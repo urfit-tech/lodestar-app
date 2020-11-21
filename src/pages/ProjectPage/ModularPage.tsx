@@ -91,10 +91,10 @@ const ModularPage: React.FC<{ projectId: string }> = ({ projectId }) => {
               )
             case 'messenger':
               return (
-                process.env.REACT_APP_FACEBOOK_APP_ID && (
+                settings['auth.facebook_app_id'] && (
                   <MessengerChat
                     key={projectSection.id}
-                    appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+                    appId={settings['auth.facebook_app_id']}
                     {...projectSection.options}
                   />
                 )

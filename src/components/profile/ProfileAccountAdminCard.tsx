@@ -31,7 +31,7 @@ type ProfileAccountAdminCardProps = CardProps &
   }
 const ProfileAccountAdminCard: React.FC<ProfileAccountAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
-  const { enabledModules } = useApp()
+  const { enabledModules, settings } = useApp()
   const { member } = useMember(memberId)
   const updateMember = useUpdateMember()
 
@@ -109,7 +109,7 @@ const ProfileAccountAdminCard: React.FC<ProfileAccountAdminCardProps> = ({ form,
               {!isYouTubeConnected && (
                 <a
                   href={'https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&scope={{SCOPE}}&state={{STATE}}&response_type=token'
-                    .replace('{{CLIENT_ID}}', `${process.env.REACT_APP_GOOGLE_CLIENT_ID}`)
+                    .replace('{{CLIENT_ID}}', `${settings['auth.google_client_id']}`)
                     .replace('{{REDIRECT_URI}}', `https://${window.location.hostname}/oauth2`)
                     .replace('{{SCOPE}}', 'https://www.googleapis.com/auth/youtubepartner-channel-audit')
                     .replace(

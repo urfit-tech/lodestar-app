@@ -5159,11 +5159,6 @@ clone-deep@^4.0.1:
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
 
-clone@^2.1.1:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
-  integrity sha1-G39Ln1kfHo+DZwQBYANFoCiHQ18=
-
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
@@ -9690,6 +9685,11 @@ kleur@^3.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
+klona@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.4.tgz#7bb1e3affb0cb8624547ef7e8f6708ea2e39dfc0"
+  integrity sha512-ZRbnvdg/NxqzC7L9Uyqzf4psi1OM4Cuc+sJAkQPjO6XkQIJTNbfK2Rsmbw8fx1p2mkZdp2FZYo2+LwXYY/uwIA==
+
 last-call-webpack-plugin@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/last-call-webpack-plugin/-/last-call-webpack-plugin-3.0.0.tgz#9742df0e10e3cf46e5c0381c2de90d3a7a2d7555"
@@ -9718,14 +9718,14 @@ less-bundle-promise@^1.0.7:
   resolved "https://registry.yarnpkg.com/less-bundle-promise/-/less-bundle-promise-1.0.7.tgz#198d7991ac4f5f3c7862fac1074c7b9aca7b9cb2"
   integrity sha512-B4mN+YtkOxAPUHyorhup+ETVNZ9E1PO65sPhgPvDDHDVtR1oYRd87EbYVYOsU0Oev0MW/6MSouS5QYlhe7XrzA==
 
-less-loader@5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/less-loader/-/less-loader-5.0.0.tgz#498dde3a6c6c4f887458ee9ed3f086a12ad1b466"
-  integrity sha512-bquCU89mO/yWLaUq0Clk7qCsKhsF/TZpJUzETRvJa9KSVEL9SO3ovCvdEHISBhrC81OwC8QSVX7E0bzElZj9cg==
+less-loader@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/less-loader/-/less-loader-7.1.0.tgz#958d41e86d7de0bcb490711ee0f235aa9dc596aa"
+  integrity sha512-EHbnRaTzHgsxnd3RK6OXSiygcCJs72+2ezXVLg+Hgl/ijUTtthKZXZh4MvQkWJr3h/SSKvxGZr7IIHzuS2KbVQ==
   dependencies:
-    clone "^2.1.1"
-    loader-utils "^1.1.0"
-    pify "^4.0.1"
+    klona "^2.0.4"
+    loader-utils "^2.0.0"
+    schema-utils "^3.0.0"
 
 less-plugin-npm-import@^2.1.0:
   version "2.1.0"
@@ -9735,7 +9735,7 @@ less-plugin-npm-import@^2.1.0:
     promise "~7.0.1"
     resolve "~1.1.6"
 
-less@^3.11.3, less@^3.9.0:
+less@^3.12.2, less@^3.9.0:
   version "3.12.2"
   resolved "https://registry.yarnpkg.com/less/-/less-3.12.2.tgz#157e6dd32a68869df8859314ad38e70211af3ab4"
   integrity sha512-+1V2PCMFkL+OIj2/HrtrvZw0BC0sYLMICJfbQjuj/K8CEnlrFX6R5cKKgzzttsZDHyxQNL1jqMREjKN3ja/E3Q==
@@ -14066,7 +14066,7 @@ schema-dts@^0.6.0:
   resolved "https://registry.yarnpkg.com/schema-dts/-/schema-dts-0.6.1.tgz#2f9463cc5269ee403aa580ee6cb2989acb2572db"
   integrity sha512-Lx3Rp5EGlRjw2y8ONyZ5/nY/wZdFbeJP7e85Gp6Z6+O9qPYjmDXz6S8LoNbhZ7OhqSR4fP01UMz+mM7sFa1EcA==
 
-schema-utils@*:
+schema-utils@*, schema-utils@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/schema-utils/-/schema-utils-3.0.0.tgz#67502f6aa2b66a2d4032b4279a2944978a0913ef"
   integrity sha512-6D82/xSzO094ajanoOSbe4YvXWMfn2A//8Y1+MUqFAJul5Bs+yn36xbK9OtNDcRVSBJ9jjeoXftM6CfztsjOAA==

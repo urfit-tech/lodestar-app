@@ -58,6 +58,7 @@ class WrappedSocialLoginButton extends React.Component<{
 const SocialLoginButton = SocialLogin(WrappedSocialLoginButton)
 
 export const FacebookLoginButton: React.FC = () => {
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
   const host = window.location.hostname
@@ -65,7 +66,7 @@ export const FacebookLoginButton: React.FC = () => {
   return (
     <a
       href={'https://www.facebook.com/v6.0/dialog/oauth?client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&scope={{SCOPE}}&state={{STATE}}&response_type=token'
-        .replace('{{CLIENT_ID}}', `${process.env.REACT_APP_FACEBOOK_APP_ID}`)
+        .replace('{{CLIENT_ID}}', `${settings['auth.facebook_app_id']}`)
         .replace('{{REDIRECT_URI}}', `https://${host}/oauth2`)
         .replace('{{SCOPE}}', 'public_profile,email')
         .replace(
@@ -95,7 +96,7 @@ export const FacebookLoginButton: React.FC = () => {
 export const GoogleLoginButton: React.FC<{
   variant?: 'default' | 'connect'
 }> = ({ variant }) => {
-  const { id: appId } = useApp()
+  const { id: appId, settings } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
   const { socialLogin } = useAuth()
@@ -127,7 +128,7 @@ export const GoogleLoginButton: React.FC<{
       <SocialLoginButton
         loading={loading}
         provider="google"
-        appId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+        appId={settings['auth.google_client_id']}
         scope="profile email openid"
         onLoginSuccess={handleLoginSuccess}
         onLoginFailure={handleLoginFailure}
@@ -140,7 +141,7 @@ export const GoogleLoginButton: React.FC<{
   return (
     <a
       href={'https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=token&scope={{SCOPE}}&access_type=online&redirect_uri={{REDIRECT_URI}}&state={{STATE}}'
-        .replace('{{CLIENT_ID}}', `${process.env.REACT_APP_GOOGLE_CLIENT_ID}`)
+        .replace('{{CLIENT_ID}}', `${settings['auth.google_client_id']}`)
         .replace('{{REDIRECT_URI}}', `${host}/oauth2`)
         .replace('{{SCOPE}}', 'openid profile email')
         .replace(

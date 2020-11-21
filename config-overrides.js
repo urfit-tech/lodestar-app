@@ -9,8 +9,10 @@ module.exports = override(
     style: true,
   }),
   addLessLoader({
-    javascriptEnabled: true,
-    modifyVars: defaultThemeVars,
+    lessOptions: {
+      javascriptEnabled: true,
+      modifyVars: defaultThemeVars,
+    },
   }),
   (config, env) => {
     config = rewireReactHotLoader(config, env)

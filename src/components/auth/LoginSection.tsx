@@ -29,7 +29,7 @@ type LoginSectionProps = FormComponentProps & {
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
 }
 const LoginSection: React.FC<LoginSectionProps> = ({ form, onAuthStateChange }) => {
-  const { id: appId } = useApp()
+  const { id: appId, settings } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [back] = useQueryParam('back', StringParam)
@@ -70,17 +70,17 @@ const LoginSection: React.FC<LoginSectionProps> = ({ form, onAuthStateChange }) 
     <>
       <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>
 
-      {!!process.env.REACT_APP_FACEBOOK_APP_ID && (
+      {!!settings['auth.facebook_app_id'] && (
         <div className="mb-3">
           <FacebookLoginButton />
         </div>
       )}
-      {!!process.env.REACT_APP_GOOGLE_CLIENT_ID && (
+      {!!settings['auth.google_client_id'] && (
         <div className="mb-3">
           <GoogleLoginButton />
         </div>
       )}
-      {(!!process.env.REACT_APP_FACEBOOK_APP_ID || !!process.env.REACT_APP_GOOGLE_CLIENT_ID) && (
+      {(!!settings['auth.facebook_app_id'] || !!settings['auth.google_client_id']) && (
         <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
       )}
 
