@@ -1,0 +1,39 @@
+mutation SET_DEFAULT_APP_SETTINGS($app_id: String!) {
+  insert_app_setting(
+    on_conflict: { constraint: app_setting_app_id_key_key, update_columns: value }
+    objects: [
+      # general
+      { app_id: $app_id, key: "logo", value: "" }
+      { app_id: $app_id, key: "title", value: "" }
+      { app_id: $app_id, key: "description", value: "" }
+      { app_id: $app_id, key: "footer.type", value: "" }
+      { app_id: $app_id, key: "customer_support_link", value: "" }
+      # open graph
+      { app_id: $app_id, key: "open_graph.title", value: "" }
+      { app_id: $app_id, key: "open_graph.url", value: "" }
+      { app_id: $app_id, key: "open_graph.image", value: "" }
+      { app_id: $app_id, key: "open_graph.description", value: "" }
+      # seo
+      { app_id: $app_id, key: "seo.name", value: "" }
+      { app_id: $app_id, key: "seo.logo", value: "" }
+      { app_id: $app_id, key: "seo.url", value: "" }
+      # tracking
+      { app_id: $app_id, key: "tracking.ga_id", value: "" }
+      { app_id: $app_id, key: "tracking.fb_pixel_id", value: "" }
+      # program banner
+      { app_id: $app_id, key: "program_collection_banner.enabled", value: "" }
+      { app_id: $app_id, key: "program_collection_banner.link", value: "" }
+      { app_id: $app_id, key: "program_collection_banner.img_url@0", value: "" }
+      { app_id: $app_id, key: "program_collection_banner.img_url@425", value: "" }
+      # tappay
+      { app_id: $app_id, key: "tappay.app_id", value: "12972" }
+      {
+        app_id: $app_id
+        key: "tappay.app_key"
+        value: "app_JoE5vqRdTIatCvHPyw81oVxPJK2x0dEJriDOXxCeq85Yrt9VHWPkvOUJ4G7B"
+      }
+    ]
+  ) {
+    affected_rows
+  }
+}

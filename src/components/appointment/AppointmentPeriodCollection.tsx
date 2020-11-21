@@ -1,0 +1,64 @@
+import moment from 'moment'
+import { groupBy } from 'ramda'
+import React, { useContext } from 'react'
+import styled from 'styled-components'
+import { AppointmentPeriodProps } from '../../types/appointment'
+import { useAuth } from '../auth/AuthContext'
+import { AuthModalContext } from '../auth/AuthModal'
+import AppointmentItem from './AppointmentItem'
+
+const StyledScheduleTitle = styled.h3`
+  margin-bottom: 1.25rem;
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: var(--gray-darker);
+`
+
+const AppointmentPeriodCollection: React.FC<{
+  appointmentPeriods: AppointmentPeriodProps[]
+  onClick?: (period: AppointmentPeriodProps) => void
+}> = ({ appointmentPeriods, onClick }) => {
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
+  const { isAuthenticated } = useAuth()
+
+  const periods = groupBy(period => moment(period.startedAt).format('YYYY-MM-DD(dd)'), appointmentPeriods)
+
+  return (
+    <>
+      {Object.values(periods).map(periods => (
+        <div key={periods[0].id} className="mb-4">
+          <StyledScheduleTitle>{moment(periods[0].startedAt).format('YYYY-MM-DD(dd)')}</StyledScheduleTitle>
+
+          <div className="d-flex flex-wrap justify-content-start">
+            {periods.map(period => {
+              const ItemElem = (
+                <AppointmentItem
+                  key={period.id}
+                  id={period.id}
+                  startedAt={period.startedAt}
+                  isEnrolled={period.booked}
+                />
+              )
+
+              return period.booked ? (
+                ItemElem
+              ) : isAuthenticated ? (
+                <div key={period.id} onClick={() => onClick && onClick(period)}>
+                  {ItemElem}
+                </div>
+              ) : (
+                <div key={period.id} onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
+                  {ItemElem}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ))}
+    </>
+  )
+}
+
+export default AppointmentPeriodCollection

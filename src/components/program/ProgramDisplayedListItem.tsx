@@ -1,0 +1,124 @@
+import { Typography } from 'antd'
+import moment from 'moment'
+import { sum } from 'ramda'
+import React from 'react'
+import Icon from 'react-inlinesvg'
+import { useIntl } from 'react-intl'
+import styled from 'styled-components'
+import { useProgramContentProgress } from '../../contexts/ProgressContext'
+import { commonMessages } from '../../helpers/translation'
+import CalendarOIcon from '../../images/calendar-alt-o.svg'
+import EmptyCover from '../../images/empty-cover.png'
+import { ProgramPackageProgramProps } from '../../types/programPackage'
+import ProgressBar from '../common/ProgressBar'
+import { BREAK_POINT } from '../common/Responsive'
+
+const StyledProgramDisplayItem = styled.div`
+  border-bottom: 1px solid var(--gray-light);
+  margin-bottom: 12px;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    margin-bottom: 24px;
+  }
+`
+
+const StyledWrapper = styled.div`
+  width: 100%;
+  padding-bottom: 12px;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    padding: 0 20px 24px;
+  }
+`
+
+const StyledProgramCover = styled.div<{ src: string }>`
+  border-radius: 4px;
+  width: 7rem;
+  height: 3.9rem;
+  background-image: url(${props => props.src});
+  background-size: cover;
+  background-position: center;
+`
+
+const StyledProgramInfo = styled.div`
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    flex-flow: row;
+    align-items: center;
+  }
+`
+
+const StyledProgramTitle = styled(Typography.Title)`
+  && {
+    margin: 0;
+    overflow: hidden;
+    color: var(--gray-darker);
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 0.8px;
+  }
+`
+
+const StyledExpiredTime = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.4px;
+  color: var(--gray-dark);
+`
+
+const StyledProgressBar = styled.div`
+  width: 100%;
+  margin-top: 12px;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    width: 100px;
+    margin-top: 0;
+  }
+`
+
+export const ProgramDisplayedListItem: React.FC<{
+  program: ProgramPackageProgramProps & {
+    expiredAt?: Date | null
+  }
+  memberId?: string | null
+}> = ({ program, memberId }) => {
+  const { formatMessage } = useIntl()
+  const { programContentProgress } = useProgramContentProgress(program.id, memberId || '')
+  const viewRate = programContentProgress.length
+    ? Math.floor(
+        (sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length) *
+          100,
+      )
+    : 0
+
+  return (
+    <StyledProgramDisplayItem>
+      <StyledWrapper className="d-flex justify-content-between align-items-center">
+        <StyledProgramCover className="flex-shrink-0 mr-4" src={program.coverUrl || EmptyCover} />
+        <StyledProgramInfo className="flex-grow-1">
+          <div>
+            <StyledProgramTitle level={2} ellipsis={{ rows: 2 }}>
+              {program.title}
+            </StyledProgramTitle>
+            {program.expiredAt && (
+              <StyledExpiredTime className="mt-1 d-flex align-items-center">
+                <Icon src={CalendarOIcon} className="mr-1" />
+                <span className="mr-1">{moment(program.expiredAt).format('YYYY-MM-DD')}</span>
+                <span>{formatMessage(commonMessages.term.expiredAt)}</span>
+              </StyledExpiredTime>
+            )}
+          </div>
+          {memberId && (
+            <StyledProgressBar className="flex-shrink-0">
+              <ProgressBar percent={viewRate} />
+            </StyledProgressBar>
+          )}
+        </StyledProgramInfo>
+      </StyledWrapper>
+    </StyledProgramDisplayItem>
+  )
+}

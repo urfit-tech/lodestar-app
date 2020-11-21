@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 54 54">
+    <defs>
+        <linearGradient id="a" x1="100.874%" x2="-4.781%" y1="49.699%" y2="50.294%">
+            <stop offset="0%" stop-color="#C2CECE" stop-opacity="0"/>
+            <stop offset="17.9%" stop-color="#AFBCBC" stop-opacity=".179"/>
+            <stop offset="100%" stop-color="#5B6A6A"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <path fill="#585858" fill-rule="nonzero" d="M25.603.68L.037 21.34v3.85h53.926v-3.85L28.397.68a2.222 2.222 0 0 0-2.794 0z"/>
+        <path fill="#ECECEC" fill-rule="nonzero" d="M49.519 46.54H4.48a2.222 2.222 0 0 1-2.222-2.222V2.222C2.26.995 3.254 0 4.481 0H49.52c1.227 0 2.222.995 2.222 2.222v42.096a2.222 2.222 0 0 1-2.222 2.222z"/>
+        <rect width="31.021" height="2.298" x="12.064" y="9.766" fill="#9B9B9B" rx="1.149"/>
+        <rect width="31.021" height="2.298" x="12.064" y="16.66" fill="#9B9B9B" rx="1.149"/>
+        <rect width="31.021" height="2.298" x="12.064" y="23.553" fill="#9B9B9B" rx="1.149"/>
+        <path fill="url(#a)" fill-rule="nonzero" d="M51.74 43.08v.865a2.596 2.596 0 0 1-2.594 2.595H4.855a2.596 2.596 0 0 1-2.596-2.595v-.865h49.482z"/>
+        <path fill="#585858" fill-rule="nonzero" d="M53.963 21.388v30.39A2.223 2.223 0 0 1 51.741 54H2.259a2.223 2.223 0 0 1-2.222-2.222v-30.39l27.26 21.501 26.666-21.5z"/>
+        <path fill="#737373" fill-rule="nonzero" d="M53.663 52.889L28.691 32.754a2.222 2.222 0 0 0-2.79 0L.55 53.196a2.218 2.218 0 0 0 1.71.804h49.482a2.22 2.22 0 0 0 1.922-1.111z"/>
+    </g>
+</svg>
