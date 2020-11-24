@@ -1275,6 +1275,36 @@ export const projectMessages = {
   }),
 }
 
+export const reviewMessages = {
+  status: defineMessages({
+    edited: { id: 'review.status.edited', defaultMessage: '已編輯' },
+  }),
+  text: defineMessages({
+    reply: { id: 'review.text.reply', defaultMessage: '回覆...' },
+    reviewModalDescription: {
+      id: 'review.text.reviewModalDescription',
+      defaultMessage: '歡迎給予鼓勵、分享心得或是提出建議！為維護評價公正性，累計三則以上評價才會公開呦！',
+    },
+  }),
+  button: defineMessages({
+    toReview: { id: 'review.button.toReview', defaultMessage: '我要評論' },
+  }),
+  modal: defineMessages({
+    fillReview: { id: 'review.modal.fillReview', defaultMessage: '填寫評價與心得' },
+    score: { id: 'review.modal.score', defaultMessage: '評分 (點擊星星評等，預設為五星)' },
+    title: { id: 'review.modal.title', defaultMessage: '評價標題' },
+    content: { id: 'review.modal.content', defaultMessage: '評價內容' },
+    private: { id: 'review.modal.private', defaultMessage: '私下想給老師的話 (選填)' },
+  }),
+  event: defineMessages({
+    submitReview: { id: 'review.event.submitReview', defaultMessage: '已送出評價' },
+  }),
+  validate: defineMessages({
+    titleIsRequired: { id: 'review.validate.titleIsRequired', defaultMessage: '請填入評價標題' },
+    contentIsRequired: { id: 'review.validate.contentIsRequired', defaultMessage: '請填入評價內容' },
+  }),
+}
+
 export const codeMessages = defineMessages({
   SUCCESS: {
     id: 'code.SUCCESS',
