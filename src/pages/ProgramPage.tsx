@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useRef } from 'react'
 import ReactGA from 'react-ga'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { useAuth } from '../components/auth/AuthContext'
 import Responsive, { BREAK_POINT } from '../components/common/Responsive'
@@ -17,6 +17,7 @@ import ProgramInfoBlock from '../components/program/ProgramInfoBlock'
 import ProgramInstructorCollectionBlock from '../components/program/ProgramInstructorCollectionBlock'
 import ProgramPerpetualPlanCard from '../components/program/ProgramPerpetualPlanCard'
 import ProgramSubscriptionPlanSection from '../components/program/ProgramSubscriptionPlanSection'
+import ReviewCollectionBlock from '../components/review/ReviewCollectionBlock'
 import { useApp } from '../containers/common/AppContext'
 import PodcastPlayerContext from '../contexts/PodcastPlayerContext'
 import { desktopViewMixin, rgba } from '../helpers'
@@ -71,6 +72,7 @@ const StyledButtonWrapper = styled.div`
 const ProgramPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { programId } = useParams<{ programId: string }>()
+  const { pathname } = useLocation()
   const { currentMemberId } = useAuth()
   const { id: appId, settings } = useApp()
   const { visible } = useContext(PodcastPlayerContext)
@@ -199,6 +201,14 @@ const ProgramPage: React.FC = () => {
               <div className="col-12 col-lg-8">
                 <div className="mb-5">
                   <ProgramInstructorCollectionBlock program={program} />
+                </div>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12 col-lg-8">
+                <div className="mb-5">
+                  <ReviewCollectionBlock path={pathname} />
                 </div>
               </div>
             </div>

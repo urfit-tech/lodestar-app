@@ -1231,6 +1231,164 @@ export interface GET_PRIVATE_TEACH_PROJECT_PLAN_ENROLLMENTVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_REVIEW_COLLECTION
+// ====================================================
+
+export interface GET_REVIEW_COLLECTION_review_public_review_replies_member {
+  __typename: "member_public";
+  id: string | null;
+  role: string | null;
+}
+
+export interface GET_REVIEW_COLLECTION_review_public_review_replies {
+  __typename: "review_reply";
+  id: any;
+  content: string | null;
+  created_at: any;
+  updated_at: any;
+  /**
+   * An object relationship
+   */
+  member: GET_REVIEW_COLLECTION_review_public_review_replies_member | null;
+}
+
+export interface GET_REVIEW_COLLECTION_review_public {
+  __typename: "review_public";
+  id: any | null;
+  member_id: string | null;
+  score: any | null;
+  title: string | null;
+  content: string | null;
+  created_at: any | null;
+  updated_at: any | null;
+  /**
+   * An array relationship
+   */
+  review_replies: GET_REVIEW_COLLECTION_review_public_review_replies[];
+}
+
+export interface GET_REVIEW_COLLECTION_review_public_aggregate_aggregate {
+  __typename: "review_public_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_REVIEW_COLLECTION_review_public_aggregate {
+  __typename: "review_public_aggregate";
+  aggregate: GET_REVIEW_COLLECTION_review_public_aggregate_aggregate | null;
+}
+
+export interface GET_REVIEW_COLLECTION {
+  /**
+   * fetch data from the table: "review_public"
+   */
+  review_public: GET_REVIEW_COLLECTION_review_public[];
+  /**
+   * fetch aggregated fields from the table: "review_public"
+   */
+  review_public_aggregate: GET_REVIEW_COLLECTION_review_public_aggregate;
+}
+
+export interface GET_REVIEW_COLLECTIONVariables {
+  path: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PRODUCT_ROLES
+// ====================================================
+
+export interface GET_PRODUCT_ROLES_program_by_pk_program_roles {
+  __typename: "program_role";
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_PRODUCT_ROLES_program_by_pk {
+  __typename: "program";
+  id: any;
+  /**
+   * An array relationship
+   */
+  program_roles: GET_PRODUCT_ROLES_program_by_pk_program_roles[];
+}
+
+export interface GET_PRODUCT_ROLES_podcast_program_by_pk_creator {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  username: string | null;
+  title: string | null;
+}
+
+export interface GET_PRODUCT_ROLES_podcast_program_by_pk_podcast_program_roles {
+  __typename: "podcast_program_role";
+  member_id: string;
+  /**
+   * instructor
+   */
+  name: string;
+}
+
+export interface GET_PRODUCT_ROLES_podcast_program_by_pk {
+  __typename: "podcast_program";
+  id: any;
+  /**
+   * An object relationship
+   */
+  creator: GET_PRODUCT_ROLES_podcast_program_by_pk_creator | null;
+  /**
+   * An array relationship
+   */
+  podcast_program_roles: GET_PRODUCT_ROLES_podcast_program_by_pk_podcast_program_roles[];
+}
+
+export interface GET_PRODUCT_ROLES_merchandise_by_pk_member_shop {
+  __typename: "member_shop";
+  member_id: string;
+}
+
+export interface GET_PRODUCT_ROLES_merchandise_by_pk {
+  __typename: "merchandise";
+  id: any;
+  member_id: string;
+  /**
+   * An object relationship
+   */
+  member_shop: GET_PRODUCT_ROLES_merchandise_by_pk_member_shop | null;
+}
+
+export interface GET_PRODUCT_ROLES {
+  /**
+   * fetch data from the table: "program" using primary key columns
+   */
+  program_by_pk: GET_PRODUCT_ROLES_program_by_pk | null;
+  /**
+   * fetch data from the table: "podcast_program" using primary key columns
+   */
+  podcast_program_by_pk: GET_PRODUCT_ROLES_podcast_program_by_pk | null;
+  /**
+   * fetch data from the table: "merchandise" using primary key columns
+   */
+  merchandise_by_pk: GET_PRODUCT_ROLES_merchandise_by_pk | null;
+}
+
+export interface GET_PRODUCT_ROLESVariables {
+  targetId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_MEMBER_ORDERS
 // ====================================================
 
