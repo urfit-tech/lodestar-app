@@ -44,14 +44,20 @@ const StyledButton = styled(Button)<{ isMark?: boolean }>`
     `}
 `
 
-const StyledEditor = styled(BraftEditor)`
+const StyledEditor = styled(BraftEditor)<{ isInvalid: boolean }>`
   .bf-controlbar {
     box-shadow: initial;
   }
   .bf-content {
-    border: 1px solid #cdcdcd;
+    border: 1px solid ${props => (props.isInvalid ? 'var(--error)' : 'var(--gray)')};
     border-radius: 4px;
     height: initial;
+  }
+`
+
+const StyledFormErrorMessage = styled(FormErrorMessage)`
+  && {
+    color: var(--error);
   }
 `
 
@@ -168,6 +174,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
             name="message"
             as={
               <StyledEditor
+                isInvalid={!!errors?.message}
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
                 media={{ uploadFn: createUploadFn(appId, authToken, backendEndpoint) }}
@@ -177,7 +184,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
             control={control}
           />
           <StyledFormControl isInvalid={!!errors?.message} className="mt-1">
-            <FormErrorMessage className="mt-1">{errors?.message?.message}</FormErrorMessage>
+            <StyledFormErrorMessage className="mt-1">{errors?.message?.message}</StyledFormErrorMessage>
           </StyledFormControl>
           <ButtonGroup className="d-flex justify-content-end mb-4">
             <Button variant="outline" colorScheme="primary" onClick={onClose}>
