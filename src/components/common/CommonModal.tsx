@@ -13,10 +13,11 @@ import React from 'react'
 const CommonModal: React.FC<
   ModalProps & {
     title: string
+    renderHeaderIcon?: () => React.ReactElement
     renderTrigger: () => React.ReactElement
     renderFooter?: () => React.ReactElement
   }
-> = ({ title, renderTrigger, renderFooter, children, ...ModalProps }) => {
+> = ({ title, renderHeaderIcon, renderTrigger, renderFooter, children, ...ModalProps }) => {
   return (
     <>
       {renderTrigger()}
@@ -24,6 +25,7 @@ const CommonModal: React.FC<
       <Modal {...ModalProps}>
         <ModalOverlay />
         <ModalContent>
+          {renderHeaderIcon && renderHeaderIcon()}
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
 
