@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Button, ButtonGroup, FormControl, FormErrorMessage, useDisclosure, useToast } from '@chakra-ui/react'
+import { Button as AntdButton } from 'antd'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -187,12 +188,10 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
             <StyledFormErrorMessage className="mt-1">{errors?.message?.message}</StyledFormErrorMessage>
           </StyledFormControl>
           <ButtonGroup className="d-flex justify-content-end mb-4">
-            <Button variant="outline" colorScheme="primary" onClick={onClose}>
-              {formatMessage(commonMessages.button.cancel)}
-            </Button>
-            <Button variant="solid" colorScheme="primary" type="submit">
+            <AntdButton onClick={onClose}>{formatMessage(commonMessages.button.cancel)}</AntdButton>
+            <AntdButton type="primary" htmlType="submit">
               {formatMessage(commonMessages.button.save)}
-            </Button>
+            </AntdButton>
           </ButtonGroup>
         </form>
         <div>
