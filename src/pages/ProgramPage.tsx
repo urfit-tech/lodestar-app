@@ -74,7 +74,7 @@ const ProgramPage: React.FC = () => {
   const { programId } = useParams<{ programId: string }>()
   const { pathname } = useLocation()
   const { currentMemberId } = useAuth()
-  const { id: appId, settings } = useApp()
+  const { id: appId, settings, enabledModules } = useApp()
   const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program } = useProgram(programId)
 
@@ -205,13 +205,15 @@ const ProgramPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-12 col-lg-8">
-                <div className="mb-5">
-                  <ReviewCollectionBlock path={pathname} />
+            {enabledModules.customer_review && (
+              <div className="row">
+                <div className="col-12 col-lg-8">
+                  <div className="mb-5">
+                    <ReviewCollectionBlock path={pathname} targetId={programId} />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </ProgramIntroBlock>
       </div>
