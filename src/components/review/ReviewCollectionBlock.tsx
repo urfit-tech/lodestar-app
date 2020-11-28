@@ -1,47 +1,39 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Divider } from '@chakra-ui/react'
+import { Divider, Icon } from '@chakra-ui/react'
 import gql from 'graphql-tag'
-import React from 'react'
-import Icon from 'react-inlinesvg'
-import { defineMessages, useIntl } from 'react-intl'
+import React, { useRef } from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
-import StarEmptyIcon from '../../images/star-empty.svg'
-import StarLargeIcon from '../../images/star-l.svg'
+import { reviewMessages } from '../../helpers/translation'
+import { ReactComponent as StarEmptyIcon } from '../../images/star-empty.svg'
+import { ReactComponent as StarLargeIcon } from '../../images/star-l.svg'
 import types from '../../types'
 import { useAuth } from '../auth/AuthContext'
-import ReviewItem from './ReviewItem'
+import ReviewAdminItem from './ReviewAdminItem'
+import ReviewMemberItem, { ReviewMemberItemRef } from './ReviewMemberItem'
 import ReviewModal from './ReviewModal'
-import { ReviewReplyItemProps } from './ReviewReplyItem'
-
-export type ReviewsProps = {
-  reviewId: string
-  memberId: string | null
-  score: number | 0
-  title: string | null
-  content: string | null
-  createdAt: Date
-  updatedAt: Date
-  reviewReplies: ReviewReplyItemProps[]
-}
+import ReviewPublicItem from './ReviewPublicItem'
 
 const Wrapper = styled.div`
-  & .review-divider:last-child {
-    display: none;
+  .review-item:nth-last-child(2) {
+    .chakra-divider.review-divider {
+      display: none;
+    }
   }
 `
-const StyledTitle = styled.h2`
+export const StyledTitle = styled.h2`
   font-size: 24px;
   color: #585858;
   letter-spacing: 0.2px;
   font-weight: bold;
 `
-const StyledAvgScore = styled.div`
+export const StyledAvgScore = styled.div`
   font-weight: bold;
   font-size: 40px;
   letter-spacing: 1px;
 `
-const StyledReviewAmount = styled.div`
+export const StyledReviewAmount = styled.div`
   color: #9b9b9b;
   font-size: 14px;
   letter-spacing: 0.4px;
@@ -51,101 +43,93 @@ const StyledEmptyText = styled.div`
   font-size: 14px;
   letter-spacing: 0.4px;
 `
-const messages = defineMessages({
-  programReview: { id: 'review.title.programReview', defaultMessage: '課程評價' },
-  notEnoughReviews: { id: 'review.text.notEnoughReviews', defaultMessage: '評價不足三人無法顯示' },
-  reviewAmount: { id: 'review.text.amount', defaultMessage: '{amount} 則評價' },
-})
+const EmptyIconWrapper = styled.div`
+  text-align: center;
+`
 
 const ReviewCollectionBlock: React.FC<{
   title?: string
+  targetId: string
   path: string
-}> = ({ title, path }) => {
+}> = ({ title, targetId, path }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
-  const { settings } = useApp()
+  const { settings, id: appId } = useApp()
+  const { averageScore, reviewCount } = useReviewCount(path, appId)
+  const { productRoles } = useProductRoles(targetId, appId) // 產品
+  const { enrolledMembers } = useEnrolledMembers(targetId, appId) // 購買課程名單
+  const { memberReview } = useMemberReview(currentMemberId, path, appId) // 已評論數
 
-  const { reviews, reviewCount } = useReviewCollection(path)
-
-  const AverageScore = (reviews: ReviewsProps[]) => {
-    let totalScore = 0
-    reviews.map(v => (totalScore += v.score))
-    return reviewCount === 0 ? 0 : (totalScore / reviewCount).toFixed(1)
-  }
+  const reviewMemberItemRef = useRef() as React.RefObject<ReviewMemberItemRef>
 
   return (
     <>
-      <StyledTitle>{title || formatMessage(messages.programReview)}</StyledTitle>
+      <StyledTitle>{title || formatMessage(reviewMessages.title.programReview)}</StyledTitle>
       <Divider mt={1} css={{ height: '1px', background: '#ececec', borderStyle: 'none', opacity: 1 }} />
-      <div className="d-flex align-items-center mt-2">
-        <StyledAvgScore className="mr-1">{AverageScore(reviews)}</StyledAvgScore>
+
+      <div className="d-flex align-items-center mt-3">
+        <StyledAvgScore className="mr-1">{averageScore?.toFixed(1)}</StyledAvgScore>
         <div className="mr-2">
-          <Icon src={StarLargeIcon} />
+          <Icon as={StarLargeIcon} />
         </div>
         <StyledReviewAmount className="flex-grow-1">
-          {formatMessage(messages.reviewAmount, { amount: reviewCount })}
+          {formatMessage(reviewMessages.text.reviewAmount, { amount: reviewCount })}
         </StyledReviewAmount>
-        <ReviewModal />
+        {enrolledMembers.includes(currentMemberId) &&
+          (currentUserRole !== 'app-owner' || (currentMemberId && productRoles?.includes(currentMemberId))) && (
+            <ReviewModal
+              path={path}
+              memberReview={memberReview}
+              onRefetch={reviewMemberItemRef.current?.onReviewMemberRefetch}
+            />
+          )}
       </div>
 
-      {reviews && reviews.length >= Number(settings.review_lower_bound) ? (
-        <Wrapper>
-          {reviews.map((v: any, index) => {
-            return (
-              <div key={v.id}>
-                <ReviewItem
-                  reviewId={v.reviewId}
-                  memberId={v.memberId}
-                  score={v.score}
-                  title={v.title}
-                  content={v.content}
-                  createdAt={v.createdAt}
-                  updatedAt={v.updatedAt}
-                  reviewReplies={v.reviewReplies}
-                />
-                <Divider
-                  className="review-divider"
-                  css={{ margin: '24px 0', height: '1px', background: '#ececec', borderStyle: 'none', opacity: 1 }}
-                />
-              </div>
-            )
-          })}
-        </Wrapper>
+      {reviewCount && reviewCount >= Number(settings.review_lower_bound) ? (
+        currentUserRole === 'app-owner' || (currentMemberId && productRoles?.includes(currentMemberId)) ? (
+          <Wrapper>
+            <ReviewAdminItem targetId={targetId} path={path} appId={appId} />
+          </Wrapper>
+        ) : currentUserRole === 'anonymous' ||
+          (currentUserRole !== 'general-member' && !enrolledMembers.includes(currentMemberId)) ? (
+          <Wrapper>
+            <ReviewPublicItem targetId={targetId} path={path} appId={appId} />
+          </Wrapper>
+        ) : (
+          <Wrapper>
+            <ReviewMemberItem ref={reviewMemberItemRef} targetId={targetId} path={path} appId={appId} />
+          </Wrapper>
+        )
       ) : (
-        <div style={{ textAlign: 'center' }}>
-          <Icon src={StarEmptyIcon} />
-          <StyledEmptyText className="mt-3">{formatMessage(messages.notEnoughReviews)}</StyledEmptyText>
-        </div>
+        <>
+          <div className="d-flex align-items-center mt-3">
+            <StyledAvgScore className="mr-1">{averageScore}</StyledAvgScore>
+            <div className="mr-2">
+              <Icon as={StarLargeIcon} />
+            </div>
+            <StyledReviewAmount className="flex-grow-1">
+              {formatMessage(reviewMessages.text.reviewAmount, { amount: reviewCount })}
+            </StyledReviewAmount>
+          </div>
+          <EmptyIconWrapper className="mt-4">
+            <Icon as={StarEmptyIcon} />
+            <StyledEmptyText className="mt-3">{formatMessage(reviewMessages.text.notEnoughReviews)}</StyledEmptyText>
+          </EmptyIconWrapper>
+        </>
       )}
     </>
   )
 }
 
-const useReviewCollection = (path: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_REVIEW_COLLECTION, types.GET_REVIEW_COLLECTIONVariables>(
+const useReviewCount = (path: string, appId: string) => {
+  const { loading, error, data } = useQuery<types.GET_REVIEW_PUBLISH, types.GET_REVIEW_PUBLISHVariables>(
     gql`
-      query GET_REVIEW_COLLECTION($path: String!) {
-        review_public(where: { path: { _eq: $path } }, order_by: { created_at: desc }) {
-          id
-          member_id
-          score
-          title
-          content
-          created_at
-          updated_at
-          review_replies(order_by: { created_at: desc }) {
-            id
-            content
-            created_at
-            updated_at
-            member {
-              id
-              role
-            }
-          }
-        }
-        review_public_aggregate(where: { path: { _eq: $path } }) {
+      query GET_REVIEW_PUBLISH($path: String, $appId: String) {
+        review_public_aggregate(where: { path: { _eq: $path }, app_id: { _eq: $appId } }) {
           aggregate {
+            avg {
+              score
+            }
             count
           }
         }
@@ -154,37 +138,107 @@ const useReviewCollection = (path: string) => {
     {
       variables: {
         path,
+        appId,
       },
     },
   )
-
-  const reviews: ReviewsProps[] =
-    data?.review_public.map(v => ({
-      reviewId: v.id,
-      memberId: v.member_id,
-      score: v.score,
-      title: v.title,
-      content: v.content,
-      createdAt: new Date(v.created_at),
-      updatedAt: new Date(v.updated_at),
-      reviewReplies: v?.review_replies.map(v => ({
-        reviewReplyId: v.id,
-        memberId: v.member?.id,
-        memberRole: v.member?.role,
-        content: v.content,
-        createdAt: new Date(v.created_at),
-        updatedAt: new Date(v.updated_at),
-      })),
-    })) || []
-
-  const reviewCount = data?.review_public_aggregate.aggregate?.count || 0
+  const averageScore = loading || error || !data ? null : data.review_public_aggregate.aggregate?.avg?.score || 0
+  const reviewCount = loading || error || !data ? null : data.review_public_aggregate.aggregate?.count || 0
 
   return {
-    loadingReviews: loading,
-    errorReviews: error,
-    reviews,
+    loading,
+    error,
+    averageScore,
     reviewCount,
-    refetchReviews: refetch,
+  }
+}
+
+const useProductRoles = (targetId: string, appId: string) => {
+  const { loading, error, data } = useQuery<types.GET_PRODUCT_ROLES, types.GET_PRODUCT_ROLESVariables>(
+    gql`
+      query GET_PRODUCT_ROLES($targetId: uuid, $appId: String) {
+        program(where: { app_id: { _eq: $appId }, id: { _eq: $targetId } }) {
+          program_roles(where: { name: { _eq: "instructor" } }) {
+            member_id
+            name
+          }
+        }
+        podcast_program(where: { id: { _eq: $targetId } }) {
+          podcast_program_roles(where: { name: { _eq: "instructor" }, member: { app_id: { _eq: $appId } } }) {
+            member_id
+            name
+          }
+        }
+      }
+    `,
+    { variables: { appId, targetId } },
+  )
+
+  const productRoles: string[] | null =
+    loading || error || !data
+      ? null
+      : data.program
+      ? data.program[0].program_roles.map(v => v.member_id)
+      : data.podcast_program
+      ? data.podcast_program[0].podcast_program_roles.map(v => v.member_id)
+      : null
+
+  return { productRoles }
+}
+
+const useEnrolledMembers = (targetId: string, appId: string) => {
+  const { loading, error, data } = useQuery<types.GET_ENROLLED_MEMBERS, types.GET_ENROLLED_MEMBERSVariables>(
+    gql`
+      query GET_ENROLLED_MEMBERS($targetId: uuid, $appId: String) {
+        program_enrollment(where: { program: { app_id: { _eq: $appId }, id: { _eq: $targetId } } }) {
+          member_id
+        }
+      }
+    `,
+    {
+      variables: { targetId, appId },
+    },
+  )
+  const enrolledMembers = loading || error || !data ? [] : data.program_enrollment.map(v => v.member_id)
+  return {
+    enrolledMembers,
+  }
+}
+
+const useMemberReview = (currentMemberId: string | null, path: string, appId: string) => {
+  const { loading, error, data } = useQuery<types.GET_MEMBER_REVIEW, types.GET_MEMBER_REVIEWVariables>(
+    gql`
+      query GET_MEMBER_REVIEW($currentMemberId: String, $path: String, $appId: String) {
+        review(where: { member_id: { _eq: $currentMemberId }, path: { _eq: $path }, app_id: { _eq: $appId } }) {
+          id
+          member_id
+          score
+          title
+          content
+          private_content
+        }
+      }
+    `,
+    {
+      variables: { currentMemberId, path, appId },
+    },
+  )
+  const memberReview =
+    loading || error || !data
+      ? null
+      : data.review.map(v => ({
+          id: v.id,
+          memberId: v.member_id,
+          score: v.score,
+          title: v.title,
+          content: v.content,
+          privateContent: v.private_content,
+        }))
+
+  return {
+    loading,
+    error,
+    memberReview,
   }
 }
 
