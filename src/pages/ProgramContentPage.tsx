@@ -1,5 +1,6 @@
-import { Button, Layout, PageHeader } from 'antd'
+import { Button, Icon, Layout, PageHeader } from 'antd'
 import React, { useState } from 'react'
+import { BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -72,6 +73,14 @@ const ProgramContentPage: React.FC = () => {
           title=""
           extra={
             <div>
+              <Button
+                type="link"
+                size="small"
+                onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
+              >
+                <Icon component={BsStar} />
+                {formatMessage(commonMessages.button.review)}
+              </Button>
               <Button type="link" size="small" icon="profile" onClick={() => window.open(`/programs/${programId}`)}>
                 {formatMessage(commonMessages.button.intro)}
               </Button>
@@ -91,6 +100,14 @@ const ProgramContentPage: React.FC = () => {
         title={program.title}
         extra={
           <div>
+            <Button
+              type="link"
+              size="small"
+              onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
+            >
+              <Icon component={BsStar} />
+              {formatMessage(commonMessages.button.review)}
+            </Button>
             <Button type="link" size="small" icon="profile" onClick={() => window.open(`/programs/${programId}`)}>
               {formatMessage(commonMessages.button.intro)}
             </Button>
