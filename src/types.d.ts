@@ -1231,16 +1231,26 @@ export interface GET_PRIVATE_TEACH_PROJECT_PLAN_ENROLLMENTVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_REVIEW_COLLECTION
+// GraphQL query operation: GET_REVIEW_ADMIN
 // ====================================================
 
-export interface GET_REVIEW_COLLECTION_review_public_review_replies_member {
+export interface GET_REVIEW_ADMIN_review_aggregate_aggregate {
+  __typename: "review_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_REVIEW_ADMIN_review_aggregate {
+  __typename: "review_aggregate";
+  aggregate: GET_REVIEW_ADMIN_review_aggregate_aggregate | null;
+}
+
+export interface GET_REVIEW_ADMIN_review_review_replies_member {
   __typename: "member_public";
   id: string | null;
   role: string | null;
 }
 
-export interface GET_REVIEW_COLLECTION_review_public_review_replies {
+export interface GET_REVIEW_ADMIN_review_review_replies {
   __typename: "review_reply";
   id: any;
   content: string | null;
@@ -1249,47 +1259,92 @@ export interface GET_REVIEW_COLLECTION_review_public_review_replies {
   /**
    * An object relationship
    */
-  member: GET_REVIEW_COLLECTION_review_public_review_replies_member | null;
+  member: GET_REVIEW_ADMIN_review_review_replies_member | null;
 }
 
-export interface GET_REVIEW_COLLECTION_review_public {
-  __typename: "review_public";
-  id: any | null;
-  member_id: string | null;
-  score: any | null;
-  title: string | null;
+export interface GET_REVIEW_ADMIN_review {
+  __typename: "review";
+  id: any;
+  member_id: string;
+  score: any;
+  title: string;
+  updated_at: any;
+  created_at: any;
   content: string | null;
-  created_at: any | null;
-  updated_at: any | null;
+  private_content: string | null;
   /**
    * An array relationship
    */
-  review_replies: GET_REVIEW_COLLECTION_review_public_review_replies[];
+  review_replies: GET_REVIEW_ADMIN_review_review_replies[];
 }
 
-export interface GET_REVIEW_COLLECTION_review_public_aggregate_aggregate {
+export interface GET_REVIEW_ADMIN_program_role {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_REVIEW_ADMIN {
+  /**
+   * fetch aggregated fields from the table: "review"
+   */
+  review_aggregate: GET_REVIEW_ADMIN_review_aggregate;
+  /**
+   * fetch data from the table: "review"
+   */
+  review: GET_REVIEW_ADMIN_review[];
+  /**
+   * fetch data from the table: "program_role"
+   */
+  program_role: GET_REVIEW_ADMIN_program_role[];
+}
+
+export interface GET_REVIEW_ADMINVariables {
+  condition?: review_bool_exp | null;
+  appId: string;
+  targetId?: any | null;
+  limit: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_REVIEW_PUBLISH
+// ====================================================
+
+export interface GET_REVIEW_PUBLISH_review_public_aggregate_aggregate_avg {
+  __typename: "review_public_avg_fields";
+  score: number | null;
+}
+
+export interface GET_REVIEW_PUBLISH_review_public_aggregate_aggregate {
   __typename: "review_public_aggregate_fields";
+  avg: GET_REVIEW_PUBLISH_review_public_aggregate_aggregate_avg | null;
   count: number | null;
 }
 
-export interface GET_REVIEW_COLLECTION_review_public_aggregate {
+export interface GET_REVIEW_PUBLISH_review_public_aggregate {
   __typename: "review_public_aggregate";
-  aggregate: GET_REVIEW_COLLECTION_review_public_aggregate_aggregate | null;
+  aggregate: GET_REVIEW_PUBLISH_review_public_aggregate_aggregate | null;
 }
 
-export interface GET_REVIEW_COLLECTION {
-  /**
-   * fetch data from the table: "review_public"
-   */
-  review_public: GET_REVIEW_COLLECTION_review_public[];
+export interface GET_REVIEW_PUBLISH {
   /**
    * fetch aggregated fields from the table: "review_public"
    */
-  review_public_aggregate: GET_REVIEW_COLLECTION_review_public_aggregate;
+  review_public_aggregate: GET_REVIEW_PUBLISH_review_public_aggregate;
 }
 
-export interface GET_REVIEW_COLLECTIONVariables {
-  path: string;
+export interface GET_REVIEW_PUBLISHVariables {
+  path?: string | null;
+  appId?: string | null;
 }
 
 /* tslint:disable */
@@ -1301,33 +1356,24 @@ export interface GET_REVIEW_COLLECTIONVariables {
 // GraphQL query operation: GET_PRODUCT_ROLES
 // ====================================================
 
-export interface GET_PRODUCT_ROLES_program_by_pk_program_roles {
+export interface GET_PRODUCT_ROLES_program_program_roles {
   __typename: "program_role";
+  member_id: string;
   /**
    * instructor / assistant 
    */
   name: string;
-  member_id: string;
 }
 
-export interface GET_PRODUCT_ROLES_program_by_pk {
+export interface GET_PRODUCT_ROLES_program {
   __typename: "program";
-  id: any;
   /**
    * An array relationship
    */
-  program_roles: GET_PRODUCT_ROLES_program_by_pk_program_roles[];
+  program_roles: GET_PRODUCT_ROLES_program_program_roles[];
 }
 
-export interface GET_PRODUCT_ROLES_podcast_program_by_pk_creator {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-  username: string | null;
-  title: string | null;
-}
-
-export interface GET_PRODUCT_ROLES_podcast_program_by_pk_podcast_program_roles {
+export interface GET_PRODUCT_ROLES_podcast_program_podcast_program_roles {
   __typename: "podcast_program_role";
   member_id: string;
   /**
@@ -1336,51 +1382,427 @@ export interface GET_PRODUCT_ROLES_podcast_program_by_pk_podcast_program_roles {
   name: string;
 }
 
-export interface GET_PRODUCT_ROLES_podcast_program_by_pk {
+export interface GET_PRODUCT_ROLES_podcast_program {
   __typename: "podcast_program";
-  id: any;
-  /**
-   * An object relationship
-   */
-  creator: GET_PRODUCT_ROLES_podcast_program_by_pk_creator | null;
   /**
    * An array relationship
    */
-  podcast_program_roles: GET_PRODUCT_ROLES_podcast_program_by_pk_podcast_program_roles[];
-}
-
-export interface GET_PRODUCT_ROLES_merchandise_by_pk_member_shop {
-  __typename: "member_shop";
-  member_id: string;
-}
-
-export interface GET_PRODUCT_ROLES_merchandise_by_pk {
-  __typename: "merchandise";
-  id: any;
-  member_id: string;
-  /**
-   * An object relationship
-   */
-  member_shop: GET_PRODUCT_ROLES_merchandise_by_pk_member_shop | null;
+  podcast_program_roles: GET_PRODUCT_ROLES_podcast_program_podcast_program_roles[];
 }
 
 export interface GET_PRODUCT_ROLES {
   /**
-   * fetch data from the table: "program" using primary key columns
+   * fetch data from the table: "program"
    */
-  program_by_pk: GET_PRODUCT_ROLES_program_by_pk | null;
+  program: GET_PRODUCT_ROLES_program[];
   /**
-   * fetch data from the table: "podcast_program" using primary key columns
+   * fetch data from the table: "podcast_program"
    */
-  podcast_program_by_pk: GET_PRODUCT_ROLES_podcast_program_by_pk | null;
-  /**
-   * fetch data from the table: "merchandise" using primary key columns
-   */
-  merchandise_by_pk: GET_PRODUCT_ROLES_merchandise_by_pk | null;
+  podcast_program: GET_PRODUCT_ROLES_podcast_program[];
 }
 
 export interface GET_PRODUCT_ROLESVariables {
-  targetId: any;
+  targetId?: any | null;
+  appId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_ENROLLED_MEMBERS
+// ====================================================
+
+export interface GET_ENROLLED_MEMBERS_program_enrollment {
+  __typename: "program_enrollment";
+  member_id: string | null;
+}
+
+export interface GET_ENROLLED_MEMBERS {
+  /**
+   * fetch data from the table: "program_enrollment"
+   */
+  program_enrollment: GET_ENROLLED_MEMBERS_program_enrollment[];
+}
+
+export interface GET_ENROLLED_MEMBERSVariables {
+  targetId?: any | null;
+  appId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_REVIEW
+// ====================================================
+
+export interface GET_MEMBER_REVIEW_review {
+  __typename: "review";
+  id: any;
+  member_id: string;
+  score: any;
+  title: string;
+  content: string | null;
+  private_content: string | null;
+}
+
+export interface GET_MEMBER_REVIEW {
+  /**
+   * fetch data from the table: "review"
+   */
+  review: GET_MEMBER_REVIEW_review[];
+}
+
+export interface GET_MEMBER_REVIEWVariables {
+  currentMemberId?: string | null;
+  path?: string | null;
+  appId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_REVIEW_REPLY
+// ====================================================
+
+export interface INSERT_REVIEW_REPLY_insert_review_reply {
+  __typename: "review_reply_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_REVIEW_REPLY {
+  /**
+   * insert data into the table: "review_reply"
+   */
+  insert_review_reply: INSERT_REVIEW_REPLY_insert_review_reply | null;
+}
+
+export interface INSERT_REVIEW_REPLYVariables {
+  reviewId?: any | null;
+  memberId?: string | null;
+  content?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_REVIEW_MEMBER
+// ====================================================
+
+export interface GET_REVIEW_MEMBER_review_public_aggregate_aggregate {
+  __typename: "review_public_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_REVIEW_MEMBER_review_public_aggregate {
+  __typename: "review_public_aggregate";
+  aggregate: GET_REVIEW_MEMBER_review_public_aggregate_aggregate | null;
+}
+
+export interface GET_REVIEW_MEMBER_review_public_review_replies_member {
+  __typename: "member_public";
+  id: string | null;
+  role: string | null;
+}
+
+export interface GET_REVIEW_MEMBER_review_public_review_replies {
+  __typename: "review_reply";
+  id: any;
+  content: string | null;
+  created_at: any;
+  updated_at: any;
+  /**
+   * An object relationship
+   */
+  member: GET_REVIEW_MEMBER_review_public_review_replies_member | null;
+}
+
+export interface GET_REVIEW_MEMBER_review_public {
+  __typename: "review_public";
+  id: any | null;
+  member_id: string | null;
+  score: any | null;
+  title: string | null;
+  content: string | null;
+  created_at: any | null;
+  updated_at: any | null;
+  /**
+   * An array relationship
+   */
+  review_replies: GET_REVIEW_MEMBER_review_public_review_replies[];
+}
+
+export interface GET_REVIEW_MEMBER_review {
+  __typename: "review";
+  id: any;
+  member_id: string;
+  private_content: string | null;
+}
+
+export interface GET_REVIEW_MEMBER_program_role {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_REVIEW_MEMBER {
+  /**
+   * fetch aggregated fields from the table: "review_public"
+   */
+  review_public_aggregate: GET_REVIEW_MEMBER_review_public_aggregate;
+  /**
+   * fetch data from the table: "review_public"
+   */
+  review_public: GET_REVIEW_MEMBER_review_public[];
+  /**
+   * fetch data from the table: "review"
+   */
+  review: GET_REVIEW_MEMBER_review[];
+  /**
+   * fetch data from the table: "program_role"
+   */
+  program_role: GET_REVIEW_MEMBER_program_role[];
+}
+
+export interface GET_REVIEW_MEMBERVariables {
+  condition?: review_public_bool_exp | null;
+  path: string;
+  currentMemberId?: string | null;
+  targetId?: any | null;
+  limit: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_REVIEW
+// ====================================================
+
+export interface INSERT_REVIEW_insert_review {
+  __typename: "review_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_REVIEW {
+  /**
+   * insert data into the table: "review"
+   */
+  insert_review: INSERT_REVIEW_insert_review | null;
+}
+
+export interface INSERT_REVIEWVariables {
+  path: string;
+  memberId?: string | null;
+  score?: any | null;
+  title: string;
+  content?: string | null;
+  privateContent?: string | null;
+  appId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UPDATE_REVIEW
+// ====================================================
+
+export interface UPDATE_REVIEW_update_review {
+  __typename: "review_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface UPDATE_REVIEW {
+  /**
+   * update data of the table: "review"
+   */
+  update_review: UPDATE_REVIEW_update_review | null;
+}
+
+export interface UPDATE_REVIEWVariables {
+  reviewId: any;
+  path: string;
+  memberId?: string | null;
+  score?: any | null;
+  title: string;
+  content?: string | null;
+  privateContent?: string | null;
+  appId: string;
+  updateAt?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_REVIEW_PUBLIC
+// ====================================================
+
+export interface GET_REVIEW_PUBLIC_review_public_aggregate_aggregate {
+  __typename: "review_public_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_REVIEW_PUBLIC_review_public_aggregate {
+  __typename: "review_public_aggregate";
+  aggregate: GET_REVIEW_PUBLIC_review_public_aggregate_aggregate | null;
+}
+
+export interface GET_REVIEW_PUBLIC_review_public_review_replies_member {
+  __typename: "member_public";
+  id: string | null;
+  role: string | null;
+}
+
+export interface GET_REVIEW_PUBLIC_review_public_review_replies {
+  __typename: "review_reply";
+  id: any;
+  content: string | null;
+  created_at: any;
+  updated_at: any;
+  /**
+   * An object relationship
+   */
+  member: GET_REVIEW_PUBLIC_review_public_review_replies_member | null;
+}
+
+export interface GET_REVIEW_PUBLIC_review_public {
+  __typename: "review_public";
+  id: any | null;
+  member_id: string | null;
+  score: any | null;
+  title: string | null;
+  content: string | null;
+  created_at: any | null;
+  updated_at: any | null;
+  /**
+   * An array relationship
+   */
+  review_replies: GET_REVIEW_PUBLIC_review_public_review_replies[];
+}
+
+export interface GET_REVIEW_PUBLIC_program_role {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_REVIEW_PUBLIC {
+  /**
+   * fetch aggregated fields from the table: "review_public"
+   */
+  review_public_aggregate: GET_REVIEW_PUBLIC_review_public_aggregate;
+  /**
+   * fetch data from the table: "review_public"
+   */
+  review_public: GET_REVIEW_PUBLIC_review_public[];
+  /**
+   * fetch data from the table: "program_role"
+   */
+  program_role: GET_REVIEW_PUBLIC_program_role[];
+}
+
+export interface GET_REVIEW_PUBLICVariables {
+  condition?: review_public_bool_exp | null;
+  targetId?: any | null;
+  limit: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UPDATE_REVIEW_REPLY
+// ====================================================
+
+export interface UPDATE_REVIEW_REPLY_update_review_reply {
+  __typename: "review_reply_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface UPDATE_REVIEW_REPLY {
+  /**
+   * update data of the table: "review_reply"
+   */
+  update_review_reply: UPDATE_REVIEW_REPLY_update_review_reply | null;
+}
+
+export interface UPDATE_REVIEW_REPLYVariables {
+  reviewReplyId: any;
+  memberId?: string | null;
+  content?: string | null;
+  appId: string;
+  updateAt?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_REVIEW_REPLY
+// ====================================================
+
+export interface DELETE_REVIEW_REPLY_delete_review_reply {
+  __typename: "review_reply_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_REVIEW_REPLY {
+  /**
+   * delete data from the table: "review_reply"
+   */
+  delete_review_reply: DELETE_REVIEW_REPLY_delete_review_reply | null;
+}
+
+export interface DELETE_REVIEW_REPLYVariables {
+  reviewReplyId: any;
+  memberId?: string | null;
+  appId?: string | null;
 }
 
 /* tslint:disable */
@@ -1480,7 +1902,7 @@ export interface GET_APP_app_by_pk_app_modules {
   __typename: "app_module";
   id: any;
   /**
-   * activity | appointment | blog | invoice | learning_statistics | locale | member_card | merchandise | podcast | program_package | qrcode | social_connect | tempo_delivery | voucher
+   * activity | appointment | blog | invoice | learning_statistics | locale | member_card | merchandise | podcast | program_package | qrcode | social_connect | tempo_delivery | voucher | creator_display
    */
   module_id: string;
 }
@@ -8067,6 +8489,23 @@ export enum coupon_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "creator_category"
+ */
+export enum creator_category_constraint {
+  creator_category_pkey = "creator_category_pkey",
+}
+
+/**
+ * update columns of table "creator_category"
+ */
+export enum creator_category_update_column {
+  category_id = "category_id",
+  creator_id = "creator_id",
+  id = "id",
+  position = "position",
+}
+
+/**
  * unique or primary key constraints on table "currency"
  */
 export enum currency_constraint {
@@ -11632,6 +12071,69 @@ export interface coupon_status_bool_exp {
 }
 
 /**
+ * Boolean expression to filter rows from the table "creator". All fields are combined with a logical 'AND'.
+ */
+export interface creator_bool_exp {
+  _and?: (creator_bool_exp | null)[] | null;
+  _not?: creator_bool_exp | null;
+  _or?: (creator_bool_exp | null)[] | null;
+  block_id?: String_comparison_exp | null;
+  creator_categories?: creator_category_bool_exp | null;
+  id?: String_comparison_exp | null;
+  member?: member_public_bool_exp | null;
+  member_specialities?: member_speciality_bool_exp | null;
+  name?: String_comparison_exp | null;
+  picture_url?: String_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+  published_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "creator_category"
+ */
+export interface creator_category_arr_rel_insert_input {
+  data: creator_category_insert_input[];
+  on_conflict?: creator_category_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "creator_category". All fields are combined with a logical 'AND'.
+ */
+export interface creator_category_bool_exp {
+  _and?: (creator_category_bool_exp | null)[] | null;
+  _not?: creator_category_bool_exp | null;
+  _or?: (creator_category_bool_exp | null)[] | null;
+  category?: category_bool_exp | null;
+  category_id?: String_comparison_exp | null;
+  creator?: creator_bool_exp | null;
+  creator_id?: String_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  position?: Int_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "creator_category"
+ */
+export interface creator_category_insert_input {
+  category?: category_obj_rel_insert_input | null;
+  category_id?: string | null;
+  creator_id?: string | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  position?: number | null;
+}
+
+/**
+ * on conflict condition type for table "creator_category"
+ */
+export interface creator_category_on_conflict {
+  constraint: creator_category_constraint;
+  update_columns: creator_category_update_column[];
+  where?: creator_category_bool_exp | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "currency". All fields are combined with a logical 'AND'.
  */
 export interface currency_bool_exp {
@@ -12002,6 +12504,7 @@ export interface member_bool_exp {
   comments?: comment_bool_exp | null;
   coupons?: coupon_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  creator_categories?: creator_category_bool_exp | null;
   description?: String_comparison_exp | null;
   email?: String_comparison_exp | null;
   facebook_user_id?: String_comparison_exp | null;
@@ -12225,6 +12728,7 @@ export interface member_insert_input {
   comments?: comment_arr_rel_insert_input | null;
   coupons?: coupon_arr_rel_insert_input | null;
   created_at?: any | null;
+  creator_categories?: creator_category_arr_rel_insert_input | null;
   description?: string | null;
   email?: string | null;
   facebook_user_id?: string | null;
@@ -16492,6 +16996,66 @@ export interface property_on_conflict {
   constraint: property_constraint;
   update_columns: property_update_column[];
   where?: property_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "review". All fields are combined with a logical 'AND'.
+ */
+export interface review_bool_exp {
+  _and?: (review_bool_exp | null)[] | null;
+  _not?: review_bool_exp | null;
+  _or?: (review_bool_exp | null)[] | null;
+  app_id?: String_comparison_exp | null;
+  content?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  path?: String_comparison_exp | null;
+  private_content?: String_comparison_exp | null;
+  review_replies?: review_reply_bool_exp | null;
+  score?: numeric_comparison_exp | null;
+  title?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "review_public". All fields are combined with a logical 'AND'.
+ */
+export interface review_public_bool_exp {
+  _and?: (review_public_bool_exp | null)[] | null;
+  _not?: review_public_bool_exp | null;
+  _or?: (review_public_bool_exp | null)[] | null;
+  app_id?: String_comparison_exp | null;
+  content?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member_id?: String_comparison_exp | null;
+  name?: String_comparison_exp | null;
+  path?: String_comparison_exp | null;
+  picture_url?: String_comparison_exp | null;
+  review_replies?: review_reply_bool_exp | null;
+  score?: numeric_comparison_exp | null;
+  title?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+  username?: String_comparison_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "review_reply". All fields are combined with a logical 'AND'.
+ */
+export interface review_reply_bool_exp {
+  _and?: (review_reply_bool_exp | null)[] | null;
+  _not?: review_reply_bool_exp | null;
+  _or?: (review_reply_bool_exp | null)[] | null;
+  content?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_public_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  review?: review_bool_exp | null;
+  review_id?: uuid_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
 }
 
 /**

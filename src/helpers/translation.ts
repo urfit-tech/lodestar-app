@@ -192,6 +192,8 @@ export const commonMessages = {
     usePoint: { id: 'common.button.usePoint', defaultMessage: '使用點數' },
     useCoin: { id: 'common.button.useCoin', defaultMessage: '使用代幣' },
     reload: { id: 'common.button.reload', defaultMessage: '重新整理' },
+    review: { id: 'common.button.review', defaultMessage: '評價' },
+    loadMore: { id: 'common.button.loadMore', defaultMessage: '載入更多' },
   }),
   link: defineMessages({
     more: { id: 'common.profile', defaultMessage: '查看簡介' },
@@ -1276,10 +1278,15 @@ export const projectMessages = {
 }
 
 export const reviewMessages = {
+  title: defineMessages({
+    programReview: { id: 'review.title.programReview', defaultMessage: '課程評價' },
+  }),
   status: defineMessages({
     edited: { id: 'review.status.edited', defaultMessage: '已編輯' },
   }),
   text: defineMessages({
+    reviewAmount: { id: 'review.text.amount', defaultMessage: '{amount} 則評價' },
+    notEnoughReviews: { id: 'review.text.notEnoughReviews', defaultMessage: '評價不足三人無法顯示' },
     reply: { id: 'review.text.reply', defaultMessage: '回覆...' },
     reviewModalDescription: {
       id: 'review.text.reviewModalDescription',
@@ -1287,7 +1294,10 @@ export const reviewMessages = {
     },
   }),
   button: defineMessages({
+    reply: { id: 'review.button.review', defaultMessage: '回覆' },
     toReview: { id: 'review.button.toReview', defaultMessage: '我要評論' },
+    editReview: { id: 'review.button.editReview', defaultMessage: '修改評價' },
+    submitReview: { id: 'review.event.submitReview', defaultMessage: '送出評價' },
   }),
   modal: defineMessages({
     fillReview: { id: 'review.modal.fillReview', defaultMessage: '填寫評價與心得' },
@@ -1297,7 +1307,7 @@ export const reviewMessages = {
     private: { id: 'review.modal.private', defaultMessage: '私下想給老師的話 (選填)' },
   }),
   event: defineMessages({
-    submitReview: { id: 'review.event.submitReview', defaultMessage: '已送出評價' },
+    isSubmitReview: { id: 'review.event.isSubmitReview', defaultMessage: '已送出評價' },
   }),
   validate: defineMessages({
     titleIsRequired: { id: 'review.validate.titleIsRequired', defaultMessage: '請填入評價標題' },
