@@ -116,7 +116,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
       .finally(() => {
         setIsSubmitting(false)
         setReplyEditing(false)
-        onRefetch && onRefetch()
+        onRefetch?.()
       })
   }
 

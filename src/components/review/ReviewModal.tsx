@@ -142,7 +142,7 @@ const ReviewModal: React.FC<{
         .catch(error => console.log(error))
         .finally(() => {
           setIsSubmitting(false)
-          onRefetch && onRefetch()
+          onRefetch?.()
           onClose()
         })
     } else {
@@ -173,7 +173,7 @@ const ReviewModal: React.FC<{
         .catch(error => console.log(error))
         .finally(() => {
           setIsSubmitting(false)
-          onRefetch && onRefetch()
+          onRefetch?.()
           onClose()
         })
     }

@@ -127,7 +127,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
         .finally(() => {
           setIsSubmitting(false)
           setReplyEditing(false)
-          onRefetch && onRefetch()
+          onRefetch?.()
         })
   }
   const handleDelete = () => {
@@ -145,7 +145,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
         .catch(error => console.log(error))
         .finally(() => {
           setReplyEditing(false)
-          onRefetch && onRefetch()
+          onRefetch?.()
         })
   }
 
