@@ -1,20 +1,23 @@
-import { Button, ButtonGroup } from '@chakra-ui/react'
+import { useMutation } from '@apollo/react-hooks'
+import { Button, ButtonGroup, Icon, useToast } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
+import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn } from '../../helpers'
-import { reviewMessages } from '../../helpers/translation'
-import StarGrayIcon from '../../images/star-gray.svg'
-import StarIcon from '../../images/star.svg'
+import { commonMessages, reviewMessages } from '../../helpers/translation'
+import { ReactComponent as StarGrayIcon } from '../../images/star-gray.svg'
+import { ReactComponent as StarIcon } from '../../images/star.svg'
+import types from '../../types'
+import { ReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
-import { ReviewsProps } from './ReviewCollectionBlock'
+import { BraftContent } from '../common/StyledBraftEditor'
 import ReviewReplyItem from './ReviewReplyItem'
 
 const ReviewContentBlock = styled.div`
@@ -24,12 +27,7 @@ const StyledTitle = styled.div`
   font-weight: bold;
   color: var(--gray-darker);
 `
-const StyledContent = styled.div`
-  font-size: 14px;
-  letter-spacing: 0.4px;
-  color: var(--gray-darker);
-`
-const StyledButton = styled(Button)`
+export const StyledButton = styled(Button)`
   &&& {
     color: ${props => props.theme['@primary-color']};
   }
@@ -44,14 +42,6 @@ const ReviewPrivateBlock = styled.div`
 const ReviewPrivateTitle = styled.div`
   color: var(--gray-dark);
 `
-const ReviewPrivateContent = styled.div`
-  color: var(--gray-darker);
-`
-const ReviewReplyEditorWrapper = styled.div`
-  border: solid 1px var(--gray);
-  border-radius: 4px;
-  padding: 12px;
-`
 const StyledEditor = styled(BraftEditor)`
   .bf-controlbar {
     box-shadow: initial;
@@ -62,46 +52,76 @@ const StyledEditor = styled(BraftEditor)`
     height: initial;
   }
 `
-
-const ReviewItem: React.FC<ReviewsProps> = ({
+const ReviewPrivateContent = styled(BraftContent)`
+  color: var(--gray-darker);
+`
+const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
+  isAdmin,
+  reviewId,
   memberId,
   score,
   title,
   content,
   createdAt,
   updatedAt,
+  privateContent,
   reviewReplies,
+  labelRole,
+  onRefetch,
 }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { authToken, currentMemberId, backendEndpoint } = useAuth()
-  const { handleSubmit, control, errors, register } = useForm()
+  const { authToken, backendEndpoint } = useAuth()
+  const { handleSubmit, control } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [replyEditing, setReplyEditing] = useState(false)
+
+  const [insertReviewReply] = useMutation<types.INSERT_REVIEW_REPLY, types.INSERT_REVIEW_REPLYVariables>(
+    INSERT_REVIEW_REPLY,
+  )
+  const toast = useToast()
 
   const starAmount = (score: number) => {
     let starLists = []
     for (let i = 0; i < score; i++) {
-      starLists.push(<Icon key={uuid()} style={{ marginRight: '2px' }} src={StarIcon} />)
+      starLists.push(<Icon key={uuid()} style={{ marginRight: '2px' }} as={StarIcon} />)
     }
     if (starLists.length < 5) {
       for (let i = starLists.length; i < 5; i++) {
-        starLists.push(<Icon key={uuid()} style={{ marginRight: '2px' }} src={StarGrayIcon} />)
+        starLists.push(<Icon key={uuid()} style={{ marginRight: '2px' }} as={StarGrayIcon} />)
       }
     }
     return <div className="d-flex mb-3">{starLists}</div>
   }
 
-  const onSubmit = (value: any) => {
+  const handleSave = (data: { replyContent: any }) => {
     setIsSubmitting(true)
-    setTimeout(() => {
-      alert(JSON.stringify(value, null, 2))
-      setIsSubmitting(false)
-    }, 1000)
+    insertReviewReply({
+      variables: {
+        reviewId: reviewId,
+        memberId: memberId,
+        content: data.replyContent.toRAW(),
+      },
+    })
+      .then(() => {
+        toast({
+          title: formatMessage(reviewMessages.event.isSubmitReview),
+          status: 'success',
+          duration: 3000,
+          isClosable: false,
+          position: 'top',
+        })
+      })
+      .catch(error => console.log(error))
+      .finally(() => {
+        setIsSubmitting(false)
+        setReplyEditing(false)
+        onRefetch && onRefetch()
+      })
   }
 
   return (
-    <div>
+    <>
       <div className="d-flex align-items-center justify-content-start">
         <MemberAvatar memberId={memberId || ''} withName size={36} />
         <span className="ml-2 flex-grow-1" style={{ fontSize: '12px', color: '#9b9b9b' }}>
@@ -114,16 +134,19 @@ const ReviewItem: React.FC<ReviewsProps> = ({
       <ReviewContentBlock>
         {starAmount(score)}
         <StyledTitle className="mb-2">{title}</StyledTitle>
-        <StyledContent>{content}</StyledContent>
-        <ReviewPrivateBlock className="mt-3">
-          <ReviewPrivateTitle className="mb-2">私下給老師的訊息</ReviewPrivateTitle>
-          <ReviewPrivateContent>悄悄話內容</ReviewPrivateContent>
-        </ReviewPrivateBlock>
+        <BraftContent>{content}</BraftContent>
 
-        {reviewReplies.length === 0 && (
+        {privateContent && (
+          <ReviewPrivateBlock className="mt-3">
+            <ReviewPrivateTitle className="mb-2">私下給老師的訊息</ReviewPrivateTitle>
+            <ReviewPrivateContent>{privateContent}</ReviewPrivateContent>
+          </ReviewPrivateBlock>
+        )}
+
+        {isAdmin && reviewReplies.length === 0 && (
           <>
             <StyledButton className="mt-2" variant="ghost" onClick={() => setReplyEditing(true)}>
-              回覆
+              {formatMessage(reviewMessages.button.reply)}
             </StyledButton>
             {replyEditing && (
               <>
@@ -136,9 +159,9 @@ const ReviewItem: React.FC<ReviewsProps> = ({
                     )}
                   </span>
                 </div>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(handleSave)}>
                   <Controller
-                    name="content"
+                    name="replyContent"
                     as={
                       <StyledEditor
                         language="zh-hant"
@@ -150,10 +173,10 @@ const ReviewItem: React.FC<ReviewsProps> = ({
                   />
                   <ButtonGroup mt={4} className="d-flex justify-content-end">
                     <StyledButton type="reset" variant="ghost" onClick={() => setReplyEditing(false)}>
-                      取消
+                      {formatMessage(commonMessages.button.cancel)}
                     </StyledButton>
                     <Button isLoading={isSubmitting} type="submit" colorScheme="primary" className="apply-btn">
-                      回覆
+                      {formatMessage(reviewMessages.button.submitReview)}
                     </Button>
                   </ButtonGroup>
                 </form>
@@ -165,18 +188,27 @@ const ReviewItem: React.FC<ReviewsProps> = ({
           {reviewReplies?.map(v => (
             <ReviewReplyItem
               key={v.reviewReplyId}
-              reviewId={v.reviewId}
-              memberId={v.memberId}
-              memberRole={v.memberRole}
+              reviewReplyId={v.reviewReplyId}
+              reviewReplyMemberId={v.memberId}
               content={v.content}
               createdAt={v.createdAt}
               updatedAt={v.updatedAt}
+              labelRole={labelRole}
+              onRefetch={onRefetch}
             />
           ))}
         </div>
       </ReviewContentBlock>
-    </div>
+    </>
   )
 }
+
+const INSERT_REVIEW_REPLY = gql`
+  mutation INSERT_REVIEW_REPLY($reviewId: uuid, $memberId: String, $content: String) {
+    insert_review_reply(objects: { review_id: $reviewId, member_id: $memberId, content: $content }) {
+      affected_rows
+    }
+  }
+`
 
 export default ReviewItem
