@@ -1,5 +1,6 @@
 import { Button, Skeleton } from 'antd'
 import { render } from 'mustache'
+import queryString from 'query-string'
 import React, { useContext, useEffect, useRef } from 'react'
 import ReactGA from 'react-ga'
 import { Helmet } from 'react-helmet'
@@ -80,6 +81,9 @@ const ProgramPage: React.FC = () => {
 
   const containerRef = useRef<HTMLDivElement | null>(null)
   const planBlockRef = useRef<HTMLDivElement | null>(null)
+  const customerReviewBlockRef = useRef<HTMLDivElement>(null)
+  const location = useLocation()
+  const params = queryString.parse(location.search)
 
   let seoMeta:
     | {
@@ -99,6 +103,12 @@ const ProgramPage: React.FC = () => {
 
   const siteDescription = program?.abstract || settings['open_graph.description']
   const siteImage = program?.coverUrl || settings['open_graph.image']
+
+  useEffect(() => {
+    if (customerReviewBlockRef.current && params.moveToBlock) {
+      customerReviewBlockRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [customerReviewBlockRef, params])
 
   useEffect(() => {
     if (program) {
@@ -204,16 +214,17 @@ const ProgramPage: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {enabledModules.customer_review && (
-              <div className="row">
-                <div className="col-12 col-lg-8">
-                  <div className="mb-5">
-                    <ReviewCollectionBlock path={pathname} targetId={programId} />
+            <div id="customer-review" ref={customerReviewBlockRef}>
+              {enabledModules.customer_review && (
+                <div className="row">
+                  <div className="col-12 col-lg-8">
+                    <div className="mb-5">
+                      <ReviewCollectionBlock path={pathname} targetId={programId} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </ProgramIntroBlock>
       </div>
