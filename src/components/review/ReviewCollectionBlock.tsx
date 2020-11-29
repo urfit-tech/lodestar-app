@@ -68,7 +68,7 @@ const ReviewCollectionBlock: React.FC<{
       <Divider mt={1} css={{ height: '1px', background: '#ececec', borderStyle: 'none', opacity: 1 }} />
 
       <div className="d-flex align-items-center mt-3">
-        <StyledAvgScore className="mr-1">{averageScore?.toFixed(1)}</StyledAvgScore>
+        <StyledAvgScore className="mr-1">{averageScore === 0 ? 0 : averageScore?.toFixed(1)}</StyledAvgScore>
         <div className="mr-2">
           <Icon as={StarLargeIcon} />
         </div>
@@ -102,17 +102,8 @@ const ReviewCollectionBlock: React.FC<{
         )
       ) : (
         <>
-          <div className="d-flex align-items-center mt-3">
-            <StyledAvgScore className="mr-1">{averageScore}</StyledAvgScore>
-            <div className="mr-2">
-              <Icon as={StarLargeIcon} />
-            </div>
-            <StyledReviewAmount className="flex-grow-1">
-              {formatMessage(reviewMessages.text.reviewAmount, { amount: reviewCount })}
-            </StyledReviewAmount>
-          </div>
           <EmptyIconWrapper className="mt-4">
-            <Icon as={StarEmptyIcon} />
+            <Icon as={StarEmptyIcon} w="100" h="100" />
             <StyledEmptyText className="mt-3">{formatMessage(reviewMessages.text.notEnoughReviews)}</StyledEmptyText>
           </EmptyIconWrapper>
         </>
