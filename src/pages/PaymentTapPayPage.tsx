@@ -96,7 +96,7 @@ const PaymentTapPayBlock: React.FC = () => {
 const usePayment = (paymentNo: number) => {
   const { TPDirect } = useTappay()
   const { formatMessage } = useIntl()
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const [paying, setPaying] = useState(false)
 
   const payPayment = useCallback(
@@ -108,7 +108,7 @@ const usePayment = (paymentNo: number) => {
         setPaying(true)
         axios
           .post(
-            `${backendEndpoint}/payment/pay/${paymentNo}`,
+            `https://${apiHost}/payment/pay/${paymentNo}`,
             {
               memberCreditCardId,
             },
@@ -129,7 +129,7 @@ const usePayment = (paymentNo: number) => {
           .catch(reject)
           .finally(() => setPaying(false))
       }),
-    [authToken, backendEndpoint, formatMessage],
+    [authToken, apiHost, formatMessage],
   )
 
   const addCreditCard = async (cardHolder: CardHolder) => {
@@ -140,7 +140,7 @@ const usePayment = (paymentNo: number) => {
         }
         axios({
           method: 'POST',
-          url: `${backendEndpoint}/payment/credit-cards`,
+          url: `https://${apiHost}/payment/credit-cards`,
           withCredentials: true,
           data: { prime: result.card.prime, cardHolder },
           headers: { authorization: `Bearer ${authToken}` },

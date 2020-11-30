@@ -13,7 +13,7 @@ import types from '../../types'
 
 const VoucherCollectionBlock: React.FC = () => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, authToken, backendEndpoint } = useAuth()
+  const { currentMemberId, authToken, apiHost } = useAuth()
   const { loading, error, data, refetch } = useQuery<types.GET_VOUCHER_COLLECTION>(GET_VOUCHER_COLLECTION)
 
   const voucherCollection =
@@ -43,7 +43,7 @@ const VoucherCollectionBlock: React.FC = () => {
 
     axios
       .post(
-        `${backendEndpoint}/payment/exchange`,
+        `https://${apiHost}/payment/exchange`,
         {
           code,
           type: 'Voucher',
@@ -80,7 +80,7 @@ const VoucherCollectionBlock: React.FC = () => {
 
     setLoading(true)
 
-    exchangeVoucherCode(authToken, backendEndpoint, voucherId, selectedProductIds)
+    exchangeVoucherCode(authToken, apiHost, voucherId, selectedProductIds)
       .then(data => {
         setVisible(false)
         message.success(formatMessage(voucherMessages.messages.exchangeVoucher))
@@ -110,12 +110,12 @@ const VoucherCollectionBlock: React.FC = () => {
 
 const exchangeVoucherCode = (
   authToken: string | null,
-  backendEndpoint: string | null,
+  apiHost: string,
   voucherId: string,
   selectedProductIds: string[],
 ) => {
   return axios.post(
-    `${backendEndpoint}/tasks/order`,
+    `https://${apiHost}/tasks/order`,
     {
       paymentModel: { type: 'perpetual' },
       discountId: `Voucher_${voucherId}`,

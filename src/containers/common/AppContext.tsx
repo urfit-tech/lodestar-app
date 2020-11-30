@@ -47,7 +47,7 @@ const AppContext = createContext<AppProps>(defaultAppProps)
 export const useApp = () => useContext(AppContext)
 
 export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) => {
-  const { authToken, refreshToken, backendEndpoint, setBackendEndpoint } = useAuth()
+  const { authToken, refreshToken } = useAuth()
   const { loading, error, data } = useQuery<types.GET_APP, types.GET_APPVariables>(
     gql`
       query GET_APP($appId: String!) {
@@ -80,16 +80,13 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
             value
           }
         }
-        app_admin(where: { app_id: { _eq: $appId } }, order_by: { position: asc_nulls_last }, limit: 1) {
-          api_host
-        }
       }
     `,
     { variables: { appId } },
   )
 
   const settings =
-    data?.app_by_pk?.app_settings?.reduce((accumulator, appSetting, index) => {
+    data?.app_by_pk?.app_settings?.reduce((accumulator, appSetting) => {
       accumulator[appSetting.key] = appSetting.value
       return accumulator
     }, {} as { [key: string]: string }) || {}
@@ -130,20 +127,11 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
           }
         })()
 
-  // after getting app, fetch the auth token
-  const apiHost = data?.app_admin[0]?.api_host
-
   useEffect(() => {
-    if (!backendEndpoint) {
-      if (apiHost) {
-        setBackendEndpoint?.(`https://${apiHost}`)
-      } else {
-        setBackendEndpoint?.(process.env.REACT_APP_BACKEND_ENDPOINT || '')
-      }
-    } else if (!authToken) {
+    if (!authToken) {
       refreshToken?.({ appId })
     }
-  }, [apiHost, appId, authToken, backendEndpoint, refreshToken, setBackendEndpoint])
+  }, [appId, authToken, refreshToken])
 
   return (
     <AppContext.Provider value={app}>

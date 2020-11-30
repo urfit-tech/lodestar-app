@@ -14,17 +14,24 @@ import { CartProvider } from './contexts/CartContext'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { PodcastPlayerProvider } from './contexts/PodcastPlayerContext'
+import { useApiHost } from './hooks/util'
+import LoadingPage from './pages/LoadingPage'
 import Routes, { RouteProps } from './Routes'
 
-type ApplicationProps = {
+const Application: React.FC<{
   appId: string
   extraRouteProps?: { [routeKey: string]: RouteProps }
-}
-const Application: React.FC<ApplicationProps> = ({ appId, extraRouteProps }) => {
+}> = ({ appId, extraRouteProps }) => {
+  const apiHost = useApiHost(appId)
+
+  if (!apiHost) {
+    return <LoadingPage />
+  }
+
   return (
     <BrowserRouter>
       <QueryParamProvider ReactRouterRoute={Route}>
-        <AuthProvider>
+        <AuthProvider apiHost={apiHost}>
           <ApiProvider appId={appId}>
             <AppProvider appId={appId}>
               <LanguageProvider>

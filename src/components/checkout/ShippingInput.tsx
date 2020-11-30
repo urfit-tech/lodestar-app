@@ -54,7 +54,7 @@ const ShippingInput: React.FC<{
   shippingMethods?: shippingOptionProps[]
 }> = ({ value, onChange, isValidating, shippingMethods }) => {
   const { formatMessage } = useIntl()
-  const { backendEndpoint } = useAuth()
+  const { apiHost } = useAuth()
   const { currencyId: appCurrencyId } = useApp()
 
   const nameRef = useRef<Input | null>(null)
@@ -123,7 +123,7 @@ const ShippingInput: React.FC<{
 
   const handleStoreSelect = () => {
     const cvsSelectionBackUrl = encodeURIComponent(
-      `${backendEndpoint}/payment/cvs-proxy/${value?.shippingMethod}?callbackUrl=${window.location.origin}/cvs`,
+      `https://${apiHost}/payment/cvs-proxy/${value?.shippingMethod}?callbackUrl=${window.location.origin}/cvs`,
     )
     let cvsSelectionUrl
 

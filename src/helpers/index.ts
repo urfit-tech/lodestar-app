@@ -38,14 +38,14 @@ export const uploadFile = async (
   key: string,
   file: File | null,
   authToken: string | null,
-  backendEndpoint: string | null,
+  apiHost: string,
   config?: AxiosRequestConfig,
 ) => {
   let signedUrl = ''
   file &&
     (await axios
       .post(
-        `${backendEndpoint}/sys/sign-url`,
+        `https://${apiHost}/sys/sign-url`,
         {
           operation: 'putObject',
           params: {
@@ -74,13 +74,9 @@ export const uploadFile = async (
   return signedUrl
 }
 
-export const getFileDownloadableLink = async (
-  key: string,
-  authToken: string | null,
-  backendEndpoint: string | null,
-) => {
+export const getFileDownloadableLink = async (key: string, authToken: string | null, apiHost: string) => {
   const { data } = await axios.post(
-    `${backendEndpoint}/sys/sign-url`,
+    `https://${apiHost}/sys/sign-url`,
     {
       operation: 'getObject',
       params: {
@@ -114,16 +110,16 @@ export const dateRangeFormatter: (props: {
   endedAt: Date
   dateFormat?: string
   timeFormat?: string
-}) => string = ({ startedAt, endedAt, dateFormat, timeFormat }) => {
+}) => string = ({ startedAt, endedAt, dateFormat = 'YYYY-MM-DD(dd)', timeFormat = 'HH:mm' }) => {
   const startedMoment = moment(startedAt)
   const endedMoment = moment(endedAt)
   const isInSameDay = startedMoment.format('YYYY/MM/DD') === endedMoment.format('YYYY/MM/DD')
 
   return 'STARTED_DATE STARTED_TIME ~ ENDED_DATE ENDED_TIME'
-    .replace('STARTED_DATE', startedMoment.format(dateFormat || 'YYYY-MM-DD(dd)'))
-    .replace('STARTED_TIME', startedMoment.format(timeFormat || 'HH:mm'))
-    .replace('ENDED_DATE', isInSameDay ? '' : endedMoment.format(dateFormat || 'YYYY-MM-DD(dd)'))
-    .replace('ENDED_TIME', endedMoment.format(timeFormat || 'HH:mm'))
+    .replace('STARTED_DATE', startedMoment.format(dateFormat))
+    .replace('STARTED_TIME', startedMoment.format(timeFormat))
+    .replace('ENDED_DATE', isInSameDay ? '' : endedMoment.format(dateFormat))
+    .replace('ENDED_TIME', endedMoment.format(timeFormat))
     .replace(/  +/g, ' ')
 }
 
@@ -250,7 +246,7 @@ export const desktopViewMixin = (children: FlattenSimpleInterpolation) => css`
   }
 `
 
-export const createUploadFn = (appId: string, authToken: string | null, backendEndpoint: string | null) => {
+export const createUploadFn = (appId: string, authToken: string | null, apiHost: string) => {
   return async (params: {
     file: File
     success: (res: {
@@ -266,7 +262,7 @@ export const createUploadFn = (appId: string, authToken: string | null, backendE
       }
     }) => void
   }) => {
-    uploadFile(`images/${appId}/editor/${uuid()}`, params.file, authToken, backendEndpoint).then(signedUrl => {
+    uploadFile(`images/${appId}/editor/${uuid()}`, params.file, authToken, apiHost).then(signedUrl => {
       params.success({
         url: signedUrl.split('?')[0],
         meta: {

@@ -345,7 +345,7 @@ export const useEnrolledPodcastPlansCreators = (memberId: string) => {
 
 export const usePodcastProgramContent = (podcastProgramId: string) => {
   const { id: appId } = useApp()
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const [url, setUrl] = useState('')
   const { loading, error, data, refetch } = useQuery<
     types.GET_PODCAST_PROGRAM_WITH_BODY,
@@ -392,10 +392,10 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
 
   useEffect(() => {
     audioFilename &&
-      getFileDownloadableLink(`audios/${appId}/${audioFilename}`, authToken, backendEndpoint).then(url => {
+      getFileDownloadableLink(`audios/${appId}/${audioFilename}`, authToken, apiHost).then(url => {
         setUrl(url)
       })
-  }, [audioFilename, authToken, backendEndpoint])
+  }, [audioFilename, authToken, apiHost])
 
   const podcastProgram = useMemo<PodcastProgramContent | null>(() => {
     if (loading || error || !data || !data.podcast_program_by_pk) {

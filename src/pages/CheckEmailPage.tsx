@@ -31,7 +31,7 @@ const CheckEmailPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const [email] = useQueryParam('email', StringParam)
   const [type] = useQueryParam('type', StringParam)
-  const { backendEndpoint } = useAuth()
+  const { apiHost } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleResendEmail = () => {
@@ -43,7 +43,7 @@ const CheckEmailPage: React.FC = () => {
       return
     }
     axios
-      .post(`${backendEndpoint}/auth/forgot-password`, {
+      .post(`https://${apiHost}/auth/forgot-password`, {
         appId,
         account: email,
       })

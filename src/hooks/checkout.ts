@@ -18,7 +18,7 @@ export const useCheck = (
   shipping: ShippingProps | null,
   options: { [ProductId: string]: any },
 ) => {
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const { id: appId } = useApp()
   const [check, setCheck] = useState<CheckProps>({ orderProducts: [], orderDiscounts: [], shippingOption: null })
   const [orderChecking, setOrderChecking] = useState(false)
@@ -36,7 +36,7 @@ export const useCheck = (
         shippingOption: shippingOptionProps
       }
     }>(
-      `${backendEndpoint}/payment/checkout-order`,
+      `https://${apiHost}/payment/checkout-order`,
       {
         appId,
         productIds,
@@ -61,7 +61,7 @@ export const useCheck = (
   }, [
     appId,
     authToken,
-    backendEndpoint,
+    apiHost,
     discountId,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     JSON.stringify(options),
@@ -75,7 +75,7 @@ export const useCheck = (
     async (paymentType: 'perpetual' | 'subscription', invoice: InvoiceProps) => {
       setOrderPlacing(true)
       return Axios.post<{ code: string; message: string; result: { id: string } }>(
-        `${backendEndpoint}/tasks/order`,
+        `https://${apiHost}/tasks/order`,
         {
           paymentModel: { type: paymentType },
           productIds,
@@ -100,7 +100,7 @@ export const useCheck = (
         })
         .finally(() => setOrderPlacing(false))
     },
-    [authToken, backendEndpoint, discountId, options, productIds, shipping],
+    [authToken, apiHost, discountId, options, productIds, shipping],
   )
 
   return {

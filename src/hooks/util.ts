@@ -1,5 +1,6 @@
+import Axios from 'axios'
 import { filter } from 'ramda'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import TagManager from 'react-gtm-module'
@@ -55,9 +56,9 @@ export const useGA = () => {
   const { settings } = useApp()
 
   if (settings['tracking.ga_id']) {
-    ReactGA.initialize(settings['tracking.ga_id'], { debug: process.env.NODE_ENV === 'development' })
-    ReactGA.plugin.require('ecommerce', { debug: process.env.NODE_ENV === 'development' })
-    ReactGA.plugin.require('ec', { debug: process.env.NODE_ENV === 'development' })
+    ReactGA.initialize(settings['tracking.ga_id'])
+    ReactGA.plugin.require('ecommerce')
+    ReactGA.plugin.require('ec')
   }
 }
 
@@ -97,4 +98,34 @@ export const useGTM = () => {
   } catch (error) {
     process.env.NODE_ENV === 'development' && console.error(error)
   }
+}
+
+export const useApiHost = (appId: string) => {
+  const [apiHost, setApiHost] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (apiHost) {
+      return
+    }
+    Axios.post(
+      `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
+      {},
+      {
+        data: {
+          operationName: 'GET_API_HOST',
+          query:
+            'query GET_API_HOST($appId: String!) { app_admin(where: { app_id: { _eq: $appId } }, order_by: { position: asc_nulls_last }, limit: 1) { api_host } }',
+          variables: { appId },
+        },
+      },
+    )
+      .then(({ data }) => {
+        setApiHost(data?.data?.app_admin[0]?.api_host || process.env.REACT_APP_API_HOST || null)
+      })
+      .catch(() => {
+        setApiHost(process.env.REACT_APP_API_HOST || null)
+      })
+  }, [apiHost, appId])
+
+  return apiHost
 }

@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Button, ButtonGroup, FormControl, FormErrorMessage, useDisclosure, useToast } from '@chakra-ui/react'
+import { Button as AntdButton } from 'antd'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -44,14 +45,20 @@ const StyledButton = styled(Button)<{ isMark?: boolean }>`
     `}
 `
 
-const StyledEditor = styled(BraftEditor)`
+const StyledEditor = styled(BraftEditor)<{ isInvalid: boolean }>`
   .bf-controlbar {
     box-shadow: initial;
   }
   .bf-content {
-    border: 1px solid #cdcdcd;
+    border: 1px solid ${props => (props.isInvalid ? 'var(--error)' : 'var(--gray)')};
     border-radius: 4px;
     height: initial;
+  }
+`
+
+const StyledFormErrorMessage = styled(FormErrorMessage)`
+  && {
+    color: var(--error);
   }
 `
 
@@ -95,7 +102,7 @@ const MerchandiseContactBlock: React.FC<{
 
 const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }) => {
   const { id: appId } = useApp()
-  const { authToken, currentMemberId, backendEndpoint } = useAuth()
+  const { authToken, currentMemberId, apiHost } = useAuth()
   const {
     loading,
     error,
@@ -168,24 +175,23 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
             name="message"
             as={
               <StyledEditor
+                isInvalid={!!errors?.message}
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken, backendEndpoint) }}
+                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
                 placeholder={formatMessage(messages.fillMessageContent)}
               />
             }
             control={control}
           />
           <StyledFormControl isInvalid={!!errors?.message} className="mt-1">
-            <FormErrorMessage className="mt-1">{errors?.message?.message}</FormErrorMessage>
+            <StyledFormErrorMessage className="mt-1">{errors?.message?.message}</StyledFormErrorMessage>
           </StyledFormControl>
           <ButtonGroup className="d-flex justify-content-end mb-4">
-            <Button variant="outline" colorScheme="primary" onClick={onClose}>
-              {formatMessage(commonMessages.button.cancel)}
-            </Button>
-            <Button variant="solid" colorScheme="primary" type="submit">
+            <AntdButton onClick={onClose}>{formatMessage(commonMessages.button.cancel)}</AntdButton>
+            <AntdButton type="primary" htmlType="submit">
               {formatMessage(commonMessages.button.save)}
-            </Button>
+            </AntdButton>
           </ButtonGroup>
         </form>
         <div>

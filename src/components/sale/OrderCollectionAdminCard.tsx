@@ -91,7 +91,7 @@ const OrderCollectionAdminCard: React.FC<
 > = ({ memberId, ...props }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const { loading, error, orderLogs } = useOrderLogCollection(memberId)
   if (loading || error) {
     return (
@@ -152,7 +152,8 @@ const OrderCollectionAdminCard: React.FC<
               {orderProduct.name}
               {orderProduct.endedAt && orderProduct.product.type !== 'AppointmentPlan' && (
                 <span className="ml-2">
-                  ({moment(orderProduct.endedAt).format('YYYY-MM-DD')} {formatMessage(commonMessages.term.expiredAt)})
+                  ({moment(orderProduct.endedAt).format('YYYY-MM-DD HH:mm')}{' '}
+                  {formatMessage(commonMessages.term.expiredAt)})
                 </span>
               )}
               {orderProduct.startedAt && orderProduct.endedAt && orderProduct.product.type === 'AppointmentPlan' && (
@@ -182,7 +183,7 @@ const OrderCollectionAdminCard: React.FC<
               onClick={() =>
                 axios
                   .post(
-                    `${backendEndpoint}/tasks/payment/`,
+                    `https://${apiHost}/tasks/payment/`,
                     { orderId: record.id },
                     { headers: { authorization: `Bearer ${authToken}` } },
                   )
