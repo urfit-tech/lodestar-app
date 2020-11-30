@@ -16,7 +16,7 @@ import ReviewModal from './ReviewModal'
 import ReviewPublicItem from './ReviewPublicItem'
 
 const Wrapper = styled.div`
-  .review-item:nth-last-child(2) {
+  .review-item:last-child {
     .chakra-divider.review-divider {
       display: none;
     }
