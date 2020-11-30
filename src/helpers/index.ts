@@ -38,14 +38,14 @@ export const uploadFile = async (
   key: string,
   file: File | null,
   authToken: string | null,
-  backendEndpoint: string | null,
+  apiHost: string,
   config?: AxiosRequestConfig,
 ) => {
   let signedUrl = ''
   file &&
     (await axios
       .post(
-        `${backendEndpoint}/sys/sign-url`,
+        `https://${apiHost}/sys/sign-url`,
         {
           operation: 'putObject',
           params: {
@@ -74,13 +74,9 @@ export const uploadFile = async (
   return signedUrl
 }
 
-export const getFileDownloadableLink = async (
-  key: string,
-  authToken: string | null,
-  backendEndpoint: string | null,
-) => {
+export const getFileDownloadableLink = async (key: string, authToken: string | null, apiHost: string) => {
   const { data } = await axios.post(
-    `${backendEndpoint}/sys/sign-url`,
+    `https://${apiHost}/sys/sign-url`,
     {
       operation: 'getObject',
       params: {
@@ -250,7 +246,7 @@ export const desktopViewMixin = (children: FlattenSimpleInterpolation) => css`
   }
 `
 
-export const createUploadFn = (appId: string, authToken: string | null, backendEndpoint: string | null) => {
+export const createUploadFn = (appId: string, authToken: string | null, apiHost: string) => {
   return async (params: {
     file: File
     success: (res: {
@@ -266,7 +262,7 @@ export const createUploadFn = (appId: string, authToken: string | null, backendE
       }
     }) => void
   }) => {
-    uploadFile(`images/${appId}/editor/${uuid()}`, params.file, authToken, backendEndpoint).then(signedUrl => {
+    uploadFile(`images/${appId}/editor/${uuid()}`, params.file, authToken, apiHost).then(signedUrl => {
       params.success({
         url: signedUrl.split('?')[0],
         meta: {

@@ -34,7 +34,7 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({
   ...modalProps
 }) => {
   const { formatMessage } = useIntl()
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const { id: appId } = useApp()
   const [insertIssue] = useMutation<types.INSERT_ISSUE, types.INSERT_ISSUEVariables>(INSERT_ISSUE)
 
@@ -113,7 +113,7 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({
                   'media',
                 ]}
                 contentClassName="short-bf-content"
-                media={{ uploadFn: createUploadFn(appId, authToken, backendEndpoint) }}
+                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
               />,
             )}
           </Form.Item>

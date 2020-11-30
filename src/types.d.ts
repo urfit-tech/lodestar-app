@@ -1322,7 +1322,7 @@ export interface GET_APP_app_by_pk_app_modules {
   __typename: "app_module";
   id: any;
   /**
-   * activity | appointment | blog | invoice | learning_statistics | locale | member_card | merchandise | podcast | program_package | qrcode | social_connect | tempo_delivery | voucher
+   * activity | appointment | blog | invoice | learning_statistics | locale | member_card | merchandise | podcast | program_package | qrcode | social_connect | tempo_delivery | voucher | creator_display
    */
   module_id: string;
 }
@@ -1365,11 +1365,6 @@ export interface GET_APP_app_by_pk {
   app_settings: GET_APP_app_by_pk_app_settings[];
 }
 
-export interface GET_APP_app_admin {
-  __typename: "app_admin";
-  api_host: string | null;
-}
-
 export interface GET_APP {
   /**
    * fetch data from the table: "currency"
@@ -1379,10 +1374,6 @@ export interface GET_APP {
    * fetch data from the table: "app" using primary key columns
    */
   app_by_pk: GET_APP_app_by_pk | null;
-  /**
-   * fetch data from the table: "app_admin"
-   */
-  app_admin: GET_APP_app_admin[];
 }
 
 export interface GET_APPVariables {
@@ -7909,6 +7900,23 @@ export enum coupon_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "creator_category"
+ */
+export enum creator_category_constraint {
+  creator_category_pkey = "creator_category_pkey",
+}
+
+/**
+ * update columns of table "creator_category"
+ */
+export enum creator_category_update_column {
+  category_id = "category_id",
+  creator_id = "creator_id",
+  id = "id",
+  position = "position",
+}
+
+/**
  * unique or primary key constraints on table "currency"
  */
 export enum currency_constraint {
@@ -11474,6 +11482,69 @@ export interface coupon_status_bool_exp {
 }
 
 /**
+ * Boolean expression to filter rows from the table "creator". All fields are combined with a logical 'AND'.
+ */
+export interface creator_bool_exp {
+  _and?: (creator_bool_exp | null)[] | null;
+  _not?: creator_bool_exp | null;
+  _or?: (creator_bool_exp | null)[] | null;
+  block_id?: String_comparison_exp | null;
+  creator_categories?: creator_category_bool_exp | null;
+  id?: String_comparison_exp | null;
+  member?: member_public_bool_exp | null;
+  member_specialities?: member_speciality_bool_exp | null;
+  name?: String_comparison_exp | null;
+  picture_url?: String_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+  published_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "creator_category"
+ */
+export interface creator_category_arr_rel_insert_input {
+  data: creator_category_insert_input[];
+  on_conflict?: creator_category_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "creator_category". All fields are combined with a logical 'AND'.
+ */
+export interface creator_category_bool_exp {
+  _and?: (creator_category_bool_exp | null)[] | null;
+  _not?: creator_category_bool_exp | null;
+  _or?: (creator_category_bool_exp | null)[] | null;
+  category?: category_bool_exp | null;
+  category_id?: String_comparison_exp | null;
+  creator?: creator_bool_exp | null;
+  creator_id?: String_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  position?: Int_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "creator_category"
+ */
+export interface creator_category_insert_input {
+  category?: category_obj_rel_insert_input | null;
+  category_id?: string | null;
+  creator_id?: string | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  position?: number | null;
+}
+
+/**
+ * on conflict condition type for table "creator_category"
+ */
+export interface creator_category_on_conflict {
+  constraint: creator_category_constraint;
+  update_columns: creator_category_update_column[];
+  where?: creator_category_bool_exp | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "currency". All fields are combined with a logical 'AND'.
  */
 export interface currency_bool_exp {
@@ -11844,6 +11915,7 @@ export interface member_bool_exp {
   comments?: comment_bool_exp | null;
   coupons?: coupon_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  creator_categories?: creator_category_bool_exp | null;
   description?: String_comparison_exp | null;
   email?: String_comparison_exp | null;
   facebook_user_id?: String_comparison_exp | null;
@@ -12067,6 +12139,7 @@ export interface member_insert_input {
   comments?: comment_arr_rel_insert_input | null;
   coupons?: coupon_arr_rel_insert_input | null;
   created_at?: any | null;
+  creator_categories?: creator_category_arr_rel_insert_input | null;
   description?: string | null;
   email?: string | null;
   facebook_user_id?: string | null;

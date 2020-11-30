@@ -14,9 +14,11 @@
     "hant",
     "haohaoming",
     "hardcopy",
+    "hasura",
     "hotjar",
     "ilike",
     "imgs",
+    "inlinesvg",
     "jsonb",
     "kolable",
     "navs",
@@ -39,8 +41,7 @@
     "uuidv",
     "virtualness",
     "xuemi",
-    "youtube",
-    "inlinesvg"
+    "youtube"
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
 }

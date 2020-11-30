@@ -38,7 +38,7 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
   const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { backendEndpoint } = useAuth()
+  const { apiHost } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,7 +49,7 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
       }
 
       axios
-        .post(`${backendEndpoint}/auth/forgot-password`, {
+        .post(`https://${apiHost}/auth/forgot-password`, {
           appId,
           account: values.email,
         })

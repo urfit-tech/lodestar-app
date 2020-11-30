@@ -24,7 +24,7 @@ const PaymentPage: React.FC = () => {
 const usePayForm = (paymentNo: number) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { authToken, currentMemberId, backendEndpoint } = useAuth()
+  const { authToken, currentMemberId, apiHost } = useAuth()
   const [loadingForm, setLoadingForm] = useState(false)
   const [PayForm, setPayForm] = useState<JSX.Element | null>(null)
 
@@ -34,13 +34,13 @@ const usePayForm = (paymentNo: number) => {
       setLoadingForm(true)
       axios
         .post(
-          `${backendEndpoint}/payment/pay-form`,
+          `https://${apiHost}/payment/pay-form`,
           {
             paymentNo,
             options: {
-              notifyUrl: `${backendEndpoint}/payment/order-notification`,
+              notifyUrl: `https://${apiHost}/payment/order-notification`,
               clientBackUrl,
-              returnUrl: `${backendEndpoint}/payment/payment-proxy`,
+              returnUrl: `https://${apiHost}/payment/payment-proxy`,
             },
           },
           {
@@ -73,7 +73,7 @@ const usePayForm = (paymentNo: number) => {
         .catch(handleError)
         .finally(() => setLoadingForm(false))
     }
-  }, [authToken, backendEndpoint, currentMemberId, formatMessage, history, paymentNo])
+  }, [authToken, apiHost, currentMemberId, formatMessage, history, paymentNo])
   return { loadingForm, PayForm }
 }
 export default PaymentPage

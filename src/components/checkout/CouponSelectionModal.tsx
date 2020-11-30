@@ -21,7 +21,7 @@ const CouponSelectionModal: React.FC<{
   }>
 }> = ({ memberId, orderProducts, orderDiscounts, onSelect, render }) => {
   const { formatMessage } = useIntl()
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const { coupons, loadingCoupons, refetchCoupons } = useCouponCollection(memberId)
 
   const [code, setCode] = useState('')
@@ -33,7 +33,7 @@ const CouponSelectionModal: React.FC<{
     setInserting(true)
     axios
       .post(
-        `${backendEndpoint}/payment/exchange`,
+        `https://${apiHost}/payment/exchange`,
         {
           code,
           type: 'Coupon',

@@ -1,4 +1,4 @@
-import { default as Axios } from 'axios'
+import Axios from 'axios'
 import jwt from 'jsonwebtoken'
 import React, { useContext, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -11,8 +11,7 @@ type AuthContext = {
   currentMemberId: string | null
   authToken: string | null
   currentMember: { name: string; username: string; email: string; pictureUrl: string } | null
-  backendEndpoint: string | null
-  setBackendEndpoint?: (value: string) => void
+  apiHost: string
   refreshToken?: (data: { appId: string }) => Promise<void>
   register?: (data: { appId: string; username: string; email: string; password: string }) => Promise<void>
   login?: (data: { appId: string; account: string; password: string }) => Promise<void>
@@ -27,18 +26,20 @@ const defaultAuthContext: AuthContext = {
   currentMemberId: null,
   authToken: null,
   currentMember: null,
-  backendEndpoint: null,
+  apiHost: '',
 }
 
 const AuthContext = React.createContext<AuthContext>(defaultAuthContext)
+export const useAuth = () => useContext(AuthContext)
 
-export const AuthProvider: React.FC = ({ children }) => {
+export const AuthProvider: React.FC<{
+  apiHost: string
+}> = ({ apiHost, children }) => {
   const [isAuthenticating, setIsAuthenticating] = useState(defaultAuthContext.isAuthenticating)
   const [authToken, setAuthToken] = useState<string | null>(null)
-  const [backendEndpoint, setBackendEndpoint] = useState<string | null>(null)
 
   // TODO: add auth payload type
-  const payload = authToken && (jwt.decode(authToken) as any)
+  const payload: any = authToken && jwt.decode(authToken)
   if (payload) {
     const _window = window as any
     _window.insider_object = {
@@ -67,12 +68,11 @@ export const AuthProvider: React.FC = ({ children }) => {
           email: payload.email,
           pictureUrl: payload.pictureUrl,
         },
-        backendEndpoint,
-        setBackendEndpoint,
-        refreshToken: backendEndpoint
+        apiHost,
+        refreshToken: apiHost
           ? async ({ appId }) =>
               Axios.post(
-                `${backendEndpoint}/auth/refresh-token`,
+                `https://${apiHost}/auth/refresh-token`,
                 { appId },
                 {
                   method: 'POST',
@@ -88,10 +88,10 @@ export const AuthProvider: React.FC = ({ children }) => {
                 })
                 .finally(() => setIsAuthenticating(false))
           : undefined,
-        register: backendEndpoint
+        register: apiHost
           ? async ({ appId, username, email, password }) =>
               Axios.post(
-                `${backendEndpoint}/auth/register`,
+                `https://${apiHost}/auth/register`,
                 {
                   appId,
                   username,
@@ -108,10 +108,10 @@ export const AuthProvider: React.FC = ({ children }) => {
                 }
               })
           : undefined,
-        login: backendEndpoint
+        login: apiHost
           ? async ({ appId, account, password }) =>
               Axios.post(
-                `${backendEndpoint}/auth/general-login`,
+                `https://${apiHost}/auth/general-login`,
                 { appId, account, password },
                 { withCredentials: true },
               ).then(({ data: { code, result } }) => {
@@ -125,10 +125,10 @@ export const AuthProvider: React.FC = ({ children }) => {
                 }
               })
           : undefined,
-        socialLogin: backendEndpoint
+        socialLogin: apiHost
           ? async ({ appId, provider, providerToken }) =>
               Axios.post(
-                `${backendEndpoint}/auth/social-login`,
+                `https://${apiHost}/auth/social-login`,
                 {
                   appId,
                   provider,
@@ -144,10 +144,10 @@ export const AuthProvider: React.FC = ({ children }) => {
                 }
               })
           : undefined,
-        logout: backendEndpoint
+        logout: apiHost
           ? async () => {
               localStorage.clear()
-              Axios(`${backendEndpoint}/auth/logout`, {
+              Axios(`https://${apiHost}/auth/logout`, {
                 method: 'POST',
                 withCredentials: true,
               }).then(({ data: { code, message, result } }) => {
@@ -164,5 +164,3 @@ export const AuthProvider: React.FC = ({ children }) => {
     </AuthContext.Provider>
   )
 }
-
-export const useAuth = () => useContext(AuthContext)

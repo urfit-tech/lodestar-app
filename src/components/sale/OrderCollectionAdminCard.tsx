@@ -91,7 +91,7 @@ const OrderCollectionAdminCard: React.FC<
 > = ({ memberId, ...props }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const { loading, error, orderLogs } = useOrderLogCollection(memberId)
   if (loading || error) {
     return (
@@ -183,7 +183,7 @@ const OrderCollectionAdminCard: React.FC<
               onClick={() =>
                 axios
                   .post(
-                    `${backendEndpoint}/tasks/payment/`,
+                    `https://${apiHost}/tasks/payment/`,
                     { orderId: record.id },
                     { headers: { authorization: `Bearer ${authToken}` } },
                   )

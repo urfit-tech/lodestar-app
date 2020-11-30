@@ -37,7 +37,7 @@ const SingleUploader: React.FC<
   ...uploadProps
 }) => {
   const { formatMessage } = useIntl()
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const uploadCanceler = useRef<Canceler>()
   const [loading, setLoading] = useState(false)
 
@@ -67,7 +67,7 @@ const SingleUploader: React.FC<
       const { file, onProgress, onError, onSuccess } = option
       setLoading(true)
       onChange && onChange(file)
-      uploadFile(path, file, authToken, backendEndpoint, {
+      uploadFile(path, file, authToken, apiHost, {
         onUploadProgress: progressEvent => {
           onProgress({
             percent: (progressEvent.loaded / progressEvent.total) * 100,

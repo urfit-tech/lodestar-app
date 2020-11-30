@@ -32,7 +32,7 @@ const OrderTaskPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { taskId } = useParams<{ taskId: string }>()
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const { task, retry } = useTask('order', taskId)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -45,7 +45,7 @@ const OrderTaskPage: React.FC = () => {
     if (authToken && task?.finishedOn && task?.returnvalue?.orderId) {
       axios
         .post(
-          `${backendEndpoint}/tasks/payment/`,
+          `https://${apiHost}/tasks/payment/`,
           { orderId: task.returnvalue.orderId },
           { headers: { authorization: `Bearer ${authToken}` } },
         )
@@ -58,7 +58,7 @@ const OrderTaskPage: React.FC = () => {
         })
         .catch(handleError)
     }
-  }, [authToken, backendEndpoint, formatMessage, history, task])
+  }, [authToken, apiHost, formatMessage, history, task])
 
   if (errorMessage) {
     return (

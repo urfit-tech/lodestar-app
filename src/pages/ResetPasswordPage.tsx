@@ -38,7 +38,7 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)
-  const { backendEndpoint } = useAuth()
+  const { apiHost } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,7 +48,7 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
         setLoading(true)
         axios
           .post(
-            `${backendEndpoint}/auth/reset-password`,
+            `https://${apiHost}/auth/reset-password`,
             { newPassword: values.password },
             {
               headers: { authorization: `Bearer ${token}` },

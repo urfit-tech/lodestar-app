@@ -102,7 +102,7 @@ const MerchandiseContactBlock: React.FC<{
 
 const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }) => {
   const { id: appId } = useApp()
-  const { authToken, currentMemberId, backendEndpoint } = useAuth()
+  const { authToken, currentMemberId, apiHost } = useAuth()
   const {
     loading,
     error,
@@ -178,7 +178,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
                 isInvalid={!!errors?.message}
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken, backendEndpoint) }}
+                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
                 placeholder={formatMessage(messages.fillMessageContent)}
               />
             }

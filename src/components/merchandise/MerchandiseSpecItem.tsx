@@ -30,7 +30,7 @@ const MerchandiseSpecItem: React.FC<{
   orderProductFilenames?: string[]
 }> = ({ merchandiseSpecId, quantity, orderProductId, orderProductFilenames = [] }) => {
   const { formatMessage } = useIntl()
-  const { authToken, backendEndpoint } = useAuth()
+  const { authToken, apiHost } = useAuth()
   const { id: appId } = useApp()
   const { loadingMerchandiseSpec, merchandiseSpec } = useMerchandiseSpec(merchandiseSpecId)
   const [isDownloading, setIsDownloading] = useState<boolean>(false)
@@ -86,7 +86,7 @@ const MerchandiseSpecItem: React.FC<{
                   file.from === 'merchandise'
                     ? `merchandise_files/${appId}/${merchandiseSpec.merchandise.id}_${file.name}`
                     : `merchandise_files/${appId}/${orderProductId}_${file.name}`
-                const fileLink = await getFileDownloadableLink(fileKey, authToken, backendEndpoint)
+                const fileLink = await getFileDownloadableLink(fileKey, authToken, apiHost)
                 const fileRequest = new Request(fileLink)
 
                 try {
