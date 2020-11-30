@@ -75,6 +75,12 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     pageName: 'MemberPage',
     authenticated: true,
   },
+  member_contract: {
+    path: '/members/:memberId/contracts/:memberContractId',
+    pageName: 'ContractPage',
+    authenticated: true,
+  },
+
   order_task: {
     path: '/tasks/order/:taskId',
     pageName: 'OrderTaskPage',
