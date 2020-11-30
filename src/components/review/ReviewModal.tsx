@@ -73,8 +73,9 @@ const StyledFormControl = styled(FormControl)`
 const ReviewModal: React.FC<{
   path: string
   memberReview: MemberReviewProps[] | null
-  onRefetch?: () => void
-}> = ({ path, memberReview, onRefetch }) => {
+  onReviewMemberItemRefetch?: () => void
+  onReviewCountAndProductRolesRefetch: () => void
+}> = ({ path, memberReview, onReviewMemberItemRefetch, onReviewCountAndProductRolesRefetch }) => {
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { id: appId } = useApp()
@@ -142,7 +143,7 @@ const ReviewModal: React.FC<{
         .catch(error => console.log(error))
         .finally(() => {
           setIsSubmitting(false)
-          onRefetch?.()
+          onReviewMemberItemRefetch?.()
           onClose()
         })
     } else {
@@ -173,7 +174,8 @@ const ReviewModal: React.FC<{
         .catch(error => console.log(error))
         .finally(() => {
           setIsSubmitting(false)
-          onRefetch?.()
+          onReviewMemberItemRefetch?.()
+          onReviewCountAndProductRolesRefetch?.()
           onClose()
         })
     }

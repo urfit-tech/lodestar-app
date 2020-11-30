@@ -64,8 +64,11 @@ const ReviewCollectionBlock: React.FC<{
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { settings, id: appId } = useApp()
-  const { averageScore, reviewCount } = useReviewCount(path, appId)
-  const { productRoles } = useProductRoles(targetId, appId)
+  const { averageScore, reviewCount, productRoles, reviewCountAndProductRolesRefetch } = useReviewCountAndProductRoles(
+    targetId,
+    path,
+    appId,
+  )
   const { enrolledMembers } = useEnrolledMembers(targetId, appId)
   const { memberReview } = useMemberReview(currentMemberId, path, appId)
 
@@ -89,7 +92,8 @@ const ReviewCollectionBlock: React.FC<{
             <ReviewModal
               path={path}
               memberReview={memberReview}
-              onRefetch={reviewMemberItemRef.current?.onReviewMemberRefetch}
+              onReviewMemberItemRefetch={reviewMemberItemRef.current?.onReviewMemberItemRefetch}
+              onReviewCountAndProductRolesRefetch={reviewCountAndProductRolesRefetch}
             />
           )}
       </div>
@@ -121,10 +125,13 @@ const ReviewCollectionBlock: React.FC<{
   )
 }
 
-const useReviewCount = (path: string, appId: string) => {
-  const { loading, error, data } = useQuery<types.GET_REVIEW_PUBLISH, types.GET_REVIEW_PUBLISHVariables>(
+const useReviewCountAndProductRoles = (targetId: string, path: string, appId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    types.GET_REVIEW_COUNT_AND_PRODUCT_ROLES,
+    types.GET_REVIEW_COUNT_AND_PRODUCT_ROLESVariables
+  >(
     gql`
-      query GET_REVIEW_PUBLISH($path: String, $appId: String) {
+      query GET_REVIEW_COUNT_AND_PRODUCT_ROLES($targetId: uuid, $path: String, $appId: String) {
         review_public_aggregate(where: { path: { _eq: $path }, app_id: { _eq: $appId } }) {
           aggregate {
             avg {
@@ -133,30 +140,6 @@ const useReviewCount = (path: string, appId: string) => {
             count
           }
         }
-      }
-    `,
-    {
-      variables: {
-        path,
-        appId,
-      },
-    },
-  )
-  const averageScore = loading || error || !data ? null : data.review_public_aggregate.aggregate?.avg?.score || 0
-  const reviewCount = loading || error || !data ? null : data.review_public_aggregate.aggregate?.count || 0
-
-  return {
-    loading,
-    error,
-    averageScore,
-    reviewCount,
-  }
-}
-
-const useProductRoles = (targetId: string, appId: string) => {
-  const { loading, error, data } = useQuery<types.GET_PRODUCT_ROLES, types.GET_PRODUCT_ROLESVariables>(
-    gql`
-      query GET_PRODUCT_ROLES($targetId: uuid, $appId: String) {
         program(where: { app_id: { _eq: $appId }, id: { _eq: $targetId } }) {
           program_roles(where: { name: { _eq: "instructor" } }) {
             member_id
@@ -171,8 +154,16 @@ const useProductRoles = (targetId: string, appId: string) => {
         }
       }
     `,
-    { variables: { appId, targetId } },
+    {
+      variables: {
+        targetId,
+        path,
+        appId,
+      },
+    },
   )
+  const averageScore = loading || error || !data ? null : data.review_public_aggregate.aggregate?.avg?.score || 0
+  const reviewCount = loading || error || !data ? null : data.review_public_aggregate.aggregate?.count || 0
 
   const productRoles: string[] | null =
     loading || error || !data
@@ -183,7 +174,14 @@ const useProductRoles = (targetId: string, appId: string) => {
       ? data.podcast_program[0].podcast_program_roles.map(v => v.member_id)
       : null
 
-  return { productRoles }
+  return {
+    loading,
+    error,
+    averageScore,
+    reviewCount,
+    productRoles,
+    reviewCountAndProductRolesRefetch: refetch,
+  }
 }
 
 const useEnrolledMembers = (targetId: string, appId: string) => {

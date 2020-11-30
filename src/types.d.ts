@@ -1316,33 +1316,76 @@ export interface GET_REVIEW_ADMINVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_REVIEW_PUBLISH
+// GraphQL query operation: GET_REVIEW_COUNT_AND_PRODUCT_ROLES
 // ====================================================
 
-export interface GET_REVIEW_PUBLISH_review_public_aggregate_aggregate_avg {
+export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate_aggregate_avg {
   __typename: "review_public_avg_fields";
   score: number | null;
 }
 
-export interface GET_REVIEW_PUBLISH_review_public_aggregate_aggregate {
+export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate_aggregate {
   __typename: "review_public_aggregate_fields";
-  avg: GET_REVIEW_PUBLISH_review_public_aggregate_aggregate_avg | null;
+  avg: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate_aggregate_avg | null;
   count: number | null;
 }
 
-export interface GET_REVIEW_PUBLISH_review_public_aggregate {
+export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate {
   __typename: "review_public_aggregate";
-  aggregate: GET_REVIEW_PUBLISH_review_public_aggregate_aggregate | null;
+  aggregate: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate_aggregate | null;
 }
 
-export interface GET_REVIEW_PUBLISH {
+export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_program_program_roles {
+  __typename: "program_role";
+  member_id: string;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+}
+
+export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_program {
+  __typename: "program";
+  /**
+   * An array relationship
+   */
+  program_roles: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_program_program_roles[];
+}
+
+export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_podcast_program_podcast_program_roles {
+  __typename: "podcast_program_role";
+  member_id: string;
+  /**
+   * instructor
+   */
+  name: string;
+}
+
+export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_podcast_program {
+  __typename: "podcast_program";
+  /**
+   * An array relationship
+   */
+  podcast_program_roles: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_podcast_program_podcast_program_roles[];
+}
+
+export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES {
   /**
    * fetch aggregated fields from the table: "review_public"
    */
-  review_public_aggregate: GET_REVIEW_PUBLISH_review_public_aggregate;
+  review_public_aggregate: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate;
+  /**
+   * fetch data from the table: "program"
+   */
+  program: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_program[];
+  /**
+   * fetch data from the table: "podcast_program"
+   */
+  podcast_program: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_podcast_program[];
 }
 
-export interface GET_REVIEW_PUBLISHVariables {
+export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLESVariables {
+  targetId?: any | null;
   path?: string | null;
   appId?: string | null;
 }
@@ -1741,68 +1784,6 @@ export interface GET_REVIEW_PUBLICVariables {
   condition?: review_public_bool_exp | null;
   targetId?: any | null;
   limit: number;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: UPDATE_REVIEW_REPLY
-// ====================================================
-
-export interface UPDATE_REVIEW_REPLY_update_review_reply {
-  __typename: "review_reply_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface UPDATE_REVIEW_REPLY {
-  /**
-   * update data of the table: "review_reply"
-   */
-  update_review_reply: UPDATE_REVIEW_REPLY_update_review_reply | null;
-}
-
-export interface UPDATE_REVIEW_REPLYVariables {
-  reviewReplyId: any;
-  memberId?: string | null;
-  content?: string | null;
-  appId: string;
-  updateAt?: any | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DELETE_REVIEW_REPLY
-// ====================================================
-
-export interface DELETE_REVIEW_REPLY_delete_review_reply {
-  __typename: "review_reply_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface DELETE_REVIEW_REPLY {
-  /**
-   * delete data from the table: "review_reply"
-   */
-  delete_review_reply: DELETE_REVIEW_REPLY_delete_review_reply | null;
-}
-
-export interface DELETE_REVIEW_REPLYVariables {
-  reviewReplyId: any;
-  memberId?: string | null;
-  appId?: string | null;
 }
 
 /* tslint:disable */
@@ -6684,6 +6665,68 @@ export interface GET_PROJECT_INTRO_COLLECTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: UPDATE_REVIEW_REPLY
+// ====================================================
+
+export interface UPDATE_REVIEW_REPLY_update_review_reply {
+  __typename: "review_reply_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface UPDATE_REVIEW_REPLY {
+  /**
+   * update data of the table: "review_reply"
+   */
+  update_review_reply: UPDATE_REVIEW_REPLY_update_review_reply | null;
+}
+
+export interface UPDATE_REVIEW_REPLYVariables {
+  reviewReplyId: any;
+  memberId?: string | null;
+  content?: string | null;
+  appId: string;
+  updateAt?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_REVIEW_REPLY
+// ====================================================
+
+export interface DELETE_REVIEW_REPLY_delete_review_reply {
+  __typename: "review_reply_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_REVIEW_REPLY {
+  /**
+   * delete data from the table: "review_reply"
+   */
+  delete_review_reply: DELETE_REVIEW_REPLY_delete_review_reply | null;
+}
+
+export interface DELETE_REVIEW_REPLYVariables {
+  reviewReplyId: any;
+  memberId?: string | null;
+  appId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ACTIVITY
 // ====================================================
 
@@ -8172,6 +8215,7 @@ export enum appointment_plan_update_column {
   description = "description",
   duration = "duration",
   id = "id",
+  is_private = "is_private",
   phone = "phone",
   price = "price",
   published_at = "published_at",
@@ -11166,6 +11210,7 @@ export interface appointment_plan_bool_exp {
   description?: String_comparison_exp | null;
   duration?: numeric_comparison_exp | null;
   id?: uuid_comparison_exp | null;
+  is_private?: Boolean_comparison_exp | null;
   phone?: String_comparison_exp | null;
   price?: numeric_comparison_exp | null;
   published_at?: timestamptz_comparison_exp | null;
@@ -11186,6 +11231,7 @@ export interface appointment_plan_insert_input {
   description?: string | null;
   duration?: any | null;
   id?: any | null;
+  is_private?: boolean | null;
   phone?: string | null;
   price?: any | null;
   published_at?: any | null;

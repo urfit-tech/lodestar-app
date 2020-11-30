@@ -11,7 +11,7 @@ import { useAuth } from '../auth/AuthContext'
 import ReviewItem from './ReviewItem'
 
 export interface ReviewMemberItemRef {
-  onReviewMemberRefetch: () => void
+  onReviewMemberItemRefetch: () => void
 }
 
 const ReviewMemberItem: React.ForwardRefRenderFunction<
@@ -35,7 +35,7 @@ const ReviewMemberItem: React.ForwardRefRenderFunction<
   } = useReviewMemberCollection(path, appId, currentMemberId, targetId)
 
   React.useImperativeHandle(ref, () => ({
-    onReviewMemberRefetch: () => onRefetch(),
+    onReviewMemberItemRefetch: () => onRefetch(),
   }))
 
   return (
