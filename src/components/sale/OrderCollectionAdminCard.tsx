@@ -152,7 +152,8 @@ const OrderCollectionAdminCard: React.FC<
               {orderProduct.name}
               {orderProduct.endedAt && orderProduct.product.type !== 'AppointmentPlan' && (
                 <span className="ml-2">
-                  ({moment(orderProduct.endedAt).format('YYYY-MM-DD')} {formatMessage(commonMessages.term.expiredAt)})
+                  ({moment(orderProduct.endedAt).format('YYYY-MM-DD HH:mm')}{' '}
+                  {formatMessage(commonMessages.term.expiredAt)})
                 </span>
               )}
               {orderProduct.startedAt && orderProduct.endedAt && orderProduct.product.type === 'AppointmentPlan' && (
