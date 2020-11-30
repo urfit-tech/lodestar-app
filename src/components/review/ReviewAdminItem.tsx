@@ -46,7 +46,7 @@ const ReviewAdminItem: React.FC<{
         )
       })}
       {!loadingReviews && loadMoreReviews && (
-        <div className="text-center mt-4">
+        <div className="text-center mt-4 load-more-reviews">
           <Button
             isLoading={loading}
             variant="outline"

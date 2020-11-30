@@ -16,9 +16,18 @@ import ReviewModal from './ReviewModal'
 import ReviewPublicItem from './ReviewPublicItem'
 
 const Wrapper = styled.div`
-  .review-item:last-child {
-    .chakra-divider.review-divider {
-      display: none;
+  &:not(.load-more-reviews) {
+    .review-item:last-child {
+      .chakra-divider.review-divider {
+        display: none;
+      }
+    }
+  }
+  &:has(.load-more-reviews) {
+    .review-item:nth-last-child(2) {
+      .chakra-divider.review-divider {
+        display: none;
+      }
     }
   }
 `
