@@ -56,9 +56,9 @@ const ReviewCollectionBlock: React.FC<{
   const { currentMemberId, currentUserRole } = useAuth()
   const { settings, id: appId } = useApp()
   const { averageScore, reviewCount } = useReviewCount(path, appId)
-  const { productRoles } = useProductRoles(targetId, appId) // 產品
-  const { enrolledMembers } = useEnrolledMembers(targetId, appId) // 購買課程名單
-  const { memberReview } = useMemberReview(currentMemberId, path, appId) // 已評論數
+  const { productRoles } = useProductRoles(targetId, appId)
+  const { enrolledMembers } = useEnrolledMembers(targetId, appId)
+  const { memberReview } = useMemberReview(currentMemberId, path, appId)
 
   const reviewMemberItemRef = useRef() as React.RefObject<ReviewMemberItemRef>
 
