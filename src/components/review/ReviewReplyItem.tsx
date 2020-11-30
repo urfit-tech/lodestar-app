@@ -1,4 +1,3 @@
-import { useMutation } from '@apollo/react-hooks'
 import {
   Box,
   Button,
@@ -14,7 +13,6 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
-import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -24,8 +22,8 @@ import { v4 as uuid } from 'uuid'
 import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
+import { useMutateReviewReply } from '../../hooks/review'
 import { ReactComponent as MoreIcon } from '../../images/ellipsis.svg'
-import types from '../../types'
 import { ProgramRoleName } from '../../types/program'
 import { ReviewReplyItemProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
@@ -88,12 +86,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
   const [replyEditing, setReplyEditing] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const [updateReviewReply] = useMutation<types.UPDATE_REVIEW_REPLY, types.UPDATE_REVIEW_REPLYVariables>(
-    UPDATE_REVIEW_REPLY,
-  )
-  const [deleteReviewReply] = useMutation<types.DELETE_REVIEW_REPLY, types.DELETE_REVIEW_REPLYVariables>(
-    DELETE_REVIEW_REPLY,
-  )
+  const { updateReviewReply, deleteReviewReply } = useMutateReviewReply()
 
   const handleSave = (data: { reply: any }) => {
     if (data.reply.isEmpty()) {
@@ -236,32 +229,5 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
     </div>
   )
 }
-
-const UPDATE_REVIEW_REPLY = gql`
-  mutation UPDATE_REVIEW_REPLY(
-    $reviewReplyId: uuid!
-    $memberId: String
-    $content: String
-    $appId: String!
-    $updateAt: timestamptz
-  ) {
-    update_review_reply(
-      where: { id: { _eq: $reviewReplyId }, member_id: { _eq: $memberId }, member: { app_id: { _eq: $appId } } }
-      _set: { content: $content, updated_at: $updateAt }
-    ) {
-      affected_rows
-    }
-  }
-`
-
-const DELETE_REVIEW_REPLY = gql`
-  mutation DELETE_REVIEW_REPLY($reviewReplyId: uuid!, $memberId: String, $appId: String) {
-    delete_review_reply(
-      where: { id: { _eq: $reviewReplyId }, member_id: { _eq: $memberId }, member: { app_id: { _eq: $appId } } }
-    ) {
-      affected_rows
-    }
-  }
-`
 
 export default ReviewReplyItem
