@@ -47,7 +47,7 @@ const AppContext = createContext<AppProps>(defaultAppProps)
 export const useApp = () => useContext(AppContext)
 
 export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) => {
-  const { refreshToken } = useAuth()
+  const { authToken, refreshToken } = useAuth()
   const { loading, error, data } = useQuery<types.GET_APP, types.GET_APPVariables>(
     gql`
       query GET_APP($appId: String!) {
@@ -128,8 +128,10 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
         })()
 
   useEffect(() => {
-    refreshToken?.({ appId })
-  }, [appId, refreshToken])
+    if (!authToken) {
+      refreshToken?.({ appId })
+    }
+  }, [appId, authToken, refreshToken])
 
   return (
     <AppContext.Provider value={app}>

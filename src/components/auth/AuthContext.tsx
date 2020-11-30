@@ -1,6 +1,6 @@
 import Axios from 'axios'
 import jwt from 'jsonwebtoken'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { UserRole } from '../../types/member'
 
@@ -37,22 +37,31 @@ export const AuthProvider: React.FC<{
 }> = ({ apiHost, children }) => {
   const [isAuthenticating, setIsAuthenticating] = useState(defaultAuthContext.isAuthenticating)
   const [authToken, setAuthToken] = useState<string | null>(null)
+  const [payload, setPayload] = useState<any>(null)
 
-  // TODO: add auth payload type
-  const payload: any = authToken && jwt.decode(authToken)
-  if (payload) {
+  useEffect(() => {
+    if (!authToken) {
+      setPayload(null)
+      return
+    }
+    // TODO: add auth payload type
+    const tmpPayload: any = jwt.decode(authToken)
+    if (!tmpPayload) {
+      return
+    }
     const _window = window as any
     _window.insider_object = {
       user: {
         gdpr_optin: true,
         sms_optin: true,
-        email: payload.email,
-        phone_number: payload.phoneNumber,
+        email: tmpPayload.email,
+        phone_number: tmpPayload.phoneNumber,
         email_optin: true,
       },
     }
-    ReactGA.set({ userId: payload.sub })
-  }
+    ReactGA.set({ userId: tmpPayload.sub })
+    setPayload(tmpPayload)
+  }, [authToken])
 
   return (
     <AuthContext.Provider
@@ -69,95 +78,85 @@ export const AuthProvider: React.FC<{
           pictureUrl: payload.pictureUrl,
         },
         apiHost,
-        refreshToken: apiHost
-          ? async ({ appId }) =>
-              Axios.post(
-                `https://${apiHost}/auth/refresh-token`,
-                { appId },
-                {
-                  method: 'POST',
-                  withCredentials: true,
-                },
-              )
-                .then(({ data: { code, message, result } }) => {
-                  if (code === 'SUCCESS') {
-                    setAuthToken(result.authToken)
-                  } else {
-                    setAuthToken(null)
-                  }
-                })
-                .finally(() => setIsAuthenticating(false))
-          : undefined,
-        register: apiHost
-          ? async ({ appId, username, email, password }) =>
-              Axios.post(
-                `https://${apiHost}/auth/register`,
-                {
-                  appId,
-                  username,
-                  email,
-                  password,
-                },
-                { withCredentials: true },
-              ).then(({ data: { code, message, result } }) => {
-                if (code === 'SUCCESS') {
-                  setAuthToken(result.authToken)
-                } else {
-                  setAuthToken(null)
-                  throw new Error(code)
-                }
-              })
-          : undefined,
-        login: apiHost
-          ? async ({ appId, account, password }) =>
-              Axios.post(
-                `https://${apiHost}/auth/general-login`,
-                { appId, account, password },
-                { withCredentials: true },
-              ).then(({ data: { code, result } }) => {
-                if (code === 'SUCCESS') {
-                  setAuthToken(result.authToken)
-                } else if (code === 'I_RESET_PASSWORD') {
-                  window.location.assign(`/check-email?email=${account}&type=reset-password`)
-                } else {
-                  setAuthToken(null)
-                  throw new Error(code)
-                }
-              })
-          : undefined,
-        socialLogin: apiHost
-          ? async ({ appId, provider, providerToken }) =>
-              Axios.post(
-                `https://${apiHost}/auth/social-login`,
-                {
-                  appId,
-                  provider,
-                  providerToken,
-                },
-                { withCredentials: true },
-              ).then(({ data: { code, message, result } }) => {
-                if (code === 'SUCCESS') {
-                  setAuthToken(result.authToken)
-                } else {
-                  setAuthToken(null)
-                  throw new Error(code)
-                }
-              })
-          : undefined,
-        logout: apiHost
-          ? async () => {
-              localStorage.clear()
-              Axios(`https://${apiHost}/auth/logout`, {
-                method: 'POST',
-                withCredentials: true,
-              }).then(({ data: { code, message, result } }) => {
+        refreshToken: async ({ appId }) =>
+          Axios.post(
+            `https://${apiHost}/auth/refresh-token`,
+            { appId },
+            {
+              method: 'POST',
+              withCredentials: true,
+            },
+          )
+            .then(({ data: { code, message, result } }) => {
+              if (code === 'SUCCESS') {
+                setAuthToken(result.authToken)
+              } else {
                 setAuthToken(null)
-                if (code !== 'SUCCESS') {
-                  throw new Error(code)
-                }
-              })
+              }
+            })
+            .finally(() => setIsAuthenticating(false)),
+        register: async ({ appId, username, email, password }) =>
+          Axios.post(
+            `https://${apiHost}/auth/register`,
+            {
+              appId,
+              username,
+              email,
+              password,
+            },
+            { withCredentials: true },
+          ).then(({ data: { code, message, result } }) => {
+            if (code === 'SUCCESS') {
+              setAuthToken(result.authToken)
+            } else {
+              setAuthToken(null)
+              throw new Error(code)
             }
-          : undefined,
+          }),
+        login: async ({ appId, account, password }) =>
+          Axios.post(
+            `https://${apiHost}/auth/general-login`,
+            { appId, account, password },
+            { withCredentials: true },
+          ).then(({ data: { code, result } }) => {
+            if (code === 'SUCCESS') {
+              setAuthToken(result.authToken)
+            } else if (code === 'I_RESET_PASSWORD') {
+              window.location.assign(`/check-email?email=${account}&type=reset-password`)
+            } else {
+              setAuthToken(null)
+              throw new Error(code)
+            }
+          }),
+        socialLogin: async ({ appId, provider, providerToken }) =>
+          Axios.post(
+            `https://${apiHost}/auth/social-login`,
+            {
+              appId,
+              provider,
+              providerToken,
+            },
+            { withCredentials: true },
+          ).then(({ data: { code, message, result } }) => {
+            if (code === 'SUCCESS') {
+              setAuthToken(result.authToken)
+            } else {
+              setAuthToken(null)
+              throw new Error(code)
+            }
+          }),
+        logout: async () => {
+          localStorage.clear()
+          Axios(`https://${apiHost}/auth/logout`, {
+            method: 'POST',
+            withCredentials: true,
+          }).then(({ data: { code, message, result } }) => {
+            setAuthToken(null)
+            if (code !== 'SUCCESS') {
+              throw new Error(code)
+            }
+          })
+        },
       }}
     >
       {children}
