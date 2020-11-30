@@ -31,7 +31,7 @@ const OAuth2Page: React.FC = () => {
     })
       .then(() => history.push(state.redirect))
       .catch(handleError)
-  }, [accessToken, socialLogin, history, state.provider, state.redirect])
+  }, [accessToken, appId, history, socialLogin, state])
 
   const handleFetchYoutubeApi = useCallback(() => {
     fetch('https://www.googleapis.com/youtube/v3/channels?part=id&mine=true', {
@@ -55,7 +55,7 @@ const OAuth2Page: React.FC = () => {
           history.push(state.redirect)
         }
       })
-  }, [accessToken, currentMemberId, formatMessage, history, state.redirect, updateYoutubeChannelIds])
+  }, [accessToken, currentMemberId, formatMessage, history, state, updateYoutubeChannelIds])
 
   useEffect(() => {
     if (state.provider === 'google' && currentMemberId) {
