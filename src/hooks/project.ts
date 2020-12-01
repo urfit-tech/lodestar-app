@@ -111,7 +111,7 @@ export const useProject = (projectId: string) => {
             type
             options
           }
-          project_plans(order_by: { position: asc }) {
+          project_plans(where: { published_at: { _is_null: false } }, order_by: { position: asc }) {
             id
             cover_url
             title
