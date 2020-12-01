@@ -124,7 +124,13 @@ const CreatorDisplayedPage: React.FC<{}> = () => {
             {filteredCreators.map(v => (
               <div className="col-12 col-md-6 col-lg-3 mb-4">
                 <Link to={`/creators/${v.id}`}>
-                  <CustomRatioImage width="100%" ratio={1} src={v.pictureUrl || DefaultAvatar} className="mb-3" />
+                  <CustomRatioImage
+                    width="100%"
+                    ratio={1}
+                    src={v.pictureUrl || DefaultAvatar}
+                    className="mb-3"
+                    shape="rounded"
+                  />
                   <StyledCreatorName className="mb-2">{v.name}</StyledCreatorName>
                   <StyledCreatorTitle className="mb-3">{v.title}</StyledCreatorTitle>
                   <StyledCreatorAbstract className="mb-2">{v.abstract}</StyledCreatorAbstract>
