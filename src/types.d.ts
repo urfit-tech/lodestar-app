@@ -6247,6 +6247,68 @@ export interface AGREE_MEMBER_CONTRACTVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PUBLISHED_CREATOR
+// ====================================================
+
+export interface GET_PUBLISHED_CREATOR_creator_member {
+  __typename: "member_public";
+  title: string | null;
+  abstract: string | null;
+}
+
+export interface GET_PUBLISHED_CREATOR_creator_creator_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_PUBLISHED_CREATOR_creator_creator_categories {
+  __typename: "creator_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_PUBLISHED_CREATOR_creator_creator_categories_category;
+}
+
+export interface GET_PUBLISHED_CREATOR_creator_member_specialities {
+  __typename: "member_speciality";
+  id: any;
+  tag_name: string;
+}
+
+export interface GET_PUBLISHED_CREATOR_creator {
+  __typename: "creator";
+  id: string | null;
+  name: string | null;
+  picture_url: string | null;
+  /**
+   * An object relationship
+   */
+  member: GET_PUBLISHED_CREATOR_creator_member | null;
+  /**
+   * An array relationship
+   */
+  creator_categories: GET_PUBLISHED_CREATOR_creator_creator_categories[];
+  /**
+   * An array relationship
+   */
+  member_specialities: GET_PUBLISHED_CREATOR_creator_member_specialities[];
+}
+
+export interface GET_PUBLISHED_CREATOR {
+  /**
+   * fetch data from the table: "creator"
+   */
+  creator: GET_PUBLISHED_CREATOR_creator[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_COIN_STATUS
 // ====================================================
 
@@ -7583,6 +7645,7 @@ export enum appointment_plan_update_column {
   description = "description",
   duration = "duration",
   id = "id",
+  is_private = "is_private",
   phone = "phone",
   price = "price",
   published_at = "published_at",
@@ -10577,6 +10640,7 @@ export interface appointment_plan_bool_exp {
   description?: String_comparison_exp | null;
   duration?: numeric_comparison_exp | null;
   id?: uuid_comparison_exp | null;
+  is_private?: Boolean_comparison_exp | null;
   phone?: String_comparison_exp | null;
   price?: numeric_comparison_exp | null;
   published_at?: timestamptz_comparison_exp | null;
@@ -10597,6 +10661,7 @@ export interface appointment_plan_insert_input {
   description?: string | null;
   duration?: any | null;
   id?: any | null;
+  is_private?: boolean | null;
   phone?: string | null;
   price?: any | null;
   published_at?: any | null;
