@@ -21,7 +21,7 @@ type RegisterSectionProps = FormComponentProps & {
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
 }
 const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChange }) => {
-  const { id: appId, settings } = useApp()
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
   const { register } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
@@ -38,7 +38,6 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
       }
       setLoading(true)
       register({
-        appId,
         username: values.username.trim().toLowerCase(),
         email: values.email.trim().toLowerCase(),
         password: values.password,

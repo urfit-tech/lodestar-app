@@ -96,7 +96,7 @@ export const FacebookLoginButton: React.FC = () => {
 export const GoogleLoginButton: React.FC<{
   variant?: 'default' | 'connect'
 }> = ({ variant }) => {
-  const { id: appId, settings } = useApp()
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
   const { socialLogin } = useAuth()
@@ -106,17 +106,14 @@ export const GoogleLoginButton: React.FC<{
 
   const handleLoginSuccess = ({ _provider, _token: { idToken } }: any) => {
     setLoading(true)
-    socialLogin &&
-      socialLogin({
-        appId,
-        provider: _provider,
-        providerToken: idToken,
-      })
-        .then(() => {
-          setVisible && setVisible(false)
-        })
-        .catch(handleError)
-        .finally(() => setLoading(false))
+
+    socialLogin?.({
+      provider: _provider,
+      providerToken: idToken,
+    })
+      .then(() => setVisible && setVisible(false))
+      .catch(handleError)
+      .finally(() => setLoading(false))
   }
   const handleLoginFailure = (error: any) => {
     message.error(formatMessage(authMessages.message.googleError))

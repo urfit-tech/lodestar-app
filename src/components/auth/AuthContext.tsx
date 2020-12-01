@@ -12,10 +12,10 @@ type AuthContext = {
   authToken: string | null
   currentMember: { name: string; username: string; email: string; pictureUrl: string } | null
   apiHost: string
-  refreshToken?: (data: { appId: string }) => Promise<void>
-  register?: (data: { appId: string; username: string; email: string; password: string }) => Promise<void>
-  login?: (data: { appId: string; account: string; password: string }) => Promise<void>
-  socialLogin?: (data: { appId: string; provider: string; providerToken: any }) => Promise<void>
+  refreshToken?: () => Promise<void>
+  register?: (data: { username: string; email: string; password: string }) => Promise<void>
+  login?: (data: { account: string; password: string }) => Promise<void>
+  socialLogin?: (data: { provider: string; providerToken: any }) => Promise<void>
   logout?: () => void
 }
 
@@ -33,8 +33,9 @@ const AuthContext = React.createContext<AuthContext>(defaultAuthContext)
 export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider: React.FC<{
+  appId: string
   apiHost: string
-}> = ({ apiHost, children }) => {
+}> = ({ appId, apiHost, children }) => {
   const [isAuthenticating, setIsAuthenticating] = useState(defaultAuthContext.isAuthenticating)
   const [authToken, setAuthToken] = useState<string | null>(null)
   const [payload, setPayload] = useState<any>(null)
@@ -78,7 +79,7 @@ export const AuthProvider: React.FC<{
           pictureUrl: payload.pictureUrl,
         },
         apiHost,
-        refreshToken: async ({ appId }) =>
+        refreshToken: async () =>
           Axios.post(
             `https://${apiHost}/auth/refresh-token`,
             { appId },
@@ -95,7 +96,7 @@ export const AuthProvider: React.FC<{
               }
             })
             .finally(() => setIsAuthenticating(false)),
-        register: async ({ appId, username, email, password }) =>
+        register: async ({ username, email, password }) =>
           Axios.post(
             `https://${apiHost}/auth/register`,
             {
@@ -113,7 +114,7 @@ export const AuthProvider: React.FC<{
               throw new Error(code)
             }
           }),
-        login: async ({ appId, account, password }) =>
+        login: async ({ account, password }) =>
           Axios.post(
             `https://${apiHost}/auth/general-login`,
             { appId, account, password },
@@ -128,7 +129,7 @@ export const AuthProvider: React.FC<{
               throw new Error(code)
             }
           }),
-        socialLogin: async ({ appId, provider, providerToken }) =>
+        socialLogin: async ({ provider, providerToken }) =>
           Axios.post(
             `https://${apiHost}/auth/social-login`,
             {

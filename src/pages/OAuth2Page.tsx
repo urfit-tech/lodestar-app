@@ -3,17 +3,15 @@ import React, { useCallback, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import { useAuth } from '../components/auth/AuthContext'
-import { useApp } from '../containers/common/AppContext'
 import { handleError } from '../helpers'
 import { profileMessages } from '../helpers/translation'
 import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
 import LoadingPage from './LoadingPage'
 
 const OAuth2Page: React.FC = () => {
-  const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { currentMemberId, socialLogin } = useAuth()
+  const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
   const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
@@ -25,13 +23,12 @@ const OAuth2Page: React.FC = () => {
 
   const handleSocialLogin = useCallback(() => {
     socialLogin?.({
-      appId,
       provider: state.provider,
       providerToken: accessToken,
     })
       .then(() => history.push(state.redirect))
       .catch(handleError)
-  }, [accessToken, appId, history, socialLogin, state])
+  }, [accessToken, history, socialLogin, state])
 
   const handleFetchYoutubeApi = useCallback(() => {
     fetch('https://www.googleapis.com/youtube/v3/channels?part=id&mine=true', {
@@ -58,16 +55,16 @@ const OAuth2Page: React.FC = () => {
   }, [accessToken, currentMemberId, formatMessage, history, state, updateYoutubeChannelIds])
 
   useEffect(() => {
-    if (state.provider === 'google' && currentMemberId) {
+    if (!isAuthenticating && currentMemberId && state.provider === 'google') {
       handleFetchYoutubeApi()
     }
-  }, [currentMemberId, handleFetchYoutubeApi, state.provider])
+  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, state.provider])
 
   useEffect(() => {
-    if (state.provider && !currentMemberId) {
+    if (!isAuthenticating && !currentMemberId && state.provider) {
       handleSocialLogin()
     }
-  }, [currentMemberId, handleSocialLogin, state.provider])
+  }, [currentMemberId, handleSocialLogin, isAuthenticating, state.provider])
 
   return <LoadingPage />
 }
