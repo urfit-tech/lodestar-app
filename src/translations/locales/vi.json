@@ -635,7 +635,7 @@
   "project.label.exploreProjects": "探索專案",
   "project.label.fundingProject": "募資專案",
   "project.label.isExpired": "已結束",
-  "project.label.isExpiredFunding": "募資結束",
+  "project.label.isExpiredFunding": "專案結束",
   "project.label.onSaleCountDownDays": "促銷倒數 {days} {days, plural, one {天} other {天}}",
   "project.label.onSaleProject": "促銷專案",
   "project.label.preOrderProject": "預購專案",

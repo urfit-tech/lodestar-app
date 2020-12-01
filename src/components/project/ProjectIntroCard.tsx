@@ -19,7 +19,7 @@ const messages = defineMessages({
     defaultMessage: '促銷倒數 {days} {days, plural, one {天} other {天}}',
   },
   isExpired: { id: 'project.label.isExpired', defaultMessage: '已結束' },
-  isExpiredFunding: { id: 'project.label.isExpiredFunding', defaultMessage: '募資結束' },
+  isExpiredFunding: { id: 'project.label.isExpiredFunding', defaultMessage: '專案結束' },
 })
 
 const StyledCard = styled.div`
