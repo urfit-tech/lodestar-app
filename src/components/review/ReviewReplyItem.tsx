@@ -144,7 +144,6 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
           onRefetch?.()
         })
   }
-  console.log(labelRole && labelRole.findIndex(v => v.memberId === reviewReplyMemberId))
 
   return (
     <div className="mt-4">

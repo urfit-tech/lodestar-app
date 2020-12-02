@@ -3,7 +3,6 @@ import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { v4 as uuid } from 'uuid'
 import { commonMessages } from '../../helpers/translation'
 import types from '../../types'
 import { ReviewLabelRoleProps, ReviewProps } from '../../types/review'
@@ -34,11 +33,10 @@ const ReviewAdminItem: React.FC<{
 
   return (
     <>
-      {reviews.map((v: ReviewProps) => (
-        <div key={uuid()} className="review-item">
+      {reviews.map(v => (
+        <div key={v.id} className="review-item">
           <ReviewItem
             isAdmin
-            key={v.id}
             id={v.id}
             memberId={v.memberId}
             score={v.score}
@@ -54,7 +52,7 @@ const ReviewAdminItem: React.FC<{
           <StyledDivider className="review-divider" />
         </div>
       ))}
-      {!loadingReviews && loadMoreReviews && (
+      {loadMoreReviews && (
         <div className="text-center mt-4 load-more-reviews">
           <Button
             isLoading={loading}

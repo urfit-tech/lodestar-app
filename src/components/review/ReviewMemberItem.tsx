@@ -3,7 +3,6 @@ import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import React, { HTMLAttributes, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { v4 as uuid } from 'uuid'
 import { commonMessages } from '../../helpers/translation'
 import types from '../../types'
 import { ReviewLabelRoleProps, ReviewProps } from '../../types/review'
@@ -50,10 +49,9 @@ const ReviewMemberItem: React.ForwardRefRenderFunction<
 
   return (
     <>
-      {memberReviews.map((v: ReviewProps) => (
-        <div key={uuid()} className="review-item">
+      {memberReviews.map(v => (
+        <div key={v.id} className="review-item">
           <ReviewItem
-            key={v.id}
             id={v.id}
             memberId={v.memberId}
             score={v.score}
@@ -74,7 +72,7 @@ const ReviewMemberItem: React.ForwardRefRenderFunction<
           <StyledDivider className="review-divider" />
         </div>
       ))}
-      {!loadingReviews && loadMoreReviews && (
+      {loadMoreReviews && (
         <div className="text-center mt-4">
           <Button
             isLoading={loading}
