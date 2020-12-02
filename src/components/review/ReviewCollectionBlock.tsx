@@ -1,14 +1,17 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Divider, Icon } from '@chakra-ui/react'
+import { Skeleton } from 'antd'
 import gql from 'graphql-tag'
 import React, { useRef } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import { numberToText } from '../../helpers'
 import { reviewMessages } from '../../helpers/translation'
 import { ReactComponent as StarEmptyIcon } from '../../images/star-empty.svg'
 import { ReactComponent as StarLargeIcon } from '../../images/star-l.svg'
 import types from '../../types'
+import { MemberReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import ReviewAdminItem from './ReviewAdminItem'
 import ReviewMemberItem, { ReviewMemberItemRef } from './ReviewMemberItem'
@@ -55,7 +58,12 @@ const StyledEmptyText = styled.div`
 const EmptyIconWrapper = styled.div`
   text-align: center;
 `
-
+export const StyledDivider = styled(Divider)`
+  height: 1px;
+  background: #ececec;
+  border: none;
+  opacity: 1;
+`
 const ReviewCollectionBlock: React.FC<{
   title?: string
   targetId: string
@@ -64,20 +72,35 @@ const ReviewCollectionBlock: React.FC<{
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { settings, id: appId } = useApp()
-  const { averageScore, reviewCount, productRoles, reviewCountAndProductRolesRefetch } = useReviewCountAndProductRoles(
-    targetId,
+  const { loadingReviewAggregate, averageScore, reviewCount, refetchReviewAggregate } = useReviewAggregate(path, appId)
+  const {
+    loadingEnrollmentMembersAndProductEditorIds,
+    enrolledMembers,
+    productEditorIds,
+    refetchEnrollmentMembersAndProductEditorIds,
+  } = useEnrolledMembersAndProductEditorIds(targetId, appId)
+  const { loadingCurrentMemberReview, currentMemberReview, refetchCurrentMemberReview } = useCurrentMemberReview(
+    currentMemberId,
     path,
     appId,
   )
-  const { enrolledMembers } = useEnrolledMembers(targetId, appId)
-  const { memberReview } = useMemberReview(currentMemberId, path, appId)
 
   const reviewMemberItemRef = useRef() as React.RefObject<ReviewMemberItemRef>
+
+  if (loadingReviewAggregate || loadingEnrollmentMembersAndProductEditorIds || loadingCurrentMemberReview) {
+    return (
+      <>
+        <StyledTitle>{title || formatMessage(reviewMessages.title.programReview)}</StyledTitle>
+        <StyledDivider mt={1} />
+        <Skeleton />
+      </>
+    )
+  }
 
   return (
     <>
       <StyledTitle>{title || formatMessage(reviewMessages.title.programReview)}</StyledTitle>
-      <Divider mt={1} css={{ height: '1px', background: '#ececec', borderStyle: 'none', opacity: 1 }} />
+      <StyledDivider mt={1} />
 
       <div className="d-flex align-items-center mt-3">
         <StyledAvgScore className="mr-1">{averageScore === 0 ? 0 : averageScore?.toFixed(1)}</StyledAvgScore>
@@ -88,18 +111,20 @@ const ReviewCollectionBlock: React.FC<{
           {formatMessage(reviewMessages.text.reviewAmount, { amount: reviewCount })}
         </StyledReviewAmount>
         {enrolledMembers.includes(currentMemberId) &&
-          (currentUserRole !== 'app-owner' || (currentMemberId && productRoles?.includes(currentMemberId))) && (
+          (currentUserRole !== 'app-owner' || (currentMemberId && productEditorIds?.includes(currentMemberId))) && (
             <ReviewModal
               path={path}
-              memberReview={memberReview}
-              onReviewMemberItemRefetch={reviewMemberItemRef.current?.onReviewMemberItemRefetch}
-              onReviewCountAndProductRolesRefetch={reviewCountAndProductRolesRefetch}
+              memberReviews={currentMemberReview}
+              onRefetchReviewMemberItem={reviewMemberItemRef.current?.onRefetchReviewMemberItem}
+              onRefetchReviewAggregate={refetchReviewAggregate}
+              onRefetchEnrollmentMembersAndProductEditorIds={refetchEnrollmentMembersAndProductEditorIds}
+              onRefetchCurrentMemberReview={refetchCurrentMemberReview}
             />
           )}
       </div>
 
-      {reviewCount && reviewCount >= Number(settings.review_lower_bound) ? (
-        currentUserRole === 'app-owner' || (currentMemberId && productRoles?.includes(currentMemberId)) ? (
+      {reviewCount && reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
+        currentUserRole === 'app-owner' || (currentMemberId && productEditorIds?.includes(currentMemberId)) ? (
           <Wrapper>
             <ReviewAdminItem targetId={targetId} path={path} appId={appId} />
           </Wrapper>
@@ -117,7 +142,11 @@ const ReviewCollectionBlock: React.FC<{
         <>
           <EmptyIconWrapper className="mt-4">
             <Icon as={StarEmptyIcon} w="100" h="100" />
-            <StyledEmptyText className="mt-3">{formatMessage(reviewMessages.text.notEnoughReviews)}</StyledEmptyText>
+            <StyledEmptyText className="mt-3">
+              {formatMessage(reviewMessages.text.notEnoughReviews, {
+                amount: numberToText(Number(settings.review_lower_bound)) || '三',
+              })}
+            </StyledEmptyText>
           </EmptyIconWrapper>
         </>
       )}
@@ -125,13 +154,10 @@ const ReviewCollectionBlock: React.FC<{
   )
 }
 
-const useReviewCountAndProductRoles = (targetId: string, path: string, appId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    types.GET_REVIEW_COUNT_AND_PRODUCT_ROLES,
-    types.GET_REVIEW_COUNT_AND_PRODUCT_ROLESVariables
-  >(
+const useReviewAggregate = (path: string, appId: string) => {
+  const { loading, error, data, refetch } = useQuery<types.GET_REVIEW_AGGREGATE, types.GET_REVIEW_AGGREGATEVariables>(
     gql`
-      query GET_REVIEW_COUNT_AND_PRODUCT_ROLES($targetId: uuid, $path: String, $appId: String) {
+      query GET_REVIEW_AGGREGATE($path: String, $appId: String) {
         review_public_aggregate(where: { path: { _eq: $path }, app_id: { _eq: $appId } }) {
           aggregate {
             avg {
@@ -139,6 +165,37 @@ const useReviewCountAndProductRoles = (targetId: string, path: string, appId: st
             }
             count
           }
+        }
+      }
+    `,
+    {
+      variables: {
+        path,
+        appId,
+      },
+    },
+  )
+  const averageScore = loading || error || !data ? null : data.review_public_aggregate.aggregate?.avg?.score || 0
+  const reviewCount = loading || error || !data ? null : data.review_public_aggregate.aggregate?.count || 0
+
+  return {
+    loadingReviewAggregate: loading,
+    error,
+    averageScore,
+    reviewCount,
+    refetchReviewAggregate: refetch,
+  }
+}
+
+const useEnrolledMembersAndProductEditorIds = (targetId: string, appId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    types.GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS,
+    types.GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDSVariables
+  >(
+    gql`
+      query GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS($targetId: uuid, $appId: String) {
+        program_enrollment(where: { program: { app_id: { _eq: $appId }, id: { _eq: $targetId } } }) {
+          member_id
         }
         program(where: { app_id: { _eq: $appId }, id: { _eq: $targetId } }) {
           program_roles(where: { name: { _eq: "instructor" } }) {
@@ -155,58 +212,35 @@ const useReviewCountAndProductRoles = (targetId: string, path: string, appId: st
       }
     `,
     {
-      variables: {
-        targetId,
-        path,
-        appId,
-      },
-    },
-  )
-  const averageScore = loading || error || !data ? null : data.review_public_aggregate.aggregate?.avg?.score || 0
-  const reviewCount = loading || error || !data ? null : data.review_public_aggregate.aggregate?.count || 0
-
-  const productRoles: string[] | null =
-    loading || error || !data
-      ? null
-      : data.program
-      ? data.program[0].program_roles.map(v => v.member_id)
-      : data.podcast_program
-      ? data.podcast_program[0].podcast_program_roles.map(v => v.member_id)
-      : null
-
-  return {
-    loading,
-    error,
-    averageScore,
-    reviewCount,
-    productRoles,
-    reviewCountAndProductRolesRefetch: refetch,
-  }
-}
-
-const useEnrolledMembers = (targetId: string, appId: string) => {
-  const { loading, error, data } = useQuery<types.GET_ENROLLED_MEMBERS, types.GET_ENROLLED_MEMBERSVariables>(
-    gql`
-      query GET_ENROLLED_MEMBERS($targetId: uuid, $appId: String) {
-        program_enrollment(where: { program: { app_id: { _eq: $appId }, id: { _eq: $targetId } } }) {
-          member_id
-        }
-      }
-    `,
-    {
       variables: { targetId, appId },
     },
   )
-  const enrolledMembers = loading || error || !data ? [] : data.program_enrollment.map(v => v.member_id)
+  const enrolledMembers: (string | null)[] =
+    loading || error || !data ? [] : data.program_enrollment.map(v => v.member_id)
+  const productEditorIds: string[] | null =
+    loading || error || !data
+      ? []
+      : [
+          ...(data.program.length !== 0 ? data?.program[0].program_roles.map(v => v.member_id) : []),
+          ...(data.podcast_program.length !== 0
+            ? data?.podcast_program[0].podcast_program_roles.map(v => v.member_id)
+            : []),
+        ]
   return {
+    loadingEnrollmentMembersAndProductEditorIds: loading,
     enrolledMembers,
+    productEditorIds,
+    refetchEnrollmentMembersAndProductEditorIds: refetch,
   }
 }
 
-const useMemberReview = (currentMemberId: string | null, path: string, appId: string) => {
-  const { loading, error, data } = useQuery<types.GET_MEMBER_REVIEW, types.GET_MEMBER_REVIEWVariables>(
+const useCurrentMemberReview = (currentMemberId: string | null, path: string, appId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    types.GET_CURRENT_MEMBER_REVIEW,
+    types.GET_CURRENT_MEMBER_REVIEWVariables
+  >(
     gql`
-      query GET_MEMBER_REVIEW($currentMemberId: String, $path: String, $appId: String) {
+      query GET_CURRENT_MEMBER_REVIEW($currentMemberId: String, $path: String, $appId: String) {
         review(where: { member_id: { _eq: $currentMemberId }, path: { _eq: $path }, app_id: { _eq: $appId } }) {
           id
           member_id
@@ -221,9 +255,9 @@ const useMemberReview = (currentMemberId: string | null, path: string, appId: st
       variables: { currentMemberId, path, appId },
     },
   )
-  const memberReview =
+  const currentMemberReview: MemberReviewProps[] =
     loading || error || !data
-      ? null
+      ? []
       : data.review.map(v => ({
           id: v.id,
           memberId: v.member_id,
@@ -234,9 +268,9 @@ const useMemberReview = (currentMemberId: string | null, path: string, appId: st
         }))
 
   return {
-    loading,
-    error,
-    memberReview,
+    loadingCurrentMemberReview: loading,
+    currentMemberReview,
+    refetchCurrentMemberReview: refetch,
   }
 }
 

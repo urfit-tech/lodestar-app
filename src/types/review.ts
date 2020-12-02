@@ -1,8 +1,6 @@
-export type reviewRoleName = 'app-owner' | 'content-creator'
-
 export type ReviewProps = {
   isAdmin?: boolean
-  reviewId: string
+  id: string
   memberId: string | null
   score: number | 0
   title: string | null
@@ -13,23 +11,19 @@ export type ReviewProps = {
   reviewReplies: ReviewReplyItemProps[]
   labelRole?: ReviewLabelRoleProps[]
 }
-
-export type ReviewLabelRoleProps = {
-  memberId: string
-  name: string
-}
-
 export type ReviewReplyItemProps = {
-  reviewReplyId?: string
+  id: string
   reviewReplyMemberId?: string | null
-  memberId?: string | null
-  programRole?: string | null
+  memberRole?: string | null
   content: string | null
   createdAt: Date
   updatedAt: Date
   labelRole?: ReviewLabelRoleProps[]
 }
-
+export type ReviewLabelRoleProps = {
+  memberId: string | null
+  name: string | null
+}
 export type MemberReviewProps = {
   id: string
   memberId: string
@@ -37,4 +31,4 @@ export type MemberReviewProps = {
   title: string
   content: string | null
   privateContent: string | null
-} | null
+}

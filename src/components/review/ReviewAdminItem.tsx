@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Divider } from '@chakra-ui/react'
+import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid'
 import { commonMessages } from '../../helpers/translation'
 import types from '../../types'
 import { ReviewLabelRoleProps, ReviewProps } from '../../types/review'
+import { StyledDivider } from './ReviewCollectionBlock'
 import ReviewItem from './ReviewItem'
 
 const ReviewAdminItem: React.FC<{
@@ -16,35 +17,43 @@ const ReviewAdminItem: React.FC<{
 }> = ({ targetId, path, appId }) => {
   const { formatMessage } = useIntl()
   const [loading, setLoading] = useState(false)
-  const { loadingReviews, reviews, labelRole, onRefetch, loadMoreReviews } = useReviewCollection(path, appId, targetId)
+  const { loadingReviews, reviews, labelRole, refetchReviews, loadMoreReviews } = useReviewCollection(
+    path,
+    appId,
+    targetId,
+  )
+
+  if (loadingReviews) {
+    return (
+      <Box padding="6" boxShadow="lg" bg="white">
+        <SkeletonCircle size="36" />
+        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+      </Box>
+    )
+  }
 
   return (
     <>
-      {reviews.map((v: ReviewProps) => {
-        return (
-          <div key={uuid()} className="review-item">
-            <ReviewItem
-              isAdmin
-              key={uuid()}
-              reviewId={v.reviewId}
-              memberId={v.memberId}
-              score={v.score}
-              title={v.title}
-              content={v.content}
-              privateContent={v.privateContent}
-              createdAt={v.createdAt}
-              updatedAt={v.updatedAt}
-              reviewReplies={v.reviewReplies}
-              labelRole={labelRole}
-              onRefetch={onRefetch}
-            />
-            <Divider
-              className="review-divider"
-              css={{ margin: '24px 0', height: '1px', background: '#ececec', borderStyle: 'none', opacity: 1 }}
-            />
-          </div>
-        )
-      })}
+      {reviews.map((v: ReviewProps) => (
+        <div key={uuid()} className="review-item">
+          <ReviewItem
+            isAdmin
+            key={v.id}
+            id={v.id}
+            memberId={v.memberId}
+            score={v.score}
+            title={v.title}
+            content={v.content}
+            privateContent={v.privateContent}
+            createdAt={v.createdAt}
+            updatedAt={v.updatedAt}
+            reviewReplies={v.reviewReplies}
+            labelRole={labelRole}
+            onRefetch={refetchReviews}
+          />
+          <StyledDivider className="review-divider" />
+        </div>
+      ))}
       {!loadingReviews && loadMoreReviews && (
         <div className="text-center mt-4 load-more-reviews">
           <Button
@@ -118,17 +127,17 @@ const useReviewCollection = (path: string, appId: string, targetId: string) => {
 
   const reviews: ReviewProps[] =
     data?.review.map(v => ({
-      reviewId: v.id,
+      id: v.id,
       memberId: v.member_id,
       score: v.score,
       title: v.title,
+      content: v.content,
       createdAt: new Date(v.created_at),
       updatedAt: new Date(v.updated_at),
-      content: v.content,
       privateContent: v.private_content,
       reviewReplies: v?.review_replies.map(v => ({
-        reviewReplyId: v.id,
-        memberId: v.member?.id,
+        id: v.id,
+        reviewReplyMemberId: v.member?.id,
         memberRole: v.member?.role,
         content: v.content,
         createdAt: new Date(v.created_at),
@@ -165,10 +174,10 @@ const useReviewCollection = (path: string, appId: string, targetId: string) => {
 
   return {
     loadingReviews: loading,
-    error,
+    errorReviews: error,
     reviews,
     labelRole,
-    onRefetch: refetch,
+    refetchReviews: refetch,
     loadMoreReviews: (data?.review_aggregate.aggregate?.count || 0) > 5 ? loadMoreReviews : undefined,
   }
 }

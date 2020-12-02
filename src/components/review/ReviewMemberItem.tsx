@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Divider } from '@chakra-ui/react'
+import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import React, { HTMLAttributes, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -8,10 +8,11 @@ import { commonMessages } from '../../helpers/translation'
 import types from '../../types'
 import { ReviewLabelRoleProps, ReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
+import { StyledDivider } from './ReviewCollectionBlock'
 import ReviewItem from './ReviewItem'
 
 export interface ReviewMemberItemRef {
-  onReviewMemberItemRefetch: () => void
+  onRefetchReviewMemberItem: () => void
 }
 
 const ReviewMemberItem: React.ForwardRefRenderFunction<
@@ -35,40 +36,44 @@ const ReviewMemberItem: React.ForwardRefRenderFunction<
   } = useReviewMemberCollection(path, appId, currentMemberId, targetId)
 
   React.useImperativeHandle(ref, () => ({
-    onReviewMemberItemRefetch: () => onRefetch(),
+    onRefetchReviewMemberItem: () => onRefetch(),
   }))
+
+  if (loadingReviews) {
+    return (
+      <Box padding="6" boxShadow="lg" bg="white">
+        <SkeletonCircle size="36" />
+        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+      </Box>
+    )
+  }
 
   return (
     <>
-      {memberReviews.map((v: ReviewProps) => {
-        return (
-          <div key={uuid()} className="review-item">
-            <ReviewItem
-              key={uuid()}
-              reviewId={v.reviewId}
-              memberId={v.memberId}
-              score={v.score}
-              title={v.title}
-              content={v.content}
-              createdAt={v.createdAt}
-              updatedAt={v.updatedAt}
-              reviewReplies={v.reviewReplies}
-              labelRole={labelRole}
-              privateContent={
-                memberPrivateContent &&
-                memberPrivateContent.length !== 0 &&
-                v.memberId === memberPrivateContent[0].memberId
-                  ? memberPrivateContent[0].privateContent
-                  : null
-              }
-            />
-            <Divider
-              className="review-divider"
-              css={{ margin: '24px 0', height: '1px', background: '#ececec', borderStyle: 'none', opacity: 1 }}
-            />
-          </div>
-        )
-      })}
+      {memberReviews.map((v: ReviewProps) => (
+        <div key={uuid()} className="review-item">
+          <ReviewItem
+            key={v.id}
+            id={v.id}
+            memberId={v.memberId}
+            score={v.score}
+            title={v.title}
+            content={v.content}
+            createdAt={v.createdAt}
+            updatedAt={v.updatedAt}
+            reviewReplies={v.reviewReplies}
+            labelRole={labelRole}
+            privateContent={
+              memberPrivateContent &&
+              memberPrivateContent.length !== 0 &&
+              v.memberId === memberPrivateContent[0].memberId
+                ? memberPrivateContent[0].privateContent
+                : null
+            }
+          />
+          <StyledDivider className="review-divider" />
+        </div>
+      ))}
       {!loadingReviews && loadMoreReviews && (
         <div className="text-center mt-4">
           <Button
@@ -154,7 +159,7 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
 
   const memberReviews: ReviewProps[] =
     data?.review_public.map(v => ({
-      reviewId: v.id,
+      id: v.id,
       memberId: v.member_id,
       score: v.score,
       title: v.title,
@@ -162,8 +167,8 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
       createdAt: new Date(v.created_at),
       updatedAt: new Date(v.updated_at),
       reviewReplies: v?.review_replies.map(v => ({
-        reviewReplyId: v.id,
-        memberId: v.member?.id,
+        id: v.id,
+        reviewReplyMemberId: v.member?.id,
         memberRole: v.member?.role,
         content: v.content,
         createdAt: new Date(v.created_at),

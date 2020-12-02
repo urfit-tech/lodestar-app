@@ -12,10 +12,11 @@ import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import types from '../../types'
-import { ProgramRoleName, ProgramRoleProps } from '../../types/program'
+import { ProductRoleName } from '../../types/general'
+import { ProgramRoleProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
-import ProgramRoleFormatter from '../common/ProgramRoleFormatter'
+import ProductRoleFormatter from '../common/ProductRoleFormatter'
 import { BraftContent } from '../common/StyledBraftEditor'
 import IssueReplyCollectionBlock from './IssueReplyCollectionBlock'
 import { StyledEditor } from './IssueReplyCreationBlock'
@@ -167,7 +168,7 @@ const IssueItem: React.FC<IssueItemProps> = ({
                 .map(role =>
                   role.name === 'instructor' ? (
                     <StyledTag key={role.id} color={theme['@primary-color']} className="ml-2 mr-0">
-                      <ProgramRoleFormatter value={role.name as ProgramRoleName} />
+                      <ProductRoleFormatter value={role.name as ProductRoleName} />
                     </StyledTag>
                   ) : role.name === 'assistant' ? (
                     <StyledTag
@@ -176,7 +177,7 @@ const IssueItem: React.FC<IssueItemProps> = ({
                       className="ml-2 mr-0"
                       variant="assistant"
                     >
-                      <ProgramRoleFormatter value={role.name as ProgramRoleName} />
+                      <ProductRoleFormatter value={role.name as ProductRoleName} />
                     </StyledTag>
                   ) : null,
                 )

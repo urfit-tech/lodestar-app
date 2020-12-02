@@ -311,3 +311,8 @@ export const validationRegExp: { [fieldId: string]: RegExp } = {
   citizenCode: /^[a-zA-Z]{2}[0-9]{14}$/,
   uniformNumber: /^[0-9]{8}$/,
 }
+
+export const numberToText = (value: number) => {
+  const twNum = '零一二三四五六七八九'
+  return twNum[value]
+}

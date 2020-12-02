@@ -72,10 +72,19 @@ const StyledFormControl = styled(FormControl)`
 
 const ReviewModal: React.FC<{
   path: string
-  memberReview: MemberReviewProps[] | null
-  onReviewMemberItemRefetch?: () => void
-  onReviewCountAndProductRolesRefetch: () => void
-}> = ({ path, memberReview, onReviewMemberItemRefetch, onReviewCountAndProductRolesRefetch }) => {
+  memberReviews: MemberReviewProps[]
+  onRefetchReviewMemberItem?: () => void
+  onRefetchReviewAggregate: () => void
+  onRefetchEnrollmentMembersAndProductEditorIds: () => void
+  onRefetchCurrentMemberReview: () => void
+}> = ({
+  path,
+  memberReviews,
+  onRefetchReviewMemberItem,
+  onRefetchReviewAggregate,
+  onRefetchEnrollmentMembersAndProductEditorIds,
+  onRefetchCurrentMemberReview,
+}) => {
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { id: appId } = useApp()
@@ -86,25 +95,16 @@ const ReviewModal: React.FC<{
   const [updateReview] = useMutation<types.UPDATE_REVIEW, types.UPDATE_REVIEWVariables>(UPDATE_REVIEW)
   const toast = useToast()
 
-  const { control, errors, register, handleSubmit, setError, setValue } = useForm({
+  const { control, errors, register, handleSubmit, setError, reset, setValue } = useForm({
     defaultValues: {
-      title: (memberReview && memberReview[0]?.title) || '',
-      starRating: memberReview && memberReview[0]?.score ? memberReview[0]?.score : 5,
-      content:
-        BraftEditor.createEditorState(memberReview && memberReview[0]?.content) || BraftEditor.createEditorState(''),
-      private:
-        BraftEditor.createEditorState(memberReview && memberReview[0]?.privateContent) ||
-        BraftEditor.createEditorState(''),
+      title: (memberReviews && memberReviews[0]?.title) || '',
+      starRating: memberReviews && memberReviews[0]?.score ? memberReviews[0]?.score : 5,
+      content: BraftEditor.createEditorState(memberReviews && memberReviews[0]?.content) || '',
+      private: BraftEditor.createEditorState(memberReviews && memberReviews[0]?.privateContent) || '',
     },
   })
 
-  const validateTitle = (value: string) => {
-    let error
-    if (!value) {
-      error = formatMessage(reviewMessages.validate.titleIsRequired)
-    }
-    return error || true
-  }
+  const validateTitle = (value: string) => !!value || formatMessage(reviewMessages.validate.titleIsRequired)
 
   const handleSave = (data: { starRating: Number; title: string; content: any; private?: any }) => {
     if (data.content.isEmpty()) {
@@ -114,12 +114,12 @@ const ReviewModal: React.FC<{
       return
     }
     setIsSubmitting(true)
-    if (memberReview && memberReview[0]) {
+    if (memberReviews && memberReviews[0]) {
       updateReview({
         variables: {
-          reviewId: memberReview[0]?.id,
+          reviewId: memberReviews[0]?.id,
           path: path,
-          memberId: memberReview[0]?.memberId,
+          memberId: memberReviews[0]?.memberId,
           score: data.starRating,
           title: data.title,
           content: data.content.toRAW(),
@@ -136,14 +136,13 @@ const ReviewModal: React.FC<{
             isClosable: false,
             position: 'top',
           })
-          setValue('title', '')
-          setValue('content', BraftEditor.createEditorState(''))
-          setValue('private', BraftEditor.createEditorState(''))
+          reset()
+          onRefetchReviewMemberItem?.()
+          onRefetchReviewAggregate?.()
+          onRefetchCurrentMemberReview?.()
         })
-        .catch(error => console.log(error))
         .finally(() => {
           setIsSubmitting(false)
-          onReviewMemberItemRefetch?.()
           onClose()
         })
     } else {
@@ -166,16 +165,13 @@ const ReviewModal: React.FC<{
             isClosable: false,
             position: 'top',
           })
-          setValue('title', '')
-          setValue('content', BraftEditor.createEditorState(''))
-          setValue('private', BraftEditor.createEditorState(''))
-          onClose()
+          reset()
+          onRefetchReviewMemberItem?.()
+          onRefetchReviewAggregate?.()
+          onRefetchEnrollmentMembersAndProductEditorIds?.()
         })
-        .catch(error => console.log(error))
         .finally(() => {
           setIsSubmitting(false)
-          onReviewMemberItemRefetch?.()
-          onReviewCountAndProductRolesRefetch?.()
           onClose()
         })
     }
@@ -192,8 +188,8 @@ const ReviewModal: React.FC<{
         </StyledHeaderIcon>
       )}
       renderTrigger={() => (
-        <StyledButton reviewed={(!!(memberReview !== null && memberReview.length !== 0)).toString()} onClick={onOpen}>
-          {memberReview && memberReview.length !== 0
+        <StyledButton reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()} onClick={onOpen}>
+          {memberReviews && memberReviews.length !== 0
             ? formatMessage(reviewMessages.button.editReview)
             : formatMessage(reviewMessages.button.toReview)}
         </StyledButton>
@@ -208,7 +204,7 @@ const ReviewModal: React.FC<{
           as={
             <ReactStars
               name="starRating"
-              value={memberReview && memberReview[0]?.score ? memberReview[0]?.score : 5}
+              value={memberReviews && memberReviews[0]?.score ? memberReviews[0]?.score : 5}
               starColor="#FFBE1E"
               emptyStarColor="#CDCDCD"
               onStarClick={(rating: React.SetStateAction<number>) => setValue('starRating', rating)}

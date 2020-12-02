@@ -24,11 +24,11 @@ import { createUploadFn } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
 import { useMutateReviewReply } from '../../hooks/review'
 import { ReactComponent as MoreIcon } from '../../images/ellipsis.svg'
-import { ProgramRoleName } from '../../types/program'
+import { ProductRoleName } from '../../types/general'
 import { ReviewReplyItemProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
-import ProgramRoleFormatter from '../common/ProgramRoleFormatter'
+import ProductRoleFormatter from '../common/ProductRoleFormatter'
 import { BraftContent } from '../common/StyledBraftEditor'
 import { StyledButton } from './ReviewItem'
 
@@ -59,6 +59,9 @@ const StyledTag = styled(Tag)`
     letter-spacing: 0.58px;
     color: #ffffff;
     background: ${props => props.theme['@primary-color']};
+    &.admin-tag {
+      background: #585858;
+    }
   }
 `
 
@@ -66,8 +69,9 @@ const StyledFormControl = styled(FormControl)`
   height: 20px;
 `
 const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void }> = ({
-  reviewReplyId,
+  id,
   reviewReplyMemberId,
+  memberRole,
   content,
   createdAt,
   updatedAt,
@@ -79,7 +83,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
   const { authToken, currentMemberId, backendEndpoint } = useAuth()
   const { control, errors, handleSubmit, setError } = useForm({
     defaultValues: {
-      reply: BraftEditor.createEditorState(content) || BraftEditor.createEditorState(''),
+      reply: BraftEditor.createEditorState(content) || '',
     },
   })
   const toast = useToast()
@@ -99,7 +103,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
     currentMemberId &&
       updateReviewReply({
         variables: {
-          reviewReplyId,
+          id,
           memberId: currentMemberId,
           content: data.reply.toRAW(),
           appId,
@@ -115,17 +119,16 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
             position: 'top',
             render: () => <Box bg="white" color="black" />,
           })
+          onRefetch?.()
         })
-        .catch(error => console.log(error))
         .finally(() => {
           setIsSubmitting(false)
           setReplyEditing(false)
-          onRefetch?.()
         })
   }
   const handleDelete = () => {
     currentMemberId &&
-      deleteReviewReply({ variables: { reviewReplyId, memberId: currentMemberId, appId } })
+      deleteReviewReply({ variables: { id, memberId: currentMemberId, appId } })
         .then(() => {
           toast({
             title: formatMessage(commonMessages.event.successfullyDeleted),
@@ -141,6 +144,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
           onRefetch?.()
         })
   }
+  console.log(labelRole && labelRole.findIndex(v => v.memberId === reviewReplyMemberId))
 
   return (
     <div className="mt-4">
@@ -150,24 +154,25 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
           withName
           size={28}
           renderText={() =>
-            labelRole &&
-            labelRole
-              .filter(role => role.memberId === reviewReplyMemberId)
-              .map(role =>
-                role.name === 'instructor' ? (
-                  <StyledTag key={uuid()} size="md">
-                    <ProgramRoleFormatter value={role.name as ProgramRoleName} />
-                  </StyledTag>
-                ) : role.name === 'assistant' ? (
-                  <StyledTag key={uuid()} size="md">
-                    <ProgramRoleFormatter value={role.name as ProgramRoleName} />
-                  </StyledTag>
-                ) : role.name === 'app-owner' ? (
-                  <StyledTag key={uuid()} size="md">
-                    <ProgramRoleFormatter value={role.name as ProgramRoleName} />
-                  </StyledTag>
-                ) : null,
-              )
+            labelRole && !labelRole.findIndex(v => v.memberId === reviewReplyMemberId) ? (
+              labelRole
+                .filter(role => role.memberId === reviewReplyMemberId)
+                .map(role =>
+                  role.name === 'instructor' ? (
+                    <StyledTag key={uuid()} size="md">
+                      <ProductRoleFormatter value={role.name as ProductRoleName} />
+                    </StyledTag>
+                  ) : role.name === 'assistant' ? (
+                    <StyledTag key={uuid()} size="md">
+                      <ProductRoleFormatter value={role.name as ProductRoleName} />
+                    </StyledTag>
+                  ) : null,
+                )
+            ) : memberRole === 'app-owner' ? (
+              <StyledTag key={uuid()} size="md" className="admin-tag">
+                <ProductRoleFormatter value={memberRole as ProductRoleName} />
+              </StyledTag>
+            ) : null
           }
         />
         <span className="ml-2 flex-grow-1" style={{ fontSize: '12px', color: '#9b9b9b' }}>

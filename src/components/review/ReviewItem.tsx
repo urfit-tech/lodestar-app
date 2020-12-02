@@ -57,7 +57,7 @@ const ReviewPrivateContent = styled(BraftContent)`
 `
 const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
   isAdmin,
-  reviewId,
+  id,
   memberId,
   score,
   title,
@@ -71,8 +71,12 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { authToken, backendEndpoint } = useAuth()
-  const { handleSubmit, control } = useForm()
+  const { authToken, backendEndpoint, currentMemberId } = useAuth()
+  const { handleSubmit, control, reset } = useForm({
+    defaultValues: {
+      replyContent: BraftEditor.createEditorState(reviewReplies.length !== 0 && reviewReplies[0].content) || '',
+    },
+  })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [replyEditing, setReplyEditing] = useState(false)
 
@@ -98,8 +102,8 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
     setIsSubmitting(true)
     insertReviewReply({
       variables: {
-        reviewId: reviewId,
-        memberId: memberId,
+        reviewId: id,
+        memberId: currentMemberId,
         content: data.replyContent.toRAW(),
       },
     })
@@ -111,12 +115,11 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
           isClosable: false,
           position: 'top',
         })
+        onRefetch?.()
       })
-      .catch(error => console.log(error))
       .finally(() => {
         setIsSubmitting(false)
         setReplyEditing(false)
-        onRefetch?.()
       })
   }
 
@@ -151,13 +154,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
             {replyEditing && (
               <>
                 <div className="d-flex align-items-center justify-content-start mt-4">
-                  <MemberAvatar memberId={memberId || ''} withName size={36} />
-                  <span className="ml-2 flex-grow-1" style={{ fontSize: '12px', color: '#9b9b9b' }}>
-                    <span>{updatedAt ? moment(updatedAt).fromNow() : moment(createdAt).fromNow()}</span>
-                    {updatedAt && updatedAt > createdAt && (
-                      <span className="ml-2">{updatedAt && formatMessage(reviewMessages.status.edited)}</span>
-                    )}
-                  </span>
+                  <MemberAvatar memberId={currentMemberId || ''} withName size={36} />
                 </div>
                 <form onSubmit={handleSubmit(handleSave)}>
                   <Controller
@@ -172,7 +169,14 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
                     control={control}
                   />
                   <ButtonGroup mt={4} className="d-flex justify-content-end">
-                    <StyledButton type="reset" variant="ghost" onClick={() => setReplyEditing(false)}>
+                    <StyledButton
+                      type="reset"
+                      variant="ghost"
+                      onClick={() => {
+                        setReplyEditing(false)
+                        reset()
+                      }}
+                    >
                       {formatMessage(commonMessages.button.cancel)}
                     </StyledButton>
                     <Button isLoading={isSubmitting} type="submit" colorScheme="primary" className="apply-btn">
@@ -187,9 +191,10 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
         <div>
           {reviewReplies?.map(v => (
             <ReviewReplyItem
-              key={v.reviewReplyId}
-              reviewReplyId={v.reviewReplyId}
-              reviewReplyMemberId={v.memberId}
+              key={v.id}
+              id={v.id}
+              reviewReplyMemberId={v.reviewReplyMemberId}
+              memberRole={v.memberRole}
               content={v.content}
               createdAt={v.createdAt}
               updatedAt={v.updatedAt}

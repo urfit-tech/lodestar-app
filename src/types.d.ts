@@ -1316,76 +1316,33 @@ export interface GET_REVIEW_ADMINVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_REVIEW_COUNT_AND_PRODUCT_ROLES
+// GraphQL query operation: GET_REVIEW_AGGREGATE
 // ====================================================
 
-export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate_aggregate_avg {
+export interface GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate_avg {
   __typename: "review_public_avg_fields";
   score: number | null;
 }
 
-export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate_aggregate {
+export interface GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate {
   __typename: "review_public_aggregate_fields";
-  avg: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate_aggregate_avg | null;
+  avg: GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate_avg | null;
   count: number | null;
 }
 
-export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate {
+export interface GET_REVIEW_AGGREGATE_review_public_aggregate {
   __typename: "review_public_aggregate";
-  aggregate: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate_aggregate | null;
+  aggregate: GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate | null;
 }
 
-export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_program_program_roles {
-  __typename: "program_role";
-  member_id: string;
-  /**
-   * instructor / assistant 
-   */
-  name: string;
-}
-
-export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_program {
-  __typename: "program";
-  /**
-   * An array relationship
-   */
-  program_roles: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_program_program_roles[];
-}
-
-export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_podcast_program_podcast_program_roles {
-  __typename: "podcast_program_role";
-  member_id: string;
-  /**
-   * instructor
-   */
-  name: string;
-}
-
-export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES_podcast_program {
-  __typename: "podcast_program";
-  /**
-   * An array relationship
-   */
-  podcast_program_roles: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_podcast_program_podcast_program_roles[];
-}
-
-export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLES {
+export interface GET_REVIEW_AGGREGATE {
   /**
    * fetch aggregated fields from the table: "review_public"
    */
-  review_public_aggregate: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_review_public_aggregate;
-  /**
-   * fetch data from the table: "program"
-   */
-  program: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_program[];
-  /**
-   * fetch data from the table: "podcast_program"
-   */
-  podcast_program: GET_REVIEW_COUNT_AND_PRODUCT_ROLES_podcast_program[];
+  review_public_aggregate: GET_REVIEW_AGGREGATE_review_public_aggregate;
 }
 
-export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLESVariables {
-  targetId?: any | null;
+export interface GET_REVIEW_AGGREGATEVariables {
   path?: string | null;
   appId?: string | null;
 }
@@ -1396,10 +1353,15 @@ export interface GET_REVIEW_COUNT_AND_PRODUCT_ROLESVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_PRODUCT_ROLES
+// GraphQL query operation: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS
 // ====================================================
 
-export interface GET_PRODUCT_ROLES_program_program_roles {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_enrollment {
+  __typename: "program_enrollment";
+  member_id: string | null;
+}
+
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_program_roles {
   __typename: "program_role";
   member_id: string;
   /**
@@ -1408,15 +1370,15 @@ export interface GET_PRODUCT_ROLES_program_program_roles {
   name: string;
 }
 
-export interface GET_PRODUCT_ROLES_program {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program {
   __typename: "program";
   /**
    * An array relationship
    */
-  program_roles: GET_PRODUCT_ROLES_program_program_roles[];
+  program_roles: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_program_roles[];
 }
 
-export interface GET_PRODUCT_ROLES_podcast_program_podcast_program_roles {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles {
   __typename: "podcast_program_role";
   member_id: string;
   /**
@@ -1425,52 +1387,30 @@ export interface GET_PRODUCT_ROLES_podcast_program_podcast_program_roles {
   name: string;
 }
 
-export interface GET_PRODUCT_ROLES_podcast_program {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program {
   __typename: "podcast_program";
   /**
    * An array relationship
    */
-  podcast_program_roles: GET_PRODUCT_ROLES_podcast_program_podcast_program_roles[];
+  podcast_program_roles: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles[];
 }
 
-export interface GET_PRODUCT_ROLES {
-  /**
-   * fetch data from the table: "program"
-   */
-  program: GET_PRODUCT_ROLES_program[];
-  /**
-   * fetch data from the table: "podcast_program"
-   */
-  podcast_program: GET_PRODUCT_ROLES_podcast_program[];
-}
-
-export interface GET_PRODUCT_ROLESVariables {
-  targetId?: any | null;
-  appId?: string | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_ENROLLED_MEMBERS
-// ====================================================
-
-export interface GET_ENROLLED_MEMBERS_program_enrollment {
-  __typename: "program_enrollment";
-  member_id: string | null;
-}
-
-export interface GET_ENROLLED_MEMBERS {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS {
   /**
    * fetch data from the table: "program_enrollment"
    */
-  program_enrollment: GET_ENROLLED_MEMBERS_program_enrollment[];
+  program_enrollment: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_enrollment[];
+  /**
+   * fetch data from the table: "program"
+   */
+  program: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program[];
+  /**
+   * fetch data from the table: "podcast_program"
+   */
+  podcast_program: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program[];
 }
 
-export interface GET_ENROLLED_MEMBERSVariables {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDSVariables {
   targetId?: any | null;
   appId?: string | null;
 }
@@ -1481,10 +1421,10 @@ export interface GET_ENROLLED_MEMBERSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_MEMBER_REVIEW
+// GraphQL query operation: GET_CURRENT_MEMBER_REVIEW
 // ====================================================
 
-export interface GET_MEMBER_REVIEW_review {
+export interface GET_CURRENT_MEMBER_REVIEW_review {
   __typename: "review";
   id: any;
   member_id: string;
@@ -1494,14 +1434,14 @@ export interface GET_MEMBER_REVIEW_review {
   private_content: string | null;
 }
 
-export interface GET_MEMBER_REVIEW {
+export interface GET_CURRENT_MEMBER_REVIEW {
   /**
    * fetch data from the table: "review"
    */
-  review: GET_MEMBER_REVIEW_review[];
+  review: GET_CURRENT_MEMBER_REVIEW_review[];
 }
 
-export interface GET_MEMBER_REVIEWVariables {
+export interface GET_CURRENT_MEMBER_REVIEWVariables {
   currentMemberId?: string | null;
   path?: string | null;
   appId?: string | null;
@@ -6684,7 +6624,7 @@ export interface UPDATE_REVIEW_REPLY {
 }
 
 export interface UPDATE_REVIEW_REPLYVariables {
-  reviewReplyId: any;
+  id: any;
   memberId?: string | null;
   content?: string | null;
   appId: string;
@@ -6716,7 +6656,7 @@ export interface DELETE_REVIEW_REPLY {
 }
 
 export interface DELETE_REVIEW_REPLYVariables {
-  reviewReplyId: any;
+  id: any;
   memberId?: string | null;
   appId?: string | null;
 }
@@ -10167,6 +10107,7 @@ export enum project_plan_update_column {
   period_type = "period_type",
   position = "position",
   project_id = "project_id",
+  published_at = "published_at",
   sale_price = "sale_price",
   sold_at = "sold_at",
   title = "title",
@@ -16862,6 +16803,7 @@ export interface project_plan_bool_exp {
   project_id?: uuid_comparison_exp | null;
   project_plan_enrollments?: project_plan_enrollment_bool_exp | null;
   project_plan_inventory_status?: project_plan_inventory_status_bool_exp | null;
+  published_at?: timestamptz_comparison_exp | null;
   sale_price?: numeric_comparison_exp | null;
   sold_at?: timestamptz_comparison_exp | null;
   title?: String_comparison_exp | null;
@@ -16899,6 +16841,7 @@ export interface project_plan_insert_input {
   position?: number | null;
   project?: project_obj_rel_insert_input | null;
   project_id?: any | null;
+  published_at?: any | null;
   sale_price?: any | null;
   sold_at?: any | null;
   title?: string | null;

@@ -313,9 +313,10 @@ export const commonMessages = {
     identity: { id: 'common.unknown.identity', defaultMessage: '未知身份' },
   }),
   role: defineMessages({
-    owner: { id: 'helper.role.owner', defaultMessage: '課程擁有者' },
-    instructor: { id: 'helper.role.instructor', defaultMessage: '講師' },
-    assistant: { id: 'helper.role.assistant', defaultMessage: '助教' },
+    owner: { id: 'common.role.owner', defaultMessage: '課程擁有者' },
+    instructor: { id: 'common.role.instructor', defaultMessage: '講師' },
+    assistant: { id: 'common.role.assistant', defaultMessage: '助教' },
+    appOwner: { id: 'common.role.appOwner', defaultMessage: '管理員' },
   }),
   unit: defineMessages({
     min: { id: 'common.unit.min', defaultMessage: '分' },
@@ -1286,7 +1287,7 @@ export const reviewMessages = {
   }),
   text: defineMessages({
     reviewAmount: { id: 'review.text.amount', defaultMessage: '{amount} 則評價' },
-    notEnoughReviews: { id: 'review.text.notEnoughReviews', defaultMessage: '評價不足三人無法顯示' },
+    notEnoughReviews: { id: 'review.text.notEnoughReviews', defaultMessage: '評價不足{amount}人無法顯示' },
     reply: { id: 'review.text.reply', defaultMessage: '回覆...' },
     reviewModalDescription: {
       id: 'review.text.reviewModalDescription',
