@@ -79,12 +79,12 @@ const StyledTag = styled.span`
 `
 
 const CreatorIntroBlock: React.FC<{
-  avatarUrl?: string | null
   title: string
   subTitle: string
-  tags?: string[] | null
   description: string
-}> = ({ avatarUrl, title, subTitle, tags, description }) => {
+  avatarUrl?: string | null
+  tags?: string[] | null
+}> = ({ title, subTitle, description, avatarUrl, tags }) => {
   return (
     <BlurredBanner coverUrl={avatarUrl}>
       <Wrapper>

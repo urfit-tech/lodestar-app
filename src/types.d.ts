@@ -3815,6 +3815,12 @@ export interface GET_MEMBERVariables {
 // GraphQL query operation: GET_PUBLIC_MEMBER
 // ====================================================
 
+export interface GET_PUBLIC_MEMBER_member_public_member_specialities {
+  __typename: "member_speciality";
+  id: any;
+  tag_name: string;
+}
+
 export interface GET_PUBLIC_MEMBER_member_public {
   __typename: "member_public";
   id: string | null;
@@ -3827,6 +3833,10 @@ export interface GET_PUBLIC_MEMBER_member_public {
   description: string | null;
   role: string | null;
   title: string | null;
+  /**
+   * An array relationship
+   */
+  member_specialities: GET_PUBLIC_MEMBER_member_public_member_specialities[];
 }
 
 export interface GET_PUBLIC_MEMBER {
@@ -9597,6 +9607,7 @@ export enum project_plan_update_column {
   period_type = "period_type",
   position = "position",
   project_id = "project_id",
+  published_at = "published_at",
   sale_price = "sale_price",
   sold_at = "sold_at",
   title = "title",
@@ -12494,6 +12505,7 @@ export interface member_public_bool_exp {
   app_id?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
+  member_specialities?: member_speciality_bool_exp | null;
   metadata?: jsonb_comparison_exp | null;
   name?: String_comparison_exp | null;
   picture_url?: String_comparison_exp | null;
@@ -16292,6 +16304,7 @@ export interface project_plan_bool_exp {
   project_id?: uuid_comparison_exp | null;
   project_plan_enrollments?: project_plan_enrollment_bool_exp | null;
   project_plan_inventory_status?: project_plan_inventory_status_bool_exp | null;
+  published_at?: timestamptz_comparison_exp | null;
   sale_price?: numeric_comparison_exp | null;
   sold_at?: timestamptz_comparison_exp | null;
   title?: String_comparison_exp | null;
@@ -16329,6 +16342,7 @@ export interface project_plan_insert_input {
   position?: number | null;
   project?: project_obj_rel_insert_input | null;
   project_id?: any | null;
+  published_at?: any | null;
   sale_price?: any | null;
   sold_at?: any | null;
   title?: string | null;
