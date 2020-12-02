@@ -121,6 +121,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
           })
           onRefetch?.()
         })
+        .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
         .finally(() => {
           setIsSubmitting(false)
           setReplyEditing(false)
@@ -138,7 +139,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
             position: 'top',
           })
         })
-        .catch(error => console.log(error))
+        .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
         .finally(() => {
           setReplyEditing(false)
           onRefetch?.()

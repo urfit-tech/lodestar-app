@@ -141,6 +141,7 @@ const ReviewModal: React.FC<{
           onRefetchReviewAggregate?.()
           onRefetchCurrentMemberReview?.()
         })
+        .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
         .finally(() => {
           setIsSubmitting(false)
           onClose()
@@ -170,6 +171,7 @@ const ReviewModal: React.FC<{
           onRefetchReviewAggregate?.()
           onRefetchEnrollmentMembersAndProductEditorIds?.()
         })
+        .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
         .finally(() => {
           setIsSubmitting(false)
           onClose()
