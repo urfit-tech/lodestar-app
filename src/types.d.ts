@@ -1361,7 +1361,7 @@ export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_enrollment 
   member_id: string | null;
 }
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_program_roles {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_by_pk_program_roles {
   __typename: "program_role";
   member_id: string;
   /**
@@ -1370,15 +1370,15 @@ export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_program_rol
   name: string;
 }
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_by_pk {
   __typename: "program";
   /**
    * An array relationship
    */
-  program_roles: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_program_roles[];
+  program_roles: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_by_pk_program_roles[];
 }
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_by_pk_podcast_program_roles {
   __typename: "podcast_program_role";
   member_id: string;
   /**
@@ -1387,12 +1387,12 @@ export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_pod
   name: string;
 }
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program {
+export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_by_pk {
   __typename: "podcast_program";
   /**
    * An array relationship
    */
-  podcast_program_roles: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles[];
+  podcast_program_roles: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_by_pk_podcast_program_roles[];
 }
 
 export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS {
@@ -1401,17 +1401,17 @@ export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS {
    */
   program_enrollment: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_enrollment[];
   /**
-   * fetch data from the table: "program"
+   * fetch data from the table: "program" using primary key columns
    */
-  program: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program[];
+  program_by_pk: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_by_pk | null;
   /**
-   * fetch data from the table: "podcast_program"
+   * fetch data from the table: "podcast_program" using primary key columns
    */
-  podcast_program: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program[];
+  podcast_program_by_pk: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_by_pk | null;
 }
 
 export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDSVariables {
-  targetId?: any | null;
+  targetId: any;
   appId?: string | null;
 }
 
@@ -13005,6 +13005,7 @@ export interface member_public_bool_exp {
   app_id?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
+  member_specialities?: member_speciality_bool_exp | null;
   metadata?: jsonb_comparison_exp | null;
   name?: String_comparison_exp | null;
   picture_url?: String_comparison_exp | null;

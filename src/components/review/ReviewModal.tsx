@@ -99,8 +99,8 @@ const ReviewModal: React.FC<{
     defaultValues: {
       title: (memberReviews && memberReviews[0]?.title) || '',
       starRating: memberReviews && memberReviews[0]?.score ? memberReviews[0]?.score : 5,
-      content: BraftEditor.createEditorState(memberReviews && memberReviews[0]?.content) || '',
-      private: BraftEditor.createEditorState(memberReviews && memberReviews[0]?.privateContent) || '',
+      content: BraftEditor.createEditorState((memberReviews && memberReviews[0]?.content) || ''),
+      private: BraftEditor.createEditorState((memberReviews && memberReviews[0]?.privateContent) || ''),
     },
   })
 

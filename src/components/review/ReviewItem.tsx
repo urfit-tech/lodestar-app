@@ -74,7 +74,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
   const { authToken, backendEndpoint, currentMemberId } = useAuth()
   const { handleSubmit, control, reset } = useForm({
     defaultValues: {
-      replyContent: BraftEditor.createEditorState(reviewReplies.length !== 0 && reviewReplies[0].content) || '',
+      replyContent: BraftEditor.createEditorState((reviewReplies.length !== 0 && reviewReplies[0].content) || ''),
     },
   })
   const [isSubmitting, setIsSubmitting] = useState(false)

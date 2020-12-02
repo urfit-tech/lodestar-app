@@ -83,7 +83,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
   const { authToken, currentMemberId, backendEndpoint } = useAuth()
   const { control, errors, handleSubmit, setError } = useForm({
     defaultValues: {
-      reply: BraftEditor.createEditorState(content) || '',
+      reply: BraftEditor.createEditorState(content || ''),
     },
   })
   const toast = useToast()
@@ -153,7 +153,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
           withName
           size={28}
           renderText={() =>
-            labelRole && !labelRole.findIndex(v => v.memberId === reviewReplyMemberId) ? (
+            labelRole && labelRole.some(v => v.memberId === reviewReplyMemberId) ? (
               labelRole
                 .filter(role => role.memberId === reviewReplyMemberId)
                 .map(role =>

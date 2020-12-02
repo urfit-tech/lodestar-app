@@ -6,7 +6,6 @@ import React, { useRef } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
-import { numberToText } from '../../helpers'
 import { reviewMessages } from '../../helpers/translation'
 import { ReactComponent as StarEmptyIcon } from '../../images/star-empty.svg'
 import { ReactComponent as StarLargeIcon } from '../../images/star-l.svg'
@@ -85,7 +84,7 @@ const ReviewCollectionBlock: React.FC<{
     appId,
   )
 
-  const reviewMemberItemRef = useRef() as React.RefObject<ReviewMemberItemRef>
+  const reviewMemberItemRef = useRef<ReviewMemberItemRef>(null)
 
   if (loadingReviewAggregate || loadingEnrollmentMembersAndProductEditorIds || loadingCurrentMemberReview) {
     return (
@@ -144,7 +143,7 @@ const ReviewCollectionBlock: React.FC<{
             <Icon as={StarEmptyIcon} w="100" h="100" />
             <StyledEmptyText className="mt-3">
               {formatMessage(reviewMessages.text.notEnoughReviews, {
-                amount: numberToText(Number(settings.review_lower_bound)) || '三',
+                amount: Number(settings.review_lower_bound) || 3,
               })}
             </StyledEmptyText>
           </EmptyIconWrapper>
@@ -193,17 +192,17 @@ const useEnrolledMembersAndProductEditorIds = (targetId: string, appId: string) 
     types.GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDSVariables
   >(
     gql`
-      query GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS($targetId: uuid, $appId: String) {
+      query GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS($targetId: uuid!, $appId: String) {
         program_enrollment(where: { program: { app_id: { _eq: $appId }, id: { _eq: $targetId } } }) {
           member_id
         }
-        program(where: { app_id: { _eq: $appId }, id: { _eq: $targetId } }) {
-          program_roles(where: { name: { _eq: "instructor" } }) {
+        program_by_pk(id: $targetId) {
+          program_roles(where: { name: { _eq: "instructor" }, member: { app_id: { _eq: $appId } } }) {
             member_id
             name
           }
         }
-        podcast_program(where: { id: { _eq: $targetId } }) {
+        podcast_program_by_pk(id: $targetId) {
           podcast_program_roles(where: { name: { _eq: "instructor" }, member: { app_id: { _eq: $appId } } }) {
             member_id
             name
@@ -215,17 +214,13 @@ const useEnrolledMembersAndProductEditorIds = (targetId: string, appId: string) 
       variables: { targetId, appId },
     },
   )
-  const enrolledMembers: (string | null)[] =
-    loading || error || !data ? [] : data.program_enrollment.map(v => v.member_id)
-  const productEditorIds: string[] | null =
-    loading || error || !data
-      ? []
-      : [
-          ...(data.program.length !== 0 ? data?.program[0].program_roles.map(v => v.member_id) : []),
-          ...(data.podcast_program.length !== 0
-            ? data?.podcast_program[0].podcast_program_roles.map(v => v.member_id)
-            : []),
-        ]
+  const enrolledMembers: (string | null)[] = data?.program_enrollment?.map(v => v.member_id) || []
+  const productEditorIds: string[] =
+    [
+      ...(data?.program_by_pk?.program_roles?.map(v => v.member_id) || []),
+      ...(data?.podcast_program_by_pk?.podcast_program_roles?.map(v => v.member_id) || []),
+    ] || []
+
   return {
     loadingEnrollmentMembersAndProductEditorIds: loading,
     enrolledMembers,
