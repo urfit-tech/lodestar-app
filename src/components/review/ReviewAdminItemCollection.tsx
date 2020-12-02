@@ -9,7 +9,7 @@ import { ReviewLabelRoleProps, ReviewProps } from '../../types/review'
 import { StyledDivider } from './ReviewCollectionBlock'
 import ReviewItem from './ReviewItem'
 
-const ReviewAdminItem: React.FC<{
+const ReviewAdminItemCollection: React.FC<{
   targetId: string
   path: string
   appId: string
@@ -180,4 +180,4 @@ const useReviewCollection = (path: string, appId: string, targetId: string) => {
   }
 }
 
-export default ReviewAdminItem
+export default ReviewAdminItemCollection

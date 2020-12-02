@@ -12,10 +12,10 @@ import { ReactComponent as StarLargeIcon } from '../../images/star-l.svg'
 import types from '../../types'
 import { MemberReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
-import ReviewAdminItem from './ReviewAdminItem'
-import ReviewMemberItem, { ReviewMemberItemRef } from './ReviewMemberItem'
+import ReviewAdminItem from './ReviewAdminItemCollection'
+import ReviewMemberItem, { ReviewMemberItemRef } from './ReviewMemberItemCollection'
 import ReviewModal from './ReviewModal'
-import ReviewPublicItem from './ReviewPublicItem'
+import ReviewPublicItem from './ReviewPublicItemCollection'
 
 const Wrapper = styled.div`
   &:not(.load-more-reviews) {

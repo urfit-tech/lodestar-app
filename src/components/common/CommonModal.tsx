@@ -14,7 +14,7 @@ const CommonModal: React.FC<
   ModalProps & {
     title: string
     renderTrigger: () => React.ReactElement
-    renderHeaderIcon?: () => React.ReactElement
+    renderHeaderIcon?: React.FC
     renderFooter?: () => React.ReactElement
   }
 > = ({ title, renderHeaderIcon, renderTrigger, renderFooter, children, ...ModalProps }) => {
@@ -25,7 +25,7 @@ const CommonModal: React.FC<
       <Modal {...ModalProps}>
         <ModalOverlay />
         <ModalContent>
-          {renderHeaderIcon?.()}
+          {renderHeaderIcon}
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
 

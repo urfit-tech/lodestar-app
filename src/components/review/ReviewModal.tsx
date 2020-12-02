@@ -176,17 +176,20 @@ const ReviewModal: React.FC<{
         })
     }
   }
+  const headerIcon: React.FC = () => {
+    return (
+      <StyledHeaderIcon>
+        <Icon as={EditIcon} />
+      </StyledHeaderIcon>
+    )
+  }
 
   return (
     <CommonModal
       title={formatMessage(reviewMessages.modal.fillReview)}
       isOpen={isOpen}
       onClose={onClose}
-      renderHeaderIcon={() => (
-        <StyledHeaderIcon>
-          <Icon as={EditIcon} />
-        </StyledHeaderIcon>
-      )}
+      renderHeaderIcon={headerIcon}
       renderTrigger={() => (
         <StyledButton reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()} onClick={onOpen}>
           {memberReviews && memberReviews.length !== 0

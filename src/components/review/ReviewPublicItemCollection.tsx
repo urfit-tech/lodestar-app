@@ -1,42 +1,22 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
-import React, { HTMLAttributes, useState } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
 import types from '../../types'
 import { ReviewLabelRoleProps, ReviewProps } from '../../types/review'
-import { useAuth } from '../auth/AuthContext'
 import { StyledDivider } from './ReviewCollectionBlock'
 import ReviewItem from './ReviewItem'
 
-export interface ReviewMemberItemRef {
-  onRefetchReviewMemberItem: () => void
-}
-
-const ReviewMemberItem: React.ForwardRefRenderFunction<
-  ReviewMemberItemRef,
-  HTMLAttributes<HTMLDivElement> & {
-    targetId: string
-    path: string
-    appId: string
-  }
-> = ({ path, appId, targetId }, ref) => {
+const ReviewPublicItemCollection: React.FC<{
+  targetId: string
+  path: string
+  appId: string
+}> = ({ path, appId, targetId }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
   const [loading, setLoading] = useState(false)
-  const {
-    loadingReviews,
-    memberReviews,
-    memberPrivateContent,
-    labelRole,
-    onRefetch,
-    loadMoreReviews,
-  } = useReviewMemberCollection(path, appId, currentMemberId, targetId)
-
-  React.useImperativeHandle(ref, () => ({
-    onRefetchReviewMemberItem: () => onRefetch(),
-  }))
+  const { loadingReviews, publicReviews, labelRole, loadMoreReviews } = useReviewPublicCollection(path, appId, targetId)
 
   if (loadingReviews) {
     return (
@@ -49,7 +29,7 @@ const ReviewMemberItem: React.ForwardRefRenderFunction<
 
   return (
     <>
-      {memberReviews.map(v => (
+      {publicReviews.map(v => (
         <div key={v.id} className="review-item">
           <ReviewItem
             id={v.id}
@@ -61,13 +41,6 @@ const ReviewMemberItem: React.ForwardRefRenderFunction<
             updatedAt={v.updatedAt}
             reviewReplies={v.reviewReplies}
             labelRole={labelRole}
-            privateContent={
-              memberPrivateContent &&
-              memberPrivateContent.length !== 0 &&
-              v.memberId === memberPrivateContent[0].memberId
-                ? memberPrivateContent[0].privateContent
-                : null
-            }
           />
           <StyledDivider className="review-divider" />
         </div>
@@ -90,24 +63,17 @@ const ReviewMemberItem: React.ForwardRefRenderFunction<
   )
 }
 
-const useReviewMemberCollection = (path: string, appId: string, currentMemberId: string | null, targetId: string) => {
-  const condition: types.GET_REVIEW_MEMBERVariables['condition'] = {
+const useReviewPublicCollection = (path: string, appId: string, targetId: string) => {
+  const condition: types.GET_REVIEW_PUBLICVariables['condition'] = {
     path: { _eq: path },
     app_id: { _eq: appId },
   }
-
   const { loading, error, data, refetch, fetchMore } = useQuery<
-    types.GET_REVIEW_MEMBER,
-    types.GET_REVIEW_MEMBERVariables
+    types.GET_REVIEW_PUBLIC,
+    types.GET_REVIEW_PUBLICVariables
   >(
     gql`
-      query GET_REVIEW_MEMBER(
-        $condition: review_public_bool_exp
-        $path: String!
-        $currentMemberId: String
-        $targetId: uuid
-        $limit: Int!
-      ) {
+      query GET_REVIEW_PUBLIC($condition: review_public_bool_exp, $targetId: uuid, $limit: Int!) {
         review_public_aggregate(where: $condition) {
           aggregate {
             count
@@ -132,11 +98,6 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
             }
           }
         }
-        review(where: { path: { _eq: $path }, member_id: { _eq: $currentMemberId } }) {
-          id
-          member_id
-          private_content
-        }
         program_role(where: { program_id: { _eq: $targetId } }) {
           id
           name
@@ -147,15 +108,13 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
     {
       variables: {
         condition,
-        path,
-        currentMemberId,
         targetId,
         limit: 5,
       },
     },
   )
 
-  const memberReviews: ReviewProps[] =
+  const publicReviews: ReviewProps[] =
     data?.review_public.map(v => ({
       id: v.id,
       memberId: v.member_id,
@@ -173,14 +132,6 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
         updatedAt: new Date(v.updated_at),
       })),
     })) || []
-
-  const memberPrivateContent =
-    loading || error || !data
-      ? null
-      : data.review.map(v => ({
-          memberId: v.member_id,
-          privateContent: v.private_content,
-        }))
 
   const labelRole: ReviewLabelRoleProps[] =
     loading || error || !data
@@ -211,13 +162,12 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
 
   return {
     loadingReviews: loading,
-    error,
-    memberReviews,
-    memberPrivateContent,
+    errorReviews: error,
+    publicReviews,
     labelRole,
     onRefetch: refetch,
     loadMoreReviews: (data?.review_public_aggregate.aggregate?.count || 0) > 5 ? loadMoreReviews : undefined,
   }
 }
 
-export default React.forwardRef(ReviewMemberItem)
+export default ReviewPublicItemCollection
