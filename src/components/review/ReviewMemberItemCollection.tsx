@@ -49,31 +49,33 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
 
   return (
     <>
-      {memberReviews.map(v => (
-        <div key={v.id} className="review-item">
-          <ReviewItem
-            id={v.id}
-            memberId={v.memberId}
-            score={v.score}
-            title={v.title}
-            content={v.content}
-            createdAt={v.createdAt}
-            updatedAt={v.updatedAt}
-            reviewReplies={v.reviewReplies}
-            labelRole={labelRole}
-            privateContent={
-              memberPrivateContent &&
-              memberPrivateContent.length !== 0 &&
-              v.memberId === memberPrivateContent[0].memberId
-                ? memberPrivateContent[0].privateContent
-                : null
-            }
-          />
-          <StyledDivider className="review-divider" />
-        </div>
-      ))}
+      <div>
+        {memberReviews.map(v => (
+          <div key={v.id} className="review-item">
+            <ReviewItem
+              id={v.id}
+              memberId={v.memberId}
+              score={v.score}
+              title={v.title}
+              content={v.content}
+              createdAt={v.createdAt}
+              updatedAt={v.updatedAt}
+              reviewReplies={v.reviewReplies}
+              labelRole={labelRole}
+              privateContent={
+                memberPrivateContent &&
+                memberPrivateContent.length !== 0 &&
+                v.memberId === memberPrivateContent[0].memberId
+                  ? memberPrivateContent[0].privateContent
+                  : null
+              }
+            />
+            <StyledDivider className="review-divider" />
+          </div>
+        ))}
+      </div>
       {loadMoreReviews && (
-        <div className="text-center mt-4">
+        <div className="text-center mt-4 load-more-reviews">
           <Button
             isLoading={loading}
             variant="outline"

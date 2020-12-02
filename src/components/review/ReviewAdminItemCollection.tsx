@@ -33,25 +33,27 @@ const ReviewAdminItemCollection: React.FC<{
 
   return (
     <>
-      {reviews.map(v => (
-        <div key={v.id} className="review-item">
-          <ReviewItem
-            isAdmin
-            id={v.id}
-            memberId={v.memberId}
-            score={v.score}
-            title={v.title}
-            content={v.content}
-            privateContent={v.privateContent}
-            createdAt={v.createdAt}
-            updatedAt={v.updatedAt}
-            reviewReplies={v.reviewReplies}
-            labelRole={labelRole}
-            onRefetch={refetchReviews}
-          />
-          <StyledDivider className="review-divider" />
-        </div>
-      ))}
+      <div>
+        {reviews.map(v => (
+          <div key={v.id} className="review-item">
+            <ReviewItem
+              isAdmin
+              id={v.id}
+              memberId={v.memberId}
+              score={v.score}
+              title={v.title}
+              content={v.content}
+              privateContent={v.privateContent}
+              createdAt={v.createdAt}
+              updatedAt={v.updatedAt}
+              reviewReplies={v.reviewReplies}
+              labelRole={labelRole}
+              onRefetch={refetchReviews}
+            />
+            <StyledDivider className="review-divider" />
+          </div>
+        ))}
+      </div>
       {loadMoreReviews && (
         <div className="text-center mt-4 load-more-reviews">
           <Button

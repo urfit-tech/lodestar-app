@@ -12,21 +12,14 @@ import { ReactComponent as StarLargeIcon } from '../../images/star-l.svg'
 import types from '../../types'
 import { MemberReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
-import ReviewAdminItem from './ReviewAdminItemCollection'
-import ReviewMemberItem, { ReviewMemberItemRef } from './ReviewMemberItemCollection'
+import ReviewAdminItemCollection from './ReviewAdminItemCollection'
+import ReviewMemberItemCollection, { ReviewMemberItemRef } from './ReviewMemberItemCollection'
 import ReviewModal from './ReviewModal'
-import ReviewPublicItem from './ReviewPublicItemCollection'
+import ReviewPublicItemCollection from './ReviewPublicItemCollection'
 
 const Wrapper = styled.div`
-  &:not(.load-more-reviews) {
+  div {
     .review-item:last-child {
-      .chakra-divider.review-divider {
-        display: none;
-      }
-    }
-  }
-  &:has(.load-more-reviews) {
-    .review-item:nth-last-child(2) {
       .chakra-divider.review-divider {
         display: none;
       }
@@ -58,10 +51,13 @@ const EmptyIconWrapper = styled.div`
   text-align: center;
 `
 export const StyledDivider = styled(Divider)`
-  height: 1px;
-  background: #ececec;
-  border: none;
-  opacity: 1;
+  && {
+    height: 1px;
+    background: #ececec;
+    border: none;
+    opacity: 1;
+    margin: 24px 0px 24px 0px;
+  }
 `
 const ReviewCollectionBlock: React.FC<{
   title?: string
@@ -123,20 +119,16 @@ const ReviewCollectionBlock: React.FC<{
       </div>
 
       {reviewCount && reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
-        currentUserRole === 'app-owner' || (currentMemberId && productEditorIds?.includes(currentMemberId)) ? (
-          <Wrapper>
-            <ReviewAdminItem targetId={targetId} path={path} appId={appId} />
-          </Wrapper>
-        ) : currentUserRole === 'anonymous' ||
-          (currentUserRole !== 'general-member' && !enrolledMembers.includes(currentMemberId)) ? (
-          <Wrapper>
-            <ReviewPublicItem targetId={targetId} path={path} appId={appId} />
-          </Wrapper>
-        ) : (
-          <Wrapper>
-            <ReviewMemberItem ref={reviewMemberItemRef} targetId={targetId} path={path} appId={appId} />
-          </Wrapper>
-        )
+        <Wrapper>
+          {currentUserRole === 'app-owner' || (currentMemberId && productEditorIds?.includes(currentMemberId)) ? (
+            <ReviewAdminItemCollection targetId={targetId} path={path} appId={appId} />
+          ) : currentUserRole === 'anonymous' ||
+            (currentUserRole !== 'general-member' && !enrolledMembers.includes(currentMemberId)) ? (
+            <ReviewPublicItemCollection targetId={targetId} path={path} appId={appId} />
+          ) : (
+            <ReviewMemberItemCollection ref={reviewMemberItemRef} targetId={targetId} path={path} appId={appId} />
+          )}
+        </Wrapper>
       ) : (
         <>
           <EmptyIconWrapper className="mt-4">

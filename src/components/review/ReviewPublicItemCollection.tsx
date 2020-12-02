@@ -29,24 +29,26 @@ const ReviewPublicItemCollection: React.FC<{
 
   return (
     <>
-      {publicReviews.map(v => (
-        <div key={v.id} className="review-item">
-          <ReviewItem
-            id={v.id}
-            memberId={v.memberId}
-            score={v.score}
-            title={v.title}
-            content={v.content}
-            createdAt={v.createdAt}
-            updatedAt={v.updatedAt}
-            reviewReplies={v.reviewReplies}
-            labelRole={labelRole}
-          />
-          <StyledDivider className="review-divider" />
-        </div>
-      ))}
+      <div>
+        {publicReviews.map(v => (
+          <div key={v.id} className="review-item">
+            <ReviewItem
+              id={v.id}
+              memberId={v.memberId}
+              score={v.score}
+              title={v.title}
+              content={v.content}
+              createdAt={v.createdAt}
+              updatedAt={v.updatedAt}
+              reviewReplies={v.reviewReplies}
+              labelRole={labelRole}
+            />
+            <StyledDivider className="review-divider" />
+          </div>
+        ))}
+      </div>
       {loadMoreReviews && (
-        <div className="text-center mt-4">
+        <div className="text-center mt-4 load-more-reviews">
           <Button
             isLoading={loading}
             variant="outline"
