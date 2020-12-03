@@ -1278,16 +1278,6 @@ export interface GET_REVIEW_ADMIN_review {
   review_replies: GET_REVIEW_ADMIN_review_review_replies[];
 }
 
-export interface GET_REVIEW_ADMIN_program_role {
-  __typename: "program_role";
-  id: any;
-  /**
-   * instructor / assistant 
-   */
-  name: string;
-  member_id: string;
-}
-
 export interface GET_REVIEW_ADMIN {
   /**
    * fetch aggregated fields from the table: "review"
@@ -1297,16 +1287,10 @@ export interface GET_REVIEW_ADMIN {
    * fetch data from the table: "review"
    */
   review: GET_REVIEW_ADMIN_review[];
-  /**
-   * fetch data from the table: "program_role"
-   */
-  program_role: GET_REVIEW_ADMIN_program_role[];
 }
 
 export interface GET_REVIEW_ADMINVariables {
   condition?: review_bool_exp | null;
-  appId: string;
-  targetId?: any | null;
   limit: number;
 }
 
@@ -1536,16 +1520,6 @@ export interface GET_REVIEW_MEMBER_review {
   private_content: string | null;
 }
 
-export interface GET_REVIEW_MEMBER_program_role {
-  __typename: "program_role";
-  id: any;
-  /**
-   * instructor / assistant 
-   */
-  name: string;
-  member_id: string;
-}
-
 export interface GET_REVIEW_MEMBER {
   /**
    * fetch aggregated fields from the table: "review_public"
@@ -1559,17 +1533,12 @@ export interface GET_REVIEW_MEMBER {
    * fetch data from the table: "review"
    */
   review: GET_REVIEW_MEMBER_review[];
-  /**
-   * fetch data from the table: "program_role"
-   */
-  program_role: GET_REVIEW_MEMBER_program_role[];
 }
 
 export interface GET_REVIEW_MEMBERVariables {
   condition?: review_public_bool_exp | null;
   path: string;
   currentMemberId?: string | null;
-  targetId?: any | null;
   limit: number;
 }
 
@@ -1695,16 +1664,6 @@ export interface GET_REVIEW_PUBLIC_review_public {
   review_replies: GET_REVIEW_PUBLIC_review_public_review_replies[];
 }
 
-export interface GET_REVIEW_PUBLIC_program_role {
-  __typename: "program_role";
-  id: any;
-  /**
-   * instructor / assistant 
-   */
-  name: string;
-  member_id: string;
-}
-
 export interface GET_REVIEW_PUBLIC {
   /**
    * fetch aggregated fields from the table: "review_public"
@@ -1714,16 +1673,41 @@ export interface GET_REVIEW_PUBLIC {
    * fetch data from the table: "review_public"
    */
   review_public: GET_REVIEW_PUBLIC_review_public[];
-  /**
-   * fetch data from the table: "program_role"
-   */
-  program_role: GET_REVIEW_PUBLIC_program_role[];
 }
 
 export interface GET_REVIEW_PUBLICVariables {
   condition?: review_public_bool_exp | null;
-  targetId?: any | null;
   limit: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PROGRAM_ROLE
+// ====================================================
+
+export interface GET_PROGRAM_ROLE_program_role {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_PROGRAM_ROLE {
+  /**
+   * fetch data from the table: "program_role"
+   */
+  program_role: GET_PROGRAM_ROLE_program_role[];
+}
+
+export interface GET_PROGRAM_ROLEVariables {
+  targetId?: any | null;
 }
 
 /* tslint:disable */

@@ -5,7 +5,7 @@ import React, { HTMLAttributes, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
 import types from '../../types'
-import { ReviewLabelRoleProps, ReviewProps } from '../../types/review'
+import { ReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import { StyledDivider } from './ReviewCollectionBlock'
 import ReviewItem from './ReviewItem'
@@ -25,14 +25,11 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const [loading, setLoading] = useState(false)
-  const {
-    loadingReviews,
-    memberReviews,
-    memberPrivateContent,
-    labelRole,
-    onRefetch,
-    loadMoreReviews,
-  } = useReviewMemberCollection(path, appId, currentMemberId, targetId)
+  const { loadingReviews, memberReviews, memberPrivateContent, onRefetch, loadMoreReviews } = useReviewMemberCollection(
+    path,
+    appId,
+    currentMemberId,
+  )
 
   React.useImperativeHandle(ref, () => ({
     onRefetchReviewMemberItem: () => onRefetch(),
@@ -61,7 +58,6 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
               createdAt={v.createdAt}
               updatedAt={v.updatedAt}
               reviewReplies={v.reviewReplies}
-              labelRole={labelRole}
               privateContent={
                 memberPrivateContent &&
                 memberPrivateContent.length !== 0 &&
@@ -69,6 +65,7 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
                   ? memberPrivateContent[0].privateContent
                   : null
               }
+              targetId={targetId}
             />
             <StyledDivider className="review-divider" />
           </div>
@@ -92,7 +89,7 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
   )
 }
 
-const useReviewMemberCollection = (path: string, appId: string, currentMemberId: string | null, targetId: string) => {
+const useReviewMemberCollection = (path: string, appId: string, currentMemberId: string | null) => {
   const condition: types.GET_REVIEW_MEMBERVariables['condition'] = {
     path: { _eq: path },
     app_id: { _eq: appId },
@@ -107,7 +104,6 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
         $condition: review_public_bool_exp
         $path: String!
         $currentMemberId: String
-        $targetId: uuid
         $limit: Int!
       ) {
         review_public_aggregate(where: $condition) {
@@ -139,11 +135,6 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
           member_id
           private_content
         }
-        program_role(where: { program_id: { _eq: $targetId } }) {
-          id
-          name
-          member_id
-        }
       }
     `,
     {
@@ -151,7 +142,6 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
         condition,
         path,
         currentMemberId,
-        targetId,
         limit: 5,
       },
     },
@@ -177,20 +167,10 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
     })) || []
 
   const memberPrivateContent =
-    loading || error || !data
-      ? null
-      : data.review.map(v => ({
-          memberId: v.member_id,
-          privateContent: v.private_content,
-        }))
-
-  const labelRole: ReviewLabelRoleProps[] =
-    loading || error || !data
-      ? []
-      : data.program_role.map(v => ({
-          memberId: v.member_id,
-          name: v.name,
-        }))
+    data?.review?.map(v => ({
+      memberId: v.member_id,
+      privateContent: v.private_content,
+    })) || []
 
   const loadMoreReviews = () =>
     fetchMore({
@@ -216,7 +196,6 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
     error,
     memberReviews,
     memberPrivateContent,
-    labelRole,
     onRefetch: refetch,
     loadMoreReviews: (data?.review_public_aggregate.aggregate?.count || 0) > 5 ? loadMoreReviews : undefined,
   }

@@ -243,16 +243,14 @@ const useCurrentMemberReview = (currentMemberId: string | null, path: string, ap
     },
   )
   const currentMemberReview: MemberReviewProps[] =
-    loading || error || !data
-      ? []
-      : data.review.map(v => ({
-          id: v.id,
-          memberId: v.member_id,
-          score: v.score,
-          title: v.title,
-          content: v.content,
-          privateContent: v.private_content,
-        }))
+    data?.review?.map(v => ({
+      id: v.id,
+      memberId: v.member_id,
+      score: v.score,
+      title: v.title,
+      content: v.content,
+      privateContent: v.private_content,
+    })) || []
 
   return {
     loadingCurrentMemberReview: loading,

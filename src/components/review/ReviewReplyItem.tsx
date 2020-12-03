@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/react-hooks'
 import {
   Box,
   Button,
@@ -13,6 +14,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
+import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -24,7 +26,9 @@ import { createUploadFn } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
 import { useMutateReviewReply } from '../../hooks/review'
 import { ReactComponent as MoreIcon } from '../../images/ellipsis.svg'
+import types from '../../types'
 import { ProductRoleName } from '../../types/general'
+import { ProgramRoleName, ProgramRoleProps } from '../../types/program'
 import { ReviewReplyItemProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
@@ -68,15 +72,15 @@ const StyledTag = styled(Tag)`
 const StyledFormControl = styled(FormControl)`
   height: 20px;
 `
-const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void }> = ({
+const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void; targetId: string }> = ({
   id,
   reviewReplyMemberId,
   memberRole,
   content,
   createdAt,
   updatedAt,
-  labelRole,
   onRefetch,
+  targetId,
 }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
@@ -91,6 +95,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { updateReviewReply, deleteReviewReply } = useMutateReviewReply()
+  const { programRole } = useProgramRole(targetId)
 
   const handleSave = (data: { reply: any }) => {
     if (data.reply.isEmpty()) {
@@ -154,8 +159,8 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
           withName
           size={28}
           renderText={() =>
-            labelRole && labelRole.some(v => v.memberId === reviewReplyMemberId) ? (
-              labelRole
+            programRole && programRole.some(v => v.memberId === reviewReplyMemberId) ? (
+              programRole
                 .filter(role => role.memberId === reviewReplyMemberId)
                 .map(role =>
                   role.name === 'instructor' ? (
@@ -233,6 +238,38 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void 
       )}
     </div>
   )
+}
+
+const useProgramRole = (targetId: string) => {
+  const { loading, error, data } = useQuery<types.GET_PROGRAM_ROLE, types.GET_PROGRAM_ROLEVariables>(
+    gql`
+      query GET_PROGRAM_ROLE($targetId: uuid) {
+        program_role(where: { program_id: { _eq: $targetId } }) {
+          id
+          name
+          member_id
+        }
+      }
+    `,
+    {
+      variables: {
+        targetId,
+      },
+    },
+  )
+
+  const programRole: ProgramRoleProps[] =
+    data?.program_role?.map(v => ({
+      id: v.id,
+      memberId: v.member_id,
+      name: v.name as ProgramRoleName,
+    })) || []
+
+  return {
+    loading,
+    error,
+    programRole,
+  }
 }
 
 export default ReviewReplyItem

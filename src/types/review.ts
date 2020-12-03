@@ -9,7 +9,6 @@ export type ReviewProps = {
   updatedAt: Date
   privateContent?: string | null
   reviewReplies: ReviewReplyItemProps[]
-  labelRole?: ReviewLabelRoleProps[]
 }
 export type ReviewReplyItemProps = {
   id: string
@@ -18,11 +17,6 @@ export type ReviewReplyItemProps = {
   content: string | null
   createdAt: Date
   updatedAt: Date
-  labelRole?: ReviewLabelRoleProps[]
-}
-export type ReviewLabelRoleProps = {
-  memberId: string | null
-  name: string | null
 }
 export type MemberReviewProps = {
   id: string

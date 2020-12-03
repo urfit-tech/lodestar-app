@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
 import types from '../../types'
-import { ReviewLabelRoleProps, ReviewProps } from '../../types/review'
+import { ReviewProps } from '../../types/review'
 import { StyledDivider } from './ReviewCollectionBlock'
 import ReviewItem from './ReviewItem'
 
@@ -16,11 +16,7 @@ const ReviewAdminItemCollection: React.FC<{
 }> = ({ targetId, path, appId }) => {
   const { formatMessage } = useIntl()
   const [loading, setLoading] = useState(false)
-  const { loadingReviews, reviews, labelRole, refetchReviews, loadMoreReviews } = useReviewCollection(
-    path,
-    appId,
-    targetId,
-  )
+  const { loadingReviews, reviews, refetchReviews, loadMoreReviews } = useReviewCollection(path, appId)
 
   if (loadingReviews) {
     return (
@@ -47,8 +43,8 @@ const ReviewAdminItemCollection: React.FC<{
               createdAt={v.createdAt}
               updatedAt={v.updatedAt}
               reviewReplies={v.reviewReplies}
-              labelRole={labelRole}
               onRefetch={refetchReviews}
+              targetId={targetId}
             />
             <StyledDivider className="review-divider" />
           </div>
@@ -72,7 +68,7 @@ const ReviewAdminItemCollection: React.FC<{
   )
 }
 
-const useReviewCollection = (path: string, appId: string, targetId: string) => {
+const useReviewCollection = (path: string, appId: string) => {
   const condition: types.GET_REVIEW_ADMINVariables['condition'] = {
     path: { _eq: path },
     app_id: { _eq: appId },
@@ -82,7 +78,7 @@ const useReviewCollection = (path: string, appId: string, targetId: string) => {
     types.GET_REVIEW_ADMINVariables
   >(
     gql`
-      query GET_REVIEW_ADMIN($condition: review_bool_exp, $appId: String!, $targetId: uuid, $limit: Int!) {
+      query GET_REVIEW_ADMIN($condition: review_bool_exp, $limit: Int!) {
         review_aggregate(where: $condition) {
           aggregate {
             count
@@ -108,18 +104,11 @@ const useReviewCollection = (path: string, appId: string, targetId: string) => {
             }
           }
         }
-        program_role(where: { program_id: { _eq: $targetId }, member: { app_id: { _eq: $appId } } }) {
-          id
-          name
-          member_id
-        }
       }
     `,
     {
       variables: {
         condition,
-        appId,
-        targetId,
         limit: 5,
       },
     },
@@ -145,14 +134,6 @@ const useReviewCollection = (path: string, appId: string, targetId: string) => {
       })),
     })) || []
 
-  const labelRole: ReviewLabelRoleProps[] =
-    loading || error || !data
-      ? []
-      : data.program_role.map(v => ({
-          memberId: v.member_id,
-          name: v.name,
-        }))
-
   const loadMoreReviews = () =>
     fetchMore({
       variables: {
@@ -176,7 +157,6 @@ const useReviewCollection = (path: string, appId: string, targetId: string) => {
     loadingReviews: loading,
     errorReviews: error,
     reviews,
-    labelRole,
     refetchReviews: refetch,
     loadMoreReviews: (data?.review_aggregate.aggregate?.count || 0) > 5 ? loadMoreReviews : undefined,
   }

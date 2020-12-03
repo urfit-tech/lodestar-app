@@ -55,7 +55,7 @@ const StyledEditor = styled(BraftEditor)`
 const ReviewPrivateContent = styled(BraftContent)`
   color: var(--gray-darker);
 `
-const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
+const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: string }> = ({
   isAdmin,
   id,
   memberId,
@@ -66,8 +66,8 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
   updatedAt,
   privateContent,
   reviewReplies,
-  labelRole,
   onRefetch,
+  targetId,
 }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
@@ -199,8 +199,8 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void }> = ({
               content={v.content}
               createdAt={v.createdAt}
               updatedAt={v.updatedAt}
-              labelRole={labelRole}
               onRefetch={onRefetch}
+              targetId={targetId}
             />
           ))}
         </div>
