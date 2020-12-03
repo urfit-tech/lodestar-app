@@ -129,7 +129,7 @@ export const CartProvider: React.FC = ({ children }) => {
         })
         .catch(() => {})
     },
-    [apolloClient, currentMemberId, updateCartProducts],
+    [apolloClient, appId, currentMemberId, updateCartProducts],
   )
 
   // init state

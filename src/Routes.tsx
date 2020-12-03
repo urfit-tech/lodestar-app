@@ -69,6 +69,11 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     pageName: 'CreatorPage',
     authenticated: false,
   },
+  creator_display: {
+    path: '/creators-display',
+    pageName: 'CreatorDisplayedPage',
+    authenticated: false,
+  },
 
   member: {
     path: '/members/:memberId',

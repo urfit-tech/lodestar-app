@@ -31,7 +31,7 @@ const Application: React.FC<{
   return (
     <BrowserRouter>
       <QueryParamProvider ReactRouterRoute={Route}>
-        <AuthProvider apiHost={apiHost}>
+        <AuthProvider appId={appId} apiHost={apiHost}>
           <ApiProvider appId={appId}>
             <AppProvider appId={appId}>
               <LanguageProvider>

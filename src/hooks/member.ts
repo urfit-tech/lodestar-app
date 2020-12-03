@@ -72,6 +72,10 @@ export const usePublicMember = (memberId: string) => {
           description
           role
           title
+          member_specialities {
+            id
+            tag_name
+          }
         }
       }
     `,
@@ -91,6 +95,7 @@ export const usePublicMember = (memberId: string) => {
           abstract: data.member_public[0].abstract,
           description: data.member_public[0].description,
           title: data.member_public[0].title,
+          specialtyNames: data.member_public[0].member_specialities.map(v => v.tag_name),
         }
 
   return {

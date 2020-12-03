@@ -395,7 +395,7 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
       getFileDownloadableLink(`audios/${appId}/${audioFilename}`, authToken, apiHost).then(url => {
         setUrl(url)
       })
-  }, [audioFilename, authToken, apiHost])
+  }, [apiHost, appId, audioFilename, authToken])
 
   const podcastProgram = useMemo<PodcastProgramContent | null>(() => {
     if (loading || error || !data || !data.podcast_program_by_pk) {

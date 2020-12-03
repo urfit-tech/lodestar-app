@@ -129,7 +129,7 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
 
   useEffect(() => {
     if (!authToken) {
-      refreshToken?.({ appId })
+      refreshToken?.()
     }
   }, [appId, authToken, refreshToken])
 

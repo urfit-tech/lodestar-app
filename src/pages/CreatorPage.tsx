@@ -80,7 +80,7 @@ const CreatorPage: React.FC = () => {
         title={creator?.name || creator?.username || ''}
         subTitle=""
         description={creator?.abstract || ''}
-        tags={creator?.tags || null}
+        tags={creator?.specialtyNames || null}
       />
 
       <CheckoutPodcastPlanModal
