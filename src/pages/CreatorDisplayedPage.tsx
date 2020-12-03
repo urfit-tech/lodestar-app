@@ -62,8 +62,8 @@ export const StyledCreatorTag = styled.span`
   color: ${props => props.theme['@primary-color']};
   background-color: ${props => props.theme['@primary-color']}22;
 
-  & + & {
-    margin-left: 0.4rem;
+  &:not(last-child) {
+    margin-right: 0.4rem;
   }
 `
 

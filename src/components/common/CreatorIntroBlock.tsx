@@ -91,9 +91,11 @@ const CreatorIntroBlock: React.FC<{
               <StyledSubTitle>{subTitle}</StyledSubTitle>
               <StyledDescription className="mb-4">{description}</StyledDescription>
 
-              <div>
+              <div className="d-flex flex-wrap">
                 {tags?.map(tag => (
-                  <StyledCreatorTag key={tag}>{tag}</StyledCreatorTag>
+                  <StyledCreatorTag key={tag} className="mb-2">
+                    {tag}
+                  </StyledCreatorTag>
                 ))}
               </div>
             </DescriptionBlock>
