@@ -38,3 +38,5 @@ export type Module =
   | 'social_connect'
   | 'tempo_delivery'
   | 'voucher'
+
+export type ProductRoleName = 'owner' | 'instructor' | 'assistant' | 'app-owner'

@@ -11,10 +11,11 @@ import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import types from '../../types'
-import { ProgramRoleName, ProgramRoleProps } from '../../types/program'
+import { ProductRoleName } from '../../types/general'
+import { ProgramRoleProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
-import ProgramRoleFormatter from '../common/ProgramRoleFormatter'
+import ProductRoleFormatter from '../common/ProductRoleFormatter'
 import { BraftContent } from '../common/StyledBraftEditor'
 import { StyledEditor } from './IssueReplyCreationBlock'
 
@@ -121,11 +122,11 @@ const IssueReplyItem: React.FC<{
                 .map(role =>
                   role.name === 'instructor' ? (
                     <StyledTag key={role.id} color={theme['@primary-color']} className="ml-2 mr-0">
-                      <ProgramRoleFormatter value={role.name as ProgramRoleName} />
+                      <ProductRoleFormatter value={role.name as ProductRoleName} />
                     </StyledTag>
                   ) : role.name === 'assistant' ? (
                     <StyledTag key={role.id} color={theme['@processing-color']} className="ml-2 mr-0">
-                      <ProgramRoleFormatter value={role.name as ProgramRoleName} />
+                      <ProductRoleFormatter value={role.name as ProductRoleName} />
                     </StyledTag>
                   ) : null,
                 )
