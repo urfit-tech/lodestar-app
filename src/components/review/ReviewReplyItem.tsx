@@ -84,7 +84,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
 }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { authToken, currentMemberId, backendEndpoint } = useAuth()
+  const { authToken, currentMemberId, apiHost } = useAuth()
   const { control, errors, handleSubmit, setError } = useForm({
     defaultValues: {
       reply: BraftEditor.createEditorState(content || ''),
@@ -213,7 +213,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
                 <StyledEditor
                   language="zh-hant"
                   controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                  media={{ uploadFn: createUploadFn(appId, authToken, backendEndpoint) }}
+                  media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
                 />
               }
               control={control}

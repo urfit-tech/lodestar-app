@@ -88,7 +88,7 @@ const ReviewModal: React.FC<{
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { id: appId } = useApp()
-  const { authToken, currentMemberId, backendEndpoint } = useAuth()
+  const { authToken, currentMemberId, apiHost } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [insertReview] = useMutation<types.INSERT_REVIEW, types.INSERT_REVIEWVariables>(INSERT_REVIEW)
@@ -234,7 +234,7 @@ const ReviewModal: React.FC<{
             <StyledEditor
               language="zh-hant"
               controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-              media={{ uploadFn: createUploadFn(appId, authToken, backendEndpoint) }}
+              media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
             />
           }
           control={control}
@@ -250,7 +250,7 @@ const ReviewModal: React.FC<{
             <StyledEditor
               language="zh-hant"
               controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-              media={{ uploadFn: createUploadFn(appId, authToken, backendEndpoint) }}
+              media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
             />
           }
           control={control}
