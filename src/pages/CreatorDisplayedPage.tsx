@@ -135,7 +135,7 @@ const CreatorDisplayedPage: React.FC<{}> = () => {
                   />
                   <StyledCreatorName className="mb-2">{v.name}</StyledCreatorName>
                   <StyledCreatorTitle className="mb-3">{v.title}</StyledCreatorTitle>
-                  <StyledCreatorAbstract className="mb-2">{v.abstract}</StyledCreatorAbstract>
+                  <StyledCreatorAbstract className="mb-3">{v.abstract}</StyledCreatorAbstract>
                   <div className="d-flex flex-wrap">
                     {v.specialtyNames.map(w => (
                       <StyledCreatorTag>{w}</StyledCreatorTag>
