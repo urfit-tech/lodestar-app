@@ -14,7 +14,7 @@ type AuthContext = {
   apiHost: string
   refreshToken?: () => Promise<void>
   register?: (data: { username: string; email: string; password: string }) => Promise<void>
-  login?: (data: { appId: string; account: string; password: string }) => Promise<void>
+  login?: (data: { account: string; password: string }) => Promise<void>
   socialLogin?: (data: { provider: string; providerToken: any }) => Promise<void>
   logout?: () => void
 }
@@ -114,7 +114,7 @@ export const AuthProvider: React.FC<{
               throw new Error(code)
             }
           }),
-        login: async ({ appId, account, password }) =>
+        login: async ({ account, password }) =>
           Axios.post(
             `https://${apiHost}/auth/general-login`,
             { appId, account, password },

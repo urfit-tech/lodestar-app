@@ -29,7 +29,7 @@ type LoginSectionProps = FormComponentProps & {
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
 }
 const LoginSection: React.FC<LoginSectionProps> = ({ form, onAuthStateChange }) => {
-  const { settings, id: appId } = useApp()
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [back] = useQueryParam('back', StringParam)
@@ -48,7 +48,6 @@ const LoginSection: React.FC<LoginSectionProps> = ({ form, onAuthStateChange }) 
       }
       setLoading(true)
       login({
-        appId: appId,
         account: values.account.trim().toLowerCase(),
         password: values.password,
       })
