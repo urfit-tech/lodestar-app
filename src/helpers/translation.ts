@@ -1293,6 +1293,7 @@ export const reviewMessages = {
       id: 'review.text.reviewModalDescription',
       defaultMessage: '歡迎給予鼓勵、分享心得或是提出建議！為維護評價公正性，累計三則以上評價才會公開呦！',
     },
+    noReviews: { id: 'review.text.noReviews', defaultMessage: '目前無評價' },
   }),
   button: defineMessages({
     reply: { id: 'review.button.review', defaultMessage: '回覆' },

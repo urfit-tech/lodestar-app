@@ -69,22 +69,19 @@ const StyledButton = styled(Button)<{ reviewed?: string }>`
 const StyledFormControl = styled(FormControl)`
   height: 20px;
 `
+export const HeaderIcon: React.FC = () => (
+  <StyledHeaderIcon>
+    <Icon as={EditIcon} />
+  </StyledHeaderIcon>
+)
 
 const ReviewModal: React.FC<{
   path: string
   memberReviews: MemberReviewProps[]
   onRefetchReviewMemberItem?: () => void
   onRefetchReviewAggregate: () => void
-  onRefetchEnrollmentMembersAndProductEditorIds: () => void
   onRefetchCurrentMemberReview: () => void
-}> = ({
-  path,
-  memberReviews,
-  onRefetchReviewMemberItem,
-  onRefetchReviewAggregate,
-  onRefetchEnrollmentMembersAndProductEditorIds,
-  onRefetchCurrentMemberReview,
-}) => {
+}> = ({ path, memberReviews, onRefetchReviewMemberItem, onRefetchReviewAggregate, onRefetchCurrentMemberReview }) => {
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { id: appId } = useApp()
@@ -169,7 +166,6 @@ const ReviewModal: React.FC<{
           reset()
           onRefetchReviewMemberItem?.()
           onRefetchReviewAggregate?.()
-          onRefetchEnrollmentMembersAndProductEditorIds?.()
         })
         .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
         .finally(() => {
@@ -178,20 +174,13 @@ const ReviewModal: React.FC<{
         })
     }
   }
-  const headerIcon: React.FC = () => {
-    return (
-      <StyledHeaderIcon>
-        <Icon as={EditIcon} />
-      </StyledHeaderIcon>
-    )
-  }
 
   return (
     <CommonModal
       title={formatMessage(reviewMessages.modal.fillReview)}
       isOpen={isOpen}
       onClose={onClose}
-      renderHeaderIcon={headerIcon}
+      renderHeaderIcon={HeaderIcon}
       renderTrigger={() => (
         <StyledButton reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()} onClick={onOpen}>
           {memberReviews && memberReviews.length !== 0

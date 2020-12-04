@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { reviewMessages } from '../../helpers/translation'
+import { useReviewAggregate } from '../../hooks/review'
 import { ReactComponent as StarEmptyIcon } from '../../images/star-empty.svg'
 import { ReactComponent as StarLargeIcon } from '../../images/star-l.svg'
 import types from '../../types'
@@ -67,13 +68,9 @@ const ReviewCollectionBlock: React.FC<{
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { settings, id: appId } = useApp()
-  const { loadingReviewAggregate, averageScore, reviewCount, refetchReviewAggregate } = useReviewAggregate(path, appId)
-  const {
-    loadingEnrollmentMembersAndProductEditorIds,
-    enrolledMembers,
-    productEditorIds,
-    refetchEnrollmentMembersAndProductEditorIds,
-  } = useEnrolledMembersAndProductEditorIds(targetId, appId)
+  const { loadingReviewAggregate, averageScore, reviewCount, refetchReviewAggregate } = useReviewAggregate(path)
+  const { loadingEnrolledMembers, enrolledMembers } = useEnrolledMembers(targetId)
+  const { loadingProductEditorIds, productEditorIds } = useProductEditorIds(targetId)
   const { loadingCurrentMemberReview, currentMemberReview, refetchCurrentMemberReview } = useCurrentMemberReview(
     currentMemberId,
     path,
@@ -82,7 +79,7 @@ const ReviewCollectionBlock: React.FC<{
 
   const reviewMemberItemRef = useRef<ReviewMemberItemRef>(null)
 
-  if (loadingReviewAggregate || loadingEnrollmentMembersAndProductEditorIds || loadingCurrentMemberReview) {
+  if (loadingEnrolledMembers || loadingProductEditorIds || loadingReviewAggregate || loadingCurrentMemberReview) {
     return (
       <>
         <StyledTitle>{title || formatMessage(reviewMessages.title.programReview)}</StyledTitle>
@@ -112,7 +109,6 @@ const ReviewCollectionBlock: React.FC<{
               memberReviews={currentMemberReview}
               onRefetchReviewMemberItem={reviewMemberItemRef.current?.onRefetchReviewMemberItem}
               onRefetchReviewAggregate={refetchReviewAggregate}
-              onRefetchEnrollmentMembersAndProductEditorIds={refetchEnrollmentMembersAndProductEditorIds}
               onRefetchCurrentMemberReview={refetchCurrentMemberReview}
             />
           )}
@@ -145,57 +141,38 @@ const ReviewCollectionBlock: React.FC<{
   )
 }
 
-const useReviewAggregate = (path: string, appId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_REVIEW_AGGREGATE, types.GET_REVIEW_AGGREGATEVariables>(
+const useEnrolledMembers = (targetId: string) => {
+  const { loading, error, data } = useQuery<types.GET_ENROLLED_MEMBERS, types.GET_ENROLLED_MEMBERSVariables>(
     gql`
-      query GET_REVIEW_AGGREGATE($path: String, $appId: String) {
-        review_public_aggregate(where: { path: { _eq: $path }, app_id: { _eq: $appId } }) {
-          aggregate {
-            avg {
-              score
-            }
-            count
-          }
-        }
-      }
-    `,
-    {
-      variables: {
-        path,
-        appId,
-      },
-    },
-  )
-  const averageScore = loading || error || !data ? null : data.review_public_aggregate.aggregate?.avg?.score || 0
-  const reviewCount = loading || error || !data ? null : data.review_public_aggregate.aggregate?.count || 0
-
-  return {
-    loadingReviewAggregate: loading,
-    error,
-    averageScore,
-    reviewCount,
-    refetchReviewAggregate: refetch,
-  }
-}
-
-const useEnrolledMembersAndProductEditorIds = (targetId: string, appId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    types.GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS,
-    types.GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDSVariables
-  >(
-    gql`
-      query GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS($targetId: uuid!, $appId: String) {
-        program_enrollment(where: { program: { app_id: { _eq: $appId }, id: { _eq: $targetId } } }) {
+      query GET_ENROLLED_MEMBERS($targetId: uuid!) {
+        program_enrollment(where: { program_id: { _eq: $targetId } }) {
           member_id
         }
-        program_by_pk(id: $targetId) {
-          program_roles(where: { name: { _eq: "instructor" }, member: { app_id: { _eq: $appId } } }) {
+      }
+    `,
+    { variables: { targetId } },
+  )
+  const enrolledMembers: (string | null)[] = data?.program_enrollment?.map(v => v.member_id) || []
+  return {
+    loadingEnrolledMembers: loading,
+    errorEnrolledMembers: error,
+    enrolledMembers,
+  }
+}
+const useProductEditorIds = (targetId: string) => {
+  const { loading, error, data } = useQuery<types.GET_PRODUCT_EDITOR_IDS, types.GET_PRODUCT_EDITOR_IDSVariables>(
+    gql`
+      query GET_PRODUCT_EDITOR_IDS($targetId: uuid!) {
+        program(where: { id: { _eq: $targetId } }) {
+          program_roles(where: { name: { _eq: "instructor" } }) {
+            id
             member_id
             name
           }
         }
-        podcast_program_by_pk(id: $targetId) {
-          podcast_program_roles(where: { name: { _eq: "instructor" }, member: { app_id: { _eq: $appId } } }) {
+        podcast_program(where: { id: { _eq: $targetId } }) {
+          podcast_program_roles(where: { name: { _eq: "instructor" } }) {
+            id
             member_id
             name
           }
@@ -203,21 +180,23 @@ const useEnrolledMembersAndProductEditorIds = (targetId: string, appId: string) 
       }
     `,
     {
-      variables: { targetId, appId },
+      variables: { targetId },
     },
   )
-  const enrolledMembers: (string | null)[] = data?.program_enrollment?.map(v => v.member_id) || []
-  const productEditorIds: string[] =
-    [
-      ...(data?.program_by_pk?.program_roles?.map(v => v.member_id) || []),
-      ...(data?.podcast_program_by_pk?.podcast_program_roles?.map(v => v.member_id) || []),
-    ] || []
 
+  const productEditorIds: string[] =
+    loading || error || !data
+      ? []
+      : [
+          ...((data.program.length !== 0 && data?.program[0].program_roles.map(v => v.member_id)) || []),
+          ...((data.podcast_program.length !== 0 &&
+            data?.podcast_program[0].podcast_program_roles.map(v => v.member_id)) ||
+            []),
+        ]
   return {
-    loadingEnrollmentMembersAndProductEditorIds: loading,
-    enrolledMembers,
+    loadingProductEditorIds: loading,
+    errorProductEditorIds: error,
     productEditorIds,
-    refetchEnrollmentMembersAndProductEditorIds: refetch,
   }
 }
 
@@ -254,6 +233,7 @@ const useCurrentMemberReview = (currentMemberId: string | null, path: string, ap
 
   return {
     loadingCurrentMemberReview: loading,
+    errorCurrentMemberReview: error,
     currentMemberReview,
     refetchCurrentMemberReview: refetch,
   }
