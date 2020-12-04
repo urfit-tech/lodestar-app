@@ -49,13 +49,15 @@ const PaymentTapPayBlock: React.FC = () => {
   const [tpCreditCard, setTpCreditCard] = useState<TPCreditCard | null>(null)
   const [memberCreditCardId, setMemberCreditCardId] = useState<string | null>(null)
   const { currentMemberId } = useAuth()
-  const { paying, payPayment, addCreditCard } = usePayment(parseInt(paymentNo))
+  const { payPayment, addCreditCard } = usePayment(parseInt(paymentNo))
+  const [isPaying, setIsPaying] = useState(false)
 
-  const isCreditCardReady = Boolean(memberCreditCardId || (tpCreditCard && tpCreditCard.canGetPrime))
+  const isCreditCardReady = Boolean(memberCreditCardId || tpCreditCard?.canGetPrime)
 
-  const handlePaymentPay: React.MouseEventHandler<HTMLElement> = () => {
-    ;(async () => {
-      let _memberCreditCardId = memberCreditCardId
+  const handlePaymentPay = async () => {
+    setIsPaying(true)
+    let _memberCreditCardId = memberCreditCardId
+    try {
       if (!_memberCreditCardId) {
         _memberCreditCardId = await addCreditCard({
           phoneNumber: '0987654321',
@@ -63,14 +65,14 @@ const PaymentTapPayBlock: React.FC = () => {
           email: 'test@gmail.com',
         })
       }
-      try {
-        await payPayment(parseInt(paymentNo), _memberCreditCardId)
-        history.push(`/members/${currentMemberId}`)
-      } catch (err) {
-        message.error(err)
-      }
-    })()
+      await payPayment(_memberCreditCardId)
+      history.push(`/members/${currentMemberId}`)
+    } catch (err) {
+      message.error(err)
+    }
+    setIsPaying(false)
   }
+
   return (
     <StyledContainer>
       {currentMemberId ? (
@@ -80,7 +82,13 @@ const PaymentTapPayBlock: React.FC = () => {
           <div className={`${memberCreditCardId ? 'd-none' : ''} ml-4`}>
             <TapPayForm onUpdate={setTpCreditCard} />
           </div>
-          <Button block type="primary" loading={paying} disabled={!isCreditCardReady} onClick={handlePaymentPay}>
+          <Button
+            block
+            type="primary"
+            loading={isPaying}
+            disabled={!isCreditCardReady}
+            onClick={() => handlePaymentPay()}
+          >
             付款
           </Button>
 
@@ -97,15 +105,13 @@ const usePayment = (paymentNo: number) => {
   const { TPDirect } = useTappay()
   const { formatMessage } = useIntl()
   const { authToken, apiHost } = useAuth()
-  const [paying, setPaying] = useState(false)
 
   const payPayment = useCallback(
-    (paymentNo: number, memberCreditCardId: string) =>
+    (memberCreditCardId: string) =>
       new Promise((resolve, reject) => {
         if (!authToken) {
           reject('no auth')
         }
-        setPaying(true)
         axios
           .post(
             `https://${apiHost}/payment/pay/${paymentNo}`,
@@ -117,40 +123,40 @@ const usePayment = (paymentNo: number) => {
             },
           )
           .then(({ data: { code, result } }) => {
-            const codeMessage = codeMessages[code as keyof typeof codeMessages]
             if (code === 'SUCCESS') {
               resolve(result)
-            } else if (codeMessage) {
-              reject(formatMessage(codeMessage))
-            } else {
-              reject(code)
             }
+
+            const codeMessage = codeMessages[code as keyof typeof codeMessages]
+            reject(codeMessage ? formatMessage(codeMessage) : code)
           })
           .catch(reject)
-          .finally(() => setPaying(false))
       }),
-    [authToken, apiHost, formatMessage],
+    [authToken, apiHost, paymentNo, formatMessage],
   )
 
   const addCreditCard = async (cardHolder: CardHolder) => {
     const memberCreditCardId = await new Promise<string>((resolve, reject) => {
-      TPDirect.card.getPrime((result: { status: number; card: { prime: string } }) => {
-        if (result.status !== 0) {
+      TPDirect.card.getPrime(({ status, card: { prime } }: { status: number; card: { prime: string } }) => {
+        if (status !== 0) {
           console.error('getPrime error')
         }
         axios({
           method: 'POST',
           url: `https://${apiHost}/payment/credit-cards`,
           withCredentials: true,
-          data: { prime: result.card.prime, cardHolder },
+          data: {
+            prime,
+            cardHolder,
+          },
           headers: { authorization: `Bearer ${authToken}` },
         })
           .then(({ data: { code, result } }) => {
             if (code === 'SUCCESS') {
               resolve(result.memberCreditCardId)
-            } else {
-              reject(code)
             }
+
+            reject(code)
           })
           .catch(reject)
       })
@@ -158,7 +164,7 @@ const usePayment = (paymentNo: number) => {
     return memberCreditCardId
   }
 
-  return { paying, payPayment, addCreditCard }
+  return { payPayment, addCreditCard }
 }
 
 export default PaymentTapPayPage

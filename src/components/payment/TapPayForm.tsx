@@ -15,10 +15,10 @@ export type TPCreditCard = {
     ccv: number
   }
 }
-type TapPayFormProps = {
+
+const TapPayForm: React.FC<{
   onUpdate?: (tpCreditCard: TPCreditCard) => void
-}
-const TapPayForm: React.FC<TapPayFormProps> = ({ onUpdate }) => {
+}> = ({ onUpdate }) => {
   const { formatMessage } = useIntl()
   const cardNoRef = useRef<HTMLDivElement | null>(null)
   const cardExpRef = useRef<HTMLDivElement | null>(null)
@@ -26,11 +26,11 @@ const TapPayForm: React.FC<TapPayFormProps> = ({ onUpdate }) => {
   const tpCreditCard = useTPCreditCard({ cardNoElement: cardNoRef, cardExpElement: cardExpRef })
 
   useEffect(() => {
-    tpCreditCard && onUpdate && onUpdate(tpCreditCard)
-  }, [tpCreditCard, onUpdate])
+    tpCreditCard && onUpdate?.(tpCreditCard)
+  }, [tpCreditCard])
 
   return (
-    <Form className={`mb-5 d-block`}>
+    <Form className="d-block mb-5">
       <Form.Item className="mb-1" label={formatMessage(checkoutMessages.form.label.cardNo)} required>
         <StyledInputTarget ref={cardNoRef} />
       </Form.Item>
