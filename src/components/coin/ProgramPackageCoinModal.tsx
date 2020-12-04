@@ -76,8 +76,9 @@ const ProgramPackageCoinModal: React.FC<
     programPackageId: string
     periodAmount: number
     periodType: PeriodType
+    projectPlanId: string
   }
-> = ({ renderTrigger, programPackageId, periodAmount, periodType, ...props }) => {
+> = ({ renderTrigger, programPackageId, periodAmount, periodType, projectPlanId, ...props }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { currentMember, currentMemberId } = useAuth()
@@ -99,6 +100,7 @@ const ProgramPackageCoinModal: React.FC<
       return {
         ...accumulator,
         [`ProgramPlan_${currentValue.plan.id}`]: {
+          parentProductId: `ProjectPlan_${projectPlanId}`,
           position: currentValue.position,
         },
       }

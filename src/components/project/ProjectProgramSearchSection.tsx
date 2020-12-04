@@ -168,6 +168,7 @@ const ProjectProgramSearchSection: React.FC<{
           programId={selectedId}
           periodAmount={projectPlan.periodAmount}
           periodType={projectPlan.periodType}
+          projectPlanId={projectPlan.id}
           visible={visible}
           onCancel={() => setVisible(false)}
         />
@@ -176,6 +177,7 @@ const ProjectProgramSearchSection: React.FC<{
           programPackageId={selectedId}
           periodAmount={projectPlan.periodAmount}
           periodType={projectPlan.periodType}
+          projectPlanId={projectPlan.id}
           visible={visible}
           onCancel={() => setVisible(false)}
         />
