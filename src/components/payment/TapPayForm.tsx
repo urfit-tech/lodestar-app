@@ -26,8 +26,10 @@ const TapPayForm: React.FC<{
   const tpCreditCard = useTPCreditCard({ cardNoElement: cardNoRef, cardExpElement: cardExpRef })
 
   useEffect(() => {
-    tpCreditCard && onUpdate?.(tpCreditCard)
-  }, [tpCreditCard])
+    if (tpCreditCard) {
+      onUpdate?.(tpCreditCard)
+    }
+  }, [tpCreditCard, onUpdate])
 
   return (
     <Form className="d-block mb-5">
