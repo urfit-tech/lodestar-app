@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Button, ButtonGroup, Icon, useToast } from '@chakra-ui/react'
+import { Button, ButtonGroup, useToast } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -7,18 +7,16 @@ import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { v4 as uuid } from 'uuid'
 import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
-import { ReactComponent as StarGrayIcon } from '../../images/star-gray.svg'
-import { ReactComponent as StarIcon } from '../../images/star.svg'
 import types from '../../types'
 import { ReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
 import { BraftContent } from '../common/StyledBraftEditor'
 import ReviewReplyItem from './ReviewReplyItem'
+import ReviewStarRating from './ReviewStarRating'
 
 const ReviewContentBlock = styled.div`
   padding-left: 48px;
@@ -85,19 +83,6 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
   )
   const toast = useToast()
 
-  const starAmount = (score: number) => {
-    let starLists = []
-    for (let i = 0; i < score; i++) {
-      starLists.push(<Icon key={uuid()} style={{ marginRight: '2px' }} as={StarIcon} />)
-    }
-    if (starLists.length < 5) {
-      for (let i = starLists.length; i < 5; i++) {
-        starLists.push(<Icon key={uuid()} style={{ marginRight: '2px' }} as={StarGrayIcon} />)
-      }
-    }
-    return <div className="d-flex mb-3">{starLists}</div>
-  }
-
   const handleSave = (data: { replyContent: any }) => {
     setIsSubmitting(true)
     insertReviewReply({
@@ -136,8 +121,8 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
         </span>
       </div>
       <ReviewContentBlock>
-        {starAmount(score)}
-        <StyledTitle className="mb-2">{title}</StyledTitle>
+        <ReviewStarRating score={score} boxSize="16px" />
+        <StyledTitle className="mt-3 mb-2">{title}</StyledTitle>
         <BraftContent>{content}</BraftContent>
 
         {privateContent && !BraftEditor.createEditorState(privateContent).isEmpty() && (

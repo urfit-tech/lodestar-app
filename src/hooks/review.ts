@@ -1,6 +1,38 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import types from '../types'
+
+export const useReviewAggregate = (path: string) => {
+  const { loading, error, data, refetch } = useQuery<types.GET_REVIEW_AGGREGATE, types.GET_REVIEW_AGGREGATEVariables>(
+    gql`
+      query GET_REVIEW_AGGREGATE($path: String) {
+        review_public_aggregate(where: { path: { _eq: $path } }) {
+          aggregate {
+            avg {
+              score
+            }
+            count
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        path,
+      },
+    },
+  )
+  const averageScore = loading || error || !data ? null : data.review_public_aggregate.aggregate?.avg?.score || 0
+  const reviewCount = loading || error || !data ? null : data.review_public_aggregate.aggregate?.count || 0
+
+  return {
+    loadingReviewAggregate: loading,
+    errorReviewAggregate: error,
+    averageScore,
+    reviewCount,
+    refetchReviewAggregate: refetch,
+  }
+}
 
 export const useMutateReviewReply = () => {
   const [updateReviewReply] = useMutation<types.UPDATE_REVIEW_REPLY, types.UPDATE_REVIEW_REPLYVariables>(

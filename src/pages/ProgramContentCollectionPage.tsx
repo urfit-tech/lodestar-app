@@ -1,5 +1,8 @@
-import { Button, Layout, PageHeader, Spin } from 'antd'
+import { Icon } from '@chakra-ui/icons'
+import { Button } from '@chakra-ui/react'
+import { Button as AntdButton, Layout, PageHeader, Spin } from 'antd'
 import React from 'react'
+import { BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -39,7 +42,14 @@ const StyledPCPageHeader = styled(PageHeader)`
     padding: 0;
   }
 `
-
+const StyledButton = styled(Button)`
+  && {
+    border: none;
+  }
+  &&:hover {
+    background: initial;
+  }
+`
 const ProgramContentCollectionPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -53,11 +63,18 @@ const ProgramContentCollectionPage: React.FC = () => {
       <StyledPCPageHeader
         className="d-flex align-items-center"
         title={program && program.title}
-        extra={
-          <Button icon="profile" type="link" onClick={() => history.push(`/programs/${programId}`)}>
+        extra={[
+          <StyledButton
+            variant="outline"
+            onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
+            leftIcon={<Icon as={BsStar} />}
+          >
+            {formatMessage(commonMessages.button.review)}
+          </StyledButton>,
+          <AntdButton icon="profile" type="link" onClick={() => history.push(`/programs/${programId}`)}>
             {formatMessage(commonMessages.button.intro)}
-          </Button>
-        }
+          </AntdButton>,
+        ]}
         onBack={() => {
           if (productId) {
             const [productType, id] = productId.split('_')

@@ -1300,35 +1300,23 @@ export interface GET_REVIEW_ADMINVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_REVIEW_AGGREGATE
+// GraphQL query operation: GET_ENROLLED_MEMBERS
 // ====================================================
 
-export interface GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate_avg {
-  __typename: "review_public_avg_fields";
-  score: number | null;
+export interface GET_ENROLLED_MEMBERS_program_enrollment {
+  __typename: "program_enrollment";
+  member_id: string | null;
 }
 
-export interface GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate {
-  __typename: "review_public_aggregate_fields";
-  avg: GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate_avg | null;
-  count: number | null;
-}
-
-export interface GET_REVIEW_AGGREGATE_review_public_aggregate {
-  __typename: "review_public_aggregate";
-  aggregate: GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate | null;
-}
-
-export interface GET_REVIEW_AGGREGATE {
+export interface GET_ENROLLED_MEMBERS {
   /**
-   * fetch aggregated fields from the table: "review_public"
+   * fetch data from the table: "program_enrollment"
    */
-  review_public_aggregate: GET_REVIEW_AGGREGATE_review_public_aggregate;
+  program_enrollment: GET_ENROLLED_MEMBERS_program_enrollment[];
 }
 
-export interface GET_REVIEW_AGGREGATEVariables {
-  path?: string | null;
-  appId?: string | null;
+export interface GET_ENROLLED_MEMBERSVariables {
+  targetId: any;
 }
 
 /* tslint:disable */
@@ -1337,16 +1325,12 @@ export interface GET_REVIEW_AGGREGATEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS
+// GraphQL query operation: GET_PRODUCT_EDITOR_IDS
 // ====================================================
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_enrollment {
-  __typename: "program_enrollment";
-  member_id: string | null;
-}
-
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_by_pk_program_roles {
+export interface GET_PRODUCT_EDITOR_IDS_program_program_roles {
   __typename: "program_role";
+  id: any;
   member_id: string;
   /**
    * instructor / assistant 
@@ -1354,16 +1338,17 @@ export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_by_pk_progr
   name: string;
 }
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_by_pk {
+export interface GET_PRODUCT_EDITOR_IDS_program {
   __typename: "program";
   /**
    * An array relationship
    */
-  program_roles: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_by_pk_program_roles[];
+  program_roles: GET_PRODUCT_EDITOR_IDS_program_program_roles[];
 }
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_by_pk_podcast_program_roles {
+export interface GET_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles {
   __typename: "podcast_program_role";
+  id: any;
   member_id: string;
   /**
    * instructor
@@ -1371,32 +1356,27 @@ export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_by_
   name: string;
 }
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_by_pk {
+export interface GET_PRODUCT_EDITOR_IDS_podcast_program {
   __typename: "podcast_program";
   /**
    * An array relationship
    */
-  podcast_program_roles: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_by_pk_podcast_program_roles[];
+  podcast_program_roles: GET_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles[];
 }
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS {
+export interface GET_PRODUCT_EDITOR_IDS {
   /**
-   * fetch data from the table: "program_enrollment"
+   * fetch data from the table: "program"
    */
-  program_enrollment: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_enrollment[];
+  program: GET_PRODUCT_EDITOR_IDS_program[];
   /**
-   * fetch data from the table: "program" using primary key columns
+   * fetch data from the table: "podcast_program"
    */
-  program_by_pk: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_program_by_pk | null;
-  /**
-   * fetch data from the table: "podcast_program" using primary key columns
-   */
-  podcast_program_by_pk: GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDS_podcast_program_by_pk | null;
+  podcast_program: GET_PRODUCT_EDITOR_IDS_podcast_program[];
 }
 
-export interface GET_ENROLLED_MEMBERS_AND_PRODUCT_EDITOR_IDSVariables {
+export interface GET_PRODUCT_EDITOR_IDSVariables {
   targetId: any;
-  appId?: string | null;
 }
 
 /* tslint:disable */
@@ -6582,6 +6562,42 @@ export interface GET_PROJECT_INTRO_COLLECTION {
 
 export interface GET_PROJECT_INTRO_COLLECTIONVariables {
   categoryId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_REVIEW_AGGREGATE
+// ====================================================
+
+export interface GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate_avg {
+  __typename: "review_public_avg_fields";
+  score: number | null;
+}
+
+export interface GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate {
+  __typename: "review_public_aggregate_fields";
+  avg: GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate_avg | null;
+  count: number | null;
+}
+
+export interface GET_REVIEW_AGGREGATE_review_public_aggregate {
+  __typename: "review_public_aggregate";
+  aggregate: GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate | null;
+}
+
+export interface GET_REVIEW_AGGREGATE {
+  /**
+   * fetch aggregated fields from the table: "review_public"
+   */
+  review_public_aggregate: GET_REVIEW_AGGREGATE_review_public_aggregate;
+}
+
+export interface GET_REVIEW_AGGREGATEVariables {
+  path?: string | null;
 }
 
 /* tslint:disable */
