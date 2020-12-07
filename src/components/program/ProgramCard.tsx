@@ -98,7 +98,7 @@ const ProgramCard: React.FC<{
       ? program.salePrice
       : undefined
   const periodType = program.isSubscription && program.plans.length > 0 ? program.plans[0].periodType : null
-  const { loadingReviewAggregate, averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
+  const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
 
   return (
     <>
