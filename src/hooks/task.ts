@@ -18,7 +18,7 @@ export const useTask = (queue: string, taskId: string) => {
     authToken &&
       apiHost &&
       axios
-        .get(`${window.location.protocol}//${apiHost}/tasks/${queue}/${taskId}`, {
+        .get(`https://${apiHost}/tasks/${queue}/${taskId}`, {
           headers: { authorization: `Bearer ${authToken}` },
         })
         .then(({ data: { code, result } }) => {

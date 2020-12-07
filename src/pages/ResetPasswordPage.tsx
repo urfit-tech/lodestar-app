@@ -48,7 +48,7 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
         setLoading(true)
         axios
           .post(
-            `${window.location.protocol}//${apiHost}/auth/reset-password`,
+            `https://${apiHost}/auth/reset-password`,
             { newPassword: values.password },
             {
               headers: { authorization: `Bearer ${token}` },

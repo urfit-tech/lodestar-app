@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<{
         apiHost,
         refreshToken: async () =>
           Axios.post(
-            `${window.location.protocol}//${apiHost}/auth/refresh-token`,
+            `https://${apiHost}/auth/refresh-token`,
             { appId },
             {
               method: 'POST',
@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<{
             .finally(() => setIsAuthenticating(false)),
         register: async ({ username, email, password }) =>
           Axios.post(
-            `${window.location.protocol}//${apiHost}/auth/register`,
+            `https://${apiHost}/auth/register`,
             {
               appId,
               username,
@@ -116,7 +116,7 @@ export const AuthProvider: React.FC<{
           }),
         login: async ({ account, password }) =>
           Axios.post(
-            `${window.location.protocol}//${apiHost}/auth/general-login`,
+            `https://${apiHost}/auth/general-login`,
             { appId, account, password },
             { withCredentials: true },
           ).then(({ data: { code, result } }) => {
@@ -131,7 +131,7 @@ export const AuthProvider: React.FC<{
           }),
         socialLogin: async ({ provider, providerToken }) =>
           Axios.post(
-            `${window.location.protocol}//${apiHost}/auth/social-login`,
+            `https://${apiHost}/auth/social-login`,
             {
               appId,
               provider,
@@ -148,7 +148,7 @@ export const AuthProvider: React.FC<{
           }),
         logout: async () => {
           localStorage.clear()
-          Axios(`${window.location.protocol}//${apiHost}/auth/logout`, {
+          Axios(`https://${apiHost}/auth/logout`, {
             method: 'POST',
             withCredentials: true,
           }).then(({ data: { code, message, result } }) => {

@@ -33,7 +33,7 @@ const CouponSelectionModal: React.FC<{
     setInserting(true)
     axios
       .post(
-        `${window.location.protocol}//${apiHost}/payment/exchange`,
+        `https://${apiHost}/payment/exchange`,
         {
           code,
           type: 'Coupon',

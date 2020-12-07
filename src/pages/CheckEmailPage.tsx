@@ -43,7 +43,7 @@ const CheckEmailPage: React.FC = () => {
       return
     }
     axios
-      .post(`${window.location.protocol}//${apiHost}/auth/forgot-password`, {
+      .post(`https://${apiHost}/auth/forgot-password`, {
         appId,
         account: email,
       })

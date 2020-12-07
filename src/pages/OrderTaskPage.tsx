@@ -45,7 +45,7 @@ const OrderTaskPage: React.FC = () => {
     if (authToken && task?.finishedOn && task?.returnvalue?.orderId) {
       axios
         .post(
-          `${window.location.protocol}//${apiHost}/tasks/payment/`,
+          `https://${apiHost}/tasks/payment/`,
           { orderId: task.returnvalue.orderId },
           { headers: { authorization: `Bearer ${authToken}` } },
         )

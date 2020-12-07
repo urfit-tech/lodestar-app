@@ -123,7 +123,7 @@ const ShippingInput: React.FC<{
 
   const handleStoreSelect = () => {
     const cvsSelectionBackUrl = encodeURIComponent(
-      `${window.location.protocol}//${apiHost}/payment/cvs-proxy/${value?.shippingMethod}?callbackUrl=${window.location.origin}/cvs`,
+      `https://${apiHost}/payment/cvs-proxy/${value?.shippingMethod}?callbackUrl=${window.location.origin}/cvs`,
     )
     let cvsSelectionUrl
 
