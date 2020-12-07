@@ -10,6 +10,7 @@ import { StyledContainer } from '../components/layout/DefaultLayout.styled'
 import CreditCardSelector, { CardHolder } from '../components/payment/CreditCardSelector'
 import TapPayForm, { TPCreditCard } from '../components/payment/TapPayForm'
 import { codeMessages } from '../helpers/translation'
+import { useMember } from '../hooks/member'
 import { useTappay } from '../hooks/util'
 
 const StyledFreeSubscriptionNotice = styled.p`
@@ -50,6 +51,7 @@ const PaymentTapPayBlock: React.FC = () => {
   const [memberCreditCardId, setMemberCreditCardId] = useState<string | null>(null)
   const { currentMemberId } = useAuth()
   const { payPayment, addCreditCard } = usePayment(parseInt(paymentNo))
+  const { member } = useMember(currentMemberId || '')
   const [isPaying, setIsPaying] = useState(false)
 
   const isCreditCardReady = Boolean(memberCreditCardId || tpCreditCard?.canGetPrime)
@@ -60,9 +62,9 @@ const PaymentTapPayBlock: React.FC = () => {
     try {
       if (!_memberCreditCardId) {
         _memberCreditCardId = await addCreditCard({
-          phoneNumber: '0987654321',
-          name: 'test',
-          email: 'test@gmail.com',
+          phoneNumber: member?.phone || '0987654321',
+          name: member?.name || 'test',
+          email: member?.email || 'test@gmail.com',
         })
       }
       await payPayment(_memberCreditCardId)

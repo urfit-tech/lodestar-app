@@ -4237,6 +4237,12 @@ export interface GET_MEMBER_CONTRACTVariables {
 // GraphQL query operation: GET_MEMBER
 // ====================================================
 
+export interface GET_MEMBER_member_by_pk_member_phones {
+  __typename: "member_phone";
+  id: any;
+  phone: string;
+}
+
 export interface GET_MEMBER_member_by_pk {
   __typename: "member";
   id: string;
@@ -4258,6 +4264,10 @@ export interface GET_MEMBER_member_by_pk {
    * array of youtube channel ids
    */
   youtube_channel_ids: any | null;
+  /**
+   * An array relationship
+   */
+  member_phones: GET_MEMBER_member_by_pk_member_phones[];
 }
 
 export interface GET_MEMBER {
@@ -11643,6 +11653,21 @@ export interface coin_log_on_conflict {
 }
 
 /**
+ * Boolean expression to filter rows from the table "coin_status". All fields are combined with a logical 'AND'.
+ */
+export interface coin_status_bool_exp {
+  _and?: (coin_status_bool_exp | null)[] | null;
+  _not?: coin_status_bool_exp | null;
+  _or?: (coin_status_bool_exp | null)[] | null;
+  amount?: numeric_comparison_exp | null;
+  coin_id?: uuid_comparison_exp | null;
+  coin_log?: coin_log_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  remaining?: numeric_comparison_exp | null;
+  used_coins?: numeric_comparison_exp | null;
+}
+
+/**
  * input type for inserting array relation for remote table "comment"
  */
 export interface comment_arr_rel_insert_input {
@@ -12548,6 +12573,7 @@ export interface member_bool_exp {
   appointment_plans?: appointment_plan_bool_exp | null;
   assigned_at?: timestamptz_comparison_exp | null;
   coin_logs?: coin_log_bool_exp | null;
+  coin_status?: coin_status_bool_exp | null;
   comment_reactions?: comment_reaction_bool_exp | null;
   comment_replies?: comment_reply_bool_exp | null;
   comment_reply_reactions?: comment_reply_reaction_bool_exp | null;

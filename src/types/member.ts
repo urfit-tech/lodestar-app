@@ -28,6 +28,8 @@ export type MemberProps = {
   facebookUserId: string | null
   googleUserId: string | null
   youtubeChannelIds: string[] | null
+
+  phone?: string
 }
 
 export type MemberSocialType = 'youtube' | 'twitch'
