@@ -45,7 +45,7 @@ export const uploadFile = async (
   file &&
     (await axios
       .post(
-        `https://${apiHost}/sys/sign-url`,
+        `${window.location.protocol}//${apiHost}/sys/sign-url`,
         {
           operation: 'putObject',
           params: {
@@ -76,7 +76,7 @@ export const uploadFile = async (
 
 export const getFileDownloadableLink = async (key: string, authToken: string | null, apiHost: string) => {
   const { data } = await axios.post(
-    `https://${apiHost}/sys/sign-url`,
+    `${window.location.protocol}//${apiHost}/sys/sign-url`,
     {
       operation: 'getObject',
       params: {

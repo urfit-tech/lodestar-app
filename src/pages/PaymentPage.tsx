@@ -34,13 +34,13 @@ const usePayForm = (paymentNo: number) => {
       setLoadingForm(true)
       axios
         .post(
-          `https://${apiHost}/payment/pay-form`,
+          `${window.location.protocol}//${apiHost}/payment/pay-form`,
           {
             paymentNo,
             options: {
-              notifyUrl: `https://${apiHost}/payment/order-notification`,
+              notifyUrl: `${window.location.protocol}//${apiHost}/payment/order-notification`,
               clientBackUrl,
-              returnUrl: `https://${apiHost}/payment/payment-proxy`,
+              returnUrl: `${window.location.protocol}//${apiHost}/payment/payment-proxy`,
             },
           },
           {

@@ -36,7 +36,7 @@ export const useCheck = (
         shippingOption: shippingOptionProps
       }
     }>(
-      `https://${apiHost}/payment/checkout-order`,
+      `${window.location.protocol}//${apiHost}/payment/checkout-order`,
       {
         appId,
         productIds,
@@ -75,7 +75,7 @@ export const useCheck = (
     async (paymentType: 'perpetual' | 'subscription', invoice: InvoiceProps) => {
       setOrderPlacing(true)
       return Axios.post<{ code: string; message: string; result: { id: string } }>(
-        `https://${apiHost}/tasks/order`,
+        `${window.location.protocol}//${apiHost}/tasks/order`,
         {
           paymentModel: { type: paymentType },
           productIds,

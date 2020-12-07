@@ -49,7 +49,7 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
       }
 
       axios
-        .post(`https://${apiHost}/auth/forgot-password`, {
+        .post(`${window.location.protocol}//${apiHost}/auth/forgot-password`, {
           appId,
           account: values.email,
         })

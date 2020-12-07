@@ -183,7 +183,7 @@ const OrderCollectionAdminCard: React.FC<
               onClick={() =>
                 axios
                   .post(
-                    `https://${apiHost}/tasks/payment/`,
+                    `${window.location.protocol}//${apiHost}/tasks/payment/`,
                     { orderId: record.id },
                     { headers: { authorization: `Bearer ${authToken}` } },
                   )
