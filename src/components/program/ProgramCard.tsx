@@ -127,7 +127,8 @@ const ProgramCard: React.FC<{
             averageScore &&
             reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
               <StyledReviewRating className="d-flex">
-                <ReviewStarRating score={averageScore} boxSize="20px" />({reviewCount}則)
+                <ReviewStarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} boxSize="20px" />(
+                {reviewCount}則)
               </StyledReviewRating>
             ) : (
               <StyledReviewRating>{formatMessage(reviewMessages.text.noReviews)}</StyledReviewRating>
