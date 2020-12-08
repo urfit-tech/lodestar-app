@@ -1308,11 +1308,20 @@ export interface GET_ENROLLED_MEMBERS_program_enrollment {
   member_id: string | null;
 }
 
+export interface GET_ENROLLED_MEMBERS_program_plan_enrollment {
+  __typename: "program_plan_enrollment";
+  member_id: string | null;
+}
+
 export interface GET_ENROLLED_MEMBERS {
   /**
    * fetch data from the table: "program_enrollment"
    */
   program_enrollment: GET_ENROLLED_MEMBERS_program_enrollment[];
+  /**
+   * fetch data from the table: "program_plan_enrollment"
+   */
+  program_plan_enrollment: GET_ENROLLED_MEMBERS_program_plan_enrollment[];
 }
 
 export interface GET_ENROLLED_MEMBERSVariables {
@@ -2789,6 +2798,7 @@ export interface GET_APPOINTMENT_PLAN_COLLECTION_appointment_plan {
   duration: any;
   price: any;
   support_locales: any | null;
+  is_private: boolean;
   /**
    * An object relationship
    */

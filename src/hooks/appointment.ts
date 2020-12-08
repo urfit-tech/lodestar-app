@@ -17,6 +17,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
           duration
           price
           support_locales
+          is_private
           currency {
             id
             label
@@ -62,6 +63,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
             endedAt: new Date(period.ended_at),
             booked: !!period.booked,
           })),
+          isPrivate: appointmentPlan.is_private,
         }))
 
   return {
