@@ -109,36 +109,42 @@ const AppointmentCollectionTabs: React.FC<{
   return (
     <>
       <div className="row mb-4">
-        {appointmentPlans.map((appointmentPlan, index) => (
-          <div key={appointmentPlan.id} className="col-lg-4 col-6">
-            <StyledTab
-              key={appointmentPlan.title}
-              className={`d-flex flex-column justify-content-between ${
-                selectedAppointmentPlanId === appointmentPlan.id || (selectedAppointmentPlanId === null && index === 0)
-                  ? 'active'
-                  : ''
-              }`}
-              onClick={() => setSelectedAppointmentPlanId(appointmentPlan.id)}
-            >
-              <div className="title">{appointmentPlan.title}</div>
-              <div className="info">
-                {formatMessage(
-                  {
-                    id: 'product.appointment.unit',
-                    defaultMessage: '每 {duration} 分鐘 {price}',
-                  },
-                  {
-                    duration: appointmentPlan.duration,
-                    price: <PriceLabel currencyId={appointmentPlan.currency.id} listPrice={appointmentPlan.price} />,
-                  },
-                )}
-              </div>
-            </StyledTab>
-          </div>
-        ))}
+        {appointmentPlans
+          .filter(v =>
+            appointmentPlanId ? v.id === appointmentPlanId || v.isPrivate === false : v.isPrivate === false,
+          )
+          .map((appointmentPlan, index) => (
+            <div key={appointmentPlan.id} className="col-lg-4 col-6">
+              <StyledTab
+                key={appointmentPlan.title}
+                className={`d-flex flex-column justify-content-between ${
+                  selectedAppointmentPlanId === appointmentPlan.id ||
+                  (selectedAppointmentPlanId === null && index === 0)
+                    ? 'active'
+                    : ''
+                }`}
+                onClick={() => setSelectedAppointmentPlanId(appointmentPlan.id)}
+              >
+                <div className="title">{appointmentPlan.title}</div>
+                <div className="info">
+                  {formatMessage(
+                    {
+                      id: 'product.appointment.unit',
+                      defaultMessage: '每 {duration} 分鐘 {price}',
+                    },
+                    {
+                      duration: appointmentPlan.duration,
+                      price: <PriceLabel currencyId={appointmentPlan.currency.id} listPrice={appointmentPlan.price} />,
+                    },
+                  )}
+                </div>
+              </StyledTab>
+            </div>
+          ))}
       </div>
 
       {appointmentPlans
+        .filter(v => (appointmentPlanId ? v.id === appointmentPlanId || v.isPrivate === false : v.isPrivate === false))
         .filter((appointmentPlan, index) =>
           selectedAppointmentPlanId ? selectedAppointmentPlanId === appointmentPlan.id : index === 0,
         )
