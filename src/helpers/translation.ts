@@ -1444,7 +1444,7 @@ export const codeMessages = defineMessages({
   },
   E_PAY_TPCLIENT: {
     id: 'code.E_PAY_TPCLIENT',
-    defaultMessage: 'E_PAY_TPCLIENT',
+    defaultMessage: '信用卡付款失敗請重新輸入卡號',
   },
   E_SIGN_URL: {
     id: 'code.E_SIGN_URL',
