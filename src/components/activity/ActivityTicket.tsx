@@ -1,11 +1,11 @@
+import { Icon } from '@chakra-ui/icons'
 import { Divider, Tag } from 'antd'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import UserOIcon from '../../images/user-o.svg'
+import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 
@@ -144,7 +144,7 @@ const ActivityTicket: React.FC<{
       {variant === 'admin' && (
         <StyledExtraAdmin className="d-flex align-items-center justify-content-between">
           <div>
-            <Icon src={UserOIcon} className="mr-2" />
+            <Icon as={UserOIcon} className="mr-2" />
             <span>{`${participants} / ${count}`}</span>
           </div>
           {extra}

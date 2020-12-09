@@ -1,6 +1,6 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, Dropdown, Icon as AntdIcon, List, Menu, Skeleton } from 'antd'
 import React, { useContext, useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import { ReactSortable } from 'react-sortablejs'
@@ -13,7 +13,7 @@ import {
   usePlaylistPodcastPrograms,
   useUpdatePodcastProgramPositions,
 } from '../../hooks/podcast'
-import AddToPlaylistIcon from '../../images/add-to-playlist.svg'
+import { ReactComponent as AddToPlaylistIcon } from '../../images/add-to-playlist.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { PlaylistProps, PodcastProgramContentProps } from '../../types/podcast'
 import { AvatarImage, CustomRatioImage } from '../common/Image'
@@ -356,7 +356,7 @@ const PodcastProgramItem: React.FC<
 
       {typeof onEdit !== 'undefined' && (
         <StyledButton type="link" className="flex-shrink-0 ml-4 p-0" onClick={() => onEdit(id)}>
-          <Icon src={AddToPlaylistIcon} />
+          <Icon as={AddToPlaylistIcon} />
         </StyledButton>
       )}
     </StyledListItem>

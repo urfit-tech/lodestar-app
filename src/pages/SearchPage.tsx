@@ -1,11 +1,11 @@
 import { useQuery } from '@apollo/react-hooks'
+import { Icon } from '@chakra-ui/icons'
 import { Skeleton, Tabs } from 'antd'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { sum } from 'ramda'
 import React, { useEffect } from 'react'
 import ReactGA from 'react-ga'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -25,7 +25,7 @@ import CheckoutPodcastPlanModal from '../containers/checkout/CheckoutPodcastPlan
 import { useApp } from '../containers/common/AppContext'
 import { notEmpty } from '../helpers'
 import { useMember } from '../hooks/member'
-import SearchIcon from '../images/search.svg'
+import { ReactComponent as SearchIcon } from '../images/search.svg'
 import types from '../types'
 import { ActivityProps } from '../types/activity'
 import { MerchandiseBriefProps } from '../types/merchandise'
@@ -81,7 +81,7 @@ const SearchPage: React.FC = () => {
           <StyledTitle>
             {title && (
               <>
-                <Icon src={SearchIcon} className="mr-2" />
+                <Icon as={SearchIcon} className="mr-2" />
                 <span>{title}</span>
               </>
             )}

@@ -1,7 +1,7 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, message } from 'antd'
 import axios from 'axios'
 import React, { useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -10,7 +10,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { handleError } from '../helpers'
 import { codeMessages, commonMessages, usersMessages } from '../helpers/translation'
-import CheckEmailIcon from '../images/check-email.svg'
+import { ReactComponent as CheckEmailIcon } from '../images/check-email.svg'
 
 const StyledContainer = styled.div`
   padding: 4rem 1rem;
@@ -62,7 +62,7 @@ const CheckEmailPage: React.FC = () => {
     <DefaultLayout noFooter centeredBox>
       <StyledContainer>
         <StyledIcon>
-          <Icon src={CheckEmailIcon} />
+          <Icon as={CheckEmailIcon} />
         </StyledIcon>
 
         <p>

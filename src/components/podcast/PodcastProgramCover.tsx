@@ -3,14 +3,13 @@ import { Button, Divider } from 'antd'
 import moment from 'moment'
 import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineLoading } from 'react-icons/ai'
-import SVG from 'react-inlinesvg'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
 import { useEnrolledPodcastProgramIds } from '../../hooks/podcast'
-import PauseCircleIcon from '../../images/pause-circle.svg'
-import PlayCircleIcon from '../../images/play-circle.svg'
+import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
+import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { BraftContent } from '../common/StyledBraftEditor'
 const StyledWrapper = styled.div<{ coverUrl?: string }>`
   padding: 4rem 1.5rem;
@@ -57,7 +56,7 @@ const StyledDescription = styled.div`
     color: white;
   }
 `
-const StyledIcon = styled(SVG)`
+const StyledIcon = styled(Icon)`
   && {
     color: white;
     font-size: 40px;
@@ -168,11 +167,11 @@ const PodcastProgramCover: React.FC<{
             <Icon as={AiOutlineLoading} style={{ fontSize: '44px' }} />
           ) : podcastProgramId === currentPlayingId ? (
             <Button type="link" onClick={() => setIsPlaying && setIsPlaying(!isPlaying)}>
-              {isPlaying ? <StyledIcon src={PauseCircleIcon} /> : <StyledIcon src={PlayCircleIcon} />}
+              {isPlaying ? <StyledIcon as={PauseCircleIcon} /> : <StyledIcon as={PlayCircleIcon} />}
             </Button>
           ) : (
             <Button type="link" loading={loadingPodcastProgram} onClick={handlePlay}>
-              <StyledIcon src={PlayCircleIcon} />
+              <StyledIcon as={PlayCircleIcon} />
             </Button>
           )}
         </div>

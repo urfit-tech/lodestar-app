@@ -1,8 +1,8 @@
+import { Icon } from '@chakra-ui/icons'
 import { Input } from 'antd'
 import { flatten, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -12,7 +12,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCard from '../components/merchandise/MerchandiseCard'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useMerchandiseCollection } from '../hooks/merchandise'
-import ShopIcon from '../images/shop.svg'
+import { ReactComponent as ShopIcon } from '../images/shop.svg'
 
 const messages = defineMessages({
   keywordSearch: { id: 'product.merchandise.placeholder.keywordSearch', defaultMessage: '關鍵字搜尋' },
@@ -86,7 +86,7 @@ const MerchandiseCollectionPage: React.FC = () => {
               <>#{tag}</>
             ) : (
               <>
-                <Icon src={ShopIcon} className="mr-3" />
+                <Icon as={ShopIcon} className="mr-3" />
                 <span>{formatMessage(productMessages.merchandise.title.mall)}</span>
               </>
             )}

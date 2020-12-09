@@ -1,15 +1,15 @@
+import { Icon } from '@chakra-ui/icons'
 import { Progress } from 'antd'
 import moment from 'moment'
 import React, { useContext } from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { ThemeContext } from 'styled-components'
 import { CustomRatioImage } from '../../components/common/Image'
 import PriceLabel from '../../components/common/PriceLabel'
 import { projectMessages } from '../../helpers/translation'
-import CalendarAltOIcon from '../../images/calendar-alt-o.svg'
+import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import EmptyCover from '../../images/empty-cover.png'
-import UserOIcon from '../../images/user-o.svg'
+import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { ProjectIntroProps } from '../../types/project'
 
 const messages = defineMessages({
@@ -124,7 +124,7 @@ const ProjectIntroCard: React.FC<ProjectIntroProps> = ({
               />
             ) : isParticipantsVisible ? (
               <>
-                <Icon src={UserOIcon} className="mr-1" />
+                <Icon as={UserOIcon} className="mr-1" />
                 {formatMessage(messages.people, { count: enrollmentCount })}
               </>
             ) : null}
@@ -144,12 +144,12 @@ const ProjectIntroCard: React.FC<ProjectIntroProps> = ({
               <>
                 {moment().isAfter(expiredAt) ? (
                   <div>
-                    <Icon src={CalendarAltOIcon} className="mr-1" />
+                    <Icon as={CalendarAltOIcon} className="mr-1" />
                     {type === 'funding' ? formatMessage(messages.isExpiredFunding) : formatMessage(messages.isExpired)}
                   </div>
                 ) : (
                   <StyledLabel>
-                    <Icon src={CalendarAltOIcon} className="mr-1" />
+                    <Icon as={CalendarAltOIcon} className="mr-1" />
                     {formatMessage(messages.onSaleCountDownDays, {
                       days: moment(expiredAt).diff(new Date(), 'days'),
                     })}

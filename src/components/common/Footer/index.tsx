@@ -1,13 +1,13 @@
+import { Icon } from '@chakra-ui/icons'
 import React, { useContext } from 'react'
-import Icon from 'react-inlinesvg'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useApp } from '../../../containers/common/AppContext'
 import LanguageContext from '../../../contexts/LanguageContext'
-import FacebookIcon from '../../../images/facebook-icon.svg'
-import GroupIcon from '../../../images/group-icon.svg'
-import InstagramIcon from '../../../images/instagram-icon.svg'
-import YoutubeIcon from '../../../images/youtube-icon.svg'
+import { ReactComponent as FacebookIcon } from '../../../images/facebook-icon.svg'
+import { ReactComponent as GroupIcon } from '../../../images/group-icon.svg'
+import { ReactComponent as InstagramIcon } from '../../../images/instagram-icon.svg'
+import { ReactComponent as YoutubeIcon } from '../../../images/youtube-icon.svg'
 import { BREAK_POINT } from '../Responsive'
 import DefaultFooter from './DefaultFooter'
 import MultilineFooter from './MultilineFooter'
@@ -101,10 +101,10 @@ export const SocialLinks: React.FC = () => {
         .filter(nav => nav.block === 'social_media')
         .map(socialLink => (
           <StyledSocialAnchor key={socialLink.label} href={socialLink.href} target="_blank" rel="noopener noreferrer">
-            {socialLink.label === 'facebook' && <Icon src={FacebookIcon} />}
-            {socialLink.label === 'group' && <Icon src={GroupIcon} />}
-            {socialLink.label === 'youtube' && <Icon src={YoutubeIcon} />}
-            {socialLink.label === 'instagram' && <Icon src={InstagramIcon} />}
+            {socialLink.label === 'facebook' && <Icon as={FacebookIcon} />}
+            {socialLink.label === 'group' && <Icon as={GroupIcon} />}
+            {socialLink.label === 'youtube' && <Icon as={YoutubeIcon} />}
+            {socialLink.label === 'instagram' && <Icon as={InstagramIcon} />}
           </StyledSocialAnchor>
         ))}
     </>

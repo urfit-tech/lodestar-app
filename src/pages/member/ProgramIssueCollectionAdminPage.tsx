@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/react-hooks'
+import { Icon } from '@chakra-ui/icons'
 import { Checkbox, Select, Skeleton, Typography } from 'antd'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
 import IssueAdminCard from '../../components/issue/IssueAdminCard'
@@ -10,7 +10,7 @@ import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { EnrolledProgramSelector } from '../../components/program/ProgramSelector'
 import { useApp } from '../../containers/common/AppContext'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import BookIcon from '../../images/book.svg'
+import { ReactComponent as BookIcon } from '../../images/book.svg'
 import types from '../../types'
 
 const ProgramIssueCollectionAdminPage = () => {
@@ -23,7 +23,7 @@ const ProgramIssueCollectionAdminPage = () => {
   return (
     <MemberAdminLayout>
       <Typography.Title level={3} className="mb-4">
-        <Icon src={BookIcon} className="mr-3" />
+        <Icon as={BookIcon} className="mr-3" />
         <span>{formatMessage(productMessages.program.content.programProblem)}</span>
       </Typography.Title>
 

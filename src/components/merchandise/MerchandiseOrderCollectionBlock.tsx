@@ -1,15 +1,15 @@
 import { useQuery } from '@apollo/react-hooks'
+import { Icon } from '@chakra-ui/icons'
 import { Skeleton } from 'antd'
 import gql from 'graphql-tag'
 import moment from 'moment-timezone'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { productMessages, saleMessages } from '../../helpers/translation'
 import { useOrderLogsWithMerchandiseSpec } from '../../hooks/merchandise'
-import CalendarOIcon from '../../images/calendar-alt-o.svg'
+import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import types from '../../types'
 import { OrderLogWithMerchandiseSpecProps } from '../../types/merchandise'
 import AdminCard from '../common/AdminCard'
@@ -143,7 +143,7 @@ const MerchandiseOrderCard: React.FC<{
 
           {orderLog.createdAt && (
             <StyledPurchaseDate className="mb-4 d-flex align-items-center">
-              <Icon src={CalendarOIcon} className="mr-2" />
+              <Icon as={CalendarOIcon} className="mr-2" />
               {`${moment(orderLog.createdAt).format('YYYY-MM-DD hh:mm')} ${formatMessage(messages.purchase)}`}
             </StyledPurchaseDate>
           )}

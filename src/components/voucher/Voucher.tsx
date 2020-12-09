@@ -1,12 +1,12 @@
+import { Icon } from '@chakra-ui/icons'
 import { Divider } from 'antd'
 import moment from 'moment'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { rgba } from '../../helpers'
 import { commonMessages, voucherMessages } from '../../helpers/translation'
-import GiftIcon from '../../images/gift.svg'
+import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledWrapper = styled.div`
@@ -110,7 +110,7 @@ const Voucher: React.FC<VoucherProps> = ({
     <StyledWrapper>
       <div className="d-flex align-items-center justify-content-start">
         <StyledIcon className="mr-3" available={available}>
-          <Icon src={GiftIcon} />
+          <Icon as={GiftIcon} />
         </StyledIcon>
 
         <StyledContent className="flex-grow-1">

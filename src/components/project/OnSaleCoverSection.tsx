@@ -1,7 +1,7 @@
+import { Icon } from '@chakra-ui/icons'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import styled from 'styled-components'
-import CalendarOIcon from '../../images/calendar-alt-o.svg'
+import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
 import FundingCoverBlock from './FundingCoverBlock'
@@ -213,7 +213,7 @@ const OnSaleCoverSection: React.FC<OnSaleCoverSectionProps> = ({ cover, header, 
         <div className="row flex-row-reverse">
           <StyledCountDownBlock className="col-12 col-lg-4">
             <StyledCountDownTime className="d-flex align-items-center justify-content-center">
-              {<Icon src={CalendarOIcon} className="mr-2" />}
+              {<Icon as={CalendarOIcon} className="mr-2" />}
               {expiredAt && <CountDownTimeBlock expiredAt={expiredAt} />}
             </StyledCountDownTime>
           </StyledCountDownBlock>

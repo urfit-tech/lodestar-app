@@ -1,5 +1,5 @@
+import { Icon } from '@chakra-ui/icons'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -7,7 +7,7 @@ import { PodcastProgramProps } from '../../containers/podcast/PodcastProgramTime
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledPodcastPlansCreators, useEnrolledPodcastProgramIds } from '../../hooks/podcast'
 import { useEnrolledProgramIds } from '../../hooks/program'
-import ArrowRightIcon from '../../images/angle-right.svg'
+import { ReactComponent as ArrowRightIcon } from '../../images/angle-right.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramBriefProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
@@ -80,7 +80,7 @@ const OverviewBlock: React.FC<{
         ))}
         <StyledLink onClick={() => onChangeTab && onChangeTab('programs')}>
           {formatMessage(commonMessages.content.browse)}
-          <Icon src={ArrowRightIcon} className="ml-2" />
+          <Icon as={ArrowRightIcon} className="ml-2" />
         </StyledLink>
       </StyledSideBarBlock>
 
@@ -122,7 +122,7 @@ const OverviewBlock: React.FC<{
           })}
           <StyledLink onClick={() => onChangeTab && onChangeTab('podcasts')}>
             {formatMessage(commonMessages.content.browse)}
-            <Icon src={ArrowRightIcon} className="ml-2" />
+            <Icon as={ArrowRightIcon} className="ml-2" />
           </StyledLink>
         </StyledSideBarBlock>
       )}

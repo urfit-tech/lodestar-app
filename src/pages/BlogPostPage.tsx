@@ -1,3 +1,4 @@
+import { Icon } from '@chakra-ui/icons'
 import { Divider, Skeleton } from 'antd'
 import BraftEditor from 'braft-editor'
 import { throttle } from 'lodash'
@@ -5,7 +6,6 @@ import moment from 'moment'
 import { render } from 'mustache'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, Redirect, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -17,9 +17,9 @@ import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { useAddPostViews, usePost } from '../hooks/blog'
-import CalendarAltOIcon from '../images/calendar-alt-o.svg'
-import EyeIcon from '../images/eye.svg'
-import UserOIcon from '../images/user-o.svg'
+import { ReactComponent as CalendarAltOIcon } from '../images/calendar-alt-o.svg'
+import { ReactComponent as EyeIcon } from '../images/eye.svg'
+import { ReactComponent as UserOIcon } from '../images/user-o.svg'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
@@ -175,11 +175,11 @@ const BlogPostPage: React.FC = () => {
         <div className="row">
           <div className="col-12 col-lg-9">
             <StyledPostMeta className="pb-3">
-              <Icon src={UserOIcon} className="mr-1" />
+              <Icon as={UserOIcon} className="mr-1" />
               <span className="mr-2">{post?.author.name}</span>
-              <Icon src={CalendarAltOIcon} className="mr-1" />
+              <Icon as={CalendarAltOIcon} className="mr-1" />
               <span className="mr-2">{post?.publishedAt ? moment(post.publishedAt).format('YYYY-MM-DD') : ''}</span>
-              <Icon src={EyeIcon} className="mr-1" />
+              <Icon as={EyeIcon} className="mr-1" />
               <span>{post?.views}</span>
             </StyledPostMeta>
             <StyledTitle>{post?.title}</StyledTitle>

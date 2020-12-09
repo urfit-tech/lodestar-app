@@ -1,6 +1,6 @@
+import { Icon } from '@chakra-ui/icons'
 import { Dropdown, Form, Icon as AntdIcon, Menu } from 'antd'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -17,7 +17,7 @@ import {
   usePlaylistCollection,
   useUpdatePlaylist,
 } from '../../hooks/podcast'
-import AngleRightIcon from '../../images/angle-right.svg'
+import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 
 const StyledTitle = styled.h3`
   margin-bottom: 32px;
@@ -113,7 +113,7 @@ const PodcastProgramCollectionBlock: React.FC<{ memberId: string }> = ({ memberI
                       {enrolledPodcastPlansCreator.name || enrolledPodcastPlansCreator.username}
                     </StyledEnrolledPodcastPlanCreatorName>
                   </div>
-                  <Icon src={AngleRightIcon} />
+                  <Icon as={AngleRightIcon} />
                 </div>
               </Link>
             ))

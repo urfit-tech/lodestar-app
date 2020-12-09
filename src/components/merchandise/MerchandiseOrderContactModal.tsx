@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
+import { Icon } from '@chakra-ui/icons'
 import { Button, ButtonGroup, FormControl, FormErrorMessage, useDisclosure, useToast } from '@chakra-ui/react'
 import { Button as AntdButton } from 'antd'
 import BraftEditor from 'braft-editor'
@@ -6,13 +7,12 @@ import gql from 'graphql-tag'
 import moment from 'moment'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import IconEmail from '../../images/email-o.svg'
+import { ReactComponent as IconEmail } from '../../images/email-o.svg'
 import types from '../../types'
 import { OrderContact } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
@@ -156,7 +156,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
         renderTrigger={() => (
           <StyledButton
             isMark={isUnread}
-            leftIcon={<Icon src={IconEmail} />}
+            leftIcon={<Icon as={IconEmail} />}
             variant="ghost"
             colorScheme="white"
             onClick={() => {

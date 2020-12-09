@@ -1,7 +1,7 @@
+import { Icon } from '@chakra-ui/icons'
 import { Skeleton, Typography } from 'antd'
 import moment from 'moment'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useAuth } from '../../components/auth/AuthContext'
@@ -12,7 +12,7 @@ import { useApp } from '../../containers/common/AppContext'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCards, useMembershipCard } from '../../hooks/card'
 import { useMember } from '../../hooks/member'
-import MemberCardIcon from '../../images/membercard.svg'
+import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import NotFoundPage from '../NotFoundPage'
 
 const StyledContainer = styled.div`
@@ -45,7 +45,7 @@ const CardCollectionAdminPage: React.FC = () => {
   return (
     <MemberAdminLayout>
       <Typography.Title level={3} className="mb-4">
-        <Icon src={MemberCardIcon} className="mr-3" />
+        <Icon as={MemberCardIcon} className="mr-3" />
         <span>{formatMessage(commonMessages.content.memberCard)}</span>
       </Typography.Title>
 

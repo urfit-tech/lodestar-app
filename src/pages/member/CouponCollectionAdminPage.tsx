@@ -1,7 +1,7 @@
+import { Icon } from '@chakra-ui/icons'
 import { Tabs, Typography } from 'antd'
 import { reverse } from 'ramda'
 import React, { useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
 import CouponAdminCard from '../../components/checkout/CouponAdminCard'
@@ -9,7 +9,7 @@ import CouponInsertionCard from '../../components/checkout/CouponInsertionCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { usersMessages } from '../../helpers/translation'
 import { useCouponCollection } from '../../hooks/data'
-import TicketIcon from '../../images/ticket.svg'
+import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 
 const CouponCollectionAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
@@ -47,7 +47,7 @@ const CouponCollectionAdminPage: React.FC = () => {
   return (
     <MemberAdminLayout>
       <Typography.Title level={3} className="mb-4">
-        <Icon src={TicketIcon} className="mr-3" />
+        <Icon as={TicketIcon} className="mr-3" />
         <span>{formatMessage(usersMessages.title.coupon)}</span>
       </Typography.Title>
 

@@ -1,13 +1,13 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button } from '@chakra-ui/react'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages } from '../helpers/translation'
-import routeErrorIcon from '../images/404.svg'
-import errorIcon from '../images/error-2.svg'
+import { ReactComponent as routeErrorIcon } from '../images/404.svg'
+import { ReactComponent as errorIcon } from '../images/error-2.svg'
 
 const StyledWrapper = styled.div`
   height: 430px;
@@ -69,7 +69,7 @@ const NotFoundPage: React.FC<NotFoundPageProps> = ({ error }) => {
   return (
     <DefaultLayout centeredBox>
       <StyledWrapper>
-        <StyledErrorIcon src={error ? errorIcon : routeErrorIcon} />
+        <StyledErrorIcon as={error ? errorIcon : routeErrorIcon} />
         <StyledTitle>{formatMessage(error ? commonMessages.title.error : commonMessages.title.routeError)}</StyledTitle>
         <StyledDescription>
           {formatMessage(

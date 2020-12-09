@@ -1,6 +1,6 @@
+import { Icon } from '@chakra-ui/icons'
 import { Spin, Typography } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import ProductTypeLabel from '../../components/common/ProductTypeLabel'
@@ -9,7 +9,7 @@ import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useSimpleProduct } from '../../hooks/common'
 import EmptyCover from '../../images/empty-cover.png'
-import ExclamationCircleIcon from '../../images/exclamation-circle.svg'
+import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 import { ProductType } from '../../types/product'
 import { CustomRatioImage } from '../common/Image'
 import PriceLabel from '../common/PriceLabel'
@@ -80,7 +80,7 @@ const CartProductItem: React.FC<{
 
         {!!buyableQuantity && quantity > buyableQuantity && (
           <StyledInventoryBlock className="d-flex align-items-center mr-3">
-            <Icon src={ExclamationCircleIcon} className="mr-2" />
+            <Icon as={ExclamationCircleIcon} className="mr-2" />
             {`${formatMessage(messages.remainStock)} ${buyableQuantity}`}
           </StyledInventoryBlock>
         )}
@@ -112,7 +112,7 @@ const CartProductItem: React.FC<{
         {((productType === 'ProjectPlan' && isLimited === true) || productType === 'Merchandise') &&
         buyableQuantity === 0 ? (
           <StyledInventoryBlock className="d-flex align-items-center">
-            <Icon src={ExclamationCircleIcon} className="mr-2" />
+            <Icon as={ExclamationCircleIcon} className="mr-2" />
             <span>{formatMessage(commonMessages.button.soldOut)}</span>
           </StyledInventoryBlock>
         ) : (

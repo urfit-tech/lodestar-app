@@ -1,7 +1,7 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, Popover } from 'antd'
 import React, { useContext } from 'react'
 import ReactGA from 'react-ga'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -9,7 +9,7 @@ import CartContext from '../../contexts/CartContext'
 import { durationFullFormatter } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { usePodcastPlanIds } from '../../hooks/podcast'
-import MicrophoneIcon from '../../images/microphone.svg'
+import { ReactComponent as MicrophoneIcon } from '../../images/microphone.svg'
 import { AvatarImage } from '../common/Image'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 
@@ -119,7 +119,7 @@ const PodcastProgramPopover: React.FC<PodcastProgramPopoverProps & { podcastProg
     <StyledWrapper>
       <StyledTitle>{title}</StyledTitle>
       <StyledMeta>
-        <Icon src={MicrophoneIcon} className="mr-2" />
+        <Icon as={MicrophoneIcon} className="mr-2" />
         <span>{durationFullFormatter(durationSecond)}</span>
       </StyledMeta>
       <StyledDescription>{description}</StyledDescription>

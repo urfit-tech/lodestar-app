@@ -1,17 +1,17 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, Dropdown, Form, Icon as AntdIcon, Input, Menu, message, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
 import moment from 'moment'
 import React, { useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/appointment'
 import DefaultAvatar from '../../images/avatar.svg'
-import CalendarOIcon from '../../images/calendar-alt-o.svg'
-import UserOIcon from '../../images/user-o.svg'
+import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
+import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { AppointmentEnrollmentProps } from '../../types/appointment'
 import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
@@ -180,11 +180,11 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           <StyledTitle>{title}</StyledTitle>
           <StyledMetaBlock className="d-flex justify-content-start">
             <div className="mr-3">
-              <Icon src={CalendarOIcon} className="mr-1" />
+              <Icon as={CalendarOIcon} className="mr-1" />
               <span>{dateRangeFormatter({ startedAt, endedAt, dateFormat: 'MM/DD(dd)' })}</span>
             </div>
             <div className="d-none d-lg-block">
-              <Icon src={UserOIcon} className="mr-1" />
+              <Icon as={UserOIcon} className="mr-1" />
               <span>{creator.name}</span>
             </div>
           </StyledMetaBlock>

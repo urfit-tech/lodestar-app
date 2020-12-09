@@ -1,10 +1,10 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, useDisclosure } from '@chakra-ui/react'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { shippingMethodFormatter } from '../../helpers'
-import IconList from '../../images/list-o.svg'
+import { ReactComponent as IconList } from '../../images/list-o.svg'
 import { InvoiceProps } from '../checkout/InvoiceInput'
 import { ShippingProps } from '../checkout/ShippingInput'
 import CommonModal from '../common/CommonModal'
@@ -44,7 +44,7 @@ const MerchandiseShippingInfoModal: React.FC<{
     <CommonModal
       title={formatMessage(messages.shippingInfo)}
       renderTrigger={() => (
-        <Button leftIcon={<Icon src={IconList} />} variant="ghost" colorScheme="white" onClick={onOpen}>
+        <Button leftIcon={<Icon as={IconList} />} variant="ghost" colorScheme="white" onClick={onOpen}>
           {formatMessage(messages.shippingInfo)}
         </Button>
       )}
