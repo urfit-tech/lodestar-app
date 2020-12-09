@@ -75,7 +75,7 @@ const ProgramContentBlock: React.FC<{
           onProgress={({ played }) => {
             const currentProgress = Math.ceil(played * 20) / 20 // every 5% as a tick
             insertProgress(programContentId, {
-              progress: currentProgress > initialProgress ? currentProgress : initialProgress,
+              progress: currentProgress > 1 ? 1 : currentProgress > initialProgress ? currentProgress : initialProgress,
               lastProgress: played,
             }).then(() => refetchProgress())
           }}
