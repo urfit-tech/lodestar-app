@@ -28,7 +28,6 @@ const GlobalSearchInput: React.FC = () => {
   const handleSearch = () => {
     searchInputRef.current?.value && history.push(`/search?q=${searchInputRef.current.value}`)
   }
-
   return (
     <form
       onSubmit={e => {
@@ -36,8 +35,8 @@ const GlobalSearchInput: React.FC = () => {
         handleSearch()
       }}
     >
-      <InputGroup>
-        <StyledInput ref={searchInputRef} size="sm" placeholder={formatMessage(commonMessages.ui.search)} />
+      <InputGroup size="sm">
+        <StyledInput ref={searchInputRef} placeholder={formatMessage(commonMessages.ui.search)} />
         <InputRightElement
           children={<Icon as={AiOutlineSearch} className="cursor-pointer" onClick={() => handleSearch()} />}
         />
