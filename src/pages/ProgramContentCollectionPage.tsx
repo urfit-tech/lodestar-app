@@ -1,7 +1,8 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button } from '@chakra-ui/react'
-import { Button as AntdButton, Layout, PageHeader, Spin } from 'antd'
+import { Layout, PageHeader, Spin } from 'antd'
 import React from 'react'
+import { AiOutlineProfile } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -71,9 +72,13 @@ const ProgramContentCollectionPage: React.FC = () => {
           >
             {formatMessage(commonMessages.button.review)}
           </StyledButton>,
-          <AntdButton icon="profile" type="link" onClick={() => history.push(`/programs/${programId}`)}>
+          <StyledButton
+            variant="outline"
+            onClick={() => history.push(`/programs/${programId}`)}
+            leftIcon={<Icon as={AiOutlineProfile} />}
+          >
             {formatMessage(commonMessages.button.intro)}
-          </AntdButton>,
+          </StyledButton>,
         ]}
         onBack={() => {
           if (productId) {
