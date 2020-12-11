@@ -155,11 +155,10 @@ const useEnrolledMembers = (targetId: string) => {
     `,
     { variables: { targetId } },
   )
-  const enrolledMembers: (string | null)[] =
-    [
-      ...(data?.program_enrollment?.map(v => v.member_id) || []),
-      ...(data?.program_plan_enrollment?.map(v => v.member_id) || []),
-    ] || []
+  const enrolledMembers: (string | null)[] = [
+    ...(data?.program_enrollment?.map(v => v.member_id) || []),
+    ...(data?.program_plan_enrollment?.map(v => v.member_id) || []),
+  ]
 
   return {
     loadingEnrolledMembers: loading,
