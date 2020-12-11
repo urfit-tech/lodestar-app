@@ -1,12 +1,11 @@
-import { CircularProgress } from '@chakra-ui/react'
+import { CircularProgress, Icon } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { ReactSVG } from 'react-svg'
 import styled from 'styled-components'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import IconNext from '../../images/icon-next.svg'
+import { ReactComponent as IconNext } from '../../images/icon-next.svg'
 import { ProgramContentBodyProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
 
@@ -39,8 +38,13 @@ const StyledIconWrapper = styled.div`
   position: relative;
   user-select: none;
   cursor: pointer;
+  height: 72px;
+  margin-bottom: 24px;
+  svg {
+    display: block !important;
+  }
 `
-const StyledIcon = styled(ReactSVG)`
+const StyledIcon = styled(Icon)`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -180,7 +184,7 @@ const CountDownPlayButton: React.FC<{ duration?: number; onPlayNext?: () => void
   return (
     <StyledIconWrapper onClick={() => onPlayNext?.()}>
       <CircularProgress trackColor="var(--gray-darker)" color="white" thickness="6px" value={progress} size="72px" />
-      <StyledIcon src={IconNext} className="mb-4" />
+      <StyledIcon as={IconNext} />
     </StyledIconWrapper>
   )
 }
