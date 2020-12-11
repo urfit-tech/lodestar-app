@@ -12,6 +12,7 @@ import { useAuth } from '../components/auth/AuthContext'
 import AdminCard from '../components/common/AdminCard'
 import { StyledLayoutContent } from '../components/layout/DefaultLayout.styled'
 import ProgramContentMenu from '../components/program/ProgramContentMenu'
+import { useApp } from '../containers/common/AppContext'
 import { ProgressProvider } from '../contexts/ProgressContext'
 import { commonMessages } from '../helpers/translation'
 import { useProgram } from '../hooks/program'
@@ -54,32 +55,45 @@ const StyledButton = styled(Button)`
 const ProgramContentCollectionPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
+  const { enabledModules } = useApp()
   const { programId } = useParams<{ programId: string }>()
   const [productId] = useQueryParam('back', StringParam)
   const { currentMemberId } = useAuth()
   const { loadingProgram, program } = useProgram(programId)
+
+  const extra = enabledModules.customer_review
+    ? [
+        <StyledButton
+          variant="outline"
+          onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
+          leftIcon={<Icon as={BsStar} />}
+        >
+          {formatMessage(commonMessages.button.review)}
+        </StyledButton>,
+        <StyledButton
+          variant="outline"
+          onClick={() => history.push(`/programs/${programId}`)}
+          leftIcon={<Icon as={AiOutlineProfile} />}
+        >
+          {formatMessage(commonMessages.button.intro)}
+        </StyledButton>,
+      ]
+    : [
+        <StyledButton
+          variant="outline"
+          onClick={() => history.push(`/programs/${programId}`)}
+          leftIcon={<Icon as={AiOutlineProfile} />}
+        >
+          {formatMessage(commonMessages.button.intro)}
+        </StyledButton>,
+      ]
 
   return (
     <Layout>
       <StyledPCPageHeader
         className="d-flex align-items-center"
         title={program && program.title}
-        extra={[
-          <StyledButton
-            variant="outline"
-            onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
-            leftIcon={<Icon as={BsStar} />}
-          >
-            {formatMessage(commonMessages.button.review)}
-          </StyledButton>,
-          <StyledButton
-            variant="outline"
-            onClick={() => history.push(`/programs/${programId}`)}
-            leftIcon={<Icon as={AiOutlineProfile} />}
-          >
-            {formatMessage(commonMessages.button.intro)}
-          </StyledButton>,
-        ]}
+        extra={extra}
         onBack={() => {
           if (productId) {
             const [productType, id] = productId.split('_')
