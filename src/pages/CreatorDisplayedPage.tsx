@@ -48,21 +48,23 @@ const StyledCreatorAbstract = styled.p`
   color: var(--gray-dark);
 `
 
-const StyledCreatorTag = styled.span`
+export const StyledCreatorTag = styled.span`
   &:before {
     content: '#';
     margin-right: 2px;
   }
 
-  width: 48px;
-  height: 22px;
+  margin-bottom: 0.5rem;
+  border-radius: 2px;
+  padding: 4px;
   font-size: 14px;
-  line-height: 1.57;
+  line-height: 1;
   letter-spacing: 0.4px;
   color: ${props => props.theme['@primary-color']};
+  background-color: ${props => props.theme['@primary-color']}22;
 
-  & + & {
-    margin-left: 0.5rem;
+  &:not(last-child) {
+    margin-right: 0.4rem;
   }
 `
 
@@ -133,8 +135,8 @@ const CreatorDisplayedPage: React.FC<{}> = () => {
                   />
                   <StyledCreatorName className="mb-2">{v.name}</StyledCreatorName>
                   <StyledCreatorTitle className="mb-3">{v.title}</StyledCreatorTitle>
-                  <StyledCreatorAbstract className="mb-2">{v.abstract}</StyledCreatorAbstract>
-                  <div>
+                  <StyledCreatorAbstract className="mb-3">{v.abstract}</StyledCreatorAbstract>
+                  <div className="d-flex flex-wrap">
                     {v.specialtyNames.map(w => (
                       <StyledCreatorTag>{w}</StyledCreatorTag>
                     ))}
@@ -152,7 +154,7 @@ const CreatorDisplayedPage: React.FC<{}> = () => {
 const usePublishedCreator = () => {
   const { loading, error, data, refetch } = useQuery<types.GET_PUBLISHED_CREATOR>(gql`
     query GET_PUBLISHED_CREATOR {
-      creator(where: { published_at: { _is_null: false } }) {
+      creator(where: { published_at: { _is_null: false } }, order_by: { published_at: desc, position: asc }) {
         id
         name
         picture_url
@@ -167,7 +169,7 @@ const usePublishedCreator = () => {
             name
           }
         }
-        member_specialities {
+        member_specialities(limit: 3) {
           id
           tag_name
         }

@@ -1,14 +1,14 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, message } from 'antd'
 import React, { useContext } from 'react'
 import ReactGA from 'react-ga'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import CheckoutProductModal from '../../containers/checkout/CheckoutProductModal'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
 import { useMember } from '../../hooks/member'
-import CartIcon from '../../images/cart.svg'
+import { ReactComponent as CartIcon } from '../../images/cart.svg'
 import { MerchandiseProps, MerchandiseSpecProps } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
 import { AuthModalContext } from '../auth/AuthModal'
@@ -100,7 +100,7 @@ const GeneralMerchandisePaymentBlock: React.FC<{
           disabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
           onClick={() => quantity && handleClick()}
         >
-          <Icon src={CartIcon} />
+          <Icon as={CartIcon} />
         </Button>
       </div>
 

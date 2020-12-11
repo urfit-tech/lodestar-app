@@ -1,12 +1,12 @@
 import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { Icon } from '@chakra-ui/icons'
 import { Input, Select, Typography } from 'antd'
 import gql from 'graphql-tag'
 import { debounce } from 'lodash'
 import React, { useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
-import SearchIcon from '../../images/search.svg'
+import { ReactComponent as SearchIcon } from '../../images/search.svg'
 import types from '../../types'
 import { PeriodType } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
@@ -143,7 +143,7 @@ const ProjectProgramSearchSection: React.FC<{
             filterOption={false}
             value={searchText}
             style={{ width: '80%' }}
-            suffixIcon={<Icon src={SearchIcon} />}
+            suffixIcon={<Icon as={SearchIcon} />}
             onSearch={value => {
               setSearchText(value)
               searchProductDebounce(value)
@@ -168,6 +168,7 @@ const ProjectProgramSearchSection: React.FC<{
           programId={selectedId}
           periodAmount={projectPlan.periodAmount}
           periodType={projectPlan.periodType}
+          projectPlanId={projectPlan.id}
           visible={visible}
           onCancel={() => setVisible(false)}
         />
@@ -176,6 +177,7 @@ const ProjectProgramSearchSection: React.FC<{
           programPackageId={selectedId}
           periodAmount={projectPlan.periodAmount}
           periodType={projectPlan.periodType}
+          projectPlanId={projectPlan.id}
           visible={visible}
           onCancel={() => setVisible(false)}
         />

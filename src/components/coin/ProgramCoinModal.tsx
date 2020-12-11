@@ -48,8 +48,9 @@ const ProgramCoinModal: React.FC<
     programId: string
     periodAmount: number
     periodType: PeriodType
+    projectPlanId: string
   }
-> = ({ renderTrigger, programId, periodAmount, periodType, ...props }) => {
+> = ({ renderTrigger, programId, periodAmount, periodType, projectPlanId, ...props }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { currentMember, currentMemberId } = useAuth()
@@ -60,11 +61,14 @@ const ProgramCoinModal: React.FC<
   const targetProgramPlan = program?.plans.find(
     programPlan => programPlan.periodAmount === periodAmount && programPlan.periodType === periodType,
   )
+
   const { orderChecking, check, placeOrder, orderPlacing } = useCheck(
     targetProgramPlan ? [`ProgramPlan_${targetProgramPlan.id}`] : [],
     'Coin',
     null,
-    {},
+    targetProgramPlan
+      ? { [`ProgramPlan_${targetProgramPlan.id}`]: { parentProductId: `ProjectPlan_${projectPlanId}` } }
+      : {},
   )
   const isPaymentAvailable =
     !orderChecking &&

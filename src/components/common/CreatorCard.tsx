@@ -7,7 +7,7 @@ import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { ProgramRoleName } from '../../types/program'
 import { AvatarImage } from './Image'
-import ProgramRoleFormatter from './ProgramRoleFormatter'
+import ProductRoleFormatter from './ProductRoleFormatter'
 import { BREAK_POINT } from './Responsive'
 
 const StyledWrapper = styled.div`
@@ -139,7 +139,7 @@ const CreatorCard: React.FC<{
           {!!labels &&
             labels.map(label => (
               <StyledLabel key={label.id} className="ml-2">
-                <ProgramRoleFormatter value={label.name as ProgramRoleName} />
+                <ProductRoleFormatter value={label.name as ProgramRoleName} />
               </StyledLabel>
             ))}
         </StyledTitle>

@@ -1,11 +1,11 @@
+import { Icon } from '@chakra-ui/icons'
 import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
 import BraftEditor, { EditorState } from 'braft-editor'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
-import CheckIcon from '../../images/check.svg'
+import { ReactComponent as CheckIcon } from '../../images/check.svg'
 import { CouponProps } from '../../types/checkout'
 import PriceLabel from '../common/PriceLabel'
 import ProductItem from '../common/ProductItem'
@@ -102,62 +102,62 @@ const CouponDescriptionModal: React.FC<
         {coupon.couponCode.couponPlan.scope === null && <div>{formatMessage(messages.allScope)}</div>}
         {coupon.couponCode.couponPlan.scope?.includes('Program') && (
           <div className="mb-2">
-            <Icon src={CheckIcon} className="mr-2" />
+            <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allProgram)}</span>
           </div>
         )}
         {coupon.couponCode.couponPlan.scope?.includes('ProgramPlan') && (
           <div className="mb-2">
-            <Icon src={CheckIcon} className="mr-2" />
+            <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allProgramPlan)}</span>
           </div>
         )}
         {coupon.couponCode.couponPlan.scope?.includes('ActivityTicket') && (
           <div className="mb-2">
-            <Icon src={CheckIcon} className="mr-2" />
+            <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allActivityTicket)}</span>
           </div>
         )}
         {coupon.couponCode.couponPlan.scope?.includes('PodcastProgram') && (
           <div className="mb-2">
-            <Icon src={CheckIcon} className="mr-2" />
+            <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allPodcastProgram)}</span>
           </div>
         )}
         {coupon.couponCode.couponPlan.scope?.includes('PodcastPlan') && (
           <div className="mb-2">
-            <Icon src={CheckIcon} className="mr-2" />
+            <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allPodcastPlan)}</span>
           </div>
         )}
         {coupon.couponCode.couponPlan.scope?.includes('AppointmentPlan') && (
           <div className="mb-2">
-            <Icon src={CheckIcon} className="mr-2" />
+            <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allAppointmentPlan)}</span>
           </div>
         )}
         {coupon.couponCode.couponPlan.scope?.includes('Merchandise') && (
           <div className="mb-2">
-            <Icon src={CheckIcon} className="mr-2" />
+            <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allMerchandise)}</span>
           </div>
         )}
         {coupon.couponCode.couponPlan.scope?.includes('ProjectPlan') && (
           <div className="mb-2">
-            <Icon src={CheckIcon} className="mr-2" />
+            <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allProjectPlan)}</span>
           </div>
         )}
         {coupon.couponCode.couponPlan.scope?.includes('ProgramPackagePlan') && (
           <div className="mb-2">
-            <Icon src={CheckIcon} className="mr-2" />
+            <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allProgramPackagePlan)}</span>
           </div>
         )}
         {coupon.couponCode.couponPlan.productIds && coupon.couponCode.couponPlan.productIds.length > 0 && (
           <>
             <div className="mb-2">
-              <Icon src={CheckIcon} className="mr-2" />
+              <Icon as={CheckIcon} className="mr-2" />
               <span>{formatMessage(messages.otherSpecificProduct)}</span>
             </div>
             <div className="pl-4">

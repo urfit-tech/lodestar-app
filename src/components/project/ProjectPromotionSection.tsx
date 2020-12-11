@@ -1,8 +1,8 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button } from 'antd'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import styled from 'styled-components'
-import CalendarOIcon from '../../images/calendar-alt-o.svg'
+import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
 
@@ -71,7 +71,7 @@ const ProjectPromotionSection: React.FC<ProjectPromotionSectionProps> = ({ promo
               ))}
             </div>
             <StyledCountDownTime className="d-flex align-items-center justify-content-between">
-              {<Icon src={CalendarOIcon} className="icon mr-2" />}
+              {<Icon as={CalendarOIcon} className="icon mr-2" />}
               {expiredAt && <CountDownTimeBlock text="開課倒數" expiredAt={expiredAt} />}
             </StyledCountDownTime>
           </StyledSlogan>

@@ -1,13 +1,13 @@
+import { Icon } from '@chakra-ui/icons'
 import { Typography } from 'antd'
 import moment from 'moment'
 import { sum } from 'ramda'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useProgramContentProgress } from '../../contexts/ProgressContext'
 import { commonMessages } from '../../helpers/translation'
-import CalendarOIcon from '../../images/calendar-alt-o.svg'
+import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramPackageProgramProps } from '../../types/programPackage'
 import ProgressBar from '../common/ProgressBar'
@@ -106,7 +106,7 @@ export const ProgramDisplayedListItem: React.FC<{
             </StyledProgramTitle>
             {program.expiredAt && (
               <StyledExpiredTime className="mt-1 d-flex align-items-center">
-                <Icon src={CalendarOIcon} className="mr-1" />
+                <Icon as={CalendarOIcon} className="mr-1" />
                 <span className="mr-1">{moment(program.expiredAt).format('YYYY-MM-DD')}</span>
                 <span>{formatMessage(commonMessages.term.expiredAt)}</span>
               </StyledExpiredTime>

@@ -1,7 +1,7 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, message } from 'antd'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -11,7 +11,7 @@ import { StyledContainer } from '../components/layout/DefaultLayout.styled'
 import { handleError } from '../helpers'
 import { codeMessages, commonMessages } from '../helpers/translation'
 import { useTask } from '../hooks/task'
-import ErrorIcon from '../images/error.svg'
+import { ReactComponent as ErrorIcon } from '../images/error.svg'
 
 const StyledWrapper = styled.div`
   padding: 4rem 1rem;
@@ -64,7 +64,7 @@ const OrderTaskPage: React.FC = () => {
     return (
       <DefaultLayout noFooter noHeader centeredBox>
         <StyledWrapper className="d-flex flex-column justify-content-between align-items-center">
-          <Icon src={ErrorIcon} className="mr-4" />
+          <Icon as={ErrorIcon} className="mr-4" />
 
           <div className="mb-4 d-flex flex-column text-center">
             <StyledTitle className="mb-2">{errorMessage}</StyledTitle>

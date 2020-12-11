@@ -1,10 +1,10 @@
+import { Icon } from '@chakra-ui/icons'
 import moment from 'moment'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import styled from 'styled-components'
 import { StyledPostMeta, StyledPostTitle } from '.'
-import CalendarAltOIcon from '../../images/calendar-alt-o.svg'
-import UserOIcon from '../../images/user-o.svg'
+import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
+import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { PostPreviewProps } from '../../types/blog'
 import PostPreviewCover from './PostPreviewCover'
 
@@ -42,9 +42,9 @@ const FeaturingPostItem: React.FC<
       <StyledBody>
         <StyledPostTitle className={variant}>{title}</StyledPostTitle>
         <StyledPostMeta>
-          <Icon src={UserOIcon} className="mr-1" />
+          <Icon as={UserOIcon} className="mr-1" />
           <span className="mr-2">{author.name}</span>
-          <Icon src={CalendarAltOIcon} className="mr-1" />
+          <Icon as={CalendarAltOIcon} className="mr-1" />
           <span>{publishedAt ? moment(publishedAt).format('YYYY-MM-DD') : ''}</span>
         </StyledPostMeta>
       </StyledBody>

@@ -1,13 +1,13 @@
+import { Icon } from '@chakra-ui/icons'
 import { Skeleton, Typography } from 'antd'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { useApp } from '../../containers/common/AppContext'
 import VoucherCollectionBlock from '../../containers/voucher/VoucherCollectionBlock'
 import { commonMessages } from '../../helpers/translation'
-import GiftIcon from '../../images/gift.svg'
+import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import NotFoundPage from '../NotFoundPage'
 
 const VoucherCollectionAdminPage: React.FC = () => {
@@ -29,7 +29,7 @@ const VoucherCollectionAdminPage: React.FC = () => {
   return (
     <MemberAdminLayout>
       <Typography.Title level={3} className="mb-4">
-        <Icon src={GiftIcon} className="mr-3" />
+        <Icon as={GiftIcon} className="mr-3" />
         <span>{formatMessage(commonMessages.content.voucher)}</span>
       </Typography.Title>
 

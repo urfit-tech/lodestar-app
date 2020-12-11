@@ -1,10 +1,9 @@
 import { useQuery } from '@apollo/react-hooks'
-import { SettingsIcon } from '@chakra-ui/icons'
+import { Icon, SettingsIcon } from '@chakra-ui/icons'
 import { Menu } from 'antd'
 import { ClickParam, MenuProps } from 'antd/lib/menu'
 import gql from 'graphql-tag'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -12,15 +11,15 @@ import { useApp } from '../../containers/common/AppContext'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { useSocialCardCollection } from '../../hooks/member'
-import BookIcon from '../../images/book.svg'
-import ClipboardListIcon from '../../images/clipboard-list.svg'
-import CoinIcon from '../../images/coin.svg'
-import CommentsIcon from '../../images/comments.svg'
-import GiftIcon from '../../images/gift.svg'
-import IdentityIcon from '../../images/identity.svg'
-import MemberCardIcon from '../../images/membercard.svg'
-import TicketIcon from '../../images/ticket.svg'
-import UserIcon from '../../images/user.svg'
+import { ReactComponent as BookIcon } from '../../images/book.svg'
+import { ReactComponent as ClipboardListIcon } from '../../images/clipboard-list.svg'
+import { ReactComponent as CoinIcon } from '../../images/coin.svg'
+import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
+import { ReactComponent as GiftIcon } from '../../images/gift.svg'
+import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
+import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
+import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
+import { ReactComponent as UserIcon } from '../../images/user.svg'
 import { routesProps } from '../../Routes'
 import types from '../../types'
 import { useAuth } from '../auth/AuthContext'
@@ -76,60 +75,60 @@ export const MemberAdminMenu: React.FC<MenuProps> = ({ ...props }) => {
         </Menu.Item>
       )}
       <Menu.Item key="member_profile_admin">
-        <Icon src={UserIcon} className="mr-2" />
+        <Icon as={UserIcon} className="mr-2" />
         {formatMessage(commonMessages.content.personalSettings)}
       </Menu.Item>
       <Menu.Item key="member_program_issues_admin">
-        <Icon src={BookIcon} className="mr-2" />
+        <Icon as={BookIcon} className="mr-2" />
         {formatMessage(commonMessages.content.courseProblem)}
       </Menu.Item>
       <Menu.Item key="member_orders_admin">
-        <Icon src={ClipboardListIcon} className="mr-2" />
+        <Icon as={ClipboardListIcon} className="mr-2" />
         {formatMessage(commonMessages.content.orderHistory)}
       </Menu.Item>
 
       {enabledModules.contract && (
         <Menu.Item key="member_contracts_admin">
-          <Icon src={ClipboardListIcon} className="mr-2" />
+          <Icon as={ClipboardListIcon} className="mr-2" />
           {formatMessage(commonMessages.content.contracts)}
         </Menu.Item>
       )}
 
       {enabledModules.coin && (
         <Menu.Item key="member_coins_admin">
-          <Icon src={CoinIcon} className="mr-2" />
+          <Icon as={CoinIcon} className="mr-2" />
           {formatMessage(commonMessages.content.coinsAdmin)}
         </Menu.Item>
       )}
 
       {enabledModules.social_connect && socialCards.length && (
         <Menu.Item key="member_social_cards">
-          <Icon src={IdentityIcon} className="mr-2" />
+          <Icon as={IdentityIcon} className="mr-2" />
           {formatMessage(commonMessages.content.socialCard)}
         </Menu.Item>
       )}
 
       <Menu.Item key="member_coupons_admin">
-        <Icon src={TicketIcon} className="mr-2" />
+        <Icon as={TicketIcon} className="mr-2" />
         {formatMessage(commonMessages.content.coupon)}
       </Menu.Item>
 
       {enabledModules.voucher && (
         <Menu.Item key="member_voucher_admin">
-          <Icon src={GiftIcon} className="mr-2" />
+          <Icon as={GiftIcon} className="mr-2" />
           {formatMessage(commonMessages.content.voucher)}
         </Menu.Item>
       )}
 
       {enabledModules.member_card && enrolledMembershipCardIds.length > 0 && (
         <Menu.Item key="member_cards_admin">
-          <Icon src={MemberCardIcon} className="mr-2" />
+          <Icon as={MemberCardIcon} className="mr-2" />
           {formatMessage(commonMessages.content.memberCard)}
         </Menu.Item>
       )}
 
       <Menu.Item key="_blank" data-href={settings['customer_support_link']}>
-        <Icon src={CommentsIcon} className="mr-2" />
+        <Icon as={CommentsIcon} className="mr-2" />
         {formatMessage(commonMessages.content.contact)}
       </Menu.Item>
     </AdminMenu>

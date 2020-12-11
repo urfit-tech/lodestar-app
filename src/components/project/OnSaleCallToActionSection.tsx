@@ -1,11 +1,11 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button } from 'antd'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import ProjectEnrollmentCounts from '../../containers/project/ProjectEnrollmentCounts'
 import { commonMessages } from '../../helpers/translation'
-import CalendarOIcon from '../../images/calendar-alt-o.svg'
+import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
 
@@ -159,7 +159,7 @@ const OnSaleCallToActionSection: React.FC<OnSaleCallToActionSectionProps> = ({ p
                 </span>
               </div>
               <StyledCountDownTime className="d-flex align-items-center justify-content-between">
-                {<Icon src={CalendarOIcon} className="icon mr-2" />}
+                {<Icon as={CalendarOIcon} className="icon mr-2" />}
                 {expiredAt && <CountDownTimeBlock expiredAt={expiredAt} />}
               </StyledCountDownTime>
             </StyledSlogan>

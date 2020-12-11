@@ -1,16 +1,16 @@
 import { useQuery } from '@apollo/react-hooks'
+import { Icon } from '@chakra-ui/icons'
 import { Card, List, Tag, Typography } from 'antd'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../components/auth/AuthContext'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { useApp } from '../../containers/common/AppContext'
 import { commonMessages } from '../../helpers/translation'
-import CoinIcon from '../../images/coin.svg'
+import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import types from '../../types'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
@@ -59,7 +59,7 @@ const ContractCollectionAdminPage: React.FC = () => {
   return (
     <MemberAdminLayout>
       <Typography.Title level={3} className="mb-4">
-        <Icon src={CoinIcon} className="mr-3" />
+        <Icon as={CoinIcon} className="mr-3" />
         <span>{formatMessage(commonMessages.content.contracts)}</span>
       </Typography.Title>
       <List

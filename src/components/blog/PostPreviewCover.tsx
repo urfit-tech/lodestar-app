@@ -1,8 +1,8 @@
+import { Icon } from '@chakra-ui/icons'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import styled, { css } from 'styled-components'
 import EmptyCover from '../../images/empty-cover.png'
-import PlayCircleIcon from '../../images/play-circle.svg'
+import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { CustomRatioImage } from '../common/Image'
 
 const StyledCover = styled.div`
@@ -39,7 +39,7 @@ const PostPreviewCover: React.FC<{
     <StyledCover>
       {withVideo && (
         <StyledVideoIconBlock variant={variant}>
-          <Icon src={PlayCircleIcon} />
+          <Icon as={PlayCircleIcon} />
         </StyledVideoIconBlock>
       )}
       <CustomRatioImage width="100%" ratio={variant === 'list-item' ? 2 / 3 : 9 / 16} src={coverUrl || EmptyCover} />

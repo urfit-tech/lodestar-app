@@ -1,9 +1,9 @@
+import { Icon } from '@chakra-ui/icons'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import ListOIcon from '../../images/list-o.svg'
+import { ReactComponent as ListOIcon } from '../../images/list-o.svg'
 import BlurredBanner from '../common/BlurredBanner'
 import { BREAK_POINT } from '../common/Responsive'
 
@@ -115,7 +115,7 @@ const ProgramPackageBanner: React.FC<ProgramPackageBannerProps> = ({
       {isEnrolled && (
         <StyledEntrolledLink>
           <Link to={`/program-packages/${programPackageId}`}>
-            <Icon src={ListOIcon} className="mr-2" />
+            <Icon as={ListOIcon} className="mr-2" />
             <span>{formatMessage(messages.introduction)}</span>
           </Link>
         </StyledEntrolledLink>

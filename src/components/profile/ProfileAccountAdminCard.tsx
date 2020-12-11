@@ -1,14 +1,14 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, Form, Input, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { commonMessages, profileMessages, settingsMessages } from '../../helpers/translation'
 import { useMember, useUpdateMember } from '../../hooks/member'
-import YouTubeIcon from '../../images/youtube-icon.svg'
+import { ReactComponent as YouTubeIcon } from '../../images/youtube-icon.svg'
 import AdminCard from '../common/AdminCard'
 import { StyledForm } from '../layout'
 
@@ -99,7 +99,7 @@ const ProfileAccountAdminCard: React.FC<ProfileAccountAdminCardProps> = ({ form,
           <Form.Item label={formatMessage(profileMessages.form.label.socialConnect)}>
             <div className="d-flex align-items-center justify-content-between">
               <StyledSocialLogo className="flex-shrink-0 mr-3">
-                <Icon src={YouTubeIcon} />
+                <Icon as={YouTubeIcon} />
               </StyledSocialLogo>
               <StyledText className="flex-grow-1 mr-3">
                 {isYouTubeConnected

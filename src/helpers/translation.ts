@@ -192,6 +192,8 @@ export const commonMessages = {
     usePoint: { id: 'common.button.usePoint', defaultMessage: '使用點數' },
     useCoin: { id: 'common.button.useCoin', defaultMessage: '使用代幣' },
     reload: { id: 'common.button.reload', defaultMessage: '重新整理' },
+    review: { id: 'common.button.review', defaultMessage: '評價' },
+    loadMore: { id: 'common.button.loadMore', defaultMessage: '載入更多' },
   }),
   link: defineMessages({
     more: { id: 'common.profile', defaultMessage: '查看簡介' },
@@ -311,9 +313,10 @@ export const commonMessages = {
     identity: { id: 'common.unknown.identity', defaultMessage: '未知身份' },
   }),
   role: defineMessages({
-    owner: { id: 'helper.role.owner', defaultMessage: '課程擁有者' },
-    instructor: { id: 'helper.role.instructor', defaultMessage: '講師' },
-    assistant: { id: 'helper.role.assistant', defaultMessage: '助教' },
+    owner: { id: 'common.role.owner', defaultMessage: '課程擁有者' },
+    instructor: { id: 'common.role.instructor', defaultMessage: '講師' },
+    assistant: { id: 'common.role.assistant', defaultMessage: '助教' },
+    appOwner: { id: 'common.role.appOwner', defaultMessage: '管理員' },
   }),
   unit: defineMessages({
     min: { id: 'common.unit.min', defaultMessage: '分' },
@@ -1275,6 +1278,45 @@ export const projectMessages = {
   }),
 }
 
+export const reviewMessages = {
+  title: defineMessages({
+    programReview: { id: 'review.title.programReview', defaultMessage: '課程評價' },
+  }),
+  status: defineMessages({
+    edited: { id: 'review.status.edited', defaultMessage: '已編輯' },
+  }),
+  text: defineMessages({
+    reviewAmount: { id: 'review.text.amount', defaultMessage: '{amount} 則評價' },
+    notEnoughReviews: { id: 'review.text.notEnoughReviews', defaultMessage: '評價不足{amount}人無法顯示' },
+    reply: { id: 'review.text.reply', defaultMessage: '回覆...' },
+    reviewModalDescription: {
+      id: 'review.text.reviewModalDescription',
+      defaultMessage: '歡迎給予鼓勵、分享心得或是提出建議！為維護評價公正性，累計三則以上評價才會公開呦！',
+    },
+    noReviews: { id: 'review.text.noReviews', defaultMessage: '目前無評價' },
+  }),
+  button: defineMessages({
+    reply: { id: 'review.button.review', defaultMessage: '回覆' },
+    toReview: { id: 'review.button.toReview', defaultMessage: '我要評論' },
+    editReview: { id: 'review.button.editReview', defaultMessage: '修改評價' },
+    submitReview: { id: 'review.event.submitReview', defaultMessage: '送出評價' },
+  }),
+  modal: defineMessages({
+    fillReview: { id: 'review.modal.fillReview', defaultMessage: '填寫評價與心得' },
+    score: { id: 'review.modal.score', defaultMessage: '評分 (點擊星星評等，預設為五星)' },
+    title: { id: 'review.modal.title', defaultMessage: '評價標題' },
+    content: { id: 'review.modal.content', defaultMessage: '評價內容' },
+    private: { id: 'review.modal.private', defaultMessage: '私下想給老師的話 (選填)' },
+  }),
+  event: defineMessages({
+    isSubmitReview: { id: 'review.event.isSubmitReview', defaultMessage: '已送出評價' },
+  }),
+  validate: defineMessages({
+    titleIsRequired: { id: 'review.validate.titleIsRequired', defaultMessage: '請填入評價標題' },
+    contentIsRequired: { id: 'review.validate.contentIsRequired', defaultMessage: '請填入評價內容' },
+  }),
+}
+
 export const codeMessages = defineMessages({
   SUCCESS: {
     id: 'code.SUCCESS',
@@ -1402,7 +1444,7 @@ export const codeMessages = defineMessages({
   },
   E_PAY_TPCLIENT: {
     id: 'code.E_PAY_TPCLIENT',
-    defaultMessage: 'E_PAY_TPCLIENT',
+    defaultMessage: '信用卡付款失敗請重新輸入卡號',
   },
   E_SIGN_URL: {
     id: 'code.E_SIGN_URL',

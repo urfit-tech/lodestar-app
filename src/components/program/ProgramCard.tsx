@@ -2,13 +2,16 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import { durationFormatter } from '../../helpers'
-import { productMessages } from '../../helpers/translation'
+import { productMessages, reviewMessages } from '../../helpers/translation'
+import { useReviewAggregate } from '../../hooks/review'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramBriefProps, ProgramPlanProps, ProgramRoleProps } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
 import PriceLabel from '../common/PriceLabel'
+import ReviewStarRating from '../review/ReviewStarRating'
 
 const InstructorPlaceHolder = styled.div`
   height: 2rem;
@@ -33,6 +36,12 @@ const StyledTitle = styled.div<{ variant?: 'brief' }>`
   font-size: ${props => (props.variant === 'brief' ? '16px' : '18px')};
   font-weight: bold;
   letter-spacing: 0.8px;
+`
+const StyledReviewRating = styled.div`
+  color: var(--gray-dark);
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  text-align: justify;
 `
 const StyledDescription = styled.div<{ variant?: 'brief' }>`
   display: -webkit-box;
@@ -77,6 +86,7 @@ const ProgramCard: React.FC<{
   renderCustomDescription,
 }) => {
   const { formatMessage } = useIntl()
+  const { enabledModules, settings } = useApp()
 
   const instructorId = program.roles.length > 0 && program.roles[0].memberId
   const listPrice =
@@ -88,6 +98,7 @@ const ProgramCard: React.FC<{
       ? program.salePrice
       : undefined
   const periodType = program.isSubscription && program.plans.length > 0 ? program.plans[0].periodType : null
+  const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
 
   return (
     <>
@@ -111,7 +122,17 @@ const ProgramCard: React.FC<{
 
           <StyledContentBlock>
             <StyledTitle variant={variant}>{program.title}</StyledTitle>
-
+            {enabledModules.customer_review &&
+            reviewCount &&
+            averageScore &&
+            reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
+              <StyledReviewRating className="d-flex">
+                <ReviewStarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} boxSize="20px" />(
+                {reviewCount}則)
+              </StyledReviewRating>
+            ) : (
+              <StyledReviewRating>{formatMessage(reviewMessages.text.noReviews)}</StyledReviewRating>
+            )}
             {renderCustomDescription && renderCustomDescription()}
             <StyledDescription variant={variant}>{program.abstract}</StyledDescription>
             {withMeta && (

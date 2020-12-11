@@ -1,10 +1,10 @@
+import { Icon } from '@chakra-ui/icons'
 import React, { useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import { useInterval } from '../../hooks/util'
-import CalendarOIcon from '../../images/calendar-alt-o.svg'
+import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { BREAK_POINT } from './Responsive'
 
 const StyledDiscountDown = styled.span`
@@ -41,7 +41,7 @@ const CountDownTimeBlock: React.FC<{
 
   return (
     <>
-      {icon && <Icon src={CalendarOIcon} className="mr-2" />}
+      {icon && <Icon as={CalendarOIcon} className="mr-2" />}
       <StyledDiscountDown className="discount-down mr-1">
         {text || formatMessage(commonMessages.defaults.countdown)}
       </StyledDiscountDown>

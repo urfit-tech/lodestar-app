@@ -9,6 +9,7 @@ export type AppointmentPlanProps = {
   phone: string | null
   supportLocales: string[] | null
   currency: CurrencyProps
+  isPrivate?: boolean
 }
 
 export type AppointmentPeriodProps = {

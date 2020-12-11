@@ -1,14 +1,14 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, Icon as AntdIcon } from 'antd'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import styled, { css } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { desktopViewMixin } from '../../helpers'
-import ArrowUpCircleIcon from '../../images/arrow-up-circle.svg'
+import { ReactComponent as ArrowUpCircleIcon } from '../../images/arrow-up-circle.svg'
 import EmptyCover from '../../images/empty-cover.png'
-import ShopOIcon from '../../images/shop-o.svg'
+import { ReactComponent as ShopOIcon } from '../../images/shop-o.svg'
 import { MerchandiseProps } from '../../types/merchandise'
 import MerchandiseModal from './MerchandiseModal'
 
@@ -127,7 +127,7 @@ const PostCover: React.FC<{
                     <StyledTitle>{title}</StyledTitle>
                     {enabledModules.merchandise && merchandises.length > 0 && (
                       <Button type="link" size="small" onClick={setVisible}>
-                        <Icon src={ShopOIcon} />
+                        <Icon as={ShopOIcon} />
                         {formatMessage(messages.checkMerchandises)}
                       </Button>
                     )}
@@ -139,7 +139,7 @@ const PostCover: React.FC<{
         ) : enabledModules.merchandise && merchandises.length > 0 && type === 'video' ? (
           <div className="container p-3 p-lg-0 pt-lg-4 text-center">
             <StyledButton type="primary" onClick={setVisible}>
-              <Icon src={ShopOIcon} />
+              <Icon as={ShopOIcon} />
               {formatMessage(messages.checkMerchandises)}
             </StyledButton>
           </div>
@@ -166,7 +166,7 @@ const PostCover: React.FC<{
         >
           <StyledHeader className={`${isScrollingDown ? 'd-flex' : 'd-none'}`}>
             <StyledTitle className="flex-grow-1">{title}</StyledTitle>
-            <Icon src={ArrowUpCircleIcon} className="cursor-pointer" onClick={() => backToTop()} />
+            <Icon as={ArrowUpCircleIcon} className="cursor-pointer" onClick={() => backToTop()} />
             <AntdIcon type="close" className="cursor-pointer" onClick={() => setIsClosed(true)} />
           </StyledHeader>
           <StyledVideoWrapper>

@@ -1,12 +1,12 @@
 import { useQuery } from '@apollo/react-hooks'
+import { Icon } from '@chakra-ui/icons'
 import { Skeleton } from 'antd'
 import gql from 'graphql-tag'
 import React from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import RocketIcon from '../../images/icon-rocket.svg'
+import { ReactComponent as RocketIcon } from '../../images/icon-rocket.svg'
 import types from '../../types'
 import { ProgramPackageProgramProps } from '../../types/programPackage'
 import { useAuth } from '../auth/AuthContext'
@@ -61,7 +61,7 @@ const ProjectProgramCollectionSection: React.FC<{
     return (
       <StyledEmptyBlock className="d-flex justify-content-center align-items-center">
         <div className="d-flex flex-column align-items-center">
-          <Icon src={RocketIcon} className="mb-4" />
+          <Icon as={RocketIcon} className="mb-4" />
           <StyledTitle className="mb-1">{formatMessage(messages.learningStart)}</StyledTitle>
           <StyledSubtitle>{formatMessage(messages.support)}</StyledSubtitle>
         </div>

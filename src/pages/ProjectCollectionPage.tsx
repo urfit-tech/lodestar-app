@@ -1,8 +1,8 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, Icon as AntdIcon } from 'antd'
 import { flatten, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -14,9 +14,9 @@ import { notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useProjectIntroCollection } from '../hooks/project'
-import FundraisingIcon from '../images/fundraising.svg'
-import PreOrderIcon from '../images/pre-order.svg'
-import PromotionIcon from '../images/promotion.svg'
+import { ReactComponent as FundraisingIcon } from '../images/fundraising.svg'
+import { ReactComponent as PreOrderIcon } from '../images/pre-order.svg'
+import { ReactComponent as PromotionIcon } from '../images/promotion.svg'
 import { CategoryProps } from '../types/general'
 
 const messages = defineMessages({
@@ -95,17 +95,17 @@ const ProjectCollectionPage: React.FC = () => {
   const projectSections = [
     {
       id: 'funding',
-      icon: <Icon src={FundraisingIcon} />,
+      icon: <Icon as={FundraisingIcon} />,
       title: formatMessage(messages.fundingProject),
     },
     {
       id: 'pre-order',
-      icon: <Icon src={PreOrderIcon} />,
+      icon: <Icon as={PreOrderIcon} />,
       title: formatMessage(messages.preOrderProject),
     },
     {
       id: 'on-sale',
-      icon: <Icon src={PromotionIcon} />,
+      icon: <Icon as={PromotionIcon} />,
       title: formatMessage(messages.onSaleProject),
     },
   ]

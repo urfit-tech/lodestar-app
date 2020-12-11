@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { StyledCreatorTag } from '../../pages/CreatorDisplayedPage'
 import BlurredBanner from './BlurredBanner'
 import { AvatarImage } from './Image'
 import { BREAK_POINT } from './Responsive'
@@ -68,15 +69,6 @@ const StyledDescription = styled.div`
   letter-spacing: 0.2px;
   white-space: pre-line;
 `
-const StyledTag = styled.span`
-  color: ${props => props.theme['@primary-color']};
-  font-size: 14px;
-  letter-spacing: 0.4px;
-
-  :not(:first-child) {
-    margin-left: 0.5rem;
-  }
-`
 
 const CreatorIntroBlock: React.FC<{
   title: string
@@ -99,7 +91,11 @@ const CreatorIntroBlock: React.FC<{
               <StyledSubTitle>{subTitle}</StyledSubTitle>
               <StyledDescription className="mb-4">{description}</StyledDescription>
 
-              <div>{!!tags && tags.map(tag => <StyledTag key={tag}>#{tag}</StyledTag>)}</div>
+              <div className="d-flex flex-wrap">
+                {tags?.map(tag => (
+                  <StyledCreatorTag key={tag}>{tag}</StyledCreatorTag>
+                ))}
+              </div>
             </DescriptionBlock>
           </StyledCard>
         </div>

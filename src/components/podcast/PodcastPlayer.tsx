@@ -1,32 +1,32 @@
+import { Icon } from '@chakra-ui/icons'
 import { Button, Divider, Icon as AntdIcon, Popover } from 'antd'
 import { ButtonProps } from 'antd/lib/button'
 import isMobile from 'is-mobile'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import React, { useContext, useRef, useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastPlayerContext, { PlaylistModeType } from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
-import Backward5Icon from '../../images/backward-5.svg'
-import EllipsisIcon from '../../images/ellipsis.svg'
-import Forward5Icon from '../../images/forward-5.svg'
-import NextIcon from '../../images/icon-next.svg'
-import PrevIcon from '../../images/icon-prev.svg'
-import LoopIcon from '../../images/loop.svg'
-import PlayRate05xIcon from '../../images/multiple-0-5.svg'
-import PlayRate10xIcon from '../../images/multiple-1-0.svg'
-import PlayRate15xIcon from '../../images/multiple-1-5.svg'
-import PlayRate20xIcon from '../../images/multiple-2-0.svg'
-import PauseCircleIcon from '../../images/pause-circle.svg'
-import PlayCircleIcon from '../../images/play-circle.svg'
-import PlaylistIcon from '../../images/playlist.svg'
-import ShuffleIcon from '../../images/shuffle.svg'
-import SingleLoopIcon from '../../images/single-loop.svg'
-import TimesIcon from '../../images/times.svg'
+import { ReactComponent as Backward5Icon } from '../../images/backward-5.svg'
+import { ReactComponent as EllipsisIcon } from '../../images/ellipsis.svg'
+import { ReactComponent as Forward5Icon } from '../../images/forward-5.svg'
+import { ReactComponent as NextIcon } from '../../images/icon-next.svg'
+import { ReactComponent as PrevIcon } from '../../images/icon-prev.svg'
+import { ReactComponent as LoopIcon } from '../../images/loop.svg'
+import { ReactComponent as PlayRate05xIcon } from '../../images/multiple-0-5.svg'
+import { ReactComponent as PlayRate10xIcon } from '../../images/multiple-1-0.svg'
+import { ReactComponent as PlayRate15xIcon } from '../../images/multiple-1-5.svg'
+import { ReactComponent as PlayRate20xIcon } from '../../images/multiple-2-0.svg'
+import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
+import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
+import { ReactComponent as PlaylistIcon } from '../../images/playlist.svg'
+import { ReactComponent as ShuffleIcon } from '../../images/shuffle.svg'
+import { ReactComponent as SingleLoopIcon } from '../../images/single-loop.svg'
+import { ReactComponent as TimesIcon } from '../../images/times.svg'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 import PlaylistOverlay from './PlaylistOverlay'
 
@@ -292,7 +292,7 @@ const PodcastPlayer: React.FC<{
           <div className="row flex-nowrap py-2">
             <CloseBlock className="col-1 d-flex align-items-center">
               <StyledButton type="link" variant="bar" onClick={() => closePlayer && closePlayer()}>
-                <Icon src={TimesIcon} />
+                <Icon as={TimesIcon} />
               </StyledButton>
             </CloseBlock>
 
@@ -308,7 +308,7 @@ const PodcastPlayer: React.FC<{
             </div>
             <div className="col-6 col-lg-4 d-flex align-items-center justify-content-center">
               <StyledShiftButton type="link" variant="bar" onClick={() => shift && shift(-1)}>
-                <Icon src={PrevIcon} />
+                <Icon as={PrevIcon} />
               </StyledShiftButton>
               <StyledButtonGroup className="d-flex align-items-center justify-content-center">
                 <StyledButton
@@ -316,7 +316,7 @@ const PodcastPlayer: React.FC<{
                   variant="bar"
                   onClick={() => playerRef.current?.seekTo(playerRef.current.getCurrentTime() - 5)}
                 >
-                  <Icon src={Backward5Icon} />
+                  <Icon as={Backward5Icon} />
                 </StyledButton>
                 <StyledButton
                   type="link"
@@ -339,7 +339,7 @@ const PodcastPlayer: React.FC<{
                     <AntdIcon type="loading" style={{ fontSize: '44px' }} />
                   ) : (
                     <AntdIcon
-                      component={() => (isPlaying ? <Icon src={PauseCircleIcon} /> : <Icon src={PlayCircleIcon} />)}
+                      component={() => (isPlaying ? <Icon as={PauseCircleIcon} /> : <Icon as={PlayCircleIcon} />)}
                       style={{ fontSize: '44px' }}
                     />
                   )}
@@ -349,11 +349,11 @@ const PodcastPlayer: React.FC<{
                   variant="bar"
                   onClick={() => playerRef.current?.seekTo(playerRef.current.getCurrentTime() + 5)}
                 >
-                  <Icon src={Forward5Icon} />
+                  <Icon as={Forward5Icon} />
                 </StyledButton>
               </StyledButtonGroup>
               <StyledShiftButton type="link" variant="bar" onClick={() => shift && shift(1)}>
-                <Icon src={NextIcon} />
+                <Icon as={NextIcon} />
               </StyledShiftButton>
             </div>
             <div className="col-3 col-lg-4 d-flex align-items-center justify-content-end">
@@ -369,7 +369,7 @@ const PodcastPlayer: React.FC<{
                   content={<PlaylistOverlay memberId={memberId} defaultPlaylistId={playlist?.id || ''} />}
                 >
                   <StyledButton type="link" variant="bar" className="ml-lg-4" onClick={() => setShowAction(false)}>
-                    <Icon src={PlaylistIcon} />
+                    <Icon as={PlaylistIcon} />
                   </StyledButton>
                 </Popover>
               )}
@@ -381,7 +381,7 @@ const PodcastPlayer: React.FC<{
                   className="ml-2 ml-lg-4"
                   onClick={() => setShowAction(!showAction)}
                 >
-                  <Icon src={EllipsisIcon} />
+                  <Icon as={EllipsisIcon} />
                 </StyledButton>
               </Responsive.Default>
             </div>
@@ -404,13 +404,13 @@ const PlayRateButton: React.FC<
   return (
     <StyledButton type="link" variant={variant} onClick={() => onChange && onChange()} {...props}>
       {playRate < 1 ? (
-        <Icon src={PlayRate05xIcon} />
+        <Icon as={PlayRate05xIcon} />
       ) : playRate < 1.5 ? (
-        <Icon src={PlayRate10xIcon} />
+        <Icon as={PlayRate10xIcon} />
       ) : playRate < 2 ? (
-        <Icon src={PlayRate15xIcon} />
+        <Icon as={PlayRate15xIcon} />
       ) : (
-        <Icon src={PlayRate20xIcon} />
+        <Icon as={PlayRate20xIcon} />
       )}
       {variant === 'overlay' && <div>{formatMessage(messages.playRate)}</div>}
     </StyledButton>
@@ -429,11 +429,11 @@ const PlayModeButton: React.FC<
   return (
     <StyledButton type="link" variant={variant} onClick={() => onChange && onChange()} {...props}>
       {mode === 'loop' ? (
-        <Icon src={LoopIcon} />
+        <Icon as={LoopIcon} />
       ) : mode === 'single-loop' ? (
-        <Icon src={SingleLoopIcon} />
+        <Icon as={SingleLoopIcon} />
       ) : (
-        <Icon src={ShuffleIcon} />
+        <Icon as={ShuffleIcon} />
       )}
 
       {variant === 'overlay' && (

@@ -3,6 +3,7 @@ import momentTz from 'moment-timezone'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import CheckoutProductModal from '../../containers/checkout/CheckoutProductModal'
 import { productMessages } from '../../helpers/translation'
@@ -71,6 +72,9 @@ const AppointmentCollectionTabs: React.FC<{
   const { member } = useMember(currentMemberId || '')
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string | null>(appointmentPlans[0].id)
   const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriodProps | null>(null)
+  const { search } = useLocation()
+  const query = new URLSearchParams(search)
+  const appointmentPlanId = query.get('appointment_plan')
 
   useEffect(() => {
     if (appointmentPlans) {
@@ -98,39 +102,49 @@ const AppointmentCollectionTabs: React.FC<{
     }
   }, [appointmentPlans])
 
+  useEffect(() => {
+    if (appointmentPlanId) setSelectedAppointmentPlanId(appointmentPlanId)
+  }, [appointmentPlanId])
+
   return (
     <>
       <div className="row mb-4">
-        {appointmentPlans.map((appointmentPlan, index) => (
-          <div key={appointmentPlan.id} className="col-lg-4 col-6">
-            <StyledTab
-              key={appointmentPlan.title}
-              className={`d-flex flex-column justify-content-between ${
-                selectedAppointmentPlanId === appointmentPlan.id || (selectedAppointmentPlanId === null && index === 0)
-                  ? 'active'
-                  : ''
-              }`}
-              onClick={() => setSelectedAppointmentPlanId(appointmentPlan.id)}
-            >
-              <div className="title">{appointmentPlan.title}</div>
-              <div className="info">
-                {formatMessage(
-                  {
-                    id: 'product.appointment.unit',
-                    defaultMessage: '每 {duration} 分鐘 {price}',
-                  },
-                  {
-                    duration: appointmentPlan.duration,
-                    price: <PriceLabel currencyId={appointmentPlan.currency.id} listPrice={appointmentPlan.price} />,
-                  },
-                )}
-              </div>
-            </StyledTab>
-          </div>
-        ))}
+        {appointmentPlans
+          .filter(v =>
+            appointmentPlanId ? v.id === appointmentPlanId || v.isPrivate === false : v.isPrivate === false,
+          )
+          .map((appointmentPlan, index) => (
+            <div key={appointmentPlan.id} className="col-lg-4 col-6">
+              <StyledTab
+                key={appointmentPlan.title}
+                className={`d-flex flex-column justify-content-between ${
+                  selectedAppointmentPlanId === appointmentPlan.id ||
+                  (selectedAppointmentPlanId === null && index === 0)
+                    ? 'active'
+                    : ''
+                }`}
+                onClick={() => setSelectedAppointmentPlanId(appointmentPlan.id)}
+              >
+                <div className="title">{appointmentPlan.title}</div>
+                <div className="info">
+                  {formatMessage(
+                    {
+                      id: 'product.appointment.unit',
+                      defaultMessage: '每 {duration} 分鐘 {price}',
+                    },
+                    {
+                      duration: appointmentPlan.duration,
+                      price: <PriceLabel currencyId={appointmentPlan.currency.id} listPrice={appointmentPlan.price} />,
+                    },
+                  )}
+                </div>
+              </StyledTab>
+            </div>
+          ))}
       </div>
 
       {appointmentPlans
+        .filter(v => (appointmentPlanId ? v.id === appointmentPlanId || v.isPrivate === false : v.isPrivate === false))
         .filter((appointmentPlan, index) =>
           selectedAppointmentPlanId ? selectedAppointmentPlanId === appointmentPlan.id : index === 0,
         )

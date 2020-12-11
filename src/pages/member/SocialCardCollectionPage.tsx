@@ -1,13 +1,13 @@
+import { Icon } from '@chakra-ui/icons'
 import { Divider, Modal, Skeleton, Typography } from 'antd'
 import React, { useState } from 'react'
-import Icon from 'react-inlinesvg'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { CustomRatioImage } from '../../components/common/Image'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { commonMessages } from '../../helpers/translation'
 import { useSocialCardCollection } from '../../hooks/member'
-import IdentityIcon from '../../images/identity.svg'
+import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
 import { SocialCardProps } from '../../types/member'
 
 const messages = defineMessages({
@@ -89,7 +89,7 @@ const SocialCardCollectionPage: React.FC = () => {
   return (
     <MemberAdminLayout>
       <Typography.Title level={3} className="mb-4">
-        <Icon src={IdentityIcon} className="mr-2" />
+        <Icon as={IdentityIcon} className="mr-2" />
         <span>{formatMessage(commonMessages.content.socialCard)}</span>
       </Typography.Title>
 
