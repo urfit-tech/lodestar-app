@@ -15,6 +15,7 @@ import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import { useParams } from 'react-router-dom'
 import ReactStars from 'react-star-rating-component'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
@@ -87,7 +88,7 @@ const ReviewModal: React.FC<{
   const { id: appId } = useApp()
   const { authToken, currentMemberId, apiHost } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
-
+  const { programId } = useParams<{ programId: string }>()
   const [insertReview] = useMutation<types.INSERT_REVIEW, types.INSERT_REVIEWVariables>(INSERT_REVIEW)
   const [updateReview] = useMutation<types.UPDATE_REVIEW, types.UPDATE_REVIEWVariables>(UPDATE_REVIEW)
   const toast = useToast()
@@ -137,6 +138,7 @@ const ReviewModal: React.FC<{
           onRefetchReviewMemberItem?.()
           onRefetchReviewAggregate?.()
           onRefetchCurrentMemberReview?.()
+          window.location.replace(`/programs/${programId}?moveToBlock=customer-review`)
         })
         .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
         .finally(() => {
@@ -166,6 +168,7 @@ const ReviewModal: React.FC<{
           reset()
           onRefetchReviewMemberItem?.()
           onRefetchReviewAggregate?.()
+          window.location.replace(`/programs/${programId}?moveToBlock=customer-review`)
         })
         .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
         .finally(() => {
@@ -176,85 +179,90 @@ const ReviewModal: React.FC<{
   }
 
   return (
-    <CommonModal
-      title={formatMessage(reviewMessages.modal.fillReview)}
-      isOpen={isOpen}
-      onClose={onClose}
-      renderHeaderIcon={HeaderIcon}
-      renderTrigger={() => (
-        <StyledButton reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()} onClick={onOpen}>
-          {memberReviews && memberReviews.length !== 0
-            ? formatMessage(reviewMessages.button.editReview)
-            : formatMessage(reviewMessages.button.toReview)}
-        </StyledButton>
-      )}
-    >
-      <form onSubmit={handleSubmit(handleSave)}>
-        <StyledDescription>{formatMessage(reviewMessages.text.reviewModalDescription)}</StyledDescription>
-        <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.score)}</StyledFormLabel>
+    <>
+      <CommonModal
+        title={formatMessage(reviewMessages.modal.fillReview)}
+        isOpen={isOpen}
+        onClose={onClose}
+        renderHeaderIcon={HeaderIcon}
+        renderTrigger={() => (
+          <StyledButton
+            reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()}
+            onClick={onOpen}
+          >
+            {memberReviews && memberReviews.length !== 0
+              ? formatMessage(reviewMessages.button.editReview)
+              : formatMessage(reviewMessages.button.toReview)}
+          </StyledButton>
+        )}
+      >
+        <form onSubmit={handleSubmit(handleSave)}>
+          <StyledDescription>{formatMessage(reviewMessages.text.reviewModalDescription)}</StyledDescription>
+          <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.score)}</StyledFormLabel>
 
-        <Controller
-          name="starRating"
-          as={
-            <ReactStars
-              name="starRating"
-              value={memberReviews && memberReviews[0]?.score ? memberReviews[0]?.score : 5}
-              starColor="#FFBE1E"
-              emptyStarColor="#CDCDCD"
-              onStarClick={(rating: React.SetStateAction<number>) => setValue('starRating', rating)}
-              onStarHover={(rating: React.SetStateAction<number>) => setValue('starRating', rating)}
-            />
-          }
-          control={control}
-        />
+          <Controller
+            name="starRating"
+            as={
+              <ReactStars
+                name="starRating"
+                value={memberReviews && memberReviews[0]?.score ? memberReviews[0]?.score : 5}
+                starColor="#FFBE1E"
+                emptyStarColor="#CDCDCD"
+                onStarClick={(rating: React.SetStateAction<number>) => setValue('starRating', rating)}
+                onStarHover={(rating: React.SetStateAction<number>) => setValue('starRating', rating)}
+              />
+            }
+            control={control}
+          />
 
-        <StyledFormLabel className="mt-4" htmlFor="title">
-          {formatMessage(reviewMessages.modal.title)}
-        </StyledFormLabel>
-        <Input id="title" name="title" ref={register({ validate: validateTitle })} />
-        <StyledFormControl isInvalid={!!errors?.title} className="mt-1">
-          <FormErrorMessage className="mt-1">{errors?.title?.message}</FormErrorMessage>
-        </StyledFormControl>
+          <StyledFormLabel className="mt-4" htmlFor="title">
+            {formatMessage(reviewMessages.modal.title)}
+          </StyledFormLabel>
+          <Input id="title" name="title" ref={register({ validate: validateTitle })} />
+          <StyledFormControl isInvalid={!!errors?.title} className="mt-1">
+            <FormErrorMessage className="mt-1">{errors?.title?.message}</FormErrorMessage>
+          </StyledFormControl>
 
-        <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.content)}</StyledFormLabel>
-        <Controller
-          name="content"
-          as={
-            <StyledEditor
-              language="zh-hant"
-              controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-              media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
-            />
-          }
-          control={control}
-        />
-        <StyledFormControl isInvalid={!!errors?.content} className="mt-1">
-          <FormErrorMessage className="mt-1">{errors?.content?.message}</FormErrorMessage>
-        </StyledFormControl>
+          <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.content)}</StyledFormLabel>
+          <Controller
+            name="content"
+            as={
+              <StyledEditor
+                language="zh-hant"
+                controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
+                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+              />
+            }
+            control={control}
+          />
+          <StyledFormControl isInvalid={!!errors?.content} className="mt-1">
+            <FormErrorMessage className="mt-1">{errors?.content?.message}</FormErrorMessage>
+          </StyledFormControl>
 
-        <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.private)}</StyledFormLabel>
-        <Controller
-          name="private"
-          as={
-            <StyledEditor
-              language="zh-hant"
-              controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-              media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
-            />
-          }
-          control={control}
-        />
+          <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.private)}</StyledFormLabel>
+          <Controller
+            name="private"
+            as={
+              <StyledEditor
+                language="zh-hant"
+                controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
+                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+              />
+            }
+            control={control}
+          />
 
-        <ButtonGroup className="d-flex justify-content-end mt-4">
-          <Button variant="outline" colorScheme="primary" onClick={onClose}>
-            {formatMessage(commonMessages.button.cancel)}
-          </Button>
-          <Button variant="solid" colorScheme="primary" type="submit" isLoading={isSubmitting}>
-            {formatMessage(commonMessages.button.save)}
-          </Button>
-        </ButtonGroup>
-      </form>
-    </CommonModal>
+          <ButtonGroup className="d-flex justify-content-end mt-4">
+            <Button variant="outline" colorScheme="primary" onClick={onClose}>
+              {formatMessage(commonMessages.button.cancel)}
+            </Button>
+            <Button variant="solid" colorScheme="primary" type="submit" isLoading={isSubmitting}>
+              {formatMessage(commonMessages.button.save)}
+            </Button>
+          </ButtonGroup>
+        </form>
+      </CommonModal>
+    </>
   )
 }
 
