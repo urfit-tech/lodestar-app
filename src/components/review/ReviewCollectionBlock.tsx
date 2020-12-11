@@ -148,11 +148,19 @@ const useEnrolledMembers = (targetId: string) => {
         program_enrollment(where: { program_id: { _eq: $targetId } }) {
           member_id
         }
+        program_plan_enrollment(where: { program_plan: { program_id: { _eq: $targetId } } }) {
+          member_id
+        }
       }
     `,
     { variables: { targetId } },
   )
-  const enrolledMembers: (string | null)[] = data?.program_enrollment?.map(v => v.member_id) || []
+  const enrolledMembers: (string | null)[] =
+    [
+      ...(data?.program_enrollment?.map(v => v.member_id) || []),
+      ...(data?.program_plan_enrollment?.map(v => v.member_id) || []),
+    ] || []
+
   return {
     loadingEnrolledMembers: loading,
     errorEnrolledMembers: error,
