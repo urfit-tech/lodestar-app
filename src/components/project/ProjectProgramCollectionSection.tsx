@@ -61,7 +61,7 @@ const ProjectProgramCollectionSection: React.FC<{
     return (
       <StyledEmptyBlock className="d-flex justify-content-center align-items-center">
         <div className="d-flex flex-column align-items-center">
-          <Icon as={RocketIcon} className="mb-4" />
+          <Icon as={RocketIcon} className="mb-4" w="120px" h="120px" />
           <StyledTitle className="mb-1">{formatMessage(messages.learningStart)}</StyledTitle>
           <StyledSubtitle>{formatMessage(messages.support)}</StyledSubtitle>
         </div>
