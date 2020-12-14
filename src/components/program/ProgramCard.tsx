@@ -5,9 +5,10 @@ import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { durationFormatter } from '../../helpers'
 import { productMessages, reviewMessages } from '../../helpers/translation'
-import { useReviewAggregate } from '../../hooks/review'
+import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramBriefProps, ProgramPlanProps, ProgramRoleProps } from '../../types/program'
+import { useAuth } from '../auth/AuthContext'
 import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
 import PriceLabel from '../common/PriceLabel'
@@ -86,6 +87,8 @@ const ProgramCard: React.FC<{
   renderCustomDescription,
 }) => {
   const { formatMessage } = useIntl()
+  const { currentMemberId, currentUserRole } = useAuth()
+  const { productEditorIds } = useProductEditorIds(program.id)
   const { enabledModules, settings } = useApp()
 
   const instructorId = program.roles.length > 0 && program.roles[0].memberId
@@ -125,13 +128,14 @@ const ProgramCard: React.FC<{
             {enabledModules.customer_review &&
             reviewCount &&
             averageScore &&
-            reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
-              <StyledReviewRating className="d-flex">
+            (!!(currentUserRole === 'app-owner' || (currentMemberId && productEditorIds?.includes(currentMemberId))) ||
+              reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3)) ? (
+              <StyledReviewRating className="d-flex mb-2">
                 <ReviewStarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} boxSize="20px" />(
                 {reviewCount}則)
               </StyledReviewRating>
             ) : (
-              <StyledReviewRating>{formatMessage(reviewMessages.text.noReviews)}</StyledReviewRating>
+              <StyledReviewRating className="mb-2">{formatMessage(reviewMessages.text.noReviews)}</StyledReviewRating>
             )}
             {renderCustomDescription && renderCustomDescription()}
             <StyledDescription variant={variant}>{program.abstract}</StyledDescription>

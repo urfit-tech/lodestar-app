@@ -25,7 +25,7 @@ const StyledTitle = styled.div`
   font-weight: bold;
   color: var(--gray-darker);
 `
-export const StyledButton = styled(Button)`
+const StyledButton = styled(Button)`
   &&& {
     color: ${props => props.theme['@primary-color']};
   }
@@ -36,6 +36,10 @@ const ReviewPrivateBlock = styled.div`
   letter-spacing: 0.4px;
   border: solid 1px var(--gray-light);
   border-radius: 4px;
+  color: var(--gray-darker);
+  p {
+    line-height: 22px;
+  }
 `
 const ReviewPrivateTitle = styled.div`
   color: var(--gray-dark);
@@ -50,8 +54,16 @@ const StyledEditor = styled(BraftEditor)`
     height: initial;
   }
 `
-const ReviewPrivateContent = styled(BraftContent)`
-  color: var(--gray-darker);
+const StyledButtonCancel = styled(Button)`
+  && {
+    border-radius: 4px;
+    color: ${props => props.theme['@primary-color']};
+  }
+`
+const StyledButtonReply = styled(Button)`
+  && {
+    border-radius: 4px;
+  }
 `
 const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: string }> = ({
   isAdmin,
@@ -128,7 +140,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
         {privateContent && !BraftEditor.createEditorState(privateContent).isEmpty() && (
           <ReviewPrivateBlock className="mt-3">
             <ReviewPrivateTitle className="mb-2">私下給老師的訊息</ReviewPrivateTitle>
-            <ReviewPrivateContent>{privateContent}</ReviewPrivateContent>
+            <BraftContent>{privateContent}</BraftContent>
           </ReviewPrivateBlock>
         )}
 
@@ -155,7 +167,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
                     control={control}
                   />
                   <ButtonGroup mt={4} className="d-flex justify-content-end">
-                    <StyledButton
+                    <StyledButtonCancel
                       type="reset"
                       variant="ghost"
                       onClick={() => {
@@ -164,10 +176,15 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
                       }}
                     >
                       {formatMessage(commonMessages.button.cancel)}
-                    </StyledButton>
-                    <Button isLoading={isSubmitting} type="submit" colorScheme="primary" className="apply-btn">
-                      {formatMessage(reviewMessages.button.submitReview)}
-                    </Button>
+                    </StyledButtonCancel>
+                    <StyledButtonReply
+                      isLoading={isSubmitting}
+                      htmlType="submit"
+                      variant="primary"
+                      className="apply-btn"
+                    >
+                      {formatMessage(reviewMessages.button.reply)}
+                    </StyledButtonReply>
                   </ButtonGroup>
                 </form>
               </>

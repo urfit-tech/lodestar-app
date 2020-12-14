@@ -68,3 +68,44 @@ export const useMutateReviewReply = () => {
 
   return { updateReviewReply, deleteReviewReply }
 }
+
+export const useProductEditorIds = (targetId: string) => {
+  const { loading, error, data } = useQuery<types.GET_PRODUCT_EDITOR_IDS, types.GET_PRODUCT_EDITOR_IDSVariables>(
+    gql`
+      query GET_PRODUCT_EDITOR_IDS($targetId: uuid!) {
+        program(where: { id: { _eq: $targetId } }) {
+          program_roles(where: { name: { _eq: "instructor" } }) {
+            id
+            member_id
+            name
+          }
+        }
+        podcast_program(where: { id: { _eq: $targetId } }) {
+          podcast_program_roles(where: { name: { _eq: "instructor" } }) {
+            id
+            member_id
+            name
+          }
+        }
+      }
+    `,
+    {
+      variables: { targetId },
+    },
+  )
+
+  const productEditorIds: string[] =
+    loading || error || !data
+      ? []
+      : [
+          ...((data.program.length !== 0 && data?.program[0].program_roles.map(v => v.member_id)) || []),
+          ...((data.podcast_program.length !== 0 &&
+            data?.podcast_program[0].podcast_program_roles.map(v => v.member_id)) ||
+            []),
+        ]
+  return {
+    loadingProductEditorIds: loading,
+    errorProductEditorIds: error,
+    productEditorIds,
+  }
+}

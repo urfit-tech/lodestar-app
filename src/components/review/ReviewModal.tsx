@@ -22,6 +22,8 @@ import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
 import { ReactComponent as EditIcon } from '../../images/edit.svg'
+import { ReactComponent as StarGrayIcon } from '../../images/star-gray.svg'
+import { ReactComponent as StarIcon } from '../../images/star.svg'
 import types from '../../types'
 import { MemberReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
@@ -36,6 +38,19 @@ const StyledHeaderIcon = styled.div`
   justify-content: center;
   align-items: center;
   margin: 1.5rem 0 0 1.5rem;
+`
+const StyledInputTitle = styled(Input)`
+  && {
+    border: 1px solid #cdcdcd;
+    border-radius: 4px;
+    :hover {
+      border: 1px solid #cdcdcd;
+    }
+    :focus {
+      border: 1px solid #cdcdcd;
+      box-shadow: none;
+    }
+  }
 `
 const StyledDescription = styled.div`
   color: var(--gray-dark);
@@ -58,11 +73,15 @@ const StyledEditor = styled(BraftEditor)`
     height: initial;
   }
 `
-const StyledButton = styled(Button)<{ reviewed?: string }>`
+const ReactStarsWrapper = styled(ReactStars)`
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 4px;
+  }
+`
+const StyledButtonReview = styled(Button)<{ reviewed?: string }>`
   && {
-    background: ${props => (!props.reviewed ? '#ffffff' : props.theme['@primary-color'])};
-    color: ${props => (!props.reviewed ? '#585858' : '#ffffff')};
-    border: ${props => (!props.reviewed ? '#cdcdcd 1px solid' : 'none')};
     padding: 10px 45px;
     border-radius: 4px;
   }
@@ -70,11 +89,11 @@ const StyledButton = styled(Button)<{ reviewed?: string }>`
 const StyledFormControl = styled(FormControl)`
   height: 20px;
 `
-export const HeaderIcon: React.FC = () => (
-  <StyledHeaderIcon>
-    <Icon as={EditIcon} />
-  </StyledHeaderIcon>
-)
+const StyledButtonModal = styled(Button)`
+  && {
+    border-radius: 4px;
+  }
+`
 
 const ReviewModal: React.FC<{
   path: string
@@ -184,32 +203,35 @@ const ReviewModal: React.FC<{
         title={formatMessage(reviewMessages.modal.fillReview)}
         isOpen={isOpen}
         onClose={onClose}
-        renderHeaderIcon={HeaderIcon}
+        renderHeaderIcon={() => (
+          <StyledHeaderIcon>
+            <Icon as={EditIcon} />
+          </StyledHeaderIcon>
+        )}
         renderTrigger={() => (
-          <StyledButton
+          <StyledButtonReview
+            variant={memberReviews && memberReviews.length !== 0 ? 'outline' : 'primary'}
             reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()}
             onClick={onOpen}
           >
             {memberReviews && memberReviews.length !== 0
               ? formatMessage(reviewMessages.button.editReview)
               : formatMessage(reviewMessages.button.toReview)}
-          </StyledButton>
+          </StyledButtonReview>
         )}
       >
         <form onSubmit={handleSubmit(handleSave)}>
           <StyledDescription>{formatMessage(reviewMessages.text.reviewModalDescription)}</StyledDescription>
           <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.score)}</StyledFormLabel>
-
           <Controller
             name="starRating"
             as={
-              <ReactStars
+              <ReactStarsWrapper
                 name="starRating"
                 value={memberReviews && memberReviews[0]?.score ? memberReviews[0]?.score : 5}
-                starColor="#FFBE1E"
-                emptyStarColor="#CDCDCD"
                 onStarClick={(rating: React.SetStateAction<number>) => setValue('starRating', rating)}
                 onStarHover={(rating: React.SetStateAction<number>) => setValue('starRating', rating)}
+                renderStarIcon={(nextValue, prevValue) => (nextValue > prevValue ? <StarGrayIcon /> : <StarIcon />)}
               />
             }
             control={control}
@@ -218,7 +240,7 @@ const ReviewModal: React.FC<{
           <StyledFormLabel className="mt-4" htmlFor="title">
             {formatMessage(reviewMessages.modal.title)}
           </StyledFormLabel>
-          <Input id="title" name="title" ref={register({ validate: validateTitle })} />
+          <StyledInputTitle id="title" name="title" ref={register({ validate: validateTitle })} autoComplete="off" />
           <StyledFormControl isInvalid={!!errors?.title} className="mt-1">
             <FormErrorMessage className="mt-1">{errors?.title?.message}</FormErrorMessage>
           </StyledFormControl>
@@ -252,13 +274,13 @@ const ReviewModal: React.FC<{
             control={control}
           />
 
-          <ButtonGroup className="d-flex justify-content-end mt-4">
-            <Button variant="outline" colorScheme="primary" onClick={onClose}>
+          <ButtonGroup className="d-flex justify-content-end mt-4 mb-4">
+            <StyledButtonModal variant="outline" onClick={onClose}>
               {formatMessage(commonMessages.button.cancel)}
-            </Button>
-            <Button variant="solid" colorScheme="primary" type="submit" isLoading={isSubmitting}>
+            </StyledButtonModal>
+            <StyledButtonModal variant="primary" type="submit" isLoading={isSubmitting}>
               {formatMessage(commonMessages.button.save)}
-            </Button>
+            </StyledButtonModal>
           </ButtonGroup>
         </form>
       </CommonModal>

@@ -34,7 +34,6 @@ import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
 import { BraftContent } from '../common/StyledBraftEditor'
-import { StyledButton } from './ReviewItem'
 
 const ReviewReplyContent = styled.div`
   padding: 16px;
@@ -43,6 +42,9 @@ const ReviewReplyContent = styled.div`
   border-radius: 8px;
   font-size: 14px;
   letter-spacing: 0.4px;
+  p {
+    line-height: 22px;
+  }
 `
 const StyledEditor = styled(BraftEditor)`
   .bf-controlbar {
@@ -71,6 +73,17 @@ const StyledTag = styled(Tag)`
 
 const StyledFormControl = styled(FormControl)`
   height: 20px;
+`
+const StyledButtonCancel = styled(Button)`
+  && {
+    border-radius: 4px;
+    color: ${props => props.theme['@primary-color']};
+  }
+`
+const StyledButtonReply = styled(Button)`
+  && {
+    border-radius: 4px;
+  }
 `
 const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void; targetId: string }> = ({
   id,
@@ -222,12 +235,12 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
               <FormErrorMessage className="mt-1">{errors?.reply?.message}</FormErrorMessage>
             </StyledFormControl>
             <ButtonGroup mt={4} className="d-flex justify-content-end">
-              <StyledButton type="reset" variant="ghost" onClick={() => setReplyEditing(false)}>
+              <StyledButtonCancel type="reset" variant="ghost" onClick={() => setReplyEditing(false)}>
                 {formatMessage(commonMessages.button.cancel)}
-              </StyledButton>
-              <Button type="submit" colorScheme="primary" className="apply-btn" isLoading={isSubmitting}>
+              </StyledButtonCancel>
+              <StyledButtonReply type="submit" variant="primary" className="apply-btn" isLoading={isSubmitting}>
                 {formatMessage(reviewMessages.button.reply)}
-              </Button>
+              </StyledButtonReply>
             </ButtonGroup>
           </form>
         </ReviewReplyContent>
