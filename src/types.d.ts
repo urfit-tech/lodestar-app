@@ -1334,66 +1334,6 @@ export interface GET_ENROLLED_MEMBERSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_PRODUCT_EDITOR_IDS
-// ====================================================
-
-export interface GET_PRODUCT_EDITOR_IDS_program_program_roles {
-  __typename: "program_role";
-  id: any;
-  member_id: string;
-  /**
-   * instructor / assistant 
-   */
-  name: string;
-}
-
-export interface GET_PRODUCT_EDITOR_IDS_program {
-  __typename: "program";
-  /**
-   * An array relationship
-   */
-  program_roles: GET_PRODUCT_EDITOR_IDS_program_program_roles[];
-}
-
-export interface GET_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles {
-  __typename: "podcast_program_role";
-  id: any;
-  member_id: string;
-  /**
-   * instructor
-   */
-  name: string;
-}
-
-export interface GET_PRODUCT_EDITOR_IDS_podcast_program {
-  __typename: "podcast_program";
-  /**
-   * An array relationship
-   */
-  podcast_program_roles: GET_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles[];
-}
-
-export interface GET_PRODUCT_EDITOR_IDS {
-  /**
-   * fetch data from the table: "program"
-   */
-  program: GET_PRODUCT_EDITOR_IDS_program[];
-  /**
-   * fetch data from the table: "podcast_program"
-   */
-  podcast_program: GET_PRODUCT_EDITOR_IDS_podcast_program[];
-}
-
-export interface GET_PRODUCT_EDITOR_IDSVariables {
-  targetId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_CURRENT_MEMBER_REVIEW
 // ====================================================
 
@@ -6688,6 +6628,66 @@ export interface DELETE_REVIEW_REPLYVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PRODUCT_EDITOR_IDS
+// ====================================================
+
+export interface GET_PRODUCT_EDITOR_IDS_program_program_roles {
+  __typename: "program_role";
+  id: any;
+  member_id: string;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+}
+
+export interface GET_PRODUCT_EDITOR_IDS_program {
+  __typename: "program";
+  /**
+   * An array relationship
+   */
+  program_roles: GET_PRODUCT_EDITOR_IDS_program_program_roles[];
+}
+
+export interface GET_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles {
+  __typename: "podcast_program_role";
+  id: any;
+  member_id: string;
+  /**
+   * instructor
+   */
+  name: string;
+}
+
+export interface GET_PRODUCT_EDITOR_IDS_podcast_program {
+  __typename: "podcast_program";
+  /**
+   * An array relationship
+   */
+  podcast_program_roles: GET_PRODUCT_EDITOR_IDS_podcast_program_podcast_program_roles[];
+}
+
+export interface GET_PRODUCT_EDITOR_IDS {
+  /**
+   * fetch data from the table: "program"
+   */
+  program: GET_PRODUCT_EDITOR_IDS_program[];
+  /**
+   * fetch data from the table: "podcast_program"
+   */
+  podcast_program: GET_PRODUCT_EDITOR_IDS_podcast_program[];
+}
+
+export interface GET_PRODUCT_EDITOR_IDSVariables {
+  targetId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ACTIVITY
 // ====================================================
 
@@ -8915,6 +8915,30 @@ export enum member_tag_update_column {
   id = "id",
   member_id = "member_id",
   tag_name = "tag_name",
+  updated_at = "updated_at",
+}
+
+/**
+ * unique or primary key constraints on table "member_task"
+ */
+export enum member_task_constraint {
+  member_task_pkey = "member_task_pkey",
+}
+
+/**
+ * update columns of table "member_task"
+ */
+export enum member_task_update_column {
+  category_id = "category_id",
+  created_at = "created_at",
+  description = "description",
+  due_at = "due_at",
+  executor_id = "executor_id",
+  id = "id",
+  member_id = "member_id",
+  priority = "priority",
+  status = "status",
+  title = "title",
   updated_at = "updated_at",
 }
 
@@ -12617,6 +12641,7 @@ export interface member_bool_exp {
   member_socials?: member_social_bool_exp | null;
   member_specialities?: member_speciality_bool_exp | null;
   member_tags?: member_tag_bool_exp | null;
+  member_tasks?: member_task_bool_exp | null;
   members?: member_bool_exp | null;
   merchandises?: merchandise_bool_exp | null;
   metadata?: jsonb_comparison_exp | null;
@@ -12840,6 +12865,7 @@ export interface member_insert_input {
   member_socials?: member_social_arr_rel_insert_input | null;
   member_specialities?: member_speciality_arr_rel_insert_input | null;
   member_tags?: member_tag_arr_rel_insert_input | null;
+  member_tasks?: member_task_arr_rel_insert_input | null;
   members?: member_arr_rel_insert_input | null;
   merchandises?: merchandise_arr_rel_insert_input | null;
   metadata?: any | null;
@@ -13325,6 +13351,66 @@ export interface member_tag_on_conflict {
   constraint: member_tag_constraint;
   update_columns: member_tag_update_column[];
   where?: member_tag_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "member_task"
+ */
+export interface member_task_arr_rel_insert_input {
+  data: member_task_insert_input[];
+  on_conflict?: member_task_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "member_task". All fields are combined with a logical 'AND'.
+ */
+export interface member_task_bool_exp {
+  _and?: (member_task_bool_exp | null)[] | null;
+  _not?: member_task_bool_exp | null;
+  _or?: (member_task_bool_exp | null)[] | null;
+  category?: category_bool_exp | null;
+  category_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  description?: String_comparison_exp | null;
+  due_at?: timestamptz_comparison_exp | null;
+  executor?: member_bool_exp | null;
+  executor_id?: String_comparison_exp | null;
+  id?: String_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  priority?: String_comparison_exp | null;
+  status?: String_comparison_exp | null;
+  title?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "member_task"
+ */
+export interface member_task_insert_input {
+  category?: category_obj_rel_insert_input | null;
+  category_id?: string | null;
+  created_at?: any | null;
+  description?: string | null;
+  due_at?: any | null;
+  executor?: member_obj_rel_insert_input | null;
+  executor_id?: string | null;
+  id?: string | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  priority?: string | null;
+  status?: string | null;
+  title?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "member_task"
+ */
+export interface member_task_on_conflict {
+  constraint: member_task_constraint;
+  update_columns: member_task_update_column[];
+  where?: member_task_bool_exp | null;
 }
 
 /**

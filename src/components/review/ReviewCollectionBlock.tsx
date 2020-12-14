@@ -7,9 +7,9 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { reviewMessages } from '../../helpers/translation'
-import { useReviewAggregate } from '../../hooks/review'
+import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import { ReactComponent as StarEmptyIcon } from '../../images/star-empty.svg'
-import { ReactComponent as StarLargeIcon } from '../../images/star-l.svg'
+import { ReactComponent as StarIcon } from '../../images/star.svg'
 import types from '../../types'
 import { MemberReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
@@ -79,6 +79,15 @@ const ReviewCollectionBlock: React.FC<{
 
   const reviewMemberItemRef = useRef<ReviewMemberItemRef>(null)
 
+  const isMoreThanReviewLowerBound = !!(
+    reviewCount && reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3)
+  )
+
+  const isProductAdmin = !!(
+    currentUserRole === 'app-owner' ||
+    (currentMemberId && productEditorIds?.includes(currentMemberId))
+  )
+
   if (loadingEnrolledMembers || loadingProductEditorIds || loadingReviewAggregate || loadingCurrentMemberReview) {
     return (
       <>
@@ -95,28 +104,31 @@ const ReviewCollectionBlock: React.FC<{
       <StyledDivider mt={1} />
 
       <div className="d-flex align-items-center mt-3">
-        <StyledAvgScore className="mr-1">{averageScore === 0 ? 0 : averageScore?.toFixed(1)}</StyledAvgScore>
+        <StyledAvgScore className="mr-1">
+          {isMoreThanReviewLowerBound || isProductAdmin ? (averageScore === 0 ? 0 : averageScore?.toFixed(1)) : 0}
+        </StyledAvgScore>
         <div className="mr-2">
-          <Icon as={StarLargeIcon} />
+          <Icon as={StarIcon} w="24px" h="24px" />
         </div>
         <StyledReviewAmount className="flex-grow-1">
-          {formatMessage(reviewMessages.text.reviewAmount, { amount: reviewCount })}
+          {formatMessage(reviewMessages.text.reviewAmount, {
+            amount: isMoreThanReviewLowerBound || isProductAdmin ? reviewCount : 0,
+          })}
         </StyledReviewAmount>
-        {enrolledMembers.includes(currentMemberId) &&
-          (currentUserRole !== 'app-owner' || (currentMemberId && productEditorIds?.includes(currentMemberId))) && (
-            <ReviewModal
-              path={path}
-              memberReviews={currentMemberReview}
-              onRefetchReviewMemberItem={reviewMemberItemRef.current?.onRefetchReviewMemberItem}
-              onRefetchReviewAggregate={refetchReviewAggregate}
-              onRefetchCurrentMemberReview={refetchCurrentMemberReview}
-            />
-          )}
+        {enrolledMembers.includes(currentMemberId) && (
+          <ReviewModal
+            path={path}
+            memberReviews={currentMemberReview}
+            onRefetchReviewMemberItem={reviewMemberItemRef.current?.onRefetchReviewMemberItem}
+            onRefetchReviewAggregate={refetchReviewAggregate}
+            onRefetchCurrentMemberReview={refetchCurrentMemberReview}
+          />
+        )}
       </div>
 
-      {reviewCount && reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
+      {isMoreThanReviewLowerBound || isProductAdmin ? (
         <Wrapper>
-          {currentUserRole === 'app-owner' || (currentMemberId && productEditorIds?.includes(currentMemberId)) ? (
+          {isProductAdmin ? (
             <ReviewAdminItemCollection targetId={targetId} path={path} appId={appId} />
           ) : currentUserRole === 'anonymous' ||
             (currentUserRole !== 'general-member' && !enrolledMembers.includes(currentMemberId)) ? (
@@ -164,46 +176,6 @@ const useEnrolledMembers = (targetId: string) => {
     loadingEnrolledMembers: loading,
     errorEnrolledMembers: error,
     enrolledMembers,
-  }
-}
-const useProductEditorIds = (targetId: string) => {
-  const { loading, error, data } = useQuery<types.GET_PRODUCT_EDITOR_IDS, types.GET_PRODUCT_EDITOR_IDSVariables>(
-    gql`
-      query GET_PRODUCT_EDITOR_IDS($targetId: uuid!) {
-        program(where: { id: { _eq: $targetId } }) {
-          program_roles(where: { name: { _eq: "instructor" } }) {
-            id
-            member_id
-            name
-          }
-        }
-        podcast_program(where: { id: { _eq: $targetId } }) {
-          podcast_program_roles(where: { name: { _eq: "instructor" } }) {
-            id
-            member_id
-            name
-          }
-        }
-      }
-    `,
-    {
-      variables: { targetId },
-    },
-  )
-
-  const productEditorIds: string[] =
-    loading || error || !data
-      ? []
-      : [
-          ...((data.program.length !== 0 && data?.program[0].program_roles.map(v => v.member_id)) || []),
-          ...((data.podcast_program.length !== 0 &&
-            data?.podcast_program[0].podcast_program_roles.map(v => v.member_id)) ||
-            []),
-        ]
-  return {
-    loadingProductEditorIds: loading,
-    errorProductEditorIds: error,
-    productEditorIds,
   }
 }
 

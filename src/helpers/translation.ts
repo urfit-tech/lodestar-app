@@ -1297,9 +1297,8 @@ export const reviewMessages = {
   }),
   button: defineMessages({
     reply: { id: 'review.button.review', defaultMessage: '回覆' },
-    toReview: { id: 'review.button.toReview', defaultMessage: '我要評論' },
+    toReview: { id: 'review.button.toReview', defaultMessage: '我要評價' },
     editReview: { id: 'review.button.editReview', defaultMessage: '修改評價' },
-    submitReview: { id: 'review.event.submitReview', defaultMessage: '送出評價' },
   }),
   modal: defineMessages({
     fillReview: { id: 'review.modal.fillReview', defaultMessage: '填寫評價與心得' },
