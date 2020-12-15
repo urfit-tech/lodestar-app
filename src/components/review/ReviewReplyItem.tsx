@@ -74,13 +74,7 @@ const StyledTag = styled(Tag)`
 const StyledFormControl = styled(FormControl)`
   height: 20px;
 `
-const StyledButtonCancel = styled(Button)`
-  && {
-    border-radius: 4px;
-    color: ${props => props.theme['@primary-color']};
-  }
-`
-const StyledButtonReply = styled(Button)`
+const StyledButton = styled(Button)`
   && {
     border-radius: 4px;
   }
@@ -235,12 +229,12 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
               <FormErrorMessage className="mt-1">{errors?.reply?.message}</FormErrorMessage>
             </StyledFormControl>
             <ButtonGroup mt={4} className="d-flex justify-content-end">
-              <StyledButtonCancel type="reset" variant="ghost" onClick={() => setReplyEditing(false)}>
+              <StyledButton type="reset" variant="ghost" onClick={() => setReplyEditing(false)}>
                 {formatMessage(commonMessages.button.cancel)}
-              </StyledButtonCancel>
-              <StyledButtonReply type="submit" variant="primary" className="apply-btn" isLoading={isSubmitting}>
+              </StyledButton>
+              <StyledButton type="submit" variant="primary" className="apply-btn" isLoading={isSubmitting}>
                 {formatMessage(reviewMessages.button.reply)}
-              </StyledButtonReply>
+              </StyledButton>
             </ButtonGroup>
           </form>
         </ReviewReplyContent>

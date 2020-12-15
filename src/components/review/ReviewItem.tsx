@@ -25,7 +25,7 @@ const StyledTitle = styled.div`
   font-weight: bold;
   color: var(--gray-darker);
 `
-const StyledButton = styled(Button)`
+const StyledButtonReply = styled(Button)`
   &&& {
     color: ${props => props.theme['@primary-color']};
   }
@@ -54,17 +54,12 @@ const StyledEditor = styled(BraftEditor)`
     height: initial;
   }
 `
-const StyledButtonCancel = styled(Button)`
-  && {
-    border-radius: 4px;
-    color: ${props => props.theme['@primary-color']};
-  }
-`
-const StyledButtonReply = styled(Button)`
+const StyledButton = styled(Button)`
   && {
     border-radius: 4px;
   }
 `
+
 const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: string }> = ({
   isAdmin,
   id,
@@ -146,9 +141,9 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
 
         {isAdmin && reviewReplies.length === 0 && (
           <>
-            <StyledButton className="mt-2" variant="ghost" onClick={() => setReplyEditing(true)}>
+            <StyledButtonReply className="mt-2" variant="ghost" onClick={() => setReplyEditing(true)}>
               {formatMessage(reviewMessages.button.reply)}
-            </StyledButton>
+            </StyledButtonReply>
             {replyEditing && (
               <>
                 <div className="d-flex align-items-center justify-content-start mt-4">
@@ -167,7 +162,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
                     control={control}
                   />
                   <ButtonGroup mt={4} className="d-flex justify-content-end">
-                    <StyledButtonCancel
+                    <StyledButton
                       type="reset"
                       variant="ghost"
                       onClick={() => {
@@ -176,15 +171,10 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
                       }}
                     >
                       {formatMessage(commonMessages.button.cancel)}
-                    </StyledButtonCancel>
-                    <StyledButtonReply
-                      isLoading={isSubmitting}
-                      htmlType="submit"
-                      variant="primary"
-                      className="apply-btn"
-                    >
+                    </StyledButton>
+                    <StyledButton isLoading={isSubmitting} type="submit" variant="primary" className="apply-btn">
                       {formatMessage(reviewMessages.button.reply)}
-                    </StyledButtonReply>
+                    </StyledButton>
                   </ButtonGroup>
                 </form>
               </>

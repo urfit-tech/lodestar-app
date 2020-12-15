@@ -31,10 +31,11 @@ export const AppThemeProvider: React.FC = ({ children }) => {
           outline: {
             border: 'solid 1px',
             borderColor: 'var(--gray)',
-            color: `${settings['theme.@primary-color']}`,
+            color: '#585858',
             _hover: {
               background: 'transparent',
               borderColor: `${settings['theme.@primary-color']}`,
+              color: `${settings['theme.@primary-color']}`,
             },
           },
           ghost: {
