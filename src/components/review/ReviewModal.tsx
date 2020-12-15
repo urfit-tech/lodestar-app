@@ -14,6 +14,7 @@ import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import ReactStars from 'react-star-rating-component'
@@ -21,7 +22,6 @@ import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
-import { ReactComponent as EditIcon } from '../../images/edit.svg'
 import { ReactComponent as StarGrayIcon } from '../../images/star-gray.svg'
 import { ReactComponent as StarIcon } from '../../images/star.svg'
 import types from '../../types'
@@ -205,7 +205,7 @@ const ReviewModal: React.FC<{
         onClose={onClose}
         renderHeaderIcon={() => (
           <StyledHeaderIcon>
-            <Icon as={EditIcon} />
+            <Icon as={EditIcon} color="primary.500" />
           </StyledHeaderIcon>
         )}
         renderTrigger={() => (
