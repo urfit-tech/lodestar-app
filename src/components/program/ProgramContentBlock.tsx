@@ -4,6 +4,7 @@ import { flatten } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
@@ -12,6 +13,7 @@ import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramR
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
+import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
 import ProgramContentMaterialBlock from './ProgramContentMaterialBlock'
 import ProgramContentPlayer from './ProgramContentPlayer'
 
@@ -33,6 +35,7 @@ const ProgramContentBlock: React.FC<{
   programContentId: string
 }> = ({ program, programContentId }) => {
   const { formatMessage } = useIntl()
+  const { enabledModules } = useApp()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const { loadingProgramContentMaterials, programContentMaterials } = useProgramContentMaterial(programContentId)
@@ -100,8 +103,8 @@ const ProgramContentBlock: React.FC<{
           )}
       </StyledContentBlock>
 
-      {program.isIssuesOpen && (
-        <StyledContentBlock className="mb-3">
+      {(program.isIssuesOpen || enabledModules.practice || programContent.materials.length !== 0) && (
+        <StyledContentBlock>
           <Tabs defaultActiveKey={programContentMaterials?.length !== 0 ? 'material' : 'issue'}>
             <Tabs.TabPane tab={formatMessage(productMessages.program.tab.discussion)} key="issue" className="py-3">
               <IssueThreadBlock
@@ -109,8 +112,13 @@ const ProgramContentBlock: React.FC<{
                 threadId={`/programs/${program.id}/contents/${programContentId}`}
               />
             </Tabs.TabPane>
+            {enabledModules.practice && (
+              <Tabs.TabPane tab={formatMessage(programMessages.label.practiceUpload)} key="practice" className="py-3">
+                <PracticeDisplayedCollection />
+              </Tabs.TabPane>
+            )}
             {programContent.materials.length !== 0 && (
-              <Tabs.TabPane key="material" tab={formatMessage(programMessages.tab.downloadMaterials)} className="py-3">
+              <Tabs.TabPane key="materials" tab={formatMessage(programMessages.tab.downloadMaterials)} className="py-3">
                 {<ProgramContentMaterialBlock programContentId={programContentId} />}
               </Tabs.TabPane>
             )}

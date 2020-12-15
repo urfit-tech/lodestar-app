@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import { CustomRatioImage } from '../components/common/Image'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import { StyledText } from '../components/practice/PracticeDisplayedCollection'
 import { useApp } from '../containers/common/AppContext'
 import { notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
@@ -42,10 +43,7 @@ const StyledCreatorAbstract = styled.p`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-  color: var(--gray-dark);
+  ${StyledText}
 `
 
 export const StyledCreatorTag = styled.span`

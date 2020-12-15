@@ -8,6 +8,7 @@ import { ReactComponent as IconList } from '../../images/list-o.svg'
 import { InvoiceProps } from '../checkout/InvoiceInput'
 import { ShippingProps } from '../checkout/ShippingInput'
 import CommonModal from '../common/CommonModal'
+import { StyledText } from '../practice/PracticeDisplayedCollection'
 
 const messages = defineMessages({
   shippingInfo: { id: 'product.merchandise.ui.shippingInfo', defaultMessage: '收件資訊' },
@@ -19,10 +20,7 @@ const messages = defineMessages({
 })
 
 const StyledShippingInfoSubtitle = styled.h4`
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-  color: var(--gray-dark);
+  ${StyledText}
 `
 const StyledShippingInfoContent = styled.div`
   margin-bottom: 24px;

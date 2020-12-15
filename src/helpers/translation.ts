@@ -580,6 +580,28 @@ export const checkoutMessages = {
   }),
 }
 
+export const programMessages = {
+  label: defineMessages({
+    practiceUpload: { id: 'program.ui.practiceUpload', defaultMessage: '作業上傳' },
+    discussion: { id: 'program.ui.discussion', defaultMessage: '問題討論' },
+  }),
+  text: defineMessages({
+    uploadPractice: { id: 'program.text.uploadPractice', defaultMessage: '快上傳成果吧！' },
+  }),
+  tab: defineMessages({
+    downloadMaterials: {
+      id: 'program.tab.downloadMaterials',
+      defaultMessage: '下載教材',
+    },
+  }),
+  status: defineMessages({
+    loadingMaterialError: {
+      id: 'program.status.loadingMaterialError',
+      defaultMessage: '無法取得教材',
+    },
+  }),
+}
+
 export const productMessages = {
   activity: {
     tab: defineMessages({
@@ -786,9 +808,6 @@ export const productMessages = {
         },
       }),
     },
-    tab: defineMessages({
-      discussion: { id: 'product.program.tab.discussion', defaultMessage: '問題討論' },
-    }),
   },
   project: {
     title: defineMessages({
@@ -1265,21 +1284,6 @@ export const usersMessages = {
     enterNewPasswordAgain: {
       id: 'users.form.placeholder.password.again',
       defaultMessage: '再次輸入新密碼',
-    },
-  }),
-}
-
-export const programMessages = {
-  tab: defineMessages({
-    downloadMaterials: {
-      id: 'program.tab.downloadMaterials',
-      defaultMessage: '下載教材',
-    },
-  }),
-  status: defineMessages({
-    loadingMaterialError: {
-      id: 'program.status.loadingMaterialError',
-      defaultMessage: '無法取得教材',
     },
   }),
 }

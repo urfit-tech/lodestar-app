@@ -9,6 +9,7 @@ import { commonMessages, productMessages } from '../../helpers/translation'
 import { useSimpleProduct } from '../../hooks/common'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProductType } from '../../types/product'
+import { StyledText } from '../practice/PracticeDisplayedCollection'
 import { CustomRatioImage } from './Image'
 import PriceLabel from './PriceLabel'
 
@@ -40,10 +41,7 @@ const StyledTitle = styled(Typography.Title)`
   }
 `
 const StyledPeriod = styled.div`
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-  color: var(--gray-dark);
+  ${StyledText}
 `
 const StyledMeta = styled.span`
   margin-top: 0.5rem;
