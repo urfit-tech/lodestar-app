@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
+import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps } from '../../types/program'
 
 const StyledIcon = styled(Icon)`
@@ -106,7 +107,9 @@ const messages = defineMessages({
 
 const ProgramContentMenu: React.FC<{
   program: ProgramProps & {
-    contentSections: (ProgramContentSectionProps & { contents: ProgramContentProps[] })[]
+    contentSections: (ProgramContentSectionProps & {
+      contents: ProgramContentProps[]
+    })[]
   }
   onSelect?: (programContentId: string) => void
 }> = ({ program, onSelect }) => {
@@ -129,18 +132,20 @@ const ProgramContentMenu: React.FC<{
       </StyledHead>
 
       {sortBy === 'section' && (
-        <ProgramContentMenuBySection program={program} programPackageId={programPackageId} onSelect={onSelect} />
+        <ProgramContentSectionMenu program={program} programPackageId={programPackageId} onSelect={onSelect} />
       )}
       {sortBy === 'date' && (
-        <ProgramContentMenuByDate program={program} programPackageId={programPackageId} onSelect={onSelect} />
+        <ProgramContentDateMenu program={program} programPackageId={programPackageId} onSelect={onSelect} />
       )}
     </StyledProgramContentMenu>
   )
 }
 
-const ProgramContentMenuBySection: React.FC<{
+const ProgramContentSectionMenu: React.FC<{
   program: ProgramProps & {
-    contentSections: (ProgramContentSectionProps & { contents: ProgramContentProps[] })[]
+    contentSections: (ProgramContentSectionProps & {
+      contents: ProgramContentProps[]
+    })[]
   }
   programPackageId: string | null
   onSelect?: (programContentId: string) => void
@@ -167,7 +172,9 @@ const ProgramContentMenuBySection: React.FC<{
 }
 
 const ContentSection: React.FC<{
-  programContentSection: ProgramContentSectionProps & { contents: ProgramContentProps[] }
+  programContentSection: ProgramContentSectionProps & {
+    contents: ProgramContentProps[]
+  }
   programPackageId: string | null
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
@@ -232,13 +239,11 @@ const SortBySectionItem: React.FC<{
 
   return (
     <StyledItem
-      className={`${progressStatus} ${isActive ? 'active' : ''}`}
+      className={`${progressStatus} ${isActive && 'active'}`}
       onClick={() => {
         onClick?.()
         history.push(
-          `/programs/${programId}/contents/${programContent.id}${
-            programPackageId !== null ? `?back=${programPackageId}` : ''
-          }`,
+          `/programs/${programId}/contents/${programContent.id}${programPackageId ? `?back=${programPackageId}` : ''}`,
         )
       }}
     >
@@ -270,9 +275,11 @@ const SortBySectionItem: React.FC<{
   )
 }
 
-const ProgramContentMenuByDate: React.FC<{
+const ProgramContentDateMenu: React.FC<{
   program: ProgramProps & {
-    contentSections: (ProgramContentSectionProps & { contents: ProgramContentProps[] })[]
+    contentSections: (ProgramContentSectionProps & {
+      contents: ProgramContentProps[]
+    })[]
   }
   programPackageId: string | null
   onSelect?: (programContentId: string) => void
