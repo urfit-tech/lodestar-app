@@ -1,7 +1,7 @@
 import BraftEditor from 'braft-editor'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { BREAK_POINT } from '../common/Responsive'
 import StarRating from '../common/StarRating'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -17,9 +17,19 @@ const StyledBlock = styled.div`
   padding: 1.25rem;
   background-color: white;
 `
+const StyledInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+`
 const StyledTitle = styled.h2`
   font-size: 24px;
   font-weight: bold;
+  line-height: 1;
   letter-spacing: 0.2px;
   color: var(--gray-darker);
 `
@@ -33,9 +43,31 @@ const StyledEvaluation = styled.div`
   display: flex;
   flex-direction: column;
 
-  @media (min-width: ${BREAK_POINT}) {
+  @media (min-width: ${BREAK_POINT}px) {
     flex-direction: row;
   }
+`
+const StyledEvaluationText = css`
+  margin-right: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  height: 22px;
+  letter-spacing: 0.18px;
+  color: var(--gray-darker);
+`
+const StyledEstimateTime = styled.div`
+  ${StyledEvaluationText}
+
+  @media (min-width: ${BREAK_POINT}px) {
+    &:first-child {
+      border-right: 1px solid var(--gray);
+      padding-right: 12px;
+    }
+  }
+`
+const StyledDifficulty = styled.div`
+  ${StyledEvaluationText}
 `
 
 const PracticeDescriptionBlock: React.FC<{
@@ -48,14 +80,18 @@ const PracticeDescriptionBlock: React.FC<{
 
   return (
     <StyledBlock>
-      <div>
-        <StyledTitle>{formatMessage(messages.practice)}</StyledTitle>
+      <StyledInfo className="mb-3">
+        <StyledTitle className="mb-2">{formatMessage(messages.practice)}</StyledTitle>
         <StyledEvaluation>
-          <span className="">{formatMessage(messages.estimateTime, { duration: 30 })}</span>
-          <span>{formatMessage(messages.difficulty)}</span>
-          <StarRating score={score || 0} />
+          <StyledEstimateTime className="mb-1">
+            {formatMessage(messages.estimateTime, { duration: duration || 30 })}
+          </StyledEstimateTime>
+          <StyledDifficulty className="d-flex align-items-center">
+            <div className="mr-2">{formatMessage(messages.difficulty)}</div>
+            <StarRating score={score || 0} />
+          </StyledDifficulty>
         </StyledEvaluation>
-      </div>
+      </StyledInfo>
       <StyledPracticeTitle>{title}</StyledPracticeTitle>
       {!BraftEditor.createEditorState(description).isEmpty() && <BraftContent>{description}</BraftContent>}
       <PracticeUploadModal />
