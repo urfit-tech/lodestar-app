@@ -2,7 +2,7 @@ import { Icon } from '@chakra-ui/react'
 import { Button, Form, Input, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import React, { useContext, useState } from 'react'
-import { AiOutlineUser } from 'react-icons/ai'
+import { AiOutlineLock, AiOutlineMail, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
@@ -105,9 +105,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
                 message: formatMessage(commonMessages.form.message.emailFormatMessage),
               },
             ],
-          })(
-            <Input placeholder={formatMessage(commonMessages.form.placeholder.email)} suffix={<Icon type="mail" />} />,
-          )}
+          })(<Input placeholder={formatMessage(commonMessages.form.placeholder.email)} suffix={<AiOutlineMail />} />)}
         </Form.Item>
         <Form.Item>
           {form.getFieldDecorator('password', {
@@ -121,7 +119,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
             <Input
               type="password"
               placeholder={formatMessage(commonMessages.form.placeholder.password)}
-              suffix={<Icon type="lock" />}
+              suffix={<AiOutlineLock />}
             />,
           )}
         </Form.Item>
