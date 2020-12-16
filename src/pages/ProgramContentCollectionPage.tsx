@@ -61,33 +61,31 @@ const ProgramContentCollectionPage: React.FC = () => {
   const { currentMemberId } = useAuth()
   const { loadingProgram, program } = useProgram(programId)
 
-  const extra = (
-    <>
-      {enabledModules.customer_review && (
-        <StyledButton
-          variant="outline"
-          onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
-          leftIcon={<Icon as={BsStar} />}
-        >
-          {formatMessage(commonMessages.button.review)}
-        </StyledButton>
-      )}
-      <StyledButton
-        variant="outline"
-        onClick={() => history.push(`/programs/${programId}`)}
-        leftIcon={<Icon as={AiOutlineProfile} />}
-      >
-        {formatMessage(commonMessages.button.intro)}
-      </StyledButton>
-    </>
-  )
-
   return (
     <Layout>
       <StyledPCPageHeader
         className="d-flex align-items-center"
         title={program && program.title}
-        extra={extra}
+        extra={
+          <div>
+            {enabledModules.customer_review && (
+              <StyledButton
+                variant="outline"
+                onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
+                leftIcon={<Icon as={BsStar} />}
+              >
+                {formatMessage(commonMessages.button.review)}
+              </StyledButton>
+            )}
+            <StyledButton
+              variant="outline"
+              onClick={() => history.push(`/programs/${programId}`)}
+              leftIcon={<Icon as={AiOutlineProfile} />}
+            >
+              {formatMessage(commonMessages.button.intro)}
+            </StyledButton>
+          </div>
+        }
         onBack={() => {
           if (productId) {
             const [productType, id] = productId.split('_')
