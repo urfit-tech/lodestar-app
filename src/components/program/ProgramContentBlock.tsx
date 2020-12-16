@@ -13,6 +13,7 @@ import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramR
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
+import PracticeDescriptionBlock from '../practice/PracticeDescriptionBlock'
 import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
 import ProgramContentMaterialBlock from './ProgramContentMaterialBlock'
 import ProgramContentPlayer from './ProgramContentPlayer'

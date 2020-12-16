@@ -15,7 +15,7 @@ const StyledStarRating = styled.div`
   }
 `
 
-const ReviewStarRating: React.FC<{ score: number; boxSize?: string }> = ({ score, boxSize }) => {
+const StarRating: React.FC<{ score: number; boxSize?: string }> = ({ score, boxSize }) => {
   let starLists = []
   for (let i = 0; i < Math.floor(score); i++) {
     starLists.push(<Icon key={uuid()} boxSize={boxSize} as={StarIcon} />)
@@ -29,4 +29,4 @@ const ReviewStarRating: React.FC<{ score: number; boxSize?: string }> = ({ score
   return <StyledStarRating className="d-flex">{starLists}</StyledStarRating>
 }
 
-export default ReviewStarRating
+export default StarRating

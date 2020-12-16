@@ -14,9 +14,9 @@ import types from '../../types'
 import { ReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
+import StarRating from '../common/StarRating'
 import { BraftContent } from '../common/StyledBraftEditor'
 import ReviewReplyItem from './ReviewReplyItem'
-import ReviewStarRating from './ReviewStarRating'
 
 const ReviewContentBlock = styled.div`
   padding-left: 48px;
@@ -128,7 +128,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
         </span>
       </div>
       <ReviewContentBlock>
-        <ReviewStarRating score={score} boxSize="16px" />
+        <StarRating score={score} boxSize="16px" />
         <StyledTitle className="mt-3 mb-2">{title}</StyledTitle>
         <BraftContent>{content}</BraftContent>
 
