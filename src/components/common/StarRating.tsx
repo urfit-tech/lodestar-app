@@ -6,27 +6,32 @@ import { ReactComponent as StarGrayIcon } from '../../images/star-gray.svg'
 import { ReactComponent as StarHalfIcon } from '../../images/star-half.svg'
 import { ReactComponent as StarIcon } from '../../images/star.svg'
 
-const StyledStarRating = styled.div`
+const StyledStarRating = styled.div<{ boxSize?: string }>`
   && svg {
     margin-right: 2px;
   }
   svg:last-child {
     margin-right: 4px;
   }
+  font-size: ${props => props.boxSize || '16px'};
 `
 
 const StarRating: React.FC<{ score: number; boxSize?: string }> = ({ score, boxSize }) => {
   let starLists = []
   for (let i = 0; i < Math.floor(score); i++) {
-    starLists.push(<Icon key={uuid()} boxSize={boxSize} as={StarIcon} />)
+    starLists.push(<Icon key={uuid()} as={StarIcon} />)
   }
-  if (score - Math.floor(score) > 0) starLists.push(<Icon key={uuid()} boxSize={boxSize} as={StarHalfIcon} />)
+  if (score - Math.floor(score) > 0) starLists.push(<Icon key={uuid()} as={StarHalfIcon} />)
   if (starLists.length < 5) {
     for (let i = starLists.length; i < 5; i++) {
-      starLists.push(<Icon key={uuid()} boxSize={boxSize} as={StarGrayIcon} />)
+      starLists.push(<Icon key={uuid()} as={StarGrayIcon} />)
     }
   }
-  return <StyledStarRating className="d-flex">{starLists}</StyledStarRating>
+  return (
+    <StyledStarRating className="d-flex" boxSize={boxSize}>
+      {starLists}
+    </StyledStarRating>
+  )
 }
 
 export default StarRating

@@ -58,12 +58,12 @@ const StyledEvaluationText = css`
 `
 const StyledEstimateTime = styled.div`
   ${StyledEvaluationText}
+  margin-bottom: 8px;
 
   @media (min-width: ${BREAK_POINT}px) {
-    &:first-child {
-      border-right: 1px solid var(--gray);
-      padding-right: 12px;
-    }
+    margin-bottom: 0;
+    border-right: 1px solid var(--gray);
+    padding-right: 12px;
   }
 `
 const StyledDifficulty = styled.div`
@@ -83,12 +83,10 @@ const PracticeDescriptionBlock: React.FC<{
       <StyledInfo className="mb-3">
         <StyledTitle className="mb-2">{formatMessage(messages.practice)}</StyledTitle>
         <StyledEvaluation>
-          <StyledEstimateTime className="mb-1">
-            {formatMessage(messages.estimateTime, { duration: duration || 30 })}
-          </StyledEstimateTime>
+          <StyledEstimateTime>{formatMessage(messages.estimateTime, { duration: duration || 30 })}</StyledEstimateTime>
           <StyledDifficulty className="d-flex align-items-center">
             <div className="mr-2">{formatMessage(messages.difficulty)}</div>
-            <StarRating score={score || 0} />
+            <StarRating score={score || 0} boxSize="20px" />
           </StyledDifficulty>
         </StyledEvaluation>
       </StyledInfo>
