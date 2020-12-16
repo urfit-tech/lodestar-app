@@ -20,7 +20,7 @@ import { useParams } from 'react-router-dom'
 import ReactStars from 'react-star-rating-component'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
-import { createUploadFn } from '../../helpers'
+import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
 import { ReactComponent as StarGrayIcon } from '../../images/star-gray.svg'
 import { ReactComponent as StarIcon } from '../../images/star.svg'
@@ -30,7 +30,7 @@ import { useAuth } from '../auth/AuthContext'
 import CommonModal from '../common/CommonModal'
 
 const StyledHeaderIcon = styled.div`
-  background: #f2fbfc;
+  background: ${props => rgba(props.theme['@primary-color'], 0.1)};
   height: 52px;
   width: 52px;
   border-radius: 26px;
@@ -205,7 +205,7 @@ const ReviewModal: React.FC<{
         onClose={onClose}
         renderHeaderIcon={() => (
           <StyledHeaderIcon>
-            <Icon as={EditIcon} color="primary.500" />
+            <Icon as={EditIcon} color="primary.500" w="24px" h="24px" />
           </StyledHeaderIcon>
         )}
         renderTrigger={() => (
