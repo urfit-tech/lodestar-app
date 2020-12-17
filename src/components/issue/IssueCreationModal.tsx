@@ -74,7 +74,7 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form,
       >
         <Typography.Title level={4}>{formatMessage(issueMessages.form.title.fillQuestion)}</Typography.Title>
         <Form>
-          <Form.Item label={formatMessage(issueMessages.form.label.title)}>
+          <Form.Item label={formatMessage(commonMessages.label.title)}>
             {form.getFieldDecorator('title', {
               initialValue: '',
               rules: [

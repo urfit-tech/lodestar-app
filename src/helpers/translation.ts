@@ -200,15 +200,16 @@ export const commonMessages = {
     more: { id: 'common.profile', defaultMessage: '查看簡介' },
     fillIn: { id: 'common.button.fillIn', defaultMessage: '前往填寫' },
   }),
+  label: defineMessages({
+    title: { id: 'common.label.title', defaultMessage: '標題' },
+    name: { id: 'common.label.name', defaultMessage: '名稱' },
+    category: { id: 'common.label.category', defaultMessage: '類別' },
+    username: { id: 'common.label.username', defaultMessage: '帳號' },
+    email: { id: 'settings.label.email', defaultMessage: '信箱' },
+    phone: { id: 'checkout.label.phone', defaultMessage: '手機' },
+    couponTitle: { id: 'checkout.label.title', defaultMessage: '折價方案名稱' },
+  }),
   form: {
-    label: defineMessages({
-      name: { id: 'common.form.label.name', defaultMessage: '名稱' },
-      category: { id: 'common.form.label.category', defaultMessage: '類別' },
-      couponTitle: { id: 'checkout.coupon.form.label.title', defaultMessage: '折價方案名稱' },
-      username: { id: 'common.form.label.username', defaultMessage: '帳號' },
-      email: { id: 'settings.profile.from.label.email', defaultMessage: '信箱' },
-      phone: { id: 'checkout.form.label.phone', defaultMessage: '手機' },
-    }),
     message: defineMessages({
       name: { id: 'common.form.message.name', defaultMessage: '請輸入名稱' },
       username: { id: 'common.form.message.username', defaultMessage: '請輸入使用者名稱' },
@@ -892,7 +893,6 @@ export const profileMessages = {
     label: defineMessages({
       avatar: { id: 'settings.profile.form.label.avatar', defaultMessage: '頭像' },
       name: { id: 'settings.profile.form.label.name', defaultMessage: '名稱' },
-      title: { id: 'product.program.form.label.title', defaultMessage: '標題' },
       planIds: { id: 'product.program.form.label.planIds', defaultMessage: '適用方案' },
       video: { id: 'product.program.form.label.video', defaultMessage: '影片' },
       subtitle: { id: 'product.program.form.label.subtitle', defaultMessage: '字幕' },
@@ -985,7 +985,6 @@ export const issueMessages = {
       fillQuestion: { id: 'issue.form.title', defaultMessage: '填寫問題' },
     }),
     label: defineMessages({
-      title: { id: 'issue.form.label.title', defaultMessage: '標題' },
       question: { id: 'issue.form.label.question', defaultMessage: '問題內容' },
     }),
     placeholder: defineMessages({
