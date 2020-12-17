@@ -22,8 +22,8 @@ export const useReviewAggregate = (path: string) => {
       },
     },
   )
-  const averageScore = loading || error || !data ? null : data.review_public_aggregate.aggregate?.avg?.score || 0
-  const reviewCount = loading || error || !data ? null : data.review_public_aggregate.aggregate?.count || 0
+  const averageScore = data?.review_public_aggregate.aggregate?.avg?.score || 0
+  const reviewCount = data?.review_public_aggregate.aggregate?.count || 0
 
   return {
     loadingReviewAggregate: loading,
