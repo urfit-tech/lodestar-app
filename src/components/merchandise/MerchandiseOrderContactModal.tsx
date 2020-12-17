@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Icon } from '@chakra-ui/icons'
 import { Button, ButtonGroup, FormControl, FormErrorMessage, useDisclosure, useToast } from '@chakra-ui/react'
 import { Button as AntdButton } from 'antd'
-import BraftEditor from 'braft-editor'
+import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import React from 'react'
@@ -114,20 +114,22 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
   } = useOrderContact(orderId, currentMemberId || '')
 
   const { formatMessage } = useIntl()
-  const { control, handleSubmit, setValue, errors, setError } = useForm({
+  const { control, handleSubmit, setValue, errors, setError } = useForm<{
+    message: EditorState
+  }>({
     defaultValues: { message: BraftEditor.createEditorState('') },
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
 
-  const handleSave = (data: { message: any }) => {
-    if (data.message.isEmpty()) {
+  const handleSave = handleSubmit(({ message }) => {
+    if (message.isEmpty()) {
       setError('message', {
         message: formatMessage(messages.emptyContactMessage),
       })
       return
     }
-    insertOrderContact(data.message.toRAW())
+    insertOrderContact(message.toRAW())
       .then(() => {
         toast({
           title: formatMessage(commonMessages.event.successfullySaved),
@@ -141,7 +143,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
         refetch()
       })
       .catch(error => console.log(error))
-  }
+  })
 
   if (loading || error) {
     return null
@@ -170,7 +172,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
           </StyledButton>
         )}
       >
-        <form onSubmit={handleSubmit(handleSave)}>
+        <form onSubmit={handleSave}>
           <Controller
             name="message"
             as={
