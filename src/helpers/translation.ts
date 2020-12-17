@@ -81,6 +81,7 @@ export const commonMessages = {
     back: { id: 'common.ui.back', defaultMessage: '返回' },
     repay: { id: 'common.ui.repay', defaultMessage: '重新付款' },
     search: { id: 'common.ui.search', defaultMessage: '搜尋' },
+    upload: { id: 'common.ui.upload', defaultMessage: '上傳' },
     cancel: { id: 'common.ui.cancel', defaultMessage: '取消' },
   }),
   title: defineMessages({
