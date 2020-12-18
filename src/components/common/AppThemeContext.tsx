@@ -57,11 +57,28 @@ export const AppThemeProvider: React.FC = ({ children }) => {
           background: 'transparent',
         },
       },
+      Input: {
+        variants: {
+          outline: () => ({
+            field: {
+              borderColor: 'var(--gray)',
+            },
+          }),
+        },
+      },
       Modal: {
         baseStyle: {
           dialog: {
             borderRadius: '2px',
           },
+        },
+      },
+      Tooltip: {
+        baseStyle: {
+          bg: '#4a4a4a',
+          borderRadius: '4px',
+          fontWeight: '500',
+          fontSize: '12px',
         },
       },
     },

@@ -82,6 +82,7 @@ export const commonMessages = {
     repay: { id: 'common.ui.repay', defaultMessage: '重新付款' },
     search: { id: 'common.ui.search', defaultMessage: '搜尋' },
     upload: { id: 'common.ui.upload', defaultMessage: '上傳' },
+    uploadFile: { id: 'common.ui.uploadFile', defaultMessage: '上傳檔案' },
     cancel: { id: 'common.ui.cancel', defaultMessage: '取消' },
   }),
   title: defineMessages({
@@ -154,7 +155,6 @@ export const commonMessages = {
     reselectCoupon: { id: 'checkout.form.radio.coupon.reselect', defaultMessage: '重新選擇' },
     chooseCoupon: { id: 'checkout.form.radio.coupon.choose', defaultMessage: '選擇折價券' },
     reupload: { id: 'common.reupload', defaultMessage: '重新上傳' },
-    upload: { id: 'common.upload', defaultMessage: '上傳檔案' },
     viewCourse: { id: 'common.button.course.view', defaultMessage: '查看課程內容' },
     viewProgram: { id: 'common.button.program.view', defaultMessage: '查看課程' },
     viewSubscription: { id: 'product.program.subscription.view', defaultMessage: '查看訂閱方案' },

@@ -1,3 +1,5 @@
+import { ChevronDownIcon } from '@chakra-ui/icons'
+import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -11,6 +13,7 @@ const messages = defineMessages({
   practice: { id: 'program.label.practice', defaultMessage: '作業練習' },
   estimateTime: { id: 'program.text.estimateTime', defaultMessage: '預估實作 {duration} 分鐘' },
   difficulty: { id: 'program.term.difficulty', defaultMessage: '難易度' },
+  downloadMaterial: { id: 'program.ui.downloadMaterial', defaultMessage: '下載素材' },
 })
 
 const StyledBlock = styled.div`
@@ -78,6 +81,8 @@ const PracticeDescriptionBlock: React.FC<{
 }> = ({ title, description, duration, score }) => {
   const { formatMessage } = useIntl()
 
+  const handleDownload = () => {}
+
   return (
     <StyledBlock>
       <StyledInfo className="mb-3">
@@ -91,7 +96,20 @@ const PracticeDescriptionBlock: React.FC<{
         </StyledEvaluation>
       </StyledInfo>
       <StyledPracticeTitle>{title}</StyledPracticeTitle>
-      {!BraftEditor.createEditorState(description).isEmpty() && <BraftContent>{description}</BraftContent>}
+      {!BraftEditor.createEditorState(description).isEmpty() && (
+        <div className="mb-3">
+          <BraftContent>{description}</BraftContent>
+        </div>
+      )}
+      <Menu>
+        <MenuButton as={Button} variant="outline" rightIcon={<ChevronDownIcon />} className="mb-4">
+          {formatMessage(messages.downloadMaterial)}
+        </MenuButton>
+        <MenuList>
+          <MenuItem onClick={() => handleDownload()}>Download1</MenuItem>
+          <MenuItem onClick={() => handleDownload()}>Download2</MenuItem>
+        </MenuList>
+      </Menu>
       <PracticeUploadModal />
     </StyledBlock>
   )
