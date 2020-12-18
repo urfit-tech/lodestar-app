@@ -10,7 +10,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
-import React from 'react'
+import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -44,8 +44,11 @@ const PracticeUploadModal: React.FC = () => {
     coverUrl: string
     description?: EditorState
   }>()
+  const [attachment, setAttachment] = useState<File[]>([])
+  const [coverUrl, setCoverUrl] = useState<string | null>(null)
+  console.log({ attachment })
 
-  const handleUpload = handleSubmit(({ title, attachmentUrl, coverUrl, description }) => {
+  const handleUpload = handleSubmit(({ title, coverUrl, description }) => {
     if (!title) {
       setError('title', {
         message: formatMessage(messages.fillTitleNotice),
@@ -92,7 +95,7 @@ const PracticeUploadModal: React.FC = () => {
               <QuestionIcon />
             </Tooltip>
           </FormLabel>
-          <FileUploader />
+          <FileUploader multiple showUploadList fileList={attachment} onChange={value => setAttachment(value)} />
         </div>
         <div className="col-12 col-lg-4 mb-4">
           <FormLabel>
@@ -101,7 +104,7 @@ const PracticeUploadModal: React.FC = () => {
               <QuestionIcon />
             </Tooltip>
           </FormLabel>
-          <FileUploader />
+          <FileUploader fileList={attachment} onChange={value => setAttachment(value)} />
         </div>
       </div>
 
