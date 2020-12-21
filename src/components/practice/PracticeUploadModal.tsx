@@ -17,6 +17,7 @@ import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import CommonModal from '../common/CommonModal'
 import FileUploader from '../common/FileUploader'
+import ImageUploader from '../common/ImageUploader'
 
 const messages = defineMessages({
   uploadPractice: { id: 'program.ui.uploadPractice', defaultMessage: '上傳作業' },
@@ -104,7 +105,7 @@ const PracticeUploadModal: React.FC = () => {
               <QuestionIcon />
             </Tooltip>
           </FormLabel>
-          <FileUploader fileList={attachment} onChange={value => setAttachment(value)} />
+          <ImageUploader />
         </div>
       </div>
 

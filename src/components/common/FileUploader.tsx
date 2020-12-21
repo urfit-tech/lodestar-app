@@ -15,8 +15,8 @@ const StyledFileItem = styled.div`
 `
 
 const FileUploader: React.FC<{
+  fileList: File[]
   multiple?: boolean
-  fileList?: File[]
   showUploadList?: boolean
   onChange?: (value: File[]) => void
 }> = ({ multiple, fileList, showUploadList, onChange }) => {
@@ -42,7 +42,7 @@ const FileUploader: React.FC<{
           // append new file into input value
           const files: File[] = fileList?.slice() || []
           for (let i = 0; i < e.target.files.length; i++) {
-            const file = e.target.files.item(i)
+            const file = e.target.files[i]
             file && !files.some(v => v.name === file.name) && files.push(file)
           }
 
