@@ -18,11 +18,12 @@ const FileUploader: React.FC<{
   fileList: File[]
   multiple?: boolean
   showUploadList?: boolean
+  accept?: string
   onChange?: (files: File[]) => void
   renderTrigger?: React.FC<{
     onClick: () => void
   }>
-}> = ({ renderTrigger, multiple, onChange, fileList, showUploadList }) => {
+}> = ({ renderTrigger, multiple, accept, onChange, fileList, showUploadList }) => {
   const { formatMessage } = useIntl()
   const inputRef = useRef<HTMLInputElement | null>(null)
 
@@ -38,6 +39,7 @@ const FileUploader: React.FC<{
         ref={inputRef}
         type="file"
         multiple={multiple}
+        accept={accept}
         hidden
         onChange={e => {
           if (!e.target.files || !e.target.files.length || !onChange) {

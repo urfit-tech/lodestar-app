@@ -88,7 +88,7 @@ const PracticeDescriptionBlock: React.FC<{
       <StyledInfo className="mb-3">
         <StyledTitle className="mb-2">{formatMessage(messages.practice)}</StyledTitle>
         <StyledEvaluation>
-          <StyledEstimateTime>{formatMessage(messages.estimateTime, { duration: duration || 30 })}</StyledEstimateTime>
+          <StyledEstimateTime>{formatMessage(messages.estimateTime, { duration: duration || 0 })}</StyledEstimateTime>
           <StyledDifficulty className="d-flex align-items-center">
             <div className="mr-2">{formatMessage(messages.difficulty)}</div>
             <StarRating score={score || 0} boxSize="20px" />

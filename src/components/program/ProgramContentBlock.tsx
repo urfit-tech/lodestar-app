@@ -95,14 +95,16 @@ const ProgramContentBlock: React.FC<{
         />
       )}
 
-      <StyledContentBlock className="mb-3">
-        <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
+      {programContent.programContentBody?.type !== 'practice' && (
+        <StyledContentBlock className="mb-3">
+          <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
 
-        {programContent.programContentBody &&
-          !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
-            <BraftContent>{programContent.programContentBody.description}</BraftContent>
-          )}
-      </StyledContentBlock>
+          {programContent.programContentBody &&
+            !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
+              <BraftContent>{programContent.programContentBody.description}</BraftContent>
+            )}
+        </StyledContentBlock>
+      )}
 
       <div className="mb-3">
         {loadingMember ? (
@@ -128,6 +130,8 @@ const ProgramContentBlock: React.FC<{
           <PracticeDescriptionBlock
             title={'未命名的內容標題'}
             description={programContent.programContentBody?.description || ''}
+            duration={23}
+            score={4}
           />
         </div>
       )}
