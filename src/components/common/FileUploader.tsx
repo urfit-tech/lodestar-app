@@ -19,15 +19,20 @@ const FileUploader: React.FC<{
   multiple?: boolean
   showUploadList?: boolean
   onChange?: (value: File[]) => void
-}> = ({ multiple, fileList, showUploadList, onChange }) => {
+  renderTrigger?: React.FC<{
+    onClick: () => void
+  }>
+}> = ({ renderTrigger, multiple, onChange, fileList, showUploadList }) => {
   const { formatMessage } = useIntl()
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   return (
     <>
-      <Button leftIcon={<Icon as={AiOutlineUpload} />} onClick={() => inputRef.current?.click()} variant="outline">
-        {formatMessage(commonMessages.ui.uploadFile)}
-      </Button>
+      {renderTrigger?.({ onClick: () => inputRef.current?.click() }) || (
+        <Button leftIcon={<Icon as={AiOutlineUpload} />} onClick={() => inputRef.current?.click()} variant="outline">
+          {formatMessage(commonMessages.ui.uploadFile)}
+        </Button>
+      )}
 
       <input
         ref={inputRef}
@@ -56,12 +61,12 @@ const FileUploader: React.FC<{
       />
 
       {showUploadList &&
-        fileList?.map(v => (
+        fileList.map(v => (
           <StyledFileItem key={v.name} className="d-flex align-items-center justify-content-between py-1 px-2">
             <div className="flex-grow-1">{v.name}</div>
             <CloseButton
               className="flex-shrink-0 ml-2 pointer-cursor"
-              onClick={() => onChange?.(fileList.filter(w => w !== v))}
+              onClick={() => onChange?.(fileList.filter(w => w.name !== v.name))}
             />
           </StyledFileItem>
         ))}
