@@ -13,6 +13,7 @@ import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramR
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
+import PracticeDescriptionBlock from '../practice/PracticeDescriptionBlock'
 import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
 import ProgramContentMaterialBlock from './ProgramContentMaterialBlock'
 import ProgramContentPlayer from './ProgramContentPlayer'
@@ -122,7 +123,16 @@ const ProgramContentBlock: React.FC<{
         ) : null}
       </div>
 
-      {(program.isIssuesOpen || enabledModules.practice || programContent.materials.length !== 0) && (
+      {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
+        <div className="mb-4">
+          <PracticeDescriptionBlock
+            title={'未命名的內容標題'}
+            description={programContent.programContentBody?.description || ''}
+          />
+        </div>
+      )}
+
+      {(program.isIssuesOpen || (enabledModules.practice && programContent.programContentBody?.type === 'practice')) || programContent.materials.length !== 0) && (
         <StyledContentBlock>
           <Tabs defaultActiveKey={programContentMaterials?.length !== 0 ? 'material' : 'issue'}>
             <Tabs.TabPane tab={formatMessage(productMessages.program.tab.discussion)} key="issue" className="py-3">
@@ -131,7 +141,7 @@ const ProgramContentBlock: React.FC<{
                 threadId={`/programs/${program.id}/contents/${programContentId}`}
               />
             </Tabs.TabPane>
-            {enabledModules.practice && (
+            {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
               <Tabs.TabPane tab={formatMessage(programMessages.label.practiceUpload)} key="practice" className="p-4">
                 <PracticeDisplayedCollection />
               </Tabs.TabPane>
