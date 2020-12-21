@@ -128,7 +128,7 @@ const ProgramContentBlock: React.FC<{
               />
             </Tabs.TabPane>
             {enabledModules.practice && (
-              <Tabs.TabPane tab={formatMessage(programMessages.label.practiceUpload)} key="practice" className="py-3">
+              <Tabs.TabPane tab={formatMessage(programMessages.label.practiceUpload)} key="practice" className="p-4">
                 <PracticeDisplayedCollection />
               </Tabs.TabPane>
             )}
