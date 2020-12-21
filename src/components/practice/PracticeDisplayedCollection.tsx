@@ -25,7 +25,6 @@ const StyledParagraph = styled.p`
 `
 const StyledNotice = styled.div`
   border-radius: 4px;
-  height: 44px;
   padding: 12px;
   font-size: 14px;
   font-weight: 500;
