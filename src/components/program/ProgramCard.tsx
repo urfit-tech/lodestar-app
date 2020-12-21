@@ -125,18 +125,20 @@ const ProgramCard: React.FC<{
 
           <StyledContentBlock>
             <StyledTitle variant={variant}>{program.title}</StyledTitle>
-            {enabledModules.customer_review &&
-            reviewCount &&
-            averageScore &&
-            (!!(currentUserRole === 'app-owner' || (currentMemberId && productEditorIds?.includes(currentMemberId))) ||
-              reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3)) ? (
-              <StyledReviewRating className="d-flex mb-2">
-                <StarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} boxSize="20px" />(
-                {reviewCount}則)
-              </StyledReviewRating>
-            ) : (
-              <StyledReviewRating className="mb-2">{formatMessage(reviewMessages.text.noReviews)}</StyledReviewRating>
-            )}
+
+            {enabledModules.customer_review ? (
+              currentUserRole === 'app-owner' ||
+              (currentMemberId && productEditorIds.includes(currentMemberId)) ||
+              reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
+                <StyledReviewRating className="d-flex mb-2">
+                  <StarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} boxSize="20px" />
+                  <span>({formatMessage(reviewMessages.text.reviewCount, { count: reviewCount })})</span>
+                </StyledReviewRating>
+              ) : (
+                <StyledReviewRating className="mb-2">{formatMessage(reviewMessages.text.noReviews)}</StyledReviewRating>
+              )
+            ) : null}
+
             {renderCustomDescription && renderCustomDescription()}
             <StyledDescription variant={variant}>{program.abstract}</StyledDescription>
 
