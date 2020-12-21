@@ -41,15 +41,14 @@ const StyledMask = styled.div`
   }
 `
 
-const ImageUploader: React.FC = () => {
+const ImageUploader: React.FC<{
+  file: File | null
+  onChange?: (file: File) => void
+}> = ({ file, onChange }) => {
   const { formatMessage } = useIntl()
-  const [files, setFiles] = useState<File[]>([])
   const [imgSrc, setImgSrc] = useState<string | null>(null)
 
-  const handleChange = (value: File[]) => setFiles(value)
-
   useEffect(() => {
-    const [file] = files
     if (file) {
       const reader = new FileReader()
       reader.readAsDataURL(file)
@@ -58,7 +57,7 @@ const ImageUploader: React.FC = () => {
         setImgSrc(dataUrl)
       }
     }
-  }, [files])
+  }, [file])
 
   return (
     <StyledWrapper>
@@ -70,8 +69,8 @@ const ImageUploader: React.FC = () => {
               {formatMessage(commonMessages.ui.uploadFile)}
             </StyledButton>
           )}
-          fileList={files}
-          onChange={handleChange}
+          fileList={file ? [file] : []}
+          onChange={([file]) => onChange?.(file)}
         />
       </StyledMask>
     </StyledWrapper>

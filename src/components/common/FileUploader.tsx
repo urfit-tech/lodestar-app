@@ -18,7 +18,7 @@ const FileUploader: React.FC<{
   fileList: File[]
   multiple?: boolean
   showUploadList?: boolean
-  onChange?: (value: File[]) => void
+  onChange?: (files: File[]) => void
   renderTrigger?: React.FC<{
     onClick: () => void
   }>

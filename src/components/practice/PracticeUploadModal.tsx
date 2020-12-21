@@ -45,18 +45,17 @@ const PracticeUploadModal: React.FC = () => {
     coverUrl: string
     description?: EditorState
   }>()
-  const [attachment, setAttachment] = useState<File[]>([])
-  const [coverUrl, setCoverUrl] = useState<string | null>(null)
-  console.log({ attachment })
+  const [attachments, setAttachments] = useState<File[]>([])
+  const [coverImage, setCoverImage] = useState<File | null>(null)
 
-  const handleUpload = handleSubmit(({ title, coverUrl, description }) => {
+  const handleUpload = handleSubmit(({ title, description }) => {
     if (!title) {
       setError('title', {
         message: formatMessage(messages.fillTitleNotice),
       })
     }
 
-    console.log(title, description?.toRAW())
+    console.log(title, attachments, coverImage, description?.toRAW())
   })
 
   return (
@@ -96,7 +95,7 @@ const PracticeUploadModal: React.FC = () => {
               <QuestionIcon />
             </Tooltip>
           </FormLabel>
-          <FileUploader multiple showUploadList fileList={attachment} onChange={value => setAttachment(value)} />
+          <FileUploader multiple showUploadList fileList={attachments} onChange={files => setAttachments(files)} />
         </div>
         <div className="col-12 col-lg-4 mb-4">
           <FormLabel>
@@ -105,7 +104,7 @@ const PracticeUploadModal: React.FC = () => {
               <QuestionIcon />
             </Tooltip>
           </FormLabel>
-          <ImageUploader />
+          <ImageUploader file={coverImage} onChange={file => setCoverImage(file)} />
         </div>
       </div>
 
