@@ -106,24 +106,37 @@ const ProgramContentBlock: React.FC<{
         </StyledContentBlock>
       )}
 
-      <div className="mb-3">
-        {loadingMember ? (
-          <Skeleton active avatar />
-        ) : member ? (
-          <CreatorCard
-            id={member.id}
-            avatarUrl={member.pictureUrl}
-            title={member.name || member.username}
-            labels={[{ id: 'instructor', name: 'instructor' }]}
-            jobTitle={member.title}
-            description={member.abstract}
-            withProgram
-            withPodcast
-            withAppointment
-            withBlog
-          />
-        ) : null}
-      </div>
+      {programContent.programContentBody?.type !== 'practice' && (
+        <>
+          <StyledContentBlock className="mb-3">
+            <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
+
+            {programContent.programContentBody &&
+              !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
+                <BraftContent>{programContent.programContentBody.description}</BraftContent>
+              )}
+          </StyledContentBlock>
+
+          <div className="mb-3">
+            {loadingMember ? (
+              <Skeleton active avatar />
+            ) : member ? (
+              <CreatorCard
+                id={member.id}
+                avatarUrl={member.pictureUrl}
+                title={member.name || member.username}
+                labels={[{ id: 'instructor', name: 'instructor' }]}
+                jobTitle={member.title}
+                description={member.abstract}
+                withProgram
+                withPodcast
+                withAppointment
+                withBlog
+              />
+            ) : null}
+          </div>
+        </>
+      )}
 
       {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
         <div className="mb-4">
