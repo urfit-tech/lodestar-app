@@ -22,7 +22,8 @@ import ImageUploader from '../common/ImageUploader'
 
 const messages = defineMessages({
   practice: { id: 'program.term.practice', defaultMessage: '作業' },
-  uploadPractice: { id: 'program.ui.uploadPractice', defaultMessage: '上傳作業' },
+  uploadByMe: { id: 'program.ui.uploadByMe', defaultMessage: '我要上傳' },
+  uploadPractice: { id: 'program.label.uploadPractice', defaultMessage: '上傳作業' },
   practiceAttachment: { id: 'program.label.practiceAttachment', defaultMessage: '作品檔案' },
   practiceAttachmentNotice: { id: 'program.label.practiceAttachmentNotice', defaultMessage: '檔案大小不超過 5GB' },
   cover: { id: 'program.label.cover', defaultMessage: '封面圖片' },
@@ -83,7 +84,7 @@ const PracticeUploadModal: React.FC = () => {
       )}
       renderTrigger={() => (
         <StyledButton variant="primary" onClick={onOpen}>
-          {formatMessage(messages.uploadPractice)}
+          {formatMessage(messages.uploadByMe)}
         </StyledButton>
       )}
     >

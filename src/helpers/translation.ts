@@ -83,6 +83,7 @@ export const commonMessages = {
     search: { id: 'common.ui.search', defaultMessage: '搜尋' },
     upload: { id: 'common.ui.upload', defaultMessage: '上傳' },
     uploadFile: { id: 'common.ui.uploadFile', defaultMessage: '上傳檔案' },
+    uploadImage: { id: 'common.ui.uploadImage', defaultMessage: '上傳圖片' },
     cancel: { id: 'common.ui.cancel', defaultMessage: '取消' },
   }),
   title: defineMessages({
