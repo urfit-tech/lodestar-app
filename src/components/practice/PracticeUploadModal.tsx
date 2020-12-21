@@ -8,6 +8,7 @@ import {
   Input,
   Tooltip,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
 import React, { useState } from 'react'
@@ -20,6 +21,7 @@ import FileUploader from '../common/FileUploader'
 import ImageUploader from '../common/ImageUploader'
 
 const messages = defineMessages({
+  practice: { id: 'program.term.practice', defaultMessage: '作業' },
   uploadPractice: { id: 'program.ui.uploadPractice', defaultMessage: '上傳作業' },
   practiceAttachment: { id: 'program.label.practiceAttachment', defaultMessage: '作品檔案' },
   practiceAttachmentNotice: { id: 'program.label.practiceAttachmentNotice', defaultMessage: '檔案大小不超過 5GB' },
@@ -39,10 +41,9 @@ const StyledButton = styled(Button)`
 const PracticeUploadModal: React.FC = () => {
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const toast = useToast()
   const { register, control, handleSubmit, setError, errors } = useForm<{
     title: string
-    attachmentUrl: string
-    coverUrl: string
     description?: EditorState
   }>()
   const [attachments, setAttachments] = useState<File[]>([])
@@ -54,8 +55,14 @@ const PracticeUploadModal: React.FC = () => {
         message: formatMessage(messages.fillTitleNotice),
       })
     }
-
     console.log(title, attachments, coverImage, description?.toRAW())
+    toast({
+      title: `${formatMessage(messages.practice)}${formatMessage(commonMessages.event.successfullyUpload)}`,
+      status: 'success',
+      duration: 1500,
+      position: 'top',
+    })
+    onClose()
   })
 
   return (
