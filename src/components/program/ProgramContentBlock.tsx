@@ -1,17 +1,21 @@
 import { Skeleton, Tabs } from 'antd'
+import BraftEditor from 'braft-editor'
 import { flatten } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
-import { programMessages } from '../../helpers/translation'
+import { productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
+import CreatorCard from '../common/CreatorCard'
+import { BraftContent } from '../common/StyledBraftEditor'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
 import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
 import ProgramContentMaterialBlock from './ProgramContentMaterialBlock'
+import ProgramContentPlayer from './ProgramContentPlayer'
 
 const StyledContentBlock = styled.div`
   padding: 1.25rem;
@@ -62,7 +66,7 @@ const ProgramContentBlock: React.FC<{
 
   return (
     <div id="program_content_block" className="pt-4 p-sm-4">
-      {/* {!programContent.programContentBody && formatMessage(productMessages.program.content.unpurchased)}
+      {!programContent.programContentBody && formatMessage(productMessages.program.content.unpurchased)}
 
       {programContent.programContentBody?.type === 'video' && (
         <ProgramContentPlayer
@@ -116,7 +120,7 @@ const ProgramContentBlock: React.FC<{
             withBlog
           />
         ) : null}
-      </div> */}
+      </div>
 
       {(program.isIssuesOpen || enabledModules.practice || programContent.materials.length !== 0) && (
         <StyledContentBlock>

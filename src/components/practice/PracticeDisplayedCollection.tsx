@@ -78,6 +78,7 @@ const PracticeDisplayedCollection: React.FC<{ fakeData?: boolean }> = ({ fakeDat
         <Icon as={LockIcon} className="mr-2" />
         <span>{formatMessage(messages.privatePractice)}</span>
       </StyledNotice>
+
       <div className="row">
         {practiceCollection.map(v => (
           <div className="col-12 col-lg-4 mb-4">
@@ -102,7 +103,6 @@ const StyledTitle = styled.h3`
   text-overflow: ellipsis;
   white-space: nowrap;
 `
-
 const StyledContainer = styled.div`
   border-radius: 4px;
   box-shadow: 0 2px 10px 0 var(--gray);
