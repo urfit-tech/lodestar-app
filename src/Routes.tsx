@@ -244,6 +244,13 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     authenticated: false,
   },
 
+  // practice
+  practice: {
+    path: '/practices/:practiceId',
+    pageName: 'PracticePage',
+    authenticated: true,
+  },
+
   // general member admin
   member_profile_admin: {
     path: '/settings/profile',

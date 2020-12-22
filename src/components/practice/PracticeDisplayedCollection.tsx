@@ -1,6 +1,7 @@
 import { Icon } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
+import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { programMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
@@ -34,7 +35,6 @@ const StyledNotice = styled.div`
 `
 
 const StyledName = styled.span`
-  width: 67px;
   height: 18px;
   font-size: 12px;
   font-weight: 500;
@@ -81,14 +81,16 @@ const PracticeDisplayedCollection: React.FC<{ fakeData?: boolean }> = ({ fakeDat
       <div className="row">
         {practiceCollection.map(v => (
           <div className="col-12 col-lg-4 mb-4">
-            <PracticeDisplayedCard
-              title={v.title}
-              coverUrl={v.coverUrl}
-              avatarUrl={v.avatarUrl}
-              name={v.name}
-              isLiked={v.isLiked}
-              likedCount={v.likedCount}
-            />
+            <Link to={`/practices/practiceId`}>
+              <PracticeDisplayedCard
+                title={v.title}
+                coverUrl={v.coverUrl}
+                avatarUrl={v.avatarUrl}
+                name={v.name}
+                isLiked={v.isLiked}
+                likedCount={v.likedCount}
+              />
+            </Link>
           </div>
         ))}
       </div>
@@ -143,10 +145,8 @@ const PracticeDisplayedCard: React.FC<{
       <div className="p-3">
         <StyledTitle className="mb-3">{title}</StyledTitle>
         <div className="d-flex justify-content-between align-items-end">
-          <div className="d-flex align-items-center">
-            <AvatarImage className="mr-2" size="28px" src={avatarUrl} />
-            <StyledName>{name}</StyledName>
-          </div>
+          <MemberInfoBlock avatarUrl={avatarUrl} name={name} />
+
           <StyledGroup className="d-flex">
             <div className="mr-3">
               <Icon as={CommentIcon} className="mr-1" />
@@ -170,5 +170,16 @@ const PracticeDisplayedCard: React.FC<{
     </StyledContainer>
   )
 }
+
+export const MemberInfoBlock: React.FC<{
+  avatarUrl: string | null
+  name: string
+  className?: string
+}> = ({ avatarUrl, name, className }) => (
+  <div className={`d-flex align-items-center ${className}`}>
+    <AvatarImage className="mr-2" size="28px" src={avatarUrl} />
+    <StyledName>{name}</StyledName>
+  </div>
+)
 
 export default PracticeDisplayedCollection
