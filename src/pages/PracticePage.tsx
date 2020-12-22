@@ -108,12 +108,12 @@ const PracticePage: React.FC<{}> = ({}) => {
         </div>
 
         {practice.coverUrl && (
-          <CustomRatioImage width="100%" ratio={9 / 16} src={practice.coverUrl || EmptyCover} className="mt-4" />
+          <CustomRatioImage width="100%" ratio={9 / 16} src={practice.coverUrl || EmptyCover} className="my-4" />
         )}
 
         <BraftContent>{practice.description}</BraftContent>
 
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-between mt-4">
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant="outline">
               {formatMessage(messages.practiceFile)}
@@ -192,7 +192,8 @@ const usePractice = (id: string) => {
     title: '我是主題名稱主題喔我是主題名稱主題喔我是主題名稱主題',
     createdAt: new Date('2020-06-01'),
     coverUrl: 'https://fakeimg.pl/1920x1080/',
-    description: '',
+    description:
+      'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum est vel ipsam tenetur dolorem esse tempora eos necessitatibus beatae. Temporibus laudantium saepe obcaecati corporis facilis porro nostrum dignissimos praesentium blanditiis!',
     member: {
       avatarUrl: null,
       name: 'sasali Wang',
