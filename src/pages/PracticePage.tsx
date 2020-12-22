@@ -6,6 +6,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { CustomRatioImage } from '../components/common/Image'
+import MessageModal from '../components/common/MessageModal'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { MemberInfoBlock } from '../components/practice/PracticeDisplayedCollection'
@@ -138,6 +139,8 @@ const PracticePage: React.FC<{}> = ({}) => {
         </div>
 
         <StyledDivider className="my-3" />
+
+        <MessageModal />
       </div>
     </DefaultLayout>
   )
