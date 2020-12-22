@@ -5,7 +5,9 @@ import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { useAuth } from '../components/auth/AuthContext'
 import { CustomRatioImage } from '../components/common/Image'
+import MessageItem from '../components/common/MessageItem'
 import MessageModal from '../components/common/MessageModal'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -69,6 +71,7 @@ const messages = defineMessages({
 const PracticePage: React.FC<{}> = ({}) => {
   const { practiceId } = useParams<{ practiceId: string }>()
   const { formatMessage } = useIntl()
+  const { currentMemberId } = useAuth()
   const { loading, error, practice } = usePractice(practiceId)
   const [likeStatus, setLikeStatus] = useState({
     isLiked: true,
@@ -140,7 +143,18 @@ const PracticePage: React.FC<{}> = ({}) => {
 
         <StyledDivider className="my-3" />
 
-        <MessageModal />
+        <div className="mb-4">
+          <MessageModal />
+          {practice.suggests.map(v => (
+            <MessageItem
+              memberId={v.memberId}
+              createdAt={v.createdAt}
+              content={v.content}
+              isLiked={v.isLiked}
+              likedCount={v.likedCount}
+            />
+          ))}
+        </div>
       </div>
     </DefaultLayout>
   )
@@ -149,6 +163,7 @@ const PracticePage: React.FC<{}> = ({}) => {
 export default PracticePage
 
 const usePractice = (id: string) => {
+  const { currentMemberId } = useAuth()
   const practice: {
     title: string
     createdAt: Date
@@ -166,6 +181,13 @@ const usePractice = (id: string) => {
         title: string
       }
     }
+    suggests: {
+      memberId: string
+      createdAt: Date
+      content: string
+      isLiked: boolean
+      likedCount: number
+    }[]
   } = {
     title: '我是主題名稱主題喔我是主題名稱主題喔我是主題名稱主題',
     createdAt: new Date('2020-06-01'),
@@ -183,6 +205,13 @@ const usePractice = (id: string) => {
         title: '作業',
       },
     },
+    suggests: new Array(5).fill({
+      memberId: currentMemberId || '',
+      createdAt: new Date(),
+      content: 'hahahahha',
+      isLiked: false,
+      likedCount: 5,
+    }),
   }
 
   return {
