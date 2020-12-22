@@ -136,6 +136,7 @@ const PracticePage: React.FC<{}> = ({}) => {
             <StyledLikedCount isActive={likeStatus.isLiked}>{likeStatus.likedCount}</StyledLikedCount>
           </div>
         </div>
+
         <StyledDivider className="my-3" />
       </div>
     </DefaultLayout>
