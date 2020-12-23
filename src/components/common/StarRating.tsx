@@ -1,34 +1,36 @@
 import { Icon } from '@chakra-ui/react'
 import React from 'react'
 import styled from 'styled-components'
-import { v4 as uuid } from 'uuid'
 import { ReactComponent as StarGrayIcon } from '../../images/star-gray.svg'
 import { ReactComponent as StarHalfIcon } from '../../images/star-half.svg'
 import { ReactComponent as StarIcon } from '../../images/star.svg'
 
-const StyledStarRating = styled.div<{ boxSize?: string }>`
+const StyledStarRating = styled.div<{ size?: string }>`
   && svg {
     margin-right: 2px;
   }
   svg:last-child {
     margin-right: 4px;
   }
-  font-size: ${props => props.boxSize || '16px'};
+  font-size: ${props => props.size || '16px'};
 `
 
-const StarRating: React.FC<{ score: number; boxSize?: string }> = ({ score, boxSize }) => {
-  let starLists = []
-  for (let i = 0; i < Math.floor(score); i++) {
-    starLists.push(<Icon key={uuid()} as={StarIcon} />)
-  }
-  if (score - Math.floor(score) > 0) starLists.push(<Icon key={uuid()} as={StarHalfIcon} />)
-  if (starLists.length < 5) {
-    for (let i = starLists.length; i < 5; i++) {
-      starLists.push(<Icon key={uuid()} as={StarGrayIcon} />)
+const StarRating: React.FC<{ score: number; max: number; size?: string }> = ({ score, max, size }) => {
+  const starLists = []
+  while (starLists.length < max) {
+    if (starLists.length < Math.floor(score)) {
+      starLists.push(<Icon key={starLists.length} as={StarIcon} />)
+      continue
     }
+    if (0 < score - Math.floor(score)) {
+      starLists.push(<Icon key={starLists.length} as={StarHalfIcon} />)
+      continue
+    }
+    starLists.push(<Icon key={starLists.length} as={StarGrayIcon} />)
   }
+
   return (
-    <StyledStarRating className="d-flex" boxSize={boxSize}>
+    <StyledStarRating className="d-flex" size={size}>
       {starLists}
     </StyledStarRating>
   )

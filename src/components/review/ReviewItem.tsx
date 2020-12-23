@@ -130,7 +130,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
         </span>
       </div>
       <ReviewContentBlock>
-        <StarRating score={score} boxSize="16px" />
+        <StarRating score={score} max={5} size="16px" />
         <StyledTitle className="mt-3 mb-2">{title}</StyledTitle>
         <BraftContent>{content}</BraftContent>
 
