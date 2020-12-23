@@ -7,8 +7,8 @@ import { shippingMethodFormatter } from '../../helpers'
 import { ReactComponent as IconList } from '../../images/list-o.svg'
 import { InvoiceProps } from '../checkout/InvoiceInput'
 import { ShippingProps } from '../checkout/ShippingInput'
+import { CommonText } from '../common'
 import CommonModal from '../common/CommonModal'
-import { StyledText } from '../practice/PracticeDisplayedCollection'
 
 const messages = defineMessages({
   shippingInfo: { id: 'product.merchandise.ui.shippingInfo', defaultMessage: '收件資訊' },
@@ -20,7 +20,7 @@ const messages = defineMessages({
 })
 
 const StyledShippingInfoSubtitle = styled.h4`
-  ${StyledText}
+  ${CommonText}
 `
 const StyledShippingInfoContent = styled.div`
   margin-bottom: 24px;

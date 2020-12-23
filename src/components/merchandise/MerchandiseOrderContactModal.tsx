@@ -16,6 +16,7 @@ import { ReactComponent as IconEmail } from '../../images/email-o.svg'
 import types from '../../types'
 import { OrderContact } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
+import { CommonText } from '../common'
 import CommonModal from '../common/CommonModal'
 import { AvatarImage } from '../common/Image'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -73,11 +74,8 @@ const StyledContactBlock = styled.div`
 `
 
 const StyledMemberInfo = styled.div`
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
+  ${CommonText}
   line-height: 36px;
-  color: var(--gray-dark);
 `
 
 const MerchandiseContactBlock: React.FC<{

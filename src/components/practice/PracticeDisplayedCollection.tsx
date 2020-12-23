@@ -10,28 +10,20 @@ import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as RocketIcon } from '../../images/icon-rocket.svg'
+import { CommonText } from '../common'
 import { AvatarImage, CustomRatioImage } from '../common/Image'
 
 const StyledBlock = styled.div`
   margin: 50px 0;
 `
-export const StyledText = css`
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-  color: var(--gray-dark);
-`
 const StyledParagraph = styled.p`
-  ${StyledText};
+  ${CommonText};
 `
 const StyledNotice = styled.div`
+  ${CommonText};
   border-radius: 4px;
   padding: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gray-dark);
   background-color: var(--gray-lighter);
-  letter-spacing: 0.4px;
 `
 
 const StyledName = styled.span`
@@ -49,31 +41,35 @@ const messages = defineMessages({
   },
 })
 
-const PracticeDisplayedCollection: React.FC<{ fakeData?: boolean }> = ({ fakeData }) => {
+const PracticeDisplayedCollection: React.FC = () => {
   const { formatMessage } = useIntl()
-  const practiceCollection = fakeData
-    ? new Array(12).fill({
-        id: 'practiceId',
-        coverUrl: null,
-        title: 'title title title title title title title title title title title title title title',
-        avatarUrl: null,
-        name: 'name',
-        isLiked: true,
-        likedCount: 50,
-      })
-    : []
+  // ! fake data
+  const practiceCollection = new Array(12).fill({
+    id: 'practiceId',
+    coverUrl: null,
+    title: 'title title title title title title title title title title title title title title',
+    avatarUrl: null,
+    name: 'name',
+    isLiked: true,
+    likedCount: 50,
+  })
 
-  if (!practiceCollection.length) {
-    return (
+  // if (!practiceCollection.length) {
+  //   return (
+  //     <StyledBlock className="d-flex flex-column justify-content-center align-items-center">
+  //       <Icon as={RocketIcon} className="mb-4" w="120px" h="120px" />
+  //       <StyledParagraph>{formatMessage(programMessages.text.uploadPractice)}</StyledParagraph>
+  //     </StyledBlock>
+  //   )
+  // }
+
+  return (
+    <>
       <StyledBlock className="d-flex flex-column justify-content-center align-items-center">
         <Icon as={RocketIcon} className="mb-4" w="120px" h="120px" />
         <StyledParagraph>{formatMessage(programMessages.text.uploadPractice)}</StyledParagraph>
       </StyledBlock>
-    )
-  }
 
-  return (
-    <>
       <StyledNotice className="mb-4">
         <Icon as={LockIcon} className="mr-2" />
         <span>{formatMessage(messages.privatePractice)}</span>

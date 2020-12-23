@@ -6,10 +6,10 @@ import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { CommonText } from '../components/common'
 import { CustomRatioImage } from '../components/common/Image'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { StyledText } from '../components/practice/PracticeDisplayedCollection'
 import { useApp } from '../containers/common/AppContext'
 import { notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
@@ -43,7 +43,7 @@ const StyledCreatorAbstract = styled.p`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  ${StyledText}
+  ${CommonText}
 `
 
 export const StyledCreatorTag = styled.span`

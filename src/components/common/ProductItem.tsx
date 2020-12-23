@@ -3,13 +3,13 @@ import moment from 'moment'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
+import { CommonText } from '.'
 import ProductTypeLabel from '../../components/common/ProductTypeLabel'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useSimpleProduct } from '../../hooks/common'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProductType } from '../../types/product'
-import { StyledText } from '../practice/PracticeDisplayedCollection'
 import { CustomRatioImage } from './Image'
 import PriceLabel from './PriceLabel'
 
@@ -41,7 +41,7 @@ const StyledTitle = styled(Typography.Title)`
   }
 `
 const StyledPeriod = styled.div`
-  ${StyledText}
+  ${CommonText}
 `
 const StyledMeta = styled.span`
   margin-top: 0.5rem;
