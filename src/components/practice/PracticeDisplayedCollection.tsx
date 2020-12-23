@@ -53,6 +53,7 @@ const PracticeDisplayedCollection: React.FC<{ fakeData?: boolean }> = ({ fakeDat
   const { formatMessage } = useIntl()
   const practiceCollection = fakeData
     ? new Array(12).fill({
+        id: 'practiceId',
         coverUrl: null,
         title: 'title title title title title title title title title title title title title title',
         avatarUrl: null,
@@ -81,16 +82,15 @@ const PracticeDisplayedCollection: React.FC<{ fakeData?: boolean }> = ({ fakeDat
       <div className="row">
         {practiceCollection.map(v => (
           <div className="col-12 col-lg-4 mb-4">
-            <Link to={`/practices/practiceId`}>
-              <PracticeDisplayedCard
-                title={v.title}
-                coverUrl={v.coverUrl}
-                avatarUrl={v.avatarUrl}
-                name={v.name}
-                isLiked={v.isLiked}
-                likedCount={v.likedCount}
-              />
-            </Link>
+            <PracticeDisplayedCard
+              id={v.id}
+              title={v.title}
+              coverUrl={v.coverUrl}
+              avatarUrl={v.avatarUrl}
+              name={v.name}
+              isLiked={v.isLiked}
+              likedCount={v.likedCount}
+            />
           </div>
         ))}
       </div>
@@ -103,6 +103,11 @@ const StyledTitle = styled.h3`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: all 0.3s;
+
+  &:hover {
+    color: ${props => props.theme['@primary-color']};
+  }
 `
 const StyledContainer = styled.div`
   border-radius: 4px;
@@ -127,13 +132,14 @@ const StyledLike = styled.div<{ isActive: boolean }>`
 `
 
 const PracticeDisplayedCard: React.FC<{
+  id: string
   coverUrl: string | null
   title: string
   avatarUrl: string | null
   name: string
   likedCount: number
   isLiked: boolean
-}> = ({ coverUrl, title, avatarUrl, name, isLiked, likedCount }) => {
+}> = ({ id, coverUrl, title, avatarUrl, name, isLiked, likedCount }) => {
   const [likeStatus, setLikeStatus] = useState({
     isLiked,
     likedCount,
@@ -141,31 +147,32 @@ const PracticeDisplayedCard: React.FC<{
 
   return (
     <StyledContainer>
-      <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} />
-      <div className="p-3">
-        <StyledTitle className="mb-3">{title}</StyledTitle>
-        <div className="d-flex justify-content-between align-items-end">
-          <MemberInfoBlock avatarUrl={avatarUrl} name={name} />
+      <Link to={`/practices/${id}`}>
+        <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} className="mb-3" />
+        <StyledTitle className="mx-3">{title}</StyledTitle>
+      </Link>
 
-          <StyledGroup className="d-flex">
-            <div className="mr-3">
-              <Icon as={CommentIcon} className="mr-1" />
-              <span>1</span>
-            </div>
-            <StyledLike
-              isActive={likeStatus.isLiked}
-              onClick={() =>
-                setLikeStatus({
-                  isLiked: !likeStatus.isLiked,
-                  likedCount: likeStatus.isLiked ? likeStatus.likedCount - 1 : likeStatus.likedCount + 1,
-                })
-              }
-            >
-              <Icon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} className="mr-1" />
-              <span>{likeStatus.likedCount}</span>
-            </StyledLike>
-          </StyledGroup>
-        </div>
+      <div className="d-flex justify-content-between align-items-end m-3">
+        <MemberInfoBlock avatarUrl={avatarUrl} name={name} />
+
+        <StyledGroup className="d-flex">
+          <div className="mr-3">
+            <Icon as={CommentIcon} className="mr-1" />
+            <span>1</span>
+          </div>
+          <StyledLike
+            isActive={likeStatus.isLiked}
+            onClick={() =>
+              setLikeStatus({
+                isLiked: !likeStatus.isLiked,
+                likedCount: likeStatus.isLiked ? likeStatus.likedCount - 1 : likeStatus.likedCount + 1,
+              })
+            }
+          >
+            <Icon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} className="mr-1" />
+            <span>{likeStatus.likedCount}</span>
+          </StyledLike>
+        </StyledGroup>
       </div>
     </StyledContainer>
   )
