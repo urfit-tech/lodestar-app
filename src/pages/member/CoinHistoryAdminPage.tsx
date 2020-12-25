@@ -361,7 +361,11 @@ const useOrderLogWithCoinsCollection = (memberId: string) => {
     gql`
       query GET_ORDER_LOG_WITH_COINS_COLLECTION($memberId: String!, $offset: Int) {
         order_log(
-          where: { member_id: { _eq: $memberId }, order_discounts: { type: { _eq: "Coin" } } }
+          where: {
+            member_id: { _eq: $memberId }
+            order_status: { status: { _eq: "SUCCESS" } }
+            order_discounts: { type: { _eq: "Coin" } }
+          }
           order_by: { created_at: desc }
           limit: 10
           offset: $offset
