@@ -227,6 +227,7 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
         project(
           where: {
             type: { _in: ["on-sale", "pre-order", "funding"] }
+            published_at: { _is_null: false }
             _or: [{ _not: { project_categories: {} } }, { project_categories: { category_id: { _eq: $categoryId } } }]
           }
           order_by: { position: asc }
