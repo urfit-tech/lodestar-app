@@ -50,6 +50,7 @@ const PracticeDisplayedCollection: React.FC = () => {
     title: 'title title title title title title title title title title title title title title',
     avatarUrl: null,
     name: 'name',
+    suggestCount: 20,
     isLiked: true,
     likedCount: 50,
   })
@@ -84,6 +85,7 @@ const PracticeDisplayedCollection: React.FC = () => {
               coverUrl={v.coverUrl}
               avatarUrl={v.avatarUrl}
               name={v.name}
+              suggestCount={v.suggestCount}
               isLiked={v.isLiked}
               likedCount={v.likedCount}
             />
@@ -133,9 +135,10 @@ const PracticeDisplayedCard: React.FC<{
   title: string
   avatarUrl: string | null
   name: string
+  suggestCount: number
   likedCount: number
   isLiked: boolean
-}> = ({ id, coverUrl, title, avatarUrl, name, isLiked, likedCount }) => {
+}> = ({ id, coverUrl, title, avatarUrl, name, suggestCount, isLiked, likedCount }) => {
   const [likeStatus, setLikeStatus] = useState({
     isLiked,
     likedCount,
@@ -154,7 +157,7 @@ const PracticeDisplayedCard: React.FC<{
         <StyledGroup className="d-flex">
           <div className="mr-3">
             <Icon as={CommentIcon} className="mr-1" />
-            <span>1</span>
+            <span>{suggestCount}</span>
           </div>
           <StyledLike
             isActive={likeStatus.isLiked}
