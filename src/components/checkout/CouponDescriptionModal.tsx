@@ -136,7 +136,7 @@ const CouponDescriptionModal: React.FC<
             <span>{formatMessage(messages.allAppointmentPlan)}</span>
           </div>
         )}
-        {coupon.couponCode.couponPlan.scope?.includes('Merchandise') && (
+        {coupon.couponCode.couponPlan.scope?.includes('MerchandiseSpec') && (
           <div className="mb-2">
             <Icon as={CheckIcon} className="mr-2" />
             <span>{formatMessage(messages.allMerchandise)}</span>
