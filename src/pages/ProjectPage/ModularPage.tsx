@@ -18,6 +18,7 @@ import ProjectSwitchDisplaySection from '../../components/project/ProjectSwitchD
 import ProjectTourSection from '../../components/project/ProjectTourSection'
 import { useApp } from '../../containers/common/AppContext'
 import { useProject } from '../../hooks/project'
+import EmptyCover from '../../images/empty-cover.png'
 import LoadingPage from '../LoadingPage'
 
 const ModularPage: React.FC<{ projectId: string }> = ({ projectId }) => {
@@ -65,14 +66,14 @@ const ModularPage: React.FC<{ projectId: string }> = ({ projectId }) => {
     <DefaultLayout white noFooter>
       <Helmet>
         <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription} />
+        <meta name="description" content={siteDescription || ''} />
         <meta property="og:type" content="website" />
         <meta property="og:title" content={siteTitle} />
         <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={siteImage} />
-        <meta property="og:image:url" content={siteImage} />
-        <meta property="og:image:secure_url" content={siteImage} />
-        <meta property="og:description" content={siteDescription} />
+        <meta property="og:image" content={siteImage || EmptyCover} />
+        <meta property="og:image:url" content={siteImage || EmptyCover} />
+        <meta property="og:image:secure_url" content={siteImage || EmptyCover} />
+        <meta property="og:description" content={siteDescription || ''} />
         <script type="application/ld+json">{ldData}</script>
       </Helmet>
       {project.projectSections
@@ -104,9 +105,9 @@ const ModularPage: React.FC<{ projectId: string }> = ({ projectId }) => {
                 <ProjectBannerSection
                   key={projectSection.id}
                   title={project.title}
-                  abstract={project.abstract}
-                  description={project.description}
-                  url={project.coverUrl}
+                  abstract={project.abstract || ''}
+                  description={project.description || ''}
+                  url={project.coverUrl || EmptyCover}
                   type={project.coverType}
                   expiredAt={project.expiredAt}
                   callout={projectSection.options.callout}

@@ -61,7 +61,7 @@ const ProjectPlanCollectionBlock: React.FC<{
 export type ProjectPlanBlockProps = {
   id: string
   title: string
-  description: string
+  description: string | null
   project: {
     id: string
     title: string

@@ -11,6 +11,7 @@ import OnSaleRoadmapSection from '../../components/project/OnSaleRoadmapSection'
 import OnSaleSkillSection from '../../components/project/OnSaleSkillSection'
 import OnSaleTrialSection from '../../components/project/OnSaleTrialSection'
 import { useApp } from '../../containers/common/AppContext'
+import EmptyCover from '../../images/empty-cover.png'
 import { ProjectProps } from '../../types/project'
 
 const OnSalePage: React.FC<ProjectProps> = ({
@@ -55,12 +56,12 @@ const OnSalePage: React.FC<ProjectProps> = ({
     <DefaultLayout white noFooter>
       <Helmet>
         <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription} />
+        <meta name="description" content={siteDescription || ''} />
         <meta property="og:type" content="website" />
         <meta property="og:title" content={siteTitle} />
         <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={coverUrl} />
-        <meta property="og:description" content={siteDescription} />
+        <meta property="og:image" content={coverUrl || EmptyCover} />
+        <meta property="og:description" content={siteDescription || ''} />
         <script type="application/ld+json">{ldData}</script>
       </Helmet>
 
@@ -70,7 +71,7 @@ const OnSalePage: React.FC<ProjectProps> = ({
         {...contents.slogan}
       />
 
-      <OnSaleIntroductionSection introduction={introduction} />
+      <OnSaleIntroductionSection introduction={introduction || ''} />
 
       <OnSaleSkillSection {...contents.skill} />
       <OnSaleRoadmapSection roadmaps={contents.roadmaps} />
