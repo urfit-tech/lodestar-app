@@ -1,5 +1,6 @@
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import { Button, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Button, Divider, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Menu as AntdMenu } from 'antd'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -8,10 +9,15 @@ import styled, { css } from 'styled-components'
 import { useAuth } from '../components/auth/AuthContext'
 import { CustomRatioImage } from '../components/common/Image'
 import MessageItem from '../components/common/MessageItem'
-import MessageModal from '../components/common/MessageModal'
+import MessageItemAction from '../components/common/MessageItemAction'
+import MessageItemContent from '../components/common/MessageItemContent'
+import MessageItemHeader from '../components/common/MessageItemHeader'
+import MessageReplyCreationForm from '../components/common/MessageReplyCreationForm'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { MemberInfoBlock } from '../components/practice/PracticeDisplayedCollection'
+import SuggestionCreationModal from '../components/practice/SuggestionCreationModal'
+import { issueMessages } from '../helpers/translation'
 import { ReactComponent as CalendarOIcon } from '../images/calendar-alt-o.svg'
 import EmptyCover from '../images/empty-cover.png'
 import { ReactComponent as HeartIcon } from '../images/icon-heart-o.svg'
@@ -66,6 +72,8 @@ const StyledDivider = styled.div`
 const messages = defineMessages({
   practiceFile: { id: 'program.ui.practiceFile', defaultMessage: '作業檔案' },
   view: { id: 'program.ui.view', defaultMessage: '查看' },
+  editSuggestion: { id: 'program.ui.editSuggestion', defaultMessage: 'Edit Suggestion' },
+  deleteSuggestion: { id: 'program.ui.deleteSuggestion', defaultMessage: 'Delete Suggestion' },
 })
 
 const PracticePage: React.FC<{}> = ({}) => {
@@ -144,16 +152,74 @@ const PracticePage: React.FC<{}> = ({}) => {
         <StyledDivider className="my-3" />
 
         <div className="mb-4">
-          <MessageModal />
-          {practice.suggests.map(v => (
-            <MessageItem
-              memberId={v.memberId}
-              createdAt={v.createdAt}
-              content={v.content}
-              isLiked={v.isLiked}
-              likedCount={v.likedCount}
-            />
-          ))}
+          <SuggestionCreationModal />
+          {practice.suggests.map(v => {
+            const [repliesVisible, setRepliesVisible] = useState(false)
+            return (
+              <div>
+                <MessageItem>
+                  <MessageItemHeader programRoles={[]} createdAt={v.createdAt} memberId={v.memberId} />
+                  <MessageItemContent
+                    description={v.description}
+                    renderEdit={setEditing => (
+                      <AntdMenu>
+                        <AntdMenu.Item onClick={() => setEditing(true)}>
+                          {formatMessage(messages.editSuggestion)}
+                        </AntdMenu.Item>
+                        <AntdMenu.Item>{formatMessage(messages.deleteSuggestion)}</AntdMenu.Item>
+                      </AntdMenu>
+                    )}
+                  >
+                    <MessageItemAction
+                      reactedMemberIds={v.reactedMemberIds}
+                      numReplies={v.suggestReplyCount}
+                      onRepliesVisible={setRepliesVisible}
+                    />
+                    {repliesVisible && (
+                      <>
+                        {[{ id: '', memberId: '', createdAt: new Date(), content: '', reactedMemberIds: [] }].map(w => (
+                          <div key={w.id} className="mt-5">
+                            <MessageItem>
+                              <MessageItemHeader programRoles={[]} memberId={w.memberId} createdAt={w.createdAt} />
+                              <MessageItemContent
+                                description={w.content}
+                                renderEdit={
+                                  w.memberId === currentMemberId
+                                    ? setEdition => (
+                                        <AntdMenu>
+                                          <AntdMenu.Item onClick={() => setEdition(true)}>
+                                            {formatMessage(issueMessages.dropdown.content.edit)}
+                                          </AntdMenu.Item>
+                                          <AntdMenu.Item
+                                            onClick={() =>
+                                              window.confirm(
+                                                formatMessage(issueMessages.dropdown.content.unrecoverable),
+                                              )
+                                            }
+                                          >
+                                            {formatMessage(issueMessages.dropdown.content.delete)}
+                                          </AntdMenu.Item>
+                                        </AntdMenu>
+                                      )
+                                    : undefined
+                                }
+                              >
+                                <MessageItemAction reactedMemberIds={w.reactedMemberIds} />
+                              </MessageItemContent>
+                            </MessageItem>
+                          </div>
+                        ))}
+                        <div className="mt-5">
+                          <MessageReplyCreationForm />
+                        </div>
+                      </>
+                    )}
+                  </MessageItemContent>
+                </MessageItem>
+                <Divider className="my-4" />
+              </div>
+            )
+          })}
         </div>
       </div>
     </DefaultLayout>
@@ -182,11 +248,12 @@ const usePractice = (id: string) => {
       }
     }
     suggests: {
+      id: string
+      description: string
       memberId: string
       createdAt: Date
-      content: string
-      isLiked: boolean
-      likedCount: number
+      reactedMemberIds: string[]
+      suggestReplyCount: number
     }[]
   } = {
     title: '我是主題名稱主題喔我是主題名稱主題喔我是主題名稱主題',
@@ -207,11 +274,13 @@ const usePractice = (id: string) => {
       },
     },
     suggests: new Array(5).fill({
+      id: '',
+      description:
+        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum est vel ipsam tenetur dolorem esse tempora eos necessitatibus beatae. Temporibus laudantium saepe obcaecati corporis facilis porro nostrum dignissimos praesentium blanditiis!',
       memberId: currentMemberId || '',
       createdAt: new Date(),
-      content: 'hahahahha',
-      isLiked: false,
-      likedCount: 5,
+      reactedMemberIds: [],
+      suggestReplyCount: 5,
     }),
   }
 

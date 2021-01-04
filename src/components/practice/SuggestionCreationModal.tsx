@@ -7,9 +7,9 @@ import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import { useAuth } from '../auth/AuthContext'
-import CommonModal from './CommonModal'
-import MessageButton from './MessageButton'
-import StyledBraftEditor from './StyledBraftEditor'
+import CommonModal from '../common/CommonModal'
+import MessageButton from '../common/MessageButton'
+import StyledBraftEditor from '../common/StyledBraftEditor'
 
 const messages = defineMessages({
   fillSuggest: { id: 'practice.label.fillSuggest', defaultMessage: '填寫建議' },
@@ -17,7 +17,7 @@ const messages = defineMessages({
   submitSuggest: { id: 'practice.ui.submitSuggest', defaultMessage: '送出建議' },
 })
 
-const MessageModal: React.FC<{}> = () => {
+const SuggestionCreationModal: React.FC<{}> = () => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { currentMemberId, authToken, apiHost } = useAuth()
@@ -82,4 +82,4 @@ const MessageModal: React.FC<{}> = () => {
   )
 }
 
-export default MessageModal
+export default SuggestionCreationModal

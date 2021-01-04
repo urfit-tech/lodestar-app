@@ -12,6 +12,7 @@ import { useProgramContent, useProgramContentMaterial } from '../../hooks/progra
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
+import IssueCreationModal from '../issue/IssueCreationModal'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
 import PracticeDescriptionBlock from '../practice/PracticeDescriptionBlock'
 import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
