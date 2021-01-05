@@ -11,6 +11,7 @@ import { CustomRatioImage } from '../components/common/Image'
 import MessageItem from '../components/common/MessageItem'
 import MessageItemAction from '../components/common/MessageItemAction'
 import MessageItemContent from '../components/common/MessageItemContent'
+import MessageItemFooter from '../components/common/MessageItemFooter'
 import MessageItemHeader from '../components/common/MessageItemHeader'
 import MessageReplyCreationForm from '../components/common/MessageReplyCreationForm'
 import { BraftContent } from '../components/common/StyledBraftEditor'
@@ -76,7 +77,7 @@ const messages = defineMessages({
   deleteSuggestion: { id: 'program.ui.deleteSuggestion', defaultMessage: 'Delete Suggestion' },
 })
 
-const PracticePage: React.FC<{}> = ({}) => {
+const PracticePage: React.FC = () => {
   const { practiceId } = useParams<{ practiceId: string }>()
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
@@ -154,12 +155,12 @@ const PracticePage: React.FC<{}> = ({}) => {
         <div className="mb-4">
           <SuggestionCreationModal />
           {practice.suggests.map(v => {
-            const [repliesVisible, setRepliesVisible] = useState(false)
             return (
               <div>
                 <MessageItem>
                   <MessageItemHeader programRoles={[]} createdAt={v.createdAt} memberId={v.memberId} />
                   <MessageItemContent
+                    firstLayer
                     description={v.description}
                     renderEdit={setEditing => (
                       <AntdMenu>
@@ -170,50 +171,62 @@ const PracticePage: React.FC<{}> = ({}) => {
                       </AntdMenu>
                     )}
                   >
-                    <MessageItemAction
-                      reactedMemberIds={v.reactedMemberIds}
-                      numReplies={v.suggestReplyCount}
-                      onRepliesVisible={setRepliesVisible}
-                    />
-                    {repliesVisible && (
-                      <>
-                        {[{ id: '', memberId: '', createdAt: new Date(), content: '', reactedMemberIds: [] }].map(w => (
-                          <div key={w.id} className="mt-5">
-                            <MessageItem>
-                              <MessageItemHeader programRoles={[]} memberId={w.memberId} createdAt={w.createdAt} />
-                              <MessageItemContent
-                                description={w.content}
-                                renderEdit={
-                                  w.memberId === currentMemberId
-                                    ? setEdition => (
-                                        <AntdMenu>
-                                          <AntdMenu.Item onClick={() => setEdition(true)}>
-                                            {formatMessage(issueMessages.dropdown.content.edit)}
-                                          </AntdMenu.Item>
-                                          <AntdMenu.Item
-                                            onClick={() =>
-                                              window.confirm(
-                                                formatMessage(issueMessages.dropdown.content.unrecoverable),
+                    <MessageItemFooter>
+                      {({ repliesVisible, setRepliesVisible }) => (
+                        <>
+                          <MessageItemAction
+                            reactedMemberIds={v.reactedMemberIds}
+                            numReplies={v.suggestReplyCount}
+                            onRepliesVisible={setRepliesVisible}
+                          />
+                          {repliesVisible && (
+                            <>
+                              {[{ id: '', memberId: '', createdAt: new Date(), content: '', reactedMemberIds: [] }].map(
+                                w => (
+                                  <div key={w.id} className="mt-5">
+                                    <MessageItem>
+                                      <MessageItemHeader
+                                        programRoles={[]}
+                                        memberId={w.memberId}
+                                        createdAt={w.createdAt}
+                                      />
+                                      <MessageItemContent
+                                        description={w.content}
+                                        renderEdit={
+                                          w.memberId === currentMemberId
+                                            ? setEdition => (
+                                                <AntdMenu>
+                                                  <AntdMenu.Item onClick={() => setEdition(true)}>
+                                                    {formatMessage(issueMessages.dropdown.content.edit)}
+                                                  </AntdMenu.Item>
+                                                  <AntdMenu.Item
+                                                    onClick={() =>
+                                                      window.confirm(
+                                                        formatMessage(issueMessages.dropdown.content.unrecoverable),
+                                                      )
+                                                    }
+                                                  >
+                                                    {formatMessage(issueMessages.dropdown.content.delete)}
+                                                  </AntdMenu.Item>
+                                                </AntdMenu>
                                               )
-                                            }
-                                          >
-                                            {formatMessage(issueMessages.dropdown.content.delete)}
-                                          </AntdMenu.Item>
-                                        </AntdMenu>
-                                      )
-                                    : undefined
-                                }
-                              >
-                                <MessageItemAction reactedMemberIds={w.reactedMemberIds} />
-                              </MessageItemContent>
-                            </MessageItem>
-                          </div>
-                        ))}
-                        <div className="mt-5">
-                          <MessageReplyCreationForm />
-                        </div>
-                      </>
-                    )}
+                                            : undefined
+                                        }
+                                      >
+                                        <MessageItemAction reactedMemberIds={w.reactedMemberIds} />
+                                      </MessageItemContent>
+                                    </MessageItem>
+                                  </div>
+                                ),
+                              )}
+                              <div className="mt-5">
+                                <MessageReplyCreationForm />
+                              </div>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </MessageItemFooter>
                   </MessageItemContent>
                 </MessageItem>
                 <Divider className="my-4" />
