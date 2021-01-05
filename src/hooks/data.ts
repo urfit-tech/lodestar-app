@@ -158,46 +158,45 @@ export const useNav = () => {
 }
 
 export const useMemberContract = (memberContractId: string) => {
-  const GET_MEMBER_CONTRACT = gql`
-    query GET_MEMBER_CONTRACT($memberContractId: uuid!) {
-      member_contract_by_pk(id: $memberContractId) {
-        started_at
-        ended_at
-        values
-        agreed_at
-        agreed_ip
-        revoked_at
-        agreed_options
-        contract {
-          name
-          description
-          template
+  const { data, ...result } = useQuery<types.GET_MEMBER_CONTRACT, types.GET_MEMBER_CONTRACTVariables>(
+    gql`
+      query GET_MEMBER_CONTRACT($memberContractId: uuid!) {
+        member_contract_by_pk(id: $memberContractId) {
+          started_at
+          ended_at
+          values
+          agreed_at
+          agreed_ip
+          revoked_at
+          agreed_options
+          contract {
+            name
+            description
+            template
+          }
         }
       }
-    }
-  `
-  const { data, ...result } = useQuery<types.GET_MEMBER_CONTRACT, types.GET_MEMBER_CONTRACTVariables>(
-    GET_MEMBER_CONTRACT,
-    {
-      variables: { memberContractId },
-    },
+    `,
+    { variables: { memberContractId } },
   )
 
   return {
     ...result,
-    memberContract: {
-      startedAt: data?.member_contract_by_pk?.started_at || null,
-      endedAt: data?.member_contract_by_pk?.ended_at || null,
-      values: data?.member_contract_by_pk?.values,
-      agreedAt: data?.member_contract_by_pk?.agreed_at || null,
-      agreedIp: data?.member_contract_by_pk?.agreed_ip || null,
-      agreedOptions: data?.member_contract_by_pk?.agreed_options || {},
-      revokedAt: data?.member_contract_by_pk?.revoked_at || null,
-      contract: {
-        name: data?.member_contract_by_pk?.contract.name || '',
-        description: data?.member_contract_by_pk?.contract.description || '',
-        template: data?.member_contract_by_pk?.contract.template || '',
-      },
-    },
+    memberContract: data?.member_contract_by_pk
+      ? {
+          startedAt: data.member_contract_by_pk.started_at || null,
+          endedAt: data.member_contract_by_pk.ended_at || null,
+          values: data.member_contract_by_pk.values,
+          agreedAt: data.member_contract_by_pk.agreed_at || null,
+          agreedIp: data.member_contract_by_pk.agreed_ip || null,
+          agreedOptions: data.member_contract_by_pk.agreed_options || {},
+          revokedAt: data.member_contract_by_pk.revoked_at || null,
+          contract: {
+            name: data.member_contract_by_pk.contract.name || '',
+            description: data.member_contract_by_pk.contract.description || '',
+            template: data.member_contract_by_pk.contract.template || '',
+          },
+        }
+      : null,
   }
 }
