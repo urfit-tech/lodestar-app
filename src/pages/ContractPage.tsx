@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import { dateFormatter } from '../helpers'
 import { useMemberContract } from '../hooks/data'
 import types from '../types'
 
@@ -91,7 +92,15 @@ const ContractPage: React.FC = () => {
       <StyledSection className="container">
         <StyledTitle level={1}>{'線上課程服務約款'}</StyledTitle>
         <StyledCard>
-          <div dangerouslySetInnerHTML={{ __html: render(memberContract.contract.template, memberContract.values) }} />
+          <div
+            dangerouslySetInnerHTML={{
+              __html: render(memberContract.contract.template, {
+                ...memberContract.values,
+                startedAt: dateFormatter(memberContract.values.startedAt),
+                endedAt: dateFormatter(memberContract.values.endedAt),
+              }),
+            }}
+          />
         </StyledCard>
         <StyledCard>
           <div className="text-center">
