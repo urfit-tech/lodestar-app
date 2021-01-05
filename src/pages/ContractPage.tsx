@@ -9,9 +9,10 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { dateFormatter } from '../helpers'
+import { dateFormatter, handleError } from '../helpers'
 import { useMemberContract } from '../hooks/data'
 import types from '../types'
+import LoadingPage from './LoadingPage'
 
 const StyledTitle = styled(Typography.Title)`
   && {
@@ -66,14 +67,14 @@ const ContractPage: React.FC = () => {
   const [agreeMemberContract] = useMutation<types.AGREE_MEMBER_CONTRACT, types.AGREE_MEMBER_CONTRACTVariables>(
     AGREE_MEMBER_CONTRACT,
   )
-  const agreedOptions = {
-    agreedName: memberContract.values?.invoice?.name,
-    agreedPhone: memberContract.values?.invoice?.phone,
-  }
 
   useEffect(() => {
     Axios.get('https://api.ipify.org/').then(res => setAgreedIpAddress(res.data))
   }, [])
+
+  if (!memberContract) {
+    return <LoadingPage />
+  }
 
   const handleCheck = (e: CheckboxChangeEvent) => {
     if (e.target.checked && window.confirm('同意後無法修改')) {
@@ -82,11 +83,17 @@ const ContractPage: React.FC = () => {
           memberContractId,
           agreedAt: new Date(),
           agreedIp,
-          agreedOptions,
+          agreedOptions: {
+            agreedName: memberContract.values?.invoice?.name,
+            agreedPhone: memberContract.values?.invoice?.phone,
+          },
         },
-      }).then(() => refetchMemberContract())
+      })
+        .then(() => refetchMemberContract())
+        .catch(handleError)
     }
   }
+
   return (
     <DefaultLayout>
       <StyledSection className="container">
@@ -96,12 +103,13 @@ const ContractPage: React.FC = () => {
             dangerouslySetInnerHTML={{
               __html: render(memberContract.contract.template, {
                 ...memberContract.values,
-                startedAt: dateFormatter(memberContract.values.startedAt),
-                endedAt: dateFormatter(memberContract.values.endedAt),
+                startedAt: memberContract.values?.startedAt ? dateFormatter(memberContract.values.startedAt) : '',
+                endedAt: memberContract.values?.endedAt ? dateFormatter(memberContract.values.endedAt) : '',
               }),
             }}
           />
         </StyledCard>
+
         <StyledCard>
           <div className="text-center">
             {memberContract.revokedAt ? (
