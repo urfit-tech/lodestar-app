@@ -158,9 +158,9 @@ const useMutateIssueReply = (issueReplyId: string) => {
     types.DELETE_ISSUE_REPLY_REACTIONVariables
   >(DELETE_ISSUE_REPLY_REACTION)
 
-  const updateIssueReply = (contentState: EditorState) => {
+  const updateIssueReply = (content: any) => {
     return updateIssueReplyHandler({
-      variables: { issueReplyId, content: contentState.toRAW() },
+      variables: { issueReplyId, content },
     })
   }
   const deleteIssueReply = () => {
@@ -226,6 +226,9 @@ const UPDATE_ISSUE = gql`
 const DELETE_ISSUE = gql`
   mutation DELETE_ISSUE($issueId: uuid!) {
     delete_issue_reply(where: { issue_id: { _eq: $issueId } }) {
+      affected_rows
+    }
+    delete_issue_reaction(where: { issue_id: { _eq: $issueId } }) {
       affected_rows
     }
     delete_issue(where: { id: { _eq: $issueId } }) {
@@ -301,6 +304,9 @@ const UPDATE_ISSUE_REPLY = gql`
 
 const DELETE_ISSUE_REPLY = gql`
   mutation DELETE_ISSUE_REPLY($issueReplyId: uuid!) {
+    delete_issue_reply_reaction(where: { issue_reply_id: { _eq: $issueReplyId } }) {
+      affected_rows
+    }
     delete_issue_reply(where: { id: { _eq: $issueReplyId } }) {
       affected_rows
     }

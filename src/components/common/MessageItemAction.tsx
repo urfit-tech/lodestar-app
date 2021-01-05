@@ -11,7 +11,6 @@ const StyledAction = styled.span<{ reacted?: boolean }>`
 const StyledMessageState = styled(Typography.Text)`
   text-align: right;
   font-size: 12px;
-  line-height: 44px;
 `
 
 const MessageItemAction: React.FC<{

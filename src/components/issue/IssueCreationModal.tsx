@@ -1,30 +1,25 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Button, Form, Input, message, Modal, Typography } from 'antd'
+import { Form, Input, message, Modal, Typography } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { ModalProps } from 'antd/lib/modal'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import types from '../../types'
 import { useAuth } from '../auth/AuthContext'
+import MessageButton from '../common/MessageButton'
 import StyledBraftEditor from '../common/StyledBraftEditor'
-
-const StyledButton = styled(Button)`
-  height: initial;
-  font-size: 14px;
-`
 
 type IssueCreationModalProps = ModalProps &
   FormComponentProps & {
     threadId: string
-    onSubmit?: () => void
+    onRefetch?: () => void
   }
-const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form, onSubmit, ...modalProps }) => {
+const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form, onRefetch, ...modalProps }) => {
   const { formatMessage } = useIntl()
   const { authToken, apiHost, currentMemberId } = useAuth()
   const { id: appId } = useApp()
@@ -47,7 +42,7 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form,
         })
           .then(() => {
             form.resetFields()
-            onSubmit?.()
+            onRefetch?.()
             setModalVisible(false)
           })
           .catch(err => message.error(err.message))
