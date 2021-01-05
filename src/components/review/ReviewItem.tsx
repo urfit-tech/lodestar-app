@@ -170,7 +170,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
                         reset()
                       }}
                     >
-                      {formatMessage(commonMessages.button.cancel)}
+                      {formatMessage(commonMessages.ui.cancel)}
                     </StyledButton>
                     <StyledButton isLoading={isSubmitting} type="submit" variant="primary" className="apply-btn">
                       {formatMessage(reviewMessages.button.reply)}

@@ -282,7 +282,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
             <div className="text-right">
               <Button onClick={() => setModalVisible(false)} className="mr-3">
-                {formatMessage(commonMessages.button.cancel)}
+                {formatMessage(commonMessages.ui.cancel)}
               </Button>
               <Button type="primary" loading={orderPlacing} htmlType="submit">
                 {paymentType === 'subscription'

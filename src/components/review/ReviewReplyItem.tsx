@@ -230,7 +230,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
             </StyledFormControl>
             <ButtonGroup mt={4} className="d-flex justify-content-end">
               <StyledButton type="reset" variant="ghost" onClick={() => setReplyEditing(false)}>
-                {formatMessage(commonMessages.button.cancel)}
+                {formatMessage(commonMessages.ui.cancel)}
               </StyledButton>
               <StyledButton type="submit" variant="primary" className="apply-btn" isLoading={isSubmitting}>
                 {formatMessage(reviewMessages.button.reply)}

@@ -81,6 +81,7 @@ export const commonMessages = {
     back: { id: 'common.ui.back', defaultMessage: '返回' },
     repay: { id: 'common.ui.repay', defaultMessage: '重新付款' },
     search: { id: 'common.ui.search', defaultMessage: '搜尋' },
+    cancel: { id: 'common.ui.cancel', defaultMessage: '取消' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },
@@ -127,7 +128,6 @@ export const commonMessages = {
     exchange: { id: 'common.button.exchange', defaultMessage: '兌換' },
     register: { id: 'common.button.register', defaultMessage: '立即報名' },
     print: { id: 'common.button.print', defaultMessage: '列印' },
-    cancel: { id: 'common.button.cancel', defaultMessage: '取消' },
     download: { id: 'common.button.download', defaultMessage: '下載名單' },
     attend: { id: 'common.button.attend', defaultMessage: '進入會議' },
     unreleased: { id: 'common.button.unreleased', defaultMessage: '尚未發售' },

@@ -84,7 +84,7 @@ const VoucherExchangeModal: React.FC<VoucherExchangeModalProps> = ({
 
         <div className="text-right">
           <Button className="mr-2" onClick={() => setVisible(false)}>
-            {formatMessage(commonMessages.button.cancel)}
+            {formatMessage(commonMessages.ui.cancel)}
           </Button>
           <Button
             type="primary"

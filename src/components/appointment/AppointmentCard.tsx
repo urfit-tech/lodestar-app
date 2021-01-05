@@ -261,7 +261,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         visible={issueModalVisible}
         footer={isFinished ? null : undefined}
         okText={formatMessage(commonMessages.button.save)}
-        cancelText={formatMessage(commonMessages.button.cancel)}
+        cancelText={formatMessage(commonMessages.ui.cancel)}
         okButtonProps={{ loading }}
         onOk={handleSubmit}
         onCancel={() => setIssueModalVisible(false)}

@@ -276,7 +276,7 @@ const ReviewModal: React.FC<{
 
           <ButtonGroup className="d-flex justify-content-end mt-4 mb-4">
             <StyledButtonModal variant="outline" onClick={onClose}>
-              {formatMessage(commonMessages.button.cancel)}
+              {formatMessage(commonMessages.ui.cancel)}
             </StyledButtonModal>
             <StyledButtonModal variant="primary" type="submit" isLoading={isSubmitting}>
               {formatMessage(commonMessages.button.save)}

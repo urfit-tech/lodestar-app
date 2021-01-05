@@ -247,7 +247,7 @@ const IssueItem: React.FC<IssueItemProps> = ({
             </Form.Item>
             <Form.Item>
               <Button className="mr-2" onClick={() => setEditing(false)}>
-                {formatMessage(commonMessages.button.cancel)}
+                {formatMessage(commonMessages.ui.cancel)}
               </Button>
               <Button type="primary" htmlType="submit">
                 {formatMessage(commonMessages.button.save)}

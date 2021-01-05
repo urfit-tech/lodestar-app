@@ -100,7 +100,7 @@ const ProfilePasswordAdminCard: React.FC<ProfilePasswordAdminCardProps> = ({ for
         </Form.Item>
         <Form.Item wrapperCol={{ md: { offset: 4 } }}>
           <Button className="mr-2" onClick={() => form.resetFields()}>
-            {formatMessage(commonMessages.button.cancel)}
+            {formatMessage(commonMessages.ui.cancel)}
           </Button>
           <Button type="primary" htmlType="submit" loading={loading}>
             {formatMessage(commonMessages.button.save)}

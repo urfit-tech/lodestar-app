@@ -188,7 +188,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
             <StyledFormErrorMessage className="mt-1">{errors?.message?.message}</StyledFormErrorMessage>
           </StyledFormControl>
           <ButtonGroup className="d-flex justify-content-end mb-4">
-            <AntdButton onClick={onClose}>{formatMessage(commonMessages.button.cancel)}</AntdButton>
+            <AntdButton onClick={onClose}>{formatMessage(commonMessages.ui.cancel)}</AntdButton>
             <AntdButton type="primary" htmlType="submit">
               {formatMessage(commonMessages.button.save)}
             </AntdButton>
