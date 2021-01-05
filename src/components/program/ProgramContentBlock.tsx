@@ -5,13 +5,14 @@ import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
-import { productMessages } from '../../helpers/translation'
+import { productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
+import ProgramContentMaterialBlock from './ProgramContentMaterialBlock'
 import ProgramContentPlayer from './ProgramContentPlayer'
 
 const StyledContentBlock = styled.div`
@@ -127,6 +128,11 @@ const ProgramContentBlock: React.FC<{
                 threadId={`/programs/${program.id}/contents/${programContentId}`}
               />
             </Tabs.TabPane>
+            {programContent.materials.length !== 0 && (
+              <Tabs.TabPane key="materials" tab={formatMessage(programMessages.tab.downloadMaterials)} className="py-3">
+                {<ProgramContentMaterialBlock programContentId={programContentId} />}
+              </Tabs.TabPane>
+            )}
           </Tabs>
         </StyledContentBlock>
       )}

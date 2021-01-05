@@ -64,6 +64,7 @@ export type ProgramContentSectionProps = {
   id: string
   title: string
   description: string | null
+  materialsCount?: number
 }
 
 export type ProgramContentProps = {
@@ -78,6 +79,7 @@ export type ProgramContentProps = {
   listPrice: number | null
   salePrice: number | null
   soldAt: Date | null
+  materials?: ProgramContentMaterialProps[]
 }
 
 export type ProgramContentBodyProps = {
@@ -85,4 +87,10 @@ export type ProgramContentBodyProps = {
   type: string | null
   description: string | null
   data: any
+}
+
+export type ProgramContentMaterialProps = {
+  id: string
+  data: any
+  createdAt: Date
 }

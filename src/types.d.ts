@@ -5689,6 +5689,13 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
   type: string | null;
 }
 
+export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_materials {
+  __typename: "program_content_material";
+  id: any;
+  data: any | null;
+  created_at: any;
+}
+
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents {
   __typename: "program_content";
   id: any;
@@ -5707,6 +5714,10 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
    * An object relationship
    */
   program_content_type: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_type | null;
+  /**
+   * An array relationship
+   */
+  program_content_materials: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_materials[];
 }
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_aggregate_aggregate {
@@ -5816,6 +5827,13 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_body 
   type: string | null;
 }
 
+export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_materials {
+  __typename: "program_content_material";
+  id: any;
+  data: any | null;
+  created_at: any;
+}
+
 export interface GET_PROGRAM_CONTENT_program_content_by_pk {
   __typename: "program_content";
   id: any;
@@ -5839,6 +5857,10 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk {
    * An object relationship
    */
   program_content_body: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_body;
+  /**
+   * An array relationship
+   */
+  program_content_materials: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_materials[];
 }
 
 export interface GET_PROGRAM_CONTENT {
@@ -5957,6 +5979,33 @@ export interface GET_PROGRAM_PLAN_ENROLLMENT {
 
 export interface GET_PROGRAM_PLAN_ENROLLMENTVariables {
   programPlanId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PROGRAM_CONTENT_MATERIAL
+// ====================================================
+
+export interface GET_PROGRAM_CONTENT_MATERIAL_program_content_material {
+  __typename: "program_content_material";
+  id: any;
+  data: any | null;
+  created_at: any;
+}
+
+export interface GET_PROGRAM_CONTENT_MATERIAL {
+  /**
+   * fetch data from the table: "program_content_material"
+   */
+  program_content_material: GET_PROGRAM_CONTENT_MATERIAL_program_content_material[];
+}
+
+export interface GET_PROGRAM_CONTENT_MATERIALVariables {
+  programContentId: any;
 }
 
 /* tslint:disable */

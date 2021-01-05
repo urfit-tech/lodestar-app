@@ -7,6 +7,7 @@ import {
   PeriodType,
   ProgramBriefProps,
   ProgramContentBodyProps,
+  ProgramContentMaterialProps,
   ProgramContentProps,
   ProgramContentSectionProps,
   ProgramPlanProps,
@@ -302,6 +303,11 @@ export const useProgram = (programId: string) => {
                 id
                 type
               }
+              program_content_materials {
+                id
+                data
+                created_at
+              }
             }
             program_contents_aggregate(where: { published_at: { _is_null: false } }) {
               aggregate {
@@ -392,6 +398,11 @@ export const useProgram = (programId: string) => {
               listPrice: programContent.list_price,
               salePrice: programContent.sale_price,
               soldAt: programContent.sold_at && new Date(programContent.sold_at),
+              materials: programContent.program_content_materials.map(v => ({
+                id: v.id,
+                data: v.data,
+                createdAt: v.created_at,
+              })),
             })),
           })),
         }
@@ -432,6 +443,11 @@ export const useProgramContent = (programContentId: string) => {
             data
             type
           }
+          program_content_materials {
+            id
+            data
+            created_at
+          }
         }
       }
     `,
@@ -441,6 +457,7 @@ export const useProgramContent = (programContentId: string) => {
   const programContent:
     | (ProgramContentProps & {
         programContentBody: ProgramContentBodyProps | null
+        materials: ProgramContentMaterialProps[]
       })
     | null =
     loading || error || !data || !data.program_content_by_pk
@@ -464,6 +481,11 @@ export const useProgramContent = (programContentId: string) => {
                 data: data.program_content_by_pk.program_content_body.data,
               }
             : null,
+          materials: data.program_content_by_pk.program_content_materials.map(v => ({
+            id: v.id,
+            data: v.data,
+            createdAt: v.created_at,
+          })),
         }
 
   return {
@@ -564,5 +586,39 @@ export const useProgramPlanEnrollment = (programPlanId: string) => {
         : data.program_plan_enrollment_aggregate.aggregate.count || 0,
     loadingProgramPlanEnrollments: loading,
     refetchProgramPlanEnrollments: refetch,
+  }
+}
+
+export const useProgramContentMaterial = (programContentId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    types.GET_PROGRAM_CONTENT_MATERIAL,
+    types.GET_PROGRAM_CONTENT_MATERIALVariables
+  >(
+    gql`
+      query GET_PROGRAM_CONTENT_MATERIAL($programContentId: uuid!) {
+        program_content_material(where: { program_content_id: { _eq: $programContentId } }) {
+          id
+          data
+          created_at
+        }
+      }
+    `,
+    { variables: { programContentId }, fetchPolicy: 'no-cache' },
+  )
+
+  const programContentMaterials = data?.program_content_material.map(
+    (contentMaterial: { id: any; data: any; created_at: Date }) => {
+      return {
+        id: contentMaterial.id,
+        data: contentMaterial.data,
+        createdAt: new Date(contentMaterial.created_at),
+      }
+    },
+  )
+  return {
+    loading,
+    error,
+    programContentMaterials,
+    refetch,
   }
 }

@@ -1,7 +1,9 @@
-import { Card, Icon, Select } from 'antd'
+import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
+import { Card, Select } from 'antd'
 import { flatten, sum } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { AiOutlineCalendar, AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
+import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
@@ -9,6 +11,9 @@ import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps } from '../../types/program'
 
+const StyledIcon = styled(Icon)`
+  font-size: 16px;
+`
 const StyledProgramContentMenu = styled.div`
   background: white;
   font-size: 14px;
@@ -68,7 +73,7 @@ const StyledIconWrapper = styled.div`
   border-radius: 50%;
   text-align: center;
   font-size: 10px;
-  line-height: 20px;
+  line-height: 22px;
 `
 const StyledItem = styled.div`
   position: relative;
@@ -95,6 +100,9 @@ const StyledItem = styled.div`
     color: white;
   }
 `
+const messages = defineMessages({
+  materialAmount: { id: 'program.content.materialAmount', defaultMessage: '{amount}個檔案' },
+})
 
 const ProgramContentMenu: React.FC<{
   program: ProgramProps & {
@@ -207,6 +215,7 @@ const SortBySectionItem: React.FC<{
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
 }> = ({ programContent, progress, programPackageId, onSetIsCollapse, onClick }) => {
+  const { formatMessage } = useIntl()
   const history = useHistory()
   const { programId, programContentId } = useParams<{
     programId: string
@@ -236,19 +245,27 @@ const SortBySectionItem: React.FC<{
       <StyledItemTitle className="mb-2">{programContent.title}</StyledItemTitle>
 
       <StyledIconWrapper>
-        <Icon type="check" />
+        <Icon as={CheckIcon} />
       </StyledIconWrapper>
 
-      {programContent.contentType === 'video' ? (
-        <div>
-          <Icon type="video-camera" className="mr-2" />
-          {durationFormatter(programContent.duration)}
-        </div>
-      ) : (
-        <div>
-          <Icon type="file-text" />
-        </div>
-      )}
+      <div className="d-flex">
+        {programContent.contentType === 'video' ? (
+          <div className="mr-3">
+            <StyledIcon as={AiOutlineVideoCamera} className="mr-2" />
+            {durationFormatter(programContent.duration)}
+          </div>
+        ) : (
+          <div className="mr-3">
+            <StyledIcon as={AiOutlineFileText} />
+          </div>
+        )}
+        {programContent.materials && programContent?.materials.length !== 0 && (
+          <div>
+            <StyledIcon as={AttachmentIcon} className="mr-2" />
+            {formatMessage(messages.materialAmount, { amount: programContent?.materials.length })}
+          </div>
+        )}
+      </div>
     </StyledItem>
   )
 }
@@ -290,6 +307,7 @@ const SortByDateItem: React.FC<{
   programPackageId: string | null
   onClick?: () => void
 }> = ({ programContent, progress, programPackageId, onClick }) => {
+  const { formatMessage } = useIntl()
   const history = useHistory()
   const { programId, programContentId } = useParams<{
     programId: string
@@ -312,13 +330,19 @@ const SortByDateItem: React.FC<{
       <StyledItemTitle className="mb-3">{programContent.title}</StyledItemTitle>
 
       <StyledIconWrapper>
-        <Icon type="check" />
+        <Icon as={CheckIcon} />
       </StyledIconWrapper>
 
       <div>
-        <Icon type="calendar" className="mr-2" />
+        <StyledIcon as={AiOutlineCalendar} className="mr-2" />
         {programContent.publishedAt && dateFormatter(programContent.publishedAt)}
       </div>
+      {programContent.materials && programContent?.materials.length !== 0 && (
+        <div className="mt-2">
+          <StyledIcon as={AttachmentIcon} className="mr-2" />
+          {formatMessage(messages.materialAmount, { amount: programContent?.materials.length })}
+        </div>
+      )}
     </StyledItem>
   )
 }

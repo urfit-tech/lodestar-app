@@ -52,6 +52,11 @@ export const AppThemeProvider: React.FC = ({ children }) => {
           },
         },
       },
+      IconButton: {
+        download: {
+          background: 'transparent',
+        },
+      },
       Modal: {
         baseStyle: {
           dialog: {

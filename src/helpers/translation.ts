@@ -1269,6 +1269,21 @@ export const usersMessages = {
   }),
 }
 
+export const programMessages = {
+  tab: defineMessages({
+    downloadMaterials: {
+      id: 'program.tab.downloadMaterials',
+      defaultMessage: '下載教材',
+    },
+  }),
+  status: defineMessages({
+    loadingMaterialError: {
+      id: 'program.status.loadingMaterialError',
+      defaultMessage: '無法取得教材',
+    },
+  }),
+}
+
 export const projectMessages = {
   text: defineMessages({
     totalParticipants: {
