@@ -38,6 +38,12 @@ const StyledTitle = styled.h3`
   letter-spacing: 1px;
   color: var(--gray-darker);
 `
+const StyledPracticeTitle = styled.h3`
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 0.8px;
+  color: var(--gray-darker);
+`
 const StyledDate = styled.span`
   border-left: 1px solid var(--gray);
   font-size: 14px;
@@ -71,6 +77,7 @@ const StyledDivider = styled.div`
 `
 
 const messages = defineMessages({
+  practiceSuggestion: { id: 'program.label.practiceSuggestion', defaultMessage: '作業建議' },
   practiceFile: { id: 'program.ui.practiceFile', defaultMessage: '作業檔案' },
   view: { id: 'program.ui.view', defaultMessage: '查看' },
   editSuggestion: { id: 'program.ui.editSuggestion', defaultMessage: 'Edit Suggestion' },
@@ -153,6 +160,7 @@ const PracticePage: React.FC = () => {
         <StyledDivider className="my-3" />
 
         <div className="mb-4">
+          <StyledPracticeTitle className="mb-3">{formatMessage(messages.practiceSuggestion)}</StyledPracticeTitle>
           <SuggestionCreationModal />
           {practice.suggests.map(v => {
             return (
