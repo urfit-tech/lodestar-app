@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { CommonText } from '../../components/common'
+import { CommonTextMixin } from '../../components/common'
 import { AvatarImage } from '../../components/common/Image'
 import PodcastProgramCard from '../../components/podcast/PodcastProgramCard'
 import PodcastProgramTimeline from '../../containers/podcast/PodcastProgramTimeline'
@@ -30,7 +30,7 @@ const StyledTitle = styled.h3`
 `
 const StyledParagraph = styled.p`
   font-family: NotoSansCJKtc;
-  ${CommonText}
+  ${CommonTextMixin}
 `
 const StyledEnrolledPodcastPlanCreatorName = styled.span`
   color: var(--gray-darker);

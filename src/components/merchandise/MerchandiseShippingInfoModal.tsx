@@ -7,7 +7,7 @@ import { shippingMethodFormatter } from '../../helpers'
 import { ReactComponent as IconList } from '../../images/list-o.svg'
 import { InvoiceProps } from '../checkout/InvoiceInput'
 import { ShippingProps } from '../checkout/ShippingInput'
-import { CommonText } from '../common'
+import { CommonTextMixin } from '../common'
 import CommonModal from '../common/CommonModal'
 
 const messages = defineMessages({
@@ -20,7 +20,7 @@ const messages = defineMessages({
 })
 
 const StyledShippingInfoSubtitle = styled.h4`
-  ${CommonText}
+  ${CommonTextMixin}
 `
 const StyledShippingInfoContent = styled.div`
   margin-bottom: 24px;

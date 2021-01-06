@@ -16,7 +16,7 @@ import { ReactComponent as IconEmail } from '../../images/email-o.svg'
 import types from '../../types'
 import { OrderContact } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
-import { CommonText } from '../common'
+import { CommonTextMixin } from '../common'
 import CommonModal from '../common/CommonModal'
 import { AvatarImage } from '../common/Image'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -74,7 +74,7 @@ const StyledContactBlock = styled.div`
 `
 
 const StyledMemberInfo = styled.div`
-  ${CommonText}
+  ${CommonTextMixin}
   line-height: 36px;
 `
 

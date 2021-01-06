@@ -3,7 +3,7 @@ import moment from 'moment'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
-import { CommonText } from '.'
+import { CommonTextMixin } from '.'
 import ProductTypeLabel from '../../components/common/ProductTypeLabel'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
@@ -41,7 +41,7 @@ const StyledTitle = styled(Typography.Title)`
   }
 `
 const StyledPeriod = styled.div`
-  ${CommonText}
+  ${CommonTextMixin}
 `
 const StyledMeta = styled.span`
   margin-top: 0.5rem;

@@ -1,6 +1,6 @@
 import { css } from 'styled-components'
 
-export const CommonText = css`
+export const CommonTextMixin = css`
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.4px;

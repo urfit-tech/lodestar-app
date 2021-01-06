@@ -10,17 +10,17 @@ import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as RocketIcon } from '../../images/icon-rocket.svg'
-import { CommonText } from '../common'
+import { CommonTextMixin } from '../common'
 import { AvatarImage, CustomRatioImage } from '../common/Image'
 
 const StyledBlock = styled.div`
   margin: 50px 0;
 `
 const StyledParagraph = styled.p`
-  ${CommonText};
+  ${CommonTextMixin};
 `
 const StyledNotice = styled.div`
-  ${CommonText};
+  ${CommonTextMixin};
   border-radius: 4px;
   padding: 12px;
   background-color: var(--gray-lighter);
