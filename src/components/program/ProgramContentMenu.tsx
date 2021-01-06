@@ -254,16 +254,18 @@ const SortBySectionItem: React.FC<{
       </StyledIconWrapper>
 
       <div className="d-flex">
-        {programContent.contentType === 'video' ? (
-          <div className="mr-3">
-            <StyledIcon as={AiOutlineVideoCamera} className="mr-2" />
-            {durationFormatter(programContent.duration)}
-          </div>
-        ) : (
-          <div className="mr-3">
+        <div className="mr-3">
+          {programContent.contentType === 'video' ? (
+            <>
+              <StyledIcon as={AiOutlineVideoCamera} className="mr-2" />
+              {durationFormatter(programContent.duration)}
+            </>
+          ) : programContent.contentType === 'practice' ? (
+            <StyledIcon as={PracticeIcon} className="mr-2" />
+          ) : (
             <StyledIcon as={AiOutlineFileText} />
-          </div>
-        )}
+          )}
+        </div>
         {programContent.materials && programContent?.materials.length !== 0 && (
           <div>
             <StyledIcon as={AttachmentIcon} className="mr-2" />
