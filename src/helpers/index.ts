@@ -343,3 +343,11 @@ export const byteToSize = (bytes: String | number) => {
     i = Math.floor(Math.log(Number(bytes)) / Math.log(k))
   return `${(Number(bytes) / Math.pow(k, i)).toPrecision(3)}${sizes[i]}`
 }
+
+export const getFileName = (fileName: String) => {
+  return fileName.substr(0, fileName.lastIndexOf('.'))
+}
+
+export const getFileExtension = (fileName: String) => {
+  return fileName.substr(fileName.lastIndexOf('.') + 1, fileName.length)
+}

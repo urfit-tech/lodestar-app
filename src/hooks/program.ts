@@ -616,8 +616,8 @@ export const useProgramContentMaterial = (programContentId: string) => {
     },
   )
   return {
-    loading,
-    error,
+    loadingProgramContentMaterials: loading,
+    errorProgramContentMaterials: error,
     programContentMaterials,
     refetch,
   }
