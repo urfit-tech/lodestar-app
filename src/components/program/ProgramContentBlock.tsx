@@ -166,7 +166,7 @@ const ProgramContentBlock: React.FC<{
               </Tabs.TabPane>
             )}
             {programContent.materials.length !== 0 && (
-              <Tabs.TabPane key="materials" tab={formatMessage(programMessages.tab.downloadMaterials)} className="py-3">
+              <Tabs.TabPane key="material" tab={formatMessage(programMessages.tab.downloadMaterials)} className="py-3">
                 {<ProgramContentMaterialBlock programContentId={programContentId} />}
               </Tabs.TabPane>
             )}
