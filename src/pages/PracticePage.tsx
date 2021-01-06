@@ -181,44 +181,50 @@ const PracticePage: React.FC = () => {
                           />
                           {repliesVisible && (
                             <>
-                              {[{ id: '', memberId: '', createdAt: new Date(), content: '', reactedMemberIds: [] }].map(
-                                w => (
-                                  <div key={w.id} className="mt-5">
-                                    <MessageItem>
-                                      <MessageItemHeader
-                                        programRoles={[]}
-                                        memberId={w.memberId}
-                                        createdAt={w.createdAt}
-                                      />
-                                      <MessageItemContent
-                                        description={w.content}
-                                        renderEdit={
-                                          w.memberId === currentMemberId
-                                            ? setEdition => (
-                                                <AntdMenu>
-                                                  <AntdMenu.Item onClick={() => setEdition(true)}>
-                                                    {formatMessage(issueMessages.dropdown.content.edit)}
-                                                  </AntdMenu.Item>
-                                                  <AntdMenu.Item
-                                                    onClick={() =>
-                                                      window.confirm(
-                                                        formatMessage(issueMessages.dropdown.content.unrecoverable),
-                                                      )
-                                                    }
-                                                  >
-                                                    {formatMessage(issueMessages.dropdown.content.delete)}
-                                                  </AntdMenu.Item>
-                                                </AntdMenu>
-                                              )
-                                            : undefined
-                                        }
-                                      >
-                                        <MessageItemAction reactedMemberIds={w.reactedMemberIds} />
-                                      </MessageItemContent>
-                                    </MessageItem>
-                                  </div>
-                                ),
-                              )}
+                              {[
+                                {
+                                  id: '',
+                                  memberId: currentMemberId || '',
+                                  createdAt: new Date(),
+                                  content: '12341234',
+                                  reactedMemberIds: [],
+                                },
+                              ].map(w => (
+                                <div key={w.id} className="mt-5">
+                                  <MessageItem>
+                                    <MessageItemHeader
+                                      programRoles={[]}
+                                      memberId={w.memberId}
+                                      createdAt={w.createdAt}
+                                    />
+                                    <MessageItemContent
+                                      description={w.content}
+                                      renderEdit={
+                                        w.memberId === currentMemberId
+                                          ? setEdition => (
+                                              <AntdMenu>
+                                                <AntdMenu.Item onClick={() => setEdition(true)}>
+                                                  {formatMessage(issueMessages.dropdown.content.edit)}
+                                                </AntdMenu.Item>
+                                                <AntdMenu.Item
+                                                  onClick={() =>
+                                                    window.confirm(
+                                                      formatMessage(issueMessages.dropdown.content.unrecoverable),
+                                                    )
+                                                  }
+                                                >
+                                                  {formatMessage(issueMessages.dropdown.content.delete)}
+                                                </AntdMenu.Item>
+                                              </AntdMenu>
+                                            )
+                                          : undefined
+                                      }
+                                    >
+                                      <MessageItemAction reactedMemberIds={w.reactedMemberIds} />
+                                    </MessageItemContent>
+                                  </MessageItem>
+                                </div>
+                              ))}
                               <div className="mt-5">
                                 <MessageReplyCreationForm />
                               </div>
