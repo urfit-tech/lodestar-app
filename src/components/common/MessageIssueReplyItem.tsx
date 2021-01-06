@@ -39,7 +39,6 @@ const MessageIssueReplyItem: React.FC<{
         onSubmit={({ description }) =>
           updateIssueReply(description.toRAW())
             .then(() => {
-              console.log
               onRefetch?.()
             })
             .catch(() => message.error(formatMessage(issueMessages.messageError.update)))
