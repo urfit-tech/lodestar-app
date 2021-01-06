@@ -41,7 +41,7 @@ const ProjectPage: React.FC = () => {
     return <LoadingPage />
   }
 
-  if (errorProject || !project || !project.publishedAt || project.publishedAt.getTime() > Date.now()) {
+  if (errorProject || !project || (project.publishedAt && project.publishedAt.getTime() > Date.now())) {
     return <Redirect to="/" />
   }
 
