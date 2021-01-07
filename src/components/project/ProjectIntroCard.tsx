@@ -44,7 +44,7 @@ const StyledCardTitle = styled.div`
   text-align: justify;
   line-height: 1.5rem;
 `
-const StyledCardDescription = styled.div`
+const StyledCardAbstract = styled.div`
   margin-bottom: 3.5rem;
   height: 3rem;
   overflow: hidden;
@@ -76,7 +76,7 @@ const ProjectIntroCard: React.FC<ProjectIntroProps> = ({
   title,
   coverUrl,
   previewUrl,
-  description,
+  abstract,
   targetAmount,
   targetUnit,
   expiredAt,
@@ -93,7 +93,7 @@ const ProjectIntroCard: React.FC<ProjectIntroProps> = ({
       <CustomRatioImage ratio={0.56} width="100%" src={previewUrl || coverUrl || EmptyCover} />
       <StyledCardBody>
         <StyledCardTitle>{title}</StyledCardTitle>
-        <StyledCardDescription>{description}</StyledCardDescription>
+        <StyledCardAbstract>{abstract}</StyledCardAbstract>
         <StyledCardMeta className="d-flex align-items-end justify-content-between">
           <div>
             {type === 'funding' ? (

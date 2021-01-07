@@ -6539,6 +6539,7 @@ export interface GET_PROJECT_INTRO_COLLECTION_project {
   cover_url: string | null;
   preview_url: string | null;
   abstract: string | null;
+  introduction: string | null;
   description: string | null;
   target_amount: any | null;
   /**
@@ -7777,6 +7778,7 @@ export interface SEARCH_PRODUCT_COLLECTION_project {
   cover_url: string | null;
   preview_url: string | null;
   abstract: string | null;
+  introduction: string | null;
   description: string | null;
   /**
    * funds / participants

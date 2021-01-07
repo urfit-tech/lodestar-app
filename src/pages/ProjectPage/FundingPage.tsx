@@ -82,6 +82,7 @@ const FundingPage: React.FC<ProjectProps> = ({
   coverType,
   coverUrl,
   title,
+  abstract,
   description,
   targetAmount,
   targetUnit,
@@ -147,6 +148,7 @@ const FundingPage: React.FC<ProjectProps> = ({
             <FundingSummaryBlock
               projectId={id}
               title={title}
+              abstract={abstract || ''}
               description={description || ''}
               targetAmount={targetAmount}
               targetUnit={targetUnit}

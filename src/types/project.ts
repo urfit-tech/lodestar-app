@@ -50,6 +50,7 @@ export type ProjectBasicProps = {
   coverUrl: string | null
   previewUrl: string | null
   abstract: string | null
+  introduction: string | null
   description: string | null
   targetAmount: number
   targetUnit: 'funds' | 'participants'

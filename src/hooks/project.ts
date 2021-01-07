@@ -238,6 +238,7 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
           cover_url
           preview_url
           abstract
+          introduction
           description
           target_amount
           target_unit
@@ -297,13 +298,14 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
             coverUrl: project.cover_url,
             previewUrl: project.preview_url,
             abstract: project.abstract,
+            introduction: project.introduction,
             description: project.description,
             targetAmount: project.target_amount,
             targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
             expiredAt: project.expired_at ? new Date(project.expired_at) : null,
             isParticipantsVisible: project.is_participants_visible,
             isCountdownTimerVisible: project.is_countdown_timer_visible,
-            totalSales: project.project_sales?.total_sales,
+            totalSales: project.project_sales?.total_sales || 0,
             enrollmentCount: sum(
               project.project_plans.map(
                 projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0,
