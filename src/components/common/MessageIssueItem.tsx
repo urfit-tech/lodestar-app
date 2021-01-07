@@ -24,7 +24,7 @@ const MessageIssueItem: React.FC<{
   reactedMemberIds: string[]
   createdAt: Date
   solvedAt: Date | null
-  title?: string | undefined
+  title?: string
   onRefetch?: () => Promise<any>
 }> = ({
   issueId,
@@ -71,7 +71,9 @@ const MessageIssueItem: React.FC<{
                   <Menu.Item
                     onClick={() =>
                       window.confirm(formatMessage(issueMessages.dropdown.content.confirmMessage)) &&
-                      deleteIssue().then(() => onRefetch?.())
+                      deleteIssue()
+                        .then(() => onRefetch?.())
+                        .catch(() => {})
                     }
                   >
                     {formatMessage(issueMessages.dropdown.content.delete)}
@@ -82,7 +84,9 @@ const MessageIssueItem: React.FC<{
                         title: title,
                         description: description,
                         solvedAt: solvedAt ? null : new Date(),
-                      }).then(() => onRefetch?.())
+                      })
+                        .then(() => onRefetch?.())
+                        .catch(() => message.error(formatMessage(issueMessages.messageError.question)))
                     }
                   >
                     {formatMessage(issueMessages.content.markAs)}
@@ -108,8 +112,10 @@ const MessageIssueItem: React.FC<{
                 }
                 onRepliesVisible={setRepliesVisible}
                 onReact={async reacted => {
-                  reacted ? await deleteIssueReaction() : await insertIssueReaction()
-                  onRefetch?.()
+                  try {
+                    reacted ? await deleteIssueReaction() : await insertIssueReaction()
+                    onRefetch?.()
+                  } catch {}
                 }}
               />
               {repliesVisible && (
@@ -130,7 +136,11 @@ const MessageIssueItem: React.FC<{
                   ))}
                   <div className="mt-5">
                     <MessageReplyCreationForm
-                      onSubmit={content => insertIssueReply(content).then(() => refetchIssueReplies())}
+                      onSubmit={content =>
+                        insertIssueReply(content)
+                          .then(() => refetchIssueReplies())
+                          .catch(() => {})
+                      }
                     />
                   </div>
                 </>

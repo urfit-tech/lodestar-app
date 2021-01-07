@@ -53,7 +53,9 @@ const MessageIssueReplyItem: React.FC<{
                   <Menu.Item
                     onClick={() =>
                       window.confirm(formatMessage(issueMessages.dropdown.content.unrecoverable)) &&
-                      deleteIssueReply().then(() => onRefetch?.())
+                      deleteIssueReply()
+                        .then(() => onRefetch?.())
+                        .catch(() => {})
                     }
                   >
                     {formatMessage(issueMessages.dropdown.content.delete)}
@@ -66,8 +68,10 @@ const MessageIssueReplyItem: React.FC<{
         <MessageItemAction
           reactedMemberIds={reactedMemberIds}
           onReact={async reacted => {
-            reacted ? await deleteIssueReplyReaction() : await insertIssueReplyReaction()
-            onRefetch?.()
+            try {
+              reacted ? await deleteIssueReplyReaction() : await insertIssueReplyReaction()
+              onRefetch?.()
+            } catch {}
           }}
         />
       </MessageItemContent>

@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import { Button, ButtonGroup, useToast } from '@chakra-ui/react'
-import BraftEditor from 'braft-editor'
+import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useState } from 'react'
@@ -14,9 +14,9 @@ import types from '../../types'
 import { ReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
+import StarRating from '../common/StarRating'
 import { BraftContent } from '../common/StyledBraftEditor'
 import ReviewReplyItem from './ReviewReplyItem'
-import ReviewStarRating from './ReviewStarRating'
 
 const ReviewContentBlock = styled.div`
   padding-left: 48px;
@@ -77,7 +77,9 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { authToken, apiHost, currentMemberId } = useAuth()
-  const { handleSubmit, control, reset } = useForm({
+  const { handleSubmit, control, reset } = useForm<{
+    replyContent: EditorState
+  }>({
     defaultValues: {
       replyContent: BraftEditor.createEditorState((reviewReplies.length !== 0 && reviewReplies[0].content) || ''),
     },
@@ -90,13 +92,13 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
   )
   const toast = useToast()
 
-  const handleSave = (data: { replyContent: any }) => {
+  const handleSave = handleSubmit(({ replyContent }) => {
     setIsSubmitting(true)
     insertReviewReply({
       variables: {
         reviewId: id,
         memberId: currentMemberId,
-        content: data.replyContent.toRAW(),
+        content: replyContent.toRAW(),
       },
     })
       .then(() => {
@@ -114,7 +116,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
         setIsSubmitting(false)
         setReplyEditing(false)
       })
-  }
+  })
 
   return (
     <>
@@ -128,7 +130,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
         </span>
       </div>
       <ReviewContentBlock>
-        <ReviewStarRating score={score} boxSize="16px" />
+        <StarRating score={score} max={5} size="16px" />
         <StyledTitle className="mt-3 mb-2">{title}</StyledTitle>
         <BraftContent>{content}</BraftContent>
 
@@ -149,7 +151,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
                 <div className="d-flex align-items-center justify-content-start mt-4">
                   <MemberAvatar memberId={currentMemberId || ''} withName size={36} />
                 </div>
-                <form onSubmit={handleSubmit(handleSave)}>
+                <form onSubmit={handleSave}>
                   <Controller
                     name="replyContent"
                     as={

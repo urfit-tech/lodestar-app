@@ -94,7 +94,7 @@ const SingleUploader: React.FC<
         <Button icon="upload" loading={loading} disabled={loading}>
           {value
             ? reUploadText || formatMessage(commonMessages.button.reupload)
-            : uploadText || formatMessage(commonMessages.button.upload)}
+            : uploadText || formatMessage(commonMessages.ui.upload)}
         </Button>
       )}
     </Upload>
