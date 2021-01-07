@@ -1264,6 +1264,11 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@bobthered/tailwindcss-palette-generator@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@bobthered/tailwindcss-palette-generator/-/tailwindcss-palette-generator-2.0.0.tgz#ff8de62835950b820f844b243bfdf8b68100aede"
+  integrity sha512-jzYCiy+qXIV8NbXSi9OErpwlhp6PXILgyXZWOV0BUGwgfuc6ff8xJR/m4XxbRKNFafgjljGRp0NOUwy20KKq/w==
+
 "@chakra-ui/accordion@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@chakra-ui/accordion/-/accordion-1.0.1.tgz#0e170b5702945a3e48b895ec71a8c3b0723db185"

@@ -1,11 +1,10 @@
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
-import { mergeDeepLeft } from 'ramda'
 import React from 'react'
 import { ThemeProvider } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
-import { lightenDarkenHexColor } from '../../helpers/index'
 import '../../styles.scss'
 import defaultThemeVars from '../../theme.json'
+const paletteGenerator = require('@bobthered/tailwindcss-palette-generator')
 
 export const AppThemeProvider: React.FC = ({ children }) => {
   const { settings } = useApp()
@@ -83,18 +82,7 @@ export const AppThemeProvider: React.FC = ({ children }) => {
       },
     },
     colors: {
-      primary: {
-        300: `${
-          settings && settings['theme.@primary-color'] && lightenDarkenHexColor(settings['theme.@primary-color'], +40)
-        }`,
-        400: `${
-          settings && settings['theme.@primary-color'] && lightenDarkenHexColor(settings['theme.@primary-color'], +20)
-        }`,
-        500: `${settings && settings['theme.@primary-color']}`,
-        600: `${
-          settings && settings['theme.@primary-color'] && lightenDarkenHexColor(settings['theme.@primary-color'], -20)
-        }`,
-      },
+      ...paletteGenerator(settings['theme.@primary-color']),
       gray: {
         100: 'rgba(0, 0, 0, 0.1)',
         200: '#f7f8f8',
@@ -117,25 +105,8 @@ export const AppThemeProvider: React.FC = ({ children }) => {
       return vars
     }, defaultThemeVars)
 
-  const customTheme = Object.keys(settings)
-    .filter(key => key.split('.')[0] === 'chakraTheme')
-    .map(key => key.split('.').slice(1).join('.'))
-    .reduce((vars: any, themeKey: string) => {
-      return mergeDeepLeft(
-        vars,
-        themeKey
-          .split('.')
-          .reverse()
-          .reduce((acc: any, key) => {
-            const obj = {} as any
-            obj[key] = acc
-            return obj
-          }, settings[`chakraTheme.${themeKey}`]),
-      )
-    }, {})
-
   return (
-    <ChakraProvider theme={extendTheme(mergeDeepLeft(customTheme, defaultChakraTheme))}>
+    <ChakraProvider theme={extendTheme(defaultChakraTheme)}>
       <ThemeProvider theme={themeVars}>{children}</ThemeProvider>
     </ChakraProvider>
   )
