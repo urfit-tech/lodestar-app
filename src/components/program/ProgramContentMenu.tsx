@@ -239,7 +239,7 @@ const SortBySectionItem: React.FC<{
 
   return (
     <StyledItem
-      className={`${progressStatus} ${isActive && 'active'}`}
+      className={`${progressStatus} ${isActive ? 'active' : ''}`}
       onClick={() => {
         onClick?.()
         history.push(

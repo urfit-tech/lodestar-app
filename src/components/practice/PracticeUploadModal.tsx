@@ -43,7 +43,7 @@ const PracticeUploadModal: React.FC = () => {
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
-  const { register, control, handleSubmit, setError, errors } = useForm<{
+  const { register, control, handleSubmit, errors } = useForm<{
     title: string
     description?: EditorState
   }>()
@@ -51,12 +51,7 @@ const PracticeUploadModal: React.FC = () => {
   const [coverImage, setCoverImage] = useState<File | null>(null)
 
   const handleUpload = handleSubmit(({ title, description }) => {
-    if (!title) {
-      setError('title', {
-        message: formatMessage(messages.fillTitleNotice),
-      })
-    }
-    console.log(title, attachments, coverImage, description?.toRAW())
+    // console.log(title, attachments, coverImage, description?.toRAW())
     toast({
       title: `${formatMessage(messages.practice)}${formatMessage(commonMessages.event.successfullyUpload)}`,
       status: 'success',
@@ -93,7 +88,11 @@ const PracticeUploadModal: React.FC = () => {
           <FormControl isRequired isInvalid={!!errors?.title?.message} className="mb-4">
             <FormLabel>{formatMessage(commonMessages.label.title)}</FormLabel>
 
-            <Input name="title" ref={register} variant="outline" />
+            <Input
+              name="title"
+              ref={register({ required: formatMessage(messages.fillTitleNotice) })}
+              variant="outline"
+            />
             <FormErrorMessage>{errors?.title?.message}</FormErrorMessage>
           </FormControl>
 
