@@ -8,15 +8,13 @@ import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages } from '../../helpers/translation'
 import { shippingOptionProps } from '../../types/checkout'
 import { useAuth } from '../auth/AuthContext'
+import { CommonTitleMixin } from '../common'
 import PriceLabel from '../common/PriceLabel'
 
 export const csvShippingMethods = ['seven-eleven', 'family-mart', 'ok-mart', 'hi-life']
 
 const StyledTitle = styled.div`
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 
 const StyledPriceTag = styled.span`

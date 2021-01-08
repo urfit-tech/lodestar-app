@@ -3,6 +3,7 @@ import { Divider, Modal, Skeleton, Typography } from 'antd'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { CommonTitleMixin } from '../../components/common'
 import { CustomRatioImage } from '../../components/common/Image'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { commonMessages } from '../../helpers/translation'
@@ -16,10 +17,7 @@ const messages = defineMessages({
 })
 
 const StyledSectionTitle = styled.div`
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledCard = styled.div`
   padding: 2rem;

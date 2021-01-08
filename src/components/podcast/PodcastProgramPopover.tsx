@@ -10,6 +10,7 @@ import { durationFullFormatter } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { usePodcastPlanIds } from '../../hooks/podcast'
 import { ReactComponent as MicrophoneIcon } from '../../images/microphone.svg'
+import { CommonTitleMixin } from '../common'
 import { AvatarImage } from '../common/Image'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 
@@ -28,10 +29,7 @@ const StyledWrapper = styled.div`
 `
 const StyledTitle = styled.div`
   margin-bottom: 0.75rem;
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledMeta = styled.div`
   margin-bottom: 0.75rem;

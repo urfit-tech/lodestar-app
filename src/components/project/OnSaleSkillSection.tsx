@@ -1,6 +1,7 @@
 import { Carousel } from 'antd'
 import React from 'react'
 import styled from 'styled-components'
+import { CommonTitleMixin } from '../common'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 
 type OnSaleSkillSectionProps = {
@@ -113,10 +114,7 @@ const StyleCard = styled.div`
   width: 198px;
 
   h5 {
-    font-size: 18px;
-    font-weight: bold;
-    letter-spacing: 0.8px;
-    color: var(--gray-darker);
+    ${CommonTitleMixin}
   }
   p {
     margin-bottom: 0px;

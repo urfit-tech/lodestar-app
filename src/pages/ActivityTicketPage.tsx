@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import ActivityBanner from '../components/activity/ActivityBanner'
 import ActivitySessionItem from '../components/activity/ActivitySessionItem'
 import { useAuth } from '../components/auth/AuthContext'
+import { CommonLargeTitleMixin } from '../components/common'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { handleError } from '../helpers'
@@ -24,11 +25,8 @@ const StyledLink = styled(Link)`
   margin: 0 auto;
 `
 const StyledTitle = styled.div`
+  ${CommonLargeTitleMixin}
   margin-bottom: 0.75rem;
-  color: var(--gray-darker);
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0.2px;
 `
 const StyledMeta = styled.div`
   color: var(--gray-darker);

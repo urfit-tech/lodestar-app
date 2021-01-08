@@ -2,6 +2,7 @@ import { Divider, Modal } from 'antd'
 import React, { useContext, useState } from 'react'
 import styled from 'styled-components'
 import { AuthState } from '../../types/member'
+import { CommonLargeTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 import LoginSection from './LoginSection'
 import RegisterSection from './RegisterSection'
@@ -20,12 +21,9 @@ const StyledContainer = styled.div`
   }
 `
 export const StyledTitle = styled.h1`
+  ${CommonLargeTitleMixin}
   margin-bottom: 1.5rem;
-  color: #585858;
-  font-size: 24px;
-  font-weight: bold;
   text-align: center;
-  letter-spacing: 0.2px;
 `
 export const StyledDivider = styled(Divider)`
   && {

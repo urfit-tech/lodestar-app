@@ -10,6 +10,7 @@ import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramPackageProgramProps } from '../../types/programPackage'
+import { CommonTitleMixin } from '../common'
 import ProgressBar from '../common/ProgressBar'
 import { BREAK_POINT } from '../common/Responsive'
 
@@ -55,10 +56,7 @@ const StyledProgramTitle = styled(Typography.Title)`
   && {
     margin: 0;
     overflow: hidden;
-    color: var(--gray-darker);
-    font-size: 18px;
-    font-weight: bold;
-    letter-spacing: 0.8px;
+    ${CommonTitleMixin}
   }
 `
 

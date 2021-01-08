@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
+import { CommonLargeTitleMixin, CommonTitleMixin } from '../common'
 import { BraftContent } from '../common/StyledBraftEditor'
 
 const StyledWrapper = styled.div`
@@ -13,10 +14,7 @@ const StyledWrapper = styled.div`
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.15);
 `
 const StyledProjectTitle = styled.div`
-  color: var(--gray-darker);
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0.2px;
+  ${CommonLargeTitleMixin}
 `
 const StyledTag = styled(Tag)`
   && {
@@ -31,10 +29,7 @@ const StyledTag = styled(Tag)`
   }
 `
 const StyledProjectPlanTitle = styled.div`
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledDescription = styled.div`
   font-size: 14px;

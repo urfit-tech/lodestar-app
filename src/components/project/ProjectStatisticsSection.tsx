@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { CommonTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledSection = styled.section`
@@ -167,10 +168,7 @@ const StyleStatistics = styled.div`
       color: #ffc129;
     }
     .title {
-      letter-spacing: 0.8px;
-      font-size: 18px;
-      font-weight: bold;
-      color: var(--gray-darker);
+      ${CommonTitleMixin}
       margin-bottom: 4px;
     }
     .description {

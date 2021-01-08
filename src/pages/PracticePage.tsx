@@ -7,6 +7,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { useAuth } from '../components/auth/AuthContext'
+import { CommonTitleMixin } from '../components/common'
 import { CustomRatioImage } from '../components/common/Image'
 import MessageItem from '../components/common/MessageItem'
 import MessageItemAction from '../components/common/MessageItemAction'
@@ -39,10 +40,7 @@ const StyledTitle = styled.h3`
   color: var(--gray-darker);
 `
 const StyledPracticeTitle = styled.h3`
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
-  color: var(--gray-darker);
+  ${CommonTitleMixin}
 `
 const StyledDate = styled.span`
   border-left: 1px solid var(--gray);

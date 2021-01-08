@@ -1,5 +1,6 @@
 import { Form } from 'antd'
 import styled from 'styled-components'
+import { CommonLargeTitleMixin } from '../common'
 
 export const StyledBanner = styled.div`
   padding: 4rem 0;
@@ -8,10 +9,7 @@ export const StyledBanner = styled.div`
 
 export const StyledBannerTitle = styled.h1`
   margin-bottom: 2.5rem;
-  color: var(--gray-darker);
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0.2px;
+  ${CommonLargeTitleMixin}
 `
 
 export const StyledCollection = styled.div`

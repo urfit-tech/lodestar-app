@@ -10,6 +10,7 @@ import { desktopViewMixin } from '../../helpers'
 import { commonMessages, voucherMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { MerchandiseProps } from '../../types/merchandise'
+import { CommonTitleMixin } from '../common'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { CustomRatioImage } from '../common/Image'
 import PriceLabel from '../common/PriceLabel'
@@ -59,10 +60,7 @@ const StyledTag = styled.span`
 `
 const StyledTitle = styled.div`
   margin-bottom: 0.75rem;
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledInfo = styled.div`
   color: var(--gray-darker);

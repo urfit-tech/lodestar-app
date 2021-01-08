@@ -4,6 +4,7 @@ import BraftEditor from 'braft-editor'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
+import { CommonLargeTitleMixin, CommonTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 import StarRating from '../common/StarRating'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -25,18 +26,12 @@ const StyledInfo = styled.div`
   justify-content: space-between;
 `
 const StyledTitle = styled.h2`
-  font-size: 18px;
-  font-weight: bold;
+  ${CommonTitleMixin}
   line-height: 1;
-  letter-spacing: 0.2px;
-  color: var(--gray-darker);
 `
 const StyledPracticeTitle = styled.h3`
-  font-size: 24px;
-  font-weight: bold;
+  ${CommonLargeTitleMixin}
   line-height: 1;
-  letter-spacing: 0.8px;
-  color: var(--gray-darker);
 `
 const StyledEvaluation = styled.div`
   display: flex;

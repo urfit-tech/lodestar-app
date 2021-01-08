@@ -4,12 +4,10 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import ProductItem from '../../components/common/ProductItem'
 import { commonMessages, voucherMessages } from '../../helpers/translation'
+import { CommonTitleMixin } from '../common'
 
 const StyledTitle = styled.div`
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledDescription = styled.div`
   color: var(--gray-darker);

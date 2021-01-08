@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { CommonTextMixin } from '../../components/common'
+import { CommonLargeTitleMixin, CommonTextMixin } from '../../components/common'
 import { AvatarImage } from '../../components/common/Image'
 import PodcastProgramCard from '../../components/podcast/PodcastProgramCard'
 import PodcastProgramTimeline from '../../containers/podcast/PodcastProgramTimeline'
@@ -21,12 +21,9 @@ import {
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 
 const StyledTitle = styled.h3`
+  ${CommonLargeTitleMixin}
   margin-bottom: 32px;
-  color: var(--gray-darker);
   font-family: NotoSansCJKtc;
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0.2px;
 `
 const StyledParagraph = styled.p`
   font-family: NotoSansCJKtc;

@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
+import { CommonLargeTitleMixin } from '../common'
 import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 
@@ -41,10 +42,7 @@ const StyledLabel = styled.div<{ active?: boolean }>`
   }
 `
 const StyledPrice = styled.div`
-  color: var(--gray-darker);
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0.2px;
+  ${CommonLargeTitleMixin}
 `
 const StyledSubTitle = styled.div`
   margin-top: 1.25rem;

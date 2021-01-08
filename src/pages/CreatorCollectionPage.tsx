@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import CreatorBriefCard from '../components/appointment/CreatorBriefCard'
+import { CommonLargeTitleMixin } from '../components/common'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
@@ -25,10 +26,8 @@ const StyledCollectionBlock = styled.section`
   }
 `
 const StyledTitle = styled.h1`
+  ${CommonLargeTitleMixin}
   margin-bottom: 32px;
-  color: var(--gray-darker);
-  font-size: 24px;
-  font-weight: bold;
   line-height: 1.3;
   letter-spacing: 0.77px;
 
