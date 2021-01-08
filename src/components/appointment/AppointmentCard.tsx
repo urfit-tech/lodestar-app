@@ -13,6 +13,7 @@ import DefaultAvatar from '../../images/avatar.svg'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { AppointmentEnrollmentProps } from '../../types/appointment'
+import { CommonTitleMixin } from '../common'
 import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
 import StyledBraftEditor, { BraftContent } from '../common/StyledBraftEditor'
@@ -98,10 +99,7 @@ const StyledModal = styled(Modal)`
   }
 `
 const StyledModalTitle = styled.div`
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledModalSubTitle = styled.div`
   color: var(--gray-darker);
@@ -261,7 +259,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         visible={issueModalVisible}
         footer={isFinished ? null : undefined}
         okText={formatMessage(commonMessages.button.save)}
-        cancelText={formatMessage(commonMessages.button.cancel)}
+        cancelText={formatMessage(commonMessages.ui.cancel)}
         okButtonProps={{ loading }}
         onOk={handleSubmit}
         onCancel={() => setIssueModalVisible(false)}

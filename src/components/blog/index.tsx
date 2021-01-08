@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../helpers'
+import { CommonTitleMixin } from '../common'
 
 export const messages = defineMessages({
   latest: { id: 'blog.label.latest', defaultMessage: '最新' },
@@ -10,10 +11,7 @@ export const messages = defineMessages({
 
 export const StyledTitle = styled.h1`
   margin-bottom: 1rem;
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
-  color: var(--gray-darker);
+  ${CommonTitleMixin}
 `
 export const StyledPostTitle = styled.div<{ rows?: number }>`
   display: -webkit-box;

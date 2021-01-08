@@ -1,5 +1,6 @@
 import { Modal } from 'antd'
 import styled from 'styled-components'
+import { CommonTitleMixin } from '../../components/common'
 
 export const StyledModal = styled(Modal)`
   && {
@@ -16,17 +17,11 @@ export const StyledModal = styled(Modal)`
   }
 `
 export const StyledTitle = styled.h1`
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 export const StyledSubTitle = styled.div`
   margin-bottom: 0.75rem;
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 export const StyledWrapper = styled.div`
   margin: 0 auto;

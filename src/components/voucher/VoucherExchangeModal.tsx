@@ -4,12 +4,10 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import ProductItem from '../../components/common/ProductItem'
 import { commonMessages, voucherMessages } from '../../helpers/translation'
+import { CommonTitleMixin } from '../common'
 
 const StyledTitle = styled.div`
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledDescription = styled.div`
   color: var(--gray-darker);
@@ -84,7 +82,7 @@ const VoucherExchangeModal: React.FC<VoucherExchangeModalProps> = ({
 
         <div className="text-right">
           <Button className="mr-2" onClick={() => setVisible(false)}>
-            {formatMessage(commonMessages.button.cancel)}
+            {formatMessage(commonMessages.ui.cancel)}
           </Button>
           <Button
             type="primary"

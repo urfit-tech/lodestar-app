@@ -13,7 +13,7 @@ import {
   Tag,
   useToast,
 } from '@chakra-ui/react'
-import BraftEditor from 'braft-editor'
+import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useState } from 'react'
@@ -92,7 +92,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { authToken, currentMemberId, apiHost } = useAuth()
-  const { control, errors, handleSubmit, setError } = useForm({
+  const { control, errors, handleSubmit, setError } = useForm<{ reply: EditorState }>({
     defaultValues: {
       reply: BraftEditor.createEditorState(content || ''),
     },
@@ -104,8 +104,8 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
   const { updateReviewReply, deleteReviewReply } = useMutateReviewReply()
   const { programRole } = useProgramRole(targetId)
 
-  const handleSave = (data: { reply: any }) => {
-    if (data.reply.isEmpty()) {
+  const handleSave = handleSubmit(({ reply }) => {
+    if (reply.isEmpty()) {
       setError('reply', {
         message: formatMessage(reviewMessages.validate.contentIsRequired),
       })
@@ -117,7 +117,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
         variables: {
           id,
           memberId: currentMemberId,
-          content: data.reply.toRAW(),
+          content: reply.toRAW(),
           appId,
           updateAt: new Date(),
         },
@@ -138,7 +138,8 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
           setIsSubmitting(false)
           setReplyEditing(false)
         })
-  }
+  })
+
   const handleDelete = () => {
     currentMemberId &&
       deleteReviewReply({ variables: { id, memberId: currentMemberId, appId } })
@@ -213,7 +214,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
       </div>
       {replyEditing ? (
         <ReviewReplyContent className="mt-2">
-          <form onSubmit={handleSubmit(handleSave)}>
+          <form onSubmit={handleSave}>
             <Controller
               name="reply"
               as={
@@ -230,7 +231,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
             </StyledFormControl>
             <ButtonGroup mt={4} className="d-flex justify-content-end">
               <StyledButton type="reset" variant="ghost" onClick={() => setReplyEditing(false)}>
-                {formatMessage(commonMessages.button.cancel)}
+                {formatMessage(commonMessages.ui.cancel)}
               </StyledButton>
               <StyledButton type="submit" variant="primary" className="apply-btn" isLoading={isSubmitting}>
                 {formatMessage(reviewMessages.button.reply)}

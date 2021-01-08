@@ -5,6 +5,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { useAuth } from '../components/auth/AuthContext'
+import { CommonLargeTitleMixin } from '../components/common'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ProgramCollection from '../components/package/ProgramCollection'
@@ -18,10 +19,7 @@ import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from 
 import NotFoundPage from './NotFoundPage'
 
 const StyledTitle = styled.h2`
-  color: var(--gray-darker);
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0.2px;
+  ${CommonLargeTitleMixin}
 `
 const StyledFixedBlock = styled.div`
   z-index: 100;

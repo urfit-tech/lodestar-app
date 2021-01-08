@@ -2,6 +2,7 @@ import { Icon } from '@chakra-ui/icons'
 import React from 'react'
 import styled from 'styled-components'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
+import { CommonTitleMixin } from '../common'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
 import FundingCoverBlock from './FundingCoverBlock'
@@ -171,10 +172,7 @@ const StyleStatistics = styled.div`
       color: #ffc129;
     }
     div {
-      letter-spacing: 0.8px;
-      font-size: 18px;
-      font-weight: bold;
-      color: var(--gray-darker);
+      ${CommonTitleMixin}
     }
   }
 

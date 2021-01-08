@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import types from '../../types'
+import { CommonTitleMixin } from '../common'
 
 const StyledCard = styled.div`
   overflow: hidden;
@@ -28,10 +29,7 @@ const StyledDescription = styled.div`
 const StyledTitle = styled(Typography.Title)`
   && {
     margin-bottom: 1.25rem;
-    color: var(--gray-darker);
-    font-size: 18px;
-    font-weight: bold;
-    letter-spacing: 0.8px;
+    ${CommonTitleMixin}
     height: 3rem;
   }
 `

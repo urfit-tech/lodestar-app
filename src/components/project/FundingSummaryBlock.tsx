@@ -44,6 +44,7 @@ const StyledCountDownBlock = styled.div`
 const FundingSummaryBlock: React.FC<{
   projectId: string
   title: string
+  abstract: string
   description: string
   targetAmount: number
   targetUnit: ProjectIntroProps['targetUnit']
@@ -56,6 +57,7 @@ const FundingSummaryBlock: React.FC<{
 }> = ({
   projectId,
   title,
+  abstract,
   description,
   targetAmount,
   targetUnit,
@@ -69,7 +71,7 @@ const FundingSummaryBlock: React.FC<{
   return (
     <StyledFundingSummaryBlock>
       <StyledTitle>{title}</StyledTitle>
-      <StyledDescription className="mb-3">{description}</StyledDescription>
+      <StyledDescription className="mb-3">{abstract}</StyledDescription>
 
       {type === 'funding' && (
         <>

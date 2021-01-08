@@ -30,6 +30,7 @@ export type Module =
   | 'podcast'
   | 'podcast_recording'
   | 'point'
+  | 'practice'
   | 'program_package'
   | 'project'
   | 'qrcode'

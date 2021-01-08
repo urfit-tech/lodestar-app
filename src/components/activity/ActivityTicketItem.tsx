@@ -9,6 +9,7 @@ import { dateRangeFormatter } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useActivityTicket } from '../../hooks/activity'
 import EmptyCover from '../../images/empty-cover.png'
+import { CommonTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledWrapper = styled.div`
@@ -34,10 +35,7 @@ const StyledDescription = styled.div`
 const StyledTitle = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledMeta = styled.div<{ active?: boolean }>`
   margin-bottom: 0.75rem;

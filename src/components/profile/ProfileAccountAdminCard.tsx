@@ -72,7 +72,7 @@ const ProfileAccountAdminCard: React.FC<ProfileAccountAdminCardProps> = ({ form,
         labelCol={{ span: 24, md: { span: 4 } }}
         wrapperCol={{ span: 24, md: { span: 9 } }}
       >
-        <Form.Item label={formatMessage(commonMessages.form.label.username)}>
+        <Form.Item label={formatMessage(commonMessages.label.username)}>
           {form.getFieldDecorator('username', {
             initialValue: member && member.username,
             rules: [
@@ -83,7 +83,7 @@ const ProfileAccountAdminCard: React.FC<ProfileAccountAdminCardProps> = ({ form,
             ],
           })(<Input />)}
         </Form.Item>
-        <Form.Item label={formatMessage(commonMessages.form.label.email)}>
+        <Form.Item label={formatMessage(commonMessages.label.email)}>
           {form.getFieldDecorator('_email', {
             initialValue: member && member.email,
             rules: [
@@ -129,7 +129,7 @@ const ProfileAccountAdminCard: React.FC<ProfileAccountAdminCardProps> = ({ form,
 
         <Form.Item wrapperCol={{ md: { offset: 4 } }}>
           <Button className="mr-2" onClick={() => form.resetFields()}>
-            {formatMessage(commonMessages.button.cancel)}
+            {formatMessage(commonMessages.ui.cancel)}
           </Button>
           <Button type="primary" htmlType="submit">
             {formatMessage(commonMessages.button.save)}

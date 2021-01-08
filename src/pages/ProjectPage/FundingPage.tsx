@@ -15,6 +15,7 @@ import FundingSummaryBlock from '../../components/project/FundingSummaryBlock'
 import FundingUpdatesPane from '../../components/project/FundingUpdatesPane'
 import { useApp } from '../../containers/common/AppContext'
 import { commonMessages, productMessages } from '../../helpers/translation'
+import EmptyCover from '../../images/empty-cover.png'
 import { ProjectProps } from '../../types/project'
 
 const StyledCover = styled.div`
@@ -81,6 +82,7 @@ const FundingPage: React.FC<ProjectProps> = ({
   coverType,
   coverUrl,
   title,
+  abstract,
   description,
   targetAmount,
   targetUnit,
@@ -128,25 +130,26 @@ const FundingPage: React.FC<ProjectProps> = ({
     <DefaultLayout white noFooter>
       <Helmet>
         <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription} />
+        <meta name="description" content={siteDescription || ''} />
         <meta property="og:type" content="website" />
         <meta property="og:title" content={siteTitle} />
         <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={coverUrl} />
-        <meta property="og:description" content={siteDescription} />
+        <meta property="og:image" content={coverUrl || ''} />
+        <meta property="og:description" content={siteDescription || ''} />
         <script type="application/ld+json">{ldData}</script>
       </Helmet>
 
       <StyledCover className="container mb-4">
         <div className="row">
           <div className="col-12 col-lg-8">
-            <FundingCoverBlock coverType={coverType} coverUrl={coverUrl} />
+            <FundingCoverBlock coverType={coverType} coverUrl={coverUrl || EmptyCover} />
           </div>
           <div className="col-12 col-lg-4">
             <FundingSummaryBlock
               projectId={id}
               title={title}
-              description={description}
+              abstract={abstract || ''}
+              description={description || ''}
               targetAmount={targetAmount}
               targetUnit={targetUnit}
               expiredAt={expiredAt}
@@ -192,7 +195,7 @@ const FundingPage: React.FC<ProjectProps> = ({
           }}
         >
           <Tabs.TabPane tab={formatMessage(productMessages.project.tab.intro)} key="introduction">
-            {projectPlans && <FundingIntroductionPane introduction={introduction} projectPlans={projectPlans} />}
+            {projectPlans && <FundingIntroductionPane introduction={introduction || ''} projectPlans={projectPlans} />}
           </Tabs.TabPane>
           {projectSections &&
             projectSections.map(projectSection =>

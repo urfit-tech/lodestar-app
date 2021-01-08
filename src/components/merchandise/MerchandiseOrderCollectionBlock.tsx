@@ -12,6 +12,7 @@ import { useOrderLogsWithMerchandiseSpec } from '../../hooks/merchandise'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import types from '../../types'
 import { OrderLogWithMerchandiseSpecProps } from '../../types/merchandise'
+import { CommonTitleMixin } from '../common'
 import AdminCard from '../common/AdminCard'
 import MerchandiseOrderContactModal from './MerchandiseOrderContactModal'
 import MerchandiseShippingInfoModal from './MerchandiseShippingInfoModal'
@@ -25,10 +26,7 @@ const messages = defineMessages({
 })
 
 const StyledOrderTitle = styled.h3`
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledPurchaseDate = styled.div`
   color: var(--gray-dark);

@@ -17,7 +17,7 @@ export type ProjectPlanBasicProps = {
   id: string
   coverUrl: string | null
   title: string
-  description: string
+  description: string | null
 
   isSubscription: boolean
   periodAmount: number | null
@@ -47,10 +47,11 @@ export type ProjectBasicProps = {
   type: string
   title: string
   coverType: string
-  coverUrl: string
+  coverUrl: string | null
   previewUrl: string | null
-  abstract: string
-  description: string
+  abstract: string | null
+  introduction: string | null
+  description: string | null
   targetAmount: number
   targetUnit: 'funds' | 'participants'
   expiredAt: Date | null
@@ -67,7 +68,7 @@ export type ProjectIntroProps = ProjectBasicProps & {
 
 export type ProjectProps = ProjectBasicProps & {
   template: string | null
-  introduction: string
+  introduction: string | null
   updates: any
   comments: any
   contents: any

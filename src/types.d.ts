@@ -1927,7 +1927,7 @@ export interface GET_ENROLLED_PROJECT_PLANS_project_plan_enrollment_project_plan
   __typename: "project_plan";
   id: any;
   title: string;
-  description: string;
+  description: string | null;
   /**
    * An object relationship
    */
@@ -3860,7 +3860,7 @@ export interface GET_PRODUCT_SIMPLE_project_plan_by_pk {
   id: any;
   title: string;
   cover_url: string | null;
-  list_price: any;
+  list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any;
@@ -5689,6 +5689,13 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
   type: string | null;
 }
 
+export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_materials {
+  __typename: "program_content_material";
+  id: any;
+  data: any | null;
+  created_at: any;
+}
+
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents {
   __typename: "program_content";
   id: any;
@@ -5707,6 +5714,10 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
    * An object relationship
    */
   program_content_type: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_type | null;
+  /**
+   * An array relationship
+   */
+  program_content_materials: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_materials[];
 }
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_aggregate_aggregate {
@@ -5816,6 +5827,13 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_body 
   type: string | null;
 }
 
+export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_materials {
+  __typename: "program_content_material";
+  id: any;
+  data: any | null;
+  created_at: any;
+}
+
 export interface GET_PROGRAM_CONTENT_program_content_by_pk {
   __typename: "program_content";
   id: any;
@@ -5839,6 +5857,10 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk {
    * An object relationship
    */
   program_content_body: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_body;
+  /**
+   * An array relationship
+   */
+  program_content_materials: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_materials[];
 }
 
 export interface GET_PROGRAM_CONTENT {
@@ -5957,6 +5979,33 @@ export interface GET_PROGRAM_PLAN_ENROLLMENT {
 
 export interface GET_PROGRAM_PLAN_ENROLLMENTVariables {
   programPlanId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PROGRAM_CONTENT_MATERIAL
+// ====================================================
+
+export interface GET_PROGRAM_CONTENT_MATERIAL_program_content_material {
+  __typename: "program_content_material";
+  id: any;
+  data: any | null;
+  created_at: any;
+}
+
+export interface GET_PROGRAM_CONTENT_MATERIAL {
+  /**
+   * fetch data from the table: "program_content_material"
+   */
+  program_content_material: GET_PROGRAM_CONTENT_MATERIAL_program_content_material[];
+}
+
+export interface GET_PROGRAM_CONTENT_MATERIALVariables {
+  programContentId: any;
 }
 
 /* tslint:disable */
@@ -6325,14 +6374,14 @@ export interface GET_PROJECT_project_by_pk_project_plans {
   id: any;
   cover_url: string | null;
   title: string;
-  description: string;
+  description: string | null;
   is_subscription: boolean;
   period_amount: any | null;
   /**
    * Y / M / W / D
    */
   period_type: string | null;
-  list_price: any;
+  list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any;
@@ -6362,20 +6411,20 @@ export interface GET_PROJECT_project_by_pk {
    * image / video
    */
   cover_type: string;
-  cover_url: string;
+  cover_url: string | null;
   preview_url: string | null;
-  abstract: string;
-  description: string;
-  target_amount: any;
+  abstract: string | null;
+  description: string | null;
+  target_amount: any | null;
   /**
    * funds / participants
    */
   target_unit: string;
   template: string | null;
-  introduction: string;
-  updates: any;
-  comments: any;
-  contents: any;
+  introduction: string | null;
+  updates: any | null;
+  comments: any | null;
+  contents: any | null;
   created_at: any;
   published_at: any | null;
   expired_at: any | null;
@@ -6439,14 +6488,14 @@ export interface GET_PROJECT_INTRO_COLLECTION_project_project_plans {
   id: any;
   cover_url: string | null;
   title: string;
-  description: string;
+  description: string | null;
   is_subscription: boolean;
   period_amount: any | null;
   /**
    * Y / M / W / D
    */
   period_type: string | null;
-  list_price: any;
+  list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any;
@@ -6487,11 +6536,12 @@ export interface GET_PROJECT_INTRO_COLLECTION_project {
    * image / video
    */
   cover_type: string;
-  cover_url: string;
+  cover_url: string | null;
   preview_url: string | null;
-  abstract: string;
-  description: string;
-  target_amount: any;
+  abstract: string | null;
+  introduction: string | null;
+  description: string | null;
+  target_amount: any | null;
   /**
    * funds / participants
    */
@@ -7692,14 +7742,14 @@ export interface SEARCH_PRODUCT_COLLECTION_project_project_plans {
   id: any;
   cover_url: string | null;
   title: string;
-  description: string;
+  description: string | null;
   is_subscription: boolean;
   period_amount: any | null;
   /**
    * Y / M / W / D
    */
   period_type: string | null;
-  list_price: any;
+  list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any;
@@ -7725,15 +7775,16 @@ export interface SEARCH_PRODUCT_COLLECTION_project {
    * image / video
    */
   cover_type: string;
-  cover_url: string;
+  cover_url: string | null;
   preview_url: string | null;
-  abstract: string;
-  description: string;
+  abstract: string | null;
+  introduction: string | null;
+  description: string | null;
   /**
    * funds / participants
    */
   target_unit: string;
-  target_amount: any;
+  target_amount: any | null;
   expired_at: any | null;
   is_participants_visible: boolean;
   is_countdown_timer_visible: boolean;
@@ -8752,6 +8803,7 @@ export enum member_contract_update_column {
   ended_at = "ended_at",
   id = "id",
   member_id = "member_id",
+  options = "options",
   revocation_values = "revocation_values",
   revoked_at = "revoked_at",
   started_at = "started_at",
@@ -10199,6 +10251,7 @@ export enum project_plan_constraint {
  * update columns of table "project_plan"
  */
 export enum project_plan_update_column {
+  auto_renewed = "auto_renewed",
   cover_url = "cover_url",
   created_at = "created_at",
   deliverables = "deliverables",
@@ -12788,6 +12841,7 @@ export interface member_contract_bool_exp {
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
   revocation_values?: jsonb_comparison_exp | null;
   revoked_at?: timestamptz_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
@@ -12807,6 +12861,7 @@ export interface member_contract_insert_input {
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  options?: any | null;
   revocation_values?: any | null;
   revoked_at?: any | null;
   started_at?: any | null;
@@ -14117,6 +14172,7 @@ export interface order_log_bool_exp {
   order_discounts?: order_discount_bool_exp | null;
   order_executors?: order_executor_bool_exp | null;
   order_products?: order_product_bool_exp | null;
+  order_status?: order_status_bool_exp | null;
   payment_logs?: payment_log_bool_exp | null;
   payment_model?: jsonb_comparison_exp | null;
   retried_at?: timestamptz_comparison_exp | null;
@@ -14294,6 +14350,21 @@ export interface order_product_on_conflict {
   constraint: order_product_constraint;
   update_columns: order_product_update_column[];
   where?: order_product_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "order_status". All fields are combined with a logical 'AND'.
+ */
+export interface order_status_bool_exp {
+  _and?: (order_status_bool_exp | null)[] | null;
+  _not?: order_status_bool_exp | null;
+  _or?: (order_status_bool_exp | null)[] | null;
+  member_id?: String_comparison_exp | null;
+  order_id?: String_comparison_exp | null;
+  order_log?: order_log_bool_exp | null;
+  order_products?: order_product_bool_exp | null;
+  payment_logs?: payment_log_bool_exp | null;
+  status?: String_comparison_exp | null;
 }
 
 /**
@@ -16971,6 +17042,7 @@ export interface project_plan_bool_exp {
   _and?: (project_plan_bool_exp | null)[] | null;
   _not?: project_plan_bool_exp | null;
   _or?: (project_plan_bool_exp | null)[] | null;
+  auto_renewed?: Boolean_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   deliverables?: String_comparison_exp | null;
@@ -17002,6 +17074,7 @@ export interface project_plan_enrollment_bool_exp {
   _and?: (project_plan_enrollment_bool_exp | null)[] | null;
   _not?: project_plan_enrollment_bool_exp | null;
   _or?: (project_plan_enrollment_bool_exp | null)[] | null;
+  member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   project_plan?: project_plan_bool_exp | null;
   project_plan_id?: uuid_comparison_exp | null;
@@ -17011,6 +17084,7 @@ export interface project_plan_enrollment_bool_exp {
  * input type for inserting data into table "project_plan"
  */
 export interface project_plan_insert_input {
+  auto_renewed?: boolean | null;
   cover_url?: string | null;
   created_at?: any | null;
   deliverables?: string | null;

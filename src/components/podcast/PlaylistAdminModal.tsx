@@ -61,7 +61,7 @@ const PlaylistAdminModal: React.FC<
       centered
       destroyOnClose
       okText={formatMessage(commonMessages.button.save)}
-      cancelText={formatMessage(commonMessages.button.cancel)}
+      cancelText={formatMessage(commonMessages.ui.cancel)}
       okButtonProps={{ loading }}
       onOk={() => {
         setLoading(true)

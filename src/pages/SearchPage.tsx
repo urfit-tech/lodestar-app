@@ -563,6 +563,7 @@ const useSearchProductCollection = (
           cover_url
           preview_url
           abstract
+          introduction
           description
           target_unit
           target_amount
@@ -796,6 +797,7 @@ const useSearchProductCollection = (
         coverUrl: project.cover_url,
         previewUrl: project.preview_url,
         abstract: project.abstract,
+        introduction: project.introduction,
         description: project.description,
         targetAmount: project.target_amount,
         targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],

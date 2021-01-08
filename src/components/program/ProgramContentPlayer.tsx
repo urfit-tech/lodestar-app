@@ -157,7 +157,7 @@ const ProgramContentPlayerCover: React.FC<{
           }}
         />
         <StyledCancelButton onClick={() => onSetIsCoverShowing?.(false)}>
-          {formatMessage(commonMessages.button.cancel)}
+          {formatMessage(commonMessages.ui.cancel)}
         </StyledCancelButton>
       </StyledCoverWrapper>
     </StyledCover>

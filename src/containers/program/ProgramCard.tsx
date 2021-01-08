@@ -2,6 +2,7 @@ import { sum } from 'ramda'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { CommonTitleMixin } from '../../components/common'
 import { CustomRatioImage } from '../../components/common/Image'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import ProgressBar from '../../components/common/ProgressBar'
@@ -25,10 +26,7 @@ const StyledTitle = styled.div`
   overflow: hidden;
   margin-bottom: 1.25rem;
   height: 3em;
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledDescription = styled.div`
   display: -webkit-box;

@@ -2,6 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { CommonTitleMixin } from '.'
 import { useApp } from '../../containers/common/AppContext'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -32,10 +33,7 @@ const AvatarBlock = styled.div`
 `
 const StyledTitle = styled.div`
   justify-content: center;
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 
   a {
     color: var(--gray-darker);

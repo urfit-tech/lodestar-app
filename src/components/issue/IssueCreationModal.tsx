@@ -1,40 +1,27 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Button, Form, Icon, Input, message, Modal, Typography } from 'antd'
+import { Form, Input, message, Modal, Typography } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { ModalProps } from 'antd/lib/modal'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import types from '../../types'
 import { useAuth } from '../auth/AuthContext'
-import MemberAvatar from '../common/MemberAvatar'
+import MessageButton from '../common/MessageButton'
 import StyledBraftEditor from '../common/StyledBraftEditor'
-
-const StyledButton = styled(Button)`
-  height: initial;
-  font-size: 14px;
-`
 
 type IssueCreationModalProps = ModalProps &
   FormComponentProps & {
     threadId: string
-    memberId: string
-    onSubmit?: () => void
+    onRefetch?: () => void
   }
-const IssueCreationModal: React.FC<IssueCreationModalProps> = ({
-  threadId,
-  form,
-  memberId,
-  onSubmit,
-  ...modalProps
-}) => {
+const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form, onRefetch, ...modalProps }) => {
   const { formatMessage } = useIntl()
-  const { authToken, apiHost } = useAuth()
+  const { authToken, apiHost, currentMemberId } = useAuth()
   const { id: appId } = useApp()
   const [insertIssue] = useMutation<types.INSERT_ISSUE, types.INSERT_ISSUEVariables>(INSERT_ISSUE)
 
@@ -43,11 +30,11 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({
 
   const handleSubmit = () => {
     form.validateFields((error, values) => {
-      if (!error) {
+      if (!error && currentMemberId) {
         insertIssue({
           variables: {
             appId,
-            memberId,
+            memberId: currentMemberId,
             threadId,
             title: values.title,
             description: values.description.toRAW(),
@@ -55,7 +42,7 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({
         })
           .then(() => {
             form.resetFields()
-            onSubmit && onSubmit()
+            onRefetch?.()
             setModalVisible(false)
           })
           .catch(err => message.error(err.message))
@@ -64,8 +51,18 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({
     })
   }
 
+  if (!currentMemberId) {
+    return null
+  }
+
   return (
     <>
+      <MessageButton
+        onClick={() => setModalVisible(true)}
+        memberId={currentMemberId}
+        text={formatMessage(commonMessages.button.leaveQuestion)}
+      />
+
       <Modal
         okText={formatMessage(issueMessages.modal.text.ok)}
         style={{ top: 12 }}
@@ -77,7 +74,7 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({
       >
         <Typography.Title level={4}>{formatMessage(issueMessages.form.title.fillQuestion)}</Typography.Title>
         <Form>
-          <Form.Item label={formatMessage(issueMessages.form.label.title)}>
+          <Form.Item label={formatMessage(commonMessages.label.title)}>
             {form.getFieldDecorator('title', {
               initialValue: '',
               rules: [
@@ -119,18 +116,6 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({
           </Form.Item>
         </Form>
       </Modal>
-
-      <StyledButton
-        block
-        className="d-flex justify-content-between align-items-center mb-5 p-4"
-        onClick={() => setModalVisible(true)}
-      >
-        <span className="d-flex align-items-center">
-          <span className="mr-2">{memberId && <MemberAvatar memberId={memberId} />}</span>
-          <span className="ml-1">{formatMessage(commonMessages.button.leaveQuestion)}</span>
-        </span>
-        <Icon type="edit" />
-      </StyledButton>
     </>
   )
 }

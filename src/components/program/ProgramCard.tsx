@@ -12,7 +12,7 @@ import { useAuth } from '../auth/AuthContext'
 import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
 import PriceLabel from '../common/PriceLabel'
-import ReviewStarRating from '../review/ReviewStarRating'
+import StarRating from '../common/StarRating'
 
 const InstructorPlaceHolder = styled.div`
   height: 2rem;
@@ -131,7 +131,7 @@ const ProgramCard: React.FC<{
               (currentMemberId && productEditorIds.includes(currentMemberId)) ||
               reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
                 <StyledReviewRating className="d-flex mb-2">
-                  <ReviewStarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} boxSize="20px" />
+                  <StarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} max={5} size="20px" />
                   <span>({formatMessage(reviewMessages.text.reviewCount, { count: reviewCount })})</span>
                 </StyledReviewRating>
               ) : (

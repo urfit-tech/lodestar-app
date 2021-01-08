@@ -175,7 +175,7 @@ const IssueReplyItem: React.FC<{
               />
               <div>
                 <Button className="mr-2" onClick={() => setEditing(false)}>
-                  {formatMessage(commonMessages.button.cancel)}
+                  {formatMessage(commonMessages.ui.cancel)}
                 </Button>
                 <Button
                   type="primary"

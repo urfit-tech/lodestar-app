@@ -81,6 +81,10 @@ export const commonMessages = {
     back: { id: 'common.ui.back', defaultMessage: '返回' },
     repay: { id: 'common.ui.repay', defaultMessage: '重新付款' },
     search: { id: 'common.ui.search', defaultMessage: '搜尋' },
+    upload: { id: 'common.ui.upload', defaultMessage: '上傳' },
+    uploadFile: { id: 'common.ui.uploadFile', defaultMessage: '上傳檔案' },
+    uploadImage: { id: 'common.ui.uploadImage', defaultMessage: '上傳圖片' },
+    cancel: { id: 'common.ui.cancel', defaultMessage: '取消' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },
@@ -127,7 +131,6 @@ export const commonMessages = {
     exchange: { id: 'common.button.exchange', defaultMessage: '兌換' },
     register: { id: 'common.button.register', defaultMessage: '立即報名' },
     print: { id: 'common.button.print', defaultMessage: '列印' },
-    cancel: { id: 'common.button.cancel', defaultMessage: '取消' },
     download: { id: 'common.button.download', defaultMessage: '下載名單' },
     attend: { id: 'common.button.attend', defaultMessage: '進入會議' },
     unreleased: { id: 'common.button.unreleased', defaultMessage: '尚未發售' },
@@ -153,7 +156,6 @@ export const commonMessages = {
     reselectCoupon: { id: 'checkout.form.radio.coupon.reselect', defaultMessage: '重新選擇' },
     chooseCoupon: { id: 'checkout.form.radio.coupon.choose', defaultMessage: '選擇折價券' },
     reupload: { id: 'common.reupload', defaultMessage: '重新上傳' },
-    upload: { id: 'common.upload', defaultMessage: '上傳檔案' },
     viewCourse: { id: 'common.button.course.view', defaultMessage: '查看課程內容' },
     viewProgram: { id: 'common.button.program.view', defaultMessage: '查看課程' },
     viewSubscription: { id: 'product.program.subscription.view', defaultMessage: '查看訂閱方案' },
@@ -199,15 +201,16 @@ export const commonMessages = {
     more: { id: 'common.profile', defaultMessage: '查看簡介' },
     fillIn: { id: 'common.button.fillIn', defaultMessage: '前往填寫' },
   }),
+  label: defineMessages({
+    title: { id: 'common.label.title', defaultMessage: '標題' },
+    name: { id: 'common.label.name', defaultMessage: '名稱' },
+    category: { id: 'common.label.category', defaultMessage: '類別' },
+    username: { id: 'common.label.username', defaultMessage: '帳號' },
+    email: { id: 'settings.label.email', defaultMessage: '信箱' },
+    phone: { id: 'checkout.label.phone', defaultMessage: '手機' },
+    couponTitle: { id: 'checkout.label.title', defaultMessage: '折價方案名稱' },
+  }),
   form: {
-    label: defineMessages({
-      name: { id: 'common.form.label.name', defaultMessage: '名稱' },
-      category: { id: 'common.form.label.category', defaultMessage: '類別' },
-      couponTitle: { id: 'checkout.coupon.form.label.title', defaultMessage: '折價方案名稱' },
-      username: { id: 'common.form.label.username', defaultMessage: '帳號' },
-      email: { id: 'settings.profile.from.label.email', defaultMessage: '信箱' },
-      phone: { id: 'checkout.form.label.phone', defaultMessage: '手機' },
-    }),
     message: defineMessages({
       name: { id: 'common.form.message.name', defaultMessage: '請輸入名稱' },
       username: { id: 'common.form.message.username', defaultMessage: '請輸入使用者名稱' },
@@ -580,6 +583,28 @@ export const checkoutMessages = {
   }),
 }
 
+export const programMessages = {
+  label: defineMessages({
+    practiceUpload: { id: 'program.ui.practiceUpload', defaultMessage: '作業上傳' },
+    discussion: { id: 'program.ui.discussion', defaultMessage: '問題討論' },
+  }),
+  text: defineMessages({
+    uploadPractice: { id: 'program.text.uploadPractice', defaultMessage: '快上傳成果吧！' },
+  }),
+  tab: defineMessages({
+    downloadMaterials: {
+      id: 'program.tab.downloadMaterials',
+      defaultMessage: '下載教材',
+    },
+  }),
+  status: defineMessages({
+    loadingMaterialError: {
+      id: 'program.status.loadingMaterialError',
+      defaultMessage: '無法取得教材',
+    },
+  }),
+}
+
 export const productMessages = {
   activity: {
     tab: defineMessages({
@@ -786,9 +811,6 @@ export const productMessages = {
         },
       }),
     },
-    tab: defineMessages({
-      discussion: { id: 'product.program.tab.discussion', defaultMessage: '問題討論' },
-    }),
   },
   project: {
     title: defineMessages({
@@ -872,7 +894,6 @@ export const profileMessages = {
     label: defineMessages({
       avatar: { id: 'settings.profile.form.label.avatar', defaultMessage: '頭像' },
       name: { id: 'settings.profile.form.label.name', defaultMessage: '名稱' },
-      title: { id: 'product.program.form.label.title', defaultMessage: '標題' },
       planIds: { id: 'product.program.form.label.planIds', defaultMessage: '適用方案' },
       video: { id: 'product.program.form.label.video', defaultMessage: '影片' },
       subtitle: { id: 'product.program.form.label.subtitle', defaultMessage: '字幕' },
@@ -965,7 +986,6 @@ export const issueMessages = {
       fillQuestion: { id: 'issue.form.title', defaultMessage: '填寫問題' },
     }),
     label: defineMessages({
-      title: { id: 'issue.form.label.title', defaultMessage: '標題' },
       question: { id: 'issue.form.label.question', defaultMessage: '問題內容' },
     }),
     placeholder: defineMessages({

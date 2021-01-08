@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { validationRegExp } from '../../helpers'
 import { checkoutMessages } from '../../helpers/translation'
+import { CommonTitleMixin } from '../common'
 import { ShippingProps } from './ShippingInput'
 
 const StyledWrapper = styled.div`
@@ -14,10 +15,7 @@ const StyledWrapper = styled.div`
 `
 const StyledTitle = styled.div`
   margin-bottom: 0.75rem;
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledDescription = styled.div`
   color: var(--gray-dark);

@@ -10,7 +10,7 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
-import BraftEditor from 'braft-editor'
+import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -112,19 +112,24 @@ const ReviewModal: React.FC<{
   const [updateReview] = useMutation<types.UPDATE_REVIEW, types.UPDATE_REVIEWVariables>(UPDATE_REVIEW)
   const toast = useToast()
 
-  const { control, errors, register, handleSubmit, setError, reset, setValue } = useForm({
+  const { control, errors, register, handleSubmit, setError, reset, setValue } = useForm<{
+    title: string
+    starRating: number
+    content: EditorState
+    privateContent?: EditorState
+  }>({
     defaultValues: {
       title: (memberReviews && memberReviews[0]?.title) || '',
       starRating: memberReviews && memberReviews[0]?.score ? memberReviews[0]?.score : 5,
       content: BraftEditor.createEditorState((memberReviews && memberReviews[0]?.content) || ''),
-      private: BraftEditor.createEditorState((memberReviews && memberReviews[0]?.privateContent) || ''),
+      privateContent: BraftEditor.createEditorState((memberReviews && memberReviews[0]?.privateContent) || ''),
     },
   })
 
   const validateTitle = (value: string) => !!value || formatMessage(reviewMessages.validate.titleIsRequired)
 
-  const handleSave = (data: { starRating: Number; title: string; content: any; private?: any }) => {
-    if (data.content.isEmpty()) {
+  const handleSave = handleSubmit(({ starRating, title, content, privateContent }) => {
+    if (content.isEmpty()) {
       setError('content', {
         message: formatMessage(reviewMessages.validate.contentIsRequired),
       })
@@ -135,12 +140,12 @@ const ReviewModal: React.FC<{
       updateReview({
         variables: {
           reviewId: memberReviews[0]?.id,
-          path: path,
+          path,
           memberId: memberReviews[0]?.memberId,
-          score: data.starRating,
-          title: data.title,
-          content: data.content.toRAW(),
-          privateContent: data.private.toRAW(),
+          score: starRating,
+          title,
+          content: content.toRAW(),
+          privateContent: privateContent.toRAW(),
           appId: appId,
           updateAt: new Date(),
         },
@@ -167,12 +172,12 @@ const ReviewModal: React.FC<{
     } else {
       insertReview({
         variables: {
-          path: path,
+          path,
           memberId: currentMemberId,
-          score: data.starRating,
-          title: data.title,
-          content: data.content.toRAW(),
-          privateContent: data.private.toRAW(),
+          score: starRating,
+          title,
+          content: content.toRAW(),
+          privateContent: privateContent.toRAW(),
           appId: appId,
         },
       })
@@ -195,7 +200,7 @@ const ReviewModal: React.FC<{
           onClose()
         })
     }
-  }
+  })
 
   return (
     <>
@@ -220,7 +225,7 @@ const ReviewModal: React.FC<{
           </StyledButtonReview>
         )}
       >
-        <form onSubmit={handleSubmit(handleSave)}>
+        <form onSubmit={handleSave}>
           <StyledDescription>{formatMessage(reviewMessages.text.reviewModalDescription)}</StyledDescription>
           <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.score)}</StyledFormLabel>
           <Controller
@@ -263,7 +268,7 @@ const ReviewModal: React.FC<{
 
           <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.private)}</StyledFormLabel>
           <Controller
-            name="private"
+            name="privateContent"
             as={
               <StyledEditor
                 language="zh-hant"
@@ -276,7 +281,7 @@ const ReviewModal: React.FC<{
 
           <ButtonGroup className="d-flex justify-content-end mt-4 mb-4">
             <StyledButtonModal variant="outline" onClick={onClose}>
-              {formatMessage(commonMessages.button.cancel)}
+              {formatMessage(commonMessages.ui.cancel)}
             </StyledButtonModal>
             <StyledButtonModal variant="primary" type="submit" isLoading={isSubmitting}>
               {formatMessage(commonMessages.button.save)}

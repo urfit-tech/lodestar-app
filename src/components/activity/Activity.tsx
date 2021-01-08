@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { ActivityProps } from '../../types/activity'
+import { CommonTitleMixin } from '../common'
 
 const StyledWrapper = styled.div`
   overflow: hidden;
@@ -25,10 +26,7 @@ const StyledDescription = styled.div`
   padding: 1.25rem;
 `
 const StyledTitle = styled.div`
-  color: var(--gray-darker);
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
+  ${CommonTitleMixin}
 `
 const StyledMeta = styled.div`
   min-height: 1rem;

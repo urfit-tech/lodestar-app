@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Icon } from '@chakra-ui/icons'
 import { Button, ButtonGroup, FormControl, FormErrorMessage, useDisclosure, useToast } from '@chakra-ui/react'
 import { Button as AntdButton } from 'antd'
-import BraftEditor from 'braft-editor'
+import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import React from 'react'
@@ -16,6 +16,7 @@ import { ReactComponent as IconEmail } from '../../images/email-o.svg'
 import types from '../../types'
 import { OrderContact } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
+import { CommonTextMixin } from '../common'
 import CommonModal from '../common/CommonModal'
 import { AvatarImage } from '../common/Image'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -73,11 +74,8 @@ const StyledContactBlock = styled.div`
 `
 
 const StyledMemberInfo = styled.div`
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
+  ${CommonTextMixin}
   line-height: 36px;
-  color: var(--gray-dark);
 `
 
 const MerchandiseContactBlock: React.FC<{
@@ -114,20 +112,22 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
   } = useOrderContact(orderId, currentMemberId || '')
 
   const { formatMessage } = useIntl()
-  const { control, handleSubmit, setValue, errors, setError } = useForm({
+  const { control, handleSubmit, setValue, errors, setError } = useForm<{
+    message: EditorState
+  }>({
     defaultValues: { message: BraftEditor.createEditorState('') },
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
 
-  const handleSave = (data: { message: any }) => {
-    if (data.message.isEmpty()) {
+  const handleSave = handleSubmit(({ message }) => {
+    if (message.isEmpty()) {
       setError('message', {
         message: formatMessage(messages.emptyContactMessage),
       })
       return
     }
-    insertOrderContact(data.message.toRAW())
+    insertOrderContact(message.toRAW())
       .then(() => {
         toast({
           title: formatMessage(commonMessages.event.successfullySaved),
@@ -141,7 +141,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
         refetch()
       })
       .catch(error => console.log(error))
-  }
+  })
 
   if (loading || error) {
     return null
@@ -170,7 +170,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
           </StyledButton>
         )}
       >
-        <form onSubmit={handleSubmit(handleSave)}>
+        <form onSubmit={handleSave}>
           <Controller
             name="message"
             as={
@@ -188,7 +188,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
             <StyledFormErrorMessage className="mt-1">{errors?.message?.message}</StyledFormErrorMessage>
           </StyledFormControl>
           <ButtonGroup className="d-flex justify-content-end mb-4">
-            <AntdButton onClick={onClose}>{formatMessage(commonMessages.button.cancel)}</AntdButton>
+            <AntdButton onClick={onClose}>{formatMessage(commonMessages.ui.cancel)}</AntdButton>
             <AntdButton type="primary" htmlType="submit">
               {formatMessage(commonMessages.button.save)}
             </AntdButton>

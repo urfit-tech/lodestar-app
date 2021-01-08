@@ -5,13 +5,9 @@ import styled, { css } from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import { ProjectPlanProps } from '../../types/project'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
+import { BraftContent } from '../common/StyledBraftEditor'
 import ProjectPlanCollection from './ProjectPlanCollection'
 
-const StyledIntroductionContent = styled.div`
-  img {
-    width: 100%;
-  }
-`
 const TabPaneContent = styled.div<{ collapsed?: boolean }>`
   position: relative;
 
@@ -56,7 +52,7 @@ const FundingIntroductionPane: React.FC<{
     <div className="container">
       <div className="row">
         <TabPaneContent className="col-12 col-lg-8 mb-5" collapsed={collapsed}>
-          <StyledIntroductionContent dangerouslySetInnerHTML={{ __html: introduction }} />
+          {<BraftContent>{introduction}</BraftContent>}
 
           {collapsed && (
             <Responsive.Default>

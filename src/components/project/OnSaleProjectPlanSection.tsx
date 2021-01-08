@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import { ProjectPlanProps } from '../../types/project'
+import { CommonTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 import ProjectPlanCard from './ProjectPlanCard'
 
@@ -19,12 +20,9 @@ const StyledWrapper = styled.section`
     color: var(--gray-darker);
   }
   > p {
+    ${CommonTitleMixin}
     margin: 0 auto;
-    font-size: 18px;
-    font-weight: bold;
-    letter-spacing: 0.8px;
     text-align: center;
-    color: var(--gray-darker);
     width: 100%;
     max-width: 320px;
     padding-bottom: 40px;

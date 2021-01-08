@@ -4,14 +4,18 @@ import { flatten } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
-import { productMessages } from '../../helpers/translation'
+import { productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
-import { useProgramContent } from '../../hooks/program'
+import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
+import PracticeDescriptionBlock from '../practice/PracticeDescriptionBlock'
+import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
+import ProgramContentMaterialBlock from './ProgramContentMaterialBlock'
 import ProgramContentPlayer from './ProgramContentPlayer'
 
 const StyledContentBlock = styled.div`
@@ -32,9 +36,10 @@ const ProgramContentBlock: React.FC<{
   programContentId: string
 }> = ({ program, programContentId }) => {
   const { formatMessage } = useIntl()
+  const { enabledModules } = useApp()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-
+  const { loadingProgramContentMaterials, programContentMaterials } = useProgramContentMaterial(programContentId)
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
   const { loadingMember, member } = usePublicMember(instructor?.memberId || '')
 
@@ -56,7 +61,7 @@ const ProgramContentBlock: React.FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadingProgramContent, programContentBodyType, programContentId])
 
-  if (!programContent || !insertProgress || !refetchProgress) {
+  if (!programContent || !insertProgress || !refetchProgress || loadingProgramContentMaterials) {
     return <Skeleton active />
   }
 
@@ -90,44 +95,79 @@ const ProgramContentBlock: React.FC<{
         />
       )}
 
-      <StyledContentBlock className="mb-3">
-        <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
+      {programContent.programContentBody?.type !== 'practice' && (
+        <StyledContentBlock className="mb-3">
+          <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
 
-        {programContent.programContentBody &&
-          !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
-            <BraftContent>{programContent.programContentBody.description}</BraftContent>
-          )}
-      </StyledContentBlock>
+          {programContent.programContentBody &&
+            !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
+              <BraftContent>{programContent.programContentBody.description}</BraftContent>
+            )}
+        </StyledContentBlock>
+      )}
 
-      <div className="mb-3">
-        {loadingMember ? (
-          <Skeleton active avatar />
-        ) : member ? (
-          <CreatorCard
-            id={member.id}
-            avatarUrl={member.pictureUrl}
-            title={member.name || member.username}
-            labels={[{ id: 'instructor', name: 'instructor' }]}
-            jobTitle={member.title}
-            description={member.abstract}
-            withProgram
-            withPodcast
-            withAppointment
-            withBlog
+      {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
+        <div className="mb-4">
+          <PracticeDescriptionBlock
+            title={'未命名的內容標題'}
+            description={programContent.programContentBody?.description || ''}
+            duration={23}
+            score={4}
           />
-        ) : null}
-      </div>
+        </div>
+      )}
 
-      {program.isIssuesOpen && (
-        <StyledContentBlock>
-          <Tabs defaultActiveKey="issue">
-            <Tabs.TabPane tab={formatMessage(productMessages.program.tab.discussion)} key="issue" className="py-3">
+      {(program.isIssuesOpen ||
+        (enabledModules.practice && programContent.programContentBody?.type === 'practice') ||
+        programContent.materials.length !== 0) && (
+        <StyledContentBlock className="mb-3">
+          <Tabs
+            defaultActiveKey={
+              enabledModules.practice && programContent.programContentBody?.type === 'practice'
+                ? 'practice'
+                : programContentMaterials?.length !== 0
+                ? 'material'
+                : 'issue'
+            }
+          >
+            <Tabs.TabPane tab={formatMessage(programMessages.label.discussion)} key="issue" className="py-3">
               <IssueThreadBlock
                 programRoles={program.roles || []}
                 threadId={`/programs/${program.id}/contents/${programContentId}`}
               />
             </Tabs.TabPane>
+            {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
+              <Tabs.TabPane tab={formatMessage(programMessages.label.practiceUpload)} key="practice" className="p-4">
+                <PracticeDisplayedCollection />
+              </Tabs.TabPane>
+            )}
+            {programContent.materials.length !== 0 && (
+              <Tabs.TabPane key="material" tab={formatMessage(programMessages.tab.downloadMaterials)} className="py-3">
+                {<ProgramContentMaterialBlock programContentId={programContentId} />}
+              </Tabs.TabPane>
+            )}
           </Tabs>
+        </StyledContentBlock>
+      )}
+
+      {programContent.programContentBody?.type !== 'practice' && (
+        <StyledContentBlock>
+          {loadingMember ? (
+            <Skeleton active avatar />
+          ) : member ? (
+            <CreatorCard
+              id={member.id}
+              avatarUrl={member.pictureUrl}
+              title={member.name || member.username}
+              labels={[{ id: 'instructor', name: 'instructor' }]}
+              jobTitle={member.title}
+              description={member.abstract}
+              withProgram
+              withPodcast
+              withAppointment
+              withBlog
+            />
+          ) : null}
         </StyledContentBlock>
       )}
     </div>
