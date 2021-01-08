@@ -121,7 +121,15 @@ const ProgramContentBlock: React.FC<{
         (enabledModules.practice && programContent.programContentBody?.type === 'practice') ||
         programContent.materials.length !== 0) && (
         <StyledContentBlock className="mb-3">
-          <Tabs defaultActiveKey={programContentMaterials?.length !== 0 ? 'material' : 'issue'}>
+          <Tabs
+            defaultActiveKey={
+              enabledModules.practice && programContent.programContentBody?.type === 'practice'
+                ? 'practice'
+                : programContentMaterials?.length !== 0
+                ? 'material'
+                : 'issue'
+            }
+          >
             <Tabs.TabPane tab={formatMessage(programMessages.label.discussion)} key="issue" className="py-3">
               <IssueThreadBlock
                 programRoles={program.roles || []}

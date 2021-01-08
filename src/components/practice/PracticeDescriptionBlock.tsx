@@ -17,28 +17,24 @@ const messages = defineMessages({
 })
 
 const StyledBlock = styled.div`
-  padding: 1.25rem;
+  padding: 1.5rem;
   background-color: white;
 `
 const StyledInfo = styled.div`
   display: flex;
-  flex-direction: column;
-
-  @media (min-width: ${BREAK_POINT}px) {
-    flex-direction: row;
-    justify-content: space-between;
-  }
+  justify-content: space-between;
 `
 const StyledTitle = styled.h2`
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   line-height: 1;
   letter-spacing: 0.2px;
   color: var(--gray-darker);
 `
 const StyledPracticeTitle = styled.h3`
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
+  line-height: 1;
   letter-spacing: 0.8px;
   color: var(--gray-darker);
 `
@@ -50,8 +46,10 @@ const StyledEvaluation = styled.div`
     flex-direction: row;
   }
 `
+const StyledPractice = styled.div`
+  padding: 0 clamp(12px, 2vw, 32px);
+`
 const StyledEvaluationText = css`
-  margin-right: 12px;
   font-size: 14px;
   font-weight: 500;
   line-height: 22px;
@@ -61,6 +59,7 @@ const StyledEvaluationText = css`
 `
 const StyledEstimateTime = styled.div`
   ${StyledEvaluationText}
+  margin-right: 12px;
   margin-bottom: 8px;
 
   @media (min-width: ${BREAK_POINT}px) {
@@ -95,21 +94,20 @@ const PracticeDescriptionBlock: React.FC<{
           </StyledDifficulty>
         </StyledEvaluation>
       </StyledInfo>
-      <StyledPracticeTitle>{title}</StyledPracticeTitle>
-      {!BraftEditor.createEditorState(description).isEmpty() && (
-        <div className="mb-3">
-          <BraftContent>{description}</BraftContent>
-        </div>
-      )}
-      <Menu>
-        <MenuButton as={Button} variant="outline" rightIcon={<ChevronDownIcon />} className="mb-4">
-          {formatMessage(messages.downloadMaterial)}
-        </MenuButton>
-        <MenuList>
-          <MenuItem onClick={() => handleDownload()}>Download1</MenuItem>
-          <MenuItem onClick={() => handleDownload()}>Download2</MenuItem>
-        </MenuList>
-      </Menu>
+
+      <StyledPractice className="mb-4">
+        <StyledPracticeTitle className="mb-3">{title}</StyledPracticeTitle>
+        {!BraftEditor.createEditorState(description).isEmpty() && <BraftContent>{description}</BraftContent>}
+        <Menu>
+          <MenuButton as={Button} variant="outline" rightIcon={<ChevronDownIcon />} className="mt-3">
+            {formatMessage(messages.downloadMaterial)}
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => handleDownload()}>Download1</MenuItem>
+            <MenuItem onClick={() => handleDownload()}>Download2</MenuItem>
+          </MenuList>
+        </Menu>
+      </StyledPractice>
       <PracticeUploadModal />
     </StyledBlock>
   )
