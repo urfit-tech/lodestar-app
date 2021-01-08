@@ -25,6 +25,10 @@ import EmptyCover from '../images/empty-cover.png'
 import { ReactComponent as HeartIcon } from '../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../images/icon-heart.svg'
 
+const StyledContainer = styled.div`
+  max-width: 720px;
+`
+
 const StyledSubTitle = styled.h4`
   font-size: 16px;
   font-weight: 500;
@@ -55,8 +59,10 @@ const StyledIconButton = styled(IconButton)<{ isActive?: boolean }>`
     border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-light)')};
     color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray)')};
     border-radius: 50%;
-    padding: 12px;
   }
+`
+const StyledIcon = styled(Icon)`
+  margin-top: 2px;
 `
 const StyledLikedCount = styled.span<{ isActive?: boolean }>`
   color: var(--gray);
@@ -100,7 +106,7 @@ const PracticePage: React.FC = () => {
 
   return (
     <DefaultLayout white noFooter>
-      <div className="container mt-5">
+      <StyledContainer className="container mt-5">
         <div className="d-flex mb-2">
           <StyledSubTitle className="mr-2">
             <span>{practice.programContent.program.title}</span>
@@ -148,14 +154,14 @@ const PracticePage: React.FC = () => {
             <StyledIconButton
               variant="ghost"
               isActive={likeStatus.isLiked}
-              icon={<Icon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} />}
+              icon={<StyledIcon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} />}
               className="mr-2"
             />
             <StyledLikedCount isActive={likeStatus.isLiked}>{likeStatus.likedCount}</StyledLikedCount>
           </div>
         </div>
 
-        <StyledDivider className="my-3" />
+        <StyledDivider className="my-5" />
 
         <div className="mb-4">
           <StyledPracticeTitle className="mb-3">{formatMessage(messages.practiceSuggestion)}</StyledPracticeTitle>
@@ -246,7 +252,7 @@ const PracticePage: React.FC = () => {
             )
           })}
         </div>
-      </div>
+      </StyledContainer>
     </DefaultLayout>
   )
 }

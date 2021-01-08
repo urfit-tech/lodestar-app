@@ -1,7 +1,6 @@
 import { Icon } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { programMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
@@ -66,15 +65,15 @@ const PracticeDisplayedCollection: React.FC = () => {
 
   return (
     <>
-      <StyledBlock className="d-flex flex-column justify-content-center align-items-center">
-        <Icon as={RocketIcon} className="mb-4" w="120px" h="120px" />
-        <StyledParagraph>{formatMessage(programMessages.text.uploadPractice)}</StyledParagraph>
-      </StyledBlock>
-
       <StyledNotice className="mb-4">
         <Icon as={LockIcon} className="mr-2" />
         <span>{formatMessage(messages.privatePractice)}</span>
       </StyledNotice>
+
+      <StyledBlock className="d-flex flex-column justify-content-center align-items-center">
+        <Icon as={RocketIcon} className="mb-4" w="120px" h="120px" />
+        <StyledParagraph>{formatMessage(programMessages.text.uploadPractice)}</StyledParagraph>
+      </StyledBlock>
 
       <div className="row">
         {practiceCollection.map(v => (
@@ -98,6 +97,7 @@ const PracticeDisplayedCollection: React.FC = () => {
 
 const StyledTitle = styled.h3`
   height: 20px;
+  color: var(--gray-darker);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -146,33 +146,34 @@ const PracticeDisplayedCard: React.FC<{
 
   return (
     <StyledContainer>
-      <Link to={`/practices/${id}`}>
+      <a href={`/practices/${id}`} target="_blank" rel="noopener noreferrer">
         <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} className="mb-3" />
         <StyledTitle className="mx-3">{title}</StyledTitle>
-      </Link>
 
-      <div className="d-flex justify-content-between align-items-end m-3">
-        <MemberInfoBlock avatarUrl={avatarUrl} name={name} />
+        <div className="d-flex justify-content-between align-items-end m-3">
+          <MemberInfoBlock avatarUrl={avatarUrl} name={name} />
 
-        <StyledGroup className="d-flex">
-          <div className="mr-3">
-            <Icon as={CommentIcon} className="mr-1" />
-            <span>{suggestCount}</span>
-          </div>
-          <StyledLike
-            isActive={likeStatus.isLiked}
-            onClick={() =>
-              setLikeStatus({
-                isLiked: !likeStatus.isLiked,
-                likedCount: likeStatus.isLiked ? likeStatus.likedCount - 1 : likeStatus.likedCount + 1,
-              })
-            }
-          >
-            <Icon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} className="mr-1" />
-            <span>{likeStatus.likedCount}</span>
-          </StyledLike>
-        </StyledGroup>
-      </div>
+          <StyledGroup className="d-flex">
+            <div className="mr-3">
+              <Icon as={CommentIcon} className="mr-1" />
+              <span>{suggestCount}</span>
+            </div>
+            <StyledLike
+              isActive={likeStatus.isLiked}
+              onClick={e => {
+                e.preventDefault()
+                setLikeStatus({
+                  isLiked: !likeStatus.isLiked,
+                  likedCount: likeStatus.isLiked ? likeStatus.likedCount - 1 : likeStatus.likedCount + 1,
+                })
+              }}
+            >
+              <Icon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} className="mr-1" />
+              <span>{likeStatus.likedCount}</span>
+            </StyledLike>
+          </StyledGroup>
+        </div>
+      </a>
     </StyledContainer>
   )
 }

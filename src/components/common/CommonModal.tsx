@@ -24,6 +24,9 @@ const StyledModalContent = styled(ModalContent)<{ isFullWidth?: boolean }>`
 `
 const StyledWrapper = styled.div`
   position: relative;
+  margin: 0 auto;
+  max-width: 720px;
+  width: 100%;
 `
 const StyledCloseButtonBlock = styled.div`
   position: absolute;
@@ -57,7 +60,7 @@ const CommonModal: React.FC<
       <Modal {...ModalProps}>
         <ModalOverlay />
         <StyledModalContent isFullWidth={isFullWidth}>
-          <StyledWrapper className="container">
+          <StyledWrapper>
             {renderHeaderIcon?.()}
 
             <ModalHeader>{title}</ModalHeader>
