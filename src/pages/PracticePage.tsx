@@ -59,6 +59,10 @@ const StyledIconButton = styled(IconButton)<{ isActive?: boolean }>`
     border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-light)')};
     color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray)')};
     border-radius: 50%;
+
+    &:active {
+      background-color: white;
+    }
   }
 `
 const StyledIcon = styled(Icon)`

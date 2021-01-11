@@ -63,7 +63,7 @@ const CommonModal: React.FC<
           <StyledWrapper>
             {renderHeaderIcon?.()}
 
-            <ModalHeader>{title}</ModalHeader>
+            <ModalHeader className="pt-4 pb-0">{title}</ModalHeader>
 
             {renderCloseButtonBlock ? (
               <StyledCloseButtonBlock>{renderCloseButtonBlock()}</StyledCloseButtonBlock>
@@ -73,7 +73,7 @@ const CommonModal: React.FC<
 
             <ModalBody>{children}</ModalBody>
 
-            {renderFooter && <ModalFooter>{renderFooter()}</ModalFooter>}
+            {renderFooter && <ModalFooter className="pb-4">{renderFooter()}</ModalFooter>}
           </StyledWrapper>
         </StyledModalContent>
       </Modal>
