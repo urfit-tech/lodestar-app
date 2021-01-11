@@ -56,8 +56,8 @@ const StyledDate = styled.span`
 `
 const StyledIconButton = styled(IconButton)<{ isActive?: boolean }>`
   &&& {
-    border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-light)')};
-    color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray)')};
+    border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-dark)')};
+    color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-dark)')};
     border-radius: 50%;
     background: white;
   }
@@ -66,7 +66,7 @@ const StyledIcon = styled(Icon)`
   margin-top: 2px;
 `
 const StyledLikedCount = styled.span<{ isActive?: boolean }>`
-  color: var(--gray);
+  color: var(--gray-dark);
   font-size: 12px;
   font-weight: 500;
 
