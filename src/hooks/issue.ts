@@ -123,15 +123,13 @@ const useIssueReply = (issueId: string) => {
     createdAt: Date
     reactedMemberIds: string[]
   }[] =
-    loading || error || !data
-      ? []
-      : data.issue_reply.map(v => ({
-          id: v.id,
-          memberId: v.member_id,
-          content: v.content,
-          createdAt: v.created_at,
-          reactedMemberIds: v.issue_reply_reactions.map(w => w.public_member?.id || ''),
-        }))
+    data?.issue_reply.map(v => ({
+      id: v.id,
+      memberId: v.member_id,
+      content: v.content,
+      createdAt: v.created_at,
+      reactedMemberIds: v.issue_reply_reactions.map(w => w.public_member?.id || ''),
+    })) || []
 
   return {
     loadingIssueReplies: loading,

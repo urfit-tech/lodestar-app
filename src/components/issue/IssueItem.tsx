@@ -1,8 +1,6 @@
-import { useMutation } from '@apollo/react-hooks'
 import { Button, Dropdown, Form, Icon, Input, Menu, message, Tag, Typography } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
-import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -11,7 +9,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
-import types from '../../types'
+import { useMutateIssue } from '../../hooks/issue'
 import { ProductRoleName } from '../../types/general'
 import { ProgramRoleProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
@@ -89,14 +87,7 @@ const IssueItem: React.FC<IssueItemProps> = ({
   const { id: appId } = useApp()
   const theme = useContext(ThemeContext)
 
-  const [insertIssueReaction] = useMutation<types.INSERT_ISSUE_REACTION, types.INSERT_ISSUE_REACTIONVariables>(
-    INSERT_ISSUE_REACTION,
-  )
-  const [deleteIssueReaction] = useMutation<types.DELETE_ISSUE_REACTION, types.DELETE_ISSUE_REACTIONVariables>(
-    DELETE_ISSUE_REACTION,
-  )
-  const [deleteIssue] = useMutation<types.DELETE_ISSUE, types.DELETE_ISSUEVariables>(DELETE_ISSUE)
-  const [updateIssue] = useMutation<types.UPDATE_ISSUE, types.UPDATE_ISSUEVariables>(UPDATE_ISSUE)
+  const { deleteIssue, updateIssue, insertIssueReaction, deleteIssueReaction } = useMutateIssue(issueId)
 
   const [editing, setEditing] = useState(false)
   const [focus, setFocus] = useState(!qIssueReplyId && qIssueId === issueId)
@@ -114,15 +105,9 @@ const IssueItem: React.FC<IssueItemProps> = ({
   }, [currentMemberId, reactedMemberIds])
 
   const toggleReaction = async (reacted: boolean) => {
-    reacted
-      ? await deleteIssueReaction({
-          variables: { issueId, memberId: currentMemberId || '' },
-        })
-      : await insertIssueReaction({
-          variables: { issueId, memberId: currentMemberId || '' },
-        })
+    reacted ? await deleteIssueReaction() : await insertIssueReaction()
 
-    onRefetch && onRefetch()
+    onRefetch?.()
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -130,15 +115,12 @@ const IssueItem: React.FC<IssueItemProps> = ({
     form.validateFieldsAndScroll((error, values) => {
       if (!error) {
         updateIssue({
-          variables: {
-            issueId,
-            title: values.title,
-            description: values.description.toRAW(),
-          },
+          title: values.title,
+          description: values.description.toRAW(),
         })
           .then(() => {
             setEditing(false)
-            onRefetch && onRefetch()
+            onRefetch?.()
           })
           .catch(err => message.error(formatMessage(issueMessages.messageError.question)))
       }
@@ -200,7 +182,7 @@ const IssueItem: React.FC<IssueItemProps> = ({
                 <Menu.Item
                   onClick={() =>
                     window.confirm(formatMessage(issueMessages.dropdown.content.confirmMessage)) &&
-                    deleteIssue({ variables: { issueId } }).then(() => onRefetch && onRefetch())
+                    deleteIssue().then(() => onRefetch?.())
                   }
                 >
                   {formatMessage(issueMessages.dropdown.content.delete)}
@@ -208,13 +190,10 @@ const IssueItem: React.FC<IssueItemProps> = ({
                 <Menu.Item
                   onClick={() =>
                     updateIssue({
-                      variables: {
-                        issueId,
-                        title,
-                        description,
-                        solvedAt: solvedAt ? undefined : new Date(),
-                      },
-                    }).then(() => onRefetch && onRefetch())
+                      title,
+                      description,
+                      solvedAt: solvedAt ? undefined : new Date(),
+                    }).then(() => onRefetch?.())
                   }
                 >
                   {formatMessage(issueMessages.content.markAs)}
@@ -300,41 +279,4 @@ const IssueItem: React.FC<IssueItemProps> = ({
   )
 }
 
-const UPDATE_ISSUE = gql`
-  mutation UPDATE_ISSUE($issueId: uuid!, $title: String, $description: String, $solvedAt: timestamptz) {
-    update_issue(
-      where: { id: { _eq: $issueId } }
-      _set: { title: $title, description: $description, solved_at: $solvedAt }
-    ) {
-      affected_rows
-    }
-  }
-`
-
-const DELETE_ISSUE = gql`
-  mutation DELETE_ISSUE($issueId: uuid!) {
-    delete_issue_reply(where: { issue_id: { _eq: $issueId } }) {
-      affected_rows
-    }
-    delete_issue(where: { id: { _eq: $issueId } }) {
-      affected_rows
-    }
-  }
-`
-
-const INSERT_ISSUE_REACTION = gql`
-  mutation INSERT_ISSUE_REACTION($memberId: String!, $issueId: uuid!) {
-    insert_issue_reaction(objects: { member_id: $memberId, issue_id: $issueId }) {
-      affected_rows
-    }
-  }
-`
-
-const DELETE_ISSUE_REACTION = gql`
-  mutation DELETE_ISSUE_REACTION($memberId: String!, $issueId: uuid!) {
-    delete_issue_reaction(where: { member_id: { _eq: $memberId }, issue_id: { _eq: $issueId } }) {
-      affected_rows
-    }
-  }
-`
 export default Form.create<IssueItemProps>()(IssueItem)

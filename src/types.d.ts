@@ -268,380 +268,6 @@ export interface INSERT_ISSUEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: UPDATE_ISSUE
-// ====================================================
-
-export interface UPDATE_ISSUE_update_issue {
-  __typename: "issue_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface UPDATE_ISSUE {
-  /**
-   * update data of the table: "issue"
-   */
-  update_issue: UPDATE_ISSUE_update_issue | null;
-}
-
-export interface UPDATE_ISSUEVariables {
-  issueId: any;
-  title?: string | null;
-  description?: string | null;
-  solvedAt?: any | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DELETE_ISSUE
-// ====================================================
-
-export interface DELETE_ISSUE_delete_issue_reply {
-  __typename: "issue_reply_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface DELETE_ISSUE_delete_issue {
-  __typename: "issue_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface DELETE_ISSUE {
-  /**
-   * delete data from the table: "issue_reply"
-   */
-  delete_issue_reply: DELETE_ISSUE_delete_issue_reply | null;
-  /**
-   * delete data from the table: "issue"
-   */
-  delete_issue: DELETE_ISSUE_delete_issue | null;
-}
-
-export interface DELETE_ISSUEVariables {
-  issueId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: INSERT_ISSUE_REACTION
-// ====================================================
-
-export interface INSERT_ISSUE_REACTION_insert_issue_reaction {
-  __typename: "issue_reaction_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface INSERT_ISSUE_REACTION {
-  /**
-   * insert data into the table: "issue_reaction"
-   */
-  insert_issue_reaction: INSERT_ISSUE_REACTION_insert_issue_reaction | null;
-}
-
-export interface INSERT_ISSUE_REACTIONVariables {
-  memberId: string;
-  issueId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DELETE_ISSUE_REACTION
-// ====================================================
-
-export interface DELETE_ISSUE_REACTION_delete_issue_reaction {
-  __typename: "issue_reaction_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface DELETE_ISSUE_REACTION {
-  /**
-   * delete data from the table: "issue_reaction"
-   */
-  delete_issue_reaction: DELETE_ISSUE_REACTION_delete_issue_reaction | null;
-}
-
-export interface DELETE_ISSUE_REACTIONVariables {
-  memberId: string;
-  issueId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_ISSUE_REPLIES
-// ====================================================
-
-export interface GET_ISSUE_REPLIES_issue_reply_issue_reply_reactions_public_member {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-}
-
-export interface GET_ISSUE_REPLIES_issue_reply_issue_reply_reactions {
-  __typename: "issue_reply_reaction";
-  /**
-   * An object relationship
-   */
-  public_member: GET_ISSUE_REPLIES_issue_reply_issue_reply_reactions_public_member | null;
-}
-
-export interface GET_ISSUE_REPLIES_issue_reply {
-  __typename: "issue_reply";
-  id: any;
-  content: string;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  issue_reply_reactions: GET_ISSUE_REPLIES_issue_reply_issue_reply_reactions[];
-}
-
-export interface GET_ISSUE_REPLIES {
-  /**
-   * fetch data from the table: "issue_reply"
-   */
-  issue_reply: GET_ISSUE_REPLIES_issue_reply[];
-}
-
-export interface GET_ISSUE_REPLIESVariables {
-  issueId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: INSERT_ISSUE_REPLY
-// ====================================================
-
-export interface INSERT_ISSUE_REPLY_insert_issue_reply {
-  __typename: "issue_reply_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface INSERT_ISSUE_REPLY {
-  /**
-   * insert data into the table: "issue_reply"
-   */
-  insert_issue_reply: INSERT_ISSUE_REPLY_insert_issue_reply | null;
-}
-
-export interface INSERT_ISSUE_REPLYVariables {
-  memberId: string;
-  issueId: any;
-  content?: string | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: INSERT_ISSUE_REPLY_REACTION
-// ====================================================
-
-export interface INSERT_ISSUE_REPLY_REACTION_insert_issue_reply_reaction {
-  __typename: "issue_reply_reaction_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface INSERT_ISSUE_REPLY_REACTION {
-  /**
-   * insert data into the table: "issue_reply_reaction"
-   */
-  insert_issue_reply_reaction: INSERT_ISSUE_REPLY_REACTION_insert_issue_reply_reaction | null;
-}
-
-export interface INSERT_ISSUE_REPLY_REACTIONVariables {
-  memberId: string;
-  issueReplyId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DELETE_ISSUE_REPLY_REACTION
-// ====================================================
-
-export interface DELETE_ISSUE_REPLY_REACTION_delete_issue_reply_reaction {
-  __typename: "issue_reply_reaction_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface DELETE_ISSUE_REPLY_REACTION {
-  /**
-   * delete data from the table: "issue_reply_reaction"
-   */
-  delete_issue_reply_reaction: DELETE_ISSUE_REPLY_REACTION_delete_issue_reply_reaction | null;
-}
-
-export interface DELETE_ISSUE_REPLY_REACTIONVariables {
-  memberId: string;
-  issueReplyId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DELETE_ISSUE_REPLY
-// ====================================================
-
-export interface DELETE_ISSUE_REPLY_delete_issue_reply {
-  __typename: "issue_reply_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface DELETE_ISSUE_REPLY {
-  /**
-   * delete data from the table: "issue_reply"
-   */
-  delete_issue_reply: DELETE_ISSUE_REPLY_delete_issue_reply | null;
-}
-
-export interface DELETE_ISSUE_REPLYVariables {
-  issueReplyId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: UPDATE_ISSUE_REPLY
-// ====================================================
-
-export interface UPDATE_ISSUE_REPLY_update_issue_reply {
-  __typename: "issue_reply_mutation_response";
-  /**
-   * number of affected rows by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface UPDATE_ISSUE_REPLY {
-  /**
-   * update data of the table: "issue_reply"
-   */
-  update_issue_reply: UPDATE_ISSUE_REPLY_update_issue_reply | null;
-}
-
-export interface UPDATE_ISSUE_REPLYVariables {
-  issueReplyId: any;
-  content?: string | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_ISSUE_THREAD
-// ====================================================
-
-export interface GET_ISSUE_THREAD_issue_issue_reactions {
-  __typename: "issue_reaction";
-  member_id: string;
-}
-
-export interface GET_ISSUE_THREAD_issue_issue_replies_aggregate_aggregate {
-  __typename: "issue_reply_aggregate_fields";
-  count: number | null;
-}
-
-export interface GET_ISSUE_THREAD_issue_issue_replies_aggregate {
-  __typename: "issue_reply_aggregate";
-  aggregate: GET_ISSUE_THREAD_issue_issue_replies_aggregate_aggregate | null;
-}
-
-export interface GET_ISSUE_THREAD_issue {
-  __typename: "issue";
-  id: any;
-  title: string;
-  description: string;
-  solved_at: any | null;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  issue_reactions: GET_ISSUE_THREAD_issue_issue_reactions[];
-  /**
-   * An aggregated array relationship
-   */
-  issue_replies_aggregate: GET_ISSUE_THREAD_issue_issue_replies_aggregate;
-}
-
-export interface GET_ISSUE_THREAD {
-  /**
-   * fetch data from the table: "issue"
-   */
-  issue: GET_ISSUE_THREAD_issue[];
-}
-
-export interface GET_ISSUE_THREADVariables {
-  appId: string;
-  threadId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_MERCHANDISE_TYPE_COLLECTION
 // ====================================================
 
@@ -4176,6 +3802,404 @@ export interface GET_MEMBER_CONTRACT {
 
 export interface GET_MEMBER_CONTRACTVariables {
   memberContractId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_ISSUE_THREAD
+// ====================================================
+
+export interface GET_ISSUE_THREAD_issue_issue_reactions {
+  __typename: "issue_reaction";
+  member_id: string;
+}
+
+export interface GET_ISSUE_THREAD_issue_issue_replies_aggregate_aggregate {
+  __typename: "issue_reply_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_ISSUE_THREAD_issue_issue_replies_aggregate {
+  __typename: "issue_reply_aggregate";
+  aggregate: GET_ISSUE_THREAD_issue_issue_replies_aggregate_aggregate | null;
+}
+
+export interface GET_ISSUE_THREAD_issue {
+  __typename: "issue";
+  id: any;
+  title: string;
+  description: string;
+  solved_at: any | null;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  issue_reactions: GET_ISSUE_THREAD_issue_issue_reactions[];
+  /**
+   * An aggregated array relationship
+   */
+  issue_replies_aggregate: GET_ISSUE_THREAD_issue_issue_replies_aggregate;
+}
+
+export interface GET_ISSUE_THREAD {
+  /**
+   * fetch data from the table: "issue"
+   */
+  issue: GET_ISSUE_THREAD_issue[];
+}
+
+export interface GET_ISSUE_THREADVariables {
+  appId: string;
+  threadId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UPDATE_ISSUE
+// ====================================================
+
+export interface UPDATE_ISSUE_update_issue {
+  __typename: "issue_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface UPDATE_ISSUE {
+  /**
+   * update data of the table: "issue"
+   */
+  update_issue: UPDATE_ISSUE_update_issue | null;
+}
+
+export interface UPDATE_ISSUEVariables {
+  issueId: any;
+  title?: string | null;
+  description?: string | null;
+  solvedAt?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_ISSUE
+// ====================================================
+
+export interface DELETE_ISSUE_delete_issue_reply {
+  __typename: "issue_reply_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_ISSUE_delete_issue_reaction {
+  __typename: "issue_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_ISSUE_delete_issue {
+  __typename: "issue_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_ISSUE {
+  /**
+   * delete data from the table: "issue_reply"
+   */
+  delete_issue_reply: DELETE_ISSUE_delete_issue_reply | null;
+  /**
+   * delete data from the table: "issue_reaction"
+   */
+  delete_issue_reaction: DELETE_ISSUE_delete_issue_reaction | null;
+  /**
+   * delete data from the table: "issue"
+   */
+  delete_issue: DELETE_ISSUE_delete_issue | null;
+}
+
+export interface DELETE_ISSUEVariables {
+  issueId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_ISSUE_REACTION
+// ====================================================
+
+export interface INSERT_ISSUE_REACTION_insert_issue_reaction {
+  __typename: "issue_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_ISSUE_REACTION {
+  /**
+   * insert data into the table: "issue_reaction"
+   */
+  insert_issue_reaction: INSERT_ISSUE_REACTION_insert_issue_reaction | null;
+}
+
+export interface INSERT_ISSUE_REACTIONVariables {
+  memberId: string;
+  issueId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_ISSUE_REACTION
+// ====================================================
+
+export interface DELETE_ISSUE_REACTION_delete_issue_reaction {
+  __typename: "issue_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_ISSUE_REACTION {
+  /**
+   * delete data from the table: "issue_reaction"
+   */
+  delete_issue_reaction: DELETE_ISSUE_REACTION_delete_issue_reaction | null;
+}
+
+export interface DELETE_ISSUE_REACTIONVariables {
+  memberId: string;
+  issueId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_ISSUE_REPLIES
+// ====================================================
+
+export interface GET_ISSUE_REPLIES_issue_reply_issue_reply_reactions_public_member {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+}
+
+export interface GET_ISSUE_REPLIES_issue_reply_issue_reply_reactions {
+  __typename: "issue_reply_reaction";
+  /**
+   * An object relationship
+   */
+  public_member: GET_ISSUE_REPLIES_issue_reply_issue_reply_reactions_public_member | null;
+}
+
+export interface GET_ISSUE_REPLIES_issue_reply {
+  __typename: "issue_reply";
+  id: any;
+  content: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  issue_reply_reactions: GET_ISSUE_REPLIES_issue_reply_issue_reply_reactions[];
+}
+
+export interface GET_ISSUE_REPLIES {
+  /**
+   * fetch data from the table: "issue_reply"
+   */
+  issue_reply: GET_ISSUE_REPLIES_issue_reply[];
+}
+
+export interface GET_ISSUE_REPLIESVariables {
+  issueId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_ISSUE_REPLY_REACTION
+// ====================================================
+
+export interface INSERT_ISSUE_REPLY_REACTION_insert_issue_reply_reaction {
+  __typename: "issue_reply_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_ISSUE_REPLY_REACTION {
+  /**
+   * insert data into the table: "issue_reply_reaction"
+   */
+  insert_issue_reply_reaction: INSERT_ISSUE_REPLY_REACTION_insert_issue_reply_reaction | null;
+}
+
+export interface INSERT_ISSUE_REPLY_REACTIONVariables {
+  memberId: string;
+  issueReplyId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_ISSUE_REPLY_REACTION
+// ====================================================
+
+export interface DELETE_ISSUE_REPLY_REACTION_delete_issue_reply_reaction {
+  __typename: "issue_reply_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_ISSUE_REPLY_REACTION {
+  /**
+   * delete data from the table: "issue_reply_reaction"
+   */
+  delete_issue_reply_reaction: DELETE_ISSUE_REPLY_REACTION_delete_issue_reply_reaction | null;
+}
+
+export interface DELETE_ISSUE_REPLY_REACTIONVariables {
+  memberId: string;
+  issueReplyId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_ISSUE_REPLY
+// ====================================================
+
+export interface INSERT_ISSUE_REPLY_insert_issue_reply {
+  __typename: "issue_reply_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_ISSUE_REPLY {
+  /**
+   * insert data into the table: "issue_reply"
+   */
+  insert_issue_reply: INSERT_ISSUE_REPLY_insert_issue_reply | null;
+}
+
+export interface INSERT_ISSUE_REPLYVariables {
+  memberId: string;
+  issueId: any;
+  content?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UPDATE_ISSUE_REPLY
+// ====================================================
+
+export interface UPDATE_ISSUE_REPLY_update_issue_reply {
+  __typename: "issue_reply_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface UPDATE_ISSUE_REPLY {
+  /**
+   * update data of the table: "issue_reply"
+   */
+  update_issue_reply: UPDATE_ISSUE_REPLY_update_issue_reply | null;
+}
+
+export interface UPDATE_ISSUE_REPLYVariables {
+  issueReplyId: any;
+  content?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_ISSUE_REPLY
+// ====================================================
+
+export interface DELETE_ISSUE_REPLY_delete_issue_reply_reaction {
+  __typename: "issue_reply_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_ISSUE_REPLY_delete_issue_reply {
+  __typename: "issue_reply_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_ISSUE_REPLY {
+  /**
+   * delete data from the table: "issue_reply_reaction"
+   */
+  delete_issue_reply_reaction: DELETE_ISSUE_REPLY_delete_issue_reply_reaction | null;
+  /**
+   * delete data from the table: "issue_reply"
+   */
+  delete_issue_reply: DELETE_ISSUE_REPLY_delete_issue_reply | null;
+}
+
+export interface DELETE_ISSUE_REPLYVariables {
+  issueReplyId: any;
 }
 
 /* tslint:disable */
@@ -8320,6 +8344,28 @@ export enum appointment_schedule_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "attachment"
+ */
+export enum attachment_constraint {
+  attachment_pkey = "attachment_pkey",
+}
+
+/**
+ * update columns of table "attachment"
+ */
+export enum attachment_update_column {
+  app_id = "app_id",
+  created_at = "created_at",
+  data = "data",
+  id = "id",
+  is_deleted = "is_deleted",
+  options = "options",
+  target = "target",
+  type = "type",
+  updated_at = "updated_at",
+}
+
+/**
  * unique or primary key constraints on table "card"
  */
 export enum card_constraint {
@@ -8799,6 +8845,7 @@ export enum member_contract_update_column {
   agreed_at = "agreed_at",
   agreed_ip = "agreed_ip",
   agreed_options = "agreed_options",
+  author_id = "author_id",
   contract_id = "contract_id",
   ended_at = "ended_at",
   id = "id",
@@ -8828,6 +8875,7 @@ export enum member_note_update_column {
   id = "id",
   member_id = "member_id",
   metadata = "metadata",
+  note = "note",
   status = "status",
   type = "type",
   updated_at = "updated_at",
@@ -11409,6 +11457,56 @@ export interface appointment_schedule_on_conflict {
 }
 
 /**
+ * Boolean expression to filter rows from the table "attachment". All fields are combined with a logical 'AND'.
+ */
+export interface attachment_bool_exp {
+  _and?: (attachment_bool_exp | null)[] | null;
+  _not?: attachment_bool_exp | null;
+  _or?: (attachment_bool_exp | null)[] | null;
+  app_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  data?: jsonb_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  is_deleted?: Boolean_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
+  target?: String_comparison_exp | null;
+  type?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "attachment"
+ */
+export interface attachment_insert_input {
+  app_id?: string | null;
+  created_at?: any | null;
+  data?: any | null;
+  id?: any | null;
+  is_deleted?: boolean | null;
+  options?: any | null;
+  target?: string | null;
+  type?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "attachment"
+ */
+export interface attachment_obj_rel_insert_input {
+  data: attachment_insert_input;
+  on_conflict?: attachment_on_conflict | null;
+}
+
+/**
+ * on conflict condition type for table "attachment"
+ */
+export interface attachment_on_conflict {
+  constraint: attachment_constraint;
+  update_columns: attachment_update_column[];
+  where?: attachment_bool_exp | null;
+}
+
+/**
  * expression to compare columns of type bigint. All fields are combined with logical 'AND'.
  */
 export interface bigint_comparison_exp {
@@ -12835,6 +12933,7 @@ export interface member_contract_bool_exp {
   agreed_at?: timestamptz_comparison_exp | null;
   agreed_ip?: String_comparison_exp | null;
   agreed_options?: jsonb_comparison_exp | null;
+  author_id?: String_comparison_exp | null;
   contract?: contract_bool_exp | null;
   contract_id?: uuid_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
@@ -12855,6 +12954,7 @@ export interface member_contract_insert_input {
   agreed_at?: any | null;
   agreed_ip?: string | null;
   agreed_options?: any | null;
+  author_id?: string | null;
   contract?: contract_obj_rel_insert_input | null;
   contract_id?: any | null;
   ended_at?: any | null;
@@ -12960,6 +13060,46 @@ export interface member_note_arr_rel_insert_input {
 }
 
 /**
+ * input type for inserting array relation for remote table "member_note_attachment"
+ */
+export interface member_note_attachment_arr_rel_insert_input {
+  data: member_note_attachment_insert_input[];
+}
+
+/**
+ * Boolean expression to filter rows from the table "member_note_attachment". All fields are combined with a logical 'AND'.
+ */
+export interface member_note_attachment_bool_exp {
+  _and?: (member_note_attachment_bool_exp | null)[] | null;
+  _not?: member_note_attachment_bool_exp | null;
+  _or?: (member_note_attachment_bool_exp | null)[] | null;
+  app_id?: String_comparison_exp | null;
+  attachment?: attachment_bool_exp | null;
+  attachment_id?: uuid_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  data?: jsonb_comparison_exp | null;
+  member_note?: member_note_bool_exp | null;
+  member_note_id?: String_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "member_note_attachment"
+ */
+export interface member_note_attachment_insert_input {
+  app_id?: string | null;
+  attachment?: attachment_obj_rel_insert_input | null;
+  attachment_id?: any | null;
+  created_at?: any | null;
+  data?: any | null;
+  member_note?: member_note_obj_rel_insert_input | null;
+  member_note_id?: string | null;
+  options?: any | null;
+  updated_at?: any | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "member_note". All fields are combined with a logical 'AND'.
  */
 export interface member_note_bool_exp {
@@ -12974,7 +13114,9 @@ export interface member_note_bool_exp {
   id?: String_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  member_note_attachments?: member_note_attachment_bool_exp | null;
   metadata?: jsonb_comparison_exp | null;
+  note?: String_comparison_exp | null;
   status?: String_comparison_exp | null;
   type?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -12992,10 +13134,20 @@ export interface member_note_insert_input {
   id?: string | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  member_note_attachments?: member_note_attachment_arr_rel_insert_input | null;
   metadata?: any | null;
+  note?: string | null;
   status?: string | null;
   type?: string | null;
   updated_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "member_note"
+ */
+export interface member_note_obj_rel_insert_input {
+  data: member_note_insert_input;
+  on_conflict?: member_note_on_conflict | null;
 }
 
 /**

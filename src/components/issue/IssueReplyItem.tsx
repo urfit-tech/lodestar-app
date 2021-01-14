@@ -1,7 +1,5 @@
-import { useMutation } from '@apollo/react-hooks'
 import { Button, Dropdown, Icon, Menu, message, Tag } from 'antd'
 import BraftEditor from 'braft-editor'
-import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -10,7 +8,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
-import types from '../../types'
+import { useMutateIssueReply } from '../../hooks/issue'
 import { ProductRoleName } from '../../types/general'
 import { ProgramRoleProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
@@ -59,20 +57,26 @@ const IssueReplyItem: React.FC<{
   const { currentMemberId, authToken, apiHost } = useAuth()
   const { id: appId } = useApp()
 
-  const [insertIssueReplyReaction] = useMutation<
-    types.INSERT_ISSUE_REPLY_REACTION,
-    types.INSERT_ISSUE_REPLY_REACTIONVariables
-  >(INSERT_ISSUE_REPLY_REACTION)
-  const [deleteIssueReplyReaction] = useMutation<
-    types.DELETE_ISSUE_REPLY_REACTION,
-    types.DELETE_ISSUE_REPLY_REACTIONVariables
-  >(DELETE_ISSUE_REPLY_REACTION)
-  const [deleteIssueReply] = useMutation<types.DELETE_ISSUE_REPLY, types.DELETE_ISSUE_REPLYVariables>(
-    DELETE_ISSUE_REPLY,
-  )
-  const [updateIssueReply] = useMutation<types.UPDATE_ISSUE_REPLY, types.UPDATE_ISSUE_REPLYVariables>(
-    UPDATE_ISSUE_REPLY,
-  )
+  // const [insertIssueReplyReaction] = useMutation<
+  //   types.INSERT_ISSUE_REPLY_REACTION,
+  //   types.INSERT_ISSUE_REPLY_REACTIONVariables
+  // >(INSERT_ISSUE_REPLY_REACTION)
+  // const [deleteIssueReplyReaction] = useMutation<
+  //   types.DELETE_ISSUE_REPLY_REACTION,
+  //   types.DELETE_ISSUE_REPLY_REACTIONVariables
+  // >(DELETE_ISSUE_REPLY_REACTION)
+  // const [deleteIssueReply] = useMutation<types.DELETE_ISSUE_REPLY, types.DELETE_ISSUE_REPLYVariables>(
+  //   DELETE_ISSUE_REPLY,
+  // )
+  // const [updateIssueReply] = useMutation<types.UPDATE_ISSUE_REPLY, types.UPDATE_ISSUE_REPLYVariables>(
+  //   UPDATE_ISSUE_REPLY,
+  // )
+  const {
+    insertIssueReplyReaction,
+    deleteIssueReply,
+    updateIssueReply,
+    deleteIssueReplyReaction,
+  } = useMutateIssueReply(issueReplyId)
 
   const [editing, setEditing] = useState(false)
   const [focus, setFocus] = useState(qIssueReplyId === issueReplyId)
@@ -88,15 +92,8 @@ const IssueReplyItem: React.FC<{
   }, [currentMemberId, reactedMemberIds])
 
   const toggleReaction = async (reacted: boolean) => {
-    reacted
-      ? await deleteIssueReplyReaction({
-          variables: { issueReplyId, memberId: currentMemberId || '' },
-        })
-      : await insertIssueReplyReaction({
-          variables: { issueReplyId, memberId: currentMemberId || '' },
-        })
-
-    onRefetch && onRefetch()
+    reacted ? await deleteIssueReplyReaction() : await insertIssueReplyReaction()
+    onRefetch?.()
   }
 
   return (
@@ -149,7 +146,7 @@ const IssueReplyItem: React.FC<{
                 <Menu.Item
                   onClick={() =>
                     window.confirm(formatMessage(issueMessages.dropdown.content.unrecoverable)) &&
-                    deleteIssueReply({ variables: { issueReplyId } }).then(() => onRefetch && onRefetch())
+                    deleteIssueReply().then(() => onRefetch?.())
                   }
                 >
                   {formatMessage(issueMessages.dropdown.content.delete)}
@@ -184,7 +181,7 @@ const IssueReplyItem: React.FC<{
                       variables: { issueReplyId, content: contentState.toRAW() },
                     })
                       .then(() => {
-                        onRefetch && onRefetch()
+                        onRefetch?.()
                         setEditing(false)
                       })
                       .catch(err => message.error(formatMessage(issueMessages.messageError.update)))
@@ -216,35 +213,4 @@ const IssueReplyItem: React.FC<{
   )
 }
 
-const INSERT_ISSUE_REPLY_REACTION = gql`
-  mutation INSERT_ISSUE_REPLY_REACTION($memberId: String!, $issueReplyId: uuid!) {
-    insert_issue_reply_reaction(objects: { member_id: $memberId, issue_reply_id: $issueReplyId }) {
-      affected_rows
-    }
-  }
-`
-
-const DELETE_ISSUE_REPLY_REACTION = gql`
-  mutation DELETE_ISSUE_REPLY_REACTION($memberId: String!, $issueReplyId: uuid!) {
-    delete_issue_reply_reaction(where: { member_id: { _eq: $memberId }, issue_reply_id: { _eq: $issueReplyId } }) {
-      affected_rows
-    }
-  }
-`
-
-const DELETE_ISSUE_REPLY = gql`
-  mutation DELETE_ISSUE_REPLY($issueReplyId: uuid!) {
-    delete_issue_reply(where: { id: { _eq: $issueReplyId } }) {
-      affected_rows
-    }
-  }
-`
-
-const UPDATE_ISSUE_REPLY = gql`
-  mutation UPDATE_ISSUE_REPLY($issueReplyId: uuid!, $content: String) {
-    update_issue_reply(where: { id: { _eq: $issueReplyId } }, _set: { content: $content }) {
-      affected_rows
-    }
-  }
-`
 export default IssueReplyItem
