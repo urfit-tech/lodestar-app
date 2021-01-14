@@ -9777,6 +9777,11 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
+libphonenumber-js@^1.9.7:
+  version "1.9.7"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.9.7.tgz#51c0a2b600f8d40ff7a65947fe2c1ff7f85268c1"
+  integrity sha512-mDY7fCe6dXd1ZUvYr3Q0ZaoqZ1DVXDSjcqa3AMGyudEd0Tyf8PoHkQ+9NucIBy9C/wFITPwL3Ef9SA148q20Cw==
+
 lines-and-columns@^1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"

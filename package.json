@@ -59,6 +59,7 @@
     "framer-motion": "^2.9.4",
     "graphql-tag": "^2.10.3",
     "jsonwebtoken": "^8.5.1",
+    "libphonenumber-js": "^1.9.7",
     "lodash": "^4.17.15",
     "moment-timezone": "^0.5.31",
     "mustache": "^4.0.1",
