@@ -634,6 +634,61 @@ export interface GET_MEMBER_CREDIT_CARDSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PROGRAM_CONTENT_TRIAL
+// ====================================================
+
+export interface GET_PROGRAM_CONTENT_TRIAL_program_content_by_pk_program_content_section_program {
+  __typename: "program";
+  id: any;
+  title: string;
+}
+
+export interface GET_PROGRAM_CONTENT_TRIAL_program_content_by_pk_program_content_section {
+  __typename: "program_content_section";
+  id: any;
+  /**
+   * An object relationship
+   */
+  program: GET_PROGRAM_CONTENT_TRIAL_program_content_by_pk_program_content_section_program;
+}
+
+export interface GET_PROGRAM_CONTENT_TRIAL_program_content_by_pk_program_content_body {
+  __typename: "program_content_body";
+  id: any;
+  data: any | null;
+}
+
+export interface GET_PROGRAM_CONTENT_TRIAL_program_content_by_pk {
+  __typename: "program_content";
+  id: any;
+  title: string;
+  /**
+   * An object relationship
+   */
+  program_content_section: GET_PROGRAM_CONTENT_TRIAL_program_content_by_pk_program_content_section;
+  /**
+   * An object relationship
+   */
+  program_content_body: GET_PROGRAM_CONTENT_TRIAL_program_content_by_pk_program_content_body;
+}
+
+export interface GET_PROGRAM_CONTENT_TRIAL {
+  /**
+   * fetch data from the table: "program_content" using primary key columns
+   */
+  program_content_by_pk: GET_PROGRAM_CONTENT_TRIAL_program_content_by_pk | null;
+}
+
+export interface GET_PROGRAM_CONTENT_TRIALVariables {
+  programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ENROLLED_PRIVATE_TEACH_PROGRAMS
 // ====================================================
 
