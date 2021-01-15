@@ -1,18 +1,26 @@
+import { useQuery } from '@apollo/react-hooks'
+import {
+  Button,
+  Icon,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  SkeletonText,
+} from '@chakra-ui/react'
 import { Carousel } from 'antd'
-import React from 'react'
+import gql from 'graphql-tag'
+import React, { useState } from 'react'
 import styled from 'styled-components'
+import { ReactComponent as AngleThinLeftIcon } from '../../images/angle-thin-left.svg'
+import { ReactComponent as AngleThinRightIcon } from '../../images/angle-thin-right.svg'
+import { ReactComponent as ArrowRightIcon } from '../../images/arrow-right.svg'
+import types from '../../types'
 import { CommonTitleMixin } from '../common'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
-
-type ProjectCardSectionProps = {
-  items: {
-    icon?: string
-    title: string
-    description: string
-  }[]
-  title: string
-  subtitle: string
-}
+import ProgramContentPlayer from '../program/ProgramContentPlayer'
 
 const StyledSection = styled.section`
   position: relative;
@@ -124,7 +132,7 @@ const StyleCard = styled.div`
   }
 
   @media (min-width: ${BREAK_POINT}px) {
-    width: 19%;
+    width: 24%;
     margin-bottom: 20px;
   }
 `
@@ -136,8 +144,74 @@ const StyledCardWrapper = styled.div`
   padding: 24px;
   height: 100%;
 `
+const TrialLink = styled(Button)`
+  && {
+    color: #ff5760;
+  }
+`
+const StyledPlayerWrapper = styled.div`
+  position: relative;
 
-const ProjectCardSection: React.FC<ProjectCardSectionProps> = ({ items, title, subtitle }) => {
+  > svg:first-child,
+  > svg:last-child {
+    top: 50%;
+    font-size: 24px;
+    position: absolute;
+    cursor: pointer;
+  }
+
+  > svg:first-child {
+    left: 0;
+    transform: translate(-100%, -50%);
+  }
+  > svg:last-child {
+    right: 0;
+    transform: translate(100%, -50%);
+  }
+
+  @media (min-width: ${BREAK_POINT}px) {
+    > svg:first-child,
+    > svg:last-child {
+      font-size: 48px;
+    }
+  }
+`
+const StyledModalContent = styled(ModalContent)`
+  && {
+    max-width: 57rem;
+  }
+`
+const StyledModalHeader = styled(ModalHeader)`
+  && {
+    @media (min-width: ${BREAK_POINT}px) {
+      padding: 2rem 3rem 0;
+    }
+  }
+`
+const StyledModalBody = styled(ModalBody)`
+  && {
+    @media (min-width: ${BREAK_POINT}px) {
+      padding: 0.5rem 3rem 2rem;
+    }
+  }
+`
+
+const ProjectCardSection: React.FC<{
+  items: {
+    icon?: string
+    title: string
+    description: string
+    programContentIds?: string[]
+  }[]
+  title: string
+  subtitle: string
+}> = ({ items, title, subtitle }) => {
+  const [selectedItem, setSelectedItem] = useState<{
+    title: string
+    contentIds: string[]
+    index: number
+  } | null>(null)
+
   return (
     <StyledSection>
       <div className="container">
@@ -150,6 +224,7 @@ const ProjectCardSection: React.FC<ProjectCardSectionProps> = ({ items, title, s
             </h3>
             <h4>{subtitle}</h4>
           </StyledHeader>
+
           <Responsive.Default>
             <StyledCarousel dots={true} draggable={true} slidesToShow={3} slidesToScroll={1} variableWidth={true}>
               {items.map(card => (
@@ -160,6 +235,24 @@ const ProjectCardSection: React.FC<ProjectCardSectionProps> = ({ items, title, s
                       <div>
                         <h5>{card.title}</h5>
                         <p>{card.description}</p>
+                        {card.programContentIds?.length ? (
+                          <div className="align-self-stretch text-right">
+                            <TrialLink
+                              variant="link"
+                              size="sm"
+                              onClick={() =>
+                                setSelectedItem({
+                                  title: card.title,
+                                  contentIds: card.programContentIds || [],
+                                  index: 0,
+                                })
+                              }
+                            >
+                              <span className="mr-2">立即試看</span>
+                              <Icon as={ArrowRightIcon} />
+                            </TrialLink>
+                          </div>
+                        ) : null}
                       </div>
                     </StyledCardWrapper>
                   </StyleCard>
@@ -167,6 +260,7 @@ const ProjectCardSection: React.FC<ProjectCardSectionProps> = ({ items, title, s
               ))}
             </StyledCarousel>
           </Responsive.Default>
+
           <Responsive.Desktop>
             <div className="container d-flex flex-row flex-wrap justify-content-between">
               {items.map(card => (
@@ -176,6 +270,24 @@ const ProjectCardSection: React.FC<ProjectCardSectionProps> = ({ items, title, s
                     <div>
                       <h5>{card.title}</h5>
                       <p>{card.description}</p>
+                      {card.programContentIds?.length ? (
+                        <div className="align-self-stretch text-right">
+                          <TrialLink
+                            variant="link"
+                            size="sm"
+                            onClick={() =>
+                              setSelectedItem({
+                                title: card.title,
+                                contentIds: card.programContentIds || [],
+                                index: 0,
+                              })
+                            }
+                          >
+                            <span className="mr-2">立即試看</span>
+                            <Icon as={ArrowRightIcon} />
+                          </TrialLink>
+                        </div>
+                      ) : null}
                     </div>
                   </StyledCardWrapper>
                 </StyleCard>
@@ -184,7 +296,94 @@ const ProjectCardSection: React.FC<ProjectCardSectionProps> = ({ items, title, s
           </Responsive.Desktop>
         </div>
       </div>
+
+      <Modal isOpen={!!selectedItem} onClose={() => setSelectedItem(null)}>
+        <ModalOverlay />
+        <StyledModalContent>
+          <StyledModalHeader>{selectedItem?.title}</StyledModalHeader>
+          <ModalCloseButton />
+          <StyledModalBody>
+            {selectedItem && selectedItem.contentIds[selectedItem.index] && (
+              <ProgramContentTrialPlayer
+                programContentId={selectedItem.contentIds[selectedItem.index]}
+                onPrev={
+                  selectedItem.index > 0
+                    ? () =>
+                        setSelectedItem({
+                          ...selectedItem,
+                          index: selectedItem.index - 1,
+                        })
+                    : undefined
+                }
+                onNext={
+                  selectedItem.contentIds[selectedItem.index + 1]
+                    ? () =>
+                        setSelectedItem({
+                          ...selectedItem,
+                          index: selectedItem.index + 1,
+                        })
+                    : undefined
+                }
+              />
+            )}
+          </StyledModalBody>
+        </StyledModalContent>
+      </Modal>
     </StyledSection>
+  )
+}
+
+const ProgramContentTrialPlayer: React.FC<{
+  programContentId: string
+  onPrev?: () => void
+  onNext?: () => void
+}> = ({ programContentId, onPrev, onNext }) => {
+  const { data } = useQuery<types.GET_PROGRAM_CONTENT_TRIAL, types.GET_PROGRAM_CONTENT_TRIALVariables>(
+    gql`
+      query GET_PROGRAM_CONTENT_TRIAL($programContentId: uuid!) {
+        program_content_by_pk(id: $programContentId) {
+          id
+          title
+          program_content_section {
+            id
+            program {
+              id
+              title
+            }
+          }
+          program_content_body {
+            id
+            data
+          }
+        }
+      }
+    `,
+    { variables: { programContentId } },
+  )
+
+  if (!data || !data.program_content_by_pk) {
+    return <SkeletonText noOfLines={4} spacing="4" />
+  }
+
+  return (
+    <>
+      <div className="mb-4">
+        {data.program_content_by_pk.program_content_section.program.title} - {data.program_content_by_pk.title}
+      </div>
+
+      <StyledPlayerWrapper className="text-center">
+        {onPrev && <Icon as={AngleThinLeftIcon} onClick={() => onPrev()} />}
+        <ProgramContentPlayer
+          programContentBody={{
+            id: data.program_content_by_pk.program_content_body.id,
+            type: '',
+            description: '',
+            data: data.program_content_by_pk.program_content_body.data,
+          }}
+        />
+        {onNext && <Icon as={AngleThinRightIcon} onClick={() => onNext()} />}
+      </StyledPlayerWrapper>
+    </>
   )
 }
 
