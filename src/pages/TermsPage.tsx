@@ -159,6 +159,16 @@ const TermsPage: React.FC = () => {
             <p>{formatMessage(termMessages.paragraph.refund3)}</p>
             <p>{formatMessage(termMessages.paragraph.refund4)}</p>
           </StyledCard>
+
+          <StyledCard>
+            <StyledTitle level={2}>購買須知</StyledTitle>
+            <p>
+              民法規定之無行為能力人（如未滿七歲之未成年人）購買本課程，應由其法定代理人為之；限制行為能力人（滿七歲但未滿二十歲），應得法定代理人之同意，方能購買本課程。
+            </p>
+            <p>
+              一旦註冊及代表「同意購買須知」，即表示您已經同意並願意完全遵守本購買須知所有內容；且若為民法規定之無行為能力人、限制行為能力人，則視為由無行為能力人之法定代理人代為購買本課程，或限制行為能力人之法定代理人已同意購買本課程。
+            </p>
+          </StyledCard>
         </div>
       </StyledSection>
     </DefaultLayout>
