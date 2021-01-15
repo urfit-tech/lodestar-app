@@ -147,6 +147,9 @@ const StyledCardWrapper = styled.div`
 const TrialLink = styled(Button)`
   && {
     color: #ff5760;
+    :hover {
+      text-decoration: none;
+    }
   }
 `
 const StyledPlayerWrapper = styled.div`
@@ -185,6 +188,9 @@ const StyledModalHeader = styled(ModalHeader)`
   && {
     @media (min-width: ${BREAK_POINT}px) {
       padding: 2rem 3rem 0;
+      color: var(--gray-darker);
+      font-size: 28px;
+      letter-spacing: 0.23px;
     }
   }
 `
@@ -192,6 +198,9 @@ const StyledModalBody = styled(ModalBody)`
   && {
     @media (min-width: ${BREAK_POINT}px) {
       padding: 0.5rem 3rem 2rem;
+      color: var(--gray-darker);
+      line-height: 1.5;
+      letter-spacing: 0.2px;
     }
   }
 `
