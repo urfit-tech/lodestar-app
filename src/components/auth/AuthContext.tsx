@@ -1,10 +1,11 @@
 import Axios from 'axios'
 import jwt from 'jsonwebtoken'
+import parsePhoneNumber from 'libphonenumber-js'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { UserRole } from '../../types/member'
 
-type AuthContext = {
+type AuthProps = {
   isAuthenticating: boolean
   isAuthenticated: boolean
   currentUserRole: UserRole
@@ -19,7 +20,7 @@ type AuthContext = {
   logout?: () => void
 }
 
-const defaultAuthContext: AuthContext = {
+const defaultAuthContext: AuthProps = {
   isAuthenticating: true,
   isAuthenticated: false,
   currentUserRole: 'anonymous',
@@ -29,7 +30,7 @@ const defaultAuthContext: AuthContext = {
   apiHost: '',
 }
 
-const AuthContext = React.createContext<AuthContext>(defaultAuthContext)
+const AuthContext = React.createContext<AuthProps>(defaultAuthContext)
 export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider: React.FC<{
@@ -46,22 +47,27 @@ export const AuthProvider: React.FC<{
       return
     }
     // TODO: add auth payload type
-    const tmpPayload: any = jwt.decode(authToken)
-    if (!tmpPayload) {
-      return
+    try {
+      const tmpPayload: any = jwt.decode(authToken)
+      if (!tmpPayload) {
+        return
+      }
+      const phoneNumber = parsePhoneNumber(tmpPayload.phoneNumber, 'TW')
+      const _window = window as any
+      _window.insider_object = {
+        user: {
+          gdpr_optin: true,
+          sms_optin: true,
+          email: tmpPayload.email,
+          phone_number: phoneNumber?.isValid() ? phoneNumber.number : tmpPayload.phoneNumber,
+          email_optin: true,
+        },
+      }
+      ReactGA.set({ userId: tmpPayload.sub })
+      setPayload(tmpPayload)
+    } catch (error) {
+      process.env.NODE_ENV === 'development' && console.error(error)
     }
-    const _window = window as any
-    _window.insider_object = {
-      user: {
-        gdpr_optin: true,
-        sms_optin: true,
-        email: tmpPayload.email,
-        phone_number: tmpPayload.phoneNumber,
-        email_optin: true,
-      },
-    }
-    ReactGA.set({ userId: tmpPayload.sub })
-    setPayload(tmpPayload)
   }, [authToken])
 
   return (

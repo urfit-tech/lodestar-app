@@ -24,6 +24,9 @@ const StyledModalContent = styled(ModalContent)<{ isFullWidth?: boolean }>`
 `
 const StyledWrapper = styled.div`
   position: relative;
+  margin: 0 auto;
+  max-width: 720px;
+  width: 100%;
 `
 const StyledCloseButtonBlock = styled.div`
   position: absolute;
@@ -57,10 +60,10 @@ const CommonModal: React.FC<
       <Modal {...ModalProps}>
         <ModalOverlay />
         <StyledModalContent isFullWidth={isFullWidth}>
-          <StyledWrapper className="container">
+          <StyledWrapper>
             {renderHeaderIcon?.()}
 
-            <ModalHeader>{title}</ModalHeader>
+            <ModalHeader className="pt-4 pb-0">{title}</ModalHeader>
 
             {renderCloseButtonBlock ? (
               <StyledCloseButtonBlock>{renderCloseButtonBlock()}</StyledCloseButtonBlock>
@@ -70,7 +73,7 @@ const CommonModal: React.FC<
 
             <ModalBody>{children}</ModalBody>
 
-            {renderFooter && <ModalFooter>{renderFooter()}</ModalFooter>}
+            {renderFooter && <ModalFooter className="pb-4">{renderFooter()}</ModalFooter>}
           </StyledWrapper>
         </StyledModalContent>
       </Modal>
