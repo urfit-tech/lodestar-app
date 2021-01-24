@@ -74,6 +74,7 @@ const ProgramCard: React.FC<{
   noTotalDuration?: boolean
   withMeta?: boolean
   withProgress?: boolean
+  renderCover?: (cover: string) => JSX.Element
   renderCustomDescription?: () => JSX.Element
 }> = ({
   program,
@@ -84,6 +85,7 @@ const ProgramCard: React.FC<{
   noPrice,
   noTotalDuration,
   withMeta,
+  renderCover,
   renderCustomDescription,
 }) => {
   const { formatMessage } = useIntl()
@@ -121,7 +123,11 @@ const ProgramCard: React.FC<{
         }
       >
         <StyledWrapper>
-          <CustomRatioImage width="100%" ratio={9 / 16} src={program.coverUrl ? program.coverUrl : EmptyCover} />
+          {renderCover ? (
+            renderCover(program.coverUrl ? program.coverUrl : EmptyCover)
+          ) : (
+            <CustomRatioImage width="100%" ratio={9 / 16} src={program.coverUrl ? program.coverUrl : EmptyCover} />
+          )}
 
           <StyledContentBlock>
             <StyledTitle variant={variant}>{program.title}</StyledTitle>
