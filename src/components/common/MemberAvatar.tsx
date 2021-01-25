@@ -27,7 +27,7 @@ const MemberAvatar: React.FC<MemberAvatarProps> = ({ memberId, shape, size, rend
     <div className="d-flex align-items-center">
       {renderAvatar ? renderAvatar(member) : <AvatarImage src={member.pictureUrl || ''} shape={shape} size={size} />}
       {renderText && renderText(member)}
-      {withName && <MemberName className="ml-3">{member.name}</MemberName>}
+      {withName && <MemberName className="ml-3 memberName">{member.name}</MemberName>}
     </div>
   )
 }

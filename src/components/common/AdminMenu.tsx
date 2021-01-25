@@ -82,6 +82,12 @@ export const MemberAdminMenu: React.FC<MenuProps> = ({ ...props }) => {
         <Icon as={BookIcon} className="mr-2" />
         {formatMessage(commonMessages.content.courseProblem)}
       </Menu.Item>
+      {enabledModules.practice && (
+        <Menu.Item key="member_practices_admin">
+          <Icon as={BookIcon} className="mr-2" />
+          {formatMessage(commonMessages.content.practiceManagement)}
+        </Menu.Item>
+      )}
       <Menu.Item key="member_orders_admin">
         <Icon as={ClipboardListIcon} className="mr-2" />
         {formatMessage(commonMessages.content.orderHistory)}

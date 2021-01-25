@@ -238,6 +238,7 @@ export const commonMessages = {
   content: defineMessages({
     personalSettings: { id: 'common.personalSettings', defaultMessage: '個人設定' },
     courseProblem: { id: 'common.courseProblem', defaultMessage: '課程問題' },
+    practiceManagement: { id: 'common.practiceManagement', defaultMessage: '作業管理' },
     orderHistory: { id: 'common.orderHistory', defaultMessage: '訂單紀錄' },
     contracts: { id: 'common.contracts', defaultMessage: '合約紀錄' },
     coinsAdmin: { id: 'common.coinsAdmin', defaultMessage: '代幣紀錄' },
@@ -604,7 +605,11 @@ export const programMessages = {
     },
   }),
 }
-
+export const practiceMessages = {
+  button: defineMessages({
+    delete: { id: 'practice.button.delete', defaultMessage: '刪除作業' },
+  }),
+}
 export const productMessages = {
   activity: {
     tab: defineMessages({

@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import { Button, Divider, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Box, Button, Divider, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import { Menu as AntdMenu } from 'antd'
 import moment from 'moment'
 import React, { useState } from 'react'
@@ -19,8 +19,9 @@ import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { MemberInfoBlock } from '../components/practice/PracticeDisplayedCollection'
 import SuggestionCreationModal from '../components/practice/SuggestionCreationModal'
-import { issueMessages } from '../helpers/translation'
+import { commonMessages, issueMessages, practiceMessages } from '../helpers/translation'
 import { ReactComponent as CalendarOIcon } from '../images/calendar-alt-o.svg'
+import { ReactComponent as MoreIcon } from '../images/ellipsis.svg'
 import EmptyCover from '../images/empty-cover.png'
 import { ReactComponent as HeartIcon } from '../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../images/icon-heart.svg'
@@ -42,6 +43,11 @@ const StyledTitle = styled.h3`
   line-height: 1.1;
   letter-spacing: 1px;
   color: var(--gray-darker);
+`
+const StyledEditButton = styled(Button)`
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  padding: 10px 20px;
 `
 const StyledPracticeTitle = styled.h3`
   ${CommonTitleMixin}
@@ -119,7 +125,21 @@ const PracticePage: React.FC = () => {
           </Link>
         </div>
 
-        <StyledTitle className="mb-3">{practice.title}</StyledTitle>
+        <div className="mb-3 d-flex">
+          <StyledTitle>{practice.title}</StyledTitle>
+          <Box className="d-flex" h="40px">
+            <StyledEditButton variant="primary">{formatMessage(commonMessages.button.edit)}</StyledEditButton>
+            <Menu>
+              <MenuButton className="p-2">
+                <Icon as={MoreIcon} />
+              </MenuButton>
+              <MenuList minWidth="110px">
+                <MenuItem>{formatMessage(practiceMessages.button.delete)}</MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
+        </div>
+
         <div className="d-flex align-items-center">
           <MemberInfoBlock avatarUrl={practice.member.avatarUrl} name={practice.member.name} className="mr-2" />
           <StyledDate>

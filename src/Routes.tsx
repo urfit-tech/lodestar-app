@@ -294,6 +294,12 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     authenticated: true,
     allowedUserRole: 'general-member',
   },
+  member_practices_admin: {
+    path: '/settings/practices',
+    pageName: 'member/PracticeCollectionAdminPage',
+    authenticated: true,
+    allowedUserRole: 'general-member',
+  },
   member_coupons_admin: {
     path: '/settings/coupons',
     pageName: 'member/CouponCollectionAdminPage',
