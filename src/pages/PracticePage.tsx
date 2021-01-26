@@ -43,6 +43,8 @@ const StyledTitle = styled.h3`
   line-height: 1.1;
   letter-spacing: 1px;
   color: var(--gray-darker);
+  margin-right: 20px;
+  line-height: 34px;
 `
 const StyledEditButton = styled(Button)`
   font-weight: 500;
@@ -127,17 +129,20 @@ const PracticePage: React.FC = () => {
 
         <div className="mb-3 d-flex">
           <StyledTitle>{practice.title}</StyledTitle>
-          <Box className="d-flex" h="40px">
-            <StyledEditButton variant="primary">{formatMessage(commonMessages.button.edit)}</StyledEditButton>
-            <Menu>
-              <MenuButton className="p-2">
-                <Icon as={MoreIcon} />
-              </MenuButton>
-              <MenuList minWidth="110px">
-                <MenuItem>{formatMessage(practiceMessages.button.delete)}</MenuItem>
-              </MenuList>
-            </Menu>
-          </Box>
+          {/* FIXME: '' change to currentMemberId */}
+          {practice.member.id === '' && (
+            <Box className="d-flex" h="40px">
+              <StyledEditButton variant="primary">{formatMessage(commonMessages.button.edit)}</StyledEditButton>
+              <Menu>
+                <MenuButton className="p-2">
+                  <Icon as={MoreIcon} />
+                </MenuButton>
+                <MenuList minWidth="110px">
+                  <MenuItem>{formatMessage(practiceMessages.button.delete)}</MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
+          )}
         </div>
 
         <div className="d-flex align-items-center">
@@ -288,6 +293,7 @@ const usePractice = (id: string) => {
     coverUrl: string | null
     description: string | null
     member: {
+      id: string
       avatarUrl: string | null
       name: string
     }
@@ -314,6 +320,7 @@ const usePractice = (id: string) => {
     description:
       'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum est vel ipsam tenetur dolorem esse tempora eos necessitatibus beatae. Temporibus laudantium saepe obcaecati corporis facilis porro nostrum dignissimos praesentium blanditiis!',
     member: {
+      id: '',
       avatarUrl: null,
       name: 'sasali Wang',
     },

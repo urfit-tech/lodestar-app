@@ -46,6 +46,7 @@ const PracticeCollectionBlock: React.FC<{
     coverUrl: null,
     title: 'title title title title title title title title title title title title title title',
     memberId: '8cc92266-3c88-4860-b347-2e6a6cf3e8dd',
+    name: 'name',
     suggestCount: 20,
     reactedMemberIds: ['Amy', 'Ben', 'Ken'],
     reactedMemberIdsCount: 10,
@@ -54,12 +55,12 @@ const PracticeCollectionBlock: React.FC<{
   return (
     <div className="row">
       {practiceCollection.map(v => (
-        <div key={v.id} className="col-12 col-lg-3 mb-3">
+        <div key={v.id} className="col-12 col-lg-3 mb-4">
           <PracticeAdminCard
             id={v.id}
             title={v.title}
             coverUrl={v.coverUrl}
-            memberId={v.memberId}
+            name={v.name}
             suggestCount={v.suggestCount}
             reactedMemberIds={v.reactedMemberIds}
             reactedMemberIdsCount={v.reactedMemberIdsCount}

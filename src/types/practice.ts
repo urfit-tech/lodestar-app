@@ -2,7 +2,7 @@ export type PracticePreviewProps = {
   id: string
   title: string
   coverUrl: string | null
-  memberId: string
+  memberId?: string
   avatarUrl?: string | null
   name?: string
   suggestCount: number

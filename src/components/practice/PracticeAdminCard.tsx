@@ -6,7 +6,6 @@ import { ReactComponent as CommentIcon } from '../../images/icon-comment.svg'
 import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
 import { PracticePreviewProps } from '../../types/practice'
 import { CustomRatioImage } from '../common/Image'
-import MemberAvatar from '../common/MemberAvatar'
 
 const StyledWrapper = styled(Box)`
   box-shadow: 0 2px 10px 0 var(--gray);
@@ -27,11 +26,9 @@ const StyledTitle = styled.div`
   white-space: nowrap;
   transition: all 0.3s;
 `
-const StyledMemberAvatar = styled(MemberAvatar)`
-  .memberName {
-    font-size: 12px;
-    font-weight: 500;
-  }
+const StyledName = styled.div`
+  font-size: 12px;
+  font-weight: 500;
 `
 const StyledGroup = styled(Box)`
   line-height: 1;
@@ -42,7 +39,7 @@ const PracticeAdminCard: React.FC<PracticePreviewProps> = ({
   id,
   coverUrl,
   title,
-  memberId,
+  name,
   suggestCount,
   reactedMemberIdsCount,
 }) => {
@@ -53,8 +50,7 @@ const PracticeAdminCard: React.FC<PracticePreviewProps> = ({
         <StyledTitle className="mx-3">{title}</StyledTitle>
 
         <div className="d-flex justify-content-between p-3">
-          <StyledMemberAvatar memberId={memberId || ''} size={28} withName />
-
+          <StyledName>{name}</StyledName>
           <StyledGroup className="d-flex align-items-end">
             <div className="mr-2">
               <Icon as={CommentIcon} className="mr-1" />
