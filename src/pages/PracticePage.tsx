@@ -44,7 +44,7 @@ const StyledTitle = styled.h3`
   letter-spacing: 1px;
   color: var(--gray-darker);
   margin-right: 20px;
-  line-height: 34px;
+  line-height: 1.5;
 `
 const StyledEditButton = styled(Button)`
   font-weight: 500;

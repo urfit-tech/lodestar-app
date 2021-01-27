@@ -15,6 +15,9 @@ const StyledLink = styled(Link)`
   &&:hover {
     text-decoration: none;
   }
+  &&:focus {
+    box-shadow: none;
+  }
 `
 const StyledTitle = styled.div`
   line-height: 1.7;
