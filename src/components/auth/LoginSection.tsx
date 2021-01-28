@@ -26,9 +26,11 @@ const ForgetPassword = styled.div`
 `
 
 type LoginSectionProps = FormComponentProps & {
+  noGeneralLogin?: boolean
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
+  renderTitle?: () => React.ReactNode
 }
-const LoginSection: React.FC<LoginSectionProps> = ({ form, onAuthStateChange }) => {
+const LoginSection: React.FC<LoginSectionProps> = ({ form, noGeneralLogin, onAuthStateChange, renderTitle }) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -67,7 +69,7 @@ const LoginSection: React.FC<LoginSectionProps> = ({ form, onAuthStateChange }) 
 
   return (
     <>
-      <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>
+      {renderTitle ? renderTitle() : <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>}
 
       {!!settings['auth.facebook_app_id'] && (
         <div className="mb-3">
@@ -79,63 +81,67 @@ const LoginSection: React.FC<LoginSectionProps> = ({ form, onAuthStateChange }) 
           <GoogleLoginButton />
         </div>
       )}
-      {(!!settings['auth.facebook_app_id'] || !!settings['auth.google_client_id']) && (
-        <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
+      {!noGeneralLogin && (
+        <>
+          {(!!settings['auth.facebook_app_id'] || !!settings['auth.google_client_id']) && (
+            <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
+          )}
+
+          <Form
+            onSubmit={e => {
+              e.preventDefault()
+              handleLogin()
+            }}
+          >
+            <Form.Item>
+              {form.getFieldDecorator('account', {
+                rules: [
+                  {
+                    required: true,
+                    message: formatMessage(commonMessages.form.message.usernameAndEmail),
+                  },
+                ],
+              })(
+                <Input
+                  placeholder={formatMessage(commonMessages.form.message.usernameAndEmail)}
+                  suffix={<Icon as={AiOutlineUser} />}
+                />,
+              )}
+            </Form.Item>
+            <Form.Item>
+              {form.getFieldDecorator('password', {
+                rules: [
+                  {
+                    required: true,
+                    message: formatMessage(commonMessages.form.message.password),
+                  },
+                ],
+              })(
+                <Input
+                  type="password"
+                  placeholder={formatMessage(commonMessages.form.placeholder.password)}
+                  suffix={<Icon as={AiOutlineLock} />}
+                />,
+              )}
+            </Form.Item>
+            <ForgetPassword>
+              <Link to="/forgot-password">{formatMessage(authMessages.link.forgotPassword)}</Link>
+            </ForgetPassword>
+            <Form.Item>
+              <Button block loading={loading} type="primary" htmlType="submit">
+                {formatMessage(commonMessages.button.login)}
+              </Button>
+            </Form.Item>
+
+            <StyledAction>
+              <span>{formatMessage(authMessages.content.noMember)}</span>
+              <Button type="link" size="small" onClick={() => onAuthStateChange('register')}>
+                {formatMessage(commonMessages.button.signUp)}
+              </Button>
+            </StyledAction>
+          </Form>
+        </>
       )}
-
-      <Form
-        onSubmit={e => {
-          e.preventDefault()
-          handleLogin()
-        }}
-      >
-        <Form.Item>
-          {form.getFieldDecorator('account', {
-            rules: [
-              {
-                required: true,
-                message: formatMessage(commonMessages.form.message.usernameAndEmail),
-              },
-            ],
-          })(
-            <Input
-              placeholder={formatMessage(commonMessages.form.message.usernameAndEmail)}
-              suffix={<Icon as={AiOutlineUser} />}
-            />,
-          )}
-        </Form.Item>
-        <Form.Item>
-          {form.getFieldDecorator('password', {
-            rules: [
-              {
-                required: true,
-                message: formatMessage(commonMessages.form.message.password),
-              },
-            ],
-          })(
-            <Input
-              type="password"
-              placeholder={formatMessage(commonMessages.form.placeholder.password)}
-              suffix={<Icon as={AiOutlineLock} />}
-            />,
-          )}
-        </Form.Item>
-        <ForgetPassword>
-          <Link to="/forgot-password">{formatMessage(authMessages.link.forgotPassword)}</Link>
-        </ForgetPassword>
-        <Form.Item>
-          <Button block loading={loading} type="primary" htmlType="submit">
-            {formatMessage(commonMessages.button.login)}
-          </Button>
-        </Form.Item>
-
-        <StyledAction>
-          <span>{formatMessage(authMessages.content.noMember)}</span>
-          <Button type="link" size="small" onClick={() => onAuthStateChange('register')}>
-            {formatMessage(commonMessages.button.signUp)}
-          </Button>
-        </StyledAction>
-      </Form>
     </>
   )
 }

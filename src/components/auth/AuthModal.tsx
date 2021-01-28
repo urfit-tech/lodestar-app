@@ -48,9 +48,11 @@ export const AuthModalContext = React.createContext<{
 
 type AuthModalProps = {
   defaultAuthState?: AuthState
+  noGeneralLogin?: boolean
   onAuthStateChange?: (authState: AuthState) => void
+  renderTitle?: () => React.ReactNode
 }
-const AuthModal = ({ defaultAuthState, onAuthStateChange }: AuthModalProps) => {
+const AuthModal = ({ defaultAuthState, noGeneralLogin, onAuthStateChange, renderTitle }: AuthModalProps) => {
   const { visible, setVisible } = useContext(AuthModalContext)
   const [authState, setAuthState] = useState(defaultAuthState || 'login')
 
@@ -64,7 +66,7 @@ const AuthModal = ({ defaultAuthState, onAuthStateChange }: AuthModalProps) => {
     >
       <StyledContainer>
         {authState === 'login' ? (
-          <LoginSection onAuthStateChange={setAuthState} />
+          <LoginSection onAuthStateChange={setAuthState} noGeneralLogin={noGeneralLogin} renderTitle={renderTitle} />
         ) : authState === 'register' ? (
           <RegisterSection onAuthStateChange={setAuthState} />
         ) : null}

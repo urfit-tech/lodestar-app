@@ -35,10 +35,23 @@ const DefaultLayout: React.FC<{
   noHeader?: boolean
   noFooter?: boolean
   noCart?: boolean
+  noGeneralLogin?: boolean
   centeredBox?: boolean
   footerBottomSpace?: string
   renderTitle?: () => React.ReactNode
-}> = ({ white, noHeader, noFooter, noCart, centeredBox, footerBottomSpace, renderTitle, children }) => {
+  renderAuthModalTitle?: () => React.ReactNode
+}> = ({
+  white,
+  noHeader,
+  noFooter,
+  noCart,
+  noGeneralLogin,
+  centeredBox,
+  footerBottomSpace,
+  renderTitle,
+  renderAuthModalTitle,
+  children,
+}) => {
   const { formatMessage } = useIntl()
   const theme = useContext(ThemeContext)
   const { currentMemberId, isAuthenticated } = useAuth()
@@ -55,7 +68,7 @@ const DefaultLayout: React.FC<{
 
   return (
     <AuthModalContext.Provider value={{ visible, setVisible }}>
-      {visible && <AuthModal />}
+      {visible && <AuthModal noGeneralLogin={noGeneralLogin} renderTitle={renderAuthModalTitle} />}
 
       <StyledLayout variant={white ? 'white' : undefined}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
