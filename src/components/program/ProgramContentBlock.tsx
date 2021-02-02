@@ -12,6 +12,7 @@ import { useProgramContent, useProgramContentMaterial } from '../../hooks/progra
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
+import ExerciseDescriptionBlock from '../exercise/ExerciseDescriptionBlock'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
 import PracticeDescriptionBlock from '../practice/PracticeDescriptionBlock'
 import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
@@ -95,7 +96,7 @@ const ProgramContentBlock: React.FC<{
         />
       )}
 
-      {programContent.programContentBody?.type !== 'practice' && (
+      {!['practice', 'exercise'].includes(programContent.programContentBody?.type || '') && (
         <StyledContentBlock className="mb-3">
           <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
 
@@ -109,10 +110,65 @@ const ProgramContentBlock: React.FC<{
       {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
         <div className="mb-4">
           <PracticeDescriptionBlock
-            title={'未命名的內容標題'}
+            title={programContent.title}
             description={programContent.programContentBody?.description || ''}
             duration={23}
             score={4}
+          />
+        </div>
+      )}
+
+      {programContent.programContentBody?.type === 'exercise' && (
+        <div className="mb-4">
+          <ExerciseDescriptionBlock
+            allowReAnswer
+            title={programContent.title}
+            exercises={[
+              {
+                isMultipleChoice: false,
+                question: '學米的新辦公室在？',
+                options: [
+                  { answer: '吳興街', isAnswer: false },
+                  { answer: '板橋', isAnswer: false },
+                  { answer: '公園路', isAnswer: false },
+                  { answer: '台北車站', isAnswer: false },
+                  { answer: '承德路', isAnswer: true },
+                ],
+                detail: '學米共換了 4 次辦公室',
+              },
+              {
+                isMultipleChoice: false,
+                question: '2 x 2',
+                options: [
+                  { answer: '2', isAnswer: true },
+                  { answer: '3', isAnswer: true },
+                  { answer: '4', isAnswer: true },
+                ],
+                detail: '2 + 2 = 4',
+              },
+              {
+                isMultipleChoice: true,
+                question: '哪些動物是哺乳動物？',
+                options: [
+                  { answer: '大象', isAnswer: true },
+                  { answer: '人', isAnswer: true },
+                  { answer: '鱷魚', isAnswer: false },
+                ],
+                detail: '哺乳動物有體溫',
+              },
+              {
+                isMultipleChoice: true,
+                question: '那些是貓的名字',
+                options: [
+                  { answer: '圓圓', isAnswer: true },
+                  { answer: '萬萬', isAnswer: true },
+                  { answer: 'Lulu', isAnswer: true },
+                ],
+                detail: '哺乳動物有體溫',
+              },
+            ]}
+            passingScore={60}
+            nextProgramContentId={nextProgramContent?.id || ''}
           />
         </div>
       )}
