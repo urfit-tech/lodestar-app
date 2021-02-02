@@ -9,6 +9,7 @@ const messages = defineMessages({
   prevQuestion: { id: 'program.ui.prevQuestion', defaultMessage: '上一題' },
   nextQuestion: { id: 'program.ui.nextQuestion', defaultMessage: '下一題' },
   submit: { id: 'program.ui.submit', defaultMessage: '送出' },
+  showResult: { id: 'program.ui.showResult', defaultMessage: '查看分數' },
 })
 
 const StyledQuestionCount = styled.span`
@@ -77,57 +78,66 @@ const ExerciseQuestionBlock: React.FC<{
             {no}/{questions.length}
           </StyledQuestionCount>
 
-          <StyledQuestion>{v.question}</StyledQuestion>
+          <StyledQuestion className="mb-4">{v.question}</StyledQuestion>
 
-          {v.options.map((w, j) => (
-            <StyledButton
-              isActive={w.isSelected}
-              rightIcon={w.isSelected ? <Icon as={TickIcon} /> : undefined}
-              onClick={() => {
-                const newAnswers = questions.map((question, index) =>
-                  index === i
-                    ? {
-                        ...question,
-                        options: question.options
-                          .map(option =>
-                            question.isMultipleChoice
-                              ? option
-                              : {
-                                  ...option,
-                                  isSelected: false,
-                                },
-                          )
-                          .map((option, index) =>
-                            index === j
-                              ? {
-                                  ...option,
-                                  isSelected: !option.isSelected,
-                                }
-                              : option,
-                          ),
-                      }
-                    : question,
-                )
+          <div className="mb-4">
+            {v.options.map((w, j) => (
+              <StyledButton
+                isActive={w.isSelected}
+                rightIcon={w.isSelected ? <Icon as={TickIcon} /> : undefined}
+                onClick={() => {
+                  const newAnswers = questions.map((question, index) =>
+                    index === i
+                      ? {
+                          ...question,
+                          options: question.options
+                            .map(option =>
+                              question.isMultipleChoice
+                                ? option
+                                : {
+                                    ...option,
+                                    isSelected: false,
+                                  },
+                            )
+                            .map((option, index) =>
+                              index === j
+                                ? {
+                                    ...option,
+                                    isSelected: !option.isSelected,
+                                  }
+                                : option,
+                            ),
+                        }
+                      : question,
+                  )
 
-                onSetAnswer(newAnswers)
-              }}
-              variant="outline"
-              className="d-flex justify-content-between mb-3"
-            >
-              {w.answer}
-            </StyledButton>
-          ))}
+                  onSetAnswer(newAnswers)
+                }}
+                variant="outline"
+                className="d-flex justify-content-between mb-3"
+              >
+                {w.answer}
+              </StyledButton>
+            ))}
+          </div>
+
+          {showDetail && (
+            <StyledDetail className="mb-4">
+              {v.options.filter(w => w.isAnswer !== w.isSelected).length ? 'true' : 'false'}
+              {v.detail}
+            </StyledDetail>
+          )}
 
           <div className="text-center">
             {allowReAnswer && 1 < no && (
-              <Button onClick={() => setNo(prev => prev - 1)} variant="outline">
+              <Button onClick={() => setNo(prev => prev - 1)} variant="outline" className="mr-2">
                 {formatMessage(messages.prevQuestion)}
               </Button>
             )}
             {no < questions.length && (
               <Button
                 onClick={() => setNo(prev => prev + 1)}
-                disabled={!v.options.filter(w => w.isSelected).length}
+                disabled={!v.options.filter(w => w.isSelected).length && !showDetail}
                 variant="primary"
               >
                 {formatMessage(messages.nextQuestion)}
@@ -139,17 +149,10 @@ const ExerciseQuestionBlock: React.FC<{
                 variant="primary"
                 disabled={!v.options.filter(w => w.isSelected).length}
               >
-                {formatMessage(messages.submit)}
+                {showDetail ? formatMessage(messages.showResult) : formatMessage(messages.submit)}
               </Button>
             )}
           </div>
-
-          {showDetail && (
-            <StyledDetail>
-              {v.options.filter(w => w.isAnswer !== w.isSelected).length ? 'true' : 'false'}
-              {v.detail}
-            </StyledDetail>
-          )}
         </StyledQuestionBlock>
       ))}
     </>

@@ -132,19 +132,20 @@ const ProgramContentBlock: React.FC<{
                   { answer: '板橋', isAnswer: false },
                   { answer: '公園路', isAnswer: false },
                   { answer: '台北車站', isAnswer: false },
-                  { answer: '承德路', isAnswer: true },
+                  { answer: '承德路三段', isAnswer: true },
                 ],
                 detail: '學米共換了 4 次辦公室',
               },
               {
                 isMultipleChoice: false,
-                question: '2 x 2',
+                question: '誰是學米的老大',
                 options: [
-                  { answer: '2', isAnswer: true },
-                  { answer: '3', isAnswer: true },
-                  { answer: '4', isAnswer: true },
+                  { answer: 'ZZ', isAnswer: false },
+                  { answer: 'KK', isAnswer: false },
+                  { answer: 'Louis', isAnswer: false },
+                  { answer: '以上皆是', isAnswer: true },
                 ],
-                detail: '2 + 2 = 4',
+                detail: '他們都是老大',
               },
               {
                 isMultipleChoice: true,
@@ -158,13 +159,13 @@ const ProgramContentBlock: React.FC<{
               },
               {
                 isMultipleChoice: true,
-                question: '那些是貓的名字',
+                question: '哪些是貓的名字？',
                 options: [
                   { answer: '圓圓', isAnswer: true },
                   { answer: '萬萬', isAnswer: true },
                   { answer: 'Lulu', isAnswer: true },
                 ],
-                detail: '哺乳動物有體溫',
+                detail: '這些都是貓的名字',
               },
             ]}
             passingScore={60}

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import AdminCard from '../common/AdminCard'
 import ExerciseQuestionBlock from './ExerciseQuestionBlock'
+import ExerciseResultBlock from './ExerciseResultBlock'
 
 const StyledTitle = styled.h3`
   width: 76px;
@@ -84,25 +85,6 @@ const ExerciseDescriptionBlock: React.FC<{
       {exercise}
     </AdminCard>
   )
-}
-
-const ExerciseResultBlock: React.FC<{
-  questionList: {
-    isMultipleChoice: boolean
-    question: string
-    options: {
-      isSelected: boolean
-      answer: string
-      isAnswer: boolean
-    }[]
-    detail: string
-  }[]
-  passingScore: number
-  nextProgramContentId: string
-  onSetStatusAnswering: () => void
-  onSetStatusReview: () => void
-}> = ({ questionList, passingScore }) => {
-  return <></>
 }
 
 export default ExerciseDescriptionBlock
