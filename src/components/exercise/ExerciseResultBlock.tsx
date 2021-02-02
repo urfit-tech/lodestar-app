@@ -82,7 +82,12 @@ const ExerciseResultBlock: React.FC<{
   return (
     <div className="d-flex flex-column align-items-center ">
       <StyledResultTitle className="mb-2">{formatMessage(messages.yourExerciseResult)}</StyledResultTitle>
-      <StyledCircularProgress className="mb-3" value={score} size="120px" color="primary.500">
+      <StyledCircularProgress
+        className="mb-3"
+        value={score}
+        size="120px"
+        color={score >= passingScore ? 'var(--success)' : 'var(--warning)'}
+      >
         <StyledCircularProgressLabel>{formatMessage(messages.score, { score })}</StyledCircularProgressLabel>
       </StyledCircularProgress>
       <div className="mb-4 text-center">

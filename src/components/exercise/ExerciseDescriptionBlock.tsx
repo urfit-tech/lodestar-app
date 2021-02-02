@@ -48,7 +48,7 @@ const ExerciseDescriptionBlock: React.FC<{
         allowReAnswer={allowReAnswer}
         showDetail={status === 'review'}
         questions={questionList}
-        onSetAnswer={setQuestionList}
+        onSetAnswer={status === 'answering' ? setQuestionList : undefined}
         onSetStatusResult={() => setStatus('result')}
       />
     )

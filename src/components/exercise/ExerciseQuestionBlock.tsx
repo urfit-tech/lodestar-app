@@ -1,15 +1,20 @@
 import { Button, Icon } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
+import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.svg'
+import { ReactComponent as ErrorCircleIcon } from '../../images/error-circle.svg'
 import { ReactComponent as TickIcon } from '../../images/tick.svg'
-import { CommonTextMixin } from '../common'
+import { CommonLargeTextMixin, CommonTextMixin } from '../common'
 
 const messages = defineMessages({
   prevQuestion: { id: 'program.ui.prevQuestion', defaultMessage: '上一題' },
   nextQuestion: { id: 'program.ui.nextQuestion', defaultMessage: '下一題' },
   submit: { id: 'program.ui.submit', defaultMessage: '送出' },
   showResult: { id: 'program.ui.showResult', defaultMessage: '查看分數' },
+  correctAnswer: { id: 'program.status.correctAnswer', defaultMessage: '答案正確' },
+  errorAnswer: { id: 'program.status.errorAnswer', defaultMessage: '答案錯誤' },
+  correct: { id: 'program.status.correct', defaultMessage: '正解' },
 })
 
 const StyledQuestionCount = styled.span`
@@ -25,17 +30,22 @@ const StyledQuestion = styled.div`
   letter-spacing: 0.2px;
   color: var(--gray-darker);
 `
-const StyledButton = styled(Button)<{ isActive: boolean }>`
-  &&& {
-    background: white;
-    border: ${props => props.isActive && `1px solid var(--gray-darker)`};
-    width: 100%;
-  }
-`
+
 const StyledDetail = styled.div`
   padding: 24px;
   border-radius: 4px;
   background-color: var(--gray-lighter);
+`
+const StyledDetailTitle = styled.h4`
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: var(--gray-darker);
+`
+
+const StyledDetailContent = styled.p`
+  ${CommonLargeTextMixin}
 `
 
 const ExerciseQuestionBlock: React.FC<{
@@ -51,7 +61,7 @@ const ExerciseQuestionBlock: React.FC<{
     question: string
     detail: string
   }[]
-  onSetAnswer: React.Dispatch<
+  onSetAnswer?: React.Dispatch<
     React.SetStateAction<
       {
         options: {
@@ -82,9 +92,10 @@ const ExerciseQuestionBlock: React.FC<{
 
           <div className="mb-4">
             {v.options.map((w, j) => (
-              <StyledButton
-                isActive={w.isSelected}
-                rightIcon={w.isSelected ? <Icon as={TickIcon} /> : undefined}
+              <ExerciseQuestionButton
+                showDetail={showDetail}
+                isSelected={w.isSelected}
+                isAnswer={w.isAnswer}
                 onClick={() => {
                   const newAnswers = questions.map((question, index) =>
                     index === i
@@ -111,20 +122,28 @@ const ExerciseQuestionBlock: React.FC<{
                       : question,
                   )
 
-                  onSetAnswer(newAnswers)
+                  onSetAnswer?.(newAnswers)
                 }}
-                variant="outline"
-                className="d-flex justify-content-between mb-3"
               >
                 {w.answer}
-              </StyledButton>
+              </ExerciseQuestionButton>
             ))}
           </div>
 
           {showDetail && (
             <StyledDetail className="mb-4">
-              {v.options.filter(w => w.isAnswer !== w.isSelected).length ? 'true' : 'false'}
-              {v.detail}
+              {v.options.filter(w => w.isAnswer !== w.isSelected).length ? (
+                <span>
+                  <Icon className="mr-2" as={ErrorCircleIcon} color="var(--error)" />
+                  <StyledDetailTitle>{formatMessage(messages.errorAnswer)}</StyledDetailTitle>
+                </span>
+              ) : (
+                <span>
+                  <Icon className="mr-2" as={CheckCircleIcon} color="var(--success)" />
+                  <StyledDetailTitle>{formatMessage(messages.correctAnswer)}</StyledDetailTitle>
+                </span>
+              )}
+              <StyledDetailContent className="ml-4">{v.detail}</StyledDetailContent>
             </StyledDetail>
           )}
 
@@ -156,6 +175,65 @@ const ExerciseQuestionBlock: React.FC<{
         </StyledQuestionBlock>
       ))}
     </>
+  )
+}
+
+const StyledButton = styled(Button)<{ isActive: boolean; isCorrect: boolean; isError: boolean }>`
+  &&& {
+    background: white;
+    border: ${props => props.isActive && `1px solid var(--gray-darker)`};
+    width: 100%;
+    ${props =>
+      props.isCorrect &&
+      css`
+        border: 1px solid var(--success);
+        .correct {
+          color: var(--success);
+        }
+      `}
+    ${props =>
+      props.isError &&
+      css`
+        border: 1px solid var(--error);
+        .correct {
+          color: var(--error);
+        }
+      `}}
+  }
+`
+
+const ExerciseQuestionButton: React.FC<{
+  showDetail: boolean
+  isAnswer: boolean
+  isSelected: boolean
+  onClick: () => void
+}> = ({ showDetail, isAnswer, isSelected, onClick, children }) => {
+  const { formatMessage } = useIntl()
+  if (showDetail) {
+    return (
+      <StyledButton
+        isActive={isSelected}
+        isCorrect={isAnswer && isAnswer === isSelected}
+        isError={isAnswer && isAnswer !== isSelected}
+        rightIcon={isSelected && (showDetail ? undefined : <Icon as={TickIcon} />)}
+        variant="outline"
+        className="d-flex justify-content-between mb-3"
+      >
+        <span>{children}</span>
+        <span className="correct">{isAnswer && formatMessage(messages.correct)}</span>
+      </StyledButton>
+    )
+  }
+  return (
+    <StyledButton
+      isActive={isSelected}
+      rightIcon={isSelected ? <Icon as={TickIcon} /> : undefined}
+      onClick={() => onClick()}
+      variant="outline"
+      className="d-flex justify-content-between mb-3"
+    >
+      {children}
+    </StyledButton>
   )
 }
 

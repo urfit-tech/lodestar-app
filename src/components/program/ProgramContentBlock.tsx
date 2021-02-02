@@ -168,7 +168,7 @@ const ProgramContentBlock: React.FC<{
                 detail: '這些都是貓的名字',
               },
             ]}
-            passingScore={60}
+            passingScore={90}
             nextProgramContentId={nextProgramContent?.id || ''}
           />
         </div>
