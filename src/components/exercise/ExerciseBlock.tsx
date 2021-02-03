@@ -14,21 +14,21 @@ const StyledTitle = styled.h3`
   color: var(--gray-darker);
 `
 
-const ExerciseDescriptionBlock: React.FC<{
+const ExerciseBlock: React.FC<{
   title: string
-  allowReAnswer: boolean
+  nextProgramContentId: string
   exercises: {
     isMultipleChoice: boolean
     question: string
+    detail: string
     options: {
       answer: string
       isAnswer: boolean
     }[]
-    detail: string
   }[]
   passingScore: number
-  nextProgramContentId: string
-}> = ({ title, allowReAnswer, exercises, passingScore, nextProgramContentId }) => {
+  allowReAnswer?: boolean
+}> = ({ exercises, allowReAnswer, passingScore, nextProgramContentId, title }) => {
   const [status, setStatus] = useState<'answering' | 'result' | 'review'>('answering')
   const [questionList, setQuestionList] = useState(
     exercises.map(v => ({
@@ -40,14 +40,14 @@ const ExerciseDescriptionBlock: React.FC<{
     })),
   )
 
-  let exercise
+  let exerciseStatus
 
   if (['answering', 'review'].includes(status)) {
-    exercise = (
+    exerciseStatus = (
       <ExerciseQuestionBlock
         allowReAnswer={allowReAnswer}
         showDetail={status === 'review'}
-        questions={questionList}
+        questionList={questionList}
         onSetAnswer={status === 'answering' ? setQuestionList : undefined}
         onSetStatusResult={() => setStatus('result')}
       />
@@ -55,7 +55,7 @@ const ExerciseDescriptionBlock: React.FC<{
   }
 
   if (status === 'result') {
-    exercise = (
+    exerciseStatus = (
       <ExerciseResultBlock
         questionList={questionList}
         passingScore={passingScore}
@@ -82,9 +82,9 @@ const ExerciseDescriptionBlock: React.FC<{
   return (
     <AdminCard>
       <StyledTitle className="mb-4">{title}</StyledTitle>
-      {exercise}
+      {exerciseStatus}
     </AdminCard>
   )
 }
 
-export default ExerciseDescriptionBlock
+export default ExerciseBlock

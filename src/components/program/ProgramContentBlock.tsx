@@ -12,7 +12,7 @@ import { useProgramContent, useProgramContentMaterial } from '../../hooks/progra
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
-import ExerciseDescriptionBlock from '../exercise/ExerciseDescriptionBlock'
+import ExerciseBlock from '../exercise/ExerciseBlock'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
 import PracticeDescriptionBlock from '../practice/PracticeDescriptionBlock'
 import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
@@ -120,7 +120,7 @@ const ProgramContentBlock: React.FC<{
 
       {programContent.programContentBody?.type === 'exercise' && (
         <div className="mb-4">
-          <ExerciseDescriptionBlock
+          <ExerciseBlock
             allowReAnswer
             title={programContent.title}
             exercises={[
