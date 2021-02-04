@@ -50,7 +50,6 @@ const ExerciseQuestionBlock: React.FC<{
       isAnswer: boolean
       isSelected: boolean
     }[]
-    isMultipleChoice: boolean
     question: string
     detail: string
     score: number
@@ -60,7 +59,6 @@ const ExerciseQuestionBlock: React.FC<{
   onSetAnswer?: React.Dispatch<
     React.SetStateAction<
       {
-        isMultipleChoice: boolean
         question: string
         options: {
           answer: string
@@ -99,7 +97,7 @@ const ExerciseQuestionBlock: React.FC<{
                 Object.assign([], exercises, {
                   [exerciseIndex]: {
                     ...activeExercise,
-                    options: activeExercise.options.map((option, index) =>
+                    options: activeExercise.options.map((option, index, options) =>
                       index === i
                         ? {
                             ...option,
@@ -107,7 +105,7 @@ const ExerciseQuestionBlock: React.FC<{
                           }
                         : {
                             ...option,
-                            ...(!activeExercise.isMultipleChoice && { isSelected: false }),
+                            ...(options.filter(v => v.isAnswer).length === 1 && { isSelected: false }),
                           },
                     ),
                   },

@@ -19,7 +19,6 @@ const ExerciseBlock: React.FC<{
   title: string
   nextProgramContentId: string
   exercises: {
-    isMultipleChoice: boolean
     question: string
     detail: string
     options: {

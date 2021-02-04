@@ -49,7 +49,6 @@ const StyledCircularProgressLabel = styled(CircularProgressLabel)`
 
 const ExerciseResultBlock: React.FC<{
   exercises: {
-    isMultipleChoice: boolean
     question: string
     options: {
       answer: string

@@ -125,7 +125,6 @@ const ProgramContentBlock: React.FC<{
             title={programContent.title}
             exercises={[
               {
-                isMultipleChoice: false,
                 question: '學米的新辦公室在？',
                 options: [
                   { answer: '吳興街', isAnswer: false, isSelected: false },
@@ -138,7 +137,6 @@ const ProgramContentBlock: React.FC<{
                 score: 20,
               },
               {
-                isMultipleChoice: false,
                 question: '誰是學米的老大',
                 options: [
                   { answer: 'ZZ', isAnswer: false, isSelected: false },
@@ -150,7 +148,6 @@ const ProgramContentBlock: React.FC<{
                 score: 50,
               },
               {
-                isMultipleChoice: true,
                 question: '哪些動物是哺乳動物？',
                 options: [
                   { answer: '大象', isAnswer: true, isSelected: false },
@@ -161,7 +158,6 @@ const ProgramContentBlock: React.FC<{
                 score: 100,
               },
               {
-                isMultipleChoice: true,
                 question: '哪些是貓的名字？',
                 options: [
                   { answer: '圓圓', isAnswer: true, isSelected: false },
