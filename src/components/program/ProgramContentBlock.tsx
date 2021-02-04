@@ -128,47 +128,51 @@ const ProgramContentBlock: React.FC<{
                 isMultipleChoice: false,
                 question: '學米的新辦公室在？',
                 options: [
-                  { answer: '吳興街', isAnswer: false },
-                  { answer: '板橋', isAnswer: false },
-                  { answer: '公園路', isAnswer: false },
-                  { answer: '台北車站', isAnswer: false },
-                  { answer: '承德路三段', isAnswer: true },
+                  { answer: '吳興街', isAnswer: false, isSelected: false },
+                  { answer: '板橋', isAnswer: false, isSelected: false },
+                  { answer: '公園路', isAnswer: false, isSelected: false },
+                  { answer: '台北車站', isAnswer: false, isSelected: false },
+                  { answer: '承德路三段', isAnswer: true, isSelected: false },
                 ],
                 detail: '學米共換了 4 次辦公室',
+                score: 20,
               },
               {
                 isMultipleChoice: false,
                 question: '誰是學米的老大',
                 options: [
-                  { answer: 'ZZ', isAnswer: false },
-                  { answer: 'KK', isAnswer: false },
-                  { answer: 'Louis', isAnswer: false },
-                  { answer: '以上皆是', isAnswer: true },
+                  { answer: 'ZZ', isAnswer: false, isSelected: false },
+                  { answer: 'KK', isAnswer: false, isSelected: false },
+                  { answer: 'Louis', isAnswer: false, isSelected: false },
+                  { answer: '以上皆是', isAnswer: true, isSelected: false },
                 ],
                 detail: '他們都是老大',
+                score: 50,
               },
               {
                 isMultipleChoice: true,
                 question: '哪些動物是哺乳動物？',
                 options: [
-                  { answer: '大象', isAnswer: true },
-                  { answer: '人', isAnswer: true },
-                  { answer: '鱷魚', isAnswer: false },
+                  { answer: '大象', isAnswer: true, isSelected: false },
+                  { answer: '人', isAnswer: true, isSelected: false },
+                  { answer: '鱷魚', isAnswer: false, isSelected: false },
                 ],
                 detail: '哺乳動物有體溫',
+                score: 100,
               },
               {
                 isMultipleChoice: true,
                 question: '哪些是貓的名字？',
                 options: [
-                  { answer: '圓圓', isAnswer: true },
-                  { answer: '萬萬', isAnswer: true },
-                  { answer: 'Lulu', isAnswer: true },
+                  { answer: '圓圓', isAnswer: true, isSelected: false },
+                  { answer: '萬萬', isAnswer: true, isSelected: false },
+                  { answer: 'Lulu', isAnswer: true, isSelected: false },
                 ],
                 detail: '這些都是貓的名字',
+                score: 200,
               },
             ]}
-            passingScore={90}
+            passingScore={300}
             nextProgramContentId={nextProgramContent?.id || ''}
           />
         </div>

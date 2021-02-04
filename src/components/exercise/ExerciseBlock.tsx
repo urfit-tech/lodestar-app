@@ -1,3 +1,4 @@
+import { includes } from 'ramda'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import AdminCard from '../common/AdminCard'
@@ -24,31 +25,25 @@ const ExerciseBlock: React.FC<{
     options: {
       answer: string
       isAnswer: boolean
+      isSelected: boolean
     }[]
+    score: number
   }[]
   passingScore: number
   allowReAnswer?: boolean
-}> = ({ exercises, allowReAnswer, passingScore, nextProgramContentId, title }) => {
+}> = ({ exercises: exerciseList, allowReAnswer, passingScore, nextProgramContentId, title }) => {
   const [status, setStatus] = useState<'answering' | 'result' | 'review'>('answering')
-  const [questionList, setQuestionList] = useState(
-    exercises.map(v => ({
-      ...v,
-      options: v.options.map(w => ({
-        ...w,
-        isSelected: false,
-      })),
-    })),
-  )
+  const [exercises, setExercises] = useState(exerciseList)
 
   let exerciseStatus
 
-  if (['answering', 'review'].includes(status)) {
+  if (includes(status, ['answering', 'review'])) {
     exerciseStatus = (
       <ExerciseQuestionBlock
         allowReAnswer={allowReAnswer}
         showDetail={status === 'review'}
-        questionList={questionList}
-        onSetAnswer={status === 'answering' ? setQuestionList : undefined}
+        exercises={exercises}
+        onSetAnswer={status === 'answering' ? setExercises : undefined}
         onSetStatusResult={() => setStatus('result')}
       />
     )
@@ -57,13 +52,12 @@ const ExerciseBlock: React.FC<{
   if (status === 'result') {
     exerciseStatus = (
       <ExerciseResultBlock
-        questionList={questionList}
+        exercises={exercises}
         passingScore={passingScore}
         nextProgramContentId={nextProgramContentId}
         onSetStatusAnswering={() => {
-          setStatus('answering')
-          setQuestionList(
-            exercises.map(v => ({
+          setExercises(
+            exerciseList.map(v => ({
               ...v,
               options: v.options.map(w => ({
                 ...w,
@@ -71,10 +65,9 @@ const ExerciseBlock: React.FC<{
               })),
             })),
           )
+          setStatus('answering')
         }}
-        onSetStatusReview={() => {
-          setStatus('review')
-        }}
+        onSetStatusReview={() => setStatus('review')}
       />
     )
   }

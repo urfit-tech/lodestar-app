@@ -11,7 +11,7 @@ const messages = defineMessages({
   score: { id: 'program.label.score', defaultMessage: '{score}分' },
   passExercise: { id: 'program.content.passExercise', defaultMessage: '恭喜！通過測驗' },
   failExercise: { id: 'program.content.failExercise', defaultMessage: '未通過測驗' },
-  answerCorrectly: { id: 'program.content.answerCorrectly', defaultMessage: '答對 {count} 題，共 {total} 題' },
+  answerCorrectly: { id: 'program.content.answerCorrectly', defaultMessage: '答對 {correctCount} 題，共 {total} 題' },
   passingScore: { id: 'program.content.passScore', defaultMessage: '需獲得 {passingScore} 分才能通過測驗' },
   nextCourse: { id: 'program.ui.nextCourse', defaultMessage: '繼續課程' },
   showDetail: { id: 'program.ui.showDetail', defaultMessage: '查看解答' },
@@ -48,7 +48,7 @@ const StyledCircularProgressLabel = styled(CircularProgressLabel)`
 `
 
 const ExerciseResultBlock: React.FC<{
-  questionList: {
+  exercises: {
     isMultipleChoice: boolean
     question: string
     options: {
@@ -57,12 +57,13 @@ const ExerciseResultBlock: React.FC<{
       isSelected: boolean
     }[]
     detail: string
+    score: number
   }[]
   passingScore: number
   nextProgramContentId: string
   onSetStatusAnswering: () => void
   onSetStatusReview: () => void
-}> = ({ questionList, passingScore, nextProgramContentId, onSetStatusAnswering, onSetStatusReview }) => {
+}> = ({ exercises, passingScore, nextProgramContentId, onSetStatusAnswering, onSetStatusReview }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const {
@@ -72,19 +73,20 @@ const ExerciseResultBlock: React.FC<{
     params: { programContentId: string }
     url: string
   } = useRouteMatch()
-  const score =
-    sum(
-      questionList.map(v => (v.options.filter(w => w.isSelected === w.isAnswer).length === v.options.length ? 100 : 0)),
-    ) / questionList.length
-  const count = questionList.filter(v => v.options.filter(w => w.isSelected === w.isAnswer).length === v.options.length)
-    .length
+  const totalScore = sum(exercises.map(v => v.score))
+  const score = Math.floor(
+    sum(exercises.map(v => (v.options.filter(w => w.isAnswer === w.isSelected).length / v.options.length) * v.score)),
+  )
+  const correctCount = exercises.filter(
+    v => v.options.filter(w => w.isSelected === w.isAnswer).length === v.options.length,
+  ).length
 
   return (
     <div className="d-flex flex-column align-items-center ">
       <StyledResultTitle className="mb-2">{formatMessage(messages.yourExerciseResult)}</StyledResultTitle>
       <StyledCircularProgress
         className="mb-3"
-        value={score}
+        value={(score / totalScore) * 100}
         size="120px"
         color={score >= passingScore ? 'var(--success)' : 'var(--warning)'}
       >
@@ -94,7 +96,9 @@ const ExerciseResultBlock: React.FC<{
         <StyledTitle>
           {score >= passingScore ? formatMessage(messages.passExercise) : formatMessage(messages.failExercise)}
         </StyledTitle>
-        <StyledAnswer>{formatMessage(messages.answerCorrectly, { count, total: questionList.length })}</StyledAnswer>
+        <StyledAnswer>
+          {formatMessage(messages.answerCorrectly, { correctCount, total: exercises.length })}
+        </StyledAnswer>
         {score < passingScore && (
           <StyledPassingScore className="mt-3">
             {formatMessage(messages.passingScore, { passingScore })}
