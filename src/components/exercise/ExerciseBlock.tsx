@@ -17,7 +17,6 @@ const StyledTitle = styled.h3`
 
 const ExerciseBlock: React.FC<{
   title: string
-  nextProgramContentId: string
   exercises: {
     question: string
     detail: string
@@ -30,9 +29,10 @@ const ExerciseBlock: React.FC<{
   }[]
   passingScore: number
   allowReAnswer?: boolean
-}> = ({ exercises: exerciseList, allowReAnswer, passingScore, nextProgramContentId, title }) => {
+  nextProgramContentId?: string
+}> = ({ exercises: defaultExercises, allowReAnswer, passingScore, nextProgramContentId, title }) => {
   const [status, setStatus] = useState<'answering' | 'result' | 'review'>('answering')
-  const [exercises, setExercises] = useState(exerciseList)
+  const [exercises, setExercises] = useState(defaultExercises)
 
   let exerciseStatus
 
@@ -56,7 +56,7 @@ const ExerciseBlock: React.FC<{
         nextProgramContentId={nextProgramContentId}
         onSetStatusAnswering={() => {
           setExercises(
-            exerciseList.map(v => ({
+            defaultExercises.map(v => ({
               ...v,
               options: v.options.map(w => ({
                 ...w,

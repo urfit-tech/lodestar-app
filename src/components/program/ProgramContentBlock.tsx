@@ -1,6 +1,6 @@
 import { Skeleton, Tabs } from 'antd'
 import BraftEditor from 'braft-editor'
-import { flatten } from 'ramda'
+import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -96,7 +96,7 @@ const ProgramContentBlock: React.FC<{
         />
       )}
 
-      {!['practice', 'exercise'].includes(programContent.programContentBody?.type || '') && (
+      {!includes(programContent.programContentBody?.type, ['practice', 'exercise']) && (
         <StyledContentBlock className="mb-3">
           <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
 
@@ -169,7 +169,7 @@ const ProgramContentBlock: React.FC<{
               },
             ]}
             passingScore={300}
-            nextProgramContentId={nextProgramContent?.id || ''}
+            nextProgramContentId={nextProgramContent?.id}
           />
         </div>
       )}

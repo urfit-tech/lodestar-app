@@ -59,9 +59,9 @@ const ExerciseResultBlock: React.FC<{
     score: number
   }[]
   passingScore: number
-  nextProgramContentId: string
   onSetStatusAnswering: () => void
   onSetStatusReview: () => void
+  nextProgramContentId?: string
 }> = ({ exercises, passingScore, nextProgramContentId, onSetStatusAnswering, onSetStatusReview }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -105,13 +105,15 @@ const ExerciseResultBlock: React.FC<{
         )}
       </div>
       <div className="d-flex flex-column">
-        <StyledButton
-          onClick={() => history.push(url.replace(currentContentId, nextProgramContentId))}
-          className="mb-2"
-          variant="primary"
-        >
-          {formatMessage(messages.nextCourse)}
-        </StyledButton>
+        {nextProgramContentId && (
+          <StyledButton
+            onClick={() => history.push(url.replace(currentContentId, nextProgramContentId))}
+            className="mb-2"
+            variant="primary"
+          >
+            {formatMessage(messages.nextCourse)}
+          </StyledButton>
+        )}
         <StyledButton onClick={() => onSetStatusReview()} className="mb-2" variant="outline">
           {formatMessage(messages.showDetail)}
         </StyledButton>
