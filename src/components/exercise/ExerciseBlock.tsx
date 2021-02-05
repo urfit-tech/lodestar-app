@@ -66,7 +66,7 @@ const ExerciseBlock: React.FC<{
         exercises={exercises}
         passingScore={passingScore}
         nextProgramContentId={nextProgramContentId}
-        onSetStatusAnswering={() => {
+        onReAnswer={() => {
           setExercises(
             defaultExercises.map(v => ({
               ...v,
@@ -78,7 +78,7 @@ const ExerciseBlock: React.FC<{
           )
           setStatus('answering')
         }}
-        onSetStatusReview={() => setStatus('review')}
+        onReview={() => setStatus('review')}
       />
     )
   }

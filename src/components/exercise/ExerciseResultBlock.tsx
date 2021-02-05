@@ -59,10 +59,10 @@ const ExerciseResultBlock: React.FC<{
     score: number
   }[]
   passingScore: number
-  onSetStatusAnswering: () => void
-  onSetStatusReview: () => void
+  onReAnswer: () => void
+  onReview: () => void
   nextProgramContentId?: string
-}> = ({ exercises, passingScore, nextProgramContentId, onSetStatusAnswering, onSetStatusReview }) => {
+}> = ({ exercises, passingScore, nextProgramContentId, onReAnswer, onReview }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const {
@@ -111,10 +111,10 @@ const ExerciseResultBlock: React.FC<{
             {formatMessage(messages.nextCourse)}
           </StyledButton>
         )}
-        <StyledButton onClick={() => onSetStatusReview()} className="mb-2" variant="outline">
+        <StyledButton onClick={() => onReview()} className="mb-2" variant="outline">
           {formatMessage(messages.showDetail)}
         </StyledButton>
-        <StyledButton onClick={() => onSetStatusAnswering()} variant="outline">
+        <StyledButton onClick={() => onReAnswer()} variant="outline">
           {formatMessage(messages.restartExercise)}
         </StyledButton>
       </div>
