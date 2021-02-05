@@ -42,8 +42,20 @@ const ExerciseBlock: React.FC<{
         allowReAnswer={allowReAnswer}
         showDetail={status === 'review'}
         exercises={exercises}
-        onSetAnswer={status === 'answering' ? setExercises : undefined}
-        onSetStatusResult={() => setStatus('result')}
+        onOptionSelect={
+          status === 'answering'
+            ? (currentIndex, newOptions) =>
+                setExercises(
+                  Object.assign([], exercises, {
+                    [currentIndex]: {
+                      ...exercises[currentIndex],
+                      options: newOptions,
+                    },
+                  }),
+                )
+            : undefined
+        }
+        onFinish={() => setStatus('result')}
       />
     )
   }

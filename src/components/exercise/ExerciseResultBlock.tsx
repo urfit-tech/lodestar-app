@@ -68,10 +68,7 @@ const ExerciseResultBlock: React.FC<{
   const {
     params: { programContentId: currentContentId },
     url,
-  }: {
-    params: { programContentId: string }
-    url: string
-  } = useRouteMatch()
+  } = useRouteMatch<{ programContentId: string; url: string }>()
   const totalScore = sum(exercises.map(v => v.score))
   const score = Math.floor(
     sum(exercises.map(v => (v.options.filter(w => w.isAnswer === w.isSelected).length / v.options.length) * v.score)),

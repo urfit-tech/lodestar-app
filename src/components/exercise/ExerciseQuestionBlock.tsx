@@ -54,27 +54,21 @@ const ExerciseQuestionBlock: React.FC<{
     detail: string
     score: number
   }[]
-  onSetStatusResult: () => void
+  onFinish: () => void
   allowReAnswer?: boolean
-  onSetAnswer?: React.Dispatch<
-    React.SetStateAction<
-      {
-        question: string
-        options: {
-          answer: string
-          isAnswer: boolean
-          isSelected: boolean
-        }[]
-        detail: string
-        score: number
-      }[]
-    >
-  >
-}> = ({ exercises, showDetail, allowReAnswer, onSetAnswer, onSetStatusResult }) => {
+  onOptionSelect?: (
+    currentIndex: number,
+    newOptions: {
+      answer: string
+      isAnswer: boolean
+      isSelected: boolean
+    }[],
+  ) => void
+}> = ({ exercises, showDetail, allowReAnswer, onOptionSelect, onFinish }) => {
   const { formatMessage } = useIntl()
   const [questionNo, setQuestionNo] = useState(1)
-  const exerciseIndex = questionNo - 1
-  const activeExercise = exercises[exerciseIndex]
+  const currentIndex = questionNo - 1
+  const activeExercise = exercises[currentIndex]
 
   return (
     <>
@@ -93,23 +87,19 @@ const ExerciseQuestionBlock: React.FC<{
             isSelected={v.isSelected}
             isAnswer={v.isAnswer}
             onClick={() => {
-              onSetAnswer?.(
-                Object.assign([], exercises, {
-                  [exerciseIndex]: {
-                    ...activeExercise,
-                    options: activeExercise.options.map((option, index, options) =>
-                      index === i
-                        ? {
-                            ...option,
-                            isSelected: !option.isSelected,
-                          }
-                        : {
-                            ...option,
-                            ...(options.filter(v => v.isAnswer).length === 1 && { isSelected: false }),
-                          },
-                    ),
-                  },
-                }),
+              onOptionSelect?.(
+                currentIndex,
+                activeExercise.options.map((option, index, options) =>
+                  index === i
+                    ? {
+                        ...option,
+                        isSelected: !option.isSelected,
+                      }
+                    : {
+                        ...option,
+                        ...(options.filter(v => v.isAnswer).length === 1 && { isSelected: false }),
+                      },
+                ),
               )
             }}
           >
@@ -154,7 +144,7 @@ const ExerciseQuestionBlock: React.FC<{
 
         {questionNo === exercises.length && (
           <Button
-            onClick={() => onSetStatusResult()}
+            onClick={() => onFinish()}
             variant="primary"
             disabled={!activeExercise.options.filter(v => v.isSelected).length}
           >
