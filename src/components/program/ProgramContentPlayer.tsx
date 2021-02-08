@@ -139,10 +139,7 @@ const ProgramContentPlayerCover: React.FC<{
   const {
     params: { programContentId: currentContentId },
     url,
-  }: {
-    params: { programContentId: string }
-    url: string
-  } = useRouteMatch()
+  } = useRouteMatch<{ programContentId: string }>()
   const { formatMessage } = useIntl()
 
   return (

@@ -54,8 +54,8 @@ const ExerciseQuestionBlock: React.FC<{
     detail: string
     score: number
   }[]
-  onFinish: () => void
   allowReAnswer?: boolean
+  onFinish?: () => void
   onOptionSelect?: (
     currentIndex: number,
     newOptions: {
@@ -66,14 +66,13 @@ const ExerciseQuestionBlock: React.FC<{
   ) => void
 }> = ({ exercises, showDetail, allowReAnswer, onOptionSelect, onFinish }) => {
   const { formatMessage } = useIntl()
-  const [questionNo, setQuestionNo] = useState(1)
-  const currentIndex = questionNo - 1
-  const activeExercise = exercises[currentIndex]
+  const [index, setIndex] = useState(0)
+  const activeExercise = exercises[index]
 
   return (
     <>
       <StyledQuestionCount>
-        {questionNo}/{exercises.length}
+        {index + 1}/{exercises.length}
       </StyledQuestionCount>
 
       <StyledQuestion className="mb-4">{activeExercise.question}</StyledQuestion>
@@ -88,7 +87,7 @@ const ExerciseQuestionBlock: React.FC<{
             isAnswer={v.isAnswer}
             onClick={() => {
               onOptionSelect?.(
-                currentIndex,
+                index,
                 activeExercise.options.map((option, index, options) =>
                   index === i
                     ? {
@@ -126,15 +125,15 @@ const ExerciseQuestionBlock: React.FC<{
       )}
 
       <div className="text-center">
-        {allowReAnswer && 1 < questionNo && (
-          <Button onClick={() => setQuestionNo(prev => prev - 1)} variant="outline" className="mr-2">
+        {allowReAnswer && 0 < index && (
+          <Button onClick={() => setIndex(prev => prev - 1)} variant="outline" className="mr-2">
             {formatMessage(messages.prevQuestion)}
           </Button>
         )}
 
-        {questionNo < exercises.length && (
+        {index < exercises.length - 1 && (
           <Button
-            onClick={() => setQuestionNo(prev => prev + 1)}
+            onClick={() => setIndex(prev => prev + 1)}
             disabled={!activeExercise.options.filter(v => v.isSelected).length}
             variant="primary"
           >
@@ -142,9 +141,9 @@ const ExerciseQuestionBlock: React.FC<{
           </Button>
         )}
 
-        {questionNo === exercises.length && (
+        {index === exercises.length - 1 && (
           <Button
-            onClick={() => onFinish()}
+            onClick={onFinish}
             variant="primary"
             disabled={!activeExercise.options.filter(v => v.isSelected).length}
           >
@@ -211,7 +210,7 @@ const ExerciseQuestionButton: React.FC<{
       <StyledButton
         isActive={isSelected}
         rightIcon={isSelected && <Icon as={TickIcon} />}
-        onClick={() => onClick()}
+        onClick={onClick}
         variant="outline"
         className="d-flex justify-content-between mb-3"
       >

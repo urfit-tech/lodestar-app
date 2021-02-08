@@ -59,16 +59,16 @@ const ExerciseResultBlock: React.FC<{
     score: number
   }[]
   passingScore: number
-  onReAnswer: () => void
-  onReview: () => void
   nextProgramContentId?: string
+  onReAnswer?: () => void
+  onReview?: () => void
 }> = ({ exercises, passingScore, nextProgramContentId, onReAnswer, onReview }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const {
     params: { programContentId: currentContentId },
     url,
-  } = useRouteMatch<{ programContentId: string; url: string }>()
+  } = useRouteMatch<{ programContentId: string }>()
   const totalScore = sum(exercises.map(v => v.score))
   const score = Math.floor(
     sum(exercises.map(v => (v.options.filter(w => w.isAnswer === w.isSelected).length / v.options.length) * v.score)),
@@ -111,10 +111,10 @@ const ExerciseResultBlock: React.FC<{
             {formatMessage(messages.nextCourse)}
           </StyledButton>
         )}
-        <StyledButton onClick={() => onReview()} className="mb-2" variant="outline">
+        <StyledButton onClick={onReview} className="mb-2" variant="outline">
           {formatMessage(messages.showDetail)}
         </StyledButton>
-        <StyledButton onClick={() => onReAnswer()} variant="outline">
+        <StyledButton onClick={onReAnswer} variant="outline">
           {formatMessage(messages.restartExercise)}
         </StyledButton>
       </div>
