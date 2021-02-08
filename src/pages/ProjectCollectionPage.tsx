@@ -92,6 +92,10 @@ const ProjectCollectionPage: React.FC = () => {
     }
   }, [projects])
 
+  useEffect(() => {
+    setSelectedCategoryId(defaultActive || null)
+  }, [defaultActive])
+
   const projectSections = [
     {
       id: 'funding',
@@ -119,7 +123,7 @@ const ProjectCollectionPage: React.FC = () => {
             <span>{title || pageTitle || formatMessage(messages.exploreProjects)}</span>
           </StyledBannerTitle>
 
-          {!noSelector && (
+          {noSelector || (
             <Button
               type={selectedCategoryId === null ? 'primary' : 'default'}
               shape="round"
@@ -129,7 +133,7 @@ const ProjectCollectionPage: React.FC = () => {
               {formatMessage(commonMessages.button.allCategory)}
             </Button>
           )}
-          {!noSelector &&
+          {noSelector ||
             categories.map(category => (
               <Button
                 key={category.id}
