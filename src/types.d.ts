@@ -6650,7 +6650,7 @@ export interface GET_PROJECT_INTRO_COLLECTION {
 }
 
 export interface GET_PROJECT_INTRO_COLLECTIONVariables {
-  categoryId?: string | null;
+  condition: project_bool_exp;
 }
 
 /* tslint:disable */

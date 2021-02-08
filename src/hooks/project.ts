@@ -218,19 +218,17 @@ export const useProject = (projectId: string) => {
 }
 
 export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
+  const condition = {
+    type: { _in: ['on-sale', 'pre-order', 'funding'] },
+    ...(filter?.categoryId && { project_categories: { category_id: { _eq: filter.categoryId } } }),
+  }
   const { loading, error, data, refetch } = useQuery<
     types.GET_PROJECT_INTRO_COLLECTION,
     types.GET_PROJECT_INTRO_COLLECTIONVariables
   >(
     gql`
-      query GET_PROJECT_INTRO_COLLECTION($categoryId: String) {
-        project(
-          where: {
-            type: { _in: ["on-sale", "pre-order", "funding"] }
-            _or: [{ _not: { project_categories: {} } }, { project_categories: { category_id: { _eq: $categoryId } } }]
-          }
-          order_by: { position: asc }
-        ) {
+      query GET_PROJECT_INTRO_COLLECTION($condition: project_bool_exp!) {
+        project(where: $condition, order_by: { position: asc }) {
           id
           type
           title
@@ -280,57 +278,53 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
         }
       }
     `,
-    { variables: { categoryId: filter?.categoryId } },
+    { variables: { condition } },
   )
 
   const projects: ProjectIntroProps[] =
     loading || error || !data
       ? []
-      : data.project
-          .filter(
-            project => !filter?.categoryId || project.project_categories.some(v => v.category.id === filter.categoryId),
-          )
-          .map(project => ({
-            id: project.id,
-            type: project.type,
-            title: project.title,
-            coverType: project.cover_type,
-            coverUrl: project.cover_url,
-            previewUrl: project.preview_url,
-            abstract: project.abstract,
-            introduction: project.introduction,
-            description: project.description,
-            targetAmount: project.target_amount,
-            targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
-            expiredAt: project.expired_at ? new Date(project.expired_at) : null,
-            isParticipantsVisible: project.is_participants_visible,
-            isCountdownTimerVisible: project.is_countdown_timer_visible,
-            totalSales: project.project_sales?.total_sales || 0,
-            enrollmentCount: sum(
-              project.project_plans.map(
-                projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0,
-              ),
+      : data.project.map(project => ({
+          id: project.id,
+          type: project.type,
+          title: project.title,
+          coverType: project.cover_type,
+          coverUrl: project.cover_url,
+          previewUrl: project.preview_url,
+          abstract: project.abstract,
+          introduction: project.introduction,
+          description: project.description,
+          targetAmount: project.target_amount,
+          targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
+          expiredAt: project.expired_at ? new Date(project.expired_at) : null,
+          isParticipantsVisible: project.is_participants_visible,
+          isCountdownTimerVisible: project.is_countdown_timer_visible,
+          totalSales: project.project_sales?.total_sales || 0,
+          enrollmentCount: sum(
+            project.project_plans.map(
+              projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0,
             ),
-            categories: project.project_categories.map(projectCategory => ({
-              id: projectCategory.category.id,
-              name: projectCategory.category.name,
-            })),
-            projectPlans: project.project_plans.map(project_plan => ({
-              id: project_plan.id,
-              coverUrl: project_plan.cover_url,
-              title: project_plan.title,
-              description: project_plan.description,
-              isSubscription: project_plan.is_subscription,
-              periodAmount: project_plan.period_amount,
-              periodType: project_plan.period_type,
-              listPrice: project_plan.list_price,
-              salePrice: project_plan.sale_price,
-              soldAt: project_plan.sold_at ? new Date(project_plan.sold_at) : null,
-              discountDownPrice: project_plan.discount_down_price,
-              createdAt: new Date(project_plan.created_at),
-              createAt: new Date(project_plan.created_at),
-            })),
-          }))
+          ),
+          categories: project.project_categories.map(projectCategory => ({
+            id: projectCategory.category.id,
+            name: projectCategory.category.name,
+          })),
+          projectPlans: project.project_plans.map(project_plan => ({
+            id: project_plan.id,
+            coverUrl: project_plan.cover_url,
+            title: project_plan.title,
+            description: project_plan.description,
+            isSubscription: project_plan.is_subscription,
+            periodAmount: project_plan.period_amount,
+            periodType: project_plan.period_type,
+            listPrice: project_plan.list_price,
+            salePrice: project_plan.sale_price,
+            soldAt: project_plan.sold_at ? new Date(project_plan.sold_at) : null,
+            discountDownPrice: project_plan.discount_down_price,
+            createdAt: new Date(project_plan.created_at),
+            createAt: new Date(project_plan.created_at),
+          })),
+        }))
 
   return {
     loadingProjects: loading,
