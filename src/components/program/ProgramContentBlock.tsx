@@ -1,6 +1,6 @@
 import { Skeleton, Tabs } from 'antd'
 import BraftEditor from 'braft-editor'
-import { flatten } from 'ramda'
+import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -12,6 +12,7 @@ import { useProgramContent, useProgramContentMaterial } from '../../hooks/progra
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
+import ExerciseBlock from '../exercise/ExerciseBlock'
 import IssueThreadBlock from '../issue/IssueThreadBlock'
 import PracticeDescriptionBlock from '../practice/PracticeDescriptionBlock'
 import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
@@ -95,7 +96,7 @@ const ProgramContentBlock: React.FC<{
         />
       )}
 
-      {programContent.programContentBody?.type !== 'practice' && (
+      {!includes(programContent.programContentBody?.type, ['practice', 'exercise']) && (
         <StyledContentBlock className="mb-3">
           <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
 
@@ -109,10 +110,66 @@ const ProgramContentBlock: React.FC<{
       {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
         <div className="mb-4">
           <PracticeDescriptionBlock
-            title={'未命名的內容標題'}
+            title={programContent.title}
             description={programContent.programContentBody?.description || ''}
             duration={23}
             score={4}
+          />
+        </div>
+      )}
+
+      {programContent.programContentBody?.type === 'exercise' && (
+        <div className="mb-4">
+          <ExerciseBlock
+            allowReAnswer
+            title={programContent.title}
+            exercises={[
+              {
+                question: '學米的新辦公室在？',
+                options: [
+                  { answer: '吳興街', isAnswer: false, isSelected: false },
+                  { answer: '板橋', isAnswer: false, isSelected: false },
+                  { answer: '公園路', isAnswer: false, isSelected: false },
+                  { answer: '台北車站', isAnswer: false, isSelected: false },
+                  { answer: '承德路三段', isAnswer: true, isSelected: false },
+                ],
+                detail: '學米共換了 4 次辦公室',
+                score: 20,
+              },
+              {
+                question: '誰是學米的老大',
+                options: [
+                  { answer: 'ZZ', isAnswer: false, isSelected: false },
+                  { answer: 'KK', isAnswer: false, isSelected: false },
+                  { answer: 'Louis', isAnswer: false, isSelected: false },
+                  { answer: '以上皆是', isAnswer: true, isSelected: false },
+                ],
+                detail: '他們都是老大',
+                score: 50,
+              },
+              {
+                question: '哪些動物是哺乳動物？',
+                options: [
+                  { answer: '大象', isAnswer: true, isSelected: false },
+                  { answer: '人', isAnswer: true, isSelected: false },
+                  { answer: '鱷魚', isAnswer: false, isSelected: false },
+                ],
+                detail: '哺乳動物有體溫',
+                score: 100,
+              },
+              {
+                question: '哪些是貓的名字？',
+                options: [
+                  { answer: '圓圓', isAnswer: true, isSelected: false },
+                  { answer: '萬萬', isAnswer: true, isSelected: false },
+                  { answer: 'Lulu', isAnswer: true, isSelected: false },
+                ],
+                detail: '這些都是貓的名字',
+                score: 200,
+              },
+            ]}
+            passingScore={300}
+            nextProgramContentId={nextProgramContent?.id}
           />
         </div>
       )}

@@ -103,6 +103,7 @@ const StyledItem = styled.div`
 `
 const messages = defineMessages({
   materialAmount: { id: 'program.content.materialAmount', defaultMessage: '{amount}個檔案' },
+  totalQuestion: { id: 'program.content.totalAmount', defaultMessage: '共 {count} 題' },
 })
 
 const ProgramContentMenu: React.FC<{
@@ -254,14 +255,19 @@ const SortBySectionItem: React.FC<{
       </StyledIconWrapper>
 
       <div className="d-flex">
-        <div className="mr-3">
+        <div className="mr-3 d-flex justify-content-center">
           {programContent.contentType === 'video' ? (
             <>
               <StyledIcon as={AiOutlineVideoCamera} className="mr-2" />
-              {durationFormatter(programContent.duration)}
+              <span>{durationFormatter(programContent.duration)}</span>
             </>
           ) : programContent.contentType === 'practice' ? (
             <StyledIcon as={PracticeIcon} className="mr-2" />
+          ) : programContent.contentType === 'exercise' ? (
+            <>
+              <StyledIcon as={PracticeIcon} className="mr-2" />
+              <span>{formatMessage(messages.totalQuestion, { count: 3 })}</span>
+            </>
           ) : (
             <StyledIcon as={AiOutlineFileText} />
           )}
