@@ -8265,6 +8265,7 @@ export enum app_constraint {
  * unique or primary key constraints on table "app_module"
  */
 export enum app_module_constraint {
+  app_module_app_id_module_id_key = "app_module_app_id_module_id_key",
   app_module_pkey = "app_module_pkey",
 }
 
@@ -8931,6 +8932,7 @@ export enum member_note_update_column {
   member_id = "member_id",
   metadata = "metadata",
   note = "note",
+  rejected_at = "rejected_at",
   status = "status",
   type = "type",
   updated_at = "updated_at",
@@ -8968,6 +8970,8 @@ export enum member_phone_constraint {
 export enum member_phone_update_column {
   created_at = "created_at",
   id = "id",
+  is_primary = "is_primary",
+  is_valid = "is_valid",
   member_id = "member_id",
   phone = "phone",
   updated_at = "updated_at",
@@ -9880,6 +9884,46 @@ export enum post_update_column {
   updated_at = "updated_at",
   video_url = "video_url",
   views = "views",
+}
+
+/**
+ * unique or primary key constraints on table "practice"
+ */
+export enum practice_constraint {
+  practice_pkey = "practice_pkey",
+}
+
+/**
+ * unique or primary key constraints on table "practice_reaction"
+ */
+export enum practice_reaction_constraint {
+  practice_reaction_pkey = "practice_reaction_pkey",
+}
+
+/**
+ * update columns of table "practice_reaction"
+ */
+export enum practice_reaction_update_column {
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
+  practice_id = "practice_id",
+}
+
+/**
+ * update columns of table "practice"
+ */
+export enum practice_update_column {
+  cover_url = "cover_url",
+  created_at = "created_at",
+  description = "description",
+  id = "id",
+  is_deleted = "is_deleted",
+  member_id = "member_id",
+  program_content_id = "program_content_id",
+  reviewed_at = "reviewed_at",
+  title = "title",
+  updated_at = "updated_at",
 }
 
 /**
@@ -12988,6 +13032,7 @@ export interface member_contract_bool_exp {
   agreed_at?: timestamptz_comparison_exp | null;
   agreed_ip?: String_comparison_exp | null;
   agreed_options?: jsonb_comparison_exp | null;
+  author?: member_bool_exp | null;
   author_id?: String_comparison_exp | null;
   contract?: contract_bool_exp | null;
   contract_id?: uuid_comparison_exp | null;
@@ -13009,6 +13054,7 @@ export interface member_contract_insert_input {
   agreed_at?: any | null;
   agreed_ip?: string | null;
   agreed_options?: any | null;
+  author?: member_obj_rel_insert_input | null;
   author_id?: string | null;
   contract?: contract_obj_rel_insert_input | null;
   contract_id?: any | null;
@@ -13172,6 +13218,7 @@ export interface member_note_bool_exp {
   member_note_attachments?: member_note_attachment_bool_exp | null;
   metadata?: jsonb_comparison_exp | null;
   note?: String_comparison_exp | null;
+  rejected_at?: timestamptz_comparison_exp | null;
   status?: String_comparison_exp | null;
   type?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -13192,6 +13239,7 @@ export interface member_note_insert_input {
   member_note_attachments?: member_note_attachment_arr_rel_insert_input | null;
   metadata?: any | null;
   note?: string | null;
+  rejected_at?: any | null;
   status?: string | null;
   type?: string | null;
   updated_at?: any | null;
@@ -13306,6 +13354,8 @@ export interface member_phone_bool_exp {
   _or?: (member_phone_bool_exp | null)[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
+  is_primary?: Boolean_comparison_exp | null;
+  is_valid?: Boolean_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   phone?: String_comparison_exp | null;
@@ -13318,6 +13368,8 @@ export interface member_phone_bool_exp {
 export interface member_phone_insert_input {
   created_at?: any | null;
   id?: any | null;
+  is_primary?: boolean | null;
+  is_valid?: boolean | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   phone?: string | null;
@@ -15771,6 +15823,158 @@ export interface post_tag_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "practice"
+ */
+export interface practice_arr_rel_insert_input {
+  data: practice_insert_input[];
+  on_conflict?: practice_on_conflict | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "practice_attachment"
+ */
+export interface practice_attachment_arr_rel_insert_input {
+  data: practice_attachment_insert_input[];
+}
+
+/**
+ * Boolean expression to filter rows from the table "practice_attachment". All fields are combined with a logical 'AND'.
+ */
+export interface practice_attachment_bool_exp {
+  _and?: (practice_attachment_bool_exp | null)[] | null;
+  _not?: practice_attachment_bool_exp | null;
+  _or?: (practice_attachment_bool_exp | null)[] | null;
+  app_id?: String_comparison_exp | null;
+  attachment?: attachment_bool_exp | null;
+  attachment_id?: uuid_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  data?: jsonb_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
+  practice?: practice_bool_exp | null;
+  practice_id?: uuid_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "practice_attachment"
+ */
+export interface practice_attachment_insert_input {
+  app_id?: string | null;
+  attachment?: attachment_obj_rel_insert_input | null;
+  attachment_id?: any | null;
+  created_at?: any | null;
+  data?: any | null;
+  options?: any | null;
+  practice?: practice_obj_rel_insert_input | null;
+  practice_id?: any | null;
+  updated_at?: any | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "practice". All fields are combined with a logical 'AND'.
+ */
+export interface practice_bool_exp {
+  _and?: (practice_bool_exp | null)[] | null;
+  _not?: practice_bool_exp | null;
+  _or?: (practice_bool_exp | null)[] | null;
+  attachments?: practice_attachment_bool_exp | null;
+  cover_url?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  description?: String_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  is_deleted?: Boolean_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  practice_reactions?: practice_reaction_bool_exp | null;
+  program_content?: program_content_bool_exp | null;
+  program_content_id?: uuid_comparison_exp | null;
+  reviewed_at?: timestamptz_comparison_exp | null;
+  title?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "practice"
+ */
+export interface practice_insert_input {
+  attachments?: practice_attachment_arr_rel_insert_input | null;
+  cover_url?: string | null;
+  created_at?: any | null;
+  description?: string | null;
+  id?: any | null;
+  is_deleted?: boolean | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  practice_reactions?: practice_reaction_arr_rel_insert_input | null;
+  program_content?: program_content_obj_rel_insert_input | null;
+  program_content_id?: any | null;
+  reviewed_at?: any | null;
+  title?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "practice"
+ */
+export interface practice_obj_rel_insert_input {
+  data: practice_insert_input;
+  on_conflict?: practice_on_conflict | null;
+}
+
+/**
+ * on conflict condition type for table "practice"
+ */
+export interface practice_on_conflict {
+  constraint: practice_constraint;
+  update_columns: practice_update_column[];
+  where?: practice_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "practice_reaction"
+ */
+export interface practice_reaction_arr_rel_insert_input {
+  data: practice_reaction_insert_input[];
+  on_conflict?: practice_reaction_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "practice_reaction". All fields are combined with a logical 'AND'.
+ */
+export interface practice_reaction_bool_exp {
+  _and?: (practice_reaction_bool_exp | null)[] | null;
+  _not?: practice_reaction_bool_exp | null;
+  _or?: (practice_reaction_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  practice?: practice_bool_exp | null;
+  practice_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "practice_reaction"
+ */
+export interface practice_reaction_insert_input {
+  created_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  practice?: practice_obj_rel_insert_input | null;
+  practice_id?: any | null;
+}
+
+/**
+ * on conflict condition type for table "practice_reaction"
+ */
+export interface practice_reaction_on_conflict {
+  constraint: practice_reaction_constraint;
+  update_columns: practice_reaction_update_column[];
+  where?: practice_reaction_bool_exp | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "product". All fields are combined with a logical 'AND'.
  */
 export interface product_bool_exp {
@@ -16130,6 +16334,46 @@ export interface program_content_arr_rel_insert_input {
 }
 
 /**
+ * input type for inserting array relation for remote table "program_content_attachment"
+ */
+export interface program_content_attachment_arr_rel_insert_input {
+  data: program_content_attachment_insert_input[];
+}
+
+/**
+ * Boolean expression to filter rows from the table "program_content_attachment". All fields are combined with a logical 'AND'.
+ */
+export interface program_content_attachment_bool_exp {
+  _and?: (program_content_attachment_bool_exp | null)[] | null;
+  _not?: program_content_attachment_bool_exp | null;
+  _or?: (program_content_attachment_bool_exp | null)[] | null;
+  app_id?: String_comparison_exp | null;
+  attachment?: attachment_bool_exp | null;
+  attachment_id?: uuid_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  data?: jsonb_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
+  program_content?: program_content_bool_exp | null;
+  program_content_id?: uuid_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_content_attachment"
+ */
+export interface program_content_attachment_insert_input {
+  app_id?: string | null;
+  attachment?: attachment_obj_rel_insert_input | null;
+  attachment_id?: any | null;
+  created_at?: any | null;
+  data?: any | null;
+  options?: any | null;
+  program_content?: program_content_obj_rel_insert_input | null;
+  program_content_id?: any | null;
+  updated_at?: any | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "program_content_body". All fields are combined with a logical 'AND'.
  */
 export interface program_content_body_bool_exp {
@@ -16191,6 +16435,8 @@ export interface program_content_bool_exp {
   metadata?: jsonb_comparison_exp | null;
   notified_at?: timestamptz_comparison_exp | null;
   position?: Int_comparison_exp | null;
+  practices?: practice_bool_exp | null;
+  program_content_attachments?: program_content_attachment_bool_exp | null;
   program_content_body?: program_content_body_bool_exp | null;
   program_content_materials?: program_content_material_bool_exp | null;
   program_content_plans?: program_content_plan_bool_exp | null;
@@ -16234,6 +16480,8 @@ export interface program_content_insert_input {
   metadata?: any | null;
   notified_at?: any | null;
   position?: number | null;
+  practices?: practice_arr_rel_insert_input | null;
+  program_content_attachments?: program_content_attachment_arr_rel_insert_input | null;
   program_content_body?: program_content_body_obj_rel_insert_input | null;
   program_content_materials?: program_content_material_arr_rel_insert_input | null;
   program_content_plans?: program_content_plan_arr_rel_insert_input | null;

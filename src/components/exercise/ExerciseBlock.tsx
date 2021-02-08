@@ -1,4 +1,4 @@
-import { includes } from 'ramda'
+import { adjust, includes } from 'ramda'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import AdminCard from '../common/AdminCard'
@@ -46,12 +46,14 @@ const ExerciseBlock: React.FC<{
           status === 'answering'
             ? (currentIndex, newOptions) =>
                 setExercises(
-                  Object.assign([], exercises, {
-                    [currentIndex]: {
-                      ...exercises[currentIndex],
+                  adjust(
+                    currentIndex,
+                    exercise => ({
+                      ...exercise,
                       options: newOptions,
-                    },
-                  }),
+                    }),
+                    exercises,
+                  ),
                 )
             : undefined
         }
