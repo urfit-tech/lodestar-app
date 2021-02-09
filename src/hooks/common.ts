@@ -317,3 +317,23 @@ const GET_PRODUCT_SIMPLE = gql`
     }
   }
 `
+
+export const useReferrer = (email: string) => {
+  const { loading, error, data, refetch } = useQuery<types.SEARCH_REFERRER, types.SEARCH_REFERRERVariables>(
+    gql`
+      query SEARCH_REFERRER($search: String!) {
+        member_public(where: { email: { _eq: $search } }) {
+          id
+        }
+      }
+    `,
+    { variables: { search: email } },
+  )
+
+  return {
+    loadingMemberId: loading,
+    errorMemberId: error,
+    memberId: data?.member_public[0]?.id || null,
+    refetchMemberId: refetch,
+  }
+}

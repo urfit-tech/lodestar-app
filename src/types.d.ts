@@ -3724,6 +3724,31 @@ export interface GET_PRODUCT_SIMPLEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: SEARCH_REFERRER
+// ====================================================
+
+export interface SEARCH_REFERRER_member_public {
+  __typename: "member_public";
+  id: string | null;
+}
+
+export interface SEARCH_REFERRER {
+  /**
+   * fetch data from the table: "member_public"
+   */
+  member_public: SEARCH_REFERRER_member_public[];
+}
+
+export interface SEARCH_REFERRERVariables {
+  search: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_COUPON_COLLECTION
 // ====================================================
 
@@ -13443,6 +13468,7 @@ export interface member_public_bool_exp {
   abstract?: String_comparison_exp | null;
   app_id?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
+  email?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
   member_specialities?: member_speciality_bool_exp | null;
   metadata?: jsonb_comparison_exp | null;

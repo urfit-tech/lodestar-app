@@ -40,5 +40,6 @@ export type Module =
   | 'tempo_delivery'
   | 'voucher'
   | 'creator_display'
+  | 'referrer'
 
 export type ProductRoleName = 'owner' | 'instructor' | 'assistant' | 'app-owner'

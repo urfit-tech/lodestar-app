@@ -209,6 +209,7 @@ export const commonMessages = {
     email: { id: 'settings.label.email', defaultMessage: '信箱' },
     phone: { id: 'checkout.label.phone', defaultMessage: '手機' },
     couponTitle: { id: 'checkout.label.title', defaultMessage: '折價方案名稱' },
+    referrer: { id: 'common.label.referrer', defaultMessage: '推薦人' },
   }),
   form: {
     message: defineMessages({

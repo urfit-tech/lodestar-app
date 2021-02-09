@@ -1,4 +1,5 @@
-import { Button, Divider, Form, Skeleton } from 'antd'
+import { Icon, InputGroup, InputRightElement } from '@chakra-ui/react'
+import { Button, Divider, Form, Input, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { ModalProps } from 'antd/lib/modal'
 import { camelCase } from 'lodash'
@@ -14,7 +15,10 @@ import ProductItem from '../../components/common/ProductItem'
 import { notEmpty } from '../../helpers'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
+import { useReferrer } from '../../hooks/common'
 import { useUpdateMemberMetadata } from '../../hooks/member'
+import { ReactComponent as CheckedCircleBoxIcon } from '../../images/checked-circle-box.svg'
+import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 import { shippingOptionIdProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { ShippingMethodProps } from '../../types/merchandise'
@@ -27,7 +31,6 @@ import {
   StyledWarningText,
   StyledWrapper,
 } from './CheckoutProductModal.styled'
-
 const CheckoutProductItem: React.FC<{
   name: string
   price: number
@@ -78,6 +81,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
   const history = useHistory()
   const [sharingCode] = useQueryParam('sharing', StringParam)
   const updateMemberMetadata = useUpdateMemberMetadata()
+  const { enabledModules } = useApp()
 
   const [isModalVisible, setModalVisible] = useState(false)
 
@@ -123,23 +127,34 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
+  const referrerRef = useRef<HTMLDivElement | null>(null)
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
   const [isValidating, setIsValidating] = useState(false)
+  const [referrerEmail, setReferrerEmail] = useState('')
+
+  const { loadingMemberId, memberId } = useReferrer(referrerEmail)
+  const referrerStatus: 'success' | 'error' | undefined =
+    referrerEmail && !loadingMemberId ? (memberId ? 'success' : 'error') : undefined
 
   // checkout
   const [productId, setProductId] = useState<string>(defaultProductId || '')
   const productIds = [productId].filter(notEmpty)
   const discountId = form.getFieldValue('discountId')
-  const productOptions: { [ProductId: string]: any } = {}
-  productIds.forEach(productId => {
-    productOptions[productId] = {
-      startedAt,
-      from: window.location.pathname,
-      sharingCode,
-    }
-  })
+  const productOptions = productIds.reduce(
+    (accumulator, productId) => ({
+      ...accumulator,
+      [productId]: {
+        startedAt,
+        from: window.location.pathname,
+        sharingCode,
+        referrerEmail,
+      },
+    }),
+    {} as { [ProductId: string]: any },
+  )
+
   const { check, orderPlacing, orderChecking, placeOrder, totalPrice } = useCheck(
     productIds,
     discountId,
@@ -168,6 +183,13 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
         return
       } else if (!isValidInvoice) {
         invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
+        return
+      }
+      if (referrerEmail && !referrerStatus) {
+        return
+      }
+      if (referrerStatus === 'error') {
+        referrerRef.current?.scrollIntoView({ behavior: 'smooth' })
         return
       }
 
@@ -240,11 +262,29 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
               />
             </div>
 
-            <div className="mb-5">
+            <div className="mb-3">
               {form.getFieldDecorator('discountId', {
                 initialValue: discountId,
               })(<DiscountSelectionCard check={check} />)}
             </div>
+
+            {enabledModules.referrer && (
+              <div className="row" ref={referrerRef}>
+                <div className="col-12">
+                  <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
+                </div>
+                <div className="col-12 col-lg-6">
+                  <InputGroup>
+                    <Input onBlur={e => setReferrerEmail(e.target.value)} />
+                    {referrerStatus === 'success' ? (
+                      <InputRightElement children={<Icon as={CheckedCircleBoxIcon} />} />
+                    ) : referrerStatus === 'error' ? (
+                      <InputRightElement children={<Icon as={ExclamationCircleIcon} />} />
+                    ) : null}
+                  </InputGroup>
+                </div>
+              </div>
+            )}
 
             <Divider className="mb-3" />
 

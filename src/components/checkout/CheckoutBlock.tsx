@@ -1,4 +1,4 @@
-import { Icon } from '@chakra-ui/react'
+import { Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { message, Skeleton, Typography } from 'antd'
 import { prop, sum } from 'ramda'
 import React, { useContext, useRef, useState } from 'react'
@@ -6,6 +6,7 @@ import ReactPixel from 'react-facebook-pixel'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
 import { useAuth } from '../../components/auth/AuthContext'
 import CartProductTableCard from '../../components/checkout/CartProductTableCard'
 import CheckoutCard from '../../components/checkout/CheckoutCard'
@@ -20,12 +21,20 @@ import AdminCard from '../../components/common/AdminCard'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
-import { checkoutMessages } from '../../helpers/translation'
+import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck, useMemberShop, usePhysicalProductCollection } from '../../hooks/checkout'
+import { useReferrer } from '../../hooks/common'
 import { useUpdateMemberMetadata } from '../../hooks/member'
+import { ReactComponent as CheckedCircleBoxIcon } from '../../images/checked-circle-box.svg'
+import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 import { CartProductProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
+import { CommonTitleMixin } from '../common'
+
+const StyledTitle = styled.div`
+  ${CommonTitleMixin}
+`
 
 const CheckoutBlock: React.FC<{
   member: MemberProps | null
@@ -35,7 +44,7 @@ const CheckoutBlock: React.FC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticating, isAuthenticated } = useAuth()
-  const { settings } = useApp()
+  const { settings, enabledModules } = useApp()
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
@@ -86,18 +95,29 @@ const CheckoutBlock: React.FC<{
 
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
+  const referrerRef = useRef<HTMLDivElement | null>(null)
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
   const [isValidating, setIsValidating] = useState(false)
+  const [referrerEmail, setReferrerEmail] = useState('')
+
+  const { loadingMemberId, memberId } = useReferrer(referrerEmail)
+  const referrerStatus: 'success' | 'error' | undefined =
+    referrerEmail && !loadingMemberId ? (memberId ? 'success' : 'error') : undefined
 
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
-  const cartProductOptions: { [ProductId: string]: any } = cartProducts.reduce((accumulator, currentValue) => {
-    const newOptions: { [ProductId: string]: any } = { ...accumulator }
-    newOptions[currentValue.productId] = currentValue.options
-    return newOptions
-  }, {})
+  const cartProductOptions = cartProducts.reduce(
+    (accumulator, currentValue) => ({
+      ...accumulator,
+      [currentValue.productId]: {
+        ...currentValue.options,
+        referrerEmail,
+      },
+    }),
+    {} as { [ProductId: string]: any },
+  )
   const { check, orderChecking, placeOrder, orderPlacing } = useCheck(
     cartProducts.map(cartProduct => cartProduct.productId),
     discountId,
@@ -149,6 +169,14 @@ const CheckoutBlock: React.FC<{
       return
     } else if (!isValidInvoice) {
       invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+
+    if (referrerEmail && !referrerStatus) {
+      return
+    }
+    if (referrerStatus === 'error') {
+      referrerRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
 
@@ -210,7 +238,26 @@ const CheckoutBlock: React.FC<{
 
       {cartProducts.length !== 0 && (
         <AdminCard className="mb-3">
-          <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+          <div className="mb-3">
+            <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+          </div>
+          {enabledModules.referrer && (
+            <div className="row" ref={referrerRef}>
+              <div className="col-12">
+                <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
+              </div>
+              <div className="col-12 col-lg-6">
+                <InputGroup>
+                  <Input onBlur={e => setReferrerEmail(e.target.value)} />
+                  {referrerStatus === 'success' ? (
+                    <InputRightElement children={<Icon as={CheckedCircleBoxIcon} />} />
+                  ) : referrerStatus === 'error' ? (
+                    <InputRightElement children={<Icon as={ExclamationCircleIcon} />} />
+                  ) : null}
+                </InputGroup>
+              </div>
+            </div>
+          )}
         </AdminCard>
       )}
 
