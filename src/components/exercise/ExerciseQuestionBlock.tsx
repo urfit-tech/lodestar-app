@@ -161,6 +161,10 @@ const StyledButton = styled(Button)<{ isActive: boolean; isCorrect: boolean; isE
     background: white;
     border: ${props => props.isActive && `1px solid var(--gray-darker)`};
 
+    .chakra-button__icon {
+      display: inline-flex;
+    }
+
     ${props =>
       props.isCorrect &&
       css`
@@ -212,7 +216,7 @@ const ExerciseQuestionButton: React.FC<{
         rightIcon={isSelected && <Icon as={TickIcon} />}
         onClick={onClick}
         variant="outline"
-        className="d-flex justify-content-between mb-3"
+        className="justify-content-between mb-3"
       >
         {children}
       </StyledButton>

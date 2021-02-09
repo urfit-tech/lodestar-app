@@ -9,10 +9,11 @@ import { CommonLargeTextMixin, CommonTextMixin, CommonTitleMixin } from '../comm
 const messages = defineMessages({
   yourExerciseResult: { id: 'program.label.yourExerciseResult', defaultMessage: '你的測驗成果' },
   score: { id: 'program.label.score', defaultMessage: '{score}分' },
-  passExercise: { id: 'program.content.passExercise', defaultMessage: '恭喜！通過測驗' },
-  failExercise: { id: 'program.content.failExercise', defaultMessage: '未通過測驗' },
-  answerCorrectly: { id: 'program.content.answerCorrectly', defaultMessage: '答對 {correctCount} 題，共 {total} 題' },
-  passingScore: { id: 'program.content.passScore', defaultMessage: '需獲得 {passingScore} 分才能通過測驗' },
+  passExercise: { id: 'program.text.passExercise', defaultMessage: '恭喜！通過測驗' },
+  failExercise: { id: 'program.text.failExercise', defaultMessage: '未通過測驗' },
+  answerCorrectly: { id: 'program.text.answerCorrectly', defaultMessage: '答對 {correctCount} 題，共 {total} 題' },
+  maxScore: { id: 'program.text.maxScore', defaultMessage: '此測驗滿分為 {maxScore} 分' },
+  passingScore: { id: 'program.text.passScore', defaultMessage: '需獲得 {passingScore} 分才能通過測驗' },
   nextCourse: { id: 'program.ui.nextCourse', defaultMessage: '繼續課程' },
   showDetail: { id: 'program.ui.showDetail', defaultMessage: '查看解答' },
   restartExercise: { id: 'program.ui.restartExercise', defaultMessage: '重新測驗' },
@@ -95,11 +96,12 @@ const ExerciseResultBlock: React.FC<{
         <StyledAnswer>
           {formatMessage(messages.answerCorrectly, { correctCount, total: exercises.length })}
         </StyledAnswer>
-        {score < passingScore && (
-          <StyledPassingScore className="mt-3">
-            {formatMessage(messages.passingScore, { passingScore })}
-          </StyledPassingScore>
-        )}
+
+        <StyledPassingScore className="mt-3">
+          {score < passingScore
+            ? formatMessage(messages.passingScore, { passingScore })
+            : formatMessage(messages.maxScore, { maxScore: totalScore })}
+        </StyledPassingScore>
       </div>
       <div className="d-flex flex-column">
         {nextProgramContentId && (

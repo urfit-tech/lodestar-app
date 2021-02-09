@@ -10,6 +10,7 @@ import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
+import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps } from '../../types/program'
 
 const StyledIcon = styled(Icon)`
@@ -265,7 +266,7 @@ const SortBySectionItem: React.FC<{
             <StyledIcon as={PracticeIcon} className="mr-2" />
           ) : programContent.contentType === 'exercise' ? (
             <>
-              <StyledIcon as={PracticeIcon} className="mr-2" />
+              <StyledIcon as={QuizIcon} className="mr-2" />
               <span>{formatMessage(messages.totalQuestion, { count: 3 })}</span>
             </>
           ) : (
