@@ -33,12 +33,12 @@ const OrderPage: React.FC = () => {
       const discountPrice = order.order_discounts_aggregate?.aggregate?.sum?.price || 0
       const shippingFee = (order.shipping && order.shipping['fee']) || 0
       settings['tracking.fb_pixel_id'] &&
-        order.status === 'SUCCESS' &&
+        order.order_status?.status === 'SUCCESS' &&
         ReactPixel.track('Purchase', {
           value: productPrice - discountPrice - shippingFee,
           currency: 'TWD',
         })
-      if (settings['tracking.ga_id'] && order.status === 'SUCCESS') {
+      if (settings['tracking.ga_id'] && order.order_status?.status === 'SUCCESS') {
         ;(window as any).dataLayer = (window as any).dataLayer || []
         ;(window as any).dataLayer.push({
           transactionId: order.id,
@@ -115,7 +115,7 @@ const OrderPage: React.FC = () => {
       >
         <AdminCard style={{ paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
           <div className="d-flex flex-column align-items-center justify-content-center px-sm-5">
-            {data.order_log_by_pk.status === 'SUCCESS' ? (
+            {data.order_log_by_pk.order_status?.status === 'SUCCESS' ? (
               <>
                 <Icon
                   className="mb-5"
@@ -163,7 +163,9 @@ const GET_ORDERS_PRODUCT = gql`
     order_log_by_pk(id: $orderId) {
       id
       message
-      status
+      order_status {
+        status
+      }
       order_discounts_aggregate {
         aggregate {
           sum {

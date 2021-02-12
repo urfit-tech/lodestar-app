@@ -248,7 +248,9 @@ const useOrderLogCollection = (memberId: string) => {
         order_log(order_by: { created_at: desc }, where: { member_id: { _eq: $memberId } }) {
           id
           created_at
-          status
+          order_status {
+            status
+          }
           shipping
           order_products {
             id
@@ -285,7 +287,7 @@ const useOrderLogCollection = (memberId: string) => {
           id: orderLog.id,
           key: orderLog.id,
           createdAt: orderLog.created_at,
-          status: orderLog.status,
+          status: orderLog.order_status?.status || 'UNKNOWN',
           totalPrice:
             sum(orderLog.order_products.map(prop('price'))) -
             sum(orderLog.order_discounts.map(prop('price'))) +

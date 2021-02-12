@@ -1329,6 +1329,11 @@ export interface GET_PROGRAM_ROLEVariables {
 // GraphQL query operation: GET_MEMBER_ORDERS
 // ====================================================
 
+export interface GET_MEMBER_ORDERS_order_log_order_status {
+  __typename: "order_status";
+  status: string | null;
+}
+
 export interface GET_MEMBER_ORDERS_order_log_order_products_product {
   __typename: "product";
   /**
@@ -1374,7 +1379,10 @@ export interface GET_MEMBER_ORDERS_order_log {
   __typename: "order_log";
   id: string;
   created_at: any;
-  status: string;
+  /**
+   * An object relationship
+   */
+  order_status: GET_MEMBER_ORDERS_order_log_order_status | null;
   shipping: any | null;
   /**
    * An array relationship
@@ -5797,7 +5805,7 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
   __typename: "program_content_material";
   id: any;
   data: any | null;
-  created_at: any;
+  created_at: any | null;
 }
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents {
@@ -5935,7 +5943,7 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_mater
   __typename: "program_content_material";
   id: any;
   data: any | null;
-  created_at: any;
+  created_at: any | null;
 }
 
 export interface GET_PROGRAM_CONTENT_program_content_by_pk {
@@ -6098,7 +6106,7 @@ export interface GET_PROGRAM_CONTENT_MATERIAL_program_content_material {
   __typename: "program_content_material";
   id: any;
   data: any | null;
-  created_at: any;
+  created_at: any | null;
 }
 
 export interface GET_PROGRAM_CONTENT_MATERIAL {
@@ -7364,6 +7372,11 @@ export interface GET_MEMBER_PROGRAM_ISSUESVariables {
 // GraphQL query operation: GET_ORDERS_PRODUCT
 // ====================================================
 
+export interface GET_ORDERS_PRODUCT_order_log_by_pk_order_status {
+  __typename: "order_status";
+  status: string | null;
+}
+
 export interface GET_ORDERS_PRODUCT_order_log_by_pk_order_discounts_aggregate_aggregate_sum {
   __typename: "order_discount_sum_fields";
   price: any | null;
@@ -7416,7 +7429,10 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk {
   __typename: "order_log";
   id: string;
   message: string | null;
-  status: string;
+  /**
+   * An object relationship
+   */
+  order_status: GET_ORDERS_PRODUCT_order_log_by_pk_order_status | null;
   /**
    * An aggregated array relationship
    */
@@ -8447,6 +8463,25 @@ export enum attachment_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "attend"
+ */
+export enum attend_constraint {
+  attend_pkey = "attend_pkey",
+}
+
+/**
+ * update columns of table "attend"
+ */
+export enum attend_update_column {
+  created_at = "created_at",
+  ended_at = "ended_at",
+  id = "id",
+  member_id = "member_id",
+  started_at = "started_at",
+  updated_at = "updated_at",
+}
+
+/**
  * unique or primary key constraints on table "card"
  */
 export enum card_constraint {
@@ -8751,6 +8786,26 @@ export enum creator_category_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "creator_display"
+ */
+export enum creator_display_constraint {
+  creator_display_member_id_block_id_key = "creator_display_member_id_block_id_key",
+  creator_display_pkey = "creator_display_pkey",
+}
+
+/**
+ * update columns of table "creator_display"
+ */
+export enum creator_display_update_column {
+  block_id = "block_id",
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
+  position = "position",
+  updated_at = "updated_at",
+}
+
+/**
  * unique or primary key constraints on table "currency"
  */
 export enum currency_constraint {
@@ -8765,6 +8820,25 @@ export enum currency_update_column {
   label = "label",
   name = "name",
   unit = "unit",
+}
+
+/**
+ * unique or primary key constraints on table "exercise"
+ */
+export enum exercise_constraint {
+  exercise_pkey = "exercise_pkey",
+}
+
+/**
+ * update columns of table "exercise"
+ */
+export enum exercise_update_column {
+  answer = "answer",
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
+  program_content_id = "program_content_id",
+  updated_at = "updated_at",
 }
 
 /**
@@ -9426,7 +9500,6 @@ export enum order_log_update_column {
   payment_model = "payment_model",
   retried_at = "retried_at",
   shipping = "shipping",
-  status = "status",
   updated_at = "updated_at",
 }
 
@@ -10514,6 +10587,103 @@ export enum property_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "review"
+ */
+export enum review_constraint {
+  review_pkey = "review_pkey",
+}
+
+/**
+ * unique or primary key constraints on table "review_reply"
+ */
+export enum review_reply_constraint {
+  review_reply_pkey = "review_reply_pkey",
+}
+
+/**
+ * update columns of table "review_reply"
+ */
+export enum review_reply_update_column {
+  content = "content",
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
+  review_id = "review_id",
+  updated_at = "updated_at",
+}
+
+/**
+ * update columns of table "review"
+ */
+export enum review_update_column {
+  app_id = "app_id",
+  content = "content",
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
+  path = "path",
+  private_content = "private_content",
+  score = "score",
+  title = "title",
+  updated_at = "updated_at",
+}
+
+/**
+ * unique or primary key constraints on table "role"
+ */
+export enum role_constraint {
+  role_pkey = "role_pkey",
+}
+
+/**
+ * unique or primary key constraints on table "role_permission"
+ */
+export enum role_permission_constraint {
+  role_permission_pkey = "role_permission_pkey",
+}
+
+/**
+ * update columns of table "role_permission"
+ */
+export enum role_permission_update_column {
+  created_at = "created_at",
+  id = "id",
+  permission_id = "permission_id",
+  role_id = "role_id",
+  updated_at = "updated_at",
+}
+
+/**
+ * update columns of table "role"
+ */
+export enum role_update_column {
+  created_at = "created_at",
+  id = "id",
+  name = "name",
+  updated_at = "updated_at",
+}
+
+/**
+ * unique or primary key constraints on table "sharing_code"
+ */
+export enum sharing_code_constraint {
+  sharing_code_pkey = "sharing_code_pkey",
+}
+
+/**
+ * update columns of table "sharing_code"
+ */
+export enum sharing_code_update_column {
+  app_id = "app_id",
+  code = "code",
+  created_at = "created_at",
+  id = "id",
+  note = "note",
+  path = "path",
+  updated_at = "updated_at",
+}
+
+/**
  * unique or primary key constraints on table "social_card"
  */
 export enum social_card_constraint {
@@ -10641,6 +10811,82 @@ export enum voucher_update_column {
   id = "id",
   member_id = "member_id",
   voucher_code_id = "voucher_code_id",
+}
+
+/**
+ * unique or primary key constraints on table "xuemi.assign_rule"
+ */
+export enum xuemi_assign_rule_constraint {
+  assign_rule_pkey = "assign_rule_pkey",
+}
+
+/**
+ * update columns of table "xuemi.assign_rule"
+ */
+export enum xuemi_assign_rule_update_column {
+  id = "id",
+  limit = "limit",
+  member_id = "member_id",
+  member_selector_id = "member_selector_id",
+  position = "position",
+  source_member_id = "source_member_id",
+  target_member_id = "target_member_id",
+  total_limit = "total_limit",
+  trigger_id = "trigger_id",
+}
+
+/**
+ * unique or primary key constraints on table "xuemi.attend"
+ */
+export enum xuemi_attend_constraint {
+  attend_pkey = "attend_pkey",
+}
+
+/**
+ * update columns of table "xuemi.attend"
+ */
+export enum xuemi_attend_update_column {
+  created_at = "created_at",
+  ended_at = "ended_at",
+  id = "id",
+  member_id = "member_id",
+  started_at = "started_at",
+  updated_at = "updated_at",
+}
+
+/**
+ * unique or primary key constraints on table "xuemi.member_selector"
+ */
+export enum xuemi_member_selector_constraint {
+  member_selector_pkey = "member_selector_pkey",
+}
+
+/**
+ * update columns of table "xuemi.member_selector"
+ */
+export enum xuemi_member_selector_update_column {
+  condition = "condition",
+  description = "description",
+  id = "id",
+  title = "title",
+}
+
+/**
+ * unique or primary key constraints on table "xuemi.trigger"
+ */
+export enum xuemi_trigger_constraint {
+  trigger_pkey = "trigger_pkey",
+}
+
+/**
+ * update columns of table "xuemi.trigger"
+ */
+export enum xuemi_trigger_update_column {
+  condition = "condition",
+  description = "description",
+  duration = "duration",
+  id = "id",
+  title = "title",
 }
 
 /**
@@ -11176,6 +11422,7 @@ export interface app_bool_exp {
   program_packages?: program_package_bool_exp | null;
   programs?: program_bool_exp | null;
   properties?: property_bool_exp | null;
+  sharing_codes?: sharing_code_bool_exp | null;
   title?: String_comparison_exp | null;
   vimeo_project_id?: String_comparison_exp | null;
   voucher_plans?: voucher_plan_bool_exp | null;
@@ -11209,6 +11456,7 @@ export interface app_insert_input {
   program_packages?: program_package_arr_rel_insert_input | null;
   programs?: program_arr_rel_insert_input | null;
   properties?: property_arr_rel_insert_input | null;
+  sharing_codes?: sharing_code_arr_rel_insert_input | null;
   title?: string | null;
   vimeo_project_id?: string | null;
   voucher_plans?: voucher_plan_arr_rel_insert_input | null;
@@ -11631,6 +11879,52 @@ export interface attachment_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "attend"
+ */
+export interface attend_arr_rel_insert_input {
+  data: attend_insert_input[];
+  on_conflict?: attend_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "attend". All fields are combined with a logical 'AND'.
+ */
+export interface attend_bool_exp {
+  _and?: (attend_bool_exp | null)[] | null;
+  _not?: attend_bool_exp | null;
+  _or?: (attend_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  ended_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "attend"
+ */
+export interface attend_insert_input {
+  created_at?: any | null;
+  ended_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  started_at?: any | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "attend"
+ */
+export interface attend_on_conflict {
+  constraint: attend_constraint;
+  update_columns: attend_update_column[];
+  where?: attend_bool_exp | null;
+}
+
+/**
  * expression to compare columns of type bigint. All fields are combined with logical 'AND'.
  */
 export interface bigint_comparison_exp {
@@ -11861,8 +12155,10 @@ export interface category_bool_exp {
   activity_categories?: activity_category_bool_exp | null;
   app_id?: String_comparison_exp | null;
   class?: String_comparison_exp | null;
+  creator_categories?: creator_category_bool_exp | null;
   id?: String_comparison_exp | null;
   member_categories?: member_category_bool_exp | null;
+  member_tasks?: member_task_bool_exp | null;
   merchandise_categories?: merchandise_category_bool_exp | null;
   name?: String_comparison_exp | null;
   podcast_program_categories?: podcast_program_category_bool_exp | null;
@@ -11880,8 +12176,10 @@ export interface category_insert_input {
   activity_categories?: activity_category_arr_rel_insert_input | null;
   app_id?: string | null;
   class?: string | null;
+  creator_categories?: creator_category_arr_rel_insert_input | null;
   id?: string | null;
   member_categories?: member_category_arr_rel_insert_input | null;
+  member_tasks?: member_task_arr_rel_insert_input | null;
   merchandise_categories?: merchandise_category_arr_rel_insert_input | null;
   name?: string | null;
   podcast_program_categories?: podcast_program_category_arr_rel_insert_input | null;
@@ -12518,6 +12816,52 @@ export interface creator_category_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "creator_display"
+ */
+export interface creator_display_arr_rel_insert_input {
+  data: creator_display_insert_input[];
+  on_conflict?: creator_display_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "creator_display". All fields are combined with a logical 'AND'.
+ */
+export interface creator_display_bool_exp {
+  _and?: (creator_display_bool_exp | null)[] | null;
+  _not?: creator_display_bool_exp | null;
+  _or?: (creator_display_bool_exp | null)[] | null;
+  block_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "creator_display"
+ */
+export interface creator_display_insert_input {
+  block_id?: string | null;
+  created_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  position?: number | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "creator_display"
+ */
+export interface creator_display_on_conflict {
+  constraint: creator_display_constraint;
+  update_columns: creator_display_update_column[];
+  where?: creator_display_bool_exp | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "currency". All fields are combined with a logical 'AND'.
  */
 export interface currency_bool_exp {
@@ -12561,6 +12905,54 @@ export interface currency_on_conflict {
   constraint: currency_constraint;
   update_columns: currency_update_column[];
   where?: currency_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "exercise"
+ */
+export interface exercise_arr_rel_insert_input {
+  data: exercise_insert_input[];
+  on_conflict?: exercise_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "exercise". All fields are combined with a logical 'AND'.
+ */
+export interface exercise_bool_exp {
+  _and?: (exercise_bool_exp | null)[] | null;
+  _not?: exercise_bool_exp | null;
+  _or?: (exercise_bool_exp | null)[] | null;
+  answer?: jsonb_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  program_content?: program_content_bool_exp | null;
+  program_content_id?: uuid_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "exercise"
+ */
+export interface exercise_insert_input {
+  answer?: any | null;
+  created_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  program_content?: program_content_obj_rel_insert_input | null;
+  program_content_id?: any | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "exercise"
+ */
+export interface exercise_on_conflict {
+  constraint: exercise_constraint;
+  update_columns: exercise_update_column[];
+  where?: exercise_bool_exp | null;
 }
 
 /**
@@ -12880,7 +13272,12 @@ export interface member_bool_exp {
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   appointment_plans?: appointment_plan_bool_exp | null;
+  assignRulesBySourceMemberId?: xuemi_assign_rule_bool_exp | null;
+  assignRulesByTargetMemberId?: xuemi_assign_rule_bool_exp | null;
+  assign_rules?: xuemi_assign_rule_bool_exp | null;
   assigned_at?: timestamptz_comparison_exp | null;
+  attends?: xuemi_attend_bool_exp | null;
+  attendsByMemberId?: attend_bool_exp | null;
   coin_logs?: coin_log_bool_exp | null;
   coin_status?: coin_status_bool_exp | null;
   comment_reactions?: comment_reaction_bool_exp | null;
@@ -12890,8 +13287,10 @@ export interface member_bool_exp {
   coupons?: coupon_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   creator_categories?: creator_category_bool_exp | null;
+  creator_displays?: creator_display_bool_exp | null;
   description?: String_comparison_exp | null;
   email?: String_comparison_exp | null;
+  exercises?: exercise_bool_exp | null;
   facebook_user_id?: String_comparison_exp | null;
   google_user_id?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
@@ -12903,7 +13302,9 @@ export interface member_bool_exp {
   manager?: member_bool_exp | null;
   manager_id?: String_comparison_exp | null;
   media?: media_bool_exp | null;
+  memberContractsByAuthorId?: member_contract_bool_exp | null;
   memberNotesByAuthorId?: member_note_bool_exp | null;
+  memberTasksByExecutorId?: member_task_bool_exp | null;
   member_cards?: member_card_bool_exp | null;
   member_categories?: member_category_bool_exp | null;
   member_contracts?: member_contract_bool_exp | null;
@@ -12923,6 +13324,7 @@ export interface member_bool_exp {
   name?: String_comparison_exp | null;
   notifications?: notification_bool_exp | null;
   notificationsByTargetMembereId?: notification_bool_exp | null;
+  order_contacts?: order_contact_bool_exp | null;
   order_executors?: order_executor_bool_exp | null;
   order_logs?: order_log_bool_exp | null;
   passhash?: String_comparison_exp | null;
@@ -12934,11 +13336,13 @@ export interface member_bool_exp {
   podcasts?: podcast_bool_exp | null;
   point_logs?: point_log_bool_exp | null;
   point_status?: point_status_bool_exp | null;
+  practices?: practice_bool_exp | null;
   program_content_enrollments?: program_content_enrollment_bool_exp | null;
   program_content_progresses?: program_content_progress_bool_exp | null;
   program_roles?: program_role_bool_exp | null;
   program_tempo_deliveries?: program_tempo_delivery_bool_exp | null;
   refresh_token?: uuid_comparison_exp | null;
+  reviews?: review_bool_exp | null;
   role?: String_comparison_exp | null;
   roles_deprecated?: jsonb_comparison_exp | null;
   star?: numeric_comparison_exp | null;
@@ -13112,7 +13516,12 @@ export interface member_insert_input {
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
   appointment_plans?: appointment_plan_arr_rel_insert_input | null;
+  assignRulesBySourceMemberId?: xuemi_assign_rule_arr_rel_insert_input | null;
+  assignRulesByTargetMemberId?: xuemi_assign_rule_arr_rel_insert_input | null;
+  assign_rules?: xuemi_assign_rule_arr_rel_insert_input | null;
   assigned_at?: any | null;
+  attends?: xuemi_attend_arr_rel_insert_input | null;
+  attendsByMemberId?: attend_arr_rel_insert_input | null;
   coin_logs?: coin_log_arr_rel_insert_input | null;
   comment_reactions?: comment_reaction_arr_rel_insert_input | null;
   comment_replies?: comment_reply_arr_rel_insert_input | null;
@@ -13121,8 +13530,10 @@ export interface member_insert_input {
   coupons?: coupon_arr_rel_insert_input | null;
   created_at?: any | null;
   creator_categories?: creator_category_arr_rel_insert_input | null;
+  creator_displays?: creator_display_arr_rel_insert_input | null;
   description?: string | null;
   email?: string | null;
+  exercises?: exercise_arr_rel_insert_input | null;
   facebook_user_id?: string | null;
   google_user_id?: string | null;
   id?: string | null;
@@ -13134,7 +13545,9 @@ export interface member_insert_input {
   manager?: member_obj_rel_insert_input | null;
   manager_id?: string | null;
   media?: media_arr_rel_insert_input | null;
+  memberContractsByAuthorId?: member_contract_arr_rel_insert_input | null;
   memberNotesByAuthorId?: member_note_arr_rel_insert_input | null;
+  memberTasksByExecutorId?: member_task_arr_rel_insert_input | null;
   member_cards?: member_card_arr_rel_insert_input | null;
   member_categories?: member_category_arr_rel_insert_input | null;
   member_contracts?: member_contract_arr_rel_insert_input | null;
@@ -13153,6 +13566,7 @@ export interface member_insert_input {
   name?: string | null;
   notifications?: notification_arr_rel_insert_input | null;
   notificationsByTargetMembereId?: notification_arr_rel_insert_input | null;
+  order_contacts?: order_contact_arr_rel_insert_input | null;
   order_executors?: order_executor_arr_rel_insert_input | null;
   order_logs?: order_log_arr_rel_insert_input | null;
   passhash?: string | null;
@@ -13163,10 +13577,12 @@ export interface member_insert_input {
   podcast_programs?: podcast_program_arr_rel_insert_input | null;
   podcasts?: podcast_arr_rel_insert_input | null;
   point_logs?: point_log_arr_rel_insert_input | null;
+  practices?: practice_arr_rel_insert_input | null;
   program_content_progresses?: program_content_progress_arr_rel_insert_input | null;
   program_roles?: program_role_arr_rel_insert_input | null;
   program_tempo_deliveries?: program_tempo_delivery_arr_rel_insert_input | null;
   refresh_token?: any | null;
+  reviews?: review_arr_rel_insert_input | null;
   role?: string | null;
   roles_deprecated?: any | null;
   star?: any | null;
@@ -13239,6 +13655,7 @@ export interface member_note_bool_exp {
   duration?: Int_comparison_exp | null;
   id?: String_comparison_exp | null;
   member?: member_bool_exp | null;
+  memberByAuthorId?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   member_note_attachments?: member_note_attachment_bool_exp | null;
   metadata?: jsonb_comparison_exp | null;
@@ -13260,6 +13677,7 @@ export interface member_note_insert_input {
   duration?: number | null;
   id?: string | null;
   member?: member_obj_rel_insert_input | null;
+  memberByAuthorId?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   member_note_attachments?: member_note_attachment_arr_rel_insert_input | null;
   metadata?: any | null;
@@ -14462,7 +14880,6 @@ export interface order_log_bool_exp {
   payment_model?: jsonb_comparison_exp | null;
   retried_at?: timestamptz_comparison_exp | null;
   shipping?: jsonb_comparison_exp | null;
-  status?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
 
@@ -14492,7 +14909,6 @@ export interface order_log_insert_input {
   payment_model?: any | null;
   retried_at?: any | null;
   shipping?: any | null;
-  status?: string | null;
   updated_at?: any | null;
 }
 
@@ -14931,6 +15347,8 @@ export interface permission_bool_exp {
   description?: String_comparison_exp | null;
   group?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
+  member_permission_extras?: member_permission_extra_bool_exp | null;
+  role_permissions?: role_permission_bool_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
 
@@ -14942,6 +15360,8 @@ export interface permission_insert_input {
   description?: string | null;
   group?: string | null;
   id?: string | null;
+  member_permission_extras?: member_permission_extra_arr_rel_insert_input | null;
+  role_permissions?: role_permission_arr_rel_insert_input | null;
   updated_at?: any | null;
 }
 
@@ -16455,6 +16875,7 @@ export interface program_content_bool_exp {
   created_at?: timestamptz_comparison_exp | null;
   duration?: numeric_comparison_exp | null;
   enrollments?: program_content_enrollment_bool_exp | null;
+  exercises?: exercise_bool_exp | null;
   id?: uuid_comparison_exp | null;
   is_notify_update?: Boolean_comparison_exp | null;
   list_price?: numeric_comparison_exp | null;
@@ -16500,6 +16921,7 @@ export interface program_content_insert_input {
   content_type?: string | null;
   created_at?: any | null;
   duration?: any | null;
+  exercises?: exercise_arr_rel_insert_input | null;
   id?: any | null;
   is_notify_update?: boolean | null;
   list_price?: any | null;
@@ -17729,6 +18151,14 @@ export interface property_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "review"
+ */
+export interface review_arr_rel_insert_input {
+  data: review_insert_input[];
+  on_conflict?: review_on_conflict | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "review". All fields are combined with a logical 'AND'.
  */
 export interface review_bool_exp {
@@ -17747,6 +18177,41 @@ export interface review_bool_exp {
   score?: numeric_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "review"
+ */
+export interface review_insert_input {
+  app_id?: string | null;
+  content?: string | null;
+  created_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  path?: string | null;
+  private_content?: string | null;
+  review_replies?: review_reply_arr_rel_insert_input | null;
+  score?: any | null;
+  title?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "review"
+ */
+export interface review_obj_rel_insert_input {
+  data: review_insert_input;
+  on_conflict?: review_on_conflict | null;
+}
+
+/**
+ * on conflict condition type for table "review"
+ */
+export interface review_on_conflict {
+  constraint: review_constraint;
+  update_columns: review_update_column[];
+  where?: review_bool_exp | null;
 }
 
 /**
@@ -17772,6 +18237,14 @@ export interface review_public_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "review_reply"
+ */
+export interface review_reply_arr_rel_insert_input {
+  data: review_reply_insert_input[];
+  on_conflict?: review_reply_on_conflict | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "review_reply". All fields are combined with a logical 'AND'.
  */
 export interface review_reply_bool_exp {
@@ -17786,6 +18259,164 @@ export interface review_reply_bool_exp {
   review?: review_bool_exp | null;
   review_id?: uuid_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "review_reply"
+ */
+export interface review_reply_insert_input {
+  content?: string | null;
+  created_at?: any | null;
+  id?: any | null;
+  member_id?: string | null;
+  review?: review_obj_rel_insert_input | null;
+  review_id?: any | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "review_reply"
+ */
+export interface review_reply_on_conflict {
+  constraint: review_reply_constraint;
+  update_columns: review_reply_update_column[];
+  where?: review_reply_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "role". All fields are combined with a logical 'AND'.
+ */
+export interface role_bool_exp {
+  _and?: (role_bool_exp | null)[] | null;
+  _not?: role_bool_exp | null;
+  _or?: (role_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: String_comparison_exp | null;
+  name?: String_comparison_exp | null;
+  role_permissions?: role_permission_bool_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "role"
+ */
+export interface role_insert_input {
+  created_at?: any | null;
+  id?: string | null;
+  name?: string | null;
+  role_permissions?: role_permission_arr_rel_insert_input | null;
+  updated_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "role"
+ */
+export interface role_obj_rel_insert_input {
+  data: role_insert_input;
+  on_conflict?: role_on_conflict | null;
+}
+
+/**
+ * on conflict condition type for table "role"
+ */
+export interface role_on_conflict {
+  constraint: role_constraint;
+  update_columns: role_update_column[];
+  where?: role_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "role_permission"
+ */
+export interface role_permission_arr_rel_insert_input {
+  data: role_permission_insert_input[];
+  on_conflict?: role_permission_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "role_permission". All fields are combined with a logical 'AND'.
+ */
+export interface role_permission_bool_exp {
+  _and?: (role_permission_bool_exp | null)[] | null;
+  _not?: role_permission_bool_exp | null;
+  _or?: (role_permission_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  permission?: permission_bool_exp | null;
+  permission_id?: String_comparison_exp | null;
+  role?: role_bool_exp | null;
+  role_id?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "role_permission"
+ */
+export interface role_permission_insert_input {
+  created_at?: any | null;
+  id?: any | null;
+  permission?: permission_obj_rel_insert_input | null;
+  permission_id?: string | null;
+  role?: role_obj_rel_insert_input | null;
+  role_id?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "role_permission"
+ */
+export interface role_permission_on_conflict {
+  constraint: role_permission_constraint;
+  update_columns: role_permission_update_column[];
+  where?: role_permission_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "sharing_code"
+ */
+export interface sharing_code_arr_rel_insert_input {
+  data: sharing_code_insert_input[];
+  on_conflict?: sharing_code_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "sharing_code". All fields are combined with a logical 'AND'.
+ */
+export interface sharing_code_bool_exp {
+  _and?: (sharing_code_bool_exp | null)[] | null;
+  _not?: sharing_code_bool_exp | null;
+  _or?: (sharing_code_bool_exp | null)[] | null;
+  app?: app_bool_exp | null;
+  app_id?: String_comparison_exp | null;
+  code?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  note?: String_comparison_exp | null;
+  path?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "sharing_code"
+ */
+export interface sharing_code_insert_input {
+  app?: app_obj_rel_insert_input | null;
+  app_id?: string | null;
+  code?: string | null;
+  created_at?: any | null;
+  id?: any | null;
+  note?: string | null;
+  path?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "sharing_code"
+ */
+export interface sharing_code_on_conflict {
+  constraint: sharing_code_constraint;
+  update_columns: sharing_code_update_column[];
+  where?: sharing_code_bool_exp | null;
 }
 
 /**
@@ -17901,7 +18532,9 @@ export interface tag_bool_exp {
   _and?: (tag_bool_exp | null)[] | null;
   _not?: tag_bool_exp | null;
   _or?: (tag_bool_exp | null)[] | null;
+  activity_tags?: activity_tag_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  member_specialities?: member_speciality_bool_exp | null;
   member_tags?: member_tag_bool_exp | null;
   merchandise_tags?: merchandise_tag_bool_exp | null;
   name?: String_comparison_exp | null;
@@ -17916,7 +18549,9 @@ export interface tag_bool_exp {
  * input type for inserting data into table "tag"
  */
 export interface tag_insert_input {
+  activity_tags?: activity_tag_arr_rel_insert_input | null;
   created_at?: any | null;
+  member_specialities?: member_speciality_arr_rel_insert_input | null;
   member_tags?: member_tag_arr_rel_insert_input | null;
   merchandise_tags?: merchandise_tag_arr_rel_insert_input | null;
   name?: string | null;
@@ -18186,6 +18821,246 @@ export interface voucher_status_bool_exp {
   used?: Boolean_comparison_exp | null;
   voucher?: voucher_bool_exp | null;
   voucher_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "xuemi.assign_rule"
+ */
+export interface xuemi_assign_rule_arr_rel_insert_input {
+  data: xuemi_assign_rule_insert_input[];
+  on_conflict?: xuemi_assign_rule_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "xuemi.assign_rule". All fields are combined with a logical 'AND'.
+ */
+export interface xuemi_assign_rule_bool_exp {
+  _and?: (xuemi_assign_rule_bool_exp | null)[] | null;
+  _not?: xuemi_assign_rule_bool_exp | null;
+  _or?: (xuemi_assign_rule_bool_exp | null)[] | null;
+  id?: uuid_comparison_exp | null;
+  limit?: Int_comparison_exp | null;
+  manager_status?: xuemi_manager_status_bool_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  member_selector?: xuemi_member_selector_bool_exp | null;
+  member_selector_id?: uuid_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+  source_member?: member_bool_exp | null;
+  source_member_id?: String_comparison_exp | null;
+  status?: xuemi_assign_rule_status_bool_exp | null;
+  target_member?: member_bool_exp | null;
+  target_member_id?: String_comparison_exp | null;
+  target_member_status?: xuemi_manager_status_bool_exp | null;
+  total_limit?: Int_comparison_exp | null;
+  trigger?: xuemi_trigger_bool_exp | null;
+  trigger_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "xuemi.assign_rule"
+ */
+export interface xuemi_assign_rule_insert_input {
+  id?: any | null;
+  limit?: number | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  member_selector?: xuemi_member_selector_obj_rel_insert_input | null;
+  member_selector_id?: any | null;
+  position?: number | null;
+  source_member?: member_obj_rel_insert_input | null;
+  source_member_id?: string | null;
+  status?: xuemi_assign_rule_status_obj_rel_insert_input | null;
+  target_member?: member_obj_rel_insert_input | null;
+  target_member_id?: string | null;
+  total_limit?: number | null;
+  trigger?: xuemi_trigger_obj_rel_insert_input | null;
+  trigger_id?: any | null;
+}
+
+/**
+ * on conflict condition type for table "xuemi.assign_rule"
+ */
+export interface xuemi_assign_rule_on_conflict {
+  constraint: xuemi_assign_rule_constraint;
+  update_columns: xuemi_assign_rule_update_column[];
+  where?: xuemi_assign_rule_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "xuemi.assign_rule_status". All fields are combined with a logical 'AND'.
+ */
+export interface xuemi_assign_rule_status_bool_exp {
+  _and?: (xuemi_assign_rule_status_bool_exp | null)[] | null;
+  _not?: xuemi_assign_rule_status_bool_exp | null;
+  _or?: (xuemi_assign_rule_status_bool_exp | null)[] | null;
+  assign_rule_id?: uuid_comparison_exp | null;
+  matched?: Boolean_comparison_exp | null;
+  remaining?: bigint_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "xuemi.assign_rule_status"
+ */
+export interface xuemi_assign_rule_status_insert_input {
+  assign_rule_id?: any | null;
+  matched?: boolean | null;
+  remaining?: any | null;
+  updated_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "xuemi.assign_rule_status"
+ */
+export interface xuemi_assign_rule_status_obj_rel_insert_input {
+  data: xuemi_assign_rule_status_insert_input;
+}
+
+/**
+ * input type for inserting array relation for remote table "xuemi.attend"
+ */
+export interface xuemi_attend_arr_rel_insert_input {
+  data: xuemi_attend_insert_input[];
+  on_conflict?: xuemi_attend_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "xuemi.attend". All fields are combined with a logical 'AND'.
+ */
+export interface xuemi_attend_bool_exp {
+  _and?: (xuemi_attend_bool_exp | null)[] | null;
+  _not?: xuemi_attend_bool_exp | null;
+  _or?: (xuemi_attend_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  ended_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "xuemi.attend"
+ */
+export interface xuemi_attend_insert_input {
+  created_at?: any | null;
+  ended_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  started_at?: any | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "xuemi.attend"
+ */
+export interface xuemi_attend_on_conflict {
+  constraint: xuemi_attend_constraint;
+  update_columns: xuemi_attend_update_column[];
+  where?: xuemi_attend_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "xuemi.manager_status". All fields are combined with a logical 'AND'.
+ */
+export interface xuemi_manager_status_bool_exp {
+  _and?: (xuemi_manager_status_bool_exp | null)[] | null;
+  _not?: xuemi_manager_status_bool_exp | null;
+  _or?: (xuemi_manager_status_bool_exp | null)[] | null;
+  assigned?: bigint_comparison_exp | null;
+  category_name?: String_comparison_exp | null;
+  limit?: Int_comparison_exp | null;
+  manager_id?: String_comparison_exp | null;
+  remaining?: Int_comparison_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "xuemi.member_selector". All fields are combined with a logical 'AND'.
+ */
+export interface xuemi_member_selector_bool_exp {
+  _and?: (xuemi_member_selector_bool_exp | null)[] | null;
+  _not?: xuemi_member_selector_bool_exp | null;
+  _or?: (xuemi_member_selector_bool_exp | null)[] | null;
+  assign_rules?: xuemi_assign_rule_bool_exp | null;
+  condition?: jsonb_comparison_exp | null;
+  description?: String_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  title?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "xuemi.member_selector"
+ */
+export interface xuemi_member_selector_insert_input {
+  assign_rules?: xuemi_assign_rule_arr_rel_insert_input | null;
+  condition?: any | null;
+  description?: string | null;
+  id?: any | null;
+  title?: string | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "xuemi.member_selector"
+ */
+export interface xuemi_member_selector_obj_rel_insert_input {
+  data: xuemi_member_selector_insert_input;
+  on_conflict?: xuemi_member_selector_on_conflict | null;
+}
+
+/**
+ * on conflict condition type for table "xuemi.member_selector"
+ */
+export interface xuemi_member_selector_on_conflict {
+  constraint: xuemi_member_selector_constraint;
+  update_columns: xuemi_member_selector_update_column[];
+  where?: xuemi_member_selector_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "xuemi.trigger". All fields are combined with a logical 'AND'.
+ */
+export interface xuemi_trigger_bool_exp {
+  _and?: (xuemi_trigger_bool_exp | null)[] | null;
+  _not?: xuemi_trigger_bool_exp | null;
+  _or?: (xuemi_trigger_bool_exp | null)[] | null;
+  assign_rules?: xuemi_assign_rule_bool_exp | null;
+  condition?: String_comparison_exp | null;
+  description?: String_comparison_exp | null;
+  duration?: numeric_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  title?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "xuemi.trigger"
+ */
+export interface xuemi_trigger_insert_input {
+  assign_rules?: xuemi_assign_rule_arr_rel_insert_input | null;
+  condition?: string | null;
+  description?: string | null;
+  duration?: any | null;
+  id?: any | null;
+  title?: string | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "xuemi.trigger"
+ */
+export interface xuemi_trigger_obj_rel_insert_input {
+  data: xuemi_trigger_insert_input;
+  on_conflict?: xuemi_trigger_on_conflict | null;
+}
+
+/**
+ * on conflict condition type for table "xuemi.trigger"
+ */
+export interface xuemi_trigger_on_conflict {
+  constraint: xuemi_trigger_constraint;
+  update_columns: xuemi_trigger_update_column[];
+  where?: xuemi_trigger_bool_exp | null;
 }
 
 //==============================================================
