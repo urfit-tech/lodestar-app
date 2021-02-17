@@ -40,7 +40,8 @@ const StyledPassingScore = styled.p`
   ${CommonLargeTextMixin}
 `
 const StyledCircularProgress = styled(CircularProgress)`
-  line-height: 1;
+  line-height: ${props => props.size};
+  height: ${props => props.size};
 `
 const StyledCircularProgressLabel = styled(CircularProgressLabel)`
   && {
