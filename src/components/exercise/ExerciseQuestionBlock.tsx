@@ -6,6 +6,7 @@ import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.s
 import { ReactComponent as ErrorCircleIcon } from '../../images/error-circle.svg'
 import { ReactComponent as TickIcon } from '../../images/tick.svg'
 import { CommonLargeTextMixin, CommonTextMixin } from '../common'
+import { BraftContent } from '../common/StyledBraftEditor'
 
 const messages = defineMessages({
   prevQuestion: { id: 'program.ui.prevQuestion', defaultMessage: '上一題' },
@@ -75,7 +76,9 @@ const ExerciseQuestionBlock: React.FC<{
         {index + 1}/{exercises.length}
       </StyledQuestionCount>
 
-      <StyledQuestion className="mb-4">{activeExercise.question}</StyledQuestion>
+      <StyledQuestion className="mb-4">
+        <BraftContent>{activeExercise.question}</BraftContent>
+      </StyledQuestion>
 
       <div className="mb-4">
         {activeExercise.options.map((v, i, options) => (
@@ -102,7 +105,7 @@ const ExerciseQuestionBlock: React.FC<{
               )
             }}
           >
-            {v.answer}
+            <BraftContent>{v.answer}</BraftContent>
           </ExerciseQuestionButton>
         ))}
       </div>
@@ -120,7 +123,9 @@ const ExerciseQuestionBlock: React.FC<{
               <StyledDetailTitle>{formatMessage(messages.correctAnswer)}</StyledDetailTitle>
             </span>
           )}
-          <StyledDetailContent className="ml-4">{activeExercise.detail}</StyledDetailContent>
+          <StyledDetailContent className="ml-4">
+            <BraftContent>{activeExercise.detail}</BraftContent>
+          </StyledDetailContent>
         </StyledDetail>
       )}
 

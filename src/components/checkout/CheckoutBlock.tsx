@@ -111,10 +111,7 @@ const CheckoutBlock: React.FC<{
   const cartProductOptions = cartProducts.reduce(
     (accumulator, currentValue) => ({
       ...accumulator,
-      [currentValue.productId]: {
-        ...currentValue.options,
-        referrerEmail,
-      },
+      [currentValue.productId]: currentValue.options,
     }),
     {} as { [ProductId: string]: any },
   )
@@ -187,7 +184,11 @@ const CheckoutBlock: React.FC<{
         currency: 'TWD',
       })
 
-    const taskId = await placeOrder('perpetual', invoice)
+    const taskId = await placeOrder('perpetual', {
+      ...invoice,
+      referrerEmail,
+    })
+
     member &&
       (await updateMemberMetadata({
         variables: {

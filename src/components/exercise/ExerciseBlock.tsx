@@ -6,7 +6,6 @@ import ExerciseQuestionBlock from './ExerciseQuestionBlock'
 import ExerciseResultBlock from './ExerciseResultBlock'
 
 const StyledTitle = styled.h3`
-  width: 76px;
   height: 27px;
   font-family: NotoSansCJKtc;
   font-size: 18px;
