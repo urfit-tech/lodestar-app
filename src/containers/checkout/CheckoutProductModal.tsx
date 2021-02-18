@@ -149,7 +149,6 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
         startedAt,
         from: window.location.pathname,
         sharingCode,
-        referrerEmail,
       },
     }),
     {} as { [ProductId: string]: any },
@@ -193,7 +192,10 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
         return
       }
 
-      const taskId = await placeOrder(paymentType, invoice)
+      const taskId = await placeOrder(paymentType, {
+        ...invoice,
+        referrerEmail,
+      })
 
       await updateMemberMetadata({
         variables: {

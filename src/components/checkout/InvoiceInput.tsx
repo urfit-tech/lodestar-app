@@ -40,6 +40,7 @@ export type InvoiceProps = {
   donationCode?: string
   postCode?: string
   address?: string
+  referrerEmail?: string
 }
 
 type InvoiceType = 'electronic' | 'uniform-number' | 'donation' | 'hardcopy' | 'hardcopy-uniform-number'
