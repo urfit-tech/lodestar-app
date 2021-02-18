@@ -13,6 +13,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
+import { useNav } from '../hooks/data'
 import DefaultAvatar from '../images/avatar.svg'
 import types from '../types'
 import LoadingPage from './LoadingPage'
@@ -68,6 +69,7 @@ export const StyledCreatorTag = styled.span`
 
 const CreatorDisplayedPage: React.FC<{}> = () => {
   const { loading, enabledModules } = useApp()
+  const { pageTitle } = useNav()
   const { formatMessage } = useIntl()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
   const { loadingCreators, errorCreators, creators } = usePublishedCreator()
@@ -92,7 +94,7 @@ const CreatorDisplayedPage: React.FC<{}> = () => {
         <div className="container">
           <StyledBannerTitle className="d-flex align-items-center">
             <Icon type="appstore" theme="filled" className="mr-3" />
-            <span>{formatMessage(messages.creatorDisplay)}</span>
+            <span>{pageTitle}</span>
           </StyledBannerTitle>
 
           <Button
@@ -123,7 +125,7 @@ const CreatorDisplayedPage: React.FC<{}> = () => {
           <div className="row">
             {filteredCreators.map(v => (
               <div className="col-12 col-md-6 col-lg-3 mb-4">
-                <Link to={`/creators/${v.id}`}>
+                <Link to={`/creators/${v.id}?tabkey=appointments`}>
                   <CustomRatioImage
                     width="100%"
                     ratio={1}
