@@ -106,7 +106,7 @@ const PracticePage: React.FC = () => {
   useEffect(() => {
     if (currentMemberId) {
       setLikeStatus({
-        isLiked: practice?.reactedMemberIds?.some(memberId => memberId === currentMemberId) || false,
+        isLiked: practice?.reactedMemberIds.includes(currentMemberId) || false,
         likedCount: practice?.reactedMemberIdsCount || 0,
       })
     }
