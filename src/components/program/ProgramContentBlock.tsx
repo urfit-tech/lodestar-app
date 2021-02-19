@@ -1,5 +1,7 @@
+import { useQuery } from '@apollo/react-hooks'
 import { Skeleton, Tabs } from 'antd'
 import BraftEditor from 'braft-editor'
+import gql from 'graphql-tag'
 import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
@@ -9,6 +11,7 @@ import { ProgressContext } from '../../contexts/ProgressContext'
 import { productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
+import types from '../../types'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -44,6 +47,7 @@ const ProgramContentBlock: React.FC<{
   const { loadingProgramContentMaterials, programContentMaterials } = useProgramContentMaterial(programContentId)
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
   const { loadingMember, member } = usePublicMember(instructor?.memberId || '')
+  const { lastExercise } = useLastExercise(programContentId)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
@@ -123,23 +127,31 @@ const ProgramContentBlock: React.FC<{
       {programContent.programContentBody?.type === 'exercise' && (
         <div className="mb-4">
           <ExerciseBlock
-            allowReAnswer
+            programContentId={programContentId}
             title={programContent.title}
             exercises={
               programContent.programContentBody.data?.questions?.map((question: any) => ({
+                id: question.id,
                 question: question.description || '',
                 detail: question.answerDescription || '',
                 options:
                   question.choices?.map((choice: any) => ({
+                    id: choice.id,
                     answer: choice.description || '',
                     isAnswer: !!choice.isCorrect,
-                    isSelected: false,
+                    isSelected: !!lastExercise?.answer?.some(
+                      (v: any) =>
+                        v.questionId === question.id && v.choiceIds.some((choiceId: string) => choiceId === choice.id),
+                    ),
                   })) || [],
                 score: question.score || 0,
               })) || []
             }
             passingScore={programContent.metadata?.passingScore || 0}
             nextProgramContentId={nextProgramContent?.id}
+            allowReAnswer={!!programContent.metadata?.isAvailableToRetry}
+            allowGoBack={!!programContent.metadata?.isAvailableToGoBack}
+            isTaken={!!lastExercise}
           />
         </div>
       )}
@@ -202,6 +214,34 @@ const ProgramContentBlock: React.FC<{
       )}
     </div>
   )
+}
+
+const useLastExercise = (programContentId: string) => {
+  const { loading, error, data, refetch } = useQuery<types.GET_LAST_EXERCISE, types.GET_LAST_EXERCISEVariables>(
+    gql`
+      query GET_LAST_EXERCISE($programContentId: uuid!) {
+        exercise(where: { program_content_id: { _eq: $programContentId } }, order_by: [{ created_at: desc }]) {
+          id
+          answer
+        }
+      }
+    `,
+    { variables: { programContentId } },
+  )
+
+  const lastExercise = data?.exercise?.[0]
+    ? {
+        id: data.exercise[0].id,
+        answer: data.exercise[0].answer,
+      }
+    : null
+
+  return {
+    loadingLastExercise: loading,
+    errorLastExercise: error,
+    lastExercise,
+    refetchLastExercise: refetch,
+  }
 }
 
 export default ProgramContentBlock

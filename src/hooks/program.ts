@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { sum, uniq } from 'ramda'
 import types from '../types'
@@ -634,5 +634,19 @@ export const useProgramContentMaterial = (programContentId: string) => {
     errorProgramContentMaterials: error,
     programContentMaterials,
     refetch,
+  }
+}
+
+export const useMutateExercise = () => {
+  const [insertExercise] = useMutation<types.INSERT_EXERCISE, types.INSERT_EXERCISEVariables>(gql`
+    mutation INSERT_EXERCISE($data: exercise_insert_input!) {
+      insert_exercise_one(object: $data) {
+        id
+      }
+    }
+  `)
+
+  return {
+    insertExercise,
   }
 }

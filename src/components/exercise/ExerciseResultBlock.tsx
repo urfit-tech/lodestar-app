@@ -61,10 +61,11 @@ const ExerciseResultBlock: React.FC<{
     score: number
   }[]
   passingScore: number
+  allowReAnswer?: boolean
   nextProgramContentId?: string
   onReAnswer?: () => void
   onReview?: () => void
-}> = ({ exercises, passingScore, nextProgramContentId, onReAnswer, onReview }) => {
+}> = ({ exercises, passingScore, allowReAnswer, nextProgramContentId, onReAnswer, onReview }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const {
@@ -117,9 +118,11 @@ const ExerciseResultBlock: React.FC<{
         <StyledButton onClick={onReview} className="mb-2" variant="outline">
           {formatMessage(messages.showDetail)}
         </StyledButton>
-        <StyledButton onClick={onReAnswer} variant="outline">
-          {formatMessage(messages.restartExercise)}
-        </StyledButton>
+        {allowReAnswer && (
+          <StyledButton onClick={onReAnswer} variant="outline">
+            {formatMessage(messages.restartExercise)}
+          </StyledButton>
+        )}
       </div>
     </div>
   )

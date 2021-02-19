@@ -46,26 +46,29 @@ const StyledDetailContent = styled.p`
 const ExerciseQuestionBlock: React.FC<{
   showDetail: boolean
   exercises: {
+    id: string
+    question: string
+    detail: string
+    score: number
     options: {
+      id: string
       answer: string
       isAnswer: boolean
       isSelected: boolean
     }[]
-    question: string
-    detail: string
-    score: number
   }[]
-  allowReAnswer?: boolean
+  allowGoBack?: boolean
   onFinish?: () => void
   onOptionSelect?: (
     currentIndex: number,
     newOptions: {
+      id: string
       answer: string
       isAnswer: boolean
       isSelected: boolean
     }[],
   ) => void
-}> = ({ exercises, showDetail, allowReAnswer, onOptionSelect, onFinish }) => {
+}> = ({ exercises, showDetail, allowGoBack, onOptionSelect, onFinish }) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
   const activeExercise = exercises[index]
@@ -130,7 +133,7 @@ const ExerciseQuestionBlock: React.FC<{
       )}
 
       <div className="text-center">
-        {allowReAnswer && 0 < index && (
+        {allowGoBack && 0 < index && (
           <Button onClick={() => setIndex(prev => prev - 1)} variant="outline" className="mr-2">
             {formatMessage(messages.prevQuestion)}
           </Button>

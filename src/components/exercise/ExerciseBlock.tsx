@@ -1,6 +1,8 @@
 import { adjust, includes } from 'ramda'
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { useMutateExercise } from '../../hooks/program'
+import { useAuth } from '../auth/AuthContext'
 import AdminCard from '../common/AdminCard'
 import ExerciseQuestionBlock from './ExerciseQuestionBlock'
 import ExerciseResultBlock from './ExerciseResultBlock'
@@ -15,22 +17,38 @@ const StyledTitle = styled.h3`
 `
 
 const ExerciseBlock: React.FC<{
+  programContentId: string
   title: string
   exercises: {
+    id: string
     question: string
     detail: string
+    score: number
     options: {
+      id: string
       answer: string
       isAnswer: boolean
       isSelected: boolean
     }[]
-    score: number
   }[]
   passingScore: number
   allowReAnswer?: boolean
+  allowGoBack?: boolean
   nextProgramContentId?: string
-}> = ({ exercises: defaultExercises, allowReAnswer, passingScore, nextProgramContentId, title }) => {
-  const [status, setStatus] = useState<'answering' | 'result' | 'review'>('answering')
+  isTaken?: boolean
+}> = ({
+  programContentId,
+  title,
+  exercises: defaultExercises,
+  passingScore,
+  allowReAnswer,
+  allowGoBack,
+  nextProgramContentId,
+  isTaken,
+}) => {
+  const { currentMemberId } = useAuth()
+  const { insertExercise } = useMutateExercise()
+  const [status, setStatus] = useState<'answering' | 'result' | 'review'>(isTaken ? 'result' : 'answering')
   const [exercises, setExercises] = useState(defaultExercises)
 
   let exerciseStatus
@@ -38,7 +56,7 @@ const ExerciseBlock: React.FC<{
   if (includes(status, ['answering', 'review'])) {
     exerciseStatus = (
       <ExerciseQuestionBlock
-        allowReAnswer={allowReAnswer}
+        allowGoBack={allowGoBack}
         showDetail={status === 'review'}
         exercises={exercises}
         onOptionSelect={
@@ -56,7 +74,22 @@ const ExerciseBlock: React.FC<{
                 )
             : undefined
         }
-        onFinish={() => setStatus('result')}
+        onFinish={() => {
+          insertExercise({
+            variables: {
+              data: {
+                member_id: currentMemberId,
+                program_content_id: programContentId,
+                answer: exercises.map(exercise => ({
+                  questionId: exercise.id,
+                  choiceIds: exercise.options.filter(option => option.isSelected).map(option => option.id),
+                  points: exercise.score,
+                })),
+              },
+            },
+          }).catch(() => {})
+          setStatus('result')
+        }}
       />
     )
   }
@@ -67,6 +100,7 @@ const ExerciseBlock: React.FC<{
         exercises={exercises}
         passingScore={passingScore}
         nextProgramContentId={nextProgramContentId}
+        allowReAnswer={allowReAnswer}
         onReAnswer={() => {
           setExercises(
             defaultExercises.map(v => ({

@@ -694,6 +694,32 @@ export interface INSERT_SUGGESTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_LAST_EXERCISE
+// ====================================================
+
+export interface GET_LAST_EXERCISE_exercise {
+  __typename: "exercise";
+  id: any;
+  answer: any | null;
+}
+
+export interface GET_LAST_EXERCISE {
+  /**
+   * fetch data from the table: "exercise"
+   */
+  exercise: GET_LAST_EXERCISE_exercise[];
+}
+
+export interface GET_LAST_EXERCISEVariables {
+  programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PROGRAM_CONTENT_TRIAL
 // ====================================================
 
@@ -1430,8 +1456,8 @@ export interface GET_MEMBER_ORDERS_order_log_order_discounts {
   /**
    * Coupon / Voucher / Card / DownPrice
    */
-  type: string | null;
-  target: string | null;
+  type: string;
+  target: string;
   options: any | null;
 }
 
@@ -6651,6 +6677,31 @@ export interface GET_PROGRAM_CONTENT_MATERIALVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: INSERT_EXERCISE
+// ====================================================
+
+export interface INSERT_EXERCISE_insert_exercise_one {
+  __typename: "exercise";
+  id: any;
+}
+
+export interface INSERT_EXERCISE {
+  /**
+   * insert a single row into the table: "exercise"
+   */
+  insert_exercise_one: INSERT_EXERCISE_insert_exercise_one | null;
+}
+
+export interface INSERT_EXERCISEVariables {
+  data: exercise_insert_input;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PROGRAM_PACKAGE_INTRODUCTION
 // ====================================================
 
@@ -7946,8 +7997,8 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk_order_discounts {
   /**
    * Coupon / Voucher / Card / DownPrice
    */
-  type: string | null;
-  target: string | null;
+  type: string;
+  target: string;
 }
 
 export interface GET_ORDERS_PRODUCT_order_log_by_pk {
@@ -10010,6 +10061,7 @@ export enum order_log_constraint {
  * update columns of table "order_log"
  */
 export enum order_log_update_column {
+  auto_renewed_at = "auto_renewed_at",
   created_at = "created_at",
   deliver_message = "deliver_message",
   delivered_at = "delivered_at",
@@ -15382,6 +15434,7 @@ export interface order_log_bool_exp {
   _and?: (order_log_bool_exp | null)[] | null;
   _not?: order_log_bool_exp | null;
   _or?: (order_log_bool_exp | null)[] | null;
+  auto_renewed_at?: timestamptz_comparison_exp | null;
   coupon?: coupon_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   deliver_message?: String_comparison_exp | null;
@@ -15412,6 +15465,7 @@ export interface order_log_bool_exp {
  * input type for inserting data into table "order_log"
  */
 export interface order_log_insert_input {
+  auto_renewed_at?: any | null;
   coupon?: coupon_obj_rel_insert_input | null;
   created_at?: any | null;
   deliver_message?: string | null;
@@ -15586,6 +15640,7 @@ export interface order_status_bool_exp {
   _not?: order_status_bool_exp | null;
   _or?: (order_status_bool_exp | null)[] | null;
   member_id?: String_comparison_exp | null;
+  order_discounts?: order_discount_bool_exp | null;
   order_id?: String_comparison_exp | null;
   order_log?: order_log_bool_exp | null;
   order_products?: order_product_bool_exp | null;
