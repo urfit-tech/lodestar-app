@@ -634,6 +634,66 @@ export interface GET_MEMBER_CREDIT_CARDSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: DELETE_ATTACHMENTS
+// ====================================================
+
+export interface DELETE_ATTACHMENTS_update_attachment {
+  __typename: "attachment_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_ATTACHMENTS {
+  /**
+   * update data of the table: "attachment"
+   */
+  update_attachment: DELETE_ATTACHMENTS_update_attachment | null;
+}
+
+export interface DELETE_ATTACHMENTSVariables {
+  attachmentIds: any[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_SUGGESTION
+// ====================================================
+
+export interface INSERT_SUGGESTION_insert_issue {
+  __typename: "issue_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_SUGGESTION {
+  /**
+   * insert data into the table: "issue"
+   */
+  insert_issue: INSERT_SUGGESTION_insert_issue | null;
+}
+
+export interface INSERT_SUGGESTIONVariables {
+  appId: string;
+  memberId: string;
+  threadId: string;
+  title?: string | null;
+  description?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PROGRAM_CONTENT_TRIAL
 // ====================================================
 
@@ -3898,6 +3958,39 @@ export interface GET_MEMBER_CONTRACTVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: INSERT_ATTACHMENT
+// ====================================================
+
+export interface INSERT_ATTACHMENT_insert_attachment_returning {
+  __typename: "attachment";
+  id: any;
+}
+
+export interface INSERT_ATTACHMENT_insert_attachment {
+  __typename: "attachment_mutation_response";
+  /**
+   * data of the affected rows by the mutation
+   */
+  returning: INSERT_ATTACHMENT_insert_attachment_returning[];
+}
+
+export interface INSERT_ATTACHMENT {
+  /**
+   * insert data into the table: "attachment"
+   */
+  insert_attachment: INSERT_ATTACHMENT_insert_attachment | null;
+}
+
+export interface INSERT_ATTACHMENTVariables {
+  attachments: attachment_insert_input[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ISSUE_THREAD
 // ====================================================
 
@@ -3986,6 +4079,14 @@ export interface UPDATE_ISSUEVariables {
 // GraphQL mutation operation: DELETE_ISSUE
 // ====================================================
 
+export interface DELETE_ISSUE_delete_issue_reply_reaction {
+  __typename: "issue_reply_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
 export interface DELETE_ISSUE_delete_issue_reply {
   __typename: "issue_reply_mutation_response";
   /**
@@ -4011,6 +4112,10 @@ export interface DELETE_ISSUE_delete_issue {
 }
 
 export interface DELETE_ISSUE {
+  /**
+   * delete data from the table: "issue_reply_reaction"
+   */
+  delete_issue_reply_reaction: DELETE_ISSUE_delete_issue_reply_reaction | null;
   /**
    * delete data from the table: "issue_reply"
    */
@@ -5556,6 +5661,414 @@ export interface UPDATE_PODCAST_PROGRAM_POSITIONSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PRACTICE
+// ====================================================
+
+export interface GET_PRACTICE_practice_practice_reactions {
+  __typename: "practice_reaction";
+  member_id: string;
+}
+
+export interface GET_PRACTICE_practice_practice_reactions_aggregate_aggregate {
+  __typename: "practice_reaction_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_PRACTICE_practice_practice_reactions_aggregate {
+  __typename: "practice_reaction_aggregate";
+  aggregate: GET_PRACTICE_practice_practice_reactions_aggregate_aggregate | null;
+}
+
+export interface GET_PRACTICE_practice_program_content_program_content_section_program {
+  __typename: "program";
+  id: any;
+  title: string;
+}
+
+export interface GET_PRACTICE_practice_program_content_program_content_section {
+  __typename: "program_content_section";
+  /**
+   * An object relationship
+   */
+  program: GET_PRACTICE_practice_program_content_program_content_section_program;
+}
+
+export interface GET_PRACTICE_practice_program_content {
+  __typename: "program_content";
+  id: any;
+  title: string;
+  /**
+   * An object relationship
+   */
+  program_content_section: GET_PRACTICE_practice_program_content_program_content_section;
+}
+
+export interface GET_PRACTICE_practice_practice_attachments {
+  __typename: "practice_attachment";
+  attachment_id: any | null;
+  data: any | null;
+  options: any | null;
+}
+
+export interface GET_PRACTICE_practice_practice_suggests_aggregate_aggregate {
+  __typename: "practice_issue_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_PRACTICE_practice_practice_suggests_aggregate {
+  __typename: "practice_issue_aggregate";
+  aggregate: GET_PRACTICE_practice_practice_suggests_aggregate_aggregate | null;
+}
+
+export interface GET_PRACTICE_practice_practice_suggests_suggest_suggest_reactions {
+  __typename: "issue_reaction";
+  id: any;
+  member_id: string;
+}
+
+export interface GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies_aggregate_aggregate {
+  __typename: "issue_reply_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies_aggregate {
+  __typename: "issue_reply_aggregate";
+  aggregate: GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies_aggregate_aggregate | null;
+}
+
+export interface GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies_suggest_reply_reactions {
+  __typename: "issue_reply_reaction";
+  member_id: string;
+}
+
+export interface GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies {
+  __typename: "issue_reply";
+  id: any;
+  content: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reply_reactions: GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies_suggest_reply_reactions[];
+}
+
+export interface GET_PRACTICE_practice_practice_suggests_suggest {
+  __typename: "issue";
+  id: any;
+  description: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reactions: GET_PRACTICE_practice_practice_suggests_suggest_suggest_reactions[];
+  /**
+   * An aggregated array relationship
+   */
+  suggest_replies_aggregate: GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies_aggregate;
+  /**
+   * An array relationship
+   */
+  suggest_replies: GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies[];
+}
+
+export interface GET_PRACTICE_practice_practice_suggests {
+  __typename: "practice_issue";
+  /**
+   * An object relationship
+   */
+  suggest: GET_PRACTICE_practice_practice_suggests_suggest | null;
+}
+
+export interface GET_PRACTICE_practice {
+  __typename: "practice";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  created_at: any;
+  updated_at: any;
+  member_id: string;
+  description: string | null;
+  /**
+   * An array relationship
+   */
+  practice_reactions: GET_PRACTICE_practice_practice_reactions[];
+  /**
+   * An aggregated array relationship
+   */
+  practice_reactions_aggregate: GET_PRACTICE_practice_practice_reactions_aggregate;
+  /**
+   * An object relationship
+   */
+  program_content: GET_PRACTICE_practice_program_content;
+  /**
+   * An array relationship
+   */
+  practice_attachments: GET_PRACTICE_practice_practice_attachments[];
+  /**
+   * An aggregated array relationship
+   */
+  practice_suggests_aggregate: GET_PRACTICE_practice_practice_suggests_aggregate;
+  /**
+   * An array relationship
+   */
+  practice_suggests: GET_PRACTICE_practice_practice_suggests[];
+}
+
+export interface GET_PRACTICE {
+  /**
+   * fetch data from the table: "practice"
+   */
+  practice: GET_PRACTICE_practice[];
+}
+
+export interface GET_PRACTICEVariables {
+  practiceId?: any | null;
+  memberId?: string | null;
+  programContentId?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PRACTICE_COLLECTION
+// ====================================================
+
+export interface GET_PRACTICE_COLLECTION_practice_practice_reactions {
+  __typename: "practice_reaction";
+  member_id: string;
+}
+
+export interface GET_PRACTICE_COLLECTION_practice_practice_reactions_aggregate_aggregate {
+  __typename: "practice_reaction_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_PRACTICE_COLLECTION_practice_practice_reactions_aggregate {
+  __typename: "practice_reaction_aggregate";
+  aggregate: GET_PRACTICE_COLLECTION_practice_practice_reactions_aggregate_aggregate | null;
+}
+
+export interface GET_PRACTICE_COLLECTION_practice_program_content {
+  __typename: "program_content";
+  id: any;
+  title: string;
+  metadata: any | null;
+}
+
+export interface GET_PRACTICE_COLLECTION_practice_practice_issues_aggregate_aggregate {
+  __typename: "practice_issue_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_PRACTICE_COLLECTION_practice_practice_issues_aggregate {
+  __typename: "practice_issue_aggregate";
+  aggregate: GET_PRACTICE_COLLECTION_practice_practice_issues_aggregate_aggregate | null;
+}
+
+export interface GET_PRACTICE_COLLECTION_practice {
+  __typename: "practice";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  member_id: string;
+  created_at: any;
+  updated_at: any;
+  /**
+   * An array relationship
+   */
+  practice_reactions: GET_PRACTICE_COLLECTION_practice_practice_reactions[];
+  /**
+   * An aggregated array relationship
+   */
+  practice_reactions_aggregate: GET_PRACTICE_COLLECTION_practice_practice_reactions_aggregate;
+  /**
+   * An object relationship
+   */
+  program_content: GET_PRACTICE_COLLECTION_practice_program_content;
+  /**
+   * An aggregated array relationship
+   */
+  practice_issues_aggregate: GET_PRACTICE_COLLECTION_practice_practice_issues_aggregate;
+}
+
+export interface GET_PRACTICE_COLLECTION {
+  /**
+   * fetch data from the table: "practice"
+   */
+  practice: GET_PRACTICE_COLLECTION_practice[];
+}
+
+export interface GET_PRACTICE_COLLECTIONVariables {
+  programContentId?: any | null;
+  memberId?: string | null;
+  programId?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_PRACTICE
+// ====================================================
+
+export interface INSERT_PRACTICE_insert_practice_returning {
+  __typename: "practice";
+  id: any;
+}
+
+export interface INSERT_PRACTICE_insert_practice {
+  __typename: "practice_mutation_response";
+  /**
+   * data of the affected rows by the mutation
+   */
+  returning: INSERT_PRACTICE_insert_practice_returning[];
+}
+
+export interface INSERT_PRACTICE {
+  /**
+   * insert data into the table: "practice"
+   */
+  insert_practice: INSERT_PRACTICE_insert_practice | null;
+}
+
+export interface INSERT_PRACTICEVariables {
+  title: string;
+  memberId: string;
+  description?: string | null;
+  coverUrl?: string | null;
+  programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UPDATE_PRACTICE
+// ====================================================
+
+export interface UPDATE_PRACTICE_update_practice {
+  __typename: "practice_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface UPDATE_PRACTICE {
+  /**
+   * update data of the table: "practice"
+   */
+  update_practice: UPDATE_PRACTICE_update_practice | null;
+}
+
+export interface UPDATE_PRACTICEVariables {
+  practiceId: any;
+  title: string;
+  description?: string | null;
+  coverUrl?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_PRACTICE
+// ====================================================
+
+export interface DELETE_PRACTICE_update_practice {
+  __typename: "practice_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_PRACTICE {
+  /**
+   * update data of the table: "practice"
+   */
+  update_practice: DELETE_PRACTICE_update_practice | null;
+}
+
+export interface DELETE_PRACTICEVariables {
+  practiceId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_PRACTICE_REACTION
+// ====================================================
+
+export interface INSERT_PRACTICE_REACTION_insert_practice_reaction {
+  __typename: "practice_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_PRACTICE_REACTION {
+  /**
+   * insert data into the table: "practice_reaction"
+   */
+  insert_practice_reaction: INSERT_PRACTICE_REACTION_insert_practice_reaction | null;
+}
+
+export interface INSERT_PRACTICE_REACTIONVariables {
+  memberId: string;
+  practiceId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_PRACTICE_REACTION
+// ====================================================
+
+export interface DELETE_PRACTICE_REACTION_delete_practice_reaction {
+  __typename: "practice_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_PRACTICE_REACTION {
+  /**
+   * delete data from the table: "practice_reaction"
+   */
+  delete_practice_reaction: DELETE_PRACTICE_REACTION_delete_practice_reaction | null;
+}
+
+export interface DELETE_PRACTICE_REACTIONVariables {
+  memberId: string;
+  practiceId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PUBLISHED_PROGRAM_COLLECTION
 // ====================================================
 
@@ -5946,6 +6459,14 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_mater
   created_at: any | null;
 }
 
+export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_attachments {
+  __typename: "program_content_attachment";
+  attachment_id: any | null;
+  data: any | null;
+  options: any | null;
+  created_at: any | null;
+}
+
 export interface GET_PROGRAM_CONTENT_program_content_by_pk {
   __typename: "program_content";
   id: any;
@@ -5973,6 +6494,10 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk {
    * An array relationship
    */
   program_content_materials: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_materials[];
+  /**
+   * An array relationship
+   */
+  program_content_attachments: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_attachments[];
 }
 
 export interface GET_PROGRAM_CONTENT {
@@ -16323,7 +16848,6 @@ export interface practice_bool_exp {
   _and?: (practice_bool_exp | null)[] | null;
   _not?: practice_bool_exp | null;
   _or?: (practice_bool_exp | null)[] | null;
-  attachments?: practice_attachment_bool_exp | null;
   cover_url?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
@@ -16331,6 +16855,8 @@ export interface practice_bool_exp {
   is_deleted?: Boolean_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  practice_attachments?: practice_attachment_bool_exp | null;
+  practice_issues?: practice_issue_bool_exp | null;
   practice_reactions?: practice_reaction_bool_exp | null;
   program_content?: program_content_bool_exp | null;
   program_content_id?: uuid_comparison_exp | null;
@@ -16343,7 +16869,6 @@ export interface practice_bool_exp {
  * input type for inserting data into table "practice"
  */
 export interface practice_insert_input {
-  attachments?: practice_attachment_arr_rel_insert_input | null;
   cover_url?: string | null;
   created_at?: any | null;
   description?: string | null;
@@ -16351,12 +16876,26 @@ export interface practice_insert_input {
   is_deleted?: boolean | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  practice_attachments?: practice_attachment_arr_rel_insert_input | null;
   practice_reactions?: practice_reaction_arr_rel_insert_input | null;
   program_content?: program_content_obj_rel_insert_input | null;
   program_content_id?: any | null;
   reviewed_at?: any | null;
   title?: string | null;
   updated_at?: any | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "practice_issue". All fields are combined with a logical 'AND'.
+ */
+export interface practice_issue_bool_exp {
+  _and?: (practice_issue_bool_exp | null)[] | null;
+  _not?: practice_issue_bool_exp | null;
+  _or?: (practice_issue_bool_exp | null)[] | null;
+  issue?: issue_bool_exp | null;
+  issue_id?: uuid_comparison_exp | null;
+  practice?: practice_bool_exp | null;
+  practice_id?: uuid_comparison_exp | null;
 }
 
 /**

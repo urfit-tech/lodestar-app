@@ -5,7 +5,7 @@ import { usePublicMember } from '../../hooks/member'
 import { MemberPublicProps } from '../../types/member'
 import { AvatarImage } from './Image'
 
-const MemberName = styled.span`
+export const MemberName = styled.span`
   font-size: 14px;
   color: #9b9b9b;
 `

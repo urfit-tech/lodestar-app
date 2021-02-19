@@ -1,9 +1,14 @@
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Button, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spinner } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
-import React from 'react'
+import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
+import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { downloadFile, getFileDownloadableLink } from '../../helpers'
+import { usePractice } from '../../hooks/practice'
+import { ProgramContentAttachmentProps } from '../../types/program'
+import { useAuth } from '../auth/AuthContext'
 import { CommonLargeTitleMixin, CommonTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 import StarRating from '../common/StarRating'
@@ -68,14 +73,40 @@ const StyledDifficulty = styled.div`
 `
 
 const PracticeDescriptionBlock: React.FC<{
+  programContentId: string
   title: string
   description: string | null
   duration?: number
   score?: number
-}> = ({ title, description, duration, score }) => {
+  attachments?: ProgramContentAttachmentProps[]
+}> = ({ programContentId, title, description, duration, score, attachments }) => {
   const { formatMessage } = useIntl()
+  const history = useHistory()
+  const { currentMemberId, authToken, apiHost } = useAuth()
+  const { loadingPractice, practice, refetchPractice } = usePractice({ memberId: currentMemberId, programContentId })
+  const [isDownloading, setIsDownloading] = useState<boolean>(false)
 
-  const handleDownload = () => {}
+  if (loadingPractice) {
+    return <Skeleton />
+  }
+
+  const handleDownload = async (fileIndex: number) => {
+    setIsDownloading(true)
+    if (!attachments) return
+    const file = attachments[fileIndex]
+    const fileKey = `attachments/${file.id}`
+    try {
+      const fileLink = await getFileDownloadableLink(fileKey, authToken, apiHost)
+      const fileRequest = new Request(fileLink)
+      const response = await fetch(fileRequest)
+      response.url &&
+        downloadFile(response.url, file.data?.name || 'untitled').then(() => {
+          setIsDownloading(false)
+        })
+    } catch (error) {
+      // message.error(error)
+    }
+  }
 
   return (
     <StyledBlock>
@@ -94,16 +125,31 @@ const PracticeDescriptionBlock: React.FC<{
         <StyledPracticeTitle className="mb-3">{title}</StyledPracticeTitle>
         {!BraftEditor.createEditorState(description).isEmpty() && <BraftContent>{description}</BraftContent>}
         <Menu>
-          <MenuButton as={Button} variant="outline" rightIcon={<ChevronDownIcon />} className="mt-3">
+          <MenuButton
+            as={Button}
+            variant="outline"
+            rightIcon={isDownloading ? <Spinner size="sm" /> : <ChevronDownIcon />}
+            className="mt-3"
+          >
             {formatMessage(messages.downloadMaterial)}
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={() => handleDownload()}>Download1</MenuItem>
-            <MenuItem onClick={() => handleDownload()}>Download2</MenuItem>
+            {attachments?.map((attachment, index) => (
+              <MenuItem key={attachment.id} onClick={() => handleDownload(index)}>
+                {attachment.data.name}
+              </MenuItem>
+            ))}
           </MenuList>
         </Menu>
       </StyledPractice>
-      <PracticeUploadModal />
+      <PracticeUploadModal
+        programContentId={programContentId}
+        practice={practice}
+        onRefetch={refetchPractice}
+        onSubmit={() => {
+          window.location.assign(`/practices/${practice?.id}`)
+        }}
+      />
     </StyledBlock>
   )
 }

@@ -1,25 +1,23 @@
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import { Box, Button, Divider, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
-import { Menu as AntdMenu } from 'antd'
+import { Box, Button, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Spinner } from '@chakra-ui/react'
+import { message, Skeleton } from 'antd'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { useAuth } from '../components/auth/AuthContext'
 import { CommonTitleMixin } from '../components/common'
 import { CustomRatioImage } from '../components/common/Image'
-import MessageItem from '../components/common/MessageItem'
-import MessageItemAction from '../components/common/MessageItemAction'
-import MessageItemContent from '../components/common/MessageItemContent'
-import MessageItemFooter from '../components/common/MessageItemFooter'
-import MessageItemHeader from '../components/common/MessageItemHeader'
-import MessageReplyCreationForm from '../components/common/MessageReplyCreationForm'
+import MemberAvatar, { MemberName } from '../components/common/MemberAvatar'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { MemberInfoBlock } from '../components/practice/PracticeDisplayedCollection'
+import MessageSuggestItem from '../components/practice/MessageSuggestItem'
+import PracticeUploadModal from '../components/practice/PracticeUploadModal'
 import SuggestionCreationModal from '../components/practice/SuggestionCreationModal'
-import { commonMessages, issueMessages, practiceMessages } from '../helpers/translation'
+import { downloadFile, getFileDownloadableLink } from '../helpers'
+import { commonMessages, practiceMessages } from '../helpers/translation'
+import { useMutatePractice, usePractice } from '../hooks/practice'
 import { ReactComponent as CalendarOIcon } from '../images/calendar-alt-o.svg'
 import { ReactComponent as MoreIcon } from '../images/ellipsis.svg'
 import EmptyCover from '../images/empty-cover.png'
@@ -29,7 +27,6 @@ import { ReactComponent as HeartFillIcon } from '../images/icon-heart.svg'
 const StyledContainer = styled.div`
   max-width: 720px;
 `
-
 const StyledSubTitle = styled.h4`
   font-size: 16px;
   font-weight: 500;
@@ -45,11 +42,6 @@ const StyledTitle = styled.h3`
   color: var(--gray-darker);
   margin-right: 20px;
   line-height: 1.5;
-`
-const StyledEditButton = styled(Button)`
-  font-weight: 500;
-  letter-spacing: 0.2px;
-  padding: 10px 20px;
 `
 const StyledPracticeTitle = styled.h3`
   ${CommonTitleMixin}
@@ -93,24 +85,86 @@ const messages = defineMessages({
   practiceSuggestion: { id: 'program.label.practiceSuggestion', defaultMessage: '作業建議' },
   practiceFile: { id: 'program.ui.practiceFile', defaultMessage: '作業檔案' },
   view: { id: 'program.ui.view', defaultMessage: '查看' },
-  editSuggestion: { id: 'program.ui.editSuggestion', defaultMessage: 'Edit Suggestion' },
-  deleteSuggestion: { id: 'program.ui.deleteSuggestion', defaultMessage: 'Delete Suggestion' },
+  editSuggestion: { id: 'program.ui.editSuggestion', defaultMessage: '編輯建議' },
+  deleteSuggestion: { id: 'program.ui.deleteSuggestion', defaultMessage: '刪除建議' },
 })
 
 const PracticePage: React.FC = () => {
   const { practiceId } = useParams<{ practiceId: string }>()
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
-  const { loading, error, practice } = usePractice(practiceId)
+  const { currentMemberId, authToken, apiHost } = useAuth()
+  const history = useHistory()
+  const { loadingPractice, errorPractice, practice, refetchPractice } = usePractice({ practiceId })
+  const { deletePractice, insertPracticeReaction, deletePracticeReaction } = useMutatePractice(practiceId)
+  const [isDownloading, setIsDownloading] = useState<boolean>(false)
+
   const [likeStatus, setLikeStatus] = useState({
-    isLiked: true,
-    likedCount: 120,
+    isLiked: practice?.reactedMemberIds?.some(memberId => memberId === currentMemberId) || false,
+    likedCount: practice?.reactedMemberIdsCount || 0,
   })
 
-  const handleDownload = () => {}
+  useEffect(() => {
+    if (currentMemberId) {
+      setLikeStatus({
+        isLiked: practice?.reactedMemberIds?.some(memberId => memberId === currentMemberId) || false,
+        likedCount: practice?.reactedMemberIdsCount || 0,
+      })
+    }
+  }, [currentMemberId, practice?.id])
 
-  if (loading || error || !practice) {
-    return null
+  if (loadingPractice) {
+    return <Skeleton active />
+  }
+
+  if (errorPractice || !practice) {
+    return <div>{formatMessage(commonMessages.status.readingError)}</div>
+  }
+
+  const files: {
+    id: string
+    name: string
+    from: string
+  }[] = [
+    ...practice.attachments.map(attachment => ({
+      id: attachment.id,
+      name: attachment.data.name,
+      from: 'practice',
+    })),
+  ]
+
+  const handleDownload = async (fileIndex: number) => {
+    setIsDownloading(true)
+    const file = files[fileIndex]
+    const fileKey = `attachments/${file.id}`
+    try {
+      const fileLink = await getFileDownloadableLink(fileKey, authToken, apiHost)
+      const fileRequest = new Request(fileLink)
+      const response = await fetch(fileRequest)
+      response.url &&
+        downloadFile(response.url, file.name).then(() => {
+          setIsDownloading(false)
+        })
+    } catch (error) {
+      message.error(error)
+    }
+  }
+  const handleDelete = async () => {
+    if (practice.memberId === currentMemberId) {
+      await deletePractice()
+      history.push(`/members/${currentMemberId}`)
+    }
+  }
+  const handleLikeStatus = async () => {
+    if (likeStatus.isLiked) {
+      await deletePracticeReaction()
+    } else {
+      await insertPracticeReaction()
+    }
+    setLikeStatus({
+      isLiked: !likeStatus.isLiked,
+      likedCount: likeStatus.isLiked ? likeStatus?.likedCount - 1 : likeStatus?.likedCount + 1,
+    })
+    await refetchPractice()
   }
 
   return (
@@ -118,27 +172,32 @@ const PracticePage: React.FC = () => {
       <StyledContainer className="container mt-5">
         <div className="d-flex mb-2">
           <StyledSubTitle className="mr-2">
-            <span>{practice.programContent.program.title}</span>
+            <span>{practice.programTitle}</span>
             <span> - </span>
-            <span>{practice.programContent.title}</span>
+            <span>{practice.programContentTitle}</span>
           </StyledSubTitle>
-          <Link to={`/programs/${practice.programContent.program.id}/contents/${practice.programContent.id}`}>
+          <Link to={`/programs/${practice.programId}/contents/${practice.programContentId}`}>
             {formatMessage(messages.view)}
           </Link>
         </div>
 
-        <div className="mb-3 d-flex">
+        <div className="mb-3 d-flex justify-content-between">
           <StyledTitle>{practice.title}</StyledTitle>
-          {/* FIXME: '' change to currentMemberId */}
-          {practice.member.id === '' && (
+          {practice.memberId === currentMemberId && (
             <Box className="d-flex" h="40px">
-              <StyledEditButton variant="primary">{formatMessage(commonMessages.button.edit)}</StyledEditButton>
+              <PracticeUploadModal
+                practice={practice}
+                programContentId={practice.programContentId}
+                onRefetch={refetchPractice}
+                onSubmit={() => window.location.reload(true)}
+              />
+
               <Menu>
                 <MenuButton className="p-2">
                   <Icon as={MoreIcon} />
                 </MenuButton>
                 <MenuList minWidth="110px">
-                  <MenuItem>{formatMessage(practiceMessages.button.delete)}</MenuItem>
+                  <MenuItem onClick={handleDelete}>{formatMessage(practiceMessages.button.delete)}</MenuItem>
                 </MenuList>
               </Menu>
             </Box>
@@ -146,10 +205,13 @@ const PracticePage: React.FC = () => {
         </div>
 
         <div className="d-flex align-items-center">
-          <MemberInfoBlock avatarUrl={practice.member.avatarUrl} name={practice.member.name} className="mr-2" />
-          <StyledDate>
+          <MemberAvatar
+            memberId={practice.memberId || ''}
+            renderText={member => <MemberName className="ml-2">{member.name}</MemberName>}
+          />
+          <StyledDate className="ml-2">
             <Icon as={CalendarOIcon} className="mr-1" />
-            {moment(practice.createdAt).format('YYYY-MM-DD')}
+            {moment(practice.createdAt).format('YYYY-MM-DD HH:mm:ss')}
           </StyledDate>
         </div>
 
@@ -161,22 +223,22 @@ const PracticePage: React.FC = () => {
 
         <div className="d-flex justify-content-between mt-4">
           <Menu>
-            <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant="outline">
+            <MenuButton
+              as={Button}
+              rightIcon={isDownloading ? <Spinner size="sm" /> : <ChevronDownIcon />}
+              variant="outline"
+            >
               {formatMessage(messages.practiceFile)}
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={handleDownload}>Download</MenuItem>
-              <MenuItem onClick={handleDownload}>Create a Copy</MenuItem>
+              {files.map((file, index) => (
+                <MenuItem key={file.id} onClick={() => handleDownload(index)}>
+                  {file.name}
+                </MenuItem>
+              ))}
             </MenuList>
           </Menu>
-          <div
-            onClick={() =>
-              setLikeStatus({
-                isLiked: !likeStatus.isLiked,
-                likedCount: likeStatus.isLiked ? likeStatus.likedCount - 1 : likeStatus.likedCount + 1,
-              })
-            }
-          >
+          <div onClick={handleLikeStatus}>
             <StyledIconButton
               variant="ghost"
               isActive={likeStatus.isLiked}
@@ -191,89 +253,21 @@ const PracticePage: React.FC = () => {
 
         <div className="mb-4">
           <StyledPracticeTitle className="mb-3">{formatMessage(messages.practiceSuggestion)}</StyledPracticeTitle>
-          <SuggestionCreationModal />
+          <SuggestionCreationModal threadId={`/practices/${practice.id}`} onRefetch={() => refetchPractice()} />
           {practice.suggests.map(v => {
             return (
-              <div>
-                <MessageItem>
-                  <MessageItemHeader programRoles={[]} createdAt={v.createdAt} memberId={v.memberId} />
-                  <MessageItemContent
-                    firstLayer
-                    description={v.description}
-                    renderEdit={setEditing => (
-                      <AntdMenu>
-                        <AntdMenu.Item onClick={() => setEditing(true)}>
-                          {formatMessage(messages.editSuggestion)}
-                        </AntdMenu.Item>
-                        <AntdMenu.Item>{formatMessage(messages.deleteSuggestion)}</AntdMenu.Item>
-                      </AntdMenu>
-                    )}
-                  >
-                    <MessageItemFooter>
-                      {({ repliesVisible, setRepliesVisible }) => (
-                        <>
-                          <MessageItemAction
-                            reactedMemberIds={v.reactedMemberIds}
-                            numReplies={v.suggestReplyCount}
-                            onRepliesVisible={setRepliesVisible}
-                          />
-                          {repliesVisible && (
-                            <>
-                              {[
-                                {
-                                  id: '',
-                                  memberId: currentMemberId || '',
-                                  createdAt: new Date(),
-                                  content: '12341234',
-                                  reactedMemberIds: [],
-                                },
-                              ].map(w => (
-                                <div key={w.id} className="mt-5">
-                                  <MessageItem>
-                                    <MessageItemHeader
-                                      programRoles={[]}
-                                      memberId={w.memberId}
-                                      createdAt={w.createdAt}
-                                    />
-                                    <MessageItemContent
-                                      description={w.content}
-                                      renderEdit={
-                                        w.memberId === currentMemberId
-                                          ? setEdition => (
-                                              <AntdMenu>
-                                                <AntdMenu.Item onClick={() => setEdition(true)}>
-                                                  {formatMessage(issueMessages.dropdown.content.edit)}
-                                                </AntdMenu.Item>
-                                                <AntdMenu.Item
-                                                  onClick={() =>
-                                                    window.confirm(
-                                                      formatMessage(issueMessages.dropdown.content.unrecoverable),
-                                                    )
-                                                  }
-                                                >
-                                                  {formatMessage(issueMessages.dropdown.content.delete)}
-                                                </AntdMenu.Item>
-                                              </AntdMenu>
-                                            )
-                                          : undefined
-                                      }
-                                    >
-                                      <MessageItemAction reactedMemberIds={w.reactedMemberIds} />
-                                    </MessageItemContent>
-                                  </MessageItem>
-                                </div>
-                              ))}
-                              <div className="mt-5">
-                                <MessageReplyCreationForm />
-                              </div>
-                            </>
-                          )}
-                        </>
-                      )}
-                    </MessageItemFooter>
-                  </MessageItemContent>
-                </MessageItem>
-                <Divider className="my-4" />
+              <div key={v.id}>
+                <MessageSuggestItem
+                  key={v.id}
+                  suggestId={v.id}
+                  memberId={v.memberId}
+                  description={v.description}
+                  suggestReplyCount={v.suggestReplyCount}
+                  programRoles={[]}
+                  reactedMemberIds={v.reactedMemberIds}
+                  createdAt={v.createdAt}
+                  onRefetch={() => refetchPractice()}
+                />
               </div>
             )
           })}
@@ -284,68 +278,3 @@ const PracticePage: React.FC = () => {
 }
 
 export default PracticePage
-
-const usePractice = (id: string) => {
-  const { currentMemberId } = useAuth()
-  const practice: {
-    title: string
-    createdAt: Date
-    coverUrl: string | null
-    description: string | null
-    member: {
-      id: string
-      avatarUrl: string | null
-      name: string
-    }
-    programContent: {
-      id: string
-      title: string
-      program: {
-        id: string
-        title: string
-      }
-    }
-    suggests: {
-      id: string
-      description: string
-      memberId: string
-      createdAt: Date
-      reactedMemberIds: string[]
-      suggestReplyCount: number
-    }[]
-  } = {
-    title: '我是主題名稱主題喔我是主題名稱主題喔我是主題名稱主題',
-    createdAt: new Date('2020-06-01'),
-    coverUrl: 'https://fakeimg.pl/1920x1080/',
-    description:
-      'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum est vel ipsam tenetur dolorem esse tempora eos necessitatibus beatae. Temporibus laudantium saepe obcaecati corporis facilis porro nostrum dignissimos praesentium blanditiis!',
-    member: {
-      id: '',
-      avatarUrl: null,
-      name: 'sasali Wang',
-    },
-    programContent: {
-      id: 'c8407f21-bad9-4037-834a-f55f634f743e',
-      title: 'untitle',
-      program: {
-        id: 'acb315c7-6eb0-4001-90d0-cae3a0175532',
-        title: '作業',
-      },
-    },
-    suggests: new Array(5).fill({
-      id: '',
-      description:
-        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum est vel ipsam tenetur dolorem esse tempora eos necessitatibus beatae. Temporibus laudantium saepe obcaecati corporis facilis porro nostrum dignissimos praesentium blanditiis!',
-      memberId: currentMemberId || '',
-      createdAt: new Date(),
-      reactedMemberIds: [],
-      suggestReplyCount: 5,
-    }),
-  }
-
-  return {
-    loading: false,
-    error: null,
-    practice,
-  }
-}

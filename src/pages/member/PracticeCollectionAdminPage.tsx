@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
-import { Typography } from 'antd'
+import { Skeleton, Typography } from 'antd'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
@@ -7,6 +7,7 @@ import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import PracticeAdminCard from '../../components/practice/PracticeAdminCard'
 import { EnrolledProgramSelector } from '../../components/program/ProgramSelector'
 import { commonMessages } from '../../helpers/translation'
+import { usePracticeCollection } from '../../hooks/practice'
 import { ReactComponent as BookIcon } from '../../images/book.svg'
 
 const PracticeCollectionAdminPage = () => {
@@ -39,34 +40,38 @@ const PracticeCollectionAdminPage = () => {
 const PracticeCollectionBlock: React.FC<{
   memberId: string
   selectedProgramId: string
-}> = () => {
-  // FIXME: Fake data
-  const practiceCollection = new Array(11).fill({
-    id: 'practiceId',
-    coverUrl: null,
-    title: 'title title title title title title title title title title title title title title',
-    memberId: '8cc92266-3c88-4860-b347-2e6a6cf3e8dd',
-    name: 'name',
-    suggestCount: 20,
-    reactedMemberIds: ['Amy', 'Ben', 'Ken'],
-    reactedMemberIdsCount: 10,
+}> = ({ memberId, selectedProgramId }) => {
+  const { formatMessage } = useIntl()
+  const { loadingPracticeCollection, errorPracticeCollection, practiceCollection } = usePracticeCollection({
+    memberId,
+    programId: selectedProgramId === 'all' ? undefined : selectedProgramId,
   })
+  if (loadingPracticeCollection) {
+    return <Skeleton active />
+  }
 
+  if (errorPracticeCollection || !practiceCollection) {
+    return <div>{formatMessage(commonMessages.status.readingError)}</div>
+  }
   return (
     <div className="row">
-      {practiceCollection.map(v => (
-        <div key={v.id} className="col-12 col-lg-3 mb-4">
-          <PracticeAdminCard
-            id={v.id}
-            title={v.title}
-            coverUrl={v.coverUrl}
-            name={v.name}
-            suggestCount={v.suggestCount}
-            reactedMemberIds={v.reactedMemberIds}
-            reactedMemberIdsCount={v.reactedMemberIdsCount}
-          />
-        </div>
-      ))}
+      {practiceCollection.length ? (
+        practiceCollection.map((v: any) => (
+          <div key={v.id} className="col-12 col-lg-3 mb-4">
+            <PracticeAdminCard
+              id={v.id}
+              title={v.title}
+              coverUrl={v.coverUrl}
+              memberId={v.memberId}
+              suggestCount={v.suggestCount}
+              reactedMemberIds={v.reactedMemberIds}
+              reactedMemberIdsCount={v.reactedMemberIdsCount}
+            />
+          </div>
+        ))
+      ) : (
+        <p>沒有作業唷，可以去課程裡繳交作業，之後來這查看。</p>
+      )}
     </div>
   )
 }

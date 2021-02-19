@@ -1,6 +1,7 @@
 import { Box, Icon, Link } from '@chakra-ui/react'
 import React from 'react'
 import styled from 'styled-components'
+import { usePublicMember } from '../../hooks/member'
 import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as CommentIcon } from '../../images/icon-comment.svg'
 import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
@@ -42,10 +43,12 @@ const PracticeAdminCard: React.FC<PracticePreviewProps> = ({
   id,
   coverUrl,
   title,
-  name,
+  memberId,
   suggestCount,
   reactedMemberIdsCount,
 }) => {
+  const { member } = usePublicMember(memberId || '')
+
   return (
     <StyledWrapper borderRadius="4px" bg="#ffffff">
       <StyledLink href={`/practices/${id}`} isExternal>
@@ -53,7 +56,7 @@ const PracticeAdminCard: React.FC<PracticePreviewProps> = ({
         <StyledTitle className="mx-3">{title}</StyledTitle>
 
         <div className="d-flex justify-content-between p-3">
-          <StyledName>{name}</StyledName>
+          <StyledName>{member?.name}</StyledName>
           <StyledGroup className="d-flex align-items-end">
             <div className="mr-2">
               <Icon as={CommentIcon} className="mr-1" />

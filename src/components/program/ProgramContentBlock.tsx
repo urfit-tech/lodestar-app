@@ -40,6 +40,7 @@ const ProgramContentBlock: React.FC<{
   const { enabledModules } = useApp()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
+
   const { loadingProgramContentMaterials, programContentMaterials } = useProgramContentMaterial(programContentId)
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
   const { loadingMember, member } = usePublicMember(instructor?.memberId || '')
@@ -110,14 +111,15 @@ const ProgramContentBlock: React.FC<{
       {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
         <div className="mb-4">
           <PracticeDescriptionBlock
+            programContentId={programContentId}
             title={programContent.title}
             description={programContent.programContentBody?.description || ''}
-            duration={23}
-            score={4}
+            duration={programContent.duration || 0}
+            score={programContent.metadata?.difficulty || 0}
+            attachments={programContent.attachments || []}
           />
         </div>
       )}
-
       {programContent.programContentBody?.type === 'exercise' && (
         <div className="mb-4">
           <ExerciseBlock
@@ -163,7 +165,10 @@ const ProgramContentBlock: React.FC<{
             </Tabs.TabPane>
             {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
               <Tabs.TabPane tab={formatMessage(programMessages.label.practiceUpload)} key="practice" className="p-4">
-                <PracticeDisplayedCollection />
+                <PracticeDisplayedCollection
+                  isPrivate={programContent.metadata?.private || false}
+                  programContentId={programContent.id}
+                />
               </Tabs.TabPane>
             )}
             {programContent.materials.length !== 0 && (

@@ -1,16 +1,19 @@
-import { Icon } from '@chakra-ui/react'
+import { Box, Icon, SkeletonText } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { programMessages } from '../../helpers/translation'
+import { useMutatePractice, usePracticeCollection } from '../../hooks/practice'
 import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as CommentIcon } from '../../images/icon-comment.svg'
 import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as RocketIcon } from '../../images/icon-rocket.svg'
+import { useAuth } from '../auth/AuthContext'
 import { CommonTextMixin } from '../common'
-import { AvatarImage, CustomRatioImage } from '../common/Image'
+import { CustomRatioImage } from '../common/Image'
+import MemberAvatar from '../common/MemberAvatar'
 
 const StyledBlock = styled.div`
   margin: 50px 0;
@@ -25,14 +28,6 @@ const StyledNotice = styled.div`
   background-color: var(--gray-lighter);
 `
 
-const StyledName = styled.span`
-  height: 18px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.6px;
-  color: var(--gray-dark);
-`
-
 const messages = defineMessages({
   privatePractice: {
     id: 'program.text.privatePractice',
@@ -40,53 +35,50 @@ const messages = defineMessages({
   },
 })
 
-const PracticeDisplayedCollection: React.FC = () => {
+const PracticeDisplayedCollection: React.FC<{
+  isPrivate: boolean
+  programContentId: string
+}> = ({ isPrivate, programContentId }) => {
+  const { currentMemberId, currentUserRole } = useAuth()
   const { formatMessage } = useIntl()
-  // ! fake data
-  const practiceCollection = new Array(12).fill({
-    id: 'practiceId',
-    coverUrl: null,
-    title: 'title title title title title title title title title title title title title title',
-    avatarUrl: null,
-    name: 'name',
-    suggestCount: 20,
-    isLiked: true,
-    likedCount: 50,
+  const { loadingPracticeCollection, errorPracticeCollection, practiceCollection } = usePracticeCollection({
+    programContentId,
+    memberId: currentUserRole === 'general-member' && isPrivate ? currentMemberId : null,
   })
 
-  // if (!practiceCollection.length) {
-  //   return (
-  //     <StyledBlock className="d-flex flex-column justify-content-center align-items-center">
-  //       <Icon as={RocketIcon} className="mb-4" w="120px" h="120px" />
-  //       <StyledParagraph>{formatMessage(programMessages.text.uploadPractice)}</StyledParagraph>
-  //     </StyledBlock>
-  //   )
-  // }
-
+  if (loadingPracticeCollection || errorPracticeCollection || !practiceCollection) {
+    return (
+      <Box padding="6" boxShadow="lg" bg="white">
+        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+      </Box>
+    )
+  }
   return (
     <>
-      <StyledNotice className="mb-4">
-        <Icon as={LockIcon} className="mr-2" />
-        <span>{formatMessage(messages.privatePractice)}</span>
-      </StyledNotice>
-
-      <StyledBlock className="d-flex flex-column justify-content-center align-items-center">
-        <Icon as={RocketIcon} className="mb-4" w="120px" h="120px" />
-        <StyledParagraph>{formatMessage(programMessages.text.uploadPractice)}</StyledParagraph>
-      </StyledBlock>
+      {isPrivate && (
+        <StyledNotice className="mb-4">
+          <Icon as={LockIcon} className="mr-2" />
+          <span>{formatMessage(messages.privatePractice)}</span>
+        </StyledNotice>
+      )}
+      {practiceCollection.every(practice => practice.memberId !== currentMemberId) && (
+        <StyledBlock className="d-flex flex-column justify-content-center align-items-center">
+          <Icon as={RocketIcon} className="mb-4" w="120px" h="120px" />
+          <StyledParagraph>{formatMessage(programMessages.text.uploadPractice)}</StyledParagraph>
+        </StyledBlock>
+      )}
 
       <div className="row">
         {practiceCollection.map(v => (
-          <div className="col-12 col-lg-4 mb-4">
+          <div className="col-12 col-lg-4 mb-4" key={v.id}>
             <PracticeDisplayedCard
               id={v.id}
               title={v.title}
               coverUrl={v.coverUrl}
-              avatarUrl={v.avatarUrl}
-              name={v.name}
+              memberId={v.memberId}
               suggestCount={v.suggestCount}
-              isLiked={v.isLiked}
-              likedCount={v.likedCount}
+              isLiked={v.reactedMemberIds?.some(memberId => memberId === currentMemberId) || false}
+              likedCount={v?.reactedMemberIdsCount || 0}
             />
           </div>
         ))}
@@ -133,17 +125,28 @@ const PracticeDisplayedCard: React.FC<{
   id: string
   coverUrl: string | null
   title: string
-  avatarUrl: string | null
-  name: string
+  memberId: string
   suggestCount: number
   likedCount: number
   isLiked: boolean
-}> = ({ id, coverUrl, title, avatarUrl, name, suggestCount, isLiked, likedCount }) => {
+}> = ({ id, coverUrl, title, memberId, suggestCount, isLiked, likedCount }) => {
   const [likeStatus, setLikeStatus] = useState({
     isLiked,
     likedCount,
   })
+  const { deletePracticeReaction, insertPracticeReaction } = useMutatePractice(id)
 
+  const handleLikeStatus = async () => {
+    if (likeStatus.isLiked) {
+      await deletePracticeReaction()
+    } else {
+      await insertPracticeReaction()
+    }
+    setLikeStatus({
+      isLiked: !likeStatus.isLiked,
+      likedCount: likeStatus.isLiked ? likeStatus?.likedCount - 1 : likeStatus?.likedCount + 1,
+    })
+  }
   return (
     <StyledContainer>
       <a href={`/practices/${id}`} target="_blank" rel="noopener noreferrer">
@@ -151,8 +154,7 @@ const PracticeDisplayedCard: React.FC<{
         <StyledTitle className="mx-3">{title}</StyledTitle>
 
         <div className="d-flex justify-content-between align-items-end m-3">
-          <MemberInfoBlock avatarUrl={avatarUrl} name={name} />
-
+          <MemberAvatar memberId={memberId} withName />
           <StyledGroup className="d-flex">
             <div className="mr-3">
               <Icon as={CommentIcon} className="mr-1" />
@@ -162,10 +164,7 @@ const PracticeDisplayedCard: React.FC<{
               isActive={likeStatus.isLiked}
               onClick={e => {
                 e.preventDefault()
-                setLikeStatus({
-                  isLiked: !likeStatus.isLiked,
-                  likedCount: likeStatus.isLiked ? likeStatus.likedCount - 1 : likeStatus.likedCount + 1,
-                })
+                handleLikeStatus()
               }}
             >
               <Icon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} className="mr-1" />
@@ -177,16 +176,5 @@ const PracticeDisplayedCard: React.FC<{
     </StyledContainer>
   )
 }
-
-export const MemberInfoBlock: React.FC<{
-  avatarUrl: string | null
-  name: string
-  className?: string
-}> = ({ avatarUrl, name, className }) => (
-  <div className={`d-flex align-items-center ${className}`}>
-    <AvatarImage className="mr-2" size="28px" src={avatarUrl} />
-    <StyledName>{name}</StyledName>
-  </div>
-)
 
 export default PracticeDisplayedCollection
