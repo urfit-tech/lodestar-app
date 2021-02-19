@@ -8,7 +8,6 @@ import { Link, useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { useAuth } from '../components/auth/AuthContext'
 import { CommonTitleMixin } from '../components/common'
-import { CustomRatioImage } from '../components/common/Image'
 import MemberAvatar, { MemberName } from '../components/common/MemberAvatar'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -20,7 +19,6 @@ import { commonMessages, practiceMessages } from '../helpers/translation'
 import { useMutatePractice, usePractice } from '../hooks/practice'
 import { ReactComponent as CalendarOIcon } from '../images/calendar-alt-o.svg'
 import { ReactComponent as MoreIcon } from '../images/ellipsis.svg'
-import EmptyCover from '../images/empty-cover.png'
 import { ReactComponent as HeartIcon } from '../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../images/icon-heart.svg'
 
@@ -204,7 +202,7 @@ const PracticePage: React.FC = () => {
           )}
         </div>
 
-        <div className="d-flex align-items-center">
+        <div className="mb-3 d-flex align-items-center">
           <MemberAvatar
             memberId={practice.memberId || ''}
             renderText={member => <MemberName className="ml-2">{member.name}</MemberName>}
@@ -214,10 +212,6 @@ const PracticePage: React.FC = () => {
             {moment(practice.createdAt).format('YYYY-MM-DD HH:mm:ss')}
           </StyledDate>
         </div>
-
-        {practice.coverUrl && (
-          <CustomRatioImage width="100%" ratio={9 / 16} src={practice.coverUrl || EmptyCover} className="my-4" />
-        )}
 
         <BraftContent>{practice.description}</BraftContent>
 

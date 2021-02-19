@@ -146,8 +146,8 @@ const PracticeDescriptionBlock: React.FC<{
         programContentId={programContentId}
         practice={practice}
         onRefetch={refetchPractice}
-        onSubmit={() => {
-          window.location.assign(`/practices/${practice?.id}`)
+        onSubmit={({ practiceId }) => {
+          window.location.assign(`/practices/${practice?.id || practiceId}`)
         }}
       />
     </StyledBlock>
