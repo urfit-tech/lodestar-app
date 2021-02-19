@@ -1,10 +1,12 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useAuth } from '../components/auth/AuthContext'
 import { useApp } from '../containers/common/AppContext'
 import LanguageContext from '../contexts/LanguageContext'
 import { GET_NOTIFICATIONS, NotificationProps } from '../contexts/NotificationContext'
+import { handleError, uploadFile } from '../helpers/index'
 import types from '../types'
 import { CouponProps } from '../types/checkout'
 
@@ -198,5 +200,61 @@ export const useMemberContract = (memberContractId: string) => {
           },
         }
       : null,
+  }
+}
+
+export const useUploadAttachments = () => {
+  const { authToken, apiHost } = useAuth()
+  const { id: appId } = useApp()
+  const [insertAttachment] = useMutation<types.INSERT_ATTACHMENT, types.INSERT_ATTACHMENTVariables>(gql`
+    mutation INSERT_ATTACHMENT($attachments: [attachment_insert_input!]!) {
+      insert_attachment(objects: $attachments, on_conflict: { constraint: attachment_pkey, update_columns: [data] }) {
+        returning {
+          id
+        }
+      }
+    }
+  `)
+
+  return async (type: string, target: string, files: File[]) => {
+    const { data } = await insertAttachment({
+      variables: {
+        attachments: files.map(() => ({
+          type,
+          target,
+          app_id: appId,
+        })),
+      },
+    })
+
+    const attachmentIds: string[] = data?.insert_attachment?.returning.map((v: any) => v.id) || []
+
+    try {
+      for (let index = 0; files[index]; index++) {
+        const attachmentId = attachmentIds[index]
+        const file = files[index]
+        await uploadFile(`attachments/${attachmentId}`, file, authToken, apiHost)
+        await insertAttachment({
+          variables: {
+            attachments: [
+              {
+                id: attachmentId,
+                data: {
+                  lastModified: file.lastModified,
+                  name: file.name,
+                  type: file.type,
+                  size: file.size,
+                },
+                app_id: appId,
+              },
+            ],
+          },
+        })
+      }
+
+      return attachmentIds
+    } catch (error) {
+      handleError(error)
+    }
   }
 }

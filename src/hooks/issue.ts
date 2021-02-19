@@ -223,6 +223,9 @@ const UPDATE_ISSUE = gql`
 
 const DELETE_ISSUE = gql`
   mutation DELETE_ISSUE($issueId: uuid!) {
+    delete_issue_reply_reaction(where: { issue_reply: { issue_id: { _eq: $issueId } } }) {
+      affected_rows
+    }
     delete_issue_reply(where: { issue_id: { _eq: $issueId } }) {
       affected_rows
     }

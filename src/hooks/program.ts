@@ -6,6 +6,7 @@ import { CategoryProps } from '../types/general'
 import {
   PeriodType,
   ProgramBriefProps,
+  ProgramContentAttachmentProps,
   ProgramContentBodyProps,
   ProgramContentMaterialProps,
   ProgramContentProps,
@@ -448,6 +449,12 @@ export const useProgramContent = (programContentId: string) => {
             data
             created_at
           }
+          program_content_attachments {
+            attachment_id
+            data
+            options
+            created_at
+          }
         }
       }
     `,
@@ -458,6 +465,7 @@ export const useProgramContent = (programContentId: string) => {
     | (ProgramContentProps & {
         programContentBody: ProgramContentBodyProps | null
         materials: ProgramContentMaterialProps[]
+        attachments: ProgramContentAttachmentProps[]
       })
     | null =
     loading || error || !data || !data.program_content_by_pk
@@ -485,6 +493,12 @@ export const useProgramContent = (programContentId: string) => {
             id: v.id,
             data: v.data,
             createdAt: v.created_at,
+          })),
+          attachments: data.program_content_by_pk.program_content_attachments.map(u => ({
+            id: u.attachment_id,
+            data: u.data,
+            options: u.options,
+            createdAt: u.created_at,
           })),
         }
 
