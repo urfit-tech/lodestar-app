@@ -3,7 +3,7 @@ import { Button, Icon } from 'antd'
 import gql from 'graphql-tag'
 import { flatten, uniqBy } from 'ramda'
 import React, { useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CommonTextMixin } from '../components/common'
@@ -18,10 +18,6 @@ import DefaultAvatar from '../images/avatar.svg'
 import types from '../types'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
-
-const messages = defineMessages({
-  creatorDisplay: { id: 'creator.term.creatorDisplay', defaultMessage: '講師牆' },
-})
 
 const StyledCreatorName = styled.h2`
   height: 20px;

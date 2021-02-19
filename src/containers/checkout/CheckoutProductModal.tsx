@@ -1,4 +1,3 @@
-import { Icon, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { Button, Divider, Form, Input, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { ModalProps } from 'antd/lib/modal'
@@ -17,8 +16,6 @@ import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
 import { useReferrer } from '../../hooks/common'
 import { useUpdateMemberMetadata } from '../../hooks/member'
-import { ReactComponent as CheckedCircleBoxIcon } from '../../images/checked-circle-box.svg'
-import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 import { shippingOptionIdProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { ShippingMethodProps } from '../../types/merchandise'
@@ -276,14 +273,18 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
                   <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
                 </div>
                 <div className="col-12 col-lg-6">
-                  <InputGroup>
-                    <Input onBlur={e => setReferrerEmail(e.target.value)} />
-                    {referrerStatus === 'success' ? (
-                      <InputRightElement children={<Icon as={CheckedCircleBoxIcon} />} />
-                    ) : referrerStatus === 'error' ? (
-                      <InputRightElement children={<Icon as={ExclamationCircleIcon} />} />
-                    ) : null}
-                  </InputGroup>
+                  <Form.Item
+                    validateStatus={referrerStatus}
+                    hasFeedback
+                    help={
+                      referrerStatus === 'error' ? formatMessage(commonMessages.text.notFoundReferrerEmail) : undefined
+                    }
+                  >
+                    <Input
+                      placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
+                      onBlur={e => setReferrerEmail(e.target.value)}
+                    />
+                  </Form.Item>
                 </div>
               </div>
             )}

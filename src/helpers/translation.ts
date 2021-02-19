@@ -228,6 +228,7 @@ export const commonMessages = {
       password: { id: 'common.form.placeholder.password', defaultMessage: '密碼' },
       email: { id: 'common.form.placeholder.email', defaultMessage: 'Email' },
       search: { id: 'common.searchPlaceholder', defaultMessage: '選擇兌換項目' },
+      referrerEmail: { id: 'common.label.referrerEmail', defaultMessage: '請輸入推薦人的註冊信箱' },
     }),
     option: defineMessages({
       unsolved: { id: 'common.select.option.unsolved', defaultMessage: '未解決' },
@@ -364,6 +365,7 @@ export const commonMessages = {
       id: 'product.text.addToCartSuccessfully',
       defaultMessage: '成功加入購物車',
     },
+    notFoundReferrerEmail: { id: 'common.text.notFoundReferrerEmail', defaultMessage: '找不到這個註冊信箱' },
   }),
 }
 
