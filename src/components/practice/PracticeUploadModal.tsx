@@ -43,7 +43,14 @@ const messages = defineMessages({
   fillTitleNotice: { id: 'program.text.fillTitleNotice', defaultMessage: '請填入標題' },
   fillDescriptionPlease: { id: 'program.text.fillDescriptionPlease', defaultMessage: '輸入內容描述...' },
 })
-
+const StyledInput = styled(props => <Input {...props} />)`
+  && {
+    &:focus {
+      border: 1px solid ${props => props.theme['@primary-color']};
+      box-shadow: 0 0 0 1px ${props => props.theme['@primary-color']};
+    }
+  }
+`
 const StyledButton = styled(Button)`
   && {
     width: 100%;
@@ -55,7 +62,7 @@ type PracticeUploadModalProps = {
   practice?: PracticeProps | null
   onSubmit?: (values: { practiceId: string; title: string; description: EditorState }) => void
   onRefetch?: () => Promise<any>
-  renderTrigger?: () => React.ReactElement
+  renderTrigger?: (onOpen: any) => React.ReactElement
 }
 
 const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
@@ -63,6 +70,7 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
   programContentId,
   onSubmit,
   onRefetch,
+  renderTrigger,
 }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken, apiHost } = useAuth()
@@ -194,15 +202,21 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
           </Button>
         </ButtonGroup>
       )}
-      renderTrigger={() => (
-        <StyledButton variant="primary" onClick={onOpen}>
-          {formatMessage(variant === 'upload' ? messages.uploadByMe : commonMessages.button.edit)}
-        </StyledButton>
-      )}
+      renderTrigger={() =>
+        renderTrigger?.(onOpen) || (
+          <StyledButton variant="primary" onClick={onOpen}>
+            {formatMessage(variant === 'upload' ? messages.uploadByMe : commonMessages.button.edit)}
+          </StyledButton>
+        )
+      }
     >
       <FormControl isRequired isInvalid={!!errors?.title?.message} className="my-4">
         <FormLabel>{formatMessage(commonMessages.label.title)}</FormLabel>
-        <Input name="title" ref={register({ required: formatMessage(messages.fillTitleNotice) })} variant="outline" />
+        <StyledInput
+          name="title"
+          ref={register({ required: formatMessage(messages.fillTitleNotice) })}
+          variant="outline"
+        />
         <FormErrorMessage>{errors?.title?.message}</FormErrorMessage>
       </FormControl>
       <Controller

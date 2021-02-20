@@ -20,6 +20,7 @@ const messages = defineMessages({
   estimateTime: { id: 'program.text.estimateTime', defaultMessage: '預估實作 {duration} 分鐘' },
   difficulty: { id: 'program.term.difficulty', defaultMessage: '難易度' },
   downloadMaterial: { id: 'program.ui.downloadMaterial', defaultMessage: '下載素材' },
+  viewOwnPractice: { id: 'program.ui.viewOwnPractice', defaultMessage: '查看我的作業' },
 })
 
 const StyledBlock = styled.div`
@@ -70,6 +71,11 @@ const StyledEstimateTime = styled.div`
 `
 const StyledDifficulty = styled.div`
   ${StyledEvaluationText}
+`
+const StyledButton = styled(Button)`
+  && {
+    width: 100%;
+  }
 `
 
 const PracticeDescriptionBlock: React.FC<{
@@ -149,6 +155,15 @@ const PracticeDescriptionBlock: React.FC<{
         onSubmit={({ practiceId }) => {
           window.location.assign(`/practices/${practice?.id || practiceId}`)
         }}
+        renderTrigger={
+          practice
+            ? onOpen => (
+                <StyledButton variant="primary" onClick={onOpen}>
+                  {formatMessage(messages.viewOwnPractice)}
+                </StyledButton>
+              )
+            : undefined
+        }
       />
     </StyledBlock>
   )
