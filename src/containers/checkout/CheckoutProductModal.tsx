@@ -6,6 +6,7 @@ import React, { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
+import { useAuth } from '../../components/auth/AuthContext'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
 import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/checkout/InvoiceInput'
 import ShippingInput, { ShippingProps, validateShipping } from '../../components/checkout/ShippingInput'
@@ -77,6 +78,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [sharingCode] = useQueryParam('sharing', StringParam)
+  const { currentMemberId } = useAuth()
   const updateMemberMetadata = useUpdateMemberMetadata()
   const { enabledModules } = useApp()
 
@@ -131,9 +133,14 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
 
-  const { loadingMemberId, memberId } = useReferrer(referrerEmail)
-  const referrerStatus: 'success' | 'error' | undefined =
-    referrerEmail && !loadingMemberId ? (memberId ? 'success' : 'error') : undefined
+  const { loadingReferrerId, referrerId } = useReferrer(referrerEmail)
+  const referrerStatus: 'success' | 'error' | 'validating' | undefined = !referrerEmail
+    ? undefined
+    : loadingReferrerId
+    ? 'validating'
+    : referrerId === currentMemberId
+    ? 'error'
+    : 'success'
 
   // checkout
   const [productId, setProductId] = useState<string>(defaultProductId || '')
@@ -277,7 +284,11 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
                     validateStatus={referrerStatus}
                     hasFeedback
                     help={
-                      referrerStatus === 'error' ? formatMessage(commonMessages.text.notFoundReferrerEmail) : undefined
+                      referrerStatus === 'error'
+                        ? referrerId === currentMemberId
+                          ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
+                          : formatMessage(commonMessages.text.notFoundReferrerEmail)
+                        : undefined
                     }
                   >
                     <Input

@@ -331,9 +331,9 @@ export const useReferrer = (email: string) => {
   )
 
   return {
-    loadingMemberId: loading,
-    errorMemberId: error,
-    memberId: data?.member_public[0]?.id || null,
-    refetchMemberId: refetch,
+    loadingReferrerId: loading,
+    errorReferrerId: error,
+    referrerId: data?.member_public[0]?.id || null,
+    refetchReferrerId: refetch,
   }
 }

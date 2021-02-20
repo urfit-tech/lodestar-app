@@ -41,7 +41,7 @@ const CheckoutBlock: React.FC<{
 }> = ({ member, shopId, cartProducts }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { isAuthenticating, isAuthenticated } = useAuth()
+  const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
   const { settings, enabledModules } = useApp()
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
@@ -100,9 +100,14 @@ const CheckoutBlock: React.FC<{
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
 
-  const { loadingMemberId, memberId } = useReferrer(referrerEmail)
-  const referrerStatus: 'success' | 'error' | undefined =
-    referrerEmail && !loadingMemberId ? (memberId ? 'success' : 'error') : undefined
+  const { loadingReferrerId, referrerId } = useReferrer(referrerEmail)
+  const referrerStatus: 'success' | 'error' | 'validating' | undefined = !referrerEmail
+    ? undefined
+    : loadingReferrerId
+    ? 'validating'
+    : referrerId === currentMemberId
+    ? 'error'
+    : 'success'
 
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
@@ -250,7 +255,11 @@ const CheckoutBlock: React.FC<{
                   validateStatus={referrerStatus}
                   hasFeedback
                   help={
-                    referrerStatus === 'error' ? formatMessage(commonMessages.text.notFoundReferrerEmail) : undefined
+                    referrerStatus === 'error'
+                      ? referrerId === currentMemberId
+                        ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
+                        : formatMessage(commonMessages.text.notFoundReferrerEmail)
+                      : undefined
                   }
                 >
                   <Input

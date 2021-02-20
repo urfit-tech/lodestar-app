@@ -366,6 +366,7 @@ export const commonMessages = {
       defaultMessage: '成功加入購物車',
     },
     notFoundReferrerEmail: { id: 'common.text.notFoundReferrerEmail', defaultMessage: '找不到這個註冊信箱' },
+    selfReferringIsNotAllowed: { id: 'common.text.selfReferringIsNotAllowed', defaultMessage: '推薦人不可為自己' },
   }),
 }
 
