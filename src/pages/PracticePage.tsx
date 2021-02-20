@@ -149,7 +149,7 @@ const PracticePage: React.FC = () => {
   const handleDelete = async () => {
     if (practice.memberId === currentMemberId) {
       await deletePractice()
-      history.push(`/members/${currentMemberId}`)
+      history.push(`/programs/${practice.programId}/contents/${practice.programContentId}`)
     }
   }
   const handleLikeStatus = async () => {
