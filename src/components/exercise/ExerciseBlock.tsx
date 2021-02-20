@@ -1,7 +1,8 @@
-import { adjust, includes } from 'ramda'
+import { sum } from 'ramda'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useMutateExercise } from '../../hooks/program'
+import { ExerciseProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
 import AdminCard from '../common/AdminCard'
 import ExerciseQuestionBlock from './ExerciseQuestionBlock'
@@ -16,79 +17,97 @@ const StyledTitle = styled.h3`
   color: var(--gray-darker);
 `
 
-const ExerciseBlock: React.FC<{
-  programContentId: string
-  title: string
-  exercises: {
-    id: string
-    question: string
-    detail: string
-    score: number
-    options: {
-      id: string
-      answer: string
-      isAnswer: boolean
-      isSelected: boolean
-    }[]
-  }[]
-  passingScore: number
-  allowReAnswer?: boolean
-  allowGoBack?: boolean
-  nextProgramContentId?: string
-  isTaken?: boolean
-}> = ({
+const ExerciseBlock: React.FC<
+  ExerciseProps & {
+    programContentId: string
+    title: string
+    nextProgramContentId?: string
+    isTaken?: boolean
+  }
+> = ({
+  id,
+  questions: defaultQuestions,
+  passingScore,
+  isAvailableToGoBack,
+  isAvailableToRetry,
   programContentId,
   title,
-  exercises: defaultExercises,
-  passingScore,
-  allowReAnswer,
-  allowGoBack,
   nextProgramContentId,
   isTaken,
 }) => {
   const { currentMemberId } = useAuth()
   const { insertExercise } = useMutateExercise()
   const [status, setStatus] = useState<'answering' | 'result' | 'review'>(isTaken ? 'result' : 'answering')
-  const [exercises, setExercises] = useState(defaultExercises)
+  const [questions, setQuestions] = useState(defaultQuestions)
 
   let exerciseStatus
 
-  if (includes(status, ['answering', 'review'])) {
+  if (['answering', 'review'].includes(status)) {
     exerciseStatus = (
       <ExerciseQuestionBlock
-        allowGoBack={allowGoBack}
+        id={id}
+        isAvailableToGoBack={isAvailableToGoBack}
+        isAvailableToRetry={isAvailableToRetry}
+        passingScore={passingScore}
+        questions={questions}
         showDetail={status === 'review'}
-        exercises={exercises}
-        onOptionSelect={
-          status === 'answering'
-            ? (currentIndex, newOptions) =>
-                setExercises(
-                  adjust(
-                    currentIndex,
-                    exercise => ({
-                      ...exercise,
-                      options: newOptions,
-                    }),
-                    exercises,
-                  ),
-                )
-            : undefined
-        }
+        onChoiceSelect={(questionId, choiceId) => {
+          if (status !== 'answering') {
+            return
+          }
+          const question = questions.find(question => question.id === questionId)
+          if (!question) {
+            return
+          }
+          const newChoices = question.choices.map(choice =>
+            choice.id === choiceId
+              ? {
+                  ...choice,
+                  isSelected: question.isMultipleAnswers ? !choice.isSelected : true,
+                }
+              : {
+                  ...choice,
+                  isSelected: question.isMultipleAnswers ? choice.isSelected : false,
+                },
+          )
+          const gainedPoints = Math.max(
+            (question.isMultipleAnswers
+              ? sum(newChoices.map(choice => (choice.isCorrect === choice.isSelected ? 1 : -1))) / newChoices.length
+              : newChoices.every(choice => choice.isCorrect === choice.isSelected)
+              ? 1
+              : 0) * question.points,
+            0,
+          )
+
+          setQuestions(
+            questions.map(question =>
+              question.id === questionId
+                ? {
+                    ...question,
+                    choices: newChoices,
+                    gainedPoints,
+                  }
+                : question,
+            ),
+          )
+        }}
         onFinish={() => {
           insertExercise({
             variables: {
               data: {
                 member_id: currentMemberId,
                 program_content_id: programContentId,
-                answer: exercises.map(exercise => ({
-                  questionId: exercise.id,
-                  choiceIds: exercise.options.filter(option => option.isSelected).map(option => option.id),
-                  points: exercise.score,
+                answer: questions.map(question => ({
+                  questionId: question.id,
+                  questionPoints: question.points,
+                  choiceIds: question.choices.filter(choice => choice.isSelected).map(choice => choice.id),
+                  gainedPoints: question.gainedPoints || 0,
                 })),
               },
             },
-          }).catch(() => {})
-          setStatus('result')
+          })
+            .then(() => setStatus('result'))
+            .catch(() => {})
         }}
       />
     )
@@ -97,16 +116,18 @@ const ExerciseBlock: React.FC<{
   if (status === 'result') {
     exerciseStatus = (
       <ExerciseResultBlock
-        exercises={exercises}
+        id={id}
+        isAvailableToGoBack={isAvailableToGoBack}
+        isAvailableToRetry={isAvailableToRetry}
         passingScore={passingScore}
+        questions={questions}
         nextProgramContentId={nextProgramContentId}
-        allowReAnswer={allowReAnswer}
         onReAnswer={() => {
-          setExercises(
-            defaultExercises.map(v => ({
-              ...v,
-              options: v.options.map(w => ({
-                ...w,
+          setQuestions(
+            defaultQuestions.map(question => ({
+              ...question,
+              choices: question.choices.map(choice => ({
+                ...choice,
                 isSelected: false,
               })),
             })),

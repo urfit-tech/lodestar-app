@@ -47,7 +47,7 @@ const ProgramContentBlock: React.FC<{
   const { loadingProgramContentMaterials, programContentMaterials } = useProgramContentMaterial(programContentId)
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
   const { loadingMember, member } = usePublicMember(instructor?.memberId || '')
-  const { lastExercise } = useLastExercise(programContentId)
+  const { loadingLastExercise, lastExercise } = useLastExercise(programContentId)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
@@ -67,7 +67,7 @@ const ProgramContentBlock: React.FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadingProgramContent, programContentBodyType, programContentId])
 
-  if (!programContent || !insertProgress || !refetchProgress || loadingProgramContentMaterials) {
+  if (!programContent || !insertProgress || !refetchProgress || loadingProgramContentMaterials || loadingLastExercise) {
     return <Skeleton active />
   }
 
@@ -127,31 +127,37 @@ const ProgramContentBlock: React.FC<{
       {programContent.programContentBody?.type === 'exercise' && (
         <div className="mb-4">
           <ExerciseBlock
+            id={programContent.programContentBody.id}
             programContentId={programContentId}
             title={programContent.title}
-            exercises={
-              programContent.programContentBody.data?.questions?.map((question: any) => ({
-                id: question.id,
-                question: question.description || '',
-                detail: question.answerDescription || '',
-                options:
-                  question.choices?.map((choice: any) => ({
-                    id: choice.id,
-                    answer: choice.description || '',
-                    isAnswer: !!choice.isCorrect,
-                    isSelected: !!lastExercise?.answer?.some(
-                      (v: any) =>
-                        v.questionId === question.id && v.choiceIds.some((choiceId: string) => choiceId === choice.id),
-                    ),
-                  })) || [],
-                score: question.score || 0,
-              })) || []
-            }
-            passingScore={programContent.metadata?.passingScore || 0}
             nextProgramContentId={nextProgramContent?.id}
-            allowReAnswer={!!programContent.metadata?.isAvailableToRetry}
-            allowGoBack={!!programContent.metadata?.isAvailableToGoBack}
             isTaken={!!lastExercise}
+            questions={
+              programContent.programContentBody.data?.questions
+                ?.filter((question: any) => !!question.choices?.length)
+                .map((question: any) => ({
+                  id: question.id,
+                  description: question.description || '',
+                  answerDescription: question.answerDescription || '',
+                  points: question.points || 0,
+                  isMultipleAnswers: !!question.isMultipleAnswers,
+                  gainedPoints: lastExercise?.answer?.find((v: any) => v.questionId === question.id)?.gainedPoints || 0,
+                  choices:
+                    question.choices?.map((choice: any) => ({
+                      id: choice.id,
+                      description: choice.description || '',
+                      isCorrect: !!choice.isCorrect,
+                      isSelected: !!lastExercise?.answer?.some(
+                        (v: any) =>
+                          v.questionId === question.id &&
+                          v.choiceIds.some((choiceId: string) => choiceId === choice.id),
+                      ),
+                    })) || [],
+                })) || []
+            }
+            isAvailableToGoBack={!!programContent.metadata?.isAvailableToGoBack}
+            isAvailableToRetry={!!programContent.metadata?.isAvailableToRetry}
+            passingScore={programContent.metadata?.passingScore || 0}
           />
         </div>
       )}

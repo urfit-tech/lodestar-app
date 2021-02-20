@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.svg'
 import { ReactComponent as ErrorCircleIcon } from '../../images/error-circle.svg'
 import { ReactComponent as TickIcon } from '../../images/tick.svg'
+import { ExerciseProps } from '../../types/program'
 import { CommonLargeTextMixin, CommonTextMixin } from '../common'
 import { BraftContent } from '../common/StyledBraftEditor'
 
@@ -43,118 +44,80 @@ const StyledDetailContent = styled.p`
   ${CommonLargeTextMixin}
 `
 
-const ExerciseQuestionBlock: React.FC<{
-  showDetail: boolean
-  exercises: {
-    id: string
-    question: string
-    detail: string
-    score: number
-    options: {
-      id: string
-      answer: string
-      isAnswer: boolean
-      isSelected: boolean
-    }[]
-  }[]
-  allowGoBack?: boolean
-  onFinish?: () => void
-  onOptionSelect?: (
-    currentIndex: number,
-    newOptions: {
-      id: string
-      answer: string
-      isAnswer: boolean
-      isSelected: boolean
-    }[],
-  ) => void
-}> = ({ exercises, showDetail, allowGoBack, onOptionSelect, onFinish }) => {
+const ExerciseQuestionBlock: React.FC<
+  ExerciseProps & {
+    showDetail: boolean
+    onFinish?: () => void
+    onChoiceSelect?: (questionId: string, choiceId: string) => void
+  }
+> = ({ questions, showDetail, isAvailableToGoBack, onChoiceSelect, onFinish }) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
-  const activeExercise = exercises[index]
+  const activeQuestion = questions[index]
 
   return (
     <>
       <StyledQuestionCount>
-        {index + 1}/{exercises.length}
+        {index + 1}/{questions.length}
       </StyledQuestionCount>
 
       <StyledQuestion className="mb-4">
-        <BraftContent>{activeExercise.question}</BraftContent>
+        <BraftContent>{activeQuestion.description}</BraftContent>
       </StyledQuestion>
 
       <div className="mb-4">
-        {activeExercise.options.map((v, i, options) => (
+        {activeQuestion.choices.map((choice, i, choices) => (
           <ExerciseQuestionButton
-            key={`${activeExercise.question}_${v.answer}`}
+            key={choice.id}
             showDetail={showDetail}
-            selectedCount={options.filter(v => v.isSelected).length}
-            isSelected={v.isSelected}
-            isAnswer={v.isAnswer}
-            onClick={() => {
-              onOptionSelect?.(
-                index,
-                activeExercise.options.map((option, index, options) =>
-                  index === i
-                    ? {
-                        ...option,
-                        isSelected: !option.isSelected,
-                      }
-                    : {
-                        ...option,
-                        ...(options.filter(v => v.isAnswer).length === 1 && { isSelected: false }),
-                      },
-                ),
-              )
-            }}
+            selectedCount={choices.filter(choice => choice.isSelected).length}
+            isCorrect={choice.isCorrect}
+            isSelected={!!choice.isSelected}
+            onClick={() => onChoiceSelect?.(activeQuestion.id, choice.id)}
           >
-            <BraftContent>{v.answer}</BraftContent>
+            <BraftContent>{choice.description}</BraftContent>
           </ExerciseQuestionButton>
         ))}
       </div>
 
       {showDetail && (
         <StyledDetail className="mb-4">
-          {activeExercise.options.filter(v => v.isAnswer !== v.isSelected).length ? (
-            <span>
-              <Icon className="mr-2" as={ErrorCircleIcon} color="var(--error)" />
-              <StyledDetailTitle>{formatMessage(messages.errorAnswer)}</StyledDetailTitle>
-            </span>
-          ) : (
+          {activeQuestion.choices.every(choice => choice.isCorrect === choice.isSelected) ? (
             <span>
               <Icon className="mr-2" as={CheckCircleIcon} color="var(--success)" />
               <StyledDetailTitle>{formatMessage(messages.correctAnswer)}</StyledDetailTitle>
             </span>
+          ) : (
+            <span>
+              <Icon className="mr-2" as={ErrorCircleIcon} color="var(--error)" />
+              <StyledDetailTitle>{formatMessage(messages.errorAnswer)}</StyledDetailTitle>
+            </span>
           )}
           <StyledDetailContent className="ml-4">
-            <BraftContent>{activeExercise.detail}</BraftContent>
+            <BraftContent>{activeQuestion.answerDescription}</BraftContent>
           </StyledDetailContent>
         </StyledDetail>
       )}
 
       <div className="text-center">
-        {allowGoBack && 0 < index && (
+        {isAvailableToGoBack && 0 < index && (
           <Button onClick={() => setIndex(prev => prev - 1)} variant="outline" className="mr-2">
             {formatMessage(messages.prevQuestion)}
           </Button>
         )}
 
-        {index < exercises.length - 1 && (
+        {index < questions.length - 1 && (
           <Button
-            onClick={() => setIndex(prev => prev + 1)}
-            disabled={!activeExercise.options.filter(v => v.isSelected).length}
             variant="primary"
+            disabled={activeQuestion.choices.every(v => !v.isSelected)}
+            onClick={() => setIndex(prev => prev + 1)}
           >
             {formatMessage(messages.nextQuestion)}
           </Button>
         )}
 
-        {index === exercises.length - 1 && (
-          <Button
-            onClick={onFinish}
-            variant="primary"
-            disabled={!activeExercise.options.filter(v => v.isSelected).length}
-          >
+        {index === questions.length - 1 && (
+          <Button variant="primary" disabled={activeQuestion.choices.every(v => !v.isSelected)} onClick={onFinish}>
             {showDetail ? formatMessage(messages.showResult) : formatMessage(messages.submit)}
           </Button>
         )}
@@ -163,7 +126,7 @@ const ExerciseQuestionBlock: React.FC<{
   )
 }
 
-const StyledButton = styled(Button)<{ isActive: boolean; isCorrect: boolean; isError: boolean }>`
+const StyledButton = styled(Button)<{ $isActive: boolean; $isCorrect: boolean; $isError: boolean }>`
   &&& {
     width: 100%;
     background: white;
@@ -196,35 +159,35 @@ const StyledButton = styled(Button)<{ isActive: boolean; isCorrect: boolean; isE
 const ExerciseQuestionButton: React.FC<{
   showDetail: boolean
   isSelected: boolean
-  isAnswer: boolean
+  isCorrect: boolean
   selectedCount: number
   onClick: () => void
 }> = memo(
-  ({ showDetail, isSelected, isAnswer, onClick, children }) => {
+  ({ showDetail, isSelected, isCorrect, onClick, children }) => {
     const { formatMessage } = useIntl()
 
     if (showDetail) {
       return (
         <StyledButton
-          isActive={isSelected}
-          isCorrect={isAnswer && isAnswer === isSelected}
-          isError={isAnswer && isAnswer !== isSelected}
           variant="outline"
           className="d-flex justify-content-between mb-3"
+          $isActive={isSelected}
+          $isCorrect={isCorrect && isCorrect === isSelected}
+          $isError={isCorrect && isCorrect !== isSelected}
         >
           <span>{children}</span>
-          <span className="correct">{isAnswer && formatMessage(messages.correct)}</span>
+          <span className="correct">{isCorrect && formatMessage(messages.correct)}</span>
         </StyledButton>
       )
     }
 
     return (
       <StyledButton
-        isActive={isSelected}
-        rightIcon={isSelected && <Icon as={TickIcon} />}
-        onClick={onClick}
         variant="outline"
         className="justify-content-between mb-3"
+        onClick={onClick}
+        $isActive={isSelected}
+        $rightIcon={isSelected && <Icon as={TickIcon} />}
       >
         {children}
       </StyledButton>

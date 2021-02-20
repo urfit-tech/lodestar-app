@@ -4,6 +4,7 @@ import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
+import { ExerciseProps } from '../../types/program'
 import { CommonLargeTextMixin, CommonTextMixin, CommonTitleMixin } from '../common'
 
 const messages = defineMessages({
@@ -49,35 +50,24 @@ const StyledCircularProgressLabel = styled(CircularProgressLabel)`
   }
 `
 
-const ExerciseResultBlock: React.FC<{
-  exercises: {
-    question: string
-    options: {
-      answer: string
-      isAnswer: boolean
-      isSelected: boolean
-    }[]
-    detail: string
-    score: number
-  }[]
-  passingScore: number
-  allowReAnswer?: boolean
-  nextProgramContentId?: string
-  onReAnswer?: () => void
-  onReview?: () => void
-}> = ({ exercises, passingScore, allowReAnswer, nextProgramContentId, onReAnswer, onReview }) => {
+const ExerciseResultBlock: React.FC<
+  ExerciseProps & {
+    nextProgramContentId?: string
+    onReAnswer?: () => void
+    onReview?: () => void
+  }
+> = ({ questions, passingScore, isAvailableToRetry, nextProgramContentId, onReAnswer, onReview }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const {
     params: { programContentId: currentContentId },
     url,
   } = useRouteMatch<{ programContentId: string }>()
-  const totalScore = sum(exercises.map(v => v.score))
-  const score = Math.floor(
-    sum(exercises.map(v => (v.options.filter(w => w.isAnswer === w.isSelected).length / v.options.length) * v.score)),
-  )
-  const correctCount = exercises.filter(
-    v => v.options.filter(w => w.isSelected === w.isAnswer).length === v.options.length,
+  const totalPoints = sum(questions.map(question => question.points))
+  const score = sum(questions.map(question => question.gainedPoints || 0))
+
+  const correctCount = questions.filter(question =>
+    question.choices.every(choice => choice.isCorrect === choice.isSelected),
   ).length
 
   return (
@@ -85,7 +75,7 @@ const ExerciseResultBlock: React.FC<{
       <StyledResultTitle className="mb-2">{formatMessage(messages.yourExerciseResult)}</StyledResultTitle>
       <StyledCircularProgress
         className="mb-3"
-        value={(score / totalScore) * 100}
+        value={(score / totalPoints) * 100}
         size="120px"
         color={score >= passingScore ? 'var(--success)' : 'var(--warning)'}
       >
@@ -96,13 +86,13 @@ const ExerciseResultBlock: React.FC<{
           {score >= passingScore ? formatMessage(messages.passExercise) : formatMessage(messages.failExercise)}
         </StyledTitle>
         <StyledAnswer>
-          {formatMessage(messages.answerCorrectly, { correctCount, total: exercises.length })}
+          {formatMessage(messages.answerCorrectly, { correctCount, total: questions.length })}
         </StyledAnswer>
 
         <StyledPassingScore className="mt-3">
           {score < passingScore
             ? formatMessage(messages.passingScore, { passingScore })
-            : formatMessage(messages.maxScore, { maxScore: totalScore })}
+            : formatMessage(messages.maxScore, { maxScore: totalPoints })}
         </StyledPassingScore>
       </div>
       <div className="d-flex flex-column">
@@ -118,7 +108,7 @@ const ExerciseResultBlock: React.FC<{
         <StyledButton onClick={onReview} className="mb-2" variant="outline">
           {formatMessage(messages.showDetail)}
         </StyledButton>
-        {allowReAnswer && (
+        {isAvailableToRetry && (
           <StyledButton onClick={onReAnswer} variant="outline">
             {formatMessage(messages.restartExercise)}
           </StyledButton>

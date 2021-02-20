@@ -101,3 +101,28 @@ export type ProgramContentAttachmentProps = {
   options: any
   createdAt: Date
 }
+
+export type ExerciseProps = {
+  id: string
+  isAvailableToGoBack: boolean
+  isAvailableToRetry: boolean
+  passingScore: number
+  questions: QuestionProps[]
+}
+
+export type QuestionProps = {
+  id: string
+  points: number
+  description: string | null
+  answerDescription: string | null
+  isMultipleAnswers: boolean
+  choices: ChoiceProps[]
+  gainedPoints: number
+}
+
+export type ChoiceProps = {
+  id: string
+  description: string | null
+  isCorrect: boolean
+  isSelected: boolean
+}
