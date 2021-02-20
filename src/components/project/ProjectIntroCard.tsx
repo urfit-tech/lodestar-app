@@ -134,7 +134,6 @@ const ProjectIntroCard: React.FC<ProjectIntroProps> = ({
             {type === 'funding' && (
               <StyledLabel>
                 {targetUnit === 'participants' &&
-                  isParticipantsVisible &&
                   formatMessage(projectMessages.text.totalParticipants, { count: enrollmentCount })}
                 {targetUnit === 'funds' && <PriceLabel listPrice={totalSales || 0} />}
               </StyledLabel>
