@@ -80,6 +80,7 @@ const FundingSummaryBlock: React.FC<{
             targetUnit={targetUnit}
             totalSales={totalSales}
             enrollmentCount={enrollmentCount}
+            isParticipantsVisible={isParticipantsVisible}
           />
           {expiredAt && (
             <StyledDescription>

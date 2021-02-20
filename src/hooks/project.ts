@@ -219,6 +219,7 @@ export const useProject = (projectId: string) => {
 
 export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
   const condition = {
+    published_at: { _is_null: false },
     type: { _in: ['on-sale', 'pre-order', 'funding'] },
     ...(filter?.categoryId && { project_categories: { category_id: { _eq: filter.categoryId } } }),
   }

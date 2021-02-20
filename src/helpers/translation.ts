@@ -831,8 +831,8 @@ export const productMessages = {
       },
       noPerson: { id: 'product.project.person.no', defaultMessage: '-- 人' },
       zeroPerson: { id: 'product.project.person.zero', defaultMessage: '0 人' },
-      numberOfParticipants: { id: 'product.project.funding.description', defaultMessage: '參與人數' },
-      goal: { id: 'product.project.funding.meta', defaultMessage: '目標' },
+      numberOfParticipants: { id: 'product.project.funding.numberOfParticipants', defaultMessage: '參與人數' },
+      goal: { id: 'product.project.funding.goal', defaultMessage: '目標' },
     }),
     tab: defineMessages({
       intro: { id: 'product.project.funding.tab.intro', defaultMessage: '計劃內容' },

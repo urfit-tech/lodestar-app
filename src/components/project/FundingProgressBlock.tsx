@@ -78,7 +78,8 @@ const FundingProgressBlock: React.FC<{
   targetUnit: ProjectIntroProps['targetUnit']
   totalSales: number
   enrollmentCount: number
-}> = ({ targetAmount, targetUnit, totalSales, enrollmentCount }) => {
+  isParticipantsVisible: boolean
+}> = ({ targetAmount, targetUnit, totalSales, enrollmentCount, isParticipantsVisible }) => {
   const theme = useContext(ThemeContext)
   const { formatMessage } = useIntl()
   const percent = !targetAmount
@@ -87,31 +88,35 @@ const FundingProgressBlock: React.FC<{
 
   return (
     <StyledWrapper className="d-flex justify-content-between align-items-center">
-      {targetUnit === 'participants' ? (
-        <div>
-          <StyledTitle variant="participants">
-            {formatMessage(projectMessages.text.totalParticipants, { count: enrollmentCount })}
-          </StyledTitle>
-          <StyledMeta>
-            {formatMessage(productMessages.project.paragraph.goal)} {targetAmount}{' '}
-            {formatMessage(commonMessages.unit.people)}
-          </StyledMeta>
-        </div>
-      ) : (
-        <div>
-          <StyledTitle>
-            <PriceLabel listPrice={totalSales} />
-          </StyledTitle>
-          <StyledMeta>
-            {formatMessage(productMessages.project.paragraph.goal)} <PriceLabel listPrice={targetAmount} />
-          </StyledMeta>
-          <StyledDescription>
-            {formatMessage(productMessages.project.paragraph.numberOfParticipants)} {enrollmentCount}{' '}
-            {formatMessage(commonMessages.unit.people)}
-          </StyledDescription>
-        </div>
-      )}
-
+      <div>
+        {targetUnit === 'participants' && (
+          <>
+            <StyledTitle variant="participants">
+              {formatMessage(projectMessages.text.totalParticipants, { count: enrollmentCount })}
+            </StyledTitle>
+            <StyledMeta>
+              {formatMessage(productMessages.project.paragraph.goal)} {targetAmount}{' '}
+              {formatMessage(commonMessages.unit.people)}
+            </StyledMeta>
+          </>
+        )}
+        {targetUnit === 'funds' && (
+          <>
+            <StyledTitle>
+              <PriceLabel listPrice={totalSales} />
+            </StyledTitle>
+            <StyledMeta>
+              {formatMessage(productMessages.project.paragraph.goal)} <PriceLabel listPrice={targetAmount} />
+            </StyledMeta>
+            {isParticipantsVisible && (
+              <StyledDescription>
+                {formatMessage(productMessages.project.paragraph.numberOfParticipants)} {enrollmentCount}{' '}
+                {formatMessage(commonMessages.unit.people)}
+              </StyledDescription>
+            )}
+          </>
+        )}
+      </div>
       <StyleProgress
         type="circle"
         className={

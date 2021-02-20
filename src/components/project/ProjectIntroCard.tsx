@@ -133,11 +133,10 @@ const ProjectIntroCard: React.FC<ProjectIntroProps> = ({
           <div className="text-right">
             {type === 'funding' && (
               <StyledLabel>
-                {targetUnit === 'participants' ? (
-                  formatMessage(projectMessages.text.totalParticipants, { count: enrollmentCount })
-                ) : (
-                  <PriceLabel listPrice={totalSales || 0} />
-                )}
+                {targetUnit === 'participants' &&
+                  isParticipantsVisible &&
+                  formatMessage(projectMessages.text.totalParticipants, { count: enrollmentCount })}
+                {targetUnit === 'funds' && <PriceLabel listPrice={totalSales || 0} />}
               </StyledLabel>
             )}
             {isCountdownTimerVisible && expiredAt && (
