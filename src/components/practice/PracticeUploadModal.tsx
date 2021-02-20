@@ -43,9 +43,9 @@ const messages = defineMessages({
   fillTitleNotice: { id: 'program.text.fillTitleNotice', defaultMessage: '請填入標題' },
   fillDescriptionPlease: { id: 'program.text.fillDescriptionPlease', defaultMessage: '輸入內容描述...' },
 })
-const StyledInput = styled(props => <Input {...props} />)`
+const StyledInputWrapper = styled.div`
   && {
-    &:focus {
+    input:focus {
       border: 1px solid ${props => props.theme['@primary-color']};
       box-shadow: 0 0 0 1px ${props => props.theme['@primary-color']};
     }
@@ -212,11 +212,9 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
     >
       <FormControl isRequired isInvalid={!!errors?.title?.message} className="my-4">
         <FormLabel>{formatMessage(commonMessages.label.title)}</FormLabel>
-        <StyledInput
-          name="title"
-          ref={register({ required: formatMessage(messages.fillTitleNotice) })}
-          variant="outline"
-        />
+        <StyledInputWrapper>
+          <Input name="title" ref={register({ required: formatMessage(messages.fillTitleNotice) })} variant="outline" />
+        </StyledInputWrapper>
         <FormErrorMessage>{errors?.title?.message}</FormErrorMessage>
       </FormControl>
       <Controller

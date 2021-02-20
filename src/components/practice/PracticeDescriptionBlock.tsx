@@ -148,23 +148,25 @@ const PracticeDescriptionBlock: React.FC<{
           </MenuList>
         </Menu>
       </StyledPractice>
-      <PracticeUploadModal
-        programContentId={programContentId}
-        practice={practice}
-        onRefetch={refetchPractice}
-        onSubmit={({ practiceId }) => {
-          window.location.assign(`/practices/${practice?.id || practiceId}`)
-        }}
-        renderTrigger={
-          practice
-            ? onOpen => (
-                <StyledButton variant="primary" onClick={onOpen}>
-                  {formatMessage(messages.viewOwnPractice)}
-                </StyledButton>
-              )
-            : undefined
-        }
-      />
+
+      {practice ? (
+        <StyledButton
+          onClick={() => {
+            history.push(`/practices/${practice.id}`)
+          }}
+          variant="outline"
+        >
+          {formatMessage(messages.viewOwnPractice)}
+        </StyledButton>
+      ) : (
+        <PracticeUploadModal
+          programContentId={programContentId}
+          onRefetch={refetchPractice}
+          onSubmit={({ practiceId }) => {
+            window.location.assign(`/practices/${practiceId}`)
+          }}
+        />
+      )}
     </StyledBlock>
   )
 }
