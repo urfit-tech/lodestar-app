@@ -4961,6 +4961,35 @@ export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPECVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PAGE
+// ====================================================
+
+export interface GET_PAGE_app_page {
+  __typename: "app_page";
+  id: string;
+  type: string;
+  options: any | null;
+  position: number | null;
+}
+
+export interface GET_PAGE {
+  /**
+   * fetch data from the table: "app_page"
+   */
+  app_page: GET_PAGE_app_page[];
+}
+
+export interface GET_PAGEVariables {
+  id?: string | null;
+  appId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PODCAST_PROGRAM_COLLECTION
 // ====================================================
 
@@ -15639,6 +15668,7 @@ export interface order_status_bool_exp {
   _and?: (order_status_bool_exp | null)[] | null;
   _not?: order_status_bool_exp | null;
   _or?: (order_status_bool_exp | null)[] | null;
+  last_paid_at?: timestamptz_comparison_exp | null;
   member_id?: String_comparison_exp | null;
   order_discounts?: order_discount_bool_exp | null;
   order_id?: String_comparison_exp | null;
