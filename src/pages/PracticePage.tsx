@@ -216,22 +216,26 @@ const PracticePage: React.FC = () => {
         <BraftContent>{practice.description}</BraftContent>
 
         <div className="d-flex justify-content-between mt-4">
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={isDownloading ? <Spinner size="sm" /> : <ChevronDownIcon />}
-              variant="outline"
-            >
-              {formatMessage(messages.practiceFile)}
-            </MenuButton>
-            <MenuList>
-              {files.map((file, index) => (
-                <MenuItem key={file.id} onClick={() => handleDownload(index)}>
-                  {file.name}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
+          {files.length ? (
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={isDownloading ? <Spinner size="sm" /> : <ChevronDownIcon />}
+                variant="outline"
+              >
+                {formatMessage(messages.practiceFile)}
+              </MenuButton>
+              <MenuList>
+                {files.map((file, index) => (
+                  <MenuItem key={file.id} onClick={() => handleDownload(index)}>
+                    {file.name}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          ) : (
+            <div></div>
+          )}
           <div onClick={handleLikeStatus}>
             <StyledIconButton
               variant="ghost"

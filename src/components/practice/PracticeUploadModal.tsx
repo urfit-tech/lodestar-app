@@ -47,7 +47,7 @@ const StyledInputWrapper = styled.div`
   && {
     input:focus {
       border: 1px solid ${props => props.theme['@primary-color']};
-      box-shadow: 0 0 0 1px ${props => props.theme['@primary-color']};
+      box-shadow: none;
     }
   }
 `
