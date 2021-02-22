@@ -21,7 +21,7 @@ import { useProject } from '../../hooks/project'
 import EmptyCover from '../../images/empty-cover.png'
 import LoadingPage from '../LoadingPage'
 
-const ModularPage: React.FC<{ projectId: string }> = ({ projectId }) => {
+const ProjectModularPage: React.FC<{ projectId: string }> = ({ projectId }) => {
   const { settings } = useApp()
   const { project } = useProject(projectId)
   const [displaySectionTypes, setDisplaySectionTypes] = useState<string[]>(
@@ -199,4 +199,4 @@ const ModularPage: React.FC<{ projectId: string }> = ({ projectId }) => {
   )
 }
 
-export default ModularPage
+export default ProjectModularPage

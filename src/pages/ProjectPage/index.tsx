@@ -6,8 +6,8 @@ import { Redirect, useParams } from 'react-router-dom'
 import { useProject } from '../../hooks/project'
 import LoadingPage from '../LoadingPage'
 import FundingPage from './FundingPage'
-import ModularPage from './ModularPage'
 import OnSalePage from './OnSalePage'
+import ProjectModularPage from './ProjectModularPage'
 
 const ProjectPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>()
@@ -57,7 +57,7 @@ const ProjectPage: React.FC = () => {
     case 'on-sale':
       return <OnSalePage {...project} />
     case 'modular':
-      return <ModularPage projectId={project.id} />
+      return <ProjectModularPage projectId={project.id} />
     default:
       return <div>Default Project Page</div>
   }
