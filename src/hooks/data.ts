@@ -152,10 +152,8 @@ export const useNav = () => {
 
   return {
     navs: navs.filter(nav => nav.locale === currentLanguage),
-    pageTitle: navs.filter(
-      nav =>
-        nav.locale === currentLanguage && nav.block === 'header' && nav.href === location.pathname + location.search,
-    )[0]?.label,
+    pageTitle: navs.find(nav => nav.locale === currentLanguage && nav.href === location.pathname + location.search)
+      ?.label,
   }
 }
 
