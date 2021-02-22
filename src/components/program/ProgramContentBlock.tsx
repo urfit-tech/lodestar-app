@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Skeleton, Tabs } from 'antd'
+import { message, Skeleton, Tabs } from 'antd'
+import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
 import { flatten, includes } from 'ramda'
@@ -9,10 +10,12 @@ import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { productMessages, programMessages } from '../../helpers/translation'
+import { codeMessages, productMessages, programMessages } from '../../helpers/translation'
+import { handleError } from '../../helpers'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
+import { useAuth } from '../auth/AuthContext'
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
 import ExerciseBlock from '../exercise/ExerciseBlock'
@@ -41,6 +44,7 @@ const ProgramContentBlock: React.FC<{
 }> = ({ program, programContentId }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
+  const { apiHost, authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
 
@@ -89,6 +93,25 @@ const ProgramContentBlock: React.FC<{
               progress: currentProgress > 1 ? 1 : currentProgress > initialProgress ? currentProgress : initialProgress,
               lastProgress: played,
             }).then(() => refetchProgress())
+          }}
+          onEventTrigger={data => {
+            axios
+              .post(
+                `https://${apiHost}/tasks/player-event-logs/`,
+                {
+                  programContentId,
+                  data,
+                },
+                { headers: { authorization: `Bearer ${authToken}` } },
+              )
+              .then(({ data: { code, result } }) => {
+                if (code === 'SUCCESS') {
+                  process.env.NODE_ENV === 'development' && console.log({ result })
+                  return
+                }
+                return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+              })
+              .catch(handleError)
           }}
           onEnded={() => {
             setTimeout(() => {

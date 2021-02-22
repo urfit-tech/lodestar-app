@@ -75,8 +75,9 @@ const ProgramContentPlayer: React.FC<
       title: string
     }
     lastProgress?: number
+    onEventTrigger?: (data: any) => void
   }
-> = ({ programContentBody, nextProgramContent, lastProgress = 0, onProgress, onEnded }) => {
+> = ({ programContentBody, nextProgramContent, lastProgress = 0, onProgress, onEnded, onEventTrigger }) => {
   const { formatMessage } = useIntl()
   const { currentMember } = useAuth()
 
@@ -100,10 +101,23 @@ const ProgramContentPlayer: React.FC<
             playerOptions: { responsive: true },
           },
         }}
-        onReady={player => setPlayer(player)}
         onDuration={duration => player?.seekTo(duration * (lastProgress === 1 ? 0 : lastProgress), 'seconds')}
-        onProgress={onProgress}
+        onReady={player => {
+          setPlayer(player)
+          onEventTrigger?.({ eventType: 'ready' })
+        }}
+        onStart={() => onEventTrigger?.({ eventType: 'start' })}
+        onPlay={() => onEventTrigger?.({ eventType: 'play' })}
+        onPause={() => onEventTrigger?.({ eventType: 'pause' })}
+        onBuffer={() => onEventTrigger?.({ eventType: 'buffer' })}
+        onBufferEnd={() => onEventTrigger?.({ eventType: 'buffered' })}
+        onSeek={seconds => onEventTrigger?.({ eventType: 'seek', seconds })}
+        onProgress={state => {
+          onEventTrigger?.({ eventType: 'progress', state })
+          onProgress?.(state)
+        }}
         onEnded={() => {
+          onEventTrigger?.({ eventType: 'ended' })
           setIsCoverShowing(true)
           onEnded?.()
         }}
