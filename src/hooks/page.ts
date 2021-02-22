@@ -9,8 +9,8 @@ export const usePage = () => {
   const { id: appId } = useApp()
   const { loading, error, data } = useQuery<types.GET_PAGE, types.GET_PAGEVariables>(
     gql`
-      query GET_PAGE($id: String, $appId: String) {
-        app_page(where: { id: { _eq: $id }, app_id: { _eq: $appId } }, order_by: { position: asc }) {
+      query GET_PAGE($appId: String) {
+        app_page(where: { app_id: { _eq: $appId } }, order_by: { position: asc }) {
           id
           type
           options
@@ -20,7 +20,6 @@ export const usePage = () => {
     `,
     {
       variables: {
-        id: `Home_${appId}`,
         appId: `${appId}`,
       },
     },

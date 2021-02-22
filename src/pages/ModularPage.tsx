@@ -8,7 +8,7 @@ const ModularPage: React.FC<{ sections: PageProps[] }> = ({ sections }) => {
     <DefaultLayout>
       {sections.map(section => {
         switch (section.type) {
-          case 'cover':
+          case 'Home_cover':
             return <CoverSection options={section.options} />
           default:
             break

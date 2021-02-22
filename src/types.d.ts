@@ -4980,7 +4980,6 @@ export interface GET_PAGE {
 }
 
 export interface GET_PAGEVariables {
-  id?: string | null;
   appId?: string | null;
 }
 
