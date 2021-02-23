@@ -194,7 +194,7 @@ const ExerciseQuestionButton: React.FC<{
         className="justify-content-between mb-3"
         onClick={onClick}
         $isActive={isSelected}
-        $rightIcon={isSelected && <Icon as={TickIcon} />}
+        rightIcon={isSelected && <Icon as={TickIcon} />}
       >
         {children}
       </StyledButton>
