@@ -10,7 +10,7 @@ import {
   ModalOverlay,
   SkeletonText,
 } from '@chakra-ui/react'
-import { Carousel } from 'antd'
+import { Carousel, Tag } from 'antd'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import styled from 'styled-components'
@@ -196,6 +196,7 @@ const StyledModalHeader = styled(ModalHeader)`
 `
 const StyledModalBody = styled(ModalBody)`
   && {
+    font-weight: 500;
     @media (min-width: ${BREAK_POINT}px) {
       padding: 0.5rem 3rem 2rem;
       color: var(--gray-darker);
@@ -209,7 +210,8 @@ const ProjectCardSection: React.FC<{
   items: {
     icon?: string
     title: string
-    description: string
+    abstract: string
+    description?: string
     programContentIds?: string[]
   }[]
   title: string
@@ -217,7 +219,9 @@ const ProjectCardSection: React.FC<{
 }> = ({ items, title, subtitle }) => {
   const [selectedItem, setSelectedItem] = useState<{
     title: string
-    contentIds: string[]
+    abstract: string
+    description?: string
+    contentIds?: string[]
     index: number
   } | null>(null)
 
@@ -243,7 +247,7 @@ const ProjectCardSection: React.FC<{
                       <img src={card.icon} alt="card icon" />
                       <div>
                         <h5>{card.title}</h5>
-                        <p>{card.description}</p>
+                        <p>{card.abstract}</p>
                         {card.programContentIds?.length ? (
                           <div className="align-self-stretch text-right">
                             <TrialLink
@@ -252,6 +256,8 @@ const ProjectCardSection: React.FC<{
                               onClick={() =>
                                 setSelectedItem({
                                   title: card.title,
+                                  abstract: card.abstract,
+                                  description: card.description,
                                   contentIds: card.programContentIds || [],
                                   index: 0,
                                 })
@@ -273,12 +279,12 @@ const ProjectCardSection: React.FC<{
           <Responsive.Desktop>
             <div className="container d-flex flex-row flex-wrap justify-content-between">
               {items.map(card => (
-                <StyleCard key={card.title + card.description}>
+                <StyleCard key={card.title}>
                   <StyledCardWrapper>
                     <img src={card.icon} alt="card icon" />
                     <div>
                       <h5>{card.title}</h5>
-                      <p>{card.description}</p>
+                      <p>{card.abstract}</p>
                       {card.programContentIds?.length ? (
                         <div className="align-self-stretch text-right">
                           <TrialLink
@@ -287,6 +293,8 @@ const ProjectCardSection: React.FC<{
                             onClick={() =>
                               setSelectedItem({
                                 title: card.title,
+                                abstract: card.abstract,
+                                description: card.description,
                                 contentIds: card.programContentIds || [],
                                 index: 0,
                               })
@@ -312,7 +320,12 @@ const ProjectCardSection: React.FC<{
           <StyledModalHeader>{selectedItem?.title}</StyledModalHeader>
           <ModalCloseButton />
           <StyledModalBody>
-            {selectedItem && selectedItem.contentIds[selectedItem.index] && (
+            <div className="row mb-3">
+              <div className="col-12 col-lg-8">{selectedItem?.abstract}</div>
+              <div className="col-12 col-lg-4" dangerouslySetInnerHTML={{ __html: selectedItem?.description || '' }} />
+            </div>
+
+            {selectedItem?.contentIds?.[selectedItem.index] && (
               <ProgramContentTrialPlayer
                 programContentId={selectedItem.contentIds[selectedItem.index]}
                 onPrev={
@@ -376,7 +389,10 @@ const ProgramContentTrialPlayer: React.FC<{
 
   return (
     <>
-      <div className="mb-4">
+      <div className="mb-3">
+        <Tag color="#585858" className="mr-2">
+          試看
+        </Tag>
         {data.program_content_by_pk.program_content_section.program.title} - {data.program_content_by_pk.title}
       </div>
 
