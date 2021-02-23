@@ -1,5 +1,5 @@
 import { sum } from 'ramda'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useMutateExercise } from '../../hooks/program'
 import { ExerciseProps } from '../../types/program'
@@ -39,6 +39,10 @@ const ExerciseBlock: React.FC<
   const { insertExercise } = useMutateExercise()
   const [status, setStatus] = useState<'answering' | 'result' | 'review'>(isTaken ? 'result' : 'answering')
   const [questions, setQuestions] = useState(defaultQuestions)
+
+  useEffect(() => {
+    setStatus(isTaken ? 'result' : 'answering')
+  }, [isTaken])
 
   let exerciseStatus
 

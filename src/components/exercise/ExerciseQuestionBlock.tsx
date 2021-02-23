@@ -1,4 +1,5 @@
 import { Button, Icon } from '@chakra-ui/react'
+import BraftEditor from 'braft-editor'
 import React, { memo, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -40,7 +41,7 @@ const StyledDetailTitle = styled.h4`
   letter-spacing: 0.2px;
   color: var(--gray-darker);
 `
-const StyledDetailContent = styled.p`
+const StyledDetailContent = styled.div`
   ${CommonLargeTextMixin}
 `
 
@@ -54,6 +55,10 @@ const ExerciseQuestionBlock: React.FC<
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
   const activeQuestion = questions[index]
+
+  if (!activeQuestion) {
+    return null
+  }
 
   return (
     <>
@@ -94,7 +99,9 @@ const ExerciseQuestionBlock: React.FC<
             </span>
           )}
           <StyledDetailContent className="ml-4">
-            <BraftContent>{activeQuestion.answerDescription}</BraftContent>
+            {!BraftEditor.createEditorState(activeQuestion.answerDescription).isEmpty() && (
+              <BraftContent>{activeQuestion.answerDescription}</BraftContent>
+            )}
           </StyledDetailContent>
         </StyledDetail>
       )}
@@ -130,14 +137,14 @@ const StyledButton = styled(Button)<{ $isActive: boolean; $isCorrect: boolean; $
   &&& {
     width: 100%;
     background: white;
-    border: ${props => props.isActive && `1px solid var(--gray-darker)`};
+    border: ${props => props.$isActive && `1px solid var(--gray-darker)`};
 
     .chakra-button__icon {
       display: inline-flex;
     }
 
     ${props =>
-      props.isCorrect &&
+      props.$isCorrect &&
       css`
         border: 1px solid var(--success);
         .correct {
@@ -146,7 +153,7 @@ const StyledButton = styled(Button)<{ $isActive: boolean; $isCorrect: boolean; $
       `}
 
     ${props =>
-      props.isError &&
+      props.$isError &&
       css`
         border: 1px solid var(--error);
         .correct {

@@ -79,7 +79,9 @@ const ExerciseResultBlock: React.FC<
         size="120px"
         color={score >= passingScore ? 'var(--success)' : 'var(--warning)'}
       >
-        <StyledCircularProgressLabel>{formatMessage(messages.score, { score })}</StyledCircularProgressLabel>
+        <StyledCircularProgressLabel>
+          {formatMessage(messages.score, { score: Math.floor(score * 10) / 10 })}
+        </StyledCircularProgressLabel>
       </StyledCircularProgress>
       <div className="mb-4 text-center">
         <StyledTitle>

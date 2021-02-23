@@ -232,7 +232,10 @@ const useLastExercise = (programContentId: string) => {
         }
       }
     `,
-    { variables: { programContentId } },
+    {
+      variables: { programContentId },
+      fetchPolicy: 'no-cache',
+    },
   )
 
   const lastExercise = data?.exercise?.[0]
