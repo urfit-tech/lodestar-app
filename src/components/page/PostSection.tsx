@@ -113,7 +113,7 @@ const PostSection: React.FC<{ options: any }> = ({ options }) => {
       <SectionTitle>{options?.title || '部落格專欄'}</SectionTitle>
 
       <div className="container px-0">
-        <StyledPostListContainer>
+        <StyledPostListContainer className="mb-5">
           {posts
             .sort((a, b) => (a.publishedAt && b.publishedAt ? b.publishedAt.getTime() - a.publishedAt.getTime() : 1))
             .map(post => (
