@@ -38,17 +38,17 @@ const AppPage: React.FC<{ page: AppPageProps[] }> = ({ page }) => {
     <DefaultLayout>
       {page[0].appPageSections.map((section: AppPageSectionProps) => {
         switch (section.type) {
-          case 'home_cover':
+          case 'homeCover':
             return <CoverSection key={section.id} options={section.options} />
-          case 'home_activity':
+          case 'homeActivity':
             return <ActivitySection key={section.id} options={section.options} />
-          case 'home_program':
+          case 'homeProgram':
             return <ProgramSection key={section.id} options={section.options} />
-          case 'home_post':
+          case 'homePost':
             return <PostSection key={section.id} options={section.options} />
-          case 'home_program_category':
+          case 'homeProgramCategory':
             return <ProgramSection key={section.id} options={section.options} />
-          case 'home_creator':
+          case 'homeCreator':
             return <CreatorSection key={section.id} options={section.options} />
           default:
             return <div key={section.id}></div>
