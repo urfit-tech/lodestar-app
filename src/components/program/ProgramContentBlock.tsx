@@ -106,7 +106,7 @@ const ProgramContentBlock: React.FC<{
               )
               .then(({ data: { code, result } }) => {
                 if (code === 'SUCCESS') {
-                  process.env.NODE_ENV === 'development' && console.log({ result })
+                  // process.env.NODE_ENV === 'development' && console.log({ result })
                   return
                 }
                 return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
