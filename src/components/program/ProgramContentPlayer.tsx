@@ -1,5 +1,5 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -81,7 +81,7 @@ const ProgramContentPlayer: React.FC<
   const { formatMessage } = useIntl()
   const { currentMember } = useAuth()
 
-  const [player, setPlayer] = useState<ReactPlayer | null>(null)
+  const playerRef = useRef<ReactPlayer | null>(null)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
   const [playerState, setPlayerState] = useState<{
     recordAt: number
@@ -94,7 +94,6 @@ const ProgramContentPlayer: React.FC<
     startedAt: 0,
     endedAt: 0,
   })
-  const [duration, setDuration] = useState(0)
 
   useEffect(() => {
     const { recordAt, ...data } = playerState
@@ -107,6 +106,7 @@ const ProgramContentPlayer: React.FC<
         <ProgramContentPlayerCover nextProgramContent={nextProgramContent} onSetIsCoverShowing={setIsCoverShowing} />
       )}
       <ReactPlayer
+        ref={playerRef}
         url={`https://vimeo.com/${programContentBody.data.vimeoVideoId}`}
         width="100%"
         height="100%"
@@ -119,17 +119,13 @@ const ProgramContentPlayer: React.FC<
           },
         }}
         onDuration={duration => {
-          setDuration(duration)
           setPlayerState(() => ({
             recordAt: Date.now(),
             playbackRate: 0,
             startedAt: duration * (lastProgress === 1 ? 0 : lastProgress),
             endedAt: duration * (lastProgress === 1 ? 0 : lastProgress),
           }))
-          player?.seekTo(duration * (lastProgress === 1 ? 0 : lastProgress), 'seconds')
-        }}
-        onReady={player => {
-          setPlayer(player)
+          playerRef.current?.seekTo(duration * (lastProgress === 1 ? 0 : lastProgress), 'seconds')
         }}
         onProgress={state => {
           setPlayerState(({ recordAt, endedAt }) => ({
@@ -141,19 +137,19 @@ const ProgramContentPlayer: React.FC<
           onProgress?.(state)
         }}
         onPause={() => {
-          setPlayerState(({ playbackRate, endedAt }) => ({
+          setPlayerState(({ playbackRate }) => ({
             recordAt: Date.now(),
             playbackRate,
-            startedAt: endedAt,
-            endedAt: endedAt,
+            startedAt: playerRef.current?.getCurrentTime() || 0,
+            endedAt: playerRef.current?.getCurrentTime() || 0,
           }))
         }}
         onBuffer={() => {
-          setPlayerState(({ endedAt }) => ({
+          setPlayerState(() => ({
             recordAt: Date.now(),
             playbackRate: 0,
-            startedAt: endedAt,
-            endedAt: endedAt,
+            startedAt: playerRef.current?.getCurrentTime() || 0,
+            endedAt: playerRef.current?.getCurrentTime() || 0,
           }))
         }}
         onSeek={seconds => {
@@ -168,8 +164,8 @@ const ProgramContentPlayer: React.FC<
           setPlayerState(() => ({
             recordAt: Date.now(),
             playbackRate: 0,
-            startedAt: duration,
-            endedAt: duration,
+            startedAt: playerRef.current?.getDuration() || 0,
+            endedAt: playerRef.current?.getDuration() || 0,
           }))
           setIsCoverShowing(true)
           onEnded?.()
