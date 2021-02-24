@@ -105,7 +105,7 @@ const CheckoutBlock: React.FC<{
     ? undefined
     : loadingReferrerId
     ? 'validating'
-    : referrerId === currentMemberId
+    : !referrerId || referrerId === currentMemberId
     ? 'error'
     : 'success'
 
@@ -189,7 +189,7 @@ const CheckoutBlock: React.FC<{
 
     const taskId = await placeOrder('perpetual', {
       ...invoice,
-      referrerEmail,
+      referrerEmail: referrerEmail || undefined,
     })
 
     member &&

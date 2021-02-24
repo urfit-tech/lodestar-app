@@ -138,7 +138,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
     ? undefined
     : loadingReferrerId
     ? 'validating'
-    : referrerId === currentMemberId
+    : !referrerId || referrerId === currentMemberId
     ? 'error'
     : 'success'
 
@@ -198,7 +198,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
       const taskId = await placeOrder(paymentType, {
         ...invoice,
-        referrerEmail,
+        referrerEmail: referrerEmail || undefined,
       })
 
       await updateMemberMetadata({
