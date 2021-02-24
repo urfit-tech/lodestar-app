@@ -1,4 +1,3 @@
-import { Button } from '@chakra-ui/react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -33,7 +32,6 @@ export const StyledLink = styled(Link)<{ $backgroundActive?: string }>`
   }
   margin-top: 40px;
 `
-export const StyledButton = styled(Button)``
 
 const AppPage: React.FC<{ page: AppPageProps[] }> = ({ page }) => {
   return (

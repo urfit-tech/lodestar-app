@@ -22,6 +22,8 @@ const ActivitySection: React.FC<{ options: any }> = ({ options }) => {
       </div>
     )
 
+  if (activities.length === 0) return null
+
   return (
     <StyledSection className="page-section">
       <SectionTitle>{options.title ? options.title : '實體課程'}</SectionTitle>

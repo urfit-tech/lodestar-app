@@ -106,6 +106,8 @@ const PostSection: React.FC<{ options: any }> = ({ options }) => {
       </div>
     )
 
+  if (posts.length === 0) return null
+
   return (
     <StyledSection className="page-section">
       <SectionTitle>{options?.title || '部落格專欄'}</SectionTitle>

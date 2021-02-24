@@ -1,3 +1,4 @@
+import { Skeleton } from '@chakra-ui/react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Slider from 'react-slick'
@@ -76,7 +77,7 @@ const StyledDescription = styled.div`
 `
 
 const CreatorSection: React.FC<{ options: any }> = ({ options }) => {
-  const { creators } = useCreatorCollection()
+  const { loadingCreators, creators, errorCreators } = useCreatorCollection()
 
   const instructorBlock = (amount: number) => {
     const instructors = creators
@@ -95,7 +96,7 @@ const CreatorSection: React.FC<{ options: any }> = ({ options }) => {
     return instructors.slice(0, amount).map(instructor => (
       <StyledInstructorBlock key={instructor.id}>
         <Link to={`/creators/${instructor.id}`}>
-          <div style={{ marginBottom: '1.25rem' }}>
+          <div className="mb-4">
             <StyledAvatar
               src={instructor.avatarUrl !== null ? instructor.avatarUrl : DefaultAvatar}
               alt={instructor.name}
@@ -108,6 +109,17 @@ const CreatorSection: React.FC<{ options: any }> = ({ options }) => {
       </StyledInstructorBlock>
     ))
   }
+
+  if (loadingCreators || errorCreators)
+    return (
+      <div className="container mb-5">
+        <Skeleton height="20px" my="10px" />
+        <Skeleton height="20px" my="10px" />
+        <Skeleton height="20px" my="10px" />
+      </div>
+    )
+
+  if (creators.length === 0) return null
 
   return (
     <StyledSection className="page-section">
