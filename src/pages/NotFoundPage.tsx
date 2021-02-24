@@ -6,8 +6,11 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages } from '../helpers/translation'
+import { usePage } from '../hooks/page'
 import { ReactComponent as routeErrorIcon } from '../images/404.svg'
 import { ReactComponent as errorIcon } from '../images/error-2.svg'
+import AppPage from './AppPage'
+import LoadingPage from './LoadingPage'
 
 const StyledWrapper = styled.div`
   height: 430px;
@@ -58,6 +61,8 @@ type NotFoundPageProps = {
 }
 const NotFoundPage: React.FC<NotFoundPageProps> = ({ error }) => {
   const { formatMessage } = useIntl()
+  const { loadingAppPage, appPage, errorAppPage } = usePage(window.location.pathname)
+
   let history = useHistory()
   const clickHandler = () => {
     if (error) {
@@ -66,6 +71,10 @@ const NotFoundPage: React.FC<NotFoundPageProps> = ({ error }) => {
       history.goBack()
     }
   }
+
+  if (loadingAppPage) return <LoadingPage />
+  if (!loadingAppPage && appPage.length !== 0 && !errorAppPage) return <AppPage page={appPage} />
+
   return (
     <DefaultLayout centeredBox>
       <StyledWrapper>

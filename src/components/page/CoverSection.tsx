@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledSection = styled.section`
-  margin-bottom: 40px;
+  margin-bottom: 80px;
 `
 const StyledSlider = styled(Slider)`
   && {

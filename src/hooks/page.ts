@@ -1,35 +1,51 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { useApp } from '../containers/common/AppContext'
 import types from '../types'
 
-export type PageProps = { id: string; type: string; options: { [key: string]: any }; position: number | null }
+export type AppPageSectionProps = { id: string; options: { [key: string]: any }; type: string }
 
-export const usePage = () => {
-  const { id: appId } = useApp()
+export type AppPageProps = {
+  id: string
+  path: string
+  appPageSections: AppPageSectionProps[]
+}
+
+export const usePage = (path: string) => {
   const { loading, error, data } = useQuery<types.GET_PAGE, types.GET_PAGEVariables>(
     gql`
-      query GET_PAGE($appId: String) {
-        app_page(where: { app_id: { _eq: $appId } }, order_by: { position: asc }) {
+      query GET_PAGE($path: String) {
+        app_page(where: { path: { _eq: $path } }) {
           id
-          type
-          options
-          position
+          path
+          app_page_sections(order_by: { position: asc }) {
+            id
+            options
+            type
+          }
         }
       }
     `,
     {
       variables: {
-        appId: `${appId}`,
+        path,
       },
     },
   )
 
-  const page: PageProps[] = data?.app_page || []
+  const appPage: AppPageProps[] =
+    data?.app_page.map(v => ({
+      id: v.id,
+      path: v.path,
+      appPageSections: v.app_page_sections.map(section => ({
+        id: section.id,
+        options: section.options,
+        type: section.type,
+      })),
+    })) || []
 
   return {
-    loading,
-    error,
-    sections: page,
+    loadingAppPage: loading,
+    errorAppPage: error,
+    appPage,
   }
 }
