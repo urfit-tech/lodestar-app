@@ -3283,6 +3283,38 @@ export interface ADD_POST_VIEWSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_LATEST_POST
+// ====================================================
+
+export interface GET_LATEST_POST_post {
+  __typename: "post";
+  id: any;
+  code_name: string | null;
+  title: string;
+  cover_url: string | null;
+  video_url: string | null;
+  abstract: string | null;
+  description: string | null;
+  published_at: any | null;
+}
+
+export interface GET_LATEST_POST {
+  /**
+   * fetch data from the table: "post"
+   */
+  post: GET_LATEST_POST_post[];
+}
+
+export interface GET_LATEST_POSTVariables {
+  limit?: number | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ENROLLED_CARD_IDS
 // ====================================================
 
@@ -4964,12 +4996,21 @@ export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPECVariables {
 // GraphQL query operation: GET_PAGE
 // ====================================================
 
+export interface GET_PAGE_app_page_app_page_sections {
+  __typename: "app_page_section";
+  id: any;
+  options: any | null;
+  type: string;
+}
+
 export interface GET_PAGE_app_page {
   __typename: "app_page";
-  id: string;
-  type: string;
-  options: any | null;
-  position: number | null;
+  id: any;
+  path: string;
+  /**
+   * An array relationship
+   */
+  app_page_sections: GET_PAGE_app_page_app_page_sections[];
 }
 
 export interface GET_PAGE {
@@ -4980,7 +5021,7 @@ export interface GET_PAGE {
 }
 
 export interface GET_PAGEVariables {
-  appId?: string | null;
+  path?: string | null;
 }
 
 /* tslint:disable */
