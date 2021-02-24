@@ -75,7 +75,7 @@ const ProgramContentPlayer: React.FC<
       title: string
     }
     lastProgress?: number
-    onEventTrigger?: (data: any) => void
+    onEventTrigger?: (data: { playbackRate: number; startedAt: number; endedAt: number }) => void
   }
 > = ({ programContentBody, nextProgramContent, lastProgress = 0, onProgress, onEnded, onEventTrigger }) => {
   const { formatMessage } = useIntl()
@@ -83,6 +83,23 @@ const ProgramContentPlayer: React.FC<
 
   const [player, setPlayer] = useState<ReactPlayer | null>(null)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
+  const [playerState, setPlayerState] = useState<{
+    recordAt: number
+    playbackRate: number
+    startedAt: number
+    endedAt: number
+  }>({
+    recordAt: Date.now(),
+    playbackRate: 0,
+    startedAt: 0,
+    endedAt: 0,
+  })
+  const [duration, setDuration] = useState(0)
+
+  useEffect(() => {
+    const { recordAt, ...data } = playerState
+    onEventTrigger?.(data)
+  }, [playerState.startedAt])
 
   return (
     <StyledContainer>
@@ -101,23 +118,59 @@ const ProgramContentPlayer: React.FC<
             playerOptions: { responsive: true },
           },
         }}
-        onDuration={duration => player?.seekTo(duration * (lastProgress === 1 ? 0 : lastProgress), 'seconds')}
+        onDuration={duration => {
+          setDuration(duration)
+          setPlayerState(() => ({
+            recordAt: Date.now(),
+            playbackRate: 0,
+            startedAt: duration * (lastProgress === 1 ? 0 : lastProgress),
+            endedAt: duration * (lastProgress === 1 ? 0 : lastProgress),
+          }))
+          player?.seekTo(duration * (lastProgress === 1 ? 0 : lastProgress), 'seconds')
+        }}
         onReady={player => {
           setPlayer(player)
-          onEventTrigger?.({ eventType: 'ready' })
         }}
-        onStart={() => onEventTrigger?.({ eventType: 'start' })}
-        onPlay={() => onEventTrigger?.({ eventType: 'play' })}
-        onPause={() => onEventTrigger?.({ eventType: 'pause' })}
-        onBuffer={() => onEventTrigger?.({ eventType: 'buffer' })}
-        onBufferEnd={() => onEventTrigger?.({ eventType: 'buffered' })}
-        onSeek={seconds => onEventTrigger?.({ eventType: 'seek', seconds })}
         onProgress={state => {
-          onEventTrigger?.({ eventType: 'progress', state })
+          setPlayerState(({ recordAt, endedAt }) => ({
+            recordAt: Date.now(),
+            playbackRate: ((state.playedSeconds - endedAt) * 1000) / (Date.now() - recordAt),
+            startedAt: endedAt,
+            endedAt: state.playedSeconds,
+          }))
           onProgress?.(state)
         }}
+        onPause={() => {
+          setPlayerState(({ playbackRate, endedAt }) => ({
+            recordAt: Date.now(),
+            playbackRate,
+            startedAt: endedAt,
+            endedAt: endedAt,
+          }))
+        }}
+        onBuffer={() => {
+          setPlayerState(({ endedAt }) => ({
+            recordAt: Date.now(),
+            playbackRate: 0,
+            startedAt: endedAt,
+            endedAt: endedAt,
+          }))
+        }}
+        onSeek={seconds => {
+          setPlayerState(({ playbackRate, startedAt, endedAt }) => ({
+            recordAt: Date.now(),
+            playbackRate: startedAt === endedAt ? 0 : playbackRate,
+            startedAt: endedAt,
+            endedAt: seconds,
+          }))
+        }}
         onEnded={() => {
-          onEventTrigger?.({ eventType: 'ended' })
+          setPlayerState(() => ({
+            recordAt: Date.now(),
+            playbackRate: 0,
+            startedAt: duration,
+            endedAt: duration,
+          }))
           setIsCoverShowing(true)
           onEnded?.()
         }}
