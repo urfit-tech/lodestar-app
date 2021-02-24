@@ -4,7 +4,7 @@ import { useAuth } from '../components/auth/AuthContext'
 import { notEmpty } from '../helpers'
 import types from '../types'
 import { PracticePreviewProps, PracticeProps } from '../types/practice'
-
+import { ProgramRoleName } from '../types/program'
 export const usePractice = (options: { practiceId?: string; memberId?: string | null; programContentId?: string }) => {
   const { loading, error, data, refetch } = useQuery<types.GET_PRACTICE, types.GET_PRACTICEVariables>(GET_PRACTICE, {
     variables: {
@@ -27,6 +27,13 @@ export const usePractice = (options: { practiceId?: string; memberId?: string | 
           programContentId: data.practice[0].program_content.id,
           programContentTitle: data.practice[0].program_content.title,
           programId: data.practice[0].program_content.program_content_section.program.id,
+          programRoles: data.practice[0].program_content.program_content_section.program.program_roles.map(
+            programRole => ({
+              id: programRole.id,
+              name: programRole.name as ProgramRoleName,
+              memberId: programRole.member_id,
+            }),
+          ),
           programTitle: data.practice[0].program_content.program_content_section.program.title,
           reactedMemberIds: data.practice[0].practice_reactions.map(w => w.member_id),
           reactedMemberIdsCount: data.practice[0].practice_reactions_aggregate.aggregate?.count || 0,
@@ -207,6 +214,11 @@ const GET_PRACTICE = gql`
           program {
             id
             title
+            program_roles {
+              id
+              name
+              member_id
+            }
           }
         }
       }

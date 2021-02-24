@@ -261,7 +261,7 @@ const PracticePage: React.FC = () => {
                   memberId={v.memberId}
                   description={v.description}
                   suggestReplyCount={v.suggestReplyCount}
-                  programRoles={[]}
+                  programRoles={practice?.programRoles || []}
                   reactedMemberIds={v.reactedMemberIds}
                   createdAt={v.createdAt}
                   onRefetch={() => refetchPractice()}

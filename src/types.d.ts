@@ -5705,10 +5705,24 @@ export interface GET_PRACTICE_practice_practice_reactions_aggregate {
   aggregate: GET_PRACTICE_practice_practice_reactions_aggregate_aggregate | null;
 }
 
+export interface GET_PRACTICE_practice_program_content_program_content_section_program_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
 export interface GET_PRACTICE_practice_program_content_program_content_section_program {
   __typename: "program";
   id: any;
   title: string;
+  /**
+   * An array relationship
+   */
+  program_roles: GET_PRACTICE_practice_program_content_program_content_section_program_program_roles[];
 }
 
 export interface GET_PRACTICE_practice_program_content_program_content_section {
