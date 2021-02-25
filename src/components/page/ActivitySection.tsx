@@ -1,6 +1,7 @@
 import { Skeleton } from '@chakra-ui/react'
 import React from 'react'
 import styled from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import { usePublishedActivityCollection } from '../../hooks/activity'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { SectionTitle, StyledLink } from '../../pages/AppPage'
@@ -11,9 +12,10 @@ const StyledSection = styled.section`
 `
 
 const ActivitySection: React.FC<{ options: { title?: string; colAmount?: number } }> = ({ options }) => {
+  const { enabledModules } = useApp()
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 
-  if (loadingActivities || errorActivities)
+  if (loadingActivities)
     return (
       <div className="container mb-5">
         <Skeleton height="20px" my="10px" />
@@ -22,7 +24,7 @@ const ActivitySection: React.FC<{ options: { title?: string; colAmount?: number 
       </div>
     )
 
-  if (activities.length === 0) return null
+  if (activities.length === 0 || errorActivities || !enabledModules.activity) return null
 
   return (
     <StyledSection className="page-section">

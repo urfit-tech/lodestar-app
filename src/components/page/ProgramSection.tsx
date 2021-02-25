@@ -18,7 +18,7 @@ const ProgramSection: React.FC<{ options: { title?: string; colAmount?: number; 
     categoryId: options?.categoryId,
   })
 
-  if (loadingPrograms || errorPrograms)
+  if (loadingPrograms)
     return (
       <div className="container mb-5">
         <Skeleton height="20px" my="10px" />
@@ -27,7 +27,7 @@ const ProgramSection: React.FC<{ options: { title?: string; colAmount?: number; 
       </div>
     )
 
-  if (programs.length === 0) return null
+  if (programs.length === 0 || errorPrograms) return null
 
   return (
     <StyledSection className="page-section">
@@ -44,7 +44,7 @@ const ProgramSection: React.FC<{ options: { title?: string; colAmount?: number; 
       </div>
 
       <div className="text-center">
-        <StyledLink to="/programs">
+        <StyledLink to={`/programs?active=${options?.categoryId}`}>
           查看更多 <AngleRightIcon />
         </StyledLink>
       </div>

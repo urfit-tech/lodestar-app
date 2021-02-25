@@ -5,6 +5,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CustomRatioImage } from '../../components/common/Image'
+import { useApp } from '../../containers/common/AppContext'
 import { useLatestPost } from '../../hooks/blog'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
@@ -95,6 +96,7 @@ const StyledPostMeta = styled.div`
 `
 
 const PostSection: React.FC<{ options: { title?: string } }> = ({ options }) => {
+  const { enabledModules } = useApp()
   const { loadingPosts, posts, errorPosts } = useLatestPost({ limit: 3 })
 
   if (loadingPosts)
@@ -106,7 +108,7 @@ const PostSection: React.FC<{ options: { title?: string } }> = ({ options }) => 
       </div>
     )
 
-  if (posts.length === 0 || errorPosts) return null
+  if (posts.length === 0 || errorPosts || !enabledModules.blog) return null
 
   return (
     <StyledSection className="page-section">
@@ -144,7 +146,7 @@ const PostSection: React.FC<{ options: { title?: string } }> = ({ options }) => 
         </StyledPostListContainer>
 
         <div className="text-center">
-          <StyledLink to="/activities">
+          <StyledLink to="/blog">
             查看更多 <AngleRightIcon />
           </StyledLink>
         </div>
