@@ -3,7 +3,8 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Slider from 'react-slick'
 import styled from 'styled-components'
-import { useCreatorCollection } from '../../hooks/member'
+import { useApp } from '../../containers/common/AppContext'
+import { useLatestCreator } from '../../hooks/member'
 import DefaultAvatar from '../../images/avatar.svg'
 import { SectionTitle } from '../../pages/AppPage'
 import { BREAK_POINT } from '../common/Responsive'
@@ -76,41 +77,32 @@ const StyledDescription = styled.div`
   -webkit-line-clamp: 8;
 `
 
-const CreatorSection: React.FC<{ options: any }> = ({ options }) => {
-  const { loadingCreators, creators, errorCreators } = useCreatorCollection()
+const CreatorSection: React.FC<{ options: { title?: string; topInstructorIds?: string[] } }> = ({ options }) => {
+  const { id: appId } = useApp()
+  const { loadingLatestCreators, latestCreators, errorLatestCreators } = useLatestCreator(
+    options?.topInstructorIds || [],
+    appId,
+  )
 
   const instructorBlock = (amount: number) => {
-    const instructors = creators
-      .filter(creator =>
-        options?.topInstructors.find((v: { instructorId: string; name: string }) => v.instructorId === creator.id),
-      )
-      .concat(
-        creators
-          .filter(
-            creator => (v: { instructorId: string; name: string }) => v.instructorId === creator.id,
-            !options?.topInstructors.find(),
-          )
-          .reverse(),
-      )
-
-    return instructors.slice(0, amount).map(instructor => (
-      <StyledInstructorBlock key={instructor.id}>
-        <Link to={`/creators/${instructor.id}`}>
+    return latestCreators.slice(0, amount).map(v => (
+      <StyledInstructorBlock key={v.id}>
+        <Link to={`/creators/${v.id}`}>
           <div className="mb-4">
             <StyledAvatar
-              src={instructor.avatarUrl !== null ? instructor.avatarUrl : DefaultAvatar}
-              alt={instructor.name}
+              src={v.avatarUrl !== null ? v.avatarUrl : DefaultAvatar}
+              alt={v.name || ''}
               className="mx-auto"
             />
           </div>
-          <StyledTitle>{instructor.name}</StyledTitle>
-          <StyledDescription>{instructor.abstract}</StyledDescription>
+          <StyledTitle>{v.name}</StyledTitle>
+          <StyledDescription>{v.abstract}</StyledDescription>
         </Link>
       </StyledInstructorBlock>
     ))
   }
 
-  if (loadingCreators || errorCreators)
+  if (loadingLatestCreators)
     return (
       <div className="container mb-5">
         <Skeleton height="20px" my="10px" />
@@ -119,7 +111,7 @@ const CreatorSection: React.FC<{ options: any }> = ({ options }) => {
       </div>
     )
 
-  if (creators.length === 0) return null
+  if (latestCreators.length === 0 || errorLatestCreators) return null
 
   return (
     <StyledSection className="page-section">
@@ -128,8 +120,8 @@ const CreatorSection: React.FC<{ options: any }> = ({ options }) => {
         <StyledSlider
           dots
           arrows={false}
-          slidesToShow={creators.length < 3 ? creators.length : 3}
-          slidesToScroll={creators.length < 3 ? creators.length : 3}
+          slidesToShow={latestCreators.length < 3 ? latestCreators.length : 3}
+          slidesToScroll={latestCreators.length < 3 ? latestCreators.length : 3}
           responsive={[
             {
               breakpoint: BREAK_POINT,

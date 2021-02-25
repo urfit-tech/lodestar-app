@@ -94,10 +94,10 @@ const StyledPostMeta = styled.div`
   }
 `
 
-const PostSection: React.FC<{ options: any }> = ({ options }) => {
+const PostSection: React.FC<{ options: { title?: string } }> = ({ options }) => {
   const { loadingPosts, posts, errorPosts } = useLatestPost({ limit: 3 })
 
-  if (loadingPosts || errorPosts)
+  if (loadingPosts)
     return (
       <div className="container mb-5">
         <Skeleton height="20px" my="10px" />
@@ -106,7 +106,7 @@ const PostSection: React.FC<{ options: any }> = ({ options }) => {
       </div>
     )
 
-  if (posts.length === 0) return null
+  if (posts.length === 0 || errorPosts) return null
 
   return (
     <StyledSection className="page-section">
@@ -114,35 +114,33 @@ const PostSection: React.FC<{ options: any }> = ({ options }) => {
 
       <div className="container px-0">
         <StyledPostListContainer className="mb-5">
-          {posts
-            .sort((a, b) => (a.publishedAt && b.publishedAt ? b.publishedAt.getTime() - a.publishedAt.getTime() : 1))
-            .map(post => (
-              <div key={post.id} className="col-12 col-md-6 col-lg-4 mb-4 post-card-container">
-                <StyledPostCard className="mb-4" to={`/posts/${post.codeName || post.id}`}>
-                  <StyledPostCoverContainer className="mb-3">
-                    <StyledCover>
-                      {typeof post.videoUrl === 'string' && (
-                        <StyledVideoIconBlock>
-                          <PlayCircleIcon />
-                        </StyledVideoIconBlock>
-                      )}
-                      <StyledCustomRatioImage width="100%" ratio={2 / 3} src={post.coverUrl || EmptyCover} />
-                    </StyledCover>
-                  </StyledPostCoverContainer>
-                  <StyledPostTitle className="list-item">{post.title}</StyledPostTitle>
-                  <StyledPostMeta className="mb-2">
-                    <CalendarAltOIcon className="mr-1" />
-                    <span>{post.publishedAt ? moment(post.publishedAt).format('YYYY-MM-DD') : ''}</span>
-                  </StyledPostMeta>
-                  <StyledPostAbstract>
-                    {BraftEditor.createEditorState(post.description)
-                      .toHTML()
-                      .replace(/(<([^>]+)>)/gi, '')
-                      .substr(0, 50)}
-                  </StyledPostAbstract>
-                </StyledPostCard>
-              </div>
-            ))}
+          {posts.map(post => (
+            <div key={post.id} className="col-12 col-md-6 col-lg-4 mb-4 post-card-container">
+              <StyledPostCard className="mb-4" to={`/posts/${post.codeName || post.id}`}>
+                <StyledPostCoverContainer className="mb-3">
+                  <StyledCover>
+                    {typeof post.videoUrl === 'string' && (
+                      <StyledVideoIconBlock>
+                        <PlayCircleIcon />
+                      </StyledVideoIconBlock>
+                    )}
+                    <StyledCustomRatioImage width="100%" ratio={2 / 3} src={post.coverUrl || EmptyCover} />
+                  </StyledCover>
+                </StyledPostCoverContainer>
+                <StyledPostTitle className="list-item">{post.title}</StyledPostTitle>
+                <StyledPostMeta className="mb-2">
+                  <CalendarAltOIcon className="mr-1" />
+                  <span>{post.publishedAt ? moment(post.publishedAt).format('YYYY-MM-DD') : ''}</span>
+                </StyledPostMeta>
+                <StyledPostAbstract>
+                  {BraftEditor.createEditorState(post.description)
+                    .toHTML()
+                    .replace(/(<([^>]+)>)/gi, '')
+                    .slice(0, 50)}
+                </StyledPostAbstract>
+              </StyledPostCard>
+            </div>
+          ))}
         </StyledPostListContainer>
 
         <div className="text-center">

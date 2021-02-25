@@ -33,10 +33,10 @@ export const StyledLink = styled(Link)<{ $backgroundActive?: string }>`
   margin-top: 40px;
 `
 
-const AppPage: React.FC<{ page: AppPageProps[] }> = ({ page }) => {
+const AppPage: React.FC<{ page: AppPageProps }> = ({ page }) => {
   return (
     <DefaultLayout>
-      {page[0].appPageSections.map((section: AppPageSectionProps) => {
+      {page.appPageSections.map((section: AppPageSectionProps) => {
         switch (section.type) {
           case 'homeCover':
             return <CoverSection key={section.id} options={section.options} />

@@ -10,7 +10,9 @@ const StyledSection = styled.section`
   margin: 40px auto;
 `
 
-const ProgramSection: React.FC<{ options: any }> = ({ options }) => {
+const ProgramSection: React.FC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
+  options,
+}) => {
   const { loadingPrograms, errorPrograms, programs } = usePublishedProgramCollection({
     isPrivate: false,
     categoryId: options?.categoryId,
@@ -34,7 +36,7 @@ const ProgramSection: React.FC<{ options: any }> = ({ options }) => {
       <div className="container mb-5">
         <div className="row">
           {programs.slice(0, options?.colAmount || 3).map(program => (
-            <div key={program.id} className={`col-12 col-lg-${12 / options?.colAmount || 4}`}>
+            <div key={program.id} className={`col-12 col-lg-${(options?.colAmount && 12 / options?.colAmount) || 4}`}>
               <ProgramCard program={program} withMeta noInstructor />
             </div>
           ))}

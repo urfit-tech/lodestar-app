@@ -10,7 +10,7 @@ const StyledSection = styled.section`
   margin-bottom: 80px;
 `
 
-const ActivitySection: React.FC<{ options: any }> = ({ options }) => {
+const ActivitySection: React.FC<{ options: { title?: string; colAmount?: number } }> = ({ options }) => {
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 
   if (loadingActivities || errorActivities)
@@ -31,7 +31,7 @@ const ActivitySection: React.FC<{ options: any }> = ({ options }) => {
       <div className="container mb-5">
         <div className="row">
           {activities.slice(0, options.colAmount || 3).map(activity => (
-            <div key={activity.id} className={`col-12 col-lg-${12 / options.colAmount || 4}`}>
+            <div key={activity.id} className={`col-12 col-lg-${(options.colAmount && 12 / options.colAmount) || 4}`}>
               <Activity {...activity} />
             </div>
           ))}

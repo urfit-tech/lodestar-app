@@ -87,7 +87,21 @@ const StyledCoverButton = styled(Link)`
   text-align: center;
 `
 
-const CoverSection: React.FC<{ options: any }> = ({ options }) => {
+const CoverSection: React.FC<{
+  options: {
+    coverInfos: {
+      id: number
+      srcDesktop: string
+      srcMobile: string
+      title: string
+      subtitle: string
+      buttonText: string
+      link: string
+      external: boolean
+    }[]
+    sectionHeight: { desktopHeight: string; mobileHeight: string }
+  }
+}> = ({ options }) => {
   const history = useHistory()
   return (
     <StyledSection>

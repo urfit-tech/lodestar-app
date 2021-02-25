@@ -4727,6 +4727,47 @@ export interface GET_SOCIAL_CARD_COLLECTION {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_LATEST_CREATOR
+// ====================================================
+
+export interface GET_LATEST_CREATOR_topInstructor {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  abstract: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_LATEST_CREATOR_otherInstructor {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  abstract: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_LATEST_CREATOR {
+  /**
+   * fetch data from the table: "member_public"
+   */
+  topInstructor: GET_LATEST_CREATOR_topInstructor[];
+  /**
+   * fetch data from the table: "member_public"
+   */
+  otherInstructor: GET_LATEST_CREATOR_otherInstructor[];
+}
+
+export interface GET_LATEST_CREATORVariables {
+  topInstructorIds: string[];
+  appId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_MERCHANDISE_COLLECTION
 // ====================================================
 
@@ -5022,6 +5063,7 @@ export interface GET_PAGE {
 
 export interface GET_PAGEVariables {
   path?: string | null;
+  appId?: string | null;
 }
 
 /* tslint:disable */
@@ -8777,6 +8819,23 @@ export interface PostParts {
    * An array relationship
    */
   post_merchandises: PostParts_post_merchandises[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: instructorField
+// ====================================================
+
+export interface instructorField {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  abstract: string | null;
+  picture_url: string | null;
 }
 
 /* tslint:disable */
@@ -14531,6 +14590,7 @@ export interface member_public_bool_exp {
   _or?: (member_public_bool_exp | null)[] | null;
   abstract?: String_comparison_exp | null;
   app_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   email?: String_comparison_exp | null;
   id?: String_comparison_exp | null;

@@ -517,7 +517,7 @@ export const useLatestPost = (filter?: { limit?: number }) => {
           videoUrl: post.video_url,
           abstract: post.abstract,
           publishedAt: post.published_at ? new Date(post.published_at) : null,
-          description: post?.description ? JSON.parse(post.description) : null,
+          description: post.description,
         }))
 
   return {
