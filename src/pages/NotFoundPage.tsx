@@ -8,15 +8,18 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages } from '../helpers/translation'
 import { usePage } from '../hooks/page'
 import { ReactComponent as routeErrorIcon } from '../images/404.svg'
-import { ReactComponent as errorIcon } from '../images/error-2.svg'
+import { ReactComponent as error2Icon } from '../images/error-2.svg'
+import { ReactComponent as errorIcon } from '../images/error.svg'
 import AppPage from './AppPage'
 import LoadingPage from './LoadingPage'
 
 const StyledWrapper = styled.div`
-  height: 430px;
+  padding: 5rem 1rem;
   text-align: center;
   color: var(--gray-darker);
-  padding: 0 1rem;
+`
+const StyledIcon = styled(Icon)`
+  width: 100px;
 `
 const StyledTitle = styled.h3`
   font-family: NotoSansCJKtc;
@@ -26,13 +29,13 @@ const StyledTitle = styled.h3`
   letter-spacing: 1.5px;
 `
 const StyledDescription = styled.div`
-  margin-bottom: 1.25rem;
   height: 3em;
   font-size: 14px;
   letter-spacing: 0.4px;
 `
 const StyledButton = styled(props => <Button {...props} />)`
   && {
+    margin-top: 1.25rem;
     width: 160px;
     height: 45px;
     cursor: pointer;
@@ -51,43 +54,63 @@ const StyledButton = styled(props => <Button {...props} />)`
     }
   }
 `
-const StyledErrorIcon = styled(Icon)`
-  margin-top: 80px;
-  margin-bottom: 24px;
-`
 
-type NotFoundPageProps = {
-  error?: boolean
-}
-const NotFoundPage: React.FC<NotFoundPageProps> = ({ error }) => {
+const NotFoundPage: React.FC<{
+  variant?: 'error' | 'repairing'
+}> = ({ variant }) => {
   const { formatMessage } = useIntl()
+  let history = useHistory()
   const { loadingAppPage, appPage, errorAppPage } = usePage(window.location.pathname)
 
-  let history = useHistory()
-  const clickHandler = () => {
-    if (error) {
-      window.location.reload()
-    } else {
-      history.goBack()
-    }
+  if (loadingAppPage) {
+    return <LoadingPage />
   }
 
-  if (loadingAppPage) return <LoadingPage />
-  if (!loadingAppPage && !errorAppPage && appPage.path) return <AppPage page={appPage} />
+  if (!loadingAppPage && !errorAppPage && appPage.path) {
+    return <AppPage page={appPage} />
+  }
+
+  const handleClick =
+    variant === 'error'
+      ? () => {
+          window.location.reload()
+        }
+      : variant === 'repairing'
+      ? undefined
+      : () => {
+          history.goBack()
+        }
 
   return (
     <DefaultLayout centeredBox>
       <StyledWrapper>
-        <StyledErrorIcon as={error ? errorIcon : routeErrorIcon} />
-        <StyledTitle>{formatMessage(error ? commonMessages.title.error : commonMessages.title.routeError)}</StyledTitle>
+        <StyledIcon
+          as={variant === 'error' ? error2Icon : variant === 'repairing' ? errorIcon : routeErrorIcon}
+          className="mb-4"
+        />
+        <StyledTitle>
+          {formatMessage(
+            variant === 'error'
+              ? commonMessages.title.error
+              : variant === 'repairing'
+              ? commonMessages.title.repairing
+              : commonMessages.title.routeError,
+          )}
+        </StyledTitle>
         <StyledDescription>
           {formatMessage(
-            error ? commonMessages.content.errorDescription : commonMessages.content.routeErrorDescription,
+            variant === 'error'
+              ? commonMessages.content.errorDescription
+              : variant === 'repairing'
+              ? commonMessages.content.repairingDescription
+              : commonMessages.content.routeErrorDescription,
           )}
         </StyledDescription>
-        <StyledButton onClick={clickHandler} variant="outline">
-          {formatMessage(error ? commonMessages.button.reload : commonMessages.button.previousPage)}
-        </StyledButton>
+        {handleClick && (
+          <StyledButton onClick={handleClick} variant="outline">
+            {formatMessage(variant === 'error' ? commonMessages.button.reload : commonMessages.button.previousPage)}
+          </StyledButton>
+        )}
       </StyledWrapper>
     </DefaultLayout>
   )
