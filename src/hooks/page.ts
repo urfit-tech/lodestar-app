@@ -6,8 +6,8 @@ import types from '../types'
 export type AppPageSectionProps = { id: string; options: any; type: string }
 
 export type AppPageProps = {
-  id: string
-  path: string
+  id: string | null
+  path: string | null
   appPageSections: AppPageSectionProps[]
 }
 
@@ -35,15 +35,16 @@ export const usePage = (path: string) => {
     },
   )
 
-  const appPage: AppPageProps = {
-    id: data?.app_page[0].id,
-    path: data?.app_page[0].path || '',
-    appPageSections:
-      data?.app_page[0].app_page_sections.map((v: { id: string; options: any; type: string }) => ({
-        id: v.id,
-        options: v.options,
-        type: v.type,
-      })) || [],
+  const appPage: AppPageProps | null = {
+    id: data?.app_page[0] ? data.app_page[0].id : null,
+    path: data?.app_page[0] ? data.app_page[0].path : null,
+    appPageSections: data?.app_page[0]
+      ? data?.app_page[0].app_page_sections.map((v: { id: string; options: any; type: string }) => ({
+          id: v.id,
+          options: v.options,
+          type: v.type,
+        }))
+      : [],
   }
   return {
     loadingAppPage: loading,

@@ -106,63 +106,40 @@ const CoverSection: React.FC<{
   return (
     <StyledSection>
       <StyledSlider dots infinite arrows={false} autoplay autoplaySpeed={5000}>
-        {options.coverInfos.map(
-          (v: {
-            id: number
-            srcDesktop: string
-            srcMobile: string
-            title: string
-            subtitle: string
-            buttonText: string
-            link: string
-            external: boolean
-            renderHeading?: () => React.ReactElement
-            renderSubHeading?: () => React.ReactElement
-            renderButton?: () => React.ReactElement
-          }) => (
-            <StyledCoverBackground
-              key={v.id}
-              height={options.sectionHeight}
-              srcDesktop={v.srcDesktop}
-              srcMobile={v.srcMobile}
-              className={`d-flex align-items-center${v.buttonText ? '' : ' cursor-pointer'} cover-background`}
-              onClick={() => {
-                if (v.buttonText) {
-                  return
-                }
-                if (!v.link) return
-                v.external ? window.open(v.link) : history.push(v.link)
-              }}
-            >
-              <div className="container">
-                {v.title &&
-                  (v.renderHeading ? (
-                    <>{v.renderHeading()}</>
-                  ) : (
-                    <StyledCoverHeading as="h1" className="mb-3 cover-heading">
-                      {v.title}
-                    </StyledCoverHeading>
-                  ))}
-                {v.subtitle &&
-                  (v.renderSubHeading ? (
-                    <>{v.renderSubHeading}</>
-                  ) : (
-                    <StyledCoverSubHeading as="h2" className="mb-4 cover-sub-heading">
-                      {v.subtitle}
-                    </StyledCoverSubHeading>
-                  ))}
-                {v.buttonText &&
-                  (v.renderButton ? (
-                    <>{v.renderButton}</>
-                  ) : (
-                    <StyledCoverButton to={v.link} className="cover-button">
-                      {v.buttonText}
-                    </StyledCoverButton>
-                  ))}
-              </div>
-            </StyledCoverBackground>
-          ),
-        )}
+        {options.coverInfos.map(v => (
+          <StyledCoverBackground
+            key={v.id}
+            height={options.sectionHeight}
+            srcDesktop={v.srcDesktop}
+            srcMobile={v.srcMobile}
+            className={`d-flex align-items-center${v.buttonText ? '' : ' cursor-pointer'} cover-background`}
+            onClick={() => {
+              if (v.buttonText) {
+                return
+              }
+              if (!v.link) return
+              v.external ? window.open(v.link) : history.push(v.link)
+            }}
+          >
+            <div className="container">
+              {v.title && (
+                <StyledCoverHeading as="h1" className="mb-3 cover-heading">
+                  {v.title}
+                </StyledCoverHeading>
+              )}
+              {v.subtitle && (
+                <StyledCoverSubHeading as="h2" className="mb-4 cover-sub-heading">
+                  {v.subtitle}
+                </StyledCoverSubHeading>
+              )}
+              {v.buttonText && (
+                <StyledCoverButton to={v.link} className="cover-button">
+                  {v.buttonText}
+                </StyledCoverButton>
+              )}
+            </div>
+          </StyledCoverBackground>
+        ))}
       </StyledSlider>
     </StyledSection>
   )

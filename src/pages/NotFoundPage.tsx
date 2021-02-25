@@ -73,7 +73,7 @@ const NotFoundPage: React.FC<NotFoundPageProps> = ({ error }) => {
   }
 
   if (loadingAppPage) return <LoadingPage />
-  if (!loadingAppPage && !errorAppPage) return <AppPage page={appPage} />
+  if (!loadingAppPage && !errorAppPage && appPage.path) return <AppPage page={appPage} />
 
   return (
     <DefaultLayout centeredBox>
