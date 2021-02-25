@@ -7,7 +7,7 @@ import { SectionTitle, StyledLink } from '../../pages/AppPage'
 import ProgramCard from '../program/ProgramCard'
 
 const StyledSection = styled.section`
-  margin: 40px auto;
+  margin-bottom: 80px;
 `
 
 const ProgramSection: React.FC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({

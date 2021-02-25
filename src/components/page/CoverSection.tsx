@@ -76,15 +76,16 @@ const StyledCoverSubHeading = styled(Heading)`
   }
 `
 
-const StyledCoverButton = styled(Link)`
-  display: inline-block;
+const StyledCoverButton = styled.div`
   border-radius: 4px;
   width: 142px;
   height: 44px;
   background: ${props => props.theme['@primary-color']};
   color: white;
   line-height: 44px;
-  text-align: center;
+  @media (min-width: ${BREAK_POINT}px) {
+    text-align: center;
+  }
 `
 
 const CoverSection: React.FC<{
@@ -133,8 +134,8 @@ const CoverSection: React.FC<{
                 </StyledCoverSubHeading>
               )}
               {v.buttonText && (
-                <StyledCoverButton to={v.link} className="cover-button">
-                  {v.buttonText}
+                <StyledCoverButton className="cover-button">
+                  <Link to={v.link}>{v.buttonText}</Link>
                 </StyledCoverButton>
               )}
             </div>

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ActivitySection from '../components/page/ActivitySection'
 import CoverSection from '../components/page/CoverSection'
@@ -18,12 +17,6 @@ export const SectionTitle = styled.div<{ white?: boolean }>`
   letter-spacing: 0.23px;
   text-align: center;
   color: var(--gray-color);
-
-  @media (min-width: ${BREAK_POINT}px) {
-    font-size: 50px;
-    line-height: 81px;
-    letter-spacing: 1.25px;
-  }
 `
 export const StyledLink = styled(Link)<{ $backgroundActive?: string }>`
   & .ant-btn-primary:active {
