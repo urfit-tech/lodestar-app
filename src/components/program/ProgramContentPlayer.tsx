@@ -153,9 +153,9 @@ const ProgramContentPlayer: React.FC<
           }))
         }}
         onSeek={seconds => {
-          setPlayerState(({ playbackRate, startedAt, endedAt }) => ({
+          setPlayerState(({ endedAt }) => ({
             recordAt: Date.now(),
-            playbackRate: startedAt === endedAt ? 0 : playbackRate,
+            playbackRate: 0,
             startedAt: endedAt,
             endedAt: seconds,
           }))
