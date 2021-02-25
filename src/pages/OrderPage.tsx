@@ -115,7 +115,21 @@ const OrderPage: React.FC = () => {
       >
         <AdminCard style={{ paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
           <div className="d-flex flex-column align-items-center justify-content-center px-sm-5">
-            {data.order_log_by_pk.order_status?.status === 'SUCCESS' ? (
+            {!data.order_log_by_pk.order_status?.status ? (
+              <>
+                <Icon
+                  className="mb-5"
+                  type="check-circle"
+                  theme="twoTone"
+                  twoToneColor="#4ed1b3"
+                  style={{ fontSize: '4rem' }}
+                />
+                <Typography.Title level={4} className="mb-3">
+                  {formatMessage(commonMessages.title.purchasedItemPreparing)}
+                </Typography.Title>
+                <Typography.Text className="mb-4">{formatMessage(commonMessages.content.prepare)}</Typography.Text>
+              </>
+            ) : data.order_log_by_pk.order_status?.status === 'SUCCESS' ? (
               <>
                 <Icon
                   className="mb-5"

@@ -96,6 +96,7 @@ export const commonMessages = {
     courseDelete: { id: 'product.program.title.course.delete', defaultMessage: '刪除課程' },
     notification: { id: 'product.program.title.notification', defaultMessage: '你的通知' },
     purchasedItemAvailable: { id: 'common.message.success.purchasedItemAvailable', defaultMessage: '購買的項目已開通' },
+    purchasedItemPreparing: { id: 'common.message.success.purchasedItemPreparing', defaultMessage: '購買的項目準備中' },
     paymentFail: { id: 'common.fail', defaultMessage: '付款失敗' },
     creditCardConfirm: { id: 'common.confirm.credit', defaultMessage: '請確認您的信用卡資料正確後，再付款一次。' },
     error: { id: 'common.title.error', defaultMessage: 'Oops !' },
@@ -270,6 +271,10 @@ export const commonMessages = {
     creatorCollection: { id: 'users.title.creator.collection', defaultMessage: '大師列表' },
     description: { id: 'product.program.description', defaultMessage: '方案：' },
     noAuthority: { id: 'common.noAuthority', defaultMessage: '你沒有此頁面的讀取權限' },
+    prepare: {
+      id: 'common.prepare',
+      defaultMessage: '訂單查驗需要數秒的時間，將於一分鐘內會更新您的訂單資訊',
+    },
     atm: {
       id: 'common.atm',
       defaultMessage: '若你選擇「ATM轉帳」或「超商付款」需於付款完成後，等待 1-2 個工作日才會開通。',
@@ -1231,6 +1236,7 @@ export const saleMessages = {
   },
   status: defineMessages({
     completed: { id: 'sale.status.completed', defaultMessage: '已完成' },
+    preparing: { id: 'sale.status.preparing', defaultMessage: '準備中' },
     unpaid: { id: 'sale.status.unpaid', defaultMessage: '待付款' },
     refunded: { id: 'sale.status.refunded', defaultMessage: '已退款' },
     fail: { id: 'sale.status.fail', defaultMessage: '付款失敗' },
