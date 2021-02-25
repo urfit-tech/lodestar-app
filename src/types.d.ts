@@ -3283,6 +3283,38 @@ export interface ADD_POST_VIEWSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_LATEST_POST
+// ====================================================
+
+export interface GET_LATEST_POST_post {
+  __typename: "post";
+  id: any;
+  code_name: string | null;
+  title: string;
+  cover_url: string | null;
+  video_url: string | null;
+  abstract: string | null;
+  description: string | null;
+  published_at: any | null;
+}
+
+export interface GET_LATEST_POST {
+  /**
+   * fetch data from the table: "post"
+   */
+  post: GET_LATEST_POST_post[];
+}
+
+export interface GET_LATEST_POSTVariables {
+  limit?: number | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ENROLLED_CARD_IDS
 // ====================================================
 
@@ -4695,6 +4727,47 @@ export interface GET_SOCIAL_CARD_COLLECTION {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_LATEST_CREATOR
+// ====================================================
+
+export interface GET_LATEST_CREATOR_topInstructor {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  abstract: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_LATEST_CREATOR_otherInstructor {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  abstract: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_LATEST_CREATOR {
+  /**
+   * fetch data from the table: "member_public"
+   */
+  topInstructor: GET_LATEST_CREATOR_topInstructor[];
+  /**
+   * fetch data from the table: "member_public"
+   */
+  otherInstructor: GET_LATEST_CREATOR_otherInstructor[];
+}
+
+export interface GET_LATEST_CREATORVariables {
+  topInstructorIds: string[];
+  appId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_MERCHANDISE_COLLECTION
 // ====================================================
 
@@ -4953,6 +5026,44 @@ export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPEC {
 
 export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPECVariables {
   memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PAGE
+// ====================================================
+
+export interface GET_PAGE_app_page_app_page_sections {
+  __typename: "app_page_section";
+  id: any;
+  options: any | null;
+  type: string;
+}
+
+export interface GET_PAGE_app_page {
+  __typename: "app_page";
+  id: any;
+  path: string;
+  /**
+   * An array relationship
+   */
+  app_page_sections: GET_PAGE_app_page_app_page_sections[];
+}
+
+export interface GET_PAGE {
+  /**
+   * fetch data from the table: "app_page"
+   */
+  app_page: GET_PAGE_app_page[];
+}
+
+export interface GET_PAGEVariables {
+  path?: string | null;
+  appId?: string | null;
 }
 
 /* tslint:disable */
@@ -8722,6 +8833,23 @@ export interface PostParts {
    * An array relationship
    */
   post_merchandises: PostParts_post_merchandises[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: instructorField
+// ====================================================
+
+export interface instructorField {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  abstract: string | null;
+  picture_url: string | null;
 }
 
 /* tslint:disable */
@@ -14476,6 +14604,7 @@ export interface member_public_bool_exp {
   _or?: (member_public_bool_exp | null)[] | null;
   abstract?: String_comparison_exp | null;
   app_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   email?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
@@ -15653,6 +15782,7 @@ export interface order_status_bool_exp {
   _and?: (order_status_bool_exp | null)[] | null;
   _not?: order_status_bool_exp | null;
   _or?: (order_status_bool_exp | null)[] | null;
+  last_paid_at?: timestamptz_comparison_exp | null;
   member_id?: String_comparison_exp | null;
   order_discounts?: order_discount_bool_exp | null;
   order_id?: String_comparison_exp | null;
