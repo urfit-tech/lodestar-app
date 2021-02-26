@@ -17,7 +17,7 @@ class ErrorBoundary extends React.Component<{}, errorState> {
   }
   render() {
     if (this.state.hasError) {
-      return <NotFoundPage error />
+      return <NotFoundPage variant="error" />
     }
 
     return this.props.children

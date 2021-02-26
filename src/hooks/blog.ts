@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { isUUIDv4 } from '../helpers'
 import types from '../types'
-import { PostLinkProps, PostPreviewProps, PostProps } from '../types/blog'
+import { PostLatestProps, PostLinkProps, PostPreviewProps, PostProps } from '../types/blog'
 
 export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: string[] }) => {
   const { loading, error, data, refetch } = useQuery<
@@ -478,4 +478,52 @@ export const useAddPostViews = () => {
   `)
 
   return (id: string) => addPostViews({ variables: { id } })
+}
+
+export const useLatestPost = (filter?: { limit?: number }) => {
+  const { loading, error, data, refetch } = useQuery<types.GET_LATEST_POST, types.GET_LATEST_POSTVariables>(
+    gql`
+      query GET_LATEST_POST($limit: Int) {
+        post(
+          where: {
+            is_deleted: { _eq: false }
+            published_at: { _is_null: false }
+            post_roles: { name: { _eq: "author" } }
+          }
+          order_by: [{ published_at: desc }, { position: asc }]
+          limit: $limit
+        ) {
+          id
+          code_name
+          title
+          cover_url
+          video_url
+          abstract
+          description
+          published_at
+        }
+      }
+    `,
+    { variables: { limit: filter?.limit } },
+  )
+  const posts: PostLatestProps[] =
+    loading || error || !data
+      ? []
+      : data.post.map(post => ({
+          id: post.id,
+          codeName: post.code_name,
+          title: post.title,
+          coverUrl: post.cover_url,
+          videoUrl: post.video_url,
+          abstract: post.abstract,
+          publishedAt: post.published_at ? new Date(post.published_at) : null,
+          description: post.description,
+        }))
+
+  return {
+    loadingPosts: loading,
+    errorPosts: error,
+    posts,
+    refetchPosts: refetch,
+  }
 }

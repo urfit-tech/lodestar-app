@@ -43,3 +43,9 @@ export type PostProps = PostPreviewProps & {
     title: string
   } | null
 }
+
+export type PostLatestProps = PostLinkProps & {
+  abstract: string | null
+  publishedAt: Date | null
+  description: string | null
+}

@@ -101,6 +101,7 @@ export const commonMessages = {
     creditCardConfirm: { id: 'common.confirm.credit', defaultMessage: '請確認您的信用卡資料正確後，再付款一次。' },
     error: { id: 'common.title.error', defaultMessage: 'Oops !' },
     routeError: { id: 'common.title.routeError', defaultMessage: '找不到頁面' },
+    repairing: { id: 'common.label.repairing', defaultMessage: '抱歉！網站正在維修中' },
   }),
   tab: defineMessages({
     course: { id: 'common.tab.course', defaultMessage: '參與課程' },
@@ -314,6 +315,10 @@ export const commonMessages = {
     routeErrorDescription: {
       id: 'common.route.error',
       defaultMessage: '頁面無法正常運作或是網址已不存在',
+    },
+    repairingDescription: {
+      id: 'common.text.repairingDescription',
+      defaultMessage: '目前正在進行網站維護，請暫時停止使用',
     },
   }),
   unknown: defineMessages({

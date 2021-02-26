@@ -1415,11 +1415,6 @@ export interface GET_PROGRAM_ROLEVariables {
 // GraphQL query operation: GET_MEMBER_ORDERS
 // ====================================================
 
-export interface GET_MEMBER_ORDERS_order_log_order_status {
-  __typename: "order_status";
-  status: string | null;
-}
-
 export interface GET_MEMBER_ORDERS_order_log_order_products_product {
   __typename: "product";
   /**
@@ -1466,9 +1461,9 @@ export interface GET_MEMBER_ORDERS_order_log {
   id: string;
   created_at: any;
   /**
-   * An object relationship
+   * SUCCESS, MATCHING, REFUND, PARTIAL_REFUND, PARTIAL_EXPIRED, PARTIAL_PAID, EXPIRED, UNPAID
    */
-  order_status: GET_MEMBER_ORDERS_order_log_order_status | null;
+  status: string;
   shipping: any | null;
   /**
    * An array relationship
@@ -3283,6 +3278,38 @@ export interface ADD_POST_VIEWSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_LATEST_POST
+// ====================================================
+
+export interface GET_LATEST_POST_post {
+  __typename: "post";
+  id: any;
+  code_name: string | null;
+  title: string;
+  cover_url: string | null;
+  video_url: string | null;
+  abstract: string | null;
+  description: string | null;
+  published_at: any | null;
+}
+
+export interface GET_LATEST_POST {
+  /**
+   * fetch data from the table: "post"
+   */
+  post: GET_LATEST_POST_post[];
+}
+
+export interface GET_LATEST_POSTVariables {
+  limit?: number | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ENROLLED_CARD_IDS
 // ====================================================
 
@@ -4695,6 +4722,47 @@ export interface GET_SOCIAL_CARD_COLLECTION {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_LATEST_CREATOR
+// ====================================================
+
+export interface GET_LATEST_CREATOR_topInstructor {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  abstract: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_LATEST_CREATOR_otherInstructor {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  abstract: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_LATEST_CREATOR {
+  /**
+   * fetch data from the table: "member_public"
+   */
+  topInstructor: GET_LATEST_CREATOR_topInstructor[];
+  /**
+   * fetch data from the table: "member_public"
+   */
+  otherInstructor: GET_LATEST_CREATOR_otherInstructor[];
+}
+
+export interface GET_LATEST_CREATORVariables {
+  topInstructorIds: string[];
+  appId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_MERCHANDISE_COLLECTION
 // ====================================================
 
@@ -4953,6 +5021,44 @@ export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPEC {
 
 export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPECVariables {
   memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PAGE
+// ====================================================
+
+export interface GET_PAGE_app_page_app_page_sections {
+  __typename: "app_page_section";
+  id: any;
+  options: any | null;
+  type: string;
+}
+
+export interface GET_PAGE_app_page {
+  __typename: "app_page";
+  id: any;
+  path: string;
+  /**
+   * An array relationship
+   */
+  app_page_sections: GET_PAGE_app_page_app_page_sections[];
+}
+
+export interface GET_PAGE {
+  /**
+   * fetch data from the table: "app_page"
+   */
+  app_page: GET_PAGE_app_page[];
+}
+
+export interface GET_PAGEVariables {
+  path?: string | null;
+  appId?: string | null;
 }
 
 /* tslint:disable */
@@ -7962,11 +8068,6 @@ export interface GET_MEMBER_PROGRAM_ISSUESVariables {
 // GraphQL query operation: GET_ORDERS_PRODUCT
 // ====================================================
 
-export interface GET_ORDERS_PRODUCT_order_log_by_pk_order_status {
-  __typename: "order_status";
-  status: string | null;
-}
-
 export interface GET_ORDERS_PRODUCT_order_log_by_pk_order_discounts_aggregate_aggregate_sum {
   __typename: "order_discount_sum_fields";
   price: any | null;
@@ -8020,9 +8121,9 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk {
   id: string;
   message: string | null;
   /**
-   * An object relationship
+   * SUCCESS, MATCHING, REFUND, PARTIAL_REFUND, PARTIAL_EXPIRED, PARTIAL_PAID, EXPIRED, UNPAID
    */
-  order_status: GET_ORDERS_PRODUCT_order_log_by_pk_order_status | null;
+  status: string;
   /**
    * An aggregated array relationship
    */
@@ -8722,6 +8823,23 @@ export interface PostParts {
    * An array relationship
    */
   post_merchandises: PostParts_post_merchandises[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: instructorField
+// ====================================================
+
+export interface instructorField {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  abstract: string | null;
+  picture_url: string | null;
 }
 
 /* tslint:disable */
@@ -10086,11 +10204,13 @@ export enum order_log_update_column {
   expired_at = "expired_at",
   id = "id",
   invoice = "invoice",
+  last_paid_at = "last_paid_at",
   member_id = "member_id",
   message = "message",
   payment_model = "payment_model",
   retried_at = "retried_at",
   shipping = "shipping",
+  status = "status",
   updated_at = "updated_at",
 }
 
@@ -14476,6 +14596,7 @@ export interface member_public_bool_exp {
   _or?: (member_public_bool_exp | null)[] | null;
   abstract?: String_comparison_exp | null;
   app_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   email?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
@@ -15460,6 +15581,7 @@ export interface order_log_bool_exp {
   expired_at?: timestamptz_comparison_exp | null;
   id?: String_comparison_exp | null;
   invoice?: jsonb_comparison_exp | null;
+  last_paid_at?: timestamptz_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   message?: String_comparison_exp | null;
@@ -15467,11 +15589,11 @@ export interface order_log_bool_exp {
   order_discounts?: order_discount_bool_exp | null;
   order_executors?: order_executor_bool_exp | null;
   order_products?: order_product_bool_exp | null;
-  order_status?: order_status_bool_exp | null;
   payment_logs?: payment_log_bool_exp | null;
   payment_model?: jsonb_comparison_exp | null;
   retried_at?: timestamptz_comparison_exp | null;
   shipping?: jsonb_comparison_exp | null;
+  status?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
 
@@ -15491,6 +15613,7 @@ export interface order_log_insert_input {
   expired_at?: any | null;
   id?: string | null;
   invoice?: any | null;
+  last_paid_at?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   message?: string | null;
@@ -15502,6 +15625,7 @@ export interface order_log_insert_input {
   payment_model?: any | null;
   retried_at?: any | null;
   shipping?: any | null;
+  status?: string | null;
   updated_at?: any | null;
 }
 
@@ -15644,22 +15768,6 @@ export interface order_product_on_conflict {
   constraint: order_product_constraint;
   update_columns: order_product_update_column[];
   where?: order_product_bool_exp | null;
-}
-
-/**
- * Boolean expression to filter rows from the table "order_status". All fields are combined with a logical 'AND'.
- */
-export interface order_status_bool_exp {
-  _and?: (order_status_bool_exp | null)[] | null;
-  _not?: order_status_bool_exp | null;
-  _or?: (order_status_bool_exp | null)[] | null;
-  member_id?: String_comparison_exp | null;
-  order_discounts?: order_discount_bool_exp | null;
-  order_id?: String_comparison_exp | null;
-  order_log?: order_log_bool_exp | null;
-  order_products?: order_product_bool_exp | null;
-  payment_logs?: payment_log_bool_exp | null;
-  status?: String_comparison_exp | null;
 }
 
 /**
