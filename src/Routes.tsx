@@ -383,7 +383,8 @@ const Routes: React.FC<{ extra?: { [routeKey: string]: RouteProps } }> = ({ extr
             />
           )}
         />
-        <Route path="/error" component={() => <NotFoundPage error />} />
+        <Route path="/error" component={() => <NotFoundPage variant="error" />} />
+        <Route path="/repairing" component={() => <NotFoundPage variant="repairing" />} />
         <Route component={NotFoundPage} />
       </Switch>
       <PodcastPlayerBlock />

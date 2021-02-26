@@ -267,3 +267,56 @@ export const useSocialCardCollection = () => {
     refetchSocialCards: refetch,
   }
 }
+
+export const useLatestCreator = (topInstructorIds: string[], appId: string) => {
+  const { loading, error, data } = useQuery<types.GET_LATEST_CREATOR, types.GET_LATEST_CREATORVariables>(
+    gql`
+      fragment instructorField on member_public {
+        id
+        name
+        abstract
+        picture_url
+      }
+      query GET_LATEST_CREATOR($topInstructorIds: [String!]!, $appId: String) {
+        topInstructor: member_public(
+          where: { app_id: { _eq: $appId }, role: { _in: ["content-creator"] }, id: { _in: $topInstructorIds } }
+          limit: 9
+          order_by: { created_at: desc }
+        ) {
+          ...instructorField
+        }
+        otherInstructor: member_public(
+          where: {
+            app_id: { _eq: $appId }
+            role: { _in: ["content-creator"] }
+            _not: { id: { _in: $topInstructorIds } }
+          }
+          limit: 9
+          order_by: { created_at: desc }
+        ) {
+          ...instructorField
+        }
+      }
+    `,
+    { variables: { topInstructorIds, appId } },
+  )
+
+  const latestCreators: {
+    id: string | null
+    name: string | null
+    abstract: string | null
+    avatarUrl: string | null
+  }[] =
+    data?.topInstructor.concat(data.otherInstructor).map(v => ({
+      id: v.id,
+      name: v.name,
+      abstract: v.abstract,
+      avatarUrl: v.picture_url,
+    })) || []
+
+  return {
+    loadingLatestCreators: loading,
+    errorLatestCreators: error,
+    latestCreators,
+  }
+}
