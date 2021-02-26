@@ -236,7 +236,7 @@ export const useOrderLogsWithMerchandiseSpec = (memberId: string) => {
         order_log(
           where: {
             member_id: { _eq: $memberId }
-            order_status: { status: { _eq: "SUCCESS" } }
+            status: { _eq: "SUCCESS" }
             order_products: { product_id: { _like: "Merchandise%" } }
           }
         ) {

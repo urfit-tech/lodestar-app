@@ -363,7 +363,7 @@ const useOrderLogWithCoinsCollection = (memberId: string) => {
         order_log(
           where: {
             member_id: { _eq: $memberId }
-            order_status: { status: { _eq: "SUCCESS" } }
+            status: { _eq: "SUCCESS" }
             order_discounts: { type: { _eq: "Coin" } }
           }
           order_by: { created_at: desc }
