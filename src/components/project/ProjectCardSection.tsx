@@ -205,6 +205,11 @@ const StyledModalBody = styled(ModalBody)`
     }
   }
 `
+const StyledVideoTitle = styled.span`
+  color: var(--gray-darker);
+  font-weight: bold;
+  letter-spacing: 0.2px;
+`
 
 const ProjectCardSection: React.FC<{
   items: {
@@ -320,10 +325,9 @@ const ProjectCardSection: React.FC<{
           <StyledModalHeader>{selectedItem?.title}</StyledModalHeader>
           <ModalCloseButton />
           <StyledModalBody>
-            <div className="row mb-3">
-              <div className="col-12 col-lg-8">{selectedItem?.abstract}</div>
-              <div className="col-12 col-lg-4" dangerouslySetInnerHTML={{ __html: selectedItem?.description || '' }} />
-            </div>
+            <div className="mb-2">{selectedItem?.abstract}</div>
+            <div className="mb-2" dangerouslySetInnerHTML={{ __html: selectedItem?.description || '' }} />
+            <div className="mb-2">—</div>
 
             {selectedItem?.contentIds?.[selectedItem.index] && (
               <ProgramContentTrialPlayer
@@ -393,7 +397,9 @@ const ProgramContentTrialPlayer: React.FC<{
         <Tag color="#585858" className="mr-2">
           試看
         </Tag>
-        {data.program_content_by_pk.program_content_section.program.title} - {data.program_content_by_pk.title}
+        <StyledVideoTitle>
+          {data.program_content_by_pk.program_content_section.program.title} - {data.program_content_by_pk.title}
+        </StyledVideoTitle>
       </div>
 
       <StyledPlayerWrapper className="text-center">
