@@ -28,7 +28,7 @@ const ActivitySection: React.FC<{ options: { title?: string; colAmount?: number 
 
   return (
     <StyledSection className="page-section">
-      <SectionTitle>{options.title ? options.title : '實體課程'}</SectionTitle>
+      <SectionTitle>{options?.title || '實體課程'}</SectionTitle>
 
       <div className="container mb-5">
         <div className="row">
