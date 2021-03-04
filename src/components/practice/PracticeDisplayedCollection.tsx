@@ -62,8 +62,7 @@ const PracticeDisplayedCollection: React.FC<{
         </StyledNotice>
       )}
 
-      {((isPrivate && practiceCollection.every(practice => practice.memberId !== currentMemberId)) ||
-        practiceCollection.length < 1) && (
+      {practiceCollection.length < 1 && (
         <StyledBlock className="d-flex flex-column justify-content-center align-items-center">
           <Icon as={RocketIcon} className="mb-4" w="120px" h="120px" />
           <StyledParagraph>{formatMessage(programMessages.text.uploadPractice)}</StyledParagraph>
