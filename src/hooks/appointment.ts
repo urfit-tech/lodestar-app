@@ -1,7 +1,12 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import types from '../types'
-import { AppointmentEnrollmentProps, AppointmentPeriodProps, AppointmentPlanProps } from '../types/appointment'
+import {
+  AppointmentEnrollmentProps,
+  AppointmentPeriodProps,
+  AppointmentPlanProps,
+  ReservationType,
+} from '../types/appointment'
 
 export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) => {
   const { loading, error, data, refetch } = useQuery<
@@ -18,6 +23,8 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
           price
           support_locales
           is_private
+          reservation_amount
+          reservation_type
           currency {
             id
             label
@@ -64,6 +71,8 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
             booked: !!period.booked,
           })),
           isPrivate: appointmentPlan.is_private,
+          reservationAmount: appointmentPlan.reservation_amount,
+          reservationType: (appointmentPlan.reservation_type as ReservationType) || null,
         }))
 
   return {

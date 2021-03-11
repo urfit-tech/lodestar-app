@@ -2509,6 +2509,11 @@ export interface GET_APPOINTMENT_PLAN_COLLECTION_appointment_plan {
   price: any;
   support_locales: any | null;
   is_private: boolean;
+  reservation_amount: any;
+  /**
+   * hour / day
+   */
+  reservation_type: string | null;
   /**
    * An object relationship
    */
@@ -9122,6 +9127,8 @@ export enum appointment_plan_update_column {
   phone = "phone",
   price = "price",
   published_at = "published_at",
+  reservation_amount = "reservation_amount",
+  reservation_type = "reservation_type",
   support_locales = "support_locales",
   title = "title",
   updated_at = "updated_at",
@@ -12446,6 +12453,8 @@ export interface appointment_plan_bool_exp {
   phone?: String_comparison_exp | null;
   price?: numeric_comparison_exp | null;
   published_at?: timestamptz_comparison_exp | null;
+  reservation_amount?: numeric_comparison_exp | null;
+  reservation_type?: String_comparison_exp | null;
   support_locales?: jsonb_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -12467,6 +12476,8 @@ export interface appointment_plan_insert_input {
   phone?: string | null;
   price?: any | null;
   published_at?: any | null;
+  reservation_amount?: any | null;
+  reservation_type?: string | null;
   support_locales?: any | null;
   title?: string | null;
   updated_at?: any | null;
