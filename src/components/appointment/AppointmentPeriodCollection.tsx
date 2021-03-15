@@ -2,7 +2,7 @@ import moment from 'moment'
 import { groupBy } from 'ramda'
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { AppointmentPeriodProps } from '../../types/appointment'
+import { AppointmentPeriodProps, ReservationType } from '../../types/appointment'
 import { useAuth } from '../auth/AuthContext'
 import { AuthModalContext } from '../auth/AuthModal'
 import AppointmentItem from './AppointmentItem'
@@ -18,12 +18,22 @@ const StyledScheduleTitle = styled.h3`
 
 const AppointmentPeriodCollection: React.FC<{
   appointmentPeriods: AppointmentPeriodProps[]
+  reservationType?: ReservationType | null
+  reservationAmount?: number
   onClick?: (period: AppointmentPeriodProps) => void
-}> = ({ appointmentPeriods, onClick }) => {
+}> = ({ appointmentPeriods, reservationType, reservationAmount, onClick }) => {
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isAuthenticated } = useAuth()
 
-  const periods = groupBy(period => moment(period.startedAt).format('YYYY-MM-DD(dd)'), appointmentPeriods)
+  const periods = groupBy(
+    period => moment(period.startedAt).format('YYYY-MM-DD(dd)'),
+    appointmentPeriods.filter(
+      v =>
+        reservationType &&
+        reservationAmount &&
+        moment(v.startedAt).subtract(reservationType, reservationAmount).toDate() > moment().toDate(),
+    ),
+  )
 
   return (
     <>

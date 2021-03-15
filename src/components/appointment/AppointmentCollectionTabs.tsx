@@ -166,6 +166,8 @@ const AppointmentCollectionTabs: React.FC<{
               renderTrigger={({ setVisible }) => (
                 <AppointmentPeriodCollection
                   appointmentPeriods={appointmentPlan.periods}
+                  reservationAmount={appointmentPlan.reservationAmount}
+                  reservationType={appointmentPlan.reservationType}
                   onClick={period => {
                     ReactGA.plugin.execute('ec', 'addProduct', {
                       id: appointmentPlan.id,

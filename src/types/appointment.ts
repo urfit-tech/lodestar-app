@@ -1,4 +1,5 @@
 import { CurrencyProps } from './program'
+export type ReservationType = 'hour' | 'day'
 
 export type AppointmentPlanProps = {
   id: string
@@ -10,6 +11,8 @@ export type AppointmentPlanProps = {
   supportLocales: string[] | null
   currency: CurrencyProps
   isPrivate?: boolean
+  reservationAmount?: number
+  reservationType?: ReservationType | null
 }
 
 export type AppointmentPeriodProps = {
