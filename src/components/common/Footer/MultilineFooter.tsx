@@ -3,6 +3,7 @@ import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { NavLinks, SocialLinks, StyledFooter } from '.'
 import { useApp } from '../../../containers/common/AppContext'
+import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
 import LanguageContext from '../../../contexts/LanguageContext'
 
 const StyledLinkBlock = styled.div`
@@ -22,6 +23,7 @@ const StyledCopyright = styled.div`
 const MultilineFooter: React.FC = () => {
   const { name, enabledModules } = useApp()
   const { currentLanguage, setCurrentLanguage } = useContext(LanguageContext)
+  const { renderCopyright } = useCustomRenderer()
 
   return (
     <StyledFooter>
@@ -78,8 +80,13 @@ const MultilineFooter: React.FC = () => {
       </div>
 
       <div className="divider" />
+
       <StyledCopyright className="py-3 text-center">
-        Copyright © {new Date().getFullYear()} {name} Inc. All rights reserved
+        {renderCopyright?.() || (
+          <span>
+            Copyright © {new Date().getFullYear()} {name} Inc. All rights reserved
+          </span>
+        )}
       </StyledCopyright>
     </StyledFooter>
   )

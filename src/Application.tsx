@@ -11,6 +11,7 @@ import { AppThemeProvider } from './components/common/AppThemeContext'
 import { AppProvider } from './containers/common/AppContext'
 import ErrorBoundary from './containers/common/ErrorBoundary'
 import { CartProvider } from './contexts/CartContext'
+import { CustomRendererProps, CustomRendererProvider } from './contexts/CustomRendererContext'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { PodcastPlayerProvider } from './contexts/PodcastPlayerContext'
@@ -21,7 +22,8 @@ import Routes, { RouteProps } from './Routes'
 const Application: React.FC<{
   appId: string
   extraRouteProps?: { [routeKey: string]: RouteProps }
-}> = ({ appId, extraRouteProps }) => {
+  customRender?: CustomRendererProps
+}> = ({ appId, extraRouteProps, customRender }) => {
   const apiHost = useApiHost(appId)
 
   if (!apiHost) {
@@ -41,7 +43,9 @@ const Application: React.FC<{
                       <AppThemeProvider>
                         <ErrorBoundary>
                           <ConfigProvider locale={zhTW}>
-                            <Routes extra={extraRouteProps} />
+                            <CustomRendererProvider renderer={customRender}>
+                              <Routes extra={extraRouteProps} />
+                            </CustomRendererProvider>
                           </ConfigProvider>
                         </ErrorBoundary>
                       </AppThemeProvider>
