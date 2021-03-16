@@ -31,13 +31,11 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
             unit
             name
           }
-          appointment_periods(
-            where: { available: { _eq: true }, started_at: { _gt: $startedAt } }
-            order_by: { started_at: asc }
-          ) {
+          appointment_periods(where: { started_at: { _gt: $startedAt } }, order_by: { started_at: asc }) {
             started_at
             ended_at
             booked
+            available
           }
         }
       }
@@ -69,10 +67,11 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
             startedAt: new Date(period.started_at),
             endedAt: new Date(period.ended_at),
             booked: !!period.booked,
+            available: !!period.available,
           })),
           isPrivate: appointmentPlan.is_private,
           reservationAmount: appointmentPlan.reservation_amount,
-          reservationType: (appointmentPlan.reservation_type as ReservationType) || null,
+          reservationType: (appointmentPlan.reservation_type as ReservationType) || 'hour',
         }))
 
   return {

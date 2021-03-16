@@ -76,6 +76,12 @@ const AppointmentCollectionTabs: React.FC<{
   const query = new URLSearchParams(search)
   const appointmentPlanId = query.get('appointment_plan')
 
+  const diffPlanBookedTimes = [
+    ...appointmentPlans.map(appointmentPlan =>
+      appointmentPlan.periods.filter(period => period.booked).map(v => moment(v.startedAt).format('YYYY-MM-DD HH:mm')),
+    ),
+  ].flat(1)
+
   useEffect(() => {
     if (appointmentPlans) {
       appointmentPlans.forEach((appointmentPlan, index) => {
@@ -182,6 +188,7 @@ const AppointmentCollectionTabs: React.FC<{
                     setSelectedPeriod(period)
                     setVisible()
                   }}
+                  diffPlanBookedTimes={diffPlanBookedTimes}
                 />
               )}
               paymentType="perpetual"

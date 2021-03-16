@@ -18,21 +18,29 @@ const StyledScheduleTitle = styled.h3`
 
 const AppointmentPeriodCollection: React.FC<{
   appointmentPeriods: AppointmentPeriodProps[]
-  reservationType?: ReservationType | null
+  reservationType?: ReservationType
   reservationAmount?: number
+  diffPlanBookedTimes?: String[]
   onClick?: (period: AppointmentPeriodProps) => void
-}> = ({ appointmentPeriods, reservationType, reservationAmount, onClick }) => {
+}> = ({ appointmentPeriods, reservationType, reservationAmount, diffPlanBookedTimes, onClick }) => {
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isAuthenticated } = useAuth()
 
   const periods = groupBy(
     period => moment(period.startedAt).format('YYYY-MM-DD(dd)'),
-    appointmentPeriods.filter(
-      v =>
-        reservationType &&
-        reservationAmount &&
-        moment(v.startedAt).subtract(reservationType, reservationAmount).toDate() > moment().toDate(),
-    ),
+    appointmentPeriods
+      .filter(v => v.available)
+      .filter(
+        v =>
+          !diffPlanBookedTimes?.some(
+            diffPlanBookedTime => moment(v.startedAt).format('YYYY-MM-DD HH:mm').toString() === diffPlanBookedTime,
+          ),
+      )
+      .filter(v =>
+        reservationType && reservationAmount && reservationAmount !== 0
+          ? moment(v.startedAt).subtract(reservationType, reservationAmount).toDate() > moment().toDate()
+          : v,
+      ),
   )
 
   return (
