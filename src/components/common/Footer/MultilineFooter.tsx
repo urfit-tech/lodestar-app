@@ -82,7 +82,7 @@ const MultilineFooter: React.FC = () => {
       <div className="divider" />
 
       <StyledCopyright className="py-3 text-center">
-        {renderCopyright?.() || (
+        {renderCopyright?.(name) || (
           <span>
             Copyright © {new Date().getFullYear()} {name} Inc. All rights reserved
           </span>

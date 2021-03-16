@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react'
 
 export type CustomRendererProps = {
-  renderCopyright?: () => React.ReactNode
+  renderCopyright?: (name?: string) => React.ReactNode
 }
 
 const CustomRendererContext = createContext<CustomRendererProps>({})
