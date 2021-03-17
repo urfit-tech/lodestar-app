@@ -18,6 +18,8 @@ type AuthProps = {
   login?: (data: { account: string; password: string }) => Promise<void>
   socialLogin?: (data: { provider: string; providerToken: any }) => Promise<void>
   logout?: () => void
+  sendSmsCode?: (data: { phoneNumber: string }) => Promise<void>
+  verifySmsCode?: (data: { phoneNumber: string; code: string }) => Promise<void>
 }
 
 const defaultAuthContext: AuthProps = {
@@ -164,6 +166,33 @@ export const AuthProvider: React.FC<{
             }
           })
         },
+        sendSmsCode: async ({ phoneNumber }) =>
+          Axios.post(
+            `https://${apiHost}/sms/send-code`,
+            {
+              appId,
+              phoneNumber,
+            },
+            { withCredentials: true },
+          ).then(({ data: { code, message, result } }) => {
+            if (code !== 'SUCCESS') {
+              throw new Error(code)
+            }
+          }),
+        verifySmsCode: async ({ phoneNumber, code }) =>
+          Axios.post(
+            `https://${apiHost}/sms/verify-code`,
+            {
+              appId,
+              phoneNumber,
+              code,
+            },
+            { withCredentials: true },
+          ).then(({ data: { code, message, result } }) => {
+            if (code !== 'SUCCESS' || !result?.codeValid) {
+              throw new Error(code)
+            }
+          }),
       }}
     >
       {children}

@@ -41,5 +41,6 @@ export type Module =
   | 'voucher'
   | 'creator_display'
   | 'referrer'
+  | 'sms_verification'
 
 export type ProductRoleName = 'owner' | 'instructor' | 'assistant' | 'app-owner'
