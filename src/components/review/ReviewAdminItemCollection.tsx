@@ -3,8 +3,8 @@ import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
-import types from '../../types'
 import { ReviewProps } from '../../types/review'
 import { StyledDivider } from './ReviewCollectionBlock'
 import ReviewItem from './ReviewItem'
@@ -69,13 +69,13 @@ const ReviewAdminItemCollection: React.FC<{
 }
 
 const useReviewCollection = (path: string, appId: string) => {
-  const condition: types.GET_REVIEW_ADMINVariables['condition'] = {
+  const condition: hasura.GET_REVIEW_ADMINVariables['condition'] = {
     path: { _eq: path },
     app_id: { _eq: appId },
   }
   const { loading, error, data, refetch, fetchMore } = useQuery<
-    types.GET_REVIEW_ADMIN,
-    types.GET_REVIEW_ADMINVariables
+    hasura.GET_REVIEW_ADMIN,
+    hasura.GET_REVIEW_ADMINVariables
   >(
     gql`
       query GET_REVIEW_ADMIN($condition: review_bool_exp, $limit: Int!) {

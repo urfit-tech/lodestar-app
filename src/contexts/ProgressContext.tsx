@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { flatten } from 'ramda'
 import React, { createContext } from 'react'
-import types from '../types'
+import hasura from '../hasura'
 
 type ProgressProps = {
   programContentProgress: {
@@ -46,8 +46,8 @@ export const ProgressProvider: React.FC<{ programId: string; memberId: string }>
 
 const useInsertProgress = (memberId: string) => {
   const [insertProgramContentProgress] = useMutation<
-    types.INSERT_PROGRAM_CONTENT_PROGRESS,
-    types.INSERT_PROGRAM_CONTENT_PROGRESSVariables
+    hasura.INSERT_PROGRAM_CONTENT_PROGRESS,
+    hasura.INSERT_PROGRAM_CONTENT_PROGRESSVariables
   >(gql`
     mutation INSERT_PROGRAM_CONTENT_PROGRESS(
       $memberId: String!
@@ -87,8 +87,8 @@ const useInsertProgress = (memberId: string) => {
 
 export const useProgramContentProgress = (programId: string, memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PROGRAM_CONTENT_PROGRESS,
-    types.GET_PROGRAM_CONTENT_PROGRESSVariables
+    hasura.GET_PROGRAM_CONTENT_PROGRESS,
+    hasura.GET_PROGRAM_CONTENT_PROGRESSVariables
   >(
     gql`
       query GET_PROGRAM_CONTENT_PROGRESS($programId: uuid!, $memberId: String!) {

@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import React, { createContext, useContext, useEffect } from 'react'
 import { useAuth } from '../../components/auth/AuthContext'
 import ApplicationHelmet from '../../components/common/ApplicationHelmet'
-import types from '../../types'
+import hasura from '../../hasura'
 import { Module } from '../../types/general'
 
 type AppProps = {
@@ -48,7 +48,7 @@ export const useApp = () => useContext(AppContext)
 
 export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) => {
   const { authToken, refreshToken } = useAuth()
-  const { loading, error, data } = useQuery<types.GET_APP, types.GET_APPVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_APP, hasura.GET_APPVariables>(
     gql`
       query GET_APP($appId: String!) {
         currency {

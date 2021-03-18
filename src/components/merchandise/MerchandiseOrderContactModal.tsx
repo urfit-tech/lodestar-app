@@ -10,10 +10,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { createUploadFn } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as IconEmail } from '../../images/email-o.svg'
-import types from '../../types'
 import { OrderContact } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
 import { CommonTextMixin } from '../common'
@@ -211,7 +211,7 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
 }
 
 const useOrderContact = (orderId: string, memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_ORDER_CONTACT, types.GET_ORDER_CONTACTVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_ORDER_CONTACT, hasura.GET_ORDER_CONTACTVariables>(
     GET_ORDER_CONTACT,
     {
       variables: {
@@ -240,7 +240,7 @@ const useOrderContact = (orderId: string, memberId: string) => {
 
   const isUnread = latestCreatedAt.getTime() > latestReadAt.getTime()
 
-  const [insertOrderContactHandler] = useMutation<types.INSERT_ORDER_CONTACT, types.INSERT_ORDER_CONTACTVariables>(
+  const [insertOrderContactHandler] = useMutation<hasura.INSERT_ORDER_CONTACT, hasura.INSERT_ORDER_CONTACTVariables>(
     INSERT_ORDER_CONTACT,
   )
   const insertOrderContact = (message: string) =>
@@ -253,8 +253,8 @@ const useOrderContact = (orderId: string, memberId: string) => {
     })
 
   const [updateOrderContactHandler] = useMutation<
-    types.UPDATE_ORDER_CONTACT_READ_AT,
-    types.UPDATE_ORDER_CONTACT_READ_ATVariables
+    hasura.UPDATE_ORDER_CONTACT_READ_AT,
+    hasura.UPDATE_ORDER_CONTACT_READ_ATVariables
   >(UPDATE_ORDER_CONTACT_READ_AT)
 
   const updateOrderContactReadAt = (readAt: Date) =>

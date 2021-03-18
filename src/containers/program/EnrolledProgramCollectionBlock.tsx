@@ -4,13 +4,13 @@ import gql from 'graphql-tag'
 import { flatten, uniq } from 'ramda'
 import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
+import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import types from '../../types'
 import ProgramCard from './ProgramCard'
 
 const EnrolledProgramCollectionBlock: React.FC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
-  const { loading, error, data, refetch } = useQuery<types.GET_OWNED_PROGRAMS, types.GET_OWNED_PROGRAMSVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_OWNED_PROGRAMS, hasura.GET_OWNED_PROGRAMSVariables>(
     GET_OWNED_PROGRAMS,
     { variables: { memberId } },
   )

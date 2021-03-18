@@ -14,10 +14,10 @@ import { Carousel, Tag } from 'antd'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { ReactComponent as AngleThinLeftIcon } from '../../images/angle-thin-left.svg'
 import { ReactComponent as AngleThinRightIcon } from '../../images/angle-thin-right.svg'
 import { ReactComponent as ArrowRightIcon } from '../../images/arrow-right.svg'
-import types from '../../types'
 import { CommonTitleMixin } from '../common'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 import ProgramContentPlayer from '../program/ProgramContentPlayer'
@@ -364,7 +364,7 @@ const ProgramContentTrialPlayer: React.FC<{
   onPrev?: () => void
   onNext?: () => void
 }> = ({ programContentId, onPrev, onNext }) => {
-  const { data } = useQuery<types.GET_PROGRAM_CONTENT_TRIAL, types.GET_PROGRAM_CONTENT_TRIALVariables>(
+  const { data } = useQuery<hasura.GET_PROGRAM_CONTENT_TRIAL, hasura.GET_PROGRAM_CONTENT_TRIALVariables>(
     gql`
       query GET_PROGRAM_CONTENT_TRIAL($programContentId: uuid!) {
         program_content_by_pk(id: $programContentId) {

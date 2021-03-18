@@ -10,9 +10,9 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { dateFormatter, dateRangeFormatter, handleError } from '../../helpers'
 import { codeMessages, commonMessages, saleMessages } from '../../helpers/translation'
-import types from '../../types'
 import { OrderDiscountProps } from '../../types/checkout'
 import { ShippingMethodType } from '../../types/merchandise'
 import { ProductType } from '../../types/product'
@@ -242,7 +242,7 @@ const OrderCollectionAdminCard: React.FC<
 }
 
 const useOrderLogCollection = (memberId: string) => {
-  const { loading, error, data } = useQuery<types.GET_MEMBER_ORDERS, types.GET_MEMBER_ORDERSVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_MEMBER_ORDERS, hasura.GET_MEMBER_ORDERSVariables>(
     gql`
       query GET_MEMBER_ORDERS($memberId: String!) {
         order_log(order_by: { created_at: desc }, where: { member_id: { _eq: $memberId } }) {

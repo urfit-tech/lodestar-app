@@ -8,9 +8,9 @@ import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
-import types from '../../types'
 import { ReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
@@ -87,7 +87,7 @@ const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: str
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [replyEditing, setReplyEditing] = useState(false)
 
-  const [insertReviewReply] = useMutation<types.INSERT_REVIEW_REPLY, types.INSERT_REVIEW_REPLYVariables>(
+  const [insertReviewReply] = useMutation<hasura.INSERT_REVIEW_REPLY, hasura.INSERT_REVIEW_REPLYVariables>(
     INSERT_REVIEW_REPLY,
   )
   const toast = useToast()

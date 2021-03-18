@@ -2,12 +2,12 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { uniq } from 'ramda'
 import { useApp } from '../containers/common/AppContext'
+import hasura from '../hasura'
 import { notEmpty } from '../helpers'
-import types from '../types'
 import { MemberProps, MemberPublicProps, MemberSocialType, SocialCardProps, UserRole } from '../types/member'
 
 export const useMember = (memberId: string) => {
-  const { loading, data, error, refetch } = useQuery<types.GET_MEMBER, types.GET_MEMBERVariables>(
+  const { loading, data, error, refetch } = useQuery<hasura.GET_MEMBER, hasura.GET_MEMBERVariables>(
     gql`
       query GET_MEMBER($memberId: String!) {
         member_by_pk(id: $memberId) {
@@ -63,7 +63,7 @@ export const useMember = (memberId: string) => {
 }
 
 export const usePublicMember = (memberId: string) => {
-  const { loading, data, error, refetch } = useQuery<types.GET_PUBLIC_MEMBER, types.GET_PUBLIC_MEMBERVariables>(
+  const { loading, data, error, refetch } = useQuery<hasura.GET_PUBLIC_MEMBER, hasura.GET_PUBLIC_MEMBERVariables>(
     gql`
       query GET_PUBLIC_MEMBER($memberId: String!) {
         member_public(where: { id: { _eq: $memberId } }) {
@@ -112,7 +112,7 @@ export const usePublicMember = (memberId: string) => {
 }
 
 export const useUpdateMember = () => {
-  const [updateMember] = useMutation<types.UPDATE_MEMBER, types.UPDATE_MEMBERVariables>(
+  const [updateMember] = useMutation<hasura.UPDATE_MEMBER, hasura.UPDATE_MEMBERVariables>(
     gql`
       mutation UPDATE_MEMBER(
         $memberId: String!
@@ -136,7 +136,7 @@ export const useUpdateMember = () => {
 }
 
 export const useUpdateMemberMetadata = () => {
-  const [updateMemberMetadata] = useMutation<types.UPDATE_MEMBER_METADATA, types.UPDATE_MEMBER_METADATAVariables>(gql`
+  const [updateMemberMetadata] = useMutation<hasura.UPDATE_MEMBER_METADATA, hasura.UPDATE_MEMBER_METADATAVariables>(gql`
     mutation UPDATE_MEMBER_METADATA($memberId: String!, $metadata: jsonb) {
       update_member(where: { id: { _eq: $memberId } }, _set: { metadata: $metadata }) {
         affected_rows
@@ -150,8 +150,8 @@ export const useUpdateMemberMetadata = () => {
 export const useCreatorCollection = () => {
   const { id: appId } = useApp()
   const { loading, error, data, refetch } = useQuery<
-    types.GET_CREATOR_COLLECTION,
-    types.GET_CREATOR_COLLECTIONVariables
+    hasura.GET_CREATOR_COLLECTION,
+    hasura.GET_CREATOR_COLLECTIONVariables
   >(
     gql`
       query GET_CREATOR_COLLECTION($appId: String!) {
@@ -214,7 +214,7 @@ export const useUpdateMemberYouTubeChannelIds = () => {
 }
 
 export const useSocialCardCollection = () => {
-  const { loading, error, data, refetch } = useQuery<types.GET_SOCIAL_CARD_COLLECTION>(gql`
+  const { loading, error, data, refetch } = useQuery<hasura.GET_SOCIAL_CARD_COLLECTION>(gql`
     query GET_SOCIAL_CARD_COLLECTION {
       social_card_enrollment {
         social_card {
@@ -269,7 +269,7 @@ export const useSocialCardCollection = () => {
 }
 
 export const useLatestCreator = (topInstructorIds: string[], appId: string) => {
-  const { loading, error, data } = useQuery<types.GET_LATEST_CREATOR, types.GET_LATEST_CREATORVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_LATEST_CREATOR, hasura.GET_LATEST_CREATORVariables>(
     gql`
       fragment instructorField on member_public {
         id

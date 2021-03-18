@@ -9,10 +9,10 @@ import { AiOutlineClose } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import CartContext from '../../contexts/CartContext'
+import hasura from '../../hasura'
 import { checkoutMessages } from '../../helpers/translation'
 import { useMemberShop } from '../../hooks/checkout'
 import EmptyAvatar from '../../images/avatar.svg'
-import types from '../../types'
 import { CartProductProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
 import { CustomRatioImage } from '../common/Image'
@@ -118,14 +118,14 @@ const CartProductTableCard: React.FC<CartProductTableCardProps> = ({
 export default CartProductTableCard
 
 const useProductInventory = (cartProducts: CartProductProps[]) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_PRODUCT_INVENTORY, types.GET_PRODUCT_INVENTORYVariables>(
-    GET_PRODUCT_INVENTORY,
-    {
-      variables: {
-        productIds: cartProducts.map(cartProduct => cartProduct.productId),
-      },
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_PRODUCT_INVENTORY,
+    hasura.GET_PRODUCT_INVENTORYVariables
+  >(GET_PRODUCT_INVENTORY, {
+    variables: {
+      productIds: cartProducts.map(cartProduct => cartProduct.productId),
     },
-  )
+  })
 
   const productInventories =
     loading || error || !data

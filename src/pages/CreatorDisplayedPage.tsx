@@ -11,11 +11,11 @@ import { CustomRatioImage } from '../components/common/Image'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
+import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import DefaultAvatar from '../images/avatar.svg'
-import types from '../types'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
@@ -148,7 +148,7 @@ const CreatorDisplayedPage: React.FC<{}> = () => {
 }
 
 const usePublishedCreator = () => {
-  const { loading, error, data, refetch } = useQuery<types.GET_PUBLISHED_CREATOR>(gql`
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_CREATOR>(gql`
     query GET_PUBLISHED_CREATOR {
       creator(where: { published_at: { _is_null: false } }, order_by: { published_at: desc, position: asc }) {
         id

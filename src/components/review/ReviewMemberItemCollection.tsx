@@ -3,8 +3,8 @@ import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import React, { HTMLAttributes, useState } from 'react'
 import { useIntl } from 'react-intl'
+import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
-import types from '../../types'
 import { ReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import { StyledDivider } from './ReviewCollectionBlock'
@@ -90,14 +90,14 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
 }
 
 const useReviewMemberCollection = (path: string, appId: string, currentMemberId: string | null) => {
-  const condition: types.GET_REVIEW_MEMBERVariables['condition'] = {
+  const condition: hasura.GET_REVIEW_MEMBERVariables['condition'] = {
     path: { _eq: path },
     app_id: { _eq: appId },
   }
 
   const { loading, error, data, refetch, fetchMore } = useQuery<
-    types.GET_REVIEW_MEMBER,
-    types.GET_REVIEW_MEMBERVariables
+    hasura.GET_REVIEW_MEMBER,
+    hasura.GET_REVIEW_MEMBERVariables
   >(
     gql`
       query GET_REVIEW_MEMBER(

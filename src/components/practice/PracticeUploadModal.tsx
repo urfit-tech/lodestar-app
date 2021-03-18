@@ -18,12 +18,12 @@ import { Controller, useForm } from 'react-hook-form'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { handleError } from '../../helpers'
 import { uploadFile } from '../../helpers/index'
 import { commonMessages } from '../../helpers/translation'
 import { useUploadAttachments } from '../../hooks/data'
 import { useMutatePractice } from '../../hooks/practice'
-import types from '../../types'
 import { PracticeProps } from '../../types/practice'
 import { useAuth } from '../auth/AuthContext'
 import CommonModal from '../common/CommonModal'
@@ -85,7 +85,7 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
   })
   const uploadAttachments = useUploadAttachments()
   const { insertPractice, updatePractice, updatePracticeHandler } = useMutatePractice(practice?.id || '')
-  const [deleteAttachments] = useMutation<types.DELETE_ATTACHMENTS, types.DELETE_ATTACHMENTSVariables>(
+  const [deleteAttachments] = useMutation<hasura.DELETE_ATTACHMENTS, hasura.DELETE_ATTACHMENTSVariables>(
     DELETE_ATTACHMENTS,
   )
   const [attachments, setAttachments] = useState<File[]>(practice?.attachments.map(attachment => attachment.data) || [])

@@ -1,13 +1,13 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import types from '../types'
+import hasura from '../hasura'
 import { PeriodType } from '../types/program'
 import { ProgramPackagePlanProps, ProgramPackageProgramProps, ProgramPackageProps } from '../types/programPackage'
 
 export const useProgramPackageIntroduction = (programPackageId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PROGRAM_PACKAGE_INTRODUCTION,
-    types.GET_PROGRAM_PACKAGE_INTRODUCTIONVariables
+    hasura.GET_PROGRAM_PACKAGE_INTRODUCTION,
+    hasura.GET_PROGRAM_PACKAGE_INTRODUCTIONVariables
   >(
     gql`
       query GET_PROGRAM_PACKAGE_INTRODUCTION($programPackageId: uuid!) {
@@ -111,8 +111,8 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
 
 export const useEnrolledProgramPackagePlanIds = (memberId: string) => {
   const { loading, data, error, refetch } = useQuery<
-    types.GET_ENROLLED_PROGRAM_PACKAGE_PLAN_IDS,
-    types.GET_ENROLLED_PROGRAM_PACKAGE_PLAN_IDSVariables
+    hasura.GET_ENROLLED_PROGRAM_PACKAGE_PLAN_IDS,
+    hasura.GET_ENROLLED_PROGRAM_PACKAGE_PLAN_IDSVariables
   >(
     gql`
       query GET_ENROLLED_PROGRAM_PACKAGE_PLAN_IDS($memberId: String!) {
@@ -141,8 +141,8 @@ export const useEnrolledProgramPackagePlanIds = (memberId: string) => {
 
 export const useEnrolledProgramPackageIds = (memberId: string, programPackageId: string) => {
   const { loading, data, error, refetch } = useQuery<
-    types.GET_ENROLLED_PROGRAM_PACKAGE,
-    types.GET_ENROLLED_PROGRAM_PACKAGEVariables
+    hasura.GET_ENROLLED_PROGRAM_PACKAGE,
+    hasura.GET_ENROLLED_PROGRAM_PACKAGEVariables
   >(
     gql`
       query GET_ENROLLED_PROGRAM_PACKAGE($memberId: String!, $programPackageId: uuid!) {
@@ -179,8 +179,8 @@ export const useEnrolledProgramPackageIds = (memberId: string, programPackageId:
 
 export const useProgramPackage = (programPackageId: string, memberId: string | null) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PROGRAM_PACKAGE_CONTENT,
-    types.GET_PROGRAM_PACKAGE_CONTENTVariables
+    hasura.GET_PROGRAM_PACKAGE_CONTENT,
+    hasura.GET_PROGRAM_PACKAGE_CONTENTVariables
   >(
     gql`
       query GET_PROGRAM_PACKAGE_CONTENT($programPackageId: uuid!, $memberId: String) {

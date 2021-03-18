@@ -2,13 +2,13 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { sum } from 'ramda'
 import { useAuth } from '../components/auth/AuthContext'
-import types from '../types'
+import hasura from '../hasura'
 import { ProjectIntroProps, ProjectProps } from '../types/project'
 
 export const usePhysicalEnrolledProjectPlanIds = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PHYSICAL_ENROLLED_PROJECT_PLAN_IDS,
-    types.GET_PHYSICAL_ENROLLED_PROJECT_PLAN_IDSVariables
+    hasura.GET_PHYSICAL_ENROLLED_PROJECT_PLAN_IDS,
+    hasura.GET_PHYSICAL_ENROLLED_PROJECT_PLAN_IDSVariables
   >(
     gql`
       query GET_PHYSICAL_ENROLLED_PROJECT_PLAN_IDS($memberId: String!) {
@@ -50,8 +50,8 @@ export const useEnrolledProjectPlanIds = (memberId: string) => {
   `
 
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ENROLLED_PROJECT_PLAN_IDS,
-    types.GET_ENROLLED_PROJECT_PLAN_IDSVariables
+    hasura.GET_ENROLLED_PROJECT_PLAN_IDS,
+    hasura.GET_ENROLLED_PROJECT_PLAN_IDSVariables
   >(GET_ENROLLED_PROJECT_PLAN_IDS, {
     variables: { memberId },
     fetchPolicy: 'no-cache',
@@ -71,7 +71,7 @@ export const useEnrolledProjectPlanIds = (memberId: string) => {
 export const useProject = (projectId: string) => {
   const { currentMemberId } = useAuth()
   const { enrolledProjectPlanIds } = usePhysicalEnrolledProjectPlanIds(currentMemberId || '')
-  const { loading, error, data, refetch } = useQuery<types.GET_PROJECT, types.GET_PROJECTVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PROJECT, hasura.GET_PROJECTVariables>(
     gql`
       query GET_PROJECT($projectId: uuid!) {
         project_by_pk(id: $projectId) {
@@ -224,8 +224,8 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
     ...(filter?.categoryId && { project_categories: { category_id: { _eq: filter.categoryId } } }),
   }
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PROJECT_INTRO_COLLECTION,
-    types.GET_PROJECT_INTRO_COLLECTIONVariables
+    hasura.GET_PROJECT_INTRO_COLLECTION,
+    hasura.GET_PROJECT_INTRO_COLLECTIONVariables
   >(
     gql`
       query GET_PROJECT_INTRO_COLLECTION($condition: project_bool_exp!) {

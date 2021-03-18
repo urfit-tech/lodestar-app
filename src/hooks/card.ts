@@ -1,9 +1,12 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import types from '../types'
+import hasura from '../hasura'
 
 export const useEnrolledMembershipCardIds = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_ENROLLED_CARD_IDS, types.GET_ENROLLED_CARD_IDSVariables>(
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_ENROLLED_CARD_IDS,
+    hasura.GET_ENROLLED_CARD_IDSVariables
+  >(
     gql`
       query GET_ENROLLED_CARD_IDS($memberId: String!) {
         card_enrollment(where: { member_id: { _eq: $memberId } }) {
@@ -28,7 +31,7 @@ export const useEnrolledMembershipCardIds = (memberId: string) => {
 }
 
 export const useMembershipCard = (cardId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_ENROLLED_CARD, types.GET_ENROLLED_CARDVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_ENROLLED_CARD, hasura.GET_ENROLLED_CARDVariables>(
     gql`
       query GET_ENROLLED_CARD($cardId: uuid!) {
         card_by_pk(id: $cardId) {
@@ -67,7 +70,7 @@ export const useMembershipCard = (cardId: string) => {
 }
 
 export const useEnrolledMembershipCards = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_ENROLLED_CARDS, types.GET_ENROLLED_CARDSVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_ENROLLED_CARDS, hasura.GET_ENROLLED_CARDSVariables>(
     gql`
       query GET_ENROLLED_CARDS($memberId: String!) {
         card_enrollment(where: { member_id: { _eq: $memberId } }, distinct_on: card_id) {

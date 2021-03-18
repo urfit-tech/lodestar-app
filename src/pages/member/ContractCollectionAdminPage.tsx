@@ -9,9 +9,9 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../../components/auth/AuthContext'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
-import types from '../../types'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 
@@ -26,7 +26,7 @@ const ContractCollectionAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { loading, enabledModules } = useApp()
-  const { data: memberContractsData } = useQuery<types.GET_MEMBER_CONTRACTS, types.GET_MEMBER_CONTRACTSVariables>(
+  const { data: memberContractsData } = useQuery<hasura.GET_MEMBER_CONTRACTS, hasura.GET_MEMBER_CONTRACTSVariables>(
     GET_MEMBER_CONTRACTS,
     {
       variables: { memberId: currentMemberId || '' },

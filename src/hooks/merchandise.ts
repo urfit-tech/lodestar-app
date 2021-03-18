@@ -2,13 +2,13 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { flatten, uniq } from 'ramda'
-import types from '../types'
+import hasura from '../hasura'
 import { MerchandiseBriefProps, MerchandiseProps, OrderLogWithMerchandiseSpecProps } from '../types/merchandise'
 
 export const useMerchandiseCollection = (search: string | null = null) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_MERCHANDISE_COLLECTION,
-    types.GET_MERCHANDISE_COLLECTIONVariables
+    hasura.GET_MERCHANDISE_COLLECTION,
+    hasura.GET_MERCHANDISE_COLLECTIONVariables
   >(
     gql`
       query GET_MERCHANDISE_COLLECTION($search: String) {
@@ -105,7 +105,7 @@ export const useMerchandiseCollection = (search: string | null = null) => {
 }
 
 export const useMerchandise = (merchandiseId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_MERCHANDISE, types.GET_MERCHANDISEVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_MERCHANDISE, hasura.GET_MERCHANDISEVariables>(
     gql`
       query GET_MERCHANDISE($merchandiseId: uuid!) {
         merchandise_by_pk(id: $merchandiseId) {
@@ -228,8 +228,8 @@ export const useMerchandise = (merchandiseId: string) => {
 
 export const useOrderLogsWithMerchandiseSpec = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ORDER_LOGS_WITH_MERCHANDISE_SPEC,
-    types.GET_ORDER_LOGS_WITH_MERCHANDISE_SPECVariables
+    hasura.GET_ORDER_LOGS_WITH_MERCHANDISE_SPEC,
+    hasura.GET_ORDER_LOGS_WITH_MERCHANDISE_SPECVariables
   >(
     gql`
       query GET_ORDER_LOGS_WITH_MERCHANDISE_SPEC($memberId: String!) {

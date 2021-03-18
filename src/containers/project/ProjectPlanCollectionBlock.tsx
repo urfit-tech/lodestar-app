@@ -4,15 +4,15 @@ import React from 'react'
 import ProjectPlanCollectionBlockComponent, {
   ProjectPlanBlockProps,
 } from '../../components/project/ProjectPlanCollectionBlock'
+import hasura from '../../hasura'
 import { notEmpty } from '../../helpers'
-import types from '../../types'
 
 const ProjectPlanCollectionBlock: React.FC<{
   memberId: string
 }> = ({ memberId }) => {
   const { loading, error, data } = useQuery<
-    types.GET_ENROLLED_PROJECT_PLANS,
-    types.GET_ENROLLED_PROJECT_PLANSVariables
+    hasura.GET_ENROLLED_PROJECT_PLANS,
+    hasura.GET_ENROLLED_PROJECT_PLANSVariables
   >(GET_ENROLLED_PROJECT_PLANS, { variables: { memberId } })
 
   const projectPlans: ProjectPlanBlockProps[] =

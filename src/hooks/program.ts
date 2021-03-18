@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { sum, uniq } from 'ramda'
-import types from '../types'
+import hasura from '../hasura'
 import { CategoryProps } from '../types/general'
 import {
   PeriodType,
@@ -23,8 +23,8 @@ export const usePublishedProgramCollection = (options?: {
   categoryId?: string
 }) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PUBLISHED_PROGRAM_COLLECTION,
-    types.GET_PUBLISHED_PROGRAM_COLLECTIONVariables
+    hasura.GET_PUBLISHED_PROGRAM_COLLECTION,
+    hasura.GET_PUBLISHED_PROGRAM_COLLECTIONVariables
   >(
     gql`
       query GET_PUBLISHED_PROGRAM_COLLECTION($instructorId: String, $isPrivate: Boolean, $categoryId: String) {
@@ -187,8 +187,8 @@ export const usePublishedProgramCollection = (options?: {
 
 export const useLatestProgramIds = ({ limit, language }: { limit?: number; language?: string }) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_LATEST_PROGRAM_IDS,
-    types.GET_LATEST_PROGRAM_IDSVariables
+    hasura.GET_LATEST_PROGRAM_IDS,
+    hasura.GET_LATEST_PROGRAM_IDSVariables
   >(
     gql`
       query GET_LATEST_PROGRAM_IDS($limit: Int) {
@@ -221,7 +221,7 @@ export const useLatestProgramIds = ({ limit, language }: { limit?: number; langu
 }
 
 export const useProgram = (programId: string) => {
-  const { loading, data, error, refetch } = useQuery<types.GET_PROGRAM, types.GET_PROGRAMVariables>(
+  const { loading, data, error, refetch } = useQuery<hasura.GET_PROGRAM, hasura.GET_PROGRAMVariables>(
     gql`
       query GET_PROGRAM($programId: uuid!) {
         program_by_pk(id: $programId) {
@@ -417,7 +417,7 @@ export const useProgram = (programId: string) => {
 }
 
 export const useProgramContent = (programContentId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_PROGRAM_CONTENT, types.GET_PROGRAM_CONTENTVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PROGRAM_CONTENT, hasura.GET_PROGRAM_CONTENTVariables>(
     gql`
       query GET_PROGRAM_CONTENT($programContentId: uuid!) {
         program_content_by_pk(id: $programContentId) {
@@ -511,7 +511,10 @@ export const useProgramContent = (programContentId: string) => {
 }
 
 export const useEnrolledProgramIds = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_ENROLLED_PROGRAMS, types.GET_ENROLLED_PROGRAMSVariables>(
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_ENROLLED_PROGRAMS,
+    hasura.GET_ENROLLED_PROGRAMSVariables
+  >(
     gql`
       query GET_ENROLLED_PROGRAMS($memberId: String!) {
         program_enrollment(where: { member_id: { _eq: $memberId } }, distinct_on: program_id) {
@@ -553,8 +556,8 @@ export const useEnrolledProgramIds = (memberId: string) => {
 
 export const useEnrolledPlanIds = (memberId: string) => {
   const { loading, data, error, refetch } = useQuery<
-    types.GET_ENROLLED_PROGRAM_PLANS,
-    types.GET_ENROLLED_PROGRAM_PLANSVariables
+    hasura.GET_ENROLLED_PROGRAM_PLANS,
+    hasura.GET_ENROLLED_PROGRAM_PLANSVariables
   >(
     gql`
       query GET_ENROLLED_PROGRAM_PLANS($memberId: String!) {
@@ -578,8 +581,8 @@ export const useEnrolledPlanIds = (memberId: string) => {
 
 export const useProgramPlanEnrollment = (programPlanId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PROGRAM_PLAN_ENROLLMENT,
-    types.GET_PROGRAM_PLAN_ENROLLMENTVariables
+    hasura.GET_PROGRAM_PLAN_ENROLLMENT,
+    hasura.GET_PROGRAM_PLAN_ENROLLMENTVariables
   >(
     gql`
       query GET_PROGRAM_PLAN_ENROLLMENT($programPlanId: uuid!) {
@@ -605,8 +608,8 @@ export const useProgramPlanEnrollment = (programPlanId: string) => {
 
 export const useProgramContentMaterial = (programContentId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PROGRAM_CONTENT_MATERIAL,
-    types.GET_PROGRAM_CONTENT_MATERIALVariables
+    hasura.GET_PROGRAM_CONTENT_MATERIAL,
+    hasura.GET_PROGRAM_CONTENT_MATERIALVariables
   >(
     gql`
       query GET_PROGRAM_CONTENT_MATERIAL($programContentId: uuid!) {
@@ -638,7 +641,7 @@ export const useProgramContentMaterial = (programContentId: string) => {
 }
 
 export const useMutateExercise = () => {
-  const [insertExercise] = useMutation<types.INSERT_EXERCISE, types.INSERT_EXERCISEVariables>(gql`
+  const [insertExercise] = useMutation<hasura.INSERT_EXERCISE, hasura.INSERT_EXERCISEVariables>(gql`
     mutation INSERT_EXERCISE($data: exercise_insert_input!) {
       insert_exercise_one(object: $data) {
         id

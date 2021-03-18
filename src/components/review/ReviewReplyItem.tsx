@@ -22,11 +22,11 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
 import { useMutateReviewReply } from '../../hooks/review'
 import { ReactComponent as MoreIcon } from '../../images/ellipsis.svg'
-import types from '../../types'
 import { ProductRoleName } from '../../types/general'
 import { ProgramRoleName, ProgramRoleProps } from '../../types/program'
 import { ReviewReplyItemProps } from '../../types/review'
@@ -249,7 +249,7 @@ const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void;
 }
 
 const useProgramRole = (targetId: string) => {
-  const { loading, error, data } = useQuery<types.GET_PROGRAM_ROLE, types.GET_PROGRAM_ROLEVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_PROGRAM_ROLE, hasura.GET_PROGRAM_ROLEVariables>(
     gql`
       query GET_PROGRAM_ROLE($targetId: uuid) {
         program_role(where: { program_id: { _eq: $targetId } }) {

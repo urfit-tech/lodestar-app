@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useApp } from '../containers/common/AppContext'
-import types from '../types'
+import hasura from '../hasura'
 
 export type AppPageSectionProps = { id: string; options: any; type: string }
 
@@ -13,7 +13,7 @@ export type AppPageProps = {
 
 export const usePage = (path: string) => {
   const { id: appId } = useApp()
-  const { loading, error, data } = useQuery<types.GET_PAGE, types.GET_PAGEVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_PAGE, hasura.GET_PAGEVariables>(
     gql`
       query GET_PAGE($path: String, $appId: String) {
         app_page(where: { path: { _eq: $path }, app_id: { _eq: $appId } }) {

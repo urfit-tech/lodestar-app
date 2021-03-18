@@ -5,9 +5,9 @@ import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { downloadFile, getFileDownloadableLink } from '../../helpers'
 import EmptyCover from '../../images/empty-cover.png'
-import types from '../../types'
 import { useAuth } from '../auth/AuthContext'
 import { CustomRatioImage } from '../common/Image'
 
@@ -112,7 +112,7 @@ const MerchandiseSpecItem: React.FC<{
 }
 
 const useMerchandiseSpec = (merchandiseSpecId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_MERCHANDISE_SPEC, types.GET_MERCHANDISE_SPECVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_MERCHANDISE_SPEC, hasura.GET_MERCHANDISE_SPECVariables>(
     gql`
       query GET_MERCHANDISE_SPEC($merchandiseSpecId: uuid!) {
         merchandise_spec_by_pk(id: $merchandiseSpecId) {

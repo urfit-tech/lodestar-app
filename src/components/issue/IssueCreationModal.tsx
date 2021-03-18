@@ -7,9 +7,9 @@ import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
-import types from '../../types'
 import { useAuth } from '../auth/AuthContext'
 import MessageButton from '../common/MessageButton'
 import StyledBraftEditor from '../common/StyledBraftEditor'
@@ -23,7 +23,7 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form,
   const { formatMessage } = useIntl()
   const { authToken, apiHost, currentMemberId } = useAuth()
   const { id: appId } = useApp()
-  const [insertIssue] = useMutation<types.INSERT_ISSUE, types.INSERT_ISSUEVariables>(INSERT_ISSUE)
+  const [insertIssue] = useMutation<hasura.INSERT_ISSUE, hasura.INSERT_ISSUEVariables>(INSERT_ISSUE)
 
   const [loading, setLoading] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)

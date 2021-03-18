@@ -8,7 +8,7 @@ import { useAuth } from '../components/auth/AuthContext'
 import { InvoiceProps } from '../components/checkout/InvoiceInput'
 import { ShippingProps } from '../components/checkout/ShippingInput'
 import { useApp } from '../containers/common/AppContext'
-import types from '../types'
+import hasura from '../hasura'
 import { CheckProps, OrderDiscountProps, OrderProductProps, shippingOptionProps } from '../types/checkout'
 import { MemberShopProps } from '../types/merchandise'
 
@@ -117,7 +117,7 @@ export const useCheck = (
 }
 
 export const useOrderProduct = (orderProductId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_ORDER_PRODUCT, types.GET_ORDER_PRODUCTVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_ORDER_PRODUCT, hasura.GET_ORDER_PRODUCTVariables>(
     gql`
       query GET_ORDER_PRODUCT($orderProductId: uuid!) {
         order_product_by_pk(id: $orderProductId) {
@@ -187,7 +187,7 @@ export const useOrderProduct = (orderProductId: string) => {
 }
 
 export const useMemberShop = (id: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_MEMBER_SHOP, types.GET_MEMBER_SHOPVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_MEMBER_SHOP, hasura.GET_MEMBER_SHOPVariables>(
     gql`
       query GET_MEMBER_SHOP($shopId: uuid!) {
         member_shop_by_pk(id: $shopId) {
@@ -224,8 +224,8 @@ export const useMemberShop = (id: string) => {
 
 export const useCartProjectPlanCollection = (cartProjectPlanIds: string[]) => {
   const { loading, error, data } = useQuery<
-    types.GET_CART_PROJECT_PLAN_COLLECTION,
-    types.GET_CART_PROJECT_PLAN_COLLECTIONVariables
+    hasura.GET_CART_PROJECT_PLAN_COLLECTION,
+    hasura.GET_CART_PROJECT_PLAN_COLLECTIONVariables
   >(
     gql`
       query GET_CART_PROJECT_PLAN_COLLECTION($cartProjectPlanIds: [uuid!]!) {
@@ -258,7 +258,7 @@ export const useCartProjectPlanCollection = (cartProjectPlanIds: string[]) => {
 }
 
 export const usePhysicalProductCollection = (productIds: string[]) => {
-  const { loading, error, data } = useQuery<types.GET_PHYSICAL_PRODUCTS, types.GET_PHYSICAL_PRODUCTSVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_PHYSICAL_PRODUCTS, hasura.GET_PHYSICAL_PRODUCTSVariables>(
     gql`
       query GET_PHYSICAL_PRODUCTS($productIds: [uuid!]!) {
         project_plan_aggregate(where: { id: { _in: $productIds }, is_physical: { _eq: true } }) {

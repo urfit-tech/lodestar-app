@@ -6,8 +6,8 @@ import { debounce } from 'lodash'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { ReactComponent as SearchIcon } from '../../images/search.svg'
-import types from '../../types'
 import { PeriodType } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
 import AppointmentCoinModal from '../coin/AppointmentCoinModal'
@@ -72,7 +72,7 @@ const ProjectProgramSearchSection: React.FC<{
 
     if (selectedType === 'program') {
       apolloClient
-        .query<types.GET_PROGRAM_ID_BY_TITLE, types.GET_PROGRAM_ID_BY_TITLEVariables>({
+        .query<hasura.GET_PROGRAM_ID_BY_TITLE, hasura.GET_PROGRAM_ID_BY_TITLEVariables>({
           query: GET_PROGRAM_ID_BY_TITLE,
           variables: { programCategory: category, searchText: `%${searchText}%` },
         })
@@ -86,7 +86,7 @@ const ProjectProgramSearchSection: React.FC<{
         })
     } else if (selectedType === 'program_package') {
       apolloClient
-        .query<types.GET_PROGRAM_PACKAGE_ID_BY_TITLE, types.GET_PROGRAM_PACKAGE_ID_BY_TITLEVariables>({
+        .query<hasura.GET_PROGRAM_PACKAGE_ID_BY_TITLE, hasura.GET_PROGRAM_PACKAGE_ID_BY_TITLEVariables>({
           query: GET_PROGRAM_PACKAGE_ID_BY_TITLE,
           variables: {
             programPackageCategory: category,
@@ -103,7 +103,7 @@ const ProjectProgramSearchSection: React.FC<{
         })
     } else if (selectedType === 'appointment') {
       apolloClient
-        .query<types.GET_APPOINTMENT_PLANS_ID, types.GET_APPOINTMENT_PLANS_IDVariables>({
+        .query<hasura.GET_APPOINTMENT_PLANS_ID, hasura.GET_APPOINTMENT_PLANS_IDVariables>({
           query: GET_APPOINTMENT_PLANS_ID,
           variables: { searchText: `%${searchText}%` },
         })
@@ -232,8 +232,8 @@ const GET_APPOINTMENT_PLANS_ID = gql`
 
 const useEnrolledCoinProjectPlans = (memberId: string, projectId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ENROLLED_COIN_PROJECT_PLANS,
-    types.GET_ENROLLED_COIN_PROJECT_PLANSVariables
+    hasura.GET_ENROLLED_COIN_PROJECT_PLANS,
+    hasura.GET_ENROLLED_COIN_PROJECT_PLANSVariables
   >(
     gql`
       query GET_ENROLLED_COIN_PROJECT_PLANS($memberId: String!, $projectId: uuid!) {

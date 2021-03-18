@@ -93,7 +93,7 @@ const PodcastProgramPopover: React.FC<PodcastProgramPopoverProps & { podcastProg
   const withPodcastPlan = podcastPlanIds.length > 0
 
   const onClickAddCartProduct = () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       try {
         addCartProduct && (await addCartProduct('PodcastProgram', podcastProgramId))
         ReactGA.plugin.execute('ec', 'addProduct', {

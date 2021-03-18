@@ -1,14 +1,14 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
+import hasura from '../hasura'
 import { isUUIDv4 } from '../helpers'
-import types from '../types'
 import { PostLatestProps, PostLinkProps, PostPreviewProps, PostProps } from '../types/blog'
 
 export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: string[] }) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_POST_PREVIEW_COLLECTION,
-    types.GET_POST_PREVIEW_COLLECTIONVariables
+    hasura.GET_POST_PREVIEW_COLLECTION,
+    hasura.GET_POST_PREVIEW_COLLECTIONVariables
   >(
     gql`
       query GET_POST_PREVIEW_COLLECTION($authorId: String) {
@@ -92,8 +92,8 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
 
 export const usePopularPostCollection = () => {
   const { loading, error, data, refetch, fetchMore } = useQuery<
-    types.GET_POPULAR_POST_COLLECTION,
-    types.GET_POPULAR_POST_COLLECTIONVariables
+    hasura.GET_POPULAR_POST_COLLECTION,
+    hasura.GET_POPULAR_POST_COLLECTIONVariables
   >(
     gql`
       query GET_POPULAR_POST_COLLECTION($offset: Int) {
@@ -153,8 +153,8 @@ export const usePopularPostCollection = () => {
 
 export const useRelativePostCollection = (id: string, tags?: string[]) => {
   const { loading, error, data, refetch, fetchMore } = useQuery<
-    types.GET_RELATIVE_POST_COLLECTION,
-    types.GET_RELATIVE_POST_COLLECTIONVariables
+    hasura.GET_RELATIVE_POST_COLLECTION,
+    hasura.GET_RELATIVE_POST_COLLECTIONVariables
   >(
     gql`
       query GET_RELATIVE_POST_COLLECTION($tags: [String!], $offset: Int) {
@@ -226,7 +226,7 @@ export const useRelativePostCollection = (id: string, tags?: string[]) => {
 }
 
 export const usePost = (search: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_POST, types.GET_POSTVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_POST, hasura.GET_POSTVariables>(
     gql`
       fragment PostParts on post {
         id
@@ -414,7 +414,7 @@ export const usePost = (search: string) => {
 }
 
 const useNearPost = (publishedAt?: Date) => {
-  const { data: dataPrevPost } = useQuery<types.GET_PREV_POST, types.GET_PREV_POSTVariables>(
+  const { data: dataPrevPost } = useQuery<hasura.GET_PREV_POST, hasura.GET_PREV_POSTVariables>(
     gql`
       query GET_PREV_POST($publishedAt: timestamptz) {
         post(
@@ -430,7 +430,7 @@ const useNearPost = (publishedAt?: Date) => {
     `,
     { variables: { publishedAt } },
   )
-  const { data: dataNextPost } = useQuery<types.GET_NEXT_POST, types.GET_NEXT_POSTVariables>(
+  const { data: dataNextPost } = useQuery<hasura.GET_NEXT_POST, hasura.GET_NEXT_POSTVariables>(
     gql`
       query GET_NEXT_POST($publishedAt: timestamptz) {
         post(
@@ -469,7 +469,7 @@ const useNearPost = (publishedAt?: Date) => {
 }
 
 export const useAddPostViews = () => {
-  const [addPostViews] = useMutation<types.ADD_POST_VIEWS, types.ADD_POST_VIEWSVariables>(gql`
+  const [addPostViews] = useMutation<hasura.ADD_POST_VIEWS, hasura.ADD_POST_VIEWSVariables>(gql`
     mutation ADD_POST_VIEWS($id: uuid!) {
       update_post(where: { id: { _eq: $id } }, _inc: { views: 1 }) {
         affected_rows
@@ -481,7 +481,7 @@ export const useAddPostViews = () => {
 }
 
 export const useLatestPost = (filter?: { limit?: number }) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_LATEST_POST, types.GET_LATEST_POSTVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_LATEST_POST, hasura.GET_LATEST_POSTVariables>(
     gql`
       query GET_LATEST_POST($limit: Int) {
         post(

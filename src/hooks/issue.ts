@@ -3,11 +3,11 @@ import { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import { useAuth } from '../components/auth/AuthContext'
 import { useApp } from '../containers/common/AppContext'
-import types from '../types'
+import hasura from '../hasura'
 
 const useIssue = (threadId: string) => {
   const { id: appId } = useApp()
-  const { loading, error, data, refetch } = useQuery<types.GET_ISSUE_THREAD, types.GET_ISSUE_THREADVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_ISSUE_THREAD, hasura.GET_ISSUE_THREADVariables>(
     GET_ISSUE_THREAD,
     {
       variables: {
@@ -50,15 +50,15 @@ const useIssue = (threadId: string) => {
 
 const useMutateIssue = (issueId: string) => {
   const { currentMemberId } = useAuth()
-  const [updateIssueHandler] = useMutation<types.UPDATE_ISSUE, types.UPDATE_ISSUEVariables>(UPDATE_ISSUE)
-  const [deleteIssueHandler] = useMutation<types.DELETE_ISSUE, types.DELETE_ISSUEVariables>(DELETE_ISSUE)
-  const [insertIssueReactionHandler] = useMutation<types.INSERT_ISSUE_REACTION, types.INSERT_ISSUE_REACTIONVariables>(
+  const [updateIssueHandler] = useMutation<hasura.UPDATE_ISSUE, hasura.UPDATE_ISSUEVariables>(UPDATE_ISSUE)
+  const [deleteIssueHandler] = useMutation<hasura.DELETE_ISSUE, hasura.DELETE_ISSUEVariables>(DELETE_ISSUE)
+  const [insertIssueReactionHandler] = useMutation<hasura.INSERT_ISSUE_REACTION, hasura.INSERT_ISSUE_REACTIONVariables>(
     INSERT_ISSUE_REACTION,
   )
-  const [deleteIssueReactionHandler] = useMutation<types.DELETE_ISSUE_REACTION, types.DELETE_ISSUE_REACTIONVariables>(
+  const [deleteIssueReactionHandler] = useMutation<hasura.DELETE_ISSUE_REACTION, hasura.DELETE_ISSUE_REACTIONVariables>(
     DELETE_ISSUE_REACTION,
   )
-  const [insertIssueReplyHandler] = useMutation<types.INSERT_ISSUE_REPLY, types.INSERT_ISSUE_REPLYVariables>(
+  const [insertIssueReplyHandler] = useMutation<hasura.INSERT_ISSUE_REPLY, hasura.INSERT_ISSUE_REPLYVariables>(
     INSERT_ISSUE_REPLY,
   )
 
@@ -111,7 +111,7 @@ const useMutateIssue = (issueId: string) => {
 }
 
 const useIssueReply = (issueId: string) => {
-  const { loading, data, error, refetch } = useQuery<types.GET_ISSUE_REPLIES, types.GET_ISSUE_REPLIESVariables>(
+  const { loading, data, error, refetch } = useQuery<hasura.GET_ISSUE_REPLIES, hasura.GET_ISSUE_REPLIESVariables>(
     GET_ISSUE_REPLIES,
     { variables: { issueId } },
   )
@@ -141,19 +141,19 @@ const useIssueReply = (issueId: string) => {
 
 const useMutateIssueReply = (issueReplyId: string) => {
   const { currentMemberId } = useAuth()
-  const [updateIssueReplyHandler] = useMutation<types.UPDATE_ISSUE_REPLY, types.UPDATE_ISSUE_REPLYVariables>(
+  const [updateIssueReplyHandler] = useMutation<hasura.UPDATE_ISSUE_REPLY, hasura.UPDATE_ISSUE_REPLYVariables>(
     UPDATE_ISSUE_REPLY,
   )
-  const [deleteIssueReplyHandler] = useMutation<types.DELETE_ISSUE_REPLY, types.DELETE_ISSUE_REPLYVariables>(
+  const [deleteIssueReplyHandler] = useMutation<hasura.DELETE_ISSUE_REPLY, hasura.DELETE_ISSUE_REPLYVariables>(
     DELETE_ISSUE_REPLY,
   )
   const [insertIssueReplyReactionHandler] = useMutation<
-    types.INSERT_ISSUE_REPLY_REACTION,
-    types.INSERT_ISSUE_REPLY_REACTIONVariables
+    hasura.INSERT_ISSUE_REPLY_REACTION,
+    hasura.INSERT_ISSUE_REPLY_REACTIONVariables
   >(INSERT_ISSUE_REPLY_REACTION)
   const [deleteIssueReplyReactionHandler] = useMutation<
-    types.DELETE_ISSUE_REPLY_REACTION,
-    types.DELETE_ISSUE_REPLY_REACTIONVariables
+    hasura.DELETE_ISSUE_REPLY_REACTION,
+    hasura.DELETE_ISSUE_REPLY_REACTIONVariables
   >(DELETE_ISSUE_REPLY_REACTION)
 
   const updateIssueReply = (content: any) => {

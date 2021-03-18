@@ -4,7 +4,7 @@ import { uniqBy } from 'ramda'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../components/auth/AuthContext'
 import { useApp } from '../containers/common/AppContext'
-import types from '../types'
+import hasura from '../hasura'
 import { CartProductProps } from '../types/checkout'
 import { ProductType } from '../types/product'
 
@@ -28,7 +28,7 @@ export const CartProvider: React.FC = ({ children }) => {
   const { id: appId } = useApp()
   const apolloClient = useApolloClient()
   const { currentMemberId } = useAuth()
-  const [updateCartProducts] = useMutation<types.UPDATE_CART_PRODUCTS, types.UPDATE_CART_PRODUCTSVariables>(
+  const [updateCartProducts] = useMutation<hasura.UPDATE_CART_PRODUCTS, hasura.UPDATE_CART_PRODUCTSVariables>(
     UPDATE_CART_PRODUCTS,
   )
 
@@ -58,7 +58,7 @@ export const CartProvider: React.FC = ({ children }) => {
       })
 
       apolloClient
-        .query<types.GET_CART_PRODUCT_COLLECTION, types.GET_CART_PRODUCT_COLLECTIONVariables>({
+        .query<hasura.GET_CART_PRODUCT_COLLECTION, hasura.GET_CART_PRODUCT_COLLECTIONVariables>({
           query: GET_CART_PRODUCT_COLLECTION,
           variables: {
             appId,

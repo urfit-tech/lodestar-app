@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { sum } from 'ramda'
-import types from '../types'
+import hasura from '../hasura'
 import {
   ActivityCategoryProps,
   ActivityProps,
@@ -10,7 +10,7 @@ import {
 } from '../types/activity'
 
 export const usePublishedActivityCollection = () => {
-  const { loading, error, data, refetch } = useQuery<types.GET_PUBLISHED_ACTIVITY_COLLECTION>(gql`
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_ACTIVITY_COLLECTION>(gql`
     query GET_PUBLISHED_ACTIVITY_COLLECTION {
       activity(where: { published_at: { _is_null: false } }, order_by: [{ position: asc }, { published_at: desc }]) {
         id
@@ -93,8 +93,8 @@ export const usePublishedActivityCollection = () => {
 
 export const useEnrolledActivityTickets = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ENROLLED_ACTIVITY_TICKETS,
-    types.GET_ENROLLED_ACTIVITY_TICKETSVariables
+    hasura.GET_ENROLLED_ACTIVITY_TICKETS,
+    hasura.GET_ENROLLED_ACTIVITY_TICKETSVariables
   >(
     gql`
       query GET_ENROLLED_ACTIVITY_TICKETS($memberId: String!) {
@@ -130,7 +130,7 @@ export const useEnrolledActivityTickets = (memberId: string) => {
 }
 
 export const useActivitySession = (sessionId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_ACTIVITY_SESSION, types.GET_ACTIVITY_SESSIONVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_ACTIVITY_SESSION, hasura.GET_ACTIVITY_SESSIONVariables>(
     gql`
       query GET_ACTIVITY_SESSION($sessionId: uuid!) {
         activity_session_by_pk(id: $sessionId) {
@@ -204,7 +204,7 @@ export const useActivitySession = (sessionId: string) => {
 }
 
 export const useActivityTicket = (ticketId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_TICKET, types.GET_TICKETVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_TICKET, hasura.GET_TICKETVariables>(
     gql`
       query GET_TICKET($ticketId: uuid!) {
         activity_ticket_by_pk(id: $ticketId) {
@@ -313,8 +313,8 @@ export const useActivityTicket = (ticketId: string) => {
 
 export const useActivityAttendance = (memberId: string, activityTicketId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ACTIVITY_ATTENDANCE,
-    types.GET_ACTIVITY_ATTENDANCEVariables
+    hasura.GET_ACTIVITY_ATTENDANCE,
+    hasura.GET_ACTIVITY_ATTENDANCEVariables
   >(
     gql`
       query GET_ACTIVITY_ATTENDANCE($memberId: String!, $activityTicketId: uuid!) {
@@ -348,7 +348,7 @@ export const useActivityAttendance = (memberId: string, activityTicketId: string
 }
 
 export const useAttendSession = () => {
-  const [attendActivitySession] = useMutation<types.ATTEND_ACTIVITY_SESSION, types.ATTEND_ACTIVITY_SESSIONVariables>(
+  const [attendActivitySession] = useMutation<hasura.ATTEND_ACTIVITY_SESSION, hasura.ATTEND_ACTIVITY_SESSIONVariables>(
     gql`
       mutation ATTEND_ACTIVITY_SESSION($orderProductId: uuid!, $activitySessionId: uuid!) {
         insert_activity_attendance(

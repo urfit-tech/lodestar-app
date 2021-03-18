@@ -7,14 +7,14 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
 import VoucherCollectionBlockComponent from '../../components/voucher/VoucherCollectionBlock'
+import hasura from '../../hasura'
 import { handleError } from '../../helpers'
 import { codeMessages, voucherMessages } from '../../helpers/translation'
-import types from '../../types'
 
 const VoucherCollectionBlock: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken, apiHost } = useAuth()
-  const { loading, error, data, refetch } = useQuery<types.GET_VOUCHER_COLLECTION>(GET_VOUCHER_COLLECTION)
+  const { loading, error, data, refetch } = useQuery<hasura.GET_VOUCHER_COLLECTION>(GET_VOUCHER_COLLECTION)
 
   const voucherCollection =
     loading || error || !data

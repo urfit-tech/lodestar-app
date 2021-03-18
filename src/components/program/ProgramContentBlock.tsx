@@ -8,10 +8,10 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
+import hasura from '../../hasura'
 import { productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
-import types from '../../types'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import CreatorCard from '../common/CreatorCard'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -223,7 +223,7 @@ const ProgramContentBlock: React.FC<{
 }
 
 const useLastExercise = (programContentId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_LAST_EXERCISE, types.GET_LAST_EXERCISEVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_LAST_EXERCISE, hasura.GET_LAST_EXERCISEVariables>(
     gql`
       query GET_LAST_EXERCISE($programContentId: uuid!) {
         exercise(where: { program_content_id: { _eq: $programContentId } }, order_by: [{ created_at: desc }]) {

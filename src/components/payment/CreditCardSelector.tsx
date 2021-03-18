@@ -4,7 +4,7 @@ import { RadioChangeEvent } from 'antd/lib/radio'
 import gql from 'graphql-tag'
 import React from 'react'
 import styled from 'styled-components'
-import * as types from '../../types'
+import hasura from '../../hasura'
 
 const StyledRadio = styled(Radio)`
   display: block !important;
@@ -48,7 +48,7 @@ const CreditCardSelector: React.FC<CreditCardSelectorProps> = ({ memberId, value
 }
 
 const useMemberCreditCards = (memberId: string) => {
-  const { data } = useQuery<types.GET_MEMBER_CREDIT_CARDS, types.GET_MEMBER_CREDIT_CARDSVariables>(
+  const { data } = useQuery<hasura.GET_MEMBER_CREDIT_CARDS, hasura.GET_MEMBER_CREDIT_CARDSVariables>(
     gql`
       query GET_MEMBER_CREDIT_CARDS($memberId: String!) {
         member_card(where: { member_id: { _eq: $memberId } }) {

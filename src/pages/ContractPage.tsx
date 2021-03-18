@@ -9,9 +9,9 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import hasura from '../hasura'
 import { dateFormatter, handleError } from '../helpers'
 import { useMemberContract } from '../hooks/data'
-import types from '../types'
 import LoadingPage from './LoadingPage'
 
 const StyledTitle = styled(Typography.Title)`
@@ -64,7 +64,7 @@ const ContractPage: React.FC = () => {
   const { memberContractId } = useParams<{ memberId: string; memberContractId: string }>()
   const [agreedIp, setAgreedIpAddress] = useState('unknown')
   const { memberContract, refetch: refetchMemberContract } = useMemberContract(memberContractId)
-  const [agreeMemberContract] = useMutation<types.AGREE_MEMBER_CONTRACT, types.AGREE_MEMBER_CONTRACTVariables>(
+  const [agreeMemberContract] = useMutation<hasura.AGREE_MEMBER_CONTRACT, hasura.AGREE_MEMBER_CONTRACTVariables>(
     AGREE_MEMBER_CONTRACT,
   )
 

@@ -5,8 +5,8 @@ import moment from 'moment'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import hasura from '../../hasura'
 import { getNotificationIconType, rgba } from '../../helpers'
-import types from '../../types'
 import { AvatarImage } from '../common/Image'
 
 const StyledListItem = styled(List.Item)<{ variant?: 'read' }>`
@@ -35,7 +35,7 @@ const NotificationItem: React.FC<{
   onRead?: () => void
 }> = ({ id, description, avatar, updatedAt, extra, referenceUrl, type, readAt, onRead }) => {
   const history = useHistory()
-  const [readNotification] = useMutation<types.READ_NOTIFICATION, types.READ_NOTIFICATIONVariables>(READ_NOTIFICATION)
+  const [readNotification] = useMutation<hasura.READ_NOTIFICATION, hasura.READ_NOTIFICATIONVariables>(READ_NOTIFICATION)
 
   return (
     <StyledListItem

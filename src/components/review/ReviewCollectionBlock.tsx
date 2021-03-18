@@ -6,11 +6,11 @@ import React, { useRef } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { reviewMessages } from '../../helpers/translation'
 import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import { ReactComponent as StarEmptyIcon } from '../../images/star-empty.svg'
 import { ReactComponent as StarIcon } from '../../images/star.svg'
-import types from '../../types'
 import { MemberReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import ReviewAdminItemCollection from './ReviewAdminItemCollection'
@@ -154,7 +154,7 @@ const ReviewCollectionBlock: React.FC<{
 }
 
 const useEnrolledMembers = (targetId: string) => {
-  const { loading, error, data } = useQuery<types.GET_ENROLLED_MEMBERS, types.GET_ENROLLED_MEMBERSVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_ENROLLED_MEMBERS, hasura.GET_ENROLLED_MEMBERSVariables>(
     gql`
       query GET_ENROLLED_MEMBERS($targetId: uuid!) {
         program_enrollment(where: { program_id: { _eq: $targetId } }) {
@@ -181,8 +181,8 @@ const useEnrolledMembers = (targetId: string) => {
 
 const useCurrentMemberReview = (currentMemberId: string | null, path: string, appId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_CURRENT_MEMBER_REVIEW,
-    types.GET_CURRENT_MEMBER_REVIEWVariables
+    hasura.GET_CURRENT_MEMBER_REVIEW,
+    hasura.GET_CURRENT_MEMBER_REVIEWVariables
   >(
     gql`
       query GET_CURRENT_MEMBER_REVIEW($currentMemberId: String, $path: String, $appId: String) {

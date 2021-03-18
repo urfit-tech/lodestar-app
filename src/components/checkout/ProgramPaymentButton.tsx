@@ -47,7 +47,7 @@ const ProgramPaymentButton: React.FC<ProgramPaymentButtonProps> = ({
   const [sharingCode] = useQueryParam('sharing', StringParam)
 
   const onClickAddCartProduct = () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       try {
         addCartProduct &&
           (await addCartProduct('Program', program.id, {

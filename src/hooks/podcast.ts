@@ -5,14 +5,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../components/auth/AuthContext'
 import { useApp } from '../containers/common/AppContext'
 import { PodcastProgramProps } from '../containers/podcast/PodcastProgramTimeline'
+import hasura from '../hasura'
 import { getFileDownloadableLink, notEmpty } from '../helpers'
-import types from '../types'
 import { PlaylistProps, PodcastProgramContent, PodcastProgramContentProps } from '../types/podcast'
 
 export const usePodcastProgramCollection = (creatorId?: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PODCAST_PROGRAM_COLLECTION,
-    types.GET_PODCAST_PROGRAM_COLLECTIONVariables
+    hasura.GET_PODCAST_PROGRAM_COLLECTION,
+    hasura.GET_PODCAST_PROGRAM_COLLECTIONVariables
   >(
     gql`
       query GET_PODCAST_PROGRAM_COLLECTION($creatorId: String) {
@@ -105,7 +105,7 @@ export const usePodcastProgramCollection = (creatorId?: string) => {
 }
 
 export const usePodcastPlanIds = (creatorId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_PODCAST_PLAN_IDS, types.GET_PODCAST_PLAN_IDSVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PODCAST_PLAN_IDS, hasura.GET_PODCAST_PLAN_IDSVariables>(
     gql`
       query GET_PODCAST_PLAN_IDS($creatorId: String!) {
         podcast_plan(where: { creator_id: { _eq: $creatorId } }) {
@@ -129,8 +129,8 @@ export const usePodcastPlanIds = (creatorId: string) => {
 
 export const useEnrolledPodcastProgramIds = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ENROLLED_PODCAST_PROGRAM_IDS,
-    types.GET_ENROLLED_PODCAST_PROGRAM_IDSVariables
+    hasura.GET_ENROLLED_PODCAST_PROGRAM_IDS,
+    hasura.GET_ENROLLED_PODCAST_PROGRAM_IDSVariables
   >(
     gql`
       query GET_ENROLLED_PODCAST_PROGRAM_IDS($memberId: String!) {
@@ -157,8 +157,8 @@ export const useEnrolledPodcastProgramIds = (memberId: string) => {
 
 export const useEnrolledPodcastPrograms = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ENROLLED_PODCAST_PROGRAMS,
-    types.GET_ENROLLED_PODCAST_PROGRAMSVariables
+    hasura.GET_ENROLLED_PODCAST_PROGRAMS,
+    hasura.GET_ENROLLED_PODCAST_PROGRAMSVariables
   >(
     gql`
       query GET_ENROLLED_PODCAST_PROGRAMS($memberId: String!) {
@@ -249,8 +249,8 @@ export const useEnrolledPodcastPrograms = (memberId: string) => {
 
 export const usePublishedPodcastPlans = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PUBLISHED_PODCAST_PLANS,
-    types.GET_PUBLISHED_PODCAST_PLANSVariables
+    hasura.GET_PUBLISHED_PODCAST_PLANS,
+    hasura.GET_PUBLISHED_PODCAST_PLANSVariables
   >(
     gql`
       query GET_PUBLISHED_PODCAST_PLANS($memberId: String!) {
@@ -290,8 +290,8 @@ export const usePublishedPodcastPlans = (memberId: string) => {
 
 export const useEnrolledPodcastPlansCreators = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ENROLLED_PODCAST_PLAN,
-    types.GET_ENROLLED_PODCAST_PLANVariables
+    hasura.GET_ENROLLED_PODCAST_PLAN,
+    hasura.GET_ENROLLED_PODCAST_PLANVariables
   >(
     gql`
       query GET_ENROLLED_PODCAST_PLAN($memberId: String!) {
@@ -348,8 +348,8 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
   const { authToken, apiHost } = useAuth()
   const [url, setUrl] = useState('')
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PODCAST_PROGRAM_WITH_BODY,
-    types.GET_PODCAST_PROGRAM_WITH_BODYVariables
+    hasura.GET_PODCAST_PROGRAM_WITH_BODY,
+    hasura.GET_PODCAST_PROGRAM_WITH_BODYVariables
   >(
     gql`
       query GET_PODCAST_PROGRAM_WITH_BODY($podcastProgramId: uuid!) {
@@ -430,7 +430,7 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
 }
 
 export const usePlaylistCollection = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_PLAYLIST_COLLECTION>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PLAYLIST_COLLECTION>(
     gql`
       query GET_PLAYLIST_COLLECTION($memberId: String) {
         playlist(where: { member_id: { _eq: $memberId } }, order_by: { position: asc }) {
@@ -482,7 +482,7 @@ export const usePlaylistCollection = (memberId: string) => {
 }
 
 export const useCreatePlaylist = () => {
-  const [createPlaylist] = useMutation<types.CREATE_PLAYLIST, types.CREATE_PLAYLISTVariables>(gql`
+  const [createPlaylist] = useMutation<hasura.CREATE_PLAYLIST, hasura.CREATE_PLAYLISTVariables>(gql`
     mutation CREATE_PLAYLIST($memberId: String!, $title: String!, $position: Int!) {
       insert_playlist(objects: { member_id: $memberId, title: $title, position: $position }) {
         affected_rows
@@ -494,7 +494,7 @@ export const useCreatePlaylist = () => {
 }
 
 export const useUpdatePlaylist = () => {
-  const [updatePlaylist] = useMutation<types.UPDATE_PLAYLIST, types.UPDATE_PLAYLISTVariables>(gql`
+  const [updatePlaylist] = useMutation<hasura.UPDATE_PLAYLIST, hasura.UPDATE_PLAYLISTVariables>(gql`
     mutation UPDATE_PLAYLIST($playlistId: uuid!, $title: String!) {
       update_playlist(where: { id: { _eq: $playlistId } }, _set: { title: $title }) {
         affected_rows
@@ -507,8 +507,8 @@ export const useUpdatePlaylist = () => {
 
 export const useUpdatePlaylistPosition = () => {
   const [updatePlaylistPosition] = useMutation<
-    types.UPDATE_PLAYLIST_POSITION,
-    types.UPDATE_PLAYLIST_POSITIONVariables
+    hasura.UPDATE_PLAYLIST_POSITION,
+    hasura.UPDATE_PLAYLIST_POSITIONVariables
   >(gql`
     mutation UPDATE_PLAYLIST_POSITION($data: [playlist_insert_input!]!) {
       insert_playlist(objects: $data, on_conflict: { constraint: playlist_pkey, update_columns: position }) {
@@ -521,7 +521,7 @@ export const useUpdatePlaylistPosition = () => {
 }
 
 export const useDeletePlaylist = () => {
-  const [deletePlaylist] = useMutation<types.DELETE_PLAYLIST, types.DELETE_PLAYLISTVariables>(gql`
+  const [deletePlaylist] = useMutation<hasura.DELETE_PLAYLIST, hasura.DELETE_PLAYLISTVariables>(gql`
     mutation DELETE_PLAYLIST($playlistId: uuid!) {
       delete_playlist_podcast_program(where: { playlist_id: { _eq: $playlistId } }) {
         affected_rows
@@ -537,8 +537,8 @@ export const useDeletePlaylist = () => {
 
 export const usePlaylistPodcastPrograms = (playlistId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PLAYLIST_PODCAST_PROGRAMS,
-    types.GET_PLAYLIST_PODCAST_PROGRAMSVariables
+    hasura.GET_PLAYLIST_PODCAST_PROGRAMS,
+    hasura.GET_PLAYLIST_PODCAST_PROGRAMSVariables
   >(
     gql`
       query GET_PLAYLIST_PODCAST_PROGRAMS($playlistId: uuid!) {
@@ -595,8 +595,8 @@ export const usePlaylistPodcastPrograms = (playlistId: string) => {
 
 export const useUpdatePlaylistPodcastPrograms = () => {
   const [deletePlaylistPodcastPrograms] = useMutation<
-    types.DELETE_PODCAST_PROGRAMS,
-    types.DELETE_PODCAST_PROGRAMSVariables
+    hasura.DELETE_PODCAST_PROGRAMS,
+    hasura.DELETE_PODCAST_PROGRAMSVariables
   >(gql`
     mutation DELETE_PODCAST_PROGRAMS($podcastProgramId: uuid, $playlistIds: [uuid!]!) {
       delete_playlist_podcast_program(
@@ -607,8 +607,8 @@ export const useUpdatePlaylistPodcastPrograms = () => {
     }
   `)
   const [insertPlaylistPodcastPrograms] = useMutation<
-    types.INSERT_PODCAST_PROGRAMS,
-    types.INSERT_PODCAST_PROGRAMSVariables
+    hasura.INSERT_PODCAST_PROGRAMS,
+    hasura.INSERT_PODCAST_PROGRAMSVariables
   >(gql`
     mutation INSERT_PODCAST_PROGRAMS($data: [playlist_podcast_program_insert_input!]!) {
       insert_playlist_podcast_program(objects: $data) {
@@ -620,7 +620,7 @@ export const useUpdatePlaylistPodcastPrograms = () => {
   return async (
     podcastProgramId: string,
     removedPlaylistIds: string[],
-    data: types.INSERT_PODCAST_PROGRAMSVariables['data'],
+    data: hasura.INSERT_PODCAST_PROGRAMSVariables['data'],
   ) => {
     await deletePlaylistPodcastPrograms({
       variables: {
@@ -634,8 +634,8 @@ export const useUpdatePlaylistPodcastPrograms = () => {
 
 export const useUpdatePodcastProgramPositions = () => {
   const [updatePodcastProgramPositions] = useMutation<
-    types.UPDATE_PODCAST_PROGRAM_POSITIONS,
-    types.UPDATE_PODCAST_PROGRAM_POSITIONSVariables
+    hasura.UPDATE_PODCAST_PROGRAM_POSITIONS,
+    hasura.UPDATE_PODCAST_PROGRAM_POSITIONSVariables
   >(gql`
     mutation UPDATE_PODCAST_PROGRAM_POSITIONS($playlistId: uuid!, $data: [playlist_podcast_program_insert_input!]!) {
       delete_playlist_podcast_program(where: { playlist_id: { _eq: $playlistId } }) {

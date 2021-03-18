@@ -10,8 +10,8 @@ import { BooleanParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
+import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
-import * as types from '../types'
 import ForbiddenPage from './ForbiddenPage'
 import LoadingPage from './LoadingPage'
 
@@ -20,9 +20,12 @@ const OrderPage: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
   const { settings } = useApp()
-  const { loading, data } = useQuery<types.GET_ORDERS_PRODUCT, types.GET_ORDERS_PRODUCTVariables>(GET_ORDERS_PRODUCT, {
-    variables: { orderId: orderId },
-  })
+  const { loading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
+    GET_ORDERS_PRODUCT,
+    {
+      variables: { orderId: orderId },
+    },
+  )
   const order = data && data.order_log_by_pk
 
   // TODO: get orderId and show items

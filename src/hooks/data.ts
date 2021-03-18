@@ -6,12 +6,12 @@ import { useAuth } from '../components/auth/AuthContext'
 import { useApp } from '../containers/common/AppContext'
 import LanguageContext from '../contexts/LanguageContext'
 import { GET_NOTIFICATIONS, NotificationProps } from '../contexts/NotificationContext'
+import hasura from '../hasura'
 import { handleError, uploadFile } from '../helpers/index'
-import types from '../types'
 import { CouponProps } from '../types/checkout'
 
 export const useNotifications = (limit: number) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_NOTIFICATIONS, types.GET_NOTIFICATIONSVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_NOTIFICATIONS, hasura.GET_NOTIFICATIONSVariables>(
     GET_NOTIFICATIONS,
     { variables: { limit } },
   )
@@ -40,7 +40,10 @@ export const useNotifications = (limit: number) => {
 }
 
 export const useCouponCollection = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_COUPON_COLLECTION, types.GET_COUPON_COLLECTIONVariables>(
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_COUPON_COLLECTION,
+    hasura.GET_COUPON_COLLECTIONVariables
+  >(
     gql`
       query GET_COUPON_COLLECTION($memberId: String!) {
         coupon(where: { member_id: { _eq: $memberId } }) {
@@ -121,7 +124,10 @@ export const useCouponCollection = (memberId: string) => {
 }
 
 export const useEnrolledProductIds = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_ENROLLED_PRODUCTS, types.GET_ENROLLED_PRODUCTSVariables>(
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_ENROLLED_PRODUCTS,
+    hasura.GET_ENROLLED_PRODUCTSVariables
+  >(
     gql`
       query GET_ENROLLED_PRODUCTS($memberId: String!) {
         product_enrollment(where: { member_id: { _eq: $memberId } }) {
@@ -158,7 +164,7 @@ export const useNav = () => {
 }
 
 export const useMemberContract = (memberContractId: string) => {
-  const { data, ...result } = useQuery<types.GET_MEMBER_CONTRACT, types.GET_MEMBER_CONTRACTVariables>(
+  const { data, ...result } = useQuery<hasura.GET_MEMBER_CONTRACT, hasura.GET_MEMBER_CONTRACTVariables>(
     gql`
       query GET_MEMBER_CONTRACT($memberContractId: uuid!) {
         member_contract_by_pk(id: $memberContractId) {
@@ -204,7 +210,7 @@ export const useMemberContract = (memberContractId: string) => {
 export const useUploadAttachments = () => {
   const { authToken, apiHost } = useAuth()
   const { id: appId } = useApp()
-  const [insertAttachment] = useMutation<types.INSERT_ATTACHMENT, types.INSERT_ATTACHMENTVariables>(gql`
+  const [insertAttachment] = useMutation<hasura.INSERT_ATTACHMENT, hasura.INSERT_ATTACHMENTVariables>(gql`
     mutation INSERT_ATTACHMENT($attachments: [attachment_insert_input!]!) {
       insert_attachment(objects: $attachments, on_conflict: { constraint: attachment_pkey, update_columns: [data] }) {
         returning {

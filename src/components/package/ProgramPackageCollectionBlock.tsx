@@ -6,9 +6,9 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
-import types from '../../types'
 import { CommonTitleMixin } from '../common'
 
 const StyledCard = styled.div`
@@ -84,8 +84,8 @@ export default ProgramPackageCollectionBlock
 
 const useEnrolledProgramPackage = (memberId: string) => {
   const { loading, error, data } = useQuery<
-    types.GET_ENROLLED_PROGRAM_PACKAGES,
-    types.GET_ENROLLED_PROGRAM_PACKAGESVariables
+    hasura.GET_ENROLLED_PROGRAM_PACKAGES,
+    hasura.GET_ENROLLED_PROGRAM_PACKAGESVariables
   >(
     gql`
       query GET_ENROLLED_PROGRAM_PACKAGES($memberId: String!) {

@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import types from '../types'
+import hasura from '../hasura'
 import {
   AppointmentEnrollmentProps,
   AppointmentPeriodProps,
@@ -10,8 +10,8 @@ import {
 
 export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_APPOINTMENT_PLAN_COLLECTION,
-    types.GET_APPOINTMENT_PLAN_COLLECTIONVariables
+    hasura.GET_APPOINTMENT_PLAN_COLLECTION,
+    hasura.GET_APPOINTMENT_PLAN_COLLECTIONVariables
   >(
     gql`
       query GET_APPOINTMENT_PLAN_COLLECTION($memberId: String!, $startedAt: timestamptz) {
@@ -84,8 +84,8 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
 
 export const useEnrolledAppointmentCollection = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ENROLLED_APPOINTMENT_PLAN,
-    types.GET_ENROLLED_APPOINTMENT_PLANVariables
+    hasura.GET_ENROLLED_APPOINTMENT_PLAN,
+    hasura.GET_ENROLLED_APPOINTMENT_PLANVariables
   >(
     gql`
       query GET_ENROLLED_APPOINTMENT_PLAN($memberId: String) {
@@ -160,8 +160,8 @@ export const useEnrolledAppointmentCollection = (memberId: string) => {
 
 export const useUpdateAppointmentIssue = (orderProductId: string, options: any) => {
   const [updateAppointmentIssue] = useMutation<
-    types.UPDATE_APPOINTMENT_ISSUE,
-    types.UPDATE_APPOINTMENT_ISSUEVariables
+    hasura.UPDATE_APPOINTMENT_ISSUE,
+    hasura.UPDATE_APPOINTMENT_ISSUEVariables
   >(gql`
     mutation UPDATE_APPOINTMENT_ISSUE($orderProductId: uuid!, $data: jsonb) {
       update_order_product(where: { id: { _eq: $orderProductId } }, _set: { options: $data }) {
@@ -183,7 +183,7 @@ export const useUpdateAppointmentIssue = (orderProductId: string, options: any) 
 }
 
 export const useCancelAppointment = (orderProductId: string, options: any) => {
-  const [cancelAppointment] = useMutation<types.CANCEL_APPOINTMENT, types.CANCEL_APPOINTMENTVariables>(gql`
+  const [cancelAppointment] = useMutation<hasura.CANCEL_APPOINTMENT, hasura.CANCEL_APPOINTMENTVariables>(gql`
     mutation CANCEL_APPOINTMENT($orderProductId: uuid!, $data: jsonb) {
       update_order_product(where: { id: { _eq: $orderProductId } }, _set: { options: $data }) {
         affected_rows

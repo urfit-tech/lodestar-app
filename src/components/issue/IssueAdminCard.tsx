@@ -5,9 +5,9 @@ import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
-import types from '../../types'
 import { useAuth } from '../auth/AuthContext'
 import AdminCard from '../common/AdminCard'
 import IssueItem from './IssueItem'
@@ -63,7 +63,7 @@ const IssueAdminCard: React.FC<IssueAdminCardProps> = ({
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { program } = useProgram(programId)
-  const [updateIssueStatus] = useMutation<types.UPDATE_ISSUE_STATUS, types.UPDATE_ISSUE_STATUSVariables>(
+  const [updateIssueStatus] = useMutation<hasura.UPDATE_ISSUE_STATUS, hasura.UPDATE_ISSUE_STATUSVariables>(
     UPDATE_ISSUE_STATUS,
   )
 

@@ -57,20 +57,6 @@ const IssueReplyItem: React.FC<{
   const { currentMemberId, authToken, apiHost } = useAuth()
   const { id: appId } = useApp()
 
-  // const [insertIssueReplyReaction] = useMutation<
-  //   types.INSERT_ISSUE_REPLY_REACTION,
-  //   types.INSERT_ISSUE_REPLY_REACTIONVariables
-  // >(INSERT_ISSUE_REPLY_REACTION)
-  // const [deleteIssueReplyReaction] = useMutation<
-  //   types.DELETE_ISSUE_REPLY_REACTION,
-  //   types.DELETE_ISSUE_REPLY_REACTIONVariables
-  // >(DELETE_ISSUE_REPLY_REACTION)
-  // const [deleteIssueReply] = useMutation<types.DELETE_ISSUE_REPLY, types.DELETE_ISSUE_REPLYVariables>(
-  //   DELETE_ISSUE_REPLY,
-  // )
-  // const [updateIssueReply] = useMutation<types.UPDATE_ISSUE_REPLY, types.UPDATE_ISSUE_REPLYVariables>(
-  //   UPDATE_ISSUE_REPLY,
-  // )
   const {
     insertIssueReplyReaction,
     deleteIssueReply,

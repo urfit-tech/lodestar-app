@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { useSocialCardCollection } from '../../hooks/member'
@@ -21,7 +22,6 @@ import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
 import { routesProps } from '../../Routes'
-import types from '../../types'
 import { useAuth } from '../auth/AuthContext'
 
 const StyledMenu = styled(Menu)`
@@ -142,7 +142,7 @@ export const MemberAdminMenu: React.FC<MenuProps> = ({ ...props }) => {
 }
 
 const useManagementDomain = (appId: string) => {
-  const { loading, error, data } = useQuery<types.GET_MANAGEMENT_DOMAIN, types.GET_MANAGEMENT_DOMAINVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_MANAGEMENT_DOMAIN, hasura.GET_MANAGEMENT_DOMAINVariables>(
     gql`
       query GET_MANAGEMENT_DOMAIN($appId: String) {
         app_admin(where: { app_id: { _eq: $appId } }, limit: 1, order_by: { position: asc }) {

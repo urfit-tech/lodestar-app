@@ -11,9 +11,9 @@ import { useAuth } from '../../components/auth/AuthContext'
 import AdminCard from '../../components/common/AdminCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
-import types from '../../types'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 
@@ -252,7 +252,7 @@ const CoinHistoryCollectionTabs: React.FC<{
 }
 
 const useCoinStatus = (memberId: string) => {
-  const { data } = useQuery<types.GET_COIN_STATUS>(
+  const { data } = useQuery<hasura.GET_COIN_STATUS>(
     gql`
       query GET_COIN_STATUS($memberId: String!) {
         coin_status(where: { member_id: { _eq: $memberId } }) {
@@ -271,8 +271,8 @@ const useCoinStatus = (memberId: string) => {
 
 const useCoinLogCollections = ({ memberId, current }: { memberId: string; current: Date }) => {
   const { loading, error, data, refetch, fetchMore } = useQuery<
-    types.GET_COIN_LOG_COLLECTION,
-    types.GET_COIN_LOG_COLLECTIONVariables
+    hasura.GET_COIN_LOG_COLLECTION,
+    hasura.GET_COIN_LOG_COLLECTIONVariables
   >(
     gql`
       query GET_COIN_LOG_COLLECTION($memberId: String!, $current: timestamptz!, $offset: Int) {
@@ -355,8 +355,8 @@ const useCoinLogCollections = ({ memberId, current }: { memberId: string; curren
 
 const useOrderLogWithCoinsCollection = (memberId: string) => {
   const { loading, error, data, refetch, fetchMore } = useQuery<
-    types.GET_ORDER_LOG_WITH_COINS_COLLECTION,
-    types.GET_ORDER_LOG_WITH_COINS_COLLECTIONVariables
+    hasura.GET_ORDER_LOG_WITH_COINS_COLLECTION,
+    hasura.GET_ORDER_LOG_WITH_COINS_COLLECTIONVariables
   >(
     gql`
       query GET_ORDER_LOG_WITH_COINS_COLLECTION($memberId: String!, $offset: Int) {

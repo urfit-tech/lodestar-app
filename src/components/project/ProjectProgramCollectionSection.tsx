@@ -6,8 +6,8 @@ import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { ReactComponent as RocketIcon } from '../../images/icon-rocket.svg'
-import types from '../../types'
 import { ProgramPackageProgramProps } from '../../types/programPackage'
 import { useAuth } from '../auth/AuthContext'
 import ProgramCollection from '../package/ProgramCollection'
@@ -94,8 +94,8 @@ const normalizeTimeToSecond = (time?: any) => {
 
 const useEnrolledPrivateTeachProgram = (memberId: string, programCategory: string) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_ENROLLED_PRIVATE_TEACH_PROGRAMS,
-    types.GET_ENROLLED_PRIVATE_TEACH_PROGRAMSVariables
+    hasura.GET_ENROLLED_PRIVATE_TEACH_PROGRAMS,
+    hasura.GET_ENROLLED_PRIVATE_TEACH_PROGRAMSVariables
   >(
     gql`
       query GET_ENROLLED_PRIVATE_TEACH_PROGRAMS($memberId: String!, $programCategory: String!) {

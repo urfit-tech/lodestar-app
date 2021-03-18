@@ -21,9 +21,9 @@ import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import CheckoutProductModal from '../containers/checkout/CheckoutProductModal'
 import { useApp } from '../containers/common/AppContext'
+import hasura from '../hasura'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useMember, usePublicMember } from '../hooks/member'
-import types from '../types'
 
 const ActivityContent = styled(Container)`
   && {
@@ -48,7 +48,7 @@ const ActivityPage: React.FC = () => {
   const { isAuthenticated, currentMemberId } = useAuth()
   const { settings, id: appId } = useApp()
   const { loadingMember, member } = useMember(currentMemberId || '')
-  const { loading, error, data } = useQuery<types.GET_ACTIVITY, types.GET_ACTIVITYVariables>(GET_ACTIVITY, {
+  const { loading, error, data } = useQuery<hasura.GET_ACTIVITY, hasura.GET_ACTIVITYVariables>(GET_ACTIVITY, {
     variables: {
       activityId,
       memberId: currentMemberId || '',

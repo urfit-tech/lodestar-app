@@ -6,9 +6,9 @@ import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { defineMessages, useIntl } from 'react-intl'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { createUploadFn, handleError } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
-import types from '../../types'
 import { useAuth } from '../auth/AuthContext'
 import CommonModal from '../common/CommonModal'
 import MessageButton from '../common/MessageButton'
@@ -31,7 +31,7 @@ const SuggestionCreationModal: React.FC<SuggestionCreationModalProps> = ({ threa
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
   const { control, handleSubmit } = useForm<{ suggest: EditorState }>()
-  const [insertSuggestion] = useMutation<types.INSERT_SUGGESTION, types.INSERT_SUGGESTIONVariables>(INSERT_SUGGESTION)
+  const [insertSuggestion] = useMutation<hasura.INSERT_SUGGESTION, hasura.INSERT_SUGGESTIONVariables>(INSERT_SUGGESTION)
 
   const handleSuggest = handleSubmit(({ suggest }) => {
     if (currentMemberId) {

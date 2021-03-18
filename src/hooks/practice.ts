@@ -1,12 +1,12 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useAuth } from '../components/auth/AuthContext'
+import hasura from '../hasura'
 import { notEmpty } from '../helpers'
-import types from '../types'
 import { PracticePreviewProps, PracticeProps } from '../types/practice'
 import { ProgramRoleName } from '../types/program'
 export const usePractice = (options: { practiceId?: string; memberId?: string | null; programContentId?: string }) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_PRACTICE, types.GET_PRACTICEVariables>(GET_PRACTICE, {
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PRACTICE, hasura.GET_PRACTICEVariables>(GET_PRACTICE, {
     variables: {
       practiceId: options.practiceId,
       memberId: options.memberId,
@@ -78,8 +78,8 @@ export const usePracticeCollection = (options: {
   programContentId?: string
 }) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PRACTICE_COLLECTION,
-    types.GET_PRACTICE_COLLECTIONVariables
+    hasura.GET_PRACTICE_COLLECTION,
+    hasura.GET_PRACTICE_COLLECTIONVariables
   >(GET_PRACTICE_COLLECTION, {
     variables: {
       programContentId: options.programContentId,
@@ -111,16 +111,16 @@ export const usePracticeCollection = (options: {
 
 export const useMutatePractice = (practiceId: string) => {
   const { currentMemberId } = useAuth()
-  const [insertPracticeHandler] = useMutation<types.INSERT_PRACTICE, types.INSERT_PRACTICEVariables>(INSERT_PRACTICE)
-  const [updatePracticeHandler] = useMutation<types.UPDATE_PRACTICE, types.UPDATE_PRACTICEVariables>(UPDATE_PRACTICE)
-  const [deletePracticeHandler] = useMutation<types.DELETE_PRACTICE, types.DELETE_PRACTICEVariables>(DELETE_PRACTICE)
+  const [insertPracticeHandler] = useMutation<hasura.INSERT_PRACTICE, hasura.INSERT_PRACTICEVariables>(INSERT_PRACTICE)
+  const [updatePracticeHandler] = useMutation<hasura.UPDATE_PRACTICE, hasura.UPDATE_PRACTICEVariables>(UPDATE_PRACTICE)
+  const [deletePracticeHandler] = useMutation<hasura.DELETE_PRACTICE, hasura.DELETE_PRACTICEVariables>(DELETE_PRACTICE)
   const [insertPracticeReactionHandler] = useMutation<
-    types.INSERT_PRACTICE_REACTION,
-    types.INSERT_PRACTICE_REACTIONVariables
+    hasura.INSERT_PRACTICE_REACTION,
+    hasura.INSERT_PRACTICE_REACTIONVariables
   >(INSERT_PRACTICE_REACTION)
   const [deletePracticeReactionHandler] = useMutation<
-    types.DELETE_PRACTICE_REACTION,
-    types.DELETE_PRACTICE_REACTIONVariables
+    hasura.DELETE_PRACTICE_REACTION,
+    hasura.DELETE_PRACTICE_REACTIONVariables
   >(DELETE_PRACTICE_REACTION)
   const insertPractice = ({
     title,

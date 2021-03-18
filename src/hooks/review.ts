@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import types from '../types'
+import hasura from '../hasura'
 
 export const useReviewAggregate = (path: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_REVIEW_AGGREGATE, types.GET_REVIEW_AGGREGATEVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_REVIEW_AGGREGATE, hasura.GET_REVIEW_AGGREGATEVariables>(
     gql`
       query GET_REVIEW_AGGREGATE($path: String) {
         review_public_aggregate(where: { path: { _eq: $path } }) {
@@ -35,7 +35,7 @@ export const useReviewAggregate = (path: string) => {
 }
 
 export const useMutateReviewReply = () => {
-  const [updateReviewReply] = useMutation<types.UPDATE_REVIEW_REPLY, types.UPDATE_REVIEW_REPLYVariables>(
+  const [updateReviewReply] = useMutation<hasura.UPDATE_REVIEW_REPLY, hasura.UPDATE_REVIEW_REPLYVariables>(
     gql`
       mutation UPDATE_REVIEW_REPLY(
         $id: uuid!
@@ -54,7 +54,7 @@ export const useMutateReviewReply = () => {
     `,
   )
 
-  const [deleteReviewReply] = useMutation<types.DELETE_REVIEW_REPLY, types.DELETE_REVIEW_REPLYVariables>(
+  const [deleteReviewReply] = useMutation<hasura.DELETE_REVIEW_REPLY, hasura.DELETE_REVIEW_REPLYVariables>(
     gql`
       mutation DELETE_REVIEW_REPLY($id: uuid!, $memberId: String, $appId: String) {
         delete_review_reply(
@@ -70,7 +70,7 @@ export const useMutateReviewReply = () => {
 }
 
 export const useProductEditorIds = (targetId: string) => {
-  const { loading, error, data } = useQuery<types.GET_PRODUCT_EDITOR_IDS, types.GET_PRODUCT_EDITOR_IDSVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_PRODUCT_EDITOR_IDS, hasura.GET_PRODUCT_EDITOR_IDSVariables>(
     gql`
       query GET_PRODUCT_EDITOR_IDS($targetId: uuid!) {
         program(where: { id: { _eq: $targetId } }) {

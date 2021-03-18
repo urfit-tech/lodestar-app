@@ -9,9 +9,9 @@ import IssueAdminCard from '../../components/issue/IssueAdminCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { EnrolledProgramSelector } from '../../components/program/ProgramSelector'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as BookIcon } from '../../images/book.svg'
-import types from '../../types'
 
 const ProgramIssueCollectionAdminPage = () => {
   const { formatMessage } = useIntl()
@@ -85,8 +85,8 @@ const AllProgramIssueCollectionBlock: React.FC<{
   }
 
   const { loading, error, data, refetch } = useQuery<
-    types.GET_MEMBER_PROGRAM_ISSUES,
-    types.GET_MEMBER_PROGRAM_ISSUESVariables
+    hasura.GET_MEMBER_PROGRAM_ISSUES,
+    hasura.GET_MEMBER_PROGRAM_ISSUESVariables
   >(GET_MEMBER_PROGRAM_ISSUES, {
     variables: {
       memberId: memberId,

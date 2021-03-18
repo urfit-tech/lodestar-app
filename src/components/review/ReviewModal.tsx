@@ -20,11 +20,11 @@ import { useParams } from 'react-router-dom'
 import ReactStars from 'react-star-rating-component'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
 import { ReactComponent as StarGrayIcon } from '../../images/star-gray.svg'
 import { ReactComponent as StarIcon } from '../../images/star.svg'
-import types from '../../types'
 import { MemberReviewProps } from '../../types/review'
 import { useAuth } from '../auth/AuthContext'
 import CommonModal from '../common/CommonModal'
@@ -108,8 +108,8 @@ const ReviewModal: React.FC<{
   const { authToken, currentMemberId, apiHost } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { programId } = useParams<{ programId: string }>()
-  const [insertReview] = useMutation<types.INSERT_REVIEW, types.INSERT_REVIEWVariables>(INSERT_REVIEW)
-  const [updateReview] = useMutation<types.UPDATE_REVIEW, types.UPDATE_REVIEWVariables>(UPDATE_REVIEW)
+  const [insertReview] = useMutation<hasura.INSERT_REVIEW, hasura.INSERT_REVIEWVariables>(INSERT_REVIEW)
+  const [updateReview] = useMutation<hasura.UPDATE_REVIEW, hasura.UPDATE_REVIEWVariables>(UPDATE_REVIEW)
   const toast = useToast()
 
   const { control, errors, register, handleSubmit, setError, reset, setValue } = useForm<{

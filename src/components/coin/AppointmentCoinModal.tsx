@@ -8,11 +8,11 @@ import React, { useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { dateRangeFormatter, handleError, validationRegExp } from '../../helpers'
 import { checkoutMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
 import DefaultAvatar from '../../images/avatar.svg'
-import types from '../../types'
 import { AppointmentPeriodProps, AppointmentPlanProps } from '../../types/appointment'
 import AppointmentPeriodCollection from '../appointment/AppointmentPeriodCollection'
 import { useAuth } from '../auth/AuthContext'
@@ -201,7 +201,7 @@ const AppointmentCoinModal: React.FC<
 }
 
 const useAppointmentPlan = (appointmentPlanId: string) => {
-  const { loading, error, data, refetch } = useQuery<types.GET_APPOINTMENT_PLAN, types.GET_APPOINTMENT_PLANVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_APPOINTMENT_PLAN, hasura.GET_APPOINTMENT_PLANVariables>(
     gql`
       query GET_APPOINTMENT_PLAN($appointmentPlanId: uuid!, $startedAt: timestamptz!) {
         appointment_plan_by_pk(id: $appointmentPlanId) {

@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useIntl } from 'react-intl'
+import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
-import types from '../types'
 import { ProductType } from '../types/product'
 import { PeriodType } from '../types/program'
 
@@ -29,7 +29,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
   const { formatMessage } = useIntl()
   const [, targetId] = id.split('_')
 
-  const { loading, error, data } = useQuery<types.GET_PRODUCT_SIMPLE, types.GET_PRODUCT_SIMPLEVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_PRODUCT_SIMPLE, hasura.GET_PRODUCT_SIMPLEVariables>(
     GET_PRODUCT_SIMPLE,
     {
       variables: {
@@ -319,7 +319,7 @@ const GET_PRODUCT_SIMPLE = gql`
 `
 
 export const useReferrer = (email: string) => {
-  const { loading, error, data, refetch } = useQuery<types.SEARCH_REFERRER, types.SEARCH_REFERRERVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.SEARCH_REFERRER, hasura.SEARCH_REFERRERVariables>(
     gql`
       query SEARCH_REFERRER($search: String!) {
         member_public(where: { email: { _eq: $search } }) {

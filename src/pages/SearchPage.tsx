@@ -23,10 +23,10 @@ import ProgramCard from '../components/program/ProgramCard'
 import ProjectIntroCard from '../components/project/ProjectIntroCard'
 import CheckoutPodcastPlanModal from '../containers/checkout/CheckoutPodcastPlanModal'
 import { useApp } from '../containers/common/AppContext'
+import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { useMember } from '../hooks/member'
 import { ReactComponent as SearchIcon } from '../images/search.svg'
-import types from '../types'
 import { ActivityProps } from '../types/activity'
 import { MerchandiseBriefProps } from '../types/merchandise'
 import { PodcastProgramBriefProps } from '../types/podcast'
@@ -350,8 +350,8 @@ const useSearchProductCollection = (
   },
 ) => {
   const { loading, error, data, refetch } = useQuery<
-    types.SEARCH_PRODUCT_COLLECTION,
-    types.SEARCH_PRODUCT_COLLECTIONVariables
+    hasura.SEARCH_PRODUCT_COLLECTION,
+    hasura.SEARCH_PRODUCT_COLLECTIONVariables
   >(
     gql`
       query SEARCH_PRODUCT_COLLECTION($memberId: String, $title: String, $tag: String) {

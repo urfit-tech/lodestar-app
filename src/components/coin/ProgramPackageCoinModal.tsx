@@ -7,12 +7,12 @@ import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { handleError } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
 import { useEnrolledProgramIds } from '../../hooks/program'
 import EmptyCover from '../../images/empty-cover.png'
-import types from '../../types'
 import { CurrencyProps, PeriodType } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
 import { CustomRatioImage } from '../common/Image'
@@ -210,8 +210,8 @@ const ProgramPackageCoinModal: React.FC<
 
 const useProgramPackageProgramCollection = (programPackageId: string, periodAmount: number, periodType: PeriodType) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_PROGRAM_PACKAGE_PROGRAM_COLLECTION,
-    types.GET_PROGRAM_PACKAGE_PROGRAM_COLLECTIONVariables
+    hasura.GET_PROGRAM_PACKAGE_PROGRAM_COLLECTION,
+    hasura.GET_PROGRAM_PACKAGE_PROGRAM_COLLECTIONVariables
   >(
     gql`
       query GET_PROGRAM_PACKAGE_PROGRAM_COLLECTION(

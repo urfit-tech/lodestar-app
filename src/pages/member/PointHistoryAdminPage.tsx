@@ -10,9 +10,9 @@ import { useAuth } from '../../components/auth/AuthContext'
 import AdminCard from '../../components/common/AdminCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as PointIcon } from '../../images/point.svg'
-import types from '../../types'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 
@@ -249,7 +249,7 @@ const PointHistoryCollectionTabs: React.FC<{ memberId: string }> = ({ memberId }
 }
 
 const usePointStatus = (memberId: string) => {
-  const { data } = useQuery<types.GET_POINT_STATUS>(
+  const { data } = useQuery<hasura.GET_POINT_STATUS>(
     gql`
       query GET_POINT_STATUS($memberId: String!) {
         point_status(where: { member_id: { _eq: $memberId } }) {
@@ -269,8 +269,8 @@ const usePointStatus = (memberId: string) => {
 
 const usePointLogCollections = (memberId: string) => {
   const { loading, error, data, refetch, fetchMore } = useQuery<
-    types.GET_POINT_LOG_COLLECTION,
-    types.GET_POINT_LOG_COLLECTIONVariables
+    hasura.GET_POINT_LOG_COLLECTION,
+    hasura.GET_POINT_LOG_COLLECTIONVariables
   >(
     gql`
       query GET_POINT_LOG_COLLECTION($memberId: String!, $current: timestamptz!, $offset: Int) {
@@ -348,8 +348,8 @@ const usePointLogCollections = (memberId: string) => {
 
 const useOrderLogWithPointsCollection = (memberId: string) => {
   const { loading, error, data, refetch, fetchMore } = useQuery<
-    types.GET_ORDER_LOG_WITH_POINTS_COLLECTION,
-    types.GET_ORDER_LOG_WITH_POINTS_COLLECTIONVariables
+    hasura.GET_ORDER_LOG_WITH_POINTS_COLLECTION,
+    hasura.GET_ORDER_LOG_WITH_POINTS_COLLECTIONVariables
   >(
     gql`
       query GET_ORDER_LOG_WITH_POINTS_COLLECTION($memberId: String!, $offset: Int) {

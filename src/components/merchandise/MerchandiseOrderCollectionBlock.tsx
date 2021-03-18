@@ -7,10 +7,10 @@ import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import hasura from '../../hasura'
 import { productMessages, saleMessages } from '../../helpers/translation'
 import { useOrderLogsWithMerchandiseSpec } from '../../hooks/merchandise'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
-import types from '../../types'
 import { OrderLogWithMerchandiseSpecProps } from '../../types/merchandise'
 import { CommonTitleMixin } from '../common'
 import AdminCard from '../common/AdminCard'
@@ -185,8 +185,8 @@ const MerchandiseOrderCard: React.FC<{
 
 const useMerchandiseType = (merchandiseSpecIds: string[]) => {
   const { loading, error, data, refetch } = useQuery<
-    types.GET_MERCHANDISE_TYPE_COLLECTION,
-    types.GET_MERCHANDISE_TYPE_COLLECTIONVariables
+    hasura.GET_MERCHANDISE_TYPE_COLLECTION,
+    hasura.GET_MERCHANDISE_TYPE_COLLECTIONVariables
   >(
     gql`
       query GET_MERCHANDISE_TYPE_COLLECTION($merchandiseSpecIds: [uuid!]!) {

@@ -3,8 +3,8 @@ import { Spin } from 'antd'
 import gql from 'graphql-tag'
 import React from 'react'
 import { useIntl } from 'react-intl'
+import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import types from '../../types'
 
 const ProjectEnrollmentCounts: React.FC<{
   projectId: string
@@ -12,8 +12,8 @@ const ProjectEnrollmentCounts: React.FC<{
 }> = ({ projectId, numberOnly }) => {
   const { formatMessage } = useIntl()
   const { loading, error, data } = useQuery<
-    types.GET_PROJECT_ENROLLMENT_COUNT,
-    types.GET_PROJECT_ENROLLMENT_COUNTVariables
+    hasura.GET_PROJECT_ENROLLMENT_COUNT,
+    hasura.GET_PROJECT_ENROLLMENT_COUNTVariables
   >(GET_PROJECT_ENROLLMENT_COUNT, {
     variables: {
       projectId,

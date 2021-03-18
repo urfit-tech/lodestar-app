@@ -7,8 +7,8 @@ import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { AvatarImage } from '../../components/common/Image'
+import hasura from '../../hasura'
 import { productMessages } from '../../helpers/translation'
-import types from '../../types'
 
 const StyledSubTitle = styled.h2`
   color: var(--gray-darker);
@@ -30,7 +30,7 @@ const StyledIcon = styled(Icon)`
 
 const PopularPodcastCollection: React.FC = () => {
   const { formatMessage } = useIntl()
-  const { loading, error, data } = useQuery<types.GET_PODCAST_PROGRAM_INSTRUCTOR_COLLECTION>(
+  const { loading, error, data } = useQuery<hasura.GET_PODCAST_PROGRAM_INSTRUCTOR_COLLECTION>(
     GET_PODCAST_PROGRAM_INSTRUCTOR_COLLECTION,
   )
 
