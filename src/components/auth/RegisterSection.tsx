@@ -66,6 +66,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
         verifySmsCode({ phoneNumber: values.phoneNumber.trim(), code: values.code })
           .then(() => {
             setAuthState('register')
+            sessionStorage.setItem('phone', values.phoneNumber.trim())
           })
           .catch((error: Error) => {
             message.error('簡訊驗證失敗')
@@ -128,21 +129,23 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
               />,
             )}
           </Form.Item>
-          <Form.Item>
-            {form.getFieldDecorator('code', {
-              rules: [
-                {
-                  required: true,
-                  message: formatMessage(commonMessages.form.message.smsVerification),
-                },
-              ],
-            })(
-              <Input
-                placeholder={formatMessage(commonMessages.form.placeholder.smsVerification)}
-                suffix={<AiOutlineMail />}
-              />,
-            )}
-          </Form.Item>
+          {sendingState === 'idle' && (
+            <Form.Item>
+              {form.getFieldDecorator('code', {
+                rules: [
+                  {
+                    required: true,
+                    message: formatMessage(commonMessages.form.message.smsVerification),
+                  },
+                ],
+              })(
+                <Input
+                  placeholder={formatMessage(commonMessages.form.placeholder.smsVerification)}
+                  suffix={<AiOutlineMail />}
+                />,
+              )}
+            </Form.Item>
+          )}
           <Form.Item>
             <Button
               type="dashed"
