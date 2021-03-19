@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import parsePhoneNumber from 'libphonenumber-js'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
+import { handleError } from '../../helpers'
 import { UserRole } from '../../types/member'
 
 type AuthProps = {
@@ -18,6 +19,8 @@ type AuthProps = {
   login?: (data: { account: string; password: string }) => Promise<void>
   socialLogin?: (data: { provider: string; providerToken: any }) => Promise<void>
   logout?: () => void
+  sendSmsCode?: (data: { phoneNumber: string }) => Promise<void>
+  verifySmsCode?: (data: { phoneNumber: string; code: string }) => Promise<void>
 }
 
 const defaultAuthContext: AuthProps = {
@@ -112,14 +115,37 @@ export const AuthProvider: React.FC<{
               password,
             },
             { withCredentials: true },
-          ).then(({ data: { code, message, result } }) => {
-            if (code === 'SUCCESS') {
-              setAuthToken(result.authToken)
-            } else {
-              setAuthToken(null)
-              throw new Error(code)
-            }
-          }),
+          )
+            .then(({ data: { code, message, result } }) => {
+              if (code === 'SUCCESS') {
+                setAuthToken(result.authToken)
+                return Axios.post(
+                  `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
+                  {
+                    query: `
+                      mutation INSERT_MEMBER_PHONE_ONE($currentMemberId: String!, $phone: String!) {
+                        insert_member_phone_one(object: { member_id: $currentMemberId, phone: $phone }) {
+                          id
+                        }
+                      }
+                    `,
+                    variables: {
+                      currentMemberId: jwt.decode(result.authToken)?.sub,
+                      phone: sessionStorage.getItem('phone'),
+                    },
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${result.authToken}`,
+                    },
+                  },
+                )
+              } else {
+                setAuthToken(null)
+                throw new Error(code)
+              }
+            })
+            .catch(handleError),
         login: async ({ account, password }) =>
           Axios.post(
             `https://${apiHost}/auth/general-login`,
@@ -164,6 +190,33 @@ export const AuthProvider: React.FC<{
             }
           })
         },
+        sendSmsCode: async ({ phoneNumber }) =>
+          Axios.post(
+            `https://${apiHost}/sms/send-code`,
+            {
+              appId,
+              phoneNumber,
+            },
+            { withCredentials: true },
+          ).then(({ data: { code, message, result } }) => {
+            if (code !== 'SUCCESS') {
+              throw new Error(code)
+            }
+          }),
+        verifySmsCode: async ({ phoneNumber, code }) =>
+          Axios.post(
+            `https://${apiHost}/sms/verify-code`,
+            {
+              appId,
+              phoneNumber,
+              code,
+            },
+            { withCredentials: true },
+          ).then(({ data: { code, message, result } }) => {
+            if (code !== 'SUCCESS' || !result?.codeValid) {
+              throw new Error(code)
+            }
+          }),
       }}
     >
       {children}

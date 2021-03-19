@@ -1,8 +1,8 @@
 import { Icon } from '@chakra-ui/react'
 import { Button, Form, Input, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
-import React, { useContext, useState } from 'react'
-import { AiOutlineLock, AiOutlineMail, AiOutlineUser } from 'react-icons/ai'
+import React, { useContext, useEffect, useState } from 'react'
+import { AiOutlineLock, AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
@@ -21,38 +21,152 @@ type RegisterSectionProps = FormComponentProps & {
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
 }
 const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChange }) => {
-  const { settings } = useApp()
+  const { settings, enabledModules } = useApp()
   const { formatMessage } = useIntl()
-  const { register } = useAuth()
+  const { register, sendSmsCode, verifySmsCode } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
+  const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'ready'>('ready')
+  const [verifying, setVerifying] = useState(false)
+  const [authState, setAuthState] = useState<'sms_verification' | 'register'>()
 
-  const handleLogin = () => {
-    if (!register) {
-      return
-    }
+  useEffect(() => {
+    setAuthState(enabledModules.sms_verification ? 'sms_verification' : 'register')
+  }, [enabledModules.sms_verification])
 
-    form.validateFields((error, values) => {
-      if (error) {
-        return
-      }
-      setLoading(true)
-      register({
-        username: values.username.trim().toLowerCase(),
-        email: values.email.trim().toLowerCase(),
-        password: values.password,
-      })
+  const handleSmsSend = () => {
+    const phoneNumber = form.getFieldValue('phoneNumber')
+    if (sendSmsCode && phoneNumber) {
+      setSendingState('loading')
+      sendSmsCode({ phoneNumber })
         .then(() => {
-          setVisible && setVisible(false)
-          form.resetFields()
+          setSendingState('idle')
+          // TODO: locale
+          message.success('成功發送簡訊碼')
+          setTimeout(() => {
+            setSendingState('ready')
+          }, 30000)
         })
-        .catch((error: Error) => {
-          const code = error.message as keyof typeof codeMessages
-          message.error(formatMessage(codeMessages[code]))
+        .catch(error => {
+          setSendingState('ready')
+          message.error(error.message)
         })
-        .catch(err => handleError(err))
-        .finally(() => setLoading(false))
-    })
+    } else {
+      // TODO: locale
+      message.error('請輸入手機號碼')
+    }
+  }
+  const handleSmsVerify = () => {
+    verifySmsCode &&
+      form.validateFields((error, values) => {
+        if (error) {
+          return
+        }
+        setVerifying(true)
+        verifySmsCode({ phoneNumber: values.phoneNumber.trim(), code: values.code })
+          .then(() => {
+            setAuthState('register')
+            sessionStorage.setItem('phone', values.phoneNumber.trim())
+          })
+          .catch((error: Error) => {
+            message.error('簡訊驗證失敗')
+          })
+          .finally(() => setVerifying(false))
+      })
+  }
+
+  const handleRegister = () => {
+    register &&
+      form.validateFields((error, values) => {
+        if (error) {
+          return
+        }
+        setLoading(true)
+        register({
+          username: values.username.trim().toLowerCase(),
+          email: values.email.trim().toLowerCase(),
+          password: values.password,
+        })
+          .then(() => {
+            setVisible && setVisible(false)
+            form.resetFields()
+          })
+          .catch((error: Error) => {
+            const code = error.message as keyof typeof codeMessages
+            message.error(formatMessage(codeMessages[code]))
+          })
+          .catch(err => handleError(err))
+          .finally(() => setLoading(false))
+      })
+  }
+
+  if (!authState) {
+    return <></>
+  }
+
+  if (authState === 'sms_verification') {
+    return (
+      <>
+        <StyledTitle>{formatMessage(authMessages.title.smsVerification)}</StyledTitle>
+        <Form
+          onSubmit={e => {
+            e.preventDefault()
+            handleSmsVerify()
+          }}
+        >
+          <Form.Item>
+            {form.getFieldDecorator('phoneNumber', {
+              rules: [
+                {
+                  required: true,
+                  message: formatMessage(commonMessages.form.message.phone),
+                },
+              ],
+            })(
+              <Input
+                placeholder={formatMessage(commonMessages.form.placeholder.phone)}
+                suffix={<Icon as={AiOutlinePhone} />}
+              />,
+            )}
+          </Form.Item>
+          {sendingState === 'idle' && (
+            <Form.Item>
+              {form.getFieldDecorator('code', {
+                rules: [
+                  {
+                    required: true,
+                    message: formatMessage(commonMessages.form.message.smsVerification),
+                  },
+                ],
+              })(
+                <Input
+                  placeholder={formatMessage(commonMessages.form.placeholder.smsVerification)}
+                  suffix={<AiOutlineMail />}
+                />,
+              )}
+            </Form.Item>
+          )}
+          <Form.Item>
+            <Button
+              type="dashed"
+              block
+              loading={sendingState === 'loading'}
+              onClick={handleSmsSend}
+              disabled={sendingState === 'idle'}
+            >
+              {sendingState === 'idle'
+                ? formatMessage(commonMessages.button.sendSmsIdle)
+                : formatMessage(commonMessages.button.sendSms)}
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={verifying}>
+              {formatMessage(commonMessages.button.verifySms)}
+            </Button>
+          </Form.Item>
+        </Form>
+      </>
+    )
   }
 
   return (
@@ -75,7 +189,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
       <Form
         onSubmit={e => {
           e.preventDefault()
-          handleLogin()
+          handleRegister()
         }}
       >
         <Form.Item>
