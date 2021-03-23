@@ -93,7 +93,7 @@ const MerchandiseSpecItem: React.FC<{
                   const response = await fetch(fileRequest)
 
                   response.url &&
-                    downloadFile(response.url, file.name).then(() => {
+                    downloadFile(file.name, { url: response.url }).then(() => {
                       counter += 1
                       counter === files.length && setIsDownloading(false)
                     })

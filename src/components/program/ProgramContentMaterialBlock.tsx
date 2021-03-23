@@ -1,5 +1,5 @@
 import { AttachmentIcon } from '@chakra-ui/icons'
-import { IconButton } from '@chakra-ui/react'
+import { IconButton, Progress } from '@chakra-ui/react'
 import { message, Spin } from 'antd'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -58,7 +58,8 @@ const ProgramContentMaterialBlock: React.FC<{
     programContentMaterials,
     errorProgramContentMaterials,
   } = useProgramContentMaterial(programContentId)
-  const [isDownloading, setIsDownloading] = useState<boolean>(false)
+  const [isDownloading, setIsDownloading] = useState<{ [key: string]: boolean }>({})
+  const [downloadProgress, setDownloadProgress] = useState<{ [key: string]: number }>({})
 
   const charLimit = window.innerWidth >= BREAK_POINT ? 50 : 20
 
@@ -72,28 +73,35 @@ const ProgramContentMaterialBlock: React.FC<{
         programContentMaterials.map(material => (
           <StyledMaterial
             key={material.id}
-            className="d-flex align-items-center justify-content-between mb-3"
+            className="mb-3"
             onClick={async () => {
-              setIsDownloading(true)
+              setIsDownloading(prev => ({ ...prev, [material.id]: true }))
               const fileKey = `materials/${appId}/${programContentId}_${material.data.name}`
               const materialLink = await getFileDownloadableLink(fileKey, authToken, apiHost)
               const materialRequest = new Request(materialLink)
               try {
                 const response = await fetch(materialRequest)
                 response.url &&
-                  downloadFile(response.url, material.data.name).then(() => {
-                    setIsDownloading(false)
+                  downloadFile(material.data.name, {
+                    url: response.url,
+                    onDownloadProgress: ({ loaded, total }) => {
+                      setDownloadProgress(prev => ({
+                        ...prev,
+                        [material.id]: Math.floor((loaded / total) * 100),
+                      }))
+                    },
+                  }).then(() => {
+                    setIsDownloading(prev => ({ ...prev, [material.id]: false }))
                   })
               } catch (error) {
                 message.error(error)
               }
             }}
           >
-            <div className="d-flex">
-              <div>
-                <AttachmentIcon className="mr-2" />
-              </div>
-              <StyledFileName>
+            <div className="d-flex align-items-center justify-content-between">
+              <AttachmentIcon className="flex-shrink-0 mr-2" />
+
+              <StyledFileName className="flex-grow-1">
                 <StyledDataName>
                   {getFileName(material.data.name).length >= charLimit
                     ? `${getFileName(material.data.name).substring(0, charLimit)}..`
@@ -102,8 +110,18 @@ const ProgramContentMaterialBlock: React.FC<{
                 <StyledFileExtension className="mr-2">{`.${getFileExtension(material.data.name)}`}</StyledFileExtension>
                 <StyledDataSize>{`(${byteToSize(material.data.size)})`}</StyledDataSize>
               </StyledFileName>
+
+              <IconButton
+                aria-label="download"
+                variant="download"
+                icon={<DownloadIcon />}
+                isLoading={!!isDownloading[material.id]}
+                className="flex-shrink-0"
+              />
             </div>
-            <IconButton aria-label="download" variant="download" icon={<DownloadIcon />} isLoading={isDownloading} />
+            {isDownloading[material.id] && (
+              <Progress value={downloadProgress[material.id] || 0} size="xs" colorScheme="green" />
+            )}
           </StyledMaterial>
         ))
       )}
