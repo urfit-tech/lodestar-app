@@ -7,6 +7,7 @@ import LanguageContext from '../../../contexts/LanguageContext'
 import { ReactComponent as FacebookIcon } from '../../../images/facebook-icon.svg'
 import { ReactComponent as GroupIcon } from '../../../images/group-icon.svg'
 import { ReactComponent as InstagramIcon } from '../../../images/instagram-icon.svg'
+import { ReactComponent as LineIcon } from '../../../images/line-icon.svg'
 import { ReactComponent as YoutubeIcon } from '../../../images/youtube-icon.svg'
 import { BREAK_POINT } from '../Responsive'
 import DefaultFooter from './DefaultFooter'
@@ -105,6 +106,7 @@ export const SocialLinks: React.FC = () => {
             {socialLink.label === 'group' && <Icon as={GroupIcon} />}
             {socialLink.label === 'youtube' && <Icon as={YoutubeIcon} />}
             {socialLink.label === 'instagram' && <Icon as={InstagramIcon} />}
+            {socialLink.label === 'line' && <Icon as={LineIcon} />}
           </StyledSocialAnchor>
         ))}
     </>
