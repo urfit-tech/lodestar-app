@@ -10,11 +10,15 @@ import VoucherCollectionBlockComponent from '../../components/voucher/VoucherCol
 import hasura from '../../hasura'
 import { handleError } from '../../helpers'
 import { codeMessages, voucherMessages } from '../../helpers/translation'
+import { useEnrolledProductIds } from '../../hooks/data'
 
 const VoucherCollectionBlock: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken, apiHost } = useAuth()
   const { loading, error, data, refetch } = useQuery<hasura.GET_VOUCHER_COLLECTION>(GET_VOUCHER_COLLECTION)
+  const { loadingProductIds, errorProductIds, enrolledProductIds, refetchProgramIds } = useEnrolledProductIds(
+    currentMemberId || '',
+  )
 
   const voucherCollection =
     loading || error || !data
@@ -56,6 +60,7 @@ const VoucherCollectionBlock: React.FC = () => {
         if (code === 'SUCCESS') {
           message.success(formatMessage(voucherMessages.messages.addVoucher))
           refetch()
+          refetchProgramIds()
         } else {
           if (/^GraphQL error: Uniqueness violation/.test(errorMessage)) {
             message.error(formatMessage(voucherMessages.messages.duplicateVoucherCode))
@@ -99,9 +104,10 @@ const VoucherCollectionBlock: React.FC = () => {
   return (
     <VoucherCollectionBlockComponent
       memberId={currentMemberId}
-      loading={loading}
-      error={error}
+      loading={loading || loadingProductIds}
+      error={error || errorProductIds}
       voucherCollection={voucherCollection}
+      disabledProductIds={enrolledProductIds}
       onInsert={handleInsert}
       onExchange={handleExchange}
     />

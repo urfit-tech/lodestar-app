@@ -7,13 +7,14 @@ import VoucherInsertBlock from '../../components/voucher/VoucherInsertBlock'
 import { commonMessages } from '../../helpers/translation'
 import { VoucherProps } from './Voucher'
 
-type VoucherCollectionBlockProps = {
+const VoucherCollectionBlock: React.FC<{
   memberId: string | null
   loading?: boolean
   error?: Error
   voucherCollection: (VoucherProps & {
     productIds: string[]
   })[]
+  disabledProductIds: string[]
   onInsert: (setLoading: React.Dispatch<React.SetStateAction<boolean>>, code: string) => void
   onExchange: (
     setVisible: React.Dispatch<React.SetStateAction<boolean>>,
@@ -21,15 +22,7 @@ type VoucherCollectionBlockProps = {
     selectedProductIds: string[],
     voucherId: string,
   ) => void
-}
-const VoucherCollectionBlock: React.FC<VoucherCollectionBlockProps> = ({
-  memberId,
-  loading,
-  error,
-  voucherCollection,
-  onExchange,
-  onInsert,
-}) => {
+}> = ({ memberId, loading, error, voucherCollection, disabledProductIds, onExchange, onInsert }) => {
   const { formatMessage } = useIntl()
   if (!memberId || loading) {
     return <Skeleton active />
@@ -45,6 +38,7 @@ const VoucherCollectionBlock: React.FC<VoucherCollectionBlockProps> = ({
       <VoucherExchangeModal
         productQuantityLimit={voucher.productQuantityLimit}
         productIds={voucher.productIds}
+        disabledProductIds={disabledProductIds}
         onExchange={(setVisible, setLoading, selectedProductIds) =>
           onExchange(setVisible, setLoading, selectedProductIds, voucher.id)
         }
