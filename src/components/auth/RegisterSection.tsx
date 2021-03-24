@@ -129,23 +129,23 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
               />,
             )}
           </Form.Item>
-          {sendingState === 'idle' && (
-            <Form.Item>
-              {form.getFieldDecorator('code', {
-                rules: [
-                  {
-                    required: true,
-                    message: formatMessage(commonMessages.form.message.smsVerification),
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={formatMessage(commonMessages.form.placeholder.smsVerification)}
-                  suffix={<AiOutlineMail />}
-                />,
-              )}
-            </Form.Item>
-          )}
+
+          <Form.Item>
+            {form.getFieldDecorator('code', {
+              rules: [
+                {
+                  required: true,
+                  message: formatMessage(commonMessages.form.message.smsVerification),
+                },
+              ],
+            })(
+              <Input
+                placeholder={formatMessage(commonMessages.form.placeholder.smsVerification)}
+                suffix={<AiOutlineMail />}
+              />,
+            )}
+          </Form.Item>
+
           <Form.Item>
             <Button
               type="dashed"
