@@ -115,7 +115,10 @@ const ProgramContentPlayer: React.FC<
         controls
         config={{
           vimeo: {
-            playerOptions: { responsive: true },
+            playerOptions: {
+              responsive: true,
+              speed: true,
+            },
           },
         }}
         onDuration={duration => {
