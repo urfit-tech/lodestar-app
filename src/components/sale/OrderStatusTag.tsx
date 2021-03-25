@@ -17,6 +17,8 @@ const OrderStatusTag: React.FC<{ status: string }> = ({ status }) => {
       return <Tag color="#ff7d62">{formatMessage(saleMessages.status.expired)}</Tag>
     case 'UNKNOWN':
       return <Tag color="#9b9b9b">{formatMessage(saleMessages.status.preparing)}</Tag>
+    case 'DELETED':
+      return <Tag color="#ff7d62">{formatMessage(saleMessages.status.deleted)}</Tag>
     default:
       return <Tag color="#ff7d62">{formatMessage(saleMessages.status.fail)}</Tag>
   }

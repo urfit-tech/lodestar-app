@@ -1253,6 +1253,7 @@ export const saleMessages = {
     refunded: { id: 'sale.status.refunded', defaultMessage: '已退款' },
     fail: { id: 'sale.status.fail', defaultMessage: '付款失敗' },
     expired: { id: 'sale.status.expired', defaultMessage: '已失效' },
+    deleted: { id: 'sale.status.deleted', defaultMessage: '已刪除' },
   }),
 }
 
