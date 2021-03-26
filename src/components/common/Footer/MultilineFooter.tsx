@@ -40,29 +40,17 @@ const MultilineFooter: React.FC = () => {
                 overlay={
                   <Menu>
                     <Menu.Item key="zh">
-                      <StyledButton
-                        type="link"
-                        size="small"
-                        onClick={() => setCurrentLanguage && setCurrentLanguage('zh')}
-                      >
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLanguage?.('zh')}>
                         繁體中文
                       </StyledButton>
                     </Menu.Item>
                     <Menu.Item key="en">
-                      <StyledButton
-                        type="link"
-                        size="small"
-                        onClick={() => setCurrentLanguage && setCurrentLanguage('en')}
-                      >
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLanguage?.('en')}>
                         English
                       </StyledButton>
                     </Menu.Item>
                     <Menu.Item key="vi">
-                      <StyledButton
-                        type="link"
-                        size="small"
-                        onClick={() => setCurrentLanguage && setCurrentLanguage('vi')}
-                      >
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLanguage?.('vi')}>
                         Tiếng việt
                       </StyledButton>
                     </Menu.Item>
