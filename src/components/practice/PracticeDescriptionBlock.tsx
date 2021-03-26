@@ -106,7 +106,7 @@ const PracticeDescriptionBlock: React.FC<{
       const fileRequest = new Request(fileLink)
       const response = await fetch(fileRequest)
       response.url &&
-        downloadFile(response.url, file.data?.name || 'untitled').then(() => {
+        downloadFile(file.data?.name || 'untitled', { url: response.url }).then(() => {
           setIsDownloading(false)
         })
     } catch (error) {

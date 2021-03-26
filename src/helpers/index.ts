@@ -90,8 +90,12 @@ export const getFileDownloadableLink = async (key: string, authToken: string | n
   return data.result
 }
 
-export const downloadFile = async (url: string, fileName: string) =>
-  await axios({ url, method: 'GET', responseType: 'blob' }).then((response: any) => {
+export const downloadFile = async (fileName: string, config: AxiosRequestConfig) =>
+  await axios({
+    ...config,
+    method: 'GET',
+    responseType: 'blob',
+  }).then((response: any) => {
     const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
