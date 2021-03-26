@@ -22,22 +22,17 @@ const StyledNotice = styled.div`
   letter-spacing: 0.4px;
 `
 
-type VoucherExchangeModalProps = {
+const VoucherExchangeModal: React.FC<{
   productQuantityLimit: number
   description: string | null
   productIds: string[]
+  disabledProductIds: string[]
   onExchange?: (
     setVisible: React.Dispatch<React.SetStateAction<boolean>>,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     selectedProductIds: string[],
   ) => void
-}
-const VoucherExchangeModal: React.FC<VoucherExchangeModalProps> = ({
-  productQuantityLimit,
-  description,
-  productIds,
-  onExchange,
-}) => {
+}> = ({ productQuantityLimit, description, productIds, disabledProductIds, onExchange }) => {
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -71,7 +66,10 @@ const VoucherExchangeModal: React.FC<VoucherExchangeModalProps> = ({
                     setSelectedProductIds(selectedProductIds.filter(id => id !== productId))
                   }
                 }}
-                disabled={!selectedProductIds.includes(productId) && selectedProductIds.length >= productQuantityLimit}
+                disabled={
+                  disabledProductIds.includes(productId) ||
+                  (!selectedProductIds.includes(productId) && selectedProductIds.length >= productQuantityLimit)
+                }
               />
               <ProductItem id={productId} />
             </div>
