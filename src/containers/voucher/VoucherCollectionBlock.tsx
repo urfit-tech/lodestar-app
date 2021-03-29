@@ -2,10 +2,10 @@ import { useQuery } from '@apollo/react-hooks'
 import { message } from 'antd'
 import axios from 'axios'
 import gql from 'graphql-tag'
-import { reverse } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
+import { VoucherProps } from '../../components/voucher/Voucher'
 import VoucherCollectionBlockComponent from '../../components/voucher/VoucherCollectionBlock'
 import hasura from '../../hasura'
 import { handleError } from '../../helpers'
@@ -15,28 +15,33 @@ import { useEnrolledProductIds } from '../../hooks/data'
 const VoucherCollectionBlock: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken, apiHost } = useAuth()
-  const { loading, error, data, refetch } = useQuery<hasura.GET_VOUCHER_COLLECTION>(GET_VOUCHER_COLLECTION)
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_VOUCHER_COLLECTION,
+    hasura.GET_VOUCHER_COLLECTIONVariables
+  >(GET_VOUCHER_COLLECTION, {
+    variables: { memberId: currentMemberId || '' },
+  })
   const { loadingProductIds, errorProductIds, enrolledProductIds, refetchProgramIds } = useEnrolledProductIds(
     currentMemberId || '',
   )
 
-  const voucherCollection =
-    loading || error || !data
-      ? []
-      : reverse(data.voucher).map(voucher => ({
-          ...voucher,
-          title: voucher.voucher_code.voucher_plan.title,
-          startedAt: voucher.voucher_code.voucher_plan.started_at
-            ? new Date(voucher.voucher_code.voucher_plan.started_at)
-            : undefined,
-          endedAt: voucher.voucher_code.voucher_plan.ended_at
-            ? new Date(voucher.voucher_code.voucher_plan.ended_at)
-            : undefined,
-          productQuantityLimit: voucher.voucher_code.voucher_plan.product_quantity_limit,
-          available: !voucher.status || voucher.status.outdated || voucher.status.used ? false : true,
-          productIds: voucher.voucher_code.voucher_plan.voucher_plan_products.map(product => product.product_id),
-          description: decodeURI(voucher.voucher_code.voucher_plan.description || ''),
-        }))
+  const voucherCollection: (VoucherProps & {
+    productIds: string[]
+  })[] =
+    data?.voucher.map(voucher => ({
+      id: voucher.id,
+      title: voucher.voucher_code.voucher_plan.title,
+      startedAt: voucher.voucher_code.voucher_plan.started_at
+        ? new Date(voucher.voucher_code.voucher_plan.started_at)
+        : undefined,
+      endedAt: voucher.voucher_code.voucher_plan.ended_at
+        ? new Date(voucher.voucher_code.voucher_plan.ended_at)
+        : undefined,
+      productQuantityLimit: voucher.voucher_code.voucher_plan.product_quantity_limit,
+      available: !!voucher.status && !voucher.status.outdated && !voucher.status.used,
+      productIds: voucher.voucher_code.voucher_plan.voucher_plan_products.map(product => product.product_id),
+      description: decodeURI(voucher.voucher_code.voucher_plan.description || ''),
+    })) || []
 
   const handleInsert = (setLoading: React.Dispatch<React.SetStateAction<boolean>>, code: string) => {
     if (!currentMemberId) {
@@ -135,8 +140,8 @@ const exchangeVoucherCode = (
 }
 
 const GET_VOUCHER_COLLECTION = gql`
-  query GET_VOUCHER_COLLECTION {
-    voucher {
+  query GET_VOUCHER_COLLECTION($memberId: String!) {
+    voucher(where: { member_id: { _eq: $memberId } }, order_by: [{ created_at: desc }]) {
       id
       status {
         outdated
