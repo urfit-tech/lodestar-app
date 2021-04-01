@@ -142,7 +142,7 @@ export const useMutatePractice = (practiceId: string) => {
       },
     })
   }
-  const updatePractice = (props: { title: string; description: string; coverUrl: string }) => {
+  const updatePractice = (props: { title: string; description: string; coverUrl: string | null }) => {
     return updatePracticeHandler({
       variables: {
         practiceId,

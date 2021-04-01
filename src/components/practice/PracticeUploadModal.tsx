@@ -57,21 +57,13 @@ const StyledButton = styled(Button)`
   }
 `
 
-type PracticeUploadModalProps = {
+const PracticeUploadModal: React.FC<{
   programContentId: string
   practice?: PracticeProps | null
   onSubmit?: (values: { practiceId: string; title: string; description: EditorState }) => void
   onRefetch?: () => Promise<any>
   renderTrigger?: (onOpen: any) => React.ReactElement
-}
-
-const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
-  practice,
-  programContentId,
-  onSubmit,
-  onRefetch,
-  renderTrigger,
-}) => {
+}> = ({ practice, programContentId, onSubmit, onRefetch, renderTrigger }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken, apiHost } = useAuth()
   const { id: appId } = useApp()
@@ -90,22 +82,22 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
   )
   const [attachments, setAttachments] = useState<File[]>(practice?.attachments.map(attachment => attachment.data) || [])
   const [variant, setVariant] = useState<'upload' | 'edit'>('upload')
-  const [coverImage, setCoverImage] = useState<File | null>(null)
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (practice?.id) {
       setVariant('edit')
     }
-  }, [practice?.id])
+  }, [practice])
 
   const handleUpload = handleSubmit(async ({ title, description }) => {
     if (!currentMemberId) {
       return
     }
     setLoading(true)
-    const path = `images/${appId}/practices/`
-    const coverUrl = `https://${process.env.REACT_APP_S3_BUCKET}/${path}`
+    const path = `images/${appId}/practices`
+    const practiceFolder = `https://${process.env.REACT_APP_S3_BUCKET}/${path}`
 
     try {
       if (variant === 'upload') {
@@ -115,23 +107,26 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
           memberId: currentMemberId,
           programContentId,
         })
-        const returningPracticeId = data?.insert_practice?.returning[0]?.id
-        if (!returningPracticeId) {
+        const newPracticeId = data?.insert_practice?.returning[0]?.id
+        if (!newPracticeId) {
           return
         }
+
         if (attachments.length) {
-          await uploadAttachments('Practice', returningPracticeId, attachments)
+          await uploadAttachments('Practice', newPracticeId, attachments)
         }
-        await uploadFile(`${path + returningPracticeId}`, coverImage, authToken, apiHost)
+        if (coverImageFile) {
+          await uploadFile(`${path}/${newPracticeId}`, coverImageFile, authToken, apiHost)
+        }
+
         await updatePracticeHandler({
           variables: {
-            practiceId: returningPracticeId,
-            coverUrl: `${coverUrl + returningPracticeId}`,
+            practiceId: newPracticeId,
+            coverUrl: coverImageFile ? `${practiceFolder}/${newPracticeId}` : null,
             title,
             description: description?.toRAW(),
           },
         }).then(() => {
-          onRefetch?.()
           toast({
             title: `${formatMessage(messages.practice)}${formatMessage(commonMessages.event.successfullyUpload)}`,
             status: 'success',
@@ -139,9 +134,8 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
             position: 'top',
           })
         })
-        onSubmit?.({ practiceId: returningPracticeId, title, description })
-      }
-      if (variant === 'edit' && practice?.id) {
+        onSubmit?.({ practiceId: newPracticeId, title, description })
+      } else if (variant === 'edit' && practice?.id) {
         const deletedAttachmentIds = practice.attachments
           .filter(practiceAttachment =>
             attachments.every(
@@ -162,14 +156,16 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
         await updatePractice({
           title,
           description: description?.toRAW(),
-          coverUrl: `${coverUrl + practice?.id}`,
+          coverUrl: coverImageFile ? `${practiceFolder}/${practice.id}?t=${Date.now()}` : practice.coverUrl,
         }).then(async () => {
           if (attachments.length) {
             await deleteAttachments({ variables: { attachmentIds: deletedAttachmentIds } })
             await uploadAttachments('Practice', practice.id, newAttachments)
           }
-          await uploadFile(`${path + practice.id}`, coverImage, authToken, apiHost)
-          onRefetch?.()
+          if (coverImageFile) {
+            await uploadFile(`${path}/${practice.id}`, coverImageFile, authToken, apiHost)
+          }
+
           toast({
             title: `${formatMessage(messages.practice)}${formatMessage(commonMessages.event.successfullyUpload)}`,
             status: 'success',
@@ -177,13 +173,15 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
             position: 'top',
           })
         })
+
         onSubmit?.({ practiceId: practice.id, title, description })
       }
+      onRefetch?.()
+      onClose()
     } catch (error) {
       handleError(error)
     }
     setLoading(false)
-    onClose()
   })
 
   return (
@@ -240,7 +238,7 @@ const PracticeUploadModal: React.FC<PracticeUploadModalProps> = ({
             <QuestionIcon />
           </Tooltip>
         </FormLabel>
-        <ImageUploader imgUrl={practice?.coverUrl} file={coverImage} onChange={file => setCoverImage(file)} />
+        <ImageUploader imgUrl={practice?.coverUrl} file={coverImageFile} onChange={file => setCoverImageFile(file)} />
       </div>
     </CommonModal>
   )
