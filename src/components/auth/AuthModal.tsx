@@ -63,6 +63,7 @@ const AuthModal = ({ defaultAuthState, noGeneralLogin, onAuthStateChange, render
       footer={null}
       onCancel={() => setVisible && setVisible(false)}
       visible={visible}
+      maskClosable={!(authState === 'register')}
     >
       <StyledContainer>
         {authState === 'login' ? (
