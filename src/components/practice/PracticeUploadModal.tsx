@@ -231,7 +231,7 @@ const PracticeUploadModal: React.FC<{
         </FormLabel>
         <FileUploader multiple showUploadList fileList={attachments} onChange={files => setAttachments(files)} />
       </div>
-      <div className="mb-4">
+      <div className={practice?.isCoverRequired ? 'mb-4' : 'd-none'}>
         <FormLabel>
           <span className="mr-1">{formatMessage(messages.cover)}</span>
           <Tooltip label={formatMessage(messages.coverNotice)} placement="top" hasArrow>

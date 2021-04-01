@@ -108,7 +108,7 @@ const PracticePage: React.FC = () => {
         likedCount: practice?.reactedMemberIdsCount || 0,
       })
     }
-  }, [currentMemberId, practice?.id])
+  }, [currentMemberId, practice])
 
   if (loadingPractice) {
     return <Skeleton active />

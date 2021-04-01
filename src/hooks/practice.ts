@@ -42,6 +42,7 @@ export const usePractice = (options: { practiceId?: string; memberId?: string | 
             data: u.data,
             options: u.options,
           })),
+          isCoverRequired: !!data.practice[0].program_content.metadata?.isCoverRequired,
           suggestCount: data.practice[0].practice_suggests_aggregate.aggregate?.count || 0,
           suggests: data.practice[0].practice_suggests
             .map(w => w.suggest)
@@ -88,18 +89,17 @@ export const usePracticeCollection = (options: {
     },
   })
   const practiceCollection: PracticePreviewProps[] =
-    loading || error || !data
-      ? []
-      : data.practice.map(v => ({
-          id: v.id,
-          title: v.title,
-          createdAt: new Date(v.created_at),
-          coverUrl: v.cover_url,
-          memberId: v.member_id,
-          suggestCount: v.practice_issues_aggregate.aggregate?.count || 0,
-          reactedMemberIds: v.practice_reactions.map(w => w.member_id),
-          reactedMemberIdsCount: v.practice_reactions_aggregate.aggregate?.count || 0,
-        }))
+    data?.practice.map(v => ({
+      id: v.id,
+      title: v.title,
+      createdAt: new Date(v.created_at),
+      coverUrl: v.cover_url,
+      memberId: v.member_id,
+      suggestCount: v.practice_issues_aggregate.aggregate?.count || 0,
+      reactedMemberIds: v.practice_reactions.map(w => w.member_id),
+      reactedMemberIdsCount: v.practice_reactions_aggregate.aggregate?.count || 0,
+      isCoverRequired: !!v.program_content.metadata,
+    })) || []
 
   return {
     loadingPracticeCollection: loading,
@@ -210,6 +210,7 @@ const GET_PRACTICE = gql`
       program_content {
         id
         title
+        metadata
         program_content_section {
           program {
             id

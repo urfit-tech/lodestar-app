@@ -5853,6 +5853,7 @@ export interface GET_PRACTICE_practice_program_content {
   __typename: "program_content";
   id: any;
   title: string;
+  metadata: any | null;
   /**
    * An object relationship
    */
@@ -11365,6 +11366,7 @@ export enum role_constraint {
  */
 export enum role_permission_constraint {
   role_permission_pkey = "role_permission_pkey",
+  role_permission_role_id_permission_id_key = "role_permission_role_id_permission_id_key",
 }
 
 /**
