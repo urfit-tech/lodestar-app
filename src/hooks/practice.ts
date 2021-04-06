@@ -14,56 +14,55 @@ export const usePractice = (options: { practiceId?: string; memberId?: string | 
     },
   })
 
-  const practice: PracticeProps | null =
-    loading || error || !data || !data.practice[0]
-      ? null
-      : {
-          id: data.practice[0].id,
-          title: data.practice[0].title,
-          createdAt: new Date(data.practice[0].created_at),
-          coverUrl: data.practice[0].cover_url,
-          description: data.practice[0].description,
-          memberId: data.practice[0].member_id,
-          programContentId: data.practice[0].program_content.id,
-          programContentTitle: data.practice[0].program_content.title,
-          programId: data.practice[0].program_content.program_content_section.program.id,
-          programRoles: data.practice[0].program_content.program_content_section.program.program_roles.map(
-            programRole => ({
-              id: programRole.id,
-              name: programRole.name as ProgramRoleName,
-              memberId: programRole.member_id,
-            }),
-          ),
-          programTitle: data.practice[0].program_content.program_content_section.program.title,
-          reactedMemberIds: data.practice[0].practice_reactions.map(w => w.member_id),
-          reactedMemberIdsCount: data.practice[0].practice_reactions_aggregate.aggregate?.count || 0,
-          attachments: data.practice[0].practice_attachments.map(u => ({
-            id: u.attachment_id,
-            data: u.data,
-            options: u.options,
+  const practice: PracticeProps | null = data?.practice[0]
+    ? {
+        id: data.practice[0].id,
+        title: data.practice[0].title,
+        createdAt: new Date(data.practice[0].created_at),
+        coverUrl: data.practice[0].cover_url,
+        description: data.practice[0].description,
+        memberId: data.practice[0].member_id,
+        programContentId: data.practice[0].program_content.id,
+        programContentTitle: data.practice[0].program_content.title,
+        programId: data.practice[0].program_content.program_content_section.program.id,
+        programRoles: data.practice[0].program_content.program_content_section.program.program_roles.map(
+          programRole => ({
+            id: programRole.id,
+            name: programRole.name as ProgramRoleName,
+            memberId: programRole.member_id,
+          }),
+        ),
+        programTitle: data.practice[0].program_content.program_content_section.program.title,
+        reactedMemberIds: data.practice[0].practice_reactions.map(w => w.member_id),
+        reactedMemberIdsCount: data.practice[0].practice_reactions_aggregate.aggregate?.count || 0,
+        attachments: data.practice[0].practice_attachments.map(u => ({
+          id: u.attachment_id,
+          data: u.data,
+          options: u.options,
+        })),
+        isCoverRequired: !!data.practice[0].program_content.metadata?.isCoverRequired,
+        suggestCount: data.practice[0].practice_suggests_aggregate.aggregate?.count || 0,
+        suggests: data.practice[0].practice_suggests
+          .map(w => w.suggest)
+          .filter(notEmpty)
+          .map(v => ({
+            id: v.id,
+            description: v.description,
+            memberId: v.member_id,
+            createdAt: new Date(v.created_at),
+            reactedMemberIds: v.suggest_reactions.map(w => w.member_id) || [],
+            suggestReplies:
+              v.suggest_replies.map(y => ({
+                id: y.id,
+                memberId: y.member_id,
+                content: y.content,
+                createdAt: y.created_at,
+                reactedMemberIds: y.suggest_reply_reactions.map(w => w.member_id),
+              })) || [],
+            suggestReplyCount: v.suggest_replies_aggregate.aggregate?.count || 0,
           })),
-          isCoverRequired: !!data.practice[0].program_content.metadata?.isCoverRequired,
-          suggestCount: data.practice[0].practice_suggests_aggregate.aggregate?.count || 0,
-          suggests: data.practice[0].practice_suggests
-            .map(w => w.suggest)
-            .filter(notEmpty)
-            .map(v => ({
-              id: v.id,
-              description: v.description,
-              memberId: v.member_id,
-              createdAt: new Date(v.created_at),
-              reactedMemberIds: v.suggest_reactions.map(w => w.member_id) || [],
-              suggestReplies:
-                v.suggest_replies.map(y => ({
-                  id: y.id,
-                  memberId: y.member_id,
-                  content: y.content,
-                  createdAt: y.created_at,
-                  reactedMemberIds: y.suggest_reply_reactions.map(w => w.member_id),
-                })) || [],
-              suggestReplyCount: v.suggest_replies_aggregate.aggregate?.count || 0,
-            })),
-        }
+      }
+    : null
 
   return {
     loadingPractice: loading,
@@ -98,7 +97,7 @@ export const usePracticeCollection = (options: {
       suggestCount: v.practice_issues_aggregate.aggregate?.count || 0,
       reactedMemberIds: v.practice_reactions.map(w => w.member_id),
       reactedMemberIdsCount: v.practice_reactions_aggregate.aggregate?.count || 0,
-      isCoverRequired: !!v.program_content.metadata,
+      isCoverRequired: !!v.program_content.metadata?.isCoverRequired,
     })) || []
 
   return {

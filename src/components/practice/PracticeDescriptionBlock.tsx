@@ -84,8 +84,9 @@ const PracticeDescriptionBlock: React.FC<{
   description: string | null
   duration?: number
   score?: number
+  isCoverRequired: boolean
   attachments?: ProgramContentAttachmentProps[]
-}> = ({ programContentId, title, description, duration, score, attachments }) => {
+}> = ({ programContentId, title, description, duration, score, isCoverRequired, attachments }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { currentMemberId, authToken, apiHost } = useAuth()
@@ -161,6 +162,7 @@ const PracticeDescriptionBlock: React.FC<{
       ) : (
         <PracticeUploadModal
           programContentId={programContentId}
+          isCoverRequired={isCoverRequired}
           onRefetch={refetchPractice}
           onSubmit={({ practiceId }) => {
             window.location.assign(`/practices/${practiceId}`)
