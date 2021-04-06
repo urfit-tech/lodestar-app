@@ -36,7 +36,10 @@ const ProgramSection: React.FC<{ options: { title?: string; colAmount?: number; 
       <div className="container mb-5">
         <div className="row">
           {programs.slice(0, options?.colAmount || 3).map(program => (
-            <div key={program.id} className={`col-12 col-lg-${(options?.colAmount && 12 / options?.colAmount) || 4}`}>
+            <div
+              key={program.id}
+              className={`col-12 col-lg-${(options?.colAmount && 12 / options?.colAmount) || 4} mb-5`}
+            >
               <ProgramCard program={program} withMeta noInstructor />
             </div>
           ))}

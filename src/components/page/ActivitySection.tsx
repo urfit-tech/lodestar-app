@@ -33,7 +33,10 @@ const ActivitySection: React.FC<{ options: { title?: string; colAmount?: number 
       <div className="container mb-5">
         <div className="row">
           {activities.slice(0, options.colAmount || 3).map(activity => (
-            <div key={activity.id} className={`col-12 col-lg-${(options.colAmount && 12 / options.colAmount) || 4}`}>
+            <div
+              key={activity.id}
+              className={`col-12 col-lg-${(options.colAmount && 12 / options.colAmount) || 4} mb-5`}
+            >
               <Activity {...activity} />
             </div>
           ))}

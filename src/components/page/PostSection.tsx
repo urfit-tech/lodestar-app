@@ -117,7 +117,7 @@ const PostSection: React.FC<{ options: { title?: string } }> = ({ options }) => 
       <div className="container px-0">
         <StyledPostListContainer className="mb-5">
           {posts.map(post => (
-            <div key={post.id} className="col-12 col-md-6 col-lg-4 mb-4 post-card-container">
+            <div key={post.id} className="col-12 col-lg-4 mb-5 post-card-container">
               <StyledPostCard className="mb-4" to={`/posts/${post.codeName || post.id}`}>
                 <StyledPostCoverContainer className="mb-3">
                   <StyledCover>
