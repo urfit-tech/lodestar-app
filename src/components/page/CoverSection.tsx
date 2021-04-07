@@ -10,7 +10,10 @@ const StyledSection = styled.section`
 `
 const SliderWrapper = styled.div`
   position: relative;
-  padding-top: 36%;
+  padding-top: 70%;
+  @media (min-width: ${BREAK_POINT}px) {
+    padding-top: 36%;
+  }
 `
 const StyledSlider = styled(Slider)`
   && {
@@ -47,9 +50,12 @@ const StyledCoverBackground = styled.div<{
   bottom: 0;
   left: 0;
   overflow: hidden;
-  background-image: url(${props => props.srcDesktop});
   background-size: cover;
-  background-position: top center;
+  background-image: url(${props => props.srcMobile});
+
+  @media (min-width: ${BREAK_POINT}px) {
+    background-image: url(${props => props.srcDesktop});
+  }
 `
 const StyledCoverHeading = styled(Heading)`
   color: ${props => (props?.headColor ? props.headColor : '#fff')};
