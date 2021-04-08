@@ -1,5 +1,5 @@
 import { Heading } from '@chakra-ui/react'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import Slider from 'react-slick'
 import styled from 'styled-components'
@@ -112,31 +112,15 @@ const CoverSection: React.FC<{
   }
 }> = ({ options }) => {
   const history = useHistory()
-  const [scale, setScale] = useState(0)
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const cardRef = useRef<HTMLDivElement | null>(null)
-
-  const handleResize = useCallback(() => {
-    if (containerRef.current && cardRef.current) {
-      setScale(containerRef.current.offsetWidth / cardRef.current.offsetWidth)
-    }
-  }, [containerRef, cardRef])
-
-  useEffect(() => {
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [handleResize])
 
   return (
     <StyledSection>
       <StyledSlider dots infinite arrows={false} autoplay autoplaySpeed={5000}>
         {options.coverInfos.map(v => (
           <div>
-            <SliderWrapper ref={containerRef}>
+            <SliderWrapper>
               <StyledCoverBackground
                 key={v.id}
-                ref={cardRef}
                 srcDesktop={v.srcDesktop}
                 srcMobile={v.srcMobile}
                 className={`d-flex align-items-center${v.buttonText ? '' : ' cursor-pointer'} cover-background`}
