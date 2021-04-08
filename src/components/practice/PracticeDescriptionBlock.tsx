@@ -1,11 +1,12 @@
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import { Button, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spinner } from '@chakra-ui/react'
+import { Button, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spinner, useToast } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { downloadFile, getFileDownloadableLink } from '../../helpers'
+import { commonMessages } from '../../helpers/translation'
 import { usePractice } from '../../hooks/practice'
 import { ProgramContentAttachmentProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
@@ -89,6 +90,7 @@ const PracticeDescriptionBlock: React.FC<{
 }> = ({ programContentId, title, description, duration, score, isCoverRequired, attachments }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
+  const toast = useToast()
   const { currentMemberId, authToken, apiHost } = useAuth()
   const { loadingPractice, practice, refetchPractice } = usePractice({ memberId: currentMemberId, programContentId })
   const [isDownloading, setIsDownloading] = useState<boolean>(false)
@@ -106,13 +108,18 @@ const PracticeDescriptionBlock: React.FC<{
       const fileLink = await getFileDownloadableLink(fileKey, authToken, apiHost)
       const fileRequest = new Request(fileLink)
       const response = await fetch(fileRequest)
-      response.url &&
-        downloadFile(file.data?.name || 'untitled', { url: response.url }).then(() => {
-          setIsDownloading(false)
-        })
+      if (response.url) {
+        await downloadFile(file.data?.name || 'untitled', { url: response.url })
+      }
     } catch (error) {
-      // message.error(error)
+      toast({
+        title: formatMessage(commonMessages.status.readingFail),
+        status: 'error',
+        duration: 1500,
+        position: 'top',
+      })
     }
+    setIsDownloading(false)
   }
 
   return (
@@ -131,23 +138,25 @@ const PracticeDescriptionBlock: React.FC<{
       <StyledPractice className="mb-4">
         <StyledPracticeTitle className="mb-3">{title}</StyledPracticeTitle>
         {!BraftEditor.createEditorState(description).isEmpty() && <BraftContent>{description}</BraftContent>}
-        <Menu>
-          <MenuButton
-            as={Button}
-            variant="outline"
-            rightIcon={isDownloading ? <Spinner size="sm" /> : <ChevronDownIcon />}
-            className="mt-3"
-          >
-            {formatMessage(messages.downloadMaterial)}
-          </MenuButton>
-          <MenuList>
-            {attachments?.map((attachment, index) => (
-              <MenuItem key={attachment.id} onClick={() => handleDownload(index)}>
-                {attachment.data.name}
-              </MenuItem>
-            ))}
-          </MenuList>
-        </Menu>
+        {!!attachments?.length && (
+          <Menu>
+            <MenuButton
+              as={Button}
+              variant="outline"
+              rightIcon={isDownloading ? <Spinner size="sm" /> : <ChevronDownIcon />}
+              className="mt-3"
+            >
+              {formatMessage(messages.downloadMaterial)}
+            </MenuButton>
+            <MenuList>
+              {attachments?.map((attachment, index) => (
+                <MenuItem key={attachment.id} onClick={() => handleDownload(index)}>
+                  {attachment.data.name}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+        )}
       </StyledPractice>
 
       {practice ? (
