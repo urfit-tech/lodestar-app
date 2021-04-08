@@ -8,6 +8,7 @@ export type PracticePreviewProps = {
   suggestCount: number
   reactedMemberIds: string[]
   reactedMemberIdsCount: number
+  isCoverRequired: boolean
 }
 
 export type PracticeSuggestProps = {

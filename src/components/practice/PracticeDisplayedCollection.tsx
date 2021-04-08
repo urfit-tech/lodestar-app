@@ -10,6 +10,7 @@ import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as RocketIcon } from '../../images/icon-rocket.svg'
+import { PracticePreviewProps } from '../../types/practice'
 import { useAuth } from '../auth/AuthContext'
 import { CommonTextMixin } from '../common'
 import { CustomRatioImage } from '../common/Image'
@@ -39,20 +40,21 @@ const PracticeDisplayedCollection: React.FC<{
   isPrivate: boolean
   programContentId: string
 }> = ({ isPrivate, programContentId }) => {
-  const { currentMemberId, currentUserRole } = useAuth()
   const { formatMessage } = useIntl()
+  const { currentMemberId, currentUserRole } = useAuth()
   const { loadingPracticeCollection, errorPracticeCollection, practiceCollection } = usePracticeCollection({
     programContentId,
     memberId: currentUserRole === 'general-member' && isPrivate ? currentMemberId : null,
   })
 
-  if (loadingPracticeCollection || errorPracticeCollection || !practiceCollection) {
+  if (loadingPracticeCollection || errorPracticeCollection || !practiceCollection || !currentMemberId) {
     return (
       <Box padding="6" boxShadow="lg" bg="white">
         <SkeletonText mt="4" noOfLines={4} spacing="4" />
       </Box>
     )
   }
+
   return (
     <>
       {isPrivate && (
@@ -72,15 +74,7 @@ const PracticeDisplayedCollection: React.FC<{
       <div className="row">
         {practiceCollection.map(v => (
           <div className="col-12 col-lg-4 mb-4" key={v.id}>
-            <PracticeDisplayedCard
-              id={v.id}
-              title={v.title}
-              coverUrl={v.coverUrl}
-              memberId={v.memberId}
-              suggestCount={v.suggestCount}
-              isLiked={v.reactedMemberIds?.some(memberId => memberId === currentMemberId) || false}
-              likedCount={v?.reactedMemberIdsCount || 0}
-            />
+            <PracticeDisplayedCard {...v} currentMemberId={currentMemberId} />
           </div>
         ))}
       </div>
@@ -88,10 +82,18 @@ const PracticeDisplayedCollection: React.FC<{
   )
 }
 
-const StyledTitle = styled.h3`
-  height: 20px;
-  color: var(--gray-darker);
+const StyledContainer = styled.div`
+  padding: 0.75rem;
   overflow: hidden;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px 0 var(--gray);
+`
+const StyledTitle = styled.h3`
+  overflow: hidden;
+  color: var(--gray-darker);
+  font-size: 18px;
+  font-weight: bold;
   text-overflow: ellipsis;
   white-space: nowrap;
   transition: all 0.3s;
@@ -100,17 +102,11 @@ const StyledTitle = styled.h3`
     color: ${props => props.theme['@primary-color']};
   }
 `
-const StyledContainer = styled.div`
-  border-radius: 4px;
-  box-shadow: 0 2px 10px 0 var(--gray);
-  background-color: #ffffff;
-  overflow: hidden;
-`
 const StyledGroup = styled.div`
-  line-height: 1;
+  color: var(--gray-dark);
   font-size: 12px;
 `
-const StyledLike = styled.div<{ isActive: boolean }>`
+const StyledLike = styled.span<{ isActive: boolean }>`
   ${props =>
     props.isActive &&
     css`
@@ -122,20 +118,26 @@ const StyledLike = styled.div<{ isActive: boolean }>`
   user-select: none;
 `
 
-const PracticeDisplayedCard: React.FC<{
-  id: string
-  coverUrl: string | null
-  title: string
-  memberId: string
-  suggestCount: number
-  likedCount: number
-  isLiked: boolean
-}> = ({ id, coverUrl, title, memberId, suggestCount, isLiked, likedCount }) => {
-  const [likeStatus, setLikeStatus] = useState({
-    isLiked,
-    likedCount,
-  })
+const PracticeDisplayedCard: React.FC<
+  PracticePreviewProps & {
+    currentMemberId: string
+  }
+> = ({
+  id,
+  coverUrl,
+  title,
+  memberId,
+  suggestCount,
+  isCoverRequired,
+  reactedMemberIds,
+  reactedMemberIdsCount,
+  currentMemberId,
+}) => {
   const { deletePracticeReaction, insertPracticeReaction } = useMutatePractice(id)
+  const [likeStatus, setLikeStatus] = useState({
+    isLiked: reactedMemberIds.includes(currentMemberId),
+    likedCount: reactedMemberIds.length,
+  })
 
   const handleLikeStatus = async () => {
     if (likeStatus.isLiked) {
@@ -143,24 +145,27 @@ const PracticeDisplayedCard: React.FC<{
     } else {
       await insertPracticeReaction()
     }
-    setLikeStatus({
-      isLiked: !likeStatus.isLiked,
-      likedCount: likeStatus.isLiked ? likeStatus?.likedCount - 1 : likeStatus?.likedCount + 1,
-    })
+    setLikeStatus(prev => ({
+      isLiked: !prev.isLiked,
+      likedCount: prev.isLiked ? prev.likedCount - 1 : prev.likedCount + 1,
+    }))
   }
-  return (
-    <StyledContainer>
-      <a href={`/practices/${id}`} target="_blank" rel="noopener noreferrer">
-        <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} className="mb-3" />
-        <StyledTitle className="mx-3">{title}</StyledTitle>
 
-        <div className="d-flex justify-content-between align-items-end m-3">
+  return (
+    <a href={`/practices/${id}`} target="_blank" rel="noopener noreferrer">
+      <StyledContainer>
+        {isCoverRequired && (
+          <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} className="mb-3" />
+        )}
+        <StyledTitle className="mb-3">{title}</StyledTitle>
+
+        <div className="d-flex align-items-center justify-content-between">
           <MemberAvatar memberId={memberId} withName />
-          <StyledGroup className="d-flex">
-            <div className="mr-3">
+          <StyledGroup className="text-right">
+            <span className="mr-3">
               <Icon as={CommentIcon} className="mr-1" />
               <span>{suggestCount}</span>
-            </div>
+            </span>
             <StyledLike
               isActive={likeStatus.isLiked}
               onClick={e => {
@@ -173,8 +178,8 @@ const PracticeDisplayedCard: React.FC<{
             </StyledLike>
           </StyledGroup>
         </div>
-      </a>
-    </StyledContainer>
+      </StyledContainer>
+    </a>
   )
 }
 

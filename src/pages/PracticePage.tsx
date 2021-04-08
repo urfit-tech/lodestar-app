@@ -2,7 +2,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons'
 import { Box, Button, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Spinner } from '@chakra-ui/react'
 import { message, Skeleton } from 'antd'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -93,22 +93,9 @@ const PracticePage: React.FC = () => {
   const { currentMemberId, authToken, apiHost } = useAuth()
   const history = useHistory()
   const { loadingPractice, errorPractice, practice, refetchPractice } = usePractice({ practiceId })
+
   const { deletePractice, insertPracticeReaction, deletePracticeReaction } = useMutatePractice(practiceId)
-  const [isDownloading, setIsDownloading] = useState<boolean>(false)
-
-  const [likeStatus, setLikeStatus] = useState({
-    isLiked: practice?.reactedMemberIds?.some(memberId => memberId === currentMemberId) || false,
-    likedCount: practice?.reactedMemberIdsCount || 0,
-  })
-
-  useEffect(() => {
-    if (currentMemberId) {
-      setLikeStatus({
-        isLiked: practice?.reactedMemberIds.includes(currentMemberId) || false,
-        likedCount: practice?.reactedMemberIdsCount || 0,
-      })
-    }
-  }, [currentMemberId, practice?.id])
+  const [isDownloading, setIsDownloading] = useState(false)
 
   if (loadingPractice) {
     return <Skeleton active />
@@ -118,17 +105,16 @@ const PracticePage: React.FC = () => {
     return <div>{formatMessage(commonMessages.status.readingError)}</div>
   }
 
+  const isLiked = practice?.reactedMemberIds?.some(memberId => memberId === currentMemberId) || false
   const files: {
     id: string
     name: string
     from: string
-  }[] = [
-    ...practice.attachments.map(attachment => ({
-      id: attachment.id,
-      name: attachment.data.name,
-      from: 'practice',
-    })),
-  ]
+  }[] = practice.attachments.map(attachment => ({
+    id: attachment.id,
+    name: attachment.data.name,
+    from: 'practice',
+  }))
 
   const handleDownload = async (fileIndex: number) => {
     setIsDownloading(true)
@@ -153,15 +139,12 @@ const PracticePage: React.FC = () => {
     }
   }
   const handleLikeStatus = async () => {
-    if (likeStatus.isLiked) {
+    if (isLiked) {
       await deletePracticeReaction()
     } else {
       await insertPracticeReaction()
     }
-    setLikeStatus({
-      isLiked: !likeStatus.isLiked,
-      likedCount: likeStatus.isLiked ? likeStatus?.likedCount - 1 : likeStatus?.likedCount + 1,
-    })
+
     await refetchPractice()
   }
 
@@ -184,8 +167,9 @@ const PracticePage: React.FC = () => {
           {practice.memberId === currentMemberId && (
             <Box className="d-flex" h="40px">
               <PracticeUploadModal
-                practice={practice}
                 programContentId={practice.programContentId}
+                isCoverRequired={practice.isCoverRequired}
+                practice={practice}
                 onRefetch={refetchPractice}
                 onSubmit={() => window.location.reload(true)}
               />
@@ -234,16 +218,16 @@ const PracticePage: React.FC = () => {
               </MenuList>
             </Menu>
           ) : (
-            <div></div>
+            <div />
           )}
           <div onClick={handleLikeStatus}>
             <StyledIconButton
               variant="ghost"
-              isActive={likeStatus.isLiked}
-              icon={<StyledIcon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} />}
+              isActive={isLiked}
+              icon={<StyledIcon as={isLiked ? HeartFillIcon : HeartIcon} />}
               className="mr-2"
             />
-            <StyledLikedCount isActive={likeStatus.isLiked}>{likeStatus.likedCount}</StyledLikedCount>
+            <StyledLikedCount isActive={isLiked}>{practice.reactedMemberIdsCount}</StyledLikedCount>
           </div>
         </div>
 
@@ -252,23 +236,21 @@ const PracticePage: React.FC = () => {
         <div className="mb-4">
           <StyledPracticeTitle className="mb-3">{formatMessage(messages.practiceSuggestion)}</StyledPracticeTitle>
           <SuggestionCreationModal threadId={`/practices/${practice.id}`} onRefetch={() => refetchPractice()} />
-          {practice.suggests.map(v => {
-            return (
-              <div key={v.id}>
-                <MessageSuggestItem
-                  key={v.id}
-                  suggestId={v.id}
-                  memberId={v.memberId}
-                  description={v.description}
-                  suggestReplyCount={v.suggestReplyCount}
-                  programRoles={practice?.programRoles || []}
-                  reactedMemberIds={v.reactedMemberIds}
-                  createdAt={v.createdAt}
-                  onRefetch={() => refetchPractice()}
-                />
-              </div>
-            )
-          })}
+          {practice.suggests.map(v => (
+            <div key={v.id}>
+              <MessageSuggestItem
+                key={v.id}
+                suggestId={v.id}
+                memberId={v.memberId}
+                description={v.description}
+                suggestReplyCount={v.suggestReplyCount}
+                programRoles={practice?.programRoles || []}
+                reactedMemberIds={v.reactedMemberIds}
+                createdAt={v.createdAt}
+                onRefetch={() => refetchPractice()}
+              />
+            </div>
+          ))}
         </div>
       </StyledContainer>
     </DefaultLayout>

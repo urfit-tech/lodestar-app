@@ -10,8 +10,8 @@ import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { codeMessages, productMessages, programMessages } from '../../helpers/translation'
 import { handleError } from '../../helpers'
+import { codeMessages, productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
@@ -139,6 +139,7 @@ const ProgramContentBlock: React.FC<{
         <div className="mb-4">
           <PracticeDescriptionBlock
             programContentId={programContentId}
+            isCoverRequired={!!programContent.metadata?.isCoverRequired}
             title={programContent.title}
             description={programContent.programContentBody?.description || ''}
             duration={programContent.duration || 0}

@@ -56,7 +56,7 @@ const PracticeCollectionBlock: React.FC<{
   return (
     <div className="row">
       {practiceCollection.length ? (
-        practiceCollection.map((v: any) => (
+        practiceCollection.map(v => (
           <div key={v.id} className="col-12 col-lg-3 mb-4">
             <PracticeAdminCard
               id={v.id}
@@ -66,6 +66,7 @@ const PracticeCollectionBlock: React.FC<{
               suggestCount={v.suggestCount}
               reactedMemberIds={v.reactedMemberIds}
               reactedMemberIdsCount={v.reactedMemberIdsCount}
+              isCoverRequired={v.isCoverRequired}
             />
           </div>
         ))
