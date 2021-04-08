@@ -131,12 +131,15 @@ const ProgramContentPlayer: React.FC<
           playerRef.current?.seekTo(duration * (lastProgress === 1 ? 0 : lastProgress), 'seconds')
         }}
         onProgress={state => {
-          setPlayerState(({ recordAt, endedAt }) => ({
-            recordAt: Date.now(),
-            playbackRate: ((state.playedSeconds - endedAt) * 1000) / (Date.now() - recordAt),
-            startedAt: endedAt,
-            endedAt: state.playedSeconds,
-          }))
+          setPlayerState(({ recordAt, endedAt }) => {
+            const playbackRateByCalculate = ((state.playedSeconds - endedAt) * 1000) / (Date.now() - recordAt)
+            return {
+              recordAt: Date.now(),
+              playbackRate: Math.round(playbackRateByCalculate * 4) / 4,
+              startedAt: endedAt,
+              endedAt: state.playedSeconds,
+            }
+          })
           onProgress?.(state)
         }}
         onPause={() => {
