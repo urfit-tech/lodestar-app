@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -66,31 +66,31 @@ const PracticeUploadModal: React.FC<{
   renderTrigger?: (onOpen: any) => React.ReactElement
 }> = ({ programContentId, isCoverRequired, practice, onSubmit, onRefetch, renderTrigger }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, authToken, apiHost } = useAuth()
-  const { id: appId } = useApp()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
   const { register, control, handleSubmit, errors } = useForm<{
     title: string
     description?: EditorState
   }>({
-    defaultValues: { title: practice?.title, description: BraftEditor.createEditorState(practice?.description || '') },
+    defaultValues: {
+      title: practice?.title,
+      description: BraftEditor.createEditorState(practice?.description || ''),
+    },
   })
+
+  const { currentMemberId, authToken, apiHost } = useAuth()
+  const { id: appId } = useApp()
   const uploadAttachments = useUploadAttachments()
   const { insertPractice, updatePractice, updatePracticeHandler } = useMutatePractice(practice?.id || '')
   const [deleteAttachments] = useMutation<hasura.DELETE_ATTACHMENTS, hasura.DELETE_ATTACHMENTSVariables>(
     DELETE_ATTACHMENTS,
   )
+
   const [attachments, setAttachments] = useState<File[]>(practice?.attachments.map(attachment => attachment.data) || [])
-  const [variant, setVariant] = useState<'upload' | 'edit'>('upload')
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (practice?.id && variant !== 'edit') {
-      setVariant('edit')
-    }
-  }, [practice, variant])
+  const variant = practice ? 'edit' : 'upload'
 
   const handleUpload = handleSubmit(async ({ title, description }) => {
     if (!currentMemberId) {
