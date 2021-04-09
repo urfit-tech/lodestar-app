@@ -95,10 +95,10 @@ const ProgramContentPlayer: React.FC<
     endedAt: 0,
   })
 
-  useEffect(() => {
-    const { recordAt, ...data } = playerState
-    onEventTrigger?.(data)
-  }, [playerState.startedAt])
+  // useEffect(() => {
+  //   const { recordAt, ...data } = playerState
+  //   onEventTrigger?.(data)
+  // }, [playerState.startedAt])
 
   return (
     <StyledContainer>

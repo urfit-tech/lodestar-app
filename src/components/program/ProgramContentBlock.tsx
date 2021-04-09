@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { message, Skeleton, Tabs } from 'antd'
-import axios from 'axios'
+import { Skeleton, Tabs } from 'antd'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
 import { flatten, includes } from 'ramda'
@@ -94,25 +93,25 @@ const ProgramContentBlock: React.FC<{
               lastProgress: played,
             }).then(() => refetchProgress())
           }}
-          onEventTrigger={data => {
-            axios
-              .post(
-                `https://${apiHost}/tasks/player-event-logs/`,
-                {
-                  programContentId,
-                  data,
-                },
-                { headers: { authorization: `Bearer ${authToken}` } },
-              )
-              .then(({ data: { code, result } }) => {
-                if (code === 'SUCCESS') {
-                  // process.env.NODE_ENV === 'development' && console.log({ result })
-                  return
-                }
-                return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-              })
-              .catch(handleError)
-          }}
+          // onEventTrigger={data => {
+          //   axios
+          //     .post(
+          //       `https://${apiHost}/tasks/player-event-logs/`,
+          //       {
+          //         programContentId,
+          //         data,
+          //       },
+          //       { headers: { authorization: `Bearer ${authToken}` } },
+          //     )
+          //     .then(({ data: { code, result } }) => {
+          //       if (code === 'SUCCESS') {
+          //         // process.env.NODE_ENV === 'development' && console.log({ result })
+          //         return
+          //       }
+          //       return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+          //     })
+          //     .catch(handleError)
+          // }}
           onEnded={() => {
             setTimeout(() => {
               insertProgress(programContentId, {
