@@ -82,8 +82,8 @@ const PracticeDisplayedCollection: React.FC<{
   )
 }
 
-const StyledContainer = styled.div`
-  padding: 0.75rem;
+const StyledCard = styled.div`
+  padding: 1rem;
   overflow: hidden;
   background: white;
   border-radius: 4px;
@@ -136,7 +136,7 @@ const PracticeDisplayedCard: React.FC<
   const { deletePracticeReaction, insertPracticeReaction } = useMutatePractice(id)
   const [likeStatus, setLikeStatus] = useState({
     isLiked: reactedMemberIds.includes(currentMemberId),
-    likedCount: reactedMemberIds.length,
+    likedCount: reactedMemberIdsCount,
   })
 
   const handleLikeStatus = async () => {
@@ -153,7 +153,7 @@ const PracticeDisplayedCard: React.FC<
 
   return (
     <a href={`/practices/${id}`} target="_blank" rel="noopener noreferrer">
-      <StyledContainer>
+      <StyledCard>
         {isCoverRequired && (
           <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} className="mb-3" />
         )}
@@ -178,7 +178,7 @@ const PracticeDisplayedCard: React.FC<
             </StyledLike>
           </StyledGroup>
         </div>
-      </StyledContainer>
+      </StyledCard>
     </a>
   )
 }
