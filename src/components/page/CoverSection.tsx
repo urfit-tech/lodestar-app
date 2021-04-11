@@ -117,41 +117,39 @@ const CoverSection: React.FC<{
     <StyledSection>
       <StyledSlider dots infinite arrows={false} autoplay autoplaySpeed={5000}>
         {options.coverInfos.map(v => (
-          <div>
-            <SliderWrapper>
-              <StyledCoverBackground
-                key={v.id}
-                srcDesktop={v.srcDesktop}
-                srcMobile={v.srcMobile}
-                className={`d-flex align-items-center${v.buttonText ? '' : ' cursor-pointer'} cover-background`}
-                onClick={() => {
-                  if (v.buttonText) {
-                    return
-                  }
-                  if (!v.link) return
-                  v.external ? window.open(v.link) : history.push(v.link)
-                }}
-              >
-                <div className="container">
-                  {v.title && (
-                    <StyledCoverHeading as="h1" className="mb-3 cover-heading">
-                      {v.title}
-                    </StyledCoverHeading>
-                  )}
-                  {v.subtitle && (
-                    <StyledCoverSubHeading as="h2" className="mb-4 cover-sub-heading">
-                      {v.subtitle}
-                    </StyledCoverSubHeading>
-                  )}
-                  {v.buttonText && (
-                    <StyledCoverButton className="cover-button">
-                      <Link to={v.link}>{v.buttonText}</Link>
-                    </StyledCoverButton>
-                  )}
-                </div>
-              </StyledCoverBackground>
-            </SliderWrapper>
-          </div>
+          <SliderWrapper>
+            <StyledCoverBackground
+              key={v.id}
+              srcDesktop={v.srcDesktop}
+              srcMobile={v.srcMobile}
+              className={`d-flex align-items-center${v.buttonText ? '' : ' cursor-pointer'} cover-background`}
+              onClick={() => {
+                if (v.buttonText) {
+                  return
+                }
+                if (!v.link) return
+                v.external ? window.open(v.link) : history.push(v.link)
+              }}
+            >
+              <div className="container">
+                {v.title && (
+                  <StyledCoverHeading as="h1" className="mb-3 cover-heading">
+                    {v.title}
+                  </StyledCoverHeading>
+                )}
+                {v.subtitle && (
+                  <StyledCoverSubHeading as="h2" className="mb-4 cover-sub-heading">
+                    {v.subtitle}
+                  </StyledCoverSubHeading>
+                )}
+                {v.buttonText && (
+                  <StyledCoverButton className="cover-button">
+                    <Link to={v.link}>{v.buttonText}</Link>
+                  </StyledCoverButton>
+                )}
+              </div>
+            </StyledCoverBackground>
+          </SliderWrapper>
         ))}
       </StyledSlider>
     </StyledSection>
