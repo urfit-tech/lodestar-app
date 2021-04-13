@@ -83,7 +83,6 @@ const PracticeDisplayedCollection: React.FC<{
 }
 
 const StyledCard = styled.div`
-  padding: 1rem;
   overflow: hidden;
   background: white;
   border-radius: 4px;
@@ -154,29 +153,29 @@ const PracticeDisplayedCard: React.FC<
   return (
     <a href={`/practices/${id}`} target="_blank" rel="noopener noreferrer">
       <StyledCard>
-        {isCoverRequired && (
-          <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} className="mb-3" />
-        )}
-        <StyledTitle className="mb-3">{title}</StyledTitle>
+        {isCoverRequired && <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} />}
+        <div className="p-3">
+          <StyledTitle className="mb-2">{title}</StyledTitle>
 
-        <div className="d-flex align-items-center justify-content-between">
-          <MemberAvatar memberId={memberId} withName />
-          <StyledGroup className="text-right">
-            <span className="mr-3">
-              <Icon as={CommentIcon} className="mr-1" />
-              <span>{suggestCount}</span>
-            </span>
-            <StyledLike
-              isActive={likeStatus.isLiked}
-              onClick={e => {
-                e.preventDefault()
-                handleLikeStatus()
-              }}
-            >
-              <Icon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} className="mr-1" />
-              <span>{likeStatus.likedCount}</span>
-            </StyledLike>
-          </StyledGroup>
+          <div className="d-flex align-items-center justify-content-between">
+            <MemberAvatar memberId={memberId} withName />
+            <StyledGroup className="text-right">
+              <span className="mr-3">
+                <Icon as={CommentIcon} className="mr-1" />
+                <span>{suggestCount}</span>
+              </span>
+              <StyledLike
+                isActive={likeStatus.isLiked}
+                onClick={e => {
+                  e.preventDefault()
+                  handleLikeStatus()
+                }}
+              >
+                <Icon as={likeStatus.isLiked ? HeartFillIcon : HeartIcon} className="mr-1" />
+                <span>{likeStatus.likedCount}</span>
+              </StyledLike>
+            </StyledGroup>
+          </div>
         </div>
       </StyledCard>
     </a>

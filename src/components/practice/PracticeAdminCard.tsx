@@ -8,9 +8,10 @@ import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
 import { PracticePreviewProps } from '../../types/practice'
 import { CustomRatioImage } from '../common/Image'
 
-const StyledWrapper = styled(Box)`
+const StyledWrapper = styled.div`
+  background: white;
+  border-radius: 4px;
   box-shadow: 0 2px 10px 0 var(--gray);
-  user-select: none;
 `
 const StyledLink = styled(Link)`
   &&:hover {
@@ -41,6 +42,7 @@ const StyledGroup = styled(Box)`
 `
 const PracticeAdminCard: React.FC<PracticePreviewProps> = ({
   id,
+  isCoverRequired,
   coverUrl,
   title,
   memberId,
@@ -50,24 +52,27 @@ const PracticeAdminCard: React.FC<PracticePreviewProps> = ({
   const { member } = usePublicMember(memberId || '')
 
   return (
-    <StyledWrapper borderRadius="4px" bg="#ffffff">
+    <StyledWrapper>
       <StyledLink href={`/practices/${id}`} isExternal>
-        <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} className="mb-3" />
-        <StyledTitle className="mx-3">{title}</StyledTitle>
+        {isCoverRequired && <CustomRatioImage width="100%" ratio={9 / 16} src={coverUrl || EmptyCover} />}
 
-        <div className="d-flex justify-content-between p-3">
-          <StyledName>{member?.name}</StyledName>
-          <StyledGroup className="d-flex align-items-end">
-            <div className="mr-2">
-              <Icon as={CommentIcon} className="mr-1" />
-              <span>{suggestCount}</span>
-            </div>
+        <div className="p-3">
+          <StyledTitle className="mb-2">{title}</StyledTitle>
 
-            <div>
-              <Icon as={HeartIcon} className="mr-1" />
-              <span>{reactedMemberIdsCount}</span>
-            </div>
-          </StyledGroup>
+          <div className="d-flex justify-content-between">
+            <StyledName>{member?.name}</StyledName>
+            <StyledGroup className="d-flex align-items-end">
+              <div className="mr-2">
+                <Icon as={CommentIcon} className="mr-1" />
+                <span>{suggestCount}</span>
+              </div>
+
+              <div>
+                <Icon as={HeartIcon} className="mr-1" />
+                <span>{reactedMemberIdsCount}</span>
+              </div>
+            </StyledGroup>
+          </div>
         </div>
       </StyledLink>
     </StyledWrapper>
