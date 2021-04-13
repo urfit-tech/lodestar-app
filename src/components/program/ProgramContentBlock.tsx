@@ -9,8 +9,7 @@ import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { handleError } from '../../helpers'
-import { codeMessages, productMessages, programMessages } from '../../helpers/translation'
+import { productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
@@ -147,7 +146,7 @@ const ProgramContentBlock: React.FC<{
           />
         </div>
       )}
-      {programContent.programContentBody?.type === 'exercise' && (
+      {programContent.programContentBody?.type === 'exercise' && programContent.programContentBody.data?.questions && (
         <div className="mb-4">
           <ExerciseBlock
             id={programContent.programContentBody.id}
@@ -156,8 +155,8 @@ const ProgramContentBlock: React.FC<{
             nextProgramContentId={nextProgramContent?.id}
             isTaken={!!lastExercise}
             questions={
-              programContent.programContentBody.data?.questions
-                ?.filter((question: any) => !!question.choices?.length)
+              programContent.programContentBody.data.questions
+                .filter((question: any) => !!question.choices?.length)
                 .map((question: any) => ({
                   id: question.id,
                   description: question.description || '',
