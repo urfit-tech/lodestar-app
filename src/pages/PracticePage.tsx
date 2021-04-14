@@ -14,7 +14,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import MessageSuggestItem from '../components/practice/MessageSuggestItem'
 import PracticeUploadModal from '../components/practice/PracticeUploadModal'
 import SuggestionCreationModal from '../components/practice/SuggestionCreationModal'
-import { downloadFile, getFileDownloadableLink } from '../helpers'
+import { downloadFile, getFileDownloadableLink, rgba } from '../helpers'
 import { commonMessages, practiceMessages } from '../helpers/translation'
 import { useMutatePractice, usePractice } from '../hooks/practice'
 import { ReactComponent as CalendarOIcon } from '../images/calendar-alt-o.svg'
@@ -77,6 +77,12 @@ const StyledLikedCount = styled.span<{ isActive?: boolean }>`
 `
 const StyledDivider = styled.div`
   border-bottom: 1px solid var(--gray-light);
+`
+const StyledLink = styled(Link)`
+  color: ${props => props.theme['@primary-color']};
+  &&:hover {
+    color: ${props => rgba(props.theme['@primary-color'], 0.8)};
+  }
 `
 
 const messages = defineMessages({
@@ -157,9 +163,9 @@ const PracticePage: React.FC = () => {
             <span> - </span>
             <span>{practice.programContentTitle}</span>
           </StyledSubTitle>
-          <Link to={`/programs/${practice.programId}/contents/${practice.programContentId}`}>
+          <StyledLink to={`/programs/${practice.programId}/contents/${practice.programContentId}`}>
             {formatMessage(messages.view)}
-          </Link>
+          </StyledLink>
         </div>
 
         <div className="mb-3 d-flex justify-content-between">
