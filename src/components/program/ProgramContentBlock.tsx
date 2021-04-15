@@ -10,7 +10,8 @@ import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { productMessages, programMessages } from '../../helpers/translation'
+import { handleError } from '../../helpers'
+import { codeMessages, productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
@@ -105,7 +106,6 @@ const ProgramContentBlock: React.FC<{
               )
               .then(({ data: { code, result } }) => {
                 if (code === 'SUCCESS') {
-                  // process.env.NODE_ENV === 'development' && console.log({ result })
                   return
                 }
                 return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
@@ -198,12 +198,14 @@ const ProgramContentBlock: React.FC<{
                 : 'issue'
             }
           >
-            <Tabs.TabPane tab={formatMessage(programMessages.label.discussion)} key="issue" className="py-3">
-              <IssueThreadBlock
-                programRoles={program.roles || []}
-                threadId={`/programs/${program.id}/contents/${programContentId}`}
-              />
-            </Tabs.TabPane>
+            {program.isIssuesOpen && (
+              <Tabs.TabPane tab={formatMessage(programMessages.label.discussion)} key="issue" className="py-3">
+                <IssueThreadBlock
+                  programRoles={program.roles || []}
+                  threadId={`/programs/${program.id}/contents/${programContentId}`}
+                />
+              </Tabs.TabPane>
+            )}
             {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
               <Tabs.TabPane tab={formatMessage(programMessages.label.practiceUpload)} key="practice" className="p-4">
                 <PracticeDisplayedCollection
