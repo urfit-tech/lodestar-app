@@ -7,6 +7,7 @@ import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
@@ -47,11 +48,12 @@ const ProgramContentBlock: React.FC<{
   const { apiHost, authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
+  const [exerciseId] = useQueryParam('exerciseId', StringParam)
 
   const { loadingProgramContentMaterials, programContentMaterials } = useProgramContentMaterial(programContentId)
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
   const { loadingMember, member } = usePublicMember(instructor?.memberId || '')
-  const { loadingLastExercise, lastExercise } = useLastExercise(programContentId)
+  const { loadingLastExercise, lastExercise } = useLastExercise(programContentId, exerciseId)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
@@ -247,18 +249,23 @@ const ProgramContentBlock: React.FC<{
   )
 }
 
-const useLastExercise = (programContentId: string) => {
+const useLastExercise = (programContentId: string, exerciseId?: string | null) => {
+  const condition: hasura.GET_LAST_EXERCISEVariables['condition'] = {
+    id: exerciseId ? { _eq: exerciseId } : undefined,
+    program_content_id: { _eq: programContentId },
+  }
+
   const { loading, error, data, refetch } = useQuery<hasura.GET_LAST_EXERCISE, hasura.GET_LAST_EXERCISEVariables>(
     gql`
-      query GET_LAST_EXERCISE($programContentId: uuid!) {
-        exercise(where: { program_content_id: { _eq: $programContentId } }, order_by: [{ created_at: desc }]) {
+      query GET_LAST_EXERCISE($condition: exercise_bool_exp!) {
+        exercise(where: $condition, order_by: [{ created_at: desc }], limit: 1) {
           id
           answer
         }
       }
     `,
     {
-      variables: { programContentId },
+      variables: { condition },
       fetchPolicy: 'no-cache',
     },
   )

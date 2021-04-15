@@ -711,7 +711,7 @@ export interface GET_LAST_EXERCISE {
 }
 
 export interface GET_LAST_EXERCISEVariables {
-  programContentId: any;
+  condition: exercise_bool_exp;
 }
 
 /* tslint:disable */
@@ -9405,6 +9405,7 @@ export enum contract_update_column {
   description = "description",
   id = "id",
   name = "name",
+  options = "options",
   published_at = "published_at",
   revocation = "revocation",
   template = "template",
@@ -13203,6 +13204,7 @@ export interface contract_bool_exp {
   id?: uuid_comparison_exp | null;
   member_contracts?: member_contract_bool_exp | null;
   name?: String_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
   published_at?: timestamptz_comparison_exp | null;
   revocation?: String_comparison_exp | null;
   template?: String_comparison_exp | null;
@@ -13219,6 +13221,7 @@ export interface contract_insert_input {
   id?: any | null;
   member_contracts?: member_contract_arr_rel_insert_input | null;
   name?: string | null;
+  options?: any | null;
   published_at?: any | null;
   revocation?: string | null;
   template?: string | null;
