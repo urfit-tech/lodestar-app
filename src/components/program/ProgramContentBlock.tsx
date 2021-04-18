@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { message, Skeleton, Tabs } from 'antd'
+import { Skeleton, Tabs } from 'antd'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
@@ -11,7 +11,7 @@ import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import { handleError } from '../../helpers'
-import { codeMessages, productMessages, programMessages } from '../../helpers/translation'
+import { productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
@@ -108,7 +108,7 @@ const ProgramContentBlock: React.FC<{
                 if (code === 'SUCCESS') {
                   return
                 }
-                return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                // return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
               })
               .catch(handleError)
           }}
