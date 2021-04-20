@@ -99,7 +99,7 @@ const ProgramContentPlayer: React.FC<
   useEffect(() => {
     const data = pick(['playbackRate', 'startedAt', 'endedAt'], playerState)
     onEventTrigger?.(data)
-  }, [playerState.startedAt, onEventTrigger])
+  }, [onEventTrigger, playerState])
 
   return (
     <StyledContainer>

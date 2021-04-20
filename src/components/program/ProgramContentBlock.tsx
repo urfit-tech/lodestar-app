@@ -11,7 +11,6 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { handleError } from '../../helpers'
 import { productMessages, programMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
@@ -112,7 +111,7 @@ const ProgramContentBlock: React.FC<{
                 }
                 // return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
               })
-              .catch(handleError)
+              .catch(() => {})
           }}
           onEnded={() => {
             setTimeout(() => {
