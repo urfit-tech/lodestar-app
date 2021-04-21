@@ -2,11 +2,14 @@ import React, { createContext, useContext } from 'react'
 
 export type CustomRendererProps = {
   renderCopyright?: (name?: string) => React.ReactNode
+  renderRegisterTerm?: () => React.ReactNode
 }
 
 const CustomRendererContext = createContext<CustomRendererProps>({})
 
-export const CustomRendererProvider: React.FC<{ renderer?: CustomRendererProps }> = ({ renderer = {}, children }) => {
+export const CustomRendererProvider: React.FC<{
+  renderer?: CustomRendererProps
+}> = ({ renderer = {}, children }) => {
   const { Provider } = CustomRendererContext
 
   return <Provider value={renderer}>{children}</Provider>

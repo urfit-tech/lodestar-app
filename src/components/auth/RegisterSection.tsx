@@ -6,6 +6,7 @@ import { AiOutlineLock, AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'rea
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { handleError } from '../../helpers'
 import { authMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import { AuthState } from '../../types/member'
@@ -25,6 +26,8 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
   const { formatMessage } = useIntl()
   const { register, sendSmsCode, verifySmsCode } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
+  const { renderRegisterTerm } = useCustomRenderer()
+
   const [loading, setLoading] = useState(false)
   const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'ready'>('ready')
   const [verifying, setVerifying] = useState(false)
@@ -238,10 +241,14 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
           )}
         </Form.Item>
         <StyledParagraph>
-          <span>{formatMessage(authMessages.content.registration)}</span>
-          <a href="/terms" target="_blank" rel="noopener noreferrer" className="ml-1">
-            {formatMessage(authMessages.content.term)}
-          </a>
+          {renderRegisterTerm?.() || (
+            <span>
+              {formatMessage(authMessages.content.registration)}
+              <a href="/terms" target="_blank" rel="noopener noreferrer" className="ml-1">
+                {formatMessage(authMessages.content.term)}
+              </a>
+            </span>
+          )}
         </StyledParagraph>
         <Form.Item>
           <Button type="primary" htmlType="submit" block loading={loading}>
