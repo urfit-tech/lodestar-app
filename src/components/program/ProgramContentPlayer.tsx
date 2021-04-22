@@ -1,5 +1,4 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
-import { pick } from 'ramda'
 import React, { useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
@@ -96,10 +95,10 @@ const ProgramContentPlayer: React.FC<
     endedAt: 0,
   })
 
-  useEffect(() => {
-    const data = pick(['playbackRate', 'startedAt', 'endedAt'], playerState)
-    onEventTrigger?.(data)
-  }, [onEventTrigger, playerState])
+  // useEffect(() => {
+  //   const data = pick(['playbackRate', 'startedAt', 'endedAt'], playerState)
+  //   onEventTrigger?.(data)
+  // }, [onEventTrigger, playerState])
 
   return (
     <StyledContainer>
