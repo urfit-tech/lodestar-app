@@ -174,8 +174,6 @@ const LineLoginButton: React.VFC = () => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
-  const host = window.location.hostname
-  const port = window.location.port
 
   if (loading) {
     return <Spin />
@@ -185,7 +183,7 @@ const LineLoginButton: React.VFC = () => {
     <a
       href={'https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&scope={{SCOPE}}'
         .replace('{{CLIENT_ID}}', `${settings['auth.line_client_id']}`)
-        .replace('{{REDIRECT_URI}}', `http://${host}:${port}/oauth2`)
+        .replace('{{REDIRECT_URI}}', `https://${window.location.hostname}:${window.location.port}/oauth2`)
         .replace('{{SCOPE}}', 'profile%20openid%20email')
         .replace(
           '{{STATE}}',

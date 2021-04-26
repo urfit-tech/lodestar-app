@@ -74,7 +74,7 @@ const OAuth2Page: React.FC = () => {
     const clientId = settings['auth.line_client_id']
     const clientSecret = settings['auth.line_client_secret']
     if (code && clientId) {
-      const redirectUri = `http://${location.hostname}:${location.port}/oauth2`
+      const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2`
 
       const params = new URLSearchParams({
         grant_type: 'authorization_code',
