@@ -177,13 +177,13 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
         {!!settings['auth.facebook_app_id'] && <FacebookLoginButton />}
         {!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && <LineLoginButton />}
         {!!settings['auth.google_client_id'] && <GoogleLoginButton />}
-
-        {(!!settings['auth.facebook_app_id'] ||
-          !!settings['auth.google_client_id'] ||
-          (!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'])) && (
-          <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
-        )}
       </div>
+
+      {(!!settings['auth.facebook_app_id'] ||
+        !!settings['auth.google_client_id'] ||
+        (!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'])) && (
+        <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
+      )}
 
       <Form
         onSubmit={e => {
