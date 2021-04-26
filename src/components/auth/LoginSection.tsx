@@ -70,7 +70,7 @@ const LoginSection: React.FC<LoginSectionProps> = ({ form, noGeneralLogin, onAut
   return (
     <>
       {renderTitle ? renderTitle() : <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>}
-      <div className="mb-3">
+      <div className="d-grid gap-3 mb-3">
         {!!settings['auth.facebook_app_id'] && <FacebookLoginButton />}
         {!!settings['auth.line_client_id'] && <LineLoginButton />}
         {!!settings['auth.google_client_id'] && <GoogleLoginButton />}
