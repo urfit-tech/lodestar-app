@@ -6,6 +6,10 @@ export const authMessages = {
     login: { id: 'auth.title.login', defaultMessage: '登入' },
     smsVerification: { id: 'auth.title.smsVerification', defaultMessage: '驗證手機號碼' },
   }),
+  ui: defineMessages({
+    loginFb: { id: 'auth.content.loginFb', defaultMessage: 'Facebook 登入/註冊' },
+    lineLogin: { id: 'auth.ui.lineLogin', defaultMessage: '使用 Line 繼續' },
+  }),
   content: defineMessages({
     noMember: { id: 'auth.content.noMember', defaultMessage: '還不是會員嗎？' },
     loginFb: { id: 'auth.content.loginFb', defaultMessage: 'Facebook 登入/註冊' },

@@ -13,7 +13,7 @@ import { authMessages, codeMessages, commonMessages } from '../../helpers/transl
 import { AuthState } from '../../types/member'
 import { useAuth } from './AuthContext'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
-import { FacebookLoginButton, GoogleLoginButton } from './SocialLoginButton'
+import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
 
 const ForgetPassword = styled.div`
   margin-bottom: 1.5rem;
@@ -70,17 +70,11 @@ const LoginSection: React.FC<LoginSectionProps> = ({ form, noGeneralLogin, onAut
   return (
     <>
       {renderTitle ? renderTitle() : <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>}
-
-      {!!settings['auth.facebook_app_id'] && (
-        <div className="mb-3">
-          <FacebookLoginButton />
-        </div>
-      )}
-      {!!settings['auth.google_client_id'] && (
-        <div className="mb-3">
-          <GoogleLoginButton />
-        </div>
-      )}
+      <div className="mb-3">
+        {!!settings['auth.facebook_app_id'] && <FacebookLoginButton />}
+        {!!settings['auth.line_client_id'] && <LineLoginButton />}
+        {!!settings['auth.google_client_id'] && <GoogleLoginButton />}
+      </div>
       {!noGeneralLogin && (
         <>
           {(!!settings['auth.facebook_app_id'] || !!settings['auth.google_client_id']) && (

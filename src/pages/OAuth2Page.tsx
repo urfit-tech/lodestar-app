@@ -1,8 +1,11 @@
 import { message } from 'antd'
+import axios from 'axios'
 import React, { useCallback, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../components/auth/AuthContext'
+import { useApp } from '../containers/common/AppContext'
 import { handleError } from '../helpers'
 import { profileMessages } from '../helpers/translation'
 import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
@@ -13,22 +16,29 @@ const OAuth2Page: React.FC = () => {
   const history = useHistory()
   const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
   const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
+  const { settings } = useApp()
+  const [code] = useQueryParam('code', StringParam)
+  const [state] = useQueryParam('state', StringParam)
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
-  const state: {
+
+  const {
+    provider,
+    redirect,
+  }: {
     provider: string
     redirect: string
-  } = JSON.parse(params.get('state') || '{}')
+  } = JSON.parse(atob(state || ''))
 
   const handleSocialLogin = useCallback(() => {
     socialLogin?.({
-      provider: state.provider,
+      provider,
       providerToken: accessToken,
     })
-      .then(() => history.push(state.redirect))
+      .then(() => history.push(redirect))
       .catch(handleError)
-  }, [accessToken, history, socialLogin, state])
+  }, [accessToken, history, socialLogin, provider])
 
   const handleFetchYoutubeApi = useCallback(() => {
     fetch('https://www.googleapis.com/youtube/v3/channels?part=id&mine=true', {
@@ -46,25 +56,57 @@ const OAuth2Page: React.FC = () => {
               memberId: currentMemberId,
               data: youtubeIds,
             },
-          }).then(() => history.push(state.redirect))
+          }).then(() => history.push(redirect))
         } catch (error) {
           message.error(formatMessage(profileMessages.form.message.noYouTubeChannel))
-          history.push(state.redirect)
+          history.push(redirect)
         }
       })
   }, [accessToken, currentMemberId, formatMessage, history, state, updateYoutubeChannelIds])
 
   useEffect(() => {
-    if (!isAuthenticating && currentMemberId && state.provider === 'google') {
+    if (!isAuthenticating && currentMemberId && provider === 'google') {
       handleFetchYoutubeApi()
     }
-  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, state.provider])
+  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, provider])
 
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && state.provider) {
+    const clientId = settings['auth.line_client_id']
+    const clientSecret = settings['auth.line_client_secret']
+    if (code && clientId) {
+      const redirectUri = `http://${location.hostname}:${location.port}/oauth2`
+
+      const params = new URLSearchParams({
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: redirectUri,
+        client_id: clientId,
+        client_secret: clientSecret,
+      })
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+      axios
+        .post<{ id_token: string }>('https://api.line.me/oauth2/v2.1/token', params, config)
+        .then(({ data }) => {
+          return socialLogin?.({
+            provider,
+            providerToken: data.id_token,
+          })
+        })
+        .then(() => history.push(redirect))
+        .catch(handleError)
+    }
+  }, [code, settings])
+
+  useEffect(() => {
+    if (!isAuthenticating && !currentMemberId && provider) {
       handleSocialLogin()
     }
-  }, [currentMemberId, handleSocialLogin, isAuthenticating, state.provider])
+  }, [currentMemberId, handleSocialLogin, isAuthenticating, provider])
 
   return <LoadingPage />
 }

@@ -1,4 +1,4 @@
-import { Button, message } from 'antd'
+import { Button, message, Spin } from 'antd'
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import SocialLogin from 'react-social-login'
@@ -9,6 +9,7 @@ import { handleError } from '../../helpers'
 import { authMessages, commonMessages } from '../../helpers/translation'
 import FacebookLogoImage from '../../images/FB-logo.png'
 import GoogleLogoImage from '../../images/google-logo.png'
+// import { ReactComponent as LineLogoImage } from '../../images/line-icon.svg'
 import { useAuth } from './AuthContext'
 import { AuthModalContext } from './AuthModal'
 
@@ -57,7 +58,7 @@ class WrappedSocialLoginButton extends React.Component<{
 
 const SocialLoginButton = SocialLogin(WrappedSocialLoginButton)
 
-export const FacebookLoginButton: React.FC = () => {
+const FacebookLoginButton: React.VFC = () => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
@@ -71,10 +72,12 @@ export const FacebookLoginButton: React.FC = () => {
         .replace('{{SCOPE}}', 'public_profile,email')
         .replace(
           '{{STATE}}',
-          JSON.stringify({
-            provider: 'facebook',
-            redirect: back || window.location.pathname,
-          }),
+          btoa(
+            JSON.stringify({
+              provider: 'facebook',
+              redirect: back || window.location.pathname,
+            }),
+          ),
         )}
     >
       <StyledButton
@@ -87,13 +90,13 @@ export const FacebookLoginButton: React.FC = () => {
         }}
       >
         <FacebookLogo />
-        <span>{formatMessage(authMessages.content.loginFb)}</span>
+        <span>{formatMessage(authMessages.ui.loginFb)}</span>
       </StyledButton>
     </a>
   )
 }
 
-export const GoogleLoginButton: React.FC<{
+const GoogleLoginButton: React.VFC<{
   variant?: 'default' | 'connect'
 }> = ({ variant }) => {
   const { settings } = useApp()
@@ -143,10 +146,12 @@ export const GoogleLoginButton: React.FC<{
         .replace('{{SCOPE}}', 'openid profile email')
         .replace(
           '{{STATE}}',
-          JSON.stringify({
-            provider: 'google',
-            redirect: back || window.location.pathname,
-          }),
+          btoa(
+            JSON.stringify({
+              provider: 'google',
+              redirect: back || window.location.pathname,
+            }),
+          ),
         )}
     >
       <StyledButton
@@ -164,3 +169,48 @@ export const GoogleLoginButton: React.FC<{
     </a>
   )
 }
+
+const LineLoginButton: React.VFC = () => {
+  const { settings, loading } = useApp()
+  const { formatMessage } = useIntl()
+  const [back] = useQueryParam('back', StringParam)
+  const host = window.location.hostname
+  const port = window.location.port
+
+  if (loading) {
+    return <Spin />
+  }
+
+  return (
+    <a
+      href={'https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&scope={{SCOPE}}'
+        .replace('{{CLIENT_ID}}', `${settings['auth.line_client_id']}`)
+        .replace('{{REDIRECT_URI}}', `http://${host}:${port}/oauth2`)
+        .replace('{{SCOPE}}', 'profile%20openid%20email')
+        .replace(
+          '{{STATE}}',
+          btoa(
+            JSON.stringify({
+              provider: 'line',
+              redirect: back || window.location.pathname,
+            }),
+          ),
+        )}
+    >
+      <StyledButton
+        style={{
+          border: '1px solid #01c101',
+          height: '44px',
+          width: '100%',
+          background: '#01c101',
+          color: '#fff',
+        }}
+      >
+        {/* <Icon component={LineLogoImage} /> */}
+        <span>{formatMessage(authMessages.ui.lineLogin)}</span>
+      </StyledButton>
+    </a>
+  )
+}
+
+export { FacebookLoginButton, GoogleLoginButton, LineLoginButton }
