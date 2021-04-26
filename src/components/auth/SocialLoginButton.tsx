@@ -1,29 +1,15 @@
-import { Button, message, Spin } from 'antd'
-import React, { useContext, useState } from 'react'
+import { Button, Icon } from '@chakra-ui/react'
+import { Spin } from 'antd'
+import React from 'react'
 import { useIntl } from 'react-intl'
-import SocialLogin from 'react-social-login'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { useApp } from '../../containers/common/AppContext'
-import { handleError } from '../../helpers'
-import { authMessages, commonMessages } from '../../helpers/translation'
+import { authMessages } from '../../helpers/translation'
 import FacebookLogoImage from '../../images/FB-logo.png'
 import GoogleLogoImage from '../../images/google-logo.png'
-// import { ReactComponent as LineLogoImage } from '../../images/line-icon.svg'
-import { useAuth } from './AuthContext'
-import { AuthModalContext } from './AuthModal'
+import { ReactComponent as LineIcon } from '../../images/line-icon.svg'
 
-const StyledButton = styled(Button)`
-  span {
-    vertical-align: middle;
-  }
-
-  &:hover,
-  &:active,
-  &:focus {
-    border-color: transparent;
-  }
-`
 const FacebookLogo = styled.span`
   margin-right: 0.5rem;
   height: 24px;
@@ -42,21 +28,6 @@ const GoogleLogo = styled.span`
   background-repeat: no-repeat;
   background-position: center;
 `
-
-class WrappedSocialLoginButton extends React.Component<{
-  triggerLogin: () => void
-}> {
-  render = () => {
-    const { triggerLogin, children, ...restProps } = this.props
-    return (
-      <StyledButton onClick={triggerLogin} {...restProps}>
-        {children}
-      </StyledButton>
-    )
-  }
-}
-
-const SocialLoginButton = SocialLogin(WrappedSocialLoginButton)
 
 const FacebookLoginButton: React.VFC = () => {
   const { settings } = useApp()
@@ -80,7 +51,7 @@ const FacebookLoginButton: React.VFC = () => {
           ),
         )}
     >
-      <StyledButton
+      <Button
         style={{
           border: '1px solid #3b5998',
           height: '44px',
@@ -91,52 +62,16 @@ const FacebookLoginButton: React.VFC = () => {
       >
         <FacebookLogo />
         <span>{formatMessage(authMessages.ui.loginFb)}</span>
-      </StyledButton>
+      </Button>
     </a>
   )
 }
 
-const GoogleLoginButton: React.VFC<{
-  variant?: 'default' | 'connect'
-}> = ({ variant }) => {
+const GoogleLoginButton: React.VFC = () => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
-  const { socialLogin } = useAuth()
-  const { setVisible } = useContext(AuthModalContext)
-  const [loading, setLoading] = useState(false)
   const host = window.location.origin
-
-  const handleLoginSuccess = ({ _provider, _token: { idToken } }: any) => {
-    setLoading(true)
-
-    socialLogin?.({
-      provider: _provider,
-      providerToken: idToken,
-    })
-      .then(() => setVisible && setVisible(false))
-      .catch(handleError)
-      .finally(() => setLoading(false))
-  }
-  const handleLoginFailure = (error: any) => {
-    message.error(formatMessage(authMessages.message.googleError))
-    process.env.NODE_ENV === 'development' && console.error(error)
-  }
-
-  if (variant === 'connect') {
-    return (
-      <SocialLoginButton
-        loading={loading}
-        provider="google"
-        appId={settings['auth.google_client_id']}
-        scope="profile email openid"
-        onLoginSuccess={handleLoginSuccess}
-        onLoginFailure={handleLoginFailure}
-      >
-        {formatMessage(commonMessages.button.socialConnect)}
-      </SocialLoginButton>
-    )
-  }
 
   return (
     <a
@@ -154,7 +89,7 @@ const GoogleLoginButton: React.VFC<{
           ),
         )}
     >
-      <StyledButton
+      <Button
         style={{
           border: '1px solid #585858',
           height: '44px',
@@ -165,7 +100,7 @@ const GoogleLoginButton: React.VFC<{
       >
         <GoogleLogo />
         <span>{formatMessage(authMessages.message.google)}</span>
-      </StyledButton>
+      </Button>
     </a>
   )
 }
@@ -195,7 +130,8 @@ const LineLoginButton: React.VFC = () => {
           ),
         )}
     >
-      <StyledButton
+      <Button
+        leftIcon={<Icon as={LineIcon} fontSize="20px" />}
         style={{
           border: '1px solid #01c101',
           height: '44px',
@@ -204,9 +140,8 @@ const LineLoginButton: React.VFC = () => {
           color: '#fff',
         }}
       >
-        {/* <Icon component={LineLogoImage} /> */}
         <span>{formatMessage(authMessages.ui.lineLogin)}</span>
-      </StyledButton>
+      </Button>
     </a>
   )
 }
