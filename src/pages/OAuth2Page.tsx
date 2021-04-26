@@ -27,7 +27,7 @@ const OAuth2Page: React.FC = () => {
     provider,
     redirect,
   }: {
-    provider: string
+    provider: 'facebook' | 'google' | 'line'
     redirect: string
   } = JSON.parse(atob(state || ''))
 
@@ -73,7 +73,7 @@ const OAuth2Page: React.FC = () => {
   useEffect(() => {
     const clientId = settings['auth.line_client_id']
     const clientSecret = settings['auth.line_client_secret']
-    if (code && clientId && clientSecret) {
+    if (code && provider === 'line' && clientId && clientSecret) {
       const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2`
 
       const params = new URLSearchParams({
@@ -100,10 +100,10 @@ const OAuth2Page: React.FC = () => {
         .then(() => history.push(redirect))
         .catch(handleError)
     }
-  }, [code, settings])
+  }, [code, settings, provider])
 
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && provider) {
+    if (!isAuthenticating && !currentMemberId && ['facebook', 'google'].includes(provider)) {
       handleSocialLogin()
     }
   }, [currentMemberId, handleSocialLogin, isAuthenticating, provider])
