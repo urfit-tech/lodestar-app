@@ -173,7 +173,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
     <>
       <StyledTitle>{formatMessage(authMessages.title.signUp)}</StyledTitle>
 
-      <div className="d-grid gap-3 mb-3">
+      <div className="d-grid gap-3">
         {!!settings['auth.facebook_app_id'] && <FacebookLoginButton />}
         {!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && <LineLoginButton />}
         {!!settings['auth.google_client_id'] && <GoogleLoginButton />}
@@ -182,7 +182,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
       {(!!settings['auth.facebook_app_id'] ||
         !!settings['auth.google_client_id'] ||
         (!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'])) && (
-        <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
+        <StyledDivider className="mt-3">{formatMessage(commonMessages.defaults.or)}</StyledDivider>
       )}
 
       <Form
