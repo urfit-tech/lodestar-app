@@ -38,7 +38,7 @@ const OAuth2Page: React.FC = () => {
     })
       .then(() => history.push(redirect))
       .catch(handleError)
-  }, [accessToken, history, socialLogin, provider])
+  }, [socialLogin, provider, accessToken, history, redirect])
 
   const handleFetchYoutubeApi = useCallback(() => {
     fetch('https://www.googleapis.com/youtube/v3/channels?part=id&mine=true', {
@@ -62,7 +62,7 @@ const OAuth2Page: React.FC = () => {
           history.push(redirect)
         }
       })
-  }, [accessToken, currentMemberId, formatMessage, history, state, updateYoutubeChannelIds])
+  }, [accessToken, updateYoutubeChannelIds, currentMemberId, history, redirect, formatMessage])
 
   useEffect(() => {
     if (!isAuthenticating && currentMemberId && provider === 'google') {
@@ -73,7 +73,7 @@ const OAuth2Page: React.FC = () => {
   useEffect(() => {
     const clientId = settings['auth.line_client_id']
     const clientSecret = settings['auth.line_client_secret']
-    if (code && provider === 'line' && clientId && clientSecret) {
+    if (!isAuthenticating && !currentMemberId && code && provider === 'line' && clientId && clientSecret) {
       const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2`
 
       const params = new URLSearchParams({
@@ -100,13 +100,13 @@ const OAuth2Page: React.FC = () => {
         .then(() => history.push(redirect))
         .catch(handleError)
     }
-  }, [code, settings, provider])
+  }, [isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
 
   useEffect(() => {
     if (!isAuthenticating && !currentMemberId && ['facebook', 'google'].includes(provider)) {
       handleSocialLogin()
     }
-  }, [currentMemberId, handleSocialLogin, isAuthenticating, provider])
+  }, [isAuthenticating, currentMemberId, provider, handleSocialLogin])
 
   return <LoadingPage />
 }
