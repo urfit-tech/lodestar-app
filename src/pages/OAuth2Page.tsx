@@ -13,32 +13,23 @@ import LoadingPage from './LoadingPage'
 
 const OAuth2Page: React.FC = () => {
   const { formatMessage } = useIntl()
-  const history = useHistory()
-  const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
-  const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
-  const { settings } = useApp()
   const [code] = useQueryParam('code', StringParam)
   const [state] = useQueryParam('state', StringParam)
+  const history = useHistory()
+  const { settings } = useApp()
+  const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
+  const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
 
   const {
-    provider,
-    redirect,
+    provider = null,
+    redirect = '/',
   }: {
-    provider: 'facebook' | 'google' | 'line'
+    provider: 'facebook' | 'google' | 'line' | null
     redirect: string
-  } = JSON.parse(atob(state || ''))
-
-  const handleSocialLogin = useCallback(() => {
-    socialLogin?.({
-      provider,
-      providerToken: accessToken,
-    })
-      .then(() => history.push(redirect))
-      .catch(handleError)
-  }, [socialLogin, provider, accessToken, history, redirect])
+  } = JSON.parse(atob(state || '') || '{}')
 
   const handleFetchYoutubeApi = useCallback(() => {
     fetch('https://www.googleapis.com/youtube/v3/channels?part=id&mine=true', {
@@ -70,6 +61,7 @@ const OAuth2Page: React.FC = () => {
     }
   }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, provider])
 
+  // Authorization Code Flow
   useEffect(() => {
     const clientId = settings['auth.line_client_id']
     const clientSecret = settings['auth.line_client_secret']
@@ -102,11 +94,17 @@ const OAuth2Page: React.FC = () => {
     }
   }, [isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
 
+  // Implicit Flow
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && ['facebook', 'google'].includes(provider)) {
-      handleSocialLogin()
+    if (!isAuthenticating && !currentMemberId && (provider === 'google' || provider === 'facebook')) {
+      socialLogin?.({
+        provider,
+        providerToken: accessToken,
+      })
+        .then(() => history.push(redirect))
+        .catch(handleError)
     }
-  }, [isAuthenticating, currentMemberId, provider, handleSocialLogin])
+  }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
 
   return <LoadingPage />
 }
