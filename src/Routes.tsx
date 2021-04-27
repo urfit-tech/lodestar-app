@@ -19,6 +19,11 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     pageName: 'HomePage',
     authenticated: false,
   },
+  auth: {
+    path: '/auth',
+    pageName: 'AuthPage',
+    authenticated: false,
+  },
   forgot_password: {
     path: '/forgot-password',
     pageName: 'ForgotPasswordPage',
