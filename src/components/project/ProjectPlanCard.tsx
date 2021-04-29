@@ -244,6 +244,7 @@ const PerpetualPlanBlock: React.FC<{
         addCartProduct?.('ProjectPlan', projectPlanId, {
           quantity: 1,
           sharingCode,
+          from: window.location.pathname,
         }).then(() => history.push(`/cart?type=funding`))
       }}
     >
