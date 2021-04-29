@@ -281,11 +281,12 @@ const SubscriptionPlanBlock: React.FC<{
           type="primary"
           size="large"
           onClick={() => {
-            settings['tracking.fb_pixel_id'] &&
+            if (settings['tracking.fb_pixel_id']) {
               ReactPixel.track('AddToCart', {
                 value: typeof salePrice === 'number' ? salePrice : listPrice,
                 currency: 'TWD',
               })
+            }
             if (settings['tracking.ga_id']) {
               ReactGA.plugin.execute('ec', 'addProduct', {
                 id: projectPlanId,

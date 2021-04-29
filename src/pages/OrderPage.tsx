@@ -22,26 +22,26 @@ const OrderPage: React.FC = () => {
   const { settings } = useApp()
   const { loading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
     GET_ORDERS_PRODUCT,
-    {
-      variables: { orderId: orderId },
-    },
+    { variables: { orderId: orderId } },
   )
-  const order = data && data.order_log_by_pk
+  const order = data?.order_log_by_pk
 
   // TODO: get orderId and show items
 
   useEffect(() => {
-    if (order && withTracking) {
+    if (order && order.status === 'SUCCESS' && withTracking) {
       const productPrice = order.order_products_aggregate?.aggregate?.sum?.price || 0
       const discountPrice = order.order_discounts_aggregate?.aggregate?.sum?.price || 0
       const shippingFee = (order.shipping && order.shipping['fee']) || 0
-      settings['tracking.fb_pixel_id'] &&
-        order.status === 'SUCCESS' &&
+
+      if (settings['tracking.fb_pixel_id']) {
         ReactPixel.track('Purchase', {
           value: productPrice - discountPrice - shippingFee,
           currency: 'TWD',
         })
-      if (settings['tracking.ga_id'] && order.status === 'SUCCESS') {
+      }
+
+      if (settings['tracking.ga_id']) {
         ;(window as any).dataLayer = (window as any).dataLayer || []
         ;(window as any).dataLayer.push({
           transactionId: order.id,
@@ -101,12 +101,13 @@ const OrderPage: React.FC = () => {
         ReactGA.ga('send', 'pageview')
       }
     }
-  }, [orderId, order, withTracking, settings])
+  }, [order, settings, withTracking])
 
   if (loading) {
     return <LoadingPage />
   }
-  if (!data?.order_log_by_pk) {
+
+  if (!order) {
     return <ForbiddenPage />
   }
 
@@ -118,7 +119,7 @@ const OrderPage: React.FC = () => {
       >
         <AdminCard style={{ paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
           <div className="d-flex flex-column align-items-center justify-content-center px-sm-5">
-            {!data.order_log_by_pk.status ? (
+            {!order.status ? (
               <>
                 <Icon
                   className="mb-5"
@@ -132,7 +133,7 @@ const OrderPage: React.FC = () => {
                 </Typography.Title>
                 <Typography.Text className="mb-4">{formatMessage(commonMessages.content.prepare)}</Typography.Text>
               </>
-            ) : data.order_log_by_pk.status === 'SUCCESS' ? (
+            ) : order.status === 'SUCCESS' ? (
               <>
                 <Icon
                   className="mb-5"
@@ -173,8 +174,6 @@ const OrderPage: React.FC = () => {
   )
 }
 
-export default OrderPage
-
 const GET_ORDERS_PRODUCT = gql`
   query GET_ORDERS_PRODUCT($orderId: String!) {
     order_log_by_pk(id: $orderId) {
@@ -211,3 +210,5 @@ const GET_ORDERS_PRODUCT = gql`
     }
   }
 `
+
+export default OrderPage

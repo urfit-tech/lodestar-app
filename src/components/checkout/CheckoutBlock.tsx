@@ -181,11 +181,12 @@ const CheckoutBlock: React.FC<{
     }
 
     // tracking add payment info event
-    settings['tracking.fb_pixel_id'] &&
+    if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddPaymentInfo', {
         value: check ? sum(check.orderProducts.map(prop('price'))) - sum(check.orderDiscounts.map(prop('price'))) : 0,
         currency: 'TWD',
       })
+    }
 
     const taskId = await placeOrder('perpetual', {
       ...invoice,

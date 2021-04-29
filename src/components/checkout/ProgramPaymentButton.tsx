@@ -2,12 +2,14 @@ import { Icon } from '@chakra-ui/react'
 import { Button } from 'antd'
 import { ButtonProps } from 'antd/lib/button'
 import React, { useContext } from 'react'
+import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
 import { ProgramProps } from '../../types/program'
@@ -43,32 +45,33 @@ const ProgramPaymentButton: React.FC<ProgramPaymentButtonProps> = ({
 }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { addCartProduct, isProductInCart } = useContext(CartContext)
   const [sharingCode] = useQueryParam('sharing', StringParam)
+  const { settings } = useApp()
+  const { addCartProduct, isProductInCart } = useContext(CartContext)
 
-  const onClickAddCartProduct = () => {
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        addCartProduct &&
-          (await addCartProduct('Program', program.id, {
-            from: window.location.pathname,
-            sharingCode,
-          }))
+  const onClickAddCartProduct = async () => {
+    if (settings['tracking.fb_pixel_id']) {
+      ReactPixel.track('AddToCart', {
+        value: program.listPrice,
+        currency: 'TWD',
+      })
+    }
+    if (settings['tracking.ga_id']) {
+      ReactGA.plugin.execute('ec', 'addProduct', {
+        id: program.id,
+        name: program.title,
+        category: 'Program',
+        price: `${program.listPrice}`,
+        quantity: '1',
+        currency: 'TWD',
+      })
+      ReactGA.plugin.execute('ec', 'setAction', 'add')
+      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+    }
 
-        ReactGA.plugin.execute('ec', 'addProduct', {
-          id: program.id,
-          name: program.title,
-          category: 'Program',
-          price: `${program.listPrice}`,
-          quantity: '1',
-          currency: 'TWD',
-        })
-        ReactGA.plugin.execute('ec', 'setAction', 'add')
-        ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-        resolve()
-      } catch (err) {
-        reject(err)
-      }
+    return await addCartProduct?.('Program', program.id, {
+      from: window.location.pathname,
+      sharingCode,
     })
   }
 
