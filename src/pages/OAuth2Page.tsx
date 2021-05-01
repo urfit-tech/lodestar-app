@@ -29,7 +29,7 @@ const OAuth2Page: React.FC = () => {
   }: {
     provider: 'facebook' | 'google' | 'line' | null
     redirect: string
-  } = JSON.parse(atob(state || '') || '{}')
+  } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   const handleFetchYoutubeApi = useCallback(() => {
     fetch('https://www.googleapis.com/youtube/v3/channels?part=id&mine=true', {
