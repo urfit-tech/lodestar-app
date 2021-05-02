@@ -12,6 +12,7 @@ export const authMessages = {
   }),
   content: defineMessages({
     noMember: { id: 'auth.content.noMember', defaultMessage: '還不是會員嗎？' },
+    isMember: { id: 'auth.content.isMember', defaultMessage: '已經是會員了嗎?' },
     loginFb: { id: 'auth.content.loginFb', defaultMessage: 'Facebook 登入/註冊' },
     registration: {
       id: 'auth.content.registration',

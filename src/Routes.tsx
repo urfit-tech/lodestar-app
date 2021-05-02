@@ -24,6 +24,11 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     pageName: 'AuthPage',
     authenticated: false,
   },
+  line_binding: {
+    path: '/line-binding',
+    pageName: 'LineBindingPage',
+    authenticated: true,
+  },
   forgot_password: {
     path: '/forgot-password',
     pageName: 'ForgotPasswordPage',
