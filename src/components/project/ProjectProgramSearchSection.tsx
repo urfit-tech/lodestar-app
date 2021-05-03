@@ -238,7 +238,10 @@ const useEnrolledCoinProjectPlans = (memberId: string, projectId: string) => {
     gql`
       query GET_ENROLLED_COIN_PROJECT_PLANS($memberId: String!, $projectId: uuid!) {
         project_plan_enrollment(
-          where: { member_id: { _eq: $memberId }, project_plan: { project_id: { _eq: $projectId } } }
+          where: {
+            member_id: { _eq: $memberId }
+            project_plan: { project_id: { _eq: $projectId }, name: { _like: "%私塾方案%" } }
+          }
           limit: 1
         ) {
           project_plan {
