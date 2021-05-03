@@ -16,7 +16,7 @@ type AuthProps = {
   apiHost: string
   refreshToken?: () => Promise<void>
   register?: (data: { username: string; email: string; password: string }) => Promise<void>
-  login?: (data: { account: string; password: string }) => Promise<void>
+  login?: (data: { account: string; password: string; accountLinkToken?: string }) => Promise<void>
   socialLogin?: (data: { provider: 'facebook' | 'google' | 'line'; providerToken: any }) => Promise<void>
   logout?: () => void
   sendSmsCode?: (data: { phoneNumber: string }) => Promise<void>
@@ -146,7 +146,7 @@ export const AuthProvider: React.FC<{
               }
             })
             .catch(handleError),
-        login: async ({ account, password }) =>
+        login: async ({ account, password, accountLinkToken }) => {
           Axios.post(
             `https://${apiHost}/auth/general-login`,
             { appId, account, password },
@@ -154,13 +154,17 @@ export const AuthProvider: React.FC<{
           ).then(({ data: { code, result } }) => {
             if (code === 'SUCCESS') {
               setAuthToken(result.authToken)
+              if (accountLinkToken && authToken) {
+                window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
+              }
             } else if (code === 'I_RESET_PASSWORD') {
               window.location.assign(`/check-email?email=${account}&type=reset-password`)
             } else {
               setAuthToken(null)
               throw new Error(code)
             }
-          }),
+          })
+        },
         socialLogin: async ({ provider, providerToken }) =>
           Axios.post(
             `https://${apiHost}/auth/social-login`,
