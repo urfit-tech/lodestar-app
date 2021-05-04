@@ -240,7 +240,7 @@ const useEnrolledCoinProjectPlans = (memberId: string, projectId: string) => {
         project_plan_enrollment(
           where: {
             member_id: { _eq: $memberId }
-            project_plan: { project_id: { _eq: $projectId }, name: { _like: "%私塾方案%" } }
+            project_plan: { project_id: { _eq: $projectId }, title: { _like: "%私塾方案%" } }
           }
           limit: 1
         ) {
