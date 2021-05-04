@@ -1,10 +1,12 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button, message } from 'antd'
+import { Button } from 'antd'
 import React, { useContext } from 'react'
+import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import CheckoutProductModal from '../../containers/checkout/CheckoutProductModal'
+import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
 import { useMember } from '../../hooks/member'
@@ -61,10 +63,7 @@ const GeneralMerchandisePaymentBlock: React.FC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { getCartProduct, addCartProduct } = useContext(CartContext)
-
-  if (!addCartProduct) {
-    return null
-  }
+  const { settings } = useApp()
 
   const inCartQuantity: number = getCartProduct?.(`MerchandiseSpec_${merchandiseSpec.id}`)?.options?.quantity || 0
   const remainQuantity = (merchandiseSpec.buyableQuantity || 0) - inCartQuantity
@@ -78,18 +77,29 @@ const GeneralMerchandisePaymentBlock: React.FC<{
   }
 
   const handleClick = async () => {
-    await addCartProduct('MerchandiseSpec', merchandiseSpec.id, { quantity: merchandise.isPhysical ? quantity : 1 })
-    ReactGA.plugin.execute('ec', 'addProduct', {
-      id: merchandiseSpec.id,
-      name: `${merchandise.title} - ${merchandiseSpec.title}`,
-      category: 'MerchandiseSpec',
-      price: `${merchandiseSpec.listPrice}`,
-      quantity: `${merchandise.isPhysical ? quantity : 1}`,
-      currency: 'TWD',
-    })
-    ReactGA.plugin.execute('ec', 'setAction', 'add')
-    ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-    message.success(formatMessage(commonMessages.text.addToCartSuccessfully))
+    if (settings['tracking.fb_pixel_id']) {
+      ReactPixel.track('AddToCart', {
+        value: merchandiseSpec.listPrice,
+        currency: 'TWD',
+      })
+    }
+
+    if (settings['tracking.ga_id']) {
+      ReactGA.plugin.execute('ec', 'addProduct', {
+        id: merchandiseSpec.id,
+        name: `${merchandise.title} - ${merchandiseSpec.title}`,
+        category: 'MerchandiseSpec',
+        price: `${merchandiseSpec.listPrice}`,
+        quantity: `${merchandise.isPhysical ? quantity : 1}`,
+        currency: 'TWD',
+      })
+      ReactGA.plugin.execute('ec', 'setAction', 'add')
+      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+    }
+
+    return await addCartProduct?.('MerchandiseSpec', merchandiseSpec.id, {
+      quantity: merchandise.isPhysical ? quantity : 1,
+    }).catch(() => {})
   }
 
   return (

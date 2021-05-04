@@ -49,7 +49,7 @@ const ProgramPaymentButton: React.FC<ProgramPaymentButtonProps> = ({
   const { settings } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
 
-  const onClickAddCartProduct = async () => {
+  const handleClick = async () => {
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
         value: program.listPrice,
@@ -72,7 +72,7 @@ const ProgramPaymentButton: React.FC<ProgramPaymentButtonProps> = ({
     return await addCartProduct?.('Program', program.id, {
       from: window.location.pathname,
       sharingCode,
-    })
+    }).catch(() => {})
   }
 
   return program.isSoldOut ? (
@@ -87,7 +87,7 @@ const ProgramPaymentButton: React.FC<ProgramPaymentButtonProps> = ({
     <div className={variant === 'multiline' ? 'd-flex flex-column' : 'd-flex'}>
       {program.listPrice !== 0 && (
         <StyleButton
-          onClick={() => onClickAddCartProduct()}
+          onClick={() => handleClick()}
           className="mr-2"
           block={variant === 'multiline'}
           variant={variant}
@@ -101,7 +101,7 @@ const ProgramPaymentButton: React.FC<ProgramPaymentButtonProps> = ({
       <Button
         type="primary"
         block
-        onClick={() => onClickAddCartProduct().then(() => history.push('/cart'))}
+        onClick={() => handleClick().then(() => history.push('/cart'))}
         {...orderButtonProps}
       >
         {program.listPrice !== 0

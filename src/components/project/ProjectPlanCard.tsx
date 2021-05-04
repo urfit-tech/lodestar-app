@@ -116,6 +116,8 @@ const ProjectPlanCard: React.FC<ProjectPlanProps> = ({
 }) => {
   const { formatMessage } = useIntl()
 
+  const isOnSale = (soldAt?.getTime() || 0) > Date.now()
+
   return (
     <StyledWrapper>
       <CoverImage src={coverUrl || EmptyCover} />
@@ -126,7 +128,7 @@ const ProjectPlanCard: React.FC<ProjectPlanProps> = ({
           <PriceLabel
             variant="full-detail"
             listPrice={listPrice}
-            salePrice={(soldAt?.getTime() || 0) > Date.now() ? salePrice : undefined}
+            salePrice={isOnSale ? salePrice : undefined}
             downPrice={isSubscription && discountDownPrice > 0 ? discountDownPrice : undefined}
             periodAmount={periodAmount}
             periodType={periodType ? (periodType as PeriodType) : undefined}
@@ -174,7 +176,7 @@ const ProjectPlanCard: React.FC<ProjectPlanProps> = ({
                 title={title}
                 isPhysical={isPhysical}
                 listPrice={listPrice}
-                salePrice={salePrice}
+                salePrice={isOnSale ? salePrice : null}
               />
             ) : (
               <PerpetualPlanBlock
@@ -183,7 +185,7 @@ const ProjectPlanCard: React.FC<ProjectPlanProps> = ({
                 title={title}
                 isPhysical={isPhysical}
                 listPrice={listPrice}
-                salePrice={salePrice}
+                salePrice={isOnSale ? salePrice : null}
               />
             )
           ) : null}
@@ -207,47 +209,42 @@ const PerpetualPlanBlock: React.FC<{
   const { settings } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
 
+  const handleClick = async () => {
+    if (settings['tracking.fb_pixel_id']) {
+      ReactPixel.track('AddToCart', {
+        value: salePrice ?? listPrice,
+        currency: 'TWD',
+      })
+    }
+
+    if (settings['tracking.ga_id']) {
+      ReactGA.plugin.execute('ec', 'addProduct', {
+        id: projectPlanId,
+        name: `${projectTitle} - ${title}`,
+        category: 'ProjectPlan',
+        price: `${salePrice ?? listPrice}`,
+        quantity: '1',
+        currency: 'TWD',
+      })
+      ReactGA.plugin.execute('ec', 'setAction', 'add')
+      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+    }
+
+    addCartProduct?.('ProjectPlan', projectPlanId, {
+      quantity: 1,
+      sharingCode,
+      from: window.location.pathname,
+    })
+      .then(() => history.push(`/cart?type=funding`))
+      .catch(() => {})
+  }
+
   return isProductInCart?.('ProjectPlan', projectPlanId) ? (
-    <StyledButton
-      type="primary"
-      size="large"
-      onClick={() => {
-        history.push(`/cart`)
-      }}
-    >
+    <StyledButton type="primary" size="large" onClick={() => history.push(`/cart`)}>
       <span>{formatMessage(commonMessages.button.cart)}</span>
     </StyledButton>
   ) : (
-    <StyledButton
-      type="primary"
-      size="large"
-      onClick={() => {
-        if (settings['tracking.fb_pixel_id']) {
-          ReactPixel.track('AddToCart', {
-            value: typeof salePrice === 'number' ? salePrice : listPrice,
-            currency: 'TWD',
-          })
-        }
-        if (settings['tracking.ga_id']) {
-          ReactGA.plugin.execute('ec', 'addProduct', {
-            id: projectPlanId,
-            name: `${projectTitle} - ${title}`,
-            category: 'ProjectPlan',
-            price: `${listPrice}`,
-            quantity: '1',
-            currency: 'TWD',
-          })
-          ReactGA.plugin.execute('ec', 'setAction', 'add')
-          ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-        }
-
-        addCartProduct?.('ProjectPlan', projectPlanId, {
-          quantity: 1,
-          sharingCode,
-          from: window.location.pathname,
-        }).then(() => history.push(`/cart?type=funding`))
-      }}
-    >
+    <StyledButton type="primary" size="large" onClick={handleClick}>
       <span>{formatMessage(commonMessages.button.join)}</span>
     </StyledButton>
   )
@@ -263,13 +260,12 @@ const SubscriptionPlanBlock: React.FC<{
 }> = ({ projectPlanId, projectTitle, title, listPrice, salePrice, isPhysical }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId, isAuthenticated } = useAuth()
-  const { settings } = useApp()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { member } = useMember(currentMemberId || '')
 
   if (!isAuthenticated) {
     return (
-      <StyledButton type="primary" size="large" onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
+      <StyledButton type="primary" size="large" onClick={() => setAuthModalVisible?.(true)}>
         <span>{formatMessage(commonMessages.button.join)}</span>
       </StyledButton>
     )
@@ -278,31 +274,7 @@ const SubscriptionPlanBlock: React.FC<{
   return (
     <CheckoutProductModal
       renderTrigger={({ setVisible }) => (
-        <StyledButton
-          type="primary"
-          size="large"
-          onClick={() => {
-            if (settings['tracking.fb_pixel_id']) {
-              ReactPixel.track('AddToCart', {
-                value: typeof salePrice === 'number' ? salePrice : listPrice,
-                currency: 'TWD',
-              })
-            }
-            if (settings['tracking.ga_id']) {
-              ReactGA.plugin.execute('ec', 'addProduct', {
-                id: projectPlanId,
-                name: `${projectTitle} - ${title}`,
-                category: 'ProjectPlan',
-                price: `${listPrice}`,
-                quantity: '1',
-                currency: 'TWD',
-              })
-              ReactGA.plugin.execute('ec', 'setAction', 'add')
-              ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-            }
-            setVisible()
-          }}
-        >
+        <StyledButton type="primary" size="large" onClick={() => setVisible()}>
           <span>{formatMessage(commonMessages.button.join)}</span>
         </StyledButton>
       )}

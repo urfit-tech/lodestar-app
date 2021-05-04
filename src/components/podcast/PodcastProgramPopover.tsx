@@ -1,10 +1,12 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, Popover } from 'antd'
 import React, { useContext } from 'react'
+import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { durationFullFormatter } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -88,29 +90,33 @@ const PodcastProgramPopover: React.FC<PodcastProgramPopoverProps & { podcastProg
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
+  const { settings } = useApp()
   const { podcastPlanIds } = usePodcastPlanIds(instructor?.id || '')
 
   const withPodcastPlan = podcastPlanIds.length > 0
 
-  const onClickAddCartProduct = () => {
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        addCartProduct && (await addCartProduct('PodcastProgram', podcastProgramId))
-        ReactGA.plugin.execute('ec', 'addProduct', {
-          id: podcastProgramId,
-          name: title,
-          category: 'PodcastProgram',
-          price: `${listPrice}`,
-          quantity: '1',
-          currency: 'TWD',
-        })
-        ReactGA.plugin.execute('ec', 'setAction', 'add')
-        ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-        resolve()
-      } catch (err) {
-        reject(err)
-      }
-    })
+  const handleClick = async () => {
+    if (settings['tracking.fb_pixel_id']) {
+      ReactPixel.track('AddToCart', {
+        value: listPrice,
+        currency: 'TWD',
+      })
+    }
+
+    if (settings['tracking.ga_id']) {
+      ReactGA.plugin.execute('ec', 'addProduct', {
+        id: podcastProgramId,
+        name: title,
+        category: 'PodcastProgram',
+        price: `${listPrice}`,
+        quantity: '1',
+        currency: 'TWD',
+      })
+      ReactGA.plugin.execute('ec', 'setAction', 'add')
+      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+    }
+
+    return await addCartProduct?.('PodcastProgram', podcastProgramId).catch(() => {})
   }
 
   const content = (
@@ -138,7 +144,7 @@ const PodcastProgramPopover: React.FC<PodcastProgramPopoverProps & { podcastProg
         )}
         <div className="flex-grow-1 text-right">
           {withPodcastPlan && !isSubscribed && (
-            <Button type="link" icon="plus" size="small" onClick={() => onSubscribe && onSubscribe()}>
+            <Button type="link" icon="plus" size="small" onClick={() => onSubscribe?.()}>
               {formatMessage(commonMessages.title.podcastSubscription)}
             </Button>
           )}
@@ -160,18 +166,11 @@ const PodcastProgramPopover: React.FC<PodcastProgramPopoverProps & { podcastProg
               type="primary"
               className="mb-2"
               block
-              onClick={() => {
-                onClickAddCartProduct().then(() => history.push(`/cart`))
-              }}
+              onClick={() => handleClick().then(() => history.push(`/cart`))}
             >
               {formatMessage(commonMessages.button.purchase)}
             </Button>
-            <Button
-              onClick={() => {
-                onClickAddCartProduct()
-              }}
-              block
-            >
+            <Button block onClick={() => handleClick()}>
               {formatMessage(commonMessages.button.addCart)}
             </Button>
           </>

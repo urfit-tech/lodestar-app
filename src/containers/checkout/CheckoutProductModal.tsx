@@ -3,6 +3,8 @@ import { FormComponentProps } from 'antd/lib/form'
 import { ModalProps } from 'antd/lib/modal'
 import { camelCase } from 'lodash'
 import React, { useRef, useState } from 'react'
+import ReactPixel from 'react-facebook-pixel'
+import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -12,10 +14,9 @@ import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/ch
 import ShippingInput, { ShippingProps, validateShipping } from '../../components/checkout/ShippingInput'
 import PriceLabel from '../../components/common/PriceLabel'
 import ProductItem from '../../components/common/ProductItem'
-import { notEmpty } from '../../helpers'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
-import { useReferrer } from '../../hooks/common'
+import { useReferrer, useSimpleProduct } from '../../hooks/common'
 import { useUpdateMemberMetadata } from '../../hooks/member'
 import { shippingOptionIdProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
@@ -29,7 +30,8 @@ import {
   StyledWarningText,
   StyledWrapper,
 } from './CheckoutProductModal.styled'
-const CheckoutProductItem: React.FC<{
+
+const CheckoutProductItem: React.VFC<{
   name: string
   price: number
 }> = ({ name, price }) => {
@@ -47,7 +49,7 @@ const CheckoutProductItem: React.FC<{
 
 export type CheckoutProductModalProps = FormComponentProps &
   ModalProps & {
-    renderTrigger: React.FC<{
+    renderTrigger: React.VFC<{
       setVisible: () => void
     }>
     renderProductSelector?: (options: {
@@ -79,10 +81,10 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
   const history = useHistory()
   const [sharingCode] = useQueryParam('sharing', StringParam)
   const { currentMemberId } = useAuth()
+  const { enabledModules, settings } = useApp()
   const updateMemberMetadata = useUpdateMemberMetadata()
-  const { enabledModules } = useApp()
 
-  const [isModalVisible, setModalVisible] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   // payment information
   const cachedPaymentInfor: {
@@ -144,31 +146,19 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
   // checkout
   const [productId, setProductId] = useState<string>(defaultProductId || '')
-  const productIds = [productId].filter(notEmpty)
-  const discountId = form.getFieldValue('discountId')
-  const productOptions = productIds.reduce(
-    (accumulator, productId) => ({
-      ...accumulator,
+  const { target } = useSimpleProduct({ id: productId, startedAt })
+
+  const { check, orderPlacing, orderChecking, placeOrder, totalPrice } = useCheck(
+    [productId],
+    form.getFieldValue('discountId'),
+    isProductPhysical ? shipping : productId.startsWith('MerchandiseSpec_') ? { address: member?.email } : null,
+    {
       [productId]: {
         startedAt,
         from: window.location.pathname,
         sharingCode,
       },
-    }),
-    {} as { [ProductId: string]: any },
-  )
-
-  const { check, orderPlacing, orderChecking, placeOrder, totalPrice } = useCheck(
-    productIds,
-    discountId,
-    isProductPhysical
-      ? shipping
-      : productId.startsWith('MerchandiseSpec_')
-      ? {
-          address: member?.email,
-        }
-      : null,
-    productOptions,
+    },
   )
 
   const handleSubmit = () => {
@@ -188,12 +178,31 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
         invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
         return
       }
-      if (referrerEmail && !referrerStatus) {
+      if (referrerEmail && referrerStatus !== 'success') {
+        if (referrerStatus === 'error') {
+          referrerRef.current?.scrollIntoView({ behavior: 'smooth' })
+        }
         return
       }
-      if (referrerStatus === 'error') {
-        referrerRef.current?.scrollIntoView({ behavior: 'smooth' })
-        return
+
+      if (settings['tracking.fb_pixel_id']) {
+        ReactPixel.track('AddToCart', {
+          value: totalPrice,
+          currency: 'TWD',
+        })
+      }
+
+      if (settings['tracking.ga_id']) {
+        ReactGA.plugin.execute('ec', 'addProduct', {
+          id: productId,
+          name: target?.title || productId,
+          category: productId.split('_')[0] || 'Unknown',
+          price: `${totalPrice}`,
+          quantity: '1',
+          currency: 'TWD',
+        })
+        ReactGA.plugin.execute('ec', 'setAction', 'add')
+        ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
       }
 
       const taskId = await placeOrder(paymentType, {
@@ -217,14 +226,14 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
   return (
     <>
-      {renderTrigger({ setVisible: () => setModalVisible(true) })}
+      {renderTrigger({ setVisible: () => setVisible(true) })}
 
       <StyledModal
         title={null}
         footer={null}
         width="100%"
-        visible={isModalVisible}
-        onCancel={() => setModalVisible(false)}
+        visible={visible}
+        onCancel={() => setVisible(false)}
         {...modalProps}
       >
         <StyledTitle className="mb-4">{formatMessage(checkoutMessages.title.cart)}</StyledTitle>
@@ -268,11 +277,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
               />
             </div>
 
-            <div className="mb-3">
-              {form.getFieldDecorator('discountId', {
-                initialValue: discountId,
-              })(<DiscountSelectionCard check={check} />)}
-            </div>
+            <div className="mb-3">{form.getFieldDecorator('discountId')(<DiscountSelectionCard check={check} />)}</div>
 
             {enabledModules.referrer && (
               <div className="row" ref={referrerRef}>
@@ -335,7 +340,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
             )}
 
             <div className="text-right">
-              <Button onClick={() => setModalVisible(false)} className="mr-3">
+              <Button onClick={() => setVisible(false)} className="mr-3">
                 {formatMessage(commonMessages.ui.cancel)}
               </Button>
               <Button type="primary" loading={orderPlacing} htmlType="submit">
