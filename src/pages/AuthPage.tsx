@@ -1,7 +1,8 @@
 import { Container } from '@chakra-ui/react'
 import React, { useState } from 'react'
-import { Redirect, useLocation } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../components/auth/AuthContext'
 import LoginSection from '../components/auth/LoginSection'
 import RegisterSection from '../components/auth/RegisterSection'
@@ -16,9 +17,7 @@ const StyledContainer = styled(Container)`
 const AuthPage: React.FC<{ noGeneralLogin?: boolean }> = ({ noGeneralLogin }) => {
   const { currentMember } = useAuth()
   const [authState, setAuthState] = useState<AuthState>('login')
-  const { search } = useLocation()
-  const query = new URLSearchParams(search)
-  const accountLinkToken = query.get('accountLinkToken') || ''
+  const [accountLinkToken] = useQueryParam('accountLinkToken', StringParam)
 
   if (!accountLinkToken) return <Redirect to="/" />
   if (currentMember) {
