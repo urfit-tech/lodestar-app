@@ -63,30 +63,16 @@ const StyledDescription = styled.div`
   line-height: 1.57;
   letter-spacing: 0.18px;
 `
-const StyledProjectPlanInfo = styled.div<{ active?: boolean }>`
-  display: inline-block;
-  border-radius: 4px;
-  background: ${props => (props.active ? `${props.theme['@primary-color']}19` : 'var(--gray-lighter)')};
-
-  .wrapper {
-    padding: 10px 0;
-    line-height: 12px;
-
-    div {
-    }
-  }
-`
-const StyledProjectPlanInfoWrapper = styled.div`
-  padding: 10px 0;
-  line-height: 12px;
-`
 const StyledProjectPlanInfoBlock = styled.div<{ active?: boolean }>`
   display: inline-block;
-  line-height: 1;
+  padding: 10px;
+  background: ${props => (props.active ? `${props.theme['@primary-color']}19` : 'var(--gray-lighter)')};
+  color: ${props => (props.active ? `${props.theme['@primary-color']}` : 'var(--gray-dark)')};
   font-size: 12px;
   letter-spacing: 0.15px;
-  color: ${props => (props.active ? `${props.theme['@primary-color']}` : 'var(--gray-dark)')};
-  padding: 0 10px;
+  line-height: 12px;
+  line-height: 1;
+  border-radius: 4px;
 
   &:last-child:not(:first-child) {
     border-left: 1px solid ${props => (props.active ? `${props.theme['@primary-color']}` : 'var(--gray-dark)')};
@@ -115,6 +101,7 @@ const ProjectPlanCard: React.FC<ProjectPlanProps> = ({
   projectPlanEnrollmentCount,
 }) => {
   const { formatMessage } = useIntl()
+  const { settings } = useApp()
 
   const isOnSale = (soldAt?.getTime() || 0) > Date.now()
 
@@ -124,16 +111,18 @@ const ProjectPlanCard: React.FC<ProjectPlanProps> = ({
       <div className="p-4">
         <StyledTitle className="mb-3">{title}</StyledTitle>
 
-        <div className="mb-3">
-          <PriceLabel
-            variant="full-detail"
-            listPrice={listPrice}
-            salePrice={isOnSale ? salePrice : undefined}
-            downPrice={isSubscription && discountDownPrice > 0 ? discountDownPrice : undefined}
-            periodAmount={periodAmount}
-            periodType={periodType ? (periodType as PeriodType) : undefined}
-          />
-        </div>
+        {settings['custom.project.plan_price_style'] !== 'hidden' && (
+          <div className="mb-3">
+            <PriceLabel
+              variant="full-detail"
+              listPrice={listPrice}
+              salePrice={isOnSale ? salePrice : undefined}
+              downPrice={isSubscription && discountDownPrice > 0 ? discountDownPrice : undefined}
+              periodAmount={periodAmount}
+              periodType={periodType ? (periodType as PeriodType) : undefined}
+            />
+          </div>
+        )}
 
         {!isSubscription && periodType && (
           <StyledPeriod className="mb-3">
@@ -144,19 +133,11 @@ const ProjectPlanCard: React.FC<ProjectPlanProps> = ({
           </StyledPeriod>
         )}
 
-        {(isLimited || isParticipantsVisible) && (
-          <StyledProjectPlanInfo
+        {isParticipantsVisible && (
+          <StyledProjectPlanInfoBlock
             className="mb-4"
             active={!isExpired && (!isLimited || Boolean(buyableQuantity && buyableQuantity > 0))}
-          >
-            <StyledProjectPlanInfoWrapper>
-              {isParticipantsVisible && (
-                <StyledProjectPlanInfoBlock
-                  active={!isExpired && (!isLimited || Boolean(buyableQuantity && buyableQuantity > 0))}
-                >{`${formatMessage(messages.participants)} ${projectPlanEnrollmentCount}`}</StyledProjectPlanInfoBlock>
-              )}
-            </StyledProjectPlanInfoWrapper>
-          </StyledProjectPlanInfo>
+          >{`${formatMessage(messages.participants)} ${projectPlanEnrollmentCount}`}</StyledProjectPlanInfoBlock>
         )}
 
         <StyledDescription className="mb-4">

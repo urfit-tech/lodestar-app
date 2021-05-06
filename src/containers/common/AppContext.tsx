@@ -85,11 +85,7 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
     { variables: { appId } },
   )
 
-  const settings =
-    data?.app_by_pk?.app_settings?.reduce((accumulator, appSetting) => {
-      accumulator[appSetting.key] = appSetting.value
-      return accumulator
-    }, {} as { [key: string]: string }) || {}
+  const settings = Object.fromEntries(data?.app_by_pk?.app_settings.map(v => [v.key, v.value]) || [])
 
   const app: AppProps =
     loading || error || !data || !data.app_by_pk
