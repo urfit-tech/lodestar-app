@@ -25,12 +25,12 @@ const AuthPage: React.FC = () => {
     window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
   }
   return (
-    <DefaultLayout centeredBox noFooter>
+    <DefaultLayout centeredBox noFooter noGeneralLogin={noGeneralLogin || false}>
       <StyledContainer centerContent maxW="md">
         {authState === 'login' ? (
           <LoginSection
             onAuthStateChange={setAuthState}
-            noGeneralLogin={noGeneralLogin}
+            noGeneralLogin={noGeneralLogin || false}
             accountLinkToken={accountLinkToken}
           />
         ) : authState === 'register' ? (
