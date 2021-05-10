@@ -27,7 +27,7 @@ const OAuth2Page: React.FC = () => {
     provider = null,
     redirect = '/',
   }: {
-    provider: 'facebook' | 'google' | 'line' | null
+    provider: 'facebook' | 'google' | 'line' | 'parenting' | null
     redirect: string
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
