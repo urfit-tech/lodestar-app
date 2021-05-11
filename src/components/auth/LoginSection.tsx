@@ -28,9 +28,16 @@ const ForgetPassword = styled.div`
 type LoginSectionProps = FormComponentProps & {
   noGeneralLogin?: boolean
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
+  accountLinkToken?: string
   renderTitle?: () => React.ReactNode
 }
-const LoginSection: React.FC<LoginSectionProps> = ({ form, noGeneralLogin, onAuthStateChange, renderTitle }) => {
+const LoginSection: React.FC<LoginSectionProps> = ({
+  form,
+  noGeneralLogin,
+  onAuthStateChange,
+  accountLinkToken,
+  renderTitle,
+}) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -52,6 +59,7 @@ const LoginSection: React.FC<LoginSectionProps> = ({ form, noGeneralLogin, onAut
       login({
         account: values.account.trim().toLowerCase(),
         password: values.password,
+        accountLinkToken: accountLinkToken,
       })
         .then(() => {
           setVisible && setVisible(false)

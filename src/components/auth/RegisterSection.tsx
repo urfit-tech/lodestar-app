@@ -167,6 +167,12 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
               {formatMessage(commonMessages.button.verifySms)}
             </Button>
           </Form.Item>
+          <StyledAction>
+            <span>{formatMessage(authMessages.content.isMember)}</span>
+            <Button type="link" size="small" onClick={() => onAuthStateChange('login')}>
+              {formatMessage(commonMessages.button.login)}
+            </Button>
+          </StyledAction>
         </Form>
       </>
     )
@@ -267,7 +273,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
       </Form>
 
       <StyledAction>
-        <span>{formatMessage(authMessages.content.noMember)}</span>
+        <span>{formatMessage(authMessages.content.isMember)}</span>
         <Button type="link" size="small" onClick={() => onAuthStateChange('login')}>
           {formatMessage(commonMessages.button.login)}
         </Button>
