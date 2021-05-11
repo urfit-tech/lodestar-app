@@ -91,14 +91,14 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChan
           password: values.password,
         })
           .then(() => {
-            setVisible && setVisible(false)
+            setVisible?.(false)
             form.resetFields()
           })
           .catch((error: Error) => {
             const code = error.message as keyof typeof codeMessages
             message.error(formatMessage(codeMessages[code]))
           })
-          .catch(err => handleError(err))
+          .catch(handleError)
           .finally(() => setLoading(false))
       })
   }

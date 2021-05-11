@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken'
 import parsePhoneNumber from 'libphonenumber-js'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
-import { handleError } from '../../helpers'
 import { UserRole } from '../../types/member'
 
 type AuthProps = {
@@ -115,38 +114,62 @@ export const AuthProvider: React.FC<{
               password,
             },
             { withCredentials: true },
-          )
-            .then(({ data: { code, message, result } }) => {
-              if (code === 'SUCCESS') {
-                setAuthToken(result.authToken)
-                return Axios.post(
-                  `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
-                  {
-                    query: `
-                      mutation INSERT_MEMBER_PHONE_ONE($currentMemberId: String!, $phone: String!) {
-                        insert_member_phone_one(object: { member_id: $currentMemberId, phone: $phone }) {
-                          id
+          ).then(({ data: { code, message, result } }) => {
+            if (code === 'SUCCESS') {
+              setAuthToken(result.authToken)
+              try {
+                const currentMemberId = jwt.decode(result.authToken)?.sub
+                const phone = sessionStorage.getItem('phone')
+                if (phone) {
+                  Axios.post(
+                    `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
+                    {
+                      query: `
+                        mutation INSERT_MEMBER_PHONE_ONE($currentMemberId: String!, $phone: String!) {
+                          insert_member_phone_one(object: { member_id: $currentMemberId, phone: $phone }) {
+                            id
+                          }
                         }
-                      }
                     `,
-                    variables: {
-                      currentMemberId: jwt.decode(result.authToken)?.sub,
-                      phone: sessionStorage.getItem('phone'),
+                      variables: {
+                        currentMemberId,
+                        phone,
+                      },
                     },
-                  },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${result.authToken}`,
+                    { headers: { Authorization: `Bearer ${result.authToken}` } },
+                  )
+                }
+
+                const categoryIds: string[] = JSON.parse(sessionStorage.getItem('categoryIds') || '[]')
+                if (categoryIds.length) {
+                  Axios.post(
+                    `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
+                    {
+                      query: `
+                        mutation INSERT_MEMBER_CATEGORIES($data: [member_category_insert_input!]!) {
+                          insert_member_category(objects: $data) {
+                            affected_rows
+                          }
+                        }                      
+                    `,
+                      variables: {
+                        data: categoryIds.map((categoryId, index) => ({
+                          member_id: currentMemberId,
+                          category_id: categoryId,
+                          position: index,
+                        })),
+                      },
                     },
-                  },
-                )
-              } else {
-                setAuthToken(null)
-                throw new Error(code)
-              }
-            })
-            .catch(handleError),
-        login: async ({ account, password, accountLinkToken }) => {
+                    { headers: { Authorization: `Bearer ${result.authToken}` } },
+                  )
+                }
+              } catch {}
+            } else {
+              setAuthToken(null)
+              throw new Error(code)
+            }
+          }),
+        login: async ({ account, password, accountLinkToken }) =>
           Axios.post(
             `https://${apiHost}/auth/general-login`,
             { appId, account, password },
@@ -163,8 +186,7 @@ export const AuthProvider: React.FC<{
               setAuthToken(null)
               throw new Error(code)
             }
-          })
-        },
+          }),
         socialLogin: async ({ provider, providerToken }) =>
           Axios.post(
             `https://${apiHost}/auth/social-login`,
