@@ -240,7 +240,15 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
         <StyledWrapper>
           <div className="mb-5">
-            <ProductItem id={productId} startedAt={startedAt} variant="checkout" />
+            <ProductItem
+              id={productId}
+              startedAt={startedAt}
+              variant={
+                settings['custom.project.plan_price_style'] === 'hidden' && productId.startsWith('ProjectPlan_')
+                  ? undefined
+                  : 'checkout'
+              }
+            />
           </div>
 
           <Form
@@ -307,7 +315,8 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
             <Divider className="mb-3" />
 
-            {orderChecking ? (
+            {settings['custom.project.plan_price_style'] === 'hidden' &&
+            productId.startsWith('ProjectPlan_') ? null : orderChecking ? (
               <Skeleton active />
             ) : (
               <>
