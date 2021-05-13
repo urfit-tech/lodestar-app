@@ -106,6 +106,38 @@ const OAuth2Page: React.FC = () => {
     }
   }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
 
+  useEffect(() => {
+    if (!isAuthenticating && provider === 'parenting') {
+      const clientId = settings['auth.parenting_client_id']
+      const clientSecret = settings['auth.parenting_client_secret']
+      const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2`
+      if (code && clientId && clientSecret) {
+        const params = new URLSearchParams({
+          grant_type: 'authorization_code',
+          redirect_uri: redirectUri,
+          client_id: clientId,
+          client_secret: clientSecret,
+          code,
+        })
+        const config = {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+        axios
+          .post<{ access_token: string }>('https://accounts.parenting.com.tw/oauth/token', params, config)
+          .then(({ data }) => {
+            return socialLogin?.({
+              provider,
+              providerToken: data.access_token,
+            })
+          })
+          .then(() => history.push(redirect))
+          .catch(handleError)
+      }
+    }
+  })
+
   return <LoadingPage />
 }
 
