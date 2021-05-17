@@ -1,8 +1,8 @@
 import { message } from 'antd'
-import axios from 'axios'
+import { default as Axios, default as axios } from 'axios'
 import React, { useCallback, useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../components/auth/AuthContext'
 import { useApp } from '../containers/common/AppContext'
@@ -13,21 +13,22 @@ import LoadingPage from './LoadingPage'
 
 const OAuth2Page: React.FC = () => {
   const { formatMessage } = useIntl()
+  const { provider } = useParams<{ provider: 'parenting' }>()
   const [code] = useQueryParam('code', StringParam)
   const [state] = useQueryParam('state', StringParam)
   const history = useHistory()
-  const { settings } = useApp()
-  const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
+  const { id: appId, settings } = useApp()
+  const { isAuthenticating, currentMemberId, socialLogin, apiHost } = useAuth()
   const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
 
   const {
-    provider = null,
+    providerParams = null,
     redirect = '/',
   }: {
-    provider: 'facebook' | 'google' | 'line' | 'parenting' | null
+    providerParams: 'facebook' | 'google' | 'line' | 'parenting' | null
     redirect: string
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
@@ -56,16 +57,16 @@ const OAuth2Page: React.FC = () => {
   }, [accessToken, updateYoutubeChannelIds, currentMemberId, history, redirect, formatMessage])
 
   useEffect(() => {
-    if (!isAuthenticating && currentMemberId && provider === 'google') {
+    if (!isAuthenticating && currentMemberId && providerParams === 'google') {
       handleFetchYoutubeApi()
     }
-  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, provider])
+  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, providerParams])
 
   // Authorization Code Flow
   useEffect(() => {
     const clientId = settings['auth.line_client_id']
     const clientSecret = settings['auth.line_client_secret']
-    if (!isAuthenticating && !currentMemberId && code && provider === 'line' && clientId && clientSecret) {
+    if (!isAuthenticating && !currentMemberId && code && providerParams === 'line' && clientId && clientSecret) {
       const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2`
 
       const params = new URLSearchParams({
@@ -85,58 +86,56 @@ const OAuth2Page: React.FC = () => {
         .post<{ id_token: string }>('https://api.line.me/oauth2/v2.1/token', params, config)
         .then(({ data }) => {
           return socialLogin?.({
-            provider,
+            provider: providerParams,
             providerToken: data.id_token,
           })
         })
         .then(() => history.push(redirect))
         .catch(handleError)
     }
-  }, [isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
+  }, [isAuthenticating, currentMemberId, code, settings, providerParams, socialLogin, history, redirect])
 
   // Implicit Flow
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && (provider === 'google' || provider === 'facebook')) {
+    if (!isAuthenticating && !currentMemberId && (providerParams === 'google' || providerParams === 'facebook')) {
       socialLogin?.({
-        provider,
+        provider: providerParams,
         providerToken: accessToken,
       })
         .then(() => history.push(redirect))
         .catch(handleError)
     }
-  }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
+  }, [isAuthenticating, currentMemberId, socialLogin, providerParams, accessToken, history, redirect])
 
   useEffect(() => {
-    if (!isAuthenticating && provider === 'parenting') {
-      const clientId = settings['auth.parenting_client_id']
-      const clientSecret = settings['auth.parenting_client_secret']
-      const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2`
-      if (code && clientId && clientSecret) {
-        const params = new URLSearchParams({
-          grant_type: 'authorization_code',
-          redirect_uri: redirectUri,
-          client_id: clientId,
-          client_secret: clientSecret,
-          code,
-        })
-        const config = {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+    if (!isAuthenticating && !currentMemberId && provider === 'parenting') {
+      const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2/parenting`
+      if (appId && code) {
+        Axios.post(
+          `https://${apiHost}/auth/get-oauth-token`,
+          {
+            appId,
+            provider,
+            redirectUri,
+            code,
           },
-        }
-        axios
-          .post<{ access_token: string }>('https://accounts.parenting.com.tw/oauth/token', params, config)
-          .then(({ data }) => {
-            return socialLogin?.({
-              provider,
-              providerToken: data.access_token,
-            })
+          { withCredentials: true },
+        )
+          .then(({ data: { code, message, result } }) => {
+            if (code === 'SUCCESS') {
+              return socialLogin?.({
+                provider,
+                providerToken: result.token,
+              })
+            }
           })
-          .then(() => history.push(redirect))
+          .then(() => {
+            history.push(redirect)
+          })
           .catch(handleError)
       }
     }
-  })
+  }, [appId, code, currentMemberId, history, isAuthenticating, provider, redirect, socialLogin])
 
   return <LoadingPage />
 }

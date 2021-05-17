@@ -15,7 +15,7 @@ type AuthProps = {
   apiHost: string
   refreshToken?: () => Promise<void>
   register?: (data: { username: string; email: string; password: string }) => Promise<void>
-  login?: (data: { account: string; password: string }) => Promise<void>
+  login?: (data: { account: string; password: string; accountLinkToken?: string }) => Promise<void>
   socialLogin?: (data: { provider: 'facebook' | 'google' | 'line' | 'parenting'; providerToken: any }) => Promise<void>
   logout?: () => void
   sendSmsCode?: (data: { phoneNumber: string }) => Promise<void>
