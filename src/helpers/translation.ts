@@ -7,7 +7,7 @@ export const authMessages = {
     smsVerification: { id: 'auth.title.smsVerification', defaultMessage: '驗證手機號碼' },
   }),
   ui: defineMessages({
-    facebookLogin: { id: 'auth.ui.loginFb', defaultMessage: 'Facebook 登入/註冊' },
+    facebookLogin: { id: 'auth.ui.facebookLogin', defaultMessage: 'Facebook 登入/註冊' },
     lineLogin: { id: 'auth.ui.lineLogin', defaultMessage: '使用 Line 繼續' },
     parentingLogin: { id: 'auth.ui.parentingLogin', defaultMessage: '使用 親子天下帳號 繼續' },
     googleLogin: { id: 'auth.ui.googleLogin', defaultMessage: 'Google 登入/註冊' },
