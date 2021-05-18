@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import { default as Axios, default as axios } from 'axios'
+import axios from 'axios'
 import React, { useCallback, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -11,9 +11,11 @@ import { profileMessages } from '../helpers/translation'
 import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
 import LoadingPage from './LoadingPage'
 
+type ProviderType = 'facebook' | 'google' | 'line' | 'parenting'
+
 const OAuth2Page: React.FC = () => {
   const { formatMessage } = useIntl()
-  const { provider } = useParams<{ provider: 'parenting' }>()
+  const { provider } = useParams<{ provider: ProviderType }>()
   const [code] = useQueryParam('code', StringParam)
   const [state] = useQueryParam('state', StringParam)
   const history = useHistory()
@@ -28,7 +30,7 @@ const OAuth2Page: React.FC = () => {
     providerParams = null,
     redirect = '/',
   }: {
-    providerParams: 'facebook' | 'google' | 'line' | 'parenting' | null
+    providerParams: ProviderType | null
     redirect: string
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
@@ -108,10 +110,10 @@ const OAuth2Page: React.FC = () => {
   }, [isAuthenticating, currentMemberId, socialLogin, providerParams, accessToken, history, redirect])
 
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && provider === 'parenting') {
+    if (!isAuthenticating && !currentMemberId && provider === 'parenting' && appId && code) {
       const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2/parenting`
-      if (appId && code) {
-        Axios.post(
+      axios
+        .post(
           `https://${apiHost}/auth/get-oauth-token`,
           {
             appId,
@@ -121,21 +123,20 @@ const OAuth2Page: React.FC = () => {
           },
           { withCredentials: true },
         )
-          .then(({ data: { code, message, result } }) => {
-            if (code === 'SUCCESS') {
-              return socialLogin?.({
-                provider,
-                providerToken: result.token,
-              })
-            }
-          })
-          .then(() => {
-            history.push(redirect)
-          })
-          .catch(handleError)
-      }
+        .then(({ data: { code, message, result } }) => {
+          if (code === 'SUCCESS') {
+            return socialLogin?.({
+              provider,
+              providerToken: result.token,
+            })
+          }
+        })
+        .then(() => {
+          history.push(redirect)
+        })
+        .catch(handleError)
     }
-  }, [appId, code, currentMemberId, history, isAuthenticating, provider, redirect, socialLogin])
+  }, [apiHost, appId, code, currentMemberId, history, isAuthenticating, provider, redirect, socialLogin])
 
   return <LoadingPage />
 }
