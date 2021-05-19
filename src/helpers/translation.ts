@@ -7,8 +7,10 @@ export const authMessages = {
     smsVerification: { id: 'auth.title.smsVerification', defaultMessage: '驗證手機號碼' },
   }),
   ui: defineMessages({
-    loginFb: { id: 'auth.content.loginFb', defaultMessage: 'Facebook 登入/註冊' },
+    facebookLogin: { id: 'auth.ui.facebookLogin', defaultMessage: 'Facebook 登入/註冊' },
     lineLogin: { id: 'auth.ui.lineLogin', defaultMessage: '使用 Line 繼續' },
+    parentingLogin: { id: 'auth.ui.parentingLogin', defaultMessage: '使用 親子天下帳號 繼續' },
+    googleLogin: { id: 'auth.ui.googleLogin', defaultMessage: 'Google 登入/註冊' },
   }),
   content: defineMessages({
     noMember: { id: 'auth.content.noMember', defaultMessage: '還不是會員嗎？' },
@@ -22,7 +24,6 @@ export const authMessages = {
   }),
   message: defineMessages({
     fbError: { id: 'auth.message.error.fb', defaultMessage: `無法從 Facebook 登入/註冊` },
-    google: { id: 'auth.message.google', defaultMessage: 'Google 登入/註冊' },
     googleError: { id: 'auth.message.error.google', defaultMessage: `無法從 Google 登入/註冊` },
   }),
   link: defineMessages({

@@ -1,4 +1,4 @@
-import { Button, Icon } from '@chakra-ui/react'
+import { Button, Icon, Spinner } from '@chakra-ui/react'
 import { Spin } from 'antd'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -61,7 +61,7 @@ const FacebookLoginButton: React.VFC = () => {
         }}
       >
         <FacebookLogo />
-        <span>{formatMessage(authMessages.ui.loginFb)}</span>
+        <span>{formatMessage(authMessages.ui.facebookLogin)}</span>
       </Button>
     </a>
   )
@@ -99,7 +99,7 @@ const GoogleLoginButton: React.VFC = () => {
         }}
       >
         <GoogleLogo />
-        <span>{formatMessage(authMessages.message.google)}</span>
+        <span>{formatMessage(authMessages.ui.googleLogin)}</span>
       </Button>
     </a>
   )
@@ -146,4 +146,43 @@ const LineLoginButton: React.VFC = () => {
   )
 }
 
-export { FacebookLoginButton, GoogleLoginButton, LineLoginButton }
+const ParentingLoginButton: React.VFC = () => {
+  const { settings, loading } = useApp()
+  const { formatMessage } = useIntl()
+  const [back] = useQueryParam('back', StringParam)
+
+  if (loading) {
+    return <Spinner />
+  }
+  return (
+    <a
+      href={'https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&scope={{SCOPE}}'
+        .replace('{{CLIENT_ID}}', `${settings['auth.parenting_client_id']}`)
+        .replace('{{REDIRECT_URI}}', `https://${window.location.hostname}:${window.location.port}/oauth2/parenting`)
+        .replace('{{SCOPE}}', '')
+        .replace(
+          '{{STATE}}',
+          btoa(
+            JSON.stringify({
+              provider: 'parenting',
+              redirect: back || window.location.pathname,
+            }),
+          ),
+        )}
+    >
+      <Button
+        style={{
+          border: '1px solid #e5017f',
+          height: '44px',
+          width: '100%',
+          background: '#e5017f',
+          color: '#fff',
+        }}
+      >
+        <span>{formatMessage(authMessages.ui.parentingLogin)}</span>
+      </Button>
+    </a>
+  )
+}
+
+export { FacebookLoginButton, GoogleLoginButton, LineLoginButton, ParentingLoginButton }
