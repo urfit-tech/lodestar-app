@@ -47,7 +47,7 @@ const ProgramSection: React.FC<{ options: { title?: string; colAmount?: number; 
       </div>
 
       <div className="text-center">
-        <StyledLink to={`/programs?active=${options?.categoryId}`}>
+        <StyledLink to={`/programs${options?.categoryId ? '?active=' + options?.categoryId : ''}`}>
           查看更多 <AngleRightIcon />
         </StyledLink>
       </div>
