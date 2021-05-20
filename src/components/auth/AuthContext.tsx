@@ -14,7 +14,13 @@ type AuthProps = {
   currentMember: { name: string; username: string; email: string; pictureUrl: string } | null
   apiHost: string
   refreshToken?: () => Promise<void>
-  register?: (data: { username: string; email: string; password: string }) => Promise<void>
+  register?: (data: {
+    appId?: string
+    username: string
+    email: string
+    password: string
+    withoutLogin?: boolean
+  }) => Promise<void>
   login?: (data: { account: string; password: string; accountLinkToken?: string }) => Promise<void>
   socialLogin?: (data: { provider: 'facebook' | 'google' | 'line' | 'parenting'; providerToken: any }) => Promise<void>
   logout?: () => void
@@ -104,19 +110,21 @@ export const AuthProvider: React.FC<{
               }
             })
             .finally(() => setIsAuthenticating(false)),
-        register: async ({ username, email, password }) =>
+        register: async data =>
           Axios.post(
             `https://${apiHost}/auth/register`,
             {
-              appId,
-              username,
-              email,
-              password,
+              appId: data.appId || appId,
+              username: data.username,
+              email: data.email,
+              password: data.password,
             },
             { withCredentials: true },
           ).then(({ data: { code, message, result } }) => {
             if (code === 'SUCCESS') {
-              setAuthToken(result.authToken)
+              if (!data.withoutLogin) {
+                setAuthToken(result.authToken)
+              }
               try {
                 const currentMemberId = jwt.decode(result.authToken)?.sub
                 const phone = sessionStorage.getItem('phone')
@@ -141,18 +149,34 @@ export const AuthProvider: React.FC<{
                 }
 
                 const categoryIds: string[] = JSON.parse(sessionStorage.getItem('categoryIds') || '[]')
+                const memberProperty: { propertyId?: string; value?: string } = JSON.parse(
+                  sessionStorage.getItem('memberProperty') || '{}',
+                )
                 if (categoryIds.length) {
                   Axios.post(
                     `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
                     {
                       query: `
-                        mutation INSERT_MEMBER_CATEGORIES($data: [member_category_insert_input!]!) {
+                        mutation INSERT_MEMBER_CATEGORIES($memberProperty: [member_property_insert_input!]!, $data: [member_category_insert_input!]!) {
+                          insert_member_property(objects: $memberProperty) {
+                            affected_rows
+                          }
                           insert_member_category(objects: $data) {
                             affected_rows
                           }
-                        }                      
-                    `,
+                        }
+                      `,
                       variables: {
+                        memberProperty:
+                          memberProperty.propertyId || memberProperty.value
+                            ? [
+                                {
+                                  member_id: currentMemberId,
+                                  property_id: memberProperty.propertyId,
+                                  value: memberProperty.value,
+                                },
+                              ]
+                            : [],
                         data: categoryIds.map((categoryId, index) => ({
                           member_id: currentMemberId,
                           category_id: categoryId,
