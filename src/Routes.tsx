@@ -55,6 +55,11 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     authenticated: false,
   },
   oauth2: {
+    path: '/oauth2',
+    pageName: 'OAuth2Page',
+    authenticated: false,
+  },
+  oauth2_provider: {
     path: '/oauth2/:provider',
     pageName: 'OAuth2Page',
     authenticated: false,

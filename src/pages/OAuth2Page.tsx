@@ -13,24 +13,34 @@ import LoadingPage from './LoadingPage'
 
 type ProviderType = 'facebook' | 'google' | 'line' | 'parenting'
 
-const OAuth2Page: React.FC = () => {
-  const { formatMessage } = useIntl()
+const OAuth2Page: React.VFC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
+
+  if (provider === 'parenting') {
+    return <ParentingOauth2Section />
+  }
+
+  return <DefaultOauth2Section />
+}
+
+// TODO: add oauth2 sections of Facebook, Google, Line
+const DefaultOauth2Section: React.VFC = () => {
+  const { formatMessage } = useIntl()
+  const history = useHistory()
   const [code] = useQueryParam('code', StringParam)
   const [state] = useQueryParam('state', StringParam)
-  const history = useHistory()
-  const { id: appId, settings } = useApp()
-  const { isAuthenticating, currentMemberId, socialLogin, apiHost } = useAuth()
+  const { settings } = useApp()
+  const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
   const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
 
   const {
-    providerParams = null,
+    provider = null,
     redirect = '/',
   }: {
-    providerParams: ProviderType | null
+    provider: ProviderType | null
     redirect: string
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
@@ -59,16 +69,16 @@ const OAuth2Page: React.FC = () => {
   }, [accessToken, updateYoutubeChannelIds, currentMemberId, history, redirect, formatMessage])
 
   useEffect(() => {
-    if (!isAuthenticating && currentMemberId && providerParams === 'google') {
+    if (!isAuthenticating && currentMemberId && provider === 'google') {
       handleFetchYoutubeApi()
     }
-  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, providerParams])
+  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, provider])
 
   // Authorization Code Flow
   useEffect(() => {
     const clientId = settings['auth.line_client_id']
     const clientSecret = settings['auth.line_client_secret']
-    if (!isAuthenticating && !currentMemberId && code && providerParams === 'line' && clientId && clientSecret) {
+    if (!isAuthenticating && !currentMemberId && code && provider === 'line' && clientId && clientSecret) {
       const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2`
 
       const params = new URLSearchParams({
@@ -88,26 +98,44 @@ const OAuth2Page: React.FC = () => {
         .post<{ id_token: string }>('https://api.line.me/oauth2/v2.1/token', params, config)
         .then(({ data }) => {
           return socialLogin?.({
-            provider: providerParams,
+            provider: provider,
             providerToken: data.id_token,
           })
         })
         .then(() => history.push(redirect))
         .catch(handleError)
     }
-  }, [isAuthenticating, currentMemberId, code, settings, providerParams, socialLogin, history, redirect])
+  }, [isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
 
   // Implicit Flow
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && (providerParams === 'google' || providerParams === 'facebook')) {
+    if (!isAuthenticating && !currentMemberId && (provider === 'google' || provider === 'facebook')) {
       socialLogin?.({
-        provider: providerParams,
+        provider: provider,
         providerToken: accessToken,
       })
         .then(() => history.push(redirect))
         .catch(handleError)
     }
-  }, [isAuthenticating, currentMemberId, socialLogin, providerParams, accessToken, history, redirect])
+  }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
+
+  return <LoadingPage />
+}
+
+const ParentingOauth2Section: React.VFC = () => {
+  const history = useHistory()
+  const { provider } = useParams<{ provider: ProviderType }>()
+  const [state] = useQueryParam('state', StringParam)
+  const [code] = useQueryParam('code', StringParam)
+  const { id: appId } = useApp()
+  const { isAuthenticating, currentMemberId, socialLogin, apiHost } = useAuth()
+
+  const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
+  const {
+    redirect = '/',
+  }: {
+    redirect: string
+  } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   useEffect(() => {
     if (!isAuthenticating && !currentMemberId && provider === 'parenting' && appId && code) {
