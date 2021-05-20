@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Divider, Form, Input, Skeleton } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Divider, Form, Input, Skeleton } from 'antd'
 import Modal, { ModalProps } from 'antd/lib/modal'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -175,10 +176,10 @@ const AppointmentCoinModal: React.FC<
                   </Form.Item>
 
                   <Button
-                    type="primary"
-                    block
-                    disabled={orderChecking || !isPaymentAvailable}
-                    loading={orderChecking || orderPlacing}
+                    colorScheme="primary"
+                    isFullWidth
+                    isDisabled={orderChecking || !isPaymentAvailable}
+                    isLoading={orderChecking || orderPlacing}
                     onClick={handlePay}
                   >
                     {formatMessage(messages.makeAppointment)}

@@ -1,5 +1,4 @@
-import { Button } from 'antd'
-import { CardProps } from 'antd/lib/card'
+import { Button } from '@chakra-ui/react'
 import React, { useContext } from 'react'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -43,13 +42,11 @@ const StyledBraftContent = styled.div`
   margin-bottom: 12px;
   font-size: 14px;
 `
-const ProgramSubscriptionPlanCard: React.FC<
-  CardProps & {
-    memberId: string
-    programId: string
-    programPlan: ProgramPlanProps
-  }
-> = ({ memberId, programId, programPlan, ...cardProps }) => {
+const ProgramSubscriptionPlanCard: React.FC<{
+  memberId: string
+  programId: string
+  programPlan: ProgramPlanProps
+}> = ({ memberId, programId, programPlan }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
@@ -62,7 +59,7 @@ const ProgramSubscriptionPlanCard: React.FC<
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
   return (
-    <StyledAdminCard key={programPlan.id} {...cardProps}>
+    <StyledAdminCard key={programPlan.id}>
       <header>
         <h2 className="title">{programPlan.title}</h2>
 
@@ -83,19 +80,24 @@ const ProgramSubscriptionPlanCard: React.FC<
         <BraftContent>{programPlan.description}</BraftContent>
       </StyledBraftContent>
       {program?.isSoldOut ? (
-        <Button block disabled>
+        <Button isFullWidth isDisabled>
           {formatMessage(commonMessages.button.soldOut)}
         </Button>
       ) : enrolled ? (
-        <Button block onClick={() => history.push(`/programs/${programId}/contents`)}>
+        <Button
+          variant="outline"
+          colorScheme="primary"
+          isFullWidth
+          onClick={() => history.push(`/programs/${programId}/contents`)}
+        >
           {formatMessage(commonMessages.button.enter)}
         </Button>
       ) : (
         <CheckoutProductModal
           renderTrigger={({ setVisible }) => (
             <Button
-              type="primary"
-              block
+              colorScheme="primary"
+              isFullWidth
               onClick={() => {
                 if (!isAuthenticated) {
                   setAuthModalVisible && setAuthModalVisible(true)

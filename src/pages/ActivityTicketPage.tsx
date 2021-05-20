@@ -1,4 +1,5 @@
-import { Button, Icon, Skeleton } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Icon, Skeleton } from 'antd'
 import QRCode from 'qrcode.react'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -120,8 +121,8 @@ const ActivityTicketPage: React.FC<{
                       !loadingAttendance &&
                       (attendance[sessionTicket.session.id] ? (
                         <Button
-                          block
-                          loading={loading}
+                          isFullWidth
+                          isLoading={loading}
                           onClick={() => {
                             setLoading(true)
                             leaveActivitySession({
@@ -139,9 +140,9 @@ const ActivityTicketPage: React.FC<{
                         </Button>
                       ) : (
                         <Button
-                          type="primary"
-                          block
-                          loading={loading}
+                          colorScheme="primary"
+                          isFullWidth
+                          isLoading={loading}
                           onClick={() => {
                             setLoading(true)
                             attendActivitySession({
@@ -165,7 +166,7 @@ const ActivityTicketPage: React.FC<{
             </div>
 
             <StyledLink to={`/activities/${ticket.activity.id}`} target="_blank">
-              <Button type="link" block>
+              <Button colorScheme="link" isFullWidth>
                 <span>{formatMessage(commonMessages.link.more)}</span>
                 <Icon type="right" />
               </Button>

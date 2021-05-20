@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
-import { Button } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -137,7 +136,7 @@ const OnSaleCallToActionSection: React.FC<OnSaleCallToActionSectionProps> = ({ p
             ))}
           </StyledHeader>
           <StyledButton
-            type="primary"
+            coloScheme="primary"
             onClick={() => document.getElementById('project-plan-section')?.scrollIntoView({ behavior: 'smooth' })}
           >
             <span>
@@ -164,7 +163,7 @@ const OnSaleCallToActionSection: React.FC<OnSaleCallToActionSectionProps> = ({ p
               </StyledCountDownTime>
             </StyledSlogan>
             <Button
-              type="primary"
+              coloScheme="primary"
               className="col-4 col-lg-2"
               onClick={() => document.getElementById('project-plan-section')?.scrollIntoView({ behavior: 'smooth' })}
             >

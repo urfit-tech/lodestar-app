@@ -51,6 +51,11 @@ export const AppThemeProvider: React.FC = ({ children }) => {
           },
         },
       },
+      Divider: {
+        baseStyle: {
+          borderColor: '#e8e8e8',
+        },
+      },
       IconButton: {
         download: {
           background: 'transparent',
@@ -61,6 +66,9 @@ export const AppThemeProvider: React.FC = ({ children }) => {
           outline: () => ({
             field: {
               borderColor: 'var(--gray)',
+              _focus: {
+                borderColor: 'var(--gray)',
+              },
             },
           }),
         },

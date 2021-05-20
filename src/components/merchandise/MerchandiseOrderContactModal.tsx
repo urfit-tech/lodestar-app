@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/icons'
-import { Button, ButtonGroup, FormControl, FormErrorMessage, useDisclosure, useToast } from '@chakra-ui/react'
+import { Button, ButtonGroup, FormControl, FormErrorMessage, Icon, useDisclosure, useToast } from '@chakra-ui/react'
 import { Button as AntdButton } from 'antd'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'

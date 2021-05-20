@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
-import { Button, useDisclosure } from '@chakra-ui/react'
+import { Button, Icon, useDisclosure } from '@chakra-ui/react'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'

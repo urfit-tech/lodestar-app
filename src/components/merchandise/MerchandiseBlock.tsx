@@ -1,4 +1,5 @@
-import { Button, Dropdown, Icon, Menu, Select } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Dropdown, Icon, Menu, Select } from 'antd'
 import { max, min } from 'lodash'
 import { repeat } from 'ramda'
 import React, { useContext, useState } from 'react'
@@ -215,7 +216,7 @@ const MerchandiseBlock: React.FC<{
                 </StyledMenu>
               }
             >
-              <StyledButton type="link">
+              <StyledButton variant="link">
                 <span>
                   <PriceLabel
                     listPrice={
@@ -270,7 +271,7 @@ const MerchandiseBlock: React.FC<{
         ) : (
           <StyledButtonBlock>
             <Link to={`/merchandises/${merchandise.id}`}>
-              <StyledButton type="primary">{formatMessage(commonMessages.button.purchase)}</StyledButton>
+              <StyledButton colorScheme="primary">{formatMessage(commonMessages.button.purchase)}</StyledButton>
             </Link>
           </StyledButtonBlock>
         )}

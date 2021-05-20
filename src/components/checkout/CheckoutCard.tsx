@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Button } from '@chakra-ui/react'
 import { CardProps } from 'antd/lib/card'
 import { camelCase } from 'lodash'
 import { prop, sum } from 'ramda'
@@ -90,10 +90,10 @@ const CheckoutCard: React.FC<
       <div className="row">
         <div className="col-12 offset-md-8 col-md-4 offset-lg-10 col-lg-2">
           <Button
-            type="primary"
-            block
-            disabled={check.orderProducts.length === 0}
-            loading={loading}
+            colorScheme="primary"
+            isFullWidth
+            isDisabled={check.orderProducts.length === 0}
+            isLoading={loading}
             onClick={() => onCheckout?.()}
           >
             {formatMessage(checkoutMessages.button.cartSubmit)}

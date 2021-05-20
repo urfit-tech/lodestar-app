@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/react'
-import { Button, Divider, List, Skeleton } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
+import { Divider, List, Skeleton } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import gql from 'graphql-tag'
 import React, { Fragment, useContext, useEffect } from 'react'
@@ -105,7 +105,7 @@ const CartProductTableCard: React.FC<CartProductTableCardProps> = ({
       {withCartLink && (
         <div className="text-right mt-2">
           <Link to={`/cart?shopId=${shopId}`}>
-            <Button type="primary" className="px-5">
+            <Button colorScheme="primary" className="px-5">
               {formatMessage(checkoutMessages.button.cartSubmit)}
             </Button>
           </Link>

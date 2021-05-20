@@ -1,6 +1,4 @@
-import { Icon } from '@chakra-ui/react'
-import { Button } from 'antd'
-import { ButtonProps } from 'antd/lib/button'
+import { Button, Icon } from '@chakra-ui/react'
 import React, { useContext } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
@@ -14,13 +12,13 @@ import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
 import { ProgramProps } from '../../types/program'
 
-const StyleButton = styled(Button)<{ variant?: string }>`
+const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
   span {
     display: none;
   }
 
   ${props =>
-    props.variant === 'multiline' &&
+    props.isMultiline &&
     css`
       order: 1;
       margin-top: 0.75rem;
@@ -31,18 +29,7 @@ const StyleButton = styled(Button)<{ variant?: string }>`
     `}
 `
 
-type ProgramPaymentButtonProps = {
-  program: ProgramProps
-  cartButtonProps?: ButtonProps
-  orderButtonProps?: ButtonProps
-  variant?: string
-}
-const ProgramPaymentButton: React.FC<ProgramPaymentButtonProps> = ({
-  program,
-  cartButtonProps,
-  orderButtonProps,
-  variant,
-}) => {
+const ProgramPaymentButton: React.VFC<{ program: ProgramProps; variant?: string }> = ({ program, variant }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [sharingCode] = useQueryParam('sharing', StringParam)
@@ -76,34 +63,30 @@ const ProgramPaymentButton: React.FC<ProgramPaymentButtonProps> = ({
   }
 
   return program.isSoldOut ? (
-    <Button block disabled>
+    <Button isFullWidth isDisabled>
       {formatMessage(commonMessages.button.soldOut)}
     </Button>
   ) : isProductInCart && isProductInCart('Program', program.id) ? (
-    <Button block type="primary" onClick={() => history.push(`/cart`)}>
+    <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
       {formatMessage(commonMessages.button.cart)}
     </Button>
   ) : (
     <div className={variant === 'multiline' ? 'd-flex flex-column' : 'd-flex'}>
       {program.listPrice !== 0 && (
         <StyleButton
-          onClick={() => handleClick()}
           className="mr-2"
-          block={variant === 'multiline'}
-          variant={variant}
-          {...cartButtonProps}
+          variant="outline"
+          colorScheme="primary"
+          isFullWidth={variant === 'multiline'}
+          isMultiline={variant === 'multiline'}
+          onClick={() => handleClick()}
         >
           <Icon as={AiOutlineShoppingCart} />
           <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
         </StyleButton>
       )}
 
-      <Button
-        type="primary"
-        block
-        onClick={() => handleClick().then(() => history.push('/cart'))}
-        {...orderButtonProps}
-      >
+      <Button colorScheme="primary" isFullWidth onClick={() => handleClick().then(() => history.push('/cart'))}>
         {program.listPrice !== 0
           ? formatMessage(commonMessages.button.purchase)
           : formatMessage(commonMessages.button.join)}

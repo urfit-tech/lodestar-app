@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
-import { Button } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
 import React, { useContext } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
@@ -24,7 +23,7 @@ const MerchandisePaymentButton: React.FC<{
 
   if (merchandise.startedAt && Date.now() < merchandise.startedAt.getTime()) {
     return (
-      <Button block disabled>
+      <Button isFullWidth isDisabled>
         {formatMessage(commonMessages.button.unreleased)}
       </Button>
     )
@@ -32,7 +31,7 @@ const MerchandisePaymentButton: React.FC<{
 
   if (merchandise.endedAt && merchandise.endedAt.getTime() < Date.now()) {
     return (
-      <Button block disabled>
+      <Button isFullWidth isDisabled>
         {formatMessage(commonMessages.button.soldOut)}
       </Button>
     )
@@ -70,7 +69,7 @@ const GeneralMerchandisePaymentBlock: React.FC<{
 
   if (!merchandise.isPhysical && inCartQuantity) {
     return (
-      <Button type="primary" block onClick={() => history.push('/cart')}>
+      <Button colorScheme="primary" isFullWidth onClick={() => history.push('/cart')}>
         {formatMessage(commonMessages.button.cart)}
       </Button>
     )
@@ -107,7 +106,8 @@ const GeneralMerchandisePaymentBlock: React.FC<{
       <div className="flex-shrink-0">
         <Button
           className="d-flex align-items-center mr-2"
-          disabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
+          variant="outline"
+          isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
           onClick={() => quantity && handleClick()}
         >
           <Icon as={CartIcon} />
@@ -116,9 +116,9 @@ const GeneralMerchandisePaymentBlock: React.FC<{
 
       <div className="flex-grow-1">
         <Button
-          type="primary"
-          block
-          disabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
+          colorScheme="primary"
+          isFullWidth
+          isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
           onClick={() => quantity && handleClick().then(() => history.push('/cart'))}
         >
           {formatMessage(commonMessages.button.purchase)}
@@ -139,7 +139,7 @@ const CustomizedMerchandisePaymentBlock: React.FC<{
 
   if (merchandise.isLimited && !merchandiseSpec.buyableQuantity) {
     return (
-      <Button block disabled>
+      <Button isFullWidth isDisabled>
         {formatMessage(commonMessages.button.soldOut)}
       </Button>
     )
@@ -148,7 +148,11 @@ const CustomizedMerchandisePaymentBlock: React.FC<{
   return (
     <CheckoutProductModal
       renderTrigger={({ setVisible }) => (
-        <Button type="primary" block onClick={() => (!currentMemberId ? setAuthModal?.(true) : setVisible())}>
+        <Button
+          colorScheme="primary"
+          isFullWidth
+          onClick={() => (!currentMemberId ? setAuthModal?.(true) : setVisible())}
+        >
           {formatMessage(commonMessages.button.purchase)}
         </Button>
       )}
