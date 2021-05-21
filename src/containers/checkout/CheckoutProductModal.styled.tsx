@@ -1,31 +1,12 @@
-import { Modal } from 'antd'
 import styled from 'styled-components'
 import { CommonTitleMixin } from '../../components/common'
 
-export const StyledModal = styled(Modal)`
-  && {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    padding: 0;
-
-    .ant-modal-content {
-      min-height: 100vh;
-    }
-  }
-`
 export const StyledTitle = styled.h1`
   ${CommonTitleMixin}
 `
 export const StyledSubTitle = styled.div`
   margin-bottom: 0.75rem;
   ${CommonTitleMixin}
-`
-export const StyledWrapper = styled.div`
-  margin: 0 auto;
-  max-width: 40rem;
 `
 export const StyledWarningText = styled.p`
   margin-top: 1.25rem;

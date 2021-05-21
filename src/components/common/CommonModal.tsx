@@ -36,8 +36,8 @@ const StyledCloseButtonBlock = styled.div`
 
 const CommonModal: React.FC<
   {
-    title: string
-    renderTrigger: () => React.ReactElement
+    title: string | React.ReactElement
+    renderTrigger: () => React.ReactElement | null
     isFullWidth?: boolean
     renderHeaderIcon?: () => React.ReactElement
     renderCloseButtonBlock?: () => React.ReactElement
