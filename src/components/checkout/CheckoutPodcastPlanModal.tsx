@@ -1,6 +1,6 @@
 import React from 'react'
-import PodcastPlanSelector from '../../components/podcast/PodcastPlanSelector'
 import { usePublishedPodcastPlans } from '../../hooks/podcast'
+import PodcastPlanSelector from '../podcast/PodcastPlanSelector'
 import CheckoutProductModal, { CheckoutProductModalProps } from './CheckoutProductModal'
 
 const CheckoutPodcastPlanModal: React.FC<
