@@ -1,5 +1,5 @@
-import { Icon } from '@chakra-ui/icons'
-import { Button, Popover } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
+import { Button as AntdButton, Popover } from 'antd'
 import React, { useContext } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
@@ -144,9 +144,9 @@ const PodcastProgramPopover: React.FC<PodcastProgramPopoverProps & { podcastProg
         )}
         <div className="flex-grow-1 text-right">
           {withPodcastPlan && !isSubscribed && (
-            <Button type="link" icon="plus" size="small" onClick={() => onSubscribe?.()}>
+            <AntdButton type="link" icon="plus" size="small" onClick={() => onSubscribe?.()}>
               {formatMessage(commonMessages.title.podcastSubscription)}
-            </Button>
+            </AntdButton>
           )}
         </div>
       </div>
@@ -154,23 +154,25 @@ const PodcastProgramPopover: React.FC<PodcastProgramPopoverProps & { podcastProg
       <div>
         {isEnrolled ? (
           <Link to={`/podcasts/${podcastProgramId}`}>
-            <Button block>{formatMessage(commonMessages.button.enterPodcast)}</Button>
+            <Button variant="outline" isFullWidth>
+              {formatMessage(commonMessages.button.enterPodcast)}
+            </Button>
           </Link>
         ) : isProductInCart && isProductInCart('PodcastProgram', podcastProgramId) ? (
-          <Button type="primary" onClick={() => history.push(`/cart`)} block>
+          <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
             {formatMessage(commonMessages.button.cart)}
           </Button>
         ) : (
           <>
             <Button
-              type="primary"
+              colorScheme="primary"
               className="mb-2"
-              block
+              isFullWidth
               onClick={() => handleClick().then(() => history.push(`/cart`))}
             >
               {formatMessage(commonMessages.button.purchase)}
             </Button>
-            <Button block onClick={() => handleClick()}>
+            <Button variant="outline" isFullWidth onClick={() => handleClick()}>
               {formatMessage(commonMessages.button.addCart)}
             </Button>
           </>

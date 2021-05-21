@@ -1,4 +1,5 @@
-import { Button, Divider, Input, message, Modal, Spin } from 'antd'
+import { Button, Input } from '@chakra-ui/react'
+import { Divider, message, Modal, Spin } from 'antd'
 import axios from 'axios'
 import { sum } from 'ramda'
 import React, { useState } from 'react'
@@ -116,6 +117,7 @@ const CouponSelectionModal: React.FC<{
         <div className="d-flex">
           <div className="flex-grow-1">
             <Input
+              variant="outline"
               style={{ borderRadius: '4px 0px 0px 4px' }}
               placeholder={formatMessage(checkoutMessages.form.placeholder.enter)}
               value={code}
@@ -123,10 +125,10 @@ const CouponSelectionModal: React.FC<{
             />
           </div>
           <Button
-            block
-            type="primary"
+            colorScheme="primary"
+            isFullWidth
             style={{ width: '72px', borderRadius: '0px 4px 4px 0px' }}
-            loading={inserting}
+            isLoading={inserting}
             onClick={handleCouponInsert}
           >
             {formatMessage(commonMessages.button.add)}

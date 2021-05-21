@@ -1,4 +1,5 @@
-import { Button, Divider, Form, Input, Skeleton } from 'antd'
+import { Button, Divider } from '@chakra-ui/react'
+import { Form, Input, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { ModalProps } from 'antd/lib/modal'
 import { camelCase } from 'lodash'
@@ -349,10 +350,10 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
             )}
 
             <div className="text-right">
-              <Button onClick={() => setVisible(false)} className="mr-3">
+              <Button variant="outline" onClick={() => setVisible(false)} className="mr-3">
                 {formatMessage(commonMessages.ui.cancel)}
               </Button>
-              <Button type="primary" loading={orderPlacing} htmlType="submit">
+              <Button colorScheme="primary" loading={orderPlacing} htmlType="submit">
                 {paymentType === 'subscription'
                   ? formatMessage(checkoutMessages.button.cartSubmit)
                   : formatMessage(commonMessages.button.purchase)}

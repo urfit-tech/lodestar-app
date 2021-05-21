@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Divider, Skeleton } from 'antd'
+import { Button, Divider } from '@chakra-ui/react'
+import { Skeleton } from 'antd'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
 import { render } from 'mustache'
@@ -187,12 +188,13 @@ const ActivityPage: React.FC = () => {
                           !data.activity_by_pk.published_at ||
                           new Date(data.activity_by_pk.published_at).getTime() > Date.now() ||
                           new Date(ticket.started_at).getTime() > Date.now() ? (
-                            <Button block disabled>
+                            <Button isFullWidth isDisabled>
                               {formatMessage(commonMessages.button.unreleased)}
                             </Button>
                           ) : ticket.activity_ticket_enrollments.length > 0 ? (
                             <Button
-                              block
+                              variant="outline"
+                              isFullWidth
                               onClick={() =>
                                 history.push(
                                   `/orders/${ticket.activity_ticket_enrollments[0].order_log_id}/products/${ticket.activity_ticket_enrollments[0].order_product_id}`,
@@ -202,19 +204,19 @@ const ActivityPage: React.FC = () => {
                               {formatMessage(commonMessages.button.ticket)}
                             </Button>
                           ) : participants >= ticket.count ? (
-                            <Button block disabled>
+                            <Button isFullWidth isDisabled>
                               {formatMessage(commonMessages.button.soldOut)}
                             </Button>
                           ) : new Date(ticket.ended_at).getTime() < Date.now() ? (
-                            <Button block disabled>
+                            <Button isFullWidth isDisabled>
                               {formatMessage(commonMessages.button.cutoff)}
                             </Button>
                           ) : isAuthenticated ? (
                             <CheckoutProductModal
                               renderTrigger={({ setVisible }) => (
                                 <Button
-                                  type="primary"
-                                  block
+                                  colorScheme="primary"
+                                  isFullWidth
                                   onClick={() => {
                                     ReactGA.plugin.execute('ec', 'addProduct', {
                                       id: ticket.id,
@@ -238,8 +240,8 @@ const ActivityPage: React.FC = () => {
                             />
                           ) : (
                             <Button
-                              type="primary"
-                              block
+                              colorScheme="primary"
+                              isFullWidth
                               onClick={() => setAuthModalVisible && setAuthModalVisible(true)}
                             >
                               {formatMessage(commonMessages.button.register)}

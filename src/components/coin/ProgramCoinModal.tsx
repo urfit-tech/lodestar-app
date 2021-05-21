@@ -1,4 +1,5 @@
-import { Button, Modal } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
 import { sum } from 'ramda'
 import React, { useState } from 'react'
@@ -127,10 +128,10 @@ const ProgramCoinModal: React.FC<
             )}
           </div>
           <Button
-            type="primary"
-            block
-            disabled={orderChecking || !isPaymentAvailable || isEnrolled}
-            loading={orderChecking || orderPlacing}
+            colorScheme="primary"
+            isFullWidth
+            isDisabled={orderChecking || !isPaymentAvailable || isEnrolled}
+            isLoading={orderChecking || orderPlacing}
             onClick={handlePay}
           >
             {isEnrolled ? '已使用代幣兌換' : formatMessage(commonMessages.button.useCoin)}

@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Button } from '@chakra-ui/react'
 import React, { useContext } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
@@ -221,11 +221,11 @@ const PerpetualPlanBlock: React.FC<{
   }
 
   return isProductInCart?.('ProjectPlan', projectPlanId) ? (
-    <StyledButton type="primary" size="large" onClick={() => history.push(`/cart`)}>
+    <StyledButton colorScheme="primary" size="lg" onClick={() => history.push(`/cart`)}>
       <span>{formatMessage(commonMessages.button.cart)}</span>
     </StyledButton>
   ) : (
-    <StyledButton type="primary" size="large" onClick={handleClick}>
+    <StyledButton colorScheme="primary" size="lg" onClick={handleClick}>
       <span>{formatMessage(commonMessages.button.join)}</span>
     </StyledButton>
   )
@@ -246,7 +246,7 @@ const SubscriptionPlanBlock: React.FC<{
 
   if (!isAuthenticated) {
     return (
-      <StyledButton type="primary" size="large" onClick={() => setAuthModalVisible?.(true)}>
+      <StyledButton colorScheme="primary" size="lg" onClick={() => setAuthModalVisible?.(true)}>
         <span>{formatMessage(commonMessages.button.join)}</span>
       </StyledButton>
     )
@@ -255,7 +255,7 @@ const SubscriptionPlanBlock: React.FC<{
   return (
     <CheckoutProductModal
       renderTrigger={({ setVisible }) => (
-        <StyledButton type="primary" size="large" onClick={() => setVisible()}>
+        <StyledButton colorScheme="primary" size="lg" onClick={() => setVisible()}>
           <span>{formatMessage(commonMessages.button.join)}</span>
         </StyledButton>
       )}

@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Divider, Modal } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Divider, Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
 import gql from 'graphql-tag'
 import { sum } from 'ramda'
@@ -189,10 +190,10 @@ const ProgramPackageCoinModal: React.FC<
         </StyledProgramCollection>
 
         <Button
-          type="primary"
-          block
-          loading={orderChecking || orderPlacing}
-          disabled={
+          colorScheme="primary"
+          isFullWidth
+          isLoading={orderChecking || orderPlacing}
+          isDisabled={
             orderChecking ||
             !isPaymentAvailable ||
             !programPackage?.programs.map(program => enrolledProgramIds.includes(program.id)).includes(false)

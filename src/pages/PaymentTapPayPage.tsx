@@ -1,4 +1,5 @@
-import { Button, message } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { message } from 'antd'
 import axios from 'axios'
 import React, { useCallback, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -85,10 +86,10 @@ const PaymentTapPayBlock: React.FC = () => {
             <TapPayForm onUpdate={setTpCreditCard} />
           </div>
           <Button
-            block
-            type="primary"
-            loading={isPaying}
-            disabled={!isCreditCardReady}
+            colorScheme="primary"
+            isFullWidth
+            isLoading={isPaying}
+            isDisabled={!isCreditCardReady}
             onClick={() => handlePaymentPay()}
           >
             付款

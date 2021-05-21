@@ -1,4 +1,5 @@
-import { Button, Dropdown, Icon, Menu, message, Tag } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Dropdown, Icon, Menu, message, Tag } from 'antd'
 import BraftEditor from 'braft-editor'
 import moment from 'moment'
 import React, { useContext, useEffect, useState } from 'react'
@@ -157,11 +158,11 @@ const IssueReplyItem: React.FC<{
                 media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
               />
               <div>
-                <Button className="mr-2" onClick={() => setEditing(false)}>
+                <Button variant="outline" className="mr-2" onClick={() => setEditing(false)}>
                   {formatMessage(commonMessages.ui.cancel)}
                 </Button>
                 <Button
-                  type="primary"
+                  colorScheme="primary"
                   onClick={() =>
                     updateIssueReply({
                       variables: { issueReplyId, content: contentState.toRAW() },

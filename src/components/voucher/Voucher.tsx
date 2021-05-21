@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
-import { Divider } from 'antd'
+import { Divider, Icon } from '@chakra-ui/react'
 import moment from 'moment'
 import React from 'react'
 import { useIntl } from 'react-intl'

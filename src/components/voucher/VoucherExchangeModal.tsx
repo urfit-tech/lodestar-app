@@ -1,4 +1,5 @@
-import { Button, Checkbox, Divider, Modal } from 'antd'
+import { Button, Divider } from '@chakra-ui/react'
+import { Checkbox, Modal } from 'antd'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -40,7 +41,7 @@ const VoucherExchangeModal: React.FC<{
 
   return (
     <>
-      <Button type="primary" onClick={() => setVisible(true)}>
+      <Button colorScheme="primary" onClick={() => setVisible(true)}>
         {formatMessage(commonMessages.button.useNow)}
       </Button>
 
@@ -83,9 +84,9 @@ const VoucherExchangeModal: React.FC<{
             {formatMessage(commonMessages.ui.cancel)}
           </Button>
           <Button
-            type="primary"
-            loading={loading}
-            disabled={selectedProductIds.length === 0 || selectedProductIds.length > productQuantityLimit}
+            colorScheme="primary"
+            isLoading={loading}
+            isDisabled={selectedProductIds.length === 0 || selectedProductIds.length > productQuantityLimit}
             onClick={() => {
               if (onExchange) {
                 onExchange(setVisible, setLoading, selectedProductIds)

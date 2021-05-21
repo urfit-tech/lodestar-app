@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Button } from '@chakra-ui/react'
 import React from 'react'
 
 export type Callout = {
@@ -8,7 +8,7 @@ export type Callout = {
 const ProjectCalloutButton: React.FC<Callout> = ({ href, label }) => {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer">
-      <Button type="primary">
+      <Button colorScheme="primary">
         <span>{label}</span>
       </Button>
     </a>
