@@ -48,7 +48,7 @@ export const useApp = () => useContext(AppContext)
 
 export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) => {
   const { authToken, refreshToken } = useAuth()
-  const { loading, error, data } = useQuery<hasura.GET_APP, hasura.GET_APPVariables>(
+  const { data } = useQuery<hasura.GET_APP, hasura.GET_APPVariables>(
     gql`
       query GET_APP($appId: String!) {
         currency {
@@ -82,46 +82,37 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
         }
       }
     `,
-    { variables: { appId } },
+    {
+      variables: { appId },
+      context: { important: true },
+    },
   )
 
   const settings = Object.fromEntries(data?.app_by_pk?.app_settings.map(v => [v.key, v.value]) || [])
 
-  const app: AppProps =
-    loading || error || !data || !data.app_by_pk
-      ? defaultAppProps
-      : (() => {
-          const enabledModules: { [key in Module]?: boolean } = {}
-          data.app_by_pk &&
-            data.app_by_pk.app_modules.forEach(appModule => {
-              enabledModules[appModule.module_id as Module] = true
-            })
-
-          return {
-            loading: false,
-            id: data.app_by_pk.id,
-            name: data.app_by_pk.name || '',
-            title: data.app_by_pk.title,
-            description: data.app_by_pk.description,
-            enabledModules,
-            navs: data.app_by_pk.app_navs.map(appNav => ({
-              block: appNav.block,
-              position: appNav.position,
-              label: appNav.label,
-              icon: appNav.icon,
-              href: appNav.href,
-              external: appNav.external,
-              locale: appNav.locale,
-              tag: appNav.tag,
-            })),
-            settings,
-            currencyId: settings['currency_id'] || 'TWD',
-            currencies: data.currency.reduce((accumulation, currency) => {
-              accumulation[currency.id] = currency
-              return accumulation
-            }, {} as AppProps['currencies']),
-          }
-        })()
+  const app: AppProps = data?.app_by_pk
+    ? {
+        loading: false,
+        id: data.app_by_pk.id,
+        name: data.app_by_pk.name || '',
+        title: data.app_by_pk.title,
+        description: data.app_by_pk.description,
+        enabledModules: Object.fromEntries(data.app_by_pk.app_modules.map(v => [v.module_id, true]) || []),
+        navs: data.app_by_pk.app_navs.map(appNav => ({
+          block: appNav.block,
+          position: appNav.position,
+          label: appNav.label,
+          icon: appNav.icon,
+          href: appNav.href,
+          external: appNav.external,
+          locale: appNav.locale,
+          tag: appNav.tag,
+        })),
+        settings,
+        currencyId: settings['currency_id'] || 'TWD',
+        currencies: Object.fromEntries(data.currency.map(v => [v.id, v])),
+      }
+    : defaultAppProps
 
   useEffect(() => {
     if (!authToken) {

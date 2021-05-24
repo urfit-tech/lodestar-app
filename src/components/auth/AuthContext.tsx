@@ -149,16 +149,16 @@ export const AuthProvider: React.FC<{
                 }
 
                 const categoryIds: string[] = JSON.parse(sessionStorage.getItem('categoryIds') || '[]')
-                const memberProperty: { propertyId?: string; value?: string } = JSON.parse(
-                  sessionStorage.getItem('memberProperty') || '{}',
+                const memberProperties: { propertyId?: string; value?: string }[] = JSON.parse(
+                  sessionStorage.getItem('memberProperties') || '[]',
                 )
                 if (categoryIds.length) {
                   Axios.post(
                     `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
                     {
                       query: `
-                        mutation INSERT_MEMBER_CATEGORIES($memberProperty: [member_property_insert_input!]!, $data: [member_category_insert_input!]!) {
-                          insert_member_property(objects: $memberProperty) {
+                        mutation INSERT_MEMBER_CATEGORIES($memberProperties: [member_property_insert_input!]!, $data: [member_category_insert_input!]!) {
+                          insert_member_property(objects: $memberProperties) {
                             affected_rows
                           }
                           insert_member_category(objects: $data) {
@@ -167,16 +167,11 @@ export const AuthProvider: React.FC<{
                         }
                       `,
                       variables: {
-                        memberProperty:
-                          memberProperty.propertyId || memberProperty.value
-                            ? [
-                                {
-                                  member_id: currentMemberId,
-                                  property_id: memberProperty.propertyId,
-                                  value: memberProperty.value,
-                                },
-                              ]
-                            : [],
+                        memberProperties: memberProperties.map(v => ({
+                          member_id: currentMemberId,
+                          property_id: v.propertyId,
+                          value: v.value,
+                        })),
                         data: categoryIds.map((categoryId, index) => ({
                           member_id: currentMemberId,
                           category_id: categoryId,
