@@ -26,8 +26,6 @@ const PaymentInput: React.FC<{
   const { settings } = useApp()
   const [selectedPaymentMethodType, setSelectedPaymentMethodType] = useState<PaymentMethodType | null>(value)
 
-  const paymentOptions = (settings['payment.method'] && settings['payment.method'].split(',')) || []
-
   const handleChange: (paymentMethod?: PaymentMethodType | null) => void = PaymentMethodType => {
     const currentPaymentOption =
       typeof PaymentMethodType === 'undefined' ? selectedPaymentMethodType : PaymentMethodType
@@ -45,19 +43,25 @@ const PaymentInput: React.FC<{
         value={selectedPaymentMethodType}
         onChange={v => handleChange(v)}
       >
-        <Select.Option value="CREDIT">{formatMessage(checkoutMessages.label.credit)}</Select.Option>
-        <Select.Option value="VACC">{formatMessage(checkoutMessages.label.vacc)}</Select.Option>
-        <Select.Option value="CVS">{formatMessage(checkoutMessages.label.cvs)}</Select.Option>
-        {paymentOptions.includes('InstFlag') && (
+        {Number(settings['payment.method.credit.enable']) && (
+          <Select.Option value="CREDIT">{formatMessage(checkoutMessages.label.credit)}</Select.Option>
+        )}
+        {Number(settings['payment.method.vacc.enable']) && (
+          <Select.Option value="VACC">{formatMessage(checkoutMessages.label.vacc)}</Select.Option>
+        )}
+        {Number(settings['payment.method.cvs.enable']) && (
+          <Select.Option value="CVS">{formatMessage(checkoutMessages.label.cvs)}</Select.Option>
+        )}
+        {Number(settings['payment.method.instflag.enable']) && (
           <Select.Option value="InstFlag">{formatMessage(checkoutMessages.label.instFlag)}</Select.Option>
         )}
-        {paymentOptions.includes('UNIONPAY') && (
+        {Number(settings['payment.method.unionpay.enable']) && (
           <Select.Option value="UNIONPAY">{formatMessage(checkoutMessages.label.unionPay)}</Select.Option>
         )}
-        {paymentOptions.includes('WEBATM') && (
+        {Number(settings['payment.method.webatm.enable']) && (
           <Select.Option value="WEBATM">{formatMessage(checkoutMessages.label.webAtm)}</Select.Option>
         )}
-        {paymentOptions.includes('BARCODE') && (
+        {Number(settings['payment.method.barcode.enable']) && (
           <Select.Option value="BARCODE">{formatMessage(checkoutMessages.label.barcode)}</Select.Option>
         )}
       </Select>
