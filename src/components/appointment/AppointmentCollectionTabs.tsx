@@ -169,7 +169,7 @@ const AppointmentCollectionTabs: React.FC<{
             </StyledTimeStandardBlock>
 
             <CheckoutProductModal
-              renderTrigger={({ setVisible }) => (
+              renderTrigger={onOpen => (
                 <AppointmentPeriodCollection
                   appointmentPeriods={appointmentPlan.periods}
                   reservationAmount={appointmentPlan.reservationAmount}
@@ -186,7 +186,7 @@ const AppointmentCollectionTabs: React.FC<{
                     ReactGA.plugin.execute('ec', 'setAction', 'add')
                     ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
                     setSelectedPeriod(period)
-                    setVisible()
+                    onOpen()
                   }}
                   diffPlanBookedTimes={diffPlanBookedTimes}
                 />

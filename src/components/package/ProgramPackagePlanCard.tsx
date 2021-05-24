@@ -108,8 +108,8 @@ const ProgramPackagePlanCard: React.FC<
           </Link>
         ) : (
           <CheckoutProductModal
-            renderTrigger={({ setVisible }) => (
-              <Button type="primary" onClick={() => setVisible()} loading={loading} block>
+            renderTrigger={onOpen => (
+              <Button type="primary" onClick={onOpen} loading={loading} block>
                 {isSubscription
                   ? formatMessage(commonMessages.button.subscribeNow)
                   : formatMessage(commonMessages.button.purchase)}

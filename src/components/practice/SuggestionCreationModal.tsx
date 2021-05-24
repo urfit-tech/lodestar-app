@@ -61,47 +61,47 @@ const SuggestionCreationModal: React.FC<SuggestionCreationModalProps> = ({ threa
   })
 
   return (
-    <CommonModal
-      isOpen={isOpen}
-      title={formatMessage(messages.fillSuggest)}
-      renderTrigger={() => (
-        <MessageButton memberId={currentMemberId || ''} text={formatMessage(messages.suggest)} onClick={onOpen} />
-      )}
-      onClose={onClose}
-      renderFooter={() => (
-        <ButtonGroup>
-          <Button variant="outline" onClick={onClose}>
-            {formatMessage(commonMessages.ui.cancel)}
-          </Button>
-          <Button variant="primary" onClick={handleSuggest}>
-            {formatMessage(messages.submitSuggest)}
-          </Button>
-        </ButtonGroup>
-      )}
-    >
-      <Controller
-        name="suggest"
-        as={
-          <StyledBraftEditor
-            language="zh-hant"
-            controls={[
-              'bold',
-              'italic',
-              'underline',
-              {
-                key: 'remove-styles',
-                title: formatMessage(commonMessages.editor.title.clearStyles),
-              },
-              'separator',
-              'media',
-            ]}
-            contentClassName="short-bf-content"
-            media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
-          />
-        }
-        control={control}
-      />
-    </CommonModal>
+    <>
+      <MessageButton memberId={currentMemberId || ''} text={formatMessage(messages.suggest)} onClick={onOpen} />
+      <CommonModal
+        isOpen={isOpen}
+        title={formatMessage(messages.fillSuggest)}
+        onClose={onClose}
+        renderFooter={() => (
+          <ButtonGroup>
+            <Button variant="outline" onClick={onClose}>
+              {formatMessage(commonMessages.ui.cancel)}
+            </Button>
+            <Button variant="primary" onClick={handleSuggest}>
+              {formatMessage(messages.submitSuggest)}
+            </Button>
+          </ButtonGroup>
+        )}
+      >
+        <Controller
+          name="suggest"
+          as={
+            <StyledBraftEditor
+              language="zh-hant"
+              controls={[
+                'bold',
+                'italic',
+                'underline',
+                {
+                  key: 'remove-styles',
+                  title: formatMessage(commonMessages.editor.title.clearStyles),
+                },
+                'separator',
+                'media',
+              ]}
+              contentClassName="short-bf-content"
+              media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+            />
+          }
+          control={control}
+        />
+      </CommonModal>
+    </>
   )
 }
 

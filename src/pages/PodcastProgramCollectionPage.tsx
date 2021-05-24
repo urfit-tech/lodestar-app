@@ -143,7 +143,7 @@ const PodcastProgramCollectionPage: React.FC = () => {
                     )}
                   renderItem={({ podcastProgram, isEnrolled, isSubscribed }) => (
                     <CheckoutPodcastPlanModal
-                      renderTrigger={({ setVisible: setCheckoutModalVisible }) => (
+                      renderTrigger={onOpen => (
                         <PodcastProgramPopover
                           key={podcastProgram.id}
                           isEnrolled={isEnrolled}
@@ -158,9 +158,7 @@ const PodcastProgramCollectionPage: React.FC = () => {
                           categories={podcastProgram.categories}
                           instructor={podcastProgram.instructor}
                           onSubscribe={() =>
-                            isAuthenticated
-                              ? setCheckoutModalVisible()
-                              : setAuthModalVisible && setAuthModalVisible(true)
+                            isAuthenticated ? onOpen() : setAuthModalVisible && setAuthModalVisible(true)
                           }
                         >
                           <PodcastProgramCard

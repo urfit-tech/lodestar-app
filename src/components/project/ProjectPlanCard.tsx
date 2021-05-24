@@ -254,8 +254,8 @@ const SubscriptionPlanBlock: React.FC<{
 
   return (
     <CheckoutProductModal
-      renderTrigger={({ setVisible }) => (
-        <StyledButton colorScheme="primary" size="lg" onClick={() => setVisible()}>
+      renderTrigger={onOpen => (
+        <StyledButton colorScheme="primary" size="lg" onClick={onOpen}>
           <span>{formatMessage(commonMessages.button.join)}</span>
         </StyledButton>
       )}

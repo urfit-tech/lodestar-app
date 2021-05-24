@@ -15,7 +15,7 @@ const CheckoutPodcastPlanModal: React.FC<
   }
 
   if (!publishedPodcastPlans[0]) {
-    return <>{renderTrigger({ setVisible: () => {} })}</>
+    return <>{renderTrigger(() => {})}</>
   }
 
   return (

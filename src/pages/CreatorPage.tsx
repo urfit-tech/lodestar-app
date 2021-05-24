@@ -84,9 +84,7 @@ const CreatorPage: React.FC = () => {
       />
 
       <CheckoutPodcastPlanModal
-        renderTrigger={({ setVisible }) => (
-          <CreatorTabs creatorId={creatorId} member={creator} setCheckoutModalVisible={() => setVisible()} />
-        )}
+        renderTrigger={onOpen => <CreatorTabs creatorId={creatorId} member={creator} onCheckoutModalOpen={onOpen} />}
         paymentType="subscription"
         creatorId={creatorId}
         member={member}
@@ -98,8 +96,8 @@ const CreatorPage: React.FC = () => {
 const CreatorTabs: React.FC<{
   creatorId: string
   member: MemberPublicProps | null
-  setCheckoutModalVisible?: () => void
-}> = ({ creatorId, member, setCheckoutModalVisible }) => {
+  onCheckoutModalOpen?: () => void
+}> = ({ creatorId, member, onCheckoutModalOpen }) => {
   const { formatMessage } = useIntl()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { enabledModules, settings } = useApp()
@@ -197,9 +195,7 @@ const CreatorTabs: React.FC<{
                     podcastPrograms={podcastPrograms}
                     onChangeTab={key => setActiveKey(key)}
                     onSubscribe={() =>
-                      isAuthenticated
-                        ? setCheckoutModalVisible && setCheckoutModalVisible()
-                        : setAuthModalVisible && setAuthModalVisible(true)
+                      isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
                     }
                   />
                 </div>
@@ -255,9 +251,7 @@ const CreatorTabs: React.FC<{
                         icon="plus"
                         size="large"
                         onClick={() =>
-                          isAuthenticated
-                            ? setCheckoutModalVisible && setCheckoutModalVisible()
-                            : setAuthModalVisible && setAuthModalVisible(true)
+                          isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
                         }
                       >
                         {formatMessage(commonMessages.button.subscribe)}
@@ -304,9 +298,7 @@ const CreatorTabs: React.FC<{
                           categories={podcastProgram.categories}
                           instructor={podcastProgram.instructor}
                           onSubscribe={() =>
-                            isAuthenticated
-                              ? setCheckoutModalVisible && setCheckoutModalVisible()
-                              : setAuthModalVisible && setAuthModalVisible(true)
+                            isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
                           }
                         >
                           {elem}
@@ -340,9 +332,7 @@ const CreatorTabs: React.FC<{
                     podcastPrograms={podcastPrograms}
                     onChangeTab={key => setActiveKey(key)}
                     onSubscribe={() => {
-                      isAuthenticated
-                        ? setCheckoutModalVisible && setCheckoutModalVisible()
-                        : setAuthModalVisible && setAuthModalVisible(true)
+                      isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
                     }}
                   />
                 </div>

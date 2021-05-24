@@ -1,4 +1,4 @@
-import { Button, Divider, SkeletonText } from '@chakra-ui/react'
+import { Button, Divider, SkeletonText, useDisclosure } from '@chakra-ui/react'
 import { camelCase } from 'lodash'
 import React, { useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -43,7 +43,7 @@ const CheckoutProductItem: React.VFC<{
 export type CheckoutProductModalProps = {
   member: MemberProps | null
   paymentType: 'perpetual' | 'subscription'
-  renderTrigger: React.VFC<{ setVisible: () => void }>
+  renderTrigger: (onOpen: () => void) => React.ReactElement
   defaultProductId?: string
   isProductPhysical?: boolean
   warningText?: string
@@ -68,8 +68,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
   const { currentMemberId } = useAuth()
   const { enabledModules, settings } = useApp()
   const updateMemberMetadata = useUpdateMemberMetadata()
-
-  const [visible, setVisible] = useState(false)
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   // payment information
   const cachedPaymentInfor: {
@@ -209,114 +208,116 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
   }
 
   return (
-    <CommonModal
-      title={<StyledTitle className="mb-4">{formatMessage(checkoutMessages.title.cart)}</StyledTitle>}
-      isOpen={visible}
-      isFullWidth
-      renderTrigger={() => renderTrigger({ setVisible: () => setVisible(true) })}
-      onClose={() => setVisible(false)}
-    >
-      <div className="mb-5">
-        <ProductItem
-          id={productId}
-          startedAt={startedAt}
-          variant={
-            settings['custom.project.plan_price_style'] === 'hidden' && productId.startsWith('ProjectPlan_')
-              ? undefined
-              : 'checkout'
-          }
-        />
-      </div>
-
-      {renderProductSelector && (
+    <>
+      {renderTrigger(onOpen)}
+      <CommonModal
+        title={<StyledTitle className="mb-4">{formatMessage(checkoutMessages.title.cart)}</StyledTitle>}
+        isOpen={isOpen}
+        isFullWidth
+        onClose={onClose}
+      >
         <div className="mb-5">
-          {renderProductSelector({ productId, onProductChange: productId => setProductId(productId) })}
-        </div>
-      )}
-
-      {!!warningText && <StyledWarningText>{warningText}</StyledWarningText>}
-
-      {isProductPhysical && (
-        <div ref={shippingRef}>
-          <ShippingInput
-            value={shipping}
-            onChange={value => setShipping(value)}
-            shippingMethods={shippingMethods}
-            isValidating={isValidating}
+          <ProductItem
+            id={productId}
+            startedAt={startedAt}
+            variant={
+              settings['custom.project.plan_price_style'] === 'hidden' && productId.startsWith('ProjectPlan_')
+                ? undefined
+                : 'checkout'
+            }
           />
         </div>
-      )}
 
-      <div ref={invoiceRef} className="mb-5">
-        <InvoiceInput
-          value={invoice}
-          onChange={value => setInvoice(value)}
-          isValidating={isValidating}
-          shouldSameToShippingCheckboxDisplay={isProductPhysical}
-        />
-      </div>
-
-      <div className="mb-3">
-        <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
-      </div>
-
-      {enabledModules.referrer && (
-        <div className="row" ref={referrerRef}>
-          <div className="col-12">
-            <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
+        {renderProductSelector && (
+          <div className="mb-5">
+            {renderProductSelector({ productId, onProductChange: productId => setProductId(productId) })}
           </div>
-          <div className="col-12 col-lg-6">
-            <CheckoutProductReferrerInput
-              referrerId={referrerId}
-              referrerStatus={referrerStatus}
-              onEmailSet={email => setReferrerEmail(email)}
+        )}
+
+        {!!warningText && <StyledWarningText>{warningText}</StyledWarningText>}
+
+        {isProductPhysical && (
+          <div ref={shippingRef}>
+            <ShippingInput
+              value={shipping}
+              onChange={value => setShipping(value)}
+              shippingMethods={shippingMethods}
+              isValidating={isValidating}
             />
           </div>
+        )}
+
+        <div ref={invoiceRef} className="mb-5">
+          <InvoiceInput
+            value={invoice}
+            onChange={value => setInvoice(value)}
+            isValidating={isValidating}
+            shouldSameToShippingCheckboxDisplay={isProductPhysical}
+          />
         </div>
-      )}
 
-      <Divider className="mb-3" />
+        <div className="mb-3">
+          <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+        </div>
 
-      {settings['custom.project.plan_price_style'] === 'hidden' &&
-      productId.startsWith('ProjectPlan_') ? null : orderChecking ? (
-        <SkeletonText noOfLines={4} spacing="5" />
-      ) : (
-        <>
-          <StyledCheckoutBlock className="mb-5">
-            {check.orderProducts.map(orderProduct => (
-              <CheckoutProductItem key={orderProduct.name} name={orderProduct.name} price={orderProduct.price} />
-            ))}
-
-            {check.orderDiscounts.map(orderDiscount => (
-              <CheckoutProductItem key={orderDiscount.name} name={orderDiscount.name} price={orderDiscount.price} />
-            ))}
-
-            {check.shippingOption && (
-              <CheckoutProductItem
-                name={formatMessage(
-                  checkoutMessages.shipping[camelCase(check.shippingOption.id) as shippingOptionIdProps],
-                )}
-                price={check.shippingOption.fee}
+        {enabledModules.referrer && (
+          <div className="row" ref={referrerRef}>
+            <div className="col-12">
+              <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
+            </div>
+            <div className="col-12 col-lg-6">
+              <CheckoutProductReferrerInput
+                referrerId={referrerId}
+                referrerStatus={referrerStatus}
+                onEmailSet={email => setReferrerEmail(email)}
               />
-            )}
-          </StyledCheckoutBlock>
-          <StyledCheckoutPrice className="mb-3">
-            <PriceLabel listPrice={totalPrice} />
-          </StyledCheckoutPrice>
-        </>
-      )}
+            </div>
+          </div>
+        )}
 
-      <div className="text-right">
-        <Button variant="outline" onClick={() => setVisible(false)} className="mr-3">
-          {formatMessage(commonMessages.ui.cancel)}
-        </Button>
-        <Button colorScheme="primary" isLoading={orderPlacing} onClick={handleSubmit} htmlType="submit">
-          {paymentType === 'subscription'
-            ? formatMessage(checkoutMessages.button.cartSubmit)
-            : formatMessage(commonMessages.button.purchase)}
-        </Button>
-      </div>
-    </CommonModal>
+        <Divider className="mb-3" />
+
+        {settings['custom.project.plan_price_style'] === 'hidden' &&
+        productId.startsWith('ProjectPlan_') ? null : orderChecking ? (
+          <SkeletonText noOfLines={4} spacing="5" />
+        ) : (
+          <>
+            <StyledCheckoutBlock className="mb-5">
+              {check.orderProducts.map(orderProduct => (
+                <CheckoutProductItem key={orderProduct.name} name={orderProduct.name} price={orderProduct.price} />
+              ))}
+
+              {check.orderDiscounts.map(orderDiscount => (
+                <CheckoutProductItem key={orderDiscount.name} name={orderDiscount.name} price={orderDiscount.price} />
+              ))}
+
+              {check.shippingOption && (
+                <CheckoutProductItem
+                  name={formatMessage(
+                    checkoutMessages.shipping[camelCase(check.shippingOption.id) as shippingOptionIdProps],
+                  )}
+                  price={check.shippingOption.fee}
+                />
+              )}
+            </StyledCheckoutBlock>
+            <StyledCheckoutPrice className="mb-3">
+              <PriceLabel listPrice={totalPrice} />
+            </StyledCheckoutPrice>
+          </>
+        )}
+
+        <div className="text-right">
+          <Button variant="outline" onClick={onClose} className="mr-3">
+            {formatMessage(commonMessages.ui.cancel)}
+          </Button>
+          <Button colorScheme="primary" isLoading={orderPlacing} onClick={handleSubmit}>
+            {paymentType === 'subscription'
+              ? formatMessage(checkoutMessages.button.cartSubmit)
+              : formatMessage(commonMessages.button.purchase)}
+          </Button>
+        </div>
+      </CommonModal>
+    </>
   )
 }
 

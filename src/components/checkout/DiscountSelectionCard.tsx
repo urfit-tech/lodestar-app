@@ -49,7 +49,7 @@ const DiscountSelectionCard: React.FC<{
                 onSelect={coupon => {
                   onChange?.(`Coupon_${coupon.id}`)
                 }}
-                render={({ onOpen, selectedCoupon }) => (
+                renderTrigger={({ onOpen, selectedCoupon }) => (
                   <>
                     <Button onClick={onOpen}>
                       {discountTarget

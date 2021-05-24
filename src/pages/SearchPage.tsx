@@ -255,7 +255,7 @@ const SearchResultBlock: React.FC<{
               {searchResults.podcastPrograms.map(podcastProgram => (
                 <div key={podcastProgram.id} className="col-6 col-md-3 mb-4">
                   <CheckoutPodcastPlanModal
-                    renderTrigger={({ setVisible }) => (
+                    renderTrigger={onOpen => (
                       <PodcastProgramPopover
                         key={podcastProgram.id}
                         podcastProgramId={podcastProgram.id}
@@ -269,7 +269,7 @@ const SearchResultBlock: React.FC<{
                         instructor={podcastProgram.instructor}
                         isEnrolled={podcastProgram.isEnrolled}
                         isSubscribed={podcastProgram.isSubscribed}
-                        onSubscribe={() => setVisible()}
+                        onSubscribe={onOpen}
                       >
                         <PodcastProgramBriefCard
                           coverUrl={podcastProgram.coverUrl}

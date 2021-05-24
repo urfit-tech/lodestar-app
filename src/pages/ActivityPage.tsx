@@ -213,7 +213,7 @@ const ActivityPage: React.FC = () => {
                             </Button>
                           ) : isAuthenticated ? (
                             <CheckoutProductModal
-                              renderTrigger={({ setVisible }) => (
+                              renderTrigger={onOpen => (
                                 <Button
                                   colorScheme="primary"
                                   isFullWidth
@@ -228,7 +228,7 @@ const ActivityPage: React.FC = () => {
                                     })
                                     ReactGA.plugin.execute('ec', 'setAction', 'add')
                                     ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                                    setVisible()
+                                    onOpen()
                                   }}
                                 >
                                   {formatMessage(commonMessages.button.register)}

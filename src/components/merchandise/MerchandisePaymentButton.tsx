@@ -147,12 +147,8 @@ const CustomizedMerchandisePaymentBlock: React.FC<{
 
   return (
     <CheckoutProductModal
-      renderTrigger={({ setVisible }) => (
-        <Button
-          colorScheme="primary"
-          isFullWidth
-          onClick={() => (!currentMemberId ? setAuthModal?.(true) : setVisible())}
-        >
+      renderTrigger={onOpen => (
+        <Button colorScheme="primary" isFullWidth onClick={() => (currentMemberId ? onOpen() : setAuthModal?.(true))}>
           {formatMessage(commonMessages.button.purchase)}
         </Button>
       )}

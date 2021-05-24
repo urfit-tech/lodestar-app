@@ -94,7 +94,7 @@ const ProgramSubscriptionPlanCard: React.FC<{
         </Button>
       ) : (
         <CheckoutProductModal
-          renderTrigger={({ setVisible }) => (
+          renderTrigger={onOpen => (
             <Button
               colorScheme="primary"
               isFullWidth
@@ -112,7 +112,7 @@ const ProgramSubscriptionPlanCard: React.FC<{
                   })
                   ReactGA.plugin.execute('ec', 'setAction', 'add')
                   ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                  setVisible()
+                  onOpen()
                 }
               }}
             >
