@@ -12,6 +12,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../../components/auth/AuthContext'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
 import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/checkout/InvoiceInput'
+import PaymentInput, { PaymentMethodType } from '../../components/checkout/PaymentInput'
 import ShippingInput, { ShippingProps, validateShipping } from '../../components/checkout/ShippingInput'
 import PriceLabel from '../../components/common/PriceLabel'
 import ProductItem from '../../components/common/ProductItem'
@@ -91,6 +92,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
   const cachedPaymentInfor: {
     shipping: ShippingProps
     invoice: InvoiceProps
+    paymentMethod: PaymentMethodType
   } = {
     shipping: {
       name: '',
@@ -106,11 +108,13 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
       phone: '',
       email: member?.email || '',
     },
+    paymentMethod: 'CREDIT',
   }
 
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
     const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
+    const cachedPaymentMethod = localStorage.getItem('kolable.cart.paymentMethod')
 
     cachedPaymentInfor.shipping = cachedShipping
       ? (JSON.parse(cachedShipping) as ShippingProps)
@@ -125,6 +129,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
           ...cachedPaymentInfor.invoice,
           ...member?.metadata?.invoice,
         }
+    cachedPaymentInfor.paymentMethod = cachedPaymentMethod ? cachedPaymentMethod : member?.metadata?.paymentMethod
   } catch {}
 
   const shippingRef = useRef<HTMLDivElement | null>(null)
@@ -133,6 +138,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(cachedPaymentInfor.paymentMethod)
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
 
@@ -277,6 +283,12 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
               </div>
             )}
 
+            {paymentType === 'perpetual' && (
+              <div className="mb-5">
+                <PaymentInput value={paymentMethod} onChange={v => setPaymentMethod(v)} />
+              </div>
+            )}
+
             <div ref={invoiceRef} className="mb-5">
               <InvoiceInput
                 value={invoice}
@@ -353,7 +365,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
               <Button variant="outline" onClick={() => setVisible(false)} className="mr-3">
                 {formatMessage(commonMessages.ui.cancel)}
               </Button>
-              <Button colorScheme="primary" loading={orderPlacing} htmlType="submit">
+              <Button colorScheme="primary" isLoading={orderPlacing} type="submit">
                 {paymentType === 'subscription'
                   ? formatMessage(checkoutMessages.button.cartSubmit)
                   : formatMessage(commonMessages.button.purchase)}

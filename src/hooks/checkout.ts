@@ -72,12 +72,16 @@ export const useCheck = (
   ])
 
   const placeOrder = useCallback(
-    async (paymentType: 'perpetual' | 'subscription' | 'groupBuying', invoice: InvoiceProps) => {
+    async (
+      paymentType: 'perpetual' | 'subscription' | 'groupBuying',
+      invoice: InvoiceProps,
+      paymentMethod?: string,
+    ) => {
       setOrderPlacing(true)
       return Axios.post<{ code: string; message: string; result: { id: string } }>(
         `https://${apiHost}/tasks/order`,
         {
-          paymentModel: { type: paymentType },
+          paymentModel: { type: paymentType, paymentMethod },
           productIds,
           discountId,
           shipping,

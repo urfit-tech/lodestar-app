@@ -29,6 +29,7 @@ import { CartProductProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import { CommonTitleMixin } from '../common'
+import PaymentInput, { PaymentMethodType } from './PaymentInput'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
@@ -55,6 +56,7 @@ const CheckoutBlock: React.FC<{
   const cachedPaymentInfor: {
     shipping: ShippingProps
     invoice: InvoiceProps
+    paymentMethod: PaymentMethodType
   } = {
     shipping: {
       name: '',
@@ -70,11 +72,12 @@ const CheckoutBlock: React.FC<{
       phone: '',
       email: member?.email || '',
     },
+    paymentMethod: 'CREDIT',
   }
-
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
     const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
+    const cachedPaymentMethod = localStorage.getItem('kolable.cart.paymentMethod')
 
     cachedPaymentInfor.shipping = cachedShipping
       ? (JSON.parse(cachedShipping) as ShippingProps)
@@ -89,6 +92,7 @@ const CheckoutBlock: React.FC<{
           ...cachedPaymentInfor.invoice,
           ...member?.metadata?.invoice,
         }
+    cachedPaymentInfor.paymentMethod = cachedPaymentMethod ? cachedPaymentMethod : member?.metadata?.paymentMethod
   } catch {}
 
   const shippingRef = useRef<HTMLDivElement | null>(null)
@@ -97,6 +101,7 @@ const CheckoutBlock: React.FC<{
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(cachedPaymentInfor.paymentMethod)
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
 
@@ -188,10 +193,14 @@ const CheckoutBlock: React.FC<{
       })
     }
 
-    const taskId = await placeOrder('perpetual', {
-      ...invoice,
-      referrerEmail: referrerEmail || undefined,
-    })
+    const taskId = await placeOrder(
+      'perpetual',
+      {
+        ...invoice,
+        referrerEmail: referrerEmail || undefined,
+      },
+      paymentMethod,
+    )
 
     member &&
       (await updateMemberMetadata({
@@ -201,6 +210,7 @@ const CheckoutBlock: React.FC<{
             ...member.metadata,
             invoice,
             shipping: hasPhysicalProduct ? shipping : undefined,
+            paymentMethod,
           },
         },
       }))
@@ -229,6 +239,12 @@ const CheckoutBlock: React.FC<{
           </AdminCard>
         </div>
       )}
+
+      <div className="mb-3">
+        <AdminCard>
+          <PaymentInput value={paymentMethod} onChange={v => setPaymentMethod(v)} />
+        </AdminCard>
+      </div>
 
       <div ref={invoiceRef} className="mb-3">
         <AdminCard>
