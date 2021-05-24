@@ -182,6 +182,26 @@ export const AuthProvider: React.FC<{
                     { headers: { Authorization: `Bearer ${result.authToken}` } },
                   )
                 }
+                const star = sessionStorage.getItem('star')
+                if (star) {
+                  Axios.post(
+                    `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
+                    {
+                      query: `
+                        mutation SET_MEMBER_STAR($memberId: String!, $star: numeric!) {
+                          update_member(where: {id: {_eq: $memberId}}, _set: {star: $star}) {
+                            affected_rows
+                          }
+                        }                      
+                      `,
+                      variables: {
+                        memberId: currentMemberId,
+                        star: parseInt(star),
+                      },
+                    },
+                    { headers: { Authorization: `Bearer ${result.authToken}` } },
+                  )
+                }
               } catch {}
             } else {
               setAuthToken(null)
