@@ -455,6 +455,16 @@ export const checkoutMessages = {
   button: defineMessages({
     cartSubmit: { id: 'checkout.cart.submit', defaultMessage: '前往結帳' },
   }),
+  label: defineMessages({
+    paymentMethod: { id: 'checkout.label.paymentMethod', defaultMessage: '付款方式' },
+    credit: { id: 'checkout.label.credit', defaultMessage: '信用卡' },
+    vacc: { id: 'checkout.label.vacc', defaultMessage: 'ATM轉帳' },
+    cvs: { id: 'checkout.label.cvs', defaultMessage: '超商付款' },
+    instFlag: { id: 'checkout.label.instFlag', defaultMessage: '信用卡分期' },
+    unionPay: { id: 'checkout.label.unionPay', defaultMessage: '銀聯卡支付' },
+    webAtm: { id: 'checkout.label.webATM', defaultMessage: 'WebATM' },
+    barcode: { id: 'checkout.label.barcode', defaultMessage: '超商條碼繳費' },
+  }),
   message: defineMessages({
     creditCardError: { id: 'checkout.message.error.creditCard', defaultMessage: '信用卡資料錯誤' },
     discountError: { id: 'checkout.message.error.discount', defaultMessage: '無法更新折扣方案' },
@@ -465,6 +475,10 @@ export const checkoutMessages = {
     leastOneSet: { id: 'checkout.coupon.form.message.leastOneSet', defaultMessage: '至少一組折扣碼' },
     unableAddCoupon: { id: 'checkout.coupon.message.unable', defaultMessage: '無法加入折價券' },
     noCoupon: { id: 'checkout.coupon.message.noCoupon', defaultMessage: '請選擇折價券' },
+    warningPayment: {
+      id: 'checkout.message.warningPayment',
+      defaultMessage: '下一步將連至第三方金流服務進行付款，你所有的交易資訊皆獲得安全保護。',
+    },
   }),
   help: defineMessages({
     notation: { id: 'checkout.coupon.form.help', defaultMessage: '折抵方式為比例時，額度範圍為 0 - 100' },
