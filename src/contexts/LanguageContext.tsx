@@ -16,11 +16,11 @@ const LanguageContext = createContext<LanguageProps>({
 })
 
 export const LanguageProvider: React.FC = ({ children }) => {
-  const { enabledModules } = useApp()
+  const { enabledModules, settings } = useApp()
   const [currentLanguage, setCurrentLanguage] = useState('zh')
 
   useEffect(() => {
-    const browserLanguage = navigator.language.split('-')[0]
+    const browserLanguage = settings['language'] || navigator.language.split('-')[0]
     const cachedLanguage = localStorage.getItem('kolable.app.language')
     setCurrentLanguage(
       enabledModules.locale
@@ -31,7 +31,7 @@ export const LanguageProvider: React.FC = ({ children }) => {
           : 'zh'
         : 'zh',
     )
-  }, [enabledModules])
+  }, [enabledModules, settings])
 
   moment.locale(currentLanguage)
 

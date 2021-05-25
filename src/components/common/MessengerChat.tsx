@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import MessengerCustomerChat from 'react-messenger-customer-chat'
 import { ThemeContext } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
-import './MessengerChat.css'
 
 type MessengerChatProps = {
   appId?: string
