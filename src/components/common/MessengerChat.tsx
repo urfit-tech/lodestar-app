@@ -1,10 +1,11 @@
 import React, { useContext } from 'react'
 import MessengerCustomerChat from 'react-messenger-customer-chat'
 import { ThemeContext } from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import './MessengerChat.css'
 
 type MessengerChatProps = {
-  appId: string
+  appId?: string
   pageId: string
   debug?: boolean
   themeColor?: string
@@ -22,9 +23,21 @@ type MessengerChatProps = {
   onCustomerChatDialogShow?: () => void
   onCustomerChatDialogHide?: () => void
 }
-const MessengerChat: React.FC<MessengerChatProps> = ({ children, ...options }) => {
+const MessengerChat: React.VFC<MessengerChatProps> = ({ appId, themeColor, ...options }) => {
+  const { settings } = useApp()
   const themeContext = useContext(ThemeContext)
-  return <MessengerCustomerChat {...options} themeColor={options.themeColor || themeContext['@primary-color']} />
+
+  if (!appId && !settings['auth.facebook_app_id']) {
+    return null
+  }
+
+  return (
+    <MessengerCustomerChat
+      appId={appId || settings['auth.facebook_app_id']}
+      themeColor={themeColor || themeContext['@primary-color']}
+      {...options}
+    />
+  )
 }
 
 export default MessengerChat

@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 
-export type AppPageSectionProps = { id: string; options: any; type: string }
+type AppPageSectionProps = { id: string; options: any; type: string }
 
 export type AppPageProps = {
   id: string | null

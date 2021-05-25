@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import ModularBriefFooter from '../../components/common/Footer/ModularBriefFooter'
+import MessengerChat from '../../components/common/MessengerChat'
 import DefaultLayout from '../../components/layout/DefaultLayout'
-import MessengerChat from '../../components/project/MessengerChat'
 import ProjectBannerSection from '../../components/project/ProjectBannerSection'
 import ProjectCalloutSection from '../../components/project/ProjectCalloutSection'
 import ProjectCardSection from '../../components/project/ProjectCardSection'
@@ -21,7 +21,9 @@ import { useProject } from '../../hooks/project'
 import EmptyCover from '../../images/empty-cover.png'
 import LoadingPage from '../LoadingPage'
 
-const ModularPage: React.FC<{ projectId: string }> = ({ projectId }) => {
+const ModularPage: React.VFC<{
+  projectId: string
+}> = ({ projectId }) => {
   const { settings } = useApp()
   const { project } = useProject(projectId)
   const [displaySectionTypes, setDisplaySectionTypes] = useState<string[]>(
@@ -92,13 +94,11 @@ const ModularPage: React.FC<{ projectId: string }> = ({ projectId }) => {
               )
             case 'messenger':
               return (
-                settings['auth.facebook_app_id'] && (
-                  <MessengerChat
-                    key={projectSection.id}
-                    appId={settings['auth.facebook_app_id']}
-                    {...projectSection.options}
-                  />
-                )
+                <MessengerChat
+                  key={projectSection.id}
+                  appId={settings['auth.facebook_app_id']}
+                  {...projectSection.options}
+                />
               )
             case 'banner':
               return (
