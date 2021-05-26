@@ -6,11 +6,11 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../components/auth/AuthContext'
 import { AuthModalContext } from '../components/auth/AuthModal'
+import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import { StyledBanner, StyledBannerTitle } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import PodcastProgramCard from '../components/podcast/PodcastProgramCard'
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
-import CheckoutPodcastPlanModal from '../containers/checkout/CheckoutPodcastPlanModal'
 import { useApp } from '../containers/common/AppContext'
 import PodcastProgramTimeline from '../containers/podcast/PodcastProgramTimeline'
 import PopularPodcastCollection from '../containers/podcast/PopularPodcastCollection'
@@ -143,7 +143,7 @@ const PodcastProgramCollectionPage: React.FC = () => {
                     )}
                   renderItem={({ podcastProgram, isEnrolled, isSubscribed }) => (
                     <CheckoutPodcastPlanModal
-                      renderTrigger={({ setVisible: setCheckoutModalVisible }) => (
+                      renderTrigger={onOpen => (
                         <PodcastProgramPopover
                           key={podcastProgram.id}
                           isEnrolled={isEnrolled}
@@ -158,9 +158,7 @@ const PodcastProgramCollectionPage: React.FC = () => {
                           categories={podcastProgram.categories}
                           instructor={podcastProgram.instructor}
                           onSubscribe={() =>
-                            isAuthenticated
-                              ? setCheckoutModalVisible()
-                              : setAuthModalVisible && setAuthModalVisible(true)
+                            isAuthenticated ? onOpen() : setAuthModalVisible && setAuthModalVisible(true)
                           }
                         >
                           <PodcastProgramCard

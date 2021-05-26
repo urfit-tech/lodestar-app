@@ -47,11 +47,11 @@ const DiscountSelectionCard: React.FC<{
                 orderProducts={check?.orderProducts || []}
                 orderDiscounts={check?.orderDiscounts || []}
                 onSelect={coupon => {
-                  onChange && onChange(`Coupon_${coupon.id}`)
+                  onChange?.(`Coupon_${coupon.id}`)
                 }}
-                render={({ setVisible, selectedCoupon }: any) => (
+                renderTrigger={({ onOpen, selectedCoupon }) => (
                   <>
-                    <Button onClick={() => setVisible(true)}>
+                    <Button onClick={onOpen}>
                       {discountTarget
                         ? formatMessage(commonMessages.button.reselectCoupon)
                         : formatMessage(commonMessages.button.chooseCoupon)}
@@ -78,7 +78,7 @@ const DiscountSelectionCard: React.FC<{
                 <MembershipCardSelectionModal
                   memberId={currentMemberId}
                   onSelect={membershipCardId => {
-                    onChange && onChange(`Card_${membershipCardId}`)
+                    onChange?.(`Card_${membershipCardId}`)
                   }}
                   render={({ setVisible, selectedMembershipCard }: any) => (
                     <>

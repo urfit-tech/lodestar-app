@@ -1,18 +1,13 @@
-import { Form } from 'antd'
 import React from 'react'
-import PodcastPlanSelector from '../../components/podcast/PodcastPlanSelector'
 import { usePublishedPodcastPlans } from '../../hooks/podcast'
+import PodcastPlanSelector from '../podcast/PodcastPlanSelector'
 import CheckoutProductModal, { CheckoutProductModalProps } from './CheckoutProductModal'
 
-type CheckoutPodcastPlanModalProps = CheckoutProductModalProps & {
-  creatorId: string
-}
-const CheckoutPodcastPlanModal: React.FC<CheckoutPodcastPlanModalProps> = ({
-  children,
-  creatorId,
-  renderTrigger,
-  ...modalProps
-}) => {
+const CheckoutPodcastPlanModal: React.FC<
+  {
+    creatorId: string
+  } & CheckoutProductModalProps
+> = ({ creatorId, renderTrigger, ...modalProps }) => {
   const { loadingPodcastPlans, publishedPodcastPlans } = usePublishedPodcastPlans(creatorId)
 
   if (loadingPodcastPlans) {
@@ -20,7 +15,7 @@ const CheckoutPodcastPlanModal: React.FC<CheckoutPodcastPlanModalProps> = ({
   }
 
   if (!publishedPodcastPlans[0]) {
-    return <>{renderTrigger({ setVisible: () => {} })}</>
+    return <>{renderTrigger(() => {})}</>
   }
 
   return (
@@ -39,4 +34,4 @@ const CheckoutPodcastPlanModal: React.FC<CheckoutPodcastPlanModalProps> = ({
   )
 }
 
-export default Form.create<CheckoutPodcastPlanModalProps>()(CheckoutPodcastPlanModal)
+export default CheckoutPodcastPlanModal

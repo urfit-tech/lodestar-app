@@ -204,6 +204,15 @@ const ReviewModal: React.FC<{
 
   return (
     <>
+      <StyledButtonReview
+        variant={memberReviews && memberReviews.length !== 0 ? 'outline' : 'primary'}
+        reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()}
+        onClick={onOpen}
+      >
+        {memberReviews && memberReviews.length !== 0
+          ? formatMessage(reviewMessages.button.editReview)
+          : formatMessage(reviewMessages.button.toReview)}
+      </StyledButtonReview>
       <CommonModal
         title={formatMessage(reviewMessages.modal.fillReview)}
         isOpen={isOpen}
@@ -212,17 +221,6 @@ const ReviewModal: React.FC<{
           <StyledHeaderIcon>
             <Icon as={EditIcon} color="primary.500" w="24px" h="24px" />
           </StyledHeaderIcon>
-        )}
-        renderTrigger={() => (
-          <StyledButtonReview
-            variant={memberReviews && memberReviews.length !== 0 ? 'outline' : 'primary'}
-            reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()}
-            onClick={onOpen}
-          >
-            {memberReviews && memberReviews.length !== 0
-              ? formatMessage(reviewMessages.button.editReview)
-              : formatMessage(reviewMessages.button.toReview)}
-          </StyledButtonReview>
         )}
       >
         <form onSubmit={handleSave}>

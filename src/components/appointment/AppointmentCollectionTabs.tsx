@@ -5,7 +5,7 @@ import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import CheckoutProductModal from '../../containers/checkout/CheckoutProductModal'
+import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
 import { productMessages } from '../../helpers/translation'
 import { useMember } from '../../hooks/member'
 import { AppointmentPeriodProps, AppointmentPlanProps } from '../../types/appointment'
@@ -169,7 +169,7 @@ const AppointmentCollectionTabs: React.FC<{
             </StyledTimeStandardBlock>
 
             <CheckoutProductModal
-              renderTrigger={({ setVisible }) => (
+              renderTrigger={onOpen => (
                 <AppointmentPeriodCollection
                   appointmentPeriods={appointmentPlan.periods}
                   reservationAmount={appointmentPlan.reservationAmount}
@@ -186,7 +186,7 @@ const AppointmentCollectionTabs: React.FC<{
                     ReactGA.plugin.execute('ec', 'setAction', 'add')
                     ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
                     setSelectedPeriod(period)
-                    setVisible()
+                    onOpen()
                   }}
                   diffPlanBookedTimes={diffPlanBookedTimes}
                 />

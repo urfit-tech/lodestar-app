@@ -4,7 +4,7 @@ import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import CheckoutProductModal from '../../containers/checkout/CheckoutProductModal'
+import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useMember } from '../../hooks/member'
 import { useEnrolledPlanIds, useProgram } from '../../hooks/program'
@@ -94,7 +94,7 @@ const ProgramSubscriptionPlanCard: React.FC<{
         </Button>
       ) : (
         <CheckoutProductModal
-          renderTrigger={({ setVisible }) => (
+          renderTrigger={onOpen => (
             <Button
               colorScheme="primary"
               isFullWidth
@@ -112,7 +112,7 @@ const ProgramSubscriptionPlanCard: React.FC<{
                   })
                   ReactGA.plugin.execute('ec', 'setAction', 'add')
                   ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                  setVisible()
+                  onOpen()
                 }
               }}
             >

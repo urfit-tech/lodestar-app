@@ -38,51 +38,47 @@ const MerchandiseShippingInfoModal: React.FC<{
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
-    <CommonModal
-      title={formatMessage(messages.shippingInfo)}
-      renderTrigger={() => (
-        <Button leftIcon={<Icon as={IconList} />} variant="ghost" colorScheme="white" onClick={onOpen}>
-          {formatMessage(messages.shippingInfo)}
-        </Button>
-      )}
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <div>
-        <div className="row">
-          <div className="col-4">
-            <StyledShippingInfoSubtitle className="mb-1">
-              {formatMessage(messages.shippingName)}
-            </StyledShippingInfoSubtitle>
-            <StyledShippingInfoContent>{shipping?.name}</StyledShippingInfoContent>
-          </div>
-          <div className="col-8">
-            <StyledShippingInfoSubtitle className="mb-1">
-              {formatMessage(messages.shippingMethod)}
-            </StyledShippingInfoSubtitle>
-            <StyledShippingInfoContent>{shippingMethodFormatter(shipping?.shippingMethod)}</StyledShippingInfoContent>
-          </div>
-          <div className="col-12">
-            <StyledShippingInfoSubtitle className="mb-1">
-              {formatMessage(messages.shippingPhone)}
-            </StyledShippingInfoSubtitle>
-            <StyledShippingInfoContent>{shipping?.phone}</StyledShippingInfoContent>
-          </div>
-          <div className="col-12">
-            <StyledShippingInfoSubtitle className="mb-1">
-              {formatMessage(messages.shippingAddress)}
-            </StyledShippingInfoSubtitle>
-            <StyledShippingInfoContent>{shipping?.address}</StyledShippingInfoContent>
-          </div>
-          <div className="col-12">
-            <StyledShippingInfoSubtitle className="mb-1">
-              {formatMessage(messages.shippingMail)}
-            </StyledShippingInfoSubtitle>
-            <StyledShippingInfoContent>{invoice?.email}</StyledShippingInfoContent>
+    <>
+      <Button leftIcon={<Icon as={IconList} />} variant="ghost" colorScheme="white" onClick={onOpen}>
+        {formatMessage(messages.shippingInfo)}
+      </Button>
+      <CommonModal title={formatMessage(messages.shippingInfo)} isOpen={isOpen} onClose={onClose}>
+        <div>
+          <div className="row">
+            <div className="col-4">
+              <StyledShippingInfoSubtitle className="mb-1">
+                {formatMessage(messages.shippingName)}
+              </StyledShippingInfoSubtitle>
+              <StyledShippingInfoContent>{shipping?.name}</StyledShippingInfoContent>
+            </div>
+            <div className="col-8">
+              <StyledShippingInfoSubtitle className="mb-1">
+                {formatMessage(messages.shippingMethod)}
+              </StyledShippingInfoSubtitle>
+              <StyledShippingInfoContent>{shippingMethodFormatter(shipping?.shippingMethod)}</StyledShippingInfoContent>
+            </div>
+            <div className="col-12">
+              <StyledShippingInfoSubtitle className="mb-1">
+                {formatMessage(messages.shippingPhone)}
+              </StyledShippingInfoSubtitle>
+              <StyledShippingInfoContent>{shipping?.phone}</StyledShippingInfoContent>
+            </div>
+            <div className="col-12">
+              <StyledShippingInfoSubtitle className="mb-1">
+                {formatMessage(messages.shippingAddress)}
+              </StyledShippingInfoSubtitle>
+              <StyledShippingInfoContent>{shipping?.address}</StyledShippingInfoContent>
+            </div>
+            <div className="col-12">
+              <StyledShippingInfoSubtitle className="mb-1">
+                {formatMessage(messages.shippingMail)}
+              </StyledShippingInfoSubtitle>
+              <StyledShippingInfoContent>{invoice?.email}</StyledShippingInfoContent>
+            </div>
           </div>
         </div>
-      </div>
-    </CommonModal>
+      </CommonModal>
+    </>
   )
 }
 

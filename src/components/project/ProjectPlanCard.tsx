@@ -6,7 +6,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import CheckoutProductModal from '../../containers/checkout/CheckoutProductModal'
+import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
 import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
@@ -254,8 +254,8 @@ const SubscriptionPlanBlock: React.FC<{
 
   return (
     <CheckoutProductModal
-      renderTrigger={({ setVisible }) => (
-        <StyledButton colorScheme="primary" size="lg" onClick={() => setVisible()}>
+      renderTrigger={onOpen => (
+        <StyledButton colorScheme="primary" size="lg" onClick={onOpen}>
           <span>{formatMessage(commonMessages.button.join)}</span>
         </StyledButton>
       )}

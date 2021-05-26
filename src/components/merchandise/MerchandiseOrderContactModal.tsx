@@ -142,33 +142,24 @@ const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }
       .catch(error => console.log(error))
   })
 
-  if (loading || error) {
-    return null
-  }
-
   return (
     <>
-      <CommonModal
-        title={formatMessage(messages.contactMessage)}
-        isOpen={isOpen}
-        onClose={onClose}
-        renderTrigger={() => (
-          <StyledButton
-            isMark={isUnread}
-            leftIcon={<Icon as={IconEmail} />}
-            variant="ghost"
-            colorScheme="white"
-            onClick={() => {
-              onOpen()
-              updateOrderContactReadAt(new Date())
-                .then(() => refetch())
-                .catch(err => console.error(err))
-            }}
-          >
-            {formatMessage(messages.contactMessage)}
-          </StyledButton>
-        )}
+      <StyledButton
+        isLoading={loading || error}
+        isMark={isUnread}
+        leftIcon={<Icon as={IconEmail} />}
+        variant="ghost"
+        colorScheme="white"
+        onClick={() => {
+          onOpen()
+          updateOrderContactReadAt(new Date())
+            .then(() => refetch())
+            .catch(err => console.error(err))
+        }}
       >
+        {formatMessage(messages.contactMessage)}
+      </StyledButton>
+      <CommonModal title={formatMessage(messages.contactMessage)} isOpen={isOpen} onClose={onClose}>
         <form onSubmit={handleSave}>
           <Controller
             name="message"

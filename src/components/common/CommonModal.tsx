@@ -36,49 +36,33 @@ const StyledCloseButtonBlock = styled.div`
 
 const CommonModal: React.FC<
   {
-    title: string
-    renderTrigger: () => React.ReactElement
+    title: string | React.ReactElement
     isFullWidth?: boolean
     renderHeaderIcon?: () => React.ReactElement
     renderCloseButtonBlock?: () => React.ReactElement
     renderFooter?: () => React.ReactElement
   } & ModalProps
-> = ({
-  title,
-  renderTrigger,
-  isFullWidth,
-  renderHeaderIcon,
-  renderCloseButtonBlock,
-  renderFooter,
-  children,
-  ...ModalProps
-}) => {
-  return (
-    <>
-      {renderTrigger()}
+> = ({ title, isFullWidth, renderHeaderIcon, renderCloseButtonBlock, renderFooter, children, ...ModalProps }) => (
+  <Modal {...ModalProps}>
+    <ModalOverlay />
+    <StyledModalContent isFullWidth={isFullWidth}>
+      <StyledWrapper>
+        {renderHeaderIcon?.()}
 
-      <Modal {...ModalProps}>
-        <ModalOverlay />
-        <StyledModalContent isFullWidth={isFullWidth}>
-          <StyledWrapper>
-            {renderHeaderIcon?.()}
+        <ModalHeader className="pt-4 pb-0">{title}</ModalHeader>
 
-            <ModalHeader className="pt-4 pb-0">{title}</ModalHeader>
+        {renderCloseButtonBlock ? (
+          <StyledCloseButtonBlock>{renderCloseButtonBlock()}</StyledCloseButtonBlock>
+        ) : (
+          <ModalCloseButton />
+        )}
 
-            {renderCloseButtonBlock ? (
-              <StyledCloseButtonBlock>{renderCloseButtonBlock()}</StyledCloseButtonBlock>
-            ) : (
-              <ModalCloseButton />
-            )}
+        <ModalBody>{children}</ModalBody>
 
-            <ModalBody>{children}</ModalBody>
-
-            {renderFooter && <ModalFooter className="pb-4">{renderFooter()}</ModalFooter>}
-          </StyledWrapper>
-        </StyledModalContent>
-      </Modal>
-    </>
-  )
-}
+        {renderFooter && <ModalFooter className="pb-4">{renderFooter()}</ModalFooter>}
+      </StyledWrapper>
+    </StyledModalContent>
+  </Modal>
+)
 
 export default CommonModal

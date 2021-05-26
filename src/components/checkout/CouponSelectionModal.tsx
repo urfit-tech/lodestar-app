@@ -1,5 +1,5 @@
 import { Button, Input } from '@chakra-ui/react'
-import { Divider, message, Modal, Spin } from 'antd'
+import { Divider, message, Spin } from 'antd'
 import axios from 'axios'
 import { sum } from 'ramda'
 import React, { useState } from 'react'
@@ -9,18 +9,16 @@ import { checkoutMessages, codeMessages, commonMessages } from '../../helpers/tr
 import { useCouponCollection } from '../../hooks/data'
 import { CouponProps, OrderDiscountProps, OrderProductProps } from '../../types/checkout'
 import { useAuth } from '../auth/AuthContext'
+import CommonModal from '../common/CommonModal'
 import CouponCard from './CouponCard'
 
 const CouponSelectionModal: React.FC<{
   memberId: string
   orderProducts: OrderProductProps[]
   orderDiscounts: OrderDiscountProps[]
+  renderTrigger: (params: { onOpen: () => void; selectedCoupon?: CouponProps }) => React.ReactElement
   onSelect?: (coupon: CouponProps) => void
-  render?: React.FC<{
-    setVisible: React.Dispatch<React.SetStateAction<boolean>>
-    selectedCoupon?: CouponProps
-  }>
-}> = ({ memberId, orderProducts, orderDiscounts, onSelect, render }) => {
+}> = ({ memberId, orderProducts, orderDiscounts, onSelect, renderTrigger }) => {
   const { formatMessage } = useIntl()
   const { authToken, apiHost } = useAuth()
   const { coupons, loadingCoupons, refetchCoupons } = useCouponCollection(memberId)
@@ -58,13 +56,11 @@ const CouponSelectionModal: React.FC<{
 
   return (
     <>
-      {render && render({ setVisible, selectedCoupon })}
-
-      <Modal
+      {renderTrigger({ onOpen: () => setVisible(true), selectedCoupon })}
+      <CommonModal
         title={formatMessage(checkoutMessages.title.chooseCoupon)}
-        footer={null}
-        onCancel={() => setVisible(false)}
-        visible={visible}
+        onClose={() => setVisible(false)}
+        isOpen={visible}
       >
         {loadingCoupons ? (
           <Spin />
@@ -134,7 +130,7 @@ const CouponSelectionModal: React.FC<{
             {formatMessage(commonMessages.button.add)}
           </Button>
         </div>
-      </Modal>
+      </CommonModal>
     </>
   )
 }

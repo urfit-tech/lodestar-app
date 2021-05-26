@@ -13,6 +13,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import Activity from '../components/activity/Activity'
 import CreatorBriefCard from '../components/appointment/CreatorBriefCard'
 import { useAuth } from '../components/auth/AuthContext'
+import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { StyledBanner } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -21,7 +22,6 @@ import PodcastProgramBriefCard from '../components/podcast/PodcastProgramBriefCa
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
 import ProgramCard from '../components/program/ProgramCard'
 import ProjectIntroCard from '../components/project/ProjectIntroCard'
-import CheckoutPodcastPlanModal from '../containers/checkout/CheckoutPodcastPlanModal'
 import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
@@ -255,7 +255,7 @@ const SearchResultBlock: React.FC<{
               {searchResults.podcastPrograms.map(podcastProgram => (
                 <div key={podcastProgram.id} className="col-6 col-md-3 mb-4">
                   <CheckoutPodcastPlanModal
-                    renderTrigger={({ setVisible }) => (
+                    renderTrigger={onOpen => (
                       <PodcastProgramPopover
                         key={podcastProgram.id}
                         podcastProgramId={podcastProgram.id}
@@ -269,7 +269,7 @@ const SearchResultBlock: React.FC<{
                         instructor={podcastProgram.instructor}
                         isEnrolled={podcastProgram.isEnrolled}
                         isSubscribed={podcastProgram.isSubscribed}
-                        onSubscribe={() => setVisible()}
+                        onSubscribe={onOpen}
                       >
                         <PodcastProgramBriefCard
                           coverUrl={podcastProgram.coverUrl}

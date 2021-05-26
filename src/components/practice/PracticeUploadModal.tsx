@@ -186,62 +186,66 @@ const PracticeUploadModal: React.FC<{
   })
 
   return (
-    <CommonModal
-      isFullWidth
-      title={formatMessage(variant === 'upload' ? messages.uploadPractice : messages.editPractice)}
-      isOpen={isOpen}
-      onClose={onClose}
-      renderCloseButtonBlock={() => (
-        <ButtonGroup>
-          <Button onClick={onClose} variant="outline">
-            {formatMessage(commonMessages.ui.cancel)}
-          </Button>
-          <Button onClick={handleUpload} isLoading={loading} variant="primary">
-            {formatMessage(commonMessages.ui.upload)}
-          </Button>
-        </ButtonGroup>
+    <>
+      {renderTrigger?.(onOpen) || (
+        <StyledButton variant="primary" onClick={onOpen}>
+          {formatMessage(variant === 'upload' ? messages.uploadByMe : commonMessages.button.edit)}
+        </StyledButton>
       )}
-      renderTrigger={() =>
-        renderTrigger?.(onOpen) || (
-          <StyledButton variant="primary" onClick={onOpen}>
-            {formatMessage(variant === 'upload' ? messages.uploadByMe : commonMessages.button.edit)}
-          </StyledButton>
-        )
-      }
-    >
-      <FormControl isRequired isInvalid={!!errors?.title?.message} className="my-4">
-        <FormLabel>{formatMessage(commonMessages.label.title)}</FormLabel>
-        <StyledInputWrapper>
-          <Input name="title" ref={register({ required: formatMessage(messages.fillTitleNotice) })} variant="outline" />
-        </StyledInputWrapper>
-        <FormErrorMessage>{errors?.title?.message}</FormErrorMessage>
-      </FormControl>
-      <Controller
-        name="description"
-        as={<BraftEditor className="mb-4" placeholder={formatMessage(messages.fillDescriptionPlease)} />}
-        control={control}
-      />
-      <div className="mb-4">
-        <FormLabel>
-          <span className="mr-1">
-            {formatMessage(messages.practiceAttachment)}（{formatMessage(messages.practiceAttachmentHint)}）
-          </span>
-          <Tooltip label={formatMessage(messages.practiceAttachmentNotice)} placement="top" hasArrow>
-            <QuestionIcon />
-          </Tooltip>
-        </FormLabel>
-        <FileUploader multiple showUploadList fileList={attachments} onChange={files => setAttachments(files)} />
-      </div>
-      <div className={isCoverRequired ? 'mb-4' : 'd-none'}>
-        <FormLabel>
-          <span className="mr-1">{formatMessage(messages.cover)}</span>
-          <Tooltip label={formatMessage(messages.coverNotice)} placement="top" hasArrow>
-            <QuestionIcon />
-          </Tooltip>
-        </FormLabel>
-        <ImageUploader imgUrl={practice?.coverUrl} file={coverImageFile} onChange={file => setCoverImageFile(file)} />
-      </div>
-    </CommonModal>
+      <CommonModal
+        isFullWidth
+        title={formatMessage(variant === 'upload' ? messages.uploadPractice : messages.editPractice)}
+        isOpen={isOpen}
+        onClose={onClose}
+        renderCloseButtonBlock={() => (
+          <ButtonGroup>
+            <Button onClick={onClose} variant="outline">
+              {formatMessage(commonMessages.ui.cancel)}
+            </Button>
+            <Button onClick={handleUpload} isLoading={loading} variant="primary">
+              {formatMessage(commonMessages.ui.upload)}
+            </Button>
+          </ButtonGroup>
+        )}
+      >
+        <FormControl isRequired isInvalid={!!errors?.title?.message} className="my-4">
+          <FormLabel>{formatMessage(commonMessages.label.title)}</FormLabel>
+          <StyledInputWrapper>
+            <Input
+              name="title"
+              ref={register({ required: formatMessage(messages.fillTitleNotice) })}
+              variant="outline"
+            />
+          </StyledInputWrapper>
+          <FormErrorMessage>{errors?.title?.message}</FormErrorMessage>
+        </FormControl>
+        <Controller
+          name="description"
+          as={<BraftEditor className="mb-4" placeholder={formatMessage(messages.fillDescriptionPlease)} />}
+          control={control}
+        />
+        <div className="mb-4">
+          <FormLabel>
+            <span className="mr-1">
+              {formatMessage(messages.practiceAttachment)}（{formatMessage(messages.practiceAttachmentHint)}）
+            </span>
+            <Tooltip label={formatMessage(messages.practiceAttachmentNotice)} placement="top" hasArrow>
+              <QuestionIcon />
+            </Tooltip>
+          </FormLabel>
+          <FileUploader multiple showUploadList fileList={attachments} onChange={files => setAttachments(files)} />
+        </div>
+        <div className={isCoverRequired ? 'mb-4' : 'd-none'}>
+          <FormLabel>
+            <span className="mr-1">{formatMessage(messages.cover)}</span>
+            <Tooltip label={formatMessage(messages.coverNotice)} placement="top" hasArrow>
+              <QuestionIcon />
+            </Tooltip>
+          </FormLabel>
+          <ImageUploader imgUrl={practice?.coverUrl} file={coverImageFile} onChange={file => setCoverImageFile(file)} />
+        </div>
+      </CommonModal>
+    </>
   )
 }
 
