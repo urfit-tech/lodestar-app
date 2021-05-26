@@ -1,5 +1,5 @@
-import { Icon } from '@chakra-ui/react'
-import { Button, Form, Input, message } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
+import { Form, Input, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineLock, AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'react-icons/ai'
@@ -151,11 +151,12 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
 
           <Form.Item>
             <Button
-              type="dashed"
-              block
-              loading={sendingState === 'loading'}
+              type="button"
+              variant="outline"
+              isFullWidth
+              isLoading={sendingState === 'loading'}
               onClick={handleSmsSend}
-              disabled={sendingState === 'idle'}
+              isDisabled={sendingState === 'idle'}
             >
               {sendingState === 'idle'
                 ? formatMessage(commonMessages.button.sendSmsIdle)
@@ -163,13 +164,19 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={verifying}>
+            <Button colorScheme="primary" type="submit" isFullWidth block loading={verifying}>
               {formatMessage(commonMessages.button.verifySms)}
             </Button>
           </Form.Item>
           <StyledAction>
             <span>{formatMessage(authMessages.content.isMember)}</span>
-            <Button type="link" size="small" onClick={() => onAuthStateChange('login')}>
+            <Button
+              colorScheme="primary"
+              variant="ghost"
+              size="sm"
+              lineHeight="unset"
+              onClick={() => onAuthStateChange('login')}
+            >
               {formatMessage(commonMessages.button.login)}
             </Button>
           </StyledAction>
@@ -266,7 +273,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
           )}
         </StyledParagraph>
         <Form.Item>
-          <Button type="primary" htmlType="submit" block loading={loading}>
+          <Button colorScheme="primary" type="submit" isFullWidth isLoading={loading}>
             {formatMessage(commonMessages.button.signUp)}
           </Button>
         </Form.Item>
@@ -274,7 +281,13 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
 
       <StyledAction>
         <span>{formatMessage(authMessages.content.isMember)}</span>
-        <Button type="link" size="small" onClick={() => onAuthStateChange('login')}>
+        <Button
+          colorScheme="primary"
+          variant="ghost"
+          size="sm"
+          lineHeight="unset"
+          onClick={() => onAuthStateChange('login')}
+        >
           {formatMessage(commonMessages.button.login)}
         </Button>
       </StyledAction>

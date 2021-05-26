@@ -1,5 +1,5 @@
-import { Icon } from '@chakra-ui/react'
-import { Button, Form, Input, message } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
+import { Form, Input, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import React, { useContext, useState } from 'react'
 import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai'
@@ -149,14 +149,20 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
               <Link to="/forgot-password">{formatMessage(authMessages.link.forgotPassword)}</Link>
             </ForgetPassword>
             <Form.Item>
-              <Button block loading={loading} type="primary" htmlType="submit">
+              <Button isFullWidth isLoading={loading} type="submit" colorScheme="primary">
                 {formatMessage(commonMessages.button.login)}
               </Button>
             </Form.Item>
 
             <StyledAction>
               <span>{formatMessage(authMessages.content.noMember)}</span>
-              <Button type="link" size="small" onClick={() => onAuthStateChange('register')}>
+              <Button
+                colorScheme="primary"
+                variant="ghost"
+                size="sm"
+                lineHeight="unset"
+                onClick={() => onAuthStateChange('register')}
+              >
                 {formatMessage(commonMessages.button.signUp)}
               </Button>
             </StyledAction>
