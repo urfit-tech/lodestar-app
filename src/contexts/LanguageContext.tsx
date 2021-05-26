@@ -4,20 +4,23 @@ import React, { createContext, useEffect, useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import { useApp } from '../containers/common/AppContext'
 
-const supportedLanguages = ['zh', 'en', 'vi']
+const supportedLanguages = ['zh', 'zh-cn', 'en', 'vi', 'acsi']
 
 type LanguageProps = {
   currentLanguage: string
   setCurrentLanguage?: (language: string) => void
 }
-
-const LanguageContext = createContext<LanguageProps>({
+const defaultLanguage: LanguageProps = {
   currentLanguage: 'zh',
-})
+}
+
+const LanguageContext = createContext<LanguageProps>(defaultLanguage)
 
 export const LanguageProvider: React.FC = ({ children }) => {
   const { enabledModules, settings } = useApp()
   const [currentLanguage, setCurrentLanguage] = useState('zh')
+  const [locale, setLocale] = useState('zh')
+  moment.locale('zh-tw')
 
   useEffect(() => {
     const browserLanguage = settings['language'] || navigator.language.split('-')[0]
@@ -33,7 +36,18 @@ export const LanguageProvider: React.FC = ({ children }) => {
     )
   }, [enabledModules, settings])
 
-  moment.locale(currentLanguage)
+  useEffect(() => {
+    switch (currentLanguage) {
+      case 'zh':
+      case 'acsi':
+        setLocale('zh')
+        moment.locale('zh-tw')
+        break
+      default:
+        setLocale(currentLanguage)
+        moment.locale(currentLanguage)
+    }
+  }, [currentLanguage])
 
   let messages: any = {}
   try {
@@ -42,28 +56,19 @@ export const LanguageProvider: React.FC = ({ children }) => {
     }
   } catch {}
 
-  const language: LanguageProps = {
-    currentLanguage,
-    setCurrentLanguage: (language: string) => {
-      if (supportedLanguages.includes(language)) {
-        localStorage.setItem('kolable.app.language', language)
-
-        setCurrentLanguage(language)
-
-        switch (language) {
-          case 'zh':
-            moment.locale('zh-tw')
-            break
-          default:
-            moment.locale(language)
-        }
-      }
-    },
-  }
-
   return (
-    <LanguageContext.Provider value={language}>
-      <IntlProvider defaultLocale="zh" locale={currentLanguage} messages={messages}>
+    <LanguageContext.Provider
+      value={{
+        currentLanguage,
+        setCurrentLanguage: (newLanguage: string) => {
+          if (supportedLanguages.includes(newLanguage)) {
+            localStorage.setItem('kolable.app.language', newLanguage)
+            setCurrentLanguage(newLanguage)
+          }
+        },
+      }}
+    >
+      <IntlProvider defaultLocale="zh" locale={locale} messages={messages}>
         {children}
       </IntlProvider>
     </LanguageContext.Provider>
