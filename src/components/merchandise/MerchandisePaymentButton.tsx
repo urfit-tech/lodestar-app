@@ -133,8 +133,8 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
   merchandiseSpec: MerchandiseSpecProps
 }> = ({ merchandise, merchandiseSpec }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
-  const { setVisible: setAuthModal } = useContext(AuthModalContext)
+  const { currentMemberId, isAuthenticated } = useAuth()
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { member } = useMember(currentMemberId || '')
 
   if (merchandise.isLimited && !merchandiseSpec.buyableQuantity) {
@@ -148,7 +148,11 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
   return (
     <CheckoutProductModal
       renderTrigger={onOpen => (
-        <Button colorScheme="primary" isFullWidth onClick={() => (currentMemberId ? onOpen?.() : setAuthModal?.(true))}>
+        <Button
+          colorScheme="primary"
+          isFullWidth
+          onClick={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
+        >
           {formatMessage(commonMessages.button.purchase)}
         </Button>
       )}

@@ -1,6 +1,6 @@
 import moment from 'moment'
 import momentTz from 'moment-timezone'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
@@ -10,6 +10,7 @@ import { productMessages } from '../../helpers/translation'
 import { useMember } from '../../hooks/member'
 import { AppointmentPeriodProps, AppointmentPlanProps } from '../../types/appointment'
 import { useAuth } from '../auth/AuthContext'
+import { AuthModalContext } from '../auth/AuthModal'
 import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 import AppointmentPeriodCollection from './AppointmentPeriodCollection'
@@ -68,8 +69,9 @@ const AppointmentCollectionTabs: React.VFC<{
   appointmentPlans: (AppointmentPlanProps & { periods: AppointmentPeriodProps[] })[]
 }> = ({ appointmentPlans }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
+  const { currentMemberId, isAuthenticated } = useAuth()
   const { member } = useMember(currentMemberId || '')
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string | null>(appointmentPlans[0].id)
   const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriodProps | null>(null)
   const { search } = useLocation()
@@ -175,18 +177,22 @@ const AppointmentCollectionTabs: React.VFC<{
                   reservationAmount={appointmentPlan.reservationAmount}
                   reservationType={appointmentPlan.reservationType}
                   onClick={period => {
-                    ReactGA.plugin.execute('ec', 'addProduct', {
-                      id: appointmentPlan.id,
-                      name: appointmentPlan.title,
-                      category: 'AppointmentPlan',
-                      price: `${appointmentPlan.price}`,
-                      quantity: '1',
-                      currency: 'TWD',
-                    })
-                    ReactGA.plugin.execute('ec', 'setAction', 'add')
-                    ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                    setSelectedPeriod(period)
-                    onOpen?.()
+                    if (!isAuthenticated) {
+                      setAuthModalVisible?.(true)
+                    } else {
+                      ReactGA.plugin.execute('ec', 'addProduct', {
+                        id: appointmentPlan.id,
+                        name: appointmentPlan.title,
+                        category: 'AppointmentPlan',
+                        price: `${appointmentPlan.price}`,
+                        quantity: '1',
+                        currency: 'TWD',
+                      })
+                      ReactGA.plugin.execute('ec', 'setAction', 'add')
+                      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+                      setSelectedPeriod(period)
+                      onOpen?.()
+                    }
                   }}
                   diffPlanBookedTimes={diffPlanBookedTimes}
                 />

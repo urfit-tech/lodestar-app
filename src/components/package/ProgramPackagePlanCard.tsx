@@ -1,5 +1,5 @@
 import { Button, Divider } from 'antd'
-import React from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -8,6 +8,7 @@ import { commonMessages, productMessages } from '../../helpers/translation'
 import { useMember } from '../../hooks/member'
 import { ProgramPackagePlanProps } from '../../types/programPackage'
 import { useAuth } from '../auth/AuthContext'
+import { AuthModalContext } from '../auth/AuthModal'
 import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 
@@ -59,8 +60,9 @@ const ProgramPackagePlanCard: React.VFC<
   isEnrolled,
 }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
+  const { currentMemberId, isAuthenticated } = useAuth()
   const { member } = useMember(currentMemberId || '')
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const isOnSale = soldAt ? Date.now() < soldAt.getTime() : false
 
   return (
@@ -109,7 +111,12 @@ const ProgramPackagePlanCard: React.VFC<
         ) : (
           <CheckoutProductModal
             renderTrigger={onOpen => (
-              <Button type="primary" onClick={onOpen} loading={loading} block>
+              <Button
+                type="primary"
+                onClick={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
+                loading={loading}
+                block
+              >
                 {isSubscription
                   ? formatMessage(commonMessages.button.subscribeNow)
                   : formatMessage(commonMessages.button.purchase)}
