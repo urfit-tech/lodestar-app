@@ -57,9 +57,9 @@ const CommonModal: React.FC<
           <ModalCloseButton />
         )}
 
-        <ModalBody>{children}</ModalBody>
+        <ModalBody className="px-4 mb-3">{children}</ModalBody>
 
-        {renderFooter && <ModalFooter className="pb-4">{renderFooter()}</ModalFooter>}
+        {renderFooter && <ModalFooter className="mb-4">{renderFooter()}</ModalFooter>}
       </StyledWrapper>
     </StyledModalContent>
   </Modal>

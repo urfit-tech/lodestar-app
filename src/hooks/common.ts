@@ -1,6 +1,8 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useIntl } from 'react-intl'
+import { useAuth } from '../components/auth/AuthContext'
+import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
 import { ProductType } from '../types/product'
@@ -318,22 +320,35 @@ const GET_PRODUCT_SIMPLE = gql`
   }
 `
 
-export const useReferrer = (email: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.SEARCH_REFERRER, hasura.SEARCH_REFERRERVariables>(
+export const useMemberValidation = (email: string) => {
+  const { currentMemberId } = useAuth()
+  const { id: appId } = useApp()
+  const { loading, error, data, refetch } = useQuery(
     gql`
-      query SEARCH_REFERRER($search: String!) {
-        member_public(where: { email: { _eq: $search } }) {
+      query SEARCH_MEMBER($email: String!, $appId: String!) {
+        member_public(where: { email: { _eq: $email }, app_id: { _eq: $appId } }) {
           id
         }
       }
     `,
-    { variables: { search: email } },
+    { variables: { email, appId } },
   )
 
+  const memberId: string | null = data?.member_public[0]?.id || null
+
+  const validateStatus: 'success' | 'error' | 'validating' | undefined = !email
+    ? undefined
+    : loading
+    ? 'validating'
+    : !memberId || memberId === currentMemberId
+    ? 'error'
+    : 'success'
+
   return {
-    loadingReferrerId: loading,
-    errorReferrerId: error,
-    referrerId: data?.member_public[0]?.id || null,
-    refetchReferrerId: refetch,
+    loadingMemberId: loading,
+    errorMemberId: error,
+    memberId,
+    validateStatus,
+    refetchMemberId: refetch,
   }
 }

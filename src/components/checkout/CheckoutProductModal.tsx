@@ -6,7 +6,6 @@ import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { useAuth } from '../../components/auth/AuthContext'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
 import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/checkout/InvoiceInput'
 import ShippingInput, { ShippingProps, validateShipping } from '../../components/checkout/ShippingInput'
@@ -16,11 +15,12 @@ import ProductItem from '../../components/common/ProductItem'
 import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
-import { useReferrer, useSimpleProduct } from '../../hooks/common'
+import { useMemberValidation, useSimpleProduct } from '../../hooks/common'
 import { useUpdateMemberMetadata } from '../../hooks/member'
 import { shippingOptionIdProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { ShippingMethodProps } from '../../types/merchandise'
+import CheckoutGroupBuyingForm from './CheckoutGroupBuyingForm'
 import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
 import CheckoutProductReferrerInput from './CheckoutProductReferrerInput'
 
@@ -68,7 +68,6 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [sharingCode] = useQueryParam('sharing', StringParam)
-  const { currentMemberId } = useAuth()
   const { enabledModules, settings } = useApp()
   const updateMemberMetadata = useUpdateMemberMetadata()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -123,14 +122,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const [discountId, setDiscountId] = useState('')
   const [referrerEmail, setReferrerEmail] = useState('')
 
-  const { loadingReferrerId, referrerId } = useReferrer(referrerEmail)
-  const referrerStatus: 'success' | 'error' | 'validating' | undefined = !referrerEmail
-    ? undefined
-    : loadingReferrerId
-    ? 'validating'
-    : !referrerId || referrerId === currentMemberId
-    ? 'error'
-    : 'success'
+  const { memberId: referrerId, validateStatus: referrerStatus } = useMemberValidation(referrerEmail)
 
   // checkout
   const [productId, setProductId] = useState<string>(defaultProductId || '')
@@ -253,6 +245,8 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
             />
           </div>
         )}
+
+        <CheckoutGroupBuyingForm />
 
         <div ref={invoiceRef} className="mb-5">
           <InvoiceInput

@@ -395,7 +395,7 @@ export const commonMessages = {
       id: 'product.text.addToCartSuccessfully',
       defaultMessage: '成功加入購物車',
     },
-    notFoundReferrerEmail: { id: 'common.text.notFoundReferrerEmail', defaultMessage: '找不到這個註冊信箱' },
+    notFoundMemberEmail: { id: 'common.text.notFoundMemberEmail', defaultMessage: '找不到這個註冊信箱' },
     selfReferringIsNotAllowed: { id: 'common.text.selfReferringIsNotAllowed', defaultMessage: '推薦人不可為自己' },
     fillInEnrolledEmail: {
       id: 'common.text.fillInEnrolledEmail',
@@ -479,6 +479,72 @@ export const checkoutMessages = {
   }),
   help: defineMessages({
     notation: { id: 'checkout.coupon.form.help', defaultMessage: '折抵方式為比例時，額度範圍為 0 - 100' },
+  }),
+  label: defineMessages({
+    groupBuying: { id: 'checkout.label.groupBuying', defineMessage: '多人同行揪團' },
+    groupBuyingPlan: {
+      id: 'checkout.label.groupBuyingTitle',
+      defaultMessage: '你購買「{title}」多人同行 方案：',
+    },
+    partnerEmail: {
+      id: 'checkout.label.partnerEmail',
+      defaultMessage: '同行者信箱',
+    },
+    groupBuyingRuleTitle: {
+      id: 'checkout.label.groupBuyingTitle',
+      defaultMessage: '多人同行揪團規定與退費說明',
+    },
+  }),
+  text: defineMessages({
+    groupBuyingDescription1: {
+      id: 'checkout.text.groupBuyingDescription1',
+      defaultMessage:
+        '可於底下填寫同行者信箱帳號，將於完成付款後隨即開通，主揪者與同行者皆可在「我的主頁」內找到購買項目。',
+    },
+    groupBuyingDescription2: {
+      id: 'checkout.text.groupBuyingDescription2',
+      defaultMessage: '若本次未填寫同行者信箱，則會保留在後台的「我的揪團」，可以之後再指定開通給其他會員。',
+    },
+    groupBuyingDescription3_1: {
+      id: 'checkout.text.groupBuyingDescription3_1',
+      defaultMessage: '注意事項：購買即同意以下多人同行揪團',
+    },
+    groupBuyingDescription3_2: {
+      id: 'checkout.text.groupBuyingDescription3_2',
+      defaultMessage: '辦法。',
+    },
+    groupBuyingRuleLink: {
+      id: 'checkout.text.groupBuyingRuleLink',
+      defaultMessage: '規定與退費',
+    },
+    groupBuyingRule1: {
+      id: 'checkout.text.groupBuyingRule1',
+      defaultMessage: ' 選擇多人同行方案，僅會開立一張發票，無法另外提供多張發票。',
+    },
+    groupBuyingRule2: {
+      id: 'checkout.text.groupBuyingRule2',
+      defaultMessage: '多人同行方案不得與其他優惠合併使用。',
+    },
+    groupBuyingRule3: {
+      id: 'checkout.text.groupBuyingRule3',
+      defaultMessage: '多人同行方案於購買後 7 天內，只要所有人尚未使用，即可申請全額退費。',
+    },
+    groupBuyingRule4: {
+      id: 'checkout.text.groupBuyingRule4',
+      defaultMessage: '退費時由多人同行方案的購買人向平台方提出申請，平台方也將統一退費給當初的購買人，將不分別退費。',
+    },
+    groupBuyingRule5: {
+      id: 'checkout.text.groupBuyingRule5',
+      defaultMessage: '會員之間的項目轉讓，均屬會員的私人行為，平台方均不干涉。',
+    },
+    fillInPartnerEmail: {
+      id: 'checkout.text.fillInPartnerEmail',
+      defaultMessage: '請填寫同行者在站上註冊的電子信箱',
+    },
+    existingPartner: {
+      id: 'checkout.text.existingPartner',
+      defaultMessage: '重複的同行者',
+    },
   }),
   content: defineMessages({
     cartNothing: { id: 'checkout.cart.nothing', defaultMessage: `購物車沒有東西` },
@@ -629,6 +695,7 @@ export const programMessages = {
   }),
   text: defineMessages({
     uploadPractice: { id: 'program.text.uploadPractice', defaultMessage: '快上傳成果吧！' },
+    groupBuying: { id: 'program.text.groupBuying', defaultMessage: '{count} 人同行' },
   }),
   tab: defineMessages({
     downloadMaterials: {

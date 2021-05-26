@@ -23,7 +23,7 @@ import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck, useMemberShop, usePhysicalProductCollection } from '../../hooks/checkout'
-import { useReferrer } from '../../hooks/common'
+import { useMemberValidation } from '../../hooks/common'
 import { useUpdateMemberMetadata } from '../../hooks/member'
 import { CartProductProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
@@ -100,14 +100,7 @@ const CheckoutBlock: React.VFC<{
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
 
-  const { loadingReferrerId, referrerId } = useReferrer(referrerEmail)
-  const referrerStatus: 'success' | 'error' | 'validating' | undefined = !referrerEmail
-    ? undefined
-    : loadingReferrerId
-    ? 'validating'
-    : !referrerId || referrerId === currentMemberId
-    ? 'error'
-    : 'success'
+  const { memberId: referrerId, validateStatus } = useMemberValidation(referrerEmail)
 
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
@@ -172,10 +165,10 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
-    if (referrerEmail && !referrerStatus) {
+    if (referrerEmail && !validateStatus) {
       return
     }
-    if (referrerStatus === 'error') {
+    if (validateStatus === 'error') {
       referrerRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -253,13 +246,13 @@ const CheckoutBlock: React.VFC<{
               </div>
               <div className="col-12 col-lg-6">
                 <Form.Item
-                  validateStatus={referrerStatus}
+                  validateStatus={validateStatus}
                   hasFeedback
                   help={
-                    referrerStatus === 'error'
+                    validateStatus === 'error'
                       ? referrerId === currentMemberId
                         ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
-                        : formatMessage(commonMessages.text.notFoundReferrerEmail)
+                        : formatMessage(commonMessages.text.notFoundMemberEmail)
                       : undefined
                   }
                 >

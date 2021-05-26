@@ -437,7 +437,7 @@
   "common.term.list": "清单",
   "common.text.noSearchResult": "发现相关内容",
   "common.text.noTagContent": "找不到关于这个标签的内容",
-  "common.text.notFoundReferrerEmail": "找不到这个注册信箱",
+  "common.text.notFoundMemberEmail": "找不到这个注册信箱",
   "common.text.repairingDescription": "目前总体网站维护，请暂时停止使用",
   "common.text.selfReferringIsNotAllowed": "推荐人不可为自己",
   "common.title.course": "开设课程",

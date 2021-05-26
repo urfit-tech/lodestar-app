@@ -67,10 +67,17 @@ export const AppThemeProvider: React.FC = ({ children }) => {
             field: {
               borderColor: 'var(--gray)',
               _focus: {
-                borderColor: 'var(--gray)',
+                borderColor: settings['theme.@primary-color'],
               },
             },
           }),
+        },
+      },
+      FormError: {
+        baseStyle: {
+          text: {
+            color: 'danger.500',
+          },
         },
       },
       Modal: {
@@ -91,6 +98,9 @@ export const AppThemeProvider: React.FC = ({ children }) => {
     },
     colors: {
       ...paletteGenerator(settings['theme.@primary-color'] || '#000000'),
+      danger: {
+        ...paletteGenerator('#ff7d62').primary,
+      },
       gray: {
         100: 'rgba(0, 0, 0, 0.1)',
         200: '#f7f8f8',

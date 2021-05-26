@@ -20,7 +20,7 @@ const CheckoutProductReferrerInput: React.VFC<{
         referrerStatus === 'error'
           ? referrerId === currentMemberId
             ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
-            : formatMessage(commonMessages.text.notFoundReferrerEmail)
+            : formatMessage(commonMessages.text.notFoundMemberEmail)
           : undefined
       }
     >
