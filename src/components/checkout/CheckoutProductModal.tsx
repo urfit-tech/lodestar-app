@@ -1,6 +1,6 @@
 import { Button, Divider, SkeletonText, useDisclosure } from '@chakra-ui/react'
 import { camelCase } from 'lodash'
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -21,6 +21,7 @@ import { useUpdateMemberMetadata } from '../../hooks/member'
 import { shippingOptionIdProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { ShippingMethodProps } from '../../types/merchandise'
+import { AuthModalContext } from '../auth/AuthModal'
 import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
 import CheckoutProductReferrerInput from './CheckoutProductReferrerInput'
 
@@ -70,6 +71,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const [sharingCode] = useQueryParam('sharing', StringParam)
   const { currentMemberId } = useAuth()
   const { enabledModules, settings } = useApp()
+  const { setVisible } = useContext(AuthModalContext)
   const updateMemberMetadata = useUpdateMemberMetadata()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -151,8 +153,11 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
   const handleSubmit = async () => {
     if (!member) {
+      onClose()
+      setVisible?.(true)
       return
     }
+
     !isValidating && setIsValidating(true)
     const isValidShipping = !isProductPhysical || validateShipping(shipping)
     const isValidInvoice = validateInvoice(invoice).length === 0
