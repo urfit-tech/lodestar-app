@@ -46,6 +46,8 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
   const { setVisible } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
 
+  accountLinkToken && sessionStorage.setItem('accountLinkToken', accountLinkToken)
+
   const handleLogin = () => {
     if (!login) {
       return

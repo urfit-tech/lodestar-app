@@ -22,7 +22,11 @@ type AuthProps = {
     withoutLogin?: boolean
   }) => Promise<void>
   login?: (data: { account: string; password: string; accountLinkToken?: string }) => Promise<void>
-  socialLogin?: (data: { provider: 'facebook' | 'google' | 'line' | 'parenting'; providerToken: any }) => Promise<void>
+  socialLogin?: (data: {
+    provider: 'facebook' | 'google' | 'line' | 'parenting'
+    providerToken: any
+    accountLinkToken?: string
+  }) => Promise<void>
   logout?: () => void
   sendSmsCode?: (data: { phoneNumber: string }) => Promise<void>
   verifySmsCode?: (data: { phoneNumber: string; code: string }) => Promise<void>
@@ -226,7 +230,7 @@ export const AuthProvider: React.FC<{
               throw new Error(code)
             }
           }),
-        socialLogin: async ({ provider, providerToken }) =>
+        socialLogin: async ({ provider, providerToken, accountLinkToken }) =>
           Axios.post(
             `https://${apiHost}/auth/social-login`,
             {
@@ -238,6 +242,9 @@ export const AuthProvider: React.FC<{
           ).then(({ data: { code, message, result } }) => {
             if (code === 'SUCCESS') {
               setAuthToken(result.authToken)
+              if (accountLinkToken && authToken) {
+                window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
+              }
             } else {
               setAuthToken(null)
               throw new Error(code)
