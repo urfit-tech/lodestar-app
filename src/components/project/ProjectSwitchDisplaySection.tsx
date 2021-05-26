@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import hasura from '../../hasura'
 import { useAuth } from '../auth/AuthContext'
 
-const ProjectSwitchDisplaySection: React.FC<{
+const ProjectSwitchDisplaySection: React.VFC<{
   projectId: string
   onDisplayProjectSectionTypesSet: React.Dispatch<React.SetStateAction<string[]>>
 }> = ({ onDisplayProjectSectionTypesSet, projectId }) => {

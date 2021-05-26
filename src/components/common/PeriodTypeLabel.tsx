@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
 
-const PeriodTypeLabel: React.FC<{
+const PeriodTypeLabel: React.VFC<{
   periodType: 'D' | 'W' | 'M' | 'Y'
   periodAmount?: number
 }> = ({ periodType, periodAmount }) => {

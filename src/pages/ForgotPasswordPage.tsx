@@ -34,7 +34,7 @@ const StyledTitle = styled.h1`
   letter-spacing: 0.8px;
 `
 
-const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
+const ForgotPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()

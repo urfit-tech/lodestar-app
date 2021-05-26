@@ -11,7 +11,7 @@ const StyledWrapper = styled.div<{ coverType: string; coverUrl: string }>`
   background-position: center;
 `
 
-const FundingCoverBlock: React.FC<{
+const FundingCoverBlock: React.VFC<{
   coverType: string
   coverUrl: string
 }> = ({ coverType, coverUrl }) => {

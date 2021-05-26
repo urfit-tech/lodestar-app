@@ -11,7 +11,7 @@ import { usersMessages } from '../../helpers/translation'
 import { useCouponCollection } from '../../hooks/data'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 
-const CouponCollectionAdminPage: React.FC = () => {
+const CouponCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { coupons } = useCouponCollection(currentMemberId || '')

@@ -24,7 +24,7 @@ const StyledLink = styled(Link)`
   color: white;
 `
 
-const PerpetualProgramBanner: React.FC<{
+const PerpetualProgramBanner: React.VFC<{
   program: ProgramProps & {
     tags: string[]
   }

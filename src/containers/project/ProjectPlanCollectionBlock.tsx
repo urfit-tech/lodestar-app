@@ -7,7 +7,7 @@ import ProjectPlanCollectionBlockComponent, {
 import hasura from '../../hasura'
 import { notEmpty } from '../../helpers'
 
-const ProjectPlanCollectionBlock: React.FC<{
+const ProjectPlanCollectionBlock: React.VFC<{
   memberId: string
 }> = ({ memberId }) => {
   const { loading, error, data } = useQuery<

@@ -19,7 +19,7 @@ const messages = defineMessages({
   deleteSuggestion: { id: 'program.ui.deleteSuggestion', defaultMessage: '刪除建議' },
 })
 
-const MessageSuggestItem: React.FC<{
+const MessageSuggestItem: React.VFC<{
   suggestId: string
   memberId: string
   description: string

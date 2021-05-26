@@ -9,7 +9,7 @@ import { getUserRoleLevel } from './helpers'
 import { useGAPageView } from './hooks/util'
 import { UserRole } from './types/member'
 
-const LoadablePage: React.FC<{
+const LoadablePage: React.VFC<{
   pageName: string
   authenticated?: boolean
   allowedUserRole?: UserRole

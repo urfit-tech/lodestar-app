@@ -16,7 +16,7 @@ type MemberAvatarProps = AvatarProps & {
   renderText?: (member: MemberPublicProps) => React.ReactNode
   withName?: boolean
 }
-const MemberAvatar: React.FC<MemberAvatarProps> = ({ memberId, shape, size, renderAvatar, renderText, withName }) => {
+const MemberAvatar: React.VFC<MemberAvatarProps> = ({ memberId, shape, size, renderAvatar, renderText, withName }) => {
   const { member } = usePublicMember(memberId)
 
   if (!member) {

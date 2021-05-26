@@ -44,7 +44,7 @@ const StyledPlaylistItem = styled.div`
 `
 const StyledInput = styled.input``
 
-const PodcastProgramCollectionBlock: React.FC<{ memberId: string }> = ({ memberId }) => {
+const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { playNow } = useContext(PodcastPlayerContext)
@@ -168,7 +168,7 @@ const PodcastProgramCollectionBlock: React.FC<{ memberId: string }> = ({ memberI
   )
 }
 
-const PlaylistItem: React.FC<{
+const PlaylistItem: React.VFC<{
   id: string
   title: string
   count: number

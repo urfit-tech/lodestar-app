@@ -23,7 +23,7 @@ const StyledNotice = styled.div`
   letter-spacing: 0.4px;
 `
 
-const VoucherExchangeModal: React.FC<{
+const VoucherExchangeModal: React.VFC<{
   productQuantityLimit: number
   description: string | null
   productIds: string[]

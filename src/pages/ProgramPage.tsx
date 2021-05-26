@@ -70,7 +70,7 @@ const StyledButtonWrapper = styled.div`
   background: white;
 `
 
-const ProgramPage: React.FC = () => {
+const ProgramPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { programId } = useParams<{ programId: string }>()
   const { pathname } = useLocation()

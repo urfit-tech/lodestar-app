@@ -28,7 +28,7 @@ const StyledIcon = styled(Icon)`
   color: ${props => props.theme['@primary-color']};
 `
 
-const PopularPodcastCollection: React.FC = () => {
+const PopularPodcastCollection: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { loading, error, data } = useQuery<hasura.GET_PODCAST_PROGRAM_INSTRUCTOR_COLLECTION>(
     GET_PODCAST_PROGRAM_INSTRUCTOR_COLLECTION,

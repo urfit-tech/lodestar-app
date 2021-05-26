@@ -8,7 +8,7 @@ import { uploadFile } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useAuth } from '../auth/AuthContext'
 
-const SingleUploader: React.FC<
+const SingleUploader: React.VFC<
   UploadProps & {
     path: string
     value?: UploadFile

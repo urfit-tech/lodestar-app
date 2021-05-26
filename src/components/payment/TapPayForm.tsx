@@ -16,7 +16,7 @@ export type TPCreditCard = {
   }
 }
 
-const TapPayForm: React.FC<{
+const TapPayForm: React.VFC<{
   onUpdate?: (tpCreditCard: TPCreditCard) => void
 }> = ({ onUpdate }) => {
   const { formatMessage } = useIntl()

@@ -53,7 +53,7 @@ const StyledAbstract = styled.div`
   `)}
 `
 
-const BlogPostCollectionPage: React.FC = () => {
+const BlogPostCollectionPage: React.VFC = () => {
   const [tags] = useQueryParam('tags', StringParam)
   const { loading, enabledModules } = useApp()
   const { posts } = usePostPreviewCollection({ tags: tags?.split(',') })

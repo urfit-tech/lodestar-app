@@ -116,7 +116,7 @@ type AppointmentCardProps = FormComponentProps &
   AppointmentEnrollmentProps & {
     onRefetch?: () => void
   }
-const AppointmentCard: React.FC<AppointmentCardProps> = ({
+const AppointmentCard: React.VFC<AppointmentCardProps> = ({
   title,
   startedAt,
   endedAt,

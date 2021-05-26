@@ -81,7 +81,7 @@ const StyledDeliveryMessage = styled.div`
   }
 `
 
-const MerchandiseOrderCollectionBlock: React.FC<{
+const MerchandiseOrderCollectionBlock: React.VFC<{
   memberId: string
 }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
@@ -108,7 +108,7 @@ const MerchandiseOrderCollectionBlock: React.FC<{
   )
 }
 
-const MerchandiseOrderCard: React.FC<{
+const MerchandiseOrderCard: React.VFC<{
   orderLog: OrderLogWithMerchandiseSpecProps
 }> = ({ orderLog }) => {
   const { formatMessage } = useIntl()

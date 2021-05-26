@@ -45,7 +45,7 @@ const StyledItemMeta = styled.div`
   letter-spacing: 0.34px;
 `
 
-const AppointmentPeriodItem: React.FC<{
+const AppointmentPeriodItem: React.VFC<{
   id: string
   startedAt: Date
   isEnrolled?: boolean

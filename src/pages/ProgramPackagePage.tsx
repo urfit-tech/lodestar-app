@@ -41,7 +41,7 @@ const messages = defineMessages({
   checkPlans: { id: 'programPackage.ui.checkPlans', defaultMessage: '查看購買方案' },
 })
 
-const ProgramPackagePage: React.FC = () => {
+const ProgramPackagePage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { programPackageId } = useParams<{ programPackageId: string }>()
   const { currentMemberId } = useAuth()

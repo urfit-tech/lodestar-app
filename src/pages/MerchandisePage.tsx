@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
   max-width: 960px;
 `
 
-const MerchandisePage: React.FC = () => {
+const MerchandisePage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { merchandiseId } = useParams<{ merchandiseId: string }>()
   const { merchandise } = useMerchandise(merchandiseId)

@@ -1,7 +1,7 @@
 import { Spin } from 'antd'
 import React from 'react'
 
-const LoadingPage: React.FC = () => {
+const LoadingPage: React.VFC = () => {
   return (
     <div className="loading">
       <Spin size="large" />

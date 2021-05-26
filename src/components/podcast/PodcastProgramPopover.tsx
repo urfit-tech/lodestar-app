@@ -72,7 +72,11 @@ export type PodcastProgramPopoverProps = {
   isSubscribed?: boolean
   onSubscribe?: () => void
 }
-const PodcastProgramPopover: React.FC<PodcastProgramPopoverProps & { podcastProgramId: string }> = ({
+const PodcastProgramPopover: React.FC<
+  PodcastProgramPopoverProps & {
+    podcastProgramId: string
+  }
+> = ({
   podcastProgramId,
   title,
   duration,

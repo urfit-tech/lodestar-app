@@ -60,7 +60,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const ReviewItem: React.FC<ReviewProps & { onRefetch?: () => void; targetId: string }> = ({
+const ReviewItem: React.VFC<ReviewProps & { onRefetch?: () => void; targetId: string }> = ({
   isAdmin,
   id,
   memberId,

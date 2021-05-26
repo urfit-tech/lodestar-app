@@ -45,7 +45,7 @@ const StyledText = styled.span`
   color: var(--gray-dark);
 `
 
-const MessageItem: React.FC<{
+const MessageItem: React.VFC<{
   createdAt: Date
   memberId: string
   content: string | null

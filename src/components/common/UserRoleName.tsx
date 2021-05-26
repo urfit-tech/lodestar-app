@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages, helperMessages } from '../../helpers/translation'
 
-export const UserRoleName: React.FC<{ userRole?: string }> = ({ userRole }) => {
+export const UserRoleName: React.VFC<{ userRole?: string }> = ({ userRole }) => {
   const { formatMessage } = useIntl()
 
   switch (userRole) {

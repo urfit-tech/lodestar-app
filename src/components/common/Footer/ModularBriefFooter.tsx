@@ -28,7 +28,7 @@ const StyledCopyright = styled.div`
   font-size: 0.75rem;
 `
 
-const ModularBriefFooter: React.FC<{
+const ModularBriefFooter: React.VFC<{
   navs: {
     external: boolean
     label: string

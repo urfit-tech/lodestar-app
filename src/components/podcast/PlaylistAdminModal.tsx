@@ -18,7 +18,7 @@ const StyledModal = styled(Modal)`
   width: 24rem;
 `
 
-const PlaylistAdminModal: React.FC<
+const PlaylistAdminModal: React.VFC<
   ModalProps & {
     memberId: string
     playlists: (PlaylistProps & { podcastProgramIds: string[] })[]

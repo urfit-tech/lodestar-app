@@ -21,7 +21,7 @@ const StyledParagraph = styled.p`
 type RegisterSectionProps = FormComponentProps & {
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
 }
-const RegisterSection: React.FC<RegisterSectionProps> = ({ form, onAuthStateChange }) => {
+const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateChange }) => {
   const { settings, enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const { register, sendSmsCode, verifySmsCode } = useAuth()

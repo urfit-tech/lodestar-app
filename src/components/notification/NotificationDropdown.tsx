@@ -51,7 +51,7 @@ const StyledReadAllButton = styled(Button)`
   color: var(--gray-dark);
 `
 
-const NotificationDropdown: React.FC = () => {
+const NotificationDropdown: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { notifications, unreadCount, refetchNotifications } = useContext(NotificationContext)

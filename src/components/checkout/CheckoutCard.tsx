@@ -13,7 +13,7 @@ import PriceLabel from '../common/PriceLabel'
 import { InvoiceProps } from './InvoiceInput'
 import { ShippingProps } from './ShippingInput'
 
-const CheckoutCard: React.FC<
+const CheckoutCard: React.VFC<
   CardProps & {
     discountId: string | null
     check: CheckProps

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
 import { ProductType } from '../../types/product'
 
-const ProductTypeFormatter: React.FC<{ value: ProductType }> = ({ value }) => {
+const ProductTypeFormatter: React.VFC<{ value: ProductType }> = ({ value }) => {
   const { formatMessage } = useIntl()
 
   switch (value) {

@@ -45,7 +45,7 @@ export const validateShipping: (shipping: ShippingProps) => boolean = shipping =
   return [shipping.name, shipping.phone, shipping.address].every(value => !!value)
 }
 
-const ShippingInput: React.FC<{
+const ShippingInput: React.VFC<{
   value?: ShippingProps
   onChange?: (value: ShippingProps) => void
   isValidating?: boolean

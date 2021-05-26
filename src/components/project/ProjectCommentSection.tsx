@@ -3,10 +3,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../common/Responsive'
 
-type ProjectCommentSectionProps = {
-  items: { name: string; title: string; avatar: string; description: string }[]
-}
-
 const StyledSection = styled.section``
 
 const StyledContainer = styled.div`
@@ -95,42 +91,51 @@ const StyledComment = styled.div`
   }
 `
 
-const ProjectCommentSection: React.FC<ProjectCommentSectionProps> = ({ items }) => (
-  <StyledSection>
-    <StyledContainer>
-      <StyledCarousel
-        dots={true}
-        draggable={true}
-        slidesToShow={1}
-        slidesToScroll={1}
-        variableWidth={true}
-        responsive={[
-          {
-            breakpoint: BREAK_POINT,
-            settings: {
-              slidesToShow: 1,
-              slidesToScroll: 1,
+const ProjectCommentSection: React.VFC<{
+  items: {
+    name: string
+    title: string
+    avatar: string
+    description: string
+  }[]
+}> = ({ items }) => {
+  return (
+    <StyledSection>
+      <StyledContainer>
+        <StyledCarousel
+          dots={true}
+          draggable={true}
+          slidesToShow={1}
+          slidesToScroll={1}
+          variableWidth={true}
+          responsive={[
+            {
+              breakpoint: BREAK_POINT,
+              settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1,
+              },
             },
-          },
-        ]}
-      >
-        {items.map(item => (
-          <StyledSlide key={item.title}>
-            <div>
-              <StyledIntro>
-                <StyledAvatar src={item.avatar} alt={item.title} />
-                <p>{item.name}</p>
-              </StyledIntro>
-              <StyledComment>
-                <h4>{item.title}</h4>
-                <p>{item.description}</p>
-              </StyledComment>
-            </div>
-          </StyledSlide>
-        ))}
-      </StyledCarousel>
-    </StyledContainer>
-  </StyledSection>
-)
+          ]}
+        >
+          {items.map(item => (
+            <StyledSlide key={item.title}>
+              <div>
+                <StyledIntro>
+                  <StyledAvatar src={item.avatar} alt={item.title} />
+                  <p>{item.name}</p>
+                </StyledIntro>
+                <StyledComment>
+                  <h4>{item.title}</h4>
+                  <p>{item.description}</p>
+                </StyledComment>
+              </div>
+            </StyledSlide>
+          ))}
+        </StyledCarousel>
+      </StyledContainer>
+    </StyledSection>
+  )
+}
 
 export default ProjectCommentSection

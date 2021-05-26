@@ -34,7 +34,7 @@ const StyledTitle = styled.h1`
   letter-spacing: 0.8px;
 `
 
-const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
+const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)

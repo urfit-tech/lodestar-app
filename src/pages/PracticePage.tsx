@@ -93,7 +93,7 @@ const messages = defineMessages({
   deleteSuggestion: { id: 'program.ui.deleteSuggestion', defaultMessage: '刪除建議' },
 })
 
-const PracticePage: React.FC = () => {
+const PracticePage: React.VFC = () => {
   const { practiceId } = useParams<{ practiceId: string }>()
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken, apiHost } = useAuth()

@@ -60,7 +60,7 @@ export const StyledDivider = styled(Divider)`
     margin: 24px 0px 24px 0px;
   }
 `
-const ReviewCollectionBlock: React.FC<{
+const ReviewCollectionBlock: React.VFC<{
   title?: string
   targetId: string
   path: string

@@ -45,7 +45,7 @@ const messages = defineMessages({
   attendNow: { id: 'activity.ui.attendNow', defaultMessage: '立即簽到' },
 })
 
-const ActivityTicketPage: React.FC<{
+const ActivityTicketPage: React.VFC<{
   activityTicketId: string
   memberId: string
   orderProductId: string

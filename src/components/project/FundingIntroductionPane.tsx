@@ -41,7 +41,7 @@ const StyledExpandButton = styled(Button)`
   transform: translateY(-100%);
 `
 
-const FundingIntroductionPane: React.FC<{
+const FundingIntroductionPane: React.VFC<{
   introduction: string
   projectPlans: ProjectPlanProps[]
 }> = ({ introduction, projectPlans }) => {

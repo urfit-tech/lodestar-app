@@ -41,7 +41,7 @@ const StyledMask = styled.div`
   }
 `
 
-const ImageUploader: React.FC<{
+const ImageUploader: React.VFC<{
   file: File | null
   imgUrl?: string | null
   onChange?: (file: File) => void

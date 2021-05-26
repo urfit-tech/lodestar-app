@@ -31,7 +31,7 @@ type LoginSectionProps = FormComponentProps & {
   accountLinkToken?: string
   renderTitle?: () => React.ReactNode
 }
-const LoginSection: React.FC<LoginSectionProps> = ({
+const LoginSection: React.VFC<LoginSectionProps> = ({
   form,
   noGeneralLogin,
   onAuthStateChange,

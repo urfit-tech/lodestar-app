@@ -3,7 +3,7 @@ import React from 'react'
 import AppointmentCard from '../../components/appointment/AppointmentCard'
 import { useEnrolledAppointmentCollection } from '../../hooks/appointment'
 
-const AppointmentPlanCollectionBlock: React.FC<{ memberId: string }> = ({ memberId }) => {
+const AppointmentPlanCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { enrolledAppointments, refetchEnrolledAppointments } = useEnrolledAppointmentCollection(memberId)
 
   return (

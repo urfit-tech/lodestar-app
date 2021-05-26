@@ -9,7 +9,7 @@ import { ReviewProps } from '../../types/review'
 import { StyledDivider } from './ReviewCollectionBlock'
 import ReviewItem from './ReviewItem'
 
-const ReviewPublicItemCollection: React.FC<{
+const ReviewPublicItemCollection: React.VFC<{
   targetId: string
   path: string
   appId: string

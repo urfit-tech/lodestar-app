@@ -8,7 +8,7 @@ import { UserRole } from './types/member'
 
 export type RouteProps = {
   path: string
-  pageName: string | JSX.Element
+  pageName: string | React.ReactElement
   authenticated: boolean
   allowedUserRole?: UserRole
 }
@@ -347,7 +347,7 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
   },
 }
 
-const Routes: React.FC<{ extra?: { [routeKey: string]: RouteProps } }> = ({ extra }) => {
+const Routes: React.VFC<{ extra?: { [routeKey: string]: RouteProps } }> = ({ extra }) => {
   const routesMap = { ...routesProps, ...extra }
   return (
     <Suspense fallback={<LoadingPage />}>

@@ -30,7 +30,7 @@ const StyledVideoIconBlock = styled.div<{ variant?: 'featuring' | 'popular' | 'l
       : ''}
 `
 
-const PostPreviewCover: React.FC<{
+const PostPreviewCover: React.VFC<{
   variant?: 'featuring' | 'popular' | 'list-item'
   coverUrl?: string | null
   withVideo?: boolean

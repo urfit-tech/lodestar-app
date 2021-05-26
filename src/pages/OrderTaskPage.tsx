@@ -28,7 +28,7 @@ const StyledButton = styled(Button)`
   height: 44px;
 `
 
-const OrderTaskPage: React.FC = () => {
+const OrderTaskPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { taskId } = useParams<{ taskId: string }>()

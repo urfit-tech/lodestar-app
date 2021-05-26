@@ -76,7 +76,7 @@ const StyledBadge = styled.span`
   font-size: 14px;
 `
 
-const ActivityTicketItem: React.FC<{
+const ActivityTicketItem: React.VFC<{
   ticketId: string
 }> = ({ ticketId }) => {
   const { loadingTicket, errorTicket, ticket } = useActivityTicket(ticketId)

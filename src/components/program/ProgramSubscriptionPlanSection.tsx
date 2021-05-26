@@ -3,7 +3,7 @@ import { useAuth } from '../../components/auth/AuthContext'
 import { ProgramPlanProps, ProgramProps } from '../../types/program'
 import ProgramSubscriptionPlanCard from './ProgramSubscriptionPlanCard'
 
-const ProgramSubscriptionPlanSection: React.FC<{
+const ProgramSubscriptionPlanSection: React.VFC<{
   program: ProgramProps & {
     plans: ProgramPlanProps[]
   }

@@ -4,7 +4,7 @@ import { Organization, WithContext } from 'schema-dts'
 import { useApp } from '../../containers/common/AppContext'
 import { useGA, useGTM, useHotjar, usePixel } from '../../hooks/util'
 
-const ApplicationHelmet: React.FC = () => {
+const ApplicationHelmet: React.VFC = () => {
   const { settings, id: appId } = useApp()
   const linkedJson: WithContext<Organization> | null = {
     '@context': 'https://schema.org',

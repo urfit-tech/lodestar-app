@@ -211,7 +211,7 @@ const StyledVideoTitle = styled.span`
   letter-spacing: 0.2px;
 `
 
-const ProjectCardSection: React.FC<{
+const ProjectCardSection: React.VFC<{
   items: {
     icon?: string
     title: string
@@ -359,7 +359,7 @@ const ProjectCardSection: React.FC<{
   )
 }
 
-const ProgramContentTrialPlayer: React.FC<{
+const ProgramContentTrialPlayer: React.VFC<{
   programContentId: string
   onPrev?: () => void
   onNext?: () => void

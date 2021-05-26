@@ -7,7 +7,7 @@ import { ProgramRoleProps } from '../../types/program'
 import MessageIssueItem from '../common/MessageIssueItem'
 import IssueCreationModal from './IssueCreationModal'
 
-const IssueThreadBlock: React.FC<{
+const IssueThreadBlock: React.VFC<{
   threadId: string
   programRoles: ProgramRoleProps[]
 }> = ({ threadId, programRoles }) => {

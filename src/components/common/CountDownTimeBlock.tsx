@@ -25,7 +25,7 @@ const StyledNumberBlock = styled.span`
   }
 `
 
-const CountDownTimeBlock: React.FC<{
+const CountDownTimeBlock: React.VFC<{
   text?: string
   expiredAt: Date
   icon?: boolean

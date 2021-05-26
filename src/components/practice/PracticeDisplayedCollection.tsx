@@ -36,7 +36,7 @@ const messages = defineMessages({
   },
 })
 
-const PracticeDisplayedCollection: React.FC<{
+const PracticeDisplayedCollection: React.VFC<{
   isPrivate: boolean
   programContentId: string
 }> = ({ isPrivate, programContentId }) => {
@@ -117,7 +117,7 @@ const StyledLike = styled.span<{ isActive: boolean }>`
   user-select: none;
 `
 
-const PracticeDisplayedCard: React.FC<
+const PracticeDisplayedCard: React.VFC<
   PracticePreviewProps & {
     currentMemberId: string
   }

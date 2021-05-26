@@ -23,11 +23,10 @@ type ProgressProps = {
 
 export const ProgressContext = createContext<ProgressProps>({ programContentProgress: [] })
 
-export const ProgressProvider: React.FC<{ programId: string; memberId: string }> = ({
-  programId,
-  memberId,
-  children,
-}) => {
+export const ProgressProvider: React.FC<{
+  programId: string
+  memberId: string
+}> = ({ programId, memberId, children }) => {
   const { programContentProgress, refetchProgress } = useProgramContentProgress(programId, memberId)
   const insertProgress = useInsertProgress(memberId)
 

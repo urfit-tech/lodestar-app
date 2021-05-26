@@ -107,7 +107,7 @@ const messages = defineMessages({
   totalQuestion: { id: 'program.content.totalAmount', defaultMessage: '共 {count} 題' },
 })
 
-const ProgramContentMenu: React.FC<{
+const ProgramContentMenu: React.VFC<{
   program: ProgramProps & {
     contentSections: (ProgramContentSectionProps & {
       contents: ProgramContentProps[]
@@ -143,7 +143,7 @@ const ProgramContentMenu: React.FC<{
   )
 }
 
-const ProgramContentSectionMenu: React.FC<{
+const ProgramContentSectionMenu: React.VFC<{
   program: ProgramProps & {
     contentSections: (ProgramContentSectionProps & {
       contents: ProgramContentProps[]
@@ -173,7 +173,7 @@ const ProgramContentSectionMenu: React.FC<{
   )
 }
 
-const ContentSection: React.FC<{
+const ContentSection: React.VFC<{
   programContentSection: ProgramContentSectionProps & {
     contents: ProgramContentProps[]
   }
@@ -217,7 +217,7 @@ const ContentSection: React.FC<{
   )
 }
 
-const SortBySectionItem: React.FC<{
+const SortBySectionItem: React.VFC<{
   programContent: ProgramContentProps
   progress: number
   programPackageId: string | null
@@ -284,7 +284,7 @@ const SortBySectionItem: React.FC<{
   )
 }
 
-const ProgramContentDateMenu: React.FC<{
+const ProgramContentDateMenu: React.VFC<{
   program: ProgramProps & {
     contentSections: (ProgramContentSectionProps & {
       contents: ProgramContentProps[]
@@ -317,7 +317,7 @@ const ProgramContentDateMenu: React.FC<{
   )
 }
 
-const SortByDateItem: React.FC<{
+const SortByDateItem: React.VFC<{
   programContent: ProgramContentProps
   progress: number
   programPackageId: string | null
@@ -363,7 +363,7 @@ const SortByDateItem: React.FC<{
   )
 }
 
-const EmptyMenu: React.FC = () => (
+const EmptyMenu: React.VFC = () => (
   <Card style={{ textAlign: 'center', color: '#9b9b9b' }}>初次購買還沒有新的內容喔～</Card>
 )
 

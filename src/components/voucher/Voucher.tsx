@@ -95,7 +95,7 @@ export type VoucherProps = {
   extra?: React.ReactNode
   action?: React.ReactNode
 }
-const Voucher: React.FC<VoucherProps> = ({
+const Voucher: React.VFC<VoucherProps> = ({
   title,
   startedAt,
   endedAt,

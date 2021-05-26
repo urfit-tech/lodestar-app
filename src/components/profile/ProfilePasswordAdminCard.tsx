@@ -17,7 +17,7 @@ import AdminCard from '../common/AdminCard'
 import { StyledForm } from '../layout'
 
 type ProfilePasswordAdminCardProps = CardProps & FormComponentProps & { memberId: string }
-const ProfilePasswordAdminCard: React.FC<ProfilePasswordAdminCardProps> = ({ form, memberId, ...cardProps }) => {
+const ProfilePasswordAdminCard: React.VFC<ProfilePasswordAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { authToken, apiHost } = useAuth()
   const [loading, setLoading] = useState(false)

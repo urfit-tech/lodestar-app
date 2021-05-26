@@ -29,7 +29,7 @@ type ProfileAccountAdminCardProps = CardProps &
   FormComponentProps & {
     memberId: string
   }
-const ProfileAccountAdminCard: React.FC<ProfileAccountAdminCardProps> = ({ form, memberId, ...cardProps }) => {
+const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { enabledModules, settings } = useApp()
   const { member } = useMember(memberId)

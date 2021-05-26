@@ -50,7 +50,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const CartDropdown: React.FC = () => {
+const CartDropdown: React.VFC = () => {
   const { cartProducts } = useContext(CartContext)
   const { formatMessage } = useIntl()
 

@@ -12,7 +12,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const MessageButton: React.FC<{
+const MessageButton: React.VFC<{
   text: string
   memberId: string
   onClick: () => void

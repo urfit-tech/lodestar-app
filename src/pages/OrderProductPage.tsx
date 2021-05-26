@@ -7,7 +7,7 @@ import { commonMessages } from '../helpers/translation'
 import { useOrderProduct } from '../hooks/checkout'
 import ActivityTicketPage from './ActivityTicketPage'
 
-const OrderProductPage: React.FC = () => {
+const OrderProductPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { orderProductId } = useParams<{ orderProductId: string }>()
   const { loadingOrderProduct, errorOrderProduct, orderProduct } = useOrderProduct(orderProductId)

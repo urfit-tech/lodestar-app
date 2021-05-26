@@ -60,7 +60,7 @@ const StyledSection = styled.section`
   }
 `
 
-const ContractPage: React.FC = () => {
+const ContractPage: React.VFC = () => {
   const { memberContractId } = useParams<{ memberId: string; memberContractId: string }>()
   const [agreedIp, setAgreedIpAddress] = useState('unknown')
   const { memberContract, refetch: refetchMemberContract } = useMemberContract(memberContractId)

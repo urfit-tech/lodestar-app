@@ -10,7 +10,7 @@ const StyledSection = styled.section`
   margin-bottom: 80px;
 `
 
-const ProgramSection: React.FC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
+const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,
 }) => {
   const { loadingPrograms, errorPrograms, programs } = usePublishedProgramCollection({

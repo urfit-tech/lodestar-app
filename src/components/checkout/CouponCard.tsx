@@ -7,7 +7,7 @@ import { checkoutMessages } from '../../helpers/translation'
 import { CouponProps } from '../../types/checkout'
 import PriceLabel from '../common/PriceLabel'
 
-const CouponCard: React.FC<
+const CouponCard: React.VFC<
   CardProps & {
     coupon: CouponProps
   }

@@ -35,7 +35,7 @@ const StyledTitle = styled.h3`
   font-size: 20px;
 `
 
-const ProgramContentBlock: React.FC<{
+const ProgramContentBlock: React.VFC<{
   program: ProgramProps & {
     roles: ProgramRoleProps[]
     contentSections: (ProgramContentSectionProps & { contents: ProgramContentProps[] })[]

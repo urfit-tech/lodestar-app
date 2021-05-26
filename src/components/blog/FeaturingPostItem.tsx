@@ -31,7 +31,7 @@ const StyledBody = styled.div`
   width: 100%;
 `
 
-const FeaturingPostItem: React.FC<
+const FeaturingPostItem: React.VFC<
   PostPreviewProps & {
     variant?: 'headline' | 'featuring'
   }

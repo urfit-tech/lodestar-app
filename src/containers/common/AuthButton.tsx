@@ -6,7 +6,7 @@ import { CustomNavLinks, StyledList, Wrapper } from '../../components/common/Mem
 import Responsive from '../../components/common/Responsive'
 import { commonMessages } from '../../helpers/translation'
 
-const AuthButton: React.FC = () => {
+const AuthButton: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { setVisible } = useContext(AuthModalContext)
 

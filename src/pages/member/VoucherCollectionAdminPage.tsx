@@ -10,7 +10,7 @@ import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import NotFoundPage from '../NotFoundPage'
 
-const VoucherCollectionAdminPage: React.FC = () => {
+const VoucherCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { loading, enabledModules } = useApp()
 

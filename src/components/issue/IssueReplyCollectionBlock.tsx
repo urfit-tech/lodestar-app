@@ -7,7 +7,7 @@ import { useAuth } from '../auth/AuthContext'
 import IssueReplyCreationBlock from './IssueReplyCreationBlock'
 import IssueReplyItem from './IssueReplyItem'
 
-const IssueReplyCollectionBlock: React.FC<{
+const IssueReplyCollectionBlock: React.VFC<{
   programRoles: ProgramRoleProps[]
   issueId: string
 }> = ({ programRoles, issueId }) => {

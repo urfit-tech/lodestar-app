@@ -47,7 +47,7 @@ const StyledFileExtension = styled.span`
 const StyledDataSize = styled.span`
   color: var(--gray-dark);
 `
-const ProgramContentMaterialBlock: React.FC<{
+const ProgramContentMaterialBlock: React.VFC<{
   programContentId: string
 }> = ({ programContentId }) => {
   const { formatMessage } = useIntl()

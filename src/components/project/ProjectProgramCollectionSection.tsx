@@ -45,7 +45,7 @@ const StyledSection = styled.section`
   min-height: 60vh;
 `
 
-const ProjectProgramCollectionSection: React.FC<{
+const ProjectProgramCollectionSection: React.VFC<{
   projectId: string
   programCategory: string
 }> = ({ projectId, programCategory }) => {

@@ -5,7 +5,7 @@ const MessageItemFooter: React.FC<{
   children: (values: {
     repliesVisible: boolean
     setRepliesVisible: React.Dispatch<React.SetStateAction<boolean>>
-  }) => JSX.Element
+  }) => React.ReactElement
 }> = ({ defaultRepliesVisible = false, children }) => {
   const [repliesVisible, setRepliesVisible] = useState(defaultRepliesVisible)
 

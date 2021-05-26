@@ -64,7 +64,7 @@ const StyledTimeStandardBlock = styled.div`
   background-color: var(--gray-lighter);
 `
 
-const AppointmentCollectionTabs: React.FC<{
+const AppointmentCollectionTabs: React.VFC<{
   appointmentPlans: (AppointmentPlanProps & { periods: AppointmentPeriodProps[] })[]
 }> = ({ appointmentPlans }) => {
   const { formatMessage } = useIntl()
@@ -186,7 +186,7 @@ const AppointmentCollectionTabs: React.FC<{
                     ReactGA.plugin.execute('ec', 'setAction', 'add')
                     ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
                     setSelectedPeriod(period)
-                    onOpen()
+                    onOpen?.()
                   }}
                   diffPlanBookedTimes={diffPlanBookedTimes}
                 />

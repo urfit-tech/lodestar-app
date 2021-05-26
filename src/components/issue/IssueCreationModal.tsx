@@ -19,7 +19,7 @@ type IssueCreationModalProps = ModalProps &
     threadId: string
     onRefetch?: () => void
   }
-const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form, onRefetch, ...modalProps }) => {
+const IssueCreationModal: React.VFC<IssueCreationModalProps> = ({ threadId, form, onRefetch, ...modalProps }) => {
   const { formatMessage } = useIntl()
   const { authToken, apiHost, currentMemberId } = useAuth()
   const { id: appId } = useApp()

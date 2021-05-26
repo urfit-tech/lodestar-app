@@ -52,7 +52,7 @@ const StyledButton = styled(Button)`
     background: initial;
   }
 `
-const ProgramContentCollectionPage: React.FC = () => {
+const ProgramContentCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { enabledModules } = useApp()

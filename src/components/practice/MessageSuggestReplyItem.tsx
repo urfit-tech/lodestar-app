@@ -10,7 +10,7 @@ import MessageItemAction from '../common/MessageItemAction'
 import MessageItemContent from '../common/MessageItemContent'
 import MessageItemHeader from '../common/MessageItemHeader'
 
-const MessageSuggestReplyItem: React.FC<{
+const MessageSuggestReplyItem: React.VFC<{
   suggestReplyId: string
   memberId: string
   content: string

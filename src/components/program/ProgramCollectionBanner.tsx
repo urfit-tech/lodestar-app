@@ -9,14 +9,9 @@ const StyledImage = styled.img`
   width: 100%;
 `
 
-type ProgramCollectionBannerProps = {
-  link?: string
-  imgUrls: {
-    [key: number]: string // min-width
-  }
-}
-
-const LinkWrapper: React.FC<{ link?: string | null }> = ({ link, children }) => {
+const LinkWrapper: React.FC<{
+  link?: string | null
+}> = ({ link, children }) => {
   if (!link) {
     return <>{children}</>
   }
@@ -32,7 +27,12 @@ const LinkWrapper: React.FC<{ link?: string | null }> = ({ link, children }) => 
   return <Link to={link}>{children}</Link>
 }
 
-const ProgramCollectionBanner: React.FC<ProgramCollectionBannerProps> = ({ link, imgUrls }) => {
+const ProgramCollectionBanner: React.VFC<{
+  link?: string
+  imgUrls: {
+    [key: number]: string // min-width
+  }
+}> = ({ link, imgUrls }) => {
   const [imgUrl, setImgUrl] = useState<string | null>(null)
 
   const handleResize = useCallback(() => {

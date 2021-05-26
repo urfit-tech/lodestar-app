@@ -28,7 +28,7 @@ type ProfileBasicAdminCardProps = CardProps &
   FormComponentProps & {
     memberId: string
   }
-const ProfileBasicAdminCard: React.FC<ProfileBasicAdminCardProps> = ({ form, memberId, ...cardProps }) => {
+const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { id: appId } = useApp()
   const { member } = useMember(memberId)
   const updateMember = useUpdateMember()

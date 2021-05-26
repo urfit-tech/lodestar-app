@@ -20,7 +20,7 @@ import { useNav } from '../hooks/data'
 import { useMember } from '../hooks/member'
 import { usePodcastProgramCollection } from '../hooks/podcast'
 
-const PodcastProgramCollectionPage: React.FC = () => {
+const PodcastProgramCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId, isAuthenticated } = useAuth()
   const { settings } = useApp()
@@ -157,9 +157,7 @@ const PodcastProgramCollectionPage: React.FC = () => {
                           description={podcastProgram.description}
                           categories={podcastProgram.categories}
                           instructor={podcastProgram.instructor}
-                          onSubscribe={() =>
-                            isAuthenticated ? onOpen() : setAuthModalVisible && setAuthModalVisible(true)
-                          }
+                          onSubscribe={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
                         >
                           <PodcastProgramCard
                             coverUrl={podcastProgram.coverUrl}

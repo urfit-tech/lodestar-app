@@ -33,7 +33,7 @@ const StyledParagraph = styled(Typography.Paragraph)`
   }
 `
 
-const FundingUpdatesPane: React.FC<{
+const FundingUpdatesPane: React.VFC<{
   updates: {
     date: string
     cover?: string

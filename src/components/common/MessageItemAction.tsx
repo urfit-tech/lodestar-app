@@ -13,7 +13,7 @@ const StyledMessageState = styled(Typography.Text)`
   font-size: 12px;
 `
 
-const MessageItemAction: React.FC<{
+const MessageItemAction: React.VFC<{
   reactedMemberIds: string[]
   onRepliesVisible?: React.Dispatch<React.SetStateAction<boolean>>
   numReplies?: number

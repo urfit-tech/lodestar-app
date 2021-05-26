@@ -26,7 +26,7 @@ const StyledAction = styled.div`
   font-size: 14px;
 `
 
-const CheckEmailPage: React.FC = () => {
+const CheckEmailPage: React.VFC = () => {
   const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const [email] = useQueryParam('email', StringParam)

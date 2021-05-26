@@ -11,7 +11,7 @@ import CartContext from '../contexts/CartContext'
 import { checkoutMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
 
-const CartPage: React.FC = () => {
+const CartPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const [shopId] = useQueryParam('shopId', StringParam)
   const { cartProducts } = useContext(CartContext)

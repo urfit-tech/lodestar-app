@@ -46,7 +46,7 @@ type IssueAdminCardProps = CardProps & {
   solvedAt: Date
   onRefetch?: () => void
 }
-const IssueAdminCard: React.FC<IssueAdminCardProps> = ({
+const IssueAdminCard: React.VFC<IssueAdminCardProps> = ({
   threadId,
   programId,
   issueId,

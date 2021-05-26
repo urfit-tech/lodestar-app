@@ -26,7 +26,7 @@ const StyledContent = styled.div`
   }
 `
 
-const ActivitySessionItem: React.FC<{
+const ActivitySessionItem: React.VFC<{
   activitySessionId: string
   renderAttend?: React.ReactNode
 }> = ({ activitySessionId, renderAttend }) => {

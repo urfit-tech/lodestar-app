@@ -62,7 +62,7 @@ const StyledImage = styled.img`
   height: 40px !important;
 `
 
-const OnSaleTrialSection: React.FC<OnSaleTrialSectionProps> = ({ title, videos }) => {
+const OnSaleTrialSection: React.VFC<OnSaleTrialSectionProps> = ({ title, videos }) => {
   return (
     <StyledSection>
       <StyledContainer>

@@ -24,7 +24,7 @@ const StyledWrapper = styled.div`
   }
 `
 
-const FundingPlansPane: React.FC<{
+const FundingPlansPane: React.VFC<{
   projectPlans: ProjectPlanProps[]
 }> = ({ projectPlans }) => {
   return (

@@ -12,7 +12,7 @@ import { handleError } from '../../helpers'
 import { codeMessages, voucherMessages } from '../../helpers/translation'
 import { useEnrolledProductIds } from '../../hooks/data'
 
-const VoucherCollectionBlock: React.FC = () => {
+const VoucherCollectionBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken, apiHost } = useAuth()
   const { loading, error, data, refetch } = useQuery<

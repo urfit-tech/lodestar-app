@@ -81,7 +81,7 @@ const StyledButton = styled(Button)<{ color?: string }>`
   }
 `
 
-const PlaylistOverlay: React.FC<{
+const PlaylistOverlay: React.VFC<{
   memberId: string
   defaultPlaylistId: string | null
 }> = ({ memberId, defaultPlaylistId }) => {
@@ -143,7 +143,7 @@ const PlaylistOverlay: React.FC<{
   )
 }
 
-const AllPodcastProgramBlock: React.FC<{
+const AllPodcastProgramBlock: React.VFC<{
   memberId: string
   playlists: (PlaylistProps & {
     podcastProgramIds: string[]
@@ -217,7 +217,7 @@ const AllPodcastProgramBlock: React.FC<{
   )
 }
 
-const PlaylistPodcastProgramBlock: React.FC<{
+const PlaylistPodcastProgramBlock: React.VFC<{
   memberId: string
   playlists: (PlaylistProps & {
     podcastProgramIds: string[]
@@ -322,7 +322,7 @@ const PlaylistPodcastProgramBlock: React.FC<{
   )
 }
 
-const PodcastProgramItem: React.FC<
+const PodcastProgramItem: React.VFC<
   PodcastProgramContentProps & {
     withHandler?: boolean
     isPlaying?: boolean

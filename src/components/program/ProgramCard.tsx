@@ -61,7 +61,7 @@ const StyledMetaBlock = styled.div`
   line-height: 1;
 `
 
-const ProgramCard: React.FC<{
+const ProgramCard: React.VFC<{
   program: ProgramBriefProps & {
     roles: ProgramRoleProps[]
     plans: ProgramPlanProps[]
@@ -74,8 +74,8 @@ const ProgramCard: React.FC<{
   noTotalDuration?: boolean
   withMeta?: boolean
   withProgress?: boolean
-  renderCover?: (cover: string) => JSX.Element
-  renderCustomDescription?: () => JSX.Element
+  renderCover?: (cover: string) => React.ReactElement
+  renderCustomDescription?: () => React.ReactElement
 }> = ({
   program,
   variant,

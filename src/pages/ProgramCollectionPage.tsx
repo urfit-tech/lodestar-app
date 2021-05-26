@@ -18,7 +18,7 @@ import { useNav } from '../hooks/data'
 import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
 import { CategoryProps } from '../types/general'
 
-const ProgramCollectionPage: React.FC = () => {
+const ProgramCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
 
   const [defaultActive] = useQueryParam('active', StringParam)

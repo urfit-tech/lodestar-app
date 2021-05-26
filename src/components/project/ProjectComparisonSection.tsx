@@ -172,7 +172,7 @@ const StyledIntroItem = styled.header`
   }
 `
 
-const ProjectComparisonSection: React.FC<ProjectComparisonSectionProps> = ({ items }) => {
+const ProjectComparisonSection: React.VFC<ProjectComparisonSectionProps> = ({ items }) => {
   return (
     <StyledSection className="d-flex justify-content-center align-items-center">
       <div className="background red" />

@@ -79,7 +79,7 @@ const StyledModalDescription = styled.div`
   white-space: pre-line;
 `
 
-const SocialCardCollectionPage: React.FC = () => {
+const SocialCardCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { loadingSocialCards, socialCards } = useSocialCardCollection()
   const [selectedSocialCard, setSelectedSocialCard] = useState<SocialCardProps | null>(null)

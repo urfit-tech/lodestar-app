@@ -72,7 +72,7 @@ const StyledSocialAnchor = styled.a`
   }
 `
 
-export const NavLinks: React.FC = () => {
+export const NavLinks: React.VFC = () => {
   const { navs } = useApp()
   const { currentLanguage } = useContext(LanguageContext)
   return (
@@ -94,7 +94,7 @@ export const NavLinks: React.FC = () => {
   )
 }
 
-export const SocialLinks: React.FC = () => {
+export const SocialLinks: React.VFC = () => {
   const { navs } = useApp()
   return (
     <>
@@ -113,7 +113,7 @@ export const SocialLinks: React.FC = () => {
   )
 }
 
-const Footer: React.FC = () => {
+const Footer: React.VFC = () => {
   const { settings } = useApp()
   if (settings['footer.type'] === 'multiline') {
     return <MultilineFooter />

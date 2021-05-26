@@ -92,7 +92,7 @@ const StyledAction = styled.div`
   }
 `
 
-const CreatorCard: React.FC<{
+const CreatorCard: React.VFC<{
   id: string
   avatarUrl?: string | null
   title: string

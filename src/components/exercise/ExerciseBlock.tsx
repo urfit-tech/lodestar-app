@@ -17,7 +17,7 @@ const StyledTitle = styled.h3`
   color: var(--gray-darker);
 `
 
-const ExerciseBlock: React.FC<
+const ExerciseBlock: React.VFC<
   ExerciseProps & {
     programContentId: string
     title: string

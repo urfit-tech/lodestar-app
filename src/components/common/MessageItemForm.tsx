@@ -16,7 +16,7 @@ type MessageItemFormProps = FormComponentProps & {
   onEditing?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const MessageItemForm: React.FC<MessageItemFormProps> = ({ title, description, form, onSubmit, onEditing }) => {
+const MessageItemForm: React.VFC<MessageItemFormProps> = ({ title, description, form, onSubmit, onEditing }) => {
   const { authToken, apiHost } = useAuth()
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()

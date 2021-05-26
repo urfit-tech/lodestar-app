@@ -34,7 +34,7 @@ const StyledTitle = styled.div`
   ${CommonTitleMixin}
 `
 
-const CheckoutBlock: React.FC<{
+const CheckoutBlock: React.VFC<{
   member: MemberProps | null
   shopId: string
   cartProducts: CartProductProps[]

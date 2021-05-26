@@ -140,7 +140,7 @@ const StyledCardWrapper = styled.div`
   height: 100%;
 `
 
-const OnSaleSkillSection: React.FC<OnSaleSkillSectionProps> = ({ cards, header }) => {
+const OnSaleSkillSection: React.VFC<OnSaleSkillSectionProps> = ({ cards, header }) => {
   return (
     <StyledSection>
       <div className="container">

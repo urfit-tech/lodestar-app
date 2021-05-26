@@ -177,7 +177,7 @@ const durationFormat: (time: number) => string = time => {
     .padStart(2, '0')}`
 }
 
-const PodcastPlayer: React.FC<{
+const PodcastPlayer: React.VFC<{
   memberId: string
 }> = ({ memberId }) => {
   const {
@@ -392,7 +392,7 @@ const PodcastPlayer: React.FC<{
   )
 }
 
-const PlayRateButton: React.FC<
+const PlayRateButton: React.VFC<
   ButtonProps & {
     variant: 'overlay' | 'bar'
     playRate: number
@@ -417,7 +417,7 @@ const PlayRateButton: React.FC<
   )
 }
 
-const PlayModeButton: React.FC<
+const PlayModeButton: React.VFC<
   ButtonProps & {
     variant: 'overlay' | 'bar'
     mode: PlaylistModeType

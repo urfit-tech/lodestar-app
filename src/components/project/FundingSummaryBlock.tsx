@@ -41,7 +41,7 @@ const StyledCountDownBlock = styled.div`
   background: #f8f8f8;
 `
 
-const FundingSummaryBlock: React.FC<{
+const FundingSummaryBlock: React.VFC<{
   projectId: string
   title: string
   abstract: string

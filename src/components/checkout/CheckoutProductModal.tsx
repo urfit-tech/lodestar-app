@@ -43,15 +43,18 @@ const CheckoutProductItem: React.VFC<{
 export type CheckoutProductModalProps = {
   member: MemberProps | null
   paymentType: 'perpetual' | 'subscription'
-  renderTrigger: (onOpen: () => void) => React.ReactElement
+  renderTrigger: (onOpen?: () => void) => React.ReactElement
   defaultProductId?: string
   isProductPhysical?: boolean
   warningText?: string
   startedAt?: Date
   shippingMethods?: ShippingMethodProps[]
-  renderProductSelector?: (options: { productId: string; onProductChange: (productId: string) => void }) => JSX.Element
+  renderProductSelector?: (options: {
+    productId: string
+    onProductChange: (productId: string) => void
+  }) => React.ReactElement
 }
-const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
+const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   renderTrigger,
   renderProductSelector,
   paymentType,

@@ -102,7 +102,7 @@ const StyledImage = styled.img`
   width: 100%;
 `
 
-const OnSaleRoadmapSection: React.FC<OnSaleRoadmapSectionProps> = ({ roadmaps }) => {
+const OnSaleRoadmapSection: React.VFC<OnSaleRoadmapSectionProps> = ({ roadmaps }) => {
   return (
     <StyledSection className="d-flex justify-content-center align-items-center">
       <StyledWrapper className="container">

@@ -77,7 +77,7 @@ const StyledMemberInfo = styled.div`
   line-height: 36px;
 `
 
-const MerchandiseContactBlock: React.FC<{
+const MerchandiseContactBlock: React.VFC<{
   avatarUrl: string | null
   name: string
   createdAt: Date
@@ -97,7 +97,7 @@ const MerchandiseContactBlock: React.FC<{
   )
 }
 
-const MerchandiseOrderContactModal: React.FC<{ orderId: string }> = ({ orderId }) => {
+const MerchandiseOrderContactModal: React.VFC<{ orderId: string }> = ({ orderId }) => {
   const { id: appId } = useApp()
   const { authToken, currentMemberId, apiHost } = useAuth()
   const {

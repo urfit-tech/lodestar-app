@@ -79,7 +79,7 @@ const StyledProjectPlanInfoBlock = styled.div<{ active?: boolean }>`
   }
 `
 
-const ProjectPlanCard: React.FC<ProjectPlanProps> = ({
+const ProjectPlanCard: React.VFC<ProjectPlanProps> = ({
   id,
   projectTitle,
   coverUrl,
@@ -176,7 +176,7 @@ const ProjectPlanCard: React.FC<ProjectPlanProps> = ({
   )
 }
 
-const PerpetualPlanBlock: React.FC<{
+const PerpetualPlanBlock: React.VFC<{
   projectPlanId: string
   projectTitle: string
   title: string
@@ -231,7 +231,7 @@ const PerpetualPlanBlock: React.FC<{
   )
 }
 
-const SubscriptionPlanBlock: React.FC<{
+const SubscriptionPlanBlock: React.VFC<{
   projectPlanId: string
   projectTitle: string
   title: string

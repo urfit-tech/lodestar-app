@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
 
-const ProjectEnrollmentCounts: React.FC<{
+const ProjectEnrollmentCounts: React.VFC<{
   projectId: string
   numberOnly?: boolean
 }> = ({ projectId, numberOnly }) => {

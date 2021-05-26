@@ -20,12 +20,12 @@ const StyledContainer = styled.div`
 type MembershipCardSelectionModalProps = {
   memberId: string
   onSelect?: (membershipCardId: string) => void
-  render?: React.FC<{
+  render?: React.VFC<{
     setVisible: React.Dispatch<React.SetStateAction<boolean>>
     selectedMembershipCard?: { id: string; title: string }
   }>
 }
-const MembershipCardSelectionModal: React.FC<MembershipCardSelectionModalProps> = ({ memberId, onSelect, render }) => {
+const MembershipCardSelectionModal: React.VFC<MembershipCardSelectionModalProps> = ({ memberId, onSelect, render }) => {
   const { enrolledMembershipCards } = useEnrolledMembershipCards(memberId)
   const { loadingMember, errorMember, member } = useMember(memberId)
   const [visible, setVisible] = useState(false)
@@ -70,7 +70,7 @@ const MembershipCardSelectionModal: React.FC<MembershipCardSelectionModalProps> 
   )
 }
 
-const MembershipCardItem: React.FC<{
+const MembershipCardItem: React.VFC<{
   member: MemberProps
   membershipCardId: string
   updatedAt?: Date | null

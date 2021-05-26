@@ -22,7 +22,7 @@ const StyledCountDownBlock = styled.div`
   }
 `
 
-const ProgramPerpetualPlanCard: React.FC<{
+const ProgramPerpetualPlanCard: React.VFC<{
   memberId: string
   program: ProgramProps
 }> = ({ memberId, program }) => {

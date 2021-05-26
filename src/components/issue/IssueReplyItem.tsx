@@ -43,7 +43,7 @@ const StyledTag = styled(Tag)`
   border: 0;
 `
 
-const IssueReplyItem: React.FC<{
+const IssueReplyItem: React.VFC<{
   programRoles: ProgramRoleProps[]
   issueReplyId: string
   content: string

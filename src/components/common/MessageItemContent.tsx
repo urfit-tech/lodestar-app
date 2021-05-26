@@ -33,7 +33,7 @@ const MessageItemContent: React.FC<{
   title?: string
   firstLayer?: boolean
   onSubmit?: (values: { title?: string; description: EditorState }) => Promise<any>
-  renderEdit?: (setEditing: React.Dispatch<React.SetStateAction<boolean>>) => JSX.Element
+  renderEdit?: (setEditing: React.Dispatch<React.SetStateAction<boolean>>) => React.ReactElement
 }> = ({ renderEdit, firstLayer, title, description, onSubmit, children }) => {
   const [editing, setEditing] = useState(false)
 

@@ -23,7 +23,7 @@ const StyledQuantity = styled.div`
   letter-spacing: 0.4px;
 `
 
-const MerchandiseSpecItem: React.FC<{
+const MerchandiseSpecItem: React.VFC<{
   merchandiseSpecId: string
   quantity: number
   orderProductId: string

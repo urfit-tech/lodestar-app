@@ -42,7 +42,7 @@ const ActivityOrganizer = styled(Col)`
     }
   }
 `
-const ActivityPage: React.FC = () => {
+const ActivityPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { activityId } = useParams<{ activityId: string }>()
@@ -228,7 +228,7 @@ const ActivityPage: React.FC = () => {
                                     })
                                     ReactGA.plugin.execute('ec', 'setAction', 'add')
                                     ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                                    onOpen()
+                                    onOpen?.()
                                   }}
                                 >
                                   {formatMessage(commonMessages.button.register)}
@@ -270,7 +270,7 @@ const ActivityPage: React.FC = () => {
   )
 }
 
-const ActivityOrganizerIntro: React.FC<{
+const ActivityOrganizerIntro: React.VFC<{
   memberId: string
 }> = ({ memberId }) => {
   const { member } = usePublicMember(memberId)

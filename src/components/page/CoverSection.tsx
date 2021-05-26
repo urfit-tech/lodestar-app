@@ -96,7 +96,7 @@ const StyledCoverButton = styled.div`
   }
 `
 
-const CoverSection: React.FC<{
+const CoverSection: React.VFC<{
   options: {
     coverInfos: {
       id: number

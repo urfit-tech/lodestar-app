@@ -7,7 +7,7 @@ import VoucherInsertBlock from '../../components/voucher/VoucherInsertBlock'
 import { commonMessages } from '../../helpers/translation'
 import { VoucherProps } from './Voucher'
 
-const VoucherCollectionBlock: React.FC<{
+const VoucherCollectionBlock: React.VFC<{
   memberId: string | null
   loading?: boolean
   error?: Error

@@ -146,7 +146,7 @@ const StyleSection = styled.section`
   }
 `
 
-const OnSaleIntroductionSection: React.FC<OnSaleIntroductionSectionProp> = ({ introduction }) => (
+const OnSaleIntroductionSection: React.VFC<OnSaleIntroductionSectionProp> = ({ introduction }) => (
   <StyleSection>
     <div dangerouslySetInnerHTML={{ __html: introduction }} />
   </StyleSection>

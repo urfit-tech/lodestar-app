@@ -95,7 +95,7 @@ const StyledPostMeta = styled.div`
   }
 `
 
-const PostSection: React.FC<{ options: { title?: string } }> = ({ options }) => {
+const PostSection: React.VFC<{ options: { title?: string } }> = ({ options }) => {
   const { enabledModules } = useApp()
   const { loadingPosts, posts, errorPosts } = useLatestPost({ limit: 3 })
 

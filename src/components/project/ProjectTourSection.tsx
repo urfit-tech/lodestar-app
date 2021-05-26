@@ -102,7 +102,7 @@ const StyledImage = styled.img`
   width: 100%;
 `
 
-const ProjectTourSection: React.FC<ProjectTourSectionProps> = ({ trips }) => {
+const ProjectTourSection: React.VFC<ProjectTourSectionProps> = ({ trips }) => {
   return (
     <StyledSection className="d-flex justify-content-center align-items-center">
       <StyledWrapper className="container">

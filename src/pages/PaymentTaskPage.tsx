@@ -5,7 +5,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { StyledContainer } from '../components/layout/DefaultLayout.styled'
 import { useTask } from '../hooks/task'
 
-const PaymentTaskPage: React.FC = () => {
+const PaymentTaskPage: React.VFC = () => {
   const { authToken } = useAuth()
   const history = useHistory()
   const { taskId } = useParams<{ taskId: string }>()

@@ -85,7 +85,7 @@ const StyledComment = styled.div`
   @media (min-width: ${BREAK_POINT}px) {
   }
 `
-const OnSaleCommentSection: React.FC<{
+const OnSaleCommentSection: React.VFC<{
   comments: FundingCommentProps[]
 }> = ({ comments }) => {
   return (

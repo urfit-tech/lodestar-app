@@ -148,13 +148,7 @@ const ModularPage: React.VFC<{
                 />
               )
             case 'comment':
-              return (
-                <ProjectCommentSection key={projectSection.id} items={projectSection.options.items}>
-                  {projectSection.options.items.map((item: { type: string }, idx: number) => {
-                    return <div key={idx}>{JSON.stringify(item)}</div>
-                  })}
-                </ProjectCommentSection>
-              )
+              return <ProjectCommentSection key={projectSection.id} items={projectSection.options.items} />
             case 'callout':
               return (
                 <ProjectCalloutSection

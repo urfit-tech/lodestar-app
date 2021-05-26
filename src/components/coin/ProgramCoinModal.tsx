@@ -41,9 +41,9 @@ const StyledCurrency = styled.span`
   font-weight: bold;
 `
 
-const ProgramCoinModal: React.FC<
+const ProgramCoinModal: React.VFC<
   ModalProps & {
-    renderTrigger?: React.FC<{
+    renderTrigger?: React.VFC<{
       setVisible: React.Dispatch<React.SetStateAction<boolean>>
     }>
     programId: string

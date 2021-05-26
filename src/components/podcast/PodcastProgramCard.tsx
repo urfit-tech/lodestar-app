@@ -81,7 +81,7 @@ export type PodcastProgramCardProps = {
   isEnrolled?: boolean
   noPrice?: boolean
 }
-const PodcastProgramCard: React.FC<PodcastProgramCardProps> = ({
+const PodcastProgramCard: React.VFC<PodcastProgramCardProps> = ({
   coverUrl,
   title,
   instructor,

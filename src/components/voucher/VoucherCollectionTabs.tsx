@@ -7,7 +7,7 @@ import Voucher, { VoucherProps } from './Voucher'
 type VoucherCollectionTabProps = {
   vouchers: VoucherProps[]
 }
-const VoucherCollectionTabs: React.FC<VoucherCollectionTabProps> = ({ vouchers }) => {
+const VoucherCollectionTabs: React.VFC<VoucherCollectionTabProps> = ({ vouchers }) => {
   const [activeKey, setActiveKey] = useState('available')
   const { formatMessage } = useIntl()
 

@@ -13,7 +13,7 @@ const StyledTitle = styled.h2`
   color: #585858;
 `
 
-const ProgramInstructorCollectionBlock: React.FC<{
+const ProgramInstructorCollectionBlock: React.VFC<{
   program: ProgramProps & {
     roles: ProgramRoleProps[]
   }
@@ -35,7 +35,7 @@ const ProgramInstructorCollectionBlock: React.FC<{
   )
 }
 
-const RoleProfile: React.FC<{ role: ProgramRoleProps }> = ({ role }) => {
+const RoleProfile: React.VFC<{ role: ProgramRoleProps }> = ({ role }) => {
   const { loadingMember, member } = usePublicMember(role.memberId)
 
   if (loadingMember || !member) {

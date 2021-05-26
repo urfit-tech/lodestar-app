@@ -5,7 +5,7 @@ export type Callout = {
   label: string
   href: string
 }
-const ProjectCalloutButton: React.FC<Callout> = ({ href, label }) => {
+const ProjectCalloutButton: React.VFC<Callout> = ({ href, label }) => {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer">
       <Button colorScheme="primary">

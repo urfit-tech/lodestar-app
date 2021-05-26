@@ -47,7 +47,7 @@ const StyledLink = styled.div`
   }
 `
 
-const OverviewBlock: React.FC<{
+const OverviewBlock: React.VFC<{
   programs: ProgramBriefProps[]
   podcastPrograms: PodcastProgramProps[]
   onChangeTab?: (key: string) => void

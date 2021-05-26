@@ -56,7 +56,7 @@ const StyledDuration = styled.span`
   color: rgb(155, 155, 155);
 `
 
-const ProgramContentListSection: React.FC<{
+const ProgramContentListSection: React.VFC<{
   memberId: string
   program: ProgramProps & {
     contentSections: (ProgramContentSectionProps & {

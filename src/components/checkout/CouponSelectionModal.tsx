@@ -12,7 +12,7 @@ import { useAuth } from '../auth/AuthContext'
 import CommonModal from '../common/CommonModal'
 import CouponCard from './CouponCard'
 
-const CouponSelectionModal: React.FC<{
+const CouponSelectionModal: React.VFC<{
   memberId: string
   orderProducts: OrderProductProps[]
   orderDiscounts: OrderDiscountProps[]

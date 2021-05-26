@@ -3,7 +3,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { saleMessages } from '../../helpers/translation'
 
-const OrderStatusTag: React.FC<{ status: string }> = ({ status }) => {
+const OrderStatusTag: React.VFC<{ status: string }> = ({ status }) => {
   const { formatMessage } = useIntl()
 
   switch (status) {

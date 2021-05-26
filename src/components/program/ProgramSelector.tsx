@@ -9,7 +9,7 @@ type ProgramSelectorProps = SelectProps<string> & {
   memberId: string
 }
 
-export const EnrolledProgramSelector: React.FC<ProgramSelectorProps> = ({ memberId, ...selectProps }) => {
+export const EnrolledProgramSelector: React.VFC<ProgramSelectorProps> = ({ memberId, ...selectProps }) => {
   const { formatMessage } = useIntl()
   const { enrolledProgramIds, loadingProgramIds } = useEnrolledProgramIds(memberId)
 
@@ -27,7 +27,7 @@ export const EnrolledProgramSelector: React.FC<ProgramSelectorProps> = ({ member
   )
 }
 
-const ProgramSelectOptionValue: React.FC<{ programId: string }> = ({ programId }) => {
+const ProgramSelectOptionValue: React.VFC<{ programId: string }> = ({ programId }) => {
   const { program } = useProgram(programId)
 
   return <>{program && program.title}</>

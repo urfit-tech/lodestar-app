@@ -45,7 +45,7 @@ const StyledDetailContent = styled.div`
   ${CommonLargeTextMixin}
 `
 
-const ExerciseQuestionBlock: React.FC<
+const ExerciseQuestionBlock: React.VFC<
   ExerciseProps & {
     showDetail: boolean
     onFinish?: () => void

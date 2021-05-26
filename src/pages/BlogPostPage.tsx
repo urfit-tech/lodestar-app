@@ -54,7 +54,7 @@ const StyledSubTitle = styled.div`
   letter-spacing: 0.2px;
 `
 
-const BlogPostPage: React.FC = () => {
+const BlogPostPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { postId } = useParams<{ postId: string }>()
   const { id: appId, loading, enabledModules, settings } = useApp()

@@ -59,7 +59,7 @@ const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
   )
 }
 
-export const MemberAdminMenu: React.FC<MenuProps> = ({ ...props }) => {
+export const MemberAdminMenu: React.VFC<MenuProps> = ({ ...props }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { enabledModules, settings } = useApp()

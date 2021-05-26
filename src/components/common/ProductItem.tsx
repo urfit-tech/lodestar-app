@@ -80,7 +80,7 @@ type ProductItemProps = {
   variant?: 'default' | 'simple' | 'simpleCartProduct' | 'checkout' | 'coupon-product'
   quantity?: number
 }
-const ProductItem: React.FC<ProductItemProps> = ({ id, startedAt, variant, quantity }) => {
+const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quantity }) => {
   const { formatMessage } = useIntl()
 
   const { target } = useSimpleProduct({ id, startedAt })

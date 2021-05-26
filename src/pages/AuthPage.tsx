@@ -14,7 +14,7 @@ const StyledContainer = styled(Container)`
   padding: 56px 64px;
 `
 
-const AuthPage: React.FC = () => {
+const AuthPage: React.VFC = () => {
   const { currentMember } = useAuth()
   const [authState, setAuthState] = useState<AuthState>('login')
   const [accountLinkToken] = useQueryParam('accountLinkToken', StringParam)

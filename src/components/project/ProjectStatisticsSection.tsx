@@ -191,7 +191,7 @@ type ProjectStatisticsSectionProps = {
   subtitle: string
   items: { unit: string; amount: number; identity: string; description: string }[]
 }
-const ProjectStatisticsSection: React.FC<ProjectStatisticsSectionProps> = ({ title, subtitle, items }) => {
+const ProjectStatisticsSection: React.VFC<ProjectStatisticsSectionProps> = ({ title, subtitle, items }) => {
   return (
     <StyledSection>
       <StyledSlogan className="d-flex">

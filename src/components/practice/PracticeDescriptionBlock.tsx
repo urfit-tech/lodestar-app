@@ -79,7 +79,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const PracticeDescriptionBlock: React.FC<{
+const PracticeDescriptionBlock: React.VFC<{
   programContentId: string
   title: string
   description: string | null

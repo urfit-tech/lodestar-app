@@ -35,7 +35,7 @@ const StyledMeta = styled.div`
   letter-spacing: 0.18px;
 `
 
-const Activity: React.FC<ActivityProps> = ({
+const Activity: React.VFC<ActivityProps> = ({
   id,
   title,
   coverUrl,

@@ -2,7 +2,7 @@ import React from 'react'
 import CreatorCardComponents from '../../components/common/CreatorCard'
 import { usePublicMember } from '../../hooks/member'
 
-const CreatorCard: React.FC<{
+const CreatorCard: React.VFC<{
   id: string
 }> = ({ id }) => {
   const { member } = usePublicMember(id)

@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
 
-const ProjectPlanEnrollmentCount: React.FC<{ projectPlanId: string }> = ({ projectPlanId }) => {
+const ProjectPlanEnrollmentCount: React.VFC<{ projectPlanId: string }> = ({ projectPlanId }) => {
   const { formatMessage } = useIntl()
   const { loading, error, data } = useQuery<
     hasura.GET_PROJECT_PLAN_ENROLLMENT_COUNT,

@@ -10,7 +10,7 @@ import SpGatewayForm from '../components/payment/SpGatewayForm'
 import { handleError } from '../helpers'
 import { codeMessages } from '../helpers/translation'
 
-const PaymentPage: React.FC = () => {
+const PaymentPage: React.VFC = () => {
   const { paymentNo } = useParams<{ paymentNo: string }>()
   const { loadingForm, PayForm } = usePayForm(parseInt(paymentNo))
 
@@ -26,7 +26,7 @@ const usePayForm = (paymentNo: number) => {
   const history = useHistory()
   const { authToken, currentMemberId, apiHost } = useAuth()
   const [loadingForm, setLoadingForm] = useState(false)
-  const [PayForm, setPayForm] = useState<JSX.Element | null>(null)
+  const [PayForm, setPayForm] = useState<React.ReactElement | null>(null)
 
   useEffect(() => {
     const clientBackUrl = window.location.origin

@@ -63,7 +63,7 @@ export const StyledCreatorTag = styled.span`
   }
 `
 
-const CreatorDisplayedPage: React.FC<{}> = () => {
+const CreatorDisplayedPage: React.VFC<{}> = () => {
   const { loading, enabledModules } = useApp()
   const { pageTitle } = useNav()
   const { formatMessage } = useIntl()

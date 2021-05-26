@@ -35,7 +35,7 @@ const messages = defineMessages({
 3. member choose the credit card and pay the payment
 */
 
-const PaymentTapPayPage: React.FC = () => {
+const PaymentTapPayPage: React.VFC = () => {
   return (
     <DefaultLayout noFooter noHeader centeredBox>
       {(window as any)['TPDirect'] && <PaymentTapPayBlock />}
@@ -43,7 +43,7 @@ const PaymentTapPayPage: React.FC = () => {
   )
 }
 
-const PaymentTapPayBlock: React.FC = () => {
+const PaymentTapPayBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { paymentNo } = useParams<{ paymentNo: string }>()

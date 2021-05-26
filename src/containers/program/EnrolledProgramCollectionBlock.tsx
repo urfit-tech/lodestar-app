@@ -8,7 +8,7 @@ import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import ProgramCard from './ProgramCard'
 
-const EnrolledProgramCollectionBlock: React.FC<{ memberId: string }> = ({ memberId }) => {
+const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const { loading, error, data, refetch } = useQuery<hasura.GET_OWNED_PROGRAMS, hasura.GET_OWNED_PROGRAMSVariables>(
     GET_OWNED_PROGRAMS,

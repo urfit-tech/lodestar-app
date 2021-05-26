@@ -51,10 +51,10 @@ type PriceLabelOptions = {
   periodType?: PeriodType
   currencyId?: 'LSC' | string
 }
-const PriceLabel: React.FC<
+const PriceLabel: React.VFC<
   PriceLabelOptions & {
     variant?: 'default' | 'inline' | 'full-detail'
-    render?: React.FC<PriceLabelOptions & { formatPrice: (price: number) => string }>
+    render?: React.VFC<PriceLabelOptions & { formatPrice: (price: number) => string }>
     noFreeText?: boolean
   }
 > = ({ variant, render, noFreeText, ...options }) => {

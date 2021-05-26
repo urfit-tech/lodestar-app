@@ -50,7 +50,7 @@ const StyledCircularProgressLabel = styled(CircularProgressLabel)`
   }
 `
 
-const ExerciseResultBlock: React.FC<
+const ExerciseResultBlock: React.VFC<
   ExerciseProps & {
     nextProgramContentId?: string
     onReAnswer?: () => void

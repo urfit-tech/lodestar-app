@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
 import { ProductRoleName } from '../../types/general'
 
-const ProductRoleFormatter: React.FC<{ value: ProductRoleName }> = ({ value }) => {
+const ProductRoleFormatter: React.VFC<{ value: ProductRoleName }> = ({ value }) => {
   const { formatMessage } = useIntl()
 
   switch (value) {

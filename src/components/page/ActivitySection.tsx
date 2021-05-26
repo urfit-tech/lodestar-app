@@ -11,7 +11,7 @@ const StyledSection = styled.section`
   margin-bottom: 80px;
 `
 
-const ActivitySection: React.FC<{ options: { title?: string; colAmount?: number } }> = ({ options }) => {
+const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number } }> = ({ options }) => {
   const { enabledModules } = useApp()
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 

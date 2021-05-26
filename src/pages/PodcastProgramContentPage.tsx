@@ -25,7 +25,7 @@ const StyledContentWrapper = styled.div`
   }
 `
 
-const PodcastProgramContentPage: React.FC = () => {
+const PodcastProgramContentPage: React.VFC = () => {
   const { podcastProgramId } = useParams<{ podcastProgramId: string }>()
   const { currentMemberId } = useAuth()
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(podcastProgramId)

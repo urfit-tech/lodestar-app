@@ -45,7 +45,7 @@ const StyledButton = styled(Button)`
 type VoucherInsertBlockProps = FormComponentProps & {
   onInsert?: (setLoading: React.Dispatch<React.SetStateAction<boolean>>, code: string) => void
 }
-const VoucherInsertBlock: React.FC<VoucherInsertBlockProps> = ({ form, onInsert }) => {
+const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onInsert }) => {
   const [loading, setLoading] = useState(false)
   const { formatMessage } = useIntl()
 

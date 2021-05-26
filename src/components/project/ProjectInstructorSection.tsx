@@ -85,7 +85,7 @@ type ProjectInstructorSectionProps = {
   callout?: Callout
   items: { title: string; description: string; picture: string }[]
 }
-const ProjectInstructorSection: React.FC<ProjectInstructorSectionProps> = ({ title, callout, items }) => {
+const ProjectInstructorSection: React.VFC<ProjectInstructorSectionProps> = ({ title, callout, items }) => {
   return (
     <StyledSection>
       <SectionTitle>{title}</SectionTitle>

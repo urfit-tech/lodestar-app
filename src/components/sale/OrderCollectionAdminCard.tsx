@@ -84,7 +84,7 @@ type OrderRow = {
   totalPrice: number
 }
 
-const OrderCollectionAdminCard: React.FC<
+const OrderCollectionAdminCard: React.VFC<
   CardProps & {
     memberId: string
   }

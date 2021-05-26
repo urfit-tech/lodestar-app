@@ -19,7 +19,7 @@ const PopularPostsBlock = styled.div`
   `)}
 `
 
-const BlogPage: React.FC = () => {
+const BlogPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { loading, enabledModules } = useApp()
 

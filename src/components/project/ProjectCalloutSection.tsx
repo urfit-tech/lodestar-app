@@ -65,7 +65,7 @@ type ProjectCalloutSectionProps = {
   title: string
   callout?: Callout
 }
-const ProjectCalloutSection: React.FC<ProjectCalloutSectionProps> = ({ title, callout }) => {
+const ProjectCalloutSection: React.VFC<ProjectCalloutSectionProps> = ({ title, callout }) => {
   return (
     <section className="d-flex flex-column">
       <StyledJoin className="d-flex justify-content-center align-items-center">

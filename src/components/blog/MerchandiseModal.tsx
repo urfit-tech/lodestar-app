@@ -61,9 +61,9 @@ const StyledSwitchBlock = styled.div<{ variant?: 'left' | 'right' }>`
     `)}
 `
 
-const MerchandiseModal: React.FC<
+const MerchandiseModal: React.VFC<
   ModalProps & {
-    renderTrigger: React.FC<{
+    renderTrigger: React.VFC<{
       setVisible: () => void
     }>
     merchandises: MerchandiseProps[]

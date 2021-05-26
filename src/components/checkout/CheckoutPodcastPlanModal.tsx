@@ -3,7 +3,7 @@ import { usePublishedPodcastPlans } from '../../hooks/podcast'
 import PodcastPlanSelector from '../podcast/PodcastPlanSelector'
 import CheckoutProductModal, { CheckoutProductModalProps } from './CheckoutProductModal'
 
-const CheckoutPodcastPlanModal: React.FC<
+const CheckoutPodcastPlanModal: React.VFC<
   {
     creatorId: string
   } & CheckoutProductModalProps
@@ -15,7 +15,7 @@ const CheckoutPodcastPlanModal: React.FC<
   }
 
   if (!publishedPodcastPlans[0]) {
-    return <>{renderTrigger(() => {})}</>
+    return <>{renderTrigger()}</>
   }
 
   return (

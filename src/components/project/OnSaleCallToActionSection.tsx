@@ -123,7 +123,7 @@ type OnSaleCallToActionSectionProps = {
   }
   expiredAt: Date | null
 }
-const OnSaleCallToActionSection: React.FC<OnSaleCallToActionSectionProps> = ({ projectId, updates, expiredAt }) => {
+const OnSaleCallToActionSection: React.VFC<OnSaleCallToActionSectionProps> = ({ projectId, updates, expiredAt }) => {
   const { formatMessage } = useIntl()
 
   return (

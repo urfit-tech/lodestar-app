@@ -34,7 +34,7 @@ const StyledTitle = styled(Typography.Title)`
   }
 `
 
-const ProgramPackageCollectionBlock: React.FC<{ memberId: string }> = ({ memberId }) => {
+const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const { loading, error, programPackages } = useEnrolledProgramPackage(memberId)
   if (loading) {

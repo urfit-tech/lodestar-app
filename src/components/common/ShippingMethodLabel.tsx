@@ -11,7 +11,7 @@ const messages = defineMessages({
   other: { id: 'merchandise.label.other', defaultMessage: '其他' },
 })
 
-const ShippingMethodLabel: React.FC<{ shippingMethodId: string }> = ({ shippingMethodId }) => {
+const ShippingMethodLabel: React.VFC<{ shippingMethodId: string }> = ({ shippingMethodId }) => {
   const { formatMessage } = useIntl()
 
   switch (shippingMethodId) {

@@ -53,7 +53,7 @@ const StyledSideBar = styled.div`
   box-shadow: rgba(0, 0, 0, 0.1) -3px 10px 10px 0px;
 `
 
-const ProgramContentPage: React.FC = () => {
+const ProgramContentPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { programId, programContentId } = useParams<{

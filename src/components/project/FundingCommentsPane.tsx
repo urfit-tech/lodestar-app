@@ -21,7 +21,7 @@ const StyledDescription = styled.div`
   letter-spacing: 0.18px;
 `
 
-const FundingCommentsPane: React.FC<{
+const FundingCommentsPane: React.VFC<{
   comments: FundingCommentProps[]
   projectPlans: ProjectPlanProps[]
 }> = ({ comments, projectPlans }) => {

@@ -72,7 +72,7 @@ const EmptyBlock = styled.div`
   text-align: center;
 `
 
-const CoinHistoryAdminPage: React.FC = () => {
+const CoinHistoryAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { loading, enabledModules } = useApp()
@@ -97,7 +97,7 @@ const CoinHistoryAdminPage: React.FC = () => {
   )
 }
 
-const CoinSummaryCard: React.FC<{
+const CoinSummaryCard: React.VFC<{
   memberId: string
 }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
@@ -117,7 +117,7 @@ const CoinSummaryCard: React.FC<{
   )
 }
 
-const CoinHistoryCollectionTabs: React.FC<{
+const CoinHistoryCollectionTabs: React.VFC<{
   memberId: string
 }> = ({ memberId }) => {
   const { formatMessage } = useIntl()

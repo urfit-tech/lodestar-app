@@ -56,7 +56,7 @@ const StyledTitle = styled.h2`
   }
 `
 
-const ProjectCollectionPage: React.FC = () => {
+const ProjectCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const [defaultActive] = useQueryParam('active', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)

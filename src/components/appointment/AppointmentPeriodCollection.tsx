@@ -16,7 +16,7 @@ const StyledScheduleTitle = styled.h3`
   color: var(--gray-darker);
 `
 
-const AppointmentPeriodCollection: React.FC<{
+const AppointmentPeriodCollection: React.VFC<{
   appointmentPeriods: AppointmentPeriodProps[]
   reservationType?: ReservationType
   reservationAmount?: number

@@ -73,7 +73,7 @@ const StyledExtraAdmin = styled.div`
   letter-spacing: 0.2px;
 `
 
-const ActivityTicket: React.FC<{
+const ActivityTicket: React.VFC<{
   id: string
   title: string
   description: string | null

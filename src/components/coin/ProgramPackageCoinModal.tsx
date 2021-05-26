@@ -69,9 +69,9 @@ const StyledProgramTitle = styled.div<{ disabled?: boolean }>`
   opacity: ${props => props.disabled && 0.4};
 `
 
-const ProgramPackageCoinModal: React.FC<
+const ProgramPackageCoinModal: React.VFC<
   ModalProps & {
-    renderTrigger?: React.FC<{
+    renderTrigger?: React.VFC<{
       setVisible: React.Dispatch<React.SetStateAction<boolean>>
     }>
     programPackageId: string

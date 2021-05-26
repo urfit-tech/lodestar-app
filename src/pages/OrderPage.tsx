@@ -15,7 +15,7 @@ import { commonMessages } from '../helpers/translation'
 import ForbiddenPage from './ForbiddenPage'
 import LoadingPage from './LoadingPage'
 
-const OrderPage: React.FC = () => {
+const OrderPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
   const [withTracking] = useQueryParam('tracking', BooleanParam)

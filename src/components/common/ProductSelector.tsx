@@ -25,7 +25,7 @@ type ProductSelectorProps = {
   value?: string[]
   onChange?: (value: string[]) => void
 }
-const ProductSelector: React.FC<ProductSelectorProps> = ({ loading, error, products, value, onChange }, ref) => {
+const ProductSelector: React.VFC<ProductSelectorProps> = ({ loading, error, products, value, onChange }) => {
   const { formatMessage } = useIntl()
   if (loading) {
     return <Spin />

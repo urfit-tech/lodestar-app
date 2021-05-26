@@ -26,7 +26,7 @@ const messages = defineMessages({
   merchandiseOrderLog: { id: 'product.merchandise.tab.orderLog', defaultMessage: '商品紀錄' },
 })
 
-const MemberPage: React.FC = () => {
+const MemberPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { memberId } = useParams<{ memberId: string }>()
   const { isAuthenticated, currentMemberId, currentUserRole } = useAuth()

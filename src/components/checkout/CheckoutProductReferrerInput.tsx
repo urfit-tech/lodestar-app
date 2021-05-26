@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
 import { commonMessages } from '../../helpers/translation'
 
-const CheckoutProductReferrerInput: React.FC<{
+const CheckoutProductReferrerInput: React.VFC<{
   referrerStatus: 'success' | 'error' | 'validating' | undefined
   referrerId: string | null
   onEmailSet: (email: string) => void

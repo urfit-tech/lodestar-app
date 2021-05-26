@@ -13,7 +13,7 @@ const StyledTitle = styled.h3`
   letter-spacing: 0.2px;
 `
 
-const MerchandiseCard: React.FC<MerchandiseBriefProps> = ({ title, minPrice, maxPrice, images }) => {
+const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({ title, minPrice, maxPrice, images }) => {
   return (
     <>
       <CustomRatioImage

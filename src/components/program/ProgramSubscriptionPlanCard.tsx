@@ -42,7 +42,7 @@ const StyledBraftContent = styled.div`
   margin-bottom: 12px;
   font-size: 14px;
 `
-const ProgramSubscriptionPlanCard: React.FC<{
+const ProgramSubscriptionPlanCard: React.VFC<{
   memberId: string
   programId: string
   programPlan: ProgramPlanProps
@@ -100,7 +100,7 @@ const ProgramSubscriptionPlanCard: React.FC<{
               isFullWidth
               onClick={() => {
                 if (!isAuthenticated) {
-                  setAuthModalVisible && setAuthModalVisible(true)
+                  setAuthModalVisible?.(true)
                 } else {
                   ReactGA.plugin.execute('ec', 'addProduct', {
                     id: programPlan.id,
@@ -112,7 +112,7 @@ const ProgramSubscriptionPlanCard: React.FC<{
                   })
                   ReactGA.plugin.execute('ec', 'setAction', 'add')
                   ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                  onOpen()
+                  onOpen?.()
                 }
               }}
             >

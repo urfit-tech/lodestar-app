@@ -35,7 +35,7 @@ const StyledEnrollment = styled.div`
   letter-spacing: 0.18px;
 `
 
-const ProgramPackagePlanCard: React.FC<
+const ProgramPackagePlanCard: React.VFC<
   ProgramPackagePlanProps & {
     programPackageId: string
     loading?: boolean

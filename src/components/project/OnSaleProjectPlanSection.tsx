@@ -54,7 +54,7 @@ const StyledContainer = styled.div`
   }
 `
 
-const OnSaleProjectPlanSection: React.FC<{
+const OnSaleProjectPlanSection: React.VFC<{
   projectPlans: ProjectPlanProps[]
 }> = ({ projectPlans }) => {
   const { formatMessage } = useIntl()

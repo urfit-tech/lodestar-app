@@ -10,7 +10,7 @@ import ProfilePasswordAdminCard from '../../components/profile/ProfilePasswordAd
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
 
-const ProfileAdminPage: React.FC = () => {
+const ProfileAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
 

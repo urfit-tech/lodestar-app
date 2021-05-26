@@ -71,7 +71,7 @@ const EmptyBlock = styled.div`
   text-align: center;
 `
 
-const PointHistoryAdminPage: React.FC = () => {
+const PointHistoryAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { loading, enabledModules } = useApp()
@@ -96,7 +96,7 @@ const PointHistoryAdminPage: React.FC = () => {
   )
 }
 
-const PointSummaryCard: React.FC<{ memberId: string }> = ({ memberId }) => {
+const PointSummaryCard: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const { ownedPoints } = usePointStatus(memberId)
@@ -116,7 +116,7 @@ const PointSummaryCard: React.FC<{ memberId: string }> = ({ memberId }) => {
   )
 }
 
-const PointHistoryCollectionTabs: React.FC<{ memberId: string }> = ({ memberId }) => {
+const PointHistoryCollectionTabs: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const { loadingPointLogs, errorPointLogs, pointLogs, refetchPointLogs, fetchMorePointLogs } = usePointLogCollections(

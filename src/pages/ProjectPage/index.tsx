@@ -9,7 +9,7 @@ import FundingPage from './FundingPage'
 import ModularPage from './ModularPage'
 import OnSalePage from './OnSalePage'
 
-const ProjectPage: React.FC = () => {
+const ProjectPage: React.VFC = () => {
   const { projectId } = useParams<{ projectId: string }>()
   const { loadingProject, errorProject, project } = useProject(projectId)
 

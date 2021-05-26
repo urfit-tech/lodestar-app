@@ -2,7 +2,7 @@ import React from 'react'
 import { ProjectPlanProps } from '../../types/project'
 import ProjectPlanCard from './ProjectPlanCard'
 
-const ProjectPlanCollection: React.FC<{
+const ProjectPlanCollection: React.VFC<{
   projectPlans: ProjectPlanProps[]
 }> = ({ projectPlans }) => {
   return (

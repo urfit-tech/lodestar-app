@@ -43,7 +43,7 @@ const StyledCategoryList = styled.ul`
   }
 `
 
-const MerchandiseCollectionPage: React.FC = () => {
+const MerchandiseCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const [tag] = useQueryParam('tag', StringParam)
   const [keyword, setKeyword] = useQueryParam('keyword', StringParam)

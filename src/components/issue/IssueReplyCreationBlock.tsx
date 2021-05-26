@@ -18,7 +18,7 @@ type IssueReplyCreationBlockProps = FormComponentProps & {
   issueId: string
   onRefetch?: () => void
 }
-const IssueReplyCreationBlock: React.FC<IssueReplyCreationBlockProps> = ({ memberId, issueId, form, onRefetch }) => {
+const IssueReplyCreationBlock: React.VFC<IssueReplyCreationBlockProps> = ({ memberId, issueId, form, onRefetch }) => {
   const { formatMessage } = useIntl()
   const { insertIssueReply } = useMutateIssue(issueId)
   const [replying, setReplying] = useState(false)

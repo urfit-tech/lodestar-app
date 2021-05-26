@@ -71,7 +71,7 @@ const StyleProgress = styled(Progress)`
   }
 `
 
-const ProjectIntroCard: React.FC<ProjectIntroProps> = ({
+const ProjectIntroCard: React.VFC<ProjectIntroProps> = ({
   type,
   title,
   coverUrl,

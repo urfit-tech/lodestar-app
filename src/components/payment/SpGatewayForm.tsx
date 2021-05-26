@@ -5,7 +5,7 @@ type SpGatewayFormProps = {
   formHtml?: string
   clientBackUrl: string
 }
-const SpGatewayForm: React.FC<SpGatewayFormProps> = ({ formHtml, clientBackUrl }) => {
+const SpGatewayForm: React.VFC<SpGatewayFormProps> = ({ formHtml, clientBackUrl }) => {
   const history = useHistory()
   useEffect(() => {
     formHtml ? document.write(formHtml) : history.push(clientBackUrl)

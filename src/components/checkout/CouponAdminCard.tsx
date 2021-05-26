@@ -76,7 +76,7 @@ const StyledText = styled.span<{ outdated?: boolean }>`
   letter-spacing: 0.4px;
 `
 
-const CouponAdminCard: React.FC<{
+const CouponAdminCard: React.VFC<{
   coupon: CouponProps
   outdated?: boolean
 }> = ({ coupon, outdated }) => {

@@ -50,7 +50,7 @@ const StyledLink = styled(Link)`
   color: #9b9b9b;
 `
 
-const SubscriptionProgramBanner: React.FC<{
+const SubscriptionProgramBanner: React.VFC<{
   program: ProgramProps & {
     tags: string[]
     roles: ProgramRoleProps[]

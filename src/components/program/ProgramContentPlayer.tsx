@@ -67,7 +67,7 @@ const message = defineMessages({
   next: { id: 'program.text.next', defaultMessage: '接下來' },
 })
 
-const ProgramContentPlayer: React.FC<
+const ProgramContentPlayer: React.VFC<
   ReactPlayerProps & {
     programContentBody: ProgramContentBodyProps
     nextProgramContent?: {
@@ -83,7 +83,7 @@ const ProgramContentPlayer: React.FC<
 
   const playerRef = useRef<ReactPlayer | null>(null)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
-  const [playerState, setPlayerState] = useState<{
+  const [, setPlayerState] = useState<{
     recordAt: number
     playbackRate: number
     startedAt: number
@@ -197,7 +197,7 @@ const ProgramContentPlayer: React.FC<
   )
 }
 
-const ProgramContentPlayerCover: React.FC<{
+const ProgramContentPlayerCover: React.VFC<{
   nextProgramContent: {
     id: string
     title: string
@@ -230,10 +230,10 @@ const ProgramContentPlayerCover: React.FC<{
   )
 }
 
-const CountDownPlayButton: React.FC<{ duration?: number; onPlayNext?: () => void }> = ({
-  duration = 5,
-  onPlayNext,
-}) => {
+const CountDownPlayButton: React.VFC<{
+  duration?: number
+  onPlayNext?: () => void
+}> = ({ duration = 5, onPlayNext }) => {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {

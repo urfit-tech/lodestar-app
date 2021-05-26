@@ -203,7 +203,7 @@ type OnSaleCoverSectionProps = {
   statistics: Statistic[]
   expiredAt: Date | null
 }
-const OnSaleCoverSection: React.FC<OnSaleCoverSectionProps> = ({ cover, header, statistics, expiredAt }) => {
+const OnSaleCoverSection: React.VFC<OnSaleCoverSectionProps> = ({ cover, header, statistics, expiredAt }) => {
   return (
     <StyledSection>
       <img src={`https://static.kolable.com/images/xuemi/bg-zero.png`} alt="background" />

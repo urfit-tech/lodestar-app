@@ -36,7 +36,7 @@ const StyledCopyright = styled.div`
   font-size: 0.75rem;
 `
 
-const DefaultFooter: React.FC = () => {
+const DefaultFooter: React.VFC = () => {
   const { currentLanguage, setCurrentLanguage } = useContext(LanguageContext)
   const { enabledModules, name } = useApp()
 

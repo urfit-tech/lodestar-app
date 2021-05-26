@@ -109,7 +109,7 @@ const StyledDescription = styled.div`
   `)}
 `
 
-const MerchandiseBlock: React.FC<{
+const MerchandiseBlock: React.VFC<{
   merchandise: MerchandiseProps
   withPaymentButton?: boolean
   showDescription?: boolean

@@ -14,7 +14,7 @@ import { useApp } from '../../containers/common/AppContext'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProjectProps } from '../../types/project'
 
-const OnSalePage: React.FC<ProjectProps> = ({
+const OnSalePage: React.VFC<ProjectProps> = ({
   id,
   expiredAt,
   coverType,

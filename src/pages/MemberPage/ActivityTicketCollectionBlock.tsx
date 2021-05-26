@@ -6,7 +6,7 @@ import ActivityTicketItem from '../../components/activity/ActivityTicketItem'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledActivityTickets } from '../../hooks/activity'
 
-const ActivityTicketCollectionBlock: React.FC<{ memberId: string }> = ({ memberId }) => {
+const ActivityTicketCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { loadingTickets, errorTickets, enrolledActivityTickets } = useEnrolledActivityTickets(memberId)
   const { formatMessage } = useIntl()
 

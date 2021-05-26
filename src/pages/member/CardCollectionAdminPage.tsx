@@ -24,7 +24,7 @@ const StyledContainer = styled.div`
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.15);
 `
 
-const CardCollectionAdminPage: React.FC = () => {
+const CardCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { loading, enabledModules } = useApp()
@@ -63,7 +63,7 @@ const CardCollectionAdminPage: React.FC = () => {
     </MemberAdminLayout>
   )
 }
-const MembershipCardAdminBlock: React.FC<{
+const MembershipCardAdminBlock: React.VFC<{
   memberId: string
   cardId: string
   updatedAt?: Date | null

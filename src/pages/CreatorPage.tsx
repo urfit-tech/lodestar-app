@@ -55,7 +55,7 @@ const StyledCallToSubscription = styled.div`
   `)}
 `
 
-const CreatorPage: React.FC = () => {
+const CreatorPage: React.VFC = () => {
   const { creatorId } = useParams<{ creatorId: string }>()
   const { currentMemberId } = useAuth()
   const { loadingMember, member } = useMember(currentMemberId || '')
@@ -93,7 +93,7 @@ const CreatorPage: React.FC = () => {
   )
 }
 
-const CreatorTabs: React.FC<{
+const CreatorTabs: React.VFC<{
   creatorId: string
   member: MemberPublicProps | null
   onCheckoutModalOpen?: () => void
@@ -331,9 +331,7 @@ const CreatorTabs: React.FC<{
                     programs={programs}
                     podcastPrograms={podcastPrograms}
                     onChangeTab={key => setActiveKey(key)}
-                    onSubscribe={() => {
-                      isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
-                    }}
+                    onSubscribe={() => (isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible?.(true))}
                   />
                 </div>
               </div>

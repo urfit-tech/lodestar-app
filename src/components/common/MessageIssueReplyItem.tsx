@@ -11,7 +11,7 @@ import MessageItemAction from '../common/MessageItemAction'
 import MessageItemContent from '../common/MessageItemContent'
 import MessageItemHeader from '../common/MessageItemHeader'
 
-const MessageIssueReplyItem: React.FC<{
+const MessageIssueReplyItem: React.VFC<{
   issueReplyId: string
   memberId: string
   content: string

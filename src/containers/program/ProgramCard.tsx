@@ -43,7 +43,7 @@ const AvatarPlaceHolder = styled.div`
   height: 2rem;
 `
 
-const ProgramCard: React.FC<{
+const ProgramCard: React.VFC<{
   memberId: string
   programId: string
   programType?: string

@@ -37,7 +37,7 @@ const PracticeCollectionAdminPage = () => {
   )
 }
 
-const PracticeCollectionBlock: React.FC<{
+const PracticeCollectionBlock: React.VFC<{
   memberId: string
   selectedProgramId: string
 }> = ({ memberId, selectedProgramId }) => {

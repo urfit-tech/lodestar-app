@@ -14,7 +14,7 @@ import { MerchandiseProps, MerchandiseSpecProps } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
 import { AuthModalContext } from '../auth/AuthModal'
 
-const MerchandisePaymentButton: React.FC<{
+const MerchandisePaymentButton: React.VFC<{
   merchandise: MerchandiseProps
   merchandiseSpec: MerchandiseSpecProps
   quantity: number
@@ -54,7 +54,7 @@ const MerchandisePaymentButton: React.FC<{
   )
 }
 
-const GeneralMerchandisePaymentBlock: React.FC<{
+const GeneralMerchandisePaymentBlock: React.VFC<{
   merchandise: MerchandiseProps
   merchandiseSpec: MerchandiseSpecProps
   quantity: number
@@ -128,7 +128,7 @@ const GeneralMerchandisePaymentBlock: React.FC<{
   )
 }
 
-const CustomizedMerchandisePaymentBlock: React.FC<{
+const CustomizedMerchandisePaymentBlock: React.VFC<{
   merchandise: MerchandiseProps
   merchandiseSpec: MerchandiseSpecProps
 }> = ({ merchandise, merchandiseSpec }) => {
@@ -148,7 +148,7 @@ const CustomizedMerchandisePaymentBlock: React.FC<{
   return (
     <CheckoutProductModal
       renderTrigger={onOpen => (
-        <Button colorScheme="primary" isFullWidth onClick={() => (currentMemberId ? onOpen() : setAuthModal?.(true))}>
+        <Button colorScheme="primary" isFullWidth onClick={() => (currentMemberId ? onOpen?.() : setAuthModal?.(true))}>
           {formatMessage(commonMessages.button.purchase)}
         </Button>
       )}

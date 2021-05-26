@@ -66,7 +66,7 @@ const StyledLink = styled(Link)`
   color: white;
 `
 
-const PodcastProgramCover: React.FC<{
+const PodcastProgramCover: React.VFC<{
   memberId: string
   podcastProgramId: string
   coverUrl: string | null

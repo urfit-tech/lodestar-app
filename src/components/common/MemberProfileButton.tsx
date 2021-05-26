@@ -45,7 +45,7 @@ const BorderedItem = styled(List.Item)`
   }
 `
 
-export const CustomNavLinks: React.FC = () => {
+export const CustomNavLinks: React.VFC = () => {
   const { navs } = useNav()
 
   return (
@@ -74,7 +74,7 @@ export const CustomNavLinks: React.FC = () => {
   )
 }
 
-const MemberProfileButton: React.FC<{
+const MemberProfileButton: React.VFC<{
   memberId: string
 }> = ({ memberId }) => {
   const { formatMessage } = useIntl()

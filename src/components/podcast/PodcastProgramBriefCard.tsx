@@ -42,7 +42,7 @@ export type PodcastProgramBriefCardProps = {
   salePrice?: number | null
   soldAt?: Date | null
 }
-const PodcastProgramBriefCard: React.FC<PodcastProgramBriefCardProps> = ({
+const PodcastProgramBriefCard: React.VFC<PodcastProgramBriefCardProps> = ({
   coverUrl,
   title,
   listPrice,

@@ -65,7 +65,7 @@ type IssueItemProps = FormComponentProps & {
   defaultRepliesVisible?: boolean
   showSolvedCheckbox?: boolean
 }
-const IssueItem: React.FC<IssueItemProps> = ({
+const IssueItem: React.VFC<IssueItemProps> = ({
   form,
   programRoles,
   issueId,
