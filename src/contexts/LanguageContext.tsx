@@ -8,10 +8,12 @@ const supportedLanguages = ['zh', 'zh-cn', 'en', 'vi', 'acsi']
 
 type LanguageProps = {
   currentLanguage: string
+  locale: string
   setCurrentLanguage?: (language: string) => void
 }
 const defaultLanguage: LanguageProps = {
   currentLanguage: 'zh',
+  locale: 'zh',
 }
 
 const LanguageContext = createContext<LanguageProps>(defaultLanguage)
@@ -60,6 +62,7 @@ export const LanguageProvider: React.FC = ({ children }) => {
     <LanguageContext.Provider
       value={{
         currentLanguage,
+        locale,
         setCurrentLanguage: (newLanguage: string) => {
           if (supportedLanguages.includes(newLanguage)) {
             localStorage.setItem('kolable.app.language', newLanguage)
