@@ -1,4 +1,5 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
+import { pick } from 'ramda'
 import React, { useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
@@ -83,7 +84,7 @@ const ProgramContentPlayer: React.VFC<
 
   const playerRef = useRef<ReactPlayer | null>(null)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
-  const [, setPlayerState] = useState<{
+  const [playerState, setPlayerState] = useState<{
     recordAt: number
     playbackRate: number
     startedAt: number
@@ -95,10 +96,10 @@ const ProgramContentPlayer: React.VFC<
     endedAt: 0,
   })
 
-  // useEffect(() => {
-  //   const data = pick(['playbackRate', 'startedAt', 'endedAt'], playerState)
-  //   onEventTrigger?.(data)
-  // }, [onEventTrigger, playerState])
+  useEffect(() => {
+    const data = pick(['playbackRate', 'startedAt', 'endedAt'], playerState)
+    onEventTrigger?.(data)
+  }, [onEventTrigger, playerState])
 
   return (
     <StyledContainer>
@@ -130,25 +131,30 @@ const ProgramContentPlayer: React.VFC<
           }))
           playerRef.current?.seekTo(duration * (lastProgress === 1 ? 0 : lastProgress), 'seconds')
         }}
-        onProgress={state => {
-          setPlayerState(({ recordAt, endedAt }) => {
-            const playbackRateByCalculate = ((state.playedSeconds - endedAt) * 1000) / (Date.now() - recordAt)
+        // onProgress={state => {
+        //   setPlayerState(({ recordAt, endedAt }) => {
+        //     const playbackRateByCalculate = ((state.playedSeconds - endedAt) * 1000) / (Date.now() - recordAt)
+        //     return {
+        //       recordAt: Date.now(),
+        //       playbackRate: Math.round(playbackRateByCalculate * 4) / 4,
+        //       startedAt: endedAt,
+        //       endedAt: state.playedSeconds,
+        //     }
+        //   })
+        //   onProgress?.(state)
+        // }}
+        onPause={() => {
+          setPlayerState(({ endedAt, recordAt }) => {
+            const playbackRateByCalculate = playerRef.current
+              ? ((playerRef.current.getCurrentTime() - endedAt) * 1000) / (Date.now() - recordAt)
+              : 0
             return {
               recordAt: Date.now(),
-              playbackRate: Math.round(playbackRateByCalculate * 4) / 4,
+              playbackRate: Math.ceil(playbackRateByCalculate * 4) / 4,
               startedAt: endedAt,
-              endedAt: state.playedSeconds,
+              endedAt: playerRef.current?.getCurrentTime() || 0,
             }
           })
-          onProgress?.(state)
-        }}
-        onPause={() => {
-          setPlayerState(({ playbackRate }) => ({
-            recordAt: Date.now(),
-            playbackRate,
-            startedAt: playerRef.current?.getCurrentTime() || 0,
-            endedAt: playerRef.current?.getCurrentTime() || 0,
-          }))
         }}
         onBuffer={() => {
           setPlayerState(() => ({
