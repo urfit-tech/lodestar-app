@@ -95,6 +95,15 @@ export const AppThemeProvider: React.FC = ({ children }) => {
           fontSize: '12px',
         },
       },
+      Tabs: {
+        baseStyle: {
+          tab: {
+            _focus: {
+              boxShadow: 0,
+            },
+          },
+        },
+      },
     },
     colors: {
       ...paletteGenerator(settings['theme.@primary-color'] || '#000000'),
