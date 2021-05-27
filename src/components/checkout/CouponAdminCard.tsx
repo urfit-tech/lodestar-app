@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { dateFormatter } from '../../helpers'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { CouponProps } from '../../types/checkout'
+import { MultiLineTruncationMixin } from '../common'
 import AdminCard from '../common/AdminCard'
 import PriceLabel from '../common/PriceLabel'
 import CouponDescriptionModal from './CouponDescriptionModal'
@@ -51,15 +52,12 @@ const StyledAdminCard = styled(AdminCard)`
   }
 `
 const StyledTitle = styled.span`
-  display: -webkit-box;
+  ${MultiLineTruncationMixin}
   height: 3.25rem;
   line-height: 1.3;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   letter-spacing: 0.77px;
   font-size: 20px;
   font-weight: bold;
-  overflow: hidden;
   white-space: break-spaces;
 `
 const StyledPriceLabel = styled.span<{ outdated?: boolean }>`

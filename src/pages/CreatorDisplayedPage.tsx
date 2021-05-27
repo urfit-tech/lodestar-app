@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { CommonTextMixin } from '../components/common'
+import { CommonTextMixin, MultiLineTruncationMixin } from '../components/common'
 import { CustomRatioImage } from '../components/common/Image'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -36,10 +36,7 @@ const StyledCreatorTitle = styled.h3`
 `
 
 const StyledCreatorAbstract = styled.p`
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
+  ${MultiLineTruncationMixin}
   ${CommonTextMixin}
 `
 

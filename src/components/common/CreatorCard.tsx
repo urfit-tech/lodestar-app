@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { CommonTitleMixin } from '.'
+import { CommonTitleMixin, MultiLineTruncationMixin } from '.'
 import { useApp } from '../../containers/common/AppContext'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -60,10 +60,7 @@ const StyledJobTitle = styled.div`
   letter-spacing: 0.4px;
 `
 const StyledDescription = styled.div`
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  ${MultiLineTruncationMixin}
   margin-top: 1.5rem;
   max-height: 3rem;
   color: var(--gray-darker);

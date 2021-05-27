@@ -6,6 +6,7 @@ import { StyledPostTitle } from '../components/blog'
 import { PopularPostCollection } from '../components/blog/PostLinkCollection'
 import PostPreviewCover from '../components/blog/PostPreviewCover'
 import PostPreviewMeta from '../components/blog/PostPreviewMeta'
+import { MultiLineTruncationMixin } from '../components/common'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { desktopViewMixin } from '../helpers'
@@ -42,10 +43,7 @@ const StyledAbstract = styled.div`
   display: none;
 
   ${desktopViewMixin(css`
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
+    ${MultiLineTruncationMixin}
     color: var(--gray-darker);
     line-height: 1.69;
     letter-spacing: 0.2px;

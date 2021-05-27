@@ -1,6 +1,7 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 import DefaultAvatar from '../../images/avatar.svg'
+import { MultiLineTruncationMixin } from '../common'
 import { CustomRatioImage } from '../common/Image'
 
 const StyledCardBody = styled.div<{ variant?: string }>`
@@ -22,10 +23,7 @@ const StyledTitle = styled.div`
   letter-spacing: 0.2px;
 `
 const StyledMeta = styled.div`
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
+  ${MultiLineTruncationMixin}
   color: var(--gray-dark);
   text-align: center;
   font-size: 14px;

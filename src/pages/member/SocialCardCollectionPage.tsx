@@ -3,7 +3,7 @@ import { Divider, Modal, Skeleton, Typography } from 'antd'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { CommonTitleMixin } from '../../components/common'
+import { CommonTitleMixin, MultiLineTruncationMixin } from '../../components/common'
 import { CustomRatioImage } from '../../components/common/Image'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { commonMessages } from '../../helpers/translation'
@@ -45,11 +45,8 @@ const StyledCardTitle = styled.div`
   letter-spacing: 0.2px;
 `
 const StyledCardDescription = styled.div`
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  ${MultiLineTruncationMixin}
   max-height: 3em;
-  overflow: hidden;
   color: var(--gray-dark);
   font-size: 14px;
   line-height: normal;

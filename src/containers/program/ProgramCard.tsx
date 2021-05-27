@@ -2,7 +2,7 @@ import { sum } from 'ramda'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { CommonTitleMixin } from '../../components/common'
+import { CommonTitleMixin, MultiLineTruncationMixin } from '../../components/common'
 import { CustomRatioImage } from '../../components/common/Image'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import ProgressBar from '../../components/common/ProgressBar'
@@ -20,19 +20,13 @@ const StyledMeta = styled.div`
   padding: 1.25rem;
 `
 const StyledTitle = styled.div`
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  ${MultiLineTruncationMixin}
+  ${CommonTitleMixin}
   margin-bottom: 1.25rem;
   height: 3em;
-  ${CommonTitleMixin}
 `
 const StyledDescription = styled.div`
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  ${MultiLineTruncationMixin}
   margin-bottom: 1.25rem;
   height: 3em;
   color: var(--gray-dark);

@@ -13,7 +13,7 @@ import DefaultAvatar from '../../images/avatar.svg'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { AppointmentEnrollmentProps } from '../../types/appointment'
-import { CommonTitleMixin } from '../common'
+import { CommonTitleMixin, MultiLineTruncationMixin } from '../common'
 import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
 import StyledBraftEditor, { BraftContent } from '../common/StyledBraftEditor'
@@ -59,11 +59,8 @@ const StyledInfo = styled.div<{ withMask?: boolean }>`
   }
 `
 const StyledTitle = styled.h3`
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  ${MultiLineTruncationMixin}
   margin-bottom: 0.75rem;
-  overflow: hidden;
   color: var(--gray-darker);
   font-size: 16px;
   font-weight: bold;
