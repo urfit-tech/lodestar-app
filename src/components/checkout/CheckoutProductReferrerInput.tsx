@@ -1,8 +1,9 @@
-import { Form, Input } from 'antd'
+import { FormControl, FormErrorMessage } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
 import { commonMessages } from '../../helpers/translation'
+import { Input } from '../common/CommonForm'
 
 const CheckoutProductReferrerInput: React.VFC<{
   referrerStatus: 'success' | 'error' | 'validating' | undefined
@@ -13,22 +14,21 @@ const CheckoutProductReferrerInput: React.VFC<{
   const { currentMemberId } = useAuth()
 
   return (
-    <Form.Item
-      validateStatus={referrerStatus}
-      hasFeedback
-      help={
-        referrerStatus === 'error'
-          ? referrerId === currentMemberId
-            ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
-            : formatMessage(commonMessages.text.notFoundMemberEmail)
-          : undefined
-      }
-    >
+    <FormControl isInvalid={referrerStatus === 'error'}>
       <Input
+        type="email"
+        status={referrerStatus}
         placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
         onBlur={e => onEmailSet(e.target.value)}
       />
-    </Form.Item>
+      <FormErrorMessage>
+        {referrerStatus === 'error'
+          ? referrerId === currentMemberId
+            ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
+            : formatMessage(commonMessages.text.notFoundMemberEmail)
+          : undefined}
+      </FormErrorMessage>
+    </FormControl>
   )
 }
 

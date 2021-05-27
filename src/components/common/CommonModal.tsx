@@ -59,7 +59,7 @@ const CommonModal: React.FC<
 
         <ModalBody className="px-4 mb-3">{children}</ModalBody>
 
-        {renderFooter && <ModalFooter className="mb-4">{renderFooter()}</ModalFooter>}
+        {renderFooter && <ModalFooter>{renderFooter()}</ModalFooter>}
       </StyledWrapper>
     </StyledModalContent>
   </Modal>

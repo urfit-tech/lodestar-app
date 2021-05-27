@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, ListItem, OrderedList, Stat } from '@chakra-ui/react'
+import { ListItem, OrderedList, Stat } from '@chakra-ui/react'
 import { update } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -16,10 +16,10 @@ const StyledPlanTitle = styled.h3`
 `
 
 const CheckoutGroupBuyingForm: React.FC<{
-  title?: string
-  partnerCount?: number
+  title: string
+  partnerCount: number
   onChange?: (memberIds: string[]) => void
-}> = ({ title = '12341', partnerCount = 5, onChange }) => {
+}> = ({ title, partnerCount, onChange }) => {
   const { formatMessage } = useIntl()
   const [memberIds, setMemberIds] = useState<(string | null)[]>(new Array(partnerCount).fill(null))
 
@@ -45,15 +45,14 @@ const CheckoutGroupBuyingForm: React.FC<{
         </StyledPlanTitle>
 
         {memberIds.map((_, i) => (
-          <FormControl className="mb-4">
-            <FormLabel>{formatMessage(checkoutMessages.label.partnerEmail)}</FormLabel>
+          <div className="col-12 col-lg-6 px-0 mb-3">
             <GroupBuyingPartnerInput
               existingMemberIds={memberIds.slice(0, i).filter(notEmpty)}
               onVerified={memberId => {
                 setMemberIds(prevMemberIds => update(i, memberId, prevMemberIds))
               }}
             />
-          </FormControl>
+          </div>
         ))}
       </div>
     </Stat>

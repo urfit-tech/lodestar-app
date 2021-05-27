@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Button } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -37,7 +37,9 @@ const ProgramPerpetualPlanCard: React.VFC<{
       <div className="container">
         {isEnrolled ? (
           <Link to={`/programs/${program.id}/contents`}>
-            <Button block>{formatMessage(commonMessages.button.enter)}</Button>
+            <Button colorScheme="primary" isFullWidth>
+              {formatMessage(commonMessages.button.enter)}
+            </Button>
           </Link>
         ) : (
           <>

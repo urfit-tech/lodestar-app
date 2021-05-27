@@ -24,10 +24,7 @@ import CheckoutGroupBuyingForm from './CheckoutGroupBuyingForm'
 import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
 import CheckoutProductReferrerInput from './CheckoutProductReferrerInput'
 
-const CheckoutProductItem: React.VFC<{
-  name: string
-  price: number
-}> = ({ name, price }) => {
+const CheckoutProductItem: React.VFC<{ name: string; price: number }> = ({ name, price }) => {
   const { currencyId: appCurrencyId } = useApp()
 
   return (
@@ -262,7 +259,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         </div>
 
         {enabledModules.referrer && (
-          <div className="row" ref={referrerRef}>
+          <div className="row mb-3" ref={referrerRef}>
             <div className="col-12">
               <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
             </div>
