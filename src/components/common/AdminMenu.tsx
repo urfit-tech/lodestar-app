@@ -17,6 +17,7 @@ import { ReactComponent as ClipboardListIcon } from '../../images/clipboard-list
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
+import { ReactComponent as GroupBuyIcon } from '../../images/group-buy.svg'
 import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
@@ -127,7 +128,7 @@ export const MemberAdminMenu: React.VFC<MenuProps> = ({ ...props }) => {
       )}
 
       <Menu.Item key="member_group_buying_admin">
-        <Icon as={TicketIcon} className="mr-2" />
+        <Icon as={GroupBuyIcon} className="mr-2" />
         {formatMessage(commonMessages.ui.groupBuying)}
       </Menu.Item>
 
