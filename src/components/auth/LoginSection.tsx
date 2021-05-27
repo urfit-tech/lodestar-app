@@ -46,8 +46,6 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
   const { setVisible } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
 
-  accountLinkToken && sessionStorage.setItem('accountLinkToken', accountLinkToken)
-
   const handleLogin = () => {
     if (!login) {
       return
@@ -83,22 +81,22 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
 
       {!!settings['auth.parenting_client_id'] && (
         <div className="mb-3">
-          <ParentingLoginButton />
+          <ParentingLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
       {!!settings['auth.facebook_app_id'] && (
         <div className="mb-3">
-          <FacebookLoginButton />
+          <FacebookLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
       {!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
         <div className="mb-3">
-          <LineLoginButton />
+          <LineLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
       {!!settings['auth.google_client_id'] && (
         <div className="mb-3">
-          <GoogleLoginButton />
+          <GoogleLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
 

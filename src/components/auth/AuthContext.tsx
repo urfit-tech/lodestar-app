@@ -220,7 +220,7 @@ export const AuthProvider: React.FC<{
           ).then(({ data: { code, result } }) => {
             if (code === 'SUCCESS') {
               setAuthToken(result.authToken)
-              if (accountLinkToken && authToken) {
+              if (accountLinkToken && result.authToken) {
                 window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
               }
             } else if (code === 'I_RESET_PASSWORD') {
@@ -242,7 +242,7 @@ export const AuthProvider: React.FC<{
           ).then(({ data: { code, message, result } }) => {
             if (code === 'SUCCESS') {
               setAuthToken(result.authToken)
-              if (accountLinkToken && authToken) {
+              if (accountLinkToken && result.authToken) {
                 window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
               }
             } else {

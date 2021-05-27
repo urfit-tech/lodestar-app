@@ -35,14 +35,15 @@ const DefaultOauth2Section: React.VFC = () => {
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
-  const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
 
   const {
     provider = null,
     redirect = '/',
+    accountLinkToken = '',
   }: {
     provider: ProviderType | null
     redirect: string
+    accountLinkToken: string
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   const handleFetchYoutubeApi = useCallback(() => {
