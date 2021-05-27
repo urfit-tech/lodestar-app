@@ -23,7 +23,7 @@ const GroupBuyingPartnerInput: React.FC<{
     if (!isMemberExisted) {
       onVerified?.(memberId)
     }
-  }, [memberId, isMemberExisted])
+  }, [memberId, isMemberExisted, validateStatus, onVerified])
 
   return (
     <FormControl isInvalid={isMemberExisted || validateStatus === 'error'}>
