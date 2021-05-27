@@ -33,8 +33,8 @@ export const AppThemeProvider: React.FC = ({ children }) => {
             color: '#585858',
             _hover: {
               background: 'transparent',
-              borderColor: `${settings['theme.@primary-color']}`,
-              color: `${settings['theme.@primary-color']}`,
+              borderColor: settings['theme.@primary-color'] || '#000000',
+              color: settings['theme.@primary-color'] || '#000000',
             },
           },
           ghost: {
@@ -90,7 +90,7 @@ export const AppThemeProvider: React.FC = ({ children }) => {
       },
     },
     colors: {
-      ...paletteGenerator(settings['theme.@primary-color']),
+      ...paletteGenerator(settings['theme.@primary-color'] || '#000000'),
       gray: {
         100: 'rgba(0, 0, 0, 0.1)',
         200: '#f7f8f8',
