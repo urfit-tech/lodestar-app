@@ -7,7 +7,13 @@ import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { usePublicMember } from '../../../hooks/member'
 import { useEnrolledProgramIds } from '../../../hooks/program'
-import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../../types/program'
+import {
+  ProgramContentProps,
+  ProgramContentSectionProps,
+  ProgramPlanProps,
+  ProgramProps,
+  ProgramRoleProps,
+} from '../../../types/program'
 import { useAuth } from '../../auth/AuthContext'
 import ProgramPaymentButton from '../../checkout/ProgramPaymentButton'
 import CountDownTimeBlock from '../../common/CountDownTimeBlock'
@@ -15,6 +21,7 @@ import { AvatarImage } from '../../common/Image'
 import PriceLabel from '../../common/PriceLabel'
 import Responsive from '../../common/Responsive'
 import ProgramContentCountBlock from './ProgramContentCountBlock'
+import ProgramGroupBuyingInfo from './ProgramGroupBuyingInfo'
 
 const ProgramInfoCard = styled(Card)`
   && {
@@ -44,6 +51,7 @@ const StyledCountDownBlock = styled.div`
 const ProgramInfoBlock: React.VFC<{
   program: ProgramProps & {
     roles: ProgramRoleProps[]
+    plans: ProgramPlanProps[]
     contentSections: (ProgramContentSectionProps & {
       contents: ProgramContentProps[]
     })[]
@@ -95,9 +103,13 @@ const ProgramInfoBlock: React.VFC<{
               )}
             </div>
 
-            {isEnrolled ? (
+            {!!program.plans.length ? (
+              <ProgramGroupBuyingInfo programPlans={program.plans} />
+            ) : isEnrolled ? (
               <Link to={`/programs/${program.id}/contents`}>
-                <Button isFullWidth>{formatMessage(commonMessages.button.enter)}</Button>
+                <Button colorScheme="primary" isFullWidth>
+                  {formatMessage(commonMessages.button.enter)}
+                </Button>
               </Link>
             ) : (
               <ProgramPaymentButton program={program} variant="multiline" />

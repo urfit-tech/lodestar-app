@@ -3607,6 +3607,7 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
   sold_at: any | null;
   discount_down_price: any;
   period_type: string | null;
+  group_buying_people: any | null;
   /**
    * An object relationship
    */
@@ -3855,23 +3856,24 @@ export interface GET_PRODUCT_SIMPLEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: SEARCH_REFERRER
+// GraphQL query operation: SEARCH_MEMBER
 // ====================================================
 
-export interface SEARCH_REFERRER_member_public {
+export interface SEARCH_MEMBER_member_public {
   __typename: "member_public";
   id: string | null;
 }
 
-export interface SEARCH_REFERRER {
+export interface SEARCH_MEMBER {
   /**
    * fetch data from the table: "member_public"
    */
-  member_public: SEARCH_REFERRER_member_public[];
+  member_public: SEARCH_MEMBER_member_public[];
 }
 
-export interface SEARCH_REFERRERVariables {
-  search: string;
+export interface SEARCH_MEMBERVariables {
+  email: string;
+  appId: string;
 }
 
 /* tslint:disable */
@@ -11075,6 +11077,7 @@ export enum program_plan_update_column {
   discount_down_price = "discount_down_price",
   ended_at = "ended_at",
   gains = "gains",
+  group_buying_people = "group_buying_people",
   id = "id",
   is_countdown_timer_visible = "is_countdown_timer_visible",
   is_participants_visible = "is_participants_visible",
@@ -18272,6 +18275,7 @@ export interface program_plan_bool_exp {
   discount_down_price?: numeric_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   gains?: jsonb_comparison_exp | null;
+  group_buying_people?: numeric_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_countdown_timer_visible?: Boolean_comparison_exp | null;
   is_participants_visible?: Boolean_comparison_exp | null;
@@ -18319,6 +18323,7 @@ export interface program_plan_insert_input {
   discount_down_price?: any | null;
   ended_at?: any | null;
   gains?: any | null;
+  group_buying_people?: any | null;
   id?: any | null;
   is_countdown_timer_visible?: boolean | null;
   is_participants_visible?: boolean | null;

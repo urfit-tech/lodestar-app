@@ -25,6 +25,7 @@ type TargetProps = {
   isLimited?: boolean
   isPhysical?: boolean
   isCustomized?: boolean
+  groupBuyingPeople?: number
 } | null
 
 export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Date }) => {
@@ -69,6 +70,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
               : undefined,
           discountDownPrice: data.program_plan_by_pk.discount_down_price || undefined,
           periodType: data.program_plan_by_pk.period_type as PeriodType,
+          groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
         }
       : data.program_package_plan_by_pk
       ? {
@@ -202,6 +204,7 @@ const GET_PRODUCT_SIMPLE = gql`
       sold_at
       discount_down_price
       period_type
+      group_buying_people
       program {
         id
         title

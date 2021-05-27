@@ -243,7 +243,15 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
-        <CheckoutGroupBuyingForm />
+        {!!target?.groupBuyingPeople && (
+          <CheckoutGroupBuyingForm
+            title={target?.title || ''}
+            partnerCount={target?.groupBuyingPeople || 0}
+            onChange={memberIds => {
+              console.log(memberIds)
+            }}
+          />
+        )}
 
         <div ref={invoiceRef} className="mb-5">
           <InvoiceInput
