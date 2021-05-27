@@ -129,6 +129,7 @@ const ParentingOauth2Section: React.VFC = () => {
   const [code] = useQueryParam('code', StringParam)
   const { id: appId } = useApp()
   const { isAuthenticating, currentMemberId, socialLogin, apiHost } = useAuth()
+  const host = window.location.origin
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const {
@@ -139,7 +140,7 @@ const ParentingOauth2Section: React.VFC = () => {
 
   useEffect(() => {
     if (!isAuthenticating && !currentMemberId && provider === 'parenting' && appId && code) {
-      const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2/parenting`
+      const redirectUri = `${host}/oauth2/parenting`
       axios
         .post(
           `https://${apiHost}/auth/get-oauth-token`,
@@ -164,7 +165,7 @@ const ParentingOauth2Section: React.VFC = () => {
         })
         .catch(handleError)
     }
-  }, [apiHost, appId, code, currentMemberId, history, isAuthenticating, provider, redirect, socialLogin])
+  }, [apiHost, appId, code, currentMemberId, history, host, isAuthenticating, provider, redirect, socialLogin])
 
   return <LoadingPage />
 }

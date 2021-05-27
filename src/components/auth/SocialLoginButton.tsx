@@ -150,6 +150,7 @@ const ParentingLoginButton: React.VFC = () => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
+  const host = window.location.origin
 
   if (loading) {
     return <Spinner />
@@ -158,7 +159,7 @@ const ParentingLoginButton: React.VFC = () => {
     <a
       href={'https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&scope={{SCOPE}}'
         .replace('{{CLIENT_ID}}', `${settings['auth.parenting_client_id']}`)
-        .replace('{{REDIRECT_URI}}', `https://${window.location.hostname}:${window.location.port}/oauth2/parenting`)
+        .replace('{{REDIRECT_URI}}', `${host}/oauth2/parenting`)
         .replace('{{SCOPE}}', '')
         .replace(
           '{{STATE}}',
