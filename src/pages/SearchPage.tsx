@@ -4,7 +4,7 @@ import { Skeleton, Tabs } from 'antd'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { sum } from 'ramda'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -13,6 +13,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import Activity from '../components/activity/Activity'
 import CreatorBriefCard from '../components/appointment/CreatorBriefCard'
 import { useAuth } from '../components/auth/AuthContext'
+import { AuthModalContext } from '../components/auth/AuthModal'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { StyledBanner } from '../components/layout'
@@ -105,6 +106,8 @@ const SearchResultBlock: React.VFC<{
   tag?: string | null
 }> = ({ memberId, title, tag }) => {
   const { formatMessage } = useIntl()
+  const { currentMemberId, isAuthenticated } = useAuth()
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [tab, setTab] = useQueryParam('tab', StringParam)
   const { loadingMember, member } = useMember(memberId || '')
 
@@ -269,7 +272,7 @@ const SearchResultBlock: React.VFC<{
                         instructor={podcastProgram.instructor}
                         isEnrolled={podcastProgram.isEnrolled}
                         isSubscribed={podcastProgram.isSubscribed}
-                        onSubscribe={onOpen}
+                        onSubscribe={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
                       >
                         <PodcastProgramBriefCard
                           coverUrl={podcastProgram.coverUrl}
