@@ -131,18 +131,18 @@ const ProgramContentPlayer: React.VFC<
           }))
           playerRef.current?.seekTo(duration * (lastProgress === 1 ? 0 : lastProgress), 'seconds')
         }}
-        // onProgress={state => {
-        //   setPlayerState(({ recordAt, endedAt }) => {
-        //     const playbackRateByCalculate = ((state.playedSeconds - endedAt) * 1000) / (Date.now() - recordAt)
-        //     return {
-        //       recordAt: Date.now(),
-        //       playbackRate: Math.round(playbackRateByCalculate * 4) / 4,
-        //       startedAt: endedAt,
-        //       endedAt: state.playedSeconds,
-        //     }
-        //   })
-        //   onProgress?.(state)
-        // }}
+        onProgress={state => {
+          setPlayerState(({ recordAt, endedAt }) => {
+            const playbackRateByCalculate = ((state.playedSeconds - endedAt) * 1000) / (Date.now() - recordAt)
+            return {
+              recordAt: Date.now(),
+              playbackRate: Math.round(playbackRateByCalculate * 4) / 4,
+              startedAt: endedAt,
+              endedAt: state.playedSeconds,
+            }
+          })
+          onProgress?.(state)
+        }}
         onPause={() => {
           setPlayerState(({ endedAt, recordAt }) => {
             const playbackRateByCalculate = playerRef.current
@@ -261,4 +261,4 @@ const CountDownPlayButton: React.VFC<{
   )
 }
 
-export default ProgramContentPlayer
+export default React.memo(ProgramContentPlayer)

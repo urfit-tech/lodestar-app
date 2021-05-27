@@ -4,7 +4,7 @@ import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -53,6 +53,7 @@ const ProgramContentBlock: React.VFC<{
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
   const { loadingMember, member } = usePublicMember(instructor?.memberId || '')
   const { loadingLastExercise, lastExercise } = useLastExercise(programContentId, exerciseId)
+  const [lastProgress, setLastProgress] = useState<number | null>(null)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
@@ -61,6 +62,14 @@ const ProgramContentBlock: React.VFC<{
   const nextProgramContent = flatten(program.contentSections.map(v => v.contents)).find(
     (_, i, contents) => contents[i - 1]?.id === programContentId,
   )
+
+  useEffect(() => {
+    const progress =
+      programContentProgress.find(progress => progress.programContentId === programContentId)?.lastProgress || null
+    if (lastProgress === null && progress !== undefined) {
+      setLastProgress(progress)
+    }
+  }, [programContentProgress])
 
   useEffect(() => {
     if (!loadingProgramContent && programContentBodyType !== 'video' && insertProgress) {
@@ -82,12 +91,10 @@ const ProgramContentBlock: React.VFC<{
 
       {programContent.programContentBody?.type === 'video' && (
         <ProgramContentPlayer
-          programContentId={programContent.id}
+          key={programContent.id}
           programContentBody={programContent.programContentBody}
           nextProgramContent={nextProgramContent}
-          lastProgress={
-            programContentProgress.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
-          }
+          lastProgress={lastProgress || 0}
           onProgress={({ played }) => {
             const currentProgress = Math.ceil(played * 20) / 20 // every 5% as a tick
             insertProgress(programContentId, {

@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { sum, uniq } from 'ramda'
+import { useMemo } from 'react'
 import hasura from '../hasura'
 import { CategoryProps } from '../types/general'
 import {
@@ -467,40 +468,43 @@ export const useProgramContent = (programContentId: string) => {
         materials: ProgramContentMaterialProps[]
         attachments: ProgramContentAttachmentProps[]
       })
-    | null =
-    loading || error || !data || !data.program_content_by_pk
-      ? null
-      : {
-          id: data.program_content_by_pk.id,
-          title: data.program_content_by_pk.title,
-          abstract: data.program_content_by_pk.abstract,
-          metadata: data.program_content_by_pk.metadata,
-          duration: data.program_content_by_pk.duration,
-          contentType: data.program_content_by_pk.program_content_body?.type,
-          publishedAt: new Date(data.program_content_by_pk.published_at),
-          listPrice: data.program_content_by_pk.list_price,
-          salePrice: data.program_content_by_pk.sale_price,
-          soldAt: data.program_content_by_pk.sold_at && new Date(data.program_content_by_pk.sold_at),
-          programContentBody: data.program_content_by_pk.program_content_body
-            ? {
-                id: data.program_content_by_pk.program_content_body.id,
-                type: data.program_content_by_pk.program_content_body.type,
-                description: data.program_content_by_pk.program_content_body.description,
-                data: data.program_content_by_pk.program_content_body.data,
-              }
-            : null,
-          materials: data.program_content_by_pk.program_content_materials.map(v => ({
-            id: v.id,
-            data: v.data,
-            createdAt: v.created_at,
-          })),
-          attachments: data.program_content_by_pk.program_content_attachments.map(u => ({
-            id: u.attachment_id,
-            data: u.data,
-            options: u.options,
-            createdAt: u.created_at,
-          })),
-        }
+    | null = useMemo(
+    () =>
+      loading || error || !data || !data.program_content_by_pk
+        ? null
+        : {
+            id: data.program_content_by_pk.id,
+            title: data.program_content_by_pk.title,
+            abstract: data.program_content_by_pk.abstract,
+            metadata: data.program_content_by_pk.metadata,
+            duration: data.program_content_by_pk.duration,
+            contentType: data.program_content_by_pk.program_content_body?.type,
+            publishedAt: new Date(data.program_content_by_pk.published_at),
+            listPrice: data.program_content_by_pk.list_price,
+            salePrice: data.program_content_by_pk.sale_price,
+            soldAt: data.program_content_by_pk.sold_at && new Date(data.program_content_by_pk.sold_at),
+            programContentBody: data.program_content_by_pk.program_content_body
+              ? {
+                  id: data.program_content_by_pk.program_content_body.id,
+                  type: data.program_content_by_pk.program_content_body.type,
+                  description: data.program_content_by_pk.program_content_body.description,
+                  data: data.program_content_by_pk.program_content_body.data,
+                }
+              : null,
+            materials: data.program_content_by_pk.program_content_materials.map(v => ({
+              id: v.id,
+              data: v.data,
+              createdAt: v.created_at,
+            })),
+            attachments: data.program_content_by_pk.program_content_attachments.map(u => ({
+              id: u.attachment_id,
+              data: u.data,
+              options: u.options,
+              createdAt: u.created_at,
+            })),
+          },
+    [data],
+  )
 
   return {
     loadingProgramContent: loading,
