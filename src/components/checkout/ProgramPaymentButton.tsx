@@ -88,7 +88,7 @@ const ProgramPaymentButton: React.VFC<{ program: ProgramProps; variant?: string 
 
       <Button colorScheme="primary" isFullWidth onClick={() => handleClick().then(() => history.push('/cart'))}>
         {program.listPrice !== 0
-          ? formatMessage(commonMessages.button.purchase)
+          ? formatMessage(commonMessages.ui.purchase)
           : formatMessage(commonMessages.button.join)}
       </Button>
     </div>

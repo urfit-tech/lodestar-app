@@ -316,7 +316,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           <Button colorScheme="primary" isLoading={orderPlacing} onClick={handleSubmit}>
             {paymentType === 'subscription'
               ? formatMessage(checkoutMessages.button.cartSubmit)
-              : formatMessage(commonMessages.button.purchase)}
+              : formatMessage(commonMessages.ui.purchase)}
           </Button>
         </div>
       </CommonModal>

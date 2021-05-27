@@ -121,7 +121,7 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
           isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
           onClick={() => quantity && handleClick().then(() => history.push('/cart'))}
         >
-          {formatMessage(commonMessages.button.purchase)}
+          {formatMessage(commonMessages.ui.purchase)}
         </Button>
       </div>
     </div>
@@ -153,7 +153,7 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
           isFullWidth
           onClick={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
         >
-          {formatMessage(commonMessages.button.purchase)}
+          {formatMessage(commonMessages.ui.purchase)}
         </Button>
       )}
       paymentType="perpetual"

@@ -236,7 +236,7 @@
   "common.button.print": "Print",
   "common.button.program.sort": "Sort courses",
   "common.button.program.view": "View Course",
-  "common.button.purchase": "Purchase",
+  "common.ui.purchase": "Purchase",
   "common.button.register": "Register",
   "common.button.reload": "Reload",
   "common.button.reply": "Reply",

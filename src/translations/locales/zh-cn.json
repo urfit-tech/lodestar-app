@@ -236,7 +236,7 @@
   "common.button.print": "列印",
   "common.button.program.sort": "课程排序",
   "common.button.program.view": "查看课程",
-  "common.button.purchase": "立即购买",
+  "common.ui.purchase": "立即购买",
   "common.button.register": "立即报名",
   "common.button.reload": "重新整理",
   "common.button.reply": "回覆",

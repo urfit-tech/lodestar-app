@@ -174,7 +174,7 @@ const PodcastProgramPopover: React.FC<
               isFullWidth
               onClick={() => handleClick().then(() => history.push(`/cart`))}
             >
-              {formatMessage(commonMessages.button.purchase)}
+              {formatMessage(commonMessages.ui.purchase)}
             </Button>
             <Button variant="outline" isFullWidth onClick={() => handleClick()}>
               {formatMessage(commonMessages.button.addCart)}

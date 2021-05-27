@@ -271,7 +271,7 @@ const MerchandiseBlock: React.VFC<{
         ) : (
           <StyledButtonBlock>
             <Link to={`/merchandises/${merchandise.id}`}>
-              <StyledButton colorScheme="primary">{formatMessage(commonMessages.button.purchase)}</StyledButton>
+              <StyledButton colorScheme="primary">{formatMessage(commonMessages.ui.purchase)}</StyledButton>
             </Link>
           </StyledButtonBlock>
         )}

@@ -68,6 +68,8 @@ export const commonMessages = {
     expired: { id: 'common.expired', defaultMessage: '已失效' },
     projectFinished: { id: 'common.project.finished', defaultMessage: '專案結束' },
     available: { id: 'common.available', defaultMessage: '可使用' },
+    sendable: { id: 'common.status.sendable', defaultMessage: '可發送' },
+    sent: { id: 'common.status.sent', defaultMessage: '已發送' },
   }),
   ui: defineMessages({
     programs: { id: 'common.program', defaultMessage: '課程' },
@@ -92,6 +94,10 @@ export const commonMessages = {
     uploadFile: { id: 'common.ui.uploadFile', defaultMessage: '上傳檔案' },
     uploadImage: { id: 'common.ui.uploadImage', defaultMessage: '上傳圖片' },
     cancel: { id: 'common.ui.cancel', defaultMessage: '取消' },
+    groupBuying: { id: 'common.ui.groupBuying', defaultMessage: '我的團購' },
+    send: { id: 'common.ui.send', defaultMessage: '發送' },
+    sendNow: { id: 'common.ui.sendNow', defaultMessage: '立即發送' },
+    purchase: { id: 'common.ui.purchase', defaultMessage: '立即購買' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },
@@ -163,7 +169,6 @@ export const commonMessages = {
     confirm: { id: 'common.button.confirm', defaultMessage: '確認' },
     cart: { id: 'common.button.cart', defaultMessage: '前往購物車' },
     addCart: { id: 'common.button.cart.add', defaultMessage: '加入購物車' },
-    purchase: { id: 'common.button.purchase', defaultMessage: '立即購買' },
     join: { id: 'common.button.join', defaultMessage: '立即參與' },
     reselectCoupon: { id: 'checkout.form.radio.coupon.reselect', defaultMessage: '重新選擇' },
     chooseCoupon: { id: 'checkout.form.radio.coupon.choose', defaultMessage: '選擇折價券' },
@@ -222,6 +227,8 @@ export const commonMessages = {
     phone: { id: 'checkout.label.phone', defaultMessage: '手機' },
     couponTitle: { id: 'checkout.label.title', defaultMessage: '折價方案名稱' },
     referrer: { id: 'common.label.referrer', defaultMessage: '推薦人' },
+    partnerChoose: { id: 'common.label.partnerChoose', defaultMessage: '發送設定' },
+    targetPartner: { id: 'common.label.targetPartner', defaultMessage: '發送對象' },
   }),
   form: {
     message: defineMessages({
@@ -390,6 +397,10 @@ export const commonMessages = {
     },
     notFoundReferrerEmail: { id: 'common.text.notFoundReferrerEmail', defaultMessage: '找不到這個註冊信箱' },
     selfReferringIsNotAllowed: { id: 'common.text.selfReferringIsNotAllowed', defaultMessage: '推薦人不可為自己' },
+    fillInEnrolledEmail: {
+      id: 'common.text.fillInEnrolledEmail',
+      defaultMessage: '請填寫對方在站上註冊的電子信箱',
+    },
   }),
 }
 
