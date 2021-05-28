@@ -6,7 +6,7 @@ import { useMemberValidation } from '../../../hooks/common'
 import { Input } from '../../common/CommonForm'
 
 const GroupBuyingPartnerInput: React.FC<{
-  existingMemberIds?: (string | null)[]
+  existingMemberIds: (string | null)[]
   onVerified?: (memberId: string | null) => void
 }> = ({ existingMemberIds, onVerified }) => {
   const { formatMessage } = useIntl()
@@ -23,7 +23,7 @@ const GroupBuyingPartnerInput: React.FC<{
     if (!isMemberExisted) {
       onVerified?.(memberId)
     }
-  }, [memberId, isMemberExisted, validateStatus, onVerified])
+  }, [memberId, isMemberExisted, validateStatus])
 
   return (
     <FormControl isInvalid={isMemberExisted || validateStatus === 'error'}>
