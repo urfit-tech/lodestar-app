@@ -68,6 +68,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const { enabledModules, settings } = useApp()
   const updateMemberMetadata = useUpdateMemberMetadata()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [groupBuyingPartnerIds, setGroupBuyingPartnerIds] = useState<string[]>()
 
   // payment information
   const cachedPaymentInfor: {
@@ -138,6 +139,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         startedAt,
         from: window.location.pathname,
         sharingCode,
+        groupBuyingPartnerIds,
       },
     },
   })
@@ -246,9 +248,9 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         {!!target?.groupBuyingPeople && (
           <CheckoutGroupBuyingForm
             title={target?.title || ''}
-            partnerCount={target?.groupBuyingPeople || 0}
+            partnerCount={target.groupBuyingPeople - 1}
             onChange={memberIds => {
-              console.log(memberIds)
+              setGroupBuyingPartnerIds(memberIds)
             }}
           />
         )}

@@ -103,7 +103,7 @@ const ProgramInfoBlock: React.VFC<{
               )}
             </div>
 
-            {!!program.plans.length ? (
+            {!!program.plans.filter(v => v.publishedAt).length ? (
               <ProgramGroupBuyingInfo programPlans={program.plans.filter(v => v.publishedAt)} />
             ) : isEnrolled ? (
               <Link to={`/programs/${program.id}/contents`}>
