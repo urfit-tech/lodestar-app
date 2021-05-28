@@ -31,6 +31,7 @@ const ProgramGroupBuyingInfo: React.FC<{
     title: string
     listPrice: number
     salePrice: number | null
+    soldAt: Date | null
   }[]
 }> = ({ programPlans }) => {
   const { formatMessage } = useIntl()
@@ -41,13 +42,15 @@ const ProgramGroupBuyingInfo: React.FC<{
   return (
     <div>
       <div className="mb-2">
-        {programPlans.map(v => (
-          <span key={v.id} className="d-flex justify-content-between">
-            <StyledTitle>{v.title}</StyledTitle>
-
-            <PriceLabel variant="inline" listPrice={v.listPrice} salePrice={v.salePrice} />
-          </span>
-        ))}
+        {programPlans.map(v => {
+          const isOnSale = (v.soldAt?.getTime() || 0) > Date.now()
+          return (
+            <span key={v.id} className="d-flex justify-content-between">
+              <StyledTitle>{v.title}</StyledTitle>
+              <PriceLabel variant="inline" listPrice={v.listPrice} salePrice={isOnSale ? v.salePrice : undefined} />
+            </span>
+          )
+        })}
       </div>
 
       <Button colorScheme="primary" isFullWidth onClick={() => setIsVisible(prev => !prev)}>
@@ -56,27 +59,30 @@ const ProgramGroupBuyingInfo: React.FC<{
 
       {isVisible && (
         <div className="px-1">
-          {programPlans.map(v => (
-            <CheckoutProductModal
-              member={member}
-              paymentType="perpetual"
-              defaultProductId={`ProgramPlan_${v.id}`}
-              renderTrigger={onOpen => (
-                <StyledGroupBuyingButton
-                  variant="outline"
-                  isFullWidth
-                  className="d-flex justify-content-between align-items-center my-2"
-                  onClick={onOpen}
-                >
-                  <div className="d-flex flex-column align-items-start">
-                    <StyledTitle>{v.title}</StyledTitle>
-                    <PriceLabel listPrice={v.salePrice || v.listPrice} />
-                  </div>
-                  <Icon as={ArrowRightIcon} />
-                </StyledGroupBuyingButton>
-              )}
-            />
-          ))}
+          {programPlans.map(v => {
+            const isOnSale = (v.soldAt?.getTime() || 0) > Date.now()
+            return (
+              <CheckoutProductModal
+                member={member}
+                paymentType="perpetual"
+                defaultProductId={`ProgramPlan_${v.id}`}
+                renderTrigger={onOpen => (
+                  <StyledGroupBuyingButton
+                    variant="outline"
+                    isFullWidth
+                    className="d-flex justify-content-between align-items-center my-2"
+                    onClick={onOpen}
+                  >
+                    <div className="d-flex flex-column align-items-start">
+                      <StyledTitle>{v.title}</StyledTitle>
+                      <PriceLabel listPrice={isOnSale ? v.salePrice || v.listPrice : v.listPrice} />
+                    </div>
+                    <Icon as={ArrowRightIcon} />
+                  </StyledGroupBuyingButton>
+                )}
+              />
+            )
+          })}
         </div>
       )}
     </div>
