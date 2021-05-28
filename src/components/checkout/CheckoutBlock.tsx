@@ -111,19 +111,19 @@ const CheckoutBlock: React.VFC<{
 
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
-  const cartProductOptions = cartProducts.reduce(
-    (accumulator, currentValue) => ({
-      ...accumulator,
-      [currentValue.productId]: currentValue.options,
-    }),
-    {} as { [ProductId: string]: any },
-  )
-  const { check, orderChecking, placeOrder, orderPlacing } = useCheck(
-    cartProducts.map(cartProduct => cartProduct.productId),
+
+  const { check, orderChecking, placeOrder, orderPlacing } = useCheck({
+    productIds: cartProducts.map(cartProduct => cartProduct.productId),
     discountId,
-    hasPhysicalProduct ? shipping : null,
-    cartProductOptions,
-  )
+    shipping: hasPhysicalProduct ? shipping : null,
+    options: cartProducts.reduce<{ [ProductId: string]: any }>(
+      (accumulator, currentValue) => ({
+        ...accumulator,
+        [currentValue.productId]: currentValue.options,
+      }),
+      {},
+    ),
+  })
 
   if (isAuthenticating) {
     return (

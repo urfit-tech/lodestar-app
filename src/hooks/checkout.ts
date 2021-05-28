@@ -12,12 +12,17 @@ import hasura from '../hasura'
 import { CheckProps, OrderDiscountProps, OrderProductProps, shippingOptionProps } from '../types/checkout'
 import { MemberShopProps } from '../types/merchandise'
 
-export const useCheck = (
-  productIds: string[],
-  discountId: string | null,
-  shipping: ShippingProps | null,
-  options: { [ProductId: string]: any },
-) => {
+export const useCheck = ({
+  productIds,
+  discountId,
+  shipping,
+  options,
+}: {
+  productIds: string[]
+  discountId: string | null
+  shipping: ShippingProps | null
+  options: { [ProductId: string]: any }
+}) => {
   const { authToken, apiHost } = useAuth()
   const { id: appId } = useApp()
   const [check, setCheck] = useState<CheckProps>({ orderProducts: [], orderDiscounts: [], shippingOption: null })

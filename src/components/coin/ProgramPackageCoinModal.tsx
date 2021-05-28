@@ -87,26 +87,28 @@ const ProgramPackageCoinModal: React.VFC<
   const [visible, setVisible] = useState(false)
   const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
-  const { orderChecking, check, placeOrder, orderPlacing } = useCheck(
-    programPackage?.programs
-      .filter(program => program.plan && !enrolledProgramIds.includes(program.id))
-      .map(program => `ProgramPlan_${program.plan?.id}`) || [],
-    'Coin',
-    null,
-    programPackage?.programs.reduce((accumulator, currentValue) => {
-      if (!currentValue.plan) {
-        return accumulator
-      }
+  const { orderChecking, check, placeOrder, orderPlacing } = useCheck({
+    productIds:
+      programPackage?.programs
+        .filter(program => program.plan && !enrolledProgramIds.includes(program.id))
+        .map(program => `ProgramPlan_${program.plan?.id}`) || [],
+    discountId: 'Coin',
+    shipping: null,
+    options:
+      programPackage?.programs.reduce<{ [key: string]: any }>((accumulator, currentValue) => {
+        if (!currentValue.plan) {
+          return accumulator
+        }
 
-      return {
-        ...accumulator,
-        [`ProgramPlan_${currentValue.plan.id}`]: {
-          parentProductId: `ProjectPlan_${projectPlanId}`,
-          position: currentValue.position,
-        },
-      }
-    }, {} as { [key: string]: any }) || {},
-  )
+        return {
+          ...accumulator,
+          [`ProgramPlan_${currentValue.plan.id}`]: {
+            parentProductId: `ProjectPlan_${projectPlanId}`,
+            position: currentValue.position,
+          },
+        }
+      }, {}) || {},
+  })
   const isPaymentAvailable =
     !orderChecking &&
     sum(check.orderProducts.map(orderProduct => orderProduct.price)) ===

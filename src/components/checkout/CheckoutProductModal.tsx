@@ -136,18 +136,22 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const [productId, setProductId] = useState<string>(defaultProductId || '')
   const { target } = useSimpleProduct({ id: productId, startedAt })
 
-  const { check, orderPlacing, orderChecking, placeOrder, totalPrice } = useCheck(
-    [productId],
+  const { check, orderPlacing, orderChecking, placeOrder, totalPrice } = useCheck({
+    productIds: [productId],
     discountId,
-    isProductPhysical ? shipping : productId.startsWith('MerchandiseSpec_') ? { address: member?.email } : null,
-    {
+    shipping: isProductPhysical
+      ? shipping
+      : productId.startsWith('MerchandiseSpec_')
+      ? { address: member?.email }
+      : null,
+    options: {
       [productId]: {
         startedAt,
         from: window.location.pathname,
         sharingCode,
       },
     },
-  )
+  })
 
   const handleSubmit = async () => {
     if (!member) {
