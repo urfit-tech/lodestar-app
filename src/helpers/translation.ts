@@ -70,6 +70,7 @@ export const commonMessages = {
     available: { id: 'common.available', defaultMessage: '可使用' },
     sendable: { id: 'common.status.sendable', defaultMessage: '可發送' },
     sent: { id: 'common.status.sent', defaultMessage: '已發送' },
+    received: { id: 'common.status.received', defaultMessage: '已收到' },
   }),
   ui: defineMessages({
     programs: { id: 'common.program', defaultMessage: '課程' },

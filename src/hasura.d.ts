@@ -7773,6 +7773,65 @@ export interface GET_PUBLISHED_CREATOR {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: UPDATE_ORDER
+// ====================================================
+
+export interface UPDATE_ORDER_update_order_log_by_pk {
+  __typename: "order_log";
+  id: string;
+}
+
+export interface UPDATE_ORDER {
+  /**
+   * update single row of the table: "order_log"
+   */
+  update_order_log_by_pk: UPDATE_ORDER_update_order_log_by_pk | null;
+}
+
+export interface UPDATE_ORDERVariables {
+  orderId: string;
+  memberId: string;
+  transferredAt: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_GROUP_BUYING_ORDER
+// ====================================================
+
+export interface GET_GROUP_BUYING_ORDER_order_group_buying_log {
+  __typename: "order_group_buying_log";
+  parent_order_member_id: string | null;
+  order_id: string | null;
+  member_id: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  transferred_at: any | null;
+  name: string | null;
+  cover_url: string | null;
+}
+
+export interface GET_GROUP_BUYING_ORDER {
+  /**
+   * fetch data from the table: "order_group_buying_log"
+   */
+  order_group_buying_log: GET_GROUP_BUYING_ORDER_order_group_buying_log[];
+}
+
+export interface GET_GROUP_BUYING_ORDERVariables {
+  memberId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_COIN_STATUS
 // ====================================================
 
@@ -10227,10 +10286,12 @@ export enum order_log_update_column {
   last_paid_at = "last_paid_at",
   member_id = "member_id",
   message = "message",
+  parent_order_id = "parent_order_id",
   payment_model = "payment_model",
   retried_at = "retried_at",
   shipping = "shipping",
   status = "status",
+  transferred_at = "transferred_at",
   updated_at = "updated_at",
 }
 
@@ -15601,12 +15662,16 @@ export interface order_log_bool_exp {
   order_contacts?: order_contact_bool_exp | null;
   order_discounts?: order_discount_bool_exp | null;
   order_executors?: order_executor_bool_exp | null;
+  order_parent_log?: order_log_bool_exp | null;
   order_products?: order_product_bool_exp | null;
+  order_sub_logs?: order_log_bool_exp | null;
+  parent_order_id?: String_comparison_exp | null;
   payment_logs?: payment_log_bool_exp | null;
   payment_model?: jsonb_comparison_exp | null;
   retried_at?: timestamptz_comparison_exp | null;
   shipping?: jsonb_comparison_exp | null;
   status?: String_comparison_exp | null;
+  transferred_at?: timestamptz_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
 
@@ -15634,12 +15699,16 @@ export interface order_log_insert_input {
   order_contacts?: order_contact_arr_rel_insert_input | null;
   order_discounts?: order_discount_arr_rel_insert_input | null;
   order_executors?: order_executor_arr_rel_insert_input | null;
+  order_parent_log?: order_log_obj_rel_insert_input | null;
   order_products?: order_product_arr_rel_insert_input | null;
+  order_sub_logs?: order_log_arr_rel_insert_input | null;
+  parent_order_id?: string | null;
   payment_logs?: payment_log_arr_rel_insert_input | null;
   payment_model?: any | null;
   retried_at?: any | null;
   shipping?: any | null;
   status?: string | null;
+  transferred_at?: any | null;
   updated_at?: any | null;
 }
 
@@ -18710,10 +18779,12 @@ export interface project_plan_enrollment_bool_exp {
   _and?: (project_plan_enrollment_bool_exp | null)[] | null;
   _not?: project_plan_enrollment_bool_exp | null;
   _or?: (project_plan_enrollment_bool_exp | null)[] | null;
+  ended_at?: timestamptz_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   project_plan?: project_plan_bool_exp | null;
   project_plan_id?: uuid_comparison_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
 }
 
 /**
