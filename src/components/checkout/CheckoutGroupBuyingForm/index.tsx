@@ -1,6 +1,6 @@
 import { ListItem, OrderedList, Stat } from '@chakra-ui/react'
 import { update } from 'ramda'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { notEmpty } from '../../../helpers'
@@ -18,14 +18,10 @@ const StyledPlanTitle = styled.h3`
 const CheckoutGroupBuyingForm: React.FC<{
   title: string
   partnerCount: number
-  onChange?: (memberIds: string[]) => void
+  onChange?: (newValue: string[]) => void
 }> = ({ title, partnerCount, onChange }) => {
   const { formatMessage } = useIntl()
-  const [memberIds, setMemberIds] = useState<(string | null)[]>(new Array(partnerCount).fill(null))
-
-  useEffect(() => {
-    onChange?.(memberIds.filter(notEmpty))
-  }, [JSON.stringify(memberIds)])
+  const [memberIds, setMemberIds] = useState<(string | null)[]>(Array(partnerCount).fill(null))
 
   return (
     <Stat>
@@ -45,11 +41,15 @@ const CheckoutGroupBuyingForm: React.FC<{
         </StyledPlanTitle>
 
         {memberIds.map((_, i) => (
-          <div className="col-12 col-lg-6 px-0 mb-3">
+          <div key={i} className="col-12 col-lg-6 px-0 mb-3">
             <GroupBuyingPartnerInput
               existingMemberIds={memberIds.slice(0, i).filter(notEmpty)}
               onVerified={memberId => {
-                setMemberIds(prevMemberIds => update(i, memberId, prevMemberIds))
+                setMemberIds(prevMemberIds => {
+                  const newMemberIds = update(i, memberId, prevMemberIds)
+                  onChange?.(newMemberIds.filter(notEmpty))
+                  return newMemberIds
+                })
               }}
             />
           </div>

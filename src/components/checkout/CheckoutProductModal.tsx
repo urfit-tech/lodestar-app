@@ -249,8 +249,8 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           <CheckoutGroupBuyingForm
             title={target?.title || ''}
             partnerCount={target.groupBuyingPeople - 1}
-            onChange={memberIds => {
-              setGroupBuyingPartnerIds(memberIds)
+            onChange={newValue => {
+              setGroupBuyingPartnerIds(newValue)
             }}
           />
         )}
