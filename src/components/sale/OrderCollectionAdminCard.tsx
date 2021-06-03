@@ -245,7 +245,10 @@ const useOrderLogCollection = (memberId: string) => {
   const { loading, error, data } = useQuery<hasura.GET_MEMBER_ORDERS, hasura.GET_MEMBER_ORDERSVariables>(
     gql`
       query GET_MEMBER_ORDERS($memberId: String!) {
-        order_log(order_by: { created_at: desc }, where: { member_id: { _eq: $memberId } }) {
+        order_log(
+          order_by: { created_at: desc }
+          where: { member_id: { _eq: $memberId }, parent_order_id: { _is_null: true } }
+        ) {
           id
           created_at
           status
