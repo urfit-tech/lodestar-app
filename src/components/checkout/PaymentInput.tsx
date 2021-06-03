@@ -43,25 +43,25 @@ const PaymentInput: React.FC<{
         value={selectedPaymentMethodType}
         onChange={v => handleChange(v)}
       >
-        {Number(settings['payment.method.credit.enable']) && (
+        {Number(settings['payment.spgateway.credit.enable']) && (
           <Select.Option value="CREDIT">{formatMessage(checkoutMessages.label.credit)}</Select.Option>
         )}
-        {Number(settings['payment.method.vacc.enable']) && (
+        {Number(settings['payment.spgateway.vacc.enable']) && (
           <Select.Option value="VACC">{formatMessage(checkoutMessages.label.vacc)}</Select.Option>
         )}
-        {Number(settings['payment.method.cvs.enable']) && (
+        {Number(settings['payment.spgateway.cvs.enable']) && (
           <Select.Option value="CVS">{formatMessage(checkoutMessages.label.cvs)}</Select.Option>
         )}
-        {Number(settings['payment.method.instflag.enable']) && (
+        {Number(settings['payment.spgateway.instflag.enable']) && (
           <Select.Option value="InstFlag">{formatMessage(checkoutMessages.label.instFlag)}</Select.Option>
         )}
-        {Number(settings['payment.method.unionpay.enable']) && (
+        {Number(settings['payment.spgateway.unionpay.enable']) && (
           <Select.Option value="UNIONPAY">{formatMessage(checkoutMessages.label.unionPay)}</Select.Option>
         )}
-        {Number(settings['payment.method.webatm.enable']) && (
+        {Number(settings['payment.spgateway.webatm.enable']) && (
           <Select.Option value="WEBATM">{formatMessage(checkoutMessages.label.webAtm)}</Select.Option>
         )}
-        {Number(settings['payment.method.barcode.enable']) && (
+        {Number(settings['payment.spgateway.barcode.enable']) && (
           <Select.Option value="BARCODE">{formatMessage(checkoutMessages.label.barcode)}</Select.Option>
         )}
       </Select>
