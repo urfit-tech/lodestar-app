@@ -29,7 +29,7 @@ import { CartProductProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import { CommonTitleMixin } from '../common'
-import PaymentInput, { PaymentMethodType } from './PaymentInput'
+import PaymentSelector, { PaymentMethodType } from './PaymentSelector'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
@@ -242,7 +242,7 @@ const CheckoutBlock: React.FC<{
 
       <div className="mb-3">
         <AdminCard>
-          <PaymentInput value={paymentMethod} onChange={v => setPaymentMethod(v)} />
+          <PaymentSelector value={paymentMethod} onChange={v => setPaymentMethod(v)} />
         </AdminCard>
       </div>
 

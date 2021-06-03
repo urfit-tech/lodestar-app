@@ -18,7 +18,7 @@ const StyledDescription = styled.div`
 
 export type PaymentMethodType = 'CREDIT' | 'VACC' | 'CVS' | 'InstFlag' | 'UNIONPAY' | 'WEBATM' | 'BARCODE'
 
-const PaymentInput: React.FC<{
+const PaymentSelector: React.FC<{
   value: PaymentMethodType
   onChange: (value: PaymentMethodType) => void
 }> = ({ value, onChange }) => {
@@ -26,12 +26,16 @@ const PaymentInput: React.FC<{
   const { settings } = useApp()
   const [selectedPaymentMethodType, setSelectedPaymentMethodType] = useState<PaymentMethodType | null>(value)
 
-  const handleChange: (paymentMethod?: PaymentMethodType | null) => void = PaymentMethodType => {
+  const handleChange = (paymentMethodType?: PaymentMethodType | null) => {
     const currentPaymentOption =
-      typeof PaymentMethodType === 'undefined' ? selectedPaymentMethodType : PaymentMethodType
-    typeof PaymentMethodType !== 'undefined' && setSelectedPaymentMethodType(PaymentMethodType)
-    currentPaymentOption && localStorage.setItem('kolable.cart.paymentMethod', currentPaymentOption)
-    currentPaymentOption && onChange && onChange(currentPaymentOption)
+      typeof paymentMethodType === 'undefined' ? selectedPaymentMethodType : paymentMethodType
+    typeof paymentMethodType !== 'undefined' && setSelectedPaymentMethodType(paymentMethodType)
+    if (currentPaymentOption) {
+      localStorage.setItem('kolable.cart.paymentMethod', currentPaymentOption)
+      if (onChange) {
+        onChange(currentPaymentOption)
+      }
+    }
   }
 
   return (
@@ -69,4 +73,4 @@ const PaymentInput: React.FC<{
   )
 }
 
-export default PaymentInput
+export default PaymentSelector

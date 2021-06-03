@@ -12,7 +12,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../../components/auth/AuthContext'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
 import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/checkout/InvoiceInput'
-import PaymentInput, { PaymentMethodType } from '../../components/checkout/PaymentInput'
+import PaymentSelector, { PaymentMethodType } from '../../components/checkout/PaymentSelector'
 import ShippingInput, { ShippingProps, validateShipping } from '../../components/checkout/ShippingInput'
 import PriceLabel from '../../components/common/PriceLabel'
 import ProductItem from '../../components/common/ProductItem'
@@ -285,7 +285,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
             {paymentType === 'perpetual' && (
               <div className="mb-5">
-                <PaymentInput value={paymentMethod} onChange={v => setPaymentMethod(v)} />
+                <PaymentSelector value={paymentMethod} onChange={v => setPaymentMethod(v)} />
               </div>
             )}
 
