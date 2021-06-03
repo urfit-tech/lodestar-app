@@ -38,7 +38,15 @@ const StyledCopyright = styled.div`
 
 const DefaultFooter: React.VFC = () => {
   const { currentLanguage, setCurrentLanguage } = useContext(LanguageContext)
-  const { enabledModules, name } = useApp()
+  const { enabledModules, name, settings } = useApp()
+
+  const languageOptions: string[] = (() => {
+    try {
+      return JSON.parse(settings['locale.languages'])
+    } catch {
+      return []
+    }
+  })()
 
   return (
     <StyledFooter>
@@ -49,7 +57,7 @@ const DefaultFooter: React.VFC = () => {
             <div className="blank" />
             <SocialLinks />
           </StyledLinkBlock>
-          {enabledModules.locale && (
+          {enabledModules.locale && languageOptions.length > 0 && (
             <div>
               <Divider type="vertical" className="mx-3" />
               <Dropdown
