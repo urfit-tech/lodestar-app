@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
-import { ProgramProps } from '../../types/program'
+import { ProgramPlanProps, ProgramProps } from '../../types/program'
 import ProgramPaymentButton from '../checkout/ProgramPaymentButton'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import PriceLabel from '../common/PriceLabel'
+import ProgramGroupBuyingInfo from './ProgramInfoBlock/ProgramGroupBuyingInfo'
 
 const StyledWrapper = styled.div`
   background: white;
@@ -24,7 +25,9 @@ const StyledCountDownBlock = styled.div`
 
 const ProgramPerpetualPlanCard: React.VFC<{
   memberId: string
-  program: ProgramProps
+  program: ProgramProps & {
+    plans: ProgramPlanProps[]
+  }
 }> = ({ memberId, program }) => {
   const { enrolledProgramIds } = useEnrolledProgramIds(memberId)
   const { formatMessage } = useIntl()
@@ -35,7 +38,9 @@ const ProgramPerpetualPlanCard: React.VFC<{
   return (
     <StyledWrapper className="py-2">
       <div className="container">
-        {isEnrolled ? (
+        {!!program.plans.filter(v => v.publishedAt).length ? (
+          <ProgramGroupBuyingInfo programPlans={program.plans.filter(v => v.publishedAt)} />
+        ) : isEnrolled ? (
           <Link to={`/programs/${program.id}/contents`}>
             <Button colorScheme="primary" isFullWidth>
               {formatMessage(commonMessages.button.enter)}
