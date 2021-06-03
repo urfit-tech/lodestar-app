@@ -10,8 +10,9 @@ import {
 } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { useAuth } from '../../components/auth/AuthContext'
 import { MultiLineTruncationMixin } from '../../components/common'
 import { Input } from '../../components/common/CommonForm'
 import CommonModal from '../../components/common/CommonModal'
@@ -32,15 +33,25 @@ const StyledTitle = styled.h3`
   color: var(--gray-darker);
 `
 
-const GroupBuyingDeliverModal: React.VFC<{ orderId: string; title: string; onRefetch?: (() => void) | null }> = ({
-  orderId,
-  title,
-  onRefetch,
-}) => {
+const messages = defineMessages({
+  selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
+  delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
+})
+
+const GroupBuyingDeliverModal: React.VFC<{
+  partnerMemberIds: string[]
+  orderId: string
+  title: string
+  onRefetch?: (() => void) | null
+}> = ({ partnerMemberIds, orderId, title, onRefetch }) => {
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [email, setEmail] = useState('')
+  const { currentMemberId } = useAuth()
   const { memberId, validateStatus } = useMemberValidation(email)
+  const memberStatus =
+    memberId === currentMemberId || partnerMemberIds.includes(memberId || '') ? 'error' : validateStatus
+
   const toast = useToast()
   const [updateOrder] = useMutation<types.UPDATE_ORDER, types.UPDATE_ORDERVariables>(gql`
     mutation UPDATE_ORDER($orderId: String!, $memberId: String!, $transferredAt: timestamptz!) {
@@ -54,7 +65,7 @@ const GroupBuyingDeliverModal: React.VFC<{ orderId: string; title: string; onRef
   `)
 
   const handleSubmit = () => {
-    if (memberId && validateStatus === 'success') {
+    if (memberId) {
       updateOrder({
         variables: {
           orderId,
@@ -89,7 +100,15 @@ const GroupBuyingDeliverModal: React.VFC<{ orderId: string; title: string; onRef
             <Button variant="outline" onClick={onClose}>
               {formatMessage(commonMessages.ui.cancel)}
             </Button>
-            <Button colorScheme="primary" isDisabled={validateStatus !== 'success'} onClick={handleSubmit}>
+            <Button
+              colorScheme="primary"
+              isDisabled={
+                memberId === currentMemberId ||
+                partnerMemberIds.includes(memberId || '') ||
+                [undefined, 'error', 'validating'].includes(validateStatus)
+              }
+              onClick={handleSubmit}
+            >
               {formatMessage(commonMessages.ui.send)}
             </Button>
           </ButtonGroup>
@@ -97,15 +116,27 @@ const GroupBuyingDeliverModal: React.VFC<{ orderId: string; title: string; onRef
         closeOnOverlayClick={false}
       >
         <StyledTitle className="mb-4">{title}</StyledTitle>
-        <FormControl isInvalid={validateStatus === 'error'}>
+        <FormControl
+          isInvalid={
+            memberId === currentMemberId || partnerMemberIds.includes(memberId || '') || validateStatus === 'error'
+          }
+        >
           <FormLabel>{formatMessage(commonMessages.label.targetPartner)}</FormLabel>
           <Input
             type="email"
-            status={validateStatus}
+            status={memberStatus}
             placeholder={formatMessage(commonMessages.text.fillInEnrolledEmail)}
             onBlur={e => setEmail(e.target.value)}
           />
-          <FormErrorMessage>{formatMessage(commonMessages.text.notFoundMemberEmail)}</FormErrorMessage>
+          <FormErrorMessage>
+            {memberId === currentMemberId
+              ? formatMessage(messages.selfDeliver)
+              : partnerMemberIds.includes(memberId || '')
+              ? formatMessage(messages.delivered)
+              : validateStatus === 'error'
+              ? formatMessage(commonMessages.text.notFoundMemberEmail)
+              : undefined}
+          </FormErrorMessage>
         </FormControl>
       </CommonModal>
     </>
@@ -118,17 +149,25 @@ const StyledCard = styled.div`
 `
 
 const GroupBuyingDisplayCard: React.VFC<{
+  partnerMemberIds: string[]
   orderId: string
   imgUrl: string
   title: string
   notTransferred: boolean
   onRefetch?: (() => void) | null
-}> = ({ orderId, imgUrl, title, notTransferred, onRefetch }) => {
+}> = ({ partnerMemberIds, orderId, imgUrl, title, notTransferred, onRefetch }) => {
   return (
     <StyledCard className="p-4">
       <CustomRatioImage className="mb-3" width="100%" ratio={9 / 16} src={imgUrl || EmptyCover} />
       <StyledTitle className="mb-4">{title}</StyledTitle>
-      {notTransferred && <GroupBuyingDeliverModal orderId={orderId} title={title} onRefetch={onRefetch} />}
+      {notTransferred && (
+        <GroupBuyingDeliverModal
+          partnerMemberIds={partnerMemberIds}
+          orderId={orderId}
+          title={title}
+          onRefetch={onRefetch}
+        />
+      )}
     </StyledCard>
   )
 }

@@ -3,7 +3,7 @@ import { Icon } from '@chakra-ui/icons'
 import { Skeleton, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import gql from 'graphql-tag'
-import { isEmpty } from 'ramda'
+import { uniq } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
@@ -19,6 +19,7 @@ type groupBuyingOrderProps = {
   memberId: string
   name: string
   coverUrl: string
+  partnerMemberIds: string[]
   startedAt: Date | null
   endedAt: Date | null
   transferredAt: Date | null
@@ -76,22 +77,26 @@ const GroupBuyingCollectionPage: React.VFC = () => {
       </TabList>
 
       <TabPanels>
-        {tabContents.map(v => (
-          <TabPanel className="row">
-            {groupBuyingOrderCollection.filter(v.isDisplay).map(order => (
-              <div className="col-12 col-md-6 col-lg-4" key={order.id}>
-                <GroupBuyingDisplayCard
-                  orderId={order.id}
-                  imgUrl={order.coverUrl}
-                  title={order.name}
-                  onRefetch={!order.transferredAt ? () => refetch() : null}
-                  notTransferred={!order.transferredAt}
-                />
-              </div>
-            ))}
-            {isEmpty(groupBuyingOrderCollection.filter(v.isDisplay)) && <div>empty</div>}
-          </TabPanel>
-        ))}
+        {tabContents.map(v => {
+          const displayOrders = groupBuyingOrderCollection.filter(v.isDisplay)
+
+          return (
+            <TabPanel className="row">
+              {displayOrders.map(v => (
+                <div className="col-12 col-md-6 col-lg-4" key={v.id}>
+                  <GroupBuyingDisplayCard
+                    orderId={v.id}
+                    imgUrl={v.coverUrl}
+                    title={v.name}
+                    partnerMemberIds={v.partnerMemberIds}
+                    onRefetch={!v.transferredAt ? () => refetch() : null}
+                    notTransferred={!v.transferredAt}
+                  />
+                </div>
+              ))}
+            </TabPanel>
+          )
+        })}
       </TabPanels>
     </Tabs>
   )
@@ -126,6 +131,11 @@ const useGroupBuyingLogs = (memberId: string | null) => {
           transferred_at
           name
           cover_url
+          parent_order_log {
+            sub_order_logs {
+              member_id
+            }
+          }
         }
       }
     `,
@@ -149,6 +159,7 @@ const useGroupBuyingLogs = (memberId: string | null) => {
           endedAt: v.ended_at ? new Date(v.ended_at) : null,
           transferredAt: v.transferred_at ? new Date(v.transferred_at) : null,
           coverUrl: v.cover_url || '',
+          partnerMemberIds: uniq(v.parent_order_log?.sub_order_logs.map(v => v.member_id) || []),
         }))
       : []
 

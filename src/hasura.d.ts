@@ -7803,6 +7803,19 @@ export interface UPDATE_ORDERVariables {
 // GraphQL query operation: GET_GROUP_BUYING_ORDER
 // ====================================================
 
+export interface GET_GROUP_BUYING_ORDER_order_group_buying_log_parent_order_log_sub_order_logs {
+  __typename: "order_log";
+  member_id: string;
+}
+
+export interface GET_GROUP_BUYING_ORDER_order_group_buying_log_parent_order_log {
+  __typename: "order_log";
+  /**
+   * An array relationship
+   */
+  sub_order_logs: GET_GROUP_BUYING_ORDER_order_group_buying_log_parent_order_log_sub_order_logs[];
+}
+
 export interface GET_GROUP_BUYING_ORDER_order_group_buying_log {
   __typename: "order_group_buying_log";
   parent_order_member_id: string | null;
@@ -7813,6 +7826,10 @@ export interface GET_GROUP_BUYING_ORDER_order_group_buying_log {
   transferred_at: any | null;
   name: string | null;
   cover_url: string | null;
+  /**
+   * An object relationship
+   */
+  parent_order_log: GET_GROUP_BUYING_ORDER_order_group_buying_log_parent_order_log | null;
 }
 
 export interface GET_GROUP_BUYING_ORDER {
@@ -15662,15 +15679,15 @@ export interface order_log_bool_exp {
   order_contacts?: order_contact_bool_exp | null;
   order_discounts?: order_discount_bool_exp | null;
   order_executors?: order_executor_bool_exp | null;
-  order_parent_log?: order_log_bool_exp | null;
   order_products?: order_product_bool_exp | null;
-  order_sub_logs?: order_log_bool_exp | null;
   parent_order_id?: String_comparison_exp | null;
+  parent_order_log?: order_log_bool_exp | null;
   payment_logs?: payment_log_bool_exp | null;
   payment_model?: jsonb_comparison_exp | null;
   retried_at?: timestamptz_comparison_exp | null;
   shipping?: jsonb_comparison_exp | null;
   status?: String_comparison_exp | null;
+  sub_order_logs?: order_log_bool_exp | null;
   transferred_at?: timestamptz_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
@@ -15699,15 +15716,15 @@ export interface order_log_insert_input {
   order_contacts?: order_contact_arr_rel_insert_input | null;
   order_discounts?: order_discount_arr_rel_insert_input | null;
   order_executors?: order_executor_arr_rel_insert_input | null;
-  order_parent_log?: order_log_obj_rel_insert_input | null;
   order_products?: order_product_arr_rel_insert_input | null;
-  order_sub_logs?: order_log_arr_rel_insert_input | null;
   parent_order_id?: string | null;
+  parent_order_log?: order_log_obj_rel_insert_input | null;
   payment_logs?: payment_log_arr_rel_insert_input | null;
   payment_model?: any | null;
   retried_at?: any | null;
   shipping?: any | null;
   status?: string | null;
+  sub_order_logs?: order_log_arr_rel_insert_input | null;
   transferred_at?: any | null;
   updated_at?: any | null;
 }
