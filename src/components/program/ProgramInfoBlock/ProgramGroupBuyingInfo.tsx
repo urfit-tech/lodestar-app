@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { useMember } from '../../../hooks/member'
 import { ReactComponent as ArrowRightIcon } from '../../../images/angle-right.svg'
+import { ProgramPlanProps } from '../../../types/program'
 import { useAuth } from '../../auth/AuthContext'
 import CheckoutProductModal from '../../checkout/CheckoutProductModal'
 import PriceLabel from '../../common/PriceLabel'
@@ -26,14 +27,9 @@ const StyledGroupBuyingButton = styled(Button)`
 `
 
 const ProgramGroupBuyingInfo: React.FC<{
-  programPlans: {
-    id: string
-    title: string
-    listPrice: number
-    salePrice: number | null
-    soldAt: Date | null
-  }[]
-}> = ({ programPlans }) => {
+  isOnSale: boolean
+  programPlans: Pick<ProgramPlanProps, 'id' | 'title' | 'listPrice' | 'salePrice'>[]
+}> = ({ isOnSale, programPlans }) => {
   const { formatMessage } = useIntl()
   const [isVisible, setIsVisible] = useState(false)
   const { currentMemberId } = useAuth()
@@ -43,7 +39,6 @@ const ProgramGroupBuyingInfo: React.FC<{
     <div>
       <div className="mb-2">
         {programPlans.map(v => {
-          const isOnSale = (v.soldAt?.getTime() || 0) > Date.now()
           return (
             <span key={v.id} className="d-flex justify-content-between">
               <StyledTitle>{v.title}</StyledTitle>
@@ -60,7 +55,6 @@ const ProgramGroupBuyingInfo: React.FC<{
       {isVisible && (
         <div className="px-1">
           {programPlans.map(v => {
-            const isOnSale = (v.soldAt?.getTime() || 0) > Date.now()
             return (
               <CheckoutProductModal
                 member={member}

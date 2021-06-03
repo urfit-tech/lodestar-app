@@ -104,7 +104,7 @@ const ProgramInfoBlock: React.VFC<{
             </div>
 
             {!!program.plans.filter(v => v.publishedAt).length ? (
-              <ProgramGroupBuyingInfo programPlans={program.plans.filter(v => v.publishedAt)} />
+              <ProgramGroupBuyingInfo isOnSale={isOnSale} programPlans={program.plans.filter(v => v.publishedAt)} />
             ) : isEnrolled ? (
               <Link to={`/programs/${program.id}/contents`}>
                 <Button colorScheme="primary" isFullWidth>
