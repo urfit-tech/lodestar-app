@@ -127,10 +127,12 @@ export const MemberAdminMenu: React.VFC<MenuProps> = ({ ...props }) => {
         </Menu.Item>
       )}
 
-      <Menu.Item key="member_group_buying_admin">
-        <Icon as={GroupBuyIcon} className="mr-2" />
-        {formatMessage(commonMessages.ui.groupBuying)}
-      </Menu.Item>
+      {enabledModules.group_buying && (
+        <Menu.Item key="member_group_buying_admin">
+          <Icon as={GroupBuyIcon} className="mr-2" />
+          {formatMessage(commonMessages.ui.groupBuying)}
+        </Menu.Item>
+      )}
 
       {enabledModules.member_card && enrolledMembershipCardIds.length > 0 && (
         <Menu.Item key="member_cards_admin">

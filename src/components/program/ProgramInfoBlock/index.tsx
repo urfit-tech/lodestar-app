@@ -4,6 +4,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useApp } from '../../../containers/common/AppContext'
 import { commonMessages } from '../../../helpers/translation'
 import { usePublicMember } from '../../../hooks/member'
 import { useEnrolledProgramIds } from '../../../hooks/program'
@@ -62,6 +63,7 @@ const ProgramInfoBlock: React.VFC<{
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
   const { member } = usePublicMember(instructorId)
   const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const { enabledModules } = useApp()
 
   const isEnrolled = enrolledProgramIds.includes(program.id)
   const isOnSale = (program.soldAt?.getTime() || 0) > Date.now()
@@ -103,7 +105,7 @@ const ProgramInfoBlock: React.VFC<{
               )}
             </div>
 
-            {!!program.plans.filter(v => v.publishedAt).length ? (
+            {enabledModules.group_buying && !!program.plans.filter(v => v.publishedAt).length ? (
               <ProgramGroupBuyingInfo isOnSale={isOnSale} programPlans={program.plans.filter(v => v.publishedAt)} />
             ) : isEnrolled ? (
               <Link to={`/programs/${program.id}/contents`}>

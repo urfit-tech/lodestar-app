@@ -245,7 +245,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
-        {!!target?.groupBuyingPeople && (
+        {enabledModules.group_buying && !!target?.groupBuyingPeople && (
           <CheckoutGroupBuyingForm
             title={target?.title || ''}
             partnerCount={target.groupBuyingPeople - 1}

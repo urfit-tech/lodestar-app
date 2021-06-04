@@ -3,6 +3,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
 import { ProgramPlanProps, ProgramProps } from '../../types/program'
@@ -31,6 +32,7 @@ const ProgramPerpetualPlanCard: React.VFC<{
 }> = ({ memberId, program }) => {
   const { enrolledProgramIds } = useEnrolledProgramIds(memberId)
   const { formatMessage } = useIntl()
+  const { enabledModules } = useApp()
 
   const isEnrolled = enrolledProgramIds.includes(program.id)
   const isOnSale = (program.soldAt?.getTime() || 0) > Date.now()
@@ -38,7 +40,7 @@ const ProgramPerpetualPlanCard: React.VFC<{
   return (
     <StyledWrapper className="py-2">
       <div className="container">
-        {!!program.plans.filter(v => v.publishedAt).length ? (
+        {enabledModules.group_buying && !!program.plans.filter(v => v.publishedAt).length ? (
           <ProgramGroupBuyingInfo isOnSale={isOnSale} programPlans={program.plans.filter(v => v.publishedAt)} />
         ) : isEnrolled ? (
           <Link to={`/programs/${program.id}/contents`}>
