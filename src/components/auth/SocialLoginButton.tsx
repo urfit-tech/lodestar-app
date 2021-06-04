@@ -159,7 +159,7 @@ const ParentingLoginButton: React.VFC = () => {
     <a
       href={'https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&scope={{SCOPE}}'
         .replace('{{CLIENT_ID}}', `${settings['auth.parenting_client_id']}`)
-        .replace('{{REDIRECT_URI}}', encodeURI(`${host}/oauth2/parenting`))
+        .replace('{{REDIRECT_URI}}', encodeURIComponent(`${host}/oauth2/parenting`))
         .replace('{{SCOPE}}', '')
         .replace(
           '{{STATE}}',
