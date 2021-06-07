@@ -20,10 +20,10 @@ const StyledDigit = styled.div<{ isDark: boolean }>`
 const StyledGrid = styled.div<{ colCount: number }>`
   display: grid;
   gap: 2.25rem;
-  grid-template-columns: ${props => `repeat(${props.colCount}, 1fr)`};
+  grid-template-columns: 1fr;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @media (min-width: 768px) {
+    grid-template-columns: ${props => `repeat(${props.colCount}, 1fr)`};
   }
 `
 
