@@ -6,6 +6,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import ActivitySection from '../components/page/ActivitySection'
 import CoverSection from '../components/page/CoverSection'
 import CreatorSection from '../components/page/CreatorSection'
+import FeatureSection from '../components/page/FeatureSection'
 import PostSection from '../components/page/PostSection'
 import ProgramSection from '../components/page/ProgramSection'
 import StatisticsSection from '../components/page/StatisticsSection'
@@ -38,6 +39,7 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
     homeActivity: ActivitySection,
     homeCover: CoverSection,
     homeCreator: CreatorSection,
+    homeFeature: FeatureSection,
     homePost: PostSection,
     homeProgram: ProgramSection,
     homeProgramCategory: ProgramSection,
