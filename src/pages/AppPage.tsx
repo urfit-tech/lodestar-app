@@ -8,6 +8,7 @@ import CoverSection from '../components/page/CoverSection'
 import CreatorSection from '../components/page/CreatorSection'
 import PostSection from '../components/page/PostSection'
 import ProgramSection from '../components/page/ProgramSection'
+import StatisticsSection from '../components/page/StatisticsSection'
 import { AppPageProps } from '../hooks/page'
 
 export const SectionTitle = styled.div<{ white?: boolean }>`
@@ -26,31 +27,29 @@ export const StyledLink = styled(Link)<{ $backgroundActive?: string }>`
   }
   margin-top: 40px;
 `
+export const StyledSection = styled.section<{ isDark?: boolean; backgroundUrl?: string }>`
+  color: ${props => props.isDark && 'white'};
+  background: ${props => (props.backgroundUrl ? `url(${props.backgroundUrl})` : 'white')};
+  padding: 64px 0;
+`
 
-const AppPage: React.VFC<{
-  page: AppPageProps
-}> = ({ page }) => {
+const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
+  const sectionConverter = {
+    homeActivity: ActivitySection,
+    homeCover: CoverSection,
+    homeCreator: CreatorSection,
+    homePost: PostSection,
+    homeProgram: ProgramSection,
+    homeProgramCategory: ProgramSection,
+    homeStatistics: StatisticsSection,
+    messenger: MessengerChat,
+  }
+
   return (
     <DefaultLayout>
       {page.appPageSections.map(section => {
-        switch (section.type) {
-          case 'homeCover':
-            return <CoverSection key={section.id} options={section.options} />
-          case 'homeActivity':
-            return <ActivitySection key={section.id} options={section.options} />
-          case 'homeProgram':
-            return <ProgramSection key={section.id} options={section.options} />
-          case 'homePost':
-            return <PostSection key={section.id} options={section.options} />
-          case 'homeProgramCategory':
-            return <ProgramSection key={section.id} options={section.options} />
-          case 'homeCreator':
-            return <CreatorSection key={section.id} options={section.options} />
-          case 'messenger':
-            return <MessengerChat key={section.id} {...section.options} />
-          default:
-            return <div key={section.id}></div>
-        }
+        const Section = sectionConverter[section.type]
+        return <Section key={section.id} options={section.options} />
       })}
     </DefaultLayout>
   )

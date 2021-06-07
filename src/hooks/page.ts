@@ -3,7 +3,24 @@ import gql from 'graphql-tag'
 import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 
-type AppPageSectionProps = { id: string; options: any; type: string }
+type SectionType =
+  | 'homeActivity'
+  | 'homeCover'
+  | 'homeCTA'
+  | 'homeCreator'
+  | 'homeDescription'
+  | 'homeFeature'
+  | 'homeStatistics'
+  | 'homePost'
+  | 'homeProgram'
+  | 'homeProgramCategory'
+  | 'messenger'
+
+type AppPageSectionProps = {
+  id: string
+  options: any
+  type: SectionType
+}
 
 export type AppPageProps = {
   id: string | null
@@ -42,7 +59,7 @@ export const usePage = (path: string) => {
       ? data?.app_page[0].app_page_sections.map((v: { id: string; options: any; type: string }) => ({
           id: v.id,
           options: v.options,
-          type: v.type,
+          type: v.type as SectionType,
         }))
       : [],
   }

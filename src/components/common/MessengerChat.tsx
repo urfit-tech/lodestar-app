@@ -4,25 +4,27 @@ import { ThemeContext } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 
 type MessengerChatProps = {
-  appId?: string
-  pageId: string
-  debug?: boolean
-  themeColor?: string
-  shouldShowDialog?: boolean
-  htmlRef?: string
-  minimized?: boolean
-  loggedInGreeting?: string
-  loggedOutGreeting?: string
-  greetingDialogDisplay?: string
-  greetingDialogDelay?: number
-  autoLogAppEvents?: boolean
-  xfbml?: boolean
-  version?: string
-  language?: string
-  onCustomerChatDialogShow?: () => void
-  onCustomerChatDialogHide?: () => void
+  options: {
+    appId?: string
+    pageId: string
+    debug?: boolean
+    themeColor?: string
+    shouldShowDialog?: boolean
+    htmlRef?: string
+    minimized?: boolean
+    loggedInGreeting?: string
+    loggedOutGreeting?: string
+    greetingDialogDisplay?: string
+    greetingDialogDelay?: number
+    autoLogAppEvents?: boolean
+    xfbml?: boolean
+    version?: string
+    language?: string
+    onCustomerChatDialogShow?: () => void
+    onCustomerChatDialogHide?: () => void
+  }
 }
-const MessengerChat: React.VFC<MessengerChatProps> = ({ appId, themeColor, ...options }) => {
+const MessengerChat: React.VFC<MessengerChatProps> = ({ options: { appId, themeColor, ...options } }) => {
   const { settings } = useApp()
   const themeContext = useContext(ThemeContext)
 
