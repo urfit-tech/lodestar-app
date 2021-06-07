@@ -1,5 +1,4 @@
 import { ListItem, OrderedList, Stat } from '@chakra-ui/react'
-import { update } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -29,9 +28,7 @@ const CheckoutGroupBuyingForm: React.FC<{
         <ListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription1)}</ListItem>
         <ListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription2)}</ListItem>
         <ListItem>
-          {formatMessage(checkoutMessages.text.groupBuyingDescription3_1)}
-          <GroupBuyingRuleModal />
-          {formatMessage(checkoutMessages.text.groupBuyingDescription3_2)}
+          {formatMessage(checkoutMessages.text.groupBuyingDescription3, { modal: <GroupBuyingRuleModal /> })}
         </ListItem>
       </OrderedList>
 
@@ -43,13 +40,11 @@ const CheckoutGroupBuyingForm: React.FC<{
         {memberIds.map((_, i) => (
           <div key={i} className="col-12 col-lg-6 px-0 mb-3">
             <GroupBuyingPartnerInput
-              existingMemberIds={memberIds.slice(0, i).filter(notEmpty)}
-              onVerified={memberId => {
-                setMemberIds(prevMemberIds => {
-                  const newMemberIds = update(i, memberId, prevMemberIds)
-                  onChange?.(newMemberIds.filter(notEmpty))
-                  return newMemberIds
-                })
+              index={i}
+              value={memberIds}
+              onChange={value => {
+                onChange?.(value.filter(notEmpty))
+                setMemberIds(value)
               }}
             />
           </div>

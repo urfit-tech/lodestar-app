@@ -28,7 +28,7 @@ const GroupBuyingRuleModal: React.VFC = () => {
       <StyledLink colorScheme="primary" variant="link" onClick={onOpen}>
         {formatMessage(checkoutMessages.text.groupBuyingRuleLink)}
       </StyledLink>
-      <CommonModal isOpen={isOpen} title="多人同行揪團規定與退費說明" onClose={onClose}>
+      <CommonModal isOpen={isOpen} title={formatMessage(checkoutMessages.label.groupBuyingRuleTitle)} onClose={onClose}>
         <OrderedList>
           <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingRule1)}</StyledListItem>
           <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingRule2)}</StyledListItem>

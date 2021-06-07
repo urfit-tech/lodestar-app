@@ -492,7 +492,7 @@ export const checkoutMessages = {
       defaultMessage: '同行者信箱',
     },
     groupBuyingRuleTitle: {
-      id: 'checkout.label.groupBuyingTitle',
+      id: 'checkout.label.groupBuyingRuleTitle',
       defaultMessage: '多人同行揪團規定與退費說明',
     },
   }),
@@ -506,14 +506,11 @@ export const checkoutMessages = {
       id: 'checkout.text.groupBuyingDescription2',
       defaultMessage: '若本次未填寫同行者信箱，則會保留在後台的「我的揪團」，可以之後再指定開通給其他會員。',
     },
-    groupBuyingDescription3_1: {
-      id: 'checkout.text.groupBuyingDescription3_1',
-      defaultMessage: '注意事項：購買即同意以下多人同行揪團',
+    groupBuyingDescription3: {
+      id: 'checkout.text.groupBuyingDescription3',
+      defaultMessage: '注意事項：購買即同意以下多人同行揪團{modal}辦法。',
     },
-    groupBuyingDescription3_2: {
-      id: 'checkout.text.groupBuyingDescription3_2',
-      defaultMessage: '辦法。',
-    },
+
     groupBuyingRuleLink: {
       id: 'checkout.text.groupBuyingRuleLink',
       defaultMessage: '規定與退費',
