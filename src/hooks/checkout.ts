@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { useAuth } from '../components/auth/AuthContext'
 import { InvoiceProps } from '../components/checkout/InvoiceInput'
+import { PaymentProps } from '../components/checkout/PaymentSelector'
 import { ShippingProps } from '../components/checkout/ShippingInput'
 import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
@@ -75,13 +76,13 @@ export const useCheck = (
     async (
       paymentType: 'perpetual' | 'subscription' | 'groupBuying',
       invoice: InvoiceProps,
-      paymentMethod?: string,
+      payment?: PaymentProps,
     ) => {
       setOrderPlacing(true)
       return Axios.post<{ code: string; message: string; result: { id: string } }>(
         `https://${apiHost}/tasks/order`,
         {
-          paymentModel: { type: paymentType, paymentMethod },
+          paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
           productIds,
           discountId,
           shipping,

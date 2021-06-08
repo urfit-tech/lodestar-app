@@ -12,7 +12,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../../components/auth/AuthContext'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
 import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/checkout/InvoiceInput'
-import PaymentSelector, { PaymentMethodType } from '../../components/checkout/PaymentSelector'
+import PaymentSelector, { PaymentMethodType, PaymentProps } from '../../components/checkout/PaymentSelector'
 import ShippingInput, { ShippingProps, validateShipping } from '../../components/checkout/ShippingInput'
 import PriceLabel from '../../components/common/PriceLabel'
 import ProductItem from '../../components/common/ProductItem'
@@ -92,7 +92,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
   const cachedPaymentInfor: {
     shipping: ShippingProps
     invoice: InvoiceProps
-    paymentMethod: PaymentMethodType
+    payment: PaymentProps
   } = {
     shipping: {
       name: '',
@@ -108,13 +108,22 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
       phone: '',
       email: member?.email || '',
     },
-    paymentMethod: 'CREDIT',
+    payment: {
+      gateway:
+        paymentType === 'perpetual'
+          ? settings['payment.perpetual.default_gateway'] || 'spgateway'
+          : settings['payment.subscription.default_gateway'] || 'tappay',
+      method:
+        paymentType === 'perpetual'
+          ? (settings['payment.perpetual.default_gateway_method'] as PaymentMethodType) || 'credit'
+          : 'credit',
+    },
   }
 
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
     const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
-    const cachedPaymentMethod = localStorage.getItem('kolable.cart.paymentMethod')
+    const cachedPayment = localStorage.getItem('kolable.cart.payment')
 
     cachedPaymentInfor.shipping = cachedShipping
       ? (JSON.parse(cachedShipping) as ShippingProps)
@@ -129,7 +138,12 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
           ...cachedPaymentInfor.invoice,
           ...member?.metadata?.invoice,
         }
-    cachedPaymentInfor.paymentMethod = cachedPaymentMethod ? cachedPaymentMethod : member?.metadata?.paymentMethod
+    cachedPaymentInfor.payment = cachedPayment
+      ? (JSON.parse(cachedPayment) as PaymentProps)
+      : {
+          ...cachedPaymentInfor.payment,
+          ...member?.metadata?.payment,
+        }
   } catch {}
 
   const shippingRef = useRef<HTMLDivElement | null>(null)
@@ -138,7 +152,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(cachedPaymentInfor.paymentMethod)
+  const [payment, setPayment] = useState<PaymentProps>(cachedPaymentInfor.payment)
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
 
@@ -224,6 +238,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
             ...member.metadata,
             invoice,
             shipping: isProductPhysical ? shipping : undefined,
+            payment,
           },
         },
       })
@@ -285,7 +300,7 @@ const CheckoutProductModal: React.FC<CheckoutProductModalProps> = ({
 
             {paymentType === 'perpetual' && (
               <div className="mb-5">
-                <PaymentSelector value={paymentMethod} onChange={v => setPaymentMethod(v)} />
+                <PaymentSelector value={payment} onChange={v => setPayment(v)} />
               </div>
             )}
 
