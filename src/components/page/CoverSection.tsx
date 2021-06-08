@@ -52,6 +52,7 @@ const StyledCoverBackground = styled.div<{
   overflow: hidden;
   background-size: cover;
   background-image: url(${props => props.srcMobile});
+  background-position: center;
 
   @media (min-width: ${BREAK_POINT}px) {
     background-image: url(${props => props.srcDesktop});
