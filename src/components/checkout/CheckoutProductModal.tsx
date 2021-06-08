@@ -68,7 +68,10 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const { enabledModules, settings } = useApp()
   const updateMemberMetadata = useUpdateMemberMetadata()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [groupBuyingPartnerIds, setGroupBuyingPartnerIds] = useState<string[]>()
+  const [groupBuying, setGroupBuying] = useState<{
+    memberIds: string[]
+    withError: boolean
+  }>({ memberIds: [], withError: false })
 
   // payment information
   const cachedPaymentInfor: {
@@ -113,6 +116,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
   const referrerRef = useRef<HTMLDivElement | null>(null)
+  const groupBuyingRef = useRef<HTMLDivElement | null>(null)
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
@@ -139,7 +143,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         startedAt,
         from: window.location.pathname,
         sharingCode,
-        groupBuyingPartnerIds,
+        groupBuyingPartnerIds: groupBuying.memberIds,
       },
     },
   })
@@ -168,6 +172,11 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
       }
       return
     }
+    if (groupBuying.withError) {
+      groupBuyingRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
         value: totalPrice,
@@ -246,13 +255,13 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         )}
 
         {enabledModules.group_buying && !!target?.groupBuyingPeople && (
-          <CheckoutGroupBuyingForm
-            title={target?.title || ''}
-            partnerCount={target.groupBuyingPeople - 1}
-            onChange={newValue => {
-              setGroupBuyingPartnerIds(newValue)
-            }}
-          />
+          <div ref={groupBuyingRef}>
+            <CheckoutGroupBuyingForm
+              title={target?.title || ''}
+              partnerCount={target.groupBuyingPeople - 1}
+              onChange={value => setGroupBuying(value)}
+            />
+          </div>
         )}
 
         <div ref={invoiceRef} className="mb-5">

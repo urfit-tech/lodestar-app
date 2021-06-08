@@ -397,7 +397,7 @@ export const commonMessages = {
       defaultMessage: '成功加入購物車',
     },
     notFoundMemberEmail: { id: 'common.text.notFoundMemberEmail', defaultMessage: '找不到這個註冊信箱' },
-    selfReferringIsNotAllowed: { id: 'common.text.selfReferringIsNotAllowed', defaultMessage: '推薦人不可為自己' },
+    selfReferringIsNotAllowed: { id: 'common.text.selfReferringIsNotAllowed', defaultMessage: '不可填寫自己的信箱' },
     fillInEnrolledEmail: {
       id: 'common.text.fillInEnrolledEmail',
       defaultMessage: '請填寫對方在站上註冊的電子信箱',

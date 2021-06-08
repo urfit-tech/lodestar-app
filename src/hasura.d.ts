@@ -3882,6 +3882,33 @@ export interface SEARCH_MEMBERVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: SEARCH_MEMBERS
+// ====================================================
+
+export interface SEARCH_MEMBERS_member_public {
+  __typename: "member_public";
+  id: string | null;
+  email: string | null;
+}
+
+export interface SEARCH_MEMBERS {
+  /**
+   * fetch data from the table: "member_public"
+   */
+  member_public: SEARCH_MEMBERS_member_public[];
+}
+
+export interface SEARCH_MEMBERSVariables {
+  emails: string[];
+  appId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_COUPON_COLLECTION
 // ====================================================
 
@@ -10303,6 +10330,7 @@ export enum order_log_update_column {
   last_paid_at = "last_paid_at",
   member_id = "member_id",
   message = "message",
+  options = "options",
   parent_order_id = "parent_order_id",
   payment_model = "payment_model",
   retried_at = "retried_at",
@@ -10447,6 +10475,7 @@ export enum payment_log_constraint {
 export enum payment_log_update_column {
   created_at = "created_at",
   gateway = "gateway",
+  method = "method",
   no = "no",
   options = "options",
   order_id = "order_id",
@@ -15676,6 +15705,7 @@ export interface order_log_bool_exp {
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   message?: String_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
   order_contacts?: order_contact_bool_exp | null;
   order_discounts?: order_discount_bool_exp | null;
   order_executors?: order_executor_bool_exp | null;
@@ -15713,6 +15743,7 @@ export interface order_log_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   message?: string | null;
+  options?: any | null;
   order_contacts?: order_contact_arr_rel_insert_input | null;
   order_discounts?: order_discount_arr_rel_insert_input | null;
   order_executors?: order_executor_arr_rel_insert_input | null;
@@ -16101,6 +16132,7 @@ export interface payment_log_bool_exp {
   _or?: (payment_log_bool_exp | null)[] | null;
   created_at?: timestamptz_comparison_exp | null;
   gateway?: String_comparison_exp | null;
+  method?: String_comparison_exp | null;
   no?: numeric_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
   order_id?: String_comparison_exp | null;
@@ -16118,6 +16150,7 @@ export interface payment_log_bool_exp {
 export interface payment_log_insert_input {
   created_at?: any | null;
   gateway?: string | null;
+  method?: string | null;
   no?: any | null;
   options?: any | null;
   order_id?: string | null;

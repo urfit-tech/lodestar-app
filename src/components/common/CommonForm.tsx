@@ -31,7 +31,11 @@ const StyledInputRightElement = styled(InputRightElement)<{ status: 'error' | 's
   }
 `
 
-const Input: React.VFC<{ status?: 'error' | 'validating' | 'success' } & InputProps> = ({ status, ...inputProps }) => {
+const Input: React.VFC<
+  {
+    status?: 'error' | 'validating' | 'success'
+  } & InputProps
+> = ({ status, ...inputProps }) => {
   const icon = {
     success: CheckCircleIcon,
     error: ExclamationCircleIcon,
