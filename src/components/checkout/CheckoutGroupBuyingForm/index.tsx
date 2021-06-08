@@ -1,4 +1,5 @@
 import { ListItem, OrderedList, Stat } from '@chakra-ui/react'
+import { update } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -44,7 +45,7 @@ const CheckoutGroupBuyingForm: React.FC<{
               value={memberIds}
               onChange={value => {
                 onChange?.(value.filter(notEmpty))
-                setMemberIds(value)
+                setMemberIds(prevMemberIds => update(i, value[i], prevMemberIds))
               }}
             />
           </div>
