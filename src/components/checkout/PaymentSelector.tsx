@@ -15,23 +15,26 @@ const StyledDescription = styled.div`
   font-size: 14px;
   letter-spacing: 0.4px;
 `
+export type PaymentProps = {
+  gateway: string
+  method?: PaymentMethodType
+}
 
-export type PaymentMethodType = 'CREDIT' | 'VACC' | 'CVS' | 'InstFlag' | 'UNIONPAY' | 'WEBATM' | 'BARCODE'
+export type PaymentMethodType = 'credit' | 'vacc' | 'cvs' | 'instflag' | 'unionpay' | 'webatm' | 'barcode'
 
 const PaymentSelector: React.FC<{
-  value: PaymentMethodType
-  onChange: (value: PaymentMethodType) => void
+  value: PaymentProps
+  onChange: (value: PaymentProps) => void
 }> = ({ value, onChange }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
-  const [selectedPaymentMethodType, setSelectedPaymentMethodType] = useState<PaymentMethodType | null>(value)
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentProps | null>(value)
 
-  const handleChange = (paymentMethodType?: PaymentMethodType | null) => {
-    const currentPaymentOption =
-      typeof paymentMethodType === 'undefined' ? selectedPaymentMethodType : paymentMethodType
-    typeof paymentMethodType !== 'undefined' && setSelectedPaymentMethodType(paymentMethodType)
+  const handleChange = (paymentType?: PaymentProps | null) => {
+    const currentPaymentOption = typeof paymentType === 'undefined' ? selectedPaymentMethod : paymentType
+    typeof paymentType !== 'undefined' && setSelectedPaymentMethod(paymentType)
     if (currentPaymentOption) {
-      localStorage.setItem('kolable.cart.paymentMethod', currentPaymentOption)
+      localStorage.setItem('kolable.cart.payment', JSON.stringify(currentPaymentOption))
       if (onChange) {
         onChange(currentPaymentOption)
       }
@@ -42,31 +45,45 @@ const PaymentSelector: React.FC<{
     <>
       <StyledTitle>{formatMessage(checkoutMessages.label.paymentMethod)}</StyledTitle>
       <StyledDescription className="mb-4">{formatMessage(checkoutMessages.message.warningPayment)}</StyledDescription>
-      <Select<PaymentMethodType | null>
+      <Select
         style={{ width: '50%' }}
-        value={selectedPaymentMethodType}
-        onChange={v => handleChange(v)}
+        value={JSON.stringify(selectedPaymentMethod)}
+        onChange={(v: string) => v && handleChange(JSON.parse(v))}
       >
-        {Number(settings['payment.spgateway.credit.enable']) && (
-          <Select.Option value="CREDIT">{formatMessage(checkoutMessages.label.credit)}</Select.Option>
+        {settings['payment.spgateway.credit.enable'] === '1' && (
+          <Select.Option value='{"gateway":"spgateway","method":"credit"}'>
+            {formatMessage(checkoutMessages.label.credit)}
+          </Select.Option>
         )}
-        {Number(settings['payment.spgateway.vacc.enable']) && (
-          <Select.Option value="VACC">{formatMessage(checkoutMessages.label.vacc)}</Select.Option>
+        {settings['payment.spgateway.vacc.enable'] === '1' && (
+          <Select.Option value='{"gateway":"spgateway","method":"vacc"}'>
+            {formatMessage(checkoutMessages.label.vacc)}
+          </Select.Option>
         )}
-        {Number(settings['payment.spgateway.cvs.enable']) && (
-          <Select.Option value="CVS">{formatMessage(checkoutMessages.label.cvs)}</Select.Option>
+        {settings['payment.spgateway.cvs.enable'] === '1' && (
+          <Select.Option value='{"gateway":"spgateway","method":"cvs"}'>
+            {formatMessage(checkoutMessages.label.cvs)}
+          </Select.Option>
         )}
-        {Number(settings['payment.spgateway.instflag.enable']) && (
-          <Select.Option value="InstFlag">{formatMessage(checkoutMessages.label.instFlag)}</Select.Option>
+        {settings['payment.spgateway.instflag.enable'] === '1' && (
+          <Select.Option value='{"gateway":"spgateway","method":"instflag"}'>
+            {formatMessage(checkoutMessages.label.instFlag)}
+          </Select.Option>
         )}
-        {Number(settings['payment.spgateway.unionpay.enable']) && (
-          <Select.Option value="UNIONPAY">{formatMessage(checkoutMessages.label.unionPay)}</Select.Option>
+        {settings['payment.spgateway.unionpay.enable'] === '1' && (
+          <Select.Option value='{"gateway":"spgateway","method":"unionpay"}'>
+            {formatMessage(checkoutMessages.label.unionPay)}
+          </Select.Option>
         )}
-        {Number(settings['payment.spgateway.webatm.enable']) && (
-          <Select.Option value="WEBATM">{formatMessage(checkoutMessages.label.webAtm)}</Select.Option>
+        {settings['payment.spgateway.webatm.enable'] === '1' && (
+          <Select.Option value='{"gateway":"spgateway","method":"webatm"}'>
+            {formatMessage(checkoutMessages.label.webAtm)}
+          </Select.Option>
         )}
-        {Number(settings['payment.spgateway.barcode.enable']) && (
-          <Select.Option value="BARCODE">{formatMessage(checkoutMessages.label.barcode)}</Select.Option>
+        {settings['payment.spgateway.barcode.enable'] === '1' && (
+          <Select.Option value='{"gateway":"spgateway","method":"barcode"}'>
+            {formatMessage(checkoutMessages.label.barcode)}
+          </Select.Option>
         )}
       </Select>
     </>

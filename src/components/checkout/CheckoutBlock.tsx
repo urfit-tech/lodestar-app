@@ -29,7 +29,7 @@ import { CartProductProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import { CommonTitleMixin } from '../common'
-import PaymentSelector, { PaymentMethodType } from './PaymentSelector'
+import PaymentSelector, { PaymentMethodType, PaymentProps } from './PaymentSelector'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
@@ -56,7 +56,7 @@ const CheckoutBlock: React.VFC<{
   const cachedPaymentInfor: {
     shipping: ShippingProps
     invoice: InvoiceProps
-    paymentMethod: PaymentMethodType
+    payment: PaymentProps
   } = {
     shipping: {
       name: '',
@@ -72,12 +72,15 @@ const CheckoutBlock: React.VFC<{
       phone: '',
       email: member?.email || '',
     },
-    paymentMethod: 'CREDIT',
+    payment: {
+      gateway: settings['payment.perpetual.default_gateway'] || 'spgateway',
+      method: (settings['payment.perpetual.default_gateway_method'] as PaymentMethodType) || 'credit',
+    },
   }
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
     const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
-    const cachedPaymentMethod = localStorage.getItem('kolable.cart.paymentMethod')
+    const cachedPayment = localStorage.getItem('kolable.cart.payment')
 
     cachedPaymentInfor.shipping = cachedShipping
       ? (JSON.parse(cachedShipping) as ShippingProps)
@@ -92,7 +95,12 @@ const CheckoutBlock: React.VFC<{
           ...cachedPaymentInfor.invoice,
           ...member?.metadata?.invoice,
         }
-    cachedPaymentInfor.paymentMethod = cachedPaymentMethod ? cachedPaymentMethod : member?.metadata?.paymentMethod
+    cachedPaymentInfor.payment = cachedPayment
+      ? (JSON.parse(cachedPayment) as PaymentProps)
+      : {
+          ...cachedPaymentInfor.payment,
+          ...member?.metadata?.payment,
+        }
   } catch {}
 
   const shippingRef = useRef<HTMLDivElement | null>(null)
@@ -101,7 +109,7 @@ const CheckoutBlock: React.VFC<{
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(cachedPaymentInfor.paymentMethod)
+  const [payment, setPayment] = useState<PaymentProps>(cachedPaymentInfor.payment)
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
 
@@ -199,7 +207,7 @@ const CheckoutBlock: React.VFC<{
         ...invoice,
         referrerEmail: referrerEmail || undefined,
       },
-      paymentMethod,
+      payment,
     )
 
     member &&
@@ -210,7 +218,7 @@ const CheckoutBlock: React.VFC<{
             ...member.metadata,
             invoice,
             shipping: hasPhysicalProduct ? shipping : undefined,
-            paymentMethod,
+            payment,
           },
         },
       }))
@@ -242,7 +250,7 @@ const CheckoutBlock: React.VFC<{
 
       <div className="mb-3">
         <AdminCard>
-          <PaymentSelector value={paymentMethod} onChange={v => setPaymentMethod(v)} />
+          <PaymentSelector value={payment} onChange={v => setPayment(v)} />
         </AdminCard>
       </div>
 
