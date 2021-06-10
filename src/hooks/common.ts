@@ -1,7 +1,10 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useIntl } from 'react-intl'
+import { useAuth } from '../components/auth/AuthContext'
+import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
+import { notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { ProductType } from '../types/product'
 import { PeriodType } from '../types/program'
@@ -23,6 +26,7 @@ type TargetProps = {
   isLimited?: boolean
   isPhysical?: boolean
   isCustomized?: boolean
+  groupBuyingPeople?: number
 } | null
 
 export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Date }) => {
@@ -67,6 +71,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
               : undefined,
           discountDownPrice: data.program_plan_by_pk.discount_down_price || undefined,
           periodType: data.program_plan_by_pk.period_type as PeriodType,
+          groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
         }
       : data.program_package_plan_by_pk
       ? {
@@ -200,6 +205,7 @@ const GET_PRODUCT_SIMPLE = gql`
       sold_at
       discount_down_price
       period_type
+      group_buying_people
       program {
         id
         title
@@ -318,22 +324,73 @@ const GET_PRODUCT_SIMPLE = gql`
   }
 `
 
-export const useReferrer = (email: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.SEARCH_REFERRER, hasura.SEARCH_REFERRERVariables>(
+export const useMemberValidation = (email: string) => {
+  const { currentMemberId } = useAuth()
+  const { id: appId } = useApp()
+  const { loading, error, data, refetch } = useQuery(
     gql`
-      query SEARCH_REFERRER($search: String!) {
-        member_public(where: { email: { _eq: $search } }) {
+      query SEARCH_MEMBER($email: String!, $appId: String!) {
+        member_public(where: { email: { _eq: $email }, app_id: { _eq: $appId } }) {
           id
         }
       }
     `,
-    { variables: { search: email } },
+    { variables: { email, appId } },
   )
 
+  const memberId: string | null = data?.member_public[0]?.id || null
+
+  const validateStatus: 'success' | 'error' | 'validating' | undefined = !email
+    ? undefined
+    : loading
+    ? 'validating'
+    : !memberId || memberId === currentMemberId
+    ? 'error'
+    : 'success'
+
   return {
-    loadingReferrerId: loading,
-    errorReferrerId: error,
-    referrerId: data?.member_public[0]?.id || null,
-    refetchReferrerId: refetch,
+    loadingMemberId: loading,
+    errorMemberId: error,
+    memberId,
+    validateStatus,
+    refetchMemberId: refetch,
   }
+}
+
+export const useSearchMembers = () => {
+  const apolloClient = useApolloClient()
+  const { id: appId } = useApp()
+  const searchMembers = async (emails: string[]) => {
+    try {
+      const { data } = await apolloClient.query<hasura.SEARCH_MEMBERS, hasura.SEARCH_MEMBERSVariables>({
+        query: gql`
+          query SEARCH_MEMBERS($emails: [String!]!, $appId: String!) {
+            member_public(where: { email: { _in: $emails }, app_id: { _eq: $appId } }) {
+              id
+              email
+            }
+          }
+        `,
+        variables: {
+          emails: emails.filter(notEmpty),
+          appId,
+        },
+        fetchPolicy: 'no-cache',
+      })
+
+      const members =
+        data?.member_public
+          .filter(v => v.id && v.email)
+          .map(v => ({
+            id: v.id || '',
+            email: v.email || '',
+          })) || []
+
+      return members
+    } catch {
+      return []
+    }
+  }
+
+  return searchMembers
 }

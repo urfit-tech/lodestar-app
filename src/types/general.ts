@@ -16,6 +16,7 @@ export type Module =
   | 'currency'
   | 'customer_review'
   | 'exercise'
+  | 'group_buying'
   | 'invoice'
   | 'learning_statistics'
   | 'learning_statistics_advanced'

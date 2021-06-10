@@ -3,6 +3,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { MultiLineTruncationMixin } from '.'
 import { PodcastProgramProps } from '../../containers/podcast/PodcastProgramTimeline'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledPodcastPlansCreators, useEnrolledPodcastProgramIds } from '../../hooks/podcast'
@@ -14,16 +15,13 @@ import { useAuth } from '../auth/AuthContext'
 import PodcastProgramPopover from '../podcast/PodcastProgramPopover'
 
 const StyledTitle = styled.div`
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  ${MultiLineTruncationMixin}
   padding-left: 20px;
   color: var(--gray-darker);
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: 0.2px;
-  overflow: hidden;
 `
 const StyledSideBarBlock = styled.div`
   margin-bottom: 2rem;

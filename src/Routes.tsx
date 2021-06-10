@@ -327,6 +327,12 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     authenticated: true,
     allowedUserRole: 'general-member',
   },
+  member_group_buying_admin: {
+    path: '/settings/group-buying',
+    pageName: 'GroupBuyingCollectionPage',
+    authenticated: true,
+    allowedUserRole: 'general-member',
+  },
   member_account_admin: {
     path: '/settings/account',
     pageName: 'member/AccountAdminPage',

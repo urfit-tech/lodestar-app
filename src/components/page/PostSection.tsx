@@ -13,6 +13,7 @@ import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { SectionTitle, StyledLink } from '../../pages/AppPage'
 import { StyledPostTitle } from '../blog'
+import { MultiLineTruncationMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledSection = styled.section`
@@ -69,10 +70,7 @@ const StyledPostListContainer = styled.div`
 `
 const StyledPostAbstract = styled.div`
   @media (min-width: ${BREAK_POINT}px) {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
+    ${MultiLineTruncationMixin}
     color: var(--gray-darker);
     line-height: 1.69;
     letter-spacing: 0.4px;

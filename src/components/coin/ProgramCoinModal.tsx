@@ -63,14 +63,14 @@ const ProgramCoinModal: React.VFC<
     programPlan => programPlan.periodAmount === periodAmount && programPlan.periodType === periodType,
   )
 
-  const { orderChecking, check, placeOrder, orderPlacing } = useCheck(
-    targetProgramPlan ? [`ProgramPlan_${targetProgramPlan.id}`] : [],
-    'Coin',
-    null,
-    targetProgramPlan
+  const { orderChecking, check, placeOrder, orderPlacing } = useCheck({
+    productIds: targetProgramPlan ? [`ProgramPlan_${targetProgramPlan.id}`] : [],
+    discountId: 'Coin',
+    shipping: null,
+    options: targetProgramPlan
       ? { [`ProgramPlan_${targetProgramPlan.id}`]: { parentProductId: `ProjectPlan_${projectPlanId}` } }
       : {},
-  )
+  })
   const isPaymentAvailable =
     !orderChecking &&
     sum(check.orderProducts.map(orderProduct => orderProduct.price)) ===

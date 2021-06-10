@@ -35,9 +35,7 @@ const PaymentSelector: React.FC<{
     typeof paymentType !== 'undefined' && setSelectedPaymentMethod(paymentType)
     if (currentPaymentOption) {
       localStorage.setItem('kolable.cart.payment', JSON.stringify(currentPaymentOption))
-      if (onChange) {
-        onChange(currentPaymentOption)
-      }
+      onChange?.(currentPaymentOption)
     }
   }
 

@@ -4,7 +4,7 @@ import { ProductType } from '../../types/product'
 
 const messages = defineMessages({
   program: { id: 'common.program', defaultMessage: '單次課程' },
-  programPlan: { id: 'common.programPlan', defaultMessage: '訂閱課程' },
+  programPlan: { id: 'common.programPlan', defaultMessage: '課程方案' },
   programContent: { id: 'common.programContent', defaultMessage: '課程內容' },
   programPackagePlan: { id: 'common.package', defaultMessage: '課程組合' },
   projectPlan: { id: 'common.project', defaultMessage: '專案方案' },

@@ -6,7 +6,6 @@ import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { useAuth } from '../../components/auth/AuthContext'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
 import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/checkout/InvoiceInput'
 import PaymentSelector, { PaymentMethodType, PaymentProps } from '../../components/checkout/PaymentSelector'
@@ -17,18 +16,16 @@ import ProductItem from '../../components/common/ProductItem'
 import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
-import { useReferrer, useSimpleProduct } from '../../hooks/common'
+import { useMemberValidation, useSimpleProduct } from '../../hooks/common'
 import { useUpdateMemberMetadata } from '../../hooks/member'
 import { shippingOptionIdProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { ShippingMethodProps } from '../../types/merchandise'
+import CheckoutGroupBuyingForm from './CheckoutGroupBuyingForm'
 import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
 import CheckoutProductReferrerInput from './CheckoutProductReferrerInput'
 
-const CheckoutProductItem: React.VFC<{
-  name: string
-  price: number
-}> = ({ name, price }) => {
+const CheckoutProductItem: React.VFC<{ name: string; price: number }> = ({ name, price }) => {
   const { currencyId: appCurrencyId } = useApp()
 
   return (
@@ -69,10 +66,13 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [sharingCode] = useQueryParam('sharing', StringParam)
-  const { currentMemberId } = useAuth()
   const { enabledModules, settings } = useApp()
   const updateMemberMetadata = useUpdateMemberMetadata()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [groupBuying, setGroupBuying] = useState<{
+    memberIds: string[]
+    withError: boolean
+  }>({ memberIds: [], withError: false })
 
   // payment information
   const cachedPaymentInfor: {
@@ -135,6 +135,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
   const referrerRef = useRef<HTMLDivElement | null>(null)
+  const groupBuyingRef = useRef<HTMLDivElement | null>(null)
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
@@ -143,31 +144,29 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const [discountId, setDiscountId] = useState('')
   const [referrerEmail, setReferrerEmail] = useState('')
 
-  const { loadingReferrerId, referrerId } = useReferrer(referrerEmail)
-  const referrerStatus: 'success' | 'error' | 'validating' | undefined = !referrerEmail
-    ? undefined
-    : loadingReferrerId
-    ? 'validating'
-    : !referrerId || referrerId === currentMemberId
-    ? 'error'
-    : 'success'
+  const { memberId: referrerId, validateStatus: referrerStatus } = useMemberValidation(referrerEmail)
 
   // checkout
   const [productId, setProductId] = useState<string>(defaultProductId || '')
   const { target } = useSimpleProduct({ id: productId, startedAt })
 
-  const { check, orderPlacing, orderChecking, placeOrder, totalPrice } = useCheck(
-    [productId],
+  const { check, orderPlacing, orderChecking, placeOrder, totalPrice } = useCheck({
+    productIds: [productId],
     discountId,
-    isProductPhysical ? shipping : productId.startsWith('MerchandiseSpec_') ? { address: member?.email } : null,
-    {
+    shipping: isProductPhysical
+      ? shipping
+      : productId.startsWith('MerchandiseSpec_')
+      ? { address: member?.email }
+      : null,
+    options: {
       [productId]: {
         startedAt,
         from: window.location.pathname,
         sharingCode,
+        groupBuyingPartnerIds: groupBuying.memberIds,
       },
     },
-  )
+  })
 
   const handleSubmit = async () => {
     if (!member) {
@@ -193,6 +192,11 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
       }
       return
     }
+    if (groupBuying.withError) {
+      groupBuyingRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
         value: totalPrice,
@@ -271,6 +275,16 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
+        {enabledModules.group_buying && !!target?.groupBuyingPeople && (
+          <div ref={groupBuyingRef}>
+            <CheckoutGroupBuyingForm
+              title={target?.title || ''}
+              partnerCount={target.groupBuyingPeople - 1}
+              onChange={value => setGroupBuying(value)}
+            />
+          </div>
+        )}
+
         {paymentType === 'perpetual' && (
           <div className="mb-5">
             <PaymentSelector value={payment} onChange={v => setPayment(v)} />
@@ -291,7 +305,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         </div>
 
         {enabledModules.referrer && (
-          <div className="row" ref={referrerRef}>
+          <div className="row mb-3" ref={referrerRef}>
             <div className="col-12">
               <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
             </div>
@@ -343,7 +357,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           <Button colorScheme="primary" isLoading={orderPlacing} onClick={handleSubmit}>
             {paymentType === 'subscription'
               ? formatMessage(checkoutMessages.button.cartSubmit)
-              : formatMessage(commonMessages.button.purchase)}
+              : formatMessage(commonMessages.ui.purchase)}
           </Button>
         </div>
       </CommonModal>

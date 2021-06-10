@@ -73,14 +73,14 @@ const AppointmentCoinModal: React.VFC<
   const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriodProps | null>(null)
   const [discountId, setDiscountId] = useState<string | null>(null)
 
-  const { orderChecking, check, placeOrder, orderPlacing } = useCheck(
-    [`AppointmentPlan_${appointmentPlanId}`],
-    discountId && discountId.split('_')[1] ? discountId : 'Coin',
-    null,
-    {
+  const { orderChecking, check, placeOrder, orderPlacing } = useCheck({
+    productIds: [`AppointmentPlan_${appointmentPlanId}`],
+    discountId: discountId && discountId.split('_')[1] ? discountId : 'Coin',
+    shipping: null,
+    options: {
       [`AppointmentPlan_${appointmentPlanId}`]: { startedAt: selectedPeriod?.startedAt },
     },
-  )
+  })
   const isPaymentAvailable =
     !orderChecking &&
     sum(check.orderProducts.map(orderProduct => orderProduct.price)) ===

@@ -3607,6 +3607,7 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
   sold_at: any | null;
   discount_down_price: any;
   period_type: string | null;
+  group_buying_people: any | null;
   /**
    * An object relationship
    */
@@ -3855,23 +3856,51 @@ export interface GET_PRODUCT_SIMPLEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: SEARCH_REFERRER
+// GraphQL query operation: SEARCH_MEMBER
 // ====================================================
 
-export interface SEARCH_REFERRER_member_public {
+export interface SEARCH_MEMBER_member_public {
   __typename: "member_public";
   id: string | null;
 }
 
-export interface SEARCH_REFERRER {
+export interface SEARCH_MEMBER {
   /**
    * fetch data from the table: "member_public"
    */
-  member_public: SEARCH_REFERRER_member_public[];
+  member_public: SEARCH_MEMBER_member_public[];
 }
 
-export interface SEARCH_REFERRERVariables {
-  search: string;
+export interface SEARCH_MEMBERVariables {
+  email: string;
+  appId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SEARCH_MEMBERS
+// ====================================================
+
+export interface SEARCH_MEMBERS_member_public {
+  __typename: "member_public";
+  id: string | null;
+  email: string | null;
+}
+
+export interface SEARCH_MEMBERS {
+  /**
+   * fetch data from the table: "member_public"
+   */
+  member_public: SEARCH_MEMBERS_member_public[];
+}
+
+export interface SEARCH_MEMBERSVariables {
+  emails: string[];
+  appId: string;
 }
 
 /* tslint:disable */
@@ -7771,6 +7800,82 @@ export interface GET_PUBLISHED_CREATOR {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: UPDATE_ORDER
+// ====================================================
+
+export interface UPDATE_ORDER_update_order_log_by_pk {
+  __typename: "order_log";
+  id: string;
+}
+
+export interface UPDATE_ORDER {
+  /**
+   * update single row of the table: "order_log"
+   */
+  update_order_log_by_pk: UPDATE_ORDER_update_order_log_by_pk | null;
+}
+
+export interface UPDATE_ORDERVariables {
+  orderId: string;
+  memberId: string;
+  transferredAt: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_GROUP_BUYING_ORDER
+// ====================================================
+
+export interface GET_GROUP_BUYING_ORDER_order_group_buying_log_parent_order_log_sub_order_logs {
+  __typename: "order_log";
+  member_id: string;
+}
+
+export interface GET_GROUP_BUYING_ORDER_order_group_buying_log_parent_order_log {
+  __typename: "order_log";
+  /**
+   * An array relationship
+   */
+  sub_order_logs: GET_GROUP_BUYING_ORDER_order_group_buying_log_parent_order_log_sub_order_logs[];
+}
+
+export interface GET_GROUP_BUYING_ORDER_order_group_buying_log {
+  __typename: "order_group_buying_log";
+  parent_order_member_id: string | null;
+  order_id: string | null;
+  member_id: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  transferred_at: any | null;
+  name: string | null;
+  cover_url: string | null;
+  /**
+   * An object relationship
+   */
+  parent_order_log: GET_GROUP_BUYING_ORDER_order_group_buying_log_parent_order_log | null;
+}
+
+export interface GET_GROUP_BUYING_ORDER {
+  /**
+   * fetch data from the table: "order_group_buying_log"
+   */
+  order_group_buying_log: GET_GROUP_BUYING_ORDER_order_group_buying_log[];
+}
+
+export interface GET_GROUP_BUYING_ORDERVariables {
+  memberId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_COIN_STATUS
 // ====================================================
 
@@ -10225,10 +10330,13 @@ export enum order_log_update_column {
   last_paid_at = "last_paid_at",
   member_id = "member_id",
   message = "message",
+  options = "options",
+  parent_order_id = "parent_order_id",
   payment_model = "payment_model",
   retried_at = "retried_at",
   shipping = "shipping",
   status = "status",
+  transferred_at = "transferred_at",
   updated_at = "updated_at",
 }
 
@@ -10367,6 +10475,7 @@ export enum payment_log_constraint {
 export enum payment_log_update_column {
   created_at = "created_at",
   gateway = "gateway",
+  method = "method",
   no = "no",
   options = "options",
   order_id = "order_id",
@@ -11075,6 +11184,7 @@ export enum program_plan_update_column {
   discount_down_price = "discount_down_price",
   ended_at = "ended_at",
   gains = "gains",
+  group_buying_people = "group_buying_people",
   id = "id",
   is_countdown_timer_visible = "is_countdown_timer_visible",
   is_participants_visible = "is_participants_visible",
@@ -15595,15 +15705,20 @@ export interface order_log_bool_exp {
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   message?: String_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
   order_contacts?: order_contact_bool_exp | null;
   order_discounts?: order_discount_bool_exp | null;
   order_executors?: order_executor_bool_exp | null;
   order_products?: order_product_bool_exp | null;
+  parent_order_id?: String_comparison_exp | null;
+  parent_order_log?: order_log_bool_exp | null;
   payment_logs?: payment_log_bool_exp | null;
   payment_model?: jsonb_comparison_exp | null;
   retried_at?: timestamptz_comparison_exp | null;
   shipping?: jsonb_comparison_exp | null;
   status?: String_comparison_exp | null;
+  sub_order_logs?: order_log_bool_exp | null;
+  transferred_at?: timestamptz_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
 
@@ -15628,15 +15743,20 @@ export interface order_log_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   message?: string | null;
+  options?: any | null;
   order_contacts?: order_contact_arr_rel_insert_input | null;
   order_discounts?: order_discount_arr_rel_insert_input | null;
   order_executors?: order_executor_arr_rel_insert_input | null;
   order_products?: order_product_arr_rel_insert_input | null;
+  parent_order_id?: string | null;
+  parent_order_log?: order_log_obj_rel_insert_input | null;
   payment_logs?: payment_log_arr_rel_insert_input | null;
   payment_model?: any | null;
   retried_at?: any | null;
   shipping?: any | null;
   status?: string | null;
+  sub_order_logs?: order_log_arr_rel_insert_input | null;
+  transferred_at?: any | null;
   updated_at?: any | null;
 }
 
@@ -16012,6 +16132,7 @@ export interface payment_log_bool_exp {
   _or?: (payment_log_bool_exp | null)[] | null;
   created_at?: timestamptz_comparison_exp | null;
   gateway?: String_comparison_exp | null;
+  method?: String_comparison_exp | null;
   no?: numeric_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
   order_id?: String_comparison_exp | null;
@@ -16029,6 +16150,7 @@ export interface payment_log_bool_exp {
 export interface payment_log_insert_input {
   created_at?: any | null;
   gateway?: string | null;
+  method?: string | null;
   no?: any | null;
   options?: any | null;
   order_id?: string | null;
@@ -18272,6 +18394,7 @@ export interface program_plan_bool_exp {
   discount_down_price?: numeric_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   gains?: jsonb_comparison_exp | null;
+  group_buying_people?: numeric_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_countdown_timer_visible?: Boolean_comparison_exp | null;
   is_participants_visible?: Boolean_comparison_exp | null;
@@ -18319,6 +18442,7 @@ export interface program_plan_insert_input {
   discount_down_price?: any | null;
   ended_at?: any | null;
   gains?: any | null;
+  group_buying_people?: any | null;
   id?: any | null;
   is_countdown_timer_visible?: boolean | null;
   is_participants_visible?: boolean | null;
@@ -18705,10 +18829,12 @@ export interface project_plan_enrollment_bool_exp {
   _and?: (project_plan_enrollment_bool_exp | null)[] | null;
   _not?: project_plan_enrollment_bool_exp | null;
   _or?: (project_plan_enrollment_bool_exp | null)[] | null;
+  ended_at?: timestamptz_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   project_plan?: project_plan_bool_exp | null;
   project_plan_id?: uuid_comparison_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
 }
 
 /**

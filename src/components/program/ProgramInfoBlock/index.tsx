@@ -4,10 +4,17 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useApp } from '../../../containers/common/AppContext'
 import { commonMessages } from '../../../helpers/translation'
 import { usePublicMember } from '../../../hooks/member'
 import { useEnrolledProgramIds } from '../../../hooks/program'
-import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../../types/program'
+import {
+  ProgramContentProps,
+  ProgramContentSectionProps,
+  ProgramPlanProps,
+  ProgramProps,
+  ProgramRoleProps,
+} from '../../../types/program'
 import { useAuth } from '../../auth/AuthContext'
 import ProgramPaymentButton from '../../checkout/ProgramPaymentButton'
 import CountDownTimeBlock from '../../common/CountDownTimeBlock'
@@ -15,6 +22,7 @@ import { AvatarImage } from '../../common/Image'
 import PriceLabel from '../../common/PriceLabel'
 import Responsive from '../../common/Responsive'
 import ProgramContentCountBlock from './ProgramContentCountBlock'
+import ProgramGroupBuyingInfo from './ProgramGroupBuyingInfo'
 
 const ProgramInfoCard = styled(Card)`
   && {
@@ -44,6 +52,7 @@ const StyledCountDownBlock = styled.div`
 const ProgramInfoBlock: React.VFC<{
   program: ProgramProps & {
     roles: ProgramRoleProps[]
+    plans: ProgramPlanProps[]
     contentSections: (ProgramContentSectionProps & {
       contents: ProgramContentProps[]
     })[]
@@ -54,6 +63,7 @@ const ProgramInfoBlock: React.VFC<{
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
   const { member } = usePublicMember(instructorId)
   const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const { enabledModules } = useApp()
 
   const isEnrolled = enrolledProgramIds.includes(program.id)
   const isOnSale = (program.soldAt?.getTime() || 0) > Date.now()
@@ -95,9 +105,13 @@ const ProgramInfoBlock: React.VFC<{
               )}
             </div>
 
-            {isEnrolled ? (
+            {enabledModules.group_buying && !!program.plans.filter(v => v.publishedAt).length ? (
+              <ProgramGroupBuyingInfo isOnSale={isOnSale} programPlans={program.plans.filter(v => v.publishedAt)} />
+            ) : isEnrolled ? (
               <Link to={`/programs/${program.id}/contents`}>
-                <Button isFullWidth>{formatMessage(commonMessages.button.enter)}</Button>
+                <Button colorScheme="primary" isFullWidth>
+                  {formatMessage(commonMessages.button.enter)}
+                </Button>
               </Link>
             ) : (
               <ProgramPaymentButton program={program} variant="multiline" />

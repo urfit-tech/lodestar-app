@@ -9,6 +9,7 @@ import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramBriefProps, ProgramPlanProps, ProgramRoleProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
+import { MultiLineTruncationMixin } from '../common'
 import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
 import PriceLabel from '../common/PriceLabel'
@@ -27,10 +28,7 @@ const StyledContentBlock = styled.div`
   padding: 1.25rem;
 `
 const StyledTitle = styled.div<{ variant?: 'brief' }>`
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  ${MultiLineTruncationMixin}
   margin-bottom: ${props => (props.variant === 'brief' ? '0.5rem' : '1.25rem')};
   height: 3em;
   color: var(--gray-darker);
@@ -45,10 +43,7 @@ const StyledReviewRating = styled.div`
   text-align: justify;
 `
 const StyledDescription = styled.div<{ variant?: 'brief' }>`
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  ${MultiLineTruncationMixin}
   margin-bottom: 12px;
   height: ${props => (props.variant === 'brief' ? '' : '3em')};
   color: var(--gray-dark);

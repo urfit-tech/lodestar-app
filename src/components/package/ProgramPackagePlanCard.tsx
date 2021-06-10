@@ -119,7 +119,7 @@ const ProgramPackagePlanCard: React.VFC<
               >
                 {isSubscription
                   ? formatMessage(commonMessages.button.subscribeNow)
-                  : formatMessage(commonMessages.button.purchase)}
+                  : formatMessage(commonMessages.ui.purchase)}
               </Button>
             )}
             paymentType={isSubscription ? 'subscription' : 'perpetual'}
