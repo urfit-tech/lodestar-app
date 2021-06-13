@@ -3,6 +3,7 @@ import { Skeleton, Tabs } from 'antd'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
+import { throttle } from 'lodash'
 import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -48,6 +49,7 @@ const ProgramContentBlock: React.VFC<{
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
+  const [lastEndedAt, setLastEndedAt] = useState<number>()
 
   const { loadingProgramContentMaterials, programContentMaterials } = useProgramContentMaterial(programContentId)
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
@@ -95,38 +97,38 @@ const ProgramContentBlock: React.VFC<{
           programContentBody={programContent.programContentBody}
           nextProgramContent={nextProgramContent}
           lastProgress={lastProgress || 0}
-          onProgress={({ played }) => {
-            const currentProgress = Math.ceil(played * 20) / 20 // every 5% as a tick
-            insertProgress(programContentId, {
-              progress: currentProgress > 1 ? 1 : currentProgress > initialProgress ? currentProgress : initialProgress,
-              lastProgress: played,
-            }).then(() => refetchProgress())
-          }}
-          onEventTrigger={data => {
-            axios
-              .post(
-                `https://${apiHost}/tasks/player-event-logs/`,
-                {
-                  programContentId,
-                  data,
-                },
-                { headers: { authorization: `Bearer ${authToken}` } },
-              )
-              .then(({ data: { code, result } }) => {
-                if (code === 'SUCCESS') {
-                  return
-                }
-                // return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-              })
-              .catch(() => {})
-          }}
-          onEnded={() => {
-            setTimeout(() => {
-              insertProgress(programContentId, {
-                progress: 1,
-                lastProgress: 1,
-              })
-            }, 3000)
+          onVideoEvent={e => {
+            if (e.type === 'ended') {
+              refetchProgress()
+            }
+            if (e.type === 'progress') {
+              const video = e.target as HTMLVideoElement
+              const currentProgress = Math.ceil((e.videoState.endedAt / video.duration) * 20) / 20 // every 5% as a tick
+              throttle(() => {
+                insertProgress(programContentId, {
+                  progress:
+                    currentProgress > 1 ? 1 : currentProgress > initialProgress ? currentProgress : initialProgress,
+                  lastProgress: currentProgress,
+                }).then(() => refetchProgress())
+              }, 5000)
+            } else {
+              axios
+                .post(
+                  `https://${apiHost}/tasks/player-event-logs/`,
+                  {
+                    programContentId,
+                    data: e.videoState,
+                  },
+                  { headers: { authorization: `Bearer ${authToken}` } },
+                )
+                .then(({ data: { code, result } }) => {
+                  if (code === 'SUCCESS') {
+                    return
+                  }
+                  // return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                })
+                .catch(() => {})
+            }
           }}
         />
       )}

@@ -1,11 +1,12 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
-import { pick } from 'ramda'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import ReactPlayer, { ReactPlayerProps } from 'react-player'
+import { ReactPlayerProps } from 'react-player'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
-import { commonMessages, productMessages } from '../../helpers/translation'
+import { useApp } from '../../containers/common/AppContext'
+import { getFileDownloadableLink } from '../../helpers'
+import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
 import { ProgramContentBodyProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
@@ -68,6 +69,9 @@ const message = defineMessages({
   next: { id: 'program.text.next', defaultMessage: '接下來' },
 })
 
+type VideoEvent = Event & {
+  videoState: { playbackRate: number; startedAt: number; endedAt: number }
+}
 const ProgramContentPlayer: React.VFC<
   ReactPlayerProps & {
     programContentBody: ProgramContentBodyProps
@@ -76,128 +80,33 @@ const ProgramContentPlayer: React.VFC<
       title: string
     }
     lastProgress?: number
-    onEventTrigger?: (data: { playbackRate: number; startedAt: number; endedAt: number }) => void
+    onVideoEvent?: (event: VideoEvent) => void
   }
-> = ({ programContentBody, nextProgramContent, lastProgress = 0, onProgress, onEnded, onEventTrigger }) => {
+> = ({ programContentBody, nextProgramContent, lastProgress = 0, onVideoEvent }) => {
+  const videoId = `v-${programContentBody.id}`
   const { formatMessage } = useIntl()
+  const { id: appId } = useApp()
   const { currentMember } = useAuth()
-
-  const playerRef = useRef<ReactPlayer | null>(null)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
-  const [playerState, setPlayerState] = useState<{
-    recordAt: number
-    playbackRate: number
-    startedAt: number
-    endedAt: number
-  }>({
-    recordAt: Date.now(),
-    playbackRate: 0,
-    startedAt: 0,
-    endedAt: 0,
-  })
-
-  useEffect(() => {
-    const data = pick(['playbackRate', 'startedAt', 'endedAt'], playerState)
-    onEventTrigger?.(data)
-  }, [onEventTrigger, playerState])
+  const urls = useUrls(appId, programContentBody.id)
 
   return (
     <StyledContainer>
       {nextProgramContent && isCoverShowing && (
         <ProgramContentPlayerCover nextProgramContent={nextProgramContent} onSetIsCoverShowing={setIsCoverShowing} />
       )}
-      <ReactPlayer
-        ref={playerRef}
-        url={`https://vimeo.com/${programContentBody.data.vimeoVideoId}`}
-        width="100%"
-        height="100%"
-        playing={true}
-        progressInterval={3000}
-        controls
-        config={{
-          vimeo: {
-            playerOptions: {
-              responsive: true,
-              speed: true,
-            },
-          },
-        }}
-        onDuration={duration => {
-          setPlayerState(() => ({
-            recordAt: Date.now(),
-            playbackRate: 0,
-            startedAt: duration * (lastProgress === 1 ? 0 : lastProgress),
-            endedAt: duration * (lastProgress === 1 ? 0 : lastProgress),
-          }))
-          playerRef.current?.seekTo(duration * (lastProgress === 1 ? 0 : lastProgress), 'seconds')
-        }}
-        onProgress={state => {
-          setPlayerState(({ recordAt, endedAt }) => {
-            const playbackRateByCalculate = ((state.playedSeconds - endedAt) * 1000) / (Date.now() - recordAt)
-            return {
-              recordAt: Date.now(),
-              playbackRate: Math.round(playbackRateByCalculate * 4) / 4,
-              startedAt: endedAt,
-              endedAt: state.playedSeconds,
+      {urls && (
+        <SmartVideo
+          videoId={videoId}
+          urls={urls}
+          initialProgress={lastProgress}
+          onEvent={e => {
+            if (e.type === 'ended') {
+              setIsCoverShowing(true)
             }
-          })
-          onProgress?.(state)
-        }}
-        onPause={() => {
-          setPlayerState(({ endedAt, recordAt }) => {
-            const playbackRateByCalculate = playerRef.current
-              ? ((playerRef.current.getCurrentTime() - endedAt) * 1000) / (Date.now() - recordAt)
-              : 0
-            return {
-              recordAt: Date.now(),
-              playbackRate: Math.ceil(playbackRateByCalculate * 4) / 4,
-              startedAt: endedAt,
-              endedAt: playerRef.current?.getCurrentTime() || 0,
-            }
-          })
-        }}
-        onBuffer={() => {
-          setPlayerState(() => ({
-            recordAt: Date.now(),
-            playbackRate: 0,
-            startedAt: playerRef.current?.getCurrentTime() || 0,
-            endedAt: playerRef.current?.getCurrentTime() || 0,
-          }))
-        }}
-        onSeek={seconds => {
-          setPlayerState(({ endedAt }) => ({
-            recordAt: Date.now(),
-            playbackRate: 0,
-            startedAt: endedAt,
-            endedAt: seconds,
-          }))
-        }}
-        onEnded={() => {
-          setPlayerState(() => ({
-            recordAt: Date.now(),
-            playbackRate: 0,
-            startedAt: playerRef.current?.getDuration() || 0,
-            endedAt: playerRef.current?.getDuration() || 0,
-          }))
-          setIsCoverShowing(true)
-          onEnded?.()
-        }}
-      />
-
-      {currentMember && (
-        <div
-          className="p-1 p-sm-2"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            background: 'rgba(255, 255, 255, 0.6)',
+            onVideoEvent?.(e)
           }}
-        >
-          {`${formatMessage(productMessages.program.content.provide)} ${currentMember.name}-${
-            currentMember.email
-          } ${formatMessage(productMessages.program.content.watch)}`}
-        </div>
+        />
       )}
     </StyledContainer>
   )
@@ -259,6 +168,165 @@ const CountDownPlayButton: React.VFC<{
       <StyledIcon as={IconNext} />
     </StyledIconWrapper>
   )
+}
+
+const SmartVideo: React.FC<{
+  videoId: string
+  urls: { video: string; texttracks: string[] }
+  initialProgress: number
+  onEvent?: (e: VideoEvent) => void
+}> = ({ videoId, urls, initialProgress, onEvent }) => {
+  const [lastEndedTime, setLastEndedTime] = useState(0)
+  useSmartVideoPlayer(videoId, {
+    onPause: player => e => {
+      onEvent?.({
+        ...e,
+        type: e.type,
+        target: e.target,
+        videoState: {
+          playbackRate: player.playbackRate(),
+          startedAt: lastEndedTime,
+          endedAt: player.currentTime(),
+        },
+      })
+      setLastEndedTime(player.currentTime())
+    },
+    onDurationChange: player => e => {
+      if (!lastEndedTime) {
+        player.currentTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
+        setLastEndedTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
+      }
+    },
+    onProgress: player => e => {
+      onEvent?.({
+        ...e,
+        type: e.type,
+        target: e.target,
+        videoState: {
+          playbackRate: player.playbackRate(),
+          startedAt: lastEndedTime,
+          endedAt: player.currentTime(),
+        },
+      })
+      setLastEndedTime(player.currentTime())
+    },
+    onSeeked: player => e => {
+      onEvent?.({
+        ...e,
+        type: e.type,
+        target: e.target,
+        videoState: {
+          playbackRate: 0,
+          startedAt: lastEndedTime,
+          endedAt: player.currentTime(),
+        },
+      })
+      setLastEndedTime(player.currentTime())
+    },
+    onEnded: player => e => {
+      onEvent?.({
+        ...e,
+        type: e.type,
+        target: e.target,
+        videoState: {
+          playbackRate: player.playbackRate(),
+          startedAt: lastEndedTime,
+          endedAt: player.currentTime(),
+        },
+      })
+      setLastEndedTime(player.currentTime())
+    },
+  })
+
+  return (
+    <div>
+      <video
+        id={videoId}
+        key={videoId}
+        width="100%"
+        className="smartvideo swarm-fluid"
+        src={urls.video}
+        controls
+        preload="auto"
+      >
+        {urls.texttracks.map((url, index) => (
+          <track key={url} default={index === 0} kind="captions" label="Default" src={url} />
+        ))}
+      </video>
+    </div>
+  )
+}
+
+const useSmartVideoPlayer = (
+  videoId: string,
+  callbacks?: {
+    onPause?: (videoPlayer: any) => (e: Event) => void
+    onSeeked?: (videoPlayer: any) => (e: Event) => void
+    onProgress?: (videoPlayer: any) => (e: Event) => void
+    onDurationChange?: (videoPlayer: any) => (e: Event) => void
+    onEnded?: (videoPlayer: any) => (e: Event) => void
+  },
+) => {
+  const [videoPlayer, setVideoPlayer] = useState<any>()
+  useEffect(() => {
+    if (!videoPlayer) {
+      getVideoPlayer(videoId).then(player => {
+        // FIXME: it will be added three times QQ
+        player.on('pause', callbacks?.onPause?.(player))
+        player.on('seeked', callbacks?.onSeeked?.(player))
+        player.on('progress', callbacks?.onProgress?.(player))
+        player.on('durationchange', callbacks?.onDurationChange?.(player))
+        player.on('ended', callbacks?.onEnded?.(player))
+        setVideoPlayer(player)
+      })
+    }
+  }, [callbacks, videoId, videoPlayer])
+}
+
+const getVideoPlayer = async (videoId: string) =>
+  new Promise<any>((resolve, reject) => {
+    // wait for 300ms to setup
+    setTimeout(() => {
+      // FIXME: videoPlayer type
+      let videoPlayer
+      try {
+        videoPlayer = (window as any).SwarmifyPlayer(videoId)
+      } catch (err) {}
+      if (videoPlayer) {
+        resolve(videoPlayer)
+      } else {
+        getVideoPlayer(videoId).then(resolve).catch(reject)
+      }
+    }, 300)
+  })
+
+const useUrls = (appId: string, programContentBodyId: string) => {
+  const [urls, setUrls] = useState<{ video: string; texttracks: string[] }>()
+  const { authToken, apiHost } = useAuth()
+  useEffect(() => {
+    getFileDownloadableLink(`videos/${appId}/${programContentBodyId}`, authToken, apiHost).then(videoUrl => {
+      getFileDownloadableLink(`texttracks/${appId}/${programContentBodyId}`, authToken, apiHost).then(texttrackUrl => {
+        const texttrackUrls: string[] = []
+        const client = new XMLHttpRequest()
+        client.open('GET', texttrackUrl)
+        client.onreadystatechange = () => {
+          if (client.responseText.length > 0 && !client.responseText.includes('NoSuchKey')) {
+            if (!client.responseText.startsWith('WEBVTT')) {
+              const content =
+                'WEBVTT - Generated using SRT2VTT\r\n\r\n' +
+                client.responseText.replace(/(\d+:\d+:\d+)+,(\d+)/g, '$1.$2')
+              const blob = new Blob([content], { type: 'text/vtt' })
+              texttrackUrl = window.URL.createObjectURL(blob)
+              texttrackUrls.push(texttrackUrl)
+            }
+          }
+          setUrls({ video: videoUrl, texttracks: texttrackUrls })
+        }
+        client.send()
+      })
+    })
+  }, [apiHost, appId, authToken, programContentBodyId])
+  return urls
 }
 
 export default React.memo(ProgramContentPlayer)
