@@ -6,7 +6,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import { useAuth } from '../components/auth/AuthContext'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { StyledContainer } from '../components/layout/DefaultLayout.styled'
-import SpGatewayForm from '../components/payment/SpGatewayForm'
+import GatewayForm from '../components/payment/GatewayForm'
 import { handleError } from '../helpers'
 import { codeMessages } from '../helpers/translation'
 
@@ -51,8 +51,9 @@ const usePayForm = (paymentNo: number) => {
           if (code === 'SUCCESS') {
             switch (result.gateway) {
               case 'spgateway':
+              case 'parenting':
                 if (result.html) {
-                  setPayForm(<SpGatewayForm formHtml={result.html} clientBackUrl={clientBackUrl} />)
+                  setPayForm(<GatewayForm formHtml={result.html} clientBackUrl={clientBackUrl} />)
                 } else {
                   // window.location.assign(`/members/${currentMemberId}`)
                   history.push(`/members/${currentMemberId}`)
