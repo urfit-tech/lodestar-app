@@ -230,8 +230,9 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           shipping: isProductPhysical ? shipping : undefined,
           payment,
         },
+        memberPhones: invoice.phone ? [{ member_id: member.id, phone: invoice.phone }] : [],
       },
-    })
+    }).catch(() => {})
     history.push(`/tasks/order/${taskId}`)
   }
 

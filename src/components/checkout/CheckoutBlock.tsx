@@ -140,8 +140,8 @@ const CheckoutBlock: React.VFC<{
   }
 
   const handleCheckout = async () => {
-    if (!isAuthenticated) {
-      setVisible && setVisible(true)
+    if (!isAuthenticated || !member) {
+      setVisible?.(true)
       return
     }
 
@@ -203,19 +203,20 @@ const CheckoutBlock: React.VFC<{
       payment,
     )
 
-    member &&
-      (await updateMemberMetadata({
-        variables: {
-          memberId: member.id,
-          metadata: {
-            ...member.metadata,
-            invoice,
-            shipping: hasPhysicalProduct ? shipping : undefined,
-            payment,
-          },
+    await updateMemberMetadata({
+      variables: {
+        memberId: member.id,
+        metadata: {
+          ...member.metadata,
+          invoice,
+          shipping: hasPhysicalProduct ? shipping : undefined,
+          payment,
         },
-      }))
-    removeCartProducts && (await removeCartProducts(cartProducts.map(cartProduct => cartProduct.productId)))
+        memberPhones: invoice.phone ? [{ member_id: member.id, phone: invoice.phone }] : [],
+      },
+    }).catch(() => {})
+
+    await removeCartProducts?.(cartProducts.map(cartProduct => cartProduct.productId))
     history.push(`/tasks/order/${taskId}`)
   }
 

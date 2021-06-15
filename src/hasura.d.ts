@@ -4634,16 +4634,29 @@ export interface UPDATE_MEMBER_METADATA_update_member {
   affected_rows: number;
 }
 
+export interface UPDATE_MEMBER_METADATA_insert_member_phone {
+  __typename: "member_phone_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
 export interface UPDATE_MEMBER_METADATA {
   /**
    * update data of the table: "member"
    */
   update_member: UPDATE_MEMBER_METADATA_update_member | null;
+  /**
+   * insert data into the table: "member_phone"
+   */
+  insert_member_phone: UPDATE_MEMBER_METADATA_insert_member_phone | null;
 }
 
 export interface UPDATE_MEMBER_METADATAVariables {
   memberId: string;
   metadata?: any | null;
+  memberPhones: member_phone_insert_input[];
 }
 
 /* tslint:disable */
@@ -10016,6 +10029,7 @@ export enum member_task_constraint {
  * update columns of table "member_task"
  */
 export enum member_task_update_column {
+  author_id = "author_id",
   category_id = "category_id",
   created_at = "created_at",
   description = "description",
@@ -14957,6 +14971,8 @@ export interface member_task_bool_exp {
   _and?: (member_task_bool_exp | null)[] | null;
   _not?: member_task_bool_exp | null;
   _or?: (member_task_bool_exp | null)[] | null;
+  author?: member_bool_exp | null;
+  author_id?: String_comparison_exp | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -14977,6 +14993,8 @@ export interface member_task_bool_exp {
  * input type for inserting data into table "member_task"
  */
 export interface member_task_insert_input {
+  author?: member_obj_rel_insert_input | null;
+  author_id?: string | null;
   category?: category_obj_rel_insert_input | null;
   category_id?: string | null;
   created_at?: any | null;
