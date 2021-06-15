@@ -1,4 +1,4 @@
-import { Button, Form, Icon, Input } from 'antd'
+import { Button, Form, Icon, Input, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import React, { useState } from 'react'
@@ -48,12 +48,13 @@ const ForgotPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         return
       }
 
+      setLoading(true)
       axios
         .post(`https://${apiHost}/auth/forgot-password`, {
           appId,
           account: values.email,
         })
-        .then(({ data: { code, message, result } }) => {
+        .then(({ data: { code } }) => {
           if (code === 'SUCCESS') {
             history.push(`/check-email?email=${values.email}&type=forgot-password`)
           } else {
@@ -62,8 +63,6 @@ const ForgotPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         })
         .catch(handleError)
         .finally(() => setLoading(false))
-
-      setLoading(true)
     })
   }
 
