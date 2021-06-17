@@ -3,7 +3,6 @@ import { uniq } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { notEmpty } from '../../../helpers'
 import { checkoutMessages, commonMessages } from '../../../helpers/translation'
 import { useSearchMembers } from '../../../hooks/common'
 import { useAuth } from '../../auth/AuthContext'
@@ -43,7 +42,7 @@ const CheckoutGroupBuyingForm: React.FC<{
       setMembers(members)
       onChange?.({
         memberIds: members.map(member => member.id),
-        withError: newEmails.filter(notEmpty).length !== members.length,
+        withError: newEmails.filter(v => !!v).length !== members.length,
       })
     }, 300)
   }
