@@ -76,7 +76,7 @@ const GroupBuyingDeliverModal: React.VFC<{
         .then(() => {
           onRefetch?.()
           toast({
-            title: formatMessage(commonMessages.status.finished),
+            title: formatMessage(commonMessages.status.sent),
             status: 'success',
             duration: 1500,
             position: 'top',
