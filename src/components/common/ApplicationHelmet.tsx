@@ -34,6 +34,11 @@ const ApplicationHelmet: React.VFC = () => {
 
       {/* JSON LD */}
       {!!linkedJson && <script type="application/ld+json">{JSON.stringify(linkedJson)}</script>}
+
+      {/* facebook domain verification */}
+      {settings['facebook.domain.verification'] && (
+        <meta name="facebook-domain-verification" content={settings['facebook.domain.verification']} />
+      )}
     </Helmet>
   )
 }
