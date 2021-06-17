@@ -1,20 +1,11 @@
+import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
+import Stat from 'lodestar-app-element/src/components/Stat'
 import React from 'react'
 import styled from 'styled-components'
-import { SectionTitle, StyledSection } from '../../pages/AppPage'
+import { SectionTitle } from '../../pages/AppPage'
 
 const StyledImage = styled.img`
   width: 40px;
-`
-
-const StyledDigit = styled.div<{ isDark: boolean }>`
-  color: ${props => (props.isDark ? 'white' : props.theme['@primary-color'])};
-  font-size: 40px;
-  line-height: 0.75;
-  letter-spacing: 1px;
-
-  &::after {
-    content: '+';
-  }
 `
 
 const StyledGrid = styled.div<{ colCount: number }>`
@@ -29,7 +20,7 @@ const StyledGrid = styled.div<{ colCount: number }>`
 
 const StatisticsSection: React.FC<{
   options: {
-    backgroundUrl?: string
+    background?: string
     title?: string
     imgUrl?: string
     infos?: {
@@ -38,14 +29,14 @@ const StatisticsSection: React.FC<{
       description: string
     }[]
   }
-}> = ({ options: { backgroundUrl, title, imgUrl, infos = [] } }) => {
+}> = ({ options: { background = null, title, imgUrl, infos = [] } }) => {
   return (
-    <StyledSection isDark={!!backgroundUrl} backgroundUrl={backgroundUrl}>
+    <BackgroundSection background={background || ''} mode={!!background ? 'dark' : undefined}>
       <div className="container">
         <div className="row align-items-center">
           {imgUrl && (
             <div className="col-12 col-md-5 my-auto">
-              <img src={imgUrl} />
+              <img src={imgUrl} alt="feature" />
             </div>
           )}
 
@@ -54,34 +45,20 @@ const StatisticsSection: React.FC<{
 
             <StyledGrid colCount={infos.length}>
               {infos.map(v => (
-                <StatisticsDigitBlock
-                  isDark={!!backgroundUrl}
-                  iconSrc={v.iconSrc}
-                  digit={v.digit}
-                  description={v.description}
-                />
+                <Stat>
+                  <StyledImage className="mx-auto mb-4" src={v.iconSrc} />
+                  <Stat.Digit isDark={!!background} className="mb-3 text-center">
+                    {v.digit}
+                  </Stat.Digit>
+                  <p className="text-center">{v.description}</p>
+                </Stat>
               ))}
             </StyledGrid>
           </div>
         </div>
       </div>
-    </StyledSection>
+    </BackgroundSection>
   )
 }
-
-const StatisticsDigitBlock: React.FC<{
-  isDark: boolean
-  iconSrc: string
-  digit: number
-  description: string
-}> = ({ isDark, iconSrc, digit, description }) => (
-  <div>
-    <StyledImage className="mx-auto mb-4" src={iconSrc} />
-    <StyledDigit isDark={isDark} className="mb-3 text-center">
-      {digit}
-    </StyledDigit>
-    <p className="text-center">{description}</p>
-  </div>
-)
 
 export default StatisticsSection

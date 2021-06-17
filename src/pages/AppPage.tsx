@@ -3,9 +3,14 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import MessengerChat from '../components/common/MessengerChat'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import AccordionSection from '../components/page/AccordionSection'
 import ActivitySection from '../components/page/ActivitySection'
 import CoverSection from '../components/page/CoverSection'
 import CreatorSection from '../components/page/CreatorSection'
+import CTASection from '../components/page/CTASection'
+import DescriptionSection from '../components/page/DescriptionSection'
+import FAQSection from '../components/page/FAQSection'
+import FeatureDescriptionSection from '../components/page/FeatureDescriptionSection'
 import FeatureSection from '../components/page/FeatureSection'
 import PostSection from '../components/page/PostSection'
 import ProgramSection from '../components/page/ProgramSection'
@@ -28,17 +33,21 @@ export const StyledLink = styled(Link)<{ $backgroundActive?: string }>`
   }
   margin-top: 40px;
 `
-export const StyledSection = styled.section<{ isDark?: boolean; backgroundUrl?: string }>`
-  color: ${props => props.isDark && 'white'};
-  background: ${props => (props.backgroundUrl ? `url(${props.backgroundUrl})` : 'white')};
+export const StyledSection = styled.section`
   padding: 64px 0;
+  background: white;
 `
 
 const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
   const sectionConverter = {
+    homeAccordion: AccordionSection,
     homeActivity: ActivitySection,
     homeCover: CoverSection,
     homeCreator: CreatorSection,
+    homeCTA: CTASection,
+    homeDescription: DescriptionSection,
+    homeFeatureDescription: FeatureDescriptionSection,
+    homeFAQ: FAQSection,
     homeFeature: FeatureSection,
     homePost: PostSection,
     homeProgram: ProgramSection,
