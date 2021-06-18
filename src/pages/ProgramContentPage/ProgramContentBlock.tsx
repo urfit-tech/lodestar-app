@@ -1,27 +1,23 @@
-import { useQuery } from '@apollo/react-hooks'
 import { Skeleton } from 'antd'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
-import gql from 'graphql-tag'
 import { throttle } from 'lodash'
 import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../../components/auth/AuthContext'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
-import ExerciseBlock from '../../components/exercise/ExerciseBlock'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
-import hasura from '../../hasura'
 import { productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
+import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
 import ProgramContentTabs from './ProgramContentTabs'
 
 const StyledTitle = styled.h3`
@@ -42,11 +38,9 @@ const ProgramContentBlock: React.VFC<{
   const { apiHost, authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const [exerciseId] = useQueryParam('exerciseId', StringParam)
 
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
 
-  const { loadingLastExercise, lastExercise } = useLastExercise(programContentId, exerciseId)
   const [lastProgress, setLastProgress] = useState<number | null>(null)
 
   const programContentBodyType = programContent?.programContentBody?.type
@@ -58,8 +52,10 @@ const ProgramContentBlock: React.VFC<{
   )
 
   useEffect(() => {
-    const progress =
-      programContentProgress.find(progress => progress.programContentId === programContentId)?.lastProgress || null
+    const progress = programContentProgress.find(
+      progress => progress.programContentId === programContentId,
+    )?.lastProgress
+
     if (lastProgress === null && progress !== undefined) {
       setLastProgress(progress)
     }
@@ -75,7 +71,7 @@ const ProgramContentBlock: React.VFC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadingProgramContent, programContentBodyType, programContentId])
 
-  if (!programContent || !insertProgress || !refetchProgress || loadingLastExercise) {
+  if (loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <Skeleton active />
   }
 
@@ -149,42 +145,9 @@ const ProgramContentBlock: React.VFC<{
           />
         </div>
       )}
-      {programContent.programContentBody?.type === 'exercise' && programContent.programContentBody.data?.questions && (
-        <div className="mb-4">
-          <ExerciseBlock
-            id={programContent.programContentBody.id}
-            programContentId={programContentId}
-            title={programContent.title}
-            nextProgramContentId={nextProgramContent?.id}
-            isTaken={!!lastExercise}
-            questions={
-              programContent.programContentBody.data.questions
-                .filter((question: any) => !!question.choices?.length)
-                .map((question: any) => ({
-                  id: question.id,
-                  description: question.description || '',
-                  answerDescription: question.answerDescription || '',
-                  points: question.points || 0,
-                  isMultipleAnswers: !!question.isMultipleAnswers,
-                  gainedPoints: lastExercise?.answer?.find((v: any) => v.questionId === question.id)?.gainedPoints || 0,
-                  choices:
-                    question.choices?.map((choice: any) => ({
-                      id: choice.id,
-                      description: choice.description || '',
-                      isCorrect: !!choice.isCorrect,
-                      isSelected: !!lastExercise?.answer?.some(
-                        (v: any) =>
-                          v.questionId === question.id &&
-                          v.choiceIds.some((choiceId: string) => choiceId === choice.id),
-                      ),
-                    })) || [],
-                })) || []
-            }
-            isAvailableToGoBack={!!programContent.metadata?.isAvailableToGoBack}
-            isAvailableToRetry={!!programContent.metadata?.isAvailableToRetry}
-            passingScore={programContent.metadata?.passingScore || 0}
-          />
-        </div>
+
+      {enabledModules.exercise && programContent.programContentBody?.type === 'exercise' && (
+        <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
       )}
 
       <ProgramContentTabs program={program} programContent={programContent} />
@@ -194,42 +157,6 @@ const ProgramContentBlock: React.VFC<{
       )}
     </div>
   )
-}
-
-const useLastExercise = (programContentId: string, exerciseId?: string | null) => {
-  const condition: hasura.GET_LAST_EXERCISEVariables['condition'] = {
-    id: exerciseId ? { _eq: exerciseId } : undefined,
-    program_content_id: { _eq: programContentId },
-  }
-
-  const { loading, error, data, refetch } = useQuery<hasura.GET_LAST_EXERCISE, hasura.GET_LAST_EXERCISEVariables>(
-    gql`
-      query GET_LAST_EXERCISE($condition: exercise_bool_exp!) {
-        exercise(where: $condition, order_by: [{ created_at: desc }], limit: 1) {
-          id
-          answer
-        }
-      }
-    `,
-    {
-      variables: { condition },
-      fetchPolicy: 'no-cache',
-    },
-  )
-
-  const lastExercise = data?.exercise?.[0]
-    ? {
-        id: data.exercise[0].id,
-        answer: data.exercise[0].answer,
-      }
-    : null
-
-  return {
-    loadingLastExercise: loading,
-    errorLastExercise: error,
-    lastExercise,
-    refetchLastExercise: refetch,
-  }
 }
 
 export default ProgramContentBlock

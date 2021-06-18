@@ -144,7 +144,7 @@ const ExerciseBlock: React.VFC<
   }
 
   return (
-    <AdminCard>
+    <AdminCard className="mb-4">
       <StyledTitle className="mb-4">{title}</StyledTitle>
       {exerciseStatus}
     </AdminCard>
