@@ -29,7 +29,7 @@ const GoogleLogo = styled.span`
   background-position: center;
 `
 
-const FacebookLoginButton: React.VFC = () => {
+const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
@@ -47,6 +47,7 @@ const FacebookLoginButton: React.VFC = () => {
             JSON.stringify({
               provider: 'facebook',
               redirect: back || window.location.pathname,
+              accountLinkToken: accountLinkToken,
             }),
           ),
         )}
@@ -67,7 +68,7 @@ const FacebookLoginButton: React.VFC = () => {
   )
 }
 
-const GoogleLoginButton: React.VFC = () => {
+const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
@@ -85,6 +86,7 @@ const GoogleLoginButton: React.VFC = () => {
             JSON.stringify({
               provider: 'google',
               redirect: back || window.location.pathname,
+              accountLinkToken: accountLinkToken,
             }),
           ),
         )}
@@ -105,7 +107,7 @@ const GoogleLoginButton: React.VFC = () => {
   )
 }
 
-const LineLoginButton: React.VFC = () => {
+const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
@@ -126,6 +128,7 @@ const LineLoginButton: React.VFC = () => {
             JSON.stringify({
               provider: 'line',
               redirect: back || window.location.pathname,
+              accountLinkToken: accountLinkToken,
             }),
           ),
         )}
@@ -146,7 +149,7 @@ const LineLoginButton: React.VFC = () => {
   )
 }
 
-const ParentingLoginButton: React.VFC = () => {
+const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
@@ -167,6 +170,7 @@ const ParentingLoginButton: React.VFC = () => {
             JSON.stringify({
               provider: 'parenting',
               redirect: back || window.location.pathname,
+              accountLinkToken: accountLinkToken,
             }),
           ),
         )}

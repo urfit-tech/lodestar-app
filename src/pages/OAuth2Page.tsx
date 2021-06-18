@@ -39,9 +39,11 @@ const DefaultOauth2Section: React.VFC = () => {
   const {
     provider = null,
     redirect = '/',
+    accountLinkToken = '',
   }: {
     provider: ProviderType | null
     redirect: string
+    accountLinkToken: string
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   const handleFetchYoutubeApi = useCallback(() => {
@@ -100,12 +102,13 @@ const DefaultOauth2Section: React.VFC = () => {
           return socialLogin?.({
             provider: provider,
             providerToken: data.id_token,
+            accountLinkToken: accountLinkToken,
           })
         })
         .then(() => history.push(redirect))
         .catch(handleError)
     }
-  }, [isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
+  }, [accountLinkToken, isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
 
   // Implicit Flow
   useEffect(() => {
@@ -130,6 +133,7 @@ const ParentingOauth2Section: React.VFC = () => {
   const { id: appId } = useApp()
   const { isAuthenticating, currentMemberId, socialLogin, apiHost } = useAuth()
   const host = window.location.origin
+  const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const {
@@ -157,6 +161,7 @@ const ParentingOauth2Section: React.VFC = () => {
             return socialLogin?.({
               provider,
               providerToken: result.token,
+              accountLinkToken: accountLinkToken,
             })
           }
         })
@@ -165,7 +170,19 @@ const ParentingOauth2Section: React.VFC = () => {
         })
         .catch(handleError)
     }
-  }, [apiHost, appId, code, currentMemberId, history, host, isAuthenticating, provider, redirect, socialLogin])
+  }, [
+    accountLinkToken,
+    apiHost,
+    appId,
+    code,
+    currentMemberId,
+    history,
+    host,
+    isAuthenticating,
+    provider,
+    redirect,
+    socialLogin,
+  ])
 
   return <LoadingPage />
 }
