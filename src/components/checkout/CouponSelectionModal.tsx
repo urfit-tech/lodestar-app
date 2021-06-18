@@ -57,6 +57,7 @@ const CouponSelectionModal: React.VFC<{
   return (
     <>
       {renderTrigger({ onOpen: () => setVisible(true), selectedCoupon })}
+
       <CommonModal
         title={formatMessage(checkoutMessages.title.chooseCoupon)}
         onClose={() => setVisible(false)}

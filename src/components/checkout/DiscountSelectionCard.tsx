@@ -32,9 +32,9 @@ const DiscountSelectionCard: React.VFC<{
 
   return (
     <Radio.Group
-      style={{ width: '100%' }}
       value={discountType || 'None'}
-      onChange={e => onChange && onChange(e.target.value)}
+      onChange={e => onChange?.(e.target.value === 'None' ? '' : e.target.value)}
+      style={{ width: '100%' }}
     >
       <StyledRadio value="None">{formatMessage(checkoutMessages.form.radio.noDiscount)}</StyledRadio>
       <StyledRadio value="Coupon">
@@ -77,9 +77,7 @@ const DiscountSelectionCard: React.VFC<{
               {currentMemberId ? (
                 <MembershipCardSelectionModal
                   memberId={currentMemberId}
-                  onSelect={membershipCardId => {
-                    onChange?.(`Card_${membershipCardId}`)
-                  }}
+                  onSelect={membershipCardId => onChange?.(`Card_${membershipCardId}`)}
                   render={({ setVisible, selectedMembershipCard }: any) => (
                     <>
                       <Button onClick={() => setVisible(true)}>

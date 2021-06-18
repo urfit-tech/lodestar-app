@@ -1,4 +1,3 @@
-import { Modal } from 'antd'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -7,6 +6,7 @@ import { checkoutMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCards, useMembershipCard } from '../../hooks/card'
 import { useMember } from '../../hooks/member'
 import { MemberProps } from '../../types/member'
+import CommonModal from '../common/CommonModal'
 import MembershipCardBlock from '../common/MembershipCardBlock'
 
 const StyledContainer = styled.div`
@@ -17,15 +17,14 @@ const StyledContainer = styled.div`
   cursor: pointer;
 `
 
-type MembershipCardSelectionModalProps = {
+const MembershipCardSelectionModal: React.VFC<{
   memberId: string
   onSelect?: (membershipCardId: string) => void
   render?: React.VFC<{
     setVisible: React.Dispatch<React.SetStateAction<boolean>>
     selectedMembershipCard?: { id: string; title: string }
   }>
-}
-const MembershipCardSelectionModal: React.VFC<MembershipCardSelectionModalProps> = ({ memberId, onSelect, render }) => {
+}> = ({ memberId, onSelect, render }) => {
   const { enrolledMembershipCards } = useEnrolledMembershipCards(memberId)
   const { loadingMember, errorMember, member } = useMember(memberId)
   const [visible, setVisible] = useState(false)
@@ -33,18 +32,17 @@ const MembershipCardSelectionModal: React.VFC<MembershipCardSelectionModalProps>
   const { formatMessage } = useIntl()
 
   if (loadingMember || errorMember || !member) {
-    return render ? render({ setVisible, selectedMembershipCard }) : null
+    return render?.({ setVisible, selectedMembershipCard }) || null
   }
 
   return (
     <>
-      {render && render({ setVisible, selectedMembershipCard })}
+      {render?.({ setVisible, selectedMembershipCard })}
 
-      <Modal
+      <CommonModal
         title={formatMessage(checkoutMessages.title.chooseMemberCard)}
-        footer={null}
-        onCancel={() => setVisible(false)}
-        visible={visible}
+        onClose={() => setVisible(false)}
+        isOpen={visible}
       >
         {enrolledMembershipCards.map(membershipCard => (
           <div
@@ -65,7 +63,7 @@ const MembershipCardSelectionModal: React.VFC<MembershipCardSelectionModalProps>
             />
           </div>
         ))}
-      </Modal>
+      </CommonModal>
     </>
   )
 }
