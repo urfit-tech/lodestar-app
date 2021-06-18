@@ -106,7 +106,7 @@ const SearchResultBlock: React.VFC<{
   tag?: string | null
 }> = ({ memberId, title, tag }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [tab, setTab] = useQueryParam('tab', StringParam)
   const { loadingMember, member } = useMember(memberId || '')

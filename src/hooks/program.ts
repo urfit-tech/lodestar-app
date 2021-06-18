@@ -470,7 +470,7 @@ export const useProgramContent = (programContentId: string) => {
       })
     | null = useMemo(
     () =>
-      loading || error || !data || !data.program_content_by_pk
+      !data?.program_content_by_pk
         ? null
         : {
             id: data.program_content_by_pk.id,

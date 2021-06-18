@@ -84,9 +84,7 @@ const ProgramContentPlayer: React.VFC<
   }
 > = ({ programContentBody, nextProgramContent, lastProgress = 0, onVideoEvent }) => {
   const videoId = `v-${programContentBody.id}`
-  const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { currentMember } = useAuth()
   const [isCoverShowing, setIsCoverShowing] = useState(false)
   const urls = useUrls(appId, programContentBody.id)
 

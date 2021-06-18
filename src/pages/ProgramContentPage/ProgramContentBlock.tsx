@@ -59,7 +59,7 @@ const ProgramContentBlock: React.VFC<{
     if (lastProgress === null && progress !== undefined) {
       setLastProgress(progress)
     }
-  }, [programContentProgress])
+  }, [lastProgress, programContentId, programContentProgress])
 
   useEffect(() => {
     if (!loadingProgramContent && programContentBodyType !== 'video' && insertProgress) {

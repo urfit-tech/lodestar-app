@@ -195,7 +195,9 @@ export const useSwarmify = () => {
           document.write(
             '<script type="text/javascript" id="swarm_script" src="https://assets.swarmcdn.com/cross/swarmcdn.js?v=e46ab80c"></script>',
           )
-          window.console && console.log('Swarmify - swarmdetect.js: Document Write Succeeded')
+          process.env.NODE_ENV === 'development' &&
+            window.console &&
+            console.log('Swarmify - swarmdetect.js: Document Write Succeeded')
         }
       }
     ;(window as any).SWARMIFY_LOADED = !0
