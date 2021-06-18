@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Skeleton, Tabs } from 'antd'
+import { Skeleton } from 'antd'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
@@ -12,19 +12,17 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../../components/auth/AuthContext'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import ExerciseBlock from '../../components/exercise/ExerciseBlock'
-import IssueThreadBlock from '../../components/issue/IssueThreadBlock'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
-import PracticeDisplayedCollection from '../../components/practice/PracticeDisplayedCollection'
-import ProgramContentMaterialBlock from '../../components/program/ProgramContentMaterialBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { productMessages, programMessages } from '../../helpers/translation'
-import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
+import { productMessages } from '../../helpers/translation'
+import { useProgramContent } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
+import ProgramContentTabs from './ProgramContentTabs'
 
 const StyledTitle = styled.h3`
   padding-bottom: 1.25rem;
@@ -45,9 +43,7 @@ const ProgramContentBlock: React.VFC<{
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
-  // const [lastEndedAt, setLastEndedAt] = useState<number>()
 
-  const { loadingProgramContentMaterials, programContentMaterials } = useProgramContentMaterial(programContentId)
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
 
   const { loadingLastExercise, lastExercise } = useLastExercise(programContentId, exerciseId)
@@ -79,7 +75,7 @@ const ProgramContentBlock: React.VFC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadingProgramContent, programContentBodyType, programContentId])
 
-  if (!programContent || !insertProgress || !refetchProgress || loadingProgramContentMaterials || loadingLastExercise) {
+  if (!programContent || !insertProgress || !refetchProgress || loadingLastExercise) {
     return <Skeleton active />
   }
 
@@ -191,43 +187,7 @@ const ProgramContentBlock: React.VFC<{
         </div>
       )}
 
-      {(program.isIssuesOpen ||
-        (enabledModules.practice && programContent.programContentBody?.type === 'practice') ||
-        programContent.materials.length !== 0) && (
-        <StyledContentBlock className="mb-3">
-          <Tabs
-            defaultActiveKey={
-              enabledModules.practice && programContent.programContentBody?.type === 'practice'
-                ? 'practice'
-                : programContentMaterials?.length !== 0
-                ? 'material'
-                : 'issue'
-            }
-          >
-            {program.isIssuesOpen && (
-              <Tabs.TabPane tab={formatMessage(programMessages.label.discussion)} key="issue" className="py-3">
-                <IssueThreadBlock
-                  programRoles={program.roles || []}
-                  threadId={`/programs/${program.id}/contents/${programContentId}`}
-                />
-              </Tabs.TabPane>
-            )}
-            {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
-              <Tabs.TabPane tab={formatMessage(programMessages.label.practiceUpload)} key="practice" className="p-4">
-                <PracticeDisplayedCollection
-                  isPrivate={programContent.metadata?.private || false}
-                  programContentId={programContent.id}
-                />
-              </Tabs.TabPane>
-            )}
-            {programContent.materials.length !== 0 && (
-              <Tabs.TabPane key="material" tab={formatMessage(programMessages.tab.downloadMaterials)} className="py-3">
-                {<ProgramContentMaterialBlock programContentId={programContentId} />}
-              </Tabs.TabPane>
-            )}
-          </Tabs>
-        </StyledContentBlock>
-      )}
+      <ProgramContentTabs program={program} programContent={programContent} />
 
       {programContent.programContentBody?.type !== 'practice' && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />
