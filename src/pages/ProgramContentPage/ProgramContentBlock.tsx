@@ -9,27 +9,23 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import { useAuth } from '../../components/auth/AuthContext'
+import { BraftContent } from '../../components/common/StyledBraftEditor'
+import ExerciseBlock from '../../components/exercise/ExerciseBlock'
+import IssueThreadBlock from '../../components/issue/IssueThreadBlock'
+import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
+import PracticeDisplayedCollection from '../../components/practice/PracticeDisplayedCollection'
+import ProgramContentMaterialBlock from '../../components/program/ProgramContentMaterialBlock'
+import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { useApp } from '../../containers/common/AppContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import { productMessages, programMessages } from '../../helpers/translation'
-import { usePublicMember } from '../../hooks/member'
 import { useProgramContent, useProgramContentMaterial } from '../../hooks/program'
 import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
-import CreatorCard from '../common/CreatorCard'
-import { BraftContent } from '../common/StyledBraftEditor'
-import ExerciseBlock from '../exercise/ExerciseBlock'
-import IssueThreadBlock from '../issue/IssueThreadBlock'
-import PracticeDescriptionBlock from '../practice/PracticeDescriptionBlock'
-import PracticeDisplayedCollection from '../practice/PracticeDisplayedCollection'
-import ProgramContentMaterialBlock from './ProgramContentMaterialBlock'
-import ProgramContentPlayer from './ProgramContentPlayer'
+import { StyledContentBlock } from './index.styled'
+import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 
-const StyledContentBlock = styled.div`
-  padding: 1.25rem;
-  background-color: white;
-`
 const StyledTitle = styled.h3`
   padding-bottom: 1.25rem;
   border-bottom: 1px solid #e8e8e8;
@@ -49,11 +45,11 @@ const ProgramContentBlock: React.VFC<{
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
-  const [lastEndedAt, setLastEndedAt] = useState<number>()
+  // const [lastEndedAt, setLastEndedAt] = useState<number>()
 
   const { loadingProgramContentMaterials, programContentMaterials } = useProgramContentMaterial(programContentId)
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
-  const { loadingMember, member } = usePublicMember(instructor?.memberId || '')
+
   const { loadingLastExercise, lastExercise } = useLastExercise(programContentId, exerciseId)
   const [lastProgress, setLastProgress] = useState<number | null>(null)
 
@@ -234,24 +230,7 @@ const ProgramContentBlock: React.VFC<{
       )}
 
       {programContent.programContentBody?.type !== 'practice' && (
-        <StyledContentBlock>
-          {loadingMember ? (
-            <Skeleton active avatar />
-          ) : member ? (
-            <CreatorCard
-              id={member.id}
-              avatarUrl={member.pictureUrl}
-              title={member.name || member.username}
-              labels={[{ id: 'instructor', name: 'instructor' }]}
-              jobTitle={member.title}
-              description={member.abstract}
-              withProgram
-              withPodcast
-              withAppointment
-              withBlog
-            />
-          ) : null}
-        </StyledContentBlock>
+        <ProgramContentCreatorBlock memberId={instructor.memberId} />
       )}
     </div>
   )
