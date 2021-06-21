@@ -5,6 +5,8 @@ import MessengerChat from '../components/common/MessengerChat'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import AccordionSection from '../components/page/AccordionSection'
 import ActivitySection from '../components/page/ActivitySection'
+import ArticleSection from '../components/page/ArticleSection'
+import BackgroundSection from '../components/page/BackgroundSection'
 import CoverSection from '../components/page/CoverSection'
 import CreatorSection from '../components/page/CreatorSection'
 import CTASection from '../components/page/CTASection'
@@ -40,6 +42,8 @@ export const StyledSection = styled.section`
 
 const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
   const sectionConverter = {
+    homeArticle: ArticleSection,
+    homeBackground: BackgroundSection,
     homeAccordion: AccordionSection,
     homeActivity: ActivitySection,
     homeCover: CoverSection,

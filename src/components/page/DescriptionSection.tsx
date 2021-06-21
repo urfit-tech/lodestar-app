@@ -3,14 +3,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { StyledSection } from '../../pages/AppPage'
 
-const StyledTitle = styled(Article.Title)`
-  font-family: NotoSansCJKtc;
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0.2px;
-  color: var(--gray-darker);
-`
-
 const StyledContent = styled(Article.Content)`
   font-family: NotoSansCJKtc;
   font-size: 16px;
@@ -34,10 +26,12 @@ const DescriptionSection: React.FC<{
     <StyledSection>
       <div className="container">
         <div className="row">
-          <div className="col-12 col-md-7">
+          <div className="col-12 col-md-7 m-auto">
             {infos?.map(v => (
               <Article className="my-5">
-                <StyledTitle className="mb-4">{v.title}</StyledTitle>
+                <Article.Title className="mb-4" fontSize={24}>
+                  {v.title}
+                </Article.Title>
                 <StyledContent>{v.description}</StyledContent>
               </Article>
             ))}
