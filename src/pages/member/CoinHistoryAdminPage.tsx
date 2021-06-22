@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/icons'
-import { Button, message, Skeleton, Tabs, Typography } from 'antd'
+import { Button, SkeletonText } from '@chakra-ui/react'
+import { message, Tabs } from 'antd'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import { sum } from 'ramda'
@@ -86,11 +86,7 @@ const CoinHistoryAdminPage: React.VFC = () => {
   }
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={CoinIcon} className="mr-3" />
-        <span>{formatMessage(commonMessages.content.coinsAdmin)}</span>
-      </Typography.Title>
+    <MemberAdminLayout content={{ icon: CoinIcon, title: formatMessage(commonMessages.content.coinsAdmin) }}>
       {currentMemberId && <CoinSummaryCard memberId={currentMemberId} />}
       {currentMemberId && <CoinHistoryCollectionTabs memberId={currentMemberId} />}
     </MemberAdminLayout>
@@ -127,13 +123,8 @@ const CoinHistoryCollectionTabs: React.VFC<{
     memberId,
     current: moment().startOf('minute').toDate(),
   })
-  const {
-    loadingOrderLogs,
-    errorOrderLogs,
-    orderLogs,
-    refetchOrderLogs,
-    fetchMoreOrderLogs,
-  } = useOrderLogWithCoinsCollection(memberId)
+  const { loadingOrderLogs, errorOrderLogs, orderLogs, refetchOrderLogs, fetchMoreOrderLogs } =
+    useOrderLogWithCoinsCollection(memberId)
   const [loading, setLoading] = useState(false)
 
   if (errorCoinLogs || errorOrderLogs) {
@@ -150,7 +141,7 @@ const CoinHistoryCollectionTabs: React.VFC<{
     >
       <Tabs.TabPane key="coin-logs" tab={formatMessage(messages.coinHistory)} className="pt-2">
         {loadingCoinLogs ? (
-          <Skeleton active />
+          <SkeletonText mt="1" noOfLines={4} spacing="4" />
         ) : coinLogs.length === 0 ? (
           <EmptyBlock>{formatMessage(messages.noCoinLog)}</EmptyBlock>
         ) : (
@@ -198,7 +189,8 @@ const CoinHistoryCollectionTabs: React.VFC<{
             {fetchMoreCoinLogs && (
               <div className="text-center mt-4">
                 <Button
-                  loading={loading}
+                  variant="outline"
+                  isLoading={loading}
                   onClick={() => {
                     setLoading(true)
                     fetchMoreCoinLogs().finally(() => setLoading(false))
@@ -214,7 +206,7 @@ const CoinHistoryCollectionTabs: React.VFC<{
 
       <Tabs.TabPane key="order-log" tab={formatMessage(messages.orderHistory)} className="pt-2">
         {loadingOrderLogs ? (
-          <Skeleton active />
+          <SkeletonText mt="1" noOfLines={4} spacing="4" />
         ) : orderLogs.length === 0 ? (
           <EmptyBlock>{formatMessage(messages.noCoinLog)}</EmptyBlock>
         ) : (

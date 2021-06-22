@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Icon } from '@chakra-ui/icons'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -17,18 +17,27 @@ const StyledContent = styled.div<{ white?: boolean; footerHeight: number }>`
   ${props => (props.white ? 'background: white;' : '')}
 `
 
-const MemberAdminLayout: React.FC = ({ children }) => {
+const StyledHeading = styled.h2`
+  font-family: NotoSansCJKtc;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: var(--gray-darker);
+`
+
+const MemberAdminLayout: React.FC<{
+  content: {
+    title: string
+    icon?: React.FC
+  }
+}> = ({ content, children }) => {
   const defaultSelectedKeys = useRouteKeys()
   const { formatMessage } = useIntl()
 
   return (
     <DefaultLayout
       noFooter
-      renderTitle={() => (
-        <Link to={`/settings`}>
-          <Button type="link">{formatMessage(commonMessages.button.backstage)}</Button>
-        </Link>
-      )}
+      renderTitle={() => <Link to={`/settings`}>{formatMessage(commonMessages.button.backstage)}</Link>}
     >
       <div className="d-flex">
         <Responsive.Desktop>
@@ -37,6 +46,10 @@ const MemberAdminLayout: React.FC = ({ children }) => {
           </StyledContent>
         </Responsive.Desktop>
         <StyledContent className="flex-grow-1 p-3 p-sm-5" footerHeight={0}>
+          <StyledHeading className="d-flex mb-4">
+            <Icon as={content.icon} className="my-auto mr-3" />
+            <span>{content.title}</span>
+          </StyledHeading>
           {children}
         </StyledContent>
       </div>

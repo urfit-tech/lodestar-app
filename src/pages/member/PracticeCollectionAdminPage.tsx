@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
-import { Skeleton, Typography } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
@@ -16,11 +15,7 @@ const PracticeCollectionAdminPage = () => {
   const [selectedProgramId, setSelectedProgramId] = useState('all')
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={BookIcon} className="mr-3" />
-        <span>{formatMessage(commonMessages.content.practiceManagement)}</span>
-      </Typography.Title>
+    <MemberAdminLayout content={{ icon: BookIcon, title: formatMessage(commonMessages.content.practiceManagement) }}>
       <div className="row no-gutters mb-4">
         <div className="col-12">
           {currentMemberId && (
@@ -47,7 +42,7 @@ const PracticeCollectionBlock: React.VFC<{
     programId: selectedProgramId === 'all' ? undefined : selectedProgramId,
   })
   if (loadingPracticeCollection) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   if (errorPracticeCollection || !practiceCollection) {

@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
-import { Tabs, Typography } from 'antd'
+import { Tabs } from 'antd'
 import { reverse } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -45,12 +44,7 @@ const CouponCollectionAdminPage: React.VFC = () => {
   ]
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={TicketIcon} className="mr-3" />
-        <span>{formatMessage(usersMessages.title.coupon)}</span>
-      </Typography.Title>
-
+    <MemberAdminLayout content={{ icon: TicketIcon, title: formatMessage(usersMessages.title.coupon) }}>
       <div className="mb-5">
         <CouponInsertionCard onInsert={() => window.location.reload()} />
       </div>
