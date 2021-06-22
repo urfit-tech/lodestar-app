@@ -1,4 +1,4 @@
-import { Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { Link, Redirect, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -18,7 +18,7 @@ const ProgramPackageContentPage: React.VFC = () => {
   const { loading, error, programPackage, programs } = useProgramPackage(programPackageId, memberId)
 
   if (loading || error || !currentUserRole || !programPackage) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   if (currentUserRole === 'general-member' && !programPackage.isEnrolled) {

@@ -1,4 +1,5 @@
-import { Button, Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Button } from 'antd'
 import { render } from 'mustache'
 import queryString from 'query-string'
 import React, { useContext, useEffect, useRef } from 'react'
@@ -128,7 +129,7 @@ const ProgramPage: React.VFC = () => {
   if (loadingProgram) {
     return (
       <DefaultLayout>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }

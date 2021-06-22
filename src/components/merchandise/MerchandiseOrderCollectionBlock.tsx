@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Icon } from '@chakra-ui/icons'
-import { Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import moment from 'moment-timezone'
 import React from 'react'
@@ -90,7 +90,7 @@ const MerchandiseOrderCollectionBlock: React.VFC<{
   if (loadingOrderLogs) {
     return (
       <div className="container pt-4">
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </div>
     )
   }

@@ -50,7 +50,7 @@ const PracticeDisplayedCollection: React.VFC<{
   if (loadingPracticeCollection || errorPracticeCollection || !practiceCollection || !currentMemberId) {
     return (
       <Box padding="6" boxShadow="lg" bg="white">
-        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </Box>
     )
   }

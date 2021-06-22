@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button, Dropdown, Icon as AntdIcon, List, Menu, Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Button, Dropdown, Icon as AntdIcon, List, Menu } from 'antd'
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -158,7 +159,7 @@ const AllPodcastProgramBlock: React.VFC<{
   const [selectedPodcastProgramId, setSelectedPodcastProgramId] = useState<string | null>(null)
 
   if (loadingPodcastProgramIds) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   return (
@@ -236,7 +237,7 @@ const PlaylistPodcastProgramBlock: React.VFC<{
   const [tmpPodcastProgramIds, setTmpPodcastProgramIds] = useState<string[]>([])
 
   if (loadingPodcastPrograms) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   return (

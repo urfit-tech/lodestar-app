@@ -1,4 +1,5 @@
-import { Button, Icon, Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Button, Icon } from 'antd'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -151,7 +152,7 @@ const ProgramCollectionPage: React.VFC = () => {
           )}
           <div className="row">
             {loadingPrograms ? (
-              <Skeleton active />
+              <SkeletonText mt="1" noOfLines={4} spacing="4" />
             ) : !!errorPrograms ? (
               <div>{formatMessage(commonMessages.status.readingFail)}</div>
             ) : (

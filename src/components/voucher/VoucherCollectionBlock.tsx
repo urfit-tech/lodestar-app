@@ -1,4 +1,4 @@
-import { Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import VoucherCollectionTabs from '../../components/voucher/VoucherCollectionTabs'
@@ -25,7 +25,7 @@ const VoucherCollectionBlock: React.VFC<{
 }> = ({ memberId, loading, error, voucherCollection, disabledProductIds, onExchange, onInsert }) => {
   const { formatMessage } = useIntl()
   if (!memberId || loading) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   if (error) {

@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button } from '@chakra-ui/react'
-import { Divider, Form, Input, Skeleton } from 'antd'
+import { Button, Divider, SkeletonText } from '@chakra-ui/react'
+import { Form, Input } from 'antd'
 import Modal, { ModalProps } from 'antd/lib/modal'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -122,7 +122,7 @@ const AppointmentCoinModal: React.VFC<
         }}
       >
         {loadingAppointmentPlan || !appointmentPlan ? (
-          <Skeleton active />
+          <SkeletonText mt="1" noOfLines={4} spacing="4" />
         ) : (
           <>
             <div className="d-flex align-self-start mb-4">

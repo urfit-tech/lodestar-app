@@ -1,4 +1,5 @@
-import { Divider, Tag } from 'antd'
+import { Divider } from '@chakra-ui/react'
+import { Tag } from 'antd'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'

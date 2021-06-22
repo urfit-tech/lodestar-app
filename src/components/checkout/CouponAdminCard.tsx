@@ -1,4 +1,5 @@
-import { Button, Divider } from 'antd'
+import { Divider } from '@chakra-ui/react'
+import { Button } from 'antd'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'

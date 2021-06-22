@@ -1,4 +1,5 @@
-import { Checkbox, Form, Input, Select, Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Checkbox, Form, Input, Select } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -117,7 +118,7 @@ const InvoiceInput: React.VFC<{
   }, [loading, enabledModules.invoice])
 
   if (loading) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   const handleChange: (props: {

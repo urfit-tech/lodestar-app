@@ -1,4 +1,5 @@
-import { Skeleton, Tabs, Typography } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Tabs, Typography } from 'antd'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Redirect, useParams } from 'react-router-dom'
@@ -48,7 +49,7 @@ const MemberPage: React.VFC = () => {
     <DefaultLayout>
       <div className=" py-4 py-sm-5" style={{ background: 'white' }}>
         {!member ? (
-          <Skeleton active />
+          <SkeletonText mt="1" noOfLines={4} spacing="4" />
         ) : (
           <div className="container d-flex flex-column flex-sm-row align-items-center">
             <MemberAvatar memberId={memberId || ''} withName={false} size={128} />
@@ -69,7 +70,7 @@ const MemberPage: React.VFC = () => {
       loadingPodcastProgramIds ||
       loadingEnrolledAppointments ||
       loadingOrderLogs ? (
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       ) : (
         <Tabs
           activeKey={activeKey || 'program'}

@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
-import { Divider, Skeleton } from 'antd'
+import { Divider, SkeletonText } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import { throttle } from 'lodash'
 import moment from 'moment'
@@ -184,7 +184,11 @@ const BlogPostPage: React.VFC = () => {
             </StyledPostMeta>
             <StyledTitle>{post?.title}</StyledTitle>
             <div className="mb-5">
-              {loadingPost ? <Skeleton active /> : <BraftContent>{post?.description}</BraftContent>}
+              {loadingPost ? (
+                <SkeletonText mt="1" noOfLines={4} spacing="4" />
+              ) : (
+                <BraftContent>{post?.description}</BraftContent>
+              )}
             </div>
             <div className="mb-5">
               {post?.tags.map(tag => (

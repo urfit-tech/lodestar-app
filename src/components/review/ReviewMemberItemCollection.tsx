@@ -39,7 +39,7 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
     return (
       <Box padding="6" boxShadow="lg" bg="white">
         <SkeletonCircle size="36" />
-        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </Box>
     )
   }

@@ -1,4 +1,5 @@
-import { List, Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { List } from 'antd'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -13,7 +14,7 @@ const ActivityTicketCollectionBlock: React.VFC<{ memberId: string }> = ({ member
   return (
     <div className="container py-3">
       {loadingTickets ? (
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       ) : errorTickets ? (
         formatMessage(commonMessages.status.loadingError)
       ) : (

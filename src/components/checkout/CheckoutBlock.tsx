@@ -1,5 +1,5 @@
-import { Icon } from '@chakra-ui/react'
-import { Form, Input, message, Skeleton, Typography } from 'antd'
+import { Icon, SkeletonText } from '@chakra-ui/react'
+import { Form, Input, message, Typography } from 'antd'
 import { prop, sum } from 'ramda'
 import React, { useContext, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -134,7 +134,7 @@ const CheckoutBlock: React.VFC<{
   if (isAuthenticating) {
     return (
       <DefaultLayout>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }

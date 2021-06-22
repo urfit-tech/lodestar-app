@@ -1,4 +1,4 @@
-import { Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
@@ -15,7 +15,7 @@ const OrderProductPage: React.VFC = () => {
   if (loadingOrderProduct) {
     return (
       <DefaultLayout noFooter>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }

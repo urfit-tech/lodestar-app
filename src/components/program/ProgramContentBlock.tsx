@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
+import { SkeletonText } from '@chakra-ui/react'
 import { Skeleton, Tabs } from 'antd'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
@@ -82,7 +83,7 @@ const ProgramContentBlock: React.VFC<{
   }, [loadingProgramContent, programContentBodyType, programContentId])
 
   if (!programContent || !insertProgress || !refetchProgress || loadingProgramContentMaterials || loadingLastExercise) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   return (

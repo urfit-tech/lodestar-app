@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Skeleton, Typography } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Typography } from 'antd'
 import gql from 'graphql-tag'
 import { sum, uniqBy } from 'ramda'
 import React from 'react'
@@ -41,7 +42,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ member
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(commonMessages.ui.packages)}</Typography.Title>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </div>
     )
   }

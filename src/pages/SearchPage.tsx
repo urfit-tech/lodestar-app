@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Icon } from '@chakra-ui/icons'
-import { Skeleton, Tabs } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Tabs } from 'antd'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { sum } from 'ramda'
@@ -92,7 +93,7 @@ const SearchPage: React.VFC = () => {
       </StyledBanner>
 
       {isAuthenticating || loading ? (
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       ) : (
         <SearchResultBlock memberId={currentMemberId} title={enabledModules.search ? title : undefined} tag={tag} />
       )}
@@ -197,7 +198,7 @@ const SearchResultBlock: React.VFC<{
   }, [searchResults])
 
   if (loadingMember || loadingSearchResults) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   if (errorSearchResults || sum(Object.values(searchResults).map(value => value.length)) === 0) {

@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Icon } from '@chakra-ui/react'
-import { Divider, List, Skeleton } from 'antd'
+import { Button, Divider, Icon, SkeletonText } from '@chakra-ui/react'
+import { List } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import gql from 'graphql-tag'
 import React, { Fragment, useContext, useEffect } from 'react'
@@ -41,7 +41,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   if (loading) {
     return (
       <AdminCard {...cardProps}>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </AdminCard>
     )
   }
