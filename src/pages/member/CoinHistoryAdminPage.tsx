@@ -8,6 +8,7 @@ import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useAuth } from '../../components/auth/AuthContext'
+import { EmptyBlock } from '../../components/common'
 import AdminCard from '../../components/common/AdminCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { useApp } from '../../containers/common/AppContext'
@@ -65,12 +66,6 @@ const StyledInactivatedItem = styled(StyledItem)`
 `
 const StyledInactivatedLabel = styled(StyledLabel)`
   background-color: var(--gray);
-`
-const EmptyBlock = styled.div`
-  padding: 12.5rem 0;
-  color: var(--gray-dark);
-  font-size: 14px;
-  text-align: center;
 `
 
 const CoinHistoryAdminPage: React.VFC = () => {

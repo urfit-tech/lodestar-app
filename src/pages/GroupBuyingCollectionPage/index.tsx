@@ -3,9 +3,10 @@ import { Skeleton, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/re
 import gql from 'graphql-tag'
 import { uniq } from 'ramda'
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useAuth } from '../../components/auth/AuthContext'
+import { EmptyBlock } from '../../components/common'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import types from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
@@ -37,6 +38,12 @@ export const StyledTabPanel = styled(TabPanel)`
   }
 `
 
+const messages = defineMessages({
+  noSendableItem: { id: 'groupBuy.text.noSendableItem', defaultMessage: '目前未收到任何項目' },
+  noSentItem: { id: 'groupBuy.text.noSentItem', defaultMessage: '尚無任何可發送的項目' },
+  noReceivedItem: { id: 'groupBuy.text.noReceivedItem', defaultMessage: '尚未發送過任何項目' },
+})
+
 const GroupBuyingCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
@@ -57,24 +64,28 @@ const GroupBuyingCollectionPage: React.VFC = () => {
     key: string
     name: string
     isDisplay: (order: groupBuyingOrderProps) => boolean
+    emptyText: string
   }[] = [
     {
       key: 'sendable',
       name: formatMessage(commonMessages.status.sendable),
       isDisplay: order =>
         !order.transferredAt && order.parentOrderMemberId === currentMemberId && order.memberId === currentMemberId,
+      emptyText: formatMessage(messages.noSendableItem),
     },
     {
       key: 'sent',
       name: formatMessage(commonMessages.status.sent),
       isDisplay: order =>
         !!order.transferredAt && order.parentOrderMemberId === currentMemberId && order.memberId !== currentMemberId,
+      emptyText: formatMessage(messages.noSentItem),
     },
     {
       key: 'received',
       name: formatMessage(commonMessages.status.received),
       isDisplay: order =>
         !!order.transferredAt && order.parentOrderMemberId !== currentMemberId && order.memberId === currentMemberId,
+      emptyText: formatMessage(messages.noReceivedItem),
     },
   ]
 
@@ -93,19 +104,25 @@ const GroupBuyingCollectionPage: React.VFC = () => {
           const displayOrders = groupBuyingOrderCollection.filter(v.isDisplay)
 
           return (
-            <StyledTabPanel className="row">
-              {displayOrders.map(v => (
-                <div className="col-12 col-md-6 col-lg-4 mb-4" key={v.id}>
-                  <GroupBuyingDisplayCard
-                    orderId={v.id}
-                    imgUrl={v.coverUrl}
-                    title={v.name}
-                    partnerMemberIds={v.partnerMemberIds}
-                    onRefetch={!v.transferredAt ? () => refetch() : null}
-                    notTransferred={!v.transferredAt}
-                  />
+            <StyledTabPanel>
+              {!displayOrders.length ? (
+                <EmptyBlock>{v.emptyText}</EmptyBlock>
+              ) : (
+                <div className="row">
+                  {displayOrders.map(v => (
+                    <div className="col-12 col-md-6 col-lg-4 mb-4" key={v.id}>
+                      <GroupBuyingDisplayCard
+                        orderId={v.id}
+                        imgUrl={v.coverUrl}
+                        title={v.name}
+                        partnerMemberIds={v.partnerMemberIds}
+                        onRefetch={!v.transferredAt ? () => refetch() : null}
+                        notTransferred={!v.transferredAt}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </StyledTabPanel>
           )
         })}
