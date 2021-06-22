@@ -83,6 +83,11 @@ const PaymentSelector: React.FC<{
             {formatMessage(checkoutMessages.label.barcode)}
           </Select.Option>
         )}
+        {settings['payment.parenting.credit.enable'] === '1' && (
+          <Select.Option value='{"gateway":"parenting","method":"credit"}'>
+            {formatMessage(checkoutMessages.label.credit)}（{formatMessage(checkoutMessages.label.parenting)}）
+          </Select.Option>
+        )}
       </Select>
     </>
   )
