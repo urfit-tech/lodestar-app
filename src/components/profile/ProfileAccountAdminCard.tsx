@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button, Form, Input, message, Typography } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Form, Input, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import React from 'react'
@@ -128,10 +129,10 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
         )}
 
         <Form.Item wrapperCol={{ md: { offset: 4 } }}>
-          <Button className="mr-2" onClick={() => form.resetFields()}>
+          <Button variant="outline" className="mr-2" onClick={() => form.resetFields()}>
             {formatMessage(commonMessages.ui.cancel)}
           </Button>
-          <Button type="primary" htmlType="submit">
+          <Button variant="primary" type="submit">
             {formatMessage(commonMessages.button.save)}
           </Button>
         </Form.Item>
