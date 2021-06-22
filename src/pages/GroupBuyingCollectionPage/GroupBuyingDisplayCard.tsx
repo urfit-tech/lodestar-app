@@ -145,6 +145,7 @@ const GroupBuyingDeliverModal: React.VFC<{
 
 const StyledCard = styled.div`
   border-radius: 4px;
+  background: white;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06); ;
 `
 

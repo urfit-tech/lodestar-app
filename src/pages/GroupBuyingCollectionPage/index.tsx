@@ -1,11 +1,10 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/icons'
 import { Skeleton, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
-import { Typography } from 'antd'
 import gql from 'graphql-tag'
 import { uniq } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
 import { useAuth } from '../../components/auth/AuthContext'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import types from '../../hasura'
@@ -24,6 +23,12 @@ type groupBuyingOrderProps = {
   endedAt: Date | null
   transferredAt: Date | null
 }
+
+const StyledTabPanel = styled(TabPanel)`
+  && {
+    padding: 24px 0;
+  }
+`
 
 const GroupBuyingCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -81,9 +86,9 @@ const GroupBuyingCollectionPage: React.VFC = () => {
           const displayOrders = groupBuyingOrderCollection.filter(v.isDisplay)
 
           return (
-            <TabPanel className="row">
+            <StyledTabPanel className="row">
               {displayOrders.map(v => (
-                <div className="col-12 col-md-6 col-lg-4" key={v.id}>
+                <div className="col-12 col-md-6 col-lg-4 mb-4" key={v.id}>
                   <GroupBuyingDisplayCard
                     orderId={v.id}
                     imgUrl={v.coverUrl}
@@ -94,7 +99,7 @@ const GroupBuyingCollectionPage: React.VFC = () => {
                   />
                 </div>
               ))}
-            </TabPanel>
+            </StyledTabPanel>
           )
         })}
       </TabPanels>
@@ -102,12 +107,7 @@ const GroupBuyingCollectionPage: React.VFC = () => {
   )
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={GroupBuyIcon} className="mr-3" />
-        <span>{formatMessage(commonMessages.ui.groupBuying)}</span>
-      </Typography.Title>
-
+    <MemberAdminLayout content={{ icon: GroupBuyIcon, title: formatMessage(commonMessages.ui.groupBuying) }}>
       {content}
     </MemberAdminLayout>
   )
