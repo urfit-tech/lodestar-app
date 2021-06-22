@@ -230,6 +230,8 @@ export const commonMessages = {
     referrer: { id: 'common.label.referrer', defaultMessage: '推薦人' },
     partnerChoose: { id: 'common.label.partnerChoose', defaultMessage: '發送設定' },
     targetPartner: { id: 'common.label.targetPartner', defaultMessage: '發送對象' },
+    target: { id: 'common.term.target', defaultMessage: '對象：' },
+    date: { id: 'common.term.date', defaultMessage: '日期：' },
   }),
   form: {
     message: defineMessages({

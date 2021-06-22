@@ -16,7 +16,10 @@ import GroupBuyingDisplayCard from './GroupBuyingDisplayCard'
 type groupBuyingOrderProps = {
   id: string
   parentOrderMemberId: string
-  memberId: string
+  member: {
+    id: string
+    email: string
+  }
   name: string
   coverUrl: string
   partnerMemberIds: string[]
@@ -70,21 +73,21 @@ const GroupBuyingCollectionPage: React.VFC = () => {
       key: 'sendable',
       name: formatMessage(commonMessages.status.sendable),
       isDisplay: order =>
-        !order.transferredAt && order.parentOrderMemberId === currentMemberId && order.memberId === currentMemberId,
+        !order.transferredAt && order.parentOrderMemberId === currentMemberId && order.member.id === currentMemberId,
       emptyText: formatMessage(messages.noSendableItem),
     },
     {
       key: 'sent',
       name: formatMessage(commonMessages.status.sent),
       isDisplay: order =>
-        !!order.transferredAt && order.parentOrderMemberId === currentMemberId && order.memberId !== currentMemberId,
+        !!order.transferredAt && order.parentOrderMemberId === currentMemberId && order.member.id !== currentMemberId,
       emptyText: formatMessage(messages.noSentItem),
     },
     {
       key: 'received',
       name: formatMessage(commonMessages.status.received),
       isDisplay: order =>
-        !!order.transferredAt && order.parentOrderMemberId !== currentMemberId && order.memberId === currentMemberId,
+        !!order.transferredAt && order.parentOrderMemberId !== currentMemberId && order.member.id === currentMemberId,
       emptyText: formatMessage(messages.noReceivedItem),
     },
   ]
@@ -117,7 +120,8 @@ const GroupBuyingCollectionPage: React.VFC = () => {
                         title={v.name}
                         partnerMemberIds={v.partnerMemberIds}
                         onRefetch={!v.transferredAt ? () => refetch() : null}
-                        notTransferred={!v.transferredAt}
+                        transferredAt={v.transferredAt}
+                        memberEmail={v.member.email}
                       />
                     </div>
                   ))}
@@ -150,6 +154,7 @@ const useGroupBuyingLogs = (memberId: string | null) => {
           parent_order_member_id
           order_id
           member_id
+          email
           started_at
           ended_at
           transferred_at
@@ -177,7 +182,10 @@ const useGroupBuyingLogs = (memberId: string | null) => {
       ? data.order_group_buying_log.map(v => ({
           id: v.order_id || '',
           parentOrderMemberId: v.parent_order_member_id || '',
-          memberId: v.member_id || '',
+          member: {
+            id: v.member_id || '',
+            email: v.email || '',
+          },
           name: v.name || '',
           startedAt: v.started_at ? new Date(v.started_at) : null,
           endedAt: v.ended_at ? new Date(v.ended_at) : null,
