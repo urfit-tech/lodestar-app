@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, SkeletonText } from '@chakra-ui/react'
-import { message, Tabs } from 'antd'
+import { Button, SkeletonText, Tab, TabPanels, Tabs } from '@chakra-ui/react'
+import { message } from 'antd'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import { sum } from 'ramda'
@@ -14,6 +14,7 @@ import { useApp } from '../../containers/common/AppContext'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
+import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 
@@ -126,6 +127,7 @@ const CoinHistoryCollectionTabs: React.VFC<{
   const { loadingOrderLogs, errorOrderLogs, orderLogs, refetchOrderLogs, fetchMoreOrderLogs } =
     useOrderLogWithCoinsCollection(memberId)
   const [loading, setLoading] = useState(false)
+  const [activeKey, setActiveKey] = useState('coin-logs')
 
   if (errorCoinLogs || errorOrderLogs) {
     message.error(formatMessage(commonMessages.status.readingError))
@@ -133,112 +135,123 @@ const CoinHistoryCollectionTabs: React.VFC<{
 
   return (
     <Tabs
-      defaultActiveKey="coins-log"
+      colorScheme="primary"
       onChange={() => {
         refetchCoinLogs()
         refetchOrderLogs()
       }}
     >
-      <Tabs.TabPane key="coin-logs" tab={formatMessage(messages.coinHistory)} className="pt-2">
-        {loadingCoinLogs ? (
-          <SkeletonText mt="1" noOfLines={4} spacing="4" />
-        ) : coinLogs.length === 0 ? (
-          <EmptyBlock>{formatMessage(messages.noCoinLog)}</EmptyBlock>
-        ) : (
-          <AdminCard className="mb-5">
-            {coinLogs.map(coinLog => {
-              return coinLog.endedAt && coinLog.endedAt < new Date() ? (
-                <StyledInactivatedItem key={coinLog.id} className="d-flex align-items-center">
-                  <div className="flex-shrink-0 mr-5">{moment(coinLog.publishedAt).format('YYYY/MM/DD')}</div>
-                  <div className="flex-grow-1">
-                    <div>{coinLog.title}</div>
-                    <StyledDescription>
-                      {coinLog.endedAt
-                        ? formatMessage(messages.dueAt, { date: moment(coinLog.endedAt).format('YYYY/MM/DD') })
-                        : formatMessage(messages.unlimited)}
-                    </StyledDescription>
-                  </div>
+      <StyledTabList>
+        <Tab onClick={() => setActiveKey('coin-logs')} className="pt-2" isSelected={'coin-logs' === activeKey}>
+          {formatMessage(messages.coinHistory)}
+        </Tab>
+        <Tab onClick={() => setActiveKey('order-log')} className="pt-2" isSelected={'order-log' === activeKey}>
+          {formatMessage(messages.orderHistory)}
+        </Tab>
+      </StyledTabList>
+
+      <TabPanels>
+        <StyledTabPanel>
+          {loadingCoinLogs ? (
+            <SkeletonText mt="1" noOfLines={4} spacing="4" />
+          ) : coinLogs.length === 0 ? (
+            <EmptyBlock>{formatMessage(messages.noCoinLog)}</EmptyBlock>
+          ) : (
+            <AdminCard className="mb-5">
+              {coinLogs.map(coinLog => {
+                return coinLog.endedAt && coinLog.endedAt < new Date() ? (
+                  <StyledInactivatedItem key={coinLog.id} className="d-flex align-items-center">
+                    <div className="flex-shrink-0 mr-5">{moment(coinLog.publishedAt).format('YYYY/MM/DD')}</div>
+                    <div className="flex-grow-1">
+                      <div>{coinLog.title}</div>
+                      <StyledDescription>
+                        {coinLog.endedAt
+                          ? formatMessage(messages.dueAt, { date: moment(coinLog.endedAt).format('YYYY/MM/DD') })
+                          : formatMessage(messages.unlimited)}
+                      </StyledDescription>
+                    </div>
+                    <div className="flex-shrink-0 ml-5">
+                      <StyledInactivatedLabel variant="coin-log">
+                        {coinLog.amount > 0 && '+'}
+                        {coinLog.amount} {coinUnit}
+                      </StyledInactivatedLabel>
+                    </div>
+                  </StyledInactivatedItem>
+                ) : (
+                  <StyledItem key={coinLog.id} className="d-flex align-items-center">
+                    <div className="flex-shrink-0 mr-5">{moment(coinLog.publishedAt).format('YYYY/MM/DD')}</div>
+                    <div className="flex-grow-1">
+                      <div>{coinLog.title}</div>
+                      <StyledDescription>
+                        {coinLog.endedAt
+                          ? formatMessage(messages.dueAt, { date: moment(coinLog.endedAt).format('YYYY/MM/DD') })
+                          : formatMessage(messages.unlimited)}
+                      </StyledDescription>
+                    </div>
+                    <div className="flex-shrink-0 ml-5">
+                      <StyledLabel variant="coin-log">
+                        {coinLog.amount > 0 && '+'}
+                        {coinLog.amount} {coinUnit}
+                      </StyledLabel>
+                    </div>
+                  </StyledItem>
+                )
+              })}
+
+              {fetchMoreCoinLogs && (
+                <div className="text-center mt-4">
+                  <Button
+                    variant="outline"
+                    isLoading={loading}
+                    onClick={() => {
+                      setLoading(true)
+                      fetchMoreCoinLogs().finally(() => setLoading(false))
+                    }}
+                  >
+                    {formatMessage(messages.viewMore)}
+                  </Button>
+                </div>
+              )}
+            </AdminCard>
+          )}
+        </StyledTabPanel>
+
+        <StyledTabPanel>
+          {loadingOrderLogs ? (
+            <SkeletonText mt="1" noOfLines={4} spacing="4" />
+          ) : orderLogs.length === 0 ? (
+            <EmptyBlock>{formatMessage(messages.noCoinLog)}</EmptyBlock>
+          ) : (
+            <AdminCard className="mb-5">
+              {orderLogs.map(orderLog => (
+                <StyledItem key={orderLog.id} className="d-flex align-items-center">
+                  <div className="flex-shrink-0 mr-5">{moment(orderLog.createdAt).format('YYYY/MM/DD')}</div>
+                  <div className="flex-grow-1">{orderLog.title}</div>
                   <div className="flex-shrink-0 ml-5">
-                    <StyledInactivatedLabel variant="coin-log">
-                      {coinLog.amount > 0 && '+'}
-                      {coinLog.amount} {coinUnit}
-                    </StyledInactivatedLabel>
-                  </div>
-                </StyledInactivatedItem>
-              ) : (
-                <StyledItem key={coinLog.id} className="d-flex align-items-center">
-                  <div className="flex-shrink-0 mr-5">{moment(coinLog.publishedAt).format('YYYY/MM/DD')}</div>
-                  <div className="flex-grow-1">
-                    <div>{coinLog.title}</div>
-                    <StyledDescription>
-                      {coinLog.endedAt
-                        ? formatMessage(messages.dueAt, { date: moment(coinLog.endedAt).format('YYYY/MM/DD') })
-                        : formatMessage(messages.unlimited)}
-                    </StyledDescription>
-                  </div>
-                  <div className="flex-shrink-0 ml-5">
-                    <StyledLabel variant="coin-log">
-                      {coinLog.amount > 0 && '+'}
-                      {coinLog.amount} {coinUnit}
+                    <StyledLabel variant="order-log">
+                      -{orderLog.amount} {coinUnit}
                     </StyledLabel>
                   </div>
                 </StyledItem>
-              )
-            })}
+              ))}
 
-            {fetchMoreCoinLogs && (
-              <div className="text-center mt-4">
-                <Button
-                  variant="outline"
-                  isLoading={loading}
-                  onClick={() => {
-                    setLoading(true)
-                    fetchMoreCoinLogs().finally(() => setLoading(false))
-                  }}
-                >
-                  {formatMessage(messages.viewMore)}
-                </Button>
-              </div>
-            )}
-          </AdminCard>
-        )}
-      </Tabs.TabPane>
-
-      <Tabs.TabPane key="order-log" tab={formatMessage(messages.orderHistory)} className="pt-2">
-        {loadingOrderLogs ? (
-          <SkeletonText mt="1" noOfLines={4} spacing="4" />
-        ) : orderLogs.length === 0 ? (
-          <EmptyBlock>{formatMessage(messages.noCoinLog)}</EmptyBlock>
-        ) : (
-          <AdminCard className="mb-5">
-            {orderLogs.map(orderLog => (
-              <StyledItem key={orderLog.id} className="d-flex align-items-center">
-                <div className="flex-shrink-0 mr-5">{moment(orderLog.createdAt).format('YYYY/MM/DD')}</div>
-                <div className="flex-grow-1">{orderLog.title}</div>
-                <div className="flex-shrink-0 ml-5">
-                  <StyledLabel variant="order-log">
-                    -{orderLog.amount} {coinUnit}
-                  </StyledLabel>
+              {fetchMoreOrderLogs && (
+                <div className="text-center mt-4">
+                  <Button
+                    loading={loading}
+                    onClick={() => {
+                      setLoading(true)
+                      fetchMoreOrderLogs().finally(() => setLoading(false))
+                    }}
+                  >
+                    {formatMessage(messages.viewMore)}
+                  </Button>
                 </div>
-              </StyledItem>
-            ))}
-
-            {fetchMoreOrderLogs && (
-              <div className="text-center mt-4">
-                <Button
-                  loading={loading}
-                  onClick={() => {
-                    setLoading(true)
-                    fetchMoreOrderLogs().finally(() => setLoading(false))
-                  }}
-                >
-                  {formatMessage(messages.viewMore)}
-                </Button>
-              </div>
-            )}
-          </AdminCard>
-        )}
-      </Tabs.TabPane>
+              )}
+            </AdminCard>
+          )}
+        </StyledTabPanel>
+      </TabPanels>
     </Tabs>
   )
 }

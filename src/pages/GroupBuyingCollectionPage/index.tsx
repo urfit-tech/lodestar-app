@@ -24,7 +24,14 @@ type groupBuyingOrderProps = {
   transferredAt: Date | null
 }
 
-const StyledTabPanel = styled(TabPanel)`
+export const StyledTabList = styled(TabList)`
+  && {
+    padding-bottom: 1px;
+    border-bottom: 1px solid var(--gray);
+  }
+`
+
+export const StyledTabPanel = styled(TabPanel)`
   && {
     padding: 24px 0;
   }
@@ -73,13 +80,13 @@ const GroupBuyingCollectionPage: React.VFC = () => {
 
   content = (
     <Tabs colorScheme="primary">
-      <TabList>
+      <StyledTabList>
         {tabContents.map(v => (
           <Tab key={v.key} onClick={() => setTab(v.key)} isSelected={v.key === tab}>
             {v.name}
           </Tab>
         ))}
-      </TabList>
+      </StyledTabList>
 
       <TabPanels>
         {tabContents.map(v => {
