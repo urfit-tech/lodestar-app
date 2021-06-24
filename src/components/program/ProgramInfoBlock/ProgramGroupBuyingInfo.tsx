@@ -1,15 +1,16 @@
-import { Icon } from '@chakra-ui/icons'
-import { Button } from '@chakra-ui/react'
-import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import React from 'react'
+import { defineMessages, useIntl } from 'react-intl'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { useMember } from '../../../hooks/member'
-import { ReactComponent as ArrowRightIcon } from '../../../images/angle-right.svg'
-import { ProgramPlanProps } from '../../../types/program'
+import { ProgramPlanProps, ProgramProps } from '../../../types/program'
 import { useAuth } from '../../auth/AuthContext'
 import CheckoutProductModal from '../../checkout/CheckoutProductModal'
+import { useAddProgramToCart } from '../../checkout/ProgramPaymentButton'
 import PriceLabel from '../../common/PriceLabel'
+import { BREAK_POINT } from '../../common/Responsive'
 
 const StyledTitle = styled.span`
   font-family: NotoSansCJKtc;
@@ -17,27 +18,63 @@ const StyledTitle = styled.span`
   font-weight: 500;
   line-height: 1.57;
   letter-spacing: 0.18px;
-  color: var(--gray-darker);
 `
 
-const StyledGroupBuyingButton = styled(Button)`
+const StyledMenuList = styled(MenuList)`
   && {
-    height: 68px;
+    min-width: 236px;
+    width: 100vw;
+    max-width: 510px;
+
+    @media (min-width: 768px) {
+      max-width: 690px;
+    }
+
+    @media (min-width: ${BREAK_POINT}px) {
+      width: clamp(236px, 23vw, 298px);
+    }
   }
 `
 
+const StyledMenuItem = styled(MenuItem)`
+  height: 48px;
+  letter-spacing: 0.2px;
+  font-family: NotoSansCJKtc;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-darker);
+
+  &:hover {
+    color: ${props => props.theme['@primary-color']};
+  }
+`
+
+const messages = defineMessages({
+  perpetualProgram: { id: 'groupBuying.ui.perpetualProgram', defaultMessage: '單人方案' },
+})
+
 const ProgramGroupBuyingInfo: React.FC<{
   isOnSale: boolean
+  program: Pick<ProgramProps, 'id' | 'listPrice' | 'salePrice' | 'title' | 'isSoldOut'>
   programPlans: Pick<ProgramPlanProps, 'id' | 'title' | 'listPrice' | 'salePrice'>[]
-}> = ({ isOnSale, programPlans }) => {
+}> = ({ isOnSale, program, programPlans }) => {
   const { formatMessage } = useIntl()
-  const [isVisible, setIsVisible] = useState(false)
   const { currentMemberId } = useAuth()
   const { member } = useMember(currentMemberId || '')
+  const { isProgramInCart, handleAddCartProgram } = useAddProgramToCart(program)
+  const history = useHistory()
 
   return (
     <div>
       <div className="mb-2">
+        <span className="d-flex justify-content-between">
+          <StyledTitle>{formatMessage(messages.perpetualProgram)}</StyledTitle>
+          <PriceLabel
+            variant="inline"
+            listPrice={program.listPrice || 0}
+            salePrice={isOnSale ? program.salePrice : undefined}
+          />
+        </span>
         {programPlans.map(v => (
           <span key={v.id} className="d-flex justify-content-between">
             <StyledTitle>{v.title}</StyledTitle>
@@ -46,12 +83,24 @@ const ProgramGroupBuyingInfo: React.FC<{
         ))}
       </div>
 
-      <Button colorScheme="primary" isFullWidth onClick={() => setIsVisible(prev => !prev)}>
-        {formatMessage(commonMessages.ui.purchase)}
-      </Button>
+      <Menu placement="top">
+        <MenuButton as={Button} colorScheme="primary" isFullWidth>
+          {formatMessage(commonMessages.ui.purchase)}
+        </MenuButton>
+        <StyledMenuList>
+          {program.isSoldOut ? (
+            <MenuItem isDisabled>{formatMessage(commonMessages.button.soldOut)}</MenuItem>
+          ) : (
+            <StyledMenuItem
+              onClick={() =>
+                isProgramInCart ? history.push(`/cart`) : handleAddCartProgram()?.then(() => history.push('/cart'))
+              }
+            >
+              <StyledTitle className="mr-1">{formatMessage(messages.perpetualProgram)}</StyledTitle>
+              <PriceLabel listPrice={isOnSale ? program.salePrice || program.listPrice || 0 : program.listPrice || 0} />
+            </StyledMenuItem>
+          )}
 
-      {isVisible && (
-        <div className="px-1">
           {programPlans.map(v => (
             <CheckoutProductModal
               key={v.id}
@@ -59,23 +108,15 @@ const ProgramGroupBuyingInfo: React.FC<{
               paymentType="perpetual"
               defaultProductId={`ProgramPlan_${v.id}`}
               renderTrigger={onOpen => (
-                <StyledGroupBuyingButton
-                  variant="outline"
-                  isFullWidth
-                  className="d-flex justify-content-between align-items-center my-2"
-                  onClick={onOpen}
-                >
-                  <div className="d-flex flex-column align-items-start">
-                    <StyledTitle>{v.title}</StyledTitle>
-                    <PriceLabel listPrice={isOnSale ? v.salePrice || v.listPrice : v.listPrice} />
-                  </div>
-                  <Icon as={ArrowRightIcon} />
-                </StyledGroupBuyingButton>
+                <StyledMenuItem onClick={onOpen}>
+                  <StyledTitle className="mr-1">{v.title}</StyledTitle>
+                  <PriceLabel listPrice={isOnSale ? v.salePrice || v.listPrice : v.listPrice} />
+                </StyledMenuItem>
               )}
             />
           ))}
-        </div>
-      )}
+        </StyledMenuList>
+      </Menu>
     </div>
   )
 }
