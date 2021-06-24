@@ -42,9 +42,9 @@ export const StyledTabPanel = styled(TabPanel)`
 `
 
 const messages = defineMessages({
-  noSendableItem: { id: 'groupBuy.text.noSendableItem', defaultMessage: '目前未收到任何項目' },
-  noSentItem: { id: 'groupBuy.text.noSentItem', defaultMessage: '尚無任何可發送的項目' },
-  noReceivedItem: { id: 'groupBuy.text.noReceivedItem', defaultMessage: '尚未發送過任何項目' },
+  noReceivedItem: { id: 'groupBuying.text.noReceivedItem', defaultMessage: '目前未收到任何項目' },
+  noSentItem: { id: 'groupBuying.text.noSentItem', defaultMessage: '尚未發送過任何項目' },
+  noSendableItem: { id: 'groupBuying.text.noSendableItem', defaultMessage: '尚無任何可發送的項目' },
 })
 
 const GroupBuyingCollectionPage: React.VFC = () => {
