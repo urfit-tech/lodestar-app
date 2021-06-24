@@ -40,14 +40,18 @@ const ProgramPerpetualPlanCard: React.VFC<{
   return (
     <StyledWrapper className="py-2">
       <div className="container">
-        {enabledModules.group_buying && !!program.plans.filter(v => v.publishedAt).length ? (
-          <ProgramGroupBuyingInfo isOnSale={isOnSale} programPlans={program.plans.filter(v => v.publishedAt)} />
-        ) : isEnrolled ? (
+        {isEnrolled ? (
           <Link to={`/programs/${program.id}/contents`}>
             <Button colorScheme="primary" isFullWidth>
               {formatMessage(commonMessages.button.enter)}
             </Button>
           </Link>
+        ) : enabledModules.group_buying && program.plans.filter(v => v.publishedAt).length > 0 ? (
+          <ProgramGroupBuyingInfo
+            isOnSale={isOnSale}
+            program={program}
+            programPlans={program.plans.filter(v => v.publishedAt)}
+          />
         ) : (
           <>
             <div className="text-center mb-2">
