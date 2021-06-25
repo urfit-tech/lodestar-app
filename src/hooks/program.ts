@@ -459,7 +459,10 @@ export const useProgramContent = (programContentId: string) => {
         }
       }
     `,
-    { variables: { programContentId } },
+    {
+      variables: { programContentId },
+      notifyOnNetworkStatusChange: true,
+    },
   )
 
   const programContent:
