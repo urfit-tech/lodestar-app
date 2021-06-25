@@ -1,12 +1,16 @@
 import Axios from 'axios'
 import { filter } from 'ramda'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import TagManager from 'react-gtm-module'
 import { hotjar } from 'react-hotjar'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
+import { ThemeContext } from 'styled-components'
+import { useAuth } from '../components/auth/AuthContext'
 import { useApp } from '../containers/common/AppContext'
+import { productMessages } from '../helpers/translation'
 import { routesProps } from '../Routes'
 
 export const useRouteKeys = () => {
@@ -128,4 +132,74 @@ export const useApiHost = (appId: string) => {
   }, [apiHost, appId])
 
   return apiHost
+}
+
+export const useSwarmify = () => {
+  const { formatMessage } = useIntl()
+  const theme = useContext(ThemeContext)
+  const { settings } = useApp()
+  const { currentMember, isAuthenticating } = useAuth()
+  const swarmcdnkey = settings['swarmify.cdn_key']
+  if (theme && !isAuthenticating && swarmcdnkey) {
+    const swarmoptions = {
+      swarmcdnkey,
+      theme: {
+        button: 'circle',
+        primaryColor: theme ? theme['@primary-color'] : '#000',
+      },
+      plugins: {},
+    }
+    if (currentMember) {
+      const text = `${formatMessage(productMessages.program.content.provide)} ${currentMember.name}-${
+        currentMember.email
+      } ${formatMessage(productMessages.program.content.watch)}`
+      const canvas = document.createElement('canvas')
+      canvas.width = text.length * 10
+      canvas.height = 40
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        ctx.fillStyle = '#fff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.font = '16px sans-serif'
+        ctx.fillStyle = 'black'
+        ctx.fillText(text, 8, canvas.height / 2)
+      }
+      const dataUri = canvas.toDataURL()
+      ;(swarmoptions.plugins as any).watermark = {
+        file: dataUri,
+        xpos: 100,
+        ypos: 0,
+        opacity: 0.6,
+      }
+    }
+    ;(window as any).swarmoptions = swarmoptions
+    var is_Custom_Video = 'undefined' != typeof (window as any).swarmvcustomvideo && (window as any).swarmvcustomvideo
+    if ('undefined' == typeof (window as any).SWARMIFY_LOADED)
+      if (is_Custom_Video) {
+        document.write(
+          '<script type="text/javascript" src="https://assets.swarmcdn.com/cross/swarmcdn-custom.js"></script>',
+        )
+        document.write(
+          '<link rel="stylesheet" href="https://assets.swarmcdn.com/cross/css/swarmify-custom.css?v=0f237668">',
+        )
+      } else {
+        var currentScriptTag = document.currentScript,
+          isAsyncLoad = currentScriptTag && (currentScriptTag as any).async
+        if ('loading' !== document.readyState || isAsyncLoad) {
+          var scriptElem = document.createElement('script')
+          scriptElem.src = 'https://assets.swarmcdn.com/cross/swarmcdn.js?v=e46ab80c'
+          var firstScript = document.getElementsByTagName('script')[0]
+          firstScript.parentNode?.insertBefore(scriptElem, firstScript)
+          window.console && console.log('Swarmify - swarmdetect.js: Script Append Succeeded')
+        } else {
+          document.write(
+            '<script type="text/javascript" id="swarm_script" src="https://assets.swarmcdn.com/cross/swarmcdn.js?v=e46ab80c"></script>',
+          )
+          process.env.NODE_ENV === 'development' &&
+            window.console &&
+            console.log('Swarmify - swarmdetect.js: Document Write Succeeded')
+        }
+      }
+    ;(window as any).SWARMIFY_LOADED = !0
+  }
 }

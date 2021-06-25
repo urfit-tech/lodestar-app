@@ -87,7 +87,7 @@ export const getFileDownloadableLink = async (key: string, authToken: string | n
       headers: { authorization: `Bearer ${authToken}` },
     },
   )
-  return data.result
+  return data.result as string
 }
 
 export const downloadFile = async (fileName: string, config: AxiosRequestConfig) =>

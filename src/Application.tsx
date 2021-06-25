@@ -7,6 +7,7 @@ import { BrowserRouter, Route } from 'react-router-dom'
 import { QueryParamProvider } from 'use-query-params'
 import { AuthProvider } from './components/auth/AuthContext'
 import { ApiProvider } from './components/common/ApiContext'
+import ApplicationHelmet from './components/common/ApplicationHelmet'
 import { AppThemeProvider } from './components/common/AppThemeContext'
 import { AppProvider } from './containers/common/AppContext'
 import ErrorBoundary from './containers/common/ErrorBoundary'
@@ -44,6 +45,7 @@ const Application: React.FC<{
                         <ErrorBoundary>
                           <ConfigProvider locale={zhTW}>
                             <CustomRendererProvider renderer={customRender}>
+                              <ApplicationHelmet />
                               <Routes extra={extraRouteProps} />
                             </CustomRendererProvider>
                           </ConfigProvider>

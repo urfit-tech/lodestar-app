@@ -2,7 +2,7 @@ import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Organization, WithContext } from 'schema-dts'
 import { useApp } from '../../containers/common/AppContext'
-import { useGA, useGTM, useHotjar, usePixel } from '../../hooks/util'
+import { useGA, useGTM, useHotjar, usePixel, useSwarmify } from '../../hooks/util'
 
 const ApplicationHelmet: React.VFC = () => {
   const { settings, id: appId } = useApp()
@@ -13,11 +13,11 @@ const ApplicationHelmet: React.VFC = () => {
     logo: settings['seo.logo'],
     url: settings['seo.url'],
   }
-
   useGA()
   usePixel()
   useHotjar()
   useGTM()
+  useSwarmify()
 
   return (
     <Helmet>

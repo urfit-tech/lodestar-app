@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import React, { createContext, useContext, useEffect } from 'react'
 import { useAuth } from '../../components/auth/AuthContext'
-import ApplicationHelmet from '../../components/common/ApplicationHelmet'
 import hasura from '../../hasura'
 import { Module } from '../../types/general'
 
@@ -120,10 +119,5 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
     }
   }, [appId, authToken, refreshToken])
 
-  return (
-    <AppContext.Provider value={app}>
-      <ApplicationHelmet />
-      {children}
-    </AppContext.Provider>
-  )
+  return <AppContext.Provider value={app}>{children}</AppContext.Provider>
 }
