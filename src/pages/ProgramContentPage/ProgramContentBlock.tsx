@@ -52,8 +52,9 @@ const ProgramContentBlock: React.VFC<{
   )
 
   useEffect(() => {
-    const progress = programContentProgress.find(progress => progress.programContentId === programContentId)
-      ?.lastProgress
+    const progress = programContentProgress.find(
+      progress => progress.programContentId === programContentId,
+    )?.lastProgress
 
     if (lastProgress === null && progress !== undefined) {
       setLastProgress(progress)
@@ -74,6 +75,13 @@ const ProgramContentBlock: React.VFC<{
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
+  const insertProgramProgress = throttle((currentProgress: number) => {
+    insertProgress(programContentId, {
+      progress: currentProgress > 1 ? 1 : currentProgress > initialProgress ? currentProgress : initialProgress,
+      lastProgress: currentProgress,
+    }).then(() => refetchProgress())
+  }, 5000)
+
   return (
     <div id="program_content_block" className="pt-4 p-sm-4">
       {!programContent.programContentBody && formatMessage(productMessages.program.content.unpurchased)}
@@ -91,13 +99,7 @@ const ProgramContentBlock: React.VFC<{
             if (e.type === 'progress') {
               const video = e.target as HTMLVideoElement
               const currentProgress = Math.ceil((e.videoState.endedAt / video.duration) * 20) / 20 // every 5% as a tick
-              throttle(() => {
-                insertProgress(programContentId, {
-                  progress:
-                    currentProgress > 1 ? 1 : currentProgress > initialProgress ? currentProgress : initialProgress,
-                  lastProgress: currentProgress,
-                }).then(() => refetchProgress())
-              }, 5000)
+              insertProgramProgress(currentProgress)
             } else {
               axios
                 .post(
