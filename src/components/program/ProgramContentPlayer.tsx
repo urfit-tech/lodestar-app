@@ -299,9 +299,14 @@ const getVideoPlayer = async (videoId: string) =>
   })
 
 const useUrls = (appId: string, programContentBodyId: string) => {
-  const [urls, setUrls] = useState<{ video: string; texttracks: string[] }>()
   const { authToken, apiHost } = useAuth()
+  const [urls, setUrls] = useState<{ video: string; texttracks: string[] }>()
+
   useEffect(() => {
+    if (!authToken || !apiHost) {
+      return
+    }
+
     getFileDownloadableLink(`videos/${appId}/${programContentBodyId}`, authToken, apiHost).then(videoUrl => {
       getFileDownloadableLink(`texttracks/${appId}/${programContentBodyId}`, authToken, apiHost).then(texttrackUrl => {
         const texttrackUrls: string[] = []
@@ -324,6 +329,7 @@ const useUrls = (appId: string, programContentBodyId: string) => {
       })
     })
   }, [apiHost, appId, authToken, programContentBodyId])
+
   return urls
 }
 
