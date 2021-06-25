@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Divider, message, Spin } from 'antd'
+import { Divider } from '@chakra-ui/react'
+import { Button, message, Spin } from 'antd'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'

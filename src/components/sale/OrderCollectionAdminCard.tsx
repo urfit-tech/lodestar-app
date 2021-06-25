@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, message, Skeleton, Table, Tooltip } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Button, message, Table, Tooltip } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { ColumnProps } from 'antd/lib/table'
 import axios from 'axios'
@@ -96,7 +97,7 @@ const OrderCollectionAdminCard: React.VFC<
   if (loading || error) {
     return (
       <AdminCard>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </AdminCard>
     )
   }

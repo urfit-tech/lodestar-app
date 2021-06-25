@@ -1,4 +1,4 @@
-import { Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -33,7 +33,7 @@ const PodcastProgramContentPage: React.VFC = () => {
   if (loadingPodcastProgram || !podcastProgram) {
     return (
       <DefaultLayout noFooter>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }

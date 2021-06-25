@@ -1,4 +1,5 @@
-import { Button, Form, message } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Form, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
 import React, { useState } from 'react'
@@ -67,7 +68,7 @@ const IssueReplyCreationBlock: React.VFC<IssueReplyCreationBlockProps> = ({ memb
         )}
       </Form.Item>
       <Form.Item style={{ textAlign: 'right' }}>
-        <Button type="primary" htmlType="submit" loading={replying}>
+        <Button variant="primary" type="submit" isLoading={replying}>
           {formatMessage(commonMessages.button.reply)}
         </Button>
       </Form.Item>

@@ -1,4 +1,5 @@
-import { Button, Form, Input } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Form, Input } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor, { EditorState } from 'braft-editor'
 import React from 'react'
@@ -46,10 +47,10 @@ const MessageItemForm: React.VFC<MessageItemFormProps> = ({ title, description, 
         )}
       </Form.Item>
       <Form.Item>
-        <Button className="mr-2" onClick={() => onEditing?.(false)}>
+        <Button variant="outline" className="mr-2" onClick={() => onEditing?.(false)}>
           {formatMessage(commonMessages.ui.cancel)}
         </Button>
-        <Button type="primary" htmlType="submit">
+        <Button variant="primary" type="submit">
           {formatMessage(commonMessages.button.save)}
         </Button>
       </Form.Item>

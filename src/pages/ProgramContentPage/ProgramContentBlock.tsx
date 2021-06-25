@@ -1,4 +1,4 @@
-import { Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import { throttle } from 'lodash'
@@ -52,9 +52,8 @@ const ProgramContentBlock: React.VFC<{
   )
 
   useEffect(() => {
-    const progress = programContentProgress.find(
-      progress => progress.programContentId === programContentId,
-    )?.lastProgress
+    const progress = programContentProgress.find(progress => progress.programContentId === programContentId)
+      ?.lastProgress
 
     if (lastProgress === null && progress !== undefined) {
       setLastProgress(progress)
@@ -72,7 +71,7 @@ const ProgramContentBlock: React.VFC<{
   }, [loadingProgramContent, programContentBodyType, programContentId])
 
   if (loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   return (

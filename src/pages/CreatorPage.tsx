@@ -1,4 +1,5 @@
-import { Button, Skeleton, Tabs } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Button, Tabs } from 'antd'
 import BraftEditor from 'braft-editor'
 import moment from 'moment'
 import { render } from 'mustache'
@@ -64,7 +65,7 @@ const CreatorPage: React.VFC = () => {
   if (loadingMember || loadingCreator) {
     return (
       <DefaultLayout white>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }

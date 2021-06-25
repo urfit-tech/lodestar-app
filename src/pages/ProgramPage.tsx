@@ -1,4 +1,4 @@
-import { Button, Skeleton } from 'antd'
+import { Button, SkeletonText } from '@chakra-ui/react'
 import { render } from 'mustache'
 import queryString from 'query-string'
 import React, { useContext, useEffect, useRef } from 'react'
@@ -128,7 +128,7 @@ const ProgramPage: React.VFC = () => {
   if (loadingProgram) {
     return (
       <DefaultLayout>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }
@@ -233,7 +233,11 @@ const ProgramPage: React.VFC = () => {
         <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
           {program.isSubscription ? (
             <StyledButtonWrapper>
-              <Button type="primary" block onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}>
+              <Button
+                variant="primary"
+                isFullWidth
+                onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              >
                 {formatMessage(commonMessages.button.viewSubscription)}
               </Button>
             </StyledButtonWrapper>

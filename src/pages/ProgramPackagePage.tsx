@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Button } from '@chakra-ui/react'
 import React, { createRef, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
@@ -160,7 +160,11 @@ const ProgramPackagePage: React.VFC = () => {
       </div>
 
       <StyledFixedBlock>
-        <Button type="primary" block onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}>
+        <Button
+          variant="primary"
+          isFullWidth
+          onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+        >
           {formatMessage(messages.checkPlans)}
         </Button>
       </StyledFixedBlock>

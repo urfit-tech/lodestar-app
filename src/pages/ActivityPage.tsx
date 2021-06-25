@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Divider } from '@chakra-ui/react'
-import { Skeleton } from 'antd'
+import { Button, Divider, SkeletonText } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
 import { render } from 'mustache'
@@ -85,7 +84,7 @@ const ActivityPage: React.VFC = () => {
   if (loading || loadingMember) {
     return (
       <DefaultLayout white>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }

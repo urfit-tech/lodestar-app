@@ -1,6 +1,17 @@
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import { Box, Button, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Spinner } from '@chakra-ui/react'
-import { message, Skeleton } from 'antd'
+import {
+  Box,
+  Button,
+  Icon,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  SkeletonText,
+  Spinner,
+} from '@chakra-ui/react'
+import { message } from 'antd'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -104,7 +115,7 @@ const PracticePage: React.VFC = () => {
   const [isDownloading, setIsDownloading] = useState(false)
 
   if (loadingPractice) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   if (errorPractice || !practice) {

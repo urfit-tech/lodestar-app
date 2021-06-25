@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Icon } from '@chakra-ui/icons'
-import { Skeleton } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -54,7 +54,7 @@ const ProjectProgramCollectionSection: React.VFC<{
   const { loading, error, programs } = useEnrolledPrivateTeachProgram(currentMemberId || '', programCategory)
 
   if (loading || error) {
-    return <Skeleton active />
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   if (programs.length === 0) {

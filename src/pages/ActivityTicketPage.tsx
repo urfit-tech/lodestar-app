@@ -1,5 +1,5 @@
-import { Button } from '@chakra-ui/react'
-import { Icon, Skeleton } from 'antd'
+import { Button, SkeletonText } from '@chakra-ui/react'
+import { Icon } from 'antd'
 import QRCode from 'qrcode.react'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -62,7 +62,7 @@ const ActivityTicketPage: React.VFC<{
   if (loadingTicket) {
     return (
       <DefaultLayout noFooter white>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }

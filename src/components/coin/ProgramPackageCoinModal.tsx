@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button } from '@chakra-ui/react'
-import { Divider, Modal } from 'antd'
+import { Button, Divider } from '@chakra-ui/react'
+import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
 import gql from 'graphql-tag'
 import { sum } from 'ramda'

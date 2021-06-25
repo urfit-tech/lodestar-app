@@ -1,4 +1,5 @@
-import { Icon, Skeleton, Typography } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Icon, Typography } from 'antd'
 import { groupBy } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
@@ -32,7 +33,7 @@ const CartPage: React.VFC = () => {
   if (isAuthenticating || loadingMember) {
     return (
       <DefaultLayout>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }
