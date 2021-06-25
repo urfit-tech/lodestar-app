@@ -126,7 +126,7 @@ const OrderCollectionAdminCard: React.VFC<
       dataIndex: 'totalPrice',
       key: 'totalPrice',
       align: 'right',
-      render: text => <PriceLabel listPrice={text} />,
+      render: text => <PriceLabel listPrice={Math.max(text, 0)} />,
     },
     {
       title: formatMessage(saleMessages.column.title.orderStatus),
@@ -283,43 +283,41 @@ const useOrderLogCollection = (memberId: string) => {
   )
 
   const orderLogs: OrderRow[] =
-    loading || error || !data
-      ? []
-      : data.order_log.map(orderLog => ({
-          id: orderLog.id,
-          key: orderLog.id,
-          createdAt: orderLog.created_at,
-          status: orderLog.status || 'UNKNOWN',
-          totalPrice:
-            sum(orderLog.order_products.map(prop('price'))) -
-            sum(orderLog.order_discounts.map(prop('price'))) +
-            (orderLog.shipping?.fee || 0),
-          shipping: orderLog.shipping,
-          orderProducts: orderLog.order_products
-            .sort((a, b) => (a.options?.position || 0) - (b.options?.position || 0))
-            .map(orderProduct => ({
-              id: orderProduct.id,
-              name: orderProduct.name,
-              price: orderProduct.price,
-              startedAt: orderProduct.started_at,
-              endedAt: orderProduct.ended_at,
-              product: {
-                id: orderProduct.product.id,
-                type: orderProduct.product.type,
-              },
-              quantity: orderProduct.options?.quantity,
-              currencyId: orderProduct.currency_id,
-            })),
-          orderDiscounts: orderLog.order_discounts.map(orderDiscount => ({
-            id: orderDiscount.id,
-            name: orderDiscount.name,
-            type: orderDiscount.type,
-            target: orderDiscount.target,
-            description: orderDiscount.description,
-            price: orderDiscount.price,
-            options: orderDiscount.options,
-          })),
-        }))
+    data?.order_log.map(orderLog => ({
+      id: orderLog.id,
+      key: orderLog.id,
+      createdAt: orderLog.created_at,
+      status: orderLog.status || 'UNKNOWN',
+      totalPrice:
+        sum(orderLog.order_products.map(prop('price'))) -
+        sum(orderLog.order_discounts.map(prop('price'))) +
+        (orderLog.shipping?.fee || 0),
+      shipping: orderLog.shipping,
+      orderProducts: orderLog.order_products
+        .sort((a, b) => (a.options?.position || 0) - (b.options?.position || 0))
+        .map(orderProduct => ({
+          id: orderProduct.id,
+          name: orderProduct.name,
+          price: orderProduct.price,
+          startedAt: orderProduct.started_at,
+          endedAt: orderProduct.ended_at,
+          product: {
+            id: orderProduct.product.id,
+            type: orderProduct.product.type,
+          },
+          quantity: orderProduct.options?.quantity,
+          currencyId: orderProduct.currency_id,
+        })),
+      orderDiscounts: orderLog.order_discounts.map(orderDiscount => ({
+        id: orderDiscount.id,
+        name: orderDiscount.name,
+        type: orderDiscount.type,
+        target: orderDiscount.target,
+        description: orderDiscount.description,
+        price: orderDiscount.price,
+        options: orderDiscount.options,
+      })),
+    })) || []
 
   return {
     loading,

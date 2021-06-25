@@ -113,16 +113,18 @@ export const useCheck = ({
     [authToken, apiHost, discountId, options, productIds, shipping],
   )
 
+  const totalPrice =
+    sum(check.orderProducts.map(prop('price'))) -
+    sum(check.orderDiscounts.map(prop('price'))) +
+    (check.shippingOption?.fee || 0)
+
   return {
     check,
     checkError,
     orderPlacing,
     orderChecking,
     placeOrder,
-    totalPrice:
-      sum(check.orderProducts.map(prop('price'))) -
-      sum(check.orderDiscounts.map(prop('price'))) +
-      (check.shippingOption?.fee || 0),
+    totalPrice: Math.max(totalPrice, 0),
   }
 }
 
