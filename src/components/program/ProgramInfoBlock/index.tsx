@@ -1,5 +1,6 @@
 import { Button } from '@chakra-ui/react'
 import { Affix, Card } from 'antd'
+import { isEmpty } from 'lodash'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -93,11 +94,13 @@ const ProgramInfoBlock: React.VFC<{
             <ProgramContentCountBlock program={program} />
 
             <div className="text-center mb-3">
-              <PriceLabel
-                variant="inline"
-                listPrice={program.listPrice || 0}
-                salePrice={isOnSale ? program.salePrice || 0 : undefined}
-              />
+              {isEmpty(program.plans.filter(v => v.publishedAt)) && (
+                <PriceLabel
+                  variant="inline"
+                  listPrice={program.listPrice || 0}
+                  salePrice={isOnSale ? program.salePrice || 0 : undefined}
+                />
+              )}
               {program.isCountdownTimerVisible && program?.soldAt && isOnSale && (
                 <StyledCountDownBlock>
                   <CountDownTimeBlock expiredAt={program.soldAt} icon />
@@ -105,14 +108,18 @@ const ProgramInfoBlock: React.VFC<{
               )}
             </div>
 
-            {enabledModules.group_buying && !!program.plans.filter(v => v.publishedAt).length ? (
-              <ProgramGroupBuyingInfo isOnSale={isOnSale} programPlans={program.plans.filter(v => v.publishedAt)} />
-            ) : isEnrolled ? (
+            {isEnrolled ? (
               <Link to={`/programs/${program.id}/contents`}>
-                <Button colorScheme="primary" isFullWidth>
+                <Button variant="outline" colorScheme="primary" isFullWidth>
                   {formatMessage(commonMessages.button.enter)}
                 </Button>
               </Link>
+            ) : enabledModules.group_buying && program.plans.filter(v => v.publishedAt).length > 0 ? (
+              <ProgramGroupBuyingInfo
+                isOnSale={isOnSale}
+                program={program}
+                programPlans={program.plans.filter(v => v.publishedAt)}
+              />
             ) : (
               <ProgramPaymentButton program={program} variant="multiline" />
             )}

@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/icons'
-import { Card, List, Tag, Typography } from 'antd'
+import { Card, List, Tag } from 'antd'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import React from 'react'
@@ -57,11 +56,7 @@ const ContractCollectionAdminPage: React.VFC = () => {
         }
       }) || []
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={CoinIcon} className="mr-3" />
-        <span>{formatMessage(commonMessages.content.contracts)}</span>
-      </Typography.Title>
+    <MemberAdminLayout content={{ icon: CoinIcon, title: formatMessage(commonMessages.content.contracts) }}>
       <List
         grid={{ gutter: 16, column: 2 }}
         dataSource={data}

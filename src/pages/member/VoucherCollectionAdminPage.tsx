@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
-import { Skeleton, Typography } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -17,7 +16,7 @@ const VoucherCollectionAdminPage: React.VFC = () => {
   if (loading) {
     return (
       <DefaultLayout>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }
@@ -27,12 +26,7 @@ const VoucherCollectionAdminPage: React.VFC = () => {
   }
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={GiftIcon} className="mr-3" />
-        <span>{formatMessage(commonMessages.content.voucher)}</span>
-      </Typography.Title>
-
+    <MemberAdminLayout content={{ icon: GiftIcon, title: formatMessage(commonMessages.content.voucher) }}>
       <VoucherCollectionBlock />
     </MemberAdminLayout>
   )

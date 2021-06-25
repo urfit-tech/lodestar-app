@@ -115,6 +115,13 @@ export const MemberAdminMenu: React.VFC<MenuProps> = ({ ...props }) => {
         </Menu.Item>
       )}
 
+      {enabledModules.group_buying && (
+        <Menu.Item key="member_group_buying_admin">
+          <Icon as={GroupBuyIcon} className="mr-2" />
+          {formatMessage(commonMessages.ui.groupBuying)}
+        </Menu.Item>
+      )}
+
       <Menu.Item key="member_coupons_admin">
         <Icon as={TicketIcon} className="mr-2" />
         {formatMessage(commonMessages.content.coupon)}
@@ -124,13 +131,6 @@ export const MemberAdminMenu: React.VFC<MenuProps> = ({ ...props }) => {
         <Menu.Item key="member_voucher_admin">
           <Icon as={GiftIcon} className="mr-2" />
           {formatMessage(commonMessages.content.voucher)}
-        </Menu.Item>
-      )}
-
-      {enabledModules.group_buying && (
-        <Menu.Item key="member_group_buying_admin">
-          <Icon as={GroupBuyIcon} className="mr-2" />
-          {formatMessage(commonMessages.ui.groupBuying)}
         </Menu.Item>
       )}
 

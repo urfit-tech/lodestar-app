@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
-import { Skeleton, Typography } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
 import moment from 'moment'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -33,7 +32,7 @@ const CardCollectionAdminPage: React.VFC = () => {
   if (loading) {
     return (
       <DefaultLayout>
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
   }
@@ -43,12 +42,7 @@ const CardCollectionAdminPage: React.VFC = () => {
   }
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={MemberCardIcon} className="mr-3" />
-        <span>{formatMessage(commonMessages.content.memberCard)}</span>
-      </Typography.Title>
-
+    <MemberAdminLayout content={{ icon: MemberCardIcon, title: formatMessage(commonMessages.content.memberCard) }}>
       <div className="row">
         {enrolledMembershipCards.map(membershipCard => (
           <div className="col-12 col-lg-6" key={membershipCard.card.id}>

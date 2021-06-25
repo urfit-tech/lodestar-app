@@ -2,13 +2,16 @@ import { useMutation } from '@apollo/react-hooks'
 import {
   Button,
   ButtonGroup,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Icon,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
 import gql from 'graphql-tag'
+import moment from 'moment'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -21,7 +24,9 @@ import types from '../../hasura'
 import { handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useMemberValidation } from '../../hooks/common'
+import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import EmptyCover from '../../images/empty-cover.png'
+import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 
 const StyledTitle = styled.h3`
   ${MultiLineTruncationMixin}
@@ -145,7 +150,15 @@ const GroupBuyingDeliverModal: React.VFC<{
 
 const StyledCard = styled.div`
   border-radius: 4px;
+  background: white;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06); ;
+`
+const StyledCardMeta = styled.div`
+  font-family: NotoSansCJKtc;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: var(--gray-dark);
 `
 
 const GroupBuyingDisplayCard: React.VFC<{
@@ -153,20 +166,44 @@ const GroupBuyingDisplayCard: React.VFC<{
   orderId: string
   imgUrl: string
   title: string
-  notTransferred: boolean
+  transferredAt: Date | null
+  memberEmail: string
   onRefetch?: (() => void) | null
-}> = ({ partnerMemberIds, orderId, imgUrl, title, notTransferred, onRefetch }) => {
+}> = ({ partnerMemberIds, orderId, imgUrl, title, transferredAt, memberEmail, onRefetch }) => {
+  const { formatMessage } = useIntl()
   return (
     <StyledCard className="p-4">
       <CustomRatioImage className="mb-3" width="100%" ratio={9 / 16} src={imgUrl || EmptyCover} />
-      <StyledTitle className="mb-4">{title}</StyledTitle>
-      {notTransferred && (
-        <GroupBuyingDeliverModal
-          partnerMemberIds={partnerMemberIds}
-          orderId={orderId}
-          title={title}
-          onRefetch={onRefetch}
-        />
+      <StyledTitle>{title}</StyledTitle>
+      {!transferredAt ? (
+        <div className="mt-3">
+          <GroupBuyingDeliverModal
+            partnerMemberIds={partnerMemberIds}
+            orderId={orderId}
+            title={title}
+            onRefetch={onRefetch}
+          />
+        </div>
+      ) : (
+        <>
+          <Divider className="my-3" />
+          <StyledCardMeta>
+            <div className="d-flex">
+              <Icon as={UserOIcon} className="my-auto mr-1" />
+              <span>
+                {formatMessage(commonMessages.label.target)}
+                {memberEmail}
+              </span>
+            </div>
+            <div className="d-flex">
+              <Icon as={CalendarAltOIcon} className="my-auto  mr-1" />
+              <span>
+                {formatMessage(commonMessages.label.date)}
+                {moment(transferredAt).format('YYYY-MM-DD HH:mm')}
+              </span>
+            </div>
+          </StyledCardMeta>
+        </>
       )}
     </StyledCard>
   )

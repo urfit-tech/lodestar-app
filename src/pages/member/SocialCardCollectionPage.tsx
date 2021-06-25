@@ -1,5 +1,5 @@
-import { Icon } from '@chakra-ui/icons'
-import { Divider, Modal, Skeleton, Typography } from 'antd'
+import { Divider, SkeletonText } from '@chakra-ui/react'
+import { Modal } from 'antd'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -82,13 +82,8 @@ const SocialCardCollectionPage: React.VFC = () => {
   const [selectedSocialCard, setSelectedSocialCard] = useState<SocialCardProps | null>(null)
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={IdentityIcon} className="mr-2" />
-        <span>{formatMessage(commonMessages.content.socialCard)}</span>
-      </Typography.Title>
-
-      {loadingSocialCards && <Skeleton active />}
+    <MemberAdminLayout content={{ icon: IdentityIcon, title: formatMessage(commonMessages.content.socialCard) }}>
+      {loadingSocialCards && <SkeletonText mt="1" noOfLines={4} spacing="4" />}
 
       {socialCards.some(socialCard => socialCard.channel.type === 'youtube') && (
         <StyledSectionTitle className="mb-4">{formatMessage(messages.youtubeChannel)}</StyledSectionTitle>

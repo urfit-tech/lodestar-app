@@ -1,4 +1,4 @@
-import { css } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const CommonTextMixin = css`
   font-size: 14px;
@@ -34,4 +34,18 @@ const MultiLineTruncationMixin = css`
   overflow: hidden;
 `
 
-export { CommonTextMixin, CommonLargeTextMixin, CommonTitleMixin, CommonLargeTitleMixin, MultiLineTruncationMixin }
+const EmptyBlock = styled.div`
+  padding: 12.5rem 0;
+  color: var(--gray-dark);
+  font-size: 14px;
+  text-align: center;
+`
+
+export {
+  CommonTextMixin,
+  CommonLargeTextMixin,
+  CommonTitleMixin,
+  CommonLargeTitleMixin,
+  MultiLineTruncationMixin,
+  EmptyBlock,
+}

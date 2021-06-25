@@ -230,6 +230,8 @@ export const commonMessages = {
     referrer: { id: 'common.label.referrer', defaultMessage: '推薦人' },
     partnerChoose: { id: 'common.label.partnerChoose', defaultMessage: '發送設定' },
     targetPartner: { id: 'common.label.targetPartner', defaultMessage: '發送對象' },
+    target: { id: 'common.term.target', defaultMessage: '對象：' },
+    date: { id: 'common.term.date', defaultMessage: '日期：' },
   }),
   form: {
     message: defineMessages({
@@ -477,7 +479,7 @@ export const checkoutMessages = {
     webAtm: { id: 'checkout.label.webATM', defaultMessage: 'WebATM' },
     barcode: { id: 'checkout.label.barcode', defaultMessage: '超商條碼繳費' },
     parenting: { id: 'checkout.label.parenting', defaultMessage: '親子天下' },
-    groupBuying: { id: 'checkout.label.groupBuying', defineMessage: '多人同行揪團' },
+    groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
     groupBuyingPlan: {
       id: 'checkout.label.groupBuyingTitle',
       defaultMessage: '你購買「{title}」多人同行 方案：',

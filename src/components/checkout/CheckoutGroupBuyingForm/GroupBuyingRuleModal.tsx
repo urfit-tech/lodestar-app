@@ -9,6 +9,7 @@ import CommonModal from '../../common/CommonModal'
 const StyledLink = styled(Button)`
   && {
     vertical-align: baseline;
+    font-size: 14px;
   }
 `
 

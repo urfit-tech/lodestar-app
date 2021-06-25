@@ -1,5 +1,3 @@
-import { Icon } from '@chakra-ui/icons'
-import { Typography } from 'antd'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../../components/auth/AuthContext'
@@ -15,12 +13,7 @@ const ProfileAdminPage: React.VFC = () => {
   const { currentMemberId } = useAuth()
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={UserIcon} className="mr-3" />
-        <span>{formatMessage(commonMessages.content.personalSettings)}</span>
-      </Typography.Title>
-
+    <MemberAdminLayout content={{ icon: UserIcon, title: formatMessage(commonMessages.content.personalSettings) }}>
       <div className="mb-3">{currentMemberId && <ProfileBasicAdminCard memberId={currentMemberId} />}</div>
       <div className="mb-3">{currentMemberId && <ProfileAccountAdminCard memberId={currentMemberId} />}</div>
       <div className="mb-3">{currentMemberId && <ProfilePasswordAdminCard memberId={currentMemberId} />}</div>

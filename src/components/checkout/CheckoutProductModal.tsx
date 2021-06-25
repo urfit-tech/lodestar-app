@@ -245,7 +245,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         isFullWidth
         onClose={onClose}
       >
-        <div className="mb-5">
+        <div className="mb-4">
           <ProductItem
             id={productId}
             startedAt={startedAt}

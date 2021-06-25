@@ -6,14 +6,35 @@ import styled from 'styled-components'
 import { checkoutMessages, commonMessages } from '../../../helpers/translation'
 import { useSearchMembers } from '../../../hooks/common'
 import { useAuth } from '../../auth/AuthContext'
-import { CommonLargeTextMixin } from '../../common'
+import { CommonLargeTextMixin, CommonTextMixin, CommonTitleMixin } from '../../common'
 import { Input } from '../../common/CommonForm'
 import GroupBuyingRuleModal from './GroupBuyingRuleModal'
+
+const StyledBlockTitle = styled.h2`
+  ${CommonTitleMixin}
+`
 
 const StyledPlanTitle = styled.h3`
   ${CommonLargeTextMixin}
   line-height: 1.5;
   font-family: NotoSansCJKtc;
+`
+
+const StyledListItem = styled(ListItem)`
+  && {
+    ${CommonTextMixin}
+    font-family: NotoSansCJKtc;
+  }
+`
+
+const StyledFormLabel = styled(FormLabel)`
+  && {
+    color: var(--gray-darker);
+    font-size: 14px;
+    font-family: NotoSansCJKtc;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+  }
 `
 
 let timeout: NodeJS.Timeout | null = null
@@ -49,12 +70,13 @@ const CheckoutGroupBuyingForm: React.FC<{
 
   return (
     <Stat>
+      <StyledBlockTitle className="mb-3">{formatMessage(checkoutMessages.label.groupBuying)}</StyledBlockTitle>
       <OrderedList className="mb-4">
-        <ListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription1)}</ListItem>
-        <ListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription2)}</ListItem>
-        <ListItem>
+        <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription1)}</StyledListItem>
+        <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription2)}</StyledListItem>
+        <StyledListItem>
           {formatMessage(checkoutMessages.text.groupBuyingDescription3, { modal: <GroupBuyingRuleModal /> })}
-        </ListItem>
+        </StyledListItem>
       </OrderedList>
 
       <div className="mb-4">
@@ -77,7 +99,7 @@ const CheckoutGroupBuyingForm: React.FC<{
           return (
             <div key={i} className="col-12 col-lg-6 px-0 mb-3">
               <FormControl isInvalid={isInvalid || isSelf || isDuplicated}>
-                <FormLabel>{formatMessage(checkoutMessages.label.partnerEmail)}</FormLabel>
+                <StyledFormLabel>{formatMessage(checkoutMessages.label.partnerEmail)}</StyledFormLabel>
                 <Input
                   type="email"
                   status={email ? (isInvalid || isSelf || isDuplicated ? 'error' : 'success') : undefined}

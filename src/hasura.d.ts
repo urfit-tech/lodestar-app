@@ -7861,6 +7861,7 @@ export interface GET_GROUP_BUYING_ORDER_order_group_buying_log {
   parent_order_member_id: string | null;
   order_id: string | null;
   member_id: string | null;
+  email: string | null;
   started_at: any | null;
   ended_at: any | null;
   transferred_at: any | null;

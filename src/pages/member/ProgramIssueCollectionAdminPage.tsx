@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/icons'
-import { Checkbox, Select, Skeleton, Typography } from 'antd'
+import { SkeletonText } from '@chakra-ui/react'
+import { Checkbox, Select } from 'antd'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -21,12 +21,9 @@ const ProgramIssueCollectionAdminPage = () => {
   const [allowOthersIssue, setAllowOthersIssue] = useState(false)
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={BookIcon} className="mr-3" />
-        <span>{formatMessage(productMessages.program.content.programProblem)}</span>
-      </Typography.Title>
-
+    <MemberAdminLayout
+      content={{ icon: BookIcon, title: formatMessage(productMessages.program.content.programProblem) }}
+    >
       <div className="row no-gutters mb-4">
         <div className="col-12 col-sm-2 pr-sm-3">
           <Select style={{ width: '100%' }} value={selectedStatus} onChange={(key: string) => setSelectedStatus(key)}>
@@ -100,7 +97,7 @@ const AllProgramIssueCollectionBlock: React.VFC<{
   return (
     <div>
       {loading || !data ? (
-        <Skeleton active />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       ) : error ? (
         formatMessage(commonMessages.status.programError)
       ) : !data.issue || data.issue.length === 0 ? (

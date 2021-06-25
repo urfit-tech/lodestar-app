@@ -9,6 +9,7 @@ import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
+import { handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { ProgramProps } from '../../types/program'
 
@@ -32,41 +33,13 @@ const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
 const ProgramPaymentButton: React.VFC<{ program: ProgramProps; variant?: string }> = ({ program, variant }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const [sharingCode] = useQueryParam('sharing', StringParam)
-  const { settings } = useApp()
-  const { addCartProduct, isProductInCart } = useContext(CartContext)
-
-  const handleClick = async () => {
-    if (settings['tracking.fb_pixel_id']) {
-      ReactPixel.track('AddToCart', {
-        value: program.listPrice,
-        currency: 'TWD',
-      })
-    }
-    if (settings['tracking.ga_id']) {
-      ReactGA.plugin.execute('ec', 'addProduct', {
-        id: program.id,
-        name: program.title,
-        category: 'Program',
-        price: `${program.listPrice}`,
-        quantity: '1',
-        currency: 'TWD',
-      })
-      ReactGA.plugin.execute('ec', 'setAction', 'add')
-      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-    }
-
-    return await addCartProduct?.('Program', program.id, {
-      from: window.location.pathname,
-      sharingCode,
-    }).catch(() => {})
-  }
+  const { isProgramInCart, handleAddCartProgram } = useAddProgramToCart(program)
 
   return program.isSoldOut ? (
     <Button isFullWidth isDisabled>
       {formatMessage(commonMessages.button.soldOut)}
     </Button>
-  ) : isProductInCart && isProductInCart('Program', program.id) ? (
+  ) : isProgramInCart ? (
     <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
       {formatMessage(commonMessages.button.cart)}
     </Button>
@@ -79,20 +52,61 @@ const ProgramPaymentButton: React.VFC<{ program: ProgramProps; variant?: string 
           colorScheme="primary"
           isFullWidth={variant === 'multiline'}
           isMultiline={variant === 'multiline'}
-          onClick={() => handleClick()}
+          onClick={handleAddCartProgram}
         >
           <Icon as={AiOutlineShoppingCart} />
           <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
         </StyleButton>
       )}
 
-      <Button colorScheme="primary" isFullWidth onClick={() => handleClick().then(() => history.push('/cart'))}>
-        {program.listPrice !== 0
-          ? formatMessage(commonMessages.ui.purchase)
-          : formatMessage(commonMessages.button.join)}
+      <Button
+        colorScheme="primary"
+        isFullWidth
+        onClick={() => handleAddCartProgram()?.then(() => history.push('/cart'))}
+      >
+        {program.listPrice === 0
+          ? formatMessage(commonMessages.button.join)
+          : formatMessage(commonMessages.ui.purchase)}
       </Button>
     </div>
   )
 }
+
+const useAddProgramToCart = (program: Pick<ProgramProps, 'id' | 'title' | 'listPrice' | 'salePrice'>) => {
+  const [sharingCode] = useQueryParam('sharing', StringParam)
+  const { settings } = useApp()
+  const { addCartProduct, isProductInCart } = useContext(CartContext)
+
+  return {
+    isProgramInCart: isProductInCart?.('Program', program.id),
+    handleAddCartProgram: () => {
+      if (settings['tracking.fb_pixel_id']) {
+        ReactPixel.track('AddToCart', {
+          value: program.listPrice,
+          currency: 'TWD',
+        })
+      }
+      if (settings['tracking.ga_id']) {
+        ReactGA.plugin.execute('ec', 'addProduct', {
+          id: program.id,
+          name: program.title,
+          category: 'Program',
+          price: `${program.listPrice}`,
+          quantity: '1',
+          currency: 'TWD',
+        })
+        ReactGA.plugin.execute('ec', 'setAction', 'add')
+        ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+      }
+
+      return addCartProduct?.('Program', program.id, {
+        from: window.location.pathname,
+        sharingCode,
+      }).catch(handleError)
+    },
+  }
+}
+
+export { useAddProgramToCart }
 
 export default ProgramPaymentButton

@@ -1,12 +1,12 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/icons'
 import { Skeleton, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
-import { Typography } from 'antd'
 import gql from 'graphql-tag'
 import { uniq } from 'ramda'
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
+import styled from 'styled-components'
 import { useAuth } from '../../components/auth/AuthContext'
+import { EmptyBlock } from '../../components/common'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import types from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
@@ -16,7 +16,10 @@ import GroupBuyingDisplayCard from './GroupBuyingDisplayCard'
 type groupBuyingOrderProps = {
   id: string
   parentOrderMemberId: string
-  memberId: string
+  member: {
+    id: string
+    email: string
+  }
   name: string
   coverUrl: string
   partnerMemberIds: string[]
@@ -24,6 +27,25 @@ type groupBuyingOrderProps = {
   endedAt: Date | null
   transferredAt: Date | null
 }
+
+export const StyledTabList = styled(TabList)`
+  && {
+    padding-bottom: 1px;
+    border-bottom: 1px solid var(--gray);
+  }
+`
+
+export const StyledTabPanel = styled(TabPanel)`
+  && {
+    padding: 24px 0;
+  }
+`
+
+const messages = defineMessages({
+  noReceivedItem: { id: 'groupBuying.text.noReceivedItem', defaultMessage: '目前未收到任何項目' },
+  noSentItem: { id: 'groupBuying.text.noSentItem', defaultMessage: '尚未發送過任何項目' },
+  noSendableItem: { id: 'groupBuying.text.noSendableItem', defaultMessage: '尚無任何可發送的項目' },
+})
 
 const GroupBuyingCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -45,56 +67,67 @@ const GroupBuyingCollectionPage: React.VFC = () => {
     key: string
     name: string
     isDisplay: (order: groupBuyingOrderProps) => boolean
+    emptyText: string
   }[] = [
     {
       key: 'sendable',
       name: formatMessage(commonMessages.status.sendable),
       isDisplay: order =>
-        !order.transferredAt && order.parentOrderMemberId === currentMemberId && order.memberId === currentMemberId,
+        !order.transferredAt && order.parentOrderMemberId === currentMemberId && order.member.id === currentMemberId,
+      emptyText: formatMessage(messages.noSendableItem),
     },
     {
       key: 'sent',
       name: formatMessage(commonMessages.status.sent),
       isDisplay: order =>
-        !!order.transferredAt && order.parentOrderMemberId === currentMemberId && order.memberId !== currentMemberId,
+        !!order.transferredAt && order.parentOrderMemberId === currentMemberId && order.member.id !== currentMemberId,
+      emptyText: formatMessage(messages.noSentItem),
     },
     {
       key: 'received',
       name: formatMessage(commonMessages.status.received),
       isDisplay: order =>
-        !!order.transferredAt && order.parentOrderMemberId !== currentMemberId && order.memberId === currentMemberId,
+        !!order.transferredAt && order.parentOrderMemberId !== currentMemberId && order.member.id === currentMemberId,
+      emptyText: formatMessage(messages.noReceivedItem),
     },
   ]
 
   content = (
     <Tabs colorScheme="primary">
-      <TabList>
+      <StyledTabList>
         {tabContents.map(v => (
           <Tab key={v.key} onClick={() => setTab(v.key)} isSelected={v.key === tab}>
             {v.name}
           </Tab>
         ))}
-      </TabList>
+      </StyledTabList>
 
       <TabPanels>
         {tabContents.map(v => {
           const displayOrders = groupBuyingOrderCollection.filter(v.isDisplay)
 
           return (
-            <TabPanel className="row">
-              {displayOrders.map(v => (
-                <div className="col-12 col-md-6 col-lg-4" key={v.id}>
-                  <GroupBuyingDisplayCard
-                    orderId={v.id}
-                    imgUrl={v.coverUrl}
-                    title={v.name}
-                    partnerMemberIds={v.partnerMemberIds}
-                    onRefetch={!v.transferredAt ? () => refetch() : null}
-                    notTransferred={!v.transferredAt}
-                  />
+            <StyledTabPanel>
+              {!displayOrders.length ? (
+                <EmptyBlock>{v.emptyText}</EmptyBlock>
+              ) : (
+                <div className="row">
+                  {displayOrders.map(v => (
+                    <div className="col-12 col-md-6 col-lg-4 mb-4" key={v.id}>
+                      <GroupBuyingDisplayCard
+                        orderId={v.id}
+                        imgUrl={v.coverUrl}
+                        title={v.name}
+                        partnerMemberIds={v.partnerMemberIds}
+                        onRefetch={!v.transferredAt ? () => refetch() : null}
+                        transferredAt={v.transferredAt}
+                        memberEmail={v.member.email}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </TabPanel>
+              )}
+            </StyledTabPanel>
           )
         })}
       </TabPanels>
@@ -102,12 +135,7 @@ const GroupBuyingCollectionPage: React.VFC = () => {
   )
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={GroupBuyIcon} className="mr-3" />
-        <span>{formatMessage(commonMessages.ui.groupBuying)}</span>
-      </Typography.Title>
-
+    <MemberAdminLayout content={{ icon: GroupBuyIcon, title: formatMessage(commonMessages.ui.groupBuying) }}>
       {content}
     </MemberAdminLayout>
   )
@@ -126,6 +154,7 @@ const useGroupBuyingLogs = (memberId: string | null) => {
           parent_order_member_id
           order_id
           member_id
+          email
           started_at
           ended_at
           transferred_at
@@ -153,7 +182,10 @@ const useGroupBuyingLogs = (memberId: string | null) => {
       ? data.order_group_buying_log.map(v => ({
           id: v.order_id || '',
           parentOrderMemberId: v.parent_order_member_id || '',
-          memberId: v.member_id || '',
+          member: {
+            id: v.member_id || '',
+            email: v.email || '',
+          },
           name: v.name || '',
           startedAt: v.started_at ? new Date(v.started_at) : null,
           endedAt: v.ended_at ? new Date(v.ended_at) : null,

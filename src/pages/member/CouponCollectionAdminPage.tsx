@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
-import { Tabs, Typography } from 'antd'
+import { Tab, TabPanels, Tabs } from '@chakra-ui/react'
 import { reverse } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -10,6 +9,7 @@ import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { usersMessages } from '../../helpers/translation'
 import { useCouponCollection } from '../../hooks/data'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
+import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
 
 const CouponCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -45,28 +45,31 @@ const CouponCollectionAdminPage: React.VFC = () => {
   ]
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={TicketIcon} className="mr-3" />
-        <span>{formatMessage(usersMessages.title.coupon)}</span>
-      </Typography.Title>
-
+    <MemberAdminLayout content={{ icon: TicketIcon, title: formatMessage(usersMessages.title.coupon) }}>
       <div className="mb-5">
         <CouponInsertionCard onInsert={() => window.location.reload()} />
       </div>
 
-      <Tabs activeKey={activeKey || 'available'} onChange={key => setActiveKey(key)}>
-        {tabContents.map(tabContent => (
-          <Tabs.TabPane key={tabContent.key} tab={tabContent.tab}>
-            <div className="row">
-              {reverse(tabContent.coupons).map(coupon => (
+      <Tabs colorScheme="primary">
+        <StyledTabList>
+          {tabContents.map(v => (
+            <Tab key={v.key} onClick={() => setActiveKey(v.key)} isSelected={v.key === activeKey}>
+              {v.tab}
+            </Tab>
+          ))}
+        </StyledTabList>
+
+        <TabPanels>
+          {tabContents.map(v => (
+            <StyledTabPanel className="row">
+              {reverse(v.coupons).map(coupon => (
                 <div className="mb-3 col-12 col-md-6" key={coupon.id}>
                   <CouponAdminCard coupon={coupon} outdated={coupon.status.outdated} />
                 </div>
               ))}
-            </div>
-          </Tabs.TabPane>
-        ))}
+            </StyledTabPanel>
+          ))}
+        </TabPanels>
       </Tabs>
     </MemberAdminLayout>
   )

@@ -1,12 +1,13 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/icons'
-import { Button, message, Skeleton, Tabs, Typography } from 'antd'
+import { Button, SkeletonText } from '@chakra-ui/react'
+import { message, Tabs } from 'antd'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useAuth } from '../../components/auth/AuthContext'
+import { EmptyBlock } from '../../components/common'
 import AdminCard from '../../components/common/AdminCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { useApp } from '../../containers/common/AppContext'
@@ -64,12 +65,6 @@ const StyledInactivatedItem = styled(StyledItem)`
 const StyledInactivatedLabel = styled(StyledLabel)`
   background-color: var(--gray);
 `
-const EmptyBlock = styled.div`
-  padding: 12.5rem 0;
-  color: var(--gray-dark);
-  font-size: 14px;
-  text-align: center;
-`
 
 const PointHistoryAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -85,11 +80,7 @@ const PointHistoryAdminPage: React.VFC = () => {
   }
 
   return (
-    <MemberAdminLayout>
-      <Typography.Title level={3} className="mb-4">
-        <Icon as={PointIcon} className="mr-3" />
-        <span>{formatMessage(commonMessages.content.pointsAdmin)}</span>
-      </Typography.Title>
+    <MemberAdminLayout content={{ icon: PointIcon, title: formatMessage(commonMessages.content.pointsAdmin) }}>
       {currentMemberId && <PointSummaryCard memberId={currentMemberId} />}
       {currentMemberId && <PointHistoryCollectionTabs memberId={currentMemberId} />}
     </MemberAdminLayout>
@@ -119,16 +110,10 @@ const PointSummaryCard: React.VFC<{ memberId: string }> = ({ memberId }) => {
 const PointHistoryCollectionTabs: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
-  const { loadingPointLogs, errorPointLogs, pointLogs, refetchPointLogs, fetchMorePointLogs } = usePointLogCollections(
-    memberId,
-  )
-  const {
-    loadingOrderLogs,
-    errorOrderLogs,
-    orderLogs,
-    refetchOrderLogs,
-    fetchMoreOrderLogs,
-  } = useOrderLogWithPointsCollection(memberId)
+  const { loadingPointLogs, errorPointLogs, pointLogs, refetchPointLogs, fetchMorePointLogs } =
+    usePointLogCollections(memberId)
+  const { loadingOrderLogs, errorOrderLogs, orderLogs, refetchOrderLogs, fetchMoreOrderLogs } =
+    useOrderLogWithPointsCollection(memberId)
   const [loading, setLoading] = useState(false)
 
   if (errorPointLogs || errorOrderLogs) {
@@ -147,7 +132,7 @@ const PointHistoryCollectionTabs: React.VFC<{ memberId: string }> = ({ memberId 
     >
       <Tabs.TabPane key="point-logs" tab={formatMessage(messages.pointHistory)} className="pt-2">
         {loadingPointLogs ? (
-          <Skeleton active />
+          <SkeletonText mt="1" noOfLines={4} spacing="4" />
         ) : pointLogs.length === 0 ? (
           <EmptyBlock>{formatMessage(messages.noPointLog)}</EmptyBlock>
         ) : (
@@ -195,11 +180,12 @@ const PointHistoryCollectionTabs: React.VFC<{ memberId: string }> = ({ memberId 
             {fetchMorePointLogs && (
               <div className="text-center mt-4">
                 <Button
-                  loading={loading}
+                  isLoading={loading}
                   onClick={() => {
                     setLoading(true)
                     fetchMorePointLogs().finally(() => setLoading(false))
                   }}
+                  variant="outline"
                 >
                   {formatMessage(messages.viewMore)}
                 </Button>
@@ -211,7 +197,7 @@ const PointHistoryCollectionTabs: React.VFC<{ memberId: string }> = ({ memberId 
 
       <Tabs.TabPane key="order-log" tab={formatMessage(messages.orderHistory)} className="pt-2">
         {loadingOrderLogs ? (
-          <Skeleton active />
+          <SkeletonText mt="1" noOfLines={4} spacing="4" />
         ) : orderLogs.length === 0 ? (
           <EmptyBlock>{formatMessage(messages.noPointLog)}</EmptyBlock>
         ) : (
