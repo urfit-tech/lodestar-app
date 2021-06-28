@@ -111,6 +111,11 @@ export const useApiHost = (appId: string) => {
     if (apiHost) {
       return
     }
+
+    const defaultApiHost =
+      process.env.REACT_APP_API_HOST ||
+      (process.env.NODE_ENV === 'development' ? 'rest-dev.lodestar.cc/v1' : 'rest.lodestar.cc/v1')
+
     Axios.post(
       `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
       {},
@@ -124,10 +129,10 @@ export const useApiHost = (appId: string) => {
       },
     )
       .then(({ data }) => {
-        setApiHost(data?.data?.app_admin[0]?.api_host || process.env.REACT_APP_API_HOST || null)
+        setApiHost(data?.data?.app_admin[0]?.api_host || defaultApiHost)
       })
       .catch(() => {
-        setApiHost(process.env.REACT_APP_API_HOST || null)
+        setApiHost(defaultApiHost)
       })
   }, [apiHost, appId])
 
