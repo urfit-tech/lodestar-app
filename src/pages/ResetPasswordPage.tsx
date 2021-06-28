@@ -49,7 +49,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         axios
           .post(
             `https://${apiHost}/auth/reset-password`,
-            { newPassword: values.password },
+            { newPassword: values.password, resetPasswordToken: token },
             {
               headers: { authorization: `Bearer ${token}` },
             },
