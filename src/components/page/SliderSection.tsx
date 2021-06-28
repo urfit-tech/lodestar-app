@@ -18,25 +18,6 @@ const StyledContainer = styled.div`
   max-width: 1080px;
 `
 
-const StyledSlideTitle = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  color: #585858;
-  font-weight: bold;
-  font-size: 20px;
-
-  svg {
-    margin: 0 8px;
-    width: 20px;
-    height: 20px;
-
-    path {
-      fill: #ff5760;
-    }
-  }
-`
-
 const SliderSection: React.FC<{
   options: {
     title?: string

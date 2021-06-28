@@ -1,17 +1,6 @@
 import Article from 'lodestar-app-element/src/components/Article'
 import React from 'react'
-import styled from 'styled-components'
 import { StyledSection } from '../../pages/AppPage'
-
-const StyledContent = styled(Article.Content)`
-  font-family: NotoSansCJKtc;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.69;
-  letter-spacing: 0.2px;
-  text-align: justify;
-  color: var(--gray-darker);
-`
 
 const DescriptionSection: React.FC<{
   options: {
