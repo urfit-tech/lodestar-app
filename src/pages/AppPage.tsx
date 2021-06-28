@@ -16,6 +16,8 @@ import FeatureDescriptionSection from '../components/page/FeatureDescriptionSect
 import FeatureSection from '../components/page/FeatureSection'
 import PostSection from '../components/page/PostSection'
 import ProgramSection from '../components/page/ProgramSection'
+import ReferrerSection from '../components/page/ReferrerSection'
+import SliderSection from '../components/page/SliderSection'
 import StatisticsSection from '../components/page/StatisticsSection'
 import { AppPageProps } from '../hooks/page'
 
@@ -42,10 +44,10 @@ export const StyledSection = styled.section`
 
 const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
   const sectionConverter = {
-    homeArticle: ArticleSection,
-    homeBackground: BackgroundSection,
     homeAccordion: AccordionSection,
     homeActivity: ActivitySection,
+    homeArticle: ArticleSection,
+    homeBackground: BackgroundSection,
     homeCover: CoverSection,
     homeCreator: CreatorSection,
     homeCTA: CTASection,
@@ -56,6 +58,8 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
     homePost: PostSection,
     homeProgram: ProgramSection,
     homeProgramCategory: ProgramSection,
+    homeReferrer: ReferrerSection,
+    homeSlider: SliderSection,
     homeStatistics: StatisticsSection,
     messenger: MessengerChat,
   }
@@ -64,6 +68,9 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
     <DefaultLayout>
       {page.appPageSections.map(section => {
         const Section = sectionConverter[section.type]
+        if (!sectionConverter[section.type]) {
+          return <div>{section.id}</div>
+        }
         return <Section key={section.id} options={section.options} />
       })}
     </DefaultLayout>

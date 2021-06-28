@@ -38,10 +38,37 @@ const FAQSection: React.FC<{
         <StyledBlock>
           {infos?.map(v => (
             <Article className="mb-4">
-              <Article.Title highlight className="mb-3">
+              <Article.Title
+                highlight
+                className="mb-3"
+                customStyle={{
+                  textAlign: 'left',
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  color: '#4c5b8f',
+                  pt: 0,
+                  pr: 0,
+                  pb: 0,
+                  pl: 10,
+                }}
+              >
                 {v.title}
               </Article.Title>
-              <Article.Content>{v.description}</Article.Content>
+              <Article.Content
+                customStyle={{
+                  textAlign: 'left',
+                  fontSize: 16,
+                  fontWeight: 'normal',
+                  lineHeight: 1.7,
+                  color: '#585858',
+                  pt: 0,
+                  pr: 0,
+                  pb: 0,
+                  pl: 0,
+                }}
+              >
+                {v.description}
+              </Article.Content>
             </Article>
           ))}
         </StyledBlock>

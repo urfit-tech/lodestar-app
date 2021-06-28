@@ -20,24 +20,6 @@ const StyledContainer = styled.div<{ row: boolean }>`
     `}
 `
 
-const StyledDescription = styled.p<{ row: boolean }>`
-  font-family: NotoSansCJKtc;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.38;
-  color: #ffffff;
-  margin-top: 24px;
-  text-align: center;
-
-  ${props =>
-    props.row &&
-    css`
-      @media (min-width: 768px) {
-        text-align: left;
-      }
-    `}
-`
-
 const CTASection: React.FC<{
   options: {
     mode?: 'light' | 'dark'
@@ -52,17 +34,65 @@ const CTASection: React.FC<{
   }
 }> = ({ options: { mode, direction, title, description, link, backgroundUrl = null } }) => {
   return (
-    <BackgroundSection background={backgroundUrl || ''} mode={mode}>
+    <BackgroundSection
+      customStyle={{
+        backgroundImage: backgroundUrl || '',
+        mt: '0',
+        mb: '0',
+        mr: '0',
+        ml: '0',
+        pt: '64',
+        pb: '64',
+        pr: '20',
+        pl: '20',
+        mode,
+      }}
+    >
       <StyledContainer className="container" row={direction === 'row'}>
         <HeadingSnippet direction={direction || 'row'}>
-          {title && <HeadingSnippet.Title row={direction === 'row'}>{title}</HeadingSnippet.Title>}
-          {description && <StyledDescription row={direction === 'row'}>{description}</StyledDescription>}
+          {title && (
+            <HeadingSnippet.Title
+              row={direction === 'row'}
+              customStyle={{
+                textAlign: 'center',
+                fontSize: 28,
+                fontWeight: 'bold',
+                color: '#fff',
+                pt: 0,
+                pr: 0,
+                pb: 0,
+                pl: 0,
+              }}
+            >
+              {title}
+            </HeadingSnippet.Title>
+          )}
+          {description && (
+            <HeadingSnippet.Content
+              row={direction === 'row'}
+              customStyle={{
+                textAlign: 'center',
+                fontSize: 20,
+                fontWeight: 'normal',
+                lineHeight: 1.35,
+                color: '#fff',
+                pt: 0,
+                pr: 0,
+                pb: 0,
+                pl: 0,
+              }}
+            >
+              {description}
+            </HeadingSnippet.Content>
+          )}
         </HeadingSnippet>
 
         <div>
           {link && (
             <Link to={link.path}>
-              <Button>{link.text}</Button>
+              <Button size="lg" variant="solid">
+                {link.text}
+              </Button>
             </Link>
           )}
         </div>

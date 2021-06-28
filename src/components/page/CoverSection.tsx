@@ -41,6 +41,29 @@ const CoverSection: React.VFC<{
               if (!v.link) return
               v.external ? window.open(v.link) : history.push(v.link)
             }}
+            customStyle={{
+              title: {
+                fontSize: 40,
+                textAlign: 'center',
+                fontWeight: 'bold',
+                color: '#fff',
+                pt: 0,
+                pr: 0,
+                pb: 0,
+                pl: 0,
+              },
+              paragraph: {
+                textAlign: 'center',
+                fontSize: 20,
+                fontWeight: 'normal',
+                lineHeight: 1.35,
+                color: '#fff',
+                pt: 0,
+                pr: 0,
+                pb: 0,
+                pl: 0,
+              },
+            }}
           />
         ))}
       </Carousel>

@@ -13,7 +13,21 @@ const StyledBackgroundSection = styled(LodestarBackgroundSection)`
 const BackgroundSection: React.FC<{
   options: { backgroundUrl?: string }
 }> = ({ options: { backgroundUrl } }) => {
-  return <StyledBackgroundSection background={backgroundUrl || ''} />
+  return (
+    <StyledBackgroundSection
+      customStyle={{
+        backgroundImage: backgroundUrl || '',
+        mt: '0',
+        mb: '0',
+        mr: '0',
+        ml: '0',
+        pt: '0',
+        pb: '0',
+        pr: '0',
+        pl: '0',
+      }}
+    />
+  )
 }
 
 export default BackgroundSection

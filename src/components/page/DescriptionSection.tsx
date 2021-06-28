@@ -29,10 +29,36 @@ const DescriptionSection: React.FC<{
           <div className="col-12 col-md-7 m-auto">
             {infos?.map(v => (
               <Article className="my-5">
-                <Article.Title className="mb-4" fontSize={24}>
+                <Article.Title
+                  className="mb-4"
+                  customStyle={{
+                    textAlign: 'left',
+                    fontSize: 24,
+                    fontWeight: 'bold',
+                    color: '#585858',
+                    pt: 0,
+                    pr: 0,
+                    pb: 0,
+                    pl: 0,
+                  }}
+                >
                   {v.title}
                 </Article.Title>
-                <StyledContent>{v.description}</StyledContent>
+                <Article.Content
+                  customStyle={{
+                    textAlign: 'left',
+                    fontSize: 16,
+                    fontWeight: 'normal',
+                    lineHeight: 1.7,
+                    color: '#585858',
+                    pt: 0,
+                    pr: 0,
+                    pb: 0,
+                    pl: 0,
+                  }}
+                >
+                  {v.description}
+                </Article.Content>
               </Article>
             ))}
           </div>

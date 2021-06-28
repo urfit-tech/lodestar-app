@@ -1,6 +1,7 @@
 import Accordion from 'lodestar-app-element/src/components/Accordion'
+import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
 import React from 'react'
-import { SectionTitle, StyledSection } from '../../pages/AppPage'
+import { SectionTitle } from '../../pages/AppPage'
 
 const AccordionSection: React.FC<{
   options: {
@@ -12,13 +13,61 @@ const AccordionSection: React.FC<{
   }
 }> = ({ options: { title, infos = [] } }) => {
   return (
-    <StyledSection>
+    <BackgroundSection
+      customStyle={{
+        mt: '0',
+        mb: '0',
+        mr: '0',
+        ml: '0',
+        pt: '64',
+        pb: '64',
+        pr: '0',
+        pl: '0',
+      }}
+    >
       <div className="container">
         <SectionTitle>{title}</SectionTitle>
 
-        <Accordion list={infos} />
+        <Accordion
+          customStyle={{
+            card: {
+              bordered: false,
+              shadow: false,
+              mt: '20',
+              mb: '20',
+              mr: '20',
+              ml: '20',
+              pt: '20',
+              pb: '20',
+              pr: '20',
+              pl: '20',
+            },
+            title: {
+              textAlign: 'left',
+              fontSize: 16,
+              fontWeight: 'bold',
+              color: '#585858',
+              pt: 0,
+              pr: 0,
+              pb: 0,
+              pl: 0,
+            },
+            paragraph: {
+              textAlign: 'left',
+              fontSize: 14,
+              fontWeight: 'bold',
+              lineHeight: 1,
+              color: '#585858',
+              pt: 0,
+              pr: 0,
+              pb: 0,
+              pl: 0,
+            },
+          }}
+          list={infos}
+        />
       </div>
-    </StyledSection>
+    </BackgroundSection>
   )
 }
 
