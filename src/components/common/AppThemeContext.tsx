@@ -80,6 +80,18 @@ export const AppThemeProvider: React.FC = ({ children }) => {
           },
         },
       },
+      Menu: {
+        baseStyle: {
+          item: {
+            _active: {
+              bg: `${settings['theme.@primary-color']}1a`,
+            },
+            _focus: {
+              bg: `${settings['theme.@primary-color']}1a`,
+            },
+          },
+        },
+      },
       Modal: {
         baseStyle: {
           dialog: {

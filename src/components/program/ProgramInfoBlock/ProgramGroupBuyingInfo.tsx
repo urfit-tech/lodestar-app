@@ -57,7 +57,8 @@ const ProgramGroupBuyingInfo: React.FC<{
   isOnSale: boolean
   program: Pick<ProgramProps, 'id' | 'listPrice' | 'salePrice' | 'title' | 'isSoldOut'>
   programPlans: Pick<ProgramPlanProps, 'id' | 'title' | 'listPrice' | 'salePrice'>[]
-}> = ({ isOnSale, program, programPlans }) => {
+  hideProgramPlanPrice?: boolean
+}> = ({ isOnSale, hideProgramPlanPrice, program, programPlans }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { member } = useMember(currentMemberId || '')
@@ -75,12 +76,13 @@ const ProgramGroupBuyingInfo: React.FC<{
             salePrice={isOnSale ? program.salePrice : undefined}
           />
         </span>
-        {programPlans.map(v => (
-          <span key={v.id} className="d-flex justify-content-between">
-            <StyledTitle>{v.title}</StyledTitle>
-            <PriceLabel variant="inline" listPrice={v.listPrice} salePrice={isOnSale ? v.salePrice : undefined} />
-          </span>
-        ))}
+        {!hideProgramPlanPrice &&
+          programPlans.map(v => (
+            <span key={v.id} className="d-flex justify-content-between">
+              <StyledTitle>{v.title}</StyledTitle>
+              <PriceLabel variant="inline" listPrice={v.listPrice} salePrice={isOnSale ? v.salePrice : undefined} />
+            </span>
+          ))}
       </div>
 
       <Menu placement="top">

@@ -51,6 +51,7 @@ const ProgramPerpetualPlanCard: React.VFC<{
             isOnSale={isOnSale}
             program={program}
             programPlans={program.plans.filter(v => v.publishedAt)}
+            hideProgramPlanPrice
           />
         ) : (
           <>
