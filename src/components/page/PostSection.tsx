@@ -92,6 +92,9 @@ const StyledPostMeta = styled.div`
     }
   }
 `
+const StyledAngleRightIcon = styled(AngleRightIcon)`
+  display: inline-block;
+`
 
 const PostSection: React.VFC<{ options: { title?: string } }> = ({ options }) => {
   const { enabledModules } = useApp()
@@ -145,7 +148,7 @@ const PostSection: React.VFC<{ options: { title?: string } }> = ({ options }) =>
 
         <div className="text-center">
           <StyledLink to="/blog">
-            查看更多 <AngleRightIcon />
+            查看更多 <StyledAngleRightIcon />
           </StyledLink>
         </div>
       </div>

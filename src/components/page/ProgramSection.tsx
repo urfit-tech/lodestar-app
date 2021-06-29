@@ -9,6 +9,9 @@ import ProgramCard from '../program/ProgramCard'
 const StyledSection = styled.section`
   margin-bottom: 80px;
 `
+const StyledAngleRightIcon = styled(AngleRightIcon)`
+  display: inline-block;
+`
 
 const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,
@@ -48,7 +51,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
 
       <div className="text-center">
         <StyledLink to={`/programs${options?.categoryId ? '?active=' + options?.categoryId : ''}`}>
-          查看更多 <AngleRightIcon />
+          查看更多 <StyledAngleRightIcon />
         </StyledLink>
       </div>
     </StyledSection>
