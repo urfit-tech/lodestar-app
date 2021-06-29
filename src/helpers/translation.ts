@@ -231,6 +231,7 @@ export const commonMessages = {
     partnerChoose: { id: 'common.label.partnerChoose', defaultMessage: '發送設定' },
     targetPartner: { id: 'common.label.targetPartner', defaultMessage: '發送對象' },
     target: { id: 'common.term.target', defaultMessage: '對象：' },
+    from: { id: 'common.term.from', defaultMessage: '來自：' },
     date: { id: 'common.term.date', defaultMessage: '日期：' },
   }),
   form: {

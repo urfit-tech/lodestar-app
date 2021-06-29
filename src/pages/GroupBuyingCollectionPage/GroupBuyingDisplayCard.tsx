@@ -167,31 +167,25 @@ const GroupBuyingDisplayCard: React.VFC<{
   imgUrl: string
   title: string
   transferredAt: Date | null
-  memberEmail: string
+  sentByCurrentMember: boolean
+  memberEmail: string | null
   onRefetch?: (() => void) | null
-}> = ({ partnerMemberIds, orderId, imgUrl, title, transferredAt, memberEmail, onRefetch }) => {
+}> = ({ partnerMemberIds, orderId, imgUrl, title, transferredAt, sentByCurrentMember, memberEmail, onRefetch }) => {
   const { formatMessage } = useIntl()
   return (
     <StyledCard className="p-4">
       <CustomRatioImage className="mb-3" width="100%" ratio={9 / 16} src={imgUrl || EmptyCover} />
       <StyledTitle>{title}</StyledTitle>
-      {!transferredAt ? (
-        <div className="mt-3">
-          <GroupBuyingDeliverModal
-            partnerMemberIds={partnerMemberIds}
-            orderId={orderId}
-            title={title}
-            onRefetch={onRefetch}
-          />
-        </div>
-      ) : (
+      {transferredAt ? (
         <>
           <Divider className="my-3" />
           <StyledCardMeta>
             <div className="d-flex">
               <Icon as={UserOIcon} className="my-auto mr-1" />
               <span>
-                {formatMessage(commonMessages.label.target)}
+                {sentByCurrentMember
+                  ? formatMessage(commonMessages.label.target)
+                  : formatMessage(commonMessages.label.from)}
                 {memberEmail}
               </span>
             </div>
@@ -204,6 +198,15 @@ const GroupBuyingDisplayCard: React.VFC<{
             </div>
           </StyledCardMeta>
         </>
+      ) : (
+        <div className="mt-3">
+          <GroupBuyingDeliverModal
+            partnerMemberIds={partnerMemberIds}
+            orderId={orderId}
+            title={title}
+            onRefetch={onRefetch}
+          />
+        </div>
       )}
     </StyledCard>
   )
