@@ -248,7 +248,10 @@ const SmartVideo: React.FC<{
   }, [initialProgress, lastEndedTime, onEvent, videoId])
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!smartVideoPlayer.current?._videoId || !['ArrowRight', 'ArrowLeft', ' '].includes(event.key)) {
+    if (
+      !smartVideoPlayer.current?._videoId ||
+      !['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' '].includes(event.key)
+    ) {
       return
     }
     event.preventDefault()
@@ -257,12 +260,20 @@ const SmartVideo: React.FC<{
       const duration = smartVideoPlayer.current.duration()
       const currentTime = smartVideoPlayer.current.currentTime()
       const isPaused = smartVideoPlayer.current.paused()
+      const currentVolume = smartVideoPlayer.current.volume()
+
       switch (event.key) {
         case 'ArrowRight':
           smartVideoPlayer.current.currentTime(Math.min(currentTime + 5, duration))
           break
         case 'ArrowLeft':
           smartVideoPlayer.current.currentTime(Math.max(currentTime - 5, 0))
+          break
+        case 'ArrowUp':
+          smartVideoPlayer.current.volume(Math.min((Math.floor(currentVolume * 20) + 1) / 20, 1))
+          break
+        case 'ArrowDown':
+          smartVideoPlayer.current.volume(Math.max((Math.floor(currentVolume * 20) - 1) / 20, 0))
           break
         case ' ':
           if (isPaused) {
