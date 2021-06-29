@@ -242,15 +242,43 @@ const SmartVideo: React.FC<{
         })
         setLastEndedTime(player.currentTime())
       })
-      smartVideoPlayer.current = {
-        _videoId: videoId,
-        ...player,
-      }
+      smartVideoPlayer.current = player
+      smartVideoPlayer.current._videoId = videoId
     })
   }, [initialProgress, lastEndedTime, onEvent, videoId])
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!smartVideoPlayer.current?._videoId || !['ArrowRight', 'ArrowLeft', ' '].includes(event.key)) {
+      return
+    }
+    event.preventDefault()
+
+    try {
+      const duration = smartVideoPlayer.current.duration()
+      const currentTime = smartVideoPlayer.current.currentTime()
+      const isPaused = smartVideoPlayer.current.paused()
+      switch (event.key) {
+        case 'ArrowRight':
+          smartVideoPlayer.current.currentTime(Math.min(currentTime + 5, duration))
+          break
+        case 'ArrowLeft':
+          smartVideoPlayer.current.currentTime(Math.max(currentTime - 5, 0))
+          break
+        case ' ':
+          if (isPaused) {
+            smartVideoPlayer.current.play()
+          } else {
+            smartVideoPlayer.current.pause()
+          }
+          break
+      }
+    } catch (error) {
+      process.env.NODE_ENV === 'development' && console.error(error)
+    }
+  }
+
   return (
-    <div>
+    <div onKeyDown={handleKeyDown}>
       <video
         id={videoId}
         key={videoId}
