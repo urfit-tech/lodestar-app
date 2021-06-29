@@ -1,5 +1,5 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { ReactPlayerProps } from 'react-player'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -175,66 +175,79 @@ const SmartVideo: React.FC<{
   onEvent?: (e: VideoEvent) => void
 }> = ({ videoId, urls, initialProgress, onEvent }) => {
   const [lastEndedTime, setLastEndedTime] = useState(0)
-  useSmartVideoPlayer(videoId, {
-    onPause: player => e => {
-      onEvent?.({
-        ...e,
-        type: e.type,
-        target: e.target,
-        videoState: {
-          playbackRate: player.playbackRate(),
-          startedAt: lastEndedTime,
-          endedAt: player.currentTime(),
-        },
+  const smartVideoPlayer = useRef<any>(null)
+
+  useEffect(() => {
+    if (smartVideoPlayer.current?._lock || videoId === smartVideoPlayer.current?._videoId) {
+      return
+    }
+    smartVideoPlayer.current = { _lock: true }
+
+    getVideoPlayer(videoId).then(player => {
+      player.on('pause', (e: Event) => {
+        onEvent?.({
+          ...e,
+          type: e.type,
+          target: e.target,
+          videoState: {
+            playbackRate: player.playbackRate(),
+            startedAt: lastEndedTime,
+            endedAt: player.currentTime(),
+          },
+        })
+        setLastEndedTime(player.currentTime())
       })
-      setLastEndedTime(player.currentTime())
-    },
-    onDurationChange: player => e => {
-      if (!lastEndedTime) {
-        player.currentTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
-        setLastEndedTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
+      player.on('seeked', (e: Event) => {
+        onEvent?.({
+          ...e,
+          type: e.type,
+          target: e.target,
+          videoState: {
+            playbackRate: 0,
+            startedAt: lastEndedTime,
+            endedAt: player.currentTime(),
+          },
+        })
+        setLastEndedTime(player.currentTime())
+      })
+      player.on('progress', (e: Event) => {
+        onEvent?.({
+          ...e,
+          type: e.type,
+          target: e.target,
+          videoState: {
+            playbackRate: player.playbackRate(),
+            startedAt: lastEndedTime,
+            endedAt: player.currentTime(),
+          },
+        })
+        setLastEndedTime(player.currentTime())
+      })
+      player.on('durationchange', (e: Event) => {
+        if (!lastEndedTime) {
+          player.currentTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
+          setLastEndedTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
+        }
+      })
+      player.on('ended', (e: Event) => {
+        onEvent?.({
+          ...e,
+          type: e.type,
+          target: e.target,
+          videoState: {
+            playbackRate: player.playbackRate(),
+            startedAt: lastEndedTime,
+            endedAt: player.currentTime(),
+          },
+        })
+        setLastEndedTime(player.currentTime())
+      })
+      smartVideoPlayer.current = {
+        _videoId: videoId,
+        ...player,
       }
-    },
-    onProgress: player => e => {
-      onEvent?.({
-        ...e,
-        type: e.type,
-        target: e.target,
-        videoState: {
-          playbackRate: player.playbackRate(),
-          startedAt: lastEndedTime,
-          endedAt: player.currentTime(),
-        },
-      })
-      setLastEndedTime(player.currentTime())
-    },
-    onSeeked: player => e => {
-      onEvent?.({
-        ...e,
-        type: e.type,
-        target: e.target,
-        videoState: {
-          playbackRate: 0,
-          startedAt: lastEndedTime,
-          endedAt: player.currentTime(),
-        },
-      })
-      setLastEndedTime(player.currentTime())
-    },
-    onEnded: player => e => {
-      onEvent?.({
-        ...e,
-        type: e.type,
-        target: e.target,
-        videoState: {
-          playbackRate: player.playbackRate(),
-          startedAt: lastEndedTime,
-          endedAt: player.currentTime(),
-        },
-      })
-      setLastEndedTime(player.currentTime())
-    },
-  })
+    })
+  }, [initialProgress, lastEndedTime, onEvent, videoId])
 
   return (
     <div>
@@ -253,32 +266,6 @@ const SmartVideo: React.FC<{
       </video>
     </div>
   )
-}
-
-const useSmartVideoPlayer = (
-  videoId: string,
-  callbacks?: {
-    onPause?: (videoPlayer: any) => (e: Event) => void
-    onSeeked?: (videoPlayer: any) => (e: Event) => void
-    onProgress?: (videoPlayer: any) => (e: Event) => void
-    onDurationChange?: (videoPlayer: any) => (e: Event) => void
-    onEnded?: (videoPlayer: any) => (e: Event) => void
-  },
-) => {
-  const [videoPlayer, setVideoPlayer] = useState<any>()
-  useEffect(() => {
-    if (!videoPlayer) {
-      getVideoPlayer(videoId).then(player => {
-        // FIXME: it will be added three times QQ
-        player.on('pause', callbacks?.onPause?.(player))
-        player.on('seeked', callbacks?.onSeeked?.(player))
-        player.on('progress', callbacks?.onProgress?.(player))
-        player.on('durationchange', callbacks?.onDurationChange?.(player))
-        player.on('ended', callbacks?.onEnded?.(player))
-        setVideoPlayer(player)
-      })
-    }
-  }, [callbacks, videoId, videoPlayer])
 }
 
 const getVideoPlayer = async (videoId: string) =>
