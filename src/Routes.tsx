@@ -351,6 +351,13 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     authenticated: true,
     allowedUserRole: 'general-member',
   },
+
+  // NITS remove when finished craft component test
+  craft: {
+    path: '/craft',
+    pageName: 'CraftPage',
+    authenticated: false,
+  },
 }
 
 const Routes: React.VFC<{ extra?: { [routeKey: string]: RouteProps } }> = ({ extra }) => {
