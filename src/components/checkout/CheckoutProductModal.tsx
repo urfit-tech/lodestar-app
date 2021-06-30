@@ -41,7 +41,7 @@ const CheckoutProductItem: React.VFC<{ name: string; price: number }> = ({ name,
 export type CheckoutProductModalProps = {
   member: MemberProps | null
   paymentType: 'perpetual' | 'subscription'
-  renderTrigger: (onOpen?: () => void) => React.ReactElement
+  renderTrigger: (onOpen?: () => void, onProductChange?: (productId: string) => void) => React.ReactElement
   defaultProductId?: string
   isProductPhysical?: boolean
   warningText?: string
@@ -238,7 +238,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
   return (
     <>
-      {renderTrigger(onOpen)}
+      {renderTrigger(onOpen, productId => setProductId(productId))}
       <CommonModal
         title={<StyledTitle className="mb-4">{formatMessage(checkoutMessages.title.cart)}</StyledTitle>}
         isOpen={isOpen}

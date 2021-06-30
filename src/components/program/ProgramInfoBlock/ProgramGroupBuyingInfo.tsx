@@ -85,40 +85,46 @@ const ProgramGroupBuyingInfo: React.FC<{
           ))}
       </div>
 
-      <Menu placement="top">
-        <MenuButton as={Button} colorScheme="primary" isFullWidth>
-          {formatMessage(commonMessages.ui.purchase)}
-        </MenuButton>
-        <StyledMenuList>
-          {program.isSoldOut ? (
-            <MenuItem isDisabled>{formatMessage(commonMessages.button.soldOut)}</MenuItem>
-          ) : (
-            <StyledMenuItem
-              onClick={() =>
-                isProgramInCart ? history.push(`/cart`) : handleAddCartProgram()?.then(() => history.push('/cart'))
-              }
-            >
-              <StyledTitle className="mr-1">{formatMessage(messages.perpetualProgram)}</StyledTitle>
-              <PriceLabel listPrice={isOnSale ? program.salePrice || program.listPrice || 0 : program.listPrice || 0} />
-            </StyledMenuItem>
-          )}
+      <CheckoutProductModal
+        member={member}
+        paymentType="perpetual"
+        renderTrigger={(onOpen, onProductChange) => (
+          <Menu placement="top">
+            <MenuButton as={Button} colorScheme="primary" isFullWidth>
+              {formatMessage(commonMessages.ui.purchase)}
+            </MenuButton>
+            <StyledMenuList>
+              {program.isSoldOut ? (
+                <MenuItem isDisabled>{formatMessage(commonMessages.button.soldOut)}</MenuItem>
+              ) : (
+                <StyledMenuItem
+                  onClick={() =>
+                    isProgramInCart ? history.push(`/cart`) : handleAddCartProgram()?.then(() => history.push('/cart'))
+                  }
+                >
+                  <StyledTitle className="mr-1">{formatMessage(messages.perpetualProgram)}</StyledTitle>
+                  <PriceLabel
+                    listPrice={isOnSale ? program.salePrice || program.listPrice || 0 : program.listPrice || 0}
+                  />
+                </StyledMenuItem>
+              )}
 
-          {programPlans.map(v => (
-            <CheckoutProductModal
-              key={v.id}
-              member={member}
-              paymentType="perpetual"
-              defaultProductId={`ProgramPlan_${v.id}`}
-              renderTrigger={onOpen => (
-                <StyledMenuItem onClick={onOpen}>
+              {programPlans.map(v => (
+                <StyledMenuItem
+                  key={v.id}
+                  onClick={() => {
+                    onProductChange?.(`ProgramPlan_${v.id}`)
+                    onOpen?.()
+                  }}
+                >
                   <StyledTitle className="mr-1">{v.title}</StyledTitle>
                   <PriceLabel listPrice={isOnSale ? v.salePrice || v.listPrice : v.listPrice} />
                 </StyledMenuItem>
-              )}
-            />
-          ))}
-        </StyledMenuList>
-      </Menu>
+              ))}
+            </StyledMenuList>
+          </Menu>
+        )}
+      />
     </div>
   )
 }
