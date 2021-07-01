@@ -226,8 +226,8 @@ const SmartVideo: React.FC<{
       })
       player.on('durationchange', (e: Event) => {
         if (!lastEndedTime) {
-          player.currentTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
-          setLastEndedTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
+          player.currentTime(player.duration() * (initialProgress >= 1 ? 0 : initialProgress))
+          setLastEndedTime(player.duration() * (initialProgress >= 1 ? 0 : initialProgress))
         }
       })
       player.on('ended', (e: Event) => {
@@ -251,6 +251,8 @@ const SmartVideo: React.FC<{
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
+        document.activeElement?.classList.contains('vjs-play-control') ||
+        document.activeElement?.classList.contains('vjs-fullscreen-control') ||
         smartVideoPlayer.current?._videoId !== videoId ||
         !['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Space'].includes(event.code)
       ) {

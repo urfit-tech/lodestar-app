@@ -79,7 +79,7 @@ const ProgramContentBlock: React.VFC<{
     insertProgress(programContentId, {
       progress: currentProgress > 1 ? 1 : currentProgress > initialProgress ? currentProgress : initialProgress,
       lastProgress: progress,
-    }).then(() => refetchProgress())
+    })
   }, 5000)
 
   return (
@@ -94,8 +94,8 @@ const ProgramContentBlock: React.VFC<{
           lastProgress={lastProgress || 0}
           onVideoEvent={e => {
             if (e.type === 'ended') {
-              refetchProgress()
               insertProgramProgress(1)
+              refetchProgress()
             }
             if (e.type === 'progress') {
               const video = e.target as HTMLVideoElement
