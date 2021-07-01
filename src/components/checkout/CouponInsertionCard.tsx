@@ -25,7 +25,7 @@ const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInse
         setLoading(true)
         axios
           .post(
-            `https://${apiHost}/payment/exchange`,
+            `//${apiHost}/payment/exchange`,
             {
               code: values.code,
               type: 'Coupon',

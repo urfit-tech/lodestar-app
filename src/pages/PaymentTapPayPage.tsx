@@ -117,7 +117,7 @@ const usePayment = (paymentNo: number) => {
         }
         axios
           .post(
-            `https://${apiHost}/payment/pay/${paymentNo}`,
+            `//${apiHost}/payment/pay/${paymentNo}`,
             {
               memberCreditCardId,
             },
@@ -146,7 +146,7 @@ const usePayment = (paymentNo: number) => {
         }
         axios({
           method: 'POST',
-          url: `https://${apiHost}/payment/credit-cards`,
+          url: `//${apiHost}/payment/credit-cards`,
           withCredentials: true,
           data: {
             prime,

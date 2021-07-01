@@ -45,7 +45,7 @@ const OrderTaskPage: React.VFC = () => {
     if (authToken && task?.finishedOn && task?.returnvalue?.orderId) {
       axios
         .post(
-          `https://${apiHost}/tasks/payment/`,
+          `//${apiHost}/tasks/payment/`,
           { orderId: task.returnvalue.orderId },
           { headers: { authorization: `Bearer ${authToken}` } },
         )

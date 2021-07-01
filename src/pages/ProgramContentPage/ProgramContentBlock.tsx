@@ -103,7 +103,7 @@ const ProgramContentBlock: React.VFC<{
             } else {
               axios
                 .post(
-                  `https://${apiHost}/tasks/player-event-logs/`,
+                  `//${apiHost}/tasks/player-event-logs/`,
                   {
                     programContentId,
                     data: e.videoState,

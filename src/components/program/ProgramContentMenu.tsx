@@ -75,7 +75,7 @@ const StyledIconWrapper = styled.div`
   border-radius: 50%;
   text-align: center;
   font-size: 10px;
-  line-height: 22px;
+  line-height: 20px;
 `
 const StyledItem = styled.div`
   position: relative;

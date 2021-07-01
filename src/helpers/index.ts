@@ -45,7 +45,7 @@ export const uploadFile = async (
   file &&
     (await axios
       .post(
-        `https://${apiHost}/sys/sign-url`,
+        `//${apiHost}/sys/sign-url`,
         {
           operation: 'putObject',
           params: {
@@ -76,7 +76,7 @@ export const uploadFile = async (
 
 export const getFileDownloadableLink = async (key: string, authToken: string | null, apiHost: string) => {
   const { data } = await axios.post(
-    `https://${apiHost}/sys/sign-url`,
+    `//${apiHost}/sys/sign-url`,
     {
       operation: 'getObject',
       params: {
@@ -305,8 +305,10 @@ export const isUUIDv4 = (uuid: string) => {
 }
 
 export const validationRegExp: { [fieldId: string]: RegExp } = {
-  phone: /^((?:\+|00)[17](?: |-)?|(?:\+|00)[1-9]\d{0,2}(?: |-)?|(?:\+|00)1-\d{3}(?: |-)?)?(0\d|\([0-9]{3}\)|[1-9]{0,3})(?:((?: |-)[0-9]{2}){4}|((?:[0-9]{2}){4})|((?: |-)[0-9]{3}(?: |-)[0-9]{4})|([0-9]{7}))$/,
-  email: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  phone:
+    /^((?:\+|00)[17](?: |-)?|(?:\+|00)[1-9]\d{0,2}(?: |-)?|(?:\+|00)1-\d{3}(?: |-)?)?(0\d|\([0-9]{3}\)|[1-9]{0,3})(?:((?: |-)[0-9]{2}){4}|((?:[0-9]{2}){4})|((?: |-)[0-9]{3}(?: |-)[0-9]{4})|([0-9]{7}))$/,
+  email:
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
   phoneBarCode: /^\/{1}[0-9A-Z+-.]{7}$/,
   citizenCode: /^[a-zA-Z]{2}[0-9]{14}$/,
   uniformNumber: /^[0-9]{8}$/,
