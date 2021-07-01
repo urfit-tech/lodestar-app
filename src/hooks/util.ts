@@ -167,14 +167,14 @@ export const useSwarmify = () => {
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         ctx.font = '16px sans-serif'
         ctx.fillStyle = 'black'
-        ctx.fillText(text, 8, canvas.height / 2)
+        ctx.fillText(text, 8, canvas.height / 2 + 4, canvas.width)
       }
       const dataUri = canvas.toDataURL()
       ;(swarmoptions.plugins as any).watermark = {
         file: dataUri,
         xpos: 100,
         ypos: 0,
-        opacity: 0.6,
+        opacity: 0.4,
       }
     }
     ;(window as any).swarmoptions = swarmoptions

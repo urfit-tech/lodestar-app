@@ -181,6 +181,7 @@ const SmartVideo: React.FC<{
     if (smartVideoPlayer.current?._lock || videoId === smartVideoPlayer.current?._videoId) {
       return
     }
+    smartVideoPlayer.current?.dispose?.()
     smartVideoPlayer.current = { _lock: true }
 
     getVideoPlayer(videoId).then(player => {
@@ -247,49 +248,58 @@ const SmartVideo: React.FC<{
     })
   }, [initialProgress, lastEndedTime, onEvent, videoId])
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (
-      !smartVideoPlayer.current?._videoId ||
-      !['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' '].includes(event.key)
-    ) {
-      return
-    }
-    event.preventDefault()
-
-    try {
-      const duration = smartVideoPlayer.current.duration()
-      const currentTime = smartVideoPlayer.current.currentTime()
-      const isPaused = smartVideoPlayer.current.paused()
-      const currentVolume = smartVideoPlayer.current.volume()
-
-      switch (event.key) {
-        case 'ArrowRight':
-          smartVideoPlayer.current.currentTime(Math.min(currentTime + 5, duration))
-          break
-        case 'ArrowLeft':
-          smartVideoPlayer.current.currentTime(Math.max(currentTime - 5, 0))
-          break
-        case 'ArrowUp':
-          smartVideoPlayer.current.volume(Math.min((Math.floor(currentVolume * 20) + 1) / 20, 1))
-          break
-        case 'ArrowDown':
-          smartVideoPlayer.current.volume(Math.max((Math.floor(currentVolume * 20) - 1) / 20, 0))
-          break
-        case ' ':
-          if (isPaused) {
-            smartVideoPlayer.current.play()
-          } else {
-            smartVideoPlayer.current.pause()
-          }
-          break
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        smartVideoPlayer.current?._videoId !== videoId ||
+        !['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Space'].includes(event.code)
+      ) {
+        return
       }
-    } catch (error) {
-      process.env.NODE_ENV === 'development' && console.error(error)
+      event.preventDefault()
+
+      try {
+        const duration = smartVideoPlayer.current.duration()
+        const currentTime = smartVideoPlayer.current.currentTime()
+        const isPaused = smartVideoPlayer.current.paused()
+        const currentVolume = smartVideoPlayer.current.volume()
+        const isMuted = smartVideoPlayer.current.muted()
+
+        switch (event.code) {
+          case 'ArrowRight':
+            smartVideoPlayer.current.currentTime(Math.min(currentTime + 5, duration))
+            break
+          case 'ArrowLeft':
+            smartVideoPlayer.current.currentTime(Math.max(currentTime - 5, 0))
+            break
+          case 'ArrowUp':
+            smartVideoPlayer.current.muted(false)
+            smartVideoPlayer.current.volume(isMuted ? 0.05 : Math.min((Math.floor(currentVolume * 20) + 1) / 20, 1))
+            break
+          case 'ArrowDown':
+            smartVideoPlayer.current.muted(false)
+            smartVideoPlayer.current.volume(isMuted ? 0 : Math.max((Math.floor(currentVolume * 20) - 1) / 20, 0))
+            break
+          case 'Space':
+            if (isPaused) {
+              smartVideoPlayer.current.play()
+            } else {
+              smartVideoPlayer.current.pause()
+            }
+            break
+        }
+      } catch (error) {
+        process.env.NODE_ENV === 'development' && console.error(error)
+      }
     }
-  }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [videoId])
 
   return (
-    <div onKeyDown={handleKeyDown}>
+    <div>
       <video
         id={videoId}
         key={videoId}
@@ -326,12 +336,14 @@ const getVideoPlayer = async (videoId: string) =>
 
 const useUrls = (appId: string, programContentBodyId: string) => {
   const { authToken, apiHost } = useAuth()
-  const [urls, setUrls] = useState<{ video: string; texttracks: string[] }>()
+  const [urls, setUrls] = useState<{ video: string; texttracks: string[] } | null>(null)
 
   useEffect(() => {
     if (!authToken || !apiHost) {
       return
     }
+
+    setUrls(null)
 
     getFileDownloadableLink(`videos/${appId}/${programContentBodyId}`, authToken, apiHost).then(videoUrl => {
       getFileDownloadableLink(`texttracks/${appId}/${programContentBodyId}`, authToken, apiHost).then(texttrackUrl => {
