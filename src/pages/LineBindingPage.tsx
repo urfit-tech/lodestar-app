@@ -24,6 +24,7 @@ const messages = defineMessages({
 
 const StyledBindingIcon = styled.div`
   font-size: 64px;
+  display: inline-block;
 `
 const StyledLinkingText = styled.div`
   font-size: 16px;
