@@ -72,7 +72,7 @@ const ProjectPromotionSection: React.VFC<ProjectPromotionSectionProps> = ({ prom
             </div>
             <StyledCountDownTime className="d-flex align-items-center justify-content-between">
               {<Icon as={CalendarOIcon} className="icon mr-2" />}
-              {expiredAt && <CountDownTimeBlock text="開課倒數" expiredAt={expiredAt} />}
+              {expiredAt && <CountDownTimeBlock text="優惠倒數" expiredAt={expiredAt} />}
             </StyledCountDownTime>
           </StyledSlogan>
           <Button
