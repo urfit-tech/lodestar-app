@@ -3,7 +3,14 @@ import gql from 'graphql-tag'
 import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 
-type SectionType = 'homeCover' | 'homeActivity' | 'homeCreator' | 'homePost' | 'homeProgram' | 'homeProgramCategory'
+type SectionType =
+  | 'homeCover'
+  | 'homeActivity'
+  | 'homeCreator'
+  | 'homePost'
+  | 'homeProgram'
+  | 'homeProgramCategory'
+  | 'messenger'
 
 type AppPageSectionProps = {
   id: string
