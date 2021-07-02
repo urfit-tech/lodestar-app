@@ -1,10 +1,11 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { ReactPlayerProps } from 'react-player'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import { ProgressContext } from '../../contexts/ProgressContext'
 import { getFileDownloadableLink } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
@@ -74,15 +75,15 @@ type VideoEvent = Event & {
 }
 const ProgramContentPlayer: React.VFC<
   ReactPlayerProps & {
+    programContentId: string
     programContentBody: ProgramContentBodyProps
     nextProgramContent?: {
       id: string
       title: string
     }
-    lastProgress?: number
     onVideoEvent?: (event: VideoEvent) => void
   }
-> = ({ programContentBody, nextProgramContent, lastProgress = 0, onVideoEvent }) => {
+> = ({ programContentId, programContentBody, nextProgramContent, onVideoEvent }) => {
   const videoId = `v-${programContentBody.id}`
   const { id: appId } = useApp()
   const [isCoverShowing, setIsCoverShowing] = useState(false)
@@ -95,9 +96,9 @@ const ProgramContentPlayer: React.VFC<
       )}
       {urls && (
         <SmartVideo
+          programContentId={programContentId}
           videoId={videoId}
           urls={urls}
-          initialProgress={lastProgress}
           onEvent={e => {
             if (e.type === 'ended') {
               setIsCoverShowing(true)
@@ -169,16 +170,27 @@ const CountDownPlayButton: React.VFC<{
 }
 
 const SmartVideo: React.FC<{
+  programContentId: string
   videoId: string
   urls: { video: string; texttracks: string[] }
-  initialProgress: number
   onEvent?: (e: VideoEvent) => void
-}> = ({ videoId, urls, initialProgress, onEvent }) => {
+}> = ({ programContentId, videoId, urls, onEvent }) => {
+  const { programContentProgress } = useContext(ProgressContext)
   const [lastEndedTime, setLastEndedTime] = useState(0)
   const smartVideoPlayer = useRef<any>(null)
 
+  const lastProgress =
+    typeof programContentProgress === 'undefined'
+      ? undefined
+      : programContentProgress.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
+
   useEffect(() => {
-    if (smartVideoPlayer.current?._lock || videoId === smartVideoPlayer.current?._videoId) {
+    if (
+      typeof lastProgress === 'undefined' ||
+      smartVideoPlayer.current?._lock ||
+      videoId === smartVideoPlayer.current?._videoId ||
+      !onEvent
+    ) {
       return
     }
     smartVideoPlayer.current?.dispose?.()
@@ -186,7 +198,7 @@ const SmartVideo: React.FC<{
 
     getVideoPlayer(videoId).then(player => {
       player.on('pause', (e: Event) => {
-        onEvent?.({
+        onEvent({
           ...e,
           type: e.type,
           target: e.target,
@@ -199,7 +211,7 @@ const SmartVideo: React.FC<{
         setLastEndedTime(player.currentTime())
       })
       player.on('seeked', (e: Event) => {
-        onEvent?.({
+        onEvent({
           ...e,
           type: e.type,
           target: e.target,
@@ -212,7 +224,7 @@ const SmartVideo: React.FC<{
         setLastEndedTime(player.currentTime())
       })
       player.on('progress', (e: Event) => {
-        onEvent?.({
+        onEvent({
           ...e,
           type: e.type,
           target: e.target,
@@ -226,12 +238,13 @@ const SmartVideo: React.FC<{
       })
       player.on('durationchange', (e: Event) => {
         if (!lastEndedTime) {
-          player.currentTime(player.duration() * (initialProgress >= 1 ? 0 : initialProgress))
-          setLastEndedTime(player.duration() * (initialProgress >= 1 ? 0 : initialProgress))
+          const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
+          player.currentTime(player.duration() * progress)
+          setLastEndedTime(player.duration() * progress)
         }
       })
       player.on('ended', (e: Event) => {
-        onEvent?.({
+        onEvent({
           ...e,
           type: e.type,
           target: e.target,
@@ -246,7 +259,7 @@ const SmartVideo: React.FC<{
       smartVideoPlayer.current = player
       smartVideoPlayer.current._videoId = videoId
     })
-  }, [initialProgress, lastEndedTime, onEvent, videoId])
+  }, [lastEndedTime, lastProgress, onEvent, videoId])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -338,10 +351,13 @@ const getVideoPlayer = async (videoId: string) =>
 
 const useUrls = (appId: string, programContentBodyId: string) => {
   const { authToken, apiHost } = useAuth()
-  const [urls, setUrls] = useState<{ video: string; texttracks: string[] } | null>(null)
+  const [urls, setUrls] = useState<{
+    video: string
+    texttracks: string[]
+  } | null>(null)
 
   useEffect(() => {
-    if (!authToken || !apiHost) {
+    if (!appId || !authToken || !apiHost) {
       return
     }
 
@@ -353,17 +369,24 @@ const useUrls = (appId: string, programContentBodyId: string) => {
         const client = new XMLHttpRequest()
         client.open('GET', texttrackUrl)
         client.onreadystatechange = () => {
-          if (client.responseText.length > 0 && !client.responseText.includes('NoSuchKey')) {
-            if (!client.responseText.startsWith('WEBVTT')) {
-              const content =
-                'WEBVTT - Generated using SRT2VTT\r\n\r\n' +
-                client.responseText.replace(/(\d+:\d+:\d+)+,(\d+)/g, '$1.$2')
-              const blob = new Blob([content], { type: 'text/vtt' })
-              texttrackUrl = window.URL.createObjectURL(blob)
-              texttrackUrls.push(texttrackUrl)
-            }
+          if (
+            client.readyState === XMLHttpRequest.DONE &&
+            client.status === 200 &&
+            client.responseText.length > 0 &&
+            !client.responseText.includes('NoSuchKey') &&
+            !client.responseText.startsWith('WEBVTT')
+          ) {
+            const content =
+              'WEBVTT - Generated using SRT2VTT\r\n\r\n' + client.responseText.replace(/(\d+:\d+:\d+)+,(\d+)/g, '$1.$2')
+            const blob = new Blob([content], { type: 'text/vtt' })
+            texttrackUrl = window.URL.createObjectURL(blob)
+            texttrackUrls.push(texttrackUrl)
           }
-          setUrls({ video: videoUrl, texttracks: texttrackUrls })
+
+          setUrls({
+            video: videoUrl,
+            texttracks: texttrackUrls,
+          })
         }
         client.send()
       })

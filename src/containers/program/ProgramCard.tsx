@@ -49,7 +49,7 @@ const ProgramCard: React.VFC<{
   const { enrolledProgramIds } = useEnrolledProgramIds(memberId)
   const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
 
-  const viewRate = programContentProgress.length
+  const viewRate = programContentProgress?.length
     ? sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length
     : 0
   const isEnrolled = enrolledProgramIds.includes(programId)

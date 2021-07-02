@@ -5,7 +5,7 @@ import React, { createContext } from 'react'
 import hasura from '../hasura'
 
 type ProgressProps = {
-  programContentProgress: {
+  programContentProgress?: {
     programContentId: string
     programContentSectionId: string
     progress: number
@@ -21,7 +21,7 @@ type ProgressProps = {
   ) => Promise<any>
 }
 
-export const ProgressContext = createContext<ProgressProps>({ programContentProgress: [] })
+export const ProgressContext = createContext<ProgressProps>({})
 
 export const ProgressProvider: React.FC<{
   programId: string
@@ -111,7 +111,7 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
 
   const programContentProgress: ProgressProps['programContentProgress'] =
     loading || error || !data
-      ? []
+      ? undefined
       : flatten(
           data.program_content_body.map(contentBody =>
             contentBody.program_contents.map(content => ({

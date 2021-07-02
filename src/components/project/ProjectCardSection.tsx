@@ -405,6 +405,7 @@ const ProgramContentTrialPlayer: React.VFC<{
       <StyledPlayerWrapper className="text-center">
         {onPrev && <Icon as={AngleThinLeftIcon} onClick={() => onPrev()} />}
         <ProgramContentPlayer
+          programContentId={programContentId}
           programContentBody={{
             id: data.program_content_by_pk.program_content_body.id,
             type: '',

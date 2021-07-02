@@ -184,9 +184,8 @@ const ContentSection: React.VFC<{
   const { programContentProgress } = useContext(ProgressContext)
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
 
-  const contentProgress = programContentProgress.filter(
-    progress => progress.programContentSectionId === programContentSection.id,
-  )
+  const contentProgress =
+    programContentProgress?.filter(progress => progress.programContentSectionId === programContentSection.id) || []
   const sectionProgress = contentProgress.length
     ? Math.floor((sum(contentProgress.map(progress => progress.progress)) * 100) / contentProgress.length)
     : 0
@@ -307,7 +306,7 @@ const ProgramContentDateMenu: React.VFC<{
           key={programContent.id}
           programContent={programContent}
           progress={
-            programContentProgress.find(progress => progress.programContentId === programContent.id)?.progress || 0
+            programContentProgress?.find(progress => progress.programContentId === programContent.id)?.progress || 0
           }
           programPackageId={programPackageId}
           onClick={() => onSelect && onSelect(programContent.id)}
