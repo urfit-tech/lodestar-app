@@ -1,5 +1,6 @@
 import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
 import ProjectBlock from 'lodestar-app-element/src/components/blocks/ProjectBlock'
+import Layout from 'lodestar-app-element/src/components/Layout'
 import { ProjectType } from 'lodestar-app-element/src/types/data'
 import React from 'react'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
@@ -15,9 +16,15 @@ const ProjectSection: React.FC<{
     <BackgroundSection>
       <SectionTitle>{title}</SectionTitle>
       <div className="container">
-        <div className="row">
+        <Layout
+          customStyle={{
+            type: 'grid',
+            mobile: { columnAmount: 1, columnRatio: [12] },
+            desktop: { columnAmount: 3, columnRatio: [4, 4, 4] },
+          }}
+        >
           <ProjectBlock projectType={projectType} />
-        </div>
+        </Layout>
       </div>
       <div className="text-center">
         <StyledLink to="/projects">
