@@ -176,7 +176,6 @@ const SmartVideo: React.FC<{
   onEvent?: (e: VideoEvent) => void
 }> = ({ programContentId, videoId, urls, onEvent }) => {
   const { programContentProgress } = useContext(ProgressContext)
-  const [lastEndedTime, setLastEndedTime] = useState(0)
   const smartVideoPlayer = useRef<any>(null)
 
   const lastProgress =
@@ -204,11 +203,11 @@ const SmartVideo: React.FC<{
           target: e.target,
           videoState: {
             playbackRate: player.playbackRate(),
-            startedAt: lastEndedTime,
+            startedAt: smartVideoPlayer.current._lastEndedTime || 0,
             endedAt: player.currentTime(),
           },
         })
-        setLastEndedTime(player.currentTime())
+        smartVideoPlayer.current._lastEndedTime = player.currentTime()
       })
       player.on('seeked', (e: Event) => {
         onEvent({
@@ -217,11 +216,11 @@ const SmartVideo: React.FC<{
           target: e.target,
           videoState: {
             playbackRate: 0,
-            startedAt: lastEndedTime,
+            startedAt: smartVideoPlayer.current._lastEndedTime || 0,
             endedAt: player.currentTime(),
           },
         })
-        setLastEndedTime(player.currentTime())
+        smartVideoPlayer.current._lastEndedTime = player.currentTime()
       })
       player.on('progress', (e: Event) => {
         onEvent({
@@ -230,17 +229,17 @@ const SmartVideo: React.FC<{
           target: e.target,
           videoState: {
             playbackRate: player.playbackRate(),
-            startedAt: lastEndedTime,
+            startedAt: smartVideoPlayer.current._lastEndedTime || 0,
             endedAt: player.currentTime(),
           },
         })
-        setLastEndedTime(player.currentTime())
+        smartVideoPlayer.current._lastEndedTime = player.currentTime()
       })
       player.on('durationchange', (e: Event) => {
-        if (!lastEndedTime) {
+        if (smartVideoPlayer.current._lastEndedTime === null) {
           const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
           player.currentTime(player.duration() * progress)
-          setLastEndedTime(player.duration() * progress)
+          smartVideoPlayer.current._lastEndedTime = player.duration() * progress
         }
       })
       player.on('ended', (e: Event) => {
@@ -250,16 +249,17 @@ const SmartVideo: React.FC<{
           target: e.target,
           videoState: {
             playbackRate: player.playbackRate(),
-            startedAt: lastEndedTime,
+            startedAt: smartVideoPlayer.current._lastEndedTime || 0,
             endedAt: player.currentTime(),
           },
         })
-        setLastEndedTime(player.currentTime())
+        smartVideoPlayer.current._lastEndedTime = player.currentTime()
       })
       smartVideoPlayer.current = player
       smartVideoPlayer.current._videoId = videoId
+      smartVideoPlayer.current._lastEndedTime = null
     })
-  }, [lastEndedTime, lastProgress, onEvent, videoId])
+  }, [lastProgress, onEvent, videoId])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
