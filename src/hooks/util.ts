@@ -116,18 +116,12 @@ export const useApiHost = (appId: string) => {
       process.env.REACT_APP_API_HOST ||
       (process.env.NODE_ENV === 'development' ? 'rest-dev.lodestar.cc/v1' : 'rest.lodestar.cc/v1')
 
-    Axios.post(
-      `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
-      {},
-      {
-        data: {
-          operationName: 'GET_API_HOST',
-          query:
-            'query GET_API_HOST($appId: String!) { app_admin(where: { app_id: { _eq: $appId } }, order_by: { position: asc_nulls_last }, limit: 1) { api_host } }',
-          variables: { appId },
-        },
-      },
-    )
+    Axios.post(`https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`, {
+      operationName: 'GET_API_HOST',
+      query:
+        'query GET_API_HOST($appId: String!) { app_admin(where: { app_id: { _eq: $appId } }, order_by: { position: asc_nulls_last }, limit: 1) { api_host } }',
+      variables: { appId },
+    })
       .then(({ data }) => {
         setApiHost(data?.data?.app_admin[0]?.api_host || defaultApiHost)
       })
