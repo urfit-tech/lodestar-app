@@ -1,4 +1,4 @@
-import { CircularProgress, Icon } from '@chakra-ui/react'
+import { CircularProgress, Icon, SkeletonText } from '@chakra-ui/react'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { ReactPlayerProps } from 'react-player'
@@ -94,7 +94,7 @@ const ProgramContentPlayer: React.VFC<
       {nextProgramContent && isCoverShowing && (
         <ProgramContentPlayerCover nextProgramContent={nextProgramContent} onSetIsCoverShowing={setIsCoverShowing} />
       )}
-      {urls && (
+      {urls ? (
         <SmartVideo
           programContentId={programContentId}
           videoId={videoId}
@@ -106,6 +106,8 @@ const ProgramContentPlayer: React.VFC<
             onVideoEvent?.(e)
           }}
         />
+      ) : (
+        <SkeletonText noOfLines={4} spacing="4" className="my-4" />
       )}
     </StyledContainer>
   )
@@ -365,30 +367,33 @@ const useUrls = (appId: string, programContentBodyId: string) => {
 
     getFileDownloadableLink(`videos/${appId}/${programContentBodyId}`, authToken, apiHost).then(videoUrl => {
       getFileDownloadableLink(`texttracks/${appId}/${programContentBodyId}`, authToken, apiHost).then(texttrackUrl => {
-        const texttrackUrls: string[] = []
-        const client = new XMLHttpRequest()
-        client.open('GET', texttrackUrl)
-        client.onreadystatechange = () => {
-          if (
-            client.readyState === XMLHttpRequest.DONE &&
-            client.status === 200 &&
-            client.responseText.length > 0 &&
-            !client.responseText.includes('NoSuchKey') &&
-            !client.responseText.startsWith('WEBVTT')
-          ) {
-            const content =
-              'WEBVTT - Generated using SRT2VTT\r\n\r\n' + client.responseText.replace(/(\d+:\d+:\d+)+,(\d+)/g, '$1.$2')
-            const blob = new Blob([content], { type: 'text/vtt' })
-            texttrackUrl = window.URL.createObjectURL(blob)
-            texttrackUrls.push(texttrackUrl)
-          }
-
-          setUrls({
-            video: videoUrl,
-            texttracks: texttrackUrls,
+        fetch(texttrackUrl)
+          .then(res => {
+            if (res.status === 200) {
+              return res.text()
+            } else {
+              throw new Error('Not Found')
+            }
           })
-        }
-        client.send()
+          .then(data => {
+            const content = !data.startsWith('WEBVTT')
+              ? 'WEBVTT - Generated using SRT2VTT\r\n\r\n' + data.replace(/(\d+:\d+:\d+)+,(\d+)/g, '$1.$2')
+              : data
+            const blob = new Blob([content], { type: 'text/vtt' })
+            const vttFile = window.URL.createObjectURL(blob)
+
+            setUrls({
+              video: videoUrl,
+              texttracks: [vttFile],
+            })
+          })
+          .catch(error => {
+            process.env.NODE_ENV === 'development' && console.error(error)
+            setUrls({
+              video: videoUrl,
+              texttracks: [],
+            })
+          })
       })
     })
   }, [apiHost, appId, authToken, programContentBodyId])
