@@ -225,6 +225,9 @@ const SmartVideo: React.FC<{
         smartVideoPlayer.current._lastEndedTime = player.currentTime()
       })
       player.on('progress', (e: Event) => {
+        if (smartVideoPlayer.current._lastEndedTime === null) {
+          return
+        }
         onEvent({
           ...e,
           type: e.type,
