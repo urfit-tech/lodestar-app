@@ -147,7 +147,7 @@ const ParentingOauth2Section: React.VFC = () => {
       const redirectUri = `${host}/oauth2/parenting`
       axios
         .post(
-          `https://${apiHost}/auth/get-oauth-token`,
+          `//${apiHost}/auth/get-oauth-token`,
           {
             appId,
             provider,

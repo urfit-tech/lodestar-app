@@ -3,7 +3,7 @@ import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import { throttle } from 'lodash'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useAuth } from '../../components/auth/AuthContext'
@@ -41,45 +41,49 @@ const ProgramContentBlock: React.VFC<{
 
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
 
-  const [lastProgress, setLastProgress] = useState<number | null>(null)
-
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
-    programContentProgress.find(progress => progress.programContentId === programContentId)?.progress || 0
+    programContentProgress?.find(progress => progress.programContentId === programContentId)?.progress || 0
 
   const nextProgramContent = flatten(program.contentSections.map(v => v.contents)).find(
     (_, i, contents) => contents[i - 1]?.id === programContentId,
   )
 
   useEffect(() => {
-    const progress = programContentProgress.find(
-      progress => progress.programContentId === programContentId,
-    )?.lastProgress
-
-    setLastProgress(progress || 0)
-  }, [programContentId, programContentProgress])
-
-  useEffect(() => {
-    if (!loadingProgramContent && programContentBodyType !== 'video' && insertProgress) {
-      insertProgress(programContentId, {
-        progress: 1,
-        lastProgress: 1,
-      })
+    if (
+      loadingProgramContent ||
+      programContentBodyType === 'video' ||
+      !insertProgress ||
+      !refetchProgress ||
+      initialProgress === 1
+    ) {
+      return
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingProgramContent, programContentBodyType, programContentId])
+
+    insertProgress(programContentId, {
+      progress: 1,
+      lastProgress: 1,
+    }).then(() => refetchProgress())
+  }, [
+    initialProgress,
+    insertProgress,
+    loadingProgramContent,
+    programContentBodyType,
+    programContentId,
+    refetchProgress,
+  ])
 
   if (loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
-  const insertProgramProgress = throttle((progress: number) => {
+  const insertProgramProgress = throttle(async (progress: number) => {
     const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
 
-    insertProgress(programContentId, {
-      progress: currentProgress > 1 ? 1 : currentProgress > initialProgress ? currentProgress : initialProgress,
+    return await insertProgress(programContentId, {
+      progress: currentProgress > 1 ? 1 : Math.max(currentProgress, initialProgress),
       lastProgress: progress,
-    }).then(() => refetchProgress())
+    }).catch(() => {})
   }, 5000)
 
   return (
@@ -89,21 +93,17 @@ const ProgramContentBlock: React.VFC<{
       {programContent.programContentBody?.type === 'video' && (
         <ProgramContentPlayer
           key={programContent.id}
+          programContentId={programContentId}
           programContentBody={programContent.programContentBody}
           nextProgramContent={nextProgramContent}
-          lastProgress={lastProgress || 0}
           onVideoEvent={e => {
-            if (e.type === 'ended') {
-              refetchProgress()
-              insertProgramProgress(1)
-            }
             if (e.type === 'progress') {
               const video = e.target as HTMLVideoElement
               insertProgramProgress(e.videoState.endedAt / video.duration)
             } else {
               axios
                 .post(
-                  `https://${apiHost}/tasks/player-event-logs/`,
+                  `//${apiHost}/tasks/player-event-logs/`,
                   {
                     programContentId,
                     data: e.videoState,
@@ -114,9 +114,13 @@ const ProgramContentBlock: React.VFC<{
                   if (code === 'SUCCESS') {
                     return
                   }
-                  // return message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
                 })
                 .catch(() => {})
+              if (e.type === 'ended') {
+                insertProgramProgress(1)?.then(() => refetchProgress())
+              } else {
+                refetchProgress()
+              }
             }
           }}
         />

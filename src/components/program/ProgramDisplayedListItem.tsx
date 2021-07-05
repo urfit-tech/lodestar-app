@@ -86,7 +86,7 @@ export const ProgramDisplayedListItem: React.VFC<{
 }> = ({ program, memberId }) => {
   const { formatMessage } = useIntl()
   const { programContentProgress } = useProgramContentProgress(program.id, memberId || '')
-  const viewRate = programContentProgress.length
+  const viewRate = programContentProgress?.length
     ? Math.floor(
         (sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length) *
           100,

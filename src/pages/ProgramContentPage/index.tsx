@@ -62,7 +62,7 @@ const ProgramContentPage: React.VFC = () => {
         <ProgressProvider programId={program.id} memberId={currentMemberId}>
           <StyledLayoutContent>
             <div className="row no-gutters">
-              <div className={menuVisible ? 'd-lg-block col-lg-9' : 'col-12'}>
+              <div className={menuVisible ? 'd-lg-block col-lg-9 d-none' : 'col-12'}>
                 <StyledLayoutContent>
                   <ProgramContentBlock program={program} programContentId={programContentId} />
                 </StyledLayoutContent>

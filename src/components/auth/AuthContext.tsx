@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<{
         apiHost,
         refreshToken: async () =>
           Axios.post(
-            `https://${apiHost}/auth/refresh-token`,
+            `//${apiHost}/auth/refresh-token`,
             { appId },
             {
               method: 'POST',
@@ -116,7 +116,7 @@ export const AuthProvider: React.FC<{
             .finally(() => setIsAuthenticating(false)),
         register: async data =>
           Axios.post(
-            `https://${apiHost}/auth/register`,
+            `//${apiHost}/auth/register`,
             {
               appId: data.appId || appId,
               username: data.username,
@@ -213,26 +213,24 @@ export const AuthProvider: React.FC<{
             }
           }),
         login: async ({ account, password, accountLinkToken }) =>
-          Axios.post(
-            `https://${apiHost}/auth/general-login`,
-            { appId, account, password },
-            { withCredentials: true },
-          ).then(({ data: { code, result } }) => {
-            if (code === 'SUCCESS') {
-              setAuthToken(result.authToken)
-              if (accountLinkToken && result.authToken) {
-                window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
+          Axios.post(`//${apiHost}/auth/general-login`, { appId, account, password }, { withCredentials: true }).then(
+            ({ data: { code, result } }) => {
+              if (code === 'SUCCESS') {
+                setAuthToken(result.authToken)
+                if (accountLinkToken && result.authToken) {
+                  window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
+                }
+              } else if (code === 'I_RESET_PASSWORD') {
+                window.location.assign(`/check-email?email=${account}&type=reset-password`)
+              } else {
+                setAuthToken(null)
+                throw new Error(code)
               }
-            } else if (code === 'I_RESET_PASSWORD') {
-              window.location.assign(`/check-email?email=${account}&type=reset-password`)
-            } else {
-              setAuthToken(null)
-              throw new Error(code)
-            }
-          }),
+            },
+          ),
         socialLogin: async ({ provider, providerToken, accountLinkToken }) =>
           Axios.post(
-            `https://${apiHost}/auth/social-login`,
+            `//${apiHost}/auth/social-login`,
             {
               appId,
               provider,
@@ -252,7 +250,7 @@ export const AuthProvider: React.FC<{
           }),
         logout: async () => {
           localStorage.clear()
-          Axios(`https://${apiHost}/auth/logout`, {
+          Axios(`//${apiHost}/auth/logout`, {
             method: 'POST',
             withCredentials: true,
           }).then(({ data: { code, message, result } }) => {
@@ -264,7 +262,7 @@ export const AuthProvider: React.FC<{
         },
         sendSmsCode: async ({ phoneNumber }) =>
           Axios.post(
-            `https://${apiHost}/sms/send-code`,
+            `//${apiHost}/sms/send-code`,
             {
               appId,
               phoneNumber,
@@ -277,7 +275,7 @@ export const AuthProvider: React.FC<{
           }),
         verifySmsCode: async ({ phoneNumber, code }) =>
           Axios.post(
-            `https://${apiHost}/sms/verify-code`,
+            `//${apiHost}/sms/verify-code`,
             {
               appId,
               phoneNumber,

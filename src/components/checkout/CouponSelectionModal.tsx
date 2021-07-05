@@ -32,7 +32,7 @@ const CouponSelectionModal: React.VFC<{
     setInserting(true)
     axios
       .post(
-        `https://${apiHost}/payment/exchange`,
+        `//${apiHost}/payment/exchange`,
         {
           code,
           type: 'Coupon',

@@ -30,7 +30,7 @@ const ProfilePasswordAdminCard: React.VFC<ProfilePasswordAdminCardProps> = ({ fo
         setLoading(true)
         axios
           .post(
-            `https://${apiHost}/auth/change-password`,
+            `//${apiHost}/auth/change-password`,
             {
               password: values.password,
               newPassword: values.newPassword,

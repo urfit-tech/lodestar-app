@@ -1,10 +1,11 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { ReactPlayerProps } from 'react-player'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import { ProgressContext } from '../../contexts/ProgressContext'
 import { getFileDownloadableLink } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
@@ -74,15 +75,15 @@ type VideoEvent = Event & {
 }
 const ProgramContentPlayer: React.VFC<
   ReactPlayerProps & {
+    programContentId: string
     programContentBody: ProgramContentBodyProps
     nextProgramContent?: {
       id: string
       title: string
     }
-    lastProgress?: number
     onVideoEvent?: (event: VideoEvent) => void
   }
-> = ({ programContentBody, nextProgramContent, lastProgress = 0, onVideoEvent }) => {
+> = ({ programContentId, programContentBody, nextProgramContent, onVideoEvent }) => {
   const videoId = `v-${programContentBody.id}`
   const { id: appId } = useApp()
   const [isCoverShowing, setIsCoverShowing] = useState(false)
@@ -95,9 +96,9 @@ const ProgramContentPlayer: React.VFC<
       )}
       {urls && (
         <SmartVideo
+          programContentId={programContentId}
           videoId={videoId}
           urls={urls}
-          initialProgress={lastProgress}
           onEvent={e => {
             if (e.type === 'ended') {
               setIsCoverShowing(true)
@@ -169,72 +170,148 @@ const CountDownPlayButton: React.VFC<{
 }
 
 const SmartVideo: React.FC<{
+  programContentId: string
   videoId: string
   urls: { video: string; texttracks: string[] }
-  initialProgress: number
   onEvent?: (e: VideoEvent) => void
-}> = ({ videoId, urls, initialProgress, onEvent }) => {
-  const [lastEndedTime, setLastEndedTime] = useState(0)
-  useSmartVideoPlayer(videoId, {
-    onPause: player => e => {
-      onEvent?.({
-        ...e,
-        type: e.type,
-        target: e.target,
-        videoState: {
-          playbackRate: player.playbackRate(),
-          startedAt: lastEndedTime,
-          endedAt: player.currentTime(),
-        },
+}> = ({ programContentId, videoId, urls, onEvent }) => {
+  const { programContentProgress } = useContext(ProgressContext)
+  const smartVideoPlayer = useRef<any>(null)
+
+  const lastProgress =
+    typeof programContentProgress === 'undefined'
+      ? undefined
+      : programContentProgress.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
+
+  useEffect(() => {
+    if (
+      typeof lastProgress === 'undefined' ||
+      smartVideoPlayer.current?._lock ||
+      videoId === smartVideoPlayer.current?._videoId ||
+      !onEvent
+    ) {
+      return
+    }
+    smartVideoPlayer.current?.dispose?.()
+    smartVideoPlayer.current = { _lock: true }
+
+    getVideoPlayer(videoId).then(player => {
+      player.on('pause', (e: Event) => {
+        onEvent({
+          ...e,
+          type: e.type,
+          target: e.target,
+          videoState: {
+            playbackRate: player.playbackRate(),
+            startedAt: smartVideoPlayer.current._lastEndedTime || 0,
+            endedAt: player.currentTime(),
+          },
+        })
+        smartVideoPlayer.current._lastEndedTime = player.currentTime()
       })
-      setLastEndedTime(player.currentTime())
-    },
-    onDurationChange: player => e => {
-      if (!lastEndedTime) {
-        player.currentTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
-        setLastEndedTime(player.duration() * (initialProgress === 1 ? 0 : initialProgress))
+      player.on('seeked', (e: Event) => {
+        onEvent({
+          ...e,
+          type: e.type,
+          target: e.target,
+          videoState: {
+            playbackRate: 0,
+            startedAt: smartVideoPlayer.current._lastEndedTime || 0,
+            endedAt: player.currentTime(),
+          },
+        })
+        smartVideoPlayer.current._lastEndedTime = player.currentTime()
+      })
+      player.on('progress', (e: Event) => {
+        onEvent({
+          ...e,
+          type: e.type,
+          target: e.target,
+          videoState: {
+            playbackRate: player.playbackRate(),
+            startedAt: smartVideoPlayer.current._lastEndedTime || 0,
+            endedAt: player.currentTime(),
+          },
+        })
+        smartVideoPlayer.current._lastEndedTime = player.currentTime()
+      })
+      player.on('durationchange', (e: Event) => {
+        if (smartVideoPlayer.current._lastEndedTime === null) {
+          const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
+          player.currentTime(player.duration() * progress)
+          smartVideoPlayer.current._lastEndedTime = player.duration() * progress
+        }
+      })
+      player.on('ended', (e: Event) => {
+        onEvent({
+          ...e,
+          type: e.type,
+          target: e.target,
+          videoState: {
+            playbackRate: player.playbackRate(),
+            startedAt: smartVideoPlayer.current._lastEndedTime || 0,
+            endedAt: player.currentTime(),
+          },
+        })
+        smartVideoPlayer.current._lastEndedTime = player.currentTime()
+      })
+      smartVideoPlayer.current = player
+      smartVideoPlayer.current._videoId = videoId
+      smartVideoPlayer.current._lastEndedTime = null
+    })
+  }, [lastProgress, onEvent, videoId])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        document.activeElement?.classList.contains('vjs-play-control') ||
+        document.activeElement?.classList.contains('vjs-fullscreen-control') ||
+        smartVideoPlayer.current?._videoId !== videoId ||
+        !['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Space'].includes(event.code)
+      ) {
+        return
       }
-    },
-    onProgress: player => e => {
-      onEvent?.({
-        ...e,
-        type: e.type,
-        target: e.target,
-        videoState: {
-          playbackRate: player.playbackRate(),
-          startedAt: lastEndedTime,
-          endedAt: player.currentTime(),
-        },
-      })
-      setLastEndedTime(player.currentTime())
-    },
-    onSeeked: player => e => {
-      onEvent?.({
-        ...e,
-        type: e.type,
-        target: e.target,
-        videoState: {
-          playbackRate: 0,
-          startedAt: lastEndedTime,
-          endedAt: player.currentTime(),
-        },
-      })
-      setLastEndedTime(player.currentTime())
-    },
-    onEnded: player => e => {
-      onEvent?.({
-        ...e,
-        type: e.type,
-        target: e.target,
-        videoState: {
-          playbackRate: player.playbackRate(),
-          startedAt: lastEndedTime,
-          endedAt: player.currentTime(),
-        },
-      })
-      setLastEndedTime(player.currentTime())
-    },
-  })
+      event.preventDefault()
+
+      try {
+        const duration = smartVideoPlayer.current.duration()
+        const currentTime = smartVideoPlayer.current.currentTime()
+        const isPaused = smartVideoPlayer.current.paused()
+        const currentVolume = smartVideoPlayer.current.volume()
+        const isMuted = smartVideoPlayer.current.muted()
+
+        switch (event.code) {
+          case 'ArrowRight':
+            smartVideoPlayer.current.currentTime(Math.min(currentTime + 5, duration))
+            break
+          case 'ArrowLeft':
+            smartVideoPlayer.current.currentTime(Math.max(currentTime - 5, 0))
+            break
+          case 'ArrowUp':
+            smartVideoPlayer.current.muted(false)
+            smartVideoPlayer.current.volume(isMuted ? 0.05 : Math.min((Math.floor(currentVolume * 20) + 1) / 20, 1))
+            break
+          case 'ArrowDown':
+            smartVideoPlayer.current.muted(false)
+            smartVideoPlayer.current.volume(isMuted ? 0 : Math.max((Math.floor(currentVolume * 20) - 1) / 20, 0))
+            break
+          case 'Space':
+            if (isPaused) {
+              smartVideoPlayer.current.play()
+            } else {
+              smartVideoPlayer.current.pause()
+            }
+            break
+        }
+      } catch (error) {
+        process.env.NODE_ENV === 'development' && console.error(error)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [videoId])
 
   return (
     <div>
@@ -253,32 +330,6 @@ const SmartVideo: React.FC<{
       </video>
     </div>
   )
-}
-
-const useSmartVideoPlayer = (
-  videoId: string,
-  callbacks?: {
-    onPause?: (videoPlayer: any) => (e: Event) => void
-    onSeeked?: (videoPlayer: any) => (e: Event) => void
-    onProgress?: (videoPlayer: any) => (e: Event) => void
-    onDurationChange?: (videoPlayer: any) => (e: Event) => void
-    onEnded?: (videoPlayer: any) => (e: Event) => void
-  },
-) => {
-  const [videoPlayer, setVideoPlayer] = useState<any>()
-  useEffect(() => {
-    if (!videoPlayer) {
-      getVideoPlayer(videoId).then(player => {
-        // FIXME: it will be added three times QQ
-        player.on('pause', callbacks?.onPause?.(player))
-        player.on('seeked', callbacks?.onSeeked?.(player))
-        player.on('progress', callbacks?.onProgress?.(player))
-        player.on('durationchange', callbacks?.onDurationChange?.(player))
-        player.on('ended', callbacks?.onEnded?.(player))
-        setVideoPlayer(player)
-      })
-    }
-  }, [callbacks, videoId, videoPlayer])
 }
 
 const getVideoPlayer = async (videoId: string) =>
@@ -300,12 +351,17 @@ const getVideoPlayer = async (videoId: string) =>
 
 const useUrls = (appId: string, programContentBodyId: string) => {
   const { authToken, apiHost } = useAuth()
-  const [urls, setUrls] = useState<{ video: string; texttracks: string[] }>()
+  const [urls, setUrls] = useState<{
+    video: string
+    texttracks: string[]
+  } | null>(null)
 
   useEffect(() => {
-    if (!authToken || !apiHost) {
+    if (!appId || !authToken || !apiHost) {
       return
     }
+
+    setUrls(null)
 
     getFileDownloadableLink(`videos/${appId}/${programContentBodyId}`, authToken, apiHost).then(videoUrl => {
       getFileDownloadableLink(`texttracks/${appId}/${programContentBodyId}`, authToken, apiHost).then(texttrackUrl => {
@@ -313,17 +369,24 @@ const useUrls = (appId: string, programContentBodyId: string) => {
         const client = new XMLHttpRequest()
         client.open('GET', texttrackUrl)
         client.onreadystatechange = () => {
-          if (client.responseText.length > 0 && !client.responseText.includes('NoSuchKey')) {
-            if (!client.responseText.startsWith('WEBVTT')) {
-              const content =
-                'WEBVTT - Generated using SRT2VTT\r\n\r\n' +
-                client.responseText.replace(/(\d+:\d+:\d+)+,(\d+)/g, '$1.$2')
-              const blob = new Blob([content], { type: 'text/vtt' })
-              texttrackUrl = window.URL.createObjectURL(blob)
-              texttrackUrls.push(texttrackUrl)
-            }
+          if (
+            client.readyState === XMLHttpRequest.DONE &&
+            client.status === 200 &&
+            client.responseText.length > 0 &&
+            !client.responseText.includes('NoSuchKey') &&
+            !client.responseText.startsWith('WEBVTT')
+          ) {
+            const content =
+              'WEBVTT - Generated using SRT2VTT\r\n\r\n' + client.responseText.replace(/(\d+:\d+:\d+)+,(\d+)/g, '$1.$2')
+            const blob = new Blob([content], { type: 'text/vtt' })
+            texttrackUrl = window.URL.createObjectURL(blob)
+            texttrackUrls.push(texttrackUrl)
           }
-          setUrls({ video: videoUrl, texttracks: texttrackUrls })
+
+          setUrls({
+            video: videoUrl,
+            texttracks: texttrackUrls,
+          })
         }
         client.send()
       })

@@ -50,7 +50,7 @@ const ForgotPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
 
       setLoading(true)
       axios
-        .post(`https://${apiHost}/auth/forgot-password`, {
+        .post(`//${apiHost}/auth/forgot-password`, {
           appId,
           account: values.email,
         })

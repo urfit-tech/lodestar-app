@@ -34,7 +34,7 @@ const usePayForm = (paymentNo: number) => {
       setLoadingForm(true)
       axios
         .post(
-          `https://${apiHost}/payment/pay-form`,
+          `//${apiHost}/payment/pay-form`,
           {
             paymentNo,
             options: {

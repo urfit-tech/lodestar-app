@@ -43,7 +43,7 @@ const CheckEmailPage: React.VFC = () => {
       return
     }
     axios
-      .post(`https://${apiHost}/auth/forgot-password`, {
+      .post(`//${apiHost}/auth/forgot-password`, {
         appId,
         account: email,
       })

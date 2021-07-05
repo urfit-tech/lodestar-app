@@ -111,23 +111,22 @@ export const useApiHost = (appId: string) => {
     if (apiHost) {
       return
     }
-    Axios.post(
-      `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
-      {},
-      {
-        data: {
-          operationName: 'GET_API_HOST',
-          query:
-            'query GET_API_HOST($appId: String!) { app_admin(where: { app_id: { _eq: $appId } }, order_by: { position: asc_nulls_last }, limit: 1) { api_host } }',
-          variables: { appId },
-        },
-      },
-    )
+
+    const defaultApiHost =
+      process.env.REACT_APP_API_HOST ||
+      (process.env.NODE_ENV === 'development' ? 'rest-dev.lodestar.cc/v1' : 'rest.lodestar.cc/v1')
+
+    Axios.post(`https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`, {
+      operationName: 'GET_API_HOST',
+      query:
+        'query GET_API_HOST($appId: String!) { app_admin(where: { app_id: { _eq: $appId } }, order_by: { position: asc_nulls_last }, limit: 1) { api_host } }',
+      variables: { appId },
+    })
       .then(({ data }) => {
-        setApiHost(data?.data?.app_admin[0]?.api_host || process.env.REACT_APP_API_HOST || null)
+        setApiHost(data?.data?.app_admin[0]?.api_host || defaultApiHost)
       })
       .catch(() => {
-        setApiHost(process.env.REACT_APP_API_HOST || null)
+        setApiHost(defaultApiHost)
       })
   }, [apiHost, appId])
 
@@ -162,14 +161,14 @@ export const useSwarmify = () => {
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         ctx.font = '16px sans-serif'
         ctx.fillStyle = 'black'
-        ctx.fillText(text, 8, canvas.height / 2)
+        ctx.fillText(text, 8, canvas.height / 2 + 4, canvas.width)
       }
       const dataUri = canvas.toDataURL()
       ;(swarmoptions.plugins as any).watermark = {
         file: dataUri,
         xpos: 100,
         ypos: 0,
-        opacity: 0.6,
+        opacity: 0.4,
       }
     }
     ;(window as any).swarmoptions = swarmoptions

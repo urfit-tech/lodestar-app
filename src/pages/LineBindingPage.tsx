@@ -24,6 +24,7 @@ const messages = defineMessages({
 
 const StyledBindingIcon = styled.div`
   font-size: 64px;
+  display: inline-block;
 `
 const StyledLinkingText = styled.div`
   font-size: 16px;
@@ -62,7 +63,7 @@ const LineBindingPage: React.VFC = () => {
     setBinding(true)
     await axios
       .post(
-        `https://${apiHost}/line/generate-nonce`,
+        `//${apiHost}/line/generate-nonce`,
         { appId, memberId: currentMemberId },
         {
           headers: { authorization: `Bearer ${authToken}` },

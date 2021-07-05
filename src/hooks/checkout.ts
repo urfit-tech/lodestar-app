@@ -42,7 +42,7 @@ export const useCheck = ({
         shippingOption: shippingOptionProps
       }
     }>(
-      `https://${apiHost}/payment/checkout-order`,
+      `//${apiHost}/payment/checkout-order`,
       {
         appId,
         productIds,
@@ -85,7 +85,7 @@ export const useCheck = ({
     ) => {
       setOrderPlacing(true)
       return Axios.post<{ code: string; message: string; result: { id: string } }>(
-        `https://${apiHost}/tasks/order`,
+        `//${apiHost}/tasks/order`,
         {
           paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
           productIds,

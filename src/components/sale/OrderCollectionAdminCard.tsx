@@ -184,7 +184,7 @@ const OrderCollectionAdminCard: React.VFC<
               onClick={() =>
                 axios
                   .post(
-                    `https://${apiHost}/tasks/payment/`,
+                    `//${apiHost}/tasks/payment/`,
                     { orderId: record.id },
                     { headers: { authorization: `Bearer ${authToken}` } },
                   )

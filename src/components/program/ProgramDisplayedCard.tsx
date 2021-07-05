@@ -29,7 +29,7 @@ export const ProgramDisplayedCard: React.VFC<{
   memberId?: string | null
 }> = ({ program, memberId }) => {
   const { programContentProgress } = useProgramContentProgress(program.id, memberId || '')
-  const viewRate = programContentProgress.length
+  const viewRate = programContentProgress?.length
     ? Math.floor(
         (sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length) *
           100,

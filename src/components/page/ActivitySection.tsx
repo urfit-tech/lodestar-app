@@ -10,6 +10,9 @@ import Activity from '../activity/Activity'
 const StyledSection = styled.section`
   margin-bottom: 80px;
 `
+const StyledAngleRightIcon = styled(AngleRightIcon)`
+  display: inline-block;
+`
 
 const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number } }> = ({ options }) => {
   const { enabledModules } = useApp()
@@ -45,7 +48,7 @@ const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number
 
       <div className="text-center">
         <StyledLink to="/activities">
-          查看更多 <AngleRightIcon />
+          查看更多 <StyledAngleRightIcon />
         </StyledLink>
       </div>
     </StyledSection>

@@ -52,7 +52,7 @@ const VoucherCollectionBlock: React.VFC = () => {
 
     axios
       .post(
-        `https://${apiHost}/payment/exchange`,
+        `//${apiHost}/payment/exchange`,
         {
           code,
           type: 'Voucher',
@@ -126,7 +126,7 @@ const exchangeVoucherCode = (
   selectedProductIds: string[],
 ) => {
   return axios.post(
-    `https://${apiHost}/tasks/order`,
+    `//${apiHost}/tasks/order`,
     {
       paymentModel: { type: 'perpetual' },
       discountId: `Voucher_${voucherId}`,

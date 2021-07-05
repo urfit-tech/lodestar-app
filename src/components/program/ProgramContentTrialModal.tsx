@@ -69,7 +69,10 @@ const ProgramContentTrialModal: React.VFC<ProgramContentTrialModalProps> = ({
         {programContent && programContent.programContentBody && (
           <>
             {programContent.programContentBody.type === 'video' && (
-              <ProgramContentPlayer programContentBody={programContent.programContentBody} />
+              <ProgramContentPlayer
+                programContentId={programContentId}
+                programContentBody={programContent.programContentBody}
+              />
             )}
             {!BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
               <BraftContent>{programContent.programContentBody.description}</BraftContent>
