@@ -694,32 +694,6 @@ export interface INSERT_SUGGESTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_LAST_EXERCISE
-// ====================================================
-
-export interface GET_LAST_EXERCISE_exercise {
-  __typename: "exercise";
-  id: any;
-  answer: any | null;
-}
-
-export interface GET_LAST_EXERCISE {
-  /**
-   * fetch data from the table: "exercise"
-   */
-  exercise: GET_LAST_EXERCISE_exercise[];
-}
-
-export interface GET_LAST_EXERCISEVariables {
-  condition: exercise_bool_exp;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_PROGRAM_CONTENT_TRIAL
 // ====================================================
 
@@ -7859,9 +7833,10 @@ export interface GET_GROUP_BUYING_ORDER_order_group_buying_log_parent_order_log 
 export interface GET_GROUP_BUYING_ORDER_order_group_buying_log {
   __typename: "order_group_buying_log";
   parent_order_member_id: string | null;
+  parent_order_member_email: string | null;
   order_id: string | null;
   member_id: string | null;
-  email: string | null;
+  member_email: string | null;
   started_at: any | null;
   ended_at: any | null;
   transferred_at: any | null;
@@ -8286,6 +8261,32 @@ export interface GET_ORDERS_PRODUCT {
 
 export interface GET_ORDERS_PRODUCTVariables {
   orderId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_LAST_EXERCISE
+// ====================================================
+
+export interface GET_LAST_EXERCISE_exercise {
+  __typename: "exercise";
+  id: any;
+  answer: any | null;
+}
+
+export interface GET_LAST_EXERCISE {
+  /**
+   * fetch data from the table: "exercise"
+   */
+  exercise: GET_LAST_EXERCISE_exercise[];
+}
+
+export interface GET_LAST_EXERCISEVariables {
+  condition: exercise_bool_exp;
 }
 
 /* tslint:disable */
@@ -9845,6 +9846,7 @@ export enum member_contract_update_column {
   agreed_options = "agreed_options",
   author_id = "author_id",
   contract_id = "contract_id",
+  created_at = "created_at",
   ended_at = "ended_at",
   id = "id",
   member_id = "member_id",
@@ -9852,6 +9854,7 @@ export enum member_contract_update_column {
   revocation_values = "revocation_values",
   revoked_at = "revoked_at",
   started_at = "started_at",
+  updated_at = "updated_at",
   values = "values",
 }
 
@@ -14310,6 +14313,7 @@ export interface member_contract_bool_exp {
   author_id?: String_comparison_exp | null;
   contract?: contract_bool_exp | null;
   contract_id?: uuid_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -14318,6 +14322,7 @@ export interface member_contract_bool_exp {
   revocation_values?: jsonb_comparison_exp | null;
   revoked_at?: timestamptz_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
   values?: jsonb_comparison_exp | null;
 }
 
@@ -14332,6 +14337,7 @@ export interface member_contract_insert_input {
   author_id?: string | null;
   contract?: contract_obj_rel_insert_input | null;
   contract_id?: any | null;
+  created_at?: any | null;
   ended_at?: any | null;
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
@@ -14340,6 +14346,7 @@ export interface member_contract_insert_input {
   revocation_values?: any | null;
   revoked_at?: any | null;
   started_at?: any | null;
+  updated_at?: any | null;
   values?: any | null;
 }
 

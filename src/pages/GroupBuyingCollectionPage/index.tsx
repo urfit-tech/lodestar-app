@@ -15,7 +15,10 @@ import GroupBuyingDisplayCard from './GroupBuyingDisplayCard'
 
 type groupBuyingOrderProps = {
   id: string
-  parentOrderMemberId: string
+  parentOrderMember: {
+    id: string
+    email: string
+  }
   member: {
     id: string
     email: string
@@ -72,22 +75,23 @@ const GroupBuyingCollectionPage: React.VFC = () => {
     {
       key: 'sendable',
       name: formatMessage(commonMessages.status.sendable),
-      isDisplay: order =>
-        !order.transferredAt && order.parentOrderMemberId === currentMemberId && order.member.id === currentMemberId,
+      isDisplay: order => !order.transferredAt && order.parentOrderMember.id === order.member.id,
       emptyText: formatMessage(messages.noSendableItem),
     },
     {
       key: 'sent',
       name: formatMessage(commonMessages.status.sent),
       isDisplay: order =>
-        !!order.transferredAt && order.parentOrderMemberId === currentMemberId && order.member.id !== currentMemberId,
+        !!order.transferredAt &&
+        order.parentOrderMember.id !== order.member.id &&
+        order.parentOrderMember.id === currentMemberId,
       emptyText: formatMessage(messages.noSentItem),
     },
     {
       key: 'received',
       name: formatMessage(commonMessages.status.received),
       isDisplay: order =>
-        !!order.transferredAt && order.parentOrderMemberId !== currentMemberId && order.member.id === currentMemberId,
+        !!order.transferredAt && order.parentOrderMember.id !== order.member.id && order.member.id === currentMemberId,
       emptyText: formatMessage(messages.noReceivedItem),
     },
   ]
@@ -108,20 +112,28 @@ const GroupBuyingCollectionPage: React.VFC = () => {
 
           return (
             <StyledTabPanel>
-              {!displayOrders.length ? (
+              {displayOrders.length === 0 ? (
                 <EmptyBlock>{v.emptyText}</EmptyBlock>
               ) : (
                 <div className="row">
-                  {displayOrders.map(v => (
-                    <div className="col-12 col-md-6 col-lg-4 mb-4" key={v.id}>
+                  {displayOrders.map(order => (
+                    <div className="col-12 col-md-6 col-lg-4 mb-4" key={order.id}>
                       <GroupBuyingDisplayCard
-                        orderId={v.id}
-                        imgUrl={v.coverUrl}
-                        title={v.name}
-                        partnerMemberIds={v.partnerMemberIds}
-                        onRefetch={!v.transferredAt ? () => refetch() : null}
-                        transferredAt={v.transferredAt}
-                        memberEmail={v.member.email}
+                        orderId={order.id}
+                        imgUrl={order.coverUrl}
+                        title={order.name}
+                        partnerMemberIds={order.partnerMemberIds}
+                        onRefetch={!order.transferredAt ? () => refetch() : null}
+                        transferredAt={order.transferredAt}
+                        sentByCurrentMember={!!order.transferredAt && order.parentOrderMember.id === currentMemberId}
+                        memberEmail={
+                          order.transferredAt &&
+                          (order.parentOrderMember.id === currentMemberId
+                            ? order.member.email
+                            : order.member.id === currentMemberId
+                            ? order.parentOrderMember.email
+                            : null)
+                        }
                       />
                     </div>
                   ))}
@@ -152,9 +164,10 @@ const useGroupBuyingLogs = (memberId: string | null) => {
           where: { _or: [{ parent_order_member_id: { _eq: $memberId } }, { member_id: { _eq: $memberId } }] }
         ) {
           parent_order_member_id
+          parent_order_member_email
           order_id
           member_id
-          email
+          member_email
           started_at
           ended_at
           transferred_at
@@ -181,10 +194,13 @@ const useGroupBuyingLogs = (memberId: string | null) => {
     memberId && data
       ? data.order_group_buying_log.map(v => ({
           id: v.order_id || '',
-          parentOrderMemberId: v.parent_order_member_id || '',
+          parentOrderMember: {
+            id: v.parent_order_member_id || '',
+            email: v.parent_order_member_email || '',
+          },
           member: {
             id: v.member_id || '',
-            email: v.email || '',
+            email: v.member_email || '',
           },
           name: v.name || '',
           startedAt: v.started_at ? new Date(v.started_at) : null,
