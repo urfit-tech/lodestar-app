@@ -51,7 +51,9 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
       {cartProducts.length === 0 && (
         <div className="d-flex align-items-center">
           <span className="mr-2">{formatMessage(checkoutMessages.content.cartNothing)}</span>
-          <Link to="/programs">{formatMessage(checkoutMessages.link.cartExplore)}</Link>
+          <Link to="/programs">
+            <Button variant="ghost">{formatMessage(checkoutMessages.link.cartExplore)}</Button>
+          </Link>
         </div>
       )}
 

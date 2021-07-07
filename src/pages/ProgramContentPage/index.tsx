@@ -1,5 +1,7 @@
-import { Button, Icon, Layout } from 'antd'
+import { Button } from '@chakra-ui/react'
+import { Icon, Layout } from 'antd'
 import React, { useState } from 'react'
+import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
@@ -37,18 +39,26 @@ const ProgramContentPage: React.VFC = () => {
           <div>
             {enabledModules.customer_review && (
               <Button
-                type="link"
-                size="small"
+                colorScheme="primary"
+                variant="ghost"
+                size="sm"
                 onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
               >
-                <Icon component={BsStar} />
+                <Icon component={BsStar} className="mr-2" />
                 {formatMessage(commonMessages.button.review)}
               </Button>
             )}
-            <Button type="link" size="small" icon="profile" onClick={() => window.open(`/programs/${programId}`)}>
+            <Button
+              size="sm"
+              colorScheme="primary"
+              variant="ghost"
+              onClick={() => window.open(`/programs/${programId}`)}
+            >
+              <Icon component={AiOutlineProfile} className="mr-2" />
               {formatMessage(commonMessages.button.intro)}
             </Button>
-            <Button type="link" size="small" icon="unordered-list" onClick={() => setMenuVisible(!menuVisible)}>
+            <Button size="sm" colorScheme="primary" variant="ghost" onClick={() => setMenuVisible(!menuVisible)}>
+              <Icon component={AiOutlineUnorderedList} className="mr-2" />
               {formatMessage(commonMessages.button.list)}
             </Button>
           </div>
