@@ -1,5 +1,5 @@
-import { Icon, SkeletonText } from '@chakra-ui/react'
-import { Form, Input, message, Typography } from 'antd'
+import { Icon, Input, SkeletonText } from '@chakra-ui/react'
+import { Form, message, Typography } from 'antd'
 import { prop, sum } from 'ramda'
 import React, { useContext, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -21,6 +21,7 @@ import AdminCard from '../../components/common/AdminCard'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
+import { rgba } from '../../helpers'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck, useMemberShop, usePhysicalProductCollection } from '../../hooks/checkout'
 import { useMemberValidation } from '../../hooks/common'
@@ -33,6 +34,17 @@ import PaymentSelector, { PaymentMethodType, PaymentProps } from './PaymentSelec
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
+`
+const StyledInputWrapper = styled.div`
+  && {
+    input:hover,
+    input:focus {
+      border: 1px solid ${props => props.theme['@primary-color']};
+    }
+    input:focus {
+      box-shadow: 0 0 0 2px ${props => rgba(props.theme['@primary-color'], 0.2)};
+    }
+  }
 `
 
 const CheckoutBlock: React.VFC<{
@@ -281,10 +293,13 @@ const CheckoutBlock: React.VFC<{
                       : undefined
                   }
                 >
-                  <Input
-                    placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
-                    onBlur={e => setReferrerEmail(e.target.value)}
-                  />
+                  <StyledInputWrapper>
+                    <Input
+                      variant="outline"
+                      placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
+                      onBlur={e => setReferrerEmail(e.target.value)}
+                    />
+                  </StyledInputWrapper>
                 </Form.Item>
               </div>
             </div>
