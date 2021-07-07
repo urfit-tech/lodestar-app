@@ -1,6 +1,7 @@
-import { Tabs } from 'antd'
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
 import IssueThreadBlock from '../../components/issue/IssueThreadBlock'
 import PracticeDisplayedCollection from '../../components/practice/PracticeDisplayedCollection'
 import ProgramContentMaterialBlock from '../../components/program/ProgramContentMaterialBlock'
@@ -15,6 +16,19 @@ import {
   ProgramRoleProps,
 } from '../../types/program'
 import { StyledContentBlock } from './index.styled'
+
+export const StyledTabList = styled(TabList)`
+  && {
+    padding-bottom: 1px;
+    border-bottom: 1px solid var(--gray);
+  }
+`
+
+export const StyledTabPanel = styled(TabPanel)`
+  && {
+    padding: 24px 0;
+  }
+`
 
 const ProgramContentTabs: React.VFC<{
   program: ProgramProps & { roles: ProgramRoleProps[] }
@@ -45,37 +59,57 @@ const ProgramContentTabs: React.VFC<{
   if (!isIssueThreadVisible && !isPracticesVisible && !isMaterialVisible) {
     return null
   }
+  const tabContents: {
+    key: string
+    name: string
+    isVisible: boolean
+    content: React.ReactElement
+  }[] = [
+    {
+      key: 'issue',
+      name: formatMessage(programMessages.label.discussion),
+      isVisible: isIssueThreadVisible,
+      content: (
+        <IssueThreadBlock
+          programRoles={program.roles || []}
+          threadId={`/programs/${program.id}/contents/${programContent.id}`}
+        />
+      ),
+    },
+    {
+      key: 'practice',
+      name: formatMessage(programMessages.label.practiceUpload),
+      isVisible: !!isPracticesVisible,
+      content: (
+        <PracticeDisplayedCollection
+          isPrivate={programContent.metadata?.private || false}
+          programContentId={programContent.id}
+        />
+      ),
+    },
+    {
+      key: 'material',
+      name: formatMessage(programMessages.tab.downloadMaterials),
+      isVisible: isMaterialVisible,
+      content: <ProgramContentMaterialBlock programContentId={programContent.id} />,
+    },
+  ].filter(v => v.isVisible)
 
   return (
     <StyledContentBlock className="mb-3">
-      <Tabs
-        defaultActiveKey={isPracticesVisible ? 'practice' : isMaterialVisible ? 'material' : 'issue'}
-        activeKey={activeKey}
-        onChange={key => setActiveKey(key)}
-      >
-        {isIssueThreadVisible && (
-          <Tabs.TabPane tab={formatMessage(programMessages.label.discussion)} key="issue" className="py-3">
-            <IssueThreadBlock
-              programRoles={program.roles || []}
-              threadId={`/programs/${program.id}/contents/${programContent.id}`}
-            />
-          </Tabs.TabPane>
-        )}
-
-        {isPracticesVisible && (
-          <Tabs.TabPane tab={formatMessage(programMessages.label.practiceUpload)} key="practice" className="p-4">
-            <PracticeDisplayedCollection
-              isPrivate={programContent.metadata?.private || false}
-              programContentId={programContent.id}
-            />
-          </Tabs.TabPane>
-        )}
-
-        {isMaterialVisible && (
-          <Tabs.TabPane key="material" tab={formatMessage(programMessages.tab.downloadMaterials)} className="py-3">
-            {<ProgramContentMaterialBlock programContentId={programContent.id} />}
-          </Tabs.TabPane>
-        )}
+      <Tabs colorScheme="primary" index={tabContents.findIndex(v => v.key === activeKey)}>
+        <StyledTabList>
+          {tabContents.map(v => (
+            <Tab key={v.key} onClick={() => setActiveKey(v.key)}>
+              {v.name}
+            </Tab>
+          ))}
+        </StyledTabList>
+        <TabPanels>
+          {tabContents.map(v => (
+            <StyledTabPanel>{v.content}</StyledTabPanel>
+          ))}
+        </TabPanels>
       </Tabs>
     </StyledContentBlock>
   )
