@@ -42,6 +42,9 @@ export const AppThemeProvider: React.FC = ({ children }) => {
               background: 'transparent',
             },
           },
+          link: {
+            color: 'primary.500',
+          },
         },
       },
       CloseButton: {

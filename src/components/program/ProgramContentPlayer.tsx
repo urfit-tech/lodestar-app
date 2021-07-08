@@ -1,4 +1,4 @@
-import { CircularProgress, Icon } from '@chakra-ui/react'
+import { Button, CircularProgress, Icon } from '@chakra-ui/react'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
@@ -9,6 +9,7 @@ import { ProgressContext } from '../../contexts/ProgressContext'
 import { getFileDownloadableLink } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
+import { ReactComponent as InfoOIcon } from '../../images/info-o.svg'
 import { ProgramContentBodyProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
 
@@ -65,9 +66,25 @@ const StyledCancelButton = styled.span`
   user-select: none;
   cursor: pointer;
 `
+const StyledAnnouncement = styled.div`
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: white;
+  box-shadow: 0 2px 10px 0 var(--black-10);
+  line-height: normal;
 
-const message = defineMessages({
+  svg {
+    color: ${props => props.theme['@primary-color']};
+  }
+`
+
+const messages = defineMessages({
   next: { id: 'program.text.next', defaultMessage: '接下來' },
+  switchPlayer: { id: 'program.ui.switchPlayer', defaultMessage: '切換為舊版' },
+  switchToStablePlayer: {
+    id: 'program.text.switchToStablePlayer',
+    defaultMessage: '系統更新了播放器版本，若還不習慣可切換為舊版模式',
+  },
 })
 
 type VideoEvent = {
@@ -87,15 +104,18 @@ const ProgramContentPlayer: React.VFC<
     onVideoEvent?: (event: VideoEvent) => void
   }
 > = ({ programContentId, programContentBody, nextProgramContent, isSwarmifyAvailable, onVideoEvent }) => {
+  const { formatMessage } = useIntl()
   const videoId = `v-${programContentBody.id}`
   const { id: appId } = useApp()
   const { programContentProgress } = useContext(ProgressContext)
   const urls = useUrls(appId, programContentBody.id)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
-  const [isSwarmifyEnabled, setIsSwarmifyEnabled] = useState(
+  const [playerType, setPlayerType] = useState<'smartVideo' | 'reactPlayer'>(
     isSwarmifyAvailable &&
-      (typeof localStorage.getItem('kolable.feature.swarmify') === 'undefined' ||
-        localStorage.getItem('kolable.feature.swarmify') === '1'),
+      (localStorage.getItem('kolable.feature.swarmify') === null ||
+        localStorage.getItem('kolable.feature.swarmify') === '1')
+      ? 'smartVideo'
+      : 'reactPlayer',
   )
 
   if (typeof programContentProgress === 'undefined') {
@@ -106,38 +126,65 @@ const ProgramContentPlayer: React.VFC<
     programContentProgress.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
 
   return (
-    <StyledContainer>
-      {nextProgramContent && isCoverShowing && (
-        <ProgramContentPlayerCover nextProgramContent={nextProgramContent} onSetIsCoverShowing={setIsCoverShowing} />
+    <>
+      {isSwarmifyAvailable && playerType === 'smartVideo' && (
+        <StyledAnnouncement className="mb-3">
+          <div className="row">
+            <div className="col-12 col-md-9">
+              <Icon viewBox="0 0 20 20" className="mr-2">
+                <InfoOIcon />
+              </Icon>
+              {formatMessage(messages.switchToStablePlayer)}
+            </div>
+            <div className="col-12 col-md-3 text-right">
+              <Button
+                variant="link"
+                onClick={() => {
+                  setPlayerType('reactPlayer')
+                  localStorage.setItem('kolable.feature.swarmify', '0')
+                  location.reload()
+                }}
+              >
+                {formatMessage(messages.switchPlayer)}
+              </Button>
+            </div>
+          </div>
+        </StyledAnnouncement>
       )}
 
-      {!isSwarmifyEnabled && (
-        <VimeoPlayer
-          videoId={programContentBody.data.vimeoVideoId}
-          lastProgress={lastProgress}
-          onEvent={e => {
-            if (e.type === 'ended') {
-              setIsCoverShowing(true)
-            }
-            onVideoEvent?.(e)
-          }}
-        />
-      )}
+      <StyledContainer>
+        {nextProgramContent && isCoverShowing && (
+          <ProgramContentPlayerCover nextProgramContent={nextProgramContent} onSetIsCoverShowing={setIsCoverShowing} />
+        )}
 
-      {isSwarmifyEnabled && urls && (
-        <SmartVideo
-          videoId={videoId}
-          urls={urls}
-          lastProgress={lastProgress}
-          onEvent={e => {
-            if (e.type === 'ended') {
-              setIsCoverShowing(true)
-            }
-            onVideoEvent?.(e)
-          }}
-        />
-      )}
-    </StyledContainer>
+        {playerType === 'reactPlayer' && (
+          <VimeoPlayer
+            videoId={programContentBody.data.vimeoVideoId}
+            lastProgress={lastProgress}
+            onEvent={e => {
+              if (e.type === 'ended') {
+                setIsCoverShowing(true)
+              }
+              onVideoEvent?.(e)
+            }}
+          />
+        )}
+
+        {playerType === 'smartVideo' && urls && (
+          <SmartVideo
+            videoId={videoId}
+            urls={urls}
+            lastProgress={lastProgress}
+            onEvent={e => {
+              if (e.type === 'ended') {
+                setIsCoverShowing(true)
+              }
+              onVideoEvent?.(e)
+            }}
+          />
+        )}
+      </StyledContainer>
+    </>
   )
 }
 
@@ -158,7 +205,7 @@ const ProgramContentPlayerCover: React.VFC<{
   return (
     <StyledCover className="d-flex align-items-center justify-content-center">
       <StyledCoverWrapper>
-        <StyledCoverSubtitle className="mb-2">{formatMessage(message.next)}</StyledCoverSubtitle>
+        <StyledCoverSubtitle className="mb-2">{formatMessage(messages.next)}</StyledCoverSubtitle>
         <StyledCoverTitle className="mb-4">{nextProgramContent.title}</StyledCoverTitle>
         <CountDownPlayButton
           onPlayNext={() => {
@@ -224,7 +271,7 @@ const VimeoPlayer: React.VFC<{
         },
       }}
       onDuration={duration => {
-        if (!playerRef.current) {
+        if (!playerRef.current || typeof lastEndedTime.current === 'number') {
           return
         }
         const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
@@ -246,7 +293,6 @@ const VimeoPlayer: React.VFC<{
             endedAt: state.playedSeconds,
           },
         })
-        lastEndedTime.current = state.playedSeconds
       }}
       onPause={() => {
         if (!playerRef.current) {
@@ -357,14 +403,14 @@ const SmartVideo: React.FC<{
             endedAt: player.currentTime(),
           },
         })
-        smartVideoPlayer.current._lastEndedTime = player.currentTime()
       })
       player.on('durationchange', (e: Event) => {
-        if (smartVideoPlayer.current._lastEndedTime === null) {
-          const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
-          player.currentTime(player.duration() * progress)
-          smartVideoPlayer.current._lastEndedTime = player.duration() * progress
+        if (smartVideoPlayer.current._lastEndedTime !== null) {
+          return
         }
+        const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
+        player.currentTime(player.duration() * progress)
+        smartVideoPlayer.current._lastEndedTime = player.duration() * progress
       })
       player.on('ended', (e: Event) => {
         onEvent({
