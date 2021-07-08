@@ -107,7 +107,7 @@ const ProgramContentPlayer: React.VFC<
   const { formatMessage } = useIntl()
   const videoId = `v-${programContentBody.id}`
   const { id: appId } = useApp()
-  const { programContentProgress } = useContext(ProgressContext)
+  const { loadingProgress, programContentProgress } = useContext(ProgressContext)
   const urls = useUrls(appId, programContentBody.id)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
   const [playerType, setPlayerType] = useState<'smartVideo' | 'reactPlayer'>(
@@ -118,12 +118,12 @@ const ProgramContentPlayer: React.VFC<
       : 'reactPlayer',
   )
 
-  if (typeof programContentProgress === 'undefined') {
+  if (loadingProgress) {
     return null
   }
 
   const lastProgress =
-    programContentProgress.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
+    programContentProgress?.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
 
   return (
     <>
@@ -142,7 +142,7 @@ const ProgramContentPlayer: React.VFC<
                 onClick={() => {
                   setPlayerType('reactPlayer')
                   localStorage.setItem('kolable.feature.swarmify', '0')
-                  location.reload()
+                  window.location.reload()
                 }}
               >
                 {formatMessage(messages.switchPlayer)}
@@ -369,7 +369,7 @@ const SmartVideo: React.FC<{
       player.on('pause', (e: Event) => {
         onEvent({
           type: 'pause',
-          progress: player.currentTime() / player.duration,
+          progress: player.currentTime() / player.duration(),
           videoState: {
             playbackRate: player.playbackRate(),
             startedAt: smartVideoPlayer.current._lastEndedTime || 0,
@@ -381,7 +381,7 @@ const SmartVideo: React.FC<{
       player.on('seeked', (e: Event) => {
         onEvent({
           type: 'seeked',
-          progress: player.currentTime() / player.duration,
+          progress: player.currentTime() / player.duration(),
           videoState: {
             playbackRate: 0,
             startedAt: smartVideoPlayer.current._lastEndedTime || 0,
@@ -396,7 +396,7 @@ const SmartVideo: React.FC<{
         }
         onEvent({
           type: 'progress',
-          progress: player.currentTime() / player.duration,
+          progress: player.currentTime() / player.duration(),
           videoState: {
             playbackRate: player.playbackRate(),
             startedAt: smartVideoPlayer.current._lastEndedTime || 0,
@@ -415,7 +415,7 @@ const SmartVideo: React.FC<{
       player.on('ended', (e: Event) => {
         onEvent({
           type: 'ended',
-          progress: player.currentTime() / player.duration,
+          progress: player.currentTime() / player.duration(),
           videoState: {
             playbackRate: player.playbackRate(),
             startedAt: smartVideoPlayer.current._lastEndedTime || 0,

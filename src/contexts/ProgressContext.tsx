@@ -5,6 +5,7 @@ import React, { createContext } from 'react'
 import hasura from '../hasura'
 
 type ProgressProps = {
+  loadingProgress?: boolean
   programContentProgress?: {
     programContentId: string
     programContentSectionId: string
@@ -27,12 +28,13 @@ export const ProgressProvider: React.FC<{
   programId: string
   memberId: string
 }> = ({ programId, memberId, children }) => {
-  const { programContentProgress, refetchProgress } = useProgramContentProgress(programId, memberId)
+  const { loadingProgress, programContentProgress, refetchProgress } = useProgramContentProgress(programId, memberId)
   const insertProgress = useInsertProgress(memberId)
 
   return (
     <ProgressContext.Provider
       value={{
+        loadingProgress,
         programContentProgress,
         refetchProgress,
         insertProgress,
