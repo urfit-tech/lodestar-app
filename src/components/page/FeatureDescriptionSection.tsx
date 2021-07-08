@@ -68,7 +68,21 @@ const FeatureDescriptionSection: React.FC<{
                 <Card.Title isDark={!!backgroundUrl} className="mb-3">
                   {v.title}
                 </Card.Title>
-                <Card.Content>{v.description}</Card.Content>
+                <Card.Content
+                  customStyle={{
+                    fontSize: 14,
+                    textAlign: 'left',
+                    fontWeight: 'normal',
+                    lineHeight: 1.5,
+                    color: !!backgroundUrl ? 'white' : 'black',
+                    pt: '0',
+                    pb: '0',
+                    pr: '0',
+                    pl: '0',
+                  }}
+                >
+                  {v.description}
+                </Card.Content>
               </Card>
             </div>
           ))}

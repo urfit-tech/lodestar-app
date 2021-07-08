@@ -77,7 +77,7 @@ const StatisticsSection: React.FC<{
                       fontSize: '20',
                       fontWeight: 'normal',
                       lineHeight: 1,
-                      color: '#585858',
+                      color: !!background ? 'white' : '#585858',
                       pt: '20',
                       pb: '20',
                       pr: '20',

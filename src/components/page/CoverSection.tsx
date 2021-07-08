@@ -1,11 +1,6 @@
 import Carousel from 'lodestar-app-element/src/components/Carousel'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import styled from 'styled-components'
-
-const StyledSection = styled.section`
-  margin-bottom: 80px;
-`
 
 const CoverSection: React.VFC<{
   options: {
@@ -25,7 +20,7 @@ const CoverSection: React.VFC<{
   const history = useHistory()
 
   return (
-    <StyledSection>
+    <section>
       <Carousel dots infinite arrows={false} autoplay autoplaySpeed={5000} variant="cover">
         {options.coverInfos.map(v => (
           <Carousel.Slide
@@ -67,7 +62,7 @@ const CoverSection: React.VFC<{
           />
         ))}
       </Carousel>
-    </StyledSection>
+    </section>
   )
 }
 
