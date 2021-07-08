@@ -395,7 +395,7 @@ const InvoiceInput: React.VFC<{
         </div>
       )}
 
-      {selectedType === 'hardcopy-uniform-number' && (
+      {(selectedType === 'hardcopy' || selectedType === 'hardcopy-uniform-number') && (
         <div className="row">
           <div className="col-12">
             <Form.Item
