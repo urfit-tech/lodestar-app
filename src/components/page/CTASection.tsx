@@ -52,9 +52,8 @@ const CTASection: React.FC<{
         <HeadingSnippet direction={direction || 'row'}>
           {title && (
             <HeadingSnippet.Title
-              row={direction === 'row'}
               customStyle={{
-                textAlign: 'center',
+                textAlign: direction === 'row' ? 'left' : 'center',
                 fontSize: 28,
                 fontWeight: 'bold',
                 color: '#fff',
@@ -69,9 +68,8 @@ const CTASection: React.FC<{
           )}
           {description && (
             <HeadingSnippet.Content
-              row={direction === 'row'}
               customStyle={{
-                textAlign: 'center',
+                textAlign: direction === 'row' ? 'left' : 'center',
                 fontSize: 20,
                 fontWeight: 'normal',
                 lineHeight: 1.35,

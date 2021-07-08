@@ -26,40 +26,28 @@ const SliderSection: React.FC<{
 }> = ({ options: { title = '' } }) => {
   const infos = [
     {
-      title: {
-        before: '行銷',
-        after: '設計實習',
-      },
+      title: '行銷',
       description:
         '本身非本科生，但目前有在業界從事網頁設計實習工作。對於網頁的知識和技能都是靠高中補習遙遠的記憶和零散的自學，但一直沒有融會貫通的感覺，每個功能都只是似懂非懂，搞不太清楚“為什麼要這樣做”，無法全靠自己刻出一個完整的頁面。',
       imgSrc: `https://static.kolable.com/images/xuemi/storyAvatar1.png`,
       name: 'Letitia',
     },
     {
-      title: {
-        before: '行銷',
-        after: '設計實習',
-      },
+      title: '行銷',
       description:
         '本身非本科生，但目前有在業界從事網頁設計實習工作。對於網頁的知識和技能都是靠高中補習遙遠的記憶和零散的自學，但一直沒有融會貫通的感覺，每個功能都只是似懂非懂，搞不太清楚“為什麼要這樣做”，無法全靠自己刻出一個完整的頁面。',
       imgSrc: `https://static.kolable.com/images/xuemi/storyAvatar1.png`,
       name: 'Letitia',
     },
     {
-      title: {
-        before: '行銷',
-        after: '設計實習',
-      },
+      title: '行銷',
       description:
         '本身非本科生，但目前有在業界從事網頁設計實習工作。對於網頁的知識和技能都是靠高中補習遙遠的記憶和零散的自學，但一直沒有融會貫通的感覺，每個功能都只是似懂非懂，搞不太清楚“為什麼要這樣做”，無法全靠自己刻出一個完整的頁面。',
       imgSrc: `https://static.kolable.com/images/xuemi/storyAvatar1.png`,
       name: 'Letitia',
     },
     {
-      title: {
-        before: '行銷',
-        after: '設計實習',
-      },
+      title: '行銷',
       description:
         '本身非本科生，但目前有在業界從事網頁設計實習工作。對於網頁的知識和技能都是靠高中補習遙遠的記憶和零散的自學，但一直沒有融會貫通的感覺，每個功能都只是似懂非懂，搞不太清楚“為什麼要這樣做”，無法全靠自己刻出一個完整的頁面。',
       imgSrc: `https://static.kolable.com/images/xuemi/storyAvatar1.png`,
@@ -101,10 +89,10 @@ const SliderSection: React.FC<{
                   mb: '54',
                   mr: '20',
                   ml: '20',
-                  pt: '40',
-                  pb: '40',
-                  pr: '40',
-                  pl: '40',
+                  pt: '32',
+                  pb: '32',
+                  pr: '32',
+                  pl: '32',
                 },
                 title: {
                   textAlign: 'left',

@@ -45,7 +45,7 @@ const FAQSection: React.FC<{
                   textAlign: 'left',
                   fontSize: 16,
                   fontWeight: 'bold',
-                  color: '#4c5b8f',
+                  color: '#ff5760',
                   pt: 0,
                   pr: 0,
                   pb: 0,
