@@ -34,7 +34,7 @@ const ProgramContentBlock: React.VFC<{
   programContentId: string
 }> = ({ program, programContentId }) => {
   const { formatMessage } = useIntl()
-  const { enabledModules } = useApp()
+  const { loading: loadingApp, enabledModules, settings } = useApp()
   const { apiHost, authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
@@ -73,7 +73,7 @@ const ProgramContentBlock: React.VFC<{
     refetchProgress,
   ])
 
-  if (loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
+  if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
@@ -96,10 +96,10 @@ const ProgramContentBlock: React.VFC<{
           programContentId={programContentId}
           programContentBody={programContent.programContentBody}
           nextProgramContent={nextProgramContent}
+          isSwarmifyAvailable={settings['feature.swarmify.enabled'] === '1'}
           onVideoEvent={e => {
             if (e.type === 'progress') {
-              const video = e.target as HTMLVideoElement
-              insertProgramProgress(e.videoState.endedAt / video.duration)
+              insertProgramProgress(e.progress)
             } else {
               axios
                 .post(

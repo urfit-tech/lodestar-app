@@ -412,6 +412,7 @@ const ProgramContentTrialPlayer: React.VFC<{
             description: '',
             data: data.program_content_by_pk.program_content_body.data,
           }}
+          isSwarmifyAvailable={false}
         />
         {onNext && <Icon as={AngleThinRightIcon} onClick={() => onNext()} />}
       </StyledPlayerWrapper>

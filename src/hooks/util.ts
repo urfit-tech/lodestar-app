@@ -139,7 +139,8 @@ export const useSwarmify = () => {
   const { settings } = useApp()
   const { currentMember, isAuthenticating } = useAuth()
   const swarmcdnkey = settings['swarmify.cdn_key']
-  if (theme && !isAuthenticating && swarmcdnkey) {
+
+  if (theme && !isAuthenticating && swarmcdnkey && settings['feature.swarmify.enabled'] === '1') {
     const swarmoptions = {
       swarmcdnkey,
       theme: {

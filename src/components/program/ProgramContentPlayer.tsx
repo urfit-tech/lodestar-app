@@ -1,7 +1,7 @@
-import { CircularProgress, Icon, SkeletonText } from '@chakra-ui/react'
+import { CircularProgress, Icon } from '@chakra-ui/react'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import { ReactPlayerProps } from 'react-player'
+import ReactPlayer, { ReactPlayerProps } from 'react-player'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
@@ -70,7 +70,9 @@ const message = defineMessages({
   next: { id: 'program.text.next', defaultMessage: '接下來' },
 })
 
-type VideoEvent = Event & {
+type VideoEvent = {
+  type: 'pause' | 'seeked' | 'progress' | 'ended'
+  progress: number
   videoState: { playbackRate: number; startedAt: number; endedAt: number }
 }
 const ProgramContentPlayer: React.VFC<
@@ -81,24 +83,38 @@ const ProgramContentPlayer: React.VFC<
       id: string
       title: string
     }
+    isSwarmifyAvailable: boolean
     onVideoEvent?: (event: VideoEvent) => void
   }
-> = ({ programContentId, programContentBody, nextProgramContent, onVideoEvent }) => {
+> = ({ programContentId, programContentBody, nextProgramContent, isSwarmifyAvailable, onVideoEvent }) => {
   const videoId = `v-${programContentBody.id}`
   const { id: appId } = useApp()
-  const [isCoverShowing, setIsCoverShowing] = useState(false)
+  const { programContentProgress } = useContext(ProgressContext)
   const urls = useUrls(appId, programContentBody.id)
+  const [isCoverShowing, setIsCoverShowing] = useState(false)
+  const [isSwarmifyEnabled, setIsSwarmifyEnabled] = useState(
+    isSwarmifyAvailable &&
+      (typeof localStorage.getItem('kolable.feature.swarmify') === 'undefined' ||
+        localStorage.getItem('kolable.feature.swarmify') === '1'),
+  )
+
+  if (typeof programContentProgress === 'undefined') {
+    return null
+  }
+
+  const lastProgress =
+    programContentProgress.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
 
   return (
     <StyledContainer>
       {nextProgramContent && isCoverShowing && (
         <ProgramContentPlayerCover nextProgramContent={nextProgramContent} onSetIsCoverShowing={setIsCoverShowing} />
       )}
-      {urls ? (
-        <SmartVideo
-          programContentId={programContentId}
-          videoId={videoId}
-          urls={urls}
+
+      {!isSwarmifyEnabled && (
+        <VimeoPlayer
+          videoId={programContentBody.data.vimeoVideoId}
+          lastProgress={lastProgress}
           onEvent={e => {
             if (e.type === 'ended') {
               setIsCoverShowing(true)
@@ -106,8 +122,20 @@ const ProgramContentPlayer: React.VFC<
             onVideoEvent?.(e)
           }}
         />
-      ) : (
-        <SkeletonText noOfLines={4} spacing="4" className="my-4" />
+      )}
+
+      {isSwarmifyEnabled && urls && (
+        <SmartVideo
+          videoId={videoId}
+          urls={urls}
+          lastProgress={lastProgress}
+          onEvent={e => {
+            if (e.type === 'ended') {
+              setIsCoverShowing(true)
+            }
+            onVideoEvent?.(e)
+          }}
+        />
       )}
     </StyledContainer>
   )
@@ -171,27 +199,121 @@ const CountDownPlayButton: React.VFC<{
   )
 }
 
+const VimeoPlayer: React.VFC<{
+  videoId: string
+  lastProgress: number
+  onEvent?: (event: VideoEvent) => void
+}> = ({ videoId, lastProgress, onEvent }) => {
+  const playerRef = useRef<ReactPlayer | null>(null)
+  const lastEndedTime = useRef<number | null>(null)
+
+  return (
+    <ReactPlayer
+      ref={playerRef}
+      url={`https://vimeo.com/${videoId}`}
+      width="100%"
+      height="100%"
+      progressInterval={5000}
+      controls
+      config={{
+        vimeo: {
+          playerOptions: {
+            responsive: true,
+            speed: true,
+          },
+        },
+      }}
+      onDuration={duration => {
+        if (!playerRef.current) {
+          return
+        }
+        const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
+        playerRef.current.seekTo(duration * progress, 'seconds')
+        lastEndedTime.current = duration * progress
+      }}
+      onProgress={state => {
+        if (!playerRef.current || lastEndedTime.current === null) {
+          return
+        }
+        const video = playerRef.current.getInternalPlayer() as HTMLVideoElement
+
+        onEvent?.({
+          type: 'progress',
+          progress: state.playedSeconds / playerRef.current.getDuration(),
+          videoState: {
+            playbackRate: video.playbackRate || 1,
+            startedAt: lastEndedTime.current || 0,
+            endedAt: state.playedSeconds,
+          },
+        })
+        lastEndedTime.current = state.playedSeconds
+      }}
+      onPause={() => {
+        if (!playerRef.current) {
+          return
+        }
+        const video = playerRef.current.getInternalPlayer() as HTMLVideoElement
+        const currentTime = playerRef.current.getCurrentTime() || 0
+
+        onEvent?.({
+          type: 'pause',
+          progress: currentTime / playerRef.current.getDuration(),
+          videoState: {
+            playbackRate: video.playbackRate || 1,
+            startedAt: lastEndedTime.current || 0,
+            endedAt: currentTime || 0,
+          },
+        })
+        lastEndedTime.current = currentTime
+      }}
+      onSeek={seconds => {
+        if (!playerRef.current || lastEndedTime.current === null) {
+          return
+        }
+
+        onEvent?.({
+          type: 'seeked',
+          progress: seconds / playerRef.current.getDuration(),
+          videoState: {
+            playbackRate: 0,
+            startedAt: lastEndedTime.current || 0,
+            endedAt: seconds,
+          },
+        })
+        lastEndedTime.current = seconds
+      }}
+      onEnded={() => {
+        if (!playerRef.current) {
+          return
+        }
+        const video = playerRef.current.getInternalPlayer() as HTMLVideoElement
+        const endedAt = playerRef.current.getDuration() || video.duration || 0
+
+        onEvent?.({
+          type: 'ended',
+          progress: playerRef.current.getCurrentTime() / playerRef.current.getDuration(),
+          videoState: {
+            playbackRate: video.playbackRate || 1,
+            startedAt: lastEndedTime.current || 0,
+            endedAt,
+          },
+        })
+        lastEndedTime.current = endedAt
+      }}
+    />
+  )
+}
+
 const SmartVideo: React.FC<{
-  programContentId: string
   videoId: string
   urls: { video: string; texttracks: string[] }
-  onEvent?: (e: VideoEvent) => void
-}> = ({ programContentId, videoId, urls, onEvent }) => {
-  const { programContentProgress } = useContext(ProgressContext)
+  lastProgress: number
+  onEvent?: (event: VideoEvent) => void
+}> = ({ videoId, urls, lastProgress, onEvent }) => {
   const smartVideoPlayer = useRef<any>(null)
 
-  const lastProgress =
-    typeof programContentProgress === 'undefined'
-      ? undefined
-      : programContentProgress.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
-
   useEffect(() => {
-    if (
-      typeof lastProgress === 'undefined' ||
-      smartVideoPlayer.current?._lock ||
-      videoId === smartVideoPlayer.current?._videoId ||
-      !onEvent
-    ) {
+    if (smartVideoPlayer.current?._lock || videoId === smartVideoPlayer.current?._videoId || !onEvent) {
       return
     }
     smartVideoPlayer.current?.dispose?.()
@@ -200,9 +322,8 @@ const SmartVideo: React.FC<{
     getVideoPlayer(videoId).then(player => {
       player.on('pause', (e: Event) => {
         onEvent({
-          ...e,
-          type: e.type,
-          target: e.target,
+          type: 'pause',
+          progress: player.currentTime() / player.duration,
           videoState: {
             playbackRate: player.playbackRate(),
             startedAt: smartVideoPlayer.current._lastEndedTime || 0,
@@ -213,9 +334,8 @@ const SmartVideo: React.FC<{
       })
       player.on('seeked', (e: Event) => {
         onEvent({
-          ...e,
-          type: e.type,
-          target: e.target,
+          type: 'seeked',
+          progress: player.currentTime() / player.duration,
           videoState: {
             playbackRate: 0,
             startedAt: smartVideoPlayer.current._lastEndedTime || 0,
@@ -229,9 +349,8 @@ const SmartVideo: React.FC<{
           return
         }
         onEvent({
-          ...e,
-          type: e.type,
-          target: e.target,
+          type: 'progress',
+          progress: player.currentTime() / player.duration,
           videoState: {
             playbackRate: player.playbackRate(),
             startedAt: smartVideoPlayer.current._lastEndedTime || 0,
@@ -249,9 +368,8 @@ const SmartVideo: React.FC<{
       })
       player.on('ended', (e: Event) => {
         onEvent({
-          ...e,
-          type: e.type,
-          target: e.target,
+          type: 'ended',
+          progress: player.currentTime() / player.duration,
           videoState: {
             playbackRate: player.playbackRate(),
             startedAt: smartVideoPlayer.current._lastEndedTime || 0,
