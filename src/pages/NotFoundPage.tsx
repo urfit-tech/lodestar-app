@@ -86,7 +86,7 @@ const NotFoundPage: React.VFC<{
       <StyledWrapper>
         <StyledIcon
           as={variant === 'error' ? error2Icon : variant === 'repairing' ? errorIcon : routeErrorIcon}
-          className="mb-4"
+          className="mb-4 mx-auto"
         />
         <StyledTitle>
           {formatMessage(
