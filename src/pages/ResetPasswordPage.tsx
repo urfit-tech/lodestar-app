@@ -9,6 +9,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../components/auth/AuthContext'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import { useApp } from '../containers/common/AppContext'
 import { handleError } from '../helpers'
 import { codeMessages, commonMessages, usersMessages } from '../helpers/translation'
 
@@ -38,7 +39,9 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)
+  const [memberId] = useQueryParam('member', StringParam)
   const { apiHost } = useAuth()
+  const { id: appId } = useApp()
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,10 +52,12 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         axios
           .post(
             `//${apiHost}/auth/reset-password`,
-            { newPassword: values.password },
             {
-              headers: { authorization: `Bearer ${token}` },
+              appId,
+              memberId,
+              newPassword: values.password,
             },
+            { headers: { Authorization: `Bearer ${token}` } },
           )
           .then(({ data: { code } }) => {
             if (code === 'SUCCESS') {
