@@ -96,8 +96,10 @@ const ModularPage: React.VFC<{
               return (
                 <MessengerChat
                   key={projectSection.id}
-                  appId={settings['auth.facebook_app_id']}
-                  {...projectSection.options}
+                  options={{
+                    appId: settings['auth.facebook_app_id'],
+                    ...projectSection.options,
+                  }}
                 />
               )
             case 'banner':
