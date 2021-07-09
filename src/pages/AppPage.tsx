@@ -20,37 +20,39 @@ export const SectionTitle = styled.div<{ white?: boolean }>`
   color: var(--gray-color);
 `
 export const StyledLink = styled(Link)<{ $backgroundActive?: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   & .ant-btn-primary:active {
     background: ${props =>
       props.$backgroundActive ? props.$backgroundActive : props.theme['@primary-color']} !important;
   }
   margin-top: 40px;
 `
+export const StyledSection = styled.section`
+  padding: 64px 0;
+  background: white;
+`
 
-const AppPage: React.VFC<{
-  page: AppPageProps
-}> = ({ page }) => {
+const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
+  const sectionConverter = {
+    homeActivity: ActivitySection,
+    homeCover: CoverSection,
+    homeCreator: CreatorSection,
+    homePost: PostSection,
+    homeProgram: ProgramSection,
+    homeProgramCategory: ProgramSection,
+    messenger: MessengerChat,
+  }
+
   return (
     <DefaultLayout>
       {page.appPageSections.map(section => {
-        switch (section.type) {
-          case 'homeCover':
-            return <CoverSection key={section.id} options={section.options} />
-          case 'homeActivity':
-            return <ActivitySection key={section.id} options={section.options} />
-          case 'homeProgram':
-            return <ProgramSection key={section.id} options={section.options} />
-          case 'homePost':
-            return <PostSection key={section.id} options={section.options} />
-          case 'homeProgramCategory':
-            return <ProgramSection key={section.id} options={section.options} />
-          case 'homeCreator':
-            return <CreatorSection key={section.id} options={section.options} />
-          case 'messenger':
-            return <MessengerChat key={section.id} {...section.options} />
-          default:
-            return <div key={section.id}></div>
+        const Section = sectionConverter[section.type]
+        if (!sectionConverter[section.type]) {
+          return <></>
         }
+        return <Section key={section.id} options={section.options} />
       })}
     </DefaultLayout>
   )
