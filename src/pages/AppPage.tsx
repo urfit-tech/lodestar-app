@@ -3,22 +3,11 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import MessengerChat from '../components/common/MessengerChat'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import AccordionSection from '../components/page/AccordionSection'
 import ActivitySection from '../components/page/ActivitySection'
-import ArticleSection from '../components/page/ArticleSection'
-import BackgroundSection from '../components/page/BackgroundSection'
 import CoverSection from '../components/page/CoverSection'
 import CreatorSection from '../components/page/CreatorSection'
-import CTASection from '../components/page/CTASection'
-import DescriptionSection from '../components/page/DescriptionSection'
-import FAQSection from '../components/page/FAQSection'
-import FeatureDescriptionSection from '../components/page/FeatureDescriptionSection'
-import FeatureSection from '../components/page/FeatureSection'
 import PostSection from '../components/page/PostSection'
 import ProgramSection from '../components/page/ProgramSection'
-import ReferrerSection from '../components/page/ReferrerSection'
-import SliderSection from '../components/page/SliderSection'
-import StatisticsSection from '../components/page/StatisticsSection'
 import { AppPageProps } from '../hooks/page'
 
 export const SectionTitle = styled.div<{ white?: boolean }>`
@@ -31,6 +20,9 @@ export const SectionTitle = styled.div<{ white?: boolean }>`
   color: var(--gray-color);
 `
 export const StyledLink = styled(Link)<{ $backgroundActive?: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   & .ant-btn-primary:active {
     background: ${props =>
       props.$backgroundActive ? props.$backgroundActive : props.theme['@primary-color']} !important;
@@ -44,23 +36,12 @@ export const StyledSection = styled.section`
 
 const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
   const sectionConverter = {
-    homeAccordion: AccordionSection,
     homeActivity: ActivitySection,
-    homeArticle: ArticleSection,
-    homeBackground: BackgroundSection,
     homeCover: CoverSection,
     homeCreator: CreatorSection,
-    homeCTA: CTASection,
-    homeDescription: DescriptionSection,
-    homeFeatureDescription: FeatureDescriptionSection,
-    homeFAQ: FAQSection,
-    homeFeature: FeatureSection,
     homePost: PostSection,
     homeProgram: ProgramSection,
     homeProgramCategory: ProgramSection,
-    homeReferrer: ReferrerSection,
-    homeSlider: SliderSection,
-    homeStatistics: StatisticsSection,
     messenger: MessengerChat,
   }
 
@@ -69,7 +50,7 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
       {page.appPageSections.map(section => {
         const Section = sectionConverter[section.type]
         if (!sectionConverter[section.type]) {
-          return <div>{section.id}</div>
+          return <></>
         }
         return <Section key={section.id} options={section.options} />
       })}

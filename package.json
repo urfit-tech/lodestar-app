@@ -92,7 +92,7 @@
     "libphonenumber-js": "^1.9.7",
     "lint-staged": "^10.2.11",
     "lodash": "^4.17.15",
-    "lodestar-app-element": "urfit-tech/lodestar-app-element.git#bugfix/home-page-element",
+    "lodestar-app-element": "urfit-tech/lodestar-app-element.git#master",
     "moment-timezone": "^0.5.31",
     "mustache": "^4.0.1",
     "node-sass": "^4.14.1",
