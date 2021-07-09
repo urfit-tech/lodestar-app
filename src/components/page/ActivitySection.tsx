@@ -8,7 +8,6 @@ import { SectionTitle, StyledLink } from '../../pages/AppPage'
 import Activity from '../activity/Activity'
 
 const StyledSection = styled.section`
-  margin-top: 80px;
   margin-bottom: 80px;
 `
 const StyledAngleRightIcon = styled(AngleRightIcon)`

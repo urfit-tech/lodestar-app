@@ -20,7 +20,7 @@ const CoverSection: React.VFC<{
   const history = useHistory()
 
   return (
-    <section>
+    <section className="mb-5">
       <Carousel dots infinite arrows={false} autoplay autoplaySpeed={5000} variant="cover">
         {options.coverInfos.map(v => (
           <Carousel.Slide
