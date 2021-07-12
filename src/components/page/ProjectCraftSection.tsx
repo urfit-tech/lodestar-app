@@ -3,8 +3,7 @@ import ProjectBlock from 'lodestar-app-element/src/components/blocks/ProjectBloc
 import Layout from 'lodestar-app-element/src/components/Layout'
 import { ProjectType } from 'lodestar-app-element/src/types/data'
 import React from 'react'
-import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
-import { SectionTitle, StyledLink } from '../../pages/AppPage'
+import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
 
 const ProjectSection: React.FC<{
   options: {
@@ -29,7 +28,7 @@ const ProjectSection: React.FC<{
       <div className="text-center">
         <StyledLink to="/projects">
           查看更多
-          <AngleRightIcon />
+          <StyledAngleRightIcon />
         </StyledLink>
       </div>
     </BackgroundSection>

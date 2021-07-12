@@ -2,8 +2,7 @@ import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSec
 import PodcastProgramBlock from 'lodestar-app-element/src/components/blocks/PodcastProgramBlock'
 import Layout from 'lodestar-app-element/src/components/Layout'
 import React from 'react'
-import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
-import { SectionTitle, StyledLink } from '../../pages/AppPage'
+import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
 
 const PodcastProgramSection: React.VFC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,
@@ -12,7 +11,7 @@ const PodcastProgramSection: React.VFC<{ options: { title?: string; colAmount?: 
     <BackgroundSection>
       <SectionTitle>{options?.title || '精選廣播'}</SectionTitle>
 
-      <div className="container mb-5">
+      <div className="container">
         <Layout
           customStyle={{
             type: 'grid',
@@ -26,7 +25,7 @@ const PodcastProgramSection: React.VFC<{ options: { title?: string; colAmount?: 
 
       <div className="text-center">
         <StyledLink to="/podcasts">
-          查看更多 <AngleRightIcon />
+          查看更多 <StyledAngleRightIcon />
         </StyledLink>
       </div>
     </BackgroundSection>

@@ -2,8 +2,7 @@ import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSec
 import ProgramBlock from 'lodestar-app-element/src/components/blocks/ProgramBlock'
 import Layout from 'lodestar-app-element/src/components/Layout'
 import React from 'react'
-import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
-import { SectionTitle, StyledLink } from '../../pages/AppPage'
+import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
 
 const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,
@@ -12,7 +11,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
     <BackgroundSection>
       <SectionTitle>{options?.title || '線上課程'}</SectionTitle>
 
-      <div className="container mb-5">
+      <div className="container">
         <Layout
           customStyle={{
             type: 'grid',
@@ -26,7 +25,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
 
       <div className="text-center">
         <StyledLink to={`/programs${options?.categoryId ? '?active=' + options?.categoryId : ''}`}>
-          查看更多 <AngleRightIcon />
+          查看更多 <StyledAngleRightIcon />
         </StyledLink>
       </div>
     </BackgroundSection>

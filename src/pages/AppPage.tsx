@@ -9,6 +9,7 @@ import CreatorSection from '../components/page/CreatorSection'
 import PostSection from '../components/page/PostSection'
 import ProgramSection from '../components/page/ProgramSection'
 import { AppPageProps } from '../hooks/page'
+import { ReactComponent as AngleRightIcon } from '../images/angle-right.svg'
 
 export const SectionTitle = styled.div<{ white?: boolean }>`
   margin: 0 auto;
@@ -27,8 +28,12 @@ export const StyledLink = styled(Link)<{ $backgroundActive?: string }>`
     background: ${props =>
       props.$backgroundActive ? props.$backgroundActive : props.theme['@primary-color']} !important;
   }
-  margin-top: 40px;
+  margin-top: 56px;
 `
+export const StyledAngleRightIcon = styled(AngleRightIcon)`
+  transform: translateY(-0.5px);
+`
+
 export const StyledSection = styled.section`
   padding: 64px 0;
   background: white;
