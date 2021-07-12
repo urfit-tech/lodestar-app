@@ -1,4 +1,5 @@
 import { Skeleton } from '@chakra-ui/react'
+import StyledSection from 'lodestar-app-element/src/components/BackgroundSection'
 import React from 'react'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
@@ -7,9 +8,6 @@ import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { SectionTitle, StyledLink } from '../../pages/AppPage'
 import Activity from '../activity/Activity'
 
-const StyledSection = styled.section`
-  margin-bottom: 80px;
-`
 const StyledAngleRightIcon = styled(AngleRightIcon)`
   display: inline-block;
 `

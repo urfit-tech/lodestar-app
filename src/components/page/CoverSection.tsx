@@ -20,7 +20,7 @@ const CoverSection: React.VFC<{
   const history = useHistory()
 
   return (
-    <section className="mb-5">
+    <section>
       <Carousel dots infinite arrows={false} autoplay autoplaySpeed={5000} variant="cover">
         {options.coverInfos.map(v => (
           <Carousel.Slide
@@ -51,7 +51,7 @@ const CoverSection: React.VFC<{
                 textAlign: 'center',
                 fontSize: 20,
                 fontWeight: 'normal',
-                lineHeight: 1.35,
+                lineHeight: 1.5,
                 color: '#fff',
                 pt: 0,
                 pr: 0,

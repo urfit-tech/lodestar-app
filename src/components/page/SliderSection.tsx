@@ -13,7 +13,7 @@ type Info = {
 
 const StyledContainer = styled.div`
   margin: 0 auto 4rem;
-  padding: 0 4rem;
+  padding: 0 1.5rem;
   width: 100%;
   max-width: 1080px;
 `
