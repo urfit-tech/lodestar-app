@@ -259,9 +259,15 @@ const MerchandiseBlock: React.VFC<{
         {merchandise.isPhysical && !merchandise.isCustomized && (
           <StyledInfo className="d-flex align-items-center mb-4">
             <div className="mr-4 d-inline-block">{formatMessage(voucherMessages.content.amount)}</div>
-            <QuantityInput value={quantity} min={0} max={remainQuantity} onChange={value => setQuantity(value || 0)} />
+            <QuantityInput
+              value={quantity}
+              min={0}
+              max={remainQuantity > 0 ? remainQuantity : 0}
+              remainQuantity={remainQuantity > 0 ? remainQuantity : 0}
+              onChange={value => setQuantity(value || 0)}
+            />
             <span className="ml-3">
-              {formatMessage(messages.remain)} {remainQuantity}
+              {formatMessage(messages.remain)} {remainQuantity > 0 ? remainQuantity : 0}
             </span>
           </StyledInfo>
         )}
