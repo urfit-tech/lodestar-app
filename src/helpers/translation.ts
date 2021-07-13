@@ -1620,4 +1620,8 @@ export const codeMessages = defineMessages({
     id: 'code.E_PAYMENT_GATEWAY',
     defaultMessage: 'E_PAYMENT_GATEWAY',
   },
+  E_RESET_PASSWORD_TOKEN: {
+    id: 'code.E_RESET_PASSWORD_TOKEN',
+    defaultMessage: '連結已失效',
+  },
 })
