@@ -51,8 +51,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         setLoading(true)
         axios
           .post(
-            'http://localhost:8081/v1/auth/reset-password',
-            //`//${apiHost}/auth/reset-password`,
+            `//${apiHost}/auth/reset-password`,
             {
               appId,
               memberId,
