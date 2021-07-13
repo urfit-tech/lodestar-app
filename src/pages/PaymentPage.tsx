@@ -34,13 +34,15 @@ const usePayForm = (paymentNo: number) => {
       setLoadingForm(true)
       axios
         .post(
-          `//${apiHost}/payment/pay-form`,
+          // `//${apiHost}/payment/pay-form`,
+          'http://localhost:8081/v1/payment/pay-form',
           {
             paymentNo,
             options: {
-              notifyUrl: `https://${apiHost}/payment/order-notification`,
+              notifyUrl: 'http://localhost:8081/v1/payment/order-notification', //`https://${apiHost}/payment/order-notification`,
               clientBackUrl,
-              returnUrl: `https://${apiHost}/payment/payment-proxy`,
+              returnUrl: 'http://localhost:8081/v1/payment/payment-proxy',
+              //`https://${apiHost}/payment/payment-proxy`,
             },
           },
           {
@@ -48,8 +50,16 @@ const usePayForm = (paymentNo: number) => {
           },
         )
         .then(({ data: { code, result } }) => {
+          console.log('9. payment result', { code, result })
           if (code === 'SUCCESS') {
             switch (result.gateway) {
+              case 'paypal':
+                if (result.html) {
+                  window.location.href = result.html
+                } else {
+                  history.push(`/members/${currentMemberId}`)
+                }
+                break
               case 'spgateway':
               case 'parenting':
                 if (result.html) {

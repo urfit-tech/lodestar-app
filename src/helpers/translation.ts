@@ -479,6 +479,7 @@ export const checkoutMessages = {
     unionPay: { id: 'checkout.label.unionPay', defaultMessage: '銀聯卡支付' },
     webAtm: { id: 'checkout.label.webATM', defaultMessage: 'WebATM' },
     barcode: { id: 'checkout.label.barcode', defaultMessage: '超商條碼繳費' },
+    paypal: { id: 'checkoutout.label.paypal', defaultMessage: '使用paypal' },
     parenting: { id: 'checkout.label.parenting', defaultMessage: '親子天下' },
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
     groupBuyingPlan: {

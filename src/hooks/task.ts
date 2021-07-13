@@ -18,9 +18,13 @@ export const useTask = (queue: string, taskId: string) => {
     authToken &&
       apiHost &&
       axios
-        .get(`//${apiHost}/tasks/${queue}/${taskId}`, {
-          headers: { authorization: `Bearer ${authToken}` },
-        })
+        .get(
+          //`//${apiHost}/tasks/${queue}/${taskId}`,
+          `http://localhost:8081/v1/tasks/${queue}/${taskId}`,
+          {
+            headers: { authorization: `Bearer ${authToken}` },
+          },
+        )
         .then(({ data: { code, result } }) => {
           if (code === 'SUCCESS') {
             setTask(result)

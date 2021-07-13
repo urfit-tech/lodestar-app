@@ -214,6 +214,7 @@ export const AuthProvider: React.FC<{
             }
           }),
         login: async ({ account, password, accountLinkToken }) =>
+<<<<<<< HEAD
           Axios.post(`//${apiHost}/auth/general-login`, { appId, account, password }, { withCredentials: true })
             .then(({ data: { code, result } }) => {
               if (code === 'SUCCESS') {
@@ -231,6 +232,27 @@ export const AuthProvider: React.FC<{
             .catch(error => {
               handleError(error)
             }),
+=======
+          Axios.post(
+            //`//${apiHost}/auth/general-login`,
+            'http://localhost:8081/v1/auth/general-login',
+            { appId, account, password },
+            { withCredentials: true },
+          ).then(({ data: { code, result } }) => {
+            console.log('@@@', { code, result })
+            if (code === 'SUCCESS') {
+              setAuthToken(result.authToken)
+              if (accountLinkToken && result.authToken) {
+                window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
+              }
+            } else if (code === 'I_RESET_PASSWORD') {
+              window.location.assign(`/check-email?email=${account}&type=reset-password`)
+            } else {
+              setAuthToken(null)
+              throw new Error(code)
+            }
+          }),
+>>>>>>> [FEATURE] progress record
         socialLogin: async ({ provider, providerToken, accountLinkToken }) =>
           Axios.post(
             `//${apiHost}/auth/social-login`,
@@ -239,7 +261,7 @@ export const AuthProvider: React.FC<{
               provider,
               providerToken,
             },
-            { withCredentials: true },
+            //{ withCredentials: true },
           ).then(({ data: { code, message, result } }) => {
             if (code === 'SUCCESS') {
               setAuthToken(result.authToken)

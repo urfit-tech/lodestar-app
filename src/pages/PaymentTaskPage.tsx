@@ -13,6 +13,7 @@ const PaymentTaskPage: React.VFC = () => {
 
   useEffect(() => {
     if (authToken && task?.finishedOn) {
+      console.log('7. payment data', task)
       history.push(`/payments/${task.returnvalue.paymentNo}`)
     }
   }, [history, authToken, task])
