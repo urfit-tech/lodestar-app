@@ -1345,13 +1345,15 @@ export const saleMessages = {
     }),
   },
   status: defineMessages({
-    completed: { id: 'sale.status.completed', defaultMessage: '已完成' },
-    preparing: { id: 'sale.status.preparing', defaultMessage: '準備中' },
     unpaid: { id: 'sale.status.unpaid', defaultMessage: '待付款' },
-    refunded: { id: 'sale.status.refunded', defaultMessage: '已退款' },
-    fail: { id: 'sale.status.fail', defaultMessage: '付款失敗' },
     expired: { id: 'sale.status.expired', defaultMessage: '已失效' },
+    fail: { id: 'sale.status.fail', defaultMessage: '付款失敗' },
+    partialPaid: { id: 'sale.status.partialPaid', defaultMessage: '部分付款' },
+    completed: { id: 'sale.status.completed', defaultMessage: '已完成' },
+    partialRefund: { id: 'sale.status.partialRefund', defaultMessage: '部分退款' },
+    refunded: { id: 'sale.status.refunded', defaultMessage: '已退款' },
     deleted: { id: 'sale.status.deleted', defaultMessage: '已刪除' },
+    preparing: { id: 'sale.status.preparing', defaultMessage: '準備中' },
   }),
 }
 
