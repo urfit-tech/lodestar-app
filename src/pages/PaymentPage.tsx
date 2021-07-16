@@ -37,9 +37,9 @@ const usePayForm = (paymentNo: number) => {
           {
             paymentNo,
             options: {
-              notifyUrl: `//${apiHost}/payment/order-notification`,
+              notifyUrl: `https://${apiHost}/payment/order-notification`,
               clientBackUrl,
-              returnUrl: `//${apiHost}/payment/payment-proxy`,
+              returnUrl: `https://${apiHost}/payment/payment-proxy`,
             },
           },
           {
