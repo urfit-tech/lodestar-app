@@ -125,7 +125,7 @@ export const AuthProvider: React.FC<{
               password: data.password,
             },
             { withCredentials: true },
-          ).then(({ data: { code, message, result } }) => {
+          ).then(({ data: { code, result } }) => {
             if (code === 'SUCCESS') {
               if (!data.withoutLogin) {
                 setAuthToken(result.authToken)
@@ -272,8 +272,8 @@ export const AuthProvider: React.FC<{
               provider,
               providerToken,
             },
-            //{ withCredentials: true },
-          ).then(({ data: { code, message, result } }) => {
+            { withCredentials: true },
+          ).then(({ data: { code, result } }) => {
             if (code === 'SUCCESS') {
               setAuthToken(result.authToken)
               if (accountLinkToken && result.authToken) {
