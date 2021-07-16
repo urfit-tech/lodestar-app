@@ -52,10 +52,14 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         axios
           .post(
 <<<<<<< HEAD
+<<<<<<< HEAD
             `//${apiHost}/auth/reset-password`,
 =======
             // `//${apiHost}/auth/reset-password`,
             'http://localhost:8081/auth/reset-password',
+=======
+            `//${apiHost}/auth/reset-password`,
+>>>>>>> [BUGFIX] remove local api end point
             {
               appId,
               memberId,
