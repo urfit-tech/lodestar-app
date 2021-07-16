@@ -1583,6 +1583,18 @@ export const codeMessages = defineMessages({
     id: 'code.E_BIND_CREDIT_CARD',
     defaultMessage: '綁定信用卡錯誤',
   },
+  E_PAYPAL_EXEC: {
+    id: 'code.E_PAYPAL_EXEC',
+    defaultMessage: 'PAYPAL執行操作失敗',
+  },
+  E_PAYPAL_ORDER: {
+    id: 'code.E_PAYPAL_ORDER',
+    defaultMessage: 'PAYPAL建立付款失敗',
+  },
+  E_PAYPAL_CAPTURE: {
+    id: 'code.E_PAYPAL_CAPTURE',
+    defaultMessage: 'PAYPAL請款失敗',
+  },
   E_NO_PAYMENT_METHOD: {
     id: 'code.E_NO_PAYMENT_METHOD',
     defaultMessage: '找不到該付款方式',
@@ -1627,4 +1639,8 @@ export const codeMessages = defineMessages({
     id: 'code.E_RESET_PASSWORD_TOKEN',
     defaultMessage: '連結已失效',
   },
+  E_PAYPAL_SETUP:{
+    id: 'code.E_PAYPAL_SETUP',
+    defaultMessage: 'Paypal 環境設定失敗'
+  }
 })

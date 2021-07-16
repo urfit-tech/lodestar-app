@@ -1,4 +1,3 @@
-import { message } from 'antd'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -34,23 +33,20 @@ const usePayForm = (paymentNo: number) => {
       setLoadingForm(true)
       axios
         .post(
-          // `//${apiHost}/payment/pay-form`,
-          'http://localhost:8081/v1/payment/pay-form',
+          `//${apiHost}/payment/pay-form`,
           {
             paymentNo,
             options: {
-              notifyUrl: 'http://localhost:8081/v1/payment/order-notification', //`https://${apiHost}/payment/order-notification`,
+              notifyUrl: `//${apiHost}/payment/order-notification`,
               clientBackUrl,
-              returnUrl: 'http://localhost:8081/v1/payment/payment-proxy',
-              //`https://${apiHost}/payment/payment-proxy`,
+              returnUrl: `//${apiHost}/payment/payment-proxy`,
             },
           },
           {
             headers: { authorization: `Bearer ${authToken}` },
           },
         )
-        .then(({ data: { code, result } }) => {
-          console.log('9. payment result', { code, result })
+        .then(({ data: { code, message, result } }) => {
           if (code === 'SUCCESS') {
             switch (result.gateway) {
               case 'paypal':

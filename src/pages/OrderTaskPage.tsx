@@ -43,16 +43,13 @@ const OrderTaskPage: React.VFC = () => {
       return
     }
     if (authToken && task?.finishedOn && task?.returnvalue?.orderId) {
-      console.log('5. completed task(order)', task)
       axios
         .post(
-          //`//${apiHost}/tasks/payment/`,
-          'http://localhost:8081/v1/tasks/payment',
+          `//${apiHost}/tasks/payment/`,
           { orderId: task.returnvalue.orderId },
           { headers: { authorization: `Bearer ${authToken}` } },
         )
         .then(({ data: { code, result } }) => {
-          console.log('6. /tasks/payment result', result)
           if (code === 'SUCCESS') {
             history.push(`/tasks/payment/${result.id}`)
           } else {

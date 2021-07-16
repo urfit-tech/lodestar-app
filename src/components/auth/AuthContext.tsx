@@ -215,8 +215,13 @@ export const AuthProvider: React.FC<{
           }),
         login: async ({ account, password, accountLinkToken }) =>
 <<<<<<< HEAD
+<<<<<<< HEAD
           Axios.post(`//${apiHost}/auth/general-login`, { appId, account, password }, { withCredentials: true })
             .then(({ data: { code, result } }) => {
+=======
+          Axios.post(`//${apiHost}/auth/general-login`, { appId, account, password }, { withCredentials: true }).then(
+            ({ data: { code, result } }) => {
+>>>>>>> [FEATURE] add error code
               if (code === 'SUCCESS') {
                 setAuthToken(result.authToken)
                 if (accountLinkToken && result.authToken) {
@@ -227,6 +232,7 @@ export const AuthProvider: React.FC<{
               } else {
                 setAuthToken(null)
                 throw new Error(code)
+<<<<<<< HEAD
               }
             })
             .catch(error => {
@@ -253,6 +259,11 @@ export const AuthProvider: React.FC<{
             }
           }),
 >>>>>>> [FEATURE] progress record
+=======
+              }
+            },
+          ),
+>>>>>>> [FEATURE] add error code
         socialLogin: async ({ provider, providerToken, accountLinkToken }) =>
           Axios.post(
             `//${apiHost}/auth/social-login`,
