@@ -64,7 +64,7 @@ const OrderTaskPage: React.VFC = () => {
     return (
       <DefaultLayout noFooter noHeader centeredBox>
         <StyledWrapper className="d-flex flex-column justify-content-between align-items-center">
-          <Icon as={ErrorIcon} className="mr-4" />
+          <Icon as={ErrorIcon} w={100} h={100} />
 
           <div className="mb-4 d-flex flex-column text-center">
             <StyledTitle className="mb-2">{errorMessage}</StyledTitle>
