@@ -92,6 +92,11 @@ type VideoEvent = {
   progress: number
   videoState: { playbackRate: number; startedAt: number; endedAt: number }
 }
+type PlayerConfigProps = {
+  playbackRate?: number
+  volume?: number
+}
+
 const ProgramContentPlayer: React.VFC<
   ReactPlayerProps & {
     programContentId: string
@@ -117,6 +122,8 @@ const ProgramContentPlayer: React.VFC<
       ? 'smartVideo'
       : 'reactPlayer',
   )
+
+  const cachedPlayerConfig = JSON.parse(localStorage.getItem('kolable.player') || '{}') as PlayerConfigProps
 
   if (loadingProgress) {
     return null
@@ -159,6 +166,10 @@ const ProgramContentPlayer: React.VFC<
 
         {playerType === 'reactPlayer' && (
           <VimeoPlayer
+            config={{
+              playbackRate: cachedPlayerConfig.playbackRate || 1,
+              volume: cachedPlayerConfig.volume || 1,
+            }}
             videoId={programContentBody.data.vimeoVideoId}
             lastProgress={lastProgress}
             onEvent={e => {
@@ -175,6 +186,10 @@ const ProgramContentPlayer: React.VFC<
             videoId={videoId}
             urls={urls}
             lastProgress={lastProgress}
+            config={{
+              playbackRate: Number(cachedPlayerConfig.playbackRate) || 1,
+              volume: Number(cachedPlayerConfig.volume) || 1,
+            }}
             onEvent={e => {
               if (e.type === 'ended') {
                 setIsCoverShowing(true)
@@ -249,13 +264,16 @@ const CountDownPlayButton: React.VFC<{
 const VimeoPlayer: React.VFC<{
   videoId: string
   lastProgress: number
+  config: PlayerConfigProps
   onEvent?: (event: VideoEvent) => void
-}> = ({ videoId, lastProgress, onEvent }) => {
+}> = ({ videoId, lastProgress, config, onEvent }) => {
   const playerRef = useRef<ReactPlayer | null>(null)
   const lastEndedTime = useRef<number | null>(null)
 
   return (
     <ReactPlayer
+      volume={config.volume}
+      playbackRate={config.playbackRate}
       ref={playerRef}
       url={`https://vimeo.com/${videoId}`}
       width="100%"
@@ -346,6 +364,34 @@ const VimeoPlayer: React.VFC<{
         })
         lastEndedTime.current = endedAt
       }}
+      onReady={player => {
+        const video = player.getInternalPlayer()
+        video.on('ratechange', (e: any) => {
+          const cachedPlayerConfig = JSON.parse(localStorage.getItem('kolable.player') || '{}') as PlayerConfigProps
+          const playbackRate = e.playbackRate || 1
+          const volume = cachedPlayerConfig.volume || 1
+          localStorage.setItem(
+            'kolable.player',
+            JSON.stringify({
+              playbackRate: playbackRate,
+              volume: volume,
+            }),
+          )
+        })
+        video.on('volumechange', (e: any) => {
+          const cachedPlayerConfig = JSON.parse(localStorage.getItem('kolable.player') || '{}') as PlayerConfigProps
+          const volume = e.volume || 1
+          const playbackRate = cachedPlayerConfig.playbackRate || 1
+
+          localStorage.setItem(
+            'kolable.player',
+            JSON.stringify({
+              playbackRate: playbackRate,
+              volume: volume,
+            }),
+          )
+        })
+      }}
     />
   )
 }
@@ -354,8 +400,9 @@ const SmartVideo: React.FC<{
   videoId: string
   urls: { video: string; texttracks: string[] }
   lastProgress: number
+  config: PlayerConfigProps
   onEvent?: (event: VideoEvent) => void
-}> = ({ videoId, urls, lastProgress, onEvent }) => {
+}> = ({ videoId, urls, lastProgress, config, onEvent }) => {
   const smartVideoPlayer = useRef<any>(null)
 
   useEffect(() => {
@@ -424,6 +471,29 @@ const SmartVideo: React.FC<{
         })
         smartVideoPlayer.current._lastEndedTime = player.currentTime()
       })
+      player.on('canplay', (e: Event) => {
+        player.volume(config.volume)
+        player.playbackRate(config.playbackRate)
+      })
+      player.on('ratechange', (e: Event) => {
+        localStorage.setItem(
+          'kolable.player',
+          JSON.stringify({
+            playbackRate: player.playbackRate(),
+            volume: player.volume(),
+          }),
+        )
+      })
+      player.on('volumechange', (e: Event) => {
+        localStorage.setItem(
+          'kolable.player',
+          JSON.stringify({
+            playbackRate: player.playbackRate(),
+            volume: player.volume(),
+          }),
+        )
+      })
+
       smartVideoPlayer.current = player
       smartVideoPlayer.current._videoId = videoId
       smartVideoPlayer.current._lastEndedTime = null
