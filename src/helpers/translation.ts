@@ -1639,8 +1639,8 @@ export const codeMessages = defineMessages({
     id: 'code.E_RESET_PASSWORD_TOKEN',
     defaultMessage: '連結已失效',
   },
-  E_PAYPAL_SETUP:{
-    id: 'code.E_PAYPAL_SETUP',
-    defaultMessage: 'Paypal 環境設定失敗'
-  }
+  E_SETUP_PAYPAL: {
+    id: 'code.E_SETUP_PAYPAL',
+    defaultMessage: 'Paypal 環境設定失敗',
+  },
 })

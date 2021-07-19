@@ -50,8 +50,8 @@ const usePayForm = (paymentNo: number) => {
           if (code === 'SUCCESS') {
             switch (result.gateway) {
               case 'paypal':
-                if (result.html) {
-                  window.location.href = result.html
+                if (result.url) {
+                  window.location.href = result.url
                 } else {
                   history.push(`/members/${currentMemberId}`)
                 }
