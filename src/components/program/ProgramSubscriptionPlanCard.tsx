@@ -55,7 +55,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds(memberId)
   const { member } = useMember(memberId)
 
-  const { salePrice, listPrice, discountDownPrice, periodType } = programPlan
+  const { salePrice, listPrice, discountDownPrice, periodType, periodAmount } = programPlan
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
   return (
@@ -68,6 +68,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
           listPrice={listPrice}
           salePrice={isOnSale ? salePrice : undefined}
           downPrice={discountDownPrice}
+          periodAmount={periodAmount}
           periodType={periodType}
         />
         {programPlan.isCountdownTimerVisible && programPlan.soldAt && isOnSale && (
