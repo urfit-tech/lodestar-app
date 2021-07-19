@@ -1,5 +1,6 @@
 import { Skeleton } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
+import StyledSection from 'lodestar-app-element/src/components/BackgroundSection'
 import moment from 'moment-timezone'
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -16,9 +17,6 @@ import { StyledPostTitle } from '../blog'
 import { MultiLineTruncationMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 
-const StyledSection = styled.section`
-  margin-bottom: 80px;
-`
 const StyledCustomRatioImage = styled(CustomRatioImage)`
   transition: transform 0.5s ease-in-out;
 `

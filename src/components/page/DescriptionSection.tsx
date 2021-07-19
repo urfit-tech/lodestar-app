@@ -18,7 +18,7 @@ const DescriptionSection: React.FC<{
           <div className="col-12 col-md-7 m-auto">
             {infos?.map(v => (
               <Article className="my-5">
-                <Article.Title
+                <Article.DescriptionTitle
                   className="mb-4"
                   customStyle={{
                     textAlign: 'left',
@@ -32,7 +32,7 @@ const DescriptionSection: React.FC<{
                   }}
                 >
                   {v.title}
-                </Article.Title>
+                </Article.DescriptionTitle>
                 <Article.Content
                   customStyle={{
                     textAlign: 'left',

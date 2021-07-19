@@ -55,7 +55,7 @@ const AccordionSection: React.FC<{
             paragraph: {
               textAlign: 'left',
               fontSize: 14,
-              fontWeight: 'bold',
+              fontWeight: 'normal',
               lineHeight: 1.5,
               color: '#585858',
               pt: 0,

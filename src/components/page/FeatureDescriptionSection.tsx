@@ -34,17 +34,17 @@ const FeatureDescriptionSection: React.FC<{
 
         <div className="row justify-content-center">
           {infos.map(v => (
-            <div className="col-12 col-md-4 mb-3">
+            <div className="col-12 col-md-4 mb-4">
               <Card
                 isDark={!!backgroundUrl}
                 customStyle={{
                   direction: 'column',
                   bordered: true,
                   shadow: true,
-                  mt: '20',
-                  mb: '20',
-                  mr: '20',
-                  ml: '20',
+                  mt: '0',
+                  mb: '0',
+                  mr: '0',
+                  ml: '0',
                   pt: '20',
                   pb: '20',
                   pr: '20',
