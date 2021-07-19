@@ -205,7 +205,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
       startedAt: Date
       endedAt: Date
       participants: number
-      sessions: { id: string; title: string }[]
+      sessions: { id: string; type: string; title: string }[]
       enrollments: { orderId: string; orderProductId: string }[]
     }[]
     categories: { id: string; name: string }[]
@@ -229,6 +229,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
           isPublished: v.is_published,
           sessions: v.activity_session_tickets.map(v => ({
             id: v.activity_session.id,
+            type: v.activity_session_type,
             title: v.activity_session.title,
           })),
           participants: v.activity_ticket_enrollments_aggregate.aggregate?.count || 0,
@@ -262,6 +263,7 @@ export const useActivitySession = (sessionId: string) => {
           started_at
           ended_at
           location
+          online_link
           description
           threshold
           activity {
@@ -293,6 +295,7 @@ export const useActivitySession = (sessionId: string) => {
     startedAt: Date
     endedAt: Date
     location: string | null
+    onlineLink: string | null
     description: string | null
     threshold: number | null
     isParticipantsVisible: boolean
@@ -307,6 +310,7 @@ export const useActivitySession = (sessionId: string) => {
           startedAt: new Date(data.activity_session_by_pk.started_at),
           endedAt: new Date(data.activity_session_by_pk.ended_at),
           location: data.activity_session_by_pk.location,
+          onlineLink: data.activity_session_by_pk.online_link,
           description: data.activity_session_by_pk.description,
           threshold: data.activity_session_by_pk.threshold,
           isParticipantsVisible: data.activity_session_by_pk.activity.is_participants_visible,

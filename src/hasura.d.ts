@@ -2206,6 +2206,131 @@ export interface GET_ENROLLED_ACTIVITY_TICKETSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_ACTIVITY
+// ====================================================
+
+export interface GET_ACTIVITY_activity_by_pk_activity_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_categories {
+  __typename: "activity_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_ACTIVITY_activity_by_pk_activity_categories_category;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_sessions {
+  __typename: "activity_session";
+  id: any;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session {
+  __typename: "activity_session";
+  id: any;
+  title: string;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets {
+  __typename: "activity_session_ticket";
+  id: any;
+  /**
+   * offline | online | both
+   */
+  activity_session_type: string;
+  /**
+   * An object relationship
+   */
+  activity_session: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate_aggregate {
+  __typename: "activity_ticket_enrollment_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate {
+  __typename: "activity_ticket_enrollment_aggregate";
+  aggregate: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments {
+  __typename: "activity_ticket_enrollment";
+  order_log_id: string | null;
+  order_product_id: any | null;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets {
+  __typename: "activity_ticket";
+  id: any;
+  /**
+   * unlimited as 99999999
+   */
+  count: number;
+  description: string | null;
+  started_at: any;
+  is_published: boolean;
+  ended_at: any;
+  price: any;
+  title: string;
+  /**
+   * An array relationship
+   */
+  activity_session_tickets: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets[];
+  /**
+   * An aggregated array relationship
+   */
+  activity_ticket_enrollments_aggregate: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate;
+  /**
+   * An array relationship
+   */
+  activity_ticket_enrollments: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments[];
+}
+
+export interface GET_ACTIVITY_activity_by_pk {
+  __typename: "activity";
+  id: any;
+  organizer_id: string;
+  cover_url: string | null;
+  title: string;
+  description: string | null;
+  published_at: any | null;
+  /**
+   * An array relationship
+   */
+  activity_categories: GET_ACTIVITY_activity_by_pk_activity_categories[];
+  /**
+   * An array relationship
+   */
+  activity_sessions: GET_ACTIVITY_activity_by_pk_activity_sessions[];
+  /**
+   * An array relationship
+   */
+  activity_tickets: GET_ACTIVITY_activity_by_pk_activity_tickets[];
+}
+
+export interface GET_ACTIVITY {
+  /**
+   * fetch data from the table: "activity" using primary key columns
+   */
+  activity_by_pk: GET_ACTIVITY_activity_by_pk | null;
+}
+
+export interface GET_ACTIVITYVariables {
+  activityId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ACTIVITY_SESSION
 // ====================================================
 
@@ -2247,6 +2372,7 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
   started_at: any;
   ended_at: any;
   location: string | null;
+  online_link: string | null;
   description: string | null;
   threshold: any | null;
   /**
@@ -7574,127 +7700,6 @@ export interface GET_PRODUCT_EDITOR_IDSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_ACTIVITY
-// ====================================================
-
-export interface GET_ACTIVITY_activity_by_pk_activity_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_categories {
-  __typename: "activity_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: GET_ACTIVITY_activity_by_pk_activity_categories_category;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_sessions {
-  __typename: "activity_session";
-  id: any;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session {
-  __typename: "activity_session";
-  id: any;
-  title: string;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets {
-  __typename: "activity_session_ticket";
-  id: any;
-  /**
-   * An object relationship
-   */
-  activity_session: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate_aggregate {
-  __typename: "activity_ticket_enrollment_aggregate_fields";
-  count: number | null;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate {
-  __typename: "activity_ticket_enrollment_aggregate";
-  aggregate: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate_aggregate | null;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments {
-  __typename: "activity_ticket_enrollment";
-  order_log_id: string | null;
-  order_product_id: any | null;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets {
-  __typename: "activity_ticket";
-  id: any;
-  /**
-   * unlimited as 99999999
-   */
-  count: number;
-  description: string | null;
-  started_at: any;
-  is_published: boolean;
-  ended_at: any;
-  price: any;
-  title: string;
-  /**
-   * An array relationship
-   */
-  activity_session_tickets: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets[];
-  /**
-   * An aggregated array relationship
-   */
-  activity_ticket_enrollments_aggregate: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate;
-  /**
-   * An array relationship
-   */
-  activity_ticket_enrollments: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments[];
-}
-
-export interface GET_ACTIVITY_activity_by_pk {
-  __typename: "activity";
-  id: any;
-  organizer_id: string;
-  cover_url: string | null;
-  title: string;
-  description: string | null;
-  published_at: any | null;
-  /**
-   * An array relationship
-   */
-  activity_categories: GET_ACTIVITY_activity_by_pk_activity_categories[];
-  /**
-   * An array relationship
-   */
-  activity_sessions: GET_ACTIVITY_activity_by_pk_activity_sessions[];
-  /**
-   * An array relationship
-   */
-  activity_tickets: GET_ACTIVITY_activity_by_pk_activity_tickets[];
-}
-
-export interface GET_ACTIVITY {
-  /**
-   * fetch data from the table: "activity" using primary key columns
-   */
-  activity_by_pk: GET_ACTIVITY_activity_by_pk | null;
-}
-
-export interface GET_ACTIVITYVariables {
-  activityId: any;
-  memberId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL mutation operation: AGREE_MEMBER_CONTRACT
 // ====================================================
 
@@ -9059,7 +9064,7 @@ export enum activity_session_update_column {
   ended_at = "ended_at",
   id = "id",
   location = "location",
-  location_online = "location_online",
+  online_link = "online_link",
   started_at = "started_at",
   threshold = "threshold",
   title = "title",
@@ -11989,7 +11994,7 @@ export interface activity_session_bool_exp {
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   location?: String_comparison_exp | null;
-  location_online?: String_comparison_exp | null;
+  online_link?: String_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
   threshold?: numeric_comparison_exp | null;
   title?: String_comparison_exp | null;
@@ -12007,7 +12012,7 @@ export interface activity_session_insert_input {
   ended_at?: any | null;
   id?: any | null;
   location?: string | null;
-  location_online?: string | null;
+  online_link?: string | null;
   started_at?: any | null;
   threshold?: any | null;
   title?: string | null;
