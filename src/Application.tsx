@@ -26,7 +26,6 @@ const Application: React.FC<{
   customRender?: CustomRendererProps
 }> = ({ appId, extraRouteProps, customRender }) => {
   const apiHost = useApiHost(appId)
-
   if (!apiHost) {
     return <LoadingPage />
   }
