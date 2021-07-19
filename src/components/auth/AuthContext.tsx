@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import parsePhoneNumber from 'libphonenumber-js'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
+import { handleError } from '../../helpers'
 import { UserRole } from '../../types/member'
 
 type AuthProps = {
@@ -213,8 +214,8 @@ export const AuthProvider: React.FC<{
             }
           }),
         login: async ({ account, password, accountLinkToken }) =>
-          Axios.post(`//${apiHost}/auth/general-login`, { appId, account, password }, { withCredentials: true }).then(
-            ({ data: { code, result } }) => {
+          Axios.post(`//${apiHost}/auth/general-login`, { appId, account, password }, { withCredentials: true })
+            .then(({ data: { code, result } }) => {
               if (code === 'SUCCESS') {
                 setAuthToken(result.authToken)
                 if (accountLinkToken && result.authToken) {
@@ -226,8 +227,10 @@ export const AuthProvider: React.FC<{
                 setAuthToken(null)
                 throw new Error(code)
               }
-            },
-          ),
+            })
+            .catch(error => {
+              handleError(error)
+            }),
         socialLogin: async ({ provider, providerToken, accountLinkToken }) =>
           Axios.post(
             `//${apiHost}/auth/social-login`,
