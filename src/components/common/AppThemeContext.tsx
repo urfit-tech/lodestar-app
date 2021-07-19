@@ -39,6 +39,7 @@ export const AppThemeProvider: React.FC = ({ children }) => {
           },
           ghost: {
             _hover: {
+              color: 'primary.400',
               background: 'transparent',
             },
           },
@@ -74,6 +75,13 @@ export const AppThemeProvider: React.FC = ({ children }) => {
               },
             },
           }),
+        },
+      },
+      Radio: {
+        baseStyle: {
+          _focus: {
+            boxShadow: 'none',
+          },
         },
       },
       FormError: {

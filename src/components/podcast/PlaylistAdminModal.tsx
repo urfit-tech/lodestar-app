@@ -1,6 +1,8 @@
-import { Button, Checkbox, Form, message, Modal } from 'antd'
+import { Button, Checkbox, CheckboxGroup } from '@chakra-ui/react'
+import { Form, message, Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
 import React, { useRef, useState } from 'react'
+import { BsPlus } from 'react-icons/bs'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
@@ -84,18 +86,18 @@ const PlaylistAdminModal: React.VFC<
       }}
       {...props}
     >
-      <Checkbox.Group
+      <CheckboxGroup
         defaultValue={checkedPlaylistIds}
         onChange={checkedValues => setCheckedPlaylistIds(checkedValues as string[])}
       >
         {playlists.map(playlist => (
           <div key={playlist.id}>
-            <Checkbox value={playlist.id} className="mb-3">
+            <Checkbox value={playlist.id} colorScheme="primary" className="mb-3">
               {playlist.title}
             </Checkbox>
           </div>
         ))}
-      </Checkbox.Group>
+      </CheckboxGroup>
 
       {isEditing && (
         <Form
@@ -105,7 +107,7 @@ const PlaylistAdminModal: React.VFC<
             handleSubmit()
           }}
         >
-          <Checkbox>
+          <Checkbox colorScheme="primary">
             <input
               ref={titleRef}
               autoFocus
@@ -116,7 +118,7 @@ const PlaylistAdminModal: React.VFC<
         </Form>
       )}
       <div>
-        <Button type="link" icon="plus" onClick={() => setIsEditing(true)}>
+        <Button colorScheme="primary" variant="ghost" leftIcon={<BsPlus />} onClick={() => setIsEditing(true)}>
           {formatMessage(messages.createPlaylist)}
         </Button>
       </div>

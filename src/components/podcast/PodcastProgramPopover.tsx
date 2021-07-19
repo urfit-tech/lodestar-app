@@ -1,8 +1,9 @@
 import { Button, Icon } from '@chakra-ui/react'
-import { Button as AntdButton, Popover } from 'antd'
+import { Popover } from 'antd'
 import React, { useContext } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
+import { BsPlus } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -148,9 +149,15 @@ const PodcastProgramPopover: React.FC<
         )}
         <div className="flex-grow-1 text-right">
           {withPodcastPlan && !isSubscribed && (
-            <AntdButton type="link" icon="plus" size="small" onClick={() => onSubscribe?.()}>
+            <Button
+              colorScheme="primary"
+              variant="ghost"
+              size="sm"
+              leftIcon={<BsPlus />}
+              onClick={() => onSubscribe?.()}
+            >
               {formatMessage(commonMessages.title.podcastSubscription)}
-            </AntdButton>
+            </Button>
           )}
         </div>
       </div>

@@ -1,7 +1,8 @@
-import { Button, Radio } from 'antd'
+import { Button, Radio, RadioGroup, Stack } from '@chakra-ui/react'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { rgba } from '../../helpers'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { CheckProps } from '../../types/checkout'
@@ -11,10 +12,8 @@ import CouponSelectionModal from './CouponSelectionModal'
 import MembershipCardSelectionModal from './MembershipCardSelectionModal'
 
 const StyledRadio = styled(Radio)`
-  && {
-    display: block;
-    height: 3rem;
-    line-height: 3rem;
+  &&:focus {
+    box-shadow: 0 0 0 3px ${props => rgba(props.theme['@primary-color'], 0.6)};
   }
 `
 
@@ -31,70 +30,73 @@ const DiscountSelectionCard: React.VFC<{
   const [discountType, discountTarget] = discountId?.split('_') || [null, null]
 
   return (
-    <Radio.Group
+    <RadioGroup
       value={discountType || 'None'}
-      onChange={e => onChange?.(e.target.value === 'None' ? '' : e.target.value)}
+      onChange={value => onChange?.(value === 'None' ? '' : `${value}`)}
       style={{ width: '100%' }}
     >
-      <StyledRadio value="None">{formatMessage(checkoutMessages.form.radio.noDiscount)}</StyledRadio>
-      <StyledRadio value="Coupon">
-        <span>{formatMessage(checkoutMessages.form.radio.useCoupon)}</span>
-        {discountType === 'Coupon' && (
-          <span className="ml-2">
-            {currentMemberId ? (
-              <CouponSelectionModal
-                memberId={currentMemberId}
-                orderProducts={check?.orderProducts || []}
-                orderDiscounts={check?.orderDiscounts || []}
-                onSelect={coupon => {
-                  onChange?.(`Coupon_${coupon.id}`)
-                }}
-                renderTrigger={({ onOpen, selectedCoupon }) => (
-                  <>
-                    <Button onClick={onOpen}>
-                      {discountTarget
-                        ? formatMessage(commonMessages.button.reselectCoupon)
-                        : formatMessage(commonMessages.button.chooseCoupon)}
-                    </Button>
-                    {selectedCoupon && <span className="ml-3">{selectedCoupon.couponCode.couponPlan.title}</span>}
-                  </>
-                )}
-              />
-            ) : (
-              <Button onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
-                {formatMessage(commonMessages.button.chooseCoupon)}
-              </Button>
-            )}
-          </span>
-        )}
-      </StyledRadio>
-
-      {enrolledMembershipCardIds.length > 0 && (
-        <StyledRadio value="Card">
-          <span>{formatMessage(checkoutMessages.content.useMemberCard)}</span>
-          {discountType === 'Card' && (
+      <Stack>
+        <StyledRadio height="3rem" colorScheme="primary" value="None">
+          {formatMessage(checkoutMessages.form.radio.noDiscount)}
+        </StyledRadio>
+        <StyledRadio height="3rem" colorScheme="primary" value="Coupon">
+          <span>{formatMessage(checkoutMessages.form.radio.useCoupon)}</span>
+          {discountType === 'Coupon' && (
             <span className="ml-2">
               {currentMemberId ? (
-                <MembershipCardSelectionModal
+                <CouponSelectionModal
                   memberId={currentMemberId}
-                  onSelect={membershipCardId => onChange?.(`Card_${membershipCardId}`)}
-                  render={({ setVisible, selectedMembershipCard }: any) => (
+                  orderProducts={check?.orderProducts || []}
+                  orderDiscounts={check?.orderDiscounts || []}
+                  onSelect={coupon => {
+                    onChange?.(`Coupon_${coupon.id}`)
+                  }}
+                  renderTrigger={({ onOpen, selectedCoupon }) => (
                     <>
-                      <Button onClick={() => setVisible(true)}>
+                      <Button variant="outline" onClick={onOpen}>
                         {discountTarget
                           ? formatMessage(commonMessages.button.reselectCoupon)
-                          : formatMessage(checkoutMessages.title.chooseMemberCard)}
+                          : formatMessage(commonMessages.button.chooseCoupon)}
                       </Button>
-                      {selectedMembershipCard && <span className="ml-3">{selectedMembershipCard.title}</span>}
+                      {selectedCoupon && <span className="ml-3">{selectedCoupon.couponCode.couponPlan.title}</span>}
                     </>
                   )}
                 />
-              ) : null}
+              ) : (
+                <Button onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
+                  {formatMessage(commonMessages.button.chooseCoupon)}
+                </Button>
+              )}
             </span>
           )}
         </StyledRadio>
-      )}
-    </Radio.Group>
+        {enrolledMembershipCardIds.length > 0 && (
+          <StyledRadio height="3rem" value="Card" colorScheme="primary">
+            <span>{formatMessage(checkoutMessages.content.useMemberCard)}</span>
+            {discountType === 'Card' && (
+              <span className="ml-2">
+                {currentMemberId ? (
+                  <MembershipCardSelectionModal
+                    memberId={currentMemberId}
+                    onSelect={membershipCardId => onChange?.(`Card_${membershipCardId}`)}
+                    render={({ setVisible, selectedMembershipCard }: any) => (
+                      <>
+                        <Button variant="outline" onClick={() => setVisible(true)}>
+                          {discountTarget
+                            ? formatMessage(commonMessages.button.reselectCoupon)
+                            : formatMessage(checkoutMessages.title.chooseMemberCard)}
+                        </Button>
+                        {selectedMembershipCard && <span className="ml-3">{selectedMembershipCard.title}</span>}
+                      </>
+                    )}
+                  />
+                ) : null}
+              </span>
+            )}
+          </StyledRadio>
+        )}
+      </Stack>
+    </RadioGroup>
   )
 }
 

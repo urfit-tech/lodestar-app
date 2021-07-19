@@ -88,6 +88,11 @@ const StyledAction = styled.div`
     }
   }
 `
+const StyledLink = styled(Link)`
+  &&:hover {
+    color: ${props => props.theme['@primary-color']}bf;
+  }
+`
 
 const CreatorCard: React.VFC<{
   id: string
@@ -145,24 +150,28 @@ const CreatorCard: React.VFC<{
         <div>
           {withProgram && (
             <StyledAction>
-              <Link to={`/creators/${id}?tabkey=programs`}>{formatMessage(commonMessages.content.addCourse)}</Link>
+              <StyledLink to={`/creators/${id}?tabkey=programs`}>
+                {formatMessage(commonMessages.content.addCourse)}
+              </StyledLink>
             </StyledAction>
           )}
           {withPodcast && enabledModules.podcast && (
             <StyledAction>
-              <Link to={`/creators/${id}?tabkey=podcasts`}>{formatMessage(commonMessages.content.podcasts)}</Link>
+              <StyledLink to={`/creators/${id}?tabkey=podcasts`}>
+                {formatMessage(commonMessages.content.podcasts)}
+              </StyledLink>
             </StyledAction>
           )}
           {withAppointment && enabledModules.appointment && (
             <StyledAction>
-              <Link to={`/creators/${id}?tabkey=appointments`}>
+              <StyledLink to={`/creators/${id}?tabkey=appointments`}>
                 {formatMessage(commonMessages.content.appointments)}
-              </Link>
+              </StyledLink>
             </StyledAction>
           )}
           {withBlog && enabledModules.blog && (
             <StyledAction>
-              <Link to={`/creators/${id}?tabkey=posts`}>{formatMessage(commonMessages.content.blog)}</Link>
+              <StyledLink to={`/creators/${id}?tabkey=posts`}>{formatMessage(commonMessages.content.blog)}</StyledLink>
             </StyledAction>
           )}
         </div>

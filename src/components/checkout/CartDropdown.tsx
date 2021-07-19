@@ -1,5 +1,7 @@
-import { Badge, Button, List, Popover } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
+import { Badge, List, Popover } from 'antd'
 import React, { useContext } from 'react'
+import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -71,7 +73,7 @@ const CartDropdown: React.VFC = () => {
           </StyledList>
           <StyledAction>
             <Link to="/cart">
-              <Button type="link" block>
+              <Button variant="ghost" isFullWidth>
                 {formatMessage(commonMessages.button.list)}
               </Button>
             </Link>
@@ -80,7 +82,9 @@ const CartDropdown: React.VFC = () => {
       ) : (
         <div className="p-3 d-flex align-items-center">
           <span className="mr-2">{formatMessage(checkoutMessages.content.cartNothing)}</span>
-          <Link to="/programs">{formatMessage(checkoutMessages.link.cartExplore)}</Link>
+          <Link to="/programs">
+            <Button variant="ghost">{formatMessage(checkoutMessages.link.cartExplore)}</Button>
+          </Link>
         </div>
       )}
     </Wrapper>
@@ -94,7 +98,9 @@ const CartDropdown: React.VFC = () => {
       content={content}
     >
       <StyledBadge count={cartProducts.length} className="mr-2">
-        <StyledButton type="link" icon="shopping-cart" />
+        <StyledButton variant="ghost">
+          <Icon as={AiOutlineShoppingCart} />
+        </StyledButton>
       </StyledBadge>
     </Popover>
   )

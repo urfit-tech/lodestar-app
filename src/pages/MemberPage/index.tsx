@@ -1,8 +1,9 @@
-import { SkeletonText } from '@chakra-ui/react'
-import { Tabs, Typography } from 'antd'
+import { SkeletonText, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
+import { Typography } from 'antd'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Redirect, useParams } from 'react-router-dom'
+import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../../components/auth/AuthContext'
 import MemberAvatar from '../../components/common/MemberAvatar'
@@ -27,6 +28,18 @@ const messages = defineMessages({
   merchandiseOrderLog: { id: 'product.merchandise.tab.orderLog', defaultMessage: '商品紀錄' },
 })
 
+const StyledTabList = styled(TabList)`
+  && {
+    padding-bottom: 1px;
+    border-bottom: 1px solid var(--gray);
+  }
+`
+
+const StyledTabPanel = styled(TabPanel)`
+  && {
+    padding: 24px 0;
+  }
+`
 const MemberPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { memberId } = useParams<{ memberId: string }>()
@@ -41,10 +54,97 @@ const MemberPage: React.VFC = () => {
 
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
 
+  let content = null
+
   if (memberId === 'currentMemberId' && isAuthenticated) {
     return <Redirect to={`/members/${currentMemberId}`} />
   }
+  if (
+    !currentMemberId ||
+    loadingProgramPackageIds ||
+    loadingEnrolledProjectPlanIds ||
+    loadingTickets ||
+    loadingPodcastProgramIds ||
+    loadingEnrolledAppointments ||
+    loadingOrderLogs
+  ) {
+    content = <SkeletonText mt="1" noOfLines={4} spacing="4" />
+  }
 
+  const tabContents: {
+    key: string
+    name: string
+    isVisible: boolean
+    content?: React.ReactElement
+  }[] = [
+    {
+      key: 'program',
+      name: formatMessage(commonMessages.tab.course),
+      isVisible: currentMemberId === memberId || currentUserRole === 'app-owner',
+      content: (
+        <>
+          <EnrolledProgramCollectionBlock memberId={memberId} />
+          {enrolledProgramPackagePlanIds.length > 0 && <ProgramPackageCollectionBlock memberId={memberId} />}
+        </>
+      ),
+    },
+    {
+      key: 'project-plan',
+      name: formatMessage(commonMessages.tab.project),
+      isVisible: (currentMemberId === memberId || currentUserRole === 'app-owner') && enrolledProjectPlanIds.length > 0,
+      content: <ProjectPlanCollectionBlock memberId={memberId} />,
+    },
+    {
+      key: 'activity-ticket',
+      name: formatMessage(commonMessages.tab.activity),
+      isVisible:
+        (currentMemberId === memberId || currentUserRole === 'app-owner') && enrolledActivityTickets.length > 0,
+      content: <ActivityTicketCollectionBlock memberId={memberId} />,
+    },
+    {
+      key: 'podcast',
+      name: formatMessage(commonMessages.tab.podcast),
+      isVisible:
+        (currentMemberId === memberId || currentUserRole === 'app-owner') && enrolledPodcastPrograms.length > 0,
+      content: <PodcastProgramCollectionBlock memberId={memberId} />,
+    },
+    {
+      key: 'appointment',
+      name: formatMessage(commonMessages.tab.appointment),
+      isVisible: (currentMemberId === memberId || currentUserRole === 'app-owner') && enrolledAppointments.length > 0,
+      content: <AppointmentPlanCollectionBlock memberId={memberId} />,
+    },
+    {
+      key: 'merchandise-order',
+      name: formatMessage(messages.merchandiseOrderLog),
+      isVisible: (currentMemberId === memberId || currentUserRole === 'app-owner') && orderLogs.length > 0,
+      content: <MerchandiseOrderCollectionBlock memberId={memberId} />,
+    },
+  ].filter(v => v.isVisible)
+
+  content = (
+    <Tabs
+      colorScheme="primary"
+      index={tabContents.findIndex(v => (activeKey ? v.key === activeKey : v.key === 'program'))}
+    >
+      <div style={{ background: 'white' }}>
+        <div className="container">
+          <StyledTabList>
+            {tabContents.map(v => (
+              <Tab key={v.key} onClick={() => setActiveKey(v.key)}>
+                {v.name}
+              </Tab>
+            ))}
+          </StyledTabList>
+        </div>
+      </div>
+      <TabPanels>
+        {tabContents.map(v => (
+          <StyledTabPanel>{v.content}</StyledTabPanel>
+        ))}
+      </TabPanels>
+    </Tabs>
+  )
   return (
     <DefaultLayout>
       <div className=" py-4 py-sm-5" style={{ background: 'white' }}>
@@ -62,60 +162,7 @@ const MemberPage: React.VFC = () => {
           </div>
         )}
       </div>
-
-      {!currentMemberId ||
-      loadingProgramPackageIds ||
-      loadingEnrolledProjectPlanIds ||
-      loadingTickets ||
-      loadingPodcastProgramIds ||
-      loadingEnrolledAppointments ||
-      loadingOrderLogs ? (
-        <SkeletonText mt="1" noOfLines={4} spacing="4" />
-      ) : (
-        <Tabs
-          activeKey={activeKey || 'program'}
-          onChange={key => setActiveKey(key)}
-          renderTabBar={(tabsProps, DefaultTabBar) => (
-            <div style={{ background: 'white' }}>
-              <div className="container">
-                <DefaultTabBar {...tabsProps} />
-              </div>
-            </div>
-          )}
-        >
-          {(currentMemberId === memberId || currentUserRole === 'app-owner') && (
-            <Tabs.TabPane key="program" tab={formatMessage(commonMessages.tab.course)}>
-              <EnrolledProgramCollectionBlock memberId={memberId} />
-              {enrolledProgramPackagePlanIds.length > 0 && <ProgramPackageCollectionBlock memberId={memberId} />}
-            </Tabs.TabPane>
-          )}
-          {(currentMemberId === memberId || currentUserRole === 'app-owner') && enrolledProjectPlanIds.length > 0 && (
-            <Tabs.TabPane key="project-plan" tab={formatMessage(commonMessages.tab.project)}>
-              <ProjectPlanCollectionBlock memberId={memberId} />
-            </Tabs.TabPane>
-          )}
-          {(currentMemberId === memberId || currentUserRole === 'app-owner') && enrolledActivityTickets.length > 0 && (
-            <Tabs.TabPane key="activity-ticket" tab={formatMessage(commonMessages.tab.activity)}>
-              <ActivityTicketCollectionBlock memberId={memberId} />
-            </Tabs.TabPane>
-          )}
-          {(currentMemberId === memberId || currentUserRole === 'app-owner') && enrolledPodcastPrograms.length > 0 && (
-            <Tabs.TabPane key="podcast" tab={formatMessage(commonMessages.tab.podcast)}>
-              <PodcastProgramCollectionBlock memberId={memberId} />
-            </Tabs.TabPane>
-          )}
-          {(currentMemberId === memberId || currentUserRole === 'app-owner') && enrolledAppointments.length > 0 && (
-            <Tabs.TabPane key="appointment" tab={formatMessage(commonMessages.tab.appointment)}>
-              <AppointmentPlanCollectionBlock memberId={memberId} />
-            </Tabs.TabPane>
-          )}
-          {(currentMemberId === memberId || currentUserRole === 'app-owner') && orderLogs.length > 0 && (
-            <Tabs.TabPane key="merchandise-order" tab={formatMessage(messages.merchandiseOrderLog)}>
-              <MerchandiseOrderCollectionBlock memberId={memberId} />
-            </Tabs.TabPane>
-          )}
-        </Tabs>
-      )}
+      {content}
     </DefaultLayout>
   )
 }

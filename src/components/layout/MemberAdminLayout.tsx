@@ -25,6 +25,13 @@ const StyledHeading = styled.h2`
   color: var(--gray-darker);
 `
 
+const StyledLink = styled(Link)`
+  color: ${props => props.theme['@primary-color']};
+  &&:hover {
+    color: ${props => props.theme['@primary-color']}bf;
+  }
+`
+
 const MemberAdminLayout: React.FC<{
   content: {
     title: string
@@ -37,7 +44,7 @@ const MemberAdminLayout: React.FC<{
   return (
     <DefaultLayout
       noFooter
-      renderTitle={() => <Link to={`/settings`}>{formatMessage(commonMessages.button.backstage)}</Link>}
+      renderTitle={() => <StyledLink to={`/settings`}>{formatMessage(commonMessages.button.backstage)}</StyledLink>}
     >
       <div className="d-flex">
         <Responsive.Desktop>

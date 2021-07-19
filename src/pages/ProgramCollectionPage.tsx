@@ -1,10 +1,11 @@
-import { SkeletonText } from '@chakra-ui/react'
-import { Button, Icon } from 'antd'
+import { Button as ChakraButton, SkeletonText } from '@chakra-ui/react'
+import { Icon } from 'antd'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../components/auth/AuthContext'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
@@ -18,6 +19,15 @@ import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
 import { CategoryProps } from '../types/general'
+
+const StyledButton = styled(ChakraButton)`
+  && {
+    height: 2.75rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    border-radius: 2rem;
+  }
+`
 
 const ProgramCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -113,28 +123,27 @@ const ProgramCollectionPage: React.VFC = () => {
             <Icon type="appstore" theme="filled" className="mr-3" />
             <span>{title || pageTitle || formatMessage(productMessages.program.title.explore)}</span>
           </StyledBannerTitle>
-
           {!noSelector && (
-            <Button
-              type={selectedCategoryId === null ? 'primary' : 'default'}
-              shape="round"
+            <StyledButton
+              colorScheme="primary"
+              variant={selectedCategoryId === null ? 'solid' : 'outline'}
               className="mb-2"
               onClick={() => setSelectedCategoryId(null)}
             >
               {formatMessage(commonMessages.button.allCategory)}
-            </Button>
+            </StyledButton>
           )}
           {!noSelector &&
             categories.map(category => (
-              <Button
+              <StyledButton
                 key={category.id}
-                type={selectedCategoryId === category.id ? 'primary' : 'default'}
-                shape="round"
+                colorScheme="primary"
+                variant={selectedCategoryId === category.id ? 'solid' : 'outline'}
                 className="ml-2 mb-2"
                 onClick={() => setSelectedCategoryId(category.id)}
               >
                 {category.name}
-              </Button>
+              </StyledButton>
             ))}
         </div>
       </StyledBanner>

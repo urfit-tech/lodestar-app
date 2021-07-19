@@ -7,6 +7,12 @@ import { PodcastProgramCardProps } from '../../components/podcast/PodcastProgram
 import { PodcastProgramPopoverProps } from '../../components/podcast/PodcastProgramPopover'
 import { useEnrolledPodcastPlansCreators, useEnrolledPodcastPrograms } from '../../hooks/podcast'
 
+const StyledTimeline = styled(Timeline)`
+  && .ant-timeline-item-head {
+    border-color: ${props => props.theme['@primary-color']};
+  }
+`
+
 const StyledTitle = styled.div`
   color: var(--gray-darker);
   font-weight: bold;
@@ -40,7 +46,7 @@ const PodcastProgramTimeline: React.VFC<{
   )
 
   return (
-    <Timeline>
+    <StyledTimeline>
       {Object.keys(podcastProgramsGroupByDate).map((date: string) => (
         <Timeline.Item key={date}>
           <StyledTitle className="mb-4">{date}</StyledTitle>
@@ -59,7 +65,7 @@ const PodcastProgramTimeline: React.VFC<{
             })}
         </Timeline.Item>
       ))}
-    </Timeline>
+    </StyledTimeline>
   )
 }
 
