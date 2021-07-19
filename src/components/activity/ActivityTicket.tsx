@@ -83,12 +83,9 @@ const ActivityTicket: React.VFC<{
   startedAt: Date
   endedAt: Date
   isPublished: boolean
-  activitySessionTickets: {
+  activityTicketSessions: {
     id: string
-    activitySession: {
-      id: string
-      title: string
-    }
+    title: string
   }[]
   participants: number
   variant?: 'admin'
@@ -101,7 +98,7 @@ const ActivityTicket: React.VFC<{
   startedAt,
   endedAt,
   isPublished,
-  activitySessionTickets,
+  activityTicketSessions,
   participants,
   variant,
   extra,
@@ -127,9 +124,9 @@ const ActivityTicket: React.VFC<{
       </StyledPrice>
       <Divider />
       <StyledSubTitle>{formatMessage(productMessages.activity.title.sessions)}</StyledSubTitle>
-      {activitySessionTickets.map(sessionTicket => (
-        <StyledTag key={sessionTicket.id} color="#585858" className="mb-2">
-          {sessionTicket.activitySession.title}
+      {activityTicketSessions.map(v => (
+        <StyledTag key={v.id} color="#585858" className="mb-2">
+          {v.title}
         </StyledTag>
       ))}
       {!!description && (

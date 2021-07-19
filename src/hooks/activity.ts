@@ -129,6 +129,129 @@ export const useEnrolledActivityTickets = (memberId: string) => {
   }
 }
 
+export const useActivity = ({ activityId, memberId }: { activityId: string; memberId: string }) => {
+  const { loading, error, data } = useQuery<hasura.GET_ACTIVITY, hasura.GET_ACTIVITYVariables>(
+    gql`
+      query GET_ACTIVITY($activityId: uuid!, $memberId: String!) {
+        activity_by_pk(id: $activityId) {
+          id
+          organizer_id
+          cover_url
+          title
+          description
+          published_at
+          activity_categories {
+            id
+            category {
+              id
+              name
+            }
+          }
+          activity_sessions(order_by: { started_at: asc }) {
+            id
+          }
+          activity_tickets(where: { is_published: { _eq: true } }, order_by: { started_at: asc }) {
+            id
+            count
+            description
+            started_at
+            is_published
+            ended_at
+            price
+            title
+            activity_session_tickets {
+              id
+              activity_session_type
+              activity_session {
+                id
+                title
+              }
+            }
+            activity_ticket_enrollments_aggregate {
+              aggregate {
+                count
+              }
+            }
+            activity_ticket_enrollments(where: { member_id: { _eq: $memberId } }) {
+              order_log_id
+              order_product_id
+            }
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        activityId,
+        memberId,
+      },
+    },
+  )
+
+  const activity: {
+    id: string
+    title: string
+    description: string | null
+    coverUrl: string | null
+    publishedAt: Date | null
+    organizerId: string
+    tickets: {
+      id: string
+      title: string
+      price: number
+      count: number
+      description: string | null
+      isPublished: boolean
+      startedAt: Date
+      endedAt: Date
+      participants: number
+      sessions: { id: string; title: string }[]
+      enrollments: { orderId: string; orderProductId: string }[]
+    }[]
+    categories: { id: string; name: string }[]
+    sessionIds: string[]
+  } | null = data?.activity_by_pk
+    ? {
+        id: activityId,
+        title: data.activity_by_pk.title,
+        description: data.activity_by_pk.description,
+        coverUrl: data.activity_by_pk.cover_url,
+        publishedAt: data.activity_by_pk.published_at ? new Date(data.activity_by_pk.published_at) : null,
+        organizerId: data.activity_by_pk.organizer_id,
+        tickets: data.activity_by_pk.activity_tickets.map(v => ({
+          id: v.id,
+          title: v.title,
+          price: v.price,
+          count: v.count,
+          description: v.description,
+          startedAt: new Date(v.started_at),
+          endedAt: new Date(v.ended_at),
+          isPublished: v.is_published,
+          sessions: v.activity_session_tickets.map(v => ({
+            id: v.activity_session.id,
+            title: v.activity_session.title,
+          })),
+          participants: v.activity_ticket_enrollments_aggregate.aggregate?.count || 0,
+          enrollments: v.activity_ticket_enrollments.map(v => ({
+            orderId: v.order_log_id || '',
+            orderProductId: v.order_product_id,
+          })),
+        })),
+        categories: data.activity_by_pk.activity_categories.map(v => ({
+          id: v.category.id,
+          name: v.category.name,
+        })),
+        sessionIds: data.activity_by_pk.activity_sessions.map(v => v.id),
+      }
+    : null
+
+  return {
+    loading,
+    error,
+    activity,
+  }
+}
+
 export const useActivitySession = (sessionId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_ACTIVITY_SESSION, hasura.GET_ACTIVITY_SESSIONVariables>(
     gql`
