@@ -2246,7 +2246,7 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
   title: string;
   started_at: any;
   ended_at: any;
-  location: string;
+  location: string | null;
   description: string | null;
   threshold: any | null;
   /**
@@ -2288,7 +2288,7 @@ export interface GET_TICKET_activity_ticket_by_pk_activity_session_tickets_activ
   id: any;
   title: string;
   description: string | null;
-  location: string;
+  location: string | null;
   started_at: any;
   ended_at: any;
   threshold: any | null;
@@ -3580,6 +3580,7 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any;
+  period_amount: any | null;
   period_type: string | null;
   group_buying_people: any | null;
   /**
@@ -6282,7 +6283,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_plans {
   __typename: "program_plan";
   id: any;
   /**
-   * 1 - subscribe from now / 2 - subscribe all / 3 - all
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
    */
   type: number;
   title: string;
@@ -6458,7 +6459,7 @@ export interface GET_PROGRAM_program_by_pk_program_plans {
   __typename: "program_plan";
   id: any;
   /**
-   * 1 - subscribe from now / 2 - subscribe all / 3 - all
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
    */
   type: number;
   title: string;
@@ -8328,7 +8329,7 @@ export interface SEARCH_PRODUCT_COLLECTION_program_program_plans {
   __typename: "program_plan";
   id: any;
   /**
-   * 1 - subscribe from now / 2 - subscribe all / 3 - all
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
    */
   type: number;
   title: string;
@@ -9044,6 +9045,7 @@ export enum activity_session_ticket_constraint {
  */
 export enum activity_session_ticket_update_column {
   activity_session_id = "activity_session_id",
+  activity_session_type = "activity_session_type",
   activity_ticket_id = "activity_ticket_id",
   id = "id",
 }
@@ -9057,6 +9059,7 @@ export enum activity_session_update_column {
   ended_at = "ended_at",
   id = "id",
   location = "location",
+  location_online = "location_online",
   started_at = "started_at",
   threshold = "threshold",
   title = "title",
@@ -11986,6 +11989,7 @@ export interface activity_session_bool_exp {
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   location?: String_comparison_exp | null;
+  location_online?: String_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
   threshold?: numeric_comparison_exp | null;
   title?: String_comparison_exp | null;
@@ -12003,6 +12007,7 @@ export interface activity_session_insert_input {
   ended_at?: any | null;
   id?: any | null;
   location?: string | null;
+  location_online?: string | null;
   started_at?: any | null;
   threshold?: any | null;
   title?: string | null;
@@ -12042,6 +12047,7 @@ export interface activity_session_ticket_bool_exp {
   _or?: (activity_session_ticket_bool_exp | null)[] | null;
   activity_session?: activity_session_bool_exp | null;
   activity_session_id?: uuid_comparison_exp | null;
+  activity_session_type?: String_comparison_exp | null;
   activity_ticket?: activity_ticket_bool_exp | null;
   activity_ticket_id?: uuid_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -12053,6 +12059,7 @@ export interface activity_session_ticket_bool_exp {
 export interface activity_session_ticket_insert_input {
   activity_session?: activity_session_obj_rel_insert_input | null;
   activity_session_id?: any | null;
+  activity_session_type?: string | null;
   activity_ticket?: activity_ticket_obj_rel_insert_input | null;
   activity_ticket_id?: any | null;
   id?: any | null;
@@ -15804,6 +15811,20 @@ export interface order_log_on_conflict {
 }
 
 /**
+ * Boolean expression to filter rows from the table "order_payment_status". All fields are combined with a logical 'AND'.
+ */
+export interface order_payment_status_bool_exp {
+  _and?: (order_payment_status_bool_exp | null)[] | null;
+  _not?: order_payment_status_bool_exp | null;
+  _or?: (order_payment_status_bool_exp | null)[] | null;
+  last_paid_at?: timestamptz_comparison_exp | null;
+  member_id?: String_comparison_exp | null;
+  order_id?: String_comparison_exp | null;
+  order_log?: order_log_bool_exp | null;
+  status?: String_comparison_exp | null;
+}
+
+/**
  * input type for inserting array relation for remote table "order_product"
  */
 export interface order_product_arr_rel_insert_input {
@@ -16163,6 +16184,7 @@ export interface payment_log_bool_exp {
   options?: jsonb_comparison_exp | null;
   order_id?: String_comparison_exp | null;
   order_log?: order_log_bool_exp | null;
+  order_payment_status?: order_payment_status_bool_exp | null;
   paid_at?: timestamptz_comparison_exp | null;
   payment_due_at?: timestamptz_comparison_exp | null;
   price?: numeric_comparison_exp | null;

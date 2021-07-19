@@ -70,6 +70,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
               ? data.program_plan_by_pk.sale_price
               : undefined,
           discountDownPrice: data.program_plan_by_pk.discount_down_price || undefined,
+          periodAmount: data.program_plan_by_pk.period_amount,
           periodType: data.program_plan_by_pk.period_type as PeriodType,
           groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
         }
@@ -204,6 +205,7 @@ const GET_PRODUCT_SIMPLE = gql`
       sale_price
       sold_at
       discount_down_price
+      period_amount
       period_type
       group_buying_people
       program {
