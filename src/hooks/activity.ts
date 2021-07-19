@@ -169,7 +169,7 @@ export const useActivitySession = (sessionId: string) => {
     title: string
     startedAt: Date
     endedAt: Date
-    location: string
+    location: string | null
     description: string | null
     threshold: number | null
     isParticipantsVisible: boolean

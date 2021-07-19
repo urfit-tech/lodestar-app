@@ -14,7 +14,7 @@ type ActivitySessionProps = {
   threshold: number | null
   startedAt: Date
   endedAt: Date
-  location: string
+  location: string | null
   activityId: string
 }
 
