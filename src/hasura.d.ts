@@ -2355,6 +2355,11 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_ti
   activity_ticket: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets_activity_ticket;
 }
 
+export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments {
+  __typename: "activity_enrollment";
+  member_id: string | null;
+}
+
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate_aggregate {
   __typename: "activity_enrollment_aggregate_fields";
   count: number | null;
@@ -2384,6 +2389,10 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
    */
   activity_session_tickets: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets[];
   /**
+   * An array relationship
+   */
+  activity_enrollments: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments[];
+  /**
    * An aggregated array relationship
    */
   activity_enrollments_aggregate: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate;
@@ -2398,6 +2407,7 @@ export interface GET_ACTIVITY_SESSION {
 
 export interface GET_ACTIVITY_SESSIONVariables {
   sessionId: any;
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -2423,6 +2433,10 @@ export interface GET_TICKET_activity_ticket_by_pk_activity_session_tickets_activ
 export interface GET_TICKET_activity_ticket_by_pk_activity_session_tickets {
   __typename: "activity_session_ticket";
   id: any;
+  /**
+   * offline | online | both
+   */
+  activity_session_type: string;
   /**
    * An object relationship
    */

@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
-import { SkeletonText } from '@chakra-ui/react'
+import { Button, SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -11,6 +11,7 @@ import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg
 import { ReactComponent as MapOIcon } from '../../images/map-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { ReactComponent as VideoIcon } from '../../images/video.svg'
+import { useAuth } from '../auth/AuthContext'
 
 const StyledWrapper = styled.div`
   padding: 1.5rem 0;
@@ -38,7 +39,11 @@ const ActivitySessionItem: React.VFC<{
 }> = ({ activitySessionId, renderAttend }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
-  const { loadingSession, errorSession, session } = useActivitySession(activitySessionId)
+  const { currentMemberId } = useAuth()
+  const { loadingSession, errorSession, session } = useActivitySession({
+    sessionId: activitySessionId,
+    memberId: currentMemberId || '',
+  })
 
   if (loadingSession) {
     return (
@@ -70,9 +75,18 @@ const ActivitySessionItem: React.VFC<{
           ))}
 
         {enabledModules.activity_online && session.onlineLink && (
-          <div>
+          <div className="d-flex align-items-center">
             <Icon as={VideoIcon} className="mr-2" />
-            {formatMessage(activityMessages.ui.live)}
+            {session.isEnrolled ? (
+              <span>
+                <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}</span>
+                <a href={`//${session.onlineLink}`} target="_blank" rel="noopener noreferrer">
+                  <Button variant="link">{session.onlineLink}</Button>
+                </a>
+              </span>
+            ) : (
+              formatMessage(activityMessages.text.live)
+            )}
           </div>
         )}
 
