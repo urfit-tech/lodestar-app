@@ -205,6 +205,7 @@ const CheckoutBlock: React.VFC<{
         currency: 'TWD',
       })
     }
+
     const taskId = await placeOrder(
       'perpetual',
       {

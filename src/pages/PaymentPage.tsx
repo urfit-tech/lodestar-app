@@ -1,3 +1,4 @@
+import { message } from 'antd'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -46,7 +47,7 @@ const usePayForm = (paymentNo: number) => {
             headers: { authorization: `Bearer ${authToken}` },
           },
         )
-        .then(({ data: { code, message, result } }) => {
+        .then(({ data: { code, result } }) => {
           if (code === 'SUCCESS') {
             switch (result.gateway) {
               case 'paypal':
