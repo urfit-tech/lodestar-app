@@ -123,7 +123,7 @@ const ProgramContentPlayer: React.VFC<
       : 'reactPlayer',
   )
 
-  const cachedPlayerConfig = JSON.parse(localStorage.getItem('kolable.player') || '{}') as PlayerConfigProps
+  const cachedPlayerConfig: PlayerConfigProps = JSON.parse(localStorage.getItem('kolable.player') || '{}')
 
   if (loadingProgress) {
     return null
@@ -367,7 +367,7 @@ const VimeoPlayer: React.VFC<{
       onReady={player => {
         const video = player.getInternalPlayer()
         video.on('ratechange', (e: any) => {
-          const cachedPlayerConfig = JSON.parse(localStorage.getItem('kolable.player') || '{}') as PlayerConfigProps
+          const cachedPlayerConfig: PlayerConfigProps = JSON.parse(localStorage.getItem('kolable.player') || '{}')
           const playbackRate = e.playbackRate || 1
           const volume = cachedPlayerConfig.volume || 1
           localStorage.setItem(
@@ -379,7 +379,7 @@ const VimeoPlayer: React.VFC<{
           )
         })
         video.on('volumechange', (e: any) => {
-          const cachedPlayerConfig = JSON.parse(localStorage.getItem('kolable.player') || '{}') as PlayerConfigProps
+          const cachedPlayerConfig: PlayerConfigProps = JSON.parse(localStorage.getItem('kolable.player') || '{}')
           const volume = e.volume || 1
           const playbackRate = cachedPlayerConfig.playbackRate || 1
 
