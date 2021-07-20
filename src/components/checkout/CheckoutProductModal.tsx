@@ -240,7 +240,6 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     history.push(`/tasks/order/${taskId}`)
   }
 
-  console.log('payment type', payment)
   return (
     <>
       {renderTrigger(onOpen, productId => setProductId(productId))}
