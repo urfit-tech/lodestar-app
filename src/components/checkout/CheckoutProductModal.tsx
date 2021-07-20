@@ -216,10 +216,14 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
       ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
     }
 
-    const taskId = await placeOrder(paymentType, {
-      ...invoice,
-      referrerEmail: referrerEmail || undefined,
-    })
+    const taskId = await placeOrder(
+      paymentType,
+      {
+        ...invoice,
+        referrerEmail: referrerEmail || undefined,
+      },
+      payment,
+    )
 
     await updateMemberMetadata({
       variables: {
