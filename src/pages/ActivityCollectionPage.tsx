@@ -4,6 +4,7 @@ import { uniqBy, unnest } from 'ramda'
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Activity from '../components/activity/Activity'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -23,10 +24,14 @@ const StyledButton = styled(Button)`
 
 const ActivityCollectionPage = () => {
   const { currentLanguage } = useContext(LanguageContext)
-  const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
-  const { formatMessage } = useIntl()
   const { pageTitle } = useNav()
+  const { formatMessage } = useIntl()
+  const [defaultActive] = useQueryParam('categories', StringParam)
+  const [noSelector] = useQueryParam('noSelector', BooleanParam)
+  const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection({
+    categoryId: defaultActive || undefined,
+  })
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
 
   const categories: {
     id: string
@@ -39,28 +44,36 @@ const ActivityCollectionPage = () => {
         <div className="container">
           <StyledBannerTitle>
             <Icon type="appstore" theme="filled" className="mr-3" />
-            <span>{pageTitle || formatMessage(productMessages.activity.title.default)}</span>
+            <span>
+              {pageTitle ||
+                categories.find(category => category.id === defaultActive)?.name ||
+                formatMessage(productMessages.activity.title.default)}
+            </span>
           </StyledBannerTitle>
 
-          <StyledButton
-            colorScheme="primary"
-            variant={selectedCategoryId === null ? 'solid' : 'outline'}
-            className="mb-2"
-            onClick={() => setSelectedCategoryId(null)}
-          >
-            {formatMessage(commonMessages.button.allCategory)}
-          </StyledButton>
-          {categories.map(category => (
-            <StyledButton
-              key={category.id}
-              colorScheme="primary"
-              variant={selectedCategoryId === category.id ? 'solid' : 'outline'}
-              className="ml-2 mb-2"
-              onClick={() => setSelectedCategoryId(category.id)}
-            >
-              {category.name}
-            </StyledButton>
-          ))}
+          {!noSelector && (
+            <>
+              <StyledButton
+                colorScheme="primary"
+                variant={selectedCategoryId === null ? 'solid' : 'outline'}
+                className="mb-2"
+                onClick={() => setSelectedCategoryId(null)}
+              >
+                {formatMessage(commonMessages.button.allCategory)}
+              </StyledButton>
+              {categories.map(category => (
+                <StyledButton
+                  key={category.id}
+                  colorScheme="primary"
+                  variant={selectedCategoryId === category.id ? 'solid' : 'outline'}
+                  className="ml-2 mb-2"
+                  onClick={() => setSelectedCategoryId(category.id)}
+                >
+                  {category.name}
+                </StyledButton>
+              ))}
+            </>
+          )}
         </div>
       </StyledBanner>
 

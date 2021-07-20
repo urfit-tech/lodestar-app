@@ -9,49 +9,62 @@ import {
   ActivityTicketProps,
 } from '../types/activity'
 
-export const usePublishedActivityCollection = () => {
-  const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_ACTIVITY_COLLECTION>(gql`
-    query GET_PUBLISHED_ACTIVITY_COLLECTION {
-      activity(where: { published_at: { _is_null: false } }, order_by: [{ position: asc }, { published_at: desc }]) {
-        id
-        cover_url
-        title
-        published_at
-        is_participants_visible
-        organizer_id
-        support_locales
-        activity_categories {
+export const usePublishedActivityCollection = (options?: { categoryId?: string }) => {
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_ACTIVITY_COLLECTION>(
+    gql`
+      query GET_PUBLISHED_ACTIVITY_COLLECTION($categoryId: String) {
+        activity(
+          where: {
+            published_at: { _is_null: false }
+            _or: { activity_categories: { category_id: { _eq: $categoryId } } }
+          }
+          order_by: [{ position: asc }, { published_at: desc }]
+        ) {
           id
-          category {
+          cover_url
+          title
+          published_at
+          is_participants_visible
+          organizer_id
+          support_locales
+          activity_categories {
             id
-            name
-          }
-        }
-        activity_enrollments_aggregate {
-          aggregate {
-            count
-          }
-        }
-        activity_sessions_aggregate {
-          aggregate {
-            min {
-              started_at
-            }
-            max {
-              ended_at
+            category {
+              id
+              name
             }
           }
-        }
-        activity_tickets_aggregate {
-          aggregate {
-            sum {
+          activity_enrollments_aggregate {
+            aggregate {
               count
+            }
+          }
+          activity_sessions_aggregate {
+            aggregate {
+              min {
+                started_at
+              }
+              max {
+                ended_at
+              }
+            }
+          }
+          activity_tickets_aggregate {
+            aggregate {
+              sum {
+                count
+              }
             }
           }
         }
       }
-    }
-  `)
+    `,
+    {
+      variables: {
+        categoryId: options?.categoryId,
+      },
+    },
+  )
 
   const activities: ActivityProps[] =
     loading || error || !data
