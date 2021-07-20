@@ -231,7 +231,6 @@ export const AuthProvider: React.FC<{
             .catch(error => {
               handleError(error)
             }),
-
         socialLogin: async ({ provider, providerToken, accountLinkToken }) =>
           Axios.post(
             `//${apiHost}/auth/social-login`,
@@ -240,7 +239,7 @@ export const AuthProvider: React.FC<{
               provider,
               providerToken,
             },
-            //{ withCredentials: true },
+            { withCredentials: true },
           ).then(({ data: { code, message, result } }) => {
             if (code === 'SUCCESS') {
               setAuthToken(result.authToken)
