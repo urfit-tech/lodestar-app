@@ -5,7 +5,7 @@ import hasura from '../hasura'
 import { isUUIDv4 } from '../helpers'
 import { PostLatestProps, PostLinkProps, PostPreviewProps, PostProps } from '../types/blog'
 
-export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: string[] }) => {
+export const usePostPreviewCollection = (filter?: { authorId?: string; categories?: string[] }) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_POST_PREVIEW_COLLECTION,
     hasura.GET_POST_PREVIEW_COLLECTIONVariables
@@ -60,8 +60,8 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
           .filter(
             post =>
               !filter ||
-              typeof filter.tags === 'undefined' ||
-              post.post_tags.some(postTag => filter.tags?.includes(postTag.tag_name)),
+              typeof filter.categories === 'undefined' ||
+              post.post_tags.some(postTag => filter.categories?.includes(postTag.tag_name)),
           )
           .map(post => ({
             id: post.id,
