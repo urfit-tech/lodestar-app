@@ -216,10 +216,14 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
       ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
     }
 
-    const taskId = await placeOrder(paymentType, {
-      ...invoice,
-      referrerEmail: referrerEmail || undefined,
-    })
+    const taskId = await placeOrder(
+      paymentType,
+      {
+        ...invoice,
+        referrerEmail: referrerEmail || undefined,
+      },
+      payment,
+    )
 
     await updateMemberMetadata({
       variables: {
@@ -236,6 +240,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     history.push(`/tasks/order/${taskId}`)
   }
 
+  console.log('payment type', payment)
   return (
     <>
       {renderTrigger(onOpen, productId => setProductId(productId))}
