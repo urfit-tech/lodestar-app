@@ -74,7 +74,7 @@ const ActivityTicketPage: React.VFC<{
   return (
     <DefaultLayout noFooter white>
       <ActivityBanner
-        activityCategories={ticket.activity.categories}
+        activityCategories={ticket.activity.categories.map(v => ({ id: v.category.id, name: v.category.name }))}
         activityTitle={ticket.activity.title}
         coverImage={ticket.activity.coverUrl || ''}
       >

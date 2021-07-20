@@ -39,27 +39,21 @@ const StyledQRCode = styled.div`
   box-shadow: 0 2px 21px 0 rgba(0, 0, 0, 0.15);
 `
 
-type ActivityBannerProps = {
+const ActivityBanner: React.FC<{
   coverImage?: string
   activityCategories: {
-    category: {
-      id: string
-      name: string
-    }
+    id: string
+    name: string
   }[]
   activityTitle: string
-}
-
-const ActivityBanner: React.FC<ActivityBannerProps> = ({ coverImage, activityCategories, activityTitle, children }) => {
+}> = ({ coverImage, activityCategories, activityTitle, children }) => {
   const { formatMessage } = useIntl()
   return (
     <BlurredBanner coverUrl={coverImage}>
       <StyledTitleBlock withChildren={!!children} className="text-center">
         <div className="mb-4">
           {activityCategories.map(activityCategory => (
-            <StyledCategoryLabel key={activityCategory.category.id}>
-              #{activityCategory.category.name}
-            </StyledCategoryLabel>
+            <StyledCategoryLabel key={activityCategory.id}>#{activityCategory.name}</StyledCategoryLabel>
           ))}
         </div>
         <StyledTitle className="m-0">{activityTitle}</StyledTitle>
