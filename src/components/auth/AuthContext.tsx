@@ -231,6 +231,7 @@ export const AuthProvider: React.FC<{
             .catch(error => {
               handleError(error)
             }),
+
         socialLogin: async ({ provider, providerToken, accountLinkToken }) =>
           Axios.post(
             `//${apiHost}/auth/social-login`,
