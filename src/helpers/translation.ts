@@ -479,6 +479,7 @@ export const checkoutMessages = {
     unionPay: { id: 'checkout.label.unionPay', defaultMessage: '銀聯卡支付' },
     webAtm: { id: 'checkout.label.webATM', defaultMessage: 'WebATM' },
     barcode: { id: 'checkout.label.barcode', defaultMessage: '超商條碼繳費' },
+    paypal: { id: 'checkoutout.label.paypal', defaultMessage: '使用paypal' },
     parenting: { id: 'checkout.label.parenting', defaultMessage: '親子天下' },
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
     groupBuyingPlan: {
@@ -1582,6 +1583,18 @@ export const codeMessages = defineMessages({
     id: 'code.E_BIND_CREDIT_CARD',
     defaultMessage: '綁定信用卡錯誤',
   },
+  E_PAYPAL_EXEC: {
+    id: 'code.E_PAYPAL_EXEC',
+    defaultMessage: 'PAYPAL執行操作失敗',
+  },
+  E_PAYPAL_ORDER: {
+    id: 'code.E_PAYPAL_ORDER',
+    defaultMessage: 'PAYPAL建立付款失敗',
+  },
+  E_PAYPAL_CAPTURE: {
+    id: 'code.E_PAYPAL_CAPTURE',
+    defaultMessage: 'PAYPAL請款失敗',
+  },
   E_NO_PAYMENT_METHOD: {
     id: 'code.E_NO_PAYMENT_METHOD',
     defaultMessage: '找不到該付款方式',
@@ -1625,5 +1638,9 @@ export const codeMessages = defineMessages({
   E_RESET_PASSWORD_TOKEN: {
     id: 'code.E_RESET_PASSWORD_TOKEN',
     defaultMessage: '連結已失效',
+  },
+  E_SETUP_PAYPAL: {
+    id: 'code.E_SETUP_PAYPAL',
+    defaultMessage: 'Paypal 環境設定失敗',
   },
 })

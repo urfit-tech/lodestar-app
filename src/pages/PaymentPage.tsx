@@ -50,6 +50,13 @@ const usePayForm = (paymentNo: number) => {
         .then(({ data: { code, result } }) => {
           if (code === 'SUCCESS') {
             switch (result.gateway) {
+              case 'paypal':
+                if (result.url) {
+                  window.location.href = result.url
+                } else {
+                  history.push(`/members/${currentMemberId}`)
+                }
+                break
               case 'spgateway':
               case 'parenting':
                 if (result.html) {
