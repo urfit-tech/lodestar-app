@@ -61,7 +61,9 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
             post =>
               !filter ||
               typeof filter.categories === 'undefined' ||
-              post.post_tags.some(postTag => filter.categories?.includes(postTag.tag_name)),
+              typeof filter.tags === 'undefined' ||
+              post.post_tags.some(postTag => filter.categories?.includes(postTag.tag_name)) ||
+              post.post_tags.some(postTag => filter.tags?.includes(postTag.tag_name)),
           )
           .map(post => ({
             id: post.id,
