@@ -11,6 +11,7 @@ import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCard from '../components/merchandise/MerchandiseCard'
 import { commonMessages, productMessages } from '../helpers/translation'
+import { useNav } from '../hooks/data'
 import { useMerchandiseCollection } from '../hooks/merchandise'
 import { ReactComponent as ShopIcon } from '../images/shop.svg'
 
@@ -48,6 +49,7 @@ const MerchandiseCollectionPage: React.VFC = () => {
   const [tag] = useQueryParam('tag', StringParam)
   const [keyword, setKeyword] = useQueryParam('keyword', StringParam)
   const { merchandises, merchandiseTags } = useMerchandiseCollection(keyword)
+  const { pageTitle } = useNav()
 
   const [categoryId, setCategoryId] = useState<string | null>()
 
@@ -87,7 +89,7 @@ const MerchandiseCollectionPage: React.VFC = () => {
             ) : (
               <>
                 <Icon as={ShopIcon} className="mr-3" />
-                <span>{formatMessage(productMessages.merchandise.title.mall)}</span>
+                <span>{pageTitle || formatMessage(productMessages.merchandise.title.mall)}</span>
               </>
             )}
           </StyledBannerTitle>
