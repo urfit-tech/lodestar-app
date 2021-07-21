@@ -2350,6 +2350,10 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_ti
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets {
   __typename: "activity_session_ticket";
   /**
+   * offline | online | both
+   */
+  activity_session_type: string;
+  /**
    * An object relationship
    */
   activity_ticket: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets_activity_ticket;
@@ -2368,6 +2372,12 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollment
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate {
   __typename: "activity_enrollment_aggregate";
   aggregate: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_ACTIVITY_SESSION_activity_session_by_pk_ticket_enrollment_count {
+  __typename: "activity_session_ticket_enrollment_count";
+  activity_offline_session_ticket_count: any | null;
+  activity_online_session_ticket_count: any | null;
 }
 
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
@@ -2396,6 +2406,10 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
    * An aggregated array relationship
    */
   activity_enrollments_aggregate: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate;
+  /**
+   * An object relationship
+   */
+  ticket_enrollment_count: GET_ACTIVITY_SESSION_activity_session_by_pk_ticket_enrollment_count | null;
 }
 
 export interface GET_ACTIVITY_SESSION {
@@ -12011,6 +12025,7 @@ export interface activity_session_bool_exp {
   online_link?: String_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
   threshold?: numeric_comparison_exp | null;
+  ticket_enrollment_count?: activity_session_ticket_enrollment_count_bool_exp | null;
   title?: String_comparison_exp | null;
 }
 
@@ -12070,6 +12085,20 @@ export interface activity_session_ticket_bool_exp {
   activity_ticket?: activity_ticket_bool_exp | null;
   activity_ticket_id?: uuid_comparison_exp | null;
   id?: uuid_comparison_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "activity_session_ticket_enrollment_count". All fields are combined with a logical 'AND'.
+ */
+export interface activity_session_ticket_enrollment_count_bool_exp {
+  _and?: (activity_session_ticket_enrollment_count_bool_exp | null)[] | null;
+  _not?: activity_session_ticket_enrollment_count_bool_exp | null;
+  _or?: (activity_session_ticket_enrollment_count_bool_exp | null)[] | null;
+  activity?: activity_bool_exp | null;
+  activity_id?: uuid_comparison_exp | null;
+  activity_offline_session_ticket_count?: numeric_comparison_exp | null;
+  activity_online_session_ticket_count?: numeric_comparison_exp | null;
+  activity_session_id?: uuid_comparison_exp | null;
 }
 
 /**

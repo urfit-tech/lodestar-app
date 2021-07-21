@@ -266,6 +266,7 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
             is_participants_visible
           }
           activity_session_tickets {
+            activity_session_type
             activity_ticket {
               count
             }
@@ -277,6 +278,10 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
             aggregate {
               count
             }
+          }
+          ticket_enrollment_count {
+            activity_offline_session_ticket_count
+            activity_online_session_ticket_count
           }
         }
       }
@@ -299,9 +304,9 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
     description: string | null
     threshold: number | null
     isParticipantsVisible: boolean
-    maxAmount: number
+    maxAmount: { online: number; offline: number }
     isEnrolled: boolean
-    enrollments: number
+    enrollmentAmount: { online: number; offline: number }
   } | null =
     loading || error || !data || !data.activity_session_by_pk
       ? null
@@ -315,13 +320,23 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
           description: data.activity_session_by_pk.description,
           threshold: data.activity_session_by_pk.threshold,
           isParticipantsVisible: data.activity_session_by_pk.activity.is_participants_visible,
-          maxAmount: sum(
-            data.activity_session_by_pk.activity_session_tickets.map(
-              sessionTicket => sessionTicket.activity_ticket?.count || 0,
+          maxAmount: {
+            online: sum(
+              data.activity_session_by_pk.activity_session_tickets
+                .filter(v => ['online', 'both'].includes(v.activity_session_type))
+                .map(sessionTicket => sessionTicket.activity_ticket?.count || 0),
             ),
-          ),
+            offline: sum(
+              data.activity_session_by_pk.activity_session_tickets
+                .filter(v => ['offline', 'both'].includes(v.activity_session_type))
+                .map(sessionTicket => sessionTicket.activity_ticket?.count || 0),
+            ),
+          },
           isEnrolled: data.activity_session_by_pk.activity_enrollments.length > 0,
-          enrollments: data.activity_session_by_pk.activity_enrollments_aggregate.aggregate?.count || 0,
+          enrollmentAmount: {
+            online: data.activity_session_by_pk.ticket_enrollment_count?.activity_online_session_ticket_count || 0,
+            offline: data.activity_session_by_pk.ticket_enrollment_count?.activity_offline_session_ticket_count || 0,
+          },
         }
 
   return {

@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, SkeletonText } from '@chakra-ui/react'
+import { map } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -80,7 +81,7 @@ const ActivitySessionItem: React.VFC<{
             {session.isEnrolled ? (
               <span>
                 <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}</span>
-                <a href={`//${session.onlineLink}`} target="_blank" rel="noopener noreferrer">
+                <a href={`https://${session.onlineLink}`} target="_blank" rel="noopener noreferrer">
                   <Button variant="link">{session.onlineLink}</Button>
                 </a>
               </span>
@@ -93,11 +94,34 @@ const ActivitySessionItem: React.VFC<{
         {(session.isParticipantsVisible || !!session.threshold) && (
           <div>
             <Icon as={UserOIcon} className="mr-2" />
-            {session.isParticipantsVisible && (
-              <span className="mr-3">
-                {session.enrollments} / {session.maxAmount}
-              </span>
-            )}
+            {session.isParticipantsVisible &&
+              (enabledModules.activity_online && session.location && session.onlineLink ? (
+                map(
+                  sessionType =>
+                    !!session.maxAmount[sessionType] && (
+                      <span className="mr-2">
+                        {`${formatMessage(activityMessages.label[sessionType])} `}
+                        {session.enrollmentAmount[sessionType]} / {session.maxAmount[sessionType]}
+                      </span>
+                    ),
+                  ['online', 'offline'] as const,
+                )
+              ) : (
+                <>
+                  {!enabledModules.activity_online || session.location ? (
+                    <span className="mr-2">
+                      {session.enrollmentAmount['offline']} / {session.maxAmount['offline']}
+                    </span>
+                  ) : (
+                    enabledModules.activity_online &&
+                    session.onlineLink && (
+                      <span className="mr-3">
+                        {session.enrollmentAmount['online']} / {session.maxAmount['online']}
+                      </span>
+                    )
+                  )}
+                </>
+              ))}
             {session.threshold && (
               <span>
                 {formatMessage(productMessages.activity.content.least)}
