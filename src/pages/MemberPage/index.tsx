@@ -20,6 +20,7 @@ import { useOrderLogsWithMerchandiseSpec } from '../../hooks/merchandise'
 import { useEnrolledPodcastPrograms } from '../../hooks/podcast'
 import { useEnrolledProgramPackagePlanIds } from '../../hooks/programPackage'
 import { useEnrolledProjectPlanIds } from '../../hooks/project'
+import { MemberPublicProps } from '../../types/member'
 import ActivityTicketCollectionBlock from './ActivityTicketCollectionBlock'
 import AppointmentPlanCollectionBlock from './AppointmentPlanCollectionBlock'
 import PodcastProgramCollectionBlock from './PodcastProgramCollectionBlock'
@@ -40,7 +41,7 @@ const StyledTabPanel = styled(TabPanel)`
     padding: 24px 0;
   }
 `
-const MemberPage: React.VFC = () => {
+const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.ReactNode }> = ({ renderText }) => {
   const { formatMessage } = useIntl()
   const { memberId } = useParams<{ memberId: string }>()
   const { isAuthenticated, currentMemberId, currentUserRole } = useAuth()
@@ -153,11 +154,16 @@ const MemberPage: React.VFC = () => {
         ) : (
           <div className="container d-flex flex-column flex-sm-row align-items-center">
             <MemberAvatar memberId={memberId || ''} withName={false} size={128} />
+
             <div className="d-flex flex-column align-items-center align-items-sm-start flex-sm-grow-1 ml-sm-4">
-              <Typography.Title level={4}>{member && member.name}</Typography.Title>
-              <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
-                {member && <p>{member.abstract}</p>}
-              </Typography.Paragraph>
+              {renderText?.(member) || (
+                <>
+                  <Typography.Title level={4}>{member && member.name}</Typography.Title>
+                  <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
+                    {member && <p>{member.abstract}</p>}
+                  </Typography.Paragraph>
+                </>
+              )}
             </div>
           </div>
         )}
