@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
+import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
@@ -80,6 +81,7 @@ const MemberProfileButton: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { closePlayer } = useContext(PodcastPlayerContext)
+  const { renderMemberProfile } = useCustomRenderer()
   const { currentMemberId, logout } = useAuth()
   const { enabledModules } = useApp()
   const { member } = useMember(memberId)
@@ -94,10 +96,21 @@ const MemberProfileButton: React.VFC<{
         )}
 
         <BorderedItem className="justify-content-between">
-          <div>{member && member.name}</div>
-          <Responsive.Default>
-            <MemberAvatar memberId={currentMemberId || ''} size={36} />
-          </Responsive.Default>
+          {member && renderMemberProfile ? (
+            renderMemberProfile({
+              id: member.id,
+              name: member.name,
+              email: member.email,
+              pictureUrl: member.pictureUrl,
+            })
+          ) : (
+            <>
+              <div>{member && member.name}</div>
+              <Responsive.Default>
+                <MemberAvatar memberId={currentMemberId || ''} size={36} />
+              </Responsive.Default>
+            </>
+          )}
         </BorderedItem>
 
         <Responsive.Default>
@@ -136,7 +149,16 @@ const MemberProfileButton: React.VFC<{
 
       <Responsive.Desktop>
         <div className="cursor-pointer">
-          <MemberAvatar memberId={currentMemberId || ''} size={36} />
+          {member && renderMemberProfile ? (
+            renderMemberProfile({
+              id: member.id,
+              name: member.name,
+              email: member.email,
+              pictureUrl: member.pictureUrl,
+            })
+          ) : (
+            <MemberAvatar memberId={currentMemberId || ''} size={36} />
+          )}
         </div>
       </Responsive.Desktop>
     </Popover>
