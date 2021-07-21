@@ -70,8 +70,7 @@ const BlogPostCollectionPage: React.VFC = () => {
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
-            {tags &&
-              !categories &&
+            {!categories &&
               tags?.split(',').map(tag => (
                 <span key={tag} className="ml-2">
                   #{tag}
