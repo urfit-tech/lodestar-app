@@ -192,7 +192,7 @@ const BlogPostPage: React.VFC = () => {
             </div>
             <div className="mb-5">
               {post?.tags.map(tag => (
-                <Link key={tag} to={`/posts/?categories=${tag}`} className="mr-2">
+                <Link key={tag} to={`/posts/?tags=${tag}`} className="mr-2">
                   <StyledTag>#{tag}</StyledTag>
                 </Link>
               ))}

@@ -53,8 +53,9 @@ const StyledAbstract = styled.div`
 
 const BlogPostCollectionPage: React.VFC = () => {
   const [categories] = useQueryParam('categories', StringParam)
+  const [tags] = useQueryParam('tags', StringParam)
   const { loading, enabledModules } = useApp()
-  const { posts } = usePostPreviewCollection({ categories: categories?.split(',') })
+  const { posts } = usePostPreviewCollection({ tags: tags?.split(','), categories: categories?.split(',') })
 
   if (loading) {
     return <LoadingPage />
@@ -69,11 +70,19 @@ const BlogPostCollectionPage: React.VFC = () => {
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
-            {categories?.split(',').map(category => (
-              <span key={category} className="ml-2">
-                {category}
-              </span>
-            ))}
+            {tags &&
+              !categories &&
+              tags?.split(',').map(tag => (
+                <span key={tag} className="ml-2">
+                  #{tag}
+                </span>
+              ))}
+            {categories &&
+              categories?.split(',').map(category => (
+                <span key={category} className="ml-2">
+                  {category}
+                </span>
+              ))}
           </StyledBannerTitle>
         </div>
       </StyledBanner>
