@@ -5,6 +5,7 @@ export type CategoryProps = {
 
 export type Module =
   | 'activity'
+  | 'activity_online'
   | 'appointment'
   | 'approval'
   | 'attend'

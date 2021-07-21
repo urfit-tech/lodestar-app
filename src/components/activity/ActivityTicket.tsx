@@ -4,8 +4,9 @@ import { Tag } from 'antd'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import { dateRangeFormatter } from '../../helpers'
-import { commonMessages, productMessages } from '../../helpers/translation'
+import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { CommonLargeTitleMixin } from '../common'
 import PriceLabel from '../common/PriceLabel'
@@ -85,6 +86,7 @@ const ActivityTicket: React.VFC<{
   isPublished: boolean
   activityTicketSessions: {
     id: string
+    type: string
     title: string
   }[]
   participants: number
@@ -104,6 +106,7 @@ const ActivityTicket: React.VFC<{
   extra,
 }) => {
   const { formatMessage } = useIntl()
+  const { enabledModules } = useApp()
   const status =
     !isPublished || Date.now() < startedAt.getTime()
       ? formatMessage(commonMessages.button.unreleased)
@@ -126,7 +129,15 @@ const ActivityTicket: React.VFC<{
       <StyledSubTitle>{formatMessage(productMessages.activity.title.sessions)}</StyledSubTitle>
       {activityTicketSessions.map(v => (
         <StyledTag key={v.id} color="#585858" className="mb-2">
-          {v.title}
+          {enabledModules.activity_online
+            ? `${v.title} - ${
+                {
+                  online: formatMessage(activityMessages.label.online),
+                  offline: formatMessage(activityMessages.label.offline),
+                  both: formatMessage(activityMessages.label.both),
+                }[v.type]
+              }`
+            : v.title}
         </StyledTag>
       ))}
       {!!description && (

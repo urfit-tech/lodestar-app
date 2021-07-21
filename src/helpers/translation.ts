@@ -725,6 +725,19 @@ export const programMessages = {
     },
   }),
 }
+
+export const activityMessages = {
+  label: defineMessages({
+    online: { id: 'activity.label.online', defaultMessage: '線上' },
+    offline: { id: 'activity.label.offline', defaultMessage: '實體' },
+    both: { id: 'activity.label.both', defaultMessage: '實體 & 線上' },
+  }),
+  text: defineMessages({
+    live: { id: 'activity.ui.live', defaultMessage: '線上直播' },
+    liveLink: { id: 'activity.text.liveLink', defaultMessage: '直播連結' },
+  }),
+}
+
 export const practiceMessages = {
   button: defineMessages({
     delete: { id: 'practice.button.delete', defaultMessage: '刪除作業' },
