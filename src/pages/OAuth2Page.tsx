@@ -11,13 +11,13 @@ import { profileMessages } from '../helpers/translation'
 import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
 import LoadingPage from './LoadingPage'
 
-type ProviderType = 'facebook' | 'google' | 'line' | 'parenting'
+type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth'
 
 const OAuth2Page: React.VFC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
 
-  if (provider === 'parenting') {
-    return <ParentingOauth2Section />
+  if (provider === 'parenting' || 'commonhealth') {
+    return <Oauth2Section />
   }
 
   return <DefaultOauth2Section />
@@ -125,7 +125,7 @@ const DefaultOauth2Section: React.VFC = () => {
   return <LoadingPage />
 }
 
-const ParentingOauth2Section: React.VFC = () => {
+const Oauth2Section: React.VFC = () => {
   const history = useHistory()
   const { provider } = useParams<{ provider: ProviderType }>()
   const [state] = useQueryParam('state', StringParam)
@@ -143,8 +143,8 @@ const ParentingOauth2Section: React.VFC = () => {
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && provider === 'parenting' && appId && code) {
-      const redirectUri = `${host}/oauth2/parenting`
+    if (!isAuthenticating && !currentMemberId && appId && code) {
+      const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(
           `//${apiHost}/auth/get-oauth-token`,
