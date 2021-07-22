@@ -24,7 +24,7 @@ type AuthProps = {
   }) => Promise<void>
   login?: (data: { account: string; password: string; accountLinkToken?: string }) => Promise<void>
   socialLogin?: (data: {
-    provider: 'facebook' | 'google' | 'line' | 'parenting'
+    provider: 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth'
     providerToken: any
     accountLinkToken?: string
   }) => Promise<void>
