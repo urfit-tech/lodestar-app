@@ -55,7 +55,7 @@ const BlogPostCollectionPage: React.VFC = () => {
   const [categories] = useQueryParam('categories', StringParam)
   const [tags] = useQueryParam('tags', StringParam)
   const { loading, enabledModules } = useApp()
-  const { posts } = usePostPreviewCollection({ tags: tags?.split(','), categories: categories?.split(',') })
+  const { posts } = usePostPreviewCollection({ tags: tags?.split(','), categories: categories || '' })
 
   if (loading) {
     return <LoadingPage />
@@ -76,14 +76,11 @@ const BlogPostCollectionPage: React.VFC = () => {
                   #{tag}
                 </span>
               ))}
-            {categories &&
-              posts.map(post =>
-                post.categories.map(category => (
-                  <span key={category.id} className="ml-2">
-                    {category.name}
-                  </span>
-                )),
-              )}
+            <span className="ml-2">
+              {posts
+                .find(post => post.categories.filter(category => category.id === categories))
+                ?.categories.filter(category => category.id === categories)[0].name || ''}
+            </span>
           </StyledBannerTitle>
         </div>
       </StyledBanner>
