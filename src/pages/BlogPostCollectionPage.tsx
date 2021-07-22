@@ -77,9 +77,11 @@ const BlogPostCollectionPage: React.VFC = () => {
                 </span>
               ))}
             <span className="ml-2">
-              {posts
-                .find(post => post.categories.filter(category => category.id === categories))
-                ?.categories.filter(category => category.id === categories)[0].name || ''}
+              {(categories &&
+                posts
+                  .find(post => post.categories.filter(category => category.id === categories))
+                  ?.categories.filter(category => category.id === categories)[0].name) ||
+                ''}
             </span>
           </StyledBannerTitle>
         </div>
