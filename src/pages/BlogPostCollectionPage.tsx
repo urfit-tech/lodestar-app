@@ -77,11 +77,13 @@ const BlogPostCollectionPage: React.VFC = () => {
                 </span>
               ))}
             {categories &&
-              categories?.split(',').map(category => (
-                <span key={category} className="ml-2">
-                  {category}
-                </span>
-              ))}
+              posts.map(post =>
+                post.categories.map(category => (
+                  <span key={category.id} className="ml-2">
+                    {category.name}
+                  </span>
+                )),
+              )}
           </StyledBannerTitle>
         </div>
       </StyledBanner>

@@ -57,13 +57,12 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
     loading || error || !data
       ? []
       : data.post
-          .filter(
-            post =>
-              !filter ||
-              typeof filter.categories === 'undefined' ||
-              typeof filter.tags === 'undefined' ||
-              post.post_tags.some(postTag => filter.categories?.includes(postTag.tag_name)) ||
-              post.post_tags.some(postTag => filter.tags?.includes(postTag.tag_name)),
+          .filter(post =>
+            !filter || filter.tags
+              ? post.post_tags.some(postTag => filter?.tags?.includes(postTag.tag_name))
+              : filter.categories
+              ? post.post_categories.some(category => filter.categories?.includes(category.category.id))
+              : post,
           )
           .map(post => ({
             id: post.id,
