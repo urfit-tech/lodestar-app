@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react'
-import { renderMemberAdminMenuProps } from '../components/common/AdminMenu'
+import { RenderMemberAdminMenuProps } from '../components/common/AdminMenu'
 
 export type CustomRendererProps = {
   renderCopyright?: (name?: string) => React.ReactNode
@@ -11,7 +11,7 @@ export type CustomRendererProps = {
     pictureUrl: string | null
   }) => React.ReactNode
   renderAuthButton?: (setAuthModalVisible?: React.Dispatch<React.SetStateAction<boolean>>) => React.ReactNode
-  renderMemberAdminMenu?: (props: renderMemberAdminMenuProps) => React.ReactElement
+  renderMemberAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement
 }
 
 const CustomRendererContext = createContext<CustomRendererProps>({})

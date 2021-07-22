@@ -35,7 +35,7 @@ const StyledMenu = styled(Menu)`
     background: none !important;
   }
 `
-export type renderMemberAdminMenuProps = {
+export type RenderMemberAdminMenuProps = {
   menuProps: MenuProps
   defaultMenuItems: { key: string; item: React.ReactElement | boolean | undefined }[]
 }
@@ -73,7 +73,7 @@ export const MemberAdminMenu: React.VFC<MenuProps> = ({ ...props }) => {
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
   const { socialCards } = useSocialCardCollection()
 
-  const defaultMenuItems: renderMemberAdminMenuProps['defaultMenuItems'] = [
+  const defaultMenuItems = [
     {
       key: 'creator_management_system',
       item: currentUserRole === 'content-creator' && (
