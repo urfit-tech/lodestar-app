@@ -4,18 +4,22 @@ import { useIntl } from 'react-intl'
 import { AuthModalContext } from '../../components/auth/AuthModal'
 import { CustomNavLinks, StyledList, Wrapper } from '../../components/common/MemberProfileButton'
 import Responsive from '../../components/common/Responsive'
+import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { commonMessages } from '../../helpers/translation'
 
 const AuthButton: React.VFC = () => {
   const { formatMessage } = useIntl()
+  const { renderAuthButton } = useCustomRenderer()
   const { setVisible } = useContext(AuthModalContext)
 
   return (
     <>
       <Responsive.Default>
-        <Button className="ml-2 mr-2" onClick={() => setVisible && setVisible(true)}>
-          {formatMessage(commonMessages.button.login)}
-        </Button>
+        {renderAuthButton?.(setVisible) || (
+          <Button className="ml-2 mr-2" onClick={() => setVisible && setVisible(true)}>
+            {formatMessage(commonMessages.button.login)}
+          </Button>
+        )}
         <Popover
           placement="bottomRight"
           trigger="click"
@@ -32,9 +36,11 @@ const AuthButton: React.VFC = () => {
       </Responsive.Default>
 
       <Responsive.Desktop>
-        <Button className="ml-2" onClick={() => setVisible && setVisible(true)}>
-          {formatMessage(commonMessages.button.loginRegister)}
-        </Button>
+        {renderAuthButton?.(setVisible) || (
+          <Button className="ml-2" onClick={() => setVisible && setVisible(true)}>
+            {formatMessage(commonMessages.button.loginRegister)}
+          </Button>
+        )}
       </Responsive.Desktop>
     </>
   )
