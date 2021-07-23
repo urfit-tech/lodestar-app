@@ -16,7 +16,7 @@ type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth
 const OAuth2Page: React.VFC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
 
-  if (provider === 'parenting' || 'commonhealth') {
+  if (['parenting', 'commonhealth'].includes(provider)) {
     return <Oauth2Section />
   }
 
@@ -81,7 +81,7 @@ const DefaultOauth2Section: React.VFC = () => {
     const clientId = settings['auth.line_client_id']
     const clientSecret = settings['auth.line_client_secret']
     if (!isAuthenticating && !currentMemberId && code && provider === 'line' && clientId && clientSecret) {
-      const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2`
+      const redirectUri = `${window.location.origin}/oauth2`
 
       const params = new URLSearchParams({
         grant_type: 'authorization_code',

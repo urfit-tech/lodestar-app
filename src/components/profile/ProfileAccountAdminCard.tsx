@@ -111,7 +111,7 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
                 <a
                   href={'https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&scope={{SCOPE}}&state={{STATE}}&response_type=token'
                     .replace('{{CLIENT_ID}}', `${settings['auth.google_client_id']}`)
-                    .replace('{{REDIRECT_URI}}', `https://${window.location.hostname}/oauth2`)
+                    .replace('{{REDIRECT_URI}}', `${window.location.origin}/oauth2`)
                     .replace('{{SCOPE}}', 'https://www.googleapis.com/auth/youtubepartner-channel-audit')
                     .replace(
                       '{{STATE}}',
