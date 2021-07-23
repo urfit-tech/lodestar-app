@@ -97,6 +97,7 @@ const ProgramCard: React.VFC<{
       : (program.soldAt?.getTime() || 0) > Date.now()
       ? program.salePrice
       : undefined
+  const periodAmount = program.isSubscription && program.plans.length > 0 ? program.plans[0].periodAmount : null
   const periodType = program.isSubscription && program.plans.length > 0 ? program.plans[0].periodType : null
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
 
@@ -154,6 +155,7 @@ const ProgramCard: React.VFC<{
                         variant="inline"
                         listPrice={listPrice}
                         salePrice={salePrice}
+                        periodAmount={periodAmount}
                         periodType={periodType || undefined}
                       />
                     )}
