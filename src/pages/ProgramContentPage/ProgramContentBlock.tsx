@@ -1,3 +1,4 @@
+import { LockIcon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
@@ -19,6 +20,12 @@ import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
 import ProgramContentTabs from './ProgramContentTabs'
+
+const StyledUnPurchased = styled.div`
+  color: ${props => props.theme['@primary-color']};
+  font-size: 16px;
+  font-weight: bold;
+`
 
 const StyledTitle = styled.h3`
   padding-bottom: 1.25rem;
@@ -88,7 +95,12 @@ const ProgramContentBlock: React.VFC<{
 
   return (
     <div id="program_content_block" className="pt-4 p-sm-4">
-      {!programContent.programContentBody && formatMessage(productMessages.program.content.unpurchased)}
+      {!programContent.programContentBody && (
+        <StyledUnPurchased className="p-2 text-center">
+          <LockIcon className="mr-2" />
+          {formatMessage(productMessages.program.content.unPurchased)}
+        </StyledUnPurchased>
+      )}
 
       {programContent.programContentBody?.type === 'video' && (
         <ProgramContentPlayer
