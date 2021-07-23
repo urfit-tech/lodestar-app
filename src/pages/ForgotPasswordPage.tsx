@@ -50,10 +50,17 @@ const ForgotPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
 
       setLoading(true)
       axios
-        .post(`//${apiHost}/auth/forgot-password`, {
-          appId,
-          account: values.email,
-        })
+        .post(
+          `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/forgot-password`,
+          {
+            account: values.email,
+          },
+          {
+            headers: {
+              'X-APP-ID': appId,
+            },
+          },
+        )
         .then(({ data: { code } }) => {
           if (code === 'SUCCESS') {
             history.push(`/check-email?email=${values.email}&type=forgot-password`)

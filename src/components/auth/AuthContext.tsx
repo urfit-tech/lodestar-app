@@ -100,11 +100,14 @@ export const AuthProvider: React.FC<{
         apiHost,
         refreshToken: async () =>
           Axios.post(
-            `//${apiHost}/auth/refresh-token`,
-            { appId },
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/refresh-token`,
+            {},
             {
               method: 'POST',
               withCredentials: true,
+              headers: {
+                'X-APP-ID': appId,
+              },
             },
           )
             .then(({ data: { code, message, result } }) => {
@@ -117,14 +120,18 @@ export const AuthProvider: React.FC<{
             .finally(() => setIsAuthenticating(false)),
         register: async data =>
           Axios.post(
-            `//${apiHost}/auth/register`,
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/register`,
             {
-              appId: data.appId || appId,
               username: data.username,
               email: data.email,
               password: data.password,
             },
-            { withCredentials: true },
+            {
+              withCredentials: true,
+              headers: {
+                'X-APP-ID': data.appId || appId,
+              },
+            },
           ).then(({ data: { code, message, result } }) => {
             if (code === 'SUCCESS') {
               if (!data.withoutLogin) {
@@ -214,7 +221,16 @@ export const AuthProvider: React.FC<{
             }
           }),
         login: async ({ account, password, accountLinkToken }) =>
-          Axios.post(`//${apiHost}/auth/general-login`, { appId, account, password }, { withCredentials: true })
+          Axios.post(
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/general-login`,
+            { account, password },
+            {
+              withCredentials: true,
+              headers: {
+                'X-APP-ID': appId,
+              },
+            },
+          )
             .then(({ data: { code, result } }) => {
               if (code === 'SUCCESS') {
                 setAuthToken(result.authToken)
@@ -233,13 +249,17 @@ export const AuthProvider: React.FC<{
             }),
         socialLogin: async ({ provider, providerToken, accountLinkToken }) =>
           Axios.post(
-            `//${apiHost}/auth/social-login`,
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/social-login`,
             {
-              appId,
               provider,
               providerToken,
             },
-            { withCredentials: true },
+            {
+              withCredentials: true,
+              headers: {
+                'X-APP-ID': appId,
+              },
+            },
           ).then(({ data: { code, message, result } }) => {
             if (code === 'SUCCESS') {
               setAuthToken(result.authToken)
@@ -253,7 +273,7 @@ export const AuthProvider: React.FC<{
           }),
         logout: async () => {
           localStorage.clear()
-          Axios(`//${apiHost}/auth/logout`, {
+          Axios(`${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/logout`, {
             method: 'POST',
             withCredentials: true,
           }).then(({ data: { code, message, result } }) => {

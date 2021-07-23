@@ -51,13 +51,12 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         setLoading(true)
         axios
           .post(
-            `//${apiHost}/auth/reset-password`,
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/reset-password`,
             {
-              appId,
               memberId,
               newPassword: values.password,
             },
-            { headers: { Authorization: `Bearer ${token}` } },
+            { headers: { Authorization: `Bearer ${token}`, 'X-APP-ID': appId } },
           )
           .then(({ data: { code } }) => {
             if (code === 'SUCCESS') {

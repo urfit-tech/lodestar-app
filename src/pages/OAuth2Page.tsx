@@ -147,14 +147,18 @@ const Oauth2Section: React.VFC = () => {
       const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(
-          `//${apiHost}/auth/get-oauth-token`,
+          `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/get-oauth-token`,
           {
-            appId,
             provider,
             redirectUri,
             code,
           },
-          { withCredentials: true },
+          {
+            withCredentials: true,
+            headers: {
+              'X-APP-ID': appId,
+            },
+          },
         )
         .then(({ data: { code, message, result } }) => {
           if (code === 'SUCCESS') {

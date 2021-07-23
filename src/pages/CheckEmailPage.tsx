@@ -43,10 +43,17 @@ const CheckEmailPage: React.VFC = () => {
       return
     }
     axios
-      .post(`//${apiHost}/auth/forgot-password`, {
-        appId,
-        account: email,
-      })
+      .post(
+        `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/forgot-password`,
+        {
+          account: email,
+        },
+        {
+          headers: {
+            'X-APP-ID': appId,
+          },
+        },
+      )
       .then(({ data: { code } }) => {
         if (code === 'SUCCESS') {
           message.success(formatMessage(usersMessages.messages.resetPassword))
