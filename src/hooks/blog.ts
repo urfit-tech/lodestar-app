@@ -58,7 +58,9 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
       ? []
       : data.post
           .filter(post =>
-            !filter || filter.tags
+            !filter
+              ? post
+              : filter.tags
               ? post.post_tags.some(postTag => filter?.tags?.includes(postTag.tag_name))
               : filter.categories
               ? post.post_categories.some(category => filter.categories === category.category.id)

@@ -12,14 +12,8 @@ import {
 export const usePublishedActivityCollection = (options?: { categoryId?: string }) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_ACTIVITY_COLLECTION>(
     gql`
-      query GET_PUBLISHED_ACTIVITY_COLLECTION($categoryId: String) {
-        activity(
-          where: {
-            published_at: { _is_null: false }
-            _or: { activity_categories: { category_id: { _eq: $categoryId } } }
-          }
-          order_by: [{ position: asc }, { published_at: desc }]
-        ) {
+      query GET_PUBLISHED_ACTIVITY_COLLECTION {
+        activity(where: { published_at: { _is_null: false } }, order_by: [{ position: asc }, { published_at: desc }]) {
           id
           cover_url
           title
@@ -59,17 +53,17 @@ export const usePublishedActivityCollection = (options?: { categoryId?: string }
         }
       }
     `,
-    {
-      variables: {
-        categoryId: options?.categoryId,
-      },
-    },
   )
 
   const activities: ActivityProps[] =
     loading || error || !data
       ? []
       : data.activity
+          .filter(activity =>
+            options?.categoryId
+              ? activity.activity_categories.some(category => category.category.id === options.categoryId)
+              : activity,
+          )
           .filter(activity => activity.published_at && new Date(activity.published_at).getTime() < Date.now())
           .map(activity => ({
             id: activity.id,
