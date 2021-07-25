@@ -94,7 +94,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
         },
         refreshToken: async () =>
           Axios.post(
-            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/refresh-token`,
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || '/v1'}/auth/refresh-token`,
             {},
             {
               method: 'POST',
@@ -114,7 +114,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
             .finally(() => setIsAuthenticating(false)),
         register: async data =>
           Axios.post(
-            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/register`,
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || '/v1'}/auth/register`,
             {
               username: data.username,
               email: data.email,
@@ -216,7 +216,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
           }),
         login: async ({ account, password, accountLinkToken }) =>
           Axios.post(
-            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/general-login`,
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || '/v1'}/auth/general-login`,
             { account, password },
             {
               withCredentials: true,
@@ -243,7 +243,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
             }),
         socialLogin: async ({ provider, providerToken, accountLinkToken }) =>
           Axios.post(
-            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/social-login`,
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || '/v1'}/auth/social-login`,
             {
               provider,
               providerToken,
@@ -267,7 +267,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
           }),
         logout: async () => {
           localStorage.clear()
-          Axios(`${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/logout`, {
+          Axios(`${process.env.REACT_APP_AUTH_BASE_ROOT || '/v1'}/auth/logout`, {
             method: 'POST',
             withCredentials: true,
           }).then(({ data: { code, message, result } }) => {

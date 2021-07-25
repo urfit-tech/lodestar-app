@@ -9,13 +9,14 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
     steps:
       - uses: actions/checkout@main
       - uses: jeanlescure/react-deploy-to-s3-action@main
         with:
           args: --follow-symlinks --delete
         env:
-          NODE_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
           AWS_S3_BUCKET: ${{ github.ref == 'refs/heads/master' && 'static.lodestar.cc' || 'static.lodestar-dev.cc' }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

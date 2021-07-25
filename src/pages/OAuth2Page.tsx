@@ -147,7 +147,7 @@ const Oauth2Section: React.VFC = () => {
       const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(
-          `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/get-oauth-token`,
+          `${process.env.REACT_APP_AUTH_BASE_ROOT || '/v1'}/auth/get-oauth-token`,
           {
             provider,
             redirectUri,

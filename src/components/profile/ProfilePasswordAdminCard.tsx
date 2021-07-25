@@ -30,7 +30,7 @@ const ProfilePasswordAdminCard: React.VFC<ProfilePasswordAdminCardProps> = ({ fo
         setLoading(true)
         axios
           .post(
-            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/change-password`,
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || '/v1'}/auth/change-password`,
             {
               password: values.password,
               newPassword: values.newPassword,

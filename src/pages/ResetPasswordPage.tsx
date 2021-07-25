@@ -49,7 +49,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         setLoading(true)
         axios
           .post(
-            `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/reset-password`,
+            `${process.env.REACT_APP_AUTH_BASE_ROOT || '/v1'}/auth/reset-password`,
             {
               memberId,
               newPassword: values.password,
