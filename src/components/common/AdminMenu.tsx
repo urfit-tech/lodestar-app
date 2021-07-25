@@ -51,7 +51,7 @@ export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
     if (key.startsWith('_blank')) {
       window.open(item.props['data-href'])
     } else if (key.startsWith('creator_management_system')) {
-      window.open(`//${managementDomain?.domain[0]}`)
+      window.open(`//${managementDomain?.domain[0]}/admin`)
     } else {
       const route = routesProps[key]
       route ? history.push(route.path) : alert(formatMessage(commonMessages.alert.noPath))
@@ -211,7 +211,7 @@ const useManagementDomain = (appId: string) => {
   const { loading, error, data } = useQuery<hasura.GET_MANAGEMENT_DOMAIN, hasura.GET_MANAGEMENT_DOMAINVariables>(
     gql`
       query GET_MANAGEMENT_DOMAIN($appId: String) {
-        app_admin(where: { app_id: { _eq: $appId } }, limit: 1, order_by: { position: asc }) {
+        app_host(where: { app_id: { _eq: $appId } }, limit: 1, order_by: { position: asc }) {
           host
         }
       }
@@ -219,6 +219,6 @@ const useManagementDomain = (appId: string) => {
     { variables: { appId } },
   )
   const managementDomain: { domain: string[] } | null =
-    loading || error || !data ? null : { domain: data.app_admin.map(data => data.host) }
+    loading || error || !data ? null : { domain: data.app_host.map(data => data.host) }
   return { loading, error, managementDomain }
 }
