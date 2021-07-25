@@ -6,16 +6,156 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap-grid.min.css" integrity="sha256-D9AvR0EzkNZoWZVSvI3ch+uf/Z5izrIpcbsykVphwPU=" crossorigin="anonymous">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap-grid.min.css"
+    integrity="sha256-D9AvR0EzkNZoWZVSvI3ch+uf/Z5izrIpcbsykVphwPU=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.0/animate.min.css">
-  <link rel="stylesheet" href="/spin.css">
-  <link rel="stylesheet" type="text/css" charset="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
+  <link rel="stylesheet" type="text/css" charset="UTF-8"
+    href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
+  <div hidden>{{{CUSTOM_HEAD}}}</div>
 </head>
+
+<style>
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .ant-spin {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    font-variant: tabular-nums;
+    line-height: 1.5;
+    list-style: none;
+    -webkit-font-feature-settings: 'tnum';
+    font-feature-settings: 'tnum';
+    position: absolute;
+    display: none;
+    color: #1890ff;
+    text-align: center;
+    vertical-align: middle;
+    opacity: 0;
+    -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
+      -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+  }
+
+  .ant-spin-spinning {
+    position: static;
+    display: inline-block;
+    opacity: 1;
+  }
+
+  .ant-spin-dot {
+    position: relative;
+    display: inline-block;
+    font-size: 20px;
+    width: 1em;
+    height: 1em;
+  }
+
+  .ant-spin-dot-item {
+    position: absolute;
+    display: block;
+    width: 9px;
+    height: 9px;
+    background-color: #9b9b9b;
+    border-radius: 100%;
+    -webkit-transform: scale(0.75);
+    -ms-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    opacity: 0.3;
+    -webkit-animation: antSpinMove 1s infinite linear alternate;
+    animation: antSpinMove 1s infinite linear alternate;
+  }
+
+  .ant-spin-dot-item:nth-child(1) {
+    top: 0;
+    left: 0;
+  }
+
+  .ant-spin-dot-item:nth-child(2) {
+    top: 0;
+    right: 0;
+    -webkit-animation-delay: 0.4s;
+    animation-delay: 0.4s;
+  }
+
+  .ant-spin-dot-item:nth-child(3) {
+    right: 0;
+    bottom: 0;
+    -webkit-animation-delay: 0.8s;
+    animation-delay: 0.8s;
+  }
+
+  .ant-spin-dot-item:nth-child(4) {
+    bottom: 0;
+    left: 0;
+    -webkit-animation-delay: 1.2s;
+    animation-delay: 1.2s;
+  }
+
+  .ant-spin-dot-spin {
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    -webkit-animation: antRotate 1.2s infinite linear;
+    animation: antRotate 1.2s infinite linear;
+  }
+
+  .ant-spin-lg .ant-spin-dot {
+    font-size: 32px;
+  }
+
+  .ant-spin-lg .ant-spin-dot i {
+    width: 14px;
+    height: 14px;
+  }
+
+  @-webkit-keyframes antSpinMove {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes antSpinMove {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @-webkit-keyframes antRotate {
+    to {
+      -webkit-transform: rotate(405deg);
+      transform: rotate(405deg);
+    }
+  }
+
+  @keyframes antRotate {
+    to {
+      -webkit-transform: rotate(405deg);
+      transform: rotate(405deg);
+    }
+  }
+</style>
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root">
+    <div hidden>{{{CUSTOM_BODY}}}</div>
     <div class="loading">
       <div class="ant-spin ant-spin-lg ant-spin-spinning">
         <span class="ant-spin-dot ant-spin-dot-spin">
@@ -29,6 +169,7 @@
   </div>
   <script src="https://unpkg.com/array-flat-polyfill"></script>
   <script src="https://js.tappaysdk.com/tpdirect/v5.1.0"></script>
+  <div hidden>{{{CUSTOM_SCRIPT}}}</div>
 </body>
 
 </html>
