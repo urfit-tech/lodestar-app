@@ -5,7 +5,6 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { useAuth } from '../components/auth/AuthContext'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
@@ -38,7 +37,6 @@ const ForgotPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { apiHost } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -50,7 +48,7 @@ const ForgotPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
 
       setLoading(true)
       axios
-        .post(`//${apiHost}/auth/forgot-password`, {
+        .post(`${process.env.REACT_APP_API_BASE_ROOT}/auth/forgot-password`, {
           appId,
           account: values.email,
         })

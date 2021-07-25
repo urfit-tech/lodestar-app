@@ -5,7 +5,6 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { useAuth } from '../components/auth/AuthContext'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { handleError } from '../helpers'
@@ -31,7 +30,6 @@ const CheckEmailPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const [email] = useQueryParam('email', StringParam)
   const [type] = useQueryParam('type', StringParam)
-  const { apiHost } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleResendEmail = () => {
@@ -43,7 +41,7 @@ const CheckEmailPage: React.VFC = () => {
       return
     }
     axios
-      .post(`//${apiHost}/auth/forgot-password`, {
+      .post(`${process.env.REACT_APP_API_BASE_ROOT}/auth/forgot-password`, {
         appId,
         account: email,
       })

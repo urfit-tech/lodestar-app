@@ -53,17 +53,17 @@ const StyledButton = styled(Button)`
 const LineBindingPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const [binding, setBinding] = useState(false)
-  const { authToken, apiHost, currentMember, currentMemberId } = useAuth()
+  const { authToken, currentMember, currentMemberId } = useAuth()
   const { id: appId, name } = useApp()
   const { search } = useLocation()
   const query = new URLSearchParams(search)
   const accountLinkToken = query.get('accountLinkToken') || ''
 
-  const handleAccountLink = async (appId: String, apiHost: String, accountLinkToken: String, authToken: String) => {
+  const handleAccountLink = async (appId: String, accountLinkToken: String, authToken: String) => {
     setBinding(true)
     await axios
       .post(
-        `//${apiHost}/line/generate-nonce`,
+        `${process.env.REACT_APP_API_BASE_ROOT}/line/generate-nonce`,
         { appId, memberId: currentMemberId },
         {
           headers: { authorization: `Bearer ${authToken}` },
@@ -104,7 +104,7 @@ const LineBindingPage: React.VFC = () => {
         </div>
         <StyledButton
           variant="primary"
-          onClick={() => authToken && handleAccountLink(appId, apiHost, accountLinkToken, authToken)}
+          onClick={() => authToken && handleAccountLink(appId, accountLinkToken, authToken)}
         >
           {formatMessage(messages.bindingStart)}
         </StyledButton>

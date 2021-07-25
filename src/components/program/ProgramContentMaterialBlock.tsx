@@ -52,12 +52,9 @@ const ProgramContentMaterialBlock: React.VFC<{
 }> = ({ programContentId }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { authToken, apiHost } = useAuth()
-  const {
-    loadingProgramContentMaterials,
-    programContentMaterials,
-    errorProgramContentMaterials,
-  } = useProgramContentMaterial(programContentId)
+  const { authToken } = useAuth()
+  const { loadingProgramContentMaterials, programContentMaterials, errorProgramContentMaterials } =
+    useProgramContentMaterial(programContentId)
   const [isDownloading, setIsDownloading] = useState<{ [key: string]: boolean }>({})
   const [downloadProgress, setDownloadProgress] = useState<{ [key: string]: number }>({})
 
@@ -77,7 +74,7 @@ const ProgramContentMaterialBlock: React.VFC<{
             onClick={async () => {
               setIsDownloading(prev => ({ ...prev, [material.id]: true }))
               const fileKey = `materials/${appId}/${programContentId}_${material.data.name}`
-              const materialLink = await getFileDownloadableLink(fileKey, authToken, apiHost)
+              const materialLink = await getFileDownloadableLink(fileKey, authToken)
               const materialRequest = new Request(materialLink)
               try {
                 const response = await fetch(materialRequest)

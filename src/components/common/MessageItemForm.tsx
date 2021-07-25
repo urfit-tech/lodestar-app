@@ -18,7 +18,7 @@ type MessageItemFormProps = FormComponentProps & {
 }
 
 const MessageItemForm: React.VFC<MessageItemFormProps> = ({ title, description, form, onSubmit, onEditing }) => {
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const handleSubmit = () =>
@@ -42,7 +42,7 @@ const MessageItemForm: React.VFC<MessageItemFormProps> = ({ title, description, 
         })(
           <StyledEditor
             controls={['bold', 'italic', 'underline', 'separator', 'media']}
-            media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+            media={{ uploadFn: createUploadFn(appId, authToken) }}
           />,
         )}
       </Form.Item>

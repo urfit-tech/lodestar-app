@@ -6,7 +6,6 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { useAuth } from '../components/auth/AuthContext'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
@@ -40,7 +39,6 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)
   const [memberId] = useQueryParam('member', StringParam)
-  const { apiHost } = useAuth()
   const { id: appId } = useApp()
   const [loading, setLoading] = useState(false)
 
@@ -51,7 +49,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         setLoading(true)
         axios
           .post(
-            `//${apiHost}/auth/reset-password`,
+            `${process.env.REACT_APP_API_BASE_ROOT}/auth/reset-password`,
             {
               appId,
               memberId,

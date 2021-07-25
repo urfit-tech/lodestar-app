@@ -27,7 +27,7 @@ type SuggestionCreationModalProps = {
 const SuggestionCreationModal: React.VFC<SuggestionCreationModalProps> = ({ threadId, onRefetch }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { currentMemberId, authToken, apiHost } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
   const { control, handleSubmit } = useForm<{ suggest: EditorState }>()
@@ -95,7 +95,7 @@ const SuggestionCreationModal: React.VFC<SuggestionCreationModalProps> = ({ thre
                 'media',
               ]}
               contentClassName="short-bf-content"
-              media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+              media={{ uploadFn: createUploadFn(appId, authToken) }}
             />
           }
           control={control}

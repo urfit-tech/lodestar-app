@@ -16,8 +16,6 @@ import { CustomRendererProps, CustomRendererProvider } from './contexts/CustomRe
 import { LanguageProvider } from './contexts/LanguageContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { PodcastPlayerProvider } from './contexts/PodcastPlayerContext'
-import { useApiHost } from './hooks/util'
-import LoadingPage from './pages/LoadingPage'
 import Routes, { RouteProps } from './Routes'
 
 const Application: React.FC<{
@@ -25,16 +23,10 @@ const Application: React.FC<{
   extraRouteProps?: { [routeKey: string]: RouteProps }
   customRender?: CustomRendererProps
 }> = ({ appId, extraRouteProps, customRender }) => {
-  const apiHost = useApiHost(appId)
-
-  if (!apiHost) {
-    return <LoadingPage />
-  }
-
   return (
     <BrowserRouter>
       <QueryParamProvider ReactRouterRoute={Route}>
-        <AuthProvider appId={appId} apiHost={apiHost}>
+        <AuthProvider appId={appId}>
           <ApiProvider appId={appId}>
             <AppProvider appId={appId}>
               <LanguageProvider>

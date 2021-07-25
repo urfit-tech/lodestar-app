@@ -78,7 +78,7 @@ const PracticeUploadModal: React.VFC<{
     },
   })
 
-  const { currentMemberId, authToken, apiHost } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
   const { id: appId } = useApp()
   const uploadAttachments = useUploadAttachments()
   const { insertPractice, updatePractice, updatePracticeHandler } = useMutatePractice(practice?.id || '')
@@ -117,7 +117,7 @@ const PracticeUploadModal: React.VFC<{
           await uploadAttachments('Practice', newPracticeId, attachments)
         }
         if (coverImageFile) {
-          await uploadFile(`${path}/${newPracticeId}`, coverImageFile, authToken, apiHost)
+          await uploadFile(`${path}/${newPracticeId}`, coverImageFile, authToken)
         }
 
         await updatePracticeHandler({
@@ -164,7 +164,7 @@ const PracticeUploadModal: React.VFC<{
             await uploadAttachments('Practice', practice.id, newAttachments)
           }
           if (coverImageFile) {
-            await uploadFile(`${path}/${practice.id}`, coverImageFile, authToken, apiHost)
+            await uploadFile(`${path}/${practice.id}`, coverImageFile, authToken)
           }
 
           toast({
