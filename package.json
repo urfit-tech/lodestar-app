@@ -5,8 +5,9 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-app-rewired start",
-    "build": "CI=false react-app-rewired build",
-    "build:staging": "env-cmd -f .env.development npm run build",
+    "build": "CI=false yarn build:${NODE_ENV:-production}",
+    "build:development": "env-cmd -f .env.development npm run build",
+    "build:production": "CI=false react-app-rewired build",
     "test": "react-app-rewired test",
     "typegen": "apollo client:codegen ./src/hasura.d.ts --outputFlat --target typescript",
     "format:organize-imports": "organize-imports-cli ./src/**/*.ts[x]",
