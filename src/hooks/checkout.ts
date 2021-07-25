@@ -24,7 +24,7 @@ export const useCheck = ({
   shipping: ShippingProps | null
   options: { [ProductId: string]: any }
 }) => {
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const { id: appId } = useApp()
   const [check, setCheck] = useState<CheckProps>({ orderProducts: [], orderDiscounts: [], shippingOption: null })
   const [orderChecking, setOrderChecking] = useState(false)
@@ -42,7 +42,7 @@ export const useCheck = ({
         shippingOption: shippingOptionProps
       }
     }>(
-      `//${apiHost}/payment/checkout-order`,
+      `${process.env.REACT_APP_API_BASE_ROOT}/payment/checkout-order`,
       {
         appId,
         productIds,
@@ -67,7 +67,6 @@ export const useCheck = ({
   }, [
     appId,
     authToken,
-    apiHost,
     discountId,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     JSON.stringify(options),
@@ -85,7 +84,7 @@ export const useCheck = ({
     ) => {
       setOrderPlacing(true)
       return Axios.post<{ code: string; message: string; result: { id: string } }>(
-        `//${apiHost}/tasks/order`,
+        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/order`,
         {
           paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
           productIds,
@@ -110,7 +109,7 @@ export const useCheck = ({
         })
         .finally(() => setOrderPlacing(false))
     },
-    [authToken, apiHost, discountId, options, productIds, shipping],
+    [authToken, discountId, options, productIds, shipping],
   )
 
   const totalPrice =

@@ -38,14 +38,13 @@ export const uploadFile = async (
   key: string,
   file: File | null,
   authToken: string | null,
-  apiHost: string,
   config?: AxiosRequestConfig,
 ) => {
   let signedUrl = ''
   file &&
     (await axios
       .post(
-        `//${apiHost}/sys/sign-url`,
+        `${process.env.REACT_APP_API_BASE_ROOT}/sys/sign-url`,
         {
           operation: 'putObject',
           params: {
@@ -74,9 +73,9 @@ export const uploadFile = async (
   return signedUrl
 }
 
-export const getFileDownloadableLink = async (key: string, authToken: string | null, apiHost: string) => {
+export const getFileDownloadableLink = async (key: string, authToken: string | null) => {
   const { data } = await axios.post(
-    `//${apiHost}/sys/sign-url`,
+    `${process.env.REACT_APP_API_BASE_ROOT}/sys/sign-url`,
     {
       operation: 'getObject',
       params: {
@@ -250,7 +249,7 @@ export const desktopViewMixin = (children: FlattenSimpleInterpolation) => css`
   }
 `
 
-export const createUploadFn = (appId: string, authToken: string | null, apiHost: string) => {
+export const createUploadFn = (appId: string, authToken: string | null) => {
   return async (params: {
     file: File
     success: (res: {
@@ -266,7 +265,7 @@ export const createUploadFn = (appId: string, authToken: string | null, apiHost:
       }
     }) => void
   }) => {
-    uploadFile(`images/${appId}/editor/${uuid()}`, params.file, authToken, apiHost).then(signedUrl => {
+    uploadFile(`images/${appId}/editor/${uuid()}`, params.file, authToken).then(signedUrl => {
       params.success({
         url: signedUrl.split('?')[0],
         meta: {

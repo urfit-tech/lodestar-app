@@ -20,7 +20,7 @@ const CouponSelectionModal: React.VFC<{
   onSelect?: (coupon: CouponProps) => void
 }> = ({ memberId, orderProducts, orderDiscounts, onSelect, renderTrigger }) => {
   const { formatMessage } = useIntl()
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const { coupons, loadingCoupons, refetchCoupons } = useCouponCollection(memberId)
 
   const [code, setCode] = useState('')
@@ -32,7 +32,7 @@ const CouponSelectionModal: React.VFC<{
     setInserting(true)
     axios
       .post(
-        `//${apiHost}/payment/exchange`,
+        `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
         {
           code,
           type: 'Coupon',

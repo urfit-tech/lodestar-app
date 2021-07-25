@@ -1,0 +1,23 @@
+name: Deploy to S3
+
+on:
+  push:
+    branches:
+      - master
+      - release
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: jeanlescure/react-deploy-to-s3-action@main
+        with:
+          args: --follow-symlinks --delete
+        env:
+          NODE_ENV: ${{ github.ref == 'refs/heads/release' && 'production' || 'development' }}
+          AWS_S3_BUCKET: ${{ github.ref == 'refs/heads/release' && 'static.lodestar.cc' || 'static.lodestar-dev.cc' }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SOURCE_DIR: build
+          DEST_DIR: deploys/${{ github.repository }}/${{ github.ref }}

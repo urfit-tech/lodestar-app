@@ -55,15 +55,11 @@ const IssueReplyItem: React.VFC<{
   const { formatMessage } = useIntl()
   const [qIssueReplyId] = useQueryParam('issueReplyId', StringParam)
   const theme = useContext(ThemeContext)
-  const { currentMemberId, authToken, apiHost } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
   const { id: appId } = useApp()
 
-  const {
-    insertIssueReplyReaction,
-    deleteIssueReply,
-    updateIssueReply,
-    deleteIssueReplyReaction,
-  } = useMutateIssueReply(issueReplyId)
+  const { insertIssueReplyReaction, deleteIssueReply, updateIssueReply, deleteIssueReplyReaction } =
+    useMutateIssueReply(issueReplyId)
 
   const [editing, setEditing] = useState(false)
   const [focus, setFocus] = useState(qIssueReplyId === issueReplyId)
@@ -155,7 +151,7 @@ const IssueReplyItem: React.VFC<{
                 value={contentState}
                 onChange={value => setContentState(value)}
                 controls={['bold', 'italic', 'underline', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+                media={{ uploadFn: createUploadFn(appId, authToken) }}
               />
               <div>
                 <Button variant="outline" className="mr-2" onClick={() => setEditing(false)}>

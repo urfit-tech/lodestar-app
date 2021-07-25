@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '../components/auth/AuthContext'
 
 export const useTask = (queue: string, taskId: string) => {
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const [retry, setRetry] = useState(0)
   const [task, setTask] = useState<{
     returnvalue: any
@@ -16,9 +16,8 @@ export const useTask = (queue: string, taskId: string) => {
 
   useEffect(() => {
     authToken &&
-      apiHost &&
       axios
-        .get(`//${apiHost}/tasks/${queue}/${taskId}`, {
+        .get(`${process.env.REACT_APP_API_BASE_ROOT}/tasks/${queue}/${taskId}`, {
           headers: { authorization: `Bearer ${authToken}` },
         })
         .then(({ data: { code, result } }) => {
@@ -29,6 +28,6 @@ export const useTask = (queue: string, taskId: string) => {
             setTimeout(() => setRetry(v => v + 1), 1000)
           }
         })
-  }, [authToken, apiHost, queue, taskId, retry])
+  }, [authToken, queue, taskId, retry])
   return { task, retry }
 }

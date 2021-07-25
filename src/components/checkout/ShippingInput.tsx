@@ -7,7 +7,6 @@ import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages } from '../../helpers/translation'
 import { shippingOptionProps } from '../../types/checkout'
-import { useAuth } from '../auth/AuthContext'
 import { CommonTitleMixin } from '../common'
 import PriceLabel from '../common/PriceLabel'
 
@@ -52,7 +51,6 @@ const ShippingInput: React.VFC<{
   shippingMethods?: shippingOptionProps[]
 }> = ({ value, onChange, isValidating, shippingMethods }) => {
   const { formatMessage } = useIntl()
-  const { apiHost } = useAuth()
   const { currencyId: appCurrencyId } = useApp()
 
   const nameRef = useRef<Input | null>(null)
@@ -121,7 +119,7 @@ const ShippingInput: React.VFC<{
 
   const handleStoreSelect = () => {
     const cvsSelectionBackUrl = encodeURIComponent(
-      `//${apiHost}/payment/cvs-proxy/${value?.shippingMethod}?callbackUrl=${window.location.origin}/cvs`,
+      `${process.env.REACT_APP_API_BASE_ROOT}/payment/cvs-proxy/${value?.shippingMethod}?callbackUrl=${window.location.origin}/cvs`,
     )
     let cvsSelectionUrl
 

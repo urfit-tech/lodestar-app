@@ -76,7 +76,7 @@ const ReviewItem: React.VFC<ReviewProps & { onRefetch?: () => void; targetId: st
 }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { authToken, apiHost, currentMemberId } = useAuth()
+  const { authToken, currentMemberId } = useAuth()
   const { handleSubmit, control, reset } = useForm<{
     replyContent: EditorState
   }>({
@@ -158,7 +158,7 @@ const ReviewItem: React.VFC<ReviewProps & { onRefetch?: () => void; targetId: st
                       <StyledEditor
                         language="zh-hant"
                         controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                        media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+                        media={{ uploadFn: createUploadFn(appId, authToken) }}
                       />
                     }
                     control={control}

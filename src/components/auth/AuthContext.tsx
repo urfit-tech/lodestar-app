@@ -13,7 +13,6 @@ type AuthProps = {
   currentMemberId: string | null
   authToken: string | null
   currentMember: { name: string; username: string; email: string; pictureUrl: string } | null
-  apiHost: string
   refreshToken?: () => Promise<void>
   register?: (data: {
     appId?: string
@@ -40,16 +39,12 @@ const defaultAuthContext: AuthProps = {
   currentMemberId: null,
   authToken: null,
   currentMember: null,
-  apiHost: '',
 }
 
 const AuthContext = React.createContext<AuthProps>(defaultAuthContext)
 export const useAuth = () => useContext(AuthContext)
 
-export const AuthProvider: React.FC<{
-  appId: string
-  apiHost: string
-}> = ({ appId, apiHost, children }) => {
+export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) => {
   const [isAuthenticating, setIsAuthenticating] = useState(defaultAuthContext.isAuthenticating)
   const [authToken, setAuthToken] = useState<string | null>(null)
   const [payload, setPayload] = useState<any>(null)
@@ -97,7 +92,6 @@ export const AuthProvider: React.FC<{
           email: payload.email,
           pictureUrl: payload.pictureUrl,
         },
-        apiHost,
         refreshToken: async () =>
           Axios.post(
             `${process.env.REACT_APP_AUTH_BASE_ROOT || ''}/auth/refresh-token`,
@@ -142,7 +136,7 @@ export const AuthProvider: React.FC<{
                 const phone = sessionStorage.getItem('phone')
                 if (phone) {
                   Axios.post(
-                    `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
+                    `${process.env.REACT_APP_GRAPHQL_BASE_ROOT}/v1/graphql`,
                     {
                       query: `
                         mutation INSERT_MEMBER_PHONE_ONE($currentMemberId: String!, $phone: String!) {
@@ -166,7 +160,7 @@ export const AuthProvider: React.FC<{
                 )
                 if (categoryIds.length) {
                   Axios.post(
-                    `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
+                    `${process.env.REACT_APP_GRAPHQL_BASE_ROOT}/v1/graphql`,
                     {
                       query: `
                         mutation INSERT_MEMBER_CATEGORIES($memberProperties: [member_property_insert_input!]!, $data: [member_category_insert_input!]!) {
@@ -197,7 +191,7 @@ export const AuthProvider: React.FC<{
                 const star = sessionStorage.getItem('star')
                 if (star) {
                   Axios.post(
-                    `https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`,
+                    `${process.env.REACT_APP_GRAPHQL_BASE_ROOT}/v1/graphql`,
                     {
                       query: `
                         mutation SET_MEMBER_STAR($memberId: String!, $star: numeric!) {
@@ -285,7 +279,7 @@ export const AuthProvider: React.FC<{
         },
         sendSmsCode: async ({ phoneNumber }) =>
           Axios.post(
-            `//${apiHost}/sms/send-code`,
+            `${process.env.REACT_APP_API_BASE_ROOT}/sms/send-code`,
             {
               appId,
               phoneNumber,
@@ -298,7 +292,7 @@ export const AuthProvider: React.FC<{
           }),
         verifySmsCode: async ({ phoneNumber, code }) =>
           Axios.post(
-            `//${apiHost}/sms/verify-code`,
+            `${process.env.REACT_APP_API_BASE_ROOT}/sms/verify-code`,
             {
               appId,
               phoneNumber,

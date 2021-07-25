@@ -99,16 +99,9 @@ const MerchandiseContactBlock: React.VFC<{
 
 const MerchandiseOrderContactModal: React.VFC<{ orderId: string }> = ({ orderId }) => {
   const { id: appId } = useApp()
-  const { authToken, currentMemberId, apiHost } = useAuth()
-  const {
-    loading,
-    error,
-    orderContacts,
-    isUnread,
-    refetch,
-    insertOrderContact,
-    updateOrderContactReadAt,
-  } = useOrderContact(orderId, currentMemberId || '')
+  const { authToken, currentMemberId } = useAuth()
+  const { loading, error, orderContacts, isUnread, refetch, insertOrderContact, updateOrderContactReadAt } =
+    useOrderContact(orderId, currentMemberId || '')
 
   const { formatMessage } = useIntl()
   const { control, handleSubmit, setValue, errors, setError } = useForm<{
@@ -168,7 +161,7 @@ const MerchandiseOrderContactModal: React.VFC<{ orderId: string }> = ({ orderId 
                 isInvalid={!!errors?.message}
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+                media={{ uploadFn: createUploadFn(appId, authToken) }}
                 placeholder={formatMessage(messages.fillMessageContent)}
               />
             }

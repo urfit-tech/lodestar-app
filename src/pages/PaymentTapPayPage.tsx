@@ -107,7 +107,7 @@ const PaymentTapPayBlock: React.VFC = () => {
 const usePayment = (paymentNo: number) => {
   const { TPDirect } = useTappay()
   const { formatMessage } = useIntl()
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
 
   const payPayment = useCallback(
     (memberCreditCardId: string) =>
@@ -117,7 +117,7 @@ const usePayment = (paymentNo: number) => {
         }
         axios
           .post(
-            `//${apiHost}/payment/pay/${paymentNo}`,
+            `${process.env.REACT_APP_API_BASE_ROOT}/payment/pay/${paymentNo}`,
             {
               memberCreditCardId,
             },
@@ -135,7 +135,7 @@ const usePayment = (paymentNo: number) => {
           })
           .catch(reject)
       }),
-    [authToken, apiHost, paymentNo, formatMessage],
+    [authToken, paymentNo, formatMessage],
   )
 
   const addCreditCard = async (cardHolder: CardHolder) => {
@@ -146,7 +146,7 @@ const usePayment = (paymentNo: number) => {
         }
         axios({
           method: 'POST',
-          url: `//${apiHost}/payment/credit-cards`,
+          url: `${process.env.REACT_APP_API_BASE_ROOT}/payment/credit-cards`,
           withCredentials: true,
           data: {
             prime,

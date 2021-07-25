@@ -42,7 +42,7 @@ const ProgramContentBlock: React.VFC<{
 }> = ({ program, programContentId }) => {
   const { formatMessage } = useIntl()
   const { loading: loadingApp, enabledModules, settings } = useApp()
-  const { apiHost, authToken } = useAuth()
+  const { authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
 
@@ -115,7 +115,7 @@ const ProgramContentBlock: React.VFC<{
             } else {
               axios
                 .post(
-                  `//${apiHost}/tasks/player-event-logs/`,
+                  `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
                   {
                     programContentId,
                     data: e.videoState,
