@@ -8,13 +8,6 @@ export type ActivityProps = {
   endedAt: Date | null
   organizerId: string
   supportLocales: string[] | null
-  categories: {
-    id: string
-    name: string
-  }[]
-  participantCount?: number
-  totalSeats?: number
-  tickets?: ActivityTicketProps[]
 }
 
 type ActivitySessionProps = {

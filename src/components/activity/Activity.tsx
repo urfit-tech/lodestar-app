@@ -35,16 +35,12 @@ const StyledMeta = styled.div`
   letter-spacing: 0.18px;
 `
 
-const Activity: React.VFC<ActivityProps> = ({
-  id,
-  title,
-  coverUrl,
-  isParticipantsVisible,
-  participantCount,
-  totalSeats,
-  startedAt,
-  endedAt,
-}) => {
+const Activity: React.VFC<
+  ActivityProps & {
+    participantCount: number
+    totalSeats: number
+  }
+> = ({ id, title, coverUrl, isParticipantsVisible, participantCount, totalSeats, startedAt, endedAt }) => {
   const { formatMessage } = useIntl()
   const startDate = startedAt ? moment(startedAt).format('YYYY-MM-DD(dd)') : ''
   const endDate = endedAt ? moment(endedAt).format('YYYY-MM-DD(dd)') : ''

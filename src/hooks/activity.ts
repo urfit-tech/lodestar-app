@@ -54,7 +54,11 @@ export const usePublishedActivityCollection = () => {
     }
   `)
 
-  const activities: ActivityProps[] =
+  const activities: (ActivityProps & {
+    categories: CategoryProps[]
+    participantCount: number
+    totalSeats: number
+  })[] =
     loading || error || !data
       ? []
       : data.activity
@@ -206,10 +210,10 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
       startedAt: Date
       endedAt: Date
       participants: number
-      sessions: { id: string; type: string; title: string }[]
+      sessions: Pick<ActivityTicketSessionProps, 'id' | 'type' | 'title'>[]
       enrollments: { orderId: string; orderProductId: string }[]
     }[]
-    categories: { id: string; name: string }[]
+    categories: CategoryProps[]
     sessionIds: string[]
   } | null = data?.activity_by_pk
     ? {
@@ -230,7 +234,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
           isPublished: v.is_published,
           sessions: v.activity_session_tickets.map(v => ({
             id: v.activity_session.id,
-            type: v.activity_session_type,
+            type: v.activity_session_type as ActivityTicketSessionType,
             title: v.activity_session.title,
           })),
           participants: v.activity_ticket_enrollments_aggregate.aggregate?.count || 0,

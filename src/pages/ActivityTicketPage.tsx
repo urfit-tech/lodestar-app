@@ -114,15 +114,15 @@ const ActivityTicketPage: React.VFC<{
         <div className="row justify-content-center">
           <div className="col-12 col-lg-8">
             <div className="mb-5">
-              {ticket.sessions.map(session => (
-                <div key={session.id} className="mb-4">
+              {ticket.sessions.map(ticketSession => (
+                <div key={ticketSession.id} className="mb-4">
                   <ActivitySessionItem
-                    activitySessionId={session.id}
+                    activitySessionId={ticketSession.id}
                     renderAttend={
                       enabledModules.qrcode &&
                       currentUserRole === 'app-owner' &&
                       !loadingAttendance &&
-                      (attendance[session.id] ? (
+                      (attendance[ticketSession.id] ? (
                         <Button
                           isFullWidth
                           isLoading={loading}
@@ -131,7 +131,7 @@ const ActivityTicketPage: React.VFC<{
                             leaveActivitySession({
                               variables: {
                                 orderProductId,
-                                activitySessionId: session.id,
+                                activitySessionId: ticketSession.id,
                               },
                             })
                               .then(() => refetchAttendance())
@@ -151,7 +151,7 @@ const ActivityTicketPage: React.VFC<{
                             attendActivitySession({
                               variables: {
                                 orderProductId,
-                                activitySessionId: session.id,
+                                activitySessionId: ticketSession.id,
                               },
                             })
                               .then(() => refetchAttendance())
