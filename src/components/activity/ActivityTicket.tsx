@@ -127,17 +127,16 @@ const ActivityTicket: React.VFC<{
       </StyledPrice>
       <Divider />
       <StyledSubTitle>{formatMessage(productMessages.activity.title.sessions)}</StyledSubTitle>
-      {activityTicketSessions.map(v => (
-        <StyledTag key={v.id} color="#585858" className="mb-2">
+      {activityTicketSessions.map(session => (
+        <StyledTag key={session.id} color="#585858" className="mb-2">
           {enabledModules.activity_online
-            ? `${v.title} - ${
+            ? `${session.title} - ${
                 {
                   online: formatMessage(activityMessages.label.online),
                   offline: formatMessage(activityMessages.label.offline),
-                  both: formatMessage(activityMessages.label.both),
-                }[v.type]
+                }[session.type]
               }`
-            : v.title}
+            : session.title}
         </StyledTag>
       ))}
       {!!description && (

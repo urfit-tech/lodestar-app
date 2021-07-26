@@ -117,7 +117,6 @@ const ActivityTicketItem: React.VFC<{
                         {
                           online: formatMessage(activityMessages.label.online),
                           offline: formatMessage(activityMessages.label.offline),
-                          both: formatMessage(activityMessages.label.both),
                         }[session.type]
                       }`
                     : session.title}
