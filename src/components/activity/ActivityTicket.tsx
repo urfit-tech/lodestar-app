@@ -8,6 +8,7 @@ import { useApp } from '../../containers/common/AppContext'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
+import { ActivityTicketProps, ActivityTicketSessionProps } from '../../types/activity'
 import { CommonLargeTitleMixin } from '../common'
 import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -75,24 +76,14 @@ const StyledExtraAdmin = styled.div`
   letter-spacing: 0.2px;
 `
 
-const ActivityTicket: React.VFC<{
-  id: string
-  title: string
-  description: string | null
-  price: number
-  count: number
-  startedAt: Date
-  endedAt: Date
-  isPublished: boolean
-  activityTicketSessions: {
-    id: string
-    type: string
-    title: string
-  }[]
-  participants: number
-  variant?: 'admin'
-  extra?: React.ReactNode
-}> = ({
+const ActivityTicket: React.VFC<
+  ActivityTicketProps & {
+    activityTicketSessions: Pick<ActivityTicketSessionProps, 'id' | 'type' | 'title'>[]
+    participants: number
+    variant?: 'admin'
+    extra?: React.ReactNode
+  }
+> = ({
   title,
   description,
   price,

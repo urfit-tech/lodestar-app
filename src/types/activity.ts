@@ -39,6 +39,8 @@ export type ActivityTicketProps = {
   isPublished: boolean
 }
 
+export type ActivityTicketSessionType = 'offline' | 'online'
+
 export type ActivityTicketSessionProps = ActivitySessionProps & {
-  type: string
+  type: ActivityTicketSessionType
 }

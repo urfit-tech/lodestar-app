@@ -2,7 +2,12 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { sum } from 'ramda'
 import hasura from '../hasura'
-import { ActivityProps, ActivityTicketProps, ActivityTicketSessionProps } from '../types/activity'
+import {
+  ActivityProps,
+  ActivityTicketProps,
+  ActivityTicketSessionProps,
+  ActivityTicketSessionType,
+} from '../types/activity'
 import { CategoryProps } from '../types/general'
 
 export const usePublishedActivityCollection = () => {
@@ -419,7 +424,7 @@ export const useActivityTicket = (ticketId: string) => {
           title: data.activity_ticket_by_pk.title,
           sessions: data.activity_ticket_by_pk.activity_session_tickets.map(activitySessionTicket => ({
             id: activitySessionTicket.activity_session.id,
-            type: activitySessionTicket.activity_session_type,
+            type: activitySessionTicket.activity_session_type as ActivityTicketSessionType,
             title: activitySessionTicket.activity_session.title,
             description: activitySessionTicket.activity_session.description,
             threshold: activitySessionTicket.activity_session.threshold,
