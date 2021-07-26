@@ -1,6 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, SkeletonText } from '@chakra-ui/react'
-import { map } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -58,6 +57,9 @@ const ActivitySessionItem: React.VFC<{
     return <StyledWrapper>{formatMessage(commonMessages.status.loadingError)}</StyledWrapper>
   }
 
+  const sessionType =
+    session.location && session.onlineLink ? 'both' : session.location ? 'offline' : session.onlineLink ? 'online' : ''
+
   return (
     <StyledWrapper>
       <StyledTitle className="mb-3">{session.title}</StyledTitle>
@@ -67,13 +69,12 @@ const ActivitySessionItem: React.VFC<{
           <span>{dateRangeFormatter({ startedAt: session.startedAt, endedAt: session.endedAt })}</span>
         </div>
 
-        {!enabledModules.activity_online ||
-          (session.location && (
-            <div>
-              <Icon as={MapOIcon} className="mr-2" />
-              <span>{session.location}</span>
-            </div>
-          ))}
+        {sessionType === 'offline' && (
+          <div>
+            <Icon as={MapOIcon} className="mr-2" />
+            <span>{session.location}</span>
+          </div>
+        )}
 
         {enabledModules.activity_online && session.onlineLink && (
           <div className="d-flex align-items-center">
@@ -91,45 +92,41 @@ const ActivitySessionItem: React.VFC<{
           </div>
         )}
 
-        {(session.isParticipantsVisible || !!session.threshold) && (
-          <div>
-            <Icon as={UserOIcon} className="mr-2" />
-            {session.isParticipantsVisible &&
-              (enabledModules.activity_online && session.location && session.onlineLink ? (
-                map(
-                  sessionType =>
-                    !!session.maxAmount[sessionType] && (
-                      <span className="mr-2">
-                        {`${formatMessage(activityMessages.label[sessionType])} `}
-                        {session.enrollmentAmount[sessionType]} / {session.maxAmount[sessionType]}
-                      </span>
-                    ),
-                  ['online', 'offline'] as const,
-                )
-              ) : (
+        <div>
+          {session.isParticipantsVisible && (
+            <>
+              <Icon as={UserOIcon} className="mr-2" />
+              {sessionType === 'offline' && (
+                <span className="mr-3">
+                  {session.enrollmentAmount['offline']} / {session.maxAmount['offline']}
+                </span>
+              )}
+              {enabledModules.activity_online && sessionType === 'online' && (
+                <span className="mr-3">
+                  {session.enrollmentAmount['online']} / {session.maxAmount['online']}
+                </span>
+              )}
+              {enabledModules.activity_online && sessionType === 'both' && (
                 <>
-                  {!enabledModules.activity_online || session.location ? (
-                    <span className="mr-2">
-                      {session.enrollmentAmount['offline']} / {session.maxAmount['offline']}
-                    </span>
-                  ) : (
-                    enabledModules.activity_online &&
-                    session.onlineLink && (
-                      <span className="mr-3">
-                        {session.enrollmentAmount['online']} / {session.maxAmount['online']}
-                      </span>
-                    )
-                  )}
+                  <span className="mr-2">
+                    {`${formatMessage(activityMessages.label['offline'])} `}
+                    {session.enrollmentAmount['offline']} / {session.maxAmount['offline']}
+                  </span>
+                  <span className="mr-2">
+                    {`${formatMessage(activityMessages.label['online'])} `}
+                    {session.enrollmentAmount['online']} / {session.maxAmount['online']}
+                  </span>
                 </>
-              ))}
-            {session.threshold && (
-              <span>
-                {formatMessage(productMessages.activity.content.least)}
-                {session.threshold}
-              </span>
-            )}
-          </div>
-        )}
+              )}
+            </>
+          )}
+          {session.threshold && (
+            <span>
+              {formatMessage(productMessages.activity.content.least)}
+              {session.threshold}
+            </span>
+          )}
+        </div>
 
         {renderAttend && <div className="pt-2">{renderAttend}</div>}
       </StyledContent>
