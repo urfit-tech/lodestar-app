@@ -1,6 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
-import { Divider } from '@chakra-ui/react'
-import { Tag } from 'antd'
+import { Divider, Tag } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -57,6 +56,7 @@ const StyledSubTitle = styled.div`
 `
 const StyledTag = styled(Tag)`
   && {
+    background-color: var(--gray-darker);
     padding: 0.25rem 0.75rem;
   }
 `
@@ -119,7 +119,7 @@ const ActivityTicket: React.VFC<
       <Divider />
       <StyledSubTitle>{formatMessage(productMessages.activity.title.sessions)}</StyledSubTitle>
       {activityTicketSessions.map(session => (
-        <StyledTag key={session.id} color="#585858" className="mb-2">
+        <StyledTag key={session.id} variant="solid" className="mb-2 mr-1">
           {enabledModules.activity_online
             ? `${session.title} - ${
                 {

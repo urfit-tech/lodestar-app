@@ -82,7 +82,7 @@ const ActivitySessionItem: React.VFC<{
             {session.isEnrolled ? (
               <span>
                 <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}</span>
-                <a href={`https://${session.onlineLink}`} target="_blank" rel="noopener noreferrer">
+                <a href={session.onlineLink} target="_blank" rel="noopener noreferrer">
                   <Button variant="link">{session.onlineLink}</Button>
                 </a>
               </span>
