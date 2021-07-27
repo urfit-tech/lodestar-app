@@ -30,6 +30,10 @@ const usePayForm = (paymentNo: number) => {
 
   useEffect(() => {
     const clientBackUrl = window.location.origin
+    const urlPrefix =
+      process.env.NODE_ENV === 'development'
+        ? `${process.env.REACT_APP_API_BASE_ROOT}`
+        : `${window.location.origin}${process.env.REACT_APP_API_BASE_ROOT}`
     if (authToken) {
       setLoadingForm(true)
       axios
@@ -38,9 +42,9 @@ const usePayForm = (paymentNo: number) => {
           {
             paymentNo,
             options: {
-              notifyUrl: `${process.env.REACT_APP_API_BASE_ROOT}/payment/order-notification`,
+              notifyUrl: `${urlPrefix}/payment/order-notification`,
               clientBackUrl,
-              returnUrl: `${process.env.REACT_APP_API_BASE_ROOT}/payment/payment-proxy`,
+              returnUrl: `${urlPrefix}/payment/payment-proxy`,
             },
           },
           {
