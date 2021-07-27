@@ -16,7 +16,7 @@ type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth
 const OAuth2Page: React.VFC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
 
-  if (provider === 'parenting' || 'commonhealth') {
+  if (['parenting', 'commonhealth'].includes(provider)) {
     return <Oauth2Section />
   }
 
