@@ -701,6 +701,10 @@ export const checkoutMessages = {
     homeDelivery: { id: 'checkout.label.homeDelivery', defaultMessage: '宅配' },
     other: { id: 'checkout.label.other', defaultMessage: '其他' },
   }),
+  event: defineMessages({
+    inventoryShortage: { id: 'checkout.event.inventoryShortage', defaultMessage: '庫存不足請調整數量' },
+    removeSoldOutProduct: { id: 'checkout.event.removeSoldOutProduct', defaultMessage: '請移除已售完項目' },
+  }),
 }
 
 export const programMessages = {
