@@ -54,7 +54,7 @@ const DefaultLayout: React.FC<{
 }) => {
   const { formatMessage } = useIntl()
   const theme = useContext(ThemeContext)
-  const { currentMemberId, isAuthenticated } = useAuth()
+  const { currentMemberId, isAuthenticated, currentMember } = useAuth()
   const { name, settings, enabledModules } = useApp()
   const { navs } = useNav()
   const { refetchNotifications } = useContext(NotificationContext)
@@ -117,7 +117,17 @@ const DefaultLayout: React.FC<{
 
             {!noCart && <CartDropdown />}
             {currentMemberId && <NotificationDropdown />}
-            {currentMemberId ? <MemberProfileButton memberId={currentMemberId} /> : <AuthButton />}
+            {currentMemberId && currentMember ? (
+              <MemberProfileButton
+                id={currentMemberId}
+                name={currentMember.name}
+                username={currentMember.username}
+                email={currentMember.email}
+                pictureUrl={currentMember.pictureUrl}
+              />
+            ) : (
+              <AuthButton />
+            )}
           </div>
         </StyledLayoutHeader>
 
