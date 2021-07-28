@@ -110,8 +110,8 @@ const CheckoutBlock: React.VFC<{
     cachedPaymentInfor.payment = cachedPayment
       ? (JSON.parse(cachedPayment) as PaymentProps)
       : {
-          ...cachedPaymentInfor.payment,
           ...member?.metadata?.payment,
+          ...cachedPaymentInfor.payment,
         }
   } catch {}
 
