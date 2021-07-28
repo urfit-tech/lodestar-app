@@ -127,8 +127,8 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     cachedPaymentInfor.payment = cachedPayment
       ? (JSON.parse(cachedPayment) as PaymentProps)
       : {
-          ...cachedPaymentInfor.payment,
           ...member?.metadata?.payment,
+          ...cachedPaymentInfor.payment,
         }
   } catch {}
 
