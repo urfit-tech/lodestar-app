@@ -2206,6 +2206,131 @@ export interface GET_ENROLLED_ACTIVITY_TICKETSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_ACTIVITY
+// ====================================================
+
+export interface GET_ACTIVITY_activity_by_pk_activity_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_categories {
+  __typename: "activity_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_ACTIVITY_activity_by_pk_activity_categories_category;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_sessions {
+  __typename: "activity_session";
+  id: any;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session {
+  __typename: "activity_session";
+  id: any;
+  title: string;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets {
+  __typename: "activity_session_ticket";
+  id: any;
+  /**
+   * offline | online
+   */
+  activity_session_type: string;
+  /**
+   * An object relationship
+   */
+  activity_session: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate_aggregate {
+  __typename: "activity_ticket_enrollment_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate {
+  __typename: "activity_ticket_enrollment_aggregate";
+  aggregate: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments {
+  __typename: "activity_ticket_enrollment";
+  order_log_id: string | null;
+  order_product_id: any | null;
+}
+
+export interface GET_ACTIVITY_activity_by_pk_activity_tickets {
+  __typename: "activity_ticket";
+  id: any;
+  /**
+   * unlimited as 99999999
+   */
+  count: number;
+  description: string | null;
+  started_at: any;
+  is_published: boolean;
+  ended_at: any;
+  price: any;
+  title: string;
+  /**
+   * An array relationship
+   */
+  activity_session_tickets: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets[];
+  /**
+   * An aggregated array relationship
+   */
+  activity_ticket_enrollments_aggregate: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate;
+  /**
+   * An array relationship
+   */
+  activity_ticket_enrollments: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments[];
+}
+
+export interface GET_ACTIVITY_activity_by_pk {
+  __typename: "activity";
+  id: any;
+  organizer_id: string;
+  cover_url: string | null;
+  title: string;
+  description: string | null;
+  published_at: any | null;
+  /**
+   * An array relationship
+   */
+  activity_categories: GET_ACTIVITY_activity_by_pk_activity_categories[];
+  /**
+   * An array relationship
+   */
+  activity_sessions: GET_ACTIVITY_activity_by_pk_activity_sessions[];
+  /**
+   * An array relationship
+   */
+  activity_tickets: GET_ACTIVITY_activity_by_pk_activity_tickets[];
+}
+
+export interface GET_ACTIVITY {
+  /**
+   * fetch data from the table: "activity" using primary key columns
+   */
+  activity_by_pk: GET_ACTIVITY_activity_by_pk | null;
+}
+
+export interface GET_ACTIVITYVariables {
+  activityId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ACTIVITY_SESSION
 // ====================================================
 
@@ -2225,9 +2350,18 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_ti
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets {
   __typename: "activity_session_ticket";
   /**
+   * offline | online
+   */
+  session_type: string;
+  /**
    * An object relationship
    */
   activity_ticket: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets_activity_ticket;
+}
+
+export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments {
+  __typename: "activity_enrollment";
+  member_id: string | null;
 }
 
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate_aggregate {
@@ -2240,6 +2374,12 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollment
   aggregate: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate_aggregate | null;
 }
 
+export interface GET_ACTIVITY_SESSION_activity_session_by_pk_ticket_enrollment_count {
+  __typename: "activity_session_ticket_enrollment_count";
+  activity_offline_session_ticket_count: any | null;
+  activity_online_session_ticket_count: any | null;
+}
+
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
   __typename: "activity_session";
   id: any;
@@ -2247,6 +2387,7 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
   started_at: any;
   ended_at: any;
   location: string | null;
+  online_link: string | null;
   description: string | null;
   threshold: any | null;
   /**
@@ -2258,9 +2399,17 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
    */
   activity_session_tickets: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets[];
   /**
+   * An array relationship
+   */
+  activity_enrollments: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments[];
+  /**
    * An aggregated array relationship
    */
   activity_enrollments_aggregate: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate;
+  /**
+   * An object relationship
+   */
+  ticket_enrollment_count: GET_ACTIVITY_SESSION_activity_session_by_pk_ticket_enrollment_count | null;
 }
 
 export interface GET_ACTIVITY_SESSION {
@@ -2272,6 +2421,7 @@ export interface GET_ACTIVITY_SESSION {
 
 export interface GET_ACTIVITY_SESSIONVariables {
   sessionId: any;
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -2297,6 +2447,10 @@ export interface GET_TICKET_activity_ticket_by_pk_activity_session_tickets_activ
 export interface GET_TICKET_activity_ticket_by_pk_activity_session_tickets {
   __typename: "activity_session_ticket";
   id: any;
+  /**
+   * offline | online
+   */
+  activity_session_type: string;
   /**
    * An object relationship
    */
@@ -7574,127 +7728,6 @@ export interface GET_PRODUCT_EDITOR_IDSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_ACTIVITY
-// ====================================================
-
-export interface GET_ACTIVITY_activity_by_pk_activity_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_categories {
-  __typename: "activity_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: GET_ACTIVITY_activity_by_pk_activity_categories_category;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_sessions {
-  __typename: "activity_session";
-  id: any;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session {
-  __typename: "activity_session";
-  id: any;
-  title: string;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets {
-  __typename: "activity_session_ticket";
-  id: any;
-  /**
-   * An object relationship
-   */
-  activity_session: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate_aggregate {
-  __typename: "activity_ticket_enrollment_aggregate_fields";
-  count: number | null;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate {
-  __typename: "activity_ticket_enrollment_aggregate";
-  aggregate: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate_aggregate | null;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments {
-  __typename: "activity_ticket_enrollment";
-  order_log_id: string | null;
-  order_product_id: any | null;
-}
-
-export interface GET_ACTIVITY_activity_by_pk_activity_tickets {
-  __typename: "activity_ticket";
-  id: any;
-  /**
-   * unlimited as 99999999
-   */
-  count: number;
-  description: string | null;
-  started_at: any;
-  is_published: boolean;
-  ended_at: any;
-  price: any;
-  title: string;
-  /**
-   * An array relationship
-   */
-  activity_session_tickets: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets[];
-  /**
-   * An aggregated array relationship
-   */
-  activity_ticket_enrollments_aggregate: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate;
-  /**
-   * An array relationship
-   */
-  activity_ticket_enrollments: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments[];
-}
-
-export interface GET_ACTIVITY_activity_by_pk {
-  __typename: "activity";
-  id: any;
-  organizer_id: string;
-  cover_url: string | null;
-  title: string;
-  description: string | null;
-  published_at: any | null;
-  /**
-   * An array relationship
-   */
-  activity_categories: GET_ACTIVITY_activity_by_pk_activity_categories[];
-  /**
-   * An array relationship
-   */
-  activity_sessions: GET_ACTIVITY_activity_by_pk_activity_sessions[];
-  /**
-   * An array relationship
-   */
-  activity_tickets: GET_ACTIVITY_activity_by_pk_activity_tickets[];
-}
-
-export interface GET_ACTIVITY {
-  /**
-   * fetch data from the table: "activity" using primary key columns
-   */
-  activity_by_pk: GET_ACTIVITY_activity_by_pk | null;
-}
-
-export interface GET_ACTIVITYVariables {
-  activityId: any;
-  memberId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL mutation operation: AGREE_MEMBER_CONTRACT
 // ====================================================
 
@@ -9059,7 +9092,7 @@ export enum activity_session_update_column {
   ended_at = "ended_at",
   id = "id",
   location = "location",
-  location_online = "location_online",
+  online_link = "online_link",
   started_at = "started_at",
   threshold = "threshold",
   title = "title",
@@ -9142,6 +9175,22 @@ export enum app_admin_update_column {
  */
 export enum app_constraint {
   App_pkey = "App_pkey",
+}
+
+/**
+ * unique or primary key constraints on table "app_host"
+ */
+export enum app_host_constraint {
+  app_host_pkey = "app_host_pkey",
+}
+
+/**
+ * update columns of table "app_host"
+ */
+export enum app_host_update_column {
+  app_id = "app_id",
+  host = "host",
+  priority = "priority",
 }
 
 /**
@@ -9887,6 +9936,24 @@ export enum member_note_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "member_oauth"
+ */
+export enum member_oauth_constraint {
+  member_oauth_member_id_provider_key = "member_oauth_member_id_provider_key",
+  member_oauth_pkey = "member_oauth_pkey",
+}
+
+/**
+ * update columns of table "member_oauth"
+ */
+export enum member_oauth_update_column {
+  id = "id",
+  member_id = "member_id",
+  provider = "provider",
+  provider_user_id = "provider_user_id",
+}
+
+/**
  * unique or primary key constraints on table "member_permission_extra"
  */
 export enum member_permission_extra_constraint {
@@ -10057,6 +10124,7 @@ export enum member_update_column {
   abstract = "abstract",
   app_id = "app_id",
   assigned_at = "assigned_at",
+  commonhealth_user_id = "commonhealth_user_id",
   created_at = "created_at",
   description = "description",
   email = "email",
@@ -10916,6 +10984,7 @@ export enum product_inventory_update_column {
  */
 export enum product_update_column {
   id = "id",
+  sku = "sku",
   target = "target",
   type = "type",
 }
@@ -11858,6 +11927,7 @@ export interface activity_bool_exp {
   package_items?: package_item_bool_exp | null;
   position?: Int_comparison_exp | null;
   published_at?: timestamptz_comparison_exp | null;
+  session_ticket_enrollment_count?: activity_session_ticket_enrollment_count_bool_exp | null;
   support_locales?: jsonb_comparison_exp | null;
   title?: String_comparison_exp | null;
 }
@@ -11989,9 +12059,10 @@ export interface activity_session_bool_exp {
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   location?: String_comparison_exp | null;
-  location_online?: String_comparison_exp | null;
+  online_link?: String_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
   threshold?: numeric_comparison_exp | null;
+  ticket_enrollment_count?: activity_session_ticket_enrollment_count_bool_exp | null;
   title?: String_comparison_exp | null;
 }
 
@@ -12007,7 +12078,7 @@ export interface activity_session_insert_input {
   ended_at?: any | null;
   id?: any | null;
   location?: string | null;
-  location_online?: string | null;
+  online_link?: string | null;
   started_at?: any | null;
   threshold?: any | null;
   title?: string | null;
@@ -12051,6 +12122,20 @@ export interface activity_session_ticket_bool_exp {
   activity_ticket?: activity_ticket_bool_exp | null;
   activity_ticket_id?: uuid_comparison_exp | null;
   id?: uuid_comparison_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "activity_session_ticket_enrollment_count". All fields are combined with a logical 'AND'.
+ */
+export interface activity_session_ticket_enrollment_count_bool_exp {
+  _and?: (activity_session_ticket_enrollment_count_bool_exp | null)[] | null;
+  _not?: activity_session_ticket_enrollment_count_bool_exp | null;
+  _or?: (activity_session_ticket_enrollment_count_bool_exp | null)[] | null;
+  activity?: activity_bool_exp | null;
+  activity_id?: uuid_comparison_exp | null;
+  activity_offline_session_ticket_count?: numeric_comparison_exp | null;
+  activity_online_session_ticket_count?: numeric_comparison_exp | null;
+  activity_session_id?: uuid_comparison_exp | null;
 }
 
 /**
@@ -12247,6 +12332,7 @@ export interface app_bool_exp {
   _or?: (app_bool_exp | null)[] | null;
   activities?: activity_bool_exp | null;
   app_admins?: app_admin_bool_exp | null;
+  app_hosts?: app_host_bool_exp | null;
   app_modules?: app_module_bool_exp | null;
   app_navs?: app_nav_bool_exp | null;
   app_secrets?: app_secret_bool_exp | null;
@@ -12276,11 +12362,52 @@ export interface app_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "app_host"
+ */
+export interface app_host_arr_rel_insert_input {
+  data: app_host_insert_input[];
+  on_conflict?: app_host_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "app_host". All fields are combined with a logical 'AND'.
+ */
+export interface app_host_bool_exp {
+  _and?: (app_host_bool_exp | null)[] | null;
+  _not?: app_host_bool_exp | null;
+  _or?: (app_host_bool_exp | null)[] | null;
+  app?: app_bool_exp | null;
+  app_id?: String_comparison_exp | null;
+  host?: String_comparison_exp | null;
+  priority?: Int_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "app_host"
+ */
+export interface app_host_insert_input {
+  app?: app_obj_rel_insert_input | null;
+  app_id?: string | null;
+  host?: string | null;
+  priority?: number | null;
+}
+
+/**
+ * on conflict condition type for table "app_host"
+ */
+export interface app_host_on_conflict {
+  constraint: app_host_constraint;
+  update_columns: app_host_update_column[];
+  where?: app_host_bool_exp | null;
+}
+
+/**
  * input type for inserting data into table "app"
  */
 export interface app_insert_input {
   activities?: activity_arr_rel_insert_input | null;
   app_admins?: app_admin_arr_rel_insert_input | null;
+  app_hosts?: app_host_arr_rel_insert_input | null;
   app_modules?: app_module_arr_rel_insert_input | null;
   app_navs?: app_nav_arr_rel_insert_input | null;
   app_secrets?: app_secret_arr_rel_insert_input | null;
@@ -14138,6 +14265,7 @@ export interface member_bool_exp {
   comment_replies?: comment_reply_bool_exp | null;
   comment_reply_reactions?: comment_reply_reaction_bool_exp | null;
   comments?: comment_bool_exp | null;
+  commonhealth_user_id?: String_comparison_exp | null;
   coupons?: coupon_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   creator_categories?: creator_category_bool_exp | null;
@@ -14164,6 +14292,7 @@ export interface member_bool_exp {
   member_categories?: member_category_bool_exp | null;
   member_contracts?: member_contract_bool_exp | null;
   member_notes?: member_note_bool_exp | null;
+  member_oauths?: member_oauth_bool_exp | null;
   member_permission_extras?: member_permission_extra_bool_exp | null;
   member_permissions?: member_permission_bool_exp | null;
   member_phones?: member_phone_bool_exp | null;
@@ -14385,6 +14514,7 @@ export interface member_insert_input {
   comment_replies?: comment_reply_arr_rel_insert_input | null;
   comment_reply_reactions?: comment_reply_reaction_arr_rel_insert_input | null;
   comments?: comment_arr_rel_insert_input | null;
+  commonhealth_user_id?: string | null;
   coupons?: coupon_arr_rel_insert_input | null;
   created_at?: any | null;
   creator_categories?: creator_category_arr_rel_insert_input | null;
@@ -14411,6 +14541,7 @@ export interface member_insert_input {
   member_categories?: member_category_arr_rel_insert_input | null;
   member_contracts?: member_contract_arr_rel_insert_input | null;
   member_notes?: member_note_arr_rel_insert_input | null;
+  member_oauths?: member_oauth_arr_rel_insert_input | null;
   member_permission_extras?: member_permission_extra_arr_rel_insert_input | null;
   member_phones?: member_phone_arr_rel_insert_input | null;
   member_properties?: member_property_arr_rel_insert_input | null;
@@ -14562,6 +14693,48 @@ export interface member_note_on_conflict {
   constraint: member_note_constraint;
   update_columns: member_note_update_column[];
   where?: member_note_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "member_oauth"
+ */
+export interface member_oauth_arr_rel_insert_input {
+  data: member_oauth_insert_input[];
+  on_conflict?: member_oauth_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "member_oauth". All fields are combined with a logical 'AND'.
+ */
+export interface member_oauth_bool_exp {
+  _and?: (member_oauth_bool_exp | null)[] | null;
+  _not?: member_oauth_bool_exp | null;
+  _or?: (member_oauth_bool_exp | null)[] | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  provider?: String_comparison_exp | null;
+  provider_user_id?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "member_oauth"
+ */
+export interface member_oauth_insert_input {
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  provider?: string | null;
+  provider_user_id?: string | null;
+}
+
+/**
+ * on conflict condition type for table "member_oauth"
+ */
+export interface member_oauth_on_conflict {
+  constraint: member_oauth_constraint;
+  update_columns: member_oauth_update_column[];
+  where?: member_oauth_bool_exp | null;
 }
 
 /**
@@ -17333,6 +17506,7 @@ export interface product_bool_exp {
   product_inventories?: product_inventory_bool_exp | null;
   product_inventory_status?: product_inventory_status_bool_exp | null;
   product_owner?: product_owner_bool_exp | null;
+  sku?: String_comparison_exp | null;
   target?: String_comparison_exp | null;
   type?: String_comparison_exp | null;
   voucher_plan_products?: voucher_plan_product_bool_exp | null;
@@ -17362,6 +17536,7 @@ export interface product_insert_input {
   id?: string | null;
   order_products?: order_product_arr_rel_insert_input | null;
   product_inventories?: product_inventory_arr_rel_insert_input | null;
+  sku?: string | null;
   target?: string | null;
   type?: string | null;
   voucher_plan_products?: voucher_plan_product_arr_rel_insert_input | null;
@@ -17788,6 +17963,7 @@ export interface program_content_bool_exp {
   program_content_section?: program_content_section_bool_exp | null;
   program_content_type?: program_content_type_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
+  sale_free?: program_content_sale_free_bool_exp | null;
   sale_price?: numeric_comparison_exp | null;
   sold_at?: timestamptz_comparison_exp | null;
   title?: String_comparison_exp | null;
@@ -18008,6 +18184,24 @@ export interface program_content_progress_on_conflict {
   constraint: program_content_progress_constraint;
   update_columns: program_content_progress_update_column[];
   where?: program_content_progress_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "program_content_sale_free". All fields are combined with a logical 'AND'.
+ */
+export interface program_content_sale_free_bool_exp {
+  _and?: (program_content_sale_free_bool_exp | null)[] | null;
+  _not?: program_content_sale_free_bool_exp | null;
+  _or?: (program_content_sale_free_bool_exp | null)[] | null;
+  is_sale_free_by_program?: Boolean_comparison_exp | null;
+  is_sale_free_by_program_content?: Boolean_comparison_exp | null;
+  is_sale_free_by_program_plan?: Boolean_comparison_exp | null;
+  program?: program_bool_exp | null;
+  program_content?: program_content_bool_exp | null;
+  program_content_id?: uuid_comparison_exp | null;
+  program_id?: uuid_comparison_exp | null;
+  program_plan?: program_plan_bool_exp | null;
+  program_plan_id?: uuid_comparison_exp | null;
 }
 
 /**

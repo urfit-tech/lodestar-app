@@ -74,7 +74,10 @@ const ActivityTicketPage: React.VFC<{
   return (
     <DefaultLayout noFooter white>
       <ActivityBanner
-        activityCategories={ticket.activity.categories.map(v => ({ id: v.category.id, name: v.category.name }))}
+        activityCategories={ticket.activity.categories.map(v => ({
+          id: v.id,
+          name: v.name,
+        }))}
         activityTitle={ticket.activity.title}
         coverImage={ticket.activity.coverUrl || ''}
       >
@@ -111,15 +114,15 @@ const ActivityTicketPage: React.VFC<{
         <div className="row justify-content-center">
           <div className="col-12 col-lg-8">
             <div className="mb-5">
-              {ticket.sessionTickets.map(sessionTicket => (
-                <div key={sessionTicket.session.id} className="mb-4">
+              {ticket.sessions.map(ticketSession => (
+                <div key={ticketSession.id} className="mb-4">
                   <ActivitySessionItem
-                    activitySessionId={sessionTicket.session.id}
+                    activitySessionId={ticketSession.id}
                     renderAttend={
                       enabledModules.qrcode &&
                       currentUserRole === 'app-owner' &&
                       !loadingAttendance &&
-                      (attendance[sessionTicket.session.id] ? (
+                      (attendance[ticketSession.id] ? (
                         <Button
                           isFullWidth
                           isLoading={loading}
@@ -128,7 +131,7 @@ const ActivityTicketPage: React.VFC<{
                             leaveActivitySession({
                               variables: {
                                 orderProductId,
-                                activitySessionId: sessionTicket.session.id,
+                                activitySessionId: ticketSession.id,
                               },
                             })
                               .then(() => refetchAttendance())
@@ -148,7 +151,7 @@ const ActivityTicketPage: React.VFC<{
                             attendActivitySession({
                               variables: {
                                 orderProductId,
-                                activitySessionId: sessionTicket.session.id,
+                                activitySessionId: ticketSession.id,
                               },
                             })
                               .then(() => refetchAttendance())

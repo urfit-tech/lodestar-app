@@ -1,12 +1,13 @@
 import { Icon } from '@chakra-ui/icons'
-import { Divider } from '@chakra-ui/react'
-import { Tag } from 'antd'
+import { Divider, Tag } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import { dateRangeFormatter } from '../../helpers'
-import { commonMessages, productMessages } from '../../helpers/translation'
+import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
+import { ActivityTicketProps, ActivityTicketSessionProps } from '../../types/activity'
 import { CommonLargeTitleMixin } from '../common'
 import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -55,6 +56,7 @@ const StyledSubTitle = styled.div`
 `
 const StyledTag = styled(Tag)`
   && {
+    background-color: var(--gray-darker);
     padding: 0.25rem 0.75rem;
   }
 `
@@ -74,23 +76,14 @@ const StyledExtraAdmin = styled.div`
   letter-spacing: 0.2px;
 `
 
-const ActivityTicket: React.VFC<{
-  id: string
-  title: string
-  description: string | null
-  price: number
-  count: number
-  startedAt: Date
-  endedAt: Date
-  isPublished: boolean
-  activityTicketSessions: {
-    id: string
-    title: string
-  }[]
-  participants: number
-  variant?: 'admin'
-  extra?: React.ReactNode
-}> = ({
+const ActivityTicket: React.VFC<
+  ActivityTicketProps & {
+    activityTicketSessions: Pick<ActivityTicketSessionProps, 'id' | 'type' | 'title'>[]
+    participants: number
+    variant?: 'admin'
+    extra?: React.ReactNode
+  }
+> = ({
   title,
   description,
   price,
@@ -104,6 +97,7 @@ const ActivityTicket: React.VFC<{
   extra,
 }) => {
   const { formatMessage } = useIntl()
+  const { enabledModules } = useApp()
   const status =
     !isPublished || Date.now() < startedAt.getTime()
       ? formatMessage(commonMessages.button.unreleased)
@@ -124,9 +118,16 @@ const ActivityTicket: React.VFC<{
       </StyledPrice>
       <Divider />
       <StyledSubTitle>{formatMessage(productMessages.activity.title.sessions)}</StyledSubTitle>
-      {activityTicketSessions.map(v => (
-        <StyledTag key={v.id} color="#585858" className="mb-2">
-          {v.title}
+      {activityTicketSessions.map(session => (
+        <StyledTag key={session.id} variant="solid" className="mb-2 mr-1">
+          {enabledModules.activity_online
+            ? `${session.title} - ${
+                {
+                  online: formatMessage(activityMessages.label.online),
+                  offline: formatMessage(activityMessages.label.offline),
+                }[session.type]
+              }`
+            : session.title}
         </StyledTag>
       ))}
       {!!description && (

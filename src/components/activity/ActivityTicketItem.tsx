@@ -5,8 +5,9 @@ import React from 'react'
 import { AiOutlineCalendar } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { useApp } from '../../containers/common/AppContext'
 import { dateRangeFormatter } from '../../helpers'
-import { commonMessages } from '../../helpers/translation'
+import { activityMessages, commonMessages } from '../../helpers/translation'
 import { useActivityTicket } from '../../hooks/activity'
 import EmptyCover from '../../images/empty-cover.png'
 import { CommonTitleMixin } from '../common'
@@ -79,8 +80,9 @@ const StyledBadge = styled.span`
 const ActivityTicketItem: React.VFC<{
   ticketId: string
 }> = ({ ticketId }) => {
-  const { loadingTicket, errorTicket, ticket } = useActivityTicket(ticketId)
   const { formatMessage } = useIntl()
+  const { enabledModules } = useApp()
+  const { loadingTicket, errorTicket, ticket } = useActivityTicket(ticketId)
 
   if (loadingTicket) {
     return (
@@ -95,7 +97,7 @@ const ActivityTicketItem: React.VFC<{
   }
 
   const activity = ticket.activity
-  const activitySessions = ticket.sessionTickets.map(sessionTicket => sessionTicket.session)
+  const activitySessions = ticket.sessions
 
   return (
     <StyledWrapper>
@@ -109,8 +111,16 @@ const ActivityTicketItem: React.VFC<{
             <StyledMeta key={session.id} active={Date.now() < session.endedAt.getTime()}>
               <div>
                 <Icon as={AiOutlineCalendar} />
-                <Icon as={AiOutlineCalendar} />
-                <span className="ml-2 mr-2">{session.title}</span>
+                <span className="ml-2 mr-2">
+                  {enabledModules.activity_online
+                    ? `${session.title} - ${
+                        {
+                          online: formatMessage(activityMessages.label.online),
+                          offline: formatMessage(activityMessages.label.offline),
+                        }[session.type]
+                      }`
+                    : session.title}
+                </span>
               </div>
               <div>
                 <span className="mr-2">

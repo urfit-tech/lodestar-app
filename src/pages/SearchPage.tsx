@@ -29,7 +29,8 @@ import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { useMember } from '../hooks/member'
 import { ReactComponent as SearchIcon } from '../images/search.svg'
-import { ActivityProps } from '../types/activity'
+import { ActivityProps, ActivityTicketProps } from '../types/activity'
+import { CategoryProps } from '../types/general'
 import { MerchandiseBriefProps } from '../types/merchandise'
 import { PodcastProgramBriefProps } from '../types/podcast'
 import { PeriodType, ProgramBriefProps, ProgramPlanProps, ProgramRoleProps } from '../types/program'
@@ -626,7 +627,12 @@ const useSearchProductCollection = (
       plans: ProgramPlanProps[]
       isEnrolled: boolean
     })[]
-    activities: ActivityProps[]
+    activities: (ActivityProps & {
+      participantCount: number
+      totalSeats: number
+      categories: CategoryProps[]
+      tickets: ActivityTicketProps[]
+    })[]
     podcastPrograms: PodcastProgramBriefProps[]
     creators: {
       id: string
