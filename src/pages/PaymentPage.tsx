@@ -32,15 +32,18 @@ const usePayForm = (paymentNo: number) => {
     const clientBackUrl = window.location.origin
     if (authToken) {
       setLoadingForm(true)
+      const apiBaseRoot = process.env.REACT_APP_API_BASE_ROOT?.startsWith('http')
+        ? process.env.REACT_APP_API_BASE_ROOT
+        : window.location.origin + process.env.REACT_APP_API_BASE_ROOT
       axios
         .post(
           `${process.env.REACT_APP_API_BASE_ROOT}/payment/pay-form`,
           {
             paymentNo,
             options: {
-              notifyUrl: `${process.env.REACT_APP_API_BASE_ROOT}/payment/order-notification`,
+              notifyUrl: `${apiBaseRoot}/payment/order-notification`,
               clientBackUrl,
-              returnUrl: `${process.env.REACT_APP_API_BASE_ROOT}/payment/payment-proxy`,
+              returnUrl: `${apiBaseRoot}/payment/payment-proxy`,
             },
           },
           {
