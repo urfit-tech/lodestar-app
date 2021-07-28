@@ -91,7 +91,7 @@ const PracticeDescriptionBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const toast = useToast()
-  const { currentMemberId, authToken, apiHost } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
   const { loadingPractice, practice, refetchPractice } = usePractice({ memberId: currentMemberId, programContentId })
   const [isDownloading, setIsDownloading] = useState<boolean>(false)
 
@@ -105,7 +105,7 @@ const PracticeDescriptionBlock: React.VFC<{
     const file = attachments[fileIndex]
     const fileKey = `attachments/${file.id}`
     try {
-      const fileLink = await getFileDownloadableLink(fileKey, authToken, apiHost)
+      const fileLink = await getFileDownloadableLink(fileKey, authToken)
       const fileRequest = new Request(fileLink)
       const response = await fetch(fileRequest)
       if (response.url) {

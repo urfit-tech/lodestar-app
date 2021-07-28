@@ -31,7 +31,7 @@ const MerchandiseSpecItem: React.VFC<{
   orderProductFilenames?: string[]
 }> = ({ merchandiseSpecId, quantity, orderProductId, orderProductFilenames = [] }) => {
   const { formatMessage } = useIntl()
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const { id: appId } = useApp()
   const { loadingMerchandiseSpec, merchandiseSpec } = useMerchandiseSpec(merchandiseSpecId)
   const [isDownloading, setIsDownloading] = useState<boolean>(false)
@@ -87,7 +87,7 @@ const MerchandiseSpecItem: React.VFC<{
                   file.from === 'merchandise'
                     ? `merchandise_files/${appId}/${merchandiseSpec.merchandise.id}_${file.name}`
                     : `merchandise_files/${appId}/${orderProductId}_${file.name}`
-                const fileLink = await getFileDownloadableLink(fileKey, authToken, apiHost)
+                const fileLink = await getFileDownloadableLink(fileKey, authToken)
                 const fileRequest = new Request(fileLink)
 
                 try {

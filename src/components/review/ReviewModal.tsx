@@ -105,7 +105,7 @@ const ReviewModal: React.VFC<{
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { id: appId } = useApp()
-  const { authToken, currentMemberId, apiHost } = useAuth()
+  const { authToken, currentMemberId } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { programId } = useParams<{ programId: string }>()
   const [insertReview] = useMutation<hasura.INSERT_REVIEW, hasura.INSERT_REVIEWVariables>(INSERT_REVIEW)
@@ -255,7 +255,7 @@ const ReviewModal: React.VFC<{
               <StyledEditor
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+                media={{ uploadFn: createUploadFn(appId, authToken) }}
               />
             }
             control={control}
@@ -271,7 +271,7 @@ const ReviewModal: React.VFC<{
               <StyledEditor
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+                media={{ uploadFn: createUploadFn(appId, authToken) }}
               />
             }
             control={control}

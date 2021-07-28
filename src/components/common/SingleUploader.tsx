@@ -37,7 +37,7 @@ const SingleUploader: React.VFC<
   ...uploadProps
 }) => {
   const { formatMessage } = useIntl()
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const uploadCanceler = useRef<Canceler>()
   const [loading, setLoading] = useState(false)
 
@@ -67,7 +67,7 @@ const SingleUploader: React.VFC<
       const { file, onProgress, onError, onSuccess } = option
       setLoading(true)
       onChange && onChange(file)
-      uploadFile(path, file, authToken, apiHost, {
+      uploadFile(path, file, authToken, {
         onUploadProgress: progressEvent => {
           onProgress({
             percent: (progressEvent.loaded / progressEvent.total) * 100,

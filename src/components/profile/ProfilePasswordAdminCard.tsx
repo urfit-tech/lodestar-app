@@ -20,7 +20,7 @@ import { StyledForm } from '../layout'
 type ProfilePasswordAdminCardProps = CardProps & FormComponentProps & { memberId: string }
 const ProfilePasswordAdminCard: React.VFC<ProfilePasswordAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -30,7 +30,7 @@ const ProfilePasswordAdminCard: React.VFC<ProfilePasswordAdminCardProps> = ({ fo
         setLoading(true)
         axios
           .post(
-            `//${apiHost}/auth/change-password`,
+            `${process.env.REACT_APP_API_BASE_ROOT}/auth/change-password`,
             {
               password: values.password,
               newPassword: values.newPassword,

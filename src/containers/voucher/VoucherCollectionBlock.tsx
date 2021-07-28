@@ -14,7 +14,7 @@ import { useEnrolledProductIds } from '../../hooks/data'
 
 const VoucherCollectionBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, authToken, apiHost } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_VOUCHER_COLLECTION,
     hasura.GET_VOUCHER_COLLECTIONVariables
@@ -52,7 +52,7 @@ const VoucherCollectionBlock: React.VFC = () => {
 
     axios
       .post(
-        `//${apiHost}/payment/exchange`,
+        `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
         {
           code,
           type: 'Voucher',
@@ -90,7 +90,7 @@ const VoucherCollectionBlock: React.VFC = () => {
 
     setLoading(true)
 
-    exchangeVoucherCode(authToken, apiHost, voucherId, selectedProductIds)
+    exchangeVoucherCode(authToken, voucherId, selectedProductIds)
       .then(data => {
         setVisible(false)
         message.success(formatMessage(voucherMessages.messages.exchangeVoucher))
@@ -119,14 +119,9 @@ const VoucherCollectionBlock: React.VFC = () => {
   )
 }
 
-const exchangeVoucherCode = (
-  authToken: string | null,
-  apiHost: string,
-  voucherId: string,
-  selectedProductIds: string[],
-) => {
+const exchangeVoucherCode = (authToken: string | null, voucherId: string, selectedProductIds: string[]) => {
   return axios.post(
-    `//${apiHost}/tasks/order`,
+    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/order`,
     {
       paymentModel: { type: 'perpetual' },
       discountId: `Voucher_${voucherId}`,

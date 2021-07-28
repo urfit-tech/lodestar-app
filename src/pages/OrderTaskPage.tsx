@@ -32,7 +32,7 @@ const OrderTaskPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { taskId } = useParams<{ taskId: string }>()
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const { task, retry } = useTask('order', taskId)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -45,7 +45,7 @@ const OrderTaskPage: React.VFC = () => {
     if (authToken && task?.finishedOn && task?.returnvalue?.orderId) {
       axios
         .post(
-          `//${apiHost}/tasks/payment/`,
+          `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
           { orderId: task.returnvalue.orderId },
           { headers: { authorization: `Bearer ${authToken}` } },
         )
@@ -58,7 +58,7 @@ const OrderTaskPage: React.VFC = () => {
         })
         .catch(handleError)
     }
-  }, [authToken, apiHost, formatMessage, history, task])
+  }, [authToken, formatMessage, history, task])
 
   if (errorMessage) {
     return (

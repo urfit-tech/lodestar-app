@@ -92,7 +92,7 @@ const OrderCollectionAdminCard: React.VFC<
 > = ({ memberId, ...props }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const { loading, error, orderLogs } = useOrderLogCollection(memberId)
   if (loading || error) {
     return (
@@ -184,7 +184,7 @@ const OrderCollectionAdminCard: React.VFC<
               onClick={() =>
                 axios
                   .post(
-                    `//${apiHost}/tasks/payment/`,
+                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
                     { orderId: record.id },
                     { headers: { authorization: `Bearer ${authToken}` } },
                   )

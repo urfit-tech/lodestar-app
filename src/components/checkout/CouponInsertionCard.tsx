@@ -15,7 +15,7 @@ type CouponInsertionCardProps = CardProps &
   }
 const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInsert, ...cardProps }) => {
   const { formatMessage } = useIntl()
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,7 +25,7 @@ const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInse
         setLoading(true)
         axios
           .post(
-            `//${apiHost}/payment/exchange`,
+            `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
             {
               code: values.code,
               type: 'Coupon',

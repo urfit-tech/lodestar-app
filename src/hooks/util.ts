@@ -1,6 +1,5 @@
-import Axios from 'axios'
 import { filter } from 'ramda'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import TagManager from 'react-gtm-module'
@@ -102,35 +101,6 @@ export const useGTM = () => {
   } catch (error) {
     process.env.NODE_ENV === 'development' && console.error(error)
   }
-}
-
-export const useApiHost = (appId: string) => {
-  const [apiHost, setApiHost] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (apiHost) {
-      return
-    }
-
-    const defaultApiHost =
-      process.env.REACT_APP_API_HOST ||
-      (process.env.NODE_ENV === 'development' ? 'rest-dev.lodestar.cc/v1' : 'rest.lodestar.cc/v1')
-
-    Axios.post(`https://${process.env.REACT_APP_GRAPHQL_HOST}/v1/graphql`, {
-      operationName: 'GET_API_HOST',
-      query:
-        'query GET_API_HOST($appId: String!) { app_admin(where: { app_id: { _eq: $appId } }, order_by: { position: asc_nulls_last }, limit: 1) { api_host } }',
-      variables: { appId },
-    })
-      .then(({ data }) => {
-        setApiHost(data?.data?.app_admin[0]?.api_host || defaultApiHost)
-      })
-      .catch(() => {
-        setApiHost(defaultApiHost)
-      })
-  }, [apiHost, appId])
-
-  return apiHost
 }
 
 export const useSwarmify = () => {

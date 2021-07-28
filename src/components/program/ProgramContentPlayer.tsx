@@ -589,21 +589,21 @@ const getVideoPlayer = async (videoId: string) =>
   })
 
 const useUrls = (appId: string, programContentBodyId: string) => {
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const [urls, setUrls] = useState<{
     video: string
     texttracks: string[]
   } | null>(null)
 
   useEffect(() => {
-    if (!appId || !authToken || !apiHost) {
+    if (!appId || !authToken) {
       return
     }
 
     setUrls(null)
 
-    getFileDownloadableLink(`videos/${appId}/${programContentBodyId}`, authToken, apiHost).then(videoUrl => {
-      getFileDownloadableLink(`texttracks/${appId}/${programContentBodyId}`, authToken, apiHost).then(texttrackUrl => {
+    getFileDownloadableLink(`videos/${appId}/${programContentBodyId}`, authToken).then(videoUrl => {
+      getFileDownloadableLink(`texttracks/${appId}/${programContentBodyId}`, authToken).then(texttrackUrl => {
         fetch(texttrackUrl)
           .then(res => {
             if (res.status === 200) {
@@ -633,7 +633,7 @@ const useUrls = (appId: string, programContentBodyId: string) => {
           })
       })
     })
-  }, [apiHost, appId, authToken, programContentBodyId])
+  }, [appId, authToken, programContentBodyId])
 
   return urls
 }

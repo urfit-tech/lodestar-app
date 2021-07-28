@@ -345,7 +345,7 @@ export const useEnrolledPodcastPlansCreators = (memberId: string) => {
 
 export const usePodcastProgramContent = (podcastProgramId: string) => {
   const { id: appId } = useApp()
-  const { authToken, apiHost } = useAuth()
+  const { authToken } = useAuth()
   const [url, setUrl] = useState('')
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_PODCAST_PROGRAM_WITH_BODY,
@@ -392,10 +392,10 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
 
   useEffect(() => {
     audioFilename &&
-      getFileDownloadableLink(`audios/${appId}/${audioFilename}`, authToken, apiHost).then(url => {
+      getFileDownloadableLink(`audios/${appId}/${audioFilename}`, authToken).then(url => {
         setUrl(url)
       })
-  }, [apiHost, appId, audioFilename, authToken])
+  }, [appId, audioFilename, authToken])
 
   const podcastProgram = useMemo<PodcastProgramContent | null>(() => {
     if (loading || error || !data || !data.podcast_program_by_pk) {

@@ -21,7 +21,7 @@ type IssueCreationModalProps = ModalProps &
   }
 const IssueCreationModal: React.VFC<IssueCreationModalProps> = ({ threadId, form, onRefetch, ...modalProps }) => {
   const { formatMessage } = useIntl()
-  const { authToken, apiHost, currentMemberId } = useAuth()
+  const { authToken, currentMemberId } = useAuth()
   const { id: appId } = useApp()
   const [insertIssue] = useMutation<hasura.INSERT_ISSUE, hasura.INSERT_ISSUEVariables>(INSERT_ISSUE)
 
@@ -110,7 +110,7 @@ const IssueCreationModal: React.VFC<IssueCreationModalProps> = ({ threadId, form
                   'media',
                 ]}
                 contentClassName="short-bf-content"
-                media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+                media={{ uploadFn: createUploadFn(appId, authToken) }}
               />,
             )}
           </Form.Item>

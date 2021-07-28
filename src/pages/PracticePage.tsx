@@ -107,7 +107,7 @@ const messages = defineMessages({
 const PracticePage: React.VFC = () => {
   const { practiceId } = useParams<{ practiceId: string }>()
   const { formatMessage } = useIntl()
-  const { currentMemberId, authToken, apiHost } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
   const history = useHistory()
   const { loadingPractice, errorPractice, practice, refetchPractice } = usePractice({ practiceId })
 
@@ -138,7 +138,7 @@ const PracticePage: React.VFC = () => {
     const file = files[fileIndex]
     const fileKey = `attachments/${file.id}`
     try {
-      const fileLink = await getFileDownloadableLink(fileKey, authToken, apiHost)
+      const fileLink = await getFileDownloadableLink(fileKey, authToken)
       const fileRequest = new Request(fileLink)
       const response = await fetch(fileRequest)
       response.url &&

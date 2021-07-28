@@ -84,7 +84,7 @@ const IssueItem: React.VFC<IssueItemProps> = ({
   const { formatMessage } = useIntl()
   const [qIssueId] = useQueryParam('issueId', StringParam)
   const [qIssueReplyId] = useQueryParam('issueReplyId', StringParam)
-  const { currentMemberId, authToken, apiHost } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
   const { id: appId } = useApp()
   const theme = useContext(ThemeContext)
 
@@ -221,7 +221,7 @@ const IssueItem: React.VFC<IssueItemProps> = ({
               })(
                 <StyledEditor
                   controls={['bold', 'italic', 'underline', 'separator', 'media']}
-                  media={{ uploadFn: createUploadFn(appId, authToken, apiHost) }}
+                  media={{ uploadFn: createUploadFn(appId, authToken) }}
                 />,
               )}
             </Form.Item>
