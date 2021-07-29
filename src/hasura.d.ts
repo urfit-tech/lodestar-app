@@ -8792,6 +8792,41 @@ export interface SEARCH_PRODUCT_COLLECTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_APP_REDIRECT
+// ====================================================
+
+export interface GET_APP_REDIRECT_app_app_settings {
+  __typename: "app_setting";
+  key: string;
+  value: string;
+}
+
+export interface GET_APP_REDIRECT_app {
+  __typename: "app";
+  id: string;
+  /**
+   * An array relationship
+   */
+  app_settings: GET_APP_REDIRECT_app_app_settings[];
+}
+
+export interface GET_APP_REDIRECT {
+  /**
+   * fetch data from the table: "app"
+   */
+  app: GET_APP_REDIRECT_app[];
+}
+
+export interface GET_APP_REDIRECTVariables {
+  host: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL fragment: PostParts
 // ====================================================
 
