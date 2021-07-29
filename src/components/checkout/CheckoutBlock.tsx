@@ -158,7 +158,7 @@ const CheckoutBlock: React.VFC<{
     )
   }
 
-  const handleCheckout = async () => {
+  const handleCheckoutAsync = async () => {
     if (!isAuthenticated || !member) {
       setVisible?.(true)
       return
@@ -339,7 +339,7 @@ const CheckoutBlock: React.VFC<{
           invoice={invoice}
           shipping={hasPhysicalProduct ? shipping : null}
           loading={orderChecking || orderPlacing}
-          onCheckout={handleCheckout}
+          onCheckout={handleCheckoutAsync}
         />
       </div>
     </div>
