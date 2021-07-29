@@ -92,7 +92,7 @@ const CheckoutBlock: React.VFC<{
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
     const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
-    const cachedPayment = localStorage.getItem('kolable.cart.payment')
+    const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
 
     cachedPaymentInfor.shipping = cachedShipping
       ? (JSON.parse(cachedShipping) as ShippingProps)
@@ -110,8 +110,8 @@ const CheckoutBlock: React.VFC<{
     cachedPaymentInfor.payment = cachedPayment
       ? (JSON.parse(cachedPayment) as PaymentProps)
       : {
-          ...member?.metadata?.payment,
           ...cachedPaymentInfor.payment,
+          ...member?.metadata?.payment,
         }
   } catch {}
 
