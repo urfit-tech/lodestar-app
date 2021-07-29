@@ -109,7 +109,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
     const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
-    const cachedPayment = localStorage.getItem('kolable.cart.payment')
+    const cachedPayment = localStorage.getItem('kolable.cart.payment.subscription')
 
     cachedPaymentInfor.shipping = cachedShipping
       ? (JSON.parse(cachedShipping) as ShippingProps)
@@ -136,6 +136,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const invoiceRef = useRef<HTMLDivElement | null>(null)
   const referrerRef = useRef<HTMLDivElement | null>(null)
   const groupBuyingRef = useRef<HTMLDivElement | null>(null)
+  const paymentMethodRef = useRef<HTMLDivElement | null>(null)
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
@@ -297,8 +298,8 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         )}
 
         {paymentType === 'perpetual' && (
-          <div className="mb-5">
-            <PaymentSelector value={payment} onChange={v => setPayment(v)} />
+          <div className="mb-5" ref={paymentMethodRef}>
+            <PaymentSelector value={payment} onChange={v => v && setPayment(v)} />
           </div>
         )}
 

@@ -2350,9 +2350,18 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_ti
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets {
   __typename: "activity_session_ticket";
   /**
+   * offline | online
+   */
+  session_type: string;
+  /**
    * An object relationship
    */
   activity_ticket: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets_activity_ticket;
+}
+
+export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments {
+  __typename: "activity_enrollment";
+  member_id: string | null;
 }
 
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate_aggregate {
@@ -2365,6 +2374,12 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollment
   aggregate: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate_aggregate | null;
 }
 
+export interface GET_ACTIVITY_SESSION_activity_session_by_pk_ticket_enrollment_count {
+  __typename: "activity_session_ticket_enrollment_count";
+  activity_offline_session_ticket_count: any | null;
+  activity_online_session_ticket_count: any | null;
+}
+
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
   __typename: "activity_session";
   id: any;
@@ -2372,6 +2387,7 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
   started_at: any;
   ended_at: any;
   location: string | null;
+  online_link: string | null;
   description: string | null;
   threshold: any | null;
   /**
@@ -2383,9 +2399,17 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
    */
   activity_session_tickets: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_session_tickets[];
   /**
+   * An array relationship
+   */
+  activity_enrollments: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments[];
+  /**
    * An aggregated array relationship
    */
   activity_enrollments_aggregate: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate;
+  /**
+   * An object relationship
+   */
+  ticket_enrollment_count: GET_ACTIVITY_SESSION_activity_session_by_pk_ticket_enrollment_count | null;
 }
 
 export interface GET_ACTIVITY_SESSION {
@@ -2397,6 +2421,7 @@ export interface GET_ACTIVITY_SESSION {
 
 export interface GET_ACTIVITY_SESSIONVariables {
   sessionId: any;
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -2422,6 +2447,10 @@ export interface GET_TICKET_activity_ticket_by_pk_activity_session_tickets_activ
 export interface GET_TICKET_activity_ticket_by_pk_activity_session_tickets {
   __typename: "activity_session_ticket";
   id: any;
+  /**
+   * offline | online
+   */
+  activity_session_type: string;
   /**
    * An object relationship
    */
@@ -9280,6 +9309,7 @@ export enum app_setting_update_column {
  * update columns of table "app"
  */
 export enum app_update_column {
+  created_at = "created_at",
   description = "description",
   id = "id",
   name = "name",
@@ -9287,6 +9317,7 @@ export enum app_update_column {
   point_exchange_rate = "point_exchange_rate",
   point_validity_period = "point_validity_period",
   title = "title",
+  updated_at = "updated_at",
   vimeo_project_id = "vimeo_project_id",
 }
 
@@ -9956,7 +9987,7 @@ export enum member_oauth_update_column {
   id = "id",
   member_id = "member_id",
   provider = "provider",
-  user_id = "user_id",
+  provider_user_id = "provider_user_id",
 }
 
 /**
@@ -10312,6 +10343,8 @@ export enum module_constraint {
  * update columns of table "module"
  */
 export enum module_update_column {
+  abstract = "abstract",
+  category_name = "category_name",
   id = "id",
   name = "name",
 }
@@ -11601,6 +11634,21 @@ export enum role_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "setting"
+ */
+export enum setting_constraint {
+  setting_pkey = "setting_pkey",
+}
+
+/**
+ * update columns of table "setting"
+ */
+export enum setting_update_column {
+  key = "key",
+  name = "name",
+}
+
+/**
  * unique or primary key constraints on table "sharing_code"
  */
 export enum sharing_code_constraint {
@@ -12249,6 +12297,7 @@ export interface activity_ticket_enrollment_bool_exp {
   activity_ticket?: activity_ticket_bool_exp | null;
   activity_ticket_id?: uuid_comparison_exp | null;
   member_id?: String_comparison_exp | null;
+  order_log?: order_log_bool_exp | null;
   order_log_id?: String_comparison_exp | null;
   order_product_id?: uuid_comparison_exp | null;
 }
@@ -12346,6 +12395,7 @@ export interface app_bool_exp {
   cards?: card_bool_exp | null;
   cart_items?: cart_item_bool_exp | null;
   comments?: comment_bool_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
   issues?: issue_bool_exp | null;
@@ -12363,6 +12413,7 @@ export interface app_bool_exp {
   properties?: property_bool_exp | null;
   sharing_codes?: sharing_code_bool_exp | null;
   title?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
   vimeo_project_id?: String_comparison_exp | null;
   voucher_plans?: voucher_plan_bool_exp | null;
 }
@@ -12421,6 +12472,7 @@ export interface app_insert_input {
   cards?: card_arr_rel_insert_input | null;
   cart_items?: cart_item_arr_rel_insert_input | null;
   comments?: comment_arr_rel_insert_input | null;
+  created_at?: any | null;
   description?: string | null;
   id?: string | null;
   issues?: issue_arr_rel_insert_input | null;
@@ -12438,6 +12490,7 @@ export interface app_insert_input {
   properties?: property_arr_rel_insert_input | null;
   sharing_codes?: sharing_code_arr_rel_insert_input | null;
   title?: string | null;
+  updated_at?: any | null;
   vimeo_project_id?: string | null;
   voucher_plans?: voucher_plan_arr_rel_insert_input | null;
 }
@@ -12618,6 +12671,7 @@ export interface app_setting_bool_exp {
   app_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   key?: String_comparison_exp | null;
+  setting?: setting_bool_exp | null;
   value?: String_comparison_exp | null;
 }
 
@@ -12629,6 +12683,7 @@ export interface app_setting_insert_input {
   app_id?: string | null;
   id?: any | null;
   key?: string | null;
+  setting?: setting_obj_rel_insert_input | null;
   value?: string | null;
 }
 
@@ -14720,7 +14775,7 @@ export interface member_oauth_bool_exp {
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   provider?: String_comparison_exp | null;
-  user_id?: String_comparison_exp | null;
+  provider_user_id?: String_comparison_exp | null;
 }
 
 /**
@@ -14731,7 +14786,7 @@ export interface member_oauth_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   provider?: string | null;
-  user_id?: string | null;
+  provider_user_id?: string | null;
 }
 
 /**
@@ -15638,7 +15693,9 @@ export interface module_bool_exp {
   _and?: (module_bool_exp | null)[] | null;
   _not?: module_bool_exp | null;
   _or?: (module_bool_exp | null)[] | null;
+  abstract?: String_comparison_exp | null;
   app_modules?: app_module_bool_exp | null;
+  category_name?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
   name?: String_comparison_exp | null;
 }
@@ -15647,7 +15704,9 @@ export interface module_bool_exp {
  * input type for inserting data into table "module"
  */
 export interface module_insert_input {
+  abstract?: string | null;
   app_modules?: app_module_arr_rel_insert_input | null;
+  category_name?: string | null;
   id?: string | null;
   name?: string | null;
 }
@@ -19472,6 +19531,44 @@ export interface role_permission_on_conflict {
   constraint: role_permission_constraint;
   update_columns: role_permission_update_column[];
   where?: role_permission_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "setting". All fields are combined with a logical 'AND'.
+ */
+export interface setting_bool_exp {
+  _and?: (setting_bool_exp | null)[] | null;
+  _not?: setting_bool_exp | null;
+  _or?: (setting_bool_exp | null)[] | null;
+  app_settings?: app_setting_bool_exp | null;
+  key?: String_comparison_exp | null;
+  name?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "setting"
+ */
+export interface setting_insert_input {
+  app_settings?: app_setting_arr_rel_insert_input | null;
+  key?: string | null;
+  name?: string | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "setting"
+ */
+export interface setting_obj_rel_insert_input {
+  data: setting_insert_input;
+  on_conflict?: setting_on_conflict | null;
+}
+
+/**
+ * on conflict condition type for table "setting"
+ */
+export interface setting_on_conflict {
+  constraint: setting_constraint;
+  update_columns: setting_update_column[];
+  where?: setting_bool_exp | null;
 }
 
 /**

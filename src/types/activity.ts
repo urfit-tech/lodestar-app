@@ -1,10 +1,13 @@
-export type ActivityCategoryProps = {
+export type ActivityProps = {
   id: string
-  category: {
-    id: string
-    name: string
-  }
-  position: number
+  coverUrl: string | null
+  title: string
+  isParticipantsVisible: boolean
+  publishedAt: Date
+  startedAt: Date | null
+  endedAt: Date | null
+  organizerId: string
+  supportLocales: string[] | null
 }
 
 type ActivitySessionProps = {
@@ -18,11 +21,6 @@ type ActivitySessionProps = {
   activityId: string
 }
 
-export type ActivitySessionTicketProps = {
-  id: string
-  session: ActivitySessionProps
-}
-
 export type ActivityTicketProps = {
   id: string
   title: string
@@ -34,21 +32,8 @@ export type ActivityTicketProps = {
   isPublished: boolean
 }
 
-export type ActivityProps = {
-  id: string
-  coverUrl: string | null
-  title: string
-  isParticipantsVisible: boolean
-  publishedAt: Date
-  startedAt: Date | null
-  endedAt: Date | null
-  organizerId: string
-  supportLocales: string[] | null
-  categories: {
-    id: string
-    name: string
-  }[]
-  participantCount?: number
-  totalSeats?: number
-  tickets?: ActivityTicketProps[]
+export type ActivityTicketSessionType = 'offline' | 'online'
+
+export type ActivityTicketSessionProps = ActivitySessionProps & {
+  type: ActivityTicketSessionType
 }

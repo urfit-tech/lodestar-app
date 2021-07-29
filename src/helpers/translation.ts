@@ -471,6 +471,7 @@ export const checkoutMessages = {
     cartSubmit: { id: 'checkout.cart.submit', defaultMessage: '前往結帳' },
   }),
   label: defineMessages({
+    paymentMethodPlaceholder: { id: 'checkout.label.paymentMethodPlaceholder', defaultMessage: '請選擇付款方式' },
     paymentMethod: { id: 'checkout.label.paymentMethod', defaultMessage: '付款方式' },
     credit: { id: 'checkout.label.credit', defaultMessage: '信用卡' },
     vacc: { id: 'checkout.label.vacc', defaultMessage: 'ATM轉帳' },
@@ -725,6 +726,19 @@ export const programMessages = {
     },
   }),
 }
+
+export const activityMessages = {
+  label: defineMessages({
+    online: { id: 'activity.label.online', defaultMessage: '線上' },
+    offline: { id: 'activity.label.offline', defaultMessage: '實體' },
+    both: { id: 'activity.label.both', defaultMessage: '實體 & 線上' },
+  }),
+  text: defineMessages({
+    live: { id: 'activity.ui.live', defaultMessage: '線上直播' },
+    liveLink: { id: 'activity.text.liveLink', defaultMessage: '直播連結' },
+  }),
+}
+
 export const practiceMessages = {
   button: defineMessages({
     delete: { id: 'practice.button.delete', defaultMessage: '刪除作業' },
