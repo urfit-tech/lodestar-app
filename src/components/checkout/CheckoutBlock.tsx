@@ -118,10 +118,11 @@ const CheckoutBlock: React.VFC<{
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
   const referrerRef = useRef<HTMLDivElement | null>(null)
+  const paymentMethodRef = useRef<HTMLDivElement | null>(null)
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
-  const [payment, setPayment] = useState<PaymentProps>(cachedPaymentInfor.payment)
+  const [payment, setPayment] = useState<PaymentProps | null>(null)
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
 
@@ -198,6 +199,11 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
+    if (!payment) {
+      paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+
     // tracking add payment info event
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddPaymentInfo', {
@@ -256,7 +262,9 @@ const CheckoutBlock: React.VFC<{
 
       <div className="mb-3">
         <AdminCard>
-          <PaymentSelector value={payment} onChange={v => setPayment(v)} />
+          <div ref={paymentMethodRef}>
+            <PaymentSelector value={payment} onChange={v => setPayment(v)} />
+          </div>
         </AdminCard>
       </div>
 

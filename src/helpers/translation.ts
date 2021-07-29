@@ -471,6 +471,7 @@ export const checkoutMessages = {
     cartSubmit: { id: 'checkout.cart.submit', defaultMessage: '前往結帳' },
   }),
   label: defineMessages({
+    paymentMethodPlaceholder: { id: 'checkout.label.paymentMethodPlaceholder', defaultMessage: '請選擇付款方式' },
     paymentMethod: { id: 'checkout.label.paymentMethod', defaultMessage: '付款方式' },
     credit: { id: 'checkout.label.credit', defaultMessage: '信用卡' },
     vacc: { id: 'checkout.label.vacc', defaultMessage: 'ATM轉帳' },

@@ -23,8 +23,8 @@ export type PaymentProps = {
 export type PaymentMethodType = 'credit' | 'vacc' | 'cvs' | 'instflag' | 'unionpay' | 'webatm' | 'barcode'
 
 const PaymentSelector: React.FC<{
-  value: PaymentProps
-  onChange: (value: PaymentProps) => void
+  value: PaymentProps | null
+  onChange: (value: PaymentProps | null) => void
 }> = ({ value, onChange }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
@@ -45,8 +45,9 @@ const PaymentSelector: React.FC<{
       <StyledDescription className="mb-4">{formatMessage(checkoutMessages.message.warningPayment)}</StyledDescription>
       <Select
         style={{ width: '50%' }}
-        value={JSON.stringify(selectedPaymentMethod)}
+        value={selectedPaymentMethod ? JSON.stringify(selectedPaymentMethod) : undefined}
         onChange={(v: string) => v && handleChange(JSON.parse(v))}
+        placeholder={formatMessage(checkoutMessages.label.paymentMethodPlaceholder)}
       >
         {settings['payment.spgateway.credit.enable'] === '1' && (
           <Select.Option value='{"gateway":"spgateway","method":"credit"}'>

@@ -136,10 +136,11 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const invoiceRef = useRef<HTMLDivElement | null>(null)
   const referrerRef = useRef<HTMLDivElement | null>(null)
   const groupBuyingRef = useRef<HTMLDivElement | null>(null)
+  const paymentMethodRef = useRef<HTMLDivElement | null>(null)
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
-  const [payment, setPayment] = useState<PaymentProps>(cachedPaymentInfor.payment)
+  const [payment, setPayment] = useState<PaymentProps | null>(null)
   const [isValidating, setIsValidating] = useState(false)
   const [discountId, setDiscountId] = useState('')
   const [referrerEmail, setReferrerEmail] = useState('')
@@ -176,6 +177,10 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     const isValidShipping = !isProductPhysical || validateShipping(shipping)
     const isValidInvoice = validateInvoice(invoice).length === 0
 
+    if (!payment) {
+      paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
     if (!isValidShipping) {
       shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
@@ -291,8 +296,8 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         )}
 
         {paymentType === 'perpetual' && (
-          <div className="mb-5">
-            <PaymentSelector value={payment} onChange={v => setPayment(v)} />
+          <div className="mb-5" ref={paymentMethodRef}>
+            <PaymentSelector value={payment} onChange={v => v && setPayment(v)} />
           </div>
         )}
 
