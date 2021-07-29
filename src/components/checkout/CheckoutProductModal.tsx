@@ -140,7 +140,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
-  const [payment, setPayment] = useState<PaymentProps | null>(null)
+  const [payment, setPayment] = useState<PaymentProps>({ gateway: 'tappay', method: 'credit' })
   const [isValidating, setIsValidating] = useState(false)
   const [discountId, setDiscountId] = useState('')
   const [referrerEmail, setReferrerEmail] = useState('')
@@ -177,10 +177,6 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     const isValidShipping = !isProductPhysical || validateShipping(shipping)
     const isValidInvoice = validateInvoice(invoice).length === 0
 
-    if (!payment) {
-      paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
-      return
-    }
     if (!isValidShipping) {
       shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
