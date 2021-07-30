@@ -1,11 +1,7 @@
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { ApolloClient } from 'apollo-client'
-import { createHttpLink } from 'apollo-link-http'
-import gql from 'graphql-tag'
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import PodcastPlayerBlock from './components/podcast/PodcastPlayerBlock'
-import hasura from './hasura'
+import { useApp } from './containers/common/AppContext'
 import LoadablePage from './LoadablePage'
 import LoadingPage from './pages/LoadingPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -360,47 +356,19 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
   },
 }
 
-const apolloClient = new ApolloClient({
-  link: createHttpLink({ uri: `${process.env.REACT_APP_GRAPHQL_BASE_ROOT}/v1/graphql` }),
-  cache: new InMemoryCache(),
-})
-
 const Routes: React.VFC<{ extra?: { [routeKey: string]: RouteProps } }> = ({ extra }) => {
-  const host = window.location.host
-  const [appOptions, setAppOptions] = useState<{ appId: string | null; homeRedirect: string | null }>({
-    appId: null,
-    homeRedirect: null,
-  })
+  const { settings } = useApp()
 
-  useEffect(() => {
-    apolloClient
-      .query<hasura.GET_APP_REDIRECT>({
-        query: GET_APP_REDIRECT,
-        variables: { host },
-      })
-      .then(({ data }) => {
-        const app = data.app.pop()
-        const homeRedirectSetting =
-          (app?.app_settings || []).filter(setting => setting.key === 'home.redirect').pop() || null
-        setAppOptions({
-          appId: app?.id || '',
-          homeRedirect: homeRedirectSetting?.value ? homeRedirectSetting.value : null,
-        })
-      })
-  }, [host])
-
-  const homeRoute: { [routeKey: string]: RouteProps } = {
+  const routesMap: { [routeKey: string]: RouteProps } = {
     home: {
       path: '/',
-      pageName: appOptions.homeRedirect ? <Redirect to={appOptions.homeRedirect} /> : 'HomePage',
+      pageName: settings['home.redirect'] ? <Redirect to={settings['home.redirect']} /> : 'HomePage',
       authenticated: false,
     },
-  }
-  const routesMap = {
-    ...homeRoute,
     ...routesProps,
     ...extra,
   }
+
   return (
     <Suspense fallback={<LoadingPage />}>
       <Switch>
@@ -459,15 +427,4 @@ const Routes: React.VFC<{ extra?: { [routeKey: string]: RouteProps } }> = ({ ext
   )
 }
 
-const GET_APP_REDIRECT = gql`
-  query GET_APP_REDIRECT($host: String!) {
-    app(where: { app_settings: { key: { _eq: "host" }, value: { _eq: $host } } }, limit: 1) {
-      id
-      app_settings {
-        key
-        value
-      }
-    }
-  }
-`
 export default Routes
