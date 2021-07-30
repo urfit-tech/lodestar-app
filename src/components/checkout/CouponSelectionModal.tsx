@@ -4,6 +4,7 @@ import axios from 'axios'
 import { sum } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
 import { handleError } from '../../helpers'
 import { checkoutMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import { useCouponCollection } from '../../hooks/data'
@@ -11,6 +12,14 @@ import { CouponProps, OrderDiscountProps, OrderProductProps } from '../../types/
 import { useAuth } from '../auth/AuthContext'
 import CommonModal from '../common/CommonModal'
 import CouponCard from './CouponCard'
+
+const StyledInputWrapper = styled.div`
+  && {
+    input:focus {
+      box-shadow: none;
+    }
+  }
+`
 
 const CouponSelectionModal: React.VFC<{
   memberId: string
@@ -57,7 +66,6 @@ const CouponSelectionModal: React.VFC<{
   return (
     <>
       {renderTrigger({ onOpen: () => setVisible(true), selectedCoupon })}
-
       <CommonModal
         title={formatMessage(checkoutMessages.title.chooseCoupon)}
         onClose={() => setVisible(false)}
@@ -112,7 +120,7 @@ const CouponSelectionModal: React.VFC<{
         <Divider>{formatMessage(commonMessages.defaults.or)}</Divider>
 
         <div className="d-flex">
-          <div className="flex-grow-1">
+          <StyledInputWrapper className="flex-grow-1">
             <Input
               variant="outline"
               style={{ borderRadius: '4px 0px 0px 4px' }}
@@ -120,7 +128,7 @@ const CouponSelectionModal: React.VFC<{
               value={code}
               onChange={e => setCode(e.target.value)}
             />
-          </div>
+          </StyledInputWrapper>
           <Button
             colorScheme="primary"
             isFullWidth

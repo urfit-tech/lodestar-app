@@ -28,7 +28,6 @@ const DiscountSelectionCard: React.VFC<{
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
 
   const [discountType, discountTarget] = discountId?.split('_') || [null, null]
-
   return (
     <RadioGroup
       value={discountType || 'None'}
@@ -39,8 +38,10 @@ const DiscountSelectionCard: React.VFC<{
         <StyledRadio height="3rem" colorScheme="primary" value="None">
           {formatMessage(checkoutMessages.form.radio.noDiscount)}
         </StyledRadio>
-        <StyledRadio height="3rem" colorScheme="primary" value="Coupon">
-          <span>{formatMessage(checkoutMessages.form.radio.useCoupon)}</span>
+        <div className="d-flex align-items-center">
+          <StyledRadio height="3rem" colorScheme="primary" value="Coupon">
+            <span>{formatMessage(checkoutMessages.form.radio.useCoupon)}</span>
+          </StyledRadio>
           {discountType === 'Coupon' && (
             <span className="ml-2">
               {currentMemberId ? (
@@ -69,7 +70,7 @@ const DiscountSelectionCard: React.VFC<{
               )}
             </span>
           )}
-        </StyledRadio>
+        </div>
         {enrolledMembershipCardIds.length > 0 && (
           <StyledRadio height="3rem" value="Card" colorScheme="primary">
             <span>{formatMessage(checkoutMessages.content.useMemberCard)}</span>
