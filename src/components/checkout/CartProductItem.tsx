@@ -86,7 +86,7 @@ const CartProductItem: React.VFC<{
         )}
 
         {((productType === 'ProjectPlan' && isLimited === true) ||
-          (productType === 'Merchandise' && isPhysical === true)) &&
+          (productType === 'MerchandiseSpec' && isPhysical === true)) &&
           !!buyableQuantity &&
           buyableQuantity > 0 && (
             <div className="d-flex flex-column flex-md-row align-items-left align-items-md-center mr-md-3">
@@ -109,7 +109,7 @@ const CartProductItem: React.VFC<{
           </div>
         )}
 
-        {((productType === 'ProjectPlan' && isLimited === true) || productType === 'Merchandise') &&
+        {((productType === 'ProjectPlan' && isLimited === true) || productType === 'MerchandiseSpec') &&
         buyableQuantity === 0 ? (
           <StyledInventoryBlock className="d-flex align-items-center">
             <Icon as={ExclamationCircleIcon} className="mr-2" />
