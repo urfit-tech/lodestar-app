@@ -385,6 +385,7 @@ export const useActivityTicket = (ticketId: string) => {
               title
               description
               location
+              online_link
               started_at
               ended_at
               threshold
@@ -442,6 +443,7 @@ export const useActivityTicket = (ticketId: string) => {
             startedAt: new Date(activitySessionTicket.activity_session.started_at),
             endedAt: new Date(activitySessionTicket.activity_session.ended_at),
             location: activitySessionTicket.activity_session.location,
+            onlineLink: activitySessionTicket.activity_session.online_link,
             activityId: data.activity_ticket_by_pk?.activity.id || '',
           })),
           activity: {
