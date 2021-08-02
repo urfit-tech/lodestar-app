@@ -91,6 +91,15 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
           periodType: data.program_package_plan_by_pk.period_type as PeriodType,
           isSubscription: data.program_package_plan_by_pk.is_subscription,
         }
+      : data.activity_ticket_by_pk
+      ? {
+          id: data.activity_ticket_by_pk.id,
+          productType: 'ActivityTicket',
+          title: `${data.activity_ticket_by_pk.activity.title} - ${data.activity_ticket_by_pk.title}`,
+          listPrice: data.activity_ticket_by_pk.price,
+          coverUrl: data.activity_ticket_by_pk.activity.cover_url || undefined,
+          isSubscription: false,
+        }
       : data.card_by_pk
       ? {
           id: data.card_by_pk.id,
