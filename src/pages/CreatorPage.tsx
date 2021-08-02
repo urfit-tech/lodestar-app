@@ -27,7 +27,7 @@ import { desktopViewMixin } from '../helpers'
 import { commonMessages, usersMessages } from '../helpers/translation'
 import { useAppointmentPlanCollection } from '../hooks/appointment'
 import { usePostPreviewCollection } from '../hooks/blog'
-import { useMember, usePublicMember } from '../hooks/member'
+import { usePublicMember } from '../hooks/member'
 import { useEnrolledPodcastPlansCreators, usePodcastPlanIds, usePodcastProgramCollection } from '../hooks/podcast'
 import { usePublishedProgramCollection } from '../hooks/program'
 import { MemberPublicProps } from '../types/member'
@@ -58,11 +58,9 @@ const StyledCallToSubscription = styled.div`
 
 const CreatorPage: React.VFC = () => {
   const { creatorId } = useParams<{ creatorId: string }>()
-  const { currentMemberId } = useAuth()
-  const { loadingMember, member } = useMember(currentMemberId || '')
   const { member: creator, loadingMember: loadingCreator } = usePublicMember(creatorId)
 
-  if (loadingMember || loadingCreator) {
+  if (loadingCreator) {
     return (
       <DefaultLayout white>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -85,10 +83,10 @@ const CreatorPage: React.VFC = () => {
       />
 
       <CheckoutPodcastPlanModal
-        renderTrigger={onOpen => <CreatorTabs creatorId={creatorId} member={creator} onCheckoutModalOpen={onOpen} />}
-        paymentType="subscription"
         creatorId={creatorId}
-        member={member}
+        renderTrigger={({ onOpen }) => (
+          <CreatorTabs creatorId={creatorId} member={creator} onCheckoutModalOpen={onOpen} />
+        )}
       />
     </DefaultLayout>
   )

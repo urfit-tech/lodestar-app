@@ -21,7 +21,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useActivity } from '../hooks/activity'
-import { useMember, usePublicMember } from '../hooks/member'
+import { usePublicMember } from '../hooks/member'
 
 const ActivityContent = styled(Container)`
   && {
@@ -45,7 +45,6 @@ const ActivityPage: React.VFC = () => {
   const { activityId } = useParams<{ activityId: string }>()
   const { isAuthenticated, currentMemberId } = useAuth()
   const { settings, id: appId } = useApp()
-  const { loadingMember, member } = useMember(currentMemberId || '')
   const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
 
   useEffect(() => {
@@ -74,7 +73,7 @@ const ActivityPage: React.VFC = () => {
     }
   }, [activity])
 
-  if (loading || loadingMember) {
+  if (loading) {
     return (
       <DefaultLayout white>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -198,10 +197,12 @@ const ActivityPage: React.VFC = () => {
                             </Button>
                           ) : isAuthenticated ? (
                             <CheckoutProductModal
-                              renderTrigger={onOpen => (
+                              defaultProductId={`ActivityTicket_${ticket.id}`}
+                              renderTrigger={({ isLoading, onOpen }) => (
                                 <Button
                                   colorScheme="primary"
                                   isFullWidth
+                                  isDisabled={isLoading}
                                   onClick={() => {
                                     ReactGA.plugin.execute('ec', 'addProduct', {
                                       id: ticket.id,
@@ -219,9 +220,6 @@ const ActivityPage: React.VFC = () => {
                                   {formatMessage(commonMessages.button.register)}
                                 </Button>
                               )}
-                              paymentType="perpetual"
-                              defaultProductId={`ActivityTicket_${ticket.id}`}
-                              member={member}
                             />
                           ) : (
                             <Button

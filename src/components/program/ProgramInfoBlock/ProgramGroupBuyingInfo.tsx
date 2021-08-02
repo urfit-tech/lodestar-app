@@ -4,9 +4,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
-import { useMember } from '../../../hooks/member'
 import { ProgramPlanProps, ProgramProps } from '../../../types/program'
-import { useAuth } from '../../auth/AuthContext'
 import CheckoutProductModal from '../../checkout/CheckoutProductModal'
 import { useAddProgramToCart } from '../../checkout/ProgramPaymentButton'
 import PriceLabel from '../../common/PriceLabel'
@@ -60,8 +58,6 @@ const ProgramGroupBuyingInfo: React.FC<{
   hideProgramPlanPrice?: boolean
 }> = ({ isOnSale, hideProgramPlanPrice, program, programPlans }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
-  const { member } = useMember(currentMemberId || '')
   const { isProgramInCart, handleAddCartProgram } = useAddProgramToCart(program)
   const history = useHistory()
 
@@ -86,9 +82,8 @@ const ProgramGroupBuyingInfo: React.FC<{
       </div>
 
       <CheckoutProductModal
-        member={member}
-        paymentType="perpetual"
-        renderTrigger={(onOpen, onProductChange) => (
+        defaultProductId={`ProgramPlan_${programPlans[0].id}`}
+        renderTrigger={({ onProductChange, onOpen }) => (
           <Menu placement="top">
             <MenuButton as={Button} colorScheme="primary" isFullWidth>
               {formatMessage(commonMessages.ui.purchase)}

@@ -1,15 +1,15 @@
 import { Button, Divider, SkeletonText, useDisclosure } from '@chakra-ui/react'
 import { camelCase } from 'lodash'
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
-import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/checkout/InvoiceInput'
-import PaymentSelector, { PaymentMethodType, PaymentProps } from '../../components/checkout/PaymentSelector'
-import ShippingInput, { ShippingProps, validateShipping } from '../../components/checkout/ShippingInput'
+import InvoiceInput, { validateInvoice } from '../../components/checkout/InvoiceInput'
+import PaymentSelector from '../../components/checkout/PaymentSelector'
+import ShippingInput, { validateShipping } from '../../components/checkout/ShippingInput'
 import CommonModal from '../../components/common/CommonModal'
 import PriceLabel from '../../components/common/PriceLabel'
 import ProductItem from '../../components/common/ProductItem'
@@ -17,10 +17,10 @@ import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
 import { useMemberValidation, useSimpleProduct } from '../../hooks/common'
-import { useUpdateMemberMetadata } from '../../hooks/member'
-import { shippingOptionIdProps } from '../../types/checkout'
-import { MemberProps } from '../../types/member'
+import { useMember, useUpdateMemberMetadata } from '../../hooks/member'
+import { InvoiceProps, PaymentProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import { ShippingMethodProps } from '../../types/merchandise'
+import { useAuth } from '../auth/AuthContext'
 import CheckoutGroupBuyingForm from './CheckoutGroupBuyingForm'
 import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
 import CheckoutProductReferrerInput from './CheckoutProductReferrerInput'
@@ -41,11 +41,12 @@ const CheckoutProductItem: React.VFC<{ name: string; price: number; currencyId?:
 }
 
 export type CheckoutProductModalProps = {
-  member: MemberProps | null
-  paymentType: 'perpetual' | 'subscription'
-  renderTrigger: (onOpen?: () => void, onProductChange?: (productId: string) => void) => React.ReactElement
-  defaultProductId?: string
-  isProductPhysical?: boolean
+  defaultProductId: string
+  renderTrigger: (options: {
+    isLoading?: boolean
+    onOpen?: () => void
+    onProductChange?: (productId: string) => void
+  }) => React.ReactElement
   warningText?: string
   startedAt?: Date
   shippingMethods?: ShippingMethodProps[]
@@ -55,84 +56,97 @@ export type CheckoutProductModalProps = {
   }) => React.ReactElement
 }
 const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
+  defaultProductId,
   renderTrigger,
   renderProductSelector,
-  paymentType,
-  defaultProductId,
-  isProductPhysical,
   warningText,
   startedAt,
-  member,
   shippingMethods,
 }) => {
   const { formatMessage } = useIntl()
-  const history = useHistory()
   const [sharingCode] = useQueryParam('sharing', StringParam)
-  const { enabledModules, settings } = useApp()
-  const updateMemberMetadata = useUpdateMemberMetadata()
+  const history = useHistory()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [groupBuying, setGroupBuying] = useState<{
-    memberIds: string[]
-    withError: boolean
-  }>({ memberIds: [], withError: false })
+  const { enabledModules, settings } = useApp()
+  const { currentMemberId } = useAuth()
+  const { member: currentMember } = useMember(currentMemberId || '')
 
-  // payment information
-  const cachedPaymentInfor: {
-    shipping: ShippingProps
-    invoice: InvoiceProps
-    payment: PaymentProps
+  // checkout
+  const [productId, setProductId] = useState(defaultProductId)
+  const { loading, target } = useSimpleProduct({ id: productId, startedAt })
+
+  // cart information
+  const memberCartInfor: {
+    shipping?: ShippingProps | null
+    invoice?: InvoiceProps | null
+    payment?: PaymentProps | null
   } = {
-    shipping: {
-      name: '',
-      phone: '',
-      address: '',
-      shippingMethod: 'home-delivery',
-      specification: '',
-      storeId: '',
-      storeName: '',
-    },
-    invoice: {
-      name: '',
-      phone: '',
-      email: member?.email || '',
-    },
-    payment: {
-      gateway:
-        paymentType === 'perpetual'
-          ? settings['payment.perpetual.default_gateway'] || 'spgateway'
-          : settings['payment.subscription.default_gateway'] || 'tappay',
-      method:
-        paymentType === 'perpetual'
-          ? (settings['payment.perpetual.default_gateway_method'] as PaymentMethodType) || 'credit'
-          : 'credit',
-    },
+    shipping: currentMember?.shipping,
+    invoice: currentMember?.invoice,
+    payment: currentMember?.payment,
   }
 
+  const cachedCartInfor: {
+    shipping: ShippingProps | null
+    invoice: InvoiceProps | null
+    payment: PaymentProps | null
+  } = {
+    shipping: null,
+    invoice: null,
+    payment: null,
+  }
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
     const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
-    const cachedPayment = localStorage.getItem('kolable.cart.payment.subscription')
-
-    cachedPaymentInfor.shipping = cachedShipping
-      ? (JSON.parse(cachedShipping) as ShippingProps)
-      : {
-          ...cachedPaymentInfor.shipping,
-          ...member?.metadata?.shipping,
-        }
-
-    cachedPaymentInfor.invoice = cachedInvoice
-      ? (JSON.parse(cachedInvoice).value as InvoiceProps)
-      : {
-          ...cachedPaymentInfor.invoice,
-          ...member?.metadata?.invoice,
-        }
-    cachedPaymentInfor.payment = cachedPayment
-      ? (JSON.parse(cachedPayment) as PaymentProps)
-      : {
-          ...cachedPaymentInfor.payment,
-          ...member?.metadata?.payment,
-        }
+    const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
+    cachedCartInfor.shipping = cachedShipping && JSON.parse(cachedShipping)
+    cachedCartInfor.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
+    cachedCartInfor.payment = cachedPayment && JSON.parse(cachedPayment)
   } catch {}
+
+  const [shipping, setShipping] = useState<ShippingProps>({
+    name: '',
+    phone: '',
+    address: '',
+    shippingMethod: 'home-delivery',
+    specification: '',
+    storeId: '',
+    storeName: '',
+    ...memberCartInfor.shipping,
+    ...cachedCartInfor.shipping,
+  })
+  const [invoice, setInvoice] = useState<InvoiceProps>({
+    name: '',
+    phone: '',
+    email: currentMember?.email || '',
+    ...memberCartInfor.invoice,
+    ...cachedCartInfor.invoice,
+  })
+
+  const [payment, setPayment] = useState<PaymentProps | null | undefined>()
+  const initializePayment = useCallback(
+    (isProductSubscription: boolean) => {
+      setPayment(
+        isProductSubscription
+          ? {
+              gateway: settings['payment.subscription.default_gateway'] || 'tappay',
+              method: 'credit',
+            }
+          : {
+              gateway: settings['payment.perpetual.default_gateway'] || 'spgateway',
+              method: settings['payment.perpetual.default_gateway_method'] || 'credit',
+              ...memberCartInfor.payment,
+              ...cachedCartInfor.payment,
+            },
+      )
+    },
+    [settings, memberCartInfor.payment, cachedCartInfor.payment],
+  )
+  useEffect(() => {
+    if (target) {
+      initializePayment(target.isSubscription)
+    }
+  }, [target, initializePayment])
 
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
@@ -140,28 +154,19 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const groupBuyingRef = useRef<HTMLDivElement | null>(null)
   const paymentMethodRef = useRef<HTMLDivElement | null>(null)
 
-  const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
-  const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
-  const [payment, setPayment] = useState<PaymentProps | null>(
-    paymentType === 'perpetual' ? null : { gateway: 'tappay', method: 'credit' },
-  )
-  const [isValidating, setIsValidating] = useState(false)
   const [discountId, setDiscountId] = useState('')
-  const [referrerEmail, setReferrerEmail] = useState('')
+  const [groupBuying, setGroupBuying] = useState<{
+    memberIds: string[]
+    withError: boolean
+  }>({ memberIds: [], withError: false })
 
-  const { memberId: referrerId, validateStatus: referrerStatus } = useMemberValidation(referrerEmail)
-
-  // checkout
-  const [productId, setProductId] = useState<string>(defaultProductId || '')
-  const { target } = useSimpleProduct({ id: productId, startedAt })
-
-  const { check, orderPlacing, orderChecking, placeOrder, totalPrice } = useCheck({
+  const { totalPrice, placeOrder, check, orderChecking, orderPlacing } = useCheck({
     productIds: [productId],
     discountId,
-    shipping: isProductPhysical
+    shipping: target?.isPhysical
       ? shipping
       : productId.startsWith('MerchandiseSpec_')
-      ? { address: member?.email }
+      ? { address: currentMember?.email }
       : null,
     options: {
       [productId]: {
@@ -172,13 +177,18 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
       },
     },
   })
+  const [isValidating, setIsValidating] = useState(false)
+  const [referrerEmail, setReferrerEmail] = useState('')
+  const { memberId: referrerId, validateStatus: referrerStatus } = useMemberValidation(referrerEmail)
+  const updateMemberMetadata = useUpdateMemberMetadata()
 
-  const handleSubmit = async () => {
-    if (!member) {
-      return
-    }
+  if (currentMember === null || target === null || payment === undefined) {
+    return renderTrigger?.({ isLoading: loading })
+  }
+
+  const handleSubmit = () => {
     !isValidating && setIsValidating(true)
-    const isValidShipping = !isProductPhysical || validateShipping(shipping)
+    const isValidShipping = !target.isPhysical || validateShipping(shipping)
     const isValidInvoice = validateInvoice(invoice).length === 0
 
     if (!payment) {
@@ -215,7 +225,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     if (settings['tracking.ga_id']) {
       ReactGA.plugin.execute('ec', 'addProduct', {
         id: productId,
-        name: target?.title || productId,
+        name: target.title || productId,
         category: productId.split('_')[0] || 'Unknown',
         price: `${totalPrice}`,
         quantity: '1',
@@ -225,33 +235,35 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
       ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
     }
 
-    const taskId = await placeOrder(
-      paymentType,
+    placeOrder(
+      target.isSubscription ? 'subscription' : 'perpetual',
       {
         ...invoice,
         referrerEmail: referrerEmail || undefined,
       },
       payment,
     )
-
-    await updateMemberMetadata({
-      variables: {
-        memberId: member.id,
-        metadata: {
-          ...member.metadata,
-          invoice,
-          shipping: isProductPhysical ? shipping : undefined,
-          payment,
-        },
-        memberPhones: invoice.phone ? [{ member_id: member.id, phone: invoice.phone }] : [],
-      },
-    }).catch(() => {})
-    history.push(`/tasks/order/${taskId}`)
+      .then(taskId =>
+        // sync cart infor
+        updateMemberMetadata({
+          variables: {
+            memberId: currentMember.id,
+            metadata: {
+              invoice,
+              shipping,
+              payment,
+            },
+            memberPhones: invoice.phone ? [{ member_id: currentMember.id, phone: invoice.phone }] : [],
+          },
+        }).then(() => taskId),
+      )
+      .then(taskId => history.push(`/tasks/order/${taskId}`))
+      .catch(() => {})
   }
 
   return (
     <>
-      {renderTrigger(onOpen, productId => setProductId(productId))}
+      {renderTrigger({ onOpen, onProductChange: productId => setProductId(productId) })}
       <CommonModal
         title={<StyledTitle className="mb-4">{formatMessage(checkoutMessages.title.cart)}</StyledTitle>}
         isOpen={isOpen}
@@ -278,7 +290,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
         {!!warningText && <StyledWarningText>{warningText}</StyledWarningText>}
 
-        {isProductPhysical && (
+        {target.isPhysical && (
           <div ref={shippingRef}>
             <ShippingInput
               value={shipping}
@@ -289,19 +301,19 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
-        {enabledModules.group_buying && !!target?.groupBuyingPeople && (
+        {enabledModules.group_buying && !!target.groupBuyingPeople && (
           <div ref={groupBuyingRef}>
             <CheckoutGroupBuyingForm
-              title={target?.title || ''}
+              title={target.title || ''}
               partnerCount={target.groupBuyingPeople - 1}
               onChange={value => setGroupBuying(value)}
             />
           </div>
         )}
 
-        {paymentType === 'perpetual' && (
+        {target.isSubscription === false && (
           <div className="mb-5" ref={paymentMethodRef}>
-            <PaymentSelector value={payment} onChange={v => v && setPayment(v)} />
+            <PaymentSelector value={payment} onChange={v => setPayment(v)} />
           </div>
         )}
 
@@ -310,7 +322,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
             value={invoice}
             onChange={value => setInvoice(value)}
             isValidating={isValidating}
-            shouldSameToShippingCheckboxDisplay={isProductPhysical}
+            shouldSameToShippingCheckboxDisplay={target.isPhysical}
           />
         </div>
 
@@ -352,7 +364,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
               {check.shippingOption && (
                 <CheckoutProductItem
                   name={formatMessage(
-                    checkoutMessages.shipping[camelCase(check.shippingOption.id) as shippingOptionIdProps],
+                    checkoutMessages.shipping[camelCase(check.shippingOption.id) as ShippingOptionIdType],
                   )}
                   price={check.shippingOption.fee}
                 />
@@ -369,9 +381,9 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
             {formatMessage(commonMessages.ui.cancel)}
           </Button>
           <Button colorScheme="primary" isLoading={orderPlacing} onClick={handleSubmit}>
-            {paymentType === 'subscription'
-              ? formatMessage(checkoutMessages.button.cartSubmit)
-              : formatMessage(commonMessages.ui.purchase)}
+            {target.isSubscription
+              ? formatMessage(commonMessages.button.subscribeNow)
+              : formatMessage(checkoutMessages.button.cartSubmit)}
           </Button>
         </div>
       </CommonModal>

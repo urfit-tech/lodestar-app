@@ -17,7 +17,6 @@ import PopularPodcastCollection from '../containers/podcast/PopularPodcastCollec
 import LanguageContext from '../contexts/LanguageContext'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
-import { useMember } from '../hooks/member'
 import { usePodcastProgramCollection } from '../hooks/podcast'
 
 const PodcastProgramCollectionPage: React.VFC = () => {
@@ -27,7 +26,6 @@ const PodcastProgramCollectionPage: React.VFC = () => {
   const { pageTitle } = useNav()
   const { currentLanguage } = useContext(LanguageContext)
   const { podcastPrograms } = usePodcastProgramCollection()
-  const { member } = useMember(currentMemberId || '')
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
 
   const categories = uniqBy(
@@ -143,7 +141,8 @@ const PodcastProgramCollectionPage: React.VFC = () => {
                     )}
                   renderItem={({ podcastProgram, isEnrolled, isSubscribed }) => (
                     <CheckoutPodcastPlanModal
-                      renderTrigger={onOpen => (
+                      creatorId={podcastProgram.instructor?.id || ''}
+                      renderTrigger={({ onOpen }) => (
                         <PodcastProgramPopover
                           key={podcastProgram.id}
                           isEnrolled={isEnrolled}
@@ -171,9 +170,6 @@ const PodcastProgramCollectionPage: React.VFC = () => {
                           />
                         </PodcastProgramPopover>
                       )}
-                      paymentType="subscription"
-                      creatorId={podcastProgram.instructor?.id || ''}
-                      member={member}
                     />
                   )}
                 />

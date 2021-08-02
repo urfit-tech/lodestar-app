@@ -27,7 +27,6 @@ import ProjectIntroCard from '../components/project/ProjectIntroCard'
 import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
-import { useMember } from '../hooks/member'
 import { ReactComponent as SearchIcon } from '../images/search.svg'
 import { ActivityProps, ActivityTicketProps } from '../types/activity'
 import { CategoryProps } from '../types/general'
@@ -111,7 +110,6 @@ const SearchResultBlock: React.VFC<{
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [tab, setTab] = useQueryParam('tab', StringParam)
-  const { loadingMember, member } = useMember(memberId || '')
 
   const { loadingSearchResults, errorSearchResults, searchResults } = useSearchProductCollection(memberId, {
     title,
@@ -198,7 +196,7 @@ const SearchResultBlock: React.VFC<{
     }
   }, [searchResults])
 
-  if (loadingMember || loadingSearchResults) {
+  if (loadingSearchResults) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
@@ -260,7 +258,8 @@ const SearchResultBlock: React.VFC<{
               {searchResults.podcastPrograms.map(podcastProgram => (
                 <div key={podcastProgram.id} className="col-6 col-md-3 mb-4">
                   <CheckoutPodcastPlanModal
-                    renderTrigger={onOpen => (
+                    creatorId={podcastProgram.instructor?.id || ''}
+                    renderTrigger={({ onOpen }) => (
                       <PodcastProgramPopover
                         key={podcastProgram.id}
                         podcastProgramId={podcastProgram.id}
@@ -285,9 +284,6 @@ const SearchResultBlock: React.VFC<{
                         />
                       </PodcastProgramPopover>
                     )}
-                    paymentType="subscription"
-                    creatorId={podcastProgram.instructor?.id || ''}
-                    member={member}
                   />
                 </div>
               ))}

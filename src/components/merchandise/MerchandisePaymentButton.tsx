@@ -8,7 +8,6 @@ import CheckoutProductModal from '../../components/checkout/CheckoutProductModal
 import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
-import { useMember } from '../../hooks/member'
 import { ReactComponent as CartIcon } from '../../images/cart.svg'
 import { MerchandiseProps, MerchandiseSpecProps } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
@@ -133,9 +132,8 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
   merchandiseSpec: MerchandiseSpecProps
 }> = ({ merchandise, merchandiseSpec }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { member } = useMember(currentMemberId || '')
 
   if (merchandise.isLimited && !merchandiseSpec.buyableQuantity) {
     return (
@@ -147,19 +145,17 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
 
   return (
     <CheckoutProductModal
-      renderTrigger={onOpen => (
+      renderTrigger={({ isLoading, onOpen }) => (
         <Button
           colorScheme="primary"
           isFullWidth
+          isDisabled={isLoading}
           onClick={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
         >
           {formatMessage(commonMessages.ui.purchase)}
         </Button>
       )}
-      paymentType="perpetual"
       defaultProductId={`MerchandiseSpec_${merchandiseSpec.id}`}
-      isProductPhysical={merchandise.isPhysical}
-      member={member}
       shippingMethods={merchandise.memberShop?.shippingMethods}
     />
   )
