@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages } from '../../helpers/translation'
-import { shippingOptionProps } from '../../types/checkout'
+import { ShippingOptionProps, ShippingProps } from '../../types/checkout'
 import { CommonTitleMixin } from '../common'
 import PriceLabel from '../common/PriceLabel'
 
@@ -23,16 +23,6 @@ const StyledPriceTag = styled.span`
   color: ${props => props.theme['@primary-color']};
 `
 
-export type ShippingProps = {
-  name?: string
-  phone?: string
-  address?: string
-  shippingMethod?: string
-  specification?: string
-  storeId?: string
-  storeName?: string
-}
-
 type cvsOptionsProps = {
   cvsType: string
   storeId: string
@@ -48,7 +38,7 @@ const ShippingInput: React.VFC<{
   value?: ShippingProps
   onChange?: (value: ShippingProps) => void
   isValidating?: boolean
-  shippingMethods?: shippingOptionProps[]
+  shippingMethods?: ShippingOptionProps[]
 }> = ({ value, onChange, isValidating, shippingMethods }) => {
   const { formatMessage } = useIntl()
   const { currencyId: appCurrencyId } = useApp()

@@ -6,8 +6,8 @@ import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { validationRegExp } from '../../helpers'
 import { checkoutMessages } from '../../helpers/translation'
+import { InvoiceProps, ShippingProps } from '../../types/checkout'
 import { CommonTitleMixin } from '../common'
-import { ShippingProps } from './ShippingInput'
 
 const StyledWrapper = styled.div`
   .ant-select {
@@ -29,20 +29,6 @@ const StyledRemark = styled.div`
   line-height: 1.57;
   letter-spacing: 0.18px;
 `
-
-export type InvoiceProps = {
-  name: string
-  phone: string
-  email: string
-  phoneBarCode?: string
-  citizenCode?: string
-  uniformNumber?: string
-  uniformTitle?: string
-  donationCode?: string
-  postCode?: string
-  address?: string
-  referrerEmail?: string
-}
 
 type InvoiceType = 'electronic' | 'uniform-number' | 'donation' | 'hardcopy' | 'hardcopy-uniform-number'
 type InvoiceOption = 'send-to-email' | 'use-phone-bar-code' | 'citizen-digital-certificate'
@@ -175,7 +161,7 @@ const InvoiceInput: React.VFC<{
 
   const syncWithShipping = async () => {
     try {
-      const cachedShipping = JSON.parse(localStorage.getItem('kolable.cart.shipping') || '') as ShippingProps
+      const cachedShipping: ShippingProps = JSON.parse(localStorage.getItem('kolable.cart.shipping') || '')
 
       nameRef.current?.setValue(cachedShipping?.name || '')
       phoneRef.current?.setValue(cachedShipping?.phone || '')

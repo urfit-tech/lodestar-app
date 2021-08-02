@@ -1,5 +1,4 @@
-import { InvoiceProps } from '../components/checkout/InvoiceInput'
-import { ShippingProps } from '../components/checkout/ShippingInput'
+import { InvoiceProps, ShippingProps } from './checkout'
 
 export type MerchandiseBasicProps = {
   id: string
