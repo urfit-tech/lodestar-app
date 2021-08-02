@@ -55,7 +55,8 @@ const ProgramSubscriptionPlanCard: React.VFC<{
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds(memberId)
   const { member } = useMember(memberId)
 
-  const { salePrice, listPrice, discountDownPrice, periodType, periodAmount } = programPlan
+  const { salePrice, listPrice, discountDownPrice, periodType, periodAmount, currency } = programPlan
+  const currencyId = currency.id || 'TWD'
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
   return (
@@ -70,6 +71,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
           downPrice={discountDownPrice}
           periodAmount={periodAmount}
           periodType={periodType}
+          currencyId={currencyId}
         />
         {programPlan.isCountdownTimerVisible && programPlan.soldAt && isOnSale && (
           <StyledCountDownBlock>
@@ -109,7 +111,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
                     category: 'ProgramPlan',
                     price: `${programPlan.listPrice}`,
                     quantity: '1',
-                    currency: 'TWD',
+                    currency: currencyId,
                   })
                   ReactGA.plugin.execute('ec', 'setAction', 'add')
                   ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
