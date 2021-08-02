@@ -74,7 +74,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
   // checkout
   const [productId, setProductId] = useState(defaultProductId)
-  const { loading, target } = useSimpleProduct({ id: productId, startedAt })
+  const { target } = useSimpleProduct({ id: productId, startedAt })
 
   // cart information
   const memberCartInfor: {
@@ -141,13 +141,13 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
             },
       )
     },
-    [settings, memberCartInfor.payment, cachedCartInfor.payment],
+    [memberCartInfor.payment],
   )
   useEffect(() => {
-    if (target) {
+    if (typeof target?.isSubscription === 'boolean') {
       initializePayment(target.isSubscription)
     }
-  }, [target, initializePayment])
+  }, [target?.isSubscription, initializePayment])
 
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
@@ -184,7 +184,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const updateMemberMetadata = useUpdateMemberMetadata()
 
   if (currentMember === null || target === null || payment === undefined) {
-    return renderTrigger?.({ isLoading: loading })
+    return renderTrigger?.({ isLoading: true })
   }
 
   const handleSubmit = () => {
