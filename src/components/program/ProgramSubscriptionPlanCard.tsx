@@ -95,7 +95,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
         </Button>
       ) : (
         <CheckoutProductModal
-          renderTrigger={({ isLoading, onOpen }) => (
+          renderTrigger={({ isLoading, onOpen, isSubscription }) => (
             <Button
               colorScheme="primary"
               isFullWidth
@@ -118,7 +118,9 @@ const ProgramSubscriptionPlanCard: React.VFC<{
                 }
               }}
             >
-              {formatMessage(commonMessages.button.subscribeNow)}
+              {isSubscription
+                ? formatMessage(commonMessages.button.subscribeNow)
+                : formatMessage(commonMessages.ui.purchase)}
             </Button>
           )}
           defaultProductId={`ProgramPlan_${programPlan.id}`}

@@ -44,6 +44,7 @@ export type CheckoutProductModalProps = {
   defaultProductId: string
   renderTrigger: (options: {
     isLoading?: boolean
+    isSubscription?: boolean
     onOpen?: () => void
     onProductChange?: (productId: string) => void
   }) => React.ReactElement
@@ -263,7 +264,11 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
   return (
     <>
-      {renderTrigger({ onOpen, onProductChange: productId => setProductId(productId) })}
+      {renderTrigger({
+        onOpen,
+        onProductChange: productId => setProductId(productId),
+        isSubscription: target.isSubscription,
+      })}
       <CommonModal
         title={<StyledTitle className="mb-4">{formatMessage(checkoutMessages.title.cart)}</StyledTitle>}
         isOpen={isOpen}
