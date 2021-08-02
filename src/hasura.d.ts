@@ -3734,6 +3734,7 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any;
+  currency_id: string;
   period_amount: any | null;
   period_type: string | null;
   group_buying_people: any | null;
@@ -11611,6 +11612,11 @@ export enum setting_constraint {
 export enum setting_update_column {
   key = "key",
   name = "name",
+  is_protected = "is_protected",
+  is_required = "is_required",
+  module_id = "module_id",
+  options = "options",
+  type = "type",
 }
 
 /**
@@ -15663,6 +15669,7 @@ export interface module_bool_exp {
   category_name?: String_comparison_exp | null;
   id?: String_comparison_exp | null;
   name?: String_comparison_exp | null;
+  settings?: setting_bool_exp | null;
 }
 
 /**
@@ -15674,6 +15681,7 @@ export interface module_insert_input {
   category_name?: string | null;
   id?: string | null;
   name?: string | null;
+  settings?: setting_arr_rel_insert_input | null;
 }
 
 /**
@@ -19499,6 +19507,14 @@ export interface role_permission_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "setting"
+ */
+export interface setting_arr_rel_insert_input {
+  data: setting_insert_input[];
+  on_conflict?: setting_on_conflict | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "setting". All fields are combined with a logical 'AND'.
  */
 export interface setting_bool_exp {
@@ -19508,6 +19524,12 @@ export interface setting_bool_exp {
   app_settings?: app_setting_bool_exp | null;
   key?: String_comparison_exp | null;
   name?: String_comparison_exp | null;
+  is_protected?: Boolean_comparison_exp | null;
+  is_required?: Boolean_comparison_exp | null;
+  module?: module_bool_exp | null;
+  module_id?: String_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
+  type?: String_comparison_exp | null;
 }
 
 /**
@@ -19515,8 +19537,14 @@ export interface setting_bool_exp {
  */
 export interface setting_insert_input {
   app_settings?: app_setting_arr_rel_insert_input | null;
-  key?: string | null;
   name?: string | null;
+  is_protected?: boolean | null;
+  is_required?: boolean | null;
+  key?: string | null;
+  module?: module_obj_rel_insert_input | null;
+  module_id?: string | null;
+  options?: any | null;
+  type?: string | null;
 }
 
 /**
