@@ -91,7 +91,7 @@ const PaymentSelector: React.FC<{
         )}
         {settings['payment.paypal.credit.enable'] === '1' && (
           <Select.Option value='{"gateway":"paypal","method":"credit"}'>
-            {formatMessage(checkoutMessages.label.credit)}（{formatMessage(checkoutMessages.label.paypal)}）
+            {formatMessage(checkoutMessages.label.paypal)}
           </Select.Option>
         )}
       </Select>
