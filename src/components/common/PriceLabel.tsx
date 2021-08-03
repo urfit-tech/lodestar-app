@@ -60,10 +60,11 @@ const PriceLabel: React.VFC<
 > = ({ variant, render, noFreeText, ...options }) => {
   const { listPrice, salePrice, downPrice, periodAmount, periodType } = options
   const { formatMessage } = useIntl()
-  const { currencyId: appCurrencyId, settings } = useApp()
+  const { currencyId: appCurrencyId, settings, currencies } = useApp()
   const { locale } = useContext(LanguageContext)
 
   const currencyId = options.currencyId || appCurrencyId
+  const minorUnits = currencies[currencyId].minor_units || 0
   const displayPrice = salePrice || listPrice
   const firstPeriodPrice = displayPrice - (downPrice || 0)
 
@@ -71,7 +72,12 @@ const PriceLabel: React.VFC<
     if (currencyId === 'LSC') {
       return price + (settings['coin.unit'] || 'Coins')
     }
-    return price.toLocaleString(locale, { style: 'currency', currency: currencyId, minimumFractionDigits: 0 })
+    return price.toLocaleString(locale, {
+      style: 'currency',
+      currency: currencyId,
+      maximumFractionDigits: minorUnits,
+      minimumFractionDigits: 0,
+    })
   }
 
   if (render) {

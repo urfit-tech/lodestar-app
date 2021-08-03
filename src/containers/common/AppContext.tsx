@@ -26,7 +26,9 @@ type AppProps = {
   }[]
   settings: { [key: string]: string }
   currencyId: string
-  currencies: { [currencyId: string]: { id: string; label: string | null; unit: string | null } }
+  currencies: {
+    [currencyId: string]: { id: string; label: string | null; unit: string | null; minor_units: number | null }
+  }
 }
 
 const defaultAppProps: AppProps = {
@@ -54,6 +56,7 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
           id
           label
           unit
+          minor_units
         }
         app_by_pk(id: $appId) {
           id

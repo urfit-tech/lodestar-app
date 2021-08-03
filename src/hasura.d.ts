@@ -1474,6 +1474,7 @@ export interface GET_APP_currency {
   id: string;
   label: string;
   unit: string;
+  minor_units: number | null;
 }
 
 export interface GET_APP_app_by_pk_app_modules {
@@ -9716,6 +9717,7 @@ export enum currency_constraint {
 export enum currency_update_column {
   id = "id",
   label = "label",
+  minor_units = "minor_units",
   name = "name",
   unit = "unit",
 }
@@ -11610,10 +11612,10 @@ export enum setting_constraint {
  * update columns of table "setting"
  */
 export enum setting_update_column {
-  key = "key",
-  name = "name",
   is_protected = "is_protected",
   is_required = "is_required",
+  is_secret = "is_secret",
+  key = "key",
   module_id = "module_id",
   options = "options",
   type = "type",
@@ -12600,6 +12602,7 @@ export interface app_secret_bool_exp {
   app_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   key?: String_comparison_exp | null;
+  setting?: setting_bool_exp | null;
   value?: String_comparison_exp | null;
 }
 
@@ -12611,6 +12614,7 @@ export interface app_secret_insert_input {
   app_id?: string | null;
   id?: any | null;
   key?: string | null;
+  setting?: setting_obj_rel_insert_input | null;
   value?: string | null;
 }
 
@@ -13885,6 +13889,7 @@ export interface currency_bool_exp {
   appointment_plans?: appointment_plan_bool_exp | null;
   id?: String_comparison_exp | null;
   label?: String_comparison_exp | null;
+  minor_units?: Int_comparison_exp | null;
   name?: String_comparison_exp | null;
   order_products?: order_product_bool_exp | null;
   program_plans?: program_plan_bool_exp | null;
@@ -13898,6 +13903,7 @@ export interface currency_insert_input {
   appointment_plans?: appointment_plan_arr_rel_insert_input | null;
   id?: string | null;
   label?: string | null;
+  minor_units?: number | null;
   name?: string | null;
   order_products?: order_product_arr_rel_insert_input | null;
   program_plans?: program_plan_arr_rel_insert_input | null;
@@ -19521,11 +19527,12 @@ export interface setting_bool_exp {
   _and?: (setting_bool_exp | null)[] | null;
   _not?: setting_bool_exp | null;
   _or?: (setting_bool_exp | null)[] | null;
+  app_secrets?: app_secret_bool_exp | null;
   app_settings?: app_setting_bool_exp | null;
-  key?: String_comparison_exp | null;
-  name?: String_comparison_exp | null;
   is_protected?: Boolean_comparison_exp | null;
   is_required?: Boolean_comparison_exp | null;
+  is_secret?: Boolean_comparison_exp | null;
+  key?: String_comparison_exp | null;
   module?: module_bool_exp | null;
   module_id?: String_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
@@ -19536,10 +19543,11 @@ export interface setting_bool_exp {
  * input type for inserting data into table "setting"
  */
 export interface setting_insert_input {
+  app_secrets?: app_secret_arr_rel_insert_input | null;
   app_settings?: app_setting_arr_rel_insert_input | null;
-  name?: string | null;
   is_protected?: boolean | null;
   is_required?: boolean | null;
+  is_secret?: boolean | null;
   key?: string | null;
   module?: module_obj_rel_insert_input | null;
   module_id?: string | null;
