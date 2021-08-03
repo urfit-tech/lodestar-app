@@ -18,6 +18,7 @@ type ActivitySessionProps = {
   startedAt: Date
   endedAt: Date
   location: string | null
+  onlineLink: string | null
   activityId: string
 }
 
