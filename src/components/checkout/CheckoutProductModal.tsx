@@ -77,7 +77,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const { target } = useSimpleProduct({ id: productId, startedAt })
 
   // cart information
-  const memberCartInfor: {
+  const memberCartInfo: {
     shipping?: ShippingProps | null
     invoice?: InvoiceProps | null
     payment?: PaymentProps | null
@@ -87,7 +87,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     payment: currentMember?.payment,
   }
 
-  const cachedCartInfor: {
+  const cachedCartInfo: {
     shipping: ShippingProps | null
     invoice: InvoiceProps | null
     payment: PaymentProps | null
@@ -100,9 +100,9 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
     const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
     const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
-    cachedCartInfor.shipping = cachedShipping && JSON.parse(cachedShipping)
-    cachedCartInfor.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
-    cachedCartInfor.payment = cachedPayment && JSON.parse(cachedPayment)
+    cachedCartInfo.shipping = cachedShipping && JSON.parse(cachedShipping)
+    cachedCartInfo.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
+    cachedCartInfo.payment = cachedPayment && JSON.parse(cachedPayment)
   } catch {}
 
   const [shipping, setShipping] = useState<ShippingProps>({
@@ -113,15 +113,15 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     specification: '',
     storeId: '',
     storeName: '',
-    ...memberCartInfor.shipping,
-    ...cachedCartInfor.shipping,
+    ...memberCartInfo.shipping,
+    ...cachedCartInfo.shipping,
   })
   const [invoice, setInvoice] = useState<InvoiceProps>({
     name: '',
     phone: '',
     email: currentMember?.email || '',
-    ...memberCartInfor.invoice,
-    ...cachedCartInfor.invoice,
+    ...memberCartInfo.invoice,
+    ...cachedCartInfo.invoice,
   })
 
   const [payment, setPayment] = useState<PaymentProps | null | undefined>()
@@ -136,12 +136,12 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           : {
               gateway: settings['payment.perpetual.default_gateway'] || 'spgateway',
               method: settings['payment.perpetual.default_gateway_method'] || 'credit',
-              ...memberCartInfor.payment,
-              ...cachedCartInfor.payment,
+              ...memberCartInfo.payment,
+              ...cachedCartInfo.payment,
             },
       )
     },
-    [memberCartInfor.payment],
+    [memberCartInfo.payment],
   )
   useEffect(() => {
     if (typeof target?.isSubscription === 'boolean') {
@@ -245,7 +245,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
       payment,
     )
       .then(taskId =>
-        // sync cart infor
+        // sync cart info
         updateMemberMetadata({
           variables: {
             memberId: currentMember.id,
