@@ -1,6 +1,7 @@
 import { Divider, Modal } from 'antd'
 import React, { useContext, useState } from 'react'
 import styled from 'styled-components'
+import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { AuthState } from '../../types/member'
 import { CommonLargeTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
@@ -52,27 +53,30 @@ type AuthModalProps = {
   onAuthStateChange?: (authState: AuthState) => void
   renderTitle?: () => React.ReactNode
 }
-const AuthModal = ({ defaultAuthState, noGeneralLogin, onAuthStateChange, renderTitle }: AuthModalProps) => {
+const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin, onAuthStateChange, renderTitle }) => {
+  const { renderAuthModal } = useCustomRenderer()
   const { visible, setVisible } = useContext(AuthModalContext)
   const [authState, setAuthState] = useState(defaultAuthState || 'login')
 
   return (
-    <Modal
-      centered
-      width={window.innerWidth > BREAK_POINT ? window.innerWidth / 3 : window.innerWidth}
-      footer={null}
-      onCancel={() => setVisible && setVisible(false)}
-      visible={visible}
-      maskClosable={!(authState === 'register')}
-    >
-      <StyledContainer>
-        {authState === 'login' ? (
-          <LoginSection onAuthStateChange={setAuthState} noGeneralLogin={noGeneralLogin} renderTitle={renderTitle} />
-        ) : authState === 'register' ? (
-          <RegisterSection onAuthStateChange={setAuthState} />
-        ) : null}
-      </StyledContainer>
-    </Modal>
+    renderAuthModal?.(visible) || (
+      <Modal
+        centered
+        width={window.innerWidth > BREAK_POINT ? window.innerWidth / 3 : window.innerWidth}
+        footer={null}
+        onCancel={() => setVisible && setVisible(false)}
+        visible={visible}
+        maskClosable={!(authState === 'register')}
+      >
+        <StyledContainer>
+          {authState === 'login' ? (
+            <LoginSection onAuthStateChange={setAuthState} noGeneralLogin={noGeneralLogin} renderTitle={renderTitle} />
+          ) : authState === 'register' ? (
+            <RegisterSection onAuthStateChange={setAuthState} />
+          ) : null}
+        </StyledContainer>
+      </Modal>
+    )
   )
 }
 

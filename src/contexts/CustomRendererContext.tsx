@@ -13,6 +13,7 @@ export type CustomRendererProps = {
   }) => React.ReactNode
   renderFooter?: (props: { DefaultFooter: React.VFC }) => React.ReactElement
   renderAuthButton?: (setAuthModalVisible?: React.Dispatch<React.SetStateAction<boolean>>) => React.ReactNode
+  renderAuthModal?: (visible: boolean) => React.ReactElement
   renderMemberAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement
 }
 

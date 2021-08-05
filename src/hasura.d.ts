@@ -1474,6 +1474,7 @@ export interface GET_APP_currency {
   id: string;
   label: string;
   unit: string;
+  minor_units: number | null;
 }
 
 export interface GET_APP_app_by_pk_app_modules {
@@ -3735,6 +3736,7 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any;
+  currency_id: string;
   period_amount: any | null;
   period_type: string | null;
   group_buying_people: any | null;

@@ -25,14 +25,16 @@ import CheckoutGroupBuyingForm from './CheckoutGroupBuyingForm'
 import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
 import CheckoutProductReferrerInput from './CheckoutProductReferrerInput'
 
-const CheckoutProductItem: React.VFC<{ name: string; price: number }> = ({ name, price }) => {
-  const { currencyId: appCurrencyId } = useApp()
-
+const CheckoutProductItem: React.VFC<{ name: string; price: number; currencyId?: string }> = ({
+  name,
+  price,
+  currencyId,
+}) => {
   return (
     <div className="d-flex align-items-center justify-content-between">
       <span className="flex-grow-1 mr-4">{name}</span>
       <span className="flex-shrink-0">
-        <PriceLabel listPrice={price} currencyId={appCurrencyId} />
+        <PriceLabel listPrice={price} currencyId={currencyId} />
       </span>
     </div>
   )
