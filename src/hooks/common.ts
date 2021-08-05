@@ -32,6 +32,7 @@ type TargetProps = {
 
 export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Date }) => {
   const { formatMessage } = useIntl()
+  const { settings } = useApp()
   const [, targetId] = id.split('_')
 
   const { loading, error, data } = useQuery<hasura.GET_PRODUCT_SIMPLE, hasura.GET_PRODUCT_SIMPLEVariables>(
@@ -71,7 +72,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
               ? data.program_plan_by_pk.sale_price
               : undefined,
           discountDownPrice: data.program_plan_by_pk.discount_down_price || undefined,
-          currencyId: data.program_plan_by_pk.currency_id || 'TWD',
+          currencyId: data.program_plan_by_pk.currency_id || settings['currency_id'],
           periodAmount: data.program_plan_by_pk.period_amount,
           periodType: data.program_plan_by_pk.period_type as PeriodType,
           groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
