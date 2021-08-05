@@ -1,4 +1,4 @@
-import { Icon, Input, SkeletonText } from '@chakra-ui/react'
+import { Icon, Input, SkeletonText, useToast } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
 import { prop, sum } from 'ramda'
 import React, { useContext, useRef, useState } from 'react'
@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useAuth } from '../../components/auth/AuthContext'
-import CartProductTableCard from '../../components/checkout/CartProductTableCard'
+import CartProductTableCard, { useProductInventory } from '../../components/checkout/CartProductTableCard'
 import CheckoutCard from '../../components/checkout/CheckoutCard'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
 import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/checkout/InvoiceInput'
@@ -60,9 +60,15 @@ const CheckoutBlock: React.VFC<{
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
   const updateMemberMetadata = useUpdateMemberMetadata()
+  const toast = useToast()
 
   const cartProductIds = cartProducts.map(v => v.productId.split('_')[1])
   const { hasPhysicalProduct } = usePhysicalProductCollection(cartProductIds)
+  const {
+    loading: loadingCartProductsWithInventory,
+    cartProductsWithInventory,
+    refetch: refetchCartProductsWithInventory,
+  } = useProductInventory(cartProducts)
 
   // payment information
   const cachedPaymentInfor: {
@@ -115,6 +121,7 @@ const CheckoutBlock: React.VFC<{
         }
   } catch {}
 
+  const cartRef = useRef<HTMLDivElement | null>(null)
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
   const referrerRef = useRef<HTMLDivElement | null>(null)
@@ -152,7 +159,7 @@ const CheckoutBlock: React.VFC<{
     )
   }
 
-  const handleCheckout = async () => {
+  const handleCheckoutAsync = async () => {
     if (!isAuthenticated || !member) {
       setVisible?.(true)
       return
@@ -166,6 +173,22 @@ const CheckoutBlock: React.VFC<{
     !isValidating && setIsValidating(true)
     const isValidShipping = !hasPhysicalProduct || validateShipping(shipping)
     const isValidInvoice = validateInvoice(invoice).length === 0
+
+    refetchCartProductsWithInventory()
+    if (
+      !loadingCartProductsWithInventory &&
+      cartProductsWithInventory.some(cartProduct => cartProduct.buyableQuantity === 0)
+    ) {
+      cartRef.current?.scrollIntoView({ behavior: 'smooth' })
+      toast({
+        title: formatMessage(checkoutMessages.event.removeSoldOutProduct),
+        status: 'error',
+        duration: 3000,
+        isClosable: false,
+        position: 'top',
+      })
+      return
+    }
 
     if (
       hasPhysicalProduct &&
@@ -245,8 +268,9 @@ const CheckoutBlock: React.VFC<{
         <span className="ml-2">{formatMessage(checkoutMessages.title.cart)}</span>
       </Typography.Title>
 
-      <CartProductTableCard className="mb-3" shopId={shopId} cartProducts={cartProducts} />
-
+      <div ref={cartRef}>
+        <CartProductTableCard className="mb-3" shopId={shopId} cartProducts={cartProducts} />
+      </div>
       {hasPhysicalProduct && (
         <div ref={shippingRef} className="mb-3">
           <AdminCard>
@@ -323,7 +347,7 @@ const CheckoutBlock: React.VFC<{
           invoice={invoice}
           shipping={hasPhysicalProduct ? shipping : null}
           loading={orderChecking || orderPlacing}
-          onCheckout={handleCheckout}
+          onCheckout={handleCheckoutAsync}
         />
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { ThemeContext } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import AuthButton from '../../containers/common/AuthButton'
+import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import NotificationContext from '../../contexts/NotificationContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../helpers/translation'
@@ -54,7 +55,8 @@ const DefaultLayout: React.FC<{
 }) => {
   const { formatMessage } = useIntl()
   const theme = useContext(ThemeContext)
-  const { currentMemberId, isAuthenticated } = useAuth()
+  const { renderFooter } = useCustomRenderer()
+  const { currentMemberId, isAuthenticated, currentMember } = useAuth()
   const { name, settings, enabledModules } = useApp()
   const { navs } = useNav()
   const { refetchNotifications } = useContext(NotificationContext)
@@ -117,7 +119,17 @@ const DefaultLayout: React.FC<{
 
             {!noCart && <CartDropdown />}
             {currentMemberId && <NotificationDropdown />}
-            {currentMemberId ? <MemberProfileButton memberId={currentMemberId} /> : <AuthButton />}
+            {currentMemberId && currentMember ? (
+              <MemberProfileButton
+                id={currentMemberId}
+                name={currentMember.name}
+                username={currentMember.username}
+                email={currentMember.email}
+                pictureUrl={currentMember.pictureUrl}
+              />
+            ) : (
+              <AuthButton />
+            )}
           </div>
         </StyledLayoutHeader>
 
@@ -129,7 +141,7 @@ const DefaultLayout: React.FC<{
             {centeredBox ? <CenteredBox>{children}</CenteredBox> : children}
           </LayoutContentWrapper>
 
-          {!noFooter && <Footer />}
+          {!noFooter && (renderFooter?.({ DefaultFooter: Footer }) || <Footer />)}
           {/* more space for fixed blocks */}
           <Responsive.Default>
             {typeof footerBottomSpace === 'string' && <EmptyBlock height={footerBottomSpace} />}

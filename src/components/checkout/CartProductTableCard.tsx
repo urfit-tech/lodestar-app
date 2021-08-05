@@ -31,7 +31,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { removeCartProducts } = useContext(CartContext)
-  const { loading, cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
+  const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
   const { memberShop } = useMemberShop(shopId)
 
   useEffect(() => {
@@ -119,7 +119,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
 
 export default CartProductTableCard
 
-const useProductInventory = (cartProducts: CartProductProps[]) => {
+export const useProductInventory = (cartProducts: CartProductProps[]) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_PRODUCT_INVENTORY,
     hasura.GET_PRODUCT_INVENTORYVariables
@@ -140,7 +140,7 @@ const useProductInventory = (cartProducts: CartProductProps[]) => {
   return {
     loading,
     error,
-    cartProducts: cartProducts.map(cartProduct => ({
+    cartProductsWithInventory: cartProducts.map(cartProduct => ({
       ...cartProduct,
       buyableQuantity: null,
       ...productInventories.find(cartProductsInventory => cartProduct.productId === cartProductsInventory.productId),

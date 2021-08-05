@@ -35,8 +35,10 @@ const StyledContent = styled.div`
 
 const ActivitySessionItem: React.VFC<{
   activitySessionId: string
+  renderSessionType?: string
+  renderLocation?: React.ReactNode
   renderAttend?: React.ReactNode
-}> = ({ activitySessionId, renderAttend }) => {
+}> = ({ activitySessionId, renderSessionType, renderLocation, renderAttend }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const { currentMemberId } = useAuth()
@@ -62,34 +64,40 @@ const ActivitySessionItem: React.VFC<{
 
   return (
     <StyledWrapper>
-      <StyledTitle className="mb-3">{session.title}</StyledTitle>
+      <StyledTitle className="mb-3">
+        {session.title}
+        {renderSessionType}
+      </StyledTitle>
       <StyledContent>
         <div>
           <Icon as={CalendarOIcon} className="mr-2" />
           <span>{dateRangeFormatter({ startedAt: session.startedAt, endedAt: session.endedAt })}</span>
         </div>
 
-        {sessionType === 'offline' && (
-          <div>
-            <Icon as={MapOIcon} className="mr-2" />
-            <span>{session.location}</span>
-          </div>
-        )}
-
-        {enabledModules.activity_online && session.onlineLink && (
-          <div className="d-flex align-items-center">
-            <Icon as={VideoIcon} className="mr-2" />
-            {session.isEnrolled ? (
-              <span>
-                <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}</span>
-                <a href={session.onlineLink} target="_blank" rel="noopener noreferrer">
-                  <Button variant="link">{session.onlineLink}</Button>
-                </a>
-              </span>
-            ) : (
-              formatMessage(activityMessages.text.live)
+        {renderLocation || (
+          <>
+            {(sessionType === 'offline' || sessionType === 'both') && (
+              <div>
+                <Icon as={MapOIcon} className="mr-2" />
+                <span>{session.location}</span>
+              </div>
             )}
-          </div>
+            {enabledModules.activity_online && session.onlineLink && (
+              <div className="d-flex align-items-center">
+                <Icon as={VideoIcon} className="mr-2" />
+                {session.isEnrolled ? (
+                  <span>
+                    <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}</span>
+                    <a href={session.onlineLink} target="_blank" rel="noopener noreferrer">
+                      <Button variant="link">{session.onlineLink}</Button>
+                    </a>
+                  </span>
+                ) : (
+                  formatMessage(activityMessages.text.live)
+                )}
+              </div>
+            )}
+          </>
         )}
 
         <div>

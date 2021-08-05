@@ -6,10 +6,12 @@ export type CustomRendererProps = {
   renderRegisterTerm?: () => React.ReactNode
   renderMemberProfile?: (member: {
     id: string
-    name: string | null
+    name: string
+    username: string
     email: string
-    pictureUrl: string | null
+    pictureUrl: string
   }) => React.ReactNode
+  renderFooter?: (props: { DefaultFooter: React.VFC }) => React.ReactElement
   renderAuthButton?: (setAuthModalVisible?: React.Dispatch<React.SetStateAction<boolean>>) => React.ReactNode
   renderMemberAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement
 }

@@ -3,6 +3,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { commonMessages } from '../../helpers/translation'
 import { useRouteKeys } from '../../hooks/util'
 import { MemberAdminMenu } from '../common/AdminMenu'
@@ -39,6 +40,7 @@ const MemberAdminLayout: React.FC<{
   }
 }> = ({ content, children }) => {
   const defaultSelectedKeys = useRouteKeys()
+  const { renderMemberAdminMenu } = useCustomRenderer()
   const { formatMessage } = useIntl()
 
   return (
@@ -49,7 +51,7 @@ const MemberAdminLayout: React.FC<{
       <div className="d-flex">
         <Responsive.Desktop>
           <StyledContent className="pl-5 py-5" footerHeight={0}>
-            <MemberAdminMenu defaultSelectedKeys={defaultSelectedKeys} />
+            <MemberAdminMenu renderAdminMenu={renderMemberAdminMenu} defaultSelectedKeys={defaultSelectedKeys} />
           </StyledContent>
         </Responsive.Desktop>
         <StyledContent className="flex-grow-1 p-3 p-sm-5" footerHeight={0}>

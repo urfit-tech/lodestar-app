@@ -480,8 +480,9 @@ export const checkoutMessages = {
     unionPay: { id: 'checkout.label.unionPay', defaultMessage: '銀聯卡支付' },
     webAtm: { id: 'checkout.label.webATM', defaultMessage: 'WebATM' },
     barcode: { id: 'checkout.label.barcode', defaultMessage: '超商條碼繳費' },
-    paypal: { id: 'checkoutout.label.paypal', defaultMessage: '使用paypal' },
+    paypal: { id: 'checkoutout.label.paypal', defaultMessage: '信用卡 PayPal (限海外)' },
     parenting: { id: 'checkout.label.parenting', defaultMessage: '親子天下' },
+    commonhealth: { id: 'checkout.label.commonhealth', defaultMessage: '康健' },
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
     groupBuyingPlan: {
       id: 'checkout.label.groupBuyingTitle',
@@ -701,6 +702,10 @@ export const checkoutMessages = {
     sendByPost: { id: 'checkout.label.sendByPost', defaultMessage: '郵寄' },
     homeDelivery: { id: 'checkout.label.homeDelivery', defaultMessage: '宅配' },
     other: { id: 'checkout.label.other', defaultMessage: '其他' },
+  }),
+  event: defineMessages({
+    inventoryShortage: { id: 'checkout.event.inventoryShortage', defaultMessage: '庫存不足請調整數量' },
+    removeSoldOutProduct: { id: 'checkout.event.removeSoldOutProduct', defaultMessage: '請移除已售完項目' },
   }),
 }
 

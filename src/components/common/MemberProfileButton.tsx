@@ -8,7 +8,6 @@ import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
-import { useMember } from '../../hooks/member'
 import { useAuth } from '../auth/AuthContext'
 import { MemberAdminMenu } from './AdminMenu'
 import GlobalSearchInput from './GlobalSearchInput'
@@ -76,15 +75,18 @@ export const CustomNavLinks: React.VFC = () => {
 }
 
 const MemberProfileButton: React.VFC<{
-  memberId: string
-}> = ({ memberId }) => {
+  id: string
+  name: string
+  username: string
+  email: string
+  pictureUrl: string
+}> = member => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { closePlayer } = useContext(PodcastPlayerContext)
-  const { renderMemberProfile } = useCustomRenderer()
-  const { currentMemberId, logout } = useAuth()
+  const { renderMemberProfile, renderMemberAdminMenu } = useCustomRenderer()
+  const { logout } = useAuth()
   const { enabledModules } = useApp()
-  const { member } = useMember(memberId)
 
   const content = (
     <Wrapper>
@@ -96,18 +98,11 @@ const MemberProfileButton: React.VFC<{
         )}
 
         <BorderedItem className="justify-content-between">
-          {member && renderMemberProfile ? (
-            renderMemberProfile({
-              id: member.id,
-              name: member.name,
-              email: member.email,
-              pictureUrl: member.pictureUrl,
-            })
-          ) : (
+          {renderMemberProfile?.(member) || (
             <>
-              <div>{member && member.name}</div>
+              <div>{member.name}</div>
               <Responsive.Default>
-                <MemberAvatar memberId={currentMemberId || ''} size={36} />
+                <MemberAvatar memberId={member.id} size={36} />
               </Responsive.Default>
             </>
           )}
@@ -115,14 +110,14 @@ const MemberProfileButton: React.VFC<{
 
         <Responsive.Default>
           <CustomNavLinks />
-          <BorderedItem onClick={() => history.push(`/members/${currentMemberId}`)} style={{ cursor: 'pointer' }}>
+          <BorderedItem onClick={() => history.push(`/members/${member.id}`)} style={{ cursor: 'pointer' }}>
             <BlankIcon className="mr-2" />
             {formatMessage(commonMessages.content.myPage)}
           </BorderedItem>
         </Responsive.Default>
 
         <BorderedItem className="shift-left">
-          <MemberAdminMenu style={{ border: 'none' }} />
+          <MemberAdminMenu renderAdminMenu={renderMemberAdminMenu} style={{ border: 'none' }} />
         </BorderedItem>
 
         <List.Item
@@ -149,16 +144,7 @@ const MemberProfileButton: React.VFC<{
 
       <Responsive.Desktop>
         <div className="cursor-pointer">
-          {member && renderMemberProfile ? (
-            renderMemberProfile({
-              id: member.id,
-              name: member.name,
-              email: member.email,
-              pictureUrl: member.pictureUrl,
-            })
-          ) : (
-            <MemberAvatar memberId={currentMemberId || ''} size={36} />
-          )}
+          {renderMemberProfile?.(member) || <MemberAvatar memberId={member.id} size={36} />}
         </div>
       </Responsive.Desktop>
     </Popover>

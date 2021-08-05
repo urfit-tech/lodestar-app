@@ -1,5 +1,4 @@
-import { Button, SkeletonText } from '@chakra-ui/react'
-import { Icon } from 'antd'
+import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import QRCode from 'qrcode.react'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -13,8 +12,10 @@ import { CommonLargeTitleMixin } from '../components/common'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { handleError } from '../helpers'
-import { commonMessages, productMessages } from '../helpers/translation'
+import { activityMessages, commonMessages, productMessages } from '../helpers/translation'
 import { useActivityAttendance, useActivityTicket, useAttendSession } from '../hooks/activity'
+import { ReactComponent as MapOIcon } from '../images/map-o.svg'
+import { ReactComponent as VideoIcon } from '../images/video.svg'
 
 const StyledContainer = styled.div`
   padding: 2.5rem 15px 5rem;
@@ -114,58 +115,82 @@ const ActivityTicketPage: React.VFC<{
         <div className="row justify-content-center">
           <div className="col-12 col-lg-8">
             <div className="mb-5">
-              {ticket.sessions.map(ticketSession => (
-                <div key={ticketSession.id} className="mb-4">
-                  <ActivitySessionItem
-                    activitySessionId={ticketSession.id}
-                    renderAttend={
-                      enabledModules.qrcode &&
-                      currentUserRole === 'app-owner' &&
-                      !loadingAttendance &&
-                      (attendance[ticketSession.id] ? (
-                        <Button
-                          isFullWidth
-                          isLoading={loading}
-                          onClick={() => {
-                            setLoading(true)
-                            leaveActivitySession({
-                              variables: {
-                                orderProductId,
-                                activitySessionId: ticketSession.id,
-                              },
-                            })
-                              .then(() => refetchAttendance())
-                              .catch(error => handleError(error))
-                              .finally(() => setLoading(false))
-                          }}
-                        >
-                          <Icon type="check" /> {formatMessage(messages.attended)}
-                        </Button>
-                      ) : (
-                        <Button
-                          colorScheme="primary"
-                          isFullWidth
-                          isLoading={loading}
-                          onClick={() => {
-                            setLoading(true)
-                            attendActivitySession({
-                              variables: {
-                                orderProductId,
-                                activitySessionId: ticketSession.id,
-                              },
-                            })
-                              .then(() => refetchAttendance())
-                              .catch(error => handleError(error))
-                              .finally(() => setLoading(false))
-                          }}
-                        >
-                          {formatMessage(messages.attendNow)}
-                        </Button>
-                      ))
-                    }
-                  />
-                </div>
-              ))}
+              {ticket.sessions
+                .filter(ticketSession => enabledModules.activity_online || ticketSession.type === 'offline')
+                .map(ticketSession => (
+                  <div key={ticketSession.id} className="mb-4">
+                    <ActivitySessionItem
+                      activitySessionId={ticketSession.id}
+                      renderSessionType={` - ${formatMessage(activityMessages.label[ticketSession.type])}`}
+                      renderLocation={
+                        <>
+                          {ticketSession.type === 'offline' && (
+                            <div>
+                              <Icon as={MapOIcon} className="mr-2" />
+                              <span>{ticketSession.location}</span>
+                            </div>
+                          )}
+                          {ticketSession.type === 'online' && ticketSession.onlineLink && (
+                            <div className="d-flex align-items-center">
+                              <Icon as={VideoIcon} className="mr-2" />
+                              <span>
+                                <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}</span>
+                                <a href={ticketSession.onlineLink} target="_blank" rel="noopener noreferrer">
+                                  <Button variant="link">{ticketSession.onlineLink}</Button>
+                                </a>
+                              </span>
+                            </div>
+                          )}
+                        </>
+                      }
+                      renderAttend={
+                        enabledModules.qrcode &&
+                        currentUserRole === 'app-owner' &&
+                        !loadingAttendance &&
+                        (attendance[ticketSession.id] ? (
+                          <Button
+                            isFullWidth
+                            isLoading={loading}
+                            onClick={() => {
+                              setLoading(true)
+                              leaveActivitySession({
+                                variables: {
+                                  orderProductId,
+                                  activitySessionId: ticketSession.id,
+                                },
+                              })
+                                .then(() => refetchAttendance())
+                                .catch(error => handleError(error))
+                                .finally(() => setLoading(false))
+                            }}
+                          >
+                            <Icon type="check" /> {formatMessage(messages.attended)}
+                          </Button>
+                        ) : (
+                          <Button
+                            colorScheme="primary"
+                            isFullWidth
+                            isLoading={loading}
+                            onClick={() => {
+                              setLoading(true)
+                              attendActivitySession({
+                                variables: {
+                                  orderProductId,
+                                  activitySessionId: ticketSession.id,
+                                },
+                              })
+                                .then(() => refetchAttendance())
+                                .catch(error => handleError(error))
+                                .finally(() => setLoading(false))
+                            }}
+                          >
+                            {formatMessage(messages.attendNow)}
+                          </Button>
+                        ))
+                      }
+                    />
+                  </div>
+                ))}
             </div>
 
             <StyledLink to={`/activities/${ticket.activity.id}`} target="_blank">

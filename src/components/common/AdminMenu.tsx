@@ -8,7 +8,6 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
-import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
@@ -65,9 +64,10 @@ export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
   )
 }
 
-export const MemberAdminMenu: React.VFC<MenuProps> = ({ ...props }) => {
+export const MemberAdminMenu: React.VFC<
+  MenuProps & { renderAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement }
+> = ({ renderAdminMenu, ...props }) => {
   const { formatMessage } = useIntl()
-  const { renderMemberAdminMenu } = useCustomRenderer()
   const { currentMemberId, currentUserRole } = useAuth()
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
@@ -195,7 +195,7 @@ export const MemberAdminMenu: React.VFC<MenuProps> = ({ ...props }) => {
 
   return (
     <>
-      {renderMemberAdminMenu?.({
+      {renderAdminMenu?.({
         menuProps: props,
         defaultMenuItems,
       }) || (
