@@ -67,10 +67,10 @@ const PodcastPlanSelector: React.VFC<{
                   variant="inline"
                   listPrice={podcastPlan.listPrice}
                   salePrice={(podcastPlan.soldAt?.getTime() || 0) > Date.now() ? podcastPlan.salePrice : undefined}
-                  render={({ listPrice, salePrice, formatPrice }) => (
+                  render={({ listPrice, salePrice, formatCurrency }) => (
                     <StyledPodcastPlanPrice active={isActive}>
-                      {salePrice && <span>{formatPrice(salePrice)}</span>}
-                      <span>{formatPrice(listPrice)}</span>
+                      {salePrice && <span>{formatCurrency(salePrice)}</span>}
+                      <span>{formatCurrency(listPrice)}</span>
                     </StyledPodcastPlanPrice>
                   )}
                 />
