@@ -112,7 +112,9 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
         })),
         settings,
         currencyId: settings['currency_id'] || 'TWD',
-        currencies: Object.fromEntries(data.currency.map(v => [v.id, { ...v, minorUnits: v.minor_units }])),
+        currencies: Object.fromEntries(
+          data.currency.map(v => [v.id, { id: v.id, label: v.label, unit: v.unit, minorUnits: v.minor_units }]),
+        ),
       }
     : defaultAppProps
 
