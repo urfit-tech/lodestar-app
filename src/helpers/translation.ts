@@ -99,6 +99,8 @@ export const commonMessages = {
     send: { id: 'common.ui.send', defaultMessage: '發送' },
     sendNow: { id: 'common.ui.sendNow', defaultMessage: '立即發送' },
     purchase: { id: 'common.ui.purchase', defaultMessage: '立即購買' },
+    physical: { id: 'common.ui.physical', defaultMessage: '實體' },
+    virtual: { id: 'common.ui.virtual', defaultMessage: '虛擬' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },
