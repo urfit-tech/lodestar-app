@@ -94,6 +94,11 @@ const PaymentSelector: React.FC<{
             {formatMessage(checkoutMessages.label.paypal)}
           </Select.Option>
         )}
+        {settings['payment.commonhealth.credit.enable'] === '1' && (
+          <Select.Option value='{"gateway":"commonhealth","method":"credit"}'>
+            {formatMessage(checkoutMessages.label.credit)}（{formatMessage(checkoutMessages.label.commonhealth)}）
+          </Select.Option>
+        )}
       </Select>
     </>
   )
