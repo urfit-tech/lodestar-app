@@ -1,7 +1,7 @@
 import { Button } from '@chakra-ui/react'
 import { Icon, Skeleton } from 'antd'
 import { uniqBy, unnest } from 'ramda'
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
@@ -26,12 +26,9 @@ const ActivityCollectionPage = () => {
   const { currentLanguage } = useContext(LanguageContext)
   const { pageTitle } = useNav()
   const { formatMessage } = useIntl()
-  const [defaultActive] = useQueryParam('categories', StringParam)
+  const [active = null, setActive] = useQueryParam('active', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
-  const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection({
-    categoryId: defaultActive || undefined,
-  })
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
+  const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 
   const categories: {
     id: string
@@ -46,7 +43,7 @@ const ActivityCollectionPage = () => {
             <Icon type="appstore" theme="filled" className="mr-3" />
             <span>
               {pageTitle ||
-                categories.find(category => category.id === defaultActive)?.name ||
+                categories.find(category => category.id === active)?.name ||
                 formatMessage(productMessages.activity.title.default)}
             </span>
           </StyledBannerTitle>
@@ -55,9 +52,9 @@ const ActivityCollectionPage = () => {
             <>
               <StyledButton
                 colorScheme="primary"
-                variant={selectedCategoryId === null ? 'solid' : 'outline'}
+                variant={active === null ? 'solid' : 'outline'}
                 className="mb-2"
-                onClick={() => setSelectedCategoryId(null)}
+                onClick={() => setActive(null)}
               >
                 {formatMessage(commonMessages.button.allCategory)}
               </StyledButton>
@@ -65,9 +62,9 @@ const ActivityCollectionPage = () => {
                 <StyledButton
                   key={category.id}
                   colorScheme="primary"
-                  variant={selectedCategoryId === category.id ? 'solid' : 'outline'}
+                  variant={active === category.id ? 'solid' : 'outline'}
                   className="ml-2 mb-2"
-                  onClick={() => setSelectedCategoryId(category.id)}
+                  onClick={() => setActive(category.id)}
                 >
                   {category.name}
                 </StyledButton>
@@ -84,11 +81,7 @@ const ActivityCollectionPage = () => {
 
           <div className="row">
             {activities
-              .filter(
-                activity =>
-                  selectedCategoryId === null ||
-                  activity.categories.some(category => category.id === selectedCategoryId),
-              )
+              .filter(activity => active === null || activity.categories.some(category => category.id === active))
               .filter(
                 activity =>
                   !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage),
