@@ -62,6 +62,7 @@ const usePayForm = (paymentNo: number) => {
                 break
               case 'spgateway':
               case 'parenting':
+              case 'commonhealth':
                 if (result.html) {
                   setPayForm(<GatewayForm formHtml={result.html} clientBackUrl={clientBackUrl} />)
                 } else {
