@@ -26,7 +26,11 @@ const ActivityCollectionPage = () => {
   const { currentLanguage } = useContext(LanguageContext)
   const { pageTitle } = useNav()
   const { formatMessage } = useIntl()
+<<<<<<< HEAD
   const [active = null, setActive] = useQueryParam('categories', StringParam)
+=======
+  const [active = null, setActive] = useQueryParam('active', StringParam)
+>>>>>>> [HOTFIX] show activity if no query param
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 
