@@ -482,6 +482,7 @@ export const checkoutMessages = {
     barcode: { id: 'checkout.label.barcode', defaultMessage: '超商條碼繳費' },
     paypal: { id: 'checkoutout.label.paypal', defaultMessage: '信用卡 PayPal (限海外)' },
     parenting: { id: 'checkout.label.parenting', defaultMessage: '親子天下' },
+    commonhealth: { id: 'checkout.label.commonhealth', defaultMessage: '康健' },
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
     groupBuyingPlan: {
       id: 'checkout.label.groupBuyingTitle',
