@@ -1,8 +1,7 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
-import LanguageContext from '../../contexts/LanguageContext'
+import { useCurrency } from '../../hooks/util'
 import { PeriodType } from '../../types/program'
 import ShortenPeriodTypeLabel from './ShortenPeriodTypeLabel'
 
@@ -54,34 +53,19 @@ type PriceLabelOptions = {
 const PriceLabel: React.VFC<
   PriceLabelOptions & {
     variant?: 'default' | 'inline' | 'full-detail'
-    render?: React.VFC<PriceLabelOptions & { formatPrice: (price: number) => string }>
+    render?: React.VFC<PriceLabelOptions & { formatCurrency: (price: number) => string }>
     noFreeText?: boolean
   }
 > = ({ variant, render, noFreeText, ...options }) => {
   const { listPrice, salePrice, downPrice, periodAmount, periodType } = options
   const { formatMessage } = useIntl()
-  const { currencyId: appCurrencyId, settings, currencies } = useApp()
-  const { locale } = useContext(LanguageContext)
+  const { formatCurrency } = useCurrency(options.currencyId)
 
-  const currencyId = options.currencyId || appCurrencyId
-  const minorUnits = currencies[currencyId].minor_units || 0
   const displayPrice = salePrice || listPrice
   const firstPeriodPrice = displayPrice - (downPrice || 0)
 
-  const formatPrice = (price: number) => {
-    if (currencyId === 'LSC') {
-      return price + (settings['coin.unit'] || 'Coins')
-    }
-    return price.toLocaleString(locale, {
-      style: 'currency',
-      currency: currencyId,
-      maximumFractionDigits: minorUnits,
-      minimumFractionDigits: 0,
-    })
-  }
-
   if (render) {
-    return render({ ...options, formatPrice })
+    return render({ ...options, formatCurrency })
   }
 
   const periodElem = !!periodType && (
@@ -98,7 +82,7 @@ const PriceLabel: React.VFC<
           <div>
             {formatMessage(messages.firstPeriod)}
             {firstPeriodPrice === 0 && !noFreeText && formatMessage(messages.free)}
-            {formatPrice(firstPeriodPrice)}
+            {formatCurrency(firstPeriodPrice)}
           </div>
         )}
 
@@ -106,7 +90,7 @@ const PriceLabel: React.VFC<
           <SalePrice>
             {!!downPrice && formatMessage(messages.fromSecondPeriod)}
             {salePrice === 0 && !noFreeText && formatMessage(messages.free)}
-            {formatPrice(salePrice)}
+            {formatCurrency(salePrice)}
             <span style={{ fontSize: '16px' }}>{periodElem}</span>
           </SalePrice>
         )}
@@ -118,7 +102,7 @@ const PriceLabel: React.VFC<
             ? formatMessage(messages.fromSecondPeriod)
             : ''}
           {listPrice === 0 && !noFreeText && formatMessage(messages.free)}
-          {formatPrice(listPrice)}
+          {formatCurrency(listPrice)}
           <span style={{ fontSize: '16px' }}>{periodElem}</span>
         </ListPrice>
       </FullDetailPrice>
@@ -129,12 +113,12 @@ const PriceLabel: React.VFC<
     return (
       <InlinePrice>
         <span>
-          {formatPrice(listPrice)}
+          {formatCurrency(listPrice)}
           {periodElem}
         </span>
         {typeof salePrice === 'number' && (
           <span>
-            {formatPrice(salePrice)}
+            {formatCurrency(salePrice)}
             {periodElem}
           </span>
         )}
@@ -142,7 +126,7 @@ const PriceLabel: React.VFC<
     )
   }
 
-  return <>{formatPrice(listPrice)}</>
+  return <>{formatCurrency(listPrice)}</>
 }
 
 export default PriceLabel

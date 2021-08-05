@@ -27,7 +27,7 @@ type AppProps = {
   settings: { [key: string]: string }
   currencyId: string
   currencies: {
-    [currencyId: string]: { id: string; label: string | null; unit: string | null; minor_units: number | null }
+    [currencyId: string]: { id: string; label: string | null; unit: string | null; minorUnits: number | null }
   }
 }
 
@@ -112,7 +112,7 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
         })),
         settings,
         currencyId: settings['currency_id'] || 'TWD',
-        currencies: Object.fromEntries(data.currency.map(v => [v.id, v])),
+        currencies: Object.fromEntries(data.currency.map(v => [v.id, { ...v, minorUnits: v.minor_units }])),
       }
     : defaultAppProps
 
