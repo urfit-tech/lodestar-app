@@ -1,10 +1,9 @@
-import { Box, useRadio, UseRadioProps } from '@chakra-ui/react'
-import { useApp } from '../containers/common/AppContext'
+import { Box, useRadio, UseRadioProps, useTheme } from '@chakra-ui/react'
 
 const RadioCard: React.VFC<{
   children: React.ReactNode
 }> = props => {
-  const { settings } = useApp()
+  const theme = useTheme()
   const { getInputProps, getCheckboxProps } = useRadio(props as UseRadioProps)
   const input = getInputProps()
   const checkbox = getCheckboxProps()
@@ -19,9 +18,9 @@ const RadioCard: React.VFC<{
         borderWidth="1px"
         borderRadius="md"
         _checked={{
-          bg: `${settings['theme.@primary-color']}`,
+          bg: `${theme.colors.primary[500]}`,
           color: 'white',
-          borderColor: `${settings['theme.@primary-color']}`,
+          borderColor: `${theme.colors.primary[500]}`,
         }}
         px={5}
         py={3}
