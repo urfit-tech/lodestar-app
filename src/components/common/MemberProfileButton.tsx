@@ -74,6 +74,31 @@ export const CustomNavLinks: React.VFC = () => {
   )
 }
 
+const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElement> }> = ({ onClick }) => {
+  const { formatMessage } = useIntl()
+  const history = useHistory()
+  const { closePlayer } = useContext(PodcastPlayerContext)
+  const { logout } = useAuth()
+
+  return (
+    <List.Item
+      className="cursor-pointer"
+      onClick={
+        onClick ||
+        (() => {
+          closePlayer && closePlayer()
+          logout && logout()
+          history.push('/')
+          message.success('已成功登出')
+        })
+      }
+    >
+      <Icon type="logout" className="mr-2" />
+      {formatMessage(commonMessages.content.logout)}
+    </List.Item>
+  )
+}
+
 const MemberProfileButton: React.VFC<{
   id: string
   name: string
@@ -84,7 +109,7 @@ const MemberProfileButton: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { closePlayer } = useContext(PodcastPlayerContext)
-  const { renderMemberProfile, renderMemberAdminMenu } = useCustomRenderer()
+  const { renderMemberProfile, renderMemberAdminMenu, renderLogout } = useCustomRenderer()
   const { logout } = useAuth()
   const { enabledModules } = useApp()
 
@@ -120,18 +145,13 @@ const MemberProfileButton: React.VFC<{
           <MemberAdminMenu renderAdminMenu={renderMemberAdminMenu} style={{ border: 'none' }} />
         </BorderedItem>
 
-        <List.Item
-          className="cursor-pointer"
-          onClick={() => {
-            closePlayer && closePlayer()
-            logout && logout()
-            history.push('/')
-            message.success('已成功登出')
-          }}
-        >
-          <Icon type="logout" className="mr-2" />
-          {formatMessage(commonMessages.content.logout)}
-        </List.Item>
+        {renderLogout?.({
+          logout: () => {
+            closePlayer?.()
+            logout?.()
+          },
+          DefaultLogout,
+        }) || <DefaultLogout />}
       </StyledList>
     </Wrapper>
   )
