@@ -6,7 +6,6 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useMember } from '../../hooks/member'
 import { useEnrolledPlanIds, useProgram } from '../../hooks/program'
 import { ProgramPlanProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
@@ -43,17 +42,16 @@ const StyledBraftContent = styled.div`
   font-size: 14px;
 `
 const ProgramSubscriptionPlanCard: React.VFC<{
-  memberId: string
   programId: string
   programPlan: ProgramPlanProps
-}> = ({ memberId, programId, programPlan }) => {
+}> = ({ programId, programPlan }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { program } = useProgram(programId)
-  const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds(memberId)
-  const { member } = useMember(memberId)
+
+  const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
 
   const { salePrice, listPrice, discountDownPrice, periodType, periodAmount, currency } = programPlan
   const currencyId = currency.id || 'TWD'
@@ -97,10 +95,11 @@ const ProgramSubscriptionPlanCard: React.VFC<{
         </Button>
       ) : (
         <CheckoutProductModal
-          renderTrigger={onOpen => (
+          renderTrigger={({ isLoading, onOpen, isSubscription }) => (
             <Button
               colorScheme="primary"
               isFullWidth
+              isDisabled={isLoading}
               onClick={() => {
                 if (!isAuthenticated) {
                   setAuthModalVisible?.(true)
@@ -119,10 +118,11 @@ const ProgramSubscriptionPlanCard: React.VFC<{
                 }
               }}
             >
-              {formatMessage(commonMessages.button.subscribeNow)}
+              {isSubscription
+                ? formatMessage(commonMessages.button.subscribeNow)
+                : formatMessage(commonMessages.ui.purchase)}
             </Button>
           )}
-          paymentType="subscription"
           defaultProductId={`ProgramPlan_${programPlan.id}`}
           // TODO: Should take care of this warningText (maybe it would move to bottom)
           warningText={
@@ -130,7 +130,6 @@ const ProgramSubscriptionPlanCard: React.VFC<{
               ? formatMessage(productMessages.program.defaults.warningText)
               : ''
           }
-          member={member}
         />
       )}
     </StyledAdminCard>

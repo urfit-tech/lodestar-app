@@ -24,7 +24,13 @@ type AppProps = {
     locale: string
     tag: string | null
   }[]
-  settings: { [key: string]: string }
+  settings: {
+    [key: string]: string
+  } & {
+    'payment.perpetual.default_gateway'?: undefined
+    'payment.perpetual.default_gateway_method'?: undefined
+    'payment.subscription.default_gateway'?: undefined
+  }
   currencyId: string
   currencies: {
     [currencyId: string]: { id: string; label: string | null; unit: string | null; minorUnits: number | null }

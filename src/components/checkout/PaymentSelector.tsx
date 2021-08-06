@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages } from '../../helpers/translation'
+import { PaymentProps } from '../../types/checkout'
 import { CommonTitleMixin } from '../common'
 
 const StyledTitle = styled.h1`
@@ -15,12 +16,6 @@ const StyledDescription = styled.div`
   font-size: 14px;
   letter-spacing: 0.4px;
 `
-export type PaymentProps = {
-  gateway: string
-  method?: PaymentMethodType
-}
-
-export type PaymentMethodType = 'credit' | 'vacc' | 'cvs' | 'instflag' | 'unionpay' | 'webatm' | 'barcode'
 
 const PaymentSelector: React.FC<{
   value: PaymentProps | null

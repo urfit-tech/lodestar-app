@@ -7,11 +7,9 @@ import { useIntl } from 'react-intl'
 import { ThemeContext } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages } from '../../helpers/translation'
-import { CartProductProps, CheckProps, shippingOptionIdProps } from '../../types/checkout'
+import { CartProductProps, CheckProps, InvoiceProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
 import PriceLabel from '../common/PriceLabel'
-import { InvoiceProps } from './InvoiceInput'
-import { ShippingProps } from './ShippingInput'
 
 const CheckoutCard: React.VFC<
   CardProps & {
@@ -57,7 +55,7 @@ const CheckoutCard: React.VFC<
       {check?.shippingOption && (
         <div className="row mb-2">
           <div className="col-10 offset-md-4 col-md-6">
-            {formatMessage(checkoutMessages.shipping[camelCase(check.shippingOption.id) as shippingOptionIdProps])}
+            {formatMessage(checkoutMessages.shipping[camelCase(check.shippingOption.id) as ShippingOptionIdType])}
           </div>
           <div className="col-2 col-md-2 text-right">
             {/* TODO unchecked 尚未驗證UI */}

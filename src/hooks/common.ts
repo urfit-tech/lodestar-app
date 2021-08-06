@@ -13,6 +13,7 @@ type TargetProps = {
   id: string
   productType: ProductType | null
   title: string
+  isSubscription: boolean
   coverUrl?: string | null
   listPrice?: number
   salePrice?: number
@@ -23,12 +24,11 @@ type TargetProps = {
   startedAt?: Date
   endedAt?: Date
   variant?: 'default' | 'simple' | 'cartProduct' | 'simpleCartProduct' | 'checkout'
-  isSubscription?: boolean
   isLimited?: boolean
   isPhysical?: boolean
   isCustomized?: boolean
   groupBuyingPeople?: number
-} | null
+}
 
 export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Date }) => {
   const { formatMessage } = useIntl()
@@ -45,152 +45,139 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     },
   )
 
-  const target: TargetProps =
-    loading || error || !data
-      ? null
-      : data.program_by_pk
-      ? {
-          id: data.program_by_pk.id,
-          productType: 'Program',
-          title: data.program_by_pk.title,
-          coverUrl: data.program_by_pk.cover_url || undefined,
-          listPrice: data.program_by_pk.list_price,
-          salePrice:
-            data.program_by_pk.sold_at && new Date(data.program_by_pk.sold_at).getTime() > Date.now()
-              ? data.program_by_pk.sale_price
-              : undefined,
-        }
-      : data.program_plan_by_pk
-      ? {
-          id: data.program_plan_by_pk.id,
-          productType: 'ProgramPlan',
-          title: `${data.program_plan_by_pk.program.title} - ${data.program_plan_by_pk.title || ''}`,
-          coverUrl: data.program_plan_by_pk.program.cover_url || undefined,
-          listPrice: data.program_plan_by_pk.list_price,
-          salePrice:
-            data.program_plan_by_pk.sold_at && new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
-              ? data.program_plan_by_pk.sale_price
-              : undefined,
-          discountDownPrice: data.program_plan_by_pk.discount_down_price || undefined,
-          currencyId: data.program_plan_by_pk.currency_id || settings['currency_id'],
-          periodAmount: data.program_plan_by_pk.period_amount,
-          periodType: data.program_plan_by_pk.period_type as PeriodType,
-          groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
-        }
-      : data.program_package_plan_by_pk
-      ? {
-          id: data.program_package_plan_by_pk.id,
-          productType: 'ProgramPackagePlan',
-          title: data.program_package_plan_by_pk.title,
-          coverUrl: data.program_package_plan_by_pk.program_package.cover_url || undefined,
-          listPrice: data.program_package_plan_by_pk.list_price,
-          salePrice:
-            data.program_package_plan_by_pk.sold_at &&
-            new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
-              ? data.program_package_plan_by_pk.sale_price
-              : undefined,
-          discountDownPrice: data.program_package_plan_by_pk.discount_down_price,
-          periodAmount: data.program_package_plan_by_pk.period_amount,
-          periodType: data.program_package_plan_by_pk.period_type as PeriodType,
-          isSubscription: data.program_package_plan_by_pk.is_subscription,
-        }
-      : data.activity_ticket_by_pk
-      ? {
-          id: data.activity_ticket_by_pk.id,
-          productType: 'ActivityTicket',
-          title: `${data.activity_ticket_by_pk.activity.title} - ${data.activity_ticket_by_pk.title}`,
-          listPrice: data.activity_ticket_by_pk.price,
-          coverUrl: data.activity_ticket_by_pk.activity.cover_url || undefined,
-          isSubscription: false,
-        }
-      : data.card_by_pk
-      ? {
-          id: data.card_by_pk.id,
-          productType: 'Card',
-          title: data.card_by_pk.title,
-          listPrice: 0,
-        }
-      : data.project_plan_by_pk
-      ? {
-          id: data.project_plan_by_pk.id,
-          productType: 'ProjectPlan',
-          title: `${data.project_plan_by_pk.project.title} - ${data.project_plan_by_pk.title}`,
-          coverUrl: data.project_plan_by_pk.cover_url || undefined,
-          listPrice: data.project_plan_by_pk.list_price,
-          salePrice:
-            data.project_plan_by_pk.sold_at && new Date(data.project_plan_by_pk.sold_at).getTime() > Date.now()
-              ? data.project_plan_by_pk.sale_price
-              : undefined,
-          discountDownPrice: data.project_plan_by_pk.discount_down_price || undefined,
-          periodAmount: data.project_plan_by_pk.period_amount,
-          periodType: data.project_plan_by_pk.period_type as PeriodType,
-          isLimited: data.project_plan_by_pk.is_limited,
-          isPhysical: data.project_plan_by_pk.is_physical,
-        }
-      : data.podcast_program_by_pk
-      ? {
-          id: data.podcast_program_by_pk.id,
-          productType: 'PodcastProgram',
-          title: data.podcast_program_by_pk.title,
-          coverUrl: data.podcast_program_by_pk.cover_url,
-          listPrice: data.podcast_program_by_pk.list_price,
-          salePrice:
-            data.podcast_program_by_pk.sold_at && new Date(data.podcast_program_by_pk.sold_at).getTime() > Date.now()
-              ? data.podcast_program_by_pk.sale_price
-              : undefined,
-        }
-      : data.podcast_plan_by_pk && data.podcast_plan_by_pk.creator
-      ? {
-          id: data.podcast_plan_by_pk.id,
-          productType: 'PodcastPlan',
-          title: `${formatMessage(commonMessages.title.podcastSubscription)} - ${
-            data.podcast_plan_by_pk.creator.name || data.podcast_plan_by_pk.creator.username
-          }`,
-          coverUrl: 'https://static.kolable.com/images/reservation.svg',
-        }
-      : data.appointment_plan_by_pk
-      ? {
-          id: data.appointment_plan_by_pk.id,
-          productType: 'AppointmentPlan',
-          title: data.appointment_plan_by_pk.title,
-          coverUrl: data.appointment_plan_by_pk.creator && data.appointment_plan_by_pk.creator.picture_url,
-          startedAt: data.appointment_plan_by_pk.appointment_periods[0]?.started_at,
-          endedAt: data.appointment_plan_by_pk.appointment_periods[0]?.ended_at,
-        }
-      : data.merchandise_by_pk
-      ? {
-          id: data.merchandise_by_pk.id,
-          productType: 'Merchandise',
-          title: data.merchandise_by_pk.title,
-          listPrice: data.merchandise_by_pk.list_price,
-          salePrice:
-            data.merchandise_by_pk.sold_at && new Date(data.merchandise_by_pk.sold_at).getTime() > Date.now()
-              ? data.merchandise_by_pk.sale_price
-              : undefined,
-          coverUrl: data.merchandise_by_pk.merchandise_imgs[0]?.url,
-          isPhysical: data.merchandise_by_pk.is_physical,
-        }
-      : data.merchandise_spec_by_pk
-      ? {
-          id: data.merchandise_spec_by_pk.id,
-          productType: 'MerchandiseSpec',
-          title: `${data.merchandise_spec_by_pk.merchandise.title} - ${data.merchandise_spec_by_pk.title}`,
-          listPrice: data.merchandise_spec_by_pk.list_price,
-          salePrice:
-            data.merchandise_spec_by_pk.merchandise.sold_at &&
-            new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()
-              ? data.merchandise_spec_by_pk.sale_price
-              : undefined,
-          coverUrl: data.merchandise_spec_by_pk.merchandise.merchandise_imgs[0]?.url,
-          // quantity: options.quantity,
-          isPhysical: data.merchandise_spec_by_pk.merchandise.is_physical,
-          isCustomized: data.merchandise_spec_by_pk.merchandise.is_customized,
-        }
-      : {
-          id: targetId,
-          productType: null,
-          title: '',
-        }
+  const target: TargetProps | null = data?.program_by_pk
+    ? {
+        id: data.program_by_pk.id,
+        productType: 'Program',
+        title: data.program_by_pk.title,
+        coverUrl: data.program_by_pk.cover_url || undefined,
+        listPrice: data.program_by_pk.list_price,
+        salePrice:
+          data.program_by_pk.sold_at && new Date(data.program_by_pk.sold_at).getTime() > Date.now()
+            ? data.program_by_pk.sale_price
+            : undefined,
+        isSubscription: false,
+      }
+    : data?.program_plan_by_pk
+    ? {
+        id: data.program_plan_by_pk.id,
+        productType: 'ProgramPlan',
+        title: `${data.program_plan_by_pk.program.title} - ${data.program_plan_by_pk.title || ''}`,
+        coverUrl: data.program_plan_by_pk.program.cover_url || undefined,
+        listPrice: data.program_plan_by_pk.list_price,
+        salePrice:
+          data.program_plan_by_pk.sold_at && new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
+            ? data.program_plan_by_pk.sale_price
+            : undefined,
+        discountDownPrice: data.program_plan_by_pk.discount_down_price || undefined,
+        periodAmount: data.program_plan_by_pk.period_amount,
+        periodType: data.program_plan_by_pk.period_type as PeriodType,
+        groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
+        isSubscription: !!data.program_plan_by_pk?.auto_renewed,
+      }
+    : data?.program_package_plan_by_pk
+    ? {
+        id: data.program_package_plan_by_pk.id,
+        productType: 'ProgramPackagePlan',
+        title: data.program_package_plan_by_pk.title,
+        coverUrl: data.program_package_plan_by_pk.program_package.cover_url || undefined,
+        listPrice: data.program_package_plan_by_pk.list_price,
+        salePrice:
+          data.program_package_plan_by_pk.sold_at &&
+          new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
+            ? data.program_package_plan_by_pk.sale_price
+            : undefined,
+        discountDownPrice: data.program_package_plan_by_pk.discount_down_price,
+        periodAmount: data.program_package_plan_by_pk.period_amount,
+        periodType: data.program_package_plan_by_pk.period_type as PeriodType,
+        isSubscription: data.program_package_plan_by_pk.is_subscription,
+      }
+    : data?.activity_ticket_by_pk
+    ? {
+        id: data.activity_ticket_by_pk.id,
+        productType: 'ActivityTicket',
+        title: `${data.activity_ticket_by_pk.activity.title} - ${data.activity_ticket_by_pk.title}`,
+        listPrice: data.activity_ticket_by_pk.price,
+        coverUrl: data.activity_ticket_by_pk.activity.cover_url || undefined,
+        isSubscription: false,
+      }
+    : data?.card_by_pk
+    ? {
+        id: data.card_by_pk.id,
+        productType: 'Card',
+        title: data.card_by_pk.title,
+        listPrice: 0,
+        isSubscription: false,
+      }
+    : data?.project_plan_by_pk
+    ? {
+        id: data.project_plan_by_pk.id,
+        productType: 'ProjectPlan',
+        title: `${data.project_plan_by_pk.project.title} - ${data.project_plan_by_pk.title}`,
+        coverUrl: data.project_plan_by_pk.cover_url || undefined,
+        listPrice: data.project_plan_by_pk.list_price,
+        salePrice:
+          data.project_plan_by_pk.sold_at && new Date(data.project_plan_by_pk.sold_at).getTime() > Date.now()
+            ? data.project_plan_by_pk.sale_price
+            : undefined,
+        discountDownPrice: data.project_plan_by_pk.discount_down_price || undefined,
+        periodAmount: data.project_plan_by_pk.period_amount,
+        periodType: data.project_plan_by_pk.period_type as PeriodType,
+        isLimited: data.project_plan_by_pk.is_limited,
+        isPhysical: data.project_plan_by_pk.is_physical,
+        isSubscription: data.project_plan_by_pk.is_subscription,
+      }
+    : data?.podcast_program_by_pk
+    ? {
+        id: data.podcast_program_by_pk.id,
+        productType: 'PodcastProgram',
+        title: data.podcast_program_by_pk.title,
+        coverUrl: data.podcast_program_by_pk.cover_url,
+        listPrice: data.podcast_program_by_pk.list_price,
+        salePrice:
+          data.podcast_program_by_pk.sold_at && new Date(data.podcast_program_by_pk.sold_at).getTime() > Date.now()
+            ? data.podcast_program_by_pk.sale_price
+            : undefined,
+        isSubscription: false,
+      }
+    : data?.podcast_plan_by_pk && data.podcast_plan_by_pk.creator
+    ? {
+        id: data.podcast_plan_by_pk.id,
+        productType: 'PodcastPlan',
+        title: `${formatMessage(commonMessages.title.podcastSubscription)} - ${
+          data.podcast_plan_by_pk.creator.name || data.podcast_plan_by_pk.creator.username
+        }`,
+        coverUrl: 'https://static.kolable.com/images/reservation.svg',
+        isSubscription: data.podcast_plan_by_pk.is_subscription,
+      }
+    : data?.appointment_plan_by_pk
+    ? {
+        id: data.appointment_plan_by_pk.id,
+        productType: 'AppointmentPlan',
+        title: data.appointment_plan_by_pk.title,
+        coverUrl: data.appointment_plan_by_pk.creator && data.appointment_plan_by_pk.creator.picture_url,
+        startedAt: data.appointment_plan_by_pk.appointment_periods[0]?.started_at,
+        endedAt: data.appointment_plan_by_pk.appointment_periods[0]?.ended_at,
+        isSubscription: false,
+      }
+    : data?.merchandise_spec_by_pk
+    ? {
+        id: data.merchandise_spec_by_pk.id,
+        productType: 'MerchandiseSpec',
+        title: `${data.merchandise_spec_by_pk.merchandise.title} - ${data.merchandise_spec_by_pk.title}`,
+        listPrice: data.merchandise_spec_by_pk.list_price,
+        salePrice:
+          data.merchandise_spec_by_pk.merchandise.sold_at &&
+          new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()
+            ? data.merchandise_spec_by_pk.sale_price
+            : undefined,
+        coverUrl: data.merchandise_spec_by_pk.merchandise.merchandise_imgs[0]?.url,
+        // quantity: options.quantity,
+        isPhysical: data.merchandise_spec_by_pk.merchandise.is_physical,
+        isCustomized: data.merchandise_spec_by_pk.merchandise.is_customized,
+        isSubscription: false,
+      }
+    : null
 
   return {
     loading,
@@ -226,6 +213,7 @@ const GET_PRODUCT_SIMPLE = gql`
         title
         cover_url
       }
+      auto_renewed
     }
     program_package_plan_by_pk(id: $targetId) {
       id
@@ -273,6 +261,7 @@ const GET_PRODUCT_SIMPLE = gql`
       }
       is_limited
       is_physical
+      is_subscription
     }
     podcast_program_by_pk(id: $targetId) {
       id
@@ -292,6 +281,7 @@ const GET_PRODUCT_SIMPLE = gql`
         name
         username
       }
+      is_subscription
     }
     appointment_plan_by_pk(id: $targetId) {
       id
@@ -306,17 +296,6 @@ const GET_PRODUCT_SIMPLE = gql`
         started_at
         ended_at
         booked
-      }
-    }
-    merchandise_by_pk(id: $targetId) {
-      id
-      title
-      list_price
-      sale_price
-      sold_at
-      is_physical
-      merchandise_imgs(where: { type: { _eq: "cover" } }) {
-        url
       }
     }
     merchandise_spec_by_pk(id: $targetId) {

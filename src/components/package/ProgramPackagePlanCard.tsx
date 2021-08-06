@@ -1,12 +1,10 @@
-import { Divider } from '@chakra-ui/react'
-import { Button } from 'antd'
+import { Button, Divider } from '@chakra-ui/react'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useMember } from '../../hooks/member'
 import { ProgramPackagePlanProps } from '../../types/programPackage'
 import { useAuth } from '../auth/AuthContext'
 import { AuthModalContext } from '../auth/AuthModal'
@@ -57,12 +55,10 @@ const ProgramPackagePlanCard: React.VFC<
   discountDownPrice,
   enrollmentCount,
   programPackageId,
-  loading,
   isEnrolled,
 }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, isAuthenticated } = useAuth()
-  const { member } = useMember(currentMemberId || '')
+  const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const isOnSale = soldAt ? Date.now() < soldAt.getTime() : false
 
@@ -111,21 +107,19 @@ const ProgramPackagePlanCard: React.VFC<
           </Link>
         ) : (
           <CheckoutProductModal
-            renderTrigger={onOpen => (
+            defaultProductId={`ProgramPackagePlan_${id}`}
+            renderTrigger={({ isLoading, onOpen }) => (
               <Button
-                type="primary"
+                variant="primary"
+                isFullWidth
+                isDisabled={isLoading}
                 onClick={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
-                loading={loading}
-                block
               >
                 {isSubscription
                   ? formatMessage(commonMessages.button.subscribeNow)
                   : formatMessage(commonMessages.ui.purchase)}
               </Button>
             )}
-            paymentType={isSubscription ? 'subscription' : 'perpetual'}
-            defaultProductId={`ProgramPackagePlan_${id}`}
-            member={member}
           />
         )}
       </div>

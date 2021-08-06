@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { sum, uniq } from 'ramda'
 import { useMemo } from 'react'
+import { useAuth } from '../components/auth/AuthContext'
 import hasura from '../hasura'
 import { CategoryProps } from '../types/general'
 import {
@@ -561,7 +562,8 @@ export const useEnrolledProgramIds = (memberId: string) => {
   }
 }
 
-export const useEnrolledPlanIds = (memberId: string) => {
+export const useEnrolledPlanIds = () => {
+  const { currentMemberId } = useAuth()
   const { loading, data, error, refetch } = useQuery<
     hasura.GET_ENROLLED_PROGRAM_PLANS,
     hasura.GET_ENROLLED_PROGRAM_PLANSVariables
@@ -573,7 +575,7 @@ export const useEnrolledPlanIds = (memberId: string) => {
         }
       }
     `,
-    { variables: { memberId } },
+    { variables: { memberId: currentMemberId || '' } },
   )
 
   const programPlanIds: string[] =

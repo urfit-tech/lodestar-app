@@ -3744,6 +3744,7 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
    * An object relationship
    */
   program: GET_PRODUCT_SIMPLE_program_plan_by_pk_program;
+  auto_renewed: boolean;
 }
 
 export interface GET_PRODUCT_SIMPLE_program_package_plan_by_pk_program_package {
@@ -3820,6 +3821,7 @@ export interface GET_PRODUCT_SIMPLE_project_plan_by_pk {
   project: GET_PRODUCT_SIMPLE_project_plan_by_pk_project;
   is_limited: boolean;
   is_physical: boolean;
+  is_subscription: boolean;
 }
 
 export interface GET_PRODUCT_SIMPLE_podcast_program_by_pk {
@@ -3849,6 +3851,7 @@ export interface GET_PRODUCT_SIMPLE_podcast_plan_by_pk {
    * An object relationship
    */
   creator: GET_PRODUCT_SIMPLE_podcast_plan_by_pk_creator | null;
+  is_subscription: boolean;
 }
 
 export interface GET_PRODUCT_SIMPLE_appointment_plan_by_pk_creator {
@@ -3878,25 +3881,6 @@ export interface GET_PRODUCT_SIMPLE_appointment_plan_by_pk {
    * An array relationship
    */
   appointment_periods: GET_PRODUCT_SIMPLE_appointment_plan_by_pk_appointment_periods[];
-}
-
-export interface GET_PRODUCT_SIMPLE_merchandise_by_pk_merchandise_imgs {
-  __typename: "merchandise_img";
-  url: string;
-}
-
-export interface GET_PRODUCT_SIMPLE_merchandise_by_pk {
-  __typename: "merchandise";
-  id: any;
-  title: string;
-  list_price: any;
-  sale_price: any | null;
-  sold_at: any | null;
-  is_physical: boolean;
-  /**
-   * An array relationship
-   */
-  merchandise_imgs: GET_PRODUCT_SIMPLE_merchandise_by_pk_merchandise_imgs[];
 }
 
 export interface GET_PRODUCT_SIMPLE_merchandise_spec_by_pk_merchandise_merchandise_imgs {
@@ -3967,10 +3951,6 @@ export interface GET_PRODUCT_SIMPLE {
    * fetch data from the table: "appointment_plan" using primary key columns
    */
   appointment_plan_by_pk: GET_PRODUCT_SIMPLE_appointment_plan_by_pk | null;
-  /**
-   * fetch data from the table: "merchandise" using primary key columns
-   */
-  merchandise_by_pk: GET_PRODUCT_SIMPLE_merchandise_by_pk | null;
   /**
    * fetch data from the table: "merchandise_spec" using primary key columns
    */

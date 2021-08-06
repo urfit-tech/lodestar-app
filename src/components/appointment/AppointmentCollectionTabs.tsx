@@ -7,7 +7,6 @@ import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
 import { productMessages } from '../../helpers/translation'
-import { useMember } from '../../hooks/member'
 import { AppointmentPeriodProps, AppointmentPlanProps } from '../../types/appointment'
 import { useAuth } from '../auth/AuthContext'
 import { AuthModalContext } from '../auth/AuthModal'
@@ -69,8 +68,7 @@ const AppointmentCollectionTabs: React.VFC<{
   appointmentPlans: (AppointmentPlanProps & { periods: AppointmentPeriodProps[] })[]
 }> = ({ appointmentPlans }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, isAuthenticated } = useAuth()
-  const { member } = useMember(currentMemberId || '')
+  const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string | null>(appointmentPlans[0].id)
   const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriodProps | null>(null)
@@ -171,7 +169,8 @@ const AppointmentCollectionTabs: React.VFC<{
             </StyledTimeStandardBlock>
 
             <CheckoutProductModal
-              renderTrigger={onOpen => (
+              defaultProductId={`AppointmentPlan_${appointmentPlan.id}`}
+              renderTrigger={({ onOpen }) => (
                 <AppointmentPeriodCollection
                   appointmentPeriods={appointmentPlan.periods}
                   reservationAmount={appointmentPlan.reservationAmount}
@@ -197,11 +196,8 @@ const AppointmentCollectionTabs: React.VFC<{
                   diffPlanBookedTimes={diffPlanBookedTimes}
                 />
               )}
-              paymentType="perpetual"
-              defaultProductId={`AppointmentPlan_${appointmentPlan.id}`}
               startedAt={selectedPeriod?.startedAt}
               warningText={formatMessage(productMessages.appointment.warningText.news)}
-              member={member}
             />
           </div>
         ))}

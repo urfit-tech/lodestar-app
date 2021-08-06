@@ -5,12 +5,17 @@ import { prop, sum } from 'ramda'
 import { useCallback, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { useAuth } from '../components/auth/AuthContext'
-import { InvoiceProps } from '../components/checkout/InvoiceInput'
-import { PaymentProps } from '../components/checkout/PaymentSelector'
-import { ShippingProps } from '../components/checkout/ShippingInput'
 import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
-import { CheckProps, OrderDiscountProps, OrderProductProps, shippingOptionProps } from '../types/checkout'
+import {
+  CheckProps,
+  InvoiceProps,
+  OrderDiscountProps,
+  OrderProductProps,
+  PaymentProps,
+  ShippingOptionProps,
+  ShippingProps,
+} from '../types/checkout'
 import { MemberShopProps } from '../types/merchandise'
 
 export const useCheck = ({
@@ -39,7 +44,7 @@ export const useCheck = ({
       result: {
         orderProducts: OrderProductProps[]
         orderDiscounts: OrderDiscountProps[]
-        shippingOption: shippingOptionProps
+        shippingOption: ShippingOptionProps
       }
     }>(
       `${process.env.REACT_APP_API_BASE_ROOT}/payment/checkout-order`,

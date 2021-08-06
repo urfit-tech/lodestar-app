@@ -6,8 +6,8 @@ import CheckoutProductModal, { CheckoutProductModalProps } from './CheckoutProdu
 const CheckoutPodcastPlanModal: React.VFC<
   {
     creatorId: string
-  } & CheckoutProductModalProps
-> = ({ creatorId, renderTrigger, ...modalProps }) => {
+  } & Pick<CheckoutProductModalProps, 'renderTrigger'>
+> = ({ creatorId, renderTrigger }) => {
   const { loadingPodcastPlans, publishedPodcastPlans } = usePublishedPodcastPlans(creatorId)
 
   if (loadingPodcastPlans) {
@@ -15,12 +15,12 @@ const CheckoutPodcastPlanModal: React.VFC<
   }
 
   if (!publishedPodcastPlans[0]) {
-    return <>{renderTrigger()}</>
+    return <>{renderTrigger({})}</>
   }
 
   return (
     <CheckoutProductModal
-      renderTrigger={renderTrigger}
+      defaultProductId={`PodcastPlan_${publishedPodcastPlans[0].id}`}
       renderProductSelector={({ productId, onProductChange }) => (
         <PodcastPlanSelector
           podcastPlans={publishedPodcastPlans}
@@ -28,8 +28,7 @@ const CheckoutPodcastPlanModal: React.VFC<
           onChange={podcastPlanId => onProductChange(`PodcastPlan_${podcastPlanId}`)}
         />
       )}
-      defaultProductId={`PodcastPlan_${publishedPodcastPlans[0].id}`}
-      {...modalProps}
+      renderTrigger={renderTrigger}
     />
   )
 }
