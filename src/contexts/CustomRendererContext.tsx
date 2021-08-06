@@ -14,6 +14,10 @@ export type CustomRendererProps = {
   renderFooter?: (props: { DefaultFooter: React.VFC }) => React.ReactElement
   renderAuthButton?: (setAuthModalVisible?: React.Dispatch<React.SetStateAction<boolean>>) => React.ReactNode
   renderAuthModal?: (visible: boolean) => React.ReactElement
+  renderLogout?: (props: {
+    logout?: () => void
+    DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElement> }>
+  }) => React.ReactElement
   renderMemberAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement
 }
 
