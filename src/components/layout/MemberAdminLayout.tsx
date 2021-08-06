@@ -1,7 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
 import React from 'react'
-import { useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { useRouteKeys } from '../../hooks/util'
@@ -25,13 +23,6 @@ const StyledHeading = styled.h2`
   color: var(--gray-darker);
 `
 
-const StyledLink = styled(Link)`
-  color: ${props => props.theme['@primary-color']};
-  &&:hover {
-    color: ${props => props.theme['@primary-color']}bf;
-  }
-`
-
 const MemberAdminLayout: React.FC<{
   content: {
     title: string
@@ -40,7 +31,6 @@ const MemberAdminLayout: React.FC<{
 }> = ({ content, children }) => {
   const defaultSelectedKeys = useRouteKeys()
   const { renderMemberAdminMenu } = useCustomRenderer()
-  const { formatMessage } = useIntl()
 
   return (
     <DefaultLayout noFooter>
