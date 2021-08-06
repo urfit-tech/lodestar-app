@@ -5,6 +5,7 @@ export type MerchandiseBasicProps = {
   id: string
   title: string
   soldAt: Date | null
+  isPhysical?: boolean
   minPrice: number
   maxPrice: number
   tags: string[]

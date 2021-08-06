@@ -4989,6 +4989,7 @@ export interface GET_MERCHANDISE_COLLECTION_merchandise {
   id: any;
   title: string;
   sold_at: any | null;
+  is_physical: boolean;
   /**
    * An array relationship
    */
@@ -5016,6 +5017,7 @@ export interface GET_MERCHANDISE_COLLECTION {
 
 export interface GET_MERCHANDISE_COLLECTIONVariables {
   search?: string | null;
+  isPhysical?: boolean | null;
 }
 
 /* tslint:disable */
@@ -9131,6 +9133,7 @@ export enum activity_ticket_constraint {
 export enum activity_ticket_update_column {
   activity_id = "activity_id",
   count = "count",
+  currency_id = "currency_id",
   description = "description",
   ended_at = "ended_at",
   id = "id",
@@ -12252,6 +12255,8 @@ export interface activity_ticket_bool_exp {
   activity_session_tickets?: activity_session_ticket_bool_exp | null;
   activity_ticket_enrollments?: activity_ticket_enrollment_bool_exp | null;
   count?: Int_comparison_exp | null;
+  currency?: currency_bool_exp | null;
+  currency_id?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -12284,6 +12289,8 @@ export interface activity_ticket_insert_input {
   activity_id?: any | null;
   activity_session_tickets?: activity_session_ticket_arr_rel_insert_input | null;
   count?: number | null;
+  currency?: currency_obj_rel_insert_input | null;
+  currency_id?: string | null;
   description?: string | null;
   ended_at?: any | null;
   id?: any | null;
