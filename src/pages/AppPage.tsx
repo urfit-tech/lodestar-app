@@ -9,6 +9,7 @@ import CreatorSection from '../components/page/CreatorSection'
 import PostSection from '../components/page/PostSection'
 import ProgramSection from '../components/page/ProgramSection'
 import StaticBlock from '../components/page/StaticBlock'
+import TeacherSection from '../components/page/TeacherSection'
 import { AppPageProps } from '../hooks/page'
 import { ReactComponent as AngleRightIcon } from '../images/angle-right.svg'
 
@@ -50,6 +51,7 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
     homeProgramCategory: ProgramSection,
     messenger: MessengerChat,
     homeStatic: StaticBlock,
+    homeTeacher: TeacherSection,
   }
 
   return (
