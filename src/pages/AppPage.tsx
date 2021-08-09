@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import MessengerChat from '../components/common/MessengerChat'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ActivitySection from '../components/page/ActivitySection'
+import BlnbPostSection from '../components/page/BlnbPostSection'
 import CoverSection from '../components/page/CoverSection'
 import CreatorSection from '../components/page/CreatorSection'
 import PostSection from '../components/page/PostSection'
@@ -52,6 +53,7 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
     messenger: MessengerChat,
     homeStatic: StaticBlock,
     homeTeacher: TeacherSection,
+    homeBlnbPost: BlnbPostSection,
   }
 
   return (
