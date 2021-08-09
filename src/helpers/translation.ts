@@ -101,6 +101,7 @@ export const commonMessages = {
     purchase: { id: 'common.ui.purchase', defaultMessage: '立即購買' },
     physical: { id: 'common.ui.physical', defaultMessage: '實體' },
     virtual: { id: 'common.ui.virtual', defaultMessage: '虛擬' },
+    allCategory: { id: 'common.ui.allCategory', defaultMessage: '全部分類' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },
@@ -189,7 +190,7 @@ export const commonMessages = {
     myPage: { id: 'common.member.myPage', defaultMessage: '我的主頁' },
     reply: { id: 'common.button.reply', defaultMessage: '回覆' },
     leaveQuestion: { id: 'common.button.leaveQuestion', defaultMessage: '留下你的問題...' },
-    allCategory: { id: 'common.category.all', defaultMessage: '全部分類' },
+    allCategory: { id: 'common.button.all', defaultMessage: '全部分類' },
     joinNow: { id: 'common.button.join.now', defaultMessage: '立即加入' },
     pledge: { id: 'common.button.pledge', defaultMessage: '前往參與' },
     intro: { id: 'common.button.introduction', defaultMessage: '簡介' },
