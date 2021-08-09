@@ -25,14 +25,14 @@ const ProgramIssueCollectionAdminPage = () => {
       content={{ icon: BookIcon, title: formatMessage(productMessages.program.content.programProblem) }}
     >
       <div className="row no-gutters mb-4">
-        <div className="col-12 col-sm-2 pr-sm-3">
+        <div className="col-12 col-sm-2 pr-sm-3 mb-3 mb-sm-0">
           <Select style={{ width: '100%' }} value={selectedStatus} onChange={(key: string) => setSelectedStatus(key)}>
             <Select.Option key="unsolved">{formatMessage(commonMessages.form.option.unsolved)}</Select.Option>
             <Select.Option key="solved">{formatMessage(commonMessages.form.option.solved)}</Select.Option>
             <Select.Option key="all">{formatMessage(commonMessages.form.option.all)}</Select.Option>
           </Select>
         </div>
-        <div className="col-12 col-sm-8 pr-sm-3">
+        <div className="col-12 col-sm-8 pr-sm-3 mb-3 mb-sm-0">
           {currentMemberId && (
             <EnrolledProgramSelector
               value={selectedProgramId}
