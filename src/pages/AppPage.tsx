@@ -57,7 +57,7 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
   }
 
   return (
-    <DefaultLayout>
+    <DefaultLayout {...page.options}>
       {page.appPageSections.map(section => {
         const Section = sectionConverter[section.type]
         if (!sectionConverter[section.type]) {

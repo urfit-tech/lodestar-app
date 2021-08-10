@@ -5209,6 +5209,7 @@ export interface GET_PAGE_app_page {
   __typename: "app_page";
   id: any;
   path: string;
+  options: any | null;
   /**
    * An array relationship
    */
@@ -9216,6 +9217,7 @@ export enum app_nav_update_column {
   id = "id",
   label = "label",
   locale = "locale",
+  parent_id = "parent_id",
   position = "position",
   tag = "tag",
 }
@@ -12524,6 +12526,7 @@ export interface app_nav_bool_exp {
   id?: uuid_comparison_exp | null;
   label?: String_comparison_exp | null;
   locale?: String_comparison_exp | null;
+  parent_id?: uuid_comparison_exp | null;
   position?: Int_comparison_exp | null;
   tag?: String_comparison_exp | null;
 }
@@ -12541,6 +12544,7 @@ export interface app_nav_insert_input {
   id?: any | null;
   label?: string | null;
   locale?: string | null;
+  parent_id?: any | null;
   position?: number | null;
   tag?: string | null;
 }
