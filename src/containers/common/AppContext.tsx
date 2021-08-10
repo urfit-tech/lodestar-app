@@ -15,6 +15,7 @@ type AppProps = {
     [key in Module]?: boolean
   }
   navs: {
+    id: string
     block: string
     position: number
     label: string
@@ -23,6 +24,17 @@ type AppProps = {
     external: boolean
     locale: string
     tag: string | null
+    subNavs?: {
+      id: string
+      block: string
+      position: number
+      label: string
+      icon: string | null
+      href: string
+      external: boolean
+      locale: string
+      tag: string | null
+    }[]
   }[]
   settings: {
     [key: string]: string
@@ -73,7 +85,8 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
             id
             module_id
           }
-          app_navs(order_by: { position: asc }) {
+          app_navs(order_by: { position: asc }, where: { parent_id: { _is_null: true } }) {
+            id
             block
             position
             label
@@ -82,6 +95,17 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
             external
             locale
             tag
+            sub_app_navs(order_by: { position: asc }) {
+              id
+              block
+              position
+              label
+              icon
+              href
+              external
+              locale
+              tag
+            }
           }
           app_settings {
             key
@@ -107,6 +131,7 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
         description: data.app_by_pk.description,
         enabledModules: Object.fromEntries(data.app_by_pk.app_modules.map(v => [v.module_id, true]) || []),
         navs: data.app_by_pk.app_navs.map(appNav => ({
+          id: appNav.id,
           block: appNav.block,
           position: appNav.position,
           label: appNav.label,
@@ -115,6 +140,17 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
           external: appNav.external,
           locale: appNav.locale,
           tag: appNav.tag,
+          subNavs: appNav.sub_app_navs.map(v => ({
+            id: v.id,
+            block: v.block,
+            position: v.position,
+            label: v.label,
+            icon: v.icon,
+            href: v.href,
+            external: v.external,
+            locale: v.locale,
+            tag: v.tag,
+          })),
         })),
         settings,
         currencyId: settings['currency_id'] || 'TWD',

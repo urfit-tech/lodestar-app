@@ -1,3 +1,4 @@
+import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -97,19 +98,75 @@ const DefaultLayout: React.FC<{
                 .filter(nav => nav.block === 'header')
                 .map(nav =>
                   nav.external ? (
-                    <a key={nav.label} href={nav.href} target="_blank" rel="noopener noreferrer">
-                      <StyledNavLinkButton type="link">{nav.label}</StyledNavLinkButton>
-                    </a>
+                    <Menu>
+                      <MenuButton
+                        onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
+                      >
+                        <StyledNavLinkButton type="link">{nav.label}</StyledNavLinkButton>
+                      </MenuButton>
+                      {nav.subNavs?.length !== 0 && (
+                        <MenuList>
+                          {nav.subNavs?.map(v => (
+                            <>
+                              {v.external ? (
+                                <MenuItem>
+                                  <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
+                                    <StyledNavLinkButton type="link">{v.label}</StyledNavLinkButton>
+                                  </a>
+                                </MenuItem>
+                              ) : (
+                                <MenuItem>
+                                  <Link key={v.label} to={v.href}>
+                                    <StyledNavLinkButton type="link">
+                                      {v.label}
+                                      {v.tag && <StyledNavTag color={theme['@primary-color']}>{v.tag}</StyledNavTag>}
+                                    </StyledNavLinkButton>
+                                  </Link>
+                                </MenuItem>
+                              )}
+                            </>
+                          ))}
+                        </MenuList>
+                      )}
+                    </Menu>
                   ) : (
-                    <Link key={nav.label} to={nav.href}>
-                      <StyledNavLinkButton type="link">
-                        {nav.label}
-                        {nav.tag && <StyledNavTag color={theme['@primary-color']}>{nav.tag}</StyledNavTag>}
-                      </StyledNavLinkButton>
-                    </Link>
+                    <Menu>
+                      <MenuButton onClick={() => nav.href && (window.location.href = nav.href)}>
+                        <Link key={nav.label} to={nav.href}>
+                          <StyledNavLinkButton type="link">
+                            {nav.label}
+                            {nav.tag && <StyledNavTag color={theme['@primary-color']}>{nav.tag}</StyledNavTag>}
+                          </StyledNavLinkButton>
+                        </Link>
+                      </MenuButton>
+                      {nav.subNavs?.length !== 0 && (
+                        <MenuList>
+                          {nav.subNavs?.map(v => (
+                            <>
+                              {v.external ? (
+                                <MenuItem>
+                                  <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
+                                    <StyledNavLinkButton type="link">{v.label}</StyledNavLinkButton>
+                                  </a>
+                                </MenuItem>
+                              ) : (
+                                <MenuItem>
+                                  <Link key={v.label} to={v.href}>
+                                    <StyledNavLinkButton type="link">
+                                      {v.label}
+                                      {v.tag && <StyledNavTag color={theme['@primary-color']}>{v.tag}</StyledNavTag>}
+                                    </StyledNavLinkButton>
+                                  </Link>
+                                </MenuItem>
+                              )}
+                            </>
+                          ))}
+                        </MenuList>
+                      )}
+                    </Menu>
                   ),
                 )}
-
+              <div>123</div>
               {isAuthenticated && (
                 <Link to={`/members/${currentMemberId}`}>
                   <StyledNavLinkButton type="link">{formatMessage(commonMessages.button.myPage)}</StyledNavLinkButton>

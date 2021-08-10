@@ -1486,8 +1486,9 @@ export interface GET_APP_app_by_pk_app_modules {
   module_id: string;
 }
 
-export interface GET_APP_app_by_pk_app_navs {
+export interface GET_APP_app_by_pk_app_navs_sub_app_navs {
   __typename: "app_nav";
+  id: any;
   block: string;
   position: number;
   label: string;
@@ -1496,6 +1497,23 @@ export interface GET_APP_app_by_pk_app_navs {
   external: boolean;
   locale: string;
   tag: string | null;
+}
+
+export interface GET_APP_app_by_pk_app_navs {
+  __typename: "app_nav";
+  id: any;
+  block: string;
+  position: number;
+  label: string;
+  icon: string | null;
+  href: string;
+  external: boolean;
+  locale: string;
+  tag: string | null;
+  /**
+   * An array relationship
+   */
+  sub_app_navs: GET_APP_app_by_pk_app_navs_sub_app_navs[];
 }
 
 export interface GET_APP_app_by_pk_app_settings {
