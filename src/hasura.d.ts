@@ -6512,6 +6512,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTIONVariables {
   instructorId?: string | null;
   isPrivate?: boolean | null;
   categoryId?: string | null;
+  limit?: number | null;
 }
 
 /* tslint:disable */
@@ -12528,6 +12529,7 @@ export interface app_nav_bool_exp {
   locale?: String_comparison_exp | null;
   parent_id?: uuid_comparison_exp | null;
   position?: Int_comparison_exp | null;
+  sub_app_navs?: app_nav_bool_exp | null;
   tag?: String_comparison_exp | null;
 }
 
@@ -12546,6 +12548,7 @@ export interface app_nav_insert_input {
   locale?: string | null;
   parent_id?: any | null;
   position?: number | null;
+  sub_app_navs?: app_nav_arr_rel_insert_input | null;
   tag?: string | null;
 }
 

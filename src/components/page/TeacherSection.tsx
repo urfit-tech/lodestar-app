@@ -77,7 +77,7 @@ const StyledContainer = styled.div`
   max-width: 1080px;
 `
 
-const StyledCarousel = styled(Carousel)`
+export const StyledCarousel = styled(Carousel)`
   && {
     .slick-prev:before,
     .slick-next:before {
