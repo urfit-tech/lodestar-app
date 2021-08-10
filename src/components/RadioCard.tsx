@@ -1,10 +1,13 @@
 import { Box, useRadio, UseRadioProps, useTheme } from '@chakra-ui/react'
 
-const RadioCard: React.VFC<{
-  children: React.ReactNode
-}> = props => {
+const RadioCard: React.FC<
+  {
+    size?: 'xs' | 'sm' | 'md' | 'lg'
+    children: React.ReactNode
+  } & UseRadioProps
+> = ({ size, children, ...props }) => {
   const theme = useTheme()
-  const { getInputProps, getCheckboxProps } = useRadio(props as UseRadioProps)
+  const { getInputProps, getCheckboxProps } = useRadio(props)
   const input = getInputProps()
   const checkbox = getCheckboxProps()
 
@@ -22,10 +25,12 @@ const RadioCard: React.VFC<{
           color: 'white',
           borderColor: `${theme.colors.primary[500]}`,
         }}
-        px={5}
-        py={3}
+        px={size === 'xs' ? 2 : size === 'sm' ? 3 : size === 'md' ? 4 : size === 'lg' ? 6 : 4}
+        h={size === 'xs' ? 6 : size === 'sm' ? 8 : size === 'md' ? 10 : size === 'lg' ? 12 : 10}
+        lineHeight={size === 'xs' ? 6 : size === 'sm' ? 8 : size === 'md' ? 10 : size === 'lg' ? 12 : 10}
+        textAlign="center"
       >
-        {props.children}
+        {children}
       </Box>
     </Box>
   )

@@ -172,11 +172,11 @@ const MerchandiseCollectionPage: React.VFC = () => {
             {!tag && (
               <Responsive.Default>
                 <div className="col-lg-4 mb-4">
-                  <HStack className="mb-2" {...group}>
+                  <HStack className="mb-4" {...group}>
                     {options.map(value => {
                       const radio = getRadioProps({ value })
                       return (
-                        <RadioCard key={value} {...radio}>
+                        <RadioCard key={value} size="md" {...radio}>
                           {value}
                         </RadioCard>
                       )
@@ -184,7 +184,7 @@ const MerchandiseCollectionPage: React.VFC = () => {
                   </HStack>
                   <StyledCategoryList>
                     <li className="mb-2" onClick={() => setCategoryId(null)}>
-                      {formatMessage(commonMessages.ui.all)} ({filteredMerchandises.length})
+                      {formatMessage(commonMessages.ui.allCategory)} ({filteredMerchandises.length})
                     </li>
                     {merchandiseCategories.map(merchandiseCategory => {
                       const count = filteredMerchandises.filter(merchandise =>
@@ -232,11 +232,11 @@ const MerchandiseCollectionPage: React.VFC = () => {
           {!tag && (
             <Responsive.Desktop>
               <div className="col-lg-4">
-                <HStack className="mb-2" {...group}>
+                <HStack className="mb-4" {...group}>
                   {options.map(value => {
                     const radio = getRadioProps({ value })
                     return (
-                      <RadioCard key={value} {...radio}>
+                      <RadioCard key={value} size="md" {...radio}>
                         {value}
                       </RadioCard>
                     )
@@ -244,7 +244,7 @@ const MerchandiseCollectionPage: React.VFC = () => {
                 </HStack>
                 <StyledCategoryList>
                   <li className="mb-2" onClick={() => setCategoryId(null)}>
-                    {formatMessage(commonMessages.ui.all)} ({filteredMerchandises.length})
+                    {formatMessage(commonMessages.ui.allCategory)} ({filteredMerchandises.length})
                   </li>
                   {merchandiseCategories.map(merchandiseCategory => {
                     const count = filteredMerchandises.filter(merchandise =>
