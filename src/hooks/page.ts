@@ -21,6 +21,7 @@ type AppPageSectionProps = {
 export type AppPageProps = {
   id: string | null
   path: string | null
+  options: { [key: string]: string } | null
   appPageSections: AppPageSectionProps[]
 }
 
@@ -32,6 +33,7 @@ export const usePage = (path: string) => {
         app_page(where: { path: { _eq: $path }, app_id: { _eq: $appId } }) {
           id
           path
+          options
           app_page_sections(order_by: { position: asc }) {
             id
             options
@@ -51,6 +53,7 @@ export const usePage = (path: string) => {
   const appPage: AppPageProps | null = {
     id: data?.app_page[0] ? data.app_page[0].id : null,
     path: data?.app_page[0] ? data.app_page[0].path : null,
+    options: data?.app_page[0]?.options || null,
     appPageSections: data?.app_page[0]
       ? data?.app_page[0].app_page_sections.map((v: { id: string; options: any; type: string }) => ({
           id: v.id,
