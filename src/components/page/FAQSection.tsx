@@ -46,10 +46,10 @@ const FAQSection: React.FC<{
                   fontSize: 16,
                   fontWeight: 'bold',
                   color: '#ff5760',
-                  pt: 0,
-                  pr: 0,
-                  pb: 0,
-                  pl: 10,
+                  mt: 0,
+                  mr: 0,
+                  mb: 0,
+                  ml: 10,
                 }}
               >
                 {v.title}
@@ -61,10 +61,10 @@ const FAQSection: React.FC<{
                   fontWeight: 'normal',
                   lineHeight: 1.7,
                   color: '#585858',
-                  pt: 0,
-                  pr: 0,
-                  pb: 0,
-                  pl: 0,
+                  mt: 0,
+                  mr: 0,
+                  mb: 0,
+                  ml: 0,
                 }}
               >
                 {v.description}

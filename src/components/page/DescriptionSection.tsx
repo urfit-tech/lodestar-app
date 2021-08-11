@@ -25,10 +25,10 @@ const DescriptionSection: React.FC<{
                     fontSize: 24,
                     fontWeight: 'bold',
                     color: '#585858',
-                    pt: 0,
-                    pr: 0,
-                    pb: 0,
-                    pl: 0,
+                    mt: 0,
+                    mr: 0,
+                    mb: 0,
+                    ml: 0,
                   }}
                 >
                   {v.title}
@@ -40,10 +40,10 @@ const DescriptionSection: React.FC<{
                     fontWeight: 'normal',
                     lineHeight: 1.7,
                     color: '#585858',
-                    pt: 0,
-                    pr: 0,
-                    pb: 0,
-                    pl: 0,
+                    mt: 0,
+                    mr: 0,
+                    mb: 0,
+                    ml: 0,
                   }}
                 >
                   {v.description}

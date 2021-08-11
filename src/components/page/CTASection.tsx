@@ -57,10 +57,10 @@ const CTASection: React.FC<{
                 fontSize: 28,
                 fontWeight: 'bold',
                 color: '#fff',
-                pt: 0,
-                pr: 0,
-                pb: 0,
-                pl: 0,
+                mt: 0,
+                mr: 0,
+                mb: 0,
+                ml: 0,
               }}
             >
               {title}
@@ -74,10 +74,10 @@ const CTASection: React.FC<{
                 fontWeight: 'normal',
                 lineHeight: 1.35,
                 color: '#fff',
-                pt: 0,
-                pr: 0,
-                pb: 0,
-                pl: 0,
+                mt: 0,
+                mr: 0,
+                mb: 0,
+                ml: 0,
               }}
             >
               {description}

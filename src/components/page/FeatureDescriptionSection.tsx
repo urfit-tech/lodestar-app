@@ -75,10 +75,10 @@ const FeatureDescriptionSection: React.FC<{
                     fontWeight: 'normal',
                     lineHeight: 1.5,
                     color: !!backgroundUrl ? 'white' : 'black',
-                    pt: '0',
-                    pb: '0',
-                    pr: '0',
-                    pl: '0',
+                    mt: '0',
+                    mb: '0',
+                    mr: '0',
+                    ml: '0',
                   }}
                 >
                   {v.description}
