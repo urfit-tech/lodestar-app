@@ -1,3 +1,5 @@
+import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons'
+import { Box, Collapse, useDisclosure } from '@chakra-ui/react'
 import { Button, Icon, List, message, Popover } from 'antd'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
@@ -44,7 +46,84 @@ const BorderedItem = styled(List.Item)`
     margin-right: -12px;
   }
 `
+const StyledCollapseIconWrapper = styled(Box)`
+  && {
+    margin: auto 0;
+  }
+`
 
+export const CollapseNavLinks: React.VFC<{ nav: any }> = ({ nav }) => {
+  const { isOpen, onToggle } = useDisclosure()
+
+  const ListItem = (
+    <List.Item key={nav.id} style={{ cursor: 'pointer' }}>
+      {nav.icon ? <Icon type={nav.icon} className="mr-2" /> : <BlankIcon className="mr-2" />}
+      {nav.label}
+    </List.Item>
+  )
+
+  return (
+    <>
+      {nav.href ? (
+        <>
+          {nav.external ? (
+            <a key={nav.id} href={nav.href} target="_blank" rel="noopener noreferrer">
+              {ListItem}
+            </a>
+          ) : (
+            <Link key={nav.id} to={nav.href}>
+              {ListItem}
+            </Link>
+          )}
+        </>
+      ) : (
+        <>
+          <Box d="flex" justifyContent="space-between" cursor="pointer" onClick={onToggle}>
+            <Box>{ListItem}</Box>
+            <StyledCollapseIconWrapper>
+              {isOpen ? <ChevronDownIcon w="16px" /> : <ChevronRightIcon w="16px" />}
+            </StyledCollapseIconWrapper>
+          </Box>
+          <Collapse in={isOpen} animateOpacity style={{ background: '#f7f8f8', margin: '0 -12px' }}>
+            {nav.subNavs.map(
+              (v: {
+                id: string
+                block: string
+                position: number
+                label: string
+                icon: string | null
+                href: string
+                external: boolean
+                locale: string
+                tag: string | null
+              }) => {
+                const navListItem = (
+                  <List.Item key={v.id}>
+                    {v.icon ? <Icon type={v.icon} className="mr-2" /> : <BlankIcon className="mr-2" />}
+                    {v.label}
+                  </List.Item>
+                )
+                return (
+                  <Box ml="3rem" style={{ cursor: 'pointer' }}>
+                    {v.external ? (
+                      <a key={v.id} href={v.href} target="_blank" rel="noopener noreferrer">
+                        {navListItem}
+                      </a>
+                    ) : (
+                      <Link key={v.id} to={v.href}>
+                        {navListItem}
+                      </Link>
+                    )}
+                  </Box>
+                )
+              },
+            )}
+          </Collapse>
+        </>
+      )}
+    </>
+  )
+}
 export const CustomNavLinks: React.VFC = () => {
   const { navs } = useNav()
 
@@ -53,22 +132,7 @@ export const CustomNavLinks: React.VFC = () => {
       {navs
         .filter(nav => nav.block === 'header')
         .map((nav, idx) => {
-          const ListItem = (
-            <List.Item key={idx} style={{ cursor: 'pointer' }}>
-              {nav.icon ? <Icon type={nav.icon} className="mr-2" /> : <BlankIcon className="mr-2" />}
-              {nav.label}
-            </List.Item>
-          )
-
-          return nav.external ? (
-            <a key={idx} href={nav.href} target="_blank" rel="noopener noreferrer">
-              {ListItem}
-            </a>
-          ) : (
-            <Link key={idx} to={nav.href}>
-              {ListItem}
-            </Link>
-          )
+          return <CollapseNavLinks nav={nav} />
         })}
     </>
   )
