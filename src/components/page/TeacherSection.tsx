@@ -19,6 +19,7 @@ const StyledSection = styled.section`
   background: #4c60ff;
   -webkit-clip-path: polygon(0% 0%, 0% 100%, 100% 100%, 100% 8%);
   position: relative;
+  top: 5px;
 
   .frame {
     width: 243px;
@@ -89,6 +90,10 @@ const StyledHeading = styled.div`
     text-align: left;
   }
 `
+const StyledTitle = styled.h2`
+  font-weight: bold;
+  line-height: 1;
+`
 
 export const StyledCarousel = styled(Carousel)`
   && {
@@ -143,7 +148,7 @@ const TeacherSection: React.FC<{
     <StyledSection>
       <StyledContainer>
         <StyledHeading>
-          <h2>{title}</h2>
+          <StyledTitle>{title}</StyledTitle>
           <h3>{subtitle}</h3>
         </StyledHeading>
         <StyledCarousel

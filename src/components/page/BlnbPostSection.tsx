@@ -41,12 +41,12 @@ const StyledCustomRatioImage = styled(CustomRatioImage)`
 const StyleTitle = styled.h2`
   font-family: PingFangTC;
   font-size: 28px;
-
-  font-weight: 600;
   letter-spacing: 0.23px;
   text-align: center;
   color: #fff;
   position: relative;
+  font-weight: bold;
+  line-height: 1;
 
   @media (min-width: ${BREAK_POINT}px) {
     font-size: 40px;

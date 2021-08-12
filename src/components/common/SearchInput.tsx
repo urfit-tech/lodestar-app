@@ -1,6 +1,13 @@
 import { Icon, Input, InputGroup, InputProps, InputRightElement } from '@chakra-ui/react'
 import React, { useRef } from 'react'
 import { AiOutlineSearch } from 'react-icons/ai'
+import styled from 'styled-components'
+
+const StyledInput = styled(Input)`
+  && {
+    background: white;
+  }
+`
 
 const SearchInput: React.FC<InputProps & { onSearch: (value: string) => void }> = ({ onSearch, ...inputProps }) => {
   const searchInputRef = useRef<HTMLInputElement | null>(null)
@@ -13,7 +20,7 @@ const SearchInput: React.FC<InputProps & { onSearch: (value: string) => void }> 
       }}
     >
       <InputGroup>
-        <Input ref={searchInputRef} {...inputProps} />
+        <StyledInput ref={searchInputRef} {...inputProps} />
         <InputRightElement
           children={
             <Icon

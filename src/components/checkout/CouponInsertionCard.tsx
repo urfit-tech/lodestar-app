@@ -1,4 +1,4 @@
-import { Button, Form, message } from 'antd'
+import { Button, Form, Input, message } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
@@ -9,10 +9,9 @@ import { handleError } from '../../helpers'
 import { checkoutMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import { useAuth } from '../auth/AuthContext'
 import AdminCard from '../common/AdminCard'
-import MigrationInput from '../common/MigrationInput'
 import { BREAK_POINT } from '../common/Responsive'
 
-const StyledInput = styled(MigrationInput)`
+const StyledInput = styled(Input)`
   && {
     margin-bottom: 1rem;
     width: 100%;
