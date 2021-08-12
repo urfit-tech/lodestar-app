@@ -15,7 +15,7 @@ import { commonMessages } from '../helpers/translation'
 import ForbiddenPage from './ForbiddenPage'
 import LoadingPage from './LoadingPage'
 
-const OrderPage: React.VFC = () => {
+const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
@@ -112,65 +112,67 @@ const OrderPage: React.VFC = () => {
   }
 
   return (
-    <DefaultLayout noFooter>
-      <div
-        className="container d-flex align-items-center justify-content-center"
-        style={{ height: 'calc(100vh - 64px)' }}
-      >
-        <AdminCard style={{ paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
-          <div className="d-flex flex-column align-items-center justify-content-center px-sm-5">
-            {!order.status ? (
-              <>
-                <Icon
-                  className="mb-5"
-                  type="check-circle"
-                  theme="twoTone"
-                  twoToneColor="#4ed1b3"
-                  style={{ fontSize: '4rem' }}
-                />
-                <Typography.Title level={4} className="mb-3">
-                  {formatMessage(commonMessages.title.purchasedItemPreparing)}
-                </Typography.Title>
-                <Typography.Text className="mb-4">{formatMessage(commonMessages.content.prepare)}</Typography.Text>
-              </>
-            ) : order.status === 'SUCCESS' ? (
-              <>
-                <Icon
-                  className="mb-5"
-                  type="check-circle"
-                  theme="twoTone"
-                  twoToneColor="#4ed1b3"
-                  style={{ fontSize: '4rem' }}
-                />
-                <Typography.Title level={4} className="mb-3">
-                  {formatMessage(commonMessages.title.purchasedItemAvailable)}
-                </Typography.Title>
-                <Typography.Text className="mb-4">{formatMessage(commonMessages.content.atm)}</Typography.Text>
-              </>
-            ) : (
-              <>
-                <Icon
-                  className="mb-5"
-                  type="close-circle"
-                  theme="twoTone"
-                  twoToneColor="#ff7d62"
-                  style={{ fontSize: '4rem' }}
-                />
-                <Typography.Title level={4} className="mb-3">
-                  {formatMessage(commonMessages.title.paymentFail)}
-                </Typography.Title>
-                <Typography.Title level={4} className="mb-3">
-                  {formatMessage(commonMessages.title.creditCardConfirm)}
-                </Typography.Title>
-              </>
-            )}
-            <Link to="/">
-              <Button>{formatMessage(commonMessages.button.home)}</Button>
-            </Link>
-          </div>
-        </AdminCard>
-      </div>
-    </DefaultLayout>
+    render?.({ order }) || (
+      <DefaultLayout noFooter>
+        <div
+          className="container d-flex align-items-center justify-content-center"
+          style={{ height: 'calc(100vh - 64px)' }}
+        >
+          <AdminCard style={{ paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
+            <div className="d-flex flex-column align-items-center justify-content-center px-sm-5">
+              {!order.status ? (
+                <>
+                  <Icon
+                    className="mb-5"
+                    type="check-circle"
+                    theme="twoTone"
+                    twoToneColor="#4ed1b3"
+                    style={{ fontSize: '4rem' }}
+                  />
+                  <Typography.Title level={4} className="mb-3">
+                    {formatMessage(commonMessages.title.purchasedItemPreparing)}
+                  </Typography.Title>
+                  <Typography.Text className="mb-4">{formatMessage(commonMessages.content.prepare)}</Typography.Text>
+                </>
+              ) : order.status === 'SUCCESS' ? (
+                <>
+                  <Icon
+                    className="mb-5"
+                    type="check-circle"
+                    theme="twoTone"
+                    twoToneColor="#4ed1b3"
+                    style={{ fontSize: '4rem' }}
+                  />
+                  <Typography.Title level={4} className="mb-3">
+                    {formatMessage(commonMessages.title.purchasedItemAvailable)}
+                  </Typography.Title>
+                  <Typography.Text className="mb-4">{formatMessage(commonMessages.content.atm)}</Typography.Text>
+                </>
+              ) : (
+                <>
+                  <Icon
+                    className="mb-5"
+                    type="close-circle"
+                    theme="twoTone"
+                    twoToneColor="#ff7d62"
+                    style={{ fontSize: '4rem' }}
+                  />
+                  <Typography.Title level={4} className="mb-3">
+                    {formatMessage(commonMessages.title.paymentFail)}
+                  </Typography.Title>
+                  <Typography.Title level={4} className="mb-3">
+                    {formatMessage(commonMessages.title.creditCardConfirm)}
+                  </Typography.Title>
+                </>
+              )}
+              <Link to="/">
+                <Button>{formatMessage(commonMessages.button.home)}</Button>
+              </Link>
+            </div>
+          </AdminCard>
+        </div>
+      </DefaultLayout>
+    )
   )
 }
 
