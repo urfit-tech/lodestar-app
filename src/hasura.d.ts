@@ -1474,6 +1474,7 @@ export interface GET_APP_currency {
   id: string;
   label: string;
   unit: string;
+  minor_units: number | null;
 }
 
 export interface GET_APP_app_by_pk_app_modules {
@@ -3735,6 +3736,7 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any;
+  currency_id: string;
   period_amount: any | null;
   period_type: string | null;
   group_buying_people: any | null;
@@ -3742,6 +3744,7 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
    * An object relationship
    */
   program: GET_PRODUCT_SIMPLE_program_plan_by_pk_program;
+  auto_renewed: boolean;
 }
 
 export interface GET_PRODUCT_SIMPLE_program_package_plan_by_pk_program_package {
@@ -3818,6 +3821,7 @@ export interface GET_PRODUCT_SIMPLE_project_plan_by_pk {
   project: GET_PRODUCT_SIMPLE_project_plan_by_pk_project;
   is_limited: boolean;
   is_physical: boolean;
+  is_subscription: boolean;
 }
 
 export interface GET_PRODUCT_SIMPLE_podcast_program_by_pk {
@@ -3847,6 +3851,7 @@ export interface GET_PRODUCT_SIMPLE_podcast_plan_by_pk {
    * An object relationship
    */
   creator: GET_PRODUCT_SIMPLE_podcast_plan_by_pk_creator | null;
+  is_subscription: boolean;
 }
 
 export interface GET_PRODUCT_SIMPLE_appointment_plan_by_pk_creator {
@@ -3876,25 +3881,6 @@ export interface GET_PRODUCT_SIMPLE_appointment_plan_by_pk {
    * An array relationship
    */
   appointment_periods: GET_PRODUCT_SIMPLE_appointment_plan_by_pk_appointment_periods[];
-}
-
-export interface GET_PRODUCT_SIMPLE_merchandise_by_pk_merchandise_imgs {
-  __typename: "merchandise_img";
-  url: string;
-}
-
-export interface GET_PRODUCT_SIMPLE_merchandise_by_pk {
-  __typename: "merchandise";
-  id: any;
-  title: string;
-  list_price: any;
-  sale_price: any | null;
-  sold_at: any | null;
-  is_physical: boolean;
-  /**
-   * An array relationship
-   */
-  merchandise_imgs: GET_PRODUCT_SIMPLE_merchandise_by_pk_merchandise_imgs[];
 }
 
 export interface GET_PRODUCT_SIMPLE_merchandise_spec_by_pk_merchandise_merchandise_imgs {
@@ -3965,10 +3951,6 @@ export interface GET_PRODUCT_SIMPLE {
    * fetch data from the table: "appointment_plan" using primary key columns
    */
   appointment_plan_by_pk: GET_PRODUCT_SIMPLE_appointment_plan_by_pk | null;
-  /**
-   * fetch data from the table: "merchandise" using primary key columns
-   */
-  merchandise_by_pk: GET_PRODUCT_SIMPLE_merchandise_by_pk | null;
   /**
    * fetch data from the table: "merchandise_spec" using primary key columns
    */
@@ -4987,6 +4969,7 @@ export interface GET_MERCHANDISE_COLLECTION_merchandise {
   id: any;
   title: string;
   sold_at: any | null;
+  is_physical: boolean;
   /**
    * An array relationship
    */
@@ -5014,6 +4997,7 @@ export interface GET_MERCHANDISE_COLLECTION {
 
 export interface GET_MERCHANDISE_COLLECTIONVariables {
   search?: string | null;
+  isPhysical?: boolean | null;
 }
 
 /* tslint:disable */
@@ -5225,6 +5209,7 @@ export interface GET_PAGE_app_page {
   __typename: "app_page";
   id: any;
   path: string;
+  options: any | null;
   /**
    * An array relationship
    */
@@ -6527,6 +6512,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTIONVariables {
   instructorId?: string | null;
   isPrivate?: boolean | null;
   categoryId?: string | null;
+  limit?: number | null;
 }
 
 /* tslint:disable */
@@ -9129,6 +9115,7 @@ export enum activity_ticket_constraint {
 export enum activity_ticket_update_column {
   activity_id = "activity_id",
   count = "count",
+  currency_id = "currency_id",
   description = "description",
   ended_at = "ended_at",
   id = "id",
@@ -9231,6 +9218,7 @@ export enum app_nav_update_column {
   id = "id",
   label = "label",
   locale = "locale",
+  parent_id = "parent_id",
   position = "position",
   tag = "tag",
 }
@@ -12250,6 +12238,8 @@ export interface activity_ticket_bool_exp {
   activity_session_tickets?: activity_session_ticket_bool_exp | null;
   activity_ticket_enrollments?: activity_ticket_enrollment_bool_exp | null;
   count?: Int_comparison_exp | null;
+  currency?: currency_bool_exp | null;
+  currency_id?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -12282,6 +12272,8 @@ export interface activity_ticket_insert_input {
   activity_id?: any | null;
   activity_session_tickets?: activity_session_ticket_arr_rel_insert_input | null;
   count?: number | null;
+  currency?: currency_obj_rel_insert_input | null;
+  currency_id?: string | null;
   description?: string | null;
   ended_at?: any | null;
   id?: any | null;
@@ -12535,7 +12527,9 @@ export interface app_nav_bool_exp {
   id?: uuid_comparison_exp | null;
   label?: String_comparison_exp | null;
   locale?: String_comparison_exp | null;
+  parent_id?: uuid_comparison_exp | null;
   position?: Int_comparison_exp | null;
+  sub_app_navs?: app_nav_bool_exp | null;
   tag?: String_comparison_exp | null;
 }
 
@@ -12552,7 +12546,9 @@ export interface app_nav_insert_input {
   id?: any | null;
   label?: string | null;
   locale?: string | null;
+  parent_id?: any | null;
   position?: number | null;
+  sub_app_navs?: app_nav_arr_rel_insert_input | null;
   tag?: string | null;
 }
 

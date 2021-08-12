@@ -1,5 +1,5 @@
 import { Button, Icon } from '@chakra-ui/react'
-import { Form, Input, message } from 'antd'
+import { Form, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineLock, AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'react-icons/ai'
@@ -10,6 +10,7 @@ import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { handleError } from '../../helpers'
 import { authMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import { AuthState } from '../../types/member'
+import MigrationInput from '../common/MigrationInput'
 import { useAuth } from './AuthContext'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
@@ -126,7 +127,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                 },
               ],
             })(
-              <Input
+              <MigrationInput
                 placeholder={formatMessage(commonMessages.form.placeholder.phone)}
                 suffix={<Icon as={AiOutlinePhone} />}
               />,
@@ -142,7 +143,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                 },
               ],
             })(
-              <Input
+              <MigrationInput
                 placeholder={formatMessage(commonMessages.form.placeholder.smsVerification)}
                 suffix={<AiOutlineMail />}
               />,
@@ -226,7 +227,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               },
             ],
           })(
-            <Input
+            <MigrationInput
               placeholder={formatMessage(commonMessages.form.placeholder.username)}
               suffix={<Icon as={AiOutlineUser} />}
             />,
@@ -244,7 +245,12 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                 message: formatMessage(commonMessages.form.message.emailFormatMessage),
               },
             ],
-          })(<Input placeholder={formatMessage(commonMessages.form.placeholder.email)} suffix={<AiOutlineMail />} />)}
+          })(
+            <MigrationInput
+              placeholder={formatMessage(commonMessages.form.placeholder.email)}
+              suffix={<AiOutlineMail />}
+            />,
+          )}
         </Form.Item>
         <Form.Item>
           {form.getFieldDecorator('password', {
@@ -255,7 +261,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               },
             ],
           })(
-            <Input
+            <MigrationInput
               type="password"
               placeholder={formatMessage(commonMessages.form.placeholder.password)}
               suffix={<AiOutlineLock />}

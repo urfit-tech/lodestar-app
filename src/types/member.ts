@@ -1,3 +1,5 @@
+import { InvoiceProps, PaymentProps, ShippingProps } from '../types/checkout'
+
 export type UserRole = 'app-owner' | 'content-creator' | 'general-member' | 'anonymous'
 export type AuthState = 'login' | 'register' | 'forgotPassword' | 'confirm'
 export type MemberPublicProps = {
@@ -21,7 +23,9 @@ export type MemberProps = {
   name: string | null
   email: string
   pictureUrl: string | null
-  metadata: { [key: string]: any } | null
+  shipping: ShippingProps | null
+  invoice: InvoiceProps | null
+  payment: PaymentProps | null
   description: string | null
   createdAt: Date
   loginedAt: Date

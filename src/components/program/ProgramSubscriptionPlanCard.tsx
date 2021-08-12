@@ -6,7 +6,6 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useMember } from '../../hooks/member'
 import { useEnrolledPlanIds, useProgram } from '../../hooks/program'
 import { ProgramPlanProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
@@ -43,19 +42,19 @@ const StyledBraftContent = styled.div`
   font-size: 14px;
 `
 const ProgramSubscriptionPlanCard: React.VFC<{
-  memberId: string
   programId: string
   programPlan: ProgramPlanProps
-}> = ({ memberId, programId, programPlan }) => {
+}> = ({ programId, programPlan }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { program } = useProgram(programId)
-  const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds(memberId)
-  const { member } = useMember(memberId)
 
-  const { salePrice, listPrice, discountDownPrice, periodType, periodAmount } = programPlan
+  const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
+
+  const { salePrice, listPrice, discountDownPrice, periodType, periodAmount, currency } = programPlan
+  const currencyId = currency.id || 'TWD'
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
   return (
@@ -70,6 +69,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
           downPrice={discountDownPrice}
           periodAmount={periodAmount}
           periodType={periodType}
+          currencyId={currencyId}
         />
         {programPlan.isCountdownTimerVisible && programPlan.soldAt && isOnSale && (
           <StyledCountDownBlock>
@@ -95,10 +95,11 @@ const ProgramSubscriptionPlanCard: React.VFC<{
         </Button>
       ) : (
         <CheckoutProductModal
-          renderTrigger={onOpen => (
+          renderTrigger={({ isLoading, onOpen, isSubscription }) => (
             <Button
               colorScheme="primary"
               isFullWidth
+              isDisabled={isLoading}
               onClick={() => {
                 if (!isAuthenticated) {
                   setAuthModalVisible?.(true)
@@ -109,7 +110,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
                     category: 'ProgramPlan',
                     price: `${programPlan.listPrice}`,
                     quantity: '1',
-                    currency: 'TWD',
+                    currency: currencyId,
                   })
                   ReactGA.plugin.execute('ec', 'setAction', 'add')
                   ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
@@ -117,10 +118,11 @@ const ProgramSubscriptionPlanCard: React.VFC<{
                 }
               }}
             >
-              {formatMessage(commonMessages.button.subscribeNow)}
+              {isSubscription
+                ? formatMessage(commonMessages.button.subscribeNow)
+                : formatMessage(commonMessages.ui.purchase)}
             </Button>
           )}
-          paymentType="subscription"
           defaultProductId={`ProgramPlan_${programPlan.id}`}
           // TODO: Should take care of this warningText (maybe it would move to bottom)
           warningText={
@@ -128,7 +130,6 @@ const ProgramSubscriptionPlanCard: React.VFC<{
               ? formatMessage(productMessages.program.defaults.warningText)
               : ''
           }
-          member={member}
         />
       )}
     </StyledAdminCard>

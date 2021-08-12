@@ -4,10 +4,42 @@ import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
 import { handleError } from '../../helpers'
 import { checkoutMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import { useAuth } from '../auth/AuthContext'
 import AdminCard from '../common/AdminCard'
+import { BREAK_POINT } from '../common/Responsive'
+
+const StyledInput = styled(Input)`
+  && {
+    margin-bottom: 1rem;
+    width: 100%;
+
+    @media (min-width: ${BREAK_POINT}px) {
+      margin-bottom: 0;
+      width: auto;
+    }
+  }
+`
+const StyledFormItem = styled(Form.Item)`
+  && {
+    width: 100%;
+
+    @media (min-width: ${BREAK_POINT}px) {
+      width: auto;
+    }
+  }
+`
+const StyledButton = styled(Button)`
+  && {
+    width: 100%;
+
+    @media (min-width: ${BREAK_POINT}px) {
+      width: auto;
+    }
+  }
+`
 
 type CouponInsertionCardProps = CardProps &
   FormComponentProps & {
@@ -52,14 +84,14 @@ const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInse
   return (
     <AdminCard {...cardProps}>
       <Form layout="inline" onSubmit={handleSubmit}>
-        <Form.Item label={formatMessage(checkoutMessages.form.label.addCoupon)}>
-          {form.getFieldDecorator('code', { rules: [{ required: true }] })(<Input />)}
-        </Form.Item>
-        <Form.Item>
-          <Button loading={loading} type="primary" htmlType="submit" disabled={!form.getFieldValue('code')}>
+        <StyledFormItem label={formatMessage(checkoutMessages.form.label.addCoupon)}>
+          {form.getFieldDecorator('code', { rules: [{ required: true }] })(<StyledInput />)}
+        </StyledFormItem>
+        <StyledFormItem>
+          <StyledButton loading={loading} type="primary" htmlType="submit" disabled={!form.getFieldValue('code')}>
             {formatMessage(commonMessages.button.add)}
-          </Button>
-        </Form.Item>
+          </StyledButton>
+        </StyledFormItem>
       </Form>
     </AdminCard>
   )

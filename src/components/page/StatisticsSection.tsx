@@ -78,10 +78,10 @@ const StatisticsSection: React.FC<{
                       fontWeight: 'normal',
                       lineHeight: 1,
                       color: !!background ? 'white' : '#585858',
-                      pt: '20',
-                      pb: '20',
-                      pr: '20',
-                      pl: '20',
+                      mt: '20',
+                      mb: '20',
+                      mr: '20',
+                      ml: '20',
                     }}
                   >
                     {v.description}

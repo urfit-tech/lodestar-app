@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { sum, uniq } from 'ramda'
 import { useMemo } from 'react'
+import { useAuth } from '../components/auth/AuthContext'
 import hasura from '../hasura'
 import { CategoryProps } from '../types/general'
 import {
@@ -22,13 +23,19 @@ export const usePublishedProgramCollection = (options?: {
   instructorId?: string
   isPrivate?: boolean
   categoryId?: string
+  limit?: number
 }) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_PUBLISHED_PROGRAM_COLLECTION,
     hasura.GET_PUBLISHED_PROGRAM_COLLECTIONVariables
   >(
     gql`
-      query GET_PUBLISHED_PROGRAM_COLLECTION($instructorId: String, $isPrivate: Boolean, $categoryId: String) {
+      query GET_PUBLISHED_PROGRAM_COLLECTION(
+        $instructorId: String
+        $isPrivate: Boolean
+        $categoryId: String
+        $limit: Int
+      ) {
         program(
           where: {
             published_at: { _is_null: false }
@@ -38,6 +45,7 @@ export const usePublishedProgramCollection = (options?: {
             _or: [{ _not: { program_categories: {} } }, { program_categories: { category_id: { _eq: $categoryId } } }]
           }
           order_by: [{ position: asc }, { published_at: desc }]
+          limit: $limit
         ) {
           id
           cover_url
@@ -106,6 +114,7 @@ export const usePublishedProgramCollection = (options?: {
         instructorId: options?.instructorId,
         isPrivate: options?.isPrivate,
         categoryId: options?.categoryId,
+        limit: options?.limit,
       },
     },
   )
@@ -561,7 +570,8 @@ export const useEnrolledProgramIds = (memberId: string) => {
   }
 }
 
-export const useEnrolledPlanIds = (memberId: string) => {
+export const useEnrolledPlanIds = () => {
+  const { currentMemberId } = useAuth()
   const { loading, data, error, refetch } = useQuery<
     hasura.GET_ENROLLED_PROGRAM_PLANS,
     hasura.GET_ENROLLED_PROGRAM_PLANSVariables
@@ -573,7 +583,7 @@ export const useEnrolledPlanIds = (memberId: string) => {
         }
       }
     `,
-    { variables: { memberId } },
+    { variables: { memberId: currentMemberId || '' } },
   )
 
   const programPlanIds: string[] =

@@ -24,9 +24,17 @@ type AppProps = {
     locale: string
     tag: string | null
   }[]
-  settings: { [key: string]: string }
+  settings: {
+    [key: string]: string
+  } & {
+    'payment.perpetual.default_gateway'?: undefined
+    'payment.perpetual.default_gateway_method'?: undefined
+    'payment.subscription.default_gateway'?: undefined
+  }
   currencyId: string
-  currencies: { [currencyId: string]: { id: string; label: string | null; unit: string | null } }
+  currencies: {
+    [currencyId: string]: { id: string; label: string | null; unit: string | null; minorUnits: number | null }
+  }
 }
 
 const defaultAppProps: AppProps = {
@@ -54,6 +62,7 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
           id
           label
           unit
+          minor_units
         }
         app_by_pk(id: $appId) {
           id
@@ -109,7 +118,9 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
         })),
         settings,
         currencyId: settings['currency_id'] || 'TWD',
-        currencies: Object.fromEntries(data.currency.map(v => [v.id, v])),
+        currencies: Object.fromEntries(
+          data.currency.map(v => [v.id, { id: v.id, label: v.label, unit: v.unit, minorUnits: v.minor_units }]),
+        ),
       }
     : defaultAppProps
 

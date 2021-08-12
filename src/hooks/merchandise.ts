@@ -5,25 +5,30 @@ import { flatten, uniq } from 'ramda'
 import hasura from '../hasura'
 import { MerchandiseBriefProps, MerchandiseProps, OrderLogWithMerchandiseSpecProps } from '../types/merchandise'
 
-export const useMerchandiseCollection = (search: string | null = null) => {
+export const useMerchandiseCollection = (options?: {
+  search?: string | null
+  isPhysical?: boolean
+  categories?: string
+}) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_MERCHANDISE_COLLECTION,
     hasura.GET_MERCHANDISE_COLLECTIONVariables
   >(
     gql`
-      query GET_MERCHANDISE_COLLECTION($search: String) {
+      query GET_MERCHANDISE_COLLECTION($search: String, $isPhysical: Boolean) {
         merchandise(
           where: {
             published_at: { _is_null: false }
             member_shop: { published_at: { _is_null: false } }
-            merchandise_specs: {}
             title: { _like: $search }
+            is_physical: { _eq: $isPhysical }
           }
           order_by: { position: asc }
         ) {
           id
           title
           sold_at
+          is_physical
           merchandise_tags(order_by: { position: asc }) {
             tag_name
           }
@@ -47,51 +52,63 @@ export const useMerchandiseCollection = (search: string | null = null) => {
         }
       }
     `,
-    { variables: { search: search && `%${search}%` } },
+    {
+      variables: {
+        search: `%${options?.search}%`,
+        isPhysical: options?.isPhysical,
+      },
+    },
   )
 
   const merchandises: MerchandiseBriefProps[] =
     loading || error || !data
       ? []
-      : data.merchandise.map(merchandise => ({
-          id: merchandise.id,
-          title: merchandise.title,
-          soldAt: merchandise.sold_at ? new Date(merchandise.sold_at) : null,
-          minPrice: min(
-            merchandise.merchandise_specs.map(spec =>
-              merchandise.sold_at &&
-              new Date(merchandise.sold_at).getTime() > Date.now() &&
-              typeof spec.sale_price === 'number'
-                ? spec.sale_price
-                : spec.list_price || 0,
+      : data.merchandise
+          .filter(merchandise =>
+            options?.categories
+              ? merchandise.merchandise_categories.some(v => options.categories?.includes(v.category.id))
+              : merchandise,
+          )
+          .map(merchandise => ({
+            id: merchandise.id,
+            title: merchandise.title,
+            soldAt: merchandise.sold_at ? new Date(merchandise.sold_at) : null,
+            isPhysical: merchandise.is_physical,
+            minPrice: min(
+              merchandise.merchandise_specs.map(spec =>
+                merchandise.sold_at &&
+                new Date(merchandise.sold_at).getTime() > Date.now() &&
+                typeof spec.sale_price === 'number'
+                  ? spec.sale_price
+                  : spec.list_price || 0,
+              ),
             ),
-          ),
-          maxPrice: max(
-            merchandise.merchandise_specs.map(spec =>
-              merchandise.sold_at &&
-              new Date(merchandise.sold_at).getTime() > Date.now() &&
-              typeof spec.sale_price === 'number'
-                ? spec.sale_price
-                : spec.list_price || 0,
+            maxPrice: max(
+              merchandise.merchandise_specs.map(spec =>
+                merchandise.sold_at &&
+                new Date(merchandise.sold_at).getTime() > Date.now() &&
+                typeof spec.sale_price === 'number'
+                  ? spec.sale_price
+                  : spec.list_price || 0,
+              ),
             ),
-          ),
-          tags: merchandise.merchandise_tags.map(v => v.tag_name),
-          categories: merchandise.merchandise_categories.map(v => ({
-            id: v.category.id,
-            name: v.category.name,
-          })),
-          images: merchandise.merchandise_imgs.map(v => ({
-            id: v.id,
-            url: v.url,
-            isCover: true,
-          })),
-          specs: merchandise.merchandise_specs.map(spec => ({
-            id: spec.id,
-            title: spec.title,
-            listPrice: spec.list_price,
-            salePrice: spec.sale_price,
-          })),
-        }))
+            tags: merchandise.merchandise_tags.map(v => v.tag_name),
+            categories: merchandise.merchandise_categories.map(v => ({
+              id: v.category.id,
+              name: v.category.name,
+            })),
+            images: merchandise.merchandise_imgs.map(v => ({
+              id: v.id,
+              url: v.url,
+              isCover: true,
+            })),
+            specs: merchandise.merchandise_specs.map(spec => ({
+              id: spec.id,
+              title: spec.title,
+              listPrice: spec.list_price,
+              salePrice: spec.sale_price,
+            })),
+          }))
 
   const merchandiseTags = uniq(flatten(merchandises.map(merchandise => merchandise.tags))).slice(0, 6)
 

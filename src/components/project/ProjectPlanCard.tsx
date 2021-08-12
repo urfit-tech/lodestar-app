@@ -10,7 +10,6 @@ import CheckoutProductModal from '../../components/checkout/CheckoutProductModal
 import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
-import { useMember } from '../../hooks/member'
 import EmptyCover from '../../images/empty-cover.png'
 import { PeriodType } from '../../types/program'
 import { ProjectPlanProps } from '../../types/project'
@@ -240,9 +239,8 @@ const SubscriptionPlanBlock: React.VFC<{
   isPhysical: boolean
 }> = ({ projectPlanId, projectTitle, title, listPrice, salePrice, isPhysical }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { member } = useMember(currentMemberId || '')
 
   if (!isAuthenticated) {
     return (
@@ -254,15 +252,12 @@ const SubscriptionPlanBlock: React.VFC<{
 
   return (
     <CheckoutProductModal
-      renderTrigger={onOpen => (
-        <StyledButton colorScheme="primary" size="lg" onClick={onOpen}>
+      defaultProductId={`ProjectPlan_${projectPlanId}`}
+      renderTrigger={({ isLoading, onOpen }) => (
+        <StyledButton colorScheme="primary" size="lg" isDisabled={isLoading} onClick={onOpen}>
           <span>{formatMessage(commonMessages.button.join)}</span>
         </StyledButton>
       )}
-      paymentType="subscription"
-      defaultProductId={`ProjectPlan_${projectPlanId}`}
-      isProductPhysical={isPhysical}
-      member={member}
     />
   )
 }

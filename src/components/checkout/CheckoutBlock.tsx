@@ -11,12 +11,8 @@ import { useAuth } from '../../components/auth/AuthContext'
 import CartProductTableCard, { useProductInventory } from '../../components/checkout/CartProductTableCard'
 import CheckoutCard from '../../components/checkout/CheckoutCard'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
-import InvoiceInput, { InvoiceProps, validateInvoice } from '../../components/checkout/InvoiceInput'
-import ShippingInput, {
-  csvShippingMethods,
-  ShippingProps,
-  validateShipping,
-} from '../../components/checkout/ShippingInput'
+import InvoiceInput, { validateInvoice } from '../../components/checkout/InvoiceInput'
+import ShippingInput, { csvShippingMethods, validateShipping } from '../../components/checkout/ShippingInput'
 import AdminCard from '../../components/common/AdminCard'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { useApp } from '../../containers/common/AppContext'
@@ -26,11 +22,11 @@ import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck, useMemberShop, usePhysicalProductCollection } from '../../hooks/checkout'
 import { useMemberValidation } from '../../hooks/common'
 import { useUpdateMemberMetadata } from '../../hooks/member'
-import { CartProductProps } from '../../types/checkout'
+import { CartProductProps, InvoiceProps, PaymentProps, ShippingProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import { CommonTitleMixin } from '../common'
-import PaymentSelector, { PaymentMethodType, PaymentProps } from './PaymentSelector'
+import PaymentSelector from './PaymentSelector'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
@@ -92,7 +88,7 @@ const CheckoutBlock: React.VFC<{
     },
     payment: {
       gateway: settings['payment.perpetual.default_gateway'] || 'spgateway',
-      method: (settings['payment.perpetual.default_gateway_method'] as PaymentMethodType) || 'credit',
+      method: settings['payment.perpetual.default_gateway_method'] || 'credit',
     },
   }
   try {
@@ -104,20 +100,20 @@ const CheckoutBlock: React.VFC<{
       ? (JSON.parse(cachedShipping) as ShippingProps)
       : {
           ...cachedPaymentInfor.shipping,
-          ...member?.metadata?.shipping,
+          ...member?.shipping,
         }
 
     cachedPaymentInfor.invoice = cachedInvoice
       ? (JSON.parse(cachedInvoice).value as InvoiceProps)
       : {
           ...cachedPaymentInfor.invoice,
-          ...member?.metadata?.invoice,
+          ...member?.invoice,
         }
     cachedPaymentInfor.payment = cachedPayment
       ? (JSON.parse(cachedPayment) as PaymentProps)
       : {
           ...cachedPaymentInfor.payment,
-          ...member?.metadata?.payment,
+          ...member?.payment,
         }
   } catch {}
 
@@ -248,9 +244,8 @@ const CheckoutBlock: React.VFC<{
       variables: {
         memberId: member.id,
         metadata: {
-          ...member.metadata,
           invoice,
-          shipping: hasPhysicalProduct ? shipping : undefined,
+          shipping: hasPhysicalProduct ? shipping : member.shipping,
           payment,
         },
         memberPhones: invoice.phone ? [{ member_id: member.id, phone: invoice.phone }] : [],

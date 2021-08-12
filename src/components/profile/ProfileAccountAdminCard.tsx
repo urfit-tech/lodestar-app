@@ -1,6 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button } from '@chakra-ui/react'
-import { Form, Input, message, Typography } from 'antd'
+import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import React from 'react'
@@ -11,6 +11,7 @@ import { commonMessages, profileMessages, settingsMessages } from '../../helpers
 import { useMember, useUpdateMember } from '../../hooks/member'
 import { ReactComponent as YouTubeIcon } from '../../images/youtube-icon.svg'
 import AdminCard from '../common/AdminCard'
+import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'
 
 const StyledSocialLogo = styled.div`
@@ -82,7 +83,7 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
                 message: formatMessage(commonMessages.form.message.username),
               },
             ],
-          })(<Input />)}
+          })(<MigrationInput />)}
         </Form.Item>
         <Form.Item label={formatMessage(commonMessages.label.email)}>
           {form.getFieldDecorator('_email', {
@@ -93,7 +94,7 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
                 message: formatMessage(commonMessages.form.message.email),
               },
             ],
-          })(<Input />)}
+          })(<MigrationInput />)}
         </Form.Item>
 
         {enabledModules.social_connect && (

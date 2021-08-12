@@ -1,7 +1,9 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Badge, Button, List, Popover } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
+import { Badge, List, Popover } from 'antd'
 import gql from 'graphql-tag'
 import React, { useContext } from 'react'
+import { AiOutlineBell } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -79,7 +81,7 @@ const NotificationDropdown: React.VFC = () => {
         ))}
       </StyledList>
       <StyledAction>
-        <Button type="link" block onClick={() => history.push('/notifications')}>
+        <Button variant="ghost" isFullWidth onClick={() => history.push('/notifications')}>
           {formatMessage(commonMessages.button.notification)}
         </Button>
       </StyledAction>
@@ -94,8 +96,8 @@ const NotificationDropdown: React.VFC = () => {
         <div className="d-flex align-items-center justify-content-between">
           <span>{formatMessage(commonMessages.content.notification)}</span>
           <StyledReadAllButton
-            type="link"
-            size="small"
+            variant="ghost"
+            size="sm"
             onClick={() =>
               readAllNotification({
                 variables: { readAt: new Date() },
@@ -109,7 +111,9 @@ const NotificationDropdown: React.VFC = () => {
       content={content}
     >
       <StyledBadge count={unreadCount && unreadCount > 15 ? '15+' : unreadCount} className="mr-2">
-        <StyledButton type="link" icon="bell" />
+        <StyledButton variant="ghost">
+          <Icon as={AiOutlineBell} />
+        </StyledButton>
       </StyledBadge>
     </Popover>
   )

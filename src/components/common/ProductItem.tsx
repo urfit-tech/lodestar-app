@@ -100,6 +100,7 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
     listPrice,
     salePrice,
     discountDownPrice,
+    currencyId,
     periodAmount,
     periodType,
     endedAt,
@@ -141,7 +142,7 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
               {typeof quantity === 'number' ? ` x${quantity}` : ''}
             </Typography.Paragraph>
             <StyledMeta className="text-left">
-              <PriceLabel listPrice={(salePrice || listPrice || 0) * (quantity || 1)} />
+              <PriceLabel listPrice={(salePrice || listPrice || 0) * (quantity || 1)} currencyId={currencyId} />
             </StyledMeta>
           </div>
         </div>
@@ -172,6 +173,7 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
               listPrice={listPrice}
               salePrice={salePrice}
               downPrice={discountDownPrice}
+              currencyId={currencyId}
               periodType={isSubscription === undefined && periodType ? periodType : undefined}
               periodAmount={isSubscription === undefined && periodType ? periodAmount : undefined}
             />

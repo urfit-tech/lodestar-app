@@ -22,19 +22,19 @@ export type OrderDiscountProps = {
   options: { [key: string]: any } | null
 }
 
-export type shippingOptionProps = {
+export type ShippingOptionProps = {
   id: string
   fee: number
   days: number
   enabled: boolean
 }
 
-export type shippingOptionIdProps = 'sevenEleven' | 'familyMart' | 'okMart' | 'sendByPost' | 'homeDelivery'
+export type ShippingOptionIdType = 'sevenEleven' | 'familyMart' | 'okMart' | 'sendByPost' | 'homeDelivery'
 
 export type CheckProps = {
   orderProducts: OrderProductProps[]
   orderDiscounts: OrderDiscountProps[]
-  shippingOption: shippingOptionProps | null
+  shippingOption: ShippingOptionProps | null
 }
 
 export type CartProductProps = {
@@ -71,3 +71,37 @@ export type CouponProps = {
     }
   }
 }
+
+export type ShippingProps = {
+  name?: string
+  phone?: string
+  address?: string
+  shippingMethod?: string
+  specification?: string
+  storeId?: string
+  storeName?: string
+}
+
+export type InvoiceProps = {
+  name: string
+  phone: string
+  email: string
+  phoneBarCode?: string
+  citizenCode?: string
+  uniformNumber?: string
+  uniformTitle?: string
+  donationCode?: string
+  postCode?: string
+  address?: string
+  referrerEmail?: string
+}
+
+export type PaymentProps =
+  | {
+      gateway: 'spgateway'
+      method: 'credit' | 'vacc' | 'cvs' | 'instflag' | 'unionpay' | 'webatm' | 'barcode'
+    }
+  | {
+      gateway: 'tappay' | 'parenting' | 'paypal'
+      method: 'credit'
+    }

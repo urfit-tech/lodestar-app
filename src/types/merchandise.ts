@@ -1,10 +1,10 @@
-import { InvoiceProps } from '../components/checkout/InvoiceInput'
-import { ShippingProps } from '../components/checkout/ShippingInput'
+import { InvoiceProps, ShippingProps } from './checkout'
 
 export type MerchandiseBasicProps = {
   id: string
   title: string
   soldAt: Date | null
+  isPhysical?: boolean
   minPrice: number
   maxPrice: number
   tags: string[]

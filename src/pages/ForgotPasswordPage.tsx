@@ -1,10 +1,11 @@
-import { Button, Form, Icon, Input, message } from 'antd'
+import { Button, Form, Icon, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import MigrationInput from '../components/common/MigrationInput'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
@@ -83,7 +84,12 @@ const ForgotPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
                   message: formatMessage(commonMessages.form.message.emailFormat),
                 },
               ],
-            })(<Input placeholder={formatMessage(commonMessages.form.option.email)} suffix={<Icon type="mail" />} />)}
+            })(
+              <MigrationInput
+                placeholder={formatMessage(commonMessages.form.option.email)}
+                suffix={<Icon type="mail" />}
+              />,
+            )}
           </Form.Item>
           <Form.Item className="m-0">
             <Button htmlType="submit" type="primary" block loading={loading}>
