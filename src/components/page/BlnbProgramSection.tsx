@@ -113,7 +113,7 @@ const BlnbProgramSection: React.VFC<{
   return (
     <section className="row m-0">
       <StyledColumn className="col-12 col-lg-4" backgroundImage={backgroundImage}>
-        <StyledDecoration src="https://static.kolable.com/images/blnb/quot-top@3x.png" />
+        <StyledDecoration src="https://static.kolable.com/images/blnb/quot.svg" />
         <StyledTitle className="mb-2">{title}</StyledTitle>
         <StyledSubTitle className="mb-5">{subtitle}</StyledSubTitle>
         <StyledQuote className="mb-3">{quote}</StyledQuote>

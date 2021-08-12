@@ -41,11 +41,16 @@ const StyledCustomRatioImage = styled(CustomRatioImage)`
 const StyleTitle = styled.h2`
   font-family: PingFangTC;
   font-size: 28px;
+
   font-weight: 600;
   letter-spacing: 0.23px;
   text-align: center;
   color: #fff;
   position: relative;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    font-size: 40px;
+  }
 `
 const StyledSubTitle = styled.h3`
   font-family: NotoSansCJKtc;
@@ -55,6 +60,10 @@ const StyledSubTitle = styled.h3`
   letter-spacing: 1px;
   text-align: center;
   color: #fff;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    font-size: 60px;
+  }
 `
 const StyledTitleLink = styled.div`
   position: absolute;
@@ -172,7 +181,7 @@ const BlnbPostSection: React.VFC = () => {
     <StyledSection>
       <StyledDecoration />
       <div className="container px-0">
-        <StyledSubTitle>Blog</StyledSubTitle>
+        <StyledSubTitle>BLOG</StyledSubTitle>
         <StyleTitle className="mb-5">
           延伸閱讀
           <StyledTitleLink className="d-none d-lg-inline-block">
