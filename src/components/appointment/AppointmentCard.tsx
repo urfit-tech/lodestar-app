@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button, Dropdown, Form, Icon as AntdIcon, Input, Menu, message, Modal } from 'antd'
+import { Textarea } from '@chakra-ui/react'
+import { Button, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
 import moment from 'moment'
@@ -320,7 +321,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
         <StyledModalTitle className="mb-4">{formatMessage(messages.confirmCancelAlert)}</StyledModalTitle>
         <div className="mb-4">{formatMessage(messages.confirmCancelNotation)}</div>
         <StyledModalSubTitle>{formatMessage(messages.canceledReason)}</StyledModalSubTitle>
-        <Input.TextArea onChange={e => setCanceledReason(e.target.value)} />
+        <Textarea onChange={e => setCanceledReason(e.target.value)} />
       </StyledModal>
     </StyledCard>
   )

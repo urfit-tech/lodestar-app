@@ -26,7 +26,7 @@ const ActivityCollectionPage = () => {
   const { currentLanguage } = useContext(LanguageContext)
   const { pageTitle } = useNav()
   const { formatMessage } = useIntl()
-  const [active = null, setActive] = useQueryParam('active', StringParam)
+  const [active = null, setActive] = useQueryParam('categories', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 

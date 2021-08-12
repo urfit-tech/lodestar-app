@@ -1,6 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
 import { HStack, useRadioGroup } from '@chakra-ui/react'
-import { Input } from 'antd'
 import { flatten, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -9,6 +8,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive from '../components/common/Responsive'
+import SearchInput from '../components/common/SearchInput'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCard from '../components/merchandise/MerchandiseCard'
@@ -147,7 +147,7 @@ const MerchandiseCollectionPage: React.VFC = () => {
 
           {!tag && (
             <StyledSearchBlock>
-              <Input.Search
+              <SearchInput
                 className="mb-2"
                 placeholder={formatMessage(messages.keywordSearch)}
                 onSearch={keyword => {
