@@ -77,6 +77,13 @@ export const AppThemeProvider: React.FC = ({ children }) => {
           }),
         },
       },
+      Textarea: {
+        variants: {
+          outline: () => ({
+            borderColor: 'var(--gray)',
+          }),
+        },
+      },
       Radio: {
         baseStyle: {
           _focus: {
