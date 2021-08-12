@@ -1,8 +1,7 @@
-import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Menu, MenuButton, MenuItem, MenuList, useTheme } from '@chakra-ui/react'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
-import { ThemeContext } from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import AuthButton from '../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
@@ -28,7 +27,9 @@ import {
   StyledLayoutContent,
   StyledLayoutHeader,
   StyledLogo,
-  StyledNavLinkButton,
+  StyledMenuItem,
+  StyledMenuTag,
+  StyledNavButton,
   StyledNavTag,
 } from './DefaultLayout.styled'
 
@@ -55,7 +56,7 @@ const DefaultLayout: React.FC<{
   children,
 }) => {
   const { formatMessage } = useIntl()
-  const theme = useContext(ThemeContext)
+  const theme = useTheme()
   const { renderFooter } = useCustomRenderer()
   const { currentMemberId, isAuthenticated, currentMember } = useAuth()
   const { name, settings, enabledModules } = useApp()
@@ -102,27 +103,31 @@ const DefaultLayout: React.FC<{
                       <MenuButton
                         onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
                       >
-                        <StyledNavLinkButton type="link">{nav.label}</StyledNavLinkButton>
+                        <StyledNavButton bg="#fff">{nav.label}</StyledNavButton>
                       </MenuButton>
                       {nav.subNavs?.length !== 0 && (
                         <MenuList>
                           {nav.subNavs?.map(v => (
                             <>
                               {v.external ? (
-                                <MenuItem>
-                                  <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
-                                    <StyledNavLinkButton type="link">{v.label}</StyledNavLinkButton>
-                                  </a>
-                                </MenuItem>
+                                <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
+                                  <StyledMenuItem _focus={{ bg: '#fff' }}>{v.label}</StyledMenuItem>
+                                </a>
                               ) : (
-                                <MenuItem>
-                                  <Link key={v.label} to={v.href}>
-                                    <StyledNavLinkButton type="link">
-                                      {v.label}
-                                      {v.tag && <StyledNavTag color={theme['@primary-color']}>{v.tag}</StyledNavTag>}
-                                    </StyledNavLinkButton>
-                                  </Link>
-                                </MenuItem>
+                                <Link key={v.label} to={v.href}>
+                                  <StyledMenuItem _focus={{ bg: '#fff' }}>
+                                    {v.label}
+                                    {v.tag && (
+                                      <StyledMenuTag
+                                        borderRadius="full"
+                                        color="#fff"
+                                        bg={theme?.colors?.primary?.[500]}
+                                      >
+                                        {v.tag}
+                                      </StyledMenuTag>
+                                    )}
+                                  </StyledMenuItem>
+                                </Link>
                               )}
                             </>
                           ))}
@@ -132,32 +137,40 @@ const DefaultLayout: React.FC<{
                   ) : (
                     <Menu>
                       <MenuButton onClick={() => nav.href && (window.location.href = nav.href)}>
-                        <Link key={nav.label} to={nav.href}>
-                          <StyledNavLinkButton type="link">
-                            {nav.label}
-                            {nav.tag && <StyledNavTag color={theme['@primary-color']}>{nav.tag}</StyledNavTag>}
-                          </StyledNavLinkButton>
-                        </Link>
+                        <StyledNavButton bg="#fff">
+                          {nav.label}
+                          {nav.tag && (
+                            <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                              {nav.tag}
+                            </StyledNavTag>
+                          )}
+                        </StyledNavButton>
                       </MenuButton>
                       {nav.subNavs?.length !== 0 && (
                         <MenuList>
                           {nav.subNavs?.map(v => (
                             <>
                               {v.external ? (
-                                <MenuItem>
-                                  <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
-                                    <StyledNavLinkButton type="link">{v.label}</StyledNavLinkButton>
-                                  </a>
-                                </MenuItem>
+                                <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
+                                  <MenuItem _focus={{ bg: '#fff' }}>
+                                    <StyledMenuItem>{v.label}</StyledMenuItem>
+                                  </MenuItem>
+                                </a>
                               ) : (
-                                <MenuItem>
-                                  <Link key={v.label} to={v.href}>
-                                    <StyledNavLinkButton type="link">
-                                      {v.label}
-                                      {v.tag && <StyledNavTag color={theme['@primary-color']}>{v.tag}</StyledNavTag>}
-                                    </StyledNavLinkButton>
-                                  </Link>
-                                </MenuItem>
+                                <Link key={v.label} to={v.href}>
+                                  <StyledMenuItem _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
+                                    {v.label}
+                                    {v.tag && (
+                                      <StyledMenuTag
+                                        borderRadius="full"
+                                        color="#fff"
+                                        bg={theme?.colors?.primary?.[500]}
+                                      >
+                                        {v.tag}
+                                      </StyledMenuTag>
+                                    )}
+                                  </StyledMenuItem>
+                                </Link>
                               )}
                             </>
                           ))}
@@ -166,10 +179,10 @@ const DefaultLayout: React.FC<{
                     </Menu>
                   ),
                 )}
-              <div>123</div>
+
               {isAuthenticated && (
                 <Link to={`/members/${currentMemberId}`}>
-                  <StyledNavLinkButton type="link">{formatMessage(commonMessages.button.myPage)}</StyledNavLinkButton>
+                  <StyledNavButton bg="#fff">{formatMessage(commonMessages.button.myPage)}</StyledNavButton>
                 </Link>
               )}
             </Responsive.Desktop>
