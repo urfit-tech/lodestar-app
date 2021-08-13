@@ -190,11 +190,7 @@ const ProgramPage: React.VFC = () => {
                 </div>
 
                 <div className="mb-5">
-                  <ProgramContentListSection
-                    memberId={currentMemberId || ''}
-                    program={program}
-                    trialOnly={program.isSubscription || false}
-                  />
+                  <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
                 </div>
               </div>
 
