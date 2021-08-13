@@ -102,6 +102,6 @@ export type PaymentProps =
       method: 'credit' | 'vacc' | 'cvs' | 'instflag' | 'unionpay' | 'webatm' | 'barcode'
     }
   | {
-      gateway: 'tappay' | 'parenting' | 'paypal'
+      gateway: 'tappay' | 'parenting' | 'paypal' | 'commonhealth'
       method: 'credit'
     }
