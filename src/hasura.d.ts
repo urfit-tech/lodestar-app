@@ -6702,6 +6702,7 @@ export interface GET_PROGRAM_program_by_pk {
   is_issues_open: boolean;
   is_private: boolean;
   is_countdown_timer_visible: boolean;
+  is_introduction_section_visible: boolean;
   /**
    * An array relationship
    */
@@ -11370,6 +11371,7 @@ export enum program_update_column {
   in_advance = "in_advance",
   is_countdown_timer_visible = "is_countdown_timer_visible",
   is_deleted = "is_deleted",
+  is_introduction_section_visible = "is_introduction_section_visible",
   is_issues_open = "is_issues_open",
   is_private = "is_private",
   is_sold_out = "is_sold_out",
@@ -17810,6 +17812,7 @@ export interface program_bool_exp {
   in_advance?: Boolean_comparison_exp | null;
   is_countdown_timer_visible?: Boolean_comparison_exp | null;
   is_deleted?: Boolean_comparison_exp | null;
+  is_introduction_section_visible?: Boolean_comparison_exp | null;
   is_issues_open?: Boolean_comparison_exp | null;
   is_private?: Boolean_comparison_exp | null;
   is_sold_out?: Boolean_comparison_exp | null;
@@ -18368,6 +18371,7 @@ export interface program_insert_input {
   in_advance?: boolean | null;
   is_countdown_timer_visible?: boolean | null;
   is_deleted?: boolean | null;
+  is_introduction_section_visible?: boolean | null;
   is_issues_open?: boolean | null;
   is_private?: boolean | null;
   is_sold_out?: boolean | null;

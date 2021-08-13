@@ -31,6 +31,7 @@ export type ProgramProps = ProgramBriefProps & {
   isIssuesOpen: boolean
   isSoldOut: boolean | null
   isCountdownTimerVisible?: boolean
+  isIntroductionSectionVisible?: boolean
 }
 
 export type ProgramRoleProps = {

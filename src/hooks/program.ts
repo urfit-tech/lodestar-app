@@ -251,7 +251,7 @@ export const useProgram = (programId: string) => {
           is_issues_open
           is_private
           is_countdown_timer_visible
-
+          is_introduction_section_visible
           program_categories(order_by: { position: asc }) {
             id
             category {
@@ -360,6 +360,7 @@ export const useProgram = (programId: string) => {
           isIssuesOpen: data.program_by_pk.is_issues_open,
           isPrivate: data.program_by_pk.is_private,
           isCountdownTimerVisible: data.program_by_pk.is_countdown_timer_visible,
+          isIntroductionSectionVisible: data.program_by_pk.is_introduction_section_visible,
           tags: data.program_by_pk.program_tags.map(programTag => programTag.tag.name),
           categories: data.program_by_pk.program_categories.map(programCategory => ({
             id: programCategory.category.id,
