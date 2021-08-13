@@ -197,7 +197,7 @@ export const useCurrency = (currencyId?: string) => {
       value.toLocaleString(locale || navigator.language, {
         style: 'currency',
         currency: currentCurrencyId,
-        maximumFractionDigits: currency['minorUnits'] || 0,
+        maximumFractionDigits: currency?.['minorUnits'] || 0,
         minimumFractionDigits: 0,
       }) || ''
     )
