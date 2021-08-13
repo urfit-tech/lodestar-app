@@ -133,7 +133,6 @@ const CoverSection: React.VFC<{
   }
 }> = ({ options }) => {
   const history = useHistory()
-  console.log(options.sectionHeight)
 
   return (
     <section>
