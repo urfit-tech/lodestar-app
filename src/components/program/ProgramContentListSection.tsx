@@ -63,8 +63,7 @@ const ProgramContentListSection: React.VFC<{
       contents: ProgramContentProps[]
     })[]
   }
-  trialOnly?: boolean
-}> = ({ memberId, program, trialOnly }) => {
+}> = ({ memberId, program }) => {
   const { formatMessage } = useIntl()
   const theme = useContext(ThemeContext)
   const { enrolledProgramIds } = useEnrolledProgramIds(memberId)
@@ -77,11 +76,11 @@ const ProgramContentListSection: React.VFC<{
         programContentSection.contents.filter(programContent => programContent.listPrice === 0) || [],
     ) || []
 
-  if (trialOnly && trialProgramContents.length === 0) {
+  if (trialProgramContents.length === 0) {
     return null
   }
 
-  if (trialOnly) {
+  if (!program.isIntroductionSectionVisible) {
     // subscription program
     return (
       <>
