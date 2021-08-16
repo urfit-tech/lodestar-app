@@ -1,29 +1,68 @@
-import { Select } from 'antd'
+import { Form, Select } from 'antd'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages } from '../../helpers/translation'
-import { PaymentProps } from '../../types/checkout'
+import { PaymentGatewayType, PaymentMethodType, PaymentProps } from '../../types/checkout'
 import { CommonTitleMixin } from '../common'
 
 const StyledTitle = styled.h1`
   margin-bottom: 0.75rem;
+  line-height: 1.5;
   ${CommonTitleMixin}
 `
 const StyledDescription = styled.div`
   color: var(--gray-dark);
   font-size: 14px;
   letter-spacing: 0.4px;
+  line-height: 1.5;
 `
 
 const PaymentSelector: React.FC<{
   value: PaymentProps | null
   onChange: (value: PaymentProps | null) => void
-}> = ({ value, onChange }) => {
+  isValidating?: boolean
+}> = ({ value, onChange, isValidating }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentProps | null>(value)
+
+  const paymentOptions = Object.keys(settings)
+    .filter(
+      key =>
+        key.startsWith('payment') && key.endsWith('enable') && key.split('.').length === 4 && settings[key] === '1',
+    )
+    .reduce<{
+      methodCount: { [key: string]: number }
+      paymentOptions: {
+        payment: {
+          gateway: string
+          method: string
+        }
+        name: string
+      }[]
+    }>(
+      ({ methodCount, paymentOptions }, currentValue) => {
+        const [, gateway, method] = currentValue.split('.')
+        const name =
+          formatMessage(checkoutMessages.label[method as PaymentMethodType]) +
+          (methodCount[method] ? ` ( ${formatMessage(checkoutMessages.label[gateway as PaymentGatewayType])} )` : '')
+        methodCount[method] = methodCount[method] ? methodCount[method] + 1 : 1
+
+        return {
+          methodCount,
+          paymentOptions: [
+            ...paymentOptions,
+            {
+              payment: { gateway, method },
+              name,
+            },
+          ],
+        }
+      },
+      { methodCount: {}, paymentOptions: [] },
+    ).paymentOptions
 
   const handleChange = (paymentType?: PaymentProps | null) => {
     const currentPaymentOption = typeof paymentType === 'undefined' ? selectedPaymentMethod : paymentType
@@ -35,7 +74,12 @@ const PaymentSelector: React.FC<{
   }
 
   return (
-    <>
+    <Form.Item
+      className="mb-0"
+      required
+      validateStatus={isValidating && !selectedPaymentMethod ? 'error' : undefined}
+      help={isValidating && !selectedPaymentMethod && formatMessage(checkoutMessages.label.paymentMethodPlaceholder)}
+    >
       <StyledTitle>{formatMessage(checkoutMessages.label.paymentMethod)}</StyledTitle>
       <StyledDescription className="mb-4">{formatMessage(checkoutMessages.message.warningPayment)}</StyledDescription>
       <Select
@@ -44,58 +88,13 @@ const PaymentSelector: React.FC<{
         onChange={(v: string) => v && handleChange(JSON.parse(v))}
         placeholder={formatMessage(checkoutMessages.label.paymentMethodPlaceholder)}
       >
-        {settings['payment.spgateway.credit.enable'] === '1' && (
-          <Select.Option value='{"gateway":"spgateway","method":"credit"}'>
-            {formatMessage(checkoutMessages.label.credit)}
+        {paymentOptions.map(option => (
+          <Select.Option key={option.name} value={JSON.stringify(option.payment)}>
+            {option.name}
           </Select.Option>
-        )}
-        {settings['payment.spgateway.vacc.enable'] === '1' && (
-          <Select.Option value='{"gateway":"spgateway","method":"vacc"}'>
-            {formatMessage(checkoutMessages.label.vacc)}
-          </Select.Option>
-        )}
-        {settings['payment.spgateway.cvs.enable'] === '1' && (
-          <Select.Option value='{"gateway":"spgateway","method":"cvs"}'>
-            {formatMessage(checkoutMessages.label.cvs)}
-          </Select.Option>
-        )}
-        {settings['payment.spgateway.instflag.enable'] === '1' && (
-          <Select.Option value='{"gateway":"spgateway","method":"instflag"}'>
-            {formatMessage(checkoutMessages.label.instFlag)}
-          </Select.Option>
-        )}
-        {settings['payment.spgateway.unionpay.enable'] === '1' && (
-          <Select.Option value='{"gateway":"spgateway","method":"unionpay"}'>
-            {formatMessage(checkoutMessages.label.unionPay)}
-          </Select.Option>
-        )}
-        {settings['payment.spgateway.webatm.enable'] === '1' && (
-          <Select.Option value='{"gateway":"spgateway","method":"webatm"}'>
-            {formatMessage(checkoutMessages.label.webAtm)}
-          </Select.Option>
-        )}
-        {settings['payment.spgateway.barcode.enable'] === '1' && (
-          <Select.Option value='{"gateway":"spgateway","method":"barcode"}'>
-            {formatMessage(checkoutMessages.label.barcode)}
-          </Select.Option>
-        )}
-        {settings['payment.parenting.credit.enable'] === '1' && (
-          <Select.Option value='{"gateway":"parenting","method":"credit"}'>
-            {formatMessage(checkoutMessages.label.credit)}（{formatMessage(checkoutMessages.label.parenting)}）
-          </Select.Option>
-        )}
-        {settings['payment.paypal.credit.enable'] === '1' && (
-          <Select.Option value='{"gateway":"paypal","method":"credit"}'>
-            {formatMessage(checkoutMessages.label.paypal)}
-          </Select.Option>
-        )}
-        {settings['payment.commonhealth.credit.enable'] === '1' && (
-          <Select.Option value='{"gateway":"commonhealth","method":"credit"}'>
-            {formatMessage(checkoutMessages.label.credit)}（{formatMessage(checkoutMessages.label.commonhealth)}）
-          </Select.Option>
-        )}
+        ))}
       </Select>
-    </>
+    </Form.Item>
   )
 }
 

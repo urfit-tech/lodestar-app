@@ -318,7 +318,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
         {target.isSubscription === false && (
           <div className="mb-5" ref={paymentMethodRef}>
-            <PaymentSelector value={payment} onChange={v => setPayment(v)} />
+            <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
           </div>
         )}
 
