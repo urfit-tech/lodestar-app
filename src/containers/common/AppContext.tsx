@@ -5,6 +5,22 @@ import { useAuth } from '../../components/auth/AuthContext'
 import hasura from '../../hasura'
 import { Module } from '../../types/general'
 
+type NavProps = {
+  id: string
+  block: string
+  position: number
+  label: string
+  icon: string | null
+  href: string
+  external: boolean
+  locale: string
+  tag: string | null
+}
+
+export type AppNavProps = NavProps & {
+  subNavs: NavProps[]
+}
+
 type AppProps = {
   loading: boolean
   id: string
@@ -14,28 +30,7 @@ type AppProps = {
   enabledModules: {
     [key in Module]?: boolean
   }
-  navs: {
-    id: string
-    block: string
-    position: number
-    label: string
-    icon: string | null
-    href: string
-    external: boolean
-    locale: string
-    tag: string | null
-    subNavs?: {
-      id: string
-      block: string
-      position: number
-      label: string
-      icon: string | null
-      href: string
-      external: boolean
-      locale: string
-      tag: string | null
-    }[]
-  }[]
+  navs: AppNavProps[]
   settings: {
     [key: string]: string
   } & {
