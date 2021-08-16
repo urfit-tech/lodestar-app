@@ -5,7 +5,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
+import { AppNavProps, useApp } from '../../containers/common/AppContext'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../helpers/translation'
@@ -52,7 +52,7 @@ const StyledCollapseIconWrapper = styled(Box)`
   }
 `
 
-export const CollapseNavLinks: React.VFC<{ nav: any }> = ({ nav }) => {
+export const CollapseNavLinks: React.VFC<{ nav: AppNavProps }> = ({ nav }) => {
   const { isOpen, onToggle } = useDisclosure()
 
   const ListItem = (
@@ -85,45 +85,34 @@ export const CollapseNavLinks: React.VFC<{ nav: any }> = ({ nav }) => {
             </StyledCollapseIconWrapper>
           </Box>
           <Collapse in={isOpen} animateOpacity style={{ background: '#f7f8f8', margin: '0 -12px' }}>
-            {nav.subNavs.map(
-              (v: {
-                id: string
-                block: string
-                position: number
-                label: string
-                icon: string | null
-                href: string
-                external: boolean
-                locale: string
-                tag: string | null
-              }) => {
-                const navListItem = (
-                  <List.Item key={v.id}>
-                    {v.icon ? <Icon type={v.icon} className="mr-2" /> : <BlankIcon className="mr-2" />}
-                    {v.label}
-                  </List.Item>
-                )
-                return (
-                  <Box ml="3rem" style={{ cursor: 'pointer' }}>
-                    {v.external ? (
-                      <a key={v.id} href={v.href} target="_blank" rel="noopener noreferrer">
-                        {navListItem}
-                      </a>
-                    ) : (
-                      <Link key={v.id} to={v.href}>
-                        {navListItem}
-                      </Link>
-                    )}
-                  </Box>
-                )
-              },
-            )}
+            {nav.subNavs.map(subNav => {
+              const navListItem = (
+                <List.Item key={subNav.id}>
+                  {subNav.icon ? <Icon type={subNav.icon} className="mr-2" /> : <BlankIcon className="mr-2" />}
+                  {subNav.label}
+                </List.Item>
+              )
+              return (
+                <Box ml="3rem" style={{ cursor: 'pointer' }}>
+                  {subNav.external ? (
+                    <a key={subNav.id} href={subNav.href} target="_blank" rel="noopener noreferrer">
+                      {navListItem}
+                    </a>
+                  ) : (
+                    <Link key={subNav.id} to={subNav.href}>
+                      {navListItem}
+                    </Link>
+                  )}
+                </Box>
+              )
+            })}
           </Collapse>
         </>
       )}
     </>
   )
 }
+
 export const CustomNavLinks: React.VFC = () => {
   const { navs } = useNav()
 
@@ -131,7 +120,7 @@ export const CustomNavLinks: React.VFC = () => {
     <>
       {navs
         .filter(nav => nav.block === 'header')
-        .map((nav, idx) => {
+        .map(nav => {
           return <CollapseNavLinks nav={nav} />
         })}
     </>
