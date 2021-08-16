@@ -96,12 +96,15 @@ export type InvoiceProps = {
   referrerEmail?: string
 }
 
+export type PaymentMethodType = 'credit' | 'vacc' | 'cvs' | 'instflag' | 'unionpay' | 'webatm' | 'barcode'
+export type PaymentGatewayType = 'spgateway' | 'tappay' | 'parenting' | 'paypal' | 'commonhealth'
+
 export type PaymentProps =
   | {
-      gateway: 'spgateway'
-      method: 'credit' | 'vacc' | 'cvs' | 'instflag' | 'unionpay' | 'webatm' | 'barcode'
+      gateway: Extract<PaymentGatewayType, 'spgateway'>
+      method: PaymentMethodType
     }
   | {
-      gateway: 'tappay' | 'parenting' | 'paypal' | 'commonhealth'
-      method: 'credit'
+      gateway: Exclude<PaymentGatewayType, 'spgateway'>
+      method: Extract<PaymentMethodType, 'credit'>
     }
