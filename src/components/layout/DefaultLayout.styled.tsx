@@ -1,4 +1,5 @@
-import { Button, Layout, Tag } from 'antd'
+import { Button, MenuButton, MenuItem, Tag } from '@chakra-ui/react'
+import { Layout } from 'antd'
 import { extname } from 'path'
 import styled, { css } from 'styled-components'
 import { BREAK_POINT } from '../../components/common/Responsive'
@@ -34,13 +35,43 @@ export const StyledLogo = styled.img`
   max-height: 36px;
 `
 export const StyledNavTag = styled(Tag)`
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0 0.25rem;
-  border-radius: 9px;
+  && {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 0.25rem;
+    line-height: 1rem;
+    min-height: 1rem;
+    font-size: 12px;
+  }
 `
-export const StyledNavLinkButton = styled(Button)`
+export const StyledNavButton = styled(Button)`
+  && {
+    background: #ffffff;
+    height: 3.5rem;
+    color: #585858;
+    line-height: 1.5;
+  }
+`
+export const StyledMenuTag = styled(Tag)`
+  && {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    padding: 0 0.25rem;
+    line-height: 1rem;
+    min-height: 1rem;
+    font-size: 12px;
+  }
+`
+export const StyledMenuButton = styled(MenuButton)`
+  && {
+    height: 3.5rem;
+    color: #585858;
+    line-height: 1.5;
+  }
+`
+export const StyledMenuItem = styled(MenuItem)`
   && {
     position: relative;
     height: 3.5rem;
