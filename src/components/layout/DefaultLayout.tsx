@@ -2,6 +2,7 @@ import { Menu, MenuButton, MenuItem, MenuList, useTheme } from '@chakra-ui/react
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import AuthButton from '../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
@@ -32,6 +33,14 @@ import {
   StyledNavButton,
   StyledNavTag,
 } from './DefaultLayout.styled'
+
+const StyledLayoutWrapper = styled(StyledLayout)`
+  && {
+    .css-r6z5ec {
+      z-index: 20;
+    }
+  }
+`
 
 const DefaultLayout: React.FC<{
   white?: boolean
@@ -74,7 +83,7 @@ const DefaultLayout: React.FC<{
     <AuthModalContext.Provider value={{ visible, setVisible }}>
       {visible && <AuthModal noGeneralLogin={noGeneralLogin} renderTitle={renderAuthModalTitle} />}
 
-      <StyledLayout variant={white ? 'white' : undefined}>
+      <StyledLayoutWrapper variant={white ? 'white' : undefined}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
           <div className="d-flex align-items-center">
             <LogoBlock className="mr-4">
@@ -101,9 +110,10 @@ const DefaultLayout: React.FC<{
                   nav.external ? (
                     <Menu>
                       <MenuButton
+                        as={StyledNavButton}
                         onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
                       >
-                        <StyledNavButton bg="#fff">{nav.label}</StyledNavButton>
+                        {nav.label}
                       </MenuButton>
                       {nav.subNavs?.length !== 0 && (
                         <MenuList>
@@ -136,17 +146,15 @@ const DefaultLayout: React.FC<{
                     </Menu>
                   ) : (
                     <Menu>
-                      <MenuButton onClick={() => nav.href && (window.location.href = nav.href)}>
-                        <StyledNavButton bg="#fff">
-                          {nav.label}
-                          {nav.tag && (
-                            <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                              {nav.tag}
-                            </StyledNavTag>
-                          )}
-                        </StyledNavButton>
+                      <MenuButton as={StyledNavButton} onClick={() => nav.href && (window.location.href = nav.href)}>
+                        {nav.label}
+                        {nav.tag && (
+                          <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                            {nav.tag}
+                          </StyledNavTag>
+                        )}
                       </MenuButton>
-                      {nav.subNavs?.length !== 0 && (
+                      {nav.subNavs.length > 0 && (
                         <MenuList>
                           {nav.subNavs?.map(v => (
                             <>
@@ -218,7 +226,7 @@ const DefaultLayout: React.FC<{
           </Responsive.Default>
           {playerVisible && <EmptyBlock height="76px" />}
         </StyledLayoutContent>
-      </StyledLayout>
+      </StyledLayoutWrapper>
     </AuthModalContext.Provider>
   )
 }
