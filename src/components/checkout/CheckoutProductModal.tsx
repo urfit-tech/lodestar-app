@@ -381,7 +381,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </>
         )}
 
-        <div className="text-right">
+        <div className="text-right mb-5">
           <Button variant="outline" onClick={onClose} className="mr-3">
             {formatMessage(commonMessages.ui.cancel)}
           </Button>
