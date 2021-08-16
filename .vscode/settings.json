@@ -61,7 +61,8 @@
     "xstate",
     "xuemi",
     "youtube",
-    "commonhealth"
+    "commonhealth",
+    "paypal"
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
 }

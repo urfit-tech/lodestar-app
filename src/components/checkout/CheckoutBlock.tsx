@@ -282,7 +282,7 @@ const CheckoutBlock: React.VFC<{
       <div className="mb-3">
         <AdminCard>
           <div ref={paymentMethodRef}>
-            <PaymentSelector value={payment} onChange={v => setPayment(v)} />
+            <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
           </div>
         </AdminCard>
       </div>
