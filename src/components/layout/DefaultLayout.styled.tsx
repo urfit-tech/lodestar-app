@@ -47,6 +47,7 @@ export const StyledNavTag = styled(Tag)`
 `
 export const StyledNavButton = styled(Button)`
   && {
+    background: #ffffff;
     height: 3.5rem;
     color: #585858;
     line-height: 1.5;
