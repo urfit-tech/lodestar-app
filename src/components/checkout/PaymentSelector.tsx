@@ -31,6 +31,7 @@ const PaymentSelector: React.FC<{
   const paymentOptions = Object.keys(settings)
     .filter(
       key =>
+        // payment options enabled setting : payment.{gateway}.{method}.enable = 1
         key.startsWith('payment') && key.endsWith('enable') && key.split('.').length === 4 && settings[key] === '1',
     )
     .reduce<{
