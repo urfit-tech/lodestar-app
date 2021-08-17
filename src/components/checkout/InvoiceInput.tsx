@@ -298,9 +298,9 @@ const InvoiceInput: React.VFC<{
                   {v.code} {v.name}
                 </Select.Option>
               ))}
+              <Select.Option value="25885">25885 財團法人伊甸社會福利基金會</Select.Option>
               <Select.Option value="5380">5380 社團法人台灣失智症協會</Select.Option>
               <Select.Option value="8957282">8957282 財團法人流浪動物之家基金會</Select.Option>
-              <Select.Option value="25885">25885 財團法人伊甸社會福利基金會</Select.Option>
             </Select>
           )}
 
