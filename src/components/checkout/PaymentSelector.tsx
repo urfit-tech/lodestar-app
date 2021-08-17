@@ -85,17 +85,7 @@ const PaymentSelector: React.FC<{
       <StyledDescription className="mb-4">{formatMessage(checkoutMessages.message.warningPayment)}</StyledDescription>
       <Select
         style={{ width: '50%' }}
-        value={
-          selectedPaymentMethod &&
-          paymentOptions.some(
-            options =>
-              options.permissions &&
-              options.payment.gateway === selectedPaymentMethod.gateway &&
-              options.payment.method === selectedPaymentMethod.method,
-          )
-            ? JSON.stringify(selectedPaymentMethod)
-            : undefined
-        }
+        value={selectedPaymentMethod ? JSON.stringify(selectedPaymentMethod) : undefined}
         onChange={(v: string) => v && handleChange(JSON.parse(v))}
         placeholder={formatMessage(checkoutMessages.label.paymentMethodPlaceholder)}
       >
