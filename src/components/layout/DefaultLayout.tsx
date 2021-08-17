@@ -41,6 +41,26 @@ const StyledLayoutWrapper = styled(StyledLayout)`
     }
   }
 `
+const StyledMenuButton = styled(MenuButton)`
+  &:hover::after {
+    width: 100%;
+  }
+  &::after {
+    position: absolute;
+    content: '';
+    width: 0px;
+    margin: auto;
+    background-color: ${props => props.theme['@primary-color']};
+    display: block;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    transition-duration: 200ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-property: width, color;
+    height: 3px;
+  }
+`
 
 const DefaultLayout: React.FC<{
   white?: boolean
@@ -109,13 +129,13 @@ const DefaultLayout: React.FC<{
                 .map(nav =>
                   nav.external ? (
                     <Menu>
-                      <MenuButton
+                      <StyledMenuButton
                         as={StyledNavButton}
                         _hover={{ background: '#fff', color: `${theme?.colors?.primary?.[500]}` }}
                         onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
                       >
                         {nav.label}
-                      </MenuButton>
+                      </StyledMenuButton>
                       {nav.subNavs?.length !== 0 && (
                         <MenuList>
                           {nav.subNavs?.map(v => (
@@ -147,7 +167,7 @@ const DefaultLayout: React.FC<{
                     </Menu>
                   ) : (
                     <Menu>
-                      <MenuButton
+                      <StyledMenuButton
                         as={StyledNavButton}
                         _hover={{ background: '#fff', color: `${theme?.colors?.primary?.[500]}` }}
                         onClick={() => nav.href && (window.location.href = nav.href)}
@@ -158,7 +178,7 @@ const DefaultLayout: React.FC<{
                             {nav.tag}
                           </StyledNavTag>
                         )}
-                      </MenuButton>
+                      </StyledMenuButton>
                       {nav.subNavs.length > 0 && (
                         <MenuList>
                           {nav.subNavs?.map(v => (
