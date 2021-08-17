@@ -111,6 +111,7 @@ const DefaultLayout: React.FC<{
                     <Menu>
                       <MenuButton
                         as={StyledNavButton}
+                        _hover={{ background: '#fff', color: `${theme?.colors?.primary?.[500]}` }}
                         onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
                       >
                         {nav.label}
@@ -146,7 +147,11 @@ const DefaultLayout: React.FC<{
                     </Menu>
                   ) : (
                     <Menu>
-                      <MenuButton as={StyledNavButton} onClick={() => nav.href && (window.location.href = nav.href)}>
+                      <MenuButton
+                        as={StyledNavButton}
+                        _hover={{ background: '#fff', color: `${theme?.colors?.primary?.[500]}` }}
+                        onClick={() => nav.href && (window.location.href = nav.href)}
+                      >
                         {nav.label}
                         {nav.tag && (
                           <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
