@@ -41,27 +41,6 @@ const StyledLayoutWrapper = styled(StyledLayout)`
     }
   }
 `
-const StyledMenuButton = styled(MenuButton)`
-  &:hover::after {
-    width: 100%;
-  }
-  &::after {
-    position: absolute;
-    content: '';
-    width: 0px;
-    margin: auto;
-    background-color: ${props => props.theme['@primary-color']};
-    display: block;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    transition-duration: 200ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-property: width, color;
-    height: 3px;
-  }
-`
-
 const DefaultLayout: React.FC<{
   white?: boolean
   noHeader?: boolean
@@ -129,14 +108,13 @@ const DefaultLayout: React.FC<{
                 .map(nav =>
                   nav.external ? (
                     <Menu>
-                      <StyledMenuButton
+                      <MenuButton
                         as={StyledNavButton}
-                        _hover={{ background: '#fff', color: `${theme?.colors?.primary?.[500]}` }}
                         onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
                       >
                         {nav.label}
-                      </StyledMenuButton>
-                      {nav.subNavs?.length !== 0 && (
+                      </MenuButton>
+                      {nav.subNavs?.length > 0 && (
                         <MenuList>
                           {nav.subNavs?.map(v => (
                             <>
@@ -167,18 +145,14 @@ const DefaultLayout: React.FC<{
                     </Menu>
                   ) : (
                     <Menu>
-                      <StyledMenuButton
-                        as={StyledNavButton}
-                        _hover={{ background: '#fff', color: `${theme?.colors?.primary?.[500]}` }}
-                        onClick={() => nav.href && (window.location.href = nav.href)}
-                      >
+                      <MenuButton as={StyledNavButton} onClick={() => nav.href && (window.location.href = nav.href)}>
                         {nav.label}
                         {nav.tag && (
                           <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
                             {nav.tag}
                           </StyledNavTag>
                         )}
-                      </StyledMenuButton>
+                      </MenuButton>
                       {nav.subNavs.length > 0 && (
                         <MenuList>
                           {nav.subNavs?.map(v => (
@@ -214,13 +188,14 @@ const DefaultLayout: React.FC<{
                 )}
 
               {isAuthenticated && (
-                <StyledMenuButton
-                  as={StyledNavButton}
-                  _hover={{ background: '#fff', color: `${theme?.colors?.primary?.[500]}` }}
-                  onClick={() => (window.location.href = `/members/${currentMemberId}`)}
-                >
-                  {formatMessage(commonMessages.button.myPage)}
-                </StyledMenuButton>
+                <Menu>
+                  <MenuButton
+                    as={StyledNavButton}
+                    onClick={() => (window.location.href = `/members/${currentMemberId}`)}
+                  >
+                    {formatMessage(commonMessages.button.myPage)}
+                  </MenuButton>
+                </Menu>
               )}
             </Responsive.Desktop>
 
