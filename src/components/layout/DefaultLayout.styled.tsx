@@ -1,4 +1,4 @@
-import { Button, MenuButton, MenuItem, Tag } from '@chakra-ui/react'
+import { Button, MenuItem, Tag } from '@chakra-ui/react'
 import { Layout } from 'antd'
 import { extname } from 'path'
 import styled, { css } from 'styled-components'
@@ -9,7 +9,6 @@ export const StyledLayout = styled(Layout)<{ variant?: 'white' }>`
   ${props => (props.variant === 'white' ? 'background: white;' : '')}
 `
 export const StyledLayoutHeader = styled(Layout.Header)`
-  border-bottom: 1px solid #ececec;
   overflow: hidden;
 
   &.hidden {
@@ -37,7 +36,7 @@ export const StyledLogo = styled.img`
 export const StyledNavTag = styled(Tag)`
   && {
     position: absolute;
-    top: 0;
+    top: 0.25rem;
     right: 0;
     padding: 0 0.25rem;
     line-height: 1rem;
@@ -46,11 +45,33 @@ export const StyledNavTag = styled(Tag)`
   }
 `
 export const StyledNavButton = styled(Button)`
-  && {
+  &&& {
     background: #ffffff;
-    height: 3.5rem;
+    height: 4rem;
     color: #585858;
-    line-height: 1.5;
+    line-height: 4rem;
+    :hover {
+      background: #ffffff;
+      color: ${props => props.theme['@primary-color']};
+    }
+    :hover:after {
+      width: 100%;
+    }
+    :after {
+      position: absolute;
+      content: '';
+      width: 0px;
+      margin: auto;
+      background-color: ${props => props.theme['@primary-color']};
+      display: block;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      transition-duration: 200ms;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-property: width, color;
+      height: 3px;
+    }
   }
 `
 export const StyledMenuTag = styled(Tag)`
@@ -62,13 +83,6 @@ export const StyledMenuTag = styled(Tag)`
     line-height: 1rem;
     min-height: 1rem;
     font-size: 12px;
-  }
-`
-export const StyledMenuButton = styled(MenuButton)`
-  && {
-    height: 3.5rem;
-    color: #585858;
-    line-height: 1.5;
   }
 `
 export const StyledMenuItem = styled(MenuItem)`
