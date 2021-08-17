@@ -214,9 +214,13 @@ const DefaultLayout: React.FC<{
                 )}
 
               {isAuthenticated && (
-                <Link to={`/members/${currentMemberId}`}>
-                  <StyledNavButton bg="#fff">{formatMessage(commonMessages.button.myPage)}</StyledNavButton>
-                </Link>
+                <StyledMenuButton
+                  as={StyledNavButton}
+                  _hover={{ background: '#fff', color: `${theme?.colors?.primary?.[500]}` }}
+                  onClick={() => (window.location.href = `/members/${currentMemberId}`)}
+                >
+                  {formatMessage(commonMessages.button.myPage)}
+                </StyledMenuButton>
               )}
             </Responsive.Desktop>
 
