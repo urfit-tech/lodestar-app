@@ -55,11 +55,13 @@ export type CheckoutProductModalProps = {
     productId: string
     onProductChange: (productId: string) => void
   }) => React.ReactElement
+  renderTerms?: () => React.ReactElement
 }
 const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   defaultProductId,
   renderTrigger,
   renderProductSelector,
+  renderTerms,
   warningText,
   startedAt,
   shippingMethods,
@@ -351,6 +353,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         )}
 
         <Divider className="mb-3" />
+        {renderTerms && <div className="mb-5">{renderTerms()}</div>}
 
         {settings['custom.project.plan_price_style'] === 'hidden' &&
         productId.startsWith('ProjectPlan_') ? null : orderChecking ? (
