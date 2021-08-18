@@ -72,6 +72,7 @@ const DefaultLayout: React.FC<{
   const { navs } = useNav()
   const { refetchNotifications } = useContext(NotificationContext)
   const { visible: playerVisible } = useContext(PodcastPlayerContext)
+  const { renderCartButton } = useCustomRenderer()
 
   const [visible, setVisible] = useState(false)
 
@@ -215,7 +216,7 @@ const DefaultLayout: React.FC<{
               )}
             </Responsive.Desktop>
 
-            {!noCart && <CartDropdown />}
+            {!noCart && (renderCartButton ? renderCartButton() : <CartDropdown />)}
             {currentMemberId && <NotificationDropdown />}
             {currentMemberId && currentMember ? (
               <MemberProfileButton
