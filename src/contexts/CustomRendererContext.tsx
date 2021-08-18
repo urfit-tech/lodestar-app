@@ -2,6 +2,7 @@ import React, { createContext, useContext } from 'react'
 import { RenderMemberAdminMenuProps } from '../components/common/AdminMenu'
 
 export type CustomRendererProps = {
+  renderCartButton?: () => React.ReactNode
   renderCopyright?: (name?: string) => React.ReactNode
   renderRegisterTerm?: () => React.ReactNode
   renderMemberProfile?: (member: {
