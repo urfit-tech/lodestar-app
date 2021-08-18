@@ -30,6 +30,7 @@ import {
   StyledLogo,
   StyledMenuItem,
   StyledMenuTag,
+  StyledNavAnimationButton,
   StyledNavButton,
   StyledNavTag,
 } from './DefaultLayout.styled'
@@ -109,7 +110,11 @@ const DefaultLayout: React.FC<{
                   nav.external ? (
                     <Menu>
                       <MenuButton
-                        as={StyledNavButton}
+                        as={
+                          settings['style.header.menu_button. animation.enable'] === '1'
+                            ? StyledNavAnimationButton
+                            : StyledNavButton
+                        }
                         onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
                       >
                         {nav.label}
@@ -145,7 +150,14 @@ const DefaultLayout: React.FC<{
                     </Menu>
                   ) : (
                     <Menu>
-                      <MenuButton as={StyledNavButton} onClick={() => nav.href && (window.location.href = nav.href)}>
+                      <MenuButton
+                        as={
+                          settings['style.header.menu_button. animation.enable'] === '1'
+                            ? StyledNavAnimationButton
+                            : StyledNavButton
+                        }
+                        onClick={() => nav.href && (window.location.href = nav.href)}
+                      >
                         {nav.label}
                         {nav.tag && (
                           <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
@@ -190,7 +202,11 @@ const DefaultLayout: React.FC<{
               {isAuthenticated && (
                 <Menu>
                   <MenuButton
-                    as={StyledNavButton}
+                    as={
+                      settings['style.header.menu_button. animation.enable'] === '1'
+                        ? StyledNavAnimationButton
+                        : StyledNavButton
+                    }
                     onClick={() => (window.location.href = `/members/${currentMemberId}`)}
                   >
                     {formatMessage(commonMessages.button.myPage)}

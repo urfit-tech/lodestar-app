@@ -49,7 +49,15 @@ export const StyledNavButton = styled(Button)`
     background: #ffffff;
     height: 4rem;
     color: #585858;
-    line-height: 4rem;
+    line-height: 1.5;
+  }
+`
+export const StyledNavAnimationButton = styled(Button)`
+  &&& {
+    background: #ffffff;
+    height: 4rem;
+    color: #585858;
+    line-height: 1.5;
     :hover {
       background: #ffffff;
       color: ${props => props.theme['@primary-color']};
