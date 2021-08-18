@@ -47,7 +47,8 @@ const CheckoutBlock: React.VFC<{
   member: MemberProps | null
   shopId: string
   cartProducts: CartProductProps[]
-}> = ({ member, shopId, cartProducts }) => {
+  renderTerms?: () => React.ReactNode
+}> = ({ member, shopId, cartProducts, renderTerms }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
@@ -332,6 +333,12 @@ const CheckoutBlock: React.VFC<{
             </div>
           )}
         </AdminCard>
+      )}
+
+      {renderTerms && (
+        <div className="mb-3">
+          <AdminCard>{renderTerms()}</AdminCard>
+        </div>
       )}
 
       <div className="mb-3">
