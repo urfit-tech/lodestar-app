@@ -316,13 +316,14 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
+        {totalPrice > 0 && target.isSubscription === false && (
+          <div className="mb-5" ref={paymentMethodRef}>
+            <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
+          </div>
+        )}
+
         {totalPrice > 0 && (
           <>
-            {target.isSubscription === false && (
-              <div className="mb-5" ref={paymentMethodRef}>
-                <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
-              </div>
-            )}
             <div ref={invoiceRef} className="mb-5">
               <InvoiceInput
                 value={invoice}
@@ -331,12 +332,11 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
                 shouldSameToShippingCheckboxDisplay={target.isPhysical}
               />
             </div>
+            <div className="mb-3">
+              <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+            </div>
           </>
         )}
-
-        <div className="mb-3">
-          <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
-        </div>
 
         {enabledModules.referrer && (
           <div className="row mb-3" ref={referrerRef}>

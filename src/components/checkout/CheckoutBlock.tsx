@@ -302,11 +302,13 @@ const CheckoutBlock: React.VFC<{
         </>
       )}
 
-      {cartProducts.length !== 0 && (
+      {cartProducts.length > 0 && (
         <AdminCard className="mb-3">
-          <div className="mb-3">
-            <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
-          </div>
+          {totalPrice > 0 && (
+            <div className="mb-3">
+              <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+            </div>
+          )}
           {enabledModules.referrer && (
             <div className="row" ref={referrerRef}>
               <div className="col-12">
