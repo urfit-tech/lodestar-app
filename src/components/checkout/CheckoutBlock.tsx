@@ -302,7 +302,7 @@ const CheckoutBlock: React.VFC<{
         </>
       )}
 
-      {cartProducts.length > 0 && (
+      {cartProducts.length > 0 && (totalPrice > 0 || enabledModules.referrer) && (
         <AdminCard className="mb-3">
           {totalPrice > 0 && (
             <div className="mb-3">
