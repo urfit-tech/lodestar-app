@@ -121,11 +121,15 @@ const CartProductItem: React.VFC<{
               <ProductTypeLabel productType={productType} />
             </StyledMeta>
             <StyledMeta>
-              <PriceLabel
-                variant="inline"
-                listPrice={(listPrice || 0) * pluralProductQuantity}
-                salePrice={soldAt && (salePrice || 0) * pluralProductQuantity}
-              />
+              {
+                <PriceLabel
+                  variant="inline"
+                  listPrice={(listPrice || 0) * pluralProductQuantity}
+                  salePrice={
+                    soldAt ? (soldAt.getTime() > Date.now() ? (salePrice || 0) * pluralProductQuantity : null) : null
+                  }
+                />
+              }
             </StyledMeta>
           </>
         )}
