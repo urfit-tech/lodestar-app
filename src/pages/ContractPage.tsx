@@ -49,7 +49,7 @@ const StyledCard = styled(Card)`
 const StyledSection = styled.section`
   background: #f7f8f8;
   padding-top: 56px;
-  padding-bottom: 80px;
+  padding: 80px 0;
   text-align: justify;
 
   & > ${StyledTitle} {

@@ -194,14 +194,14 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     const isValidShipping = !target.isPhysical || validateShipping(shipping)
     const isValidInvoice = validateInvoice(invoice).length === 0
 
-    if (!payment) {
+    if (totalPrice > 0 && payment === null) {
       paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
     if (!isValidShipping) {
       shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
-    } else if (!isValidInvoice) {
+    } else if ((totalPrice > 0 || target.discountDownPrice) && !isValidInvoice) {
       invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -318,24 +318,27 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
-        {target.isSubscription === false && (
+        {totalPrice > 0 && target.isSubscription === false && (
           <div className="mb-5" ref={paymentMethodRef}>
             <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
           </div>
         )}
 
-        <div ref={invoiceRef} className="mb-5">
-          <InvoiceInput
-            value={invoice}
-            onChange={value => setInvoice(value)}
-            isValidating={isValidating}
-            shouldSameToShippingCheckboxDisplay={target.isPhysical}
-          />
-        </div>
-
-        <div className="mb-3">
-          <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
-        </div>
+        {(totalPrice > 0 || target.discountDownPrice) && (
+          <>
+            <div ref={invoiceRef} className="mb-5">
+              <InvoiceInput
+                value={invoice}
+                onChange={value => setInvoice(value)}
+                isValidating={isValidating}
+                shouldSameToShippingCheckboxDisplay={target.isPhysical}
+              />
+            </div>
+            <div className="mb-3">
+              <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+            </div>
+          </>
+        )}
 
         {enabledModules.referrer && (
           <div className="row mb-3" ref={referrerRef}>
@@ -387,7 +390,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </>
         )}
 
-        <div className="text-right">
+        <div className="text-right mb-5">
           <Button variant="outline" onClick={onClose} className="mr-3">
             {formatMessage(commonMessages.ui.cancel)}
           </Button>

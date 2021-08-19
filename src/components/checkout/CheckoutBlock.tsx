@@ -135,7 +135,7 @@ const CheckoutBlock: React.VFC<{
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
 
-  const { check, orderChecking, placeOrder, orderPlacing } = useCheck({
+  const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
     productIds: cartProducts.map(cartProduct => cartProduct.productId),
     discountId,
     shipping: hasPhysicalProduct ? shipping : null,
@@ -206,7 +206,7 @@ const CheckoutBlock: React.VFC<{
     if (!isValidShipping) {
       shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
-    } else if (!isValidInvoice) {
+    } else if (totalPrice > 0 && !isValidInvoice) {
       invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -219,7 +219,7 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
-    if (!payment) {
+    if (totalPrice > 0 && payment === null) {
       paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -280,30 +280,35 @@ const CheckoutBlock: React.VFC<{
         </div>
       )}
 
-      <div className="mb-3">
-        <AdminCard>
-          <div ref={paymentMethodRef}>
-            <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
-          </div>
-        </AdminCard>
-      </div>
-
-      <div ref={invoiceRef} className="mb-3">
-        <AdminCard>
-          <InvoiceInput
-            value={invoice}
-            onChange={value => setInvoice(value)}
-            isValidating={isValidating}
-            shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
-          />
-        </AdminCard>
-      </div>
-
-      {cartProducts.length !== 0 && (
-        <AdminCard className="mb-3">
+      {totalPrice > 0 && (
+        <>
           <div className="mb-3">
-            <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+            <AdminCard>
+              <div ref={paymentMethodRef}>
+                <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
+              </div>
+            </AdminCard>
           </div>
+          <div ref={invoiceRef} className="mb-3">
+            <AdminCard>
+              <InvoiceInput
+                value={invoice}
+                onChange={value => setInvoice(value)}
+                isValidating={isValidating}
+                shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
+              />
+            </AdminCard>
+          </div>
+        </>
+      )}
+
+      {cartProducts.length > 0 && (
+        <AdminCard className="mb-3">
+          {totalPrice > 0 && (
+            <div className="mb-3">
+              <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+            </div>
+          )}
           {enabledModules.referrer && (
             <div className="row" ref={referrerRef}>
               <div className="col-12">
