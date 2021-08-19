@@ -112,7 +112,7 @@ const DefaultLayout: React.FC<{
                     <Menu>
                       <MenuButton
                         as={
-                          settings['style.header.menu_button. animation.enable'] === '1'
+                          settings['style.header.menu_button.animation.enable'] === '1'
                             ? StyledNavAnimationButton
                             : StyledNavButton
                         }
@@ -153,7 +153,7 @@ const DefaultLayout: React.FC<{
                     <Menu>
                       <MenuButton
                         as={
-                          settings['style.header.menu_button. animation.enable'] === '1'
+                          settings['style.header.menu_button.animation.enable'] === '1'
                             ? StyledNavAnimationButton
                             : StyledNavButton
                         }
@@ -204,7 +204,7 @@ const DefaultLayout: React.FC<{
                 <Menu>
                   <MenuButton
                     as={
-                      settings['style.header.menu_button. animation.enable'] === '1'
+                      settings['style.header.menu_button.animation.enable'] === '1'
                         ? StyledNavAnimationButton
                         : StyledNavButton
                     }
