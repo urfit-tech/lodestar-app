@@ -60,7 +60,7 @@ const CartProductItem: React.VFC<{
   }
 
   const [productType] = id.split('_') as [ProductType, string]
-  const { title, coverUrl, listPrice, salePrice, isLimited, isPhysical } = target
+  const { title, coverUrl, soldAt, listPrice, salePrice, isLimited, isPhysical } = target
 
   return (
     <div className="flex-grow-1 d-flex align-items-center justify-content-start">
@@ -124,7 +124,7 @@ const CartProductItem: React.VFC<{
               <PriceLabel
                 variant="inline"
                 listPrice={(listPrice || 0) * pluralProductQuantity}
-                salePrice={(salePrice || 0) * pluralProductQuantity}
+                salePrice={soldAt && (salePrice || 0) * pluralProductQuantity}
               />
             </StyledMeta>
           </>

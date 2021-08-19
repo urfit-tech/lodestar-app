@@ -16,6 +16,7 @@ type TargetProps = {
   isSubscription: boolean
   coverUrl?: string | null
   listPrice?: number
+  soldAt?: Date | null
   salePrice?: number
   discountDownPrice?: number
   currencyId?: string
@@ -52,6 +53,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         title: data.program_by_pk.title,
         coverUrl: data.program_by_pk.cover_url || undefined,
         listPrice: data.program_by_pk.list_price,
+        soldAt: data.program_by_pk.sold_at,
         salePrice:
           data.program_by_pk.sold_at && new Date(data.program_by_pk.sold_at).getTime() > Date.now()
             ? data.program_by_pk.sale_price
@@ -65,6 +67,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         title: `${data.program_plan_by_pk.program.title} - ${data.program_plan_by_pk.title || ''}`,
         coverUrl: data.program_plan_by_pk.program.cover_url || undefined,
         listPrice: data.program_plan_by_pk.list_price,
+        soldAt: data.program_plan_by_pk.sold_at,
         salePrice:
           data.program_plan_by_pk.sold_at && new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
             ? data.program_plan_by_pk.sale_price
@@ -82,6 +85,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         title: data.program_package_plan_by_pk.title,
         coverUrl: data.program_package_plan_by_pk.program_package.cover_url || undefined,
         listPrice: data.program_package_plan_by_pk.list_price,
+        soldAt: data.program_package_plan_by_pk.sold_at,
         salePrice:
           data.program_package_plan_by_pk.sold_at &&
           new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
@@ -116,6 +120,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         title: `${data.project_plan_by_pk.project.title} - ${data.project_plan_by_pk.title}`,
         coverUrl: data.project_plan_by_pk.cover_url || undefined,
         listPrice: data.project_plan_by_pk.list_price,
+        soldAt: data.project_plan_by_pk.sold_at,
         salePrice:
           data.project_plan_by_pk.sold_at && new Date(data.project_plan_by_pk.sold_at).getTime() > Date.now()
             ? data.project_plan_by_pk.sale_price
@@ -134,6 +139,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         title: data.podcast_program_by_pk.title,
         coverUrl: data.podcast_program_by_pk.cover_url,
         listPrice: data.podcast_program_by_pk.list_price,
+        soldAt: data.podcast_program_by_pk.sold_at,
         salePrice:
           data.podcast_program_by_pk.sold_at && new Date(data.podcast_program_by_pk.sold_at).getTime() > Date.now()
             ? data.podcast_program_by_pk.sale_price
@@ -166,6 +172,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         productType: 'MerchandiseSpec',
         title: `${data.merchandise_spec_by_pk.merchandise.title} - ${data.merchandise_spec_by_pk.title}`,
         listPrice: data.merchandise_spec_by_pk.list_price,
+        soldAt: data.merchandise_spec_by_pk.merchandise.sold_at,
         salePrice:
           data.merchandise_spec_by_pk.merchandise.sold_at &&
           new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()

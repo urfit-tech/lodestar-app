@@ -9237,6 +9237,7 @@ export enum app_nav_update_column {
   id = "id",
   label = "label",
   locale = "locale",
+  options = "options",
   parent_id = "parent_id",
   position = "position",
   tag = "tag",
@@ -12547,6 +12548,7 @@ export interface app_nav_bool_exp {
   id?: uuid_comparison_exp | null;
   label?: String_comparison_exp | null;
   locale?: String_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
   parent_id?: uuid_comparison_exp | null;
   position?: Int_comparison_exp | null;
   sub_app_navs?: app_nav_bool_exp | null;
@@ -12566,6 +12568,7 @@ export interface app_nav_insert_input {
   id?: any | null;
   label?: string | null;
   locale?: string | null;
+  options?: any | null;
   parent_id?: any | null;
   position?: number | null;
   sub_app_navs?: app_nav_arr_rel_insert_input | null;
