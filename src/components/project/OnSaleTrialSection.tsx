@@ -29,7 +29,7 @@ const StyledContainer = styled.div`
   margin: 0 auto;
   width: 100%;
   max-width: 270px;
-  padding-bottom: 80px;
+  padding: 80px 0;
 
   @media (min-width: ${BREAK_POINT}px) {
     max-width: 960px;
