@@ -219,7 +219,7 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
-    if (!payment) {
+    if (totalPrice > 0 && payment === null) {
       paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -280,25 +280,26 @@ const CheckoutBlock: React.VFC<{
         </div>
       )}
 
-      <div className="mb-3">
-        <AdminCard>
-          <div ref={paymentMethodRef}>
-            <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
-          </div>
-        </AdminCard>
-      </div>
-
       {totalPrice > 0 && (
-        <div ref={invoiceRef} className="mb-3">
-          <AdminCard>
-            <InvoiceInput
-              value={invoice}
-              onChange={value => setInvoice(value)}
-              isValidating={isValidating}
-              shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
-            />
-          </AdminCard>
-        </div>
+        <>
+          <div className="mb-3">
+            <AdminCard>
+              <div ref={paymentMethodRef}>
+                <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
+              </div>
+            </AdminCard>
+          </div>
+          <div ref={invoiceRef} className="mb-3">
+            <AdminCard>
+              <InvoiceInput
+                value={invoice}
+                onChange={value => setInvoice(value)}
+                isValidating={isValidating}
+                shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
+              />
+            </AdminCard>
+          </div>
+        </>
       )}
 
       {cartProducts.length !== 0 && (

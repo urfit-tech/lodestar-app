@@ -192,7 +192,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     const isValidShipping = !target.isPhysical || validateShipping(shipping)
     const isValidInvoice = validateInvoice(invoice).length === 0
 
-    if (!payment) {
+    if (totalPrice > 0 && payment === null) {
       paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -316,21 +316,22 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
-        {target.isSubscription === false && (
-          <div className="mb-5" ref={paymentMethodRef}>
-            <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
-          </div>
-        )}
-
         {totalPrice > 0 && (
-          <div ref={invoiceRef} className="mb-5">
-            <InvoiceInput
-              value={invoice}
-              onChange={value => setInvoice(value)}
-              isValidating={isValidating}
-              shouldSameToShippingCheckboxDisplay={target.isPhysical}
-            />
-          </div>
+          <>
+            {target.isSubscription === false && (
+              <div className="mb-5" ref={paymentMethodRef}>
+                <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
+              </div>
+            )}
+            <div ref={invoiceRef} className="mb-5">
+              <InvoiceInput
+                value={invoice}
+                onChange={value => setInvoice(value)}
+                isValidating={isValidating}
+                shouldSameToShippingCheckboxDisplay={target.isPhysical}
+              />
+            </div>
+          </>
         )}
 
         <div className="mb-3">
