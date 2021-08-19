@@ -135,7 +135,7 @@ const CheckoutBlock: React.VFC<{
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
 
-  const { check, orderChecking, placeOrder, orderPlacing } = useCheck({
+  const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
     productIds: cartProducts.map(cartProduct => cartProduct.productId),
     discountId,
     shipping: hasPhysicalProduct ? shipping : null,
@@ -206,7 +206,7 @@ const CheckoutBlock: React.VFC<{
     if (!isValidShipping) {
       shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
-    } else if (!isValidInvoice) {
+    } else if (totalPrice > 0 && !isValidInvoice) {
       invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -288,16 +288,18 @@ const CheckoutBlock: React.VFC<{
         </AdminCard>
       </div>
 
-      <div ref={invoiceRef} className="mb-3">
-        <AdminCard>
-          <InvoiceInput
-            value={invoice}
-            onChange={value => setInvoice(value)}
-            isValidating={isValidating}
-            shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
-          />
-        </AdminCard>
-      </div>
+      {totalPrice > 0 && (
+        <div ref={invoiceRef} className="mb-3">
+          <AdminCard>
+            <InvoiceInput
+              value={invoice}
+              onChange={value => setInvoice(value)}
+              isValidating={isValidating}
+              shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
+            />
+          </AdminCard>
+        </div>
+      )}
 
       {cartProducts.length !== 0 && (
         <AdminCard className="mb-3">

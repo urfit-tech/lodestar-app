@@ -199,7 +199,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     if (!isValidShipping) {
       shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
-    } else if (!isValidInvoice) {
+    } else if (totalPrice > 0 && !isValidInvoice) {
       invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -322,14 +322,16 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
-        <div ref={invoiceRef} className="mb-5">
-          <InvoiceInput
-            value={invoice}
-            onChange={value => setInvoice(value)}
-            isValidating={isValidating}
-            shouldSameToShippingCheckboxDisplay={target.isPhysical}
-          />
-        </div>
+        {totalPrice > 0 && (
+          <div ref={invoiceRef} className="mb-5">
+            <InvoiceInput
+              value={invoice}
+              onChange={value => setInvoice(value)}
+              isValidating={isValidating}
+              shouldSameToShippingCheckboxDisplay={target.isPhysical}
+            />
+          </div>
+        )}
 
         <div className="mb-3">
           <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
