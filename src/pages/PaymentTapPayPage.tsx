@@ -12,7 +12,7 @@ import CreditCardSelector, { CardHolder } from '../components/payment/CreditCard
 import TapPayForm, { TPCreditCard } from '../components/payment/TapPayForm'
 import { codeMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
-import { useTappay } from '../hooks/util'
+import { sleep, useTappay } from '../hooks/util'
 
 const StyledFreeSubscriptionNotice = styled.p`
   color: var(--gray-dark);
@@ -68,6 +68,7 @@ const PaymentTapPayBlock: React.VFC = () => {
           email: member?.email || 'test@gmail.com',
         })
       }
+      await sleep(5000)
       await payPayment(_memberCreditCardId)
       history.push(`/members/${currentMemberId}`)
     } catch (err) {
