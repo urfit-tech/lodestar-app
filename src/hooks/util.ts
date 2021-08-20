@@ -207,3 +207,9 @@ export const useCurrency = (currencyId?: string) => {
     formatCurrency,
   }
 }
+
+export async function sleep(time: number): Promise<void> {
+  return new Promise<void>((res, rej) => {
+    setTimeout(res, time)
+  })
+}
