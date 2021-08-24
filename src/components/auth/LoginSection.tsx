@@ -80,7 +80,7 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
     <>
       {renderTitle ? renderTitle() : <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>}
 
-      {!!settings['auth.parenting_client_id'] && (
+      {!!settings['auth.parenting.client_id'] && (
         <div className="mb-3">
           <ParentingLoginButton accountLinkToken={accountLinkToken} />
         </div>
