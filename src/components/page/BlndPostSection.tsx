@@ -53,7 +53,6 @@ const StyleTitle = styled.h2`
   }
 `
 const StyledSubTitle = styled.h3`
-  font-family: NotoSansCJKtc;
   font-size: 40px;
   font-weight: bold;
   line-height: 1.1;
@@ -78,7 +77,6 @@ const StyledPostCard = styled(Link)`
   }
 `
 const StyledPostTitle = styled.h4`
-  font-family: NotoSansCJKtc;
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 0.8px;
@@ -150,7 +148,6 @@ const StyledPostMeta = styled.div`
 `
 const StyledLink = styled(Link)`
   color: white;
-  font-family: NotoSansCJKtc;
   font-size: 16px;
   line-height: 16px;
   font-weight: 500;

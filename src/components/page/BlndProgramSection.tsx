@@ -30,7 +30,6 @@ const StyledDecoration = styled.img`
   }
 `
 const StyledTitle = styled.h2`
-  font-family: NotoSansCJKtc;
   color: #fff;
   font-weight: bold;
   font-size: 40px;
@@ -59,7 +58,6 @@ const StyledSubTitle = styled.h3`
   }
 `
 const StyledQuote = styled.p`
-  font-family: NotoSansCJKtc;
   font-size: 24px;
   font-weight: bold;
   letter-spacing: 0.2px;
@@ -71,7 +69,6 @@ const StyledQuote = styled.p`
   }
 `
 const StyledQuotePerson = styled.span`
-  font-family: NotoSansCJKtc;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;

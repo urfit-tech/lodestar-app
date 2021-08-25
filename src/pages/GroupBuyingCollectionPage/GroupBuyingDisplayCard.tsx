@@ -30,7 +30,6 @@ import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 
 const StyledTitle = styled.h3`
   ${MultiLineTruncationMixin}
-  font-family: NotoSansCJKtc;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
@@ -154,7 +153,6 @@ const StyledCard = styled.div`
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06); ;
 `
 const StyledCardMeta = styled.div`
-  font-family: NotoSansCJKtc;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.4px;
