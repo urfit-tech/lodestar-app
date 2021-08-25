@@ -10,7 +10,6 @@ import ExerciseResultBlock from './ExerciseResultBlock'
 
 const StyledTitle = styled.h3`
   height: 27px;
-  font-family: NotoSansCJKtc;
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 0.8px;

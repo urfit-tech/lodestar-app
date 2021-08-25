@@ -59,7 +59,6 @@ const StyledTimeStandardBlock = styled.div`
   letter-spacing: 0.18px;
   font-size: 14px;
   font-weight: 500;
-  font-family: NotoSansCJKtc;
   color: var(--gray-darker);
   background-color: var(--gray-lighter);
 `
