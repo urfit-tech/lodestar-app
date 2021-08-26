@@ -302,41 +302,75 @@ const CheckoutBlock: React.VFC<{
         </>
       )}
 
-      {cartProducts.length > 0 && (totalPrice > 0 || enabledModules.referrer) && (
+      {cartProducts.length > 0 && totalPrice > 0 && !enabledModules.referrer && (
         <AdminCard className="mb-3">
-          {totalPrice > 0 && (
-            <div className="mb-3">
-              <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+          <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+        </AdminCard>
+      )}
+
+      {cartProducts.length > 0 && totalPrice === 0 && enabledModules.referrer && (
+        <AdminCard className="mb-3">
+          <div className="row" ref={referrerRef}>
+            <div className="col-12">
+              <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
             </div>
-          )}
-          {enabledModules.referrer && (
-            <div className="row" ref={referrerRef}>
-              <div className="col-12">
-                <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
-              </div>
-              <div className="col-12 col-lg-6">
-                <Form.Item
-                  validateStatus={validateStatus}
-                  hasFeedback
-                  help={
-                    validateStatus === 'error'
-                      ? referrerId === currentMemberId
-                        ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
-                        : formatMessage(commonMessages.text.notFoundMemberEmail)
-                      : undefined
-                  }
-                >
-                  <StyledInputWrapper>
-                    <Input
-                      variant="outline"
-                      placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
-                      onBlur={e => setReferrerEmail(e.target.value)}
-                    />
-                  </StyledInputWrapper>
-                </Form.Item>
-              </div>
+            <div className="col-12 col-lg-6">
+              <Form.Item
+                validateStatus={validateStatus}
+                hasFeedback
+                help={
+                  validateStatus === 'error'
+                    ? referrerId === currentMemberId
+                      ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
+                      : formatMessage(commonMessages.text.notFoundMemberEmail)
+                    : undefined
+                }
+              >
+                <StyledInputWrapper>
+                  <Input
+                    variant="outline"
+                    placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
+                    onBlur={e => setReferrerEmail(e.target.value)}
+                  />
+                </StyledInputWrapper>
+              </Form.Item>
             </div>
-          )}
+          </div>
+        </AdminCard>
+      )}
+
+      {cartProducts.length > 0 && totalPrice > 0 && enabledModules.referrer && (
+        <AdminCard className="mb-3">
+          <div className="mb-3">
+            <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+          </div>
+
+          <div className="row" ref={referrerRef}>
+            <div className="col-12">
+              <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
+            </div>
+            <div className="col-12 col-lg-6">
+              <Form.Item
+                validateStatus={validateStatus}
+                hasFeedback
+                help={
+                  validateStatus === 'error'
+                    ? referrerId === currentMemberId
+                      ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
+                      : formatMessage(commonMessages.text.notFoundMemberEmail)
+                    : undefined
+                }
+              >
+                <StyledInputWrapper>
+                  <Input
+                    variant="outline"
+                    placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
+                    onBlur={e => setReferrerEmail(e.target.value)}
+                  />
+                </StyledInputWrapper>
+              </Form.Item>
+            </div>
+          </div>
         </AdminCard>
       )}
 
