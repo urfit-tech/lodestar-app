@@ -149,7 +149,7 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
         <Button
           colorScheme="primary"
           isFullWidth
-          isDisabled={isLoading}
+          isDisabled={isAuthenticated && isLoading}
           onClick={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
         >
           {formatMessage(commonMessages.ui.purchase)}
