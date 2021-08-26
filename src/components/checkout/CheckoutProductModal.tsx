@@ -5,6 +5,7 @@ import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
 import InvoiceInput, { validateInvoice } from '../../components/checkout/InvoiceInput'
@@ -21,9 +22,16 @@ import { useMember, useUpdateMemberMetadata } from '../../hooks/member'
 import { InvoiceProps, PaymentProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import { ShippingMethodProps } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
+import { BREAK_POINT } from '../common/Responsive'
 import CheckoutGroupBuyingForm from './CheckoutGroupBuyingForm'
 import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
 import CheckoutProductReferrerInput from './CheckoutProductReferrerInput'
+
+const StyledSubmitBlock = styled.div`
+  @media (max-width: ${BREAK_POINT}px) {
+    padding-bottom: 7rem;
+  }
+`
 
 const CheckoutProductItem: React.VFC<{ name: string; price: number; currencyId?: string }> = ({
   name,
@@ -384,7 +392,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </>
         )}
 
-        <div className="text-right mb-5">
+        <StyledSubmitBlock className="text-right">
           <Button variant="outline" onClick={onClose} className="mr-3">
             {formatMessage(commonMessages.ui.cancel)}
           </Button>
@@ -393,7 +401,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
               ? formatMessage(commonMessages.button.subscribeNow)
               : formatMessage(checkoutMessages.button.cartSubmit)}
           </Button>
-        </div>
+        </StyledSubmitBlock>
       </CommonModal>
     </>
   )
