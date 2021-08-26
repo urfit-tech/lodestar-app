@@ -86,7 +86,6 @@ const ActivityCollectionPage = () => {
 
           <div className="row">
             {activities
-              .filter(activity => active === null || activity.categories.some(category => category.id === active))
               .filter(
                 activity =>
                   classification === null || activity.categories.some(category => category.id === classification),
