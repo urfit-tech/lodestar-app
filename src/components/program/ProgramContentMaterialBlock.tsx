@@ -1,6 +1,6 @@
 import { AttachmentIcon } from '@chakra-ui/icons'
 import { IconButton, Progress } from '@chakra-ui/react'
-import { message, Spin } from 'antd'
+import { Spin } from 'antd'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -91,7 +91,7 @@ const ProgramContentMaterialBlock: React.VFC<{
                     setIsDownloading(prev => ({ ...prev, [material.id]: false }))
                   })
               } catch (error) {
-                message.error(error)
+                process.env.NODE_ENV === 'development' && console.error(error)
               }
             }}
           >

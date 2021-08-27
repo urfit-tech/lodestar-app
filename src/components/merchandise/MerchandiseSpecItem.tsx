@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Divider } from '@chakra-ui/react'
-import { Button, message, Spin } from 'antd'
+import { Button, Spin } from 'antd'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -99,7 +99,7 @@ const MerchandiseSpecItem: React.VFC<{
                       counter === files.length && setIsDownloading(false)
                     })
                 } catch (error) {
-                  message.error(error)
+                  process.env.NODE_ENV === 'development' && console.error(error)
                 }
               })
             }}

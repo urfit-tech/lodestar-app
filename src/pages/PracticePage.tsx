@@ -11,7 +11,6 @@ import {
   SkeletonText,
   Spinner,
 } from '@chakra-ui/react'
-import { message } from 'antd'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -146,7 +145,7 @@ const PracticePage: React.VFC = () => {
           setIsDownloading(false)
         })
     } catch (error) {
-      message.error(error)
+      process.env.NODE_ENV === 'development' && console.error(error)
     }
   }
   const handleDelete = async () => {
