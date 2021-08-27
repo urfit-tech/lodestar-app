@@ -84,7 +84,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         id: data.program_package_plan_by_pk.id,
         productType: 'ProgramPackagePlan',
         title: data.program_package_plan_by_pk.title,
-        coverUrl: data.program_package_plan_by_pk?.program_package.cover_url || undefined,
+        coverUrl: data.program_package_plan_by_pk.program_package?.cover_url || undefined,
         listPrice: data.program_package_plan_by_pk.list_price,
         isOnSale: data.program_package_plan_by_pk.sold_at
           ? new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
@@ -103,7 +103,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     ? {
         id: data.activity_ticket_by_pk.id,
         productType: 'ActivityTicket',
-        title: `${data.activity_ticket_by_pk?.activity.title || ''} - ${data.activity_ticket_by_pk.title || ''}`,
+        title: `${data.activity_ticket_by_pk.activity?.title || ''} - ${data.activity_ticket_by_pk.title || ''}`,
         listPrice: data.activity_ticket_by_pk.price,
         coverUrl: data.activity_ticket_by_pk.activity.cover_url || undefined,
         isSubscription: false,
