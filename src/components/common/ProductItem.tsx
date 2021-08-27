@@ -83,10 +83,10 @@ type ProductItemProps = {
 const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quantity }) => {
   const { formatMessage } = useIntl()
 
-  const { target } = useSimpleProduct({ id, startedAt })
+  const { loading, target } = useSimpleProduct({ id, startedAt })
   const [productType] = id.split('_') as [ProductType]
 
-  if (!target) {
+  if (loading || !target) {
     if (variant === 'coupon-product') {
       return <Spin size="small" className="d-block" />
     }
