@@ -63,8 +63,8 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     ? {
         id: data.program_plan_by_pk.id,
         productType: 'ProgramPlan',
-        title: `${data.program_plan_by_pk.program.title || ''} - ${data.program_plan_by_pk.title || ''}`,
-        coverUrl: data.program_plan_by_pk.program.cover_url || undefined,
+        title: `${data.program_plan_by_pk.program?.title || ''} - ${data.program_plan_by_pk.title || ''}`,
+        coverUrl: data.program_plan_by_pk.program?.cover_url || undefined,
         listPrice: data.program_plan_by_pk.list_price,
         isOnSale: data.program_plan_by_pk.sold_at
           ? new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
@@ -105,7 +105,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         productType: 'ActivityTicket',
         title: `${data.activity_ticket_by_pk.activity?.title || ''} - ${data.activity_ticket_by_pk.title || ''}`,
         listPrice: data.activity_ticket_by_pk.price,
-        coverUrl: data.activity_ticket_by_pk.activity.cover_url || undefined,
+        coverUrl: data.activity_ticket_by_pk.activity?.cover_url || undefined,
         isSubscription: false,
       }
     : data?.card_by_pk
@@ -120,7 +120,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     ? {
         id: data.project_plan_by_pk.id,
         productType: 'ProjectPlan',
-        title: `${data.project_plan_by_pk.project.title || ''} - ${data.project_plan_by_pk.title || ''}`,
+        title: `${data.project_plan_by_pk.project?.title || ''} - ${data.project_plan_by_pk.title || ''}`,
         coverUrl: data.project_plan_by_pk.cover_url || undefined,
         listPrice: data.project_plan_by_pk.list_price,
         isOnSale: data.project_plan_by_pk.sold_at
