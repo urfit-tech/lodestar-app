@@ -1,10 +1,11 @@
 import BraftEditor from 'braft-editor'
 import React from 'react'
 import styled, { css } from 'styled-components'
+import { isHTMLString } from '../../helpers'
 import QuotationLeft from '../../images/quotation-left.png'
 import QuotationRight from '../../images/quotation-right.png'
 
-const OutputMixin = css`
+const OutputMixin = css<{ isUnmodifiedHtml?: boolean }>`
   h1 {
     margin-bottom: 1.5rem;
     padding: 4px 20px;
@@ -44,9 +45,17 @@ const OutputMixin = css`
     line-height: 2;
   }
   img {
-    width: 100%;
-    height: auto !important;
-    margin-bottom: 1.5rem;
+    ${props =>
+      props.isUnmodifiedHtml
+        ? css`
+            display: unset;
+            margin-bottom: 0.4rem;
+          `
+        : css`
+            width: 100%;
+            height: auto !important;
+            margin-bottom: 1.5rem;
+          `}
   }
   iframe {
     width: 100%;
@@ -171,16 +180,19 @@ const StyledBraftEditor = styled(BraftEditor)`
   }
 `
 
-const StyledBraftContent = styled.div`
+const StyledBraftContent = styled.div<{ isUnmodifiedHtml?: boolean }>`
   ${OutputMixin}
 `
 
 export const BraftContent: React.FC = ({ children }) => {
+  const isUnmodifiedHtml = typeof children === 'string' && isHTMLString(children)
+
   return (
     <StyledBraftContent
+      isUnmodifiedHtml={isUnmodifiedHtml}
       className="braft-output-content"
       dangerouslySetInnerHTML={{
-        __html: BraftEditor.createEditorState(children).toHTML(),
+        __html: isUnmodifiedHtml ? children : BraftEditor.createEditorState(children).toHTML(),
       }}
     />
   )

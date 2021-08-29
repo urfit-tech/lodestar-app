@@ -328,3 +328,8 @@ export const getFileName = (fileName: String) => {
 export const getFileExtension = (fileName: String) => {
   return fileName.substr(fileName.lastIndexOf('.') + 1, fileName.length)
 }
+
+export const isHTMLString = (str: string) => {
+  const doc = new DOMParser().parseFromString(str, 'text/html')
+  return Array.from(doc.body.childNodes).some(node => node.nodeType === 1)
+}
