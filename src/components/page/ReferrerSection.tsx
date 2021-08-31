@@ -5,11 +5,21 @@ import { StyledSection } from '../../pages/AppPage'
 import { BREAK_POINT } from '../common/Responsive'
 
 type Info = {
-  avatarSrc: string
+  imgSrc: string
   name: string
   title: string
   description: string
 }
+
+const StyledTitle = styled.h2`
+  font-family: NotoSansCJKtc;
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.35;
+  letter-spacing: 0.5px;
+  color: var(--gray-darker);
+`
 
 const StyledContainer = styled.div`
   margin: 0 auto 4rem;
@@ -23,48 +33,10 @@ const ReferrerSection: React.FC<{
     title?: string
     infos?: Info[]
   }
-}> = ({ options: { title = '' } }) => {
-  const infos = [
-    {
-      title: '行銷',
-      name: 'Letitia',
-      description:
-        '本身非本科生，但目前有在業界從事網頁設計實習工作。對於網頁的知識和技能都是靠高中補習遙遠的記憶和零散的自學，但一直沒有融會貫通的感覺，每個功能都只是似懂非懂，搞不太清楚“為什麼要這樣做”，無法全靠自己刻出一個完整的頁面。',
-      imgSrc: `https://static.kolable.com/avatars/demo/793733e7-c270-4db1-ae71-562984265429`,
-    },
-    {
-      title: '行銷',
-      name: 'Letitia',
-      description:
-        '本身非本科生，但目前有在業界從事網頁設計實習工作。對於網頁的知識和技能都是靠高中補習遙遠的記憶和零散的自學，但一直沒有融會貫通的感覺，每個功能都只是似懂非懂，搞不太清楚“為什麼要這樣做”，無法全靠自己刻出一個完整的頁面。',
-      imgSrc: `https://static.kolable.com/avatars/demo/793733e7-c270-4db1-ae71-562984265429`,
-    },
-    {
-      title: '行銷',
-      name: 'Letitia',
-      description:
-        '本身非本科生，但目前有在業界從事網頁設計實習工作。對於網頁的知識和技能都是靠高中補習遙遠的記憶和零散的自學，但一直沒有融會貫通的感覺，每個功能都只是似懂非懂，搞不太清楚“為什麼要這樣做”，無法全靠自己刻出一個完整的頁面。',
-      imgSrc: `https://static.kolable.com/avatars/demo/793733e7-c270-4db1-ae71-562984265429`,
-    },
-    {
-      title: '行銷',
-      name: 'Letitia',
-      description:
-        '本身非本科生，但目前有在業界從事網頁設計實習工作。對於網頁的知識和技能都是靠高中補習遙遠的記憶和零散的自學，但一直沒有融會貫通的感覺，每個功能都只是似懂非懂，搞不太清楚“為什麼要這樣做”，無法全靠自己刻出一個完整的頁面。',
-      imgSrc: `https://static.kolable.com/avatars/demo/793733e7-c270-4db1-ae71-562984265429`,
-    },
-    {
-      title: '行銷',
-      name: 'Letitia',
-      description:
-        '本身非本科生，但目前有在業界從事網頁設計實習工作。對於網頁的知識和技能都是靠高中補習遙遠的記憶和零散的自學，但一直沒有融會貫通的感覺，每個功能都只是似懂非懂，搞不太清楚“為什麼要這樣做”，無法全靠自己刻出一個完整的頁面。',
-      imgSrc: `https://static.kolable.com/avatars/demo/793733e7-c270-4db1-ae71-562984265429`,
-    },
-  ]
-
+}> = ({ options: { title = '', infos = [] } }) => {
   return (
     <StyledSection>
-      <header>{title}</header>
+      <StyledTitle className="mb-5">{title}</StyledTitle>
       <StyledContainer>
         <Carousel
           dots
@@ -82,7 +54,7 @@ const ReferrerSection: React.FC<{
             },
           ]}
         >
-          {infos.map(v => (
+          {infos?.map(v => (
             <Carousel.ReferrerCard
               title={v.title}
               name={v.name}
@@ -107,7 +79,7 @@ const ReferrerSection: React.FC<{
                   fontWeight: 'bold',
                   color: '#585858',
                   mt: '0',
-                  mb: '0',
+                  mb: '16',
                   mr: '0',
                   ml: '0',
                 },
@@ -118,7 +90,7 @@ const ReferrerSection: React.FC<{
                   lineHeight: 1.57,
                   color: '#585858',
                   mt: '0',
-                  mb: '0',
+                  mb: '32',
                   mr: '0',
                   ml: '0',
                 },
