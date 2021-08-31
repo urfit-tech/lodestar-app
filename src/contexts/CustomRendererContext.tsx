@@ -20,6 +20,7 @@ export type CustomRendererProps = {
     DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElement> }>
   }) => React.ReactElement
   renderMemberAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement
+  renderOrderStatusTag?: (props: { status: string; defaultStatusTag: JSX.Element }) => React.ReactElement
 }
 
 const CustomRendererContext = createContext<CustomRendererProps>({})
