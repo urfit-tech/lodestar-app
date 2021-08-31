@@ -48,7 +48,9 @@ const PaymentSelector: React.FC<{
         const [, gateway, method] = currentValue.split('.')
         const name =
           formatMessage(checkoutMessages.label[method as PaymentMethodType]) +
-          (methodCount[method] ? ` ( ${formatMessage(checkoutMessages.label[gateway as PaymentGatewayType])} )` : '')
+          (methodCount[method] || gateway === 'paypal'
+            ? ` ( ${formatMessage(checkoutMessages.label[gateway as PaymentGatewayType])} )`
+            : '')
         methodCount[method] = methodCount[method] ? methodCount[method] + 1 : 1
 
         return {

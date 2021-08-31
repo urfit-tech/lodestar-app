@@ -97,6 +97,24 @@ type PlayerConfigProps = {
   volume?: number
 }
 
+function setPlayerConfig({ playbackRate, volume }: PlayerConfigProps): void {
+  localStorage.setItem(
+    'kolable.player',
+    JSON.stringify({
+      playbackRate,
+      volume,
+    }),
+  )
+}
+
+function getPlayerConfig(): PlayerConfigProps {
+  const playerConfig = JSON.parse(localStorage.getItem('kolable.player') || '{}')
+  return {
+    playbackRate: Number(playerConfig.playbackRate) || 1,
+    volume: Number(playerConfig.volume) || 1,
+  }
+}
+
 const ProgramContentPlayer: React.VFC<
   ReactPlayerProps & {
     programContentId: string
@@ -123,7 +141,7 @@ const ProgramContentPlayer: React.VFC<
       : 'reactPlayer',
   )
 
-  const cachedPlayerConfig: PlayerConfigProps = JSON.parse(localStorage.getItem('kolable.player') || '{}')
+  const cachedPlayerConfig: PlayerConfigProps = getPlayerConfig()
 
   if (loadingProgress) {
     return null
@@ -186,10 +204,7 @@ const ProgramContentPlayer: React.VFC<
             videoId={videoId}
             urls={urls}
             lastProgress={lastProgress}
-            config={{
-              playbackRate: Number(cachedPlayerConfig.playbackRate) || 1,
-              volume: Number(cachedPlayerConfig.volume) || 1,
-            }}
+            getConfig={getPlayerConfig}
             onEvent={e => {
               if (e.type === 'ended') {
                 setIsCoverShowing(true)
@@ -367,29 +382,22 @@ const VimeoPlayer: React.VFC<{
       onReady={player => {
         const video = player.getInternalPlayer()
         video.on('ratechange', (e: any) => {
-          const cachedPlayerConfig: PlayerConfigProps = JSON.parse(localStorage.getItem('kolable.player') || '{}')
+          const cachedPlayerConfig: PlayerConfigProps = getPlayerConfig()
           const playbackRate = e.playbackRate || 1
           const volume = cachedPlayerConfig.volume || 1
-          localStorage.setItem(
-            'kolable.player',
-            JSON.stringify({
-              playbackRate: playbackRate,
-              volume: volume,
-            }),
-          )
+          setPlayerConfig({
+            playbackRate,
+            volume,
+          })
         })
         video.on('volumechange', (e: any) => {
-          const cachedPlayerConfig: PlayerConfigProps = JSON.parse(localStorage.getItem('kolable.player') || '{}')
+          const cachedPlayerConfig: PlayerConfigProps = getPlayerConfig()
           const volume = e.volume || 1
           const playbackRate = cachedPlayerConfig.playbackRate || 1
-
-          localStorage.setItem(
-            'kolable.player',
-            JSON.stringify({
-              playbackRate: playbackRate,
-              volume: volume,
-            }),
-          )
+          setPlayerConfig({
+            playbackRate,
+            volume,
+          })
         })
       }}
     />
@@ -400,9 +408,9 @@ const SmartVideo: React.FC<{
   videoId: string
   urls: { video: string; texttracks: string[] }
   lastProgress: number
-  config: PlayerConfigProps
+  getConfig: () => PlayerConfigProps
   onEvent?: (event: VideoEvent) => void
-}> = ({ videoId, urls, lastProgress, config, onEvent }) => {
+}> = ({ videoId, urls, lastProgress, getConfig, onEvent }) => {
   const smartVideoPlayer = useRef<any>(null)
 
   useEffect(() => {
@@ -472,26 +480,20 @@ const SmartVideo: React.FC<{
         smartVideoPlayer.current._lastEndedTime = player.currentTime()
       })
       player.on('canplay', (e: Event) => {
-        player.volume(config.volume)
-        player.playbackRate(config.playbackRate)
+        player.volume(getConfig().volume)
+        player.playbackRate(getConfig().playbackRate)
       })
       player.on('ratechange', (e: Event) => {
-        localStorage.setItem(
-          'kolable.player',
-          JSON.stringify({
-            playbackRate: player.playbackRate(),
-            volume: player.volume(),
-          }),
-        )
+        setPlayerConfig({
+          playbackRate: player.playbackRate(),
+          volume: player.volume(),
+        })
       })
       player.on('volumechange', (e: Event) => {
-        localStorage.setItem(
-          'kolable.player',
-          JSON.stringify({
-            playbackRate: player.playbackRate(),
-            volume: player.volume(),
-          }),
-        )
+        setPlayerConfig({
+          playbackRate: player.playbackRate(),
+          volume: player.volume(),
+        })
       })
 
       smartVideoPlayer.current = player
