@@ -68,7 +68,7 @@ export const MemberAdminMenu: React.VFC<
   MenuProps & { renderAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement }
 > = ({ renderAdminMenu, ...props }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, currentUserRole } = useAuth()
+  const { currentMemberId, currentUserRole, permissions } = useAuth()
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
   const { socialCards } = useSocialCardCollection()
@@ -76,7 +76,9 @@ export const MemberAdminMenu: React.VFC<
   const defaultMenuItems = [
     {
       key: 'management_system',
-      item: (currentUserRole === 'app-owner' || currentUserRole === 'content-creator') && (
+      item: (currentUserRole === 'app-owner' ||
+        currentUserRole === 'content-creator' ||
+        permissions.BACKSTAGE_ENTER) && (
         <Menu.Item key="management_system" className="managementSystem">
           <SettingsIcon className="mr-2" />
           {formatMessage(commonMessages.content.managementSystem)}
