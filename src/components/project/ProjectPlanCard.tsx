@@ -185,9 +185,12 @@ const PerpetualPlanBlock: React.VFC<{
 }> = ({ projectPlanId, projectTitle, title, listPrice, salePrice, isPhysical }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const [sharingCode] = useQueryParam('sharing', StringParam)
   const { settings } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
+
+  const sessionStorageKey = `lodestar.sharing_code.${projectPlanId}`
+  const [sharingCode] = useQueryParam('sharing', StringParam) || window.sessionStorage.getItem(sessionStorageKey)
+  sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
 
   const handleClick = async () => {
     if (settings['tracking.fb_pixel_id']) {
