@@ -43,9 +43,9 @@
   integrity sha512-Fi03PfuUqRs76aI3UWYpP864lkrfPo0hluwGqh7NJdLhvH4iRDc3jbJqZIvRDLHKbXrvAfPPV3+zjUccfFvWOQ==
 
 "@ant-design/icons@^4.6.3":
-  version "4.6.3"
-  resolved "https://registry.yarnpkg.com/@ant-design/icons/-/icons-4.6.3.tgz#cdcccf4df24d51501acef9228444efb7ef8938b1"
-  integrity sha512-OO4JW3OE13FKahplPYhqEg3uEhMiMDxujVUUx/RJUCEkSgBtAEnpKnq8oz2sBKqXeEhkr9/GE2tAHO1gyc70Uw==
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/@ant-design/icons/-/icons-4.6.4.tgz#21b037dbb90ee1bb7c632cca057006e57d992fd9"
+  integrity sha512-li02J8ym721E24N3bw1oXRzFDV7m2MYQWs+WtJgVVjhNRv4sc6vL2a2M7SS8rWX3Uc/3GJfrokIJnMrmbIMuXQ==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons-svg" "^4.0.0"
@@ -3155,9 +3155,9 @@
   integrity sha512-TbG4TOx9hng8FKxaVrCisdaxKxqEwJ3zwHoCWXZ0Jw6mnvTInpaB99/2Cy4+XxpXtjNv9/TgfGSvZFyfV/t8Fw==
 
 "@types/node@^12.0.0":
-  version "12.20.21"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.21.tgz#575e91f59c2e79318c2d39a48286c6954e484fd5"
-  integrity sha512-Qk7rOvV2A4vNgXNS88vEvbJE1NDFPCQ8AU+pNElrU2bA4yrRDef3fg3SUe+xkwyin3Bpg/Xh5JkNWTlsOcS2tA==
+  version "12.20.22"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.22.tgz#732d69f1106de6ab4b64e130ad43d745719683c8"
+  integrity sha512-P87zMpHfn4/8LRmY3jm3b9oWsQ9wMe5Wnx5MuRqE6C832Wqnoz5Agh0/eIQ5WywvdlI+VJU6F92s1dl3ScD5ig==
 
 "@types/node@^15.0.1":
   version "15.14.9"
@@ -3386,7 +3386,7 @@
   dependencies:
     source-map "^0.6.1"
 
-"@types/uuid@^8.0.0":
+"@types/uuid@^8.0.0", "@types/uuid@^8.3.1":
   version "8.3.1"
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.1.tgz#1a32969cf8f0364b3d8c8af9cc3555b7805df14f"
   integrity sha512-Y2mHTRAbqfFkpjldbkHGY8JIzRN6XqYRliG8/24FcHm2D2PwW24fl5xMRTVGdrb7iMrwCaIEbLWerGIkXuFWVg==
@@ -10667,7 +10667,7 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/3c2a4d6591391a8742abd212bba705364af86213"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/508558829062994e07b9586a3c177143fd0c3694"
   dependencies:
     "@apollo/react-hooks" "^3.1.5"
     "@craftjs/core" "0.1.0-beta.20"
@@ -10680,10 +10680,13 @@ lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
     "@types/react-router-dom" "^5.1.5"
     "@types/react-slick" "^0.23.4"
     "@types/styled-components" "^5.1.1"
+    "@types/uuid" "^8.3.1"
     antd "^4.16.9"
+    axios "^0.21.1"
     graphql-tag "^2.10.3"
     moment "^2.29.1"
     node-sass "^4.14.1"
+    query-string "^7.0.1"
     ramda "^0.27.0"
     rc-progress "^3.1.4"
     react "^17.0.2"
@@ -10695,7 +10698,8 @@ lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
     react-scripts "^4.0.3"
     react-slick "^0.28.1"
     styled-components "^5.1.1"
-    typescript "^4.1.2"
+    typescript "4.3.5"
+    uuid "^8.3.2"
 
 log-symbols@^1.0.2:
   version "1.0.2"
@@ -13107,6 +13111,16 @@ query-string@^6.13.1, query-string@^6.13.8:
   version "6.14.1"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.14.1.tgz#7ac2dca46da7f309449ba0f86b1fd28255b0c86a"
   integrity sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw==
+  dependencies:
+    decode-uri-component "^0.2.0"
+    filter-obj "^1.1.0"
+    split-on-first "^1.0.0"
+    strict-uri-encode "^2.0.0"
+
+query-string@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-7.0.1.tgz#45bd149cf586aaa582dffc7ec7a8ad97dd02f75d"
+  integrity sha512-uIw3iRvHnk9to1blJCG3BTc+Ro56CBowJXKmNNAm3RulvPBzWLRqKSiiDk+IplJhsydwtuNMHi8UGQFcCLVfkA==
   dependencies:
     decode-uri-component "^0.2.0"
     filter-obj "^1.1.0"
@@ -16583,7 +16597,7 @@ typescript@4.3.5:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
   integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
 
-typescript@^4.0, typescript@^4.1.2:
+typescript@^4.0:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.2.tgz#6d618640d430e3569a1dfb44f7d7e600ced3ee86"
   integrity sha512-gzP+t5W4hdy4c+68bfcv0t400HVJMMd2+H9B7gae1nQlBzCqvrXX+6GL/b3GAgyTH966pzrZ70/fRjwAtZksSQ==
@@ -16872,7 +16886,7 @@ uuid@^3.3.2, uuid@^3.4.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
-uuid@^8.2.0, uuid@^8.3.0:
+uuid@^8.2.0, uuid@^8.3.0, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
