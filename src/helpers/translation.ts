@@ -291,7 +291,7 @@ export const commonMessages = {
     recommendCourse: { id: 'common.recommend', defaultMessage: '推薦課程' },
     selectPodcast: { id: 'product.podcast.title.select', defaultMessage: '精選廣播' },
     salePrice: { id: 'product.program.content.price.sale', defaultMessage: '優惠價' },
-    creatorManagementSystem: { id: 'product.program.content.creatorManagementSystem', defaultMessage: '創作者後台' },
+    managementSystem: { id: 'common.content.managementSystem', defaultMessage: '管理後台' },
     resetPassword: {
       id: 'users.form.message.password.reset.already',
       defaultMessage: '已重設您的密碼，請回首頁並重新登入。',
