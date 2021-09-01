@@ -485,7 +485,7 @@ export const checkoutMessages = {
     barcode: { id: 'checkout.label.barcode', defaultMessage: '超商條碼繳費' },
     spgateway: { id: 'checkout.label.spgateway', defaultMessage: '藍新' },
     tappay: { id: 'checkout.label.tappay', defaultMessage: 'tappay' },
-    paypal: { id: 'checkout.label.paypal', defaultMessage: 'PayPal - 限海外' },
+    paypal: { id: 'checkout.label.paypal', defaultMessage: 'PayPal - 限非台灣地區' },
     parenting: { id: 'checkout.label.parenting', defaultMessage: '親子天下' },
     commonhealth: { id: 'checkout.label.commonhealth', defaultMessage: '康健' },
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
