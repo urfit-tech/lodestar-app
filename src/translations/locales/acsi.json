@@ -334,7 +334,7 @@
   "common.label.category": "類別",
   "common.label.firstPeriod": "首期",
   "common.label.free": "免費",
-  "common.label.freeSubscriptionNotice": "訂閱金額為 NT$ 0 時，系統需紀錄您的信用卡卡號，並於下期進行扣款",
+  "common.label.freeSubscriptionNotice": "訂閱金額為 NT$ 0 時，系統需刷取 NT$ 1 以紀錄您的信用卡卡號，並於下期進行扣款",
   "common.label.fromSecondPeriod": "第二期開始",
   "common.label.listPrice": "定價",
   "common.label.name": "名稱",
