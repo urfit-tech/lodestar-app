@@ -9,6 +9,7 @@ import CoverSection from '../components/page/CoverSection'
 import CreatorSection from '../components/page/CreatorSection'
 import CustomCoverSection from '../components/page/CustomCoverSection'
 import MisaFeatureSection from '../components/page/MisaFeatureSection'
+import MisaNavigationBar from '../components/page/MisaNavigationBar'
 import PostSection from '../components/page/PostSection'
 import ProgramIntroSection from '../components/page/ProgramIntroSection'
 import ProgramSection from '../components/page/ProgramSection'
@@ -61,6 +62,7 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
     homeProgramIntro: ProgramIntroSection,
     homeReferrer: ReferrerSection,
     homeMisaFeature: MisaFeatureSection,
+    homeMisaNav: MisaNavigationBar,
     homeBlndPost: BlndPostSection,
   }
 
