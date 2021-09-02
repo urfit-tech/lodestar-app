@@ -23,10 +23,8 @@ import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 const StyledTitle = styled.h3`
   ${CommonLargeTitleMixin}
   margin-bottom: 32px;
-  font-family: NotoSansCJKtc;
 `
 const StyledParagraph = styled.p`
-  font-family: NotoSansCJKtc;
   ${CommonTextMixin}
 `
 const StyledEnrolledPodcastPlanCreatorName = styled.span`

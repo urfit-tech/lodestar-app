@@ -11,7 +11,6 @@ import PriceLabel from '../../common/PriceLabel'
 import { BREAK_POINT } from '../../common/Responsive'
 
 const StyledTitle = styled.span`
-  font-family: NotoSansCJKtc;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.57;
@@ -37,7 +36,6 @@ const StyledMenuList = styled(MenuList)`
 const StyledMenuItem = styled(MenuItem)`
   height: 48px;
   letter-spacing: 0.2px;
-  font-family: NotoSansCJKtc;
   font-size: 16px;
   font-weight: 500;
   color: var(--gray-darker);

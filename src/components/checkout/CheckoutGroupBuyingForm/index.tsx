@@ -17,13 +17,11 @@ const StyledBlockTitle = styled.h2`
 const StyledPlanTitle = styled.h3`
   ${CommonLargeTextMixin}
   line-height: 1.5;
-  font-family: NotoSansCJKtc;
 `
 
 const StyledListItem = styled(ListItem)`
   && {
     ${CommonTextMixin}
-    font-family: NotoSansCJKtc;
   }
 `
 
@@ -31,7 +29,6 @@ const StyledFormLabel = styled(FormLabel)`
   && {
     color: var(--gray-darker);
     font-size: 14px;
-    font-family: NotoSansCJKtc;
     font-weight: 500;
     letter-spacing: 0.4px;
   }

@@ -1,31 +1,41 @@
 import { Tag } from 'antd'
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { saleMessages } from '../../helpers/translation'
 
 const OrderStatusTag: React.FC<{
   status: string
 }> = ({ status }) => {
+  const { renderOrderStatusTag } = useCustomRenderer()
   const { formatMessage } = useIntl()
 
+  let statusTag = <Tag color="#ff7d62">{formatMessage(saleMessages.status.fail)}</Tag>
   switch (status) {
     case 'UNPAID':
-      return <Tag color="#ffbe1e">{formatMessage(saleMessages.status.unpaid)}</Tag>
+      statusTag = <Tag color="#ffbe1e">{formatMessage(saleMessages.status.unpaid)}</Tag>
+      break
     case 'EXPIRED':
-      return <Tag color="#ec9e8f">{formatMessage(saleMessages.status.expired)}</Tag>
+      statusTag = <Tag color="#ec9e8f">{formatMessage(saleMessages.status.expired)}</Tag>
+      break
     case 'PARTIAL_PAID':
-      return <Tag color="#8fd5b5">{formatMessage(saleMessages.status.partialPaid)}</Tag>
+      statusTag = <Tag color="#8fd5b5">{formatMessage(saleMessages.status.partialPaid)}</Tag>
+      break
     case 'SUCCESS':
-      return <Tag color="#4ed1b3">{formatMessage(saleMessages.status.completed)}</Tag>
+      statusTag = <Tag color="#4ed1b3">{formatMessage(saleMessages.status.completed)}</Tag>
+      break
     case 'PARTIAL_REFUND':
-      return <Tag color="#cdcdcd">{formatMessage(saleMessages.status.partialRefund)}</Tag>
+      statusTag = <Tag color="#cdcdcd">{formatMessage(saleMessages.status.partialRefund)}</Tag>
+      break
     case 'REFUND':
-      return <Tag color="#9b9b9b">{formatMessage(saleMessages.status.refunded)}</Tag>
+      statusTag = <Tag color="#9b9b9b">{formatMessage(saleMessages.status.refunded)}</Tag>
+      break
     case 'DELETED':
-      return <Tag color="#72a7c1">{formatMessage(saleMessages.status.deleted)}</Tag>
-    default:
-      return <Tag color="#ff7d62">{formatMessage(saleMessages.status.fail)}</Tag>
+      statusTag = <Tag color="#72a7c1">{formatMessage(saleMessages.status.deleted)}</Tag>
+      break
   }
+
+  return renderOrderStatusTag?.({ status, defaultStatusTag: statusTag }) || statusTag
 }
 
 export default OrderStatusTag

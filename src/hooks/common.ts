@@ -16,6 +16,7 @@ type TargetProps = {
   isSubscription: boolean
   coverUrl?: string | null
   listPrice?: number
+  isOnSale?: boolean
   salePrice?: number
   discountDownPrice?: number
   currencyId?: string
@@ -32,7 +33,6 @@ type TargetProps = {
 
 export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Date }) => {
   const { formatMessage } = useIntl()
-  const { settings } = useApp()
   const [, targetId] = id.split('_')
 
   const { loading, error, data } = useQuery<hasura.GET_PRODUCT_SIMPLE, hasura.GET_PRODUCT_SIMPLEVariables>(
@@ -52,6 +52,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         title: data.program_by_pk.title,
         coverUrl: data.program_by_pk.cover_url || undefined,
         listPrice: data.program_by_pk.list_price,
+        isOnSale: data.program_by_pk.sold_at ? new Date(data.program_by_pk.sold_at).getTime() > Date.now() : false,
         salePrice:
           data.program_by_pk.sold_at && new Date(data.program_by_pk.sold_at).getTime() > Date.now()
             ? data.program_by_pk.sale_price
@@ -62,9 +63,12 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     ? {
         id: data.program_plan_by_pk.id,
         productType: 'ProgramPlan',
-        title: `${data.program_plan_by_pk.program.title} - ${data.program_plan_by_pk.title || ''}`,
-        coverUrl: data.program_plan_by_pk.program.cover_url || undefined,
+        title: `${data.program_plan_by_pk.program?.title || ''} - ${data.program_plan_by_pk.title || ''}`,
+        coverUrl: data.program_plan_by_pk.program?.cover_url || undefined,
         listPrice: data.program_plan_by_pk.list_price,
+        isOnSale: data.program_plan_by_pk.sold_at
+          ? new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
+          : false,
         salePrice:
           data.program_plan_by_pk.sold_at && new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
             ? data.program_plan_by_pk.sale_price
@@ -80,8 +84,11 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         id: data.program_package_plan_by_pk.id,
         productType: 'ProgramPackagePlan',
         title: data.program_package_plan_by_pk.title,
-        coverUrl: data.program_package_plan_by_pk.program_package.cover_url || undefined,
+        coverUrl: data.program_package_plan_by_pk.program_package?.cover_url || undefined,
         listPrice: data.program_package_plan_by_pk.list_price,
+        isOnSale: data.program_package_plan_by_pk.sold_at
+          ? new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
+          : false,
         salePrice:
           data.program_package_plan_by_pk.sold_at &&
           new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
@@ -96,9 +103,9 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     ? {
         id: data.activity_ticket_by_pk.id,
         productType: 'ActivityTicket',
-        title: `${data.activity_ticket_by_pk.activity.title} - ${data.activity_ticket_by_pk.title}`,
+        title: `${data.activity_ticket_by_pk.activity?.title || ''} - ${data.activity_ticket_by_pk.title || ''}`,
         listPrice: data.activity_ticket_by_pk.price,
-        coverUrl: data.activity_ticket_by_pk.activity.cover_url || undefined,
+        coverUrl: data.activity_ticket_by_pk.activity?.cover_url || undefined,
         isSubscription: false,
       }
     : data?.card_by_pk
@@ -113,9 +120,12 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     ? {
         id: data.project_plan_by_pk.id,
         productType: 'ProjectPlan',
-        title: `${data.project_plan_by_pk.project.title} - ${data.project_plan_by_pk.title}`,
+        title: `${data.project_plan_by_pk.project?.title || ''} - ${data.project_plan_by_pk.title || ''}`,
         coverUrl: data.project_plan_by_pk.cover_url || undefined,
         listPrice: data.project_plan_by_pk.list_price,
+        isOnSale: data.project_plan_by_pk.sold_at
+          ? new Date(data.project_plan_by_pk.sold_at).getTime() > Date.now()
+          : false,
         salePrice:
           data.project_plan_by_pk.sold_at && new Date(data.project_plan_by_pk.sold_at).getTime() > Date.now()
             ? data.project_plan_by_pk.sale_price
@@ -132,8 +142,11 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         id: data.podcast_program_by_pk.id,
         productType: 'PodcastProgram',
         title: data.podcast_program_by_pk.title,
-        coverUrl: data.podcast_program_by_pk.cover_url,
+        coverUrl: data.podcast_program_by_pk.cover_url || undefined,
         listPrice: data.podcast_program_by_pk.list_price,
+        isOnSale: data.podcast_program_by_pk.sold_at
+          ? new Date(data.podcast_program_by_pk.sold_at).getTime() > Date.now()
+          : false,
         salePrice:
           data.podcast_program_by_pk.sold_at && new Date(data.podcast_program_by_pk.sold_at).getTime() > Date.now()
             ? data.podcast_program_by_pk.sale_price
@@ -166,6 +179,9 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         productType: 'MerchandiseSpec',
         title: `${data.merchandise_spec_by_pk.merchandise.title} - ${data.merchandise_spec_by_pk.title}`,
         listPrice: data.merchandise_spec_by_pk.list_price,
+        isOnSale: data.merchandise_spec_by_pk.merchandise.sold_at
+          ? new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()
+          : false,
         salePrice:
           data.merchandise_spec_by_pk.merchandise.sold_at &&
           new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()

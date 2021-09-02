@@ -28,11 +28,11 @@ const StyledDecoration = styled.div`
   height: 50%;
   background-size: contain;
   background-repeat: no-repeat;
-  background-image: url('https://static.kolable.com/images/blnb/deco2-m.png?query=1234');
+  background-image: url('https://static.kolable.com/images/blnd/deco2-m.png');
 
   @media (min-width: ${BREAK_POINT}px) {
     width: 55vw;
-    background-image: url('https://static.kolable.com/images/blnb/deco2.png?query=1234');
+    background-image: url('https://static.kolable.com/images/blnd/deco2.png');
   }
 `
 const StyledCustomRatioImage = styled(CustomRatioImage)`
@@ -41,20 +41,28 @@ const StyledCustomRatioImage = styled(CustomRatioImage)`
 const StyleTitle = styled.h2`
   font-family: PingFangTC;
   font-size: 28px;
-  font-weight: 600;
   letter-spacing: 0.23px;
   text-align: center;
   color: #fff;
   position: relative;
+  font-weight: bold;
+  line-height: 1;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    font-size: 40px;
+  }
 `
 const StyledSubTitle = styled.h3`
-  font-family: NotoSansCJKtc;
   font-size: 40px;
   font-weight: bold;
   line-height: 1.1;
   letter-spacing: 1px;
   text-align: center;
   color: #fff;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    font-size: 60px;
+  }
 `
 const StyledTitleLink = styled.div`
   position: absolute;
@@ -69,7 +77,6 @@ const StyledPostCard = styled(Link)`
   }
 `
 const StyledPostTitle = styled.h4`
-  font-family: NotoSansCJKtc;
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 0.8px;
@@ -116,13 +123,13 @@ const StyledPostListContainer = styled.div`
   }
 `
 const StyledPostAbstract = styled.div`
-  @media (min-width: ${BREAK_POINT}px) {
-    ${MultiLineTruncationMixin}
-    color: white;
-    line-height: 1.69;
-    letter-spacing: 0.4px;
-    text-align: justify;
-  }
+  ${MultiLineTruncationMixin}
+  -webkit-line-clamp: 3;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  text-align: justify;
 `
 const StyledPostMeta = styled.div`
   color: var(--gray-dark);
@@ -141,7 +148,6 @@ const StyledPostMeta = styled.div`
 `
 const StyledLink = styled(Link)`
   color: white;
-  font-family: NotoSansCJKtc;
   font-size: 16px;
   line-height: 16px;
   font-weight: 500;
@@ -153,7 +159,7 @@ const StyledLink = styled(Link)`
 }
 `
 
-const BlnbPostSection: React.VFC = () => {
+const BlndPostSection: React.VFC = () => {
   const { enabledModules } = useApp()
   const { loadingPosts, posts, errorPosts } = useLatestPost({ limit: 3 })
 
@@ -172,7 +178,7 @@ const BlnbPostSection: React.VFC = () => {
     <StyledSection>
       <StyledDecoration />
       <div className="container px-0">
-        <StyledSubTitle>Blog</StyledSubTitle>
+        <StyledSubTitle>BLOG</StyledSubTitle>
         <StyleTitle className="mb-5">
           延伸閱讀
           <StyledTitleLink className="d-none d-lg-inline-block">
@@ -193,8 +199,8 @@ const BlnbPostSection: React.VFC = () => {
                     <StyledCustomRatioImage width="100%" ratio={2 / 3} src={post.coverUrl || EmptyCover} />
                   </StyledCover>
                 </StyledPostCoverContainer>
-                <StyledPostTitle className="list-item">{post.title}</StyledPostTitle>
-                <StyledPostMeta className="d-flex align-items-center">
+                <StyledPostTitle className="list-item mb-2">{post.title}</StyledPostTitle>
+                <StyledPostMeta className="d-flex align-items-center mb-3">
                   <CalendarAltOIcon className="mr-1" />
                   <span>{post.publishedAt ? moment(post.publishedAt).format('YYYY-MM-DD') : ''}</span>
                 </StyledPostMeta>
@@ -225,4 +231,4 @@ const ReadMoreLink: React.VFC = () => {
   )
 }
 
-export default BlnbPostSection
+export default BlndPostSection

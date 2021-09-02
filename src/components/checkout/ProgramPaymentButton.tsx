@@ -73,9 +73,12 @@ const ProgramPaymentButton: React.VFC<{ program: ProgramProps; variant?: string 
 }
 
 const useAddProgramToCart = (program: Pick<ProgramProps, 'id' | 'title' | 'listPrice' | 'salePrice'>) => {
-  const [sharingCode] = useQueryParam('sharing', StringParam)
   const { settings } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
+
+  const sessionStorageKey = `lodestar.sharing_code.${program.id}`
+  const [sharingCode] = useQueryParam('sharing', StringParam) || window.sessionStorage.getItem(sessionStorageKey)
+  sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
 
   return {
     isProgramInCart: isProductInCart?.('Program', program.id),

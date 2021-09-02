@@ -85,7 +85,7 @@ export const useCheck = ({
     async (
       paymentType: 'perpetual' | 'subscription' | 'groupBuying',
       invoice: InvoiceProps,
-      payment?: PaymentProps,
+      payment?: PaymentProps | null,
     ) => {
       setOrderPlacing(true)
       return Axios.post<{ code: string; message: string; result: { id: string } }>(

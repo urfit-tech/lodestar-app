@@ -197,7 +197,7 @@ export const useCurrency = (currencyId?: string) => {
       value.toLocaleString(locale || navigator.language, {
         style: 'currency',
         currency: currentCurrencyId,
-        maximumFractionDigits: currency['minorUnits'] || 0,
+        maximumFractionDigits: currency?.['minorUnits'] || 0,
         minimumFractionDigits: 0,
       }) || ''
     )
@@ -206,4 +206,10 @@ export const useCurrency = (currencyId?: string) => {
   return {
     formatCurrency,
   }
+}
+
+export async function sleep(time: number): Promise<void> {
+  return new Promise<void>((res, rej) => {
+    setTimeout(res, time)
+  })
 }

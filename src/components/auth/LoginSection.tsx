@@ -1,5 +1,5 @@
 import { Button, Icon } from '@chakra-ui/react'
-import { Form, Input, message } from 'antd'
+import { Form, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import React, { useContext, useState } from 'react'
 import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai'
@@ -11,6 +11,7 @@ import { useApp } from '../../containers/common/AppContext'
 import { handleError } from '../../helpers'
 import { authMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import { AuthState } from '../../types/member'
+import MigrationInput from '../common/MigrationInput'
 import { useAuth } from './AuthContext'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton, ParentingLoginButton } from './SocialLoginButton'
@@ -79,7 +80,7 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
     <>
       {renderTitle ? renderTitle() : <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>}
 
-      {!!settings['auth.parenting_client_id'] && (
+      {!!settings['auth.parenting.client_id'] && (
         <div className="mb-3">
           <ParentingLoginButton accountLinkToken={accountLinkToken} />
         </div>
@@ -123,7 +124,7 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
                   },
                 ],
               })(
-                <Input
+                <MigrationInput
                   placeholder={formatMessage(commonMessages.form.message.usernameAndEmail)}
                   suffix={<Icon as={AiOutlineUser} />}
                 />,
@@ -138,7 +139,7 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
                   },
                 ],
               })(
-                <Input
+                <MigrationInput
                   type="password"
                   placeholder={formatMessage(commonMessages.form.placeholder.password)}
                   suffix={<Icon as={AiOutlineLock} />}

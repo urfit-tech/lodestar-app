@@ -1,7 +1,8 @@
+import { Menu, MenuButton, MenuItem, MenuList, useTheme } from '@chakra-ui/react'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
-import { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import { useApp } from '../../containers/common/AppContext'
 import AuthButton from '../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
@@ -27,10 +28,20 @@ import {
   StyledLayoutContent,
   StyledLayoutHeader,
   StyledLogo,
-  StyledNavLinkButton,
+  StyledMenuItem,
+  StyledMenuTag,
+  StyledNavAnimationButton,
+  StyledNavButton,
   StyledNavTag,
 } from './DefaultLayout.styled'
 
+const StyledLayoutWrapper = styled(StyledLayout)`
+  && {
+    .css-r6z5ec {
+      z-index: 20;
+    }
+  }
+`
 const DefaultLayout: React.FC<{
   white?: boolean
   noHeader?: boolean
@@ -54,13 +65,14 @@ const DefaultLayout: React.FC<{
   children,
 }) => {
   const { formatMessage } = useIntl()
-  const theme = useContext(ThemeContext)
+  const theme = useTheme()
   const { renderFooter } = useCustomRenderer()
   const { currentMemberId, isAuthenticated, currentMember } = useAuth()
   const { name, settings, enabledModules } = useApp()
   const { navs } = useNav()
   const { refetchNotifications } = useContext(NotificationContext)
   const { visible: playerVisible } = useContext(PodcastPlayerContext)
+  const { renderCartButton } = useCustomRenderer()
 
   const [visible, setVisible] = useState(false)
 
@@ -72,7 +84,7 @@ const DefaultLayout: React.FC<{
     <AuthModalContext.Provider value={{ visible, setVisible }}>
       {visible && <AuthModal noGeneralLogin={noGeneralLogin} renderTitle={renderAuthModalTitle} />}
 
-      <StyledLayout variant={white ? 'white' : undefined}>
+      <StyledLayoutWrapper variant={white ? 'white' : undefined}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
           <div className="d-flex align-items-center">
             <LogoBlock className="mr-4">
@@ -97,27 +109,114 @@ const DefaultLayout: React.FC<{
                 .filter(nav => nav.block === 'header')
                 .map(nav =>
                   nav.external ? (
-                    <a key={nav.label} href={nav.href} target="_blank" rel="noopener noreferrer">
-                      <StyledNavLinkButton type="link">{nav.label}</StyledNavLinkButton>
-                    </a>
-                  ) : (
-                    <Link key={nav.label} to={nav.href}>
-                      <StyledNavLinkButton type="link">
+                    <Menu>
+                      <MenuButton
+                        as={
+                          settings['style.header.menu_button.animation.enable'] === '1'
+                            ? StyledNavAnimationButton
+                            : StyledNavButton
+                        }
+                        onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
+                      >
                         {nav.label}
-                        {nav.tag && <StyledNavTag color={theme['@primary-color']}>{nav.tag}</StyledNavTag>}
-                      </StyledNavLinkButton>
-                    </Link>
+                      </MenuButton>
+                      {nav.subNavs?.length > 0 && (
+                        <MenuList>
+                          {nav.subNavs?.map(v => (
+                            <>
+                              {v.external ? (
+                                <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
+                                  <StyledMenuItem _focus={{ bg: '#fff' }}>{v.label}</StyledMenuItem>
+                                </a>
+                              ) : (
+                                <Link key={v.label} to={v.href}>
+                                  <StyledMenuItem _focus={{ bg: '#fff' }}>
+                                    {v.label}
+                                    {v.tag && (
+                                      <StyledMenuTag
+                                        borderRadius="full"
+                                        color="#fff"
+                                        bg={theme?.colors?.primary?.[500]}
+                                      >
+                                        {v.tag}
+                                      </StyledMenuTag>
+                                    )}
+                                  </StyledMenuItem>
+                                </Link>
+                              )}
+                            </>
+                          ))}
+                        </MenuList>
+                      )}
+                    </Menu>
+                  ) : (
+                    <Menu>
+                      <MenuButton
+                        as={
+                          settings['style.header.menu_button.animation.enable'] === '1'
+                            ? StyledNavAnimationButton
+                            : StyledNavButton
+                        }
+                        onClick={() => nav.href && (window.location.href = nav.href)}
+                      >
+                        {nav.label}
+                        {nav.tag && (
+                          <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                            {nav.tag}
+                          </StyledNavTag>
+                        )}
+                      </MenuButton>
+                      {nav.subNavs.length > 0 && (
+                        <MenuList>
+                          {nav.subNavs?.map(v => (
+                            <>
+                              {v.external ? (
+                                <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
+                                  <MenuItem _focus={{ bg: '#fff' }}>
+                                    <StyledMenuItem>{v.label}</StyledMenuItem>
+                                  </MenuItem>
+                                </a>
+                              ) : (
+                                <Link key={v.label} to={v.href}>
+                                  <StyledMenuItem _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
+                                    {v.label}
+                                    {v.tag && (
+                                      <StyledMenuTag
+                                        borderRadius="full"
+                                        color="#fff"
+                                        bg={theme?.colors?.primary?.[500]}
+                                      >
+                                        {v.tag}
+                                      </StyledMenuTag>
+                                    )}
+                                  </StyledMenuItem>
+                                </Link>
+                              )}
+                            </>
+                          ))}
+                        </MenuList>
+                      )}
+                    </Menu>
                   ),
                 )}
 
               {isAuthenticated && (
-                <Link to={`/members/${currentMemberId}`}>
-                  <StyledNavLinkButton type="link">{formatMessage(commonMessages.button.myPage)}</StyledNavLinkButton>
-                </Link>
+                <Menu>
+                  <MenuButton
+                    as={
+                      settings['style.header.menu_button.animation.enable'] === '1'
+                        ? StyledNavAnimationButton
+                        : StyledNavButton
+                    }
+                    onClick={() => (window.location.href = `/members/${currentMemberId}`)}
+                  >
+                    {formatMessage(commonMessages.button.myPage)}
+                  </MenuButton>
+                </Menu>
               )}
             </Responsive.Desktop>
 
-            {!noCart && <CartDropdown />}
+            {!noCart && (renderCartButton ? renderCartButton() : <CartDropdown />)}
             {currentMemberId && <NotificationDropdown />}
             {currentMemberId && currentMember ? (
               <MemberProfileButton
@@ -148,7 +247,7 @@ const DefaultLayout: React.FC<{
           </Responsive.Default>
           {playerVisible && <EmptyBlock height="76px" />}
         </StyledLayoutContent>
-      </StyledLayout>
+      </StyledLayoutWrapper>
     </AuthModalContext.Provider>
   )
 }

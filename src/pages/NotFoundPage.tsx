@@ -22,7 +22,6 @@ const StyledIcon = styled(Icon)`
   width: 100px;
 `
 const StyledTitle = styled.h3`
-  font-family: NotoSansCJKtc;
   font-size: 20px;
   font-weight: bold;
   line-height: 1.6;

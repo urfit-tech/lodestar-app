@@ -26,9 +26,12 @@ const ActivityCollectionPage = () => {
   const { currentLanguage } = useContext(LanguageContext)
   const { pageTitle } = useNav()
   const { formatMessage } = useIntl()
-  const [active = null, setActive] = useQueryParam('active', StringParam)
+  const [active = null] = useQueryParam('categories', StringParam)
+  const [classification = null, setClassification] = useQueryParam('classification', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
-  const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
+  const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection({
+    categoryId: active ? active : undefined,
+  })
 
   const categories: {
     id: string
@@ -52,23 +55,25 @@ const ActivityCollectionPage = () => {
             <>
               <StyledButton
                 colorScheme="primary"
-                variant={active === null ? 'solid' : 'outline'}
+                variant={classification === null ? 'solid' : 'outline'}
                 className="mb-2"
-                onClick={() => setActive(null)}
+                onClick={() => setClassification(null)}
               >
                 {formatMessage(commonMessages.button.allCategory)}
               </StyledButton>
-              {categories.map(category => (
-                <StyledButton
-                  key={category.id}
-                  colorScheme="primary"
-                  variant={active === category.id ? 'solid' : 'outline'}
-                  className="ml-2 mb-2"
-                  onClick={() => setActive(category.id)}
-                >
-                  {category.name}
-                </StyledButton>
-              ))}
+              {categories
+                .filter(category => category.id !== active)
+                .map(category => (
+                  <StyledButton
+                    key={category.id}
+                    colorScheme="primary"
+                    variant={classification === category.id ? 'solid' : 'outline'}
+                    className="ml-2 mb-2"
+                    onClick={() => setClassification(category.id)}
+                  >
+                    {category.name}
+                  </StyledButton>
+                ))}
             </>
           )}
         </div>
@@ -81,7 +86,10 @@ const ActivityCollectionPage = () => {
 
           <div className="row">
             {activities
-              .filter(activity => active === null || activity.categories.some(category => category.id === active))
+              .filter(
+                activity =>
+                  classification === null || activity.categories.some(category => category.id === classification),
+              )
               .filter(
                 activity =>
                   !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage),

@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/react'
-import { Form, Input, message, Typography } from 'antd'
+import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
@@ -15,6 +15,7 @@ import {
 } from '../../helpers/translation'
 import { useAuth } from '../auth/AuthContext'
 import AdminCard from '../common/AdminCard'
+import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'
 
 type ProfilePasswordAdminCardProps = CardProps & FormComponentProps & { memberId: string }
@@ -69,7 +70,7 @@ const ProfilePasswordAdminCard: React.VFC<ProfilePasswordAdminCardProps> = ({ fo
                 message: formatMessage(profileMessages.form.message.currentPassword),
               },
             ],
-          })(<Input type="password" />)}
+          })(<MigrationInput type="password" />)}
         </Form.Item>
         <Form.Item label={formatMessage(settingsMessages.profile.form.label.newPassword)}>
           {form.getFieldDecorator('newPassword', {
@@ -79,7 +80,7 @@ const ProfilePasswordAdminCard: React.VFC<ProfilePasswordAdminCardProps> = ({ fo
                 message: formatMessage(settingsMessages.profile.form.message.newPassword),
               },
             ],
-          })(<Input type="password" />)}
+          })(<MigrationInput type="password" />)}
         </Form.Item>
         <Form.Item label={formatMessage(settingsMessages.profile.form.label.confirmation)}>
           {form.getFieldDecorator('confirmPassword', {
@@ -97,7 +98,7 @@ const ProfilePasswordAdminCard: React.VFC<ProfilePasswordAdminCardProps> = ({ fo
                 },
               },
             ],
-          })(<Input type="password" />)}
+          })(<MigrationInput type="password" />)}
         </Form.Item>
         <Form.Item wrapperCol={{ md: { offset: 4 } }}>
           <Button variant="outline" className="mr-2" onClick={() => form.resetFields()}>

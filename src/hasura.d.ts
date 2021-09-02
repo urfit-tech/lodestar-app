@@ -1486,8 +1486,9 @@ export interface GET_APP_app_by_pk_app_modules {
   module_id: string;
 }
 
-export interface GET_APP_app_by_pk_app_navs {
+export interface GET_APP_app_by_pk_app_navs_sub_app_navs {
   __typename: "app_nav";
+  id: any;
   block: string;
   position: number;
   label: string;
@@ -1496,6 +1497,23 @@ export interface GET_APP_app_by_pk_app_navs {
   external: boolean;
   locale: string;
   tag: string | null;
+}
+
+export interface GET_APP_app_by_pk_app_navs {
+  __typename: "app_nav";
+  id: any;
+  block: string;
+  position: number;
+  label: string;
+  icon: string | null;
+  href: string;
+  external: boolean;
+  locale: string;
+  tag: string | null;
+  /**
+   * An array relationship
+   */
+  sub_app_navs: GET_APP_app_by_pk_app_navs_sub_app_navs[];
 }
 
 export interface GET_APP_app_by_pk_app_settings {
@@ -6702,6 +6720,7 @@ export interface GET_PROGRAM_program_by_pk {
   is_issues_open: boolean;
   is_private: boolean;
   is_countdown_timer_visible: boolean;
+  is_introduction_section_visible: boolean;
   /**
    * An array relationship
    */
@@ -9218,6 +9237,7 @@ export enum app_nav_update_column {
   id = "id",
   label = "label",
   locale = "locale",
+  options = "options",
   parent_id = "parent_id",
   position = "position",
   tag = "tag",
@@ -11370,6 +11390,7 @@ export enum program_update_column {
   in_advance = "in_advance",
   is_countdown_timer_visible = "is_countdown_timer_visible",
   is_deleted = "is_deleted",
+  is_introduction_section_visible = "is_introduction_section_visible",
   is_issues_open = "is_issues_open",
   is_private = "is_private",
   is_sold_out = "is_sold_out",
@@ -12527,6 +12548,7 @@ export interface app_nav_bool_exp {
   id?: uuid_comparison_exp | null;
   label?: String_comparison_exp | null;
   locale?: String_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
   parent_id?: uuid_comparison_exp | null;
   position?: Int_comparison_exp | null;
   sub_app_navs?: app_nav_bool_exp | null;
@@ -12546,6 +12568,7 @@ export interface app_nav_insert_input {
   id?: any | null;
   label?: string | null;
   locale?: string | null;
+  options?: any | null;
   parent_id?: any | null;
   position?: number | null;
   sub_app_navs?: app_nav_arr_rel_insert_input | null;
@@ -17810,6 +17833,7 @@ export interface program_bool_exp {
   in_advance?: Boolean_comparison_exp | null;
   is_countdown_timer_visible?: Boolean_comparison_exp | null;
   is_deleted?: Boolean_comparison_exp | null;
+  is_introduction_section_visible?: Boolean_comparison_exp | null;
   is_issues_open?: Boolean_comparison_exp | null;
   is_private?: Boolean_comparison_exp | null;
   is_sold_out?: Boolean_comparison_exp | null;
@@ -18368,6 +18392,7 @@ export interface program_insert_input {
   in_advance?: boolean | null;
   is_countdown_timer_visible?: boolean | null;
   is_deleted?: boolean | null;
+  is_introduction_section_visible?: boolean | null;
   is_issues_open?: boolean | null;
   is_private?: boolean | null;
   is_sold_out?: boolean | null;

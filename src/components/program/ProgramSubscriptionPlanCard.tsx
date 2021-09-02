@@ -99,7 +99,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
             <Button
               colorScheme="primary"
               isFullWidth
-              isDisabled={isLoading}
+              isDisabled={isAuthenticated && isLoading}
               onClick={() => {
                 if (!isAuthenticated) {
                   setAuthModalVisible?.(true)

@@ -19,11 +19,17 @@ const StyledSection = styled.section`
   background: #4c60ff;
   -webkit-clip-path: polygon(0% 0%, 0% 100%, 100% 100%, 100% 8%);
   position: relative;
+  top: 5px;
 
   .frame {
     width: 243px;
     border-radius: 50%;
     overflow: hidden;
+
+    img:hover {
+      transform: scale(1.2);
+      transition: 0.7s;
+    }
   }
 
   h2 {
@@ -74,7 +80,19 @@ const StyledContainer = styled.div`
   margin: 0 auto 4rem;
   padding: 0 1.5rem;
   width: 100%;
-  max-width: 1080px;
+  max-width: 1120px;
+`
+
+const StyledHeading = styled.div`
+  text-align: center;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    text-align: left;
+  }
+`
+const StyledTitle = styled.h2`
+  font-weight: bold;
+  line-height: 1;
 `
 
 export const StyledCarousel = styled(Carousel)`
@@ -93,6 +111,7 @@ export const StyledCarousel = styled(Carousel)`
       font-size: 64px;
     }
     .slick-prev {
+      left: -16px;
       &,
       &:hover,
       &:focus {
@@ -100,6 +119,7 @@ export const StyledCarousel = styled(Carousel)`
       }
     }
     .slick-next {
+      right: -16px;
       &,
       &:hover,
       &:focus {
@@ -108,10 +128,10 @@ export const StyledCarousel = styled(Carousel)`
     }
     @media (min-width: ${BREAK_POINT}px) {
       .slick-prev {
-        left: -64px;
+        left: -4vw;
       }
       .slick-next {
-        right: -64px;
+        right: -4vw;
       }
     }
   }
@@ -127,17 +147,23 @@ const TeacherSection: React.FC<{
   return (
     <StyledSection>
       <StyledContainer>
-        <div>
-          <h2>{title}</h2>
+        <StyledHeading>
+          <StyledTitle>{title}</StyledTitle>
           <h3>{subtitle}</h3>
-        </div>
+        </StyledHeading>
         <StyledCarousel
           infinite
           arrows={true}
           autoplay
           autoplaySpeed={10000}
-          slidesToShow={3}
+          slidesToShow={4}
           responsive={[
+            {
+              breakpoint: 1280,
+              settings: {
+                slidesToShow: 3,
+              },
+            },
             {
               breakpoint: BREAK_POINT,
               settings: {
@@ -148,7 +174,9 @@ const TeacherSection: React.FC<{
         >
           {teachers.map(teacher => (
             <div>
-              <img className="frame mx-auto" src={teacher.avatarSrc} alt={teacher.name} />
+              <div className="frame mx-auto">
+                <img src={teacher.avatarSrc} alt={teacher.name} />
+              </div>
               <div className="name">{teacher.name}</div>
               <div className="description">
                 {teacher.title}

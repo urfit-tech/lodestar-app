@@ -57,7 +57,7 @@ const InvoiceInput: React.VFC<{
   shouldSameToShippingCheckboxDisplay?: boolean
 }> = ({ value, onChange, isValidating, shouldSameToShippingCheckboxDisplay }) => {
   const { formatMessage } = useIntl()
-  const { loading, enabledModules } = useApp()
+  const { loading, settings, enabledModules } = useApp()
 
   const nameRef = useRef<Input | null>(null)
   const phoneRef = useRef<Input | null>(null)
@@ -75,13 +75,23 @@ const InvoiceInput: React.VFC<{
 
   const errorFields = isValidating && value ? validateInvoice(value) : []
 
+  const customCharities: { code: string; name: string }[] = (() => {
+    try {
+      return JSON.parse(settings['invoice.charities']) || []
+    } catch {
+      return []
+    }
+  })()
+
   useEffect(() => {
     if (loading) {
       return
     }
 
     if (enabledModules.invoice) {
-      setSelectedType('donation')
+      setSelectedType((settings['invoice.default_type'] as InvoiceType) || 'donation')
+      settings['invoice.default_type'] === 'electronic' && setSelectedOption('send-to-email')
+      customCharities[0]?.code && setSelectedCharity(customCharities[0]?.code)
     } else {
       setSelectedType('hardcopy')
     }
@@ -261,10 +271,10 @@ const InvoiceInput: React.VFC<{
                 })
               }
             >
-              <Select.Option value="donation">{formatMessage(checkoutMessages.form.label.donateInvoice)}</Select.Option>
               <Select.Option value="electronic">
                 {formatMessage(checkoutMessages.form.label.electronicInvoice)}
               </Select.Option>
+              <Select.Option value="donation">{formatMessage(checkoutMessages.form.label.donateInvoice)}</Select.Option>
               <Select.Option value="uniform-number">
                 {formatMessage(checkoutMessages.form.label.uniformNumber)}
               </Select.Option>
@@ -283,9 +293,14 @@ const InvoiceInput: React.VFC<{
         <div className="col-12 col-lg-6">
           {selectedType === 'donation' && (
             <Select<string> value={selectedCharity} onChange={v => handleChange({ invoiceCharity: v })}>
+              {customCharities.map(v => (
+                <Select.Option value={v.code}>
+                  {v.code} {v.name}
+                </Select.Option>
+              ))}
+              <Select.Option value="25885">25885 財團法人伊甸社會福利基金會</Select.Option>
               <Select.Option value="5380">5380 社團法人台灣失智症協會</Select.Option>
               <Select.Option value="8957282">8957282 財團法人流浪動物之家基金會</Select.Option>
-              <Select.Option value="25885">25885 財團法人伊甸社會福利基金會</Select.Option>
             </Select>
           )}
 

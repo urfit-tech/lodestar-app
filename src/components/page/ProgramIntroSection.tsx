@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { usePublishedProgramCollection } from '../../hooks/program'
 import { BREAK_POINT } from '../common/Responsive'
 import ProgramCard from '../program/ProgramCard'
+import { useOnceAnimation } from './MisaFeatureSection'
 import { StyledCarousel } from './TeacherSection'
 
 const StyledColumn = styled.div<{ backgroundImage: string }>`
@@ -30,7 +31,6 @@ const StyledDecoration = styled.img`
   }
 `
 const StyledTitle = styled.h2`
-  font-family: NotoSansCJKtc;
   color: #fff;
   font-weight: bold;
   font-size: 40px;
@@ -59,7 +59,6 @@ const StyledSubTitle = styled.h3`
   }
 `
 const StyledQuote = styled.p`
-  font-family: NotoSansCJKtc;
   font-size: 24px;
   font-weight: bold;
   letter-spacing: 0.2px;
@@ -71,7 +70,6 @@ const StyledQuote = styled.p`
   }
 `
 const StyledQuotePerson = styled.span`
-  font-family: NotoSansCJKtc;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
@@ -79,8 +77,8 @@ const StyledQuotePerson = styled.span`
   color: #fff;
 `
 
-const StyledProgramColumn = styled.div`
-  background-color: #3144d2;
+const StyledProgramColumn = styled.div<{ color: string }>`
+  background-color: ${props => props.color};
 `
 const StyledProgramColumnWrapper = styled.div`
   width: 100%;
@@ -93,18 +91,30 @@ const StyledProgramColumnWrapper = styled.div`
     max-width: 780px;
   }
 `
-const StyledLink = styled(Link)`
+const StyledLink = styled(Link)<{ color: string }>`
   width: 178px;
   height: 44px;
   padding: 10px 56px;
   border-radius: 4px;
   color: white;
-  background-color: #4c60ff;
+  background-color: ${props => props.color};
 `
 
-const BlnbProgramSection: React.VFC<{
-  options: { backgroundImage: string; title: string; subtitle: string; quote: string; person: string }
-}> = ({ options: { backgroundImage, title, subtitle, quote, person } }) => {
+const ProgramIntroSection: React.VFC<{
+  options: {
+    backgroundImage: string
+    subtitle: string
+    quote: string
+    person: string
+    backgroundColor: string
+    linkColor: string
+    decorationImage?: string
+    title?: string
+  }
+}> = ({
+  options: { decorationImage, backgroundImage, title, subtitle, quote, person, backgroundColor, linkColor },
+}) => {
+  const { ref, activated } = useOnceAnimation()
   const { programs } = usePublishedProgramCollection({
     isPrivate: false,
     limit: 6,
@@ -113,13 +123,15 @@ const BlnbProgramSection: React.VFC<{
   return (
     <section className="row m-0">
       <StyledColumn className="col-12 col-lg-4" backgroundImage={backgroundImage}>
-        <StyledDecoration src="https://static.kolable.com/images/blnb/quot-top@3x.png" />
-        <StyledTitle className="mb-2">{title}</StyledTitle>
+        {decorationImage && <StyledDecoration src={decorationImage} />}
+        {title && <StyledTitle className="mb-2">{title}</StyledTitle>}
         <StyledSubTitle className="mb-5">{subtitle}</StyledSubTitle>
-        <StyledQuote className="mb-3">{quote}</StyledQuote>
+        <StyledQuote ref={ref} className={`mb-3 ${activated ? 'animate__animated animate__fadeInRight' : ''}`}>
+          {quote}
+        </StyledQuote>
         <StyledQuotePerson>{person}</StyledQuotePerson>
       </StyledColumn>
-      <StyledProgramColumn className="col-12 col-lg-8">
+      <StyledProgramColumn className="col-12 col-lg-8" color={backgroundColor}>
         <StyledProgramColumnWrapper>
           <StyledCarousel
             infinite
@@ -143,7 +155,9 @@ const BlnbProgramSection: React.VFC<{
             ))}
           </StyledCarousel>
           <div className="text-center mt-4">
-            <StyledLink to="/programs">查看更多</StyledLink>
+            <StyledLink to="/programs" color={linkColor}>
+              查看更多
+            </StyledLink>
           </div>
         </StyledProgramColumnWrapper>
       </StyledProgramColumn>
@@ -151,4 +165,4 @@ const BlnbProgramSection: React.VFC<{
   )
 }
 
-export default BlnbProgramSection
+export default ProgramIntroSection

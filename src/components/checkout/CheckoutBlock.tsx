@@ -47,7 +47,8 @@ const CheckoutBlock: React.VFC<{
   member: MemberProps | null
   shopId: string
   cartProducts: CartProductProps[]
-}> = ({ member, shopId, cartProducts }) => {
+  renderTerms?: () => React.ReactNode
+}> = ({ member, shopId, cartProducts, renderTerms }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
@@ -134,7 +135,7 @@ const CheckoutBlock: React.VFC<{
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
 
-  const { check, orderChecking, placeOrder, orderPlacing } = useCheck({
+  const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
     productIds: cartProducts.map(cartProduct => cartProduct.productId),
     discountId,
     shipping: hasPhysicalProduct ? shipping : null,
@@ -205,7 +206,7 @@ const CheckoutBlock: React.VFC<{
     if (!isValidShipping) {
       shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
-    } else if (!isValidInvoice) {
+    } else if (totalPrice > 0 && !isValidInvoice) {
       invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -218,7 +219,7 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
-    if (!payment) {
+    if (totalPrice > 0 && payment === null) {
       paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -279,59 +280,104 @@ const CheckoutBlock: React.VFC<{
         </div>
       )}
 
-      <div className="mb-3">
-        <AdminCard>
-          <div ref={paymentMethodRef}>
-            <PaymentSelector value={payment} onChange={v => setPayment(v)} />
+      {totalPrice > 0 && (
+        <>
+          <div className="mb-3">
+            <AdminCard>
+              <div ref={paymentMethodRef}>
+                <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
+              </div>
+            </AdminCard>
+          </div>
+          <div ref={invoiceRef} className="mb-3">
+            <AdminCard>
+              <InvoiceInput
+                value={invoice}
+                onChange={value => setInvoice(value)}
+                isValidating={isValidating}
+                shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
+              />
+            </AdminCard>
+          </div>
+        </>
+      )}
+
+      {cartProducts.length > 0 && totalPrice > 0 && !enabledModules.referrer && (
+        <AdminCard className="mb-3">
+          <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+        </AdminCard>
+      )}
+
+      {cartProducts.length > 0 && totalPrice === 0 && enabledModules.referrer && (
+        <AdminCard className="mb-3">
+          <div className="row" ref={referrerRef}>
+            <div className="col-12">
+              <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
+            </div>
+            <div className="col-12 col-lg-6">
+              <Form.Item
+                validateStatus={validateStatus}
+                hasFeedback
+                help={
+                  validateStatus === 'error'
+                    ? referrerId === currentMemberId
+                      ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
+                      : formatMessage(commonMessages.text.notFoundMemberEmail)
+                    : undefined
+                }
+              >
+                <StyledInputWrapper>
+                  <Input
+                    variant="outline"
+                    placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
+                    onBlur={e => setReferrerEmail(e.target.value)}
+                  />
+                </StyledInputWrapper>
+              </Form.Item>
+            </div>
           </div>
         </AdminCard>
-      </div>
+      )}
 
-      <div ref={invoiceRef} className="mb-3">
-        <AdminCard>
-          <InvoiceInput
-            value={invoice}
-            onChange={value => setInvoice(value)}
-            isValidating={isValidating}
-            shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
-          />
-        </AdminCard>
-      </div>
-
-      {cartProducts.length !== 0 && (
+      {cartProducts.length > 0 && totalPrice > 0 && enabledModules.referrer && (
         <AdminCard className="mb-3">
           <div className="mb-3">
             <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
           </div>
-          {enabledModules.referrer && (
-            <div className="row" ref={referrerRef}>
-              <div className="col-12">
-                <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
-              </div>
-              <div className="col-12 col-lg-6">
-                <Form.Item
-                  validateStatus={validateStatus}
-                  hasFeedback
-                  help={
-                    validateStatus === 'error'
-                      ? referrerId === currentMemberId
-                        ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
-                        : formatMessage(commonMessages.text.notFoundMemberEmail)
-                      : undefined
-                  }
-                >
-                  <StyledInputWrapper>
-                    <Input
-                      variant="outline"
-                      placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
-                      onBlur={e => setReferrerEmail(e.target.value)}
-                    />
-                  </StyledInputWrapper>
-                </Form.Item>
-              </div>
+
+          <div className="row" ref={referrerRef}>
+            <div className="col-12">
+              <StyledTitle className="mb-2">{formatMessage(commonMessages.label.referrer)}</StyledTitle>
             </div>
-          )}
+            <div className="col-12 col-lg-6">
+              <Form.Item
+                validateStatus={validateStatus}
+                hasFeedback
+                help={
+                  validateStatus === 'error'
+                    ? referrerId === currentMemberId
+                      ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
+                      : formatMessage(commonMessages.text.notFoundMemberEmail)
+                    : undefined
+                }
+              >
+                <StyledInputWrapper>
+                  <Input
+                    variant="outline"
+                    placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
+                    onBlur={e => setReferrerEmail(e.target.value)}
+                  />
+                </StyledInputWrapper>
+              </Form.Item>
+            </div>
+          </div>
         </AdminCard>
+      )}
+
+      {renderTerms && (
+        <div className="mb-3">
+          <AdminCard>{renderTerms()}</AdminCard>
+        </div>
       )}
 
       <div className="mb-3">

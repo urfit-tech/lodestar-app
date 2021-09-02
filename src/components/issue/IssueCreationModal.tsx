@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Form, Input, message, Modal, Typography } from 'antd'
+import { Form, message, Modal, Typography } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { ModalProps } from 'antd/lib/modal'
 import BraftEditor, { EditorState } from 'braft-editor'
@@ -12,6 +12,7 @@ import { createUploadFn } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import { useAuth } from '../auth/AuthContext'
 import MessageButton from '../common/MessageButton'
+import MigrationInput from '../common/MigrationInput'
 import StyledBraftEditor from '../common/StyledBraftEditor'
 
 type IssueCreationModalProps = ModalProps &
@@ -83,7 +84,7 @@ const IssueCreationModal: React.VFC<IssueCreationModalProps> = ({ threadId, form
                   message: formatMessage(issueMessages.form.message.title),
                 },
               ],
-            })(<Input />)}
+            })(<MigrationInput />)}
           </Form.Item>
           <Form.Item label={formatMessage(issueMessages.form.label.question)}>
             {form.getFieldDecorator('description', {

@@ -1,10 +1,11 @@
 import { Button, Divider, SkeletonText, useDisclosure } from '@chakra-ui/react'
 import { camelCase } from 'lodash'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
 import InvoiceInput, { validateInvoice } from '../../components/checkout/InvoiceInput'
@@ -21,9 +22,16 @@ import { useMember, useUpdateMemberMetadata } from '../../hooks/member'
 import { InvoiceProps, PaymentProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import { ShippingMethodProps } from '../../types/merchandise'
 import { useAuth } from '../auth/AuthContext'
+import { BREAK_POINT } from '../common/Responsive'
 import CheckoutGroupBuyingForm from './CheckoutGroupBuyingForm'
 import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
 import CheckoutProductReferrerInput from './CheckoutProductReferrerInput'
+
+const StyledSubmitBlock = styled.div`
+  @media (max-width: ${BREAK_POINT}px) {
+    padding-bottom: 7rem;
+  }
+`
 
 const CheckoutProductItem: React.VFC<{ name: string; price: number; currencyId?: string }> = ({
   name,
@@ -55,22 +63,46 @@ export type CheckoutProductModalProps = {
     productId: string
     onProductChange: (productId: string) => void
   }) => React.ReactElement
+  renderTerms?: () => React.ReactElement
 }
+
+const cachedCartInfo: {
+  shipping: ShippingProps | null
+  invoice: InvoiceProps | null
+  payment: PaymentProps | null
+} = {
+  shipping: null,
+  invoice: null,
+  payment: null,
+}
+try {
+  const cachedShipping = localStorage.getItem('kolable.cart.shipping')
+  const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
+  const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
+  cachedCartInfo.shipping = cachedShipping && JSON.parse(cachedShipping)
+  cachedCartInfo.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
+  cachedCartInfo.payment = cachedPayment && JSON.parse(cachedPayment)
+} catch {}
+
 const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   defaultProductId,
   renderTrigger,
   renderProductSelector,
+  renderTerms,
   warningText,
   startedAt,
   shippingMethods,
 }) => {
   const { formatMessage } = useIntl()
-  const [sharingCode] = useQueryParam('sharing', StringParam)
   const history = useHistory()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { enabledModules, settings } = useApp()
   const { currentMemberId } = useAuth()
   const { member: currentMember } = useMember(currentMemberId || '')
+
+  const sessionStorageKey = `lodestar.sharing_code.${defaultProductId}`
+  const [sharingCode] = useQueryParam('sharing', StringParam) || window.sessionStorage.getItem(sessionStorageKey)
+  sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
 
   // checkout
   const [productId, setProductId] = useState(defaultProductId)
@@ -86,24 +118,6 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     invoice: currentMember?.invoice,
     payment: currentMember?.payment,
   }
-
-  const cachedCartInfo: {
-    shipping: ShippingProps | null
-    invoice: InvoiceProps | null
-    payment: PaymentProps | null
-  } = {
-    shipping: null,
-    invoice: null,
-    payment: null,
-  }
-  try {
-    const cachedShipping = localStorage.getItem('kolable.cart.shipping')
-    const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
-    const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
-    cachedCartInfo.shipping = cachedShipping && JSON.parse(cachedShipping)
-    cachedCartInfo.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
-    cachedCartInfo.payment = cachedPayment && JSON.parse(cachedPayment)
-  } catch {}
 
   const [shipping, setShipping] = useState<ShippingProps>({
     name: '',
@@ -125,29 +139,28 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   })
 
   const [payment, setPayment] = useState<PaymentProps | null | undefined>()
-  const initializePayment = useCallback(
-    (isProductSubscription: boolean) => {
-      setPayment(
-        isProductSubscription
-          ? {
-              gateway: settings['payment.subscription.default_gateway'] || 'tappay',
-              method: 'credit',
-            }
-          : {
-              gateway: settings['payment.perpetual.default_gateway'] || 'spgateway',
-              method: settings['payment.perpetual.default_gateway_method'] || 'credit',
-              ...memberCartInfo.payment,
-              ...cachedCartInfo.payment,
-            },
-      )
-    },
-    [memberCartInfo.payment],
+
+  const initialPayment: PaymentProps = useMemo(
+    () =>
+      target?.isSubscription
+        ? {
+            gateway: settings['payment.subscription.default_gateway'] || 'tappay',
+            method: 'credit',
+          }
+        : {
+            gateway: settings['payment.perpetual.default_gateway'] || 'spgateway',
+            method: settings['payment.perpetual.default_gateway_method'] || 'credit',
+            ...memberCartInfo.payment,
+            ...cachedCartInfo.payment,
+          },
+    [target?.isSubscription, settings, memberCartInfo.payment],
   )
+
   useEffect(() => {
     if (typeof target?.isSubscription === 'boolean') {
-      initializePayment(target.isSubscription)
+      setPayment(initialPayment)
     }
-  }, [target?.isSubscription, initializePayment])
+  }, [target?.isSubscription, initialPayment])
 
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
@@ -192,14 +205,14 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
     const isValidShipping = !target.isPhysical || validateShipping(shipping)
     const isValidInvoice = validateInvoice(invoice).length === 0
 
-    if (!payment) {
+    if (totalPrice > 0 && payment === null) {
       paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
     if (!isValidShipping) {
       shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
-    } else if (!isValidInvoice) {
+    } else if ((totalPrice > 0 || target.discountDownPrice) && !isValidInvoice) {
       invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -316,24 +329,27 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
-        {target.isSubscription === false && (
+        {totalPrice > 0 && target.isSubscription === false && (
           <div className="mb-5" ref={paymentMethodRef}>
-            <PaymentSelector value={payment} onChange={v => setPayment(v)} />
+            <PaymentSelector value={payment} onChange={v => setPayment(v)} isValidating={isValidating} />
           </div>
         )}
 
-        <div ref={invoiceRef} className="mb-5">
-          <InvoiceInput
-            value={invoice}
-            onChange={value => setInvoice(value)}
-            isValidating={isValidating}
-            shouldSameToShippingCheckboxDisplay={target.isPhysical}
-          />
-        </div>
-
-        <div className="mb-3">
-          <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
-        </div>
+        {(totalPrice > 0 || target.discountDownPrice) && (
+          <>
+            <div ref={invoiceRef} className="mb-5">
+              <InvoiceInput
+                value={invoice}
+                onChange={value => setInvoice(value)}
+                isValidating={isValidating}
+                shouldSameToShippingCheckboxDisplay={target.isPhysical}
+              />
+            </div>
+            <div className="mb-3">
+              <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
+            </div>
+          </>
+        )}
 
         {enabledModules.referrer && (
           <div className="row mb-3" ref={referrerRef}>
@@ -351,7 +367,11 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         )}
 
         <Divider className="mb-3" />
-
+        {renderTerms && (
+          <StyledCheckoutBlock className="mb-5">
+            <div className="mb-2">{renderTerms()}</div>
+          </StyledCheckoutBlock>
+        )}
         {settings['custom.project.plan_price_style'] === 'hidden' &&
         productId.startsWith('ProjectPlan_') ? null : orderChecking ? (
           <SkeletonText noOfLines={4} spacing="5" />
@@ -381,7 +401,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </>
         )}
 
-        <div className="text-right">
+        <StyledSubmitBlock className="text-right">
           <Button variant="outline" onClick={onClose} className="mr-3">
             {formatMessage(commonMessages.ui.cancel)}
           </Button>
@@ -390,7 +410,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
               ? formatMessage(commonMessages.button.subscribeNow)
               : formatMessage(checkoutMessages.button.cartSubmit)}
           </Button>
-        </div>
+        </StyledSubmitBlock>
       </CommonModal>
     </>
   )

@@ -1,6 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
 import { HStack, useRadioGroup } from '@chakra-ui/react'
-import { Input } from 'antd'
 import { flatten, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -9,6 +8,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive from '../components/common/Responsive'
+import SearchInput from '../components/common/SearchInput'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCard from '../components/merchandise/MerchandiseCard'
@@ -60,10 +60,19 @@ const MerchandiseCollectionPage: React.VFC = () => {
   })
   const { pageTitle } = useNav()
 
-  const [selectCategory, setSelectCategory] = useState<string | null>()
+  const [selectCategory, setSelectCategory] = useState<string | null>(null)
   const [categoryId, setCategoryId] = useState<string | null>()
 
-  const filteredMerchandises = merchandises.filter(merchandise => !tag || merchandise.tags?.includes(tag))
+  const filteredMerchandises = merchandises
+    .filter(merchandise => !tag || merchandise.tags?.includes(tag))
+    .filter(merchandise =>
+      selectCategory
+        ? selectCategory === 'isPhysical'
+          ? merchandise.isPhysical === true
+          : merchandise.isPhysical === false
+        : merchandise,
+    )
+
   const merchandiseCategories = uniqBy(
     category => category.id,
     flatten(filteredMerchandises.map(merchandise => merchandise.categories || [])),
@@ -138,7 +147,7 @@ const MerchandiseCollectionPage: React.VFC = () => {
 
           {!tag && (
             <StyledSearchBlock>
-              <Input.Search
+              <SearchInput
                 className="mb-2"
                 placeholder={formatMessage(messages.keywordSearch)}
                 onSearch={keyword => {
@@ -211,13 +220,6 @@ const MerchandiseCollectionPage: React.VFC = () => {
                 .filter(
                   merchandise =>
                     !categoryId || merchandise.categories?.map(category => category.id).includes(categoryId),
-                )
-                .filter(merchandise =>
-                  selectCategory
-                    ? selectCategory === 'isPhysical'
-                      ? merchandise.isPhysical === true
-                      : merchandise.isPhysical === false
-                    : merchandise,
                 )
                 .map(merchandise => (
                   <div key={merchandise.id} className="col-lg-4 col-12 mb-5">

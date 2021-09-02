@@ -2,6 +2,7 @@ import React, { createContext, useContext } from 'react'
 import { RenderMemberAdminMenuProps } from '../components/common/AdminMenu'
 
 export type CustomRendererProps = {
+  renderCartButton?: () => React.ReactNode
   renderCopyright?: (name?: string) => React.ReactNode
   renderRegisterTerm?: () => React.ReactNode
   renderMemberProfile?: (member: {
@@ -19,6 +20,7 @@ export type CustomRendererProps = {
     DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElement> }>
   }) => React.ReactElement
   renderMemberAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement
+  renderOrderStatusTag?: (props: { status: string; defaultStatusTag: JSX.Element }) => React.ReactElement
 }
 
 const CustomRendererContext = createContext<CustomRendererProps>({})

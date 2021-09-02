@@ -1,4 +1,4 @@
-import { Button, Form, Icon, Input, message } from 'antd'
+import { Button, Form, Icon, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import React, { useState } from 'react'
@@ -6,6 +6,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import MigrationInput from '../components/common/MigrationInput'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
@@ -92,7 +93,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
                 },
               ],
             })(
-              <Input
+              <MigrationInput
                 type="password"
                 placeholder={formatMessage(usersMessages.placeholder.enterNewPassword)}
                 suffix={<Icon type="lock" />}
@@ -118,7 +119,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
                 },
               ],
             })(
-              <Input
+              <MigrationInput
                 type="password"
                 placeholder={formatMessage(usersMessages.placeholder.enterNewPasswordAgain)}
                 suffix={<Icon type="lock" />}

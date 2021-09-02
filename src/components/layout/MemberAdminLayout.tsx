@@ -16,7 +16,6 @@ const StyledContent = styled.div<{ white?: boolean; footerHeight: number }>`
 `
 
 const StyledHeading = styled.h2`
-  font-family: NotoSansCJKtc;
   font-size: 24px;
   font-weight: bold;
   letter-spacing: 0.2px;

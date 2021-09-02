@@ -1,5 +1,5 @@
-import { Button } from '@chakra-ui/react'
-import { Form, Input, message, Typography } from 'antd'
+import { Button, Textarea } from '@chakra-ui/react'
+import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import React from 'react'
@@ -10,6 +10,7 @@ import { commonMessages, profileMessages } from '../../helpers/translation'
 import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
 import { AvatarImage } from '../common/Image'
+import MigrationInput from '../common/MigrationInput'
 import SingleUploader from '../common/SingleUploader'
 import { StyledForm } from '../layout'
 
@@ -96,12 +97,12 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
                 message: formatMessage(profileMessages.form.message.enterName),
               },
             ],
-          })(<Input />)}
+          })(<MigrationInput />)}
         </Form.Item>
         <Form.Item label={formatMessage(profileMessages.form.message.intro)}>
           {form.getFieldDecorator('description', {
             initialValue: member && member.description,
-          })(<Input.TextArea rows={5} />)}
+          })(<Textarea rows={5} />)}
         </Form.Item>
         <Form.Item wrapperCol={{ md: { offset: 4 } }}>
           <Button variant="outline" className="mr-2" onClick={() => form.resetFields()}>

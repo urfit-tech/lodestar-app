@@ -10,7 +10,7 @@ import { SectionTitle } from '../../pages/AppPage'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledSection = styled.section`
-  padding-bottom: 80px;
+  padding: 80px 0;
 `
 const StyledWrapper = styled.div`
   margin: 0 auto;
