@@ -12,7 +12,7 @@ import CreditCardSelector, { CardHolder } from '../components/payment/CreditCard
 import TapPayForm, { TPCreditCard } from '../components/payment/TapPayForm'
 import { codeMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
-import { sleep, useTappay } from '../hooks/util'
+import { useTappay } from '../hooks/util'
 
 const StyledFreeSubscriptionNotice = styled.p`
   color: var(--gray-dark);
@@ -25,7 +25,7 @@ const StyledFreeSubscriptionNotice = styled.p`
 const messages = defineMessages({
   freeSubscriptionNotice: {
     id: 'common.label.freeSubscriptionNotice',
-    defaultMessage: '訂閱金額為 NT$ 0 時，系統需紀錄您的信用卡卡號，並於下期進行扣款',
+    defaultMessage: '訂閱金額為 NT$ 0 時，系統需刷取 NT$ 1 以紀錄您的信用卡卡號，並於下期進行扣款',
   },
 })
 
@@ -59,17 +59,16 @@ const PaymentTapPayBlock: React.VFC = () => {
 
   const handlePaymentPay = async () => {
     setIsPaying(true)
-    let _memberCreditCardId = memberCreditCardId
     try {
-      if (!_memberCreditCardId) {
-        _memberCreditCardId = await addCreditCard({
+      if (memberCreditCardId) {
+        await payPayment(memberCreditCardId)
+      } else {
+        await addCreditCard({
           phoneNumber: member?.phone || '0987654321',
           name: member?.name || 'test',
           email: member?.email || 'test@gmail.com',
         })
       }
-      await sleep(5000)
-      await payPayment(_memberCreditCardId)
       history.push(`/members/${currentMemberId}`)
     } catch (err) {
       message.error(err)
@@ -152,6 +151,7 @@ const usePayment = (paymentNo: number) => {
           data: {
             prime,
             cardHolder,
+            paymentNo,
           },
           headers: { authorization: `Bearer ${authToken}` },
         })
