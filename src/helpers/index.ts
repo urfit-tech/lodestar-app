@@ -329,7 +329,11 @@ export const getFileExtension = (fileName: String) => {
   return fileName.substr(fileName.lastIndexOf('.') + 1, fileName.length)
 }
 
-export const isHTMLString = (str: string) => {
-  const doc = new DOMParser().parseFromString(str, 'text/html')
-  return Array.from(doc.body.childNodes).some(node => node.nodeType === 1)
-}
+export const isHTMLString = (str: string) =>
+  !(str || '')
+    // replace html tag with content
+    .replace(/<([^>]+?)([^>]*?)>(.*?)<\/\1>/gi, '')
+    // remove remaining self closing tags
+    .replace(/(<([^>]+)>)/gi, '')
+    // remove extra space at start and end
+    .trim()

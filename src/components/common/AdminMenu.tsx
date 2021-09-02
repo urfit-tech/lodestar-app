@@ -30,7 +30,7 @@ const StyledMenu = styled(Menu)`
     border-right: none;
   }
 
-  & .ant-menu-item-selected.creatorManagementSystem {
+  & .ant-menu-item-selected.managementSystem {
     background: none !important;
   }
 `
@@ -49,7 +49,7 @@ export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
   const handleClick = ({ key, item }: ClickParam) => {
     if (key.startsWith('_blank')) {
       window.open(item.props['data-href'])
-    } else if (key.startsWith('creator_management_system')) {
+    } else if (key.startsWith('management_system')) {
       window.open(`//${managementDomain?.domain[0]}/admin`)
     } else {
       const route = routesProps[key]
@@ -68,18 +68,20 @@ export const MemberAdminMenu: React.VFC<
   MenuProps & { renderAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement }
 > = ({ renderAdminMenu, ...props }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, currentUserRole } = useAuth()
+  const { currentMemberId, currentUserRole, permissions } = useAuth()
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
   const { socialCards } = useSocialCardCollection()
 
   const defaultMenuItems = [
     {
-      key: 'creator_management_system',
-      item: currentUserRole === 'content-creator' && (
-        <Menu.Item key="creator_management_system" className="creatorManagementSystem">
+      key: 'management_system',
+      item: (currentUserRole === 'app-owner' ||
+        currentUserRole === 'content-creator' ||
+        permissions.BACKSTAGE_ENTER) && (
+        <Menu.Item key="management_system" className="managementSystem">
           <SettingsIcon className="mr-2" />
-          {formatMessage(commonMessages.content.creatorManagementSystem)}
+          {formatMessage(commonMessages.content.managementSystem)}
         </Menu.Item>
       ),
     },
