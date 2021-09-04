@@ -108,8 +108,17 @@ const ShippingInput: React.VFC<{
   }
 
   const handleStoreSelect = () => {
+    if (!process.env.REACT_APP_API_BASE_ROOT) {
+      return
+    }
+    let apiUrl: string
+    try {
+      apiUrl = new URL(process.env.REACT_APP_API_BASE_ROOT).href
+    } catch {
+      apiUrl = `${window.location.origin}/${process.env.REACT_APP_API_BASE_ROOT}`
+    }
     const cvsSelectionBackUrl = encodeURIComponent(
-      `${process.env.REACT_APP_API_BASE_ROOT}/payment/cvs-proxy/${value?.shippingMethod}?callbackUrl=${window.location.origin}/cvs`,
+      `${apiUrl}/payment/cvs-proxy/${value?.shippingMethod}?callbackUrl=${window.location.origin}/cvs`,
     )
     let cvsSelectionUrl
 
