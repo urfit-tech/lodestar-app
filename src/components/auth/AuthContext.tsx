@@ -13,6 +13,7 @@ type AuthProps = {
   currentMemberId: string | null
   authToken: string | null
   currentMember: { name: string; username: string; email: string; pictureUrl: string } | null
+  permissions: { [key: string]: boolean }
   refreshToken?: () => Promise<void>
   register?: (data: {
     appId?: string
@@ -39,6 +40,7 @@ const defaultAuthContext: AuthProps = {
   currentMemberId: null,
   authToken: null,
   currentMember: null,
+  permissions: {},
 }
 
 const AuthContext = React.createContext<AuthProps>(defaultAuthContext)
@@ -92,6 +94,12 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
           email: payload.email,
           pictureUrl: payload.pictureUrl,
         },
+        permissions: payload?.permissions
+          ? payload.permissions.reduce((accumulator: { [key: string]: boolean }, currentValue: string) => {
+              accumulator[currentValue] = true
+              return accumulator
+            }, {})
+          : {},
         refreshToken: async () =>
           Axios.post(
             `${process.env.REACT_APP_API_BASE_ROOT}/auth/refresh-token`,

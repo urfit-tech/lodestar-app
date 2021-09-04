@@ -291,7 +291,7 @@ export const commonMessages = {
     recommendCourse: { id: 'common.recommend', defaultMessage: '推薦課程' },
     selectPodcast: { id: 'product.podcast.title.select', defaultMessage: '精選廣播' },
     salePrice: { id: 'product.program.content.price.sale', defaultMessage: '優惠價' },
-    creatorManagementSystem: { id: 'product.program.content.creatorManagementSystem', defaultMessage: '創作者後台' },
+    managementSystem: { id: 'common.content.managementSystem', defaultMessage: '管理後台' },
     resetPassword: {
       id: 'users.form.message.password.reset.already',
       defaultMessage: '已重設您的密碼，請回首頁並重新登入。',
@@ -485,7 +485,7 @@ export const checkoutMessages = {
     barcode: { id: 'checkout.label.barcode', defaultMessage: '超商條碼繳費' },
     spgateway: { id: 'checkout.label.spgateway', defaultMessage: '藍新' },
     tappay: { id: 'checkout.label.tappay', defaultMessage: 'tappay' },
-    paypal: { id: 'checkout.label.paypal', defaultMessage: 'PayPal - 限海外' },
+    paypal: { id: 'checkout.label.paypal', defaultMessage: 'PayPal - 限非台灣地區' },
     parenting: { id: 'checkout.label.parenting', defaultMessage: '親子天下' },
     commonhealth: { id: 'checkout.label.commonhealth', defaultMessage: '康健' },
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
