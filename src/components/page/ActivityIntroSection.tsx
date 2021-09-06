@@ -155,7 +155,7 @@ const ActivityIntroSection: React.VFC<{
             ))}
           </StyledCarousel>
           <div className="text-center mt-4">
-            <StyledLink to={`/activities${categoryId ? `?category=${categoryId}` : ''}`} color={linkColor}>
+            <StyledLink to={`/activities${categoryId ? `?categories=${categoryId}` : ''}`} color={linkColor}>
               查看更多
             </StyledLink>
           </div>
