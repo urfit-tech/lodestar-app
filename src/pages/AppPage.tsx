@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import MessengerChat from '../components/common/MessengerChat'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import ActivityIntroSection from '../components/page/ActivityIntroSection'
 import ActivitySection from '../components/page/ActivitySection'
 import BlndPostSection from '../components/page/BlndPostSection'
 import CoverSection from '../components/page/CoverSection'
@@ -64,6 +65,7 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
     homeMisaFeature: MisaFeatureSection,
     homeMisaNav: MisaNavigationBar,
     homeBlndPost: BlndPostSection,
+    homeActivityIntro: ActivityIntroSection,
   }
 
   return (
