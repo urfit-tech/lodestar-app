@@ -77,10 +77,10 @@ const StyledQuotePerson = styled.span`
   color: #fff;
 `
 
-const StyledProgramColumn = styled.div<{ color: string }>`
+const StyledActivityColumn = styled.div<{ color: string }>`
   background-color: ${props => props.color};
 `
-const StyledProgramColumnWrapper = styled.div`
+const StyledActivityColumnWrapper = styled.div`
   width: 100%;
   margin: 80px auto;
 
@@ -131,8 +131,8 @@ const ActivityIntroSection: React.VFC<{
         </StyledQuote>
         <StyledQuotePerson>{person}</StyledQuotePerson>
       </StyledColumn>
-      <StyledProgramColumn className="col-12 col-lg-8" color={backgroundColor}>
-        <StyledProgramColumnWrapper>
+      <StyledActivityColumn className="col-12 col-lg-8" color={backgroundColor}>
+        <StyledActivityColumnWrapper>
           <StyledCarousel
             infinite
             arrows={true}
@@ -159,8 +159,8 @@ const ActivityIntroSection: React.VFC<{
               查看更多
             </StyledLink>
           </div>
-        </StyledProgramColumnWrapper>
-      </StyledProgramColumn>
+        </StyledActivityColumnWrapper>
+      </StyledActivityColumn>
     </section>
   )
 }
