@@ -762,7 +762,7 @@ export const productMessages = {
       unpublished: { id: 'product.activity.tab.unpublished', defaultMessage: '未上架' },
     }),
     title: defineMessages({
-      default: { id: 'product.activity.title', defaultMessage: '線下實體' },
+      default: { id: 'product.activity.title', defaultMessage: '活動' },
       sessions: { id: 'product.activity.title.sessions', defaultMessage: '包含場次' },
       remark: { id: 'product.activity.title.remark', defaultMessage: '備註說明' },
       release: { id: 'product.activity.title.release', defaultMessage: '售票時間' },
