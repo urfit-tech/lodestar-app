@@ -1,3 +1,22 @@
+import { Editor, Frame } from '@craftjs/core'
+import CraftActivity from 'lodestar-app-element/src/components/craft/CraftActivity'
+import CraftBackground from 'lodestar-app-element/src/components/craft/CraftBackground'
+import CraftButton from 'lodestar-app-element/src/components/craft/CraftButton'
+import CraftCard from 'lodestar-app-element/src/components/craft/CraftCard'
+import CraftCarousel from 'lodestar-app-element/src/components/craft/CraftCarousel'
+import CraftCarouselContainer from 'lodestar-app-element/src/components/craft/CraftCarouselContainer'
+import CraftCollapse from 'lodestar-app-element/src/components/craft/CraftCollapse'
+import CraftContainer from 'lodestar-app-element/src/components/craft/CraftContainer'
+import CraftImage from 'lodestar-app-element/src/components/craft/CraftImage'
+import CraftInstructor from 'lodestar-app-element/src/components/craft/CraftInstructor'
+import CraftLayout from 'lodestar-app-element/src/components/craft/CraftLayout'
+import CraftParagraph from 'lodestar-app-element/src/components/craft/CraftParagraph'
+import CraftPodcastProgram from 'lodestar-app-element/src/components/craft/CraftPodcastProgram'
+import CraftProgram from 'lodestar-app-element/src/components/craft/CraftProgram'
+import CraftProject from 'lodestar-app-element/src/components/craft/CraftProject'
+import CraftStatistics from 'lodestar-app-element/src/components/craft/CraftStatistics'
+import CraftTitle from 'lodestar-app-element/src/components/craft/CraftTitle'
+import CraftTitleAndParagraph from 'lodestar-app-element/src/components/craft/CraftTitleAndParagraph'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -68,13 +87,41 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
 
   return (
     <DefaultLayout {...page.options}>
-      {page.appPageSections.map(section => {
-        const Section = sectionConverter[section.type]
-        if (!sectionConverter[section.type]) {
-          return <></>
-        }
-        return <Section key={section.id} options={section.options} />
-      })}
+      {page.craftData ? (
+        <Editor
+          enabled={false}
+          resolver={{
+            CraftContainer,
+            CraftLayout,
+            CraftTitle,
+            CraftParagraph,
+            CraftTitleAndParagraph,
+            CraftButton,
+            CraftCarousel,
+            CraftCarouselContainer,
+            CraftStatistics,
+            CraftImage,
+            CraftCard,
+            CraftCollapse,
+            CraftBackground,
+            CraftProgram,
+            CraftProject,
+            CraftActivity,
+            CraftPodcastProgram,
+            CraftInstructor,
+          }}
+        >
+          <Frame data={JSON.stringify(page.craftData)} />
+        </Editor>
+      ) : (
+        page.appPageSections.map(section => {
+          const Section = sectionConverter[section.type]
+          if (!sectionConverter[section.type]) {
+            return <></>
+          }
+          return <Section key={section.id} options={section.options} />
+        })
+      )}
     </DefaultLayout>
   )
 }
