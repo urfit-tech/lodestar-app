@@ -33,12 +33,12 @@ export const StyledList = styled(List)`
     }
   }
 `
-const BlankIcon = styled.i`
+export const BlankIcon = styled.i`
   display: inline-block;
   width: 16px;
   height: 16px;
 `
-const BorderedItem = styled(List.Item)`
+export const BorderedItem = styled(List.Item)`
   border-bottom: 1px solid #e8e8e8;
 
   &.shift-left {
@@ -162,7 +162,7 @@ const MemberProfileButton: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { closePlayer } = useContext(PodcastPlayerContext)
-  const { renderMemberProfile, renderMemberAdminMenu, renderLogout } = useCustomRenderer()
+  const { renderMemberProfile, renderMemberAdminMenu, renderLogout, renderMyPageNavItem } = useCustomRenderer()
   const { logout } = useAuth()
   const { enabledModules } = useApp()
 
@@ -188,10 +188,12 @@ const MemberProfileButton: React.VFC<{
 
         <Responsive.Default>
           <CustomNavLinks />
-          <BorderedItem onClick={() => history.push(`/members/${member.id}`)} style={{ cursor: 'pointer' }}>
-            <BlankIcon className="mr-2" />
-            {formatMessage(commonMessages.content.myPage)}
-          </BorderedItem>
+          {renderMyPageNavItem?.({ memberId: member.id }) || (
+            <BorderedItem onClick={() => history.push(`/members/${member.id}`)} style={{ cursor: 'pointer' }}>
+              <BlankIcon className="mr-2" />
+              {formatMessage(commonMessages.content.myPage)}
+            </BorderedItem>
+          )}
         </Responsive.Default>
 
         <BorderedItem className="shift-left">
