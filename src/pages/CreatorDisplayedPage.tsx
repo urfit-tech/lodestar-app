@@ -147,7 +147,7 @@ const CreatorDisplayedPage: React.VFC<{}> = () => {
 const usePublishedCreator = () => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_CREATOR>(gql`
     query GET_PUBLISHED_CREATOR {
-      creator(where: { published_at: { _is_null: false } }, order_by: { published_at: desc, position: asc }) {
+      creator(where: { published_at: { _is_null: false } }, order_by: { position: asc, published_at: desc }) {
         id
         name
         picture_url
