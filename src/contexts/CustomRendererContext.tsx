@@ -21,6 +21,7 @@ export type CustomRendererProps = {
   }) => React.ReactElement
   renderMemberAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement
   renderOrderStatusTag?: (props: { status: string; defaultStatusTag: JSX.Element }) => React.ReactElement
+  renderMyPageNavItem?: (props: { memberId: string | null }) => React.ReactElement
 }
 
 const CustomRendererContext = createContext<CustomRendererProps>({})

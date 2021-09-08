@@ -72,7 +72,7 @@ const DefaultLayout: React.FC<{
   const { navs } = useNav()
   const { refetchNotifications } = useContext(NotificationContext)
   const { visible: playerVisible } = useContext(PodcastPlayerContext)
-  const { renderCartButton } = useCustomRenderer()
+  const { renderCartButton, renderMyPageNavItem } = useCustomRenderer()
 
   const [visible, setVisible] = useState(false)
 
@@ -200,20 +200,23 @@ const DefaultLayout: React.FC<{
                   ),
                 )}
 
-              {isAuthenticated && (
-                <Menu>
-                  <MenuButton
-                    as={
-                      settings['style.header.menu_button.animation.enable'] === '1'
-                        ? StyledNavAnimationButton
-                        : StyledNavButton
-                    }
-                    onClick={() => (window.location.href = `/members/${currentMemberId}`)}
-                  >
-                    {formatMessage(commonMessages.button.myPage)}
-                  </MenuButton>
-                </Menu>
-              )}
+              {isAuthenticated &&
+                (renderMyPageNavItem?.({
+                  memberId: currentMemberId,
+                }) || (
+                  <Menu>
+                    <MenuButton
+                      as={
+                        settings['style.header.menu_button.animation.enable'] === '1'
+                          ? StyledNavAnimationButton
+                          : StyledNavButton
+                      }
+                      onClick={() => (window.location.href = `/members/${currentMemberId}`)}
+                    >
+                      {formatMessage(commonMessages.button.myPage)}
+                    </MenuButton>
+                  </Menu>
+                ))}
             </Responsive.Desktop>
 
             {!noCart && (renderCartButton ? renderCartButton() : <CartDropdown />)}
