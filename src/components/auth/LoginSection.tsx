@@ -1,9 +1,9 @@
-import { Button, Icon } from '@chakra-ui/react'
-import { Form, message } from 'antd'
-import { FormComponentProps } from 'antd/lib/form'
+import { Button, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
+import { message } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
@@ -12,7 +12,6 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { handleError } from '../../helpers'
 import { authMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import { AuthState } from '../../types/member'
-import MigrationInput from '../common/MigrationInput'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton, ParentingLoginButton } from './SocialLoginButton'
 
@@ -26,19 +25,12 @@ const ForgetPassword = styled.div`
   }
 `
 
-type LoginSectionProps = FormComponentProps & {
+const LoginSection: React.VFC<{
   noGeneralLogin?: boolean
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
   accountLinkToken?: string
   renderTitle?: () => React.ReactNode
-}
-const LoginSection: React.VFC<LoginSectionProps> = ({
-  form,
-  noGeneralLogin,
-  onAuthStateChange,
-  accountLinkToken,
-  renderTitle,
-}) => {
+}> = ({ noGeneralLogin, onAuthStateChange, accountLinkToken, renderTitle }) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -46,25 +38,28 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
   const { login } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: {
+      account: '',
+      password: '',
+    },
+  })
 
-  const handleLogin = () => {
-    if (!login) {
-      return
-    }
-
-    form.validateFields((error, values) => {
-      if (error) {
+  const handleLogin = handleSubmit(
+    ({ account, password }) => {
+      if (login === undefined) {
         return
       }
+
       setLoading(true)
       login({
-        account: values.account.trim().toLowerCase(),
-        password: values.password,
+        account: account.trim().toLowerCase(),
+        password: password,
         accountLinkToken: accountLinkToken,
       })
         .then(() => {
-          setVisible && setVisible(false)
-          form.resetFields()
+          setVisible?.(false)
+          reset()
           back && history.push(back)
         })
         .catch((error: Error) => {
@@ -73,8 +68,11 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
         })
         .catch(handleError)
         .finally(() => setLoading(false))
-    })
-  }
+    },
+    error => {
+      console.error(error)
+    },
+  )
 
   return (
     <>
@@ -109,69 +107,49 @@ const LoginSection: React.VFC<LoginSectionProps> = ({
               <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
             ))}
 
-          <Form
-            onSubmit={e => {
-              e.preventDefault()
-              handleLogin()
-            }}
-          >
-            <Form.Item>
-              {form.getFieldDecorator('account', {
-                rules: [
-                  {
-                    required: true,
-                    message: formatMessage(commonMessages.form.message.usernameAndEmail),
-                  },
-                ],
-              })(
-                <MigrationInput
-                  placeholder={formatMessage(commonMessages.form.message.usernameAndEmail)}
-                  suffix={<Icon as={AiOutlineUser} />}
-                />,
-              )}
-            </Form.Item>
-            <Form.Item>
-              {form.getFieldDecorator('password', {
-                rules: [
-                  {
-                    required: true,
-                    message: formatMessage(commonMessages.form.message.password),
-                  },
-                ],
-              })(
-                <MigrationInput
-                  type="password"
-                  placeholder={formatMessage(commonMessages.form.placeholder.password)}
-                  suffix={<Icon as={AiOutlineLock} />}
-                />,
-              )}
-            </Form.Item>
-            <ForgetPassword>
-              <Link to="/forgot-password">{formatMessage(authMessages.link.forgotPassword)}</Link>
-            </ForgetPassword>
-            <Form.Item>
-              <Button isFullWidth isLoading={loading} type="submit" colorScheme="primary">
-                {formatMessage(commonMessages.button.login)}
-              </Button>
-            </Form.Item>
+          <InputGroup className="mb-3">
+            <Input
+              name="account"
+              ref={register({ required: formatMessage(commonMessages.form.message.usernameAndEmail) })}
+              placeholder={formatMessage(commonMessages.form.message.usernameAndEmail)}
+            />
+            <InputRightElement children={<Icon as={AiOutlineUser} />} />
+          </InputGroup>
 
-            <StyledAction>
-              <span>{formatMessage(authMessages.content.noMember)}</span>
-              <Button
-                colorScheme="primary"
-                variant="ghost"
-                size="sm"
-                lineHeight="unset"
-                onClick={() => onAuthStateChange('register')}
-              >
-                {formatMessage(commonMessages.button.signUp)}
-              </Button>
-            </StyledAction>
-          </Form>
+          <InputGroup className="mb-3">
+            <Input
+              type="password"
+              name="password"
+              ref={register({ required: formatMessage(commonMessages.form.message.password) })}
+              placeholder={formatMessage(commonMessages.form.message.password)}
+            />
+            <InputRightElement children={<Icon as={AiOutlineLock} />} />
+          </InputGroup>
+
+          <ForgetPassword>
+            <Link to="/forgot-password">{formatMessage(authMessages.link.forgotPassword)}</Link>
+          </ForgetPassword>
+
+          <Button variant="primary" isFullWidth isLoading={loading} onClick={handleLogin}>
+            {formatMessage(commonMessages.button.login)}
+          </Button>
+
+          <StyledAction>
+            <span>{formatMessage(authMessages.content.noMember)}</span>
+            <Button
+              colorScheme="primary"
+              variant="ghost"
+              size="sm"
+              lineHeight="unset"
+              onClick={() => onAuthStateChange('register')}
+            >
+              {formatMessage(commonMessages.button.signUp)}
+            </Button>
+          </StyledAction>
         </>
       )}
     </>
   )
 }
 
-export default Form.create<LoginSectionProps>()(LoginSection)
+export default LoginSection
