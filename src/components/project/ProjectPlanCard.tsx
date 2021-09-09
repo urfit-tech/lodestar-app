@@ -188,7 +188,7 @@ const PerpetualPlanBlock: React.VFC<{
   const { settings } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
 
-  const sessionStorageKey = `lodestar.sharing_code.${projectPlanId}`
+  const sessionStorageKey = `lodestar.sharing_code.ProjectPlan_${projectPlanId}`
   const [sharingCode] = useQueryParam('sharing', StringParam) || window.sessionStorage.getItem(sessionStorageKey)
   sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
 
