@@ -294,13 +294,13 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     allowedUserRole: 'general-member',
   },
   member_program_issues_admin: {
-    path: '/settings/program_issues',
+    path: '/settings/program-issues',
     pageName: 'member/ProgramIssueCollectionAdminPage',
     authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_product_issues_admin: {
-    path: '/settings/product_issues',
+    path: '/settings/product-issues',
     pageName: 'member/ProductIssueCollectionAdminPage',
     authenticated: true,
     allowedUserRole: 'general-member',
@@ -346,13 +346,6 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
     pageName: 'member/SocialCardCollectionPage',
     authenticated: true,
     allowedUserRole: 'general-member',
-  },
-
-  // NITS remove when finished craft component test
-  craft: {
-    path: '/craft',
-    pageName: 'CraftPage',
-    authenticated: false,
   },
 }
 
