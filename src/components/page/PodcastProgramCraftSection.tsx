@@ -19,7 +19,7 @@ const PodcastProgramSection: React.VFC<{ options: { title?: string; colAmount?: 
             desktop: { columnAmount: 2, columnRatio: [6, 6] },
           }}
         >
-          <PodcastProgramBlock displayAmount={3} />
+          <PodcastProgramBlock />
         </Layout>
       </div>
 

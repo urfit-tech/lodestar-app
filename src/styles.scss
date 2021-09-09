@@ -24,6 +24,10 @@ i.anticon svg {
   }
 }
 
+.ant-col.ant-form-item-control-wrapper {
+  flex-grow: 1;
+}
+
 .ant-popover {
   z-index: 1001;
   .ant-popover-title {

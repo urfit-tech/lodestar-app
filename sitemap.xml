@@ -82,10 +82,10 @@
          <loc>https://demo.lodestar-dev.cc/settings/orders</loc> 
     </url>
     <url> 
-         <loc>https://demo.lodestar-dev.cc/settings/program_issues</loc> 
+         <loc>https://demo.lodestar-dev.cc/settings/program-issues</loc> 
     </url>
     <url> 
-         <loc>https://demo.lodestar-dev.cc/settings/product_issues</loc> 
+         <loc>https://demo.lodestar-dev.cc/settings/product-issues</loc> 
     </url>
     <url> 
          <loc>https://demo.lodestar-dev.cc/settings/practices</loc> 
