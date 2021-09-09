@@ -76,7 +76,7 @@ const useAddProgramToCart = (program: Pick<ProgramProps, 'id' | 'title' | 'listP
   const { settings } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
 
-  const sessionStorageKey = `lodestar.sharing_code.${program.id}`
+  const sessionStorageKey = `lodestar.sharing_code.Program_${program.id}`
   const [sharingCode] = useQueryParam('sharing', StringParam) || window.sessionStorage.getItem(sessionStorageKey)
   sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
 
