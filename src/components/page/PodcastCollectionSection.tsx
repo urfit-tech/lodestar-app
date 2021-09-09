@@ -1,8 +1,19 @@
 import styled from 'styled-components'
 
-const StyledSection = styled.section<{ variant?: 'primary-color' }>`
+const StyledSectionLayout = styled.section<{ variant?: 'primary-color' }>`
   ${props => props.variant === 'primary-color' && `background: ${props.theme['@primary-color']}`};
   padding: 80px 0;
+
+  h2 {
+    font-family: NotoSansCJKtc;
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.35;
+    letter-spacing: 0.5px;
+    color: ${props => (props.variant === 'primary-color' ? 'white' : 'var(--gray-darker)')};
+    margin-bottom: 40px;
+  }
 `
 
 export const SectionLayout: React.FC<{ title?: string; variant?: 'primary-color' }> = ({
@@ -11,12 +22,12 @@ export const SectionLayout: React.FC<{ title?: string; variant?: 'primary-color'
   children,
 }) => {
   return (
-    <StyledSection variant={variant}>
+    <StyledSectionLayout variant={variant}>
       <div className="container">
         {title && <h2>{title}</h2>}
         {children}
       </div>
-    </StyledSection>
+    </StyledSectionLayout>
   )
 }
 
