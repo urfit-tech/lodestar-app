@@ -36,6 +36,7 @@ const StyledTitle = styled.h2`
   font-size: 40px;
   line-height: 1.1;
   letter-spacing: 1px;
+  font-family: NotoSansCJKtc;
 
   @media (min-width: ${BREAK_POINT}px) {
     font-size: clamp(40px, 3.5vw, 60px);
@@ -45,7 +46,7 @@ const StyledTitle = styled.h2`
 `
 const StyledSubTitle = styled.h3`
   color: #fff;
-  font-family: PingFangTC;
+  font-family: NotoSansCJKtc;
 
   font-size: 28px;
   font-weight: 600;
@@ -70,6 +71,7 @@ const StyledQuote = styled.p`
   }
 `
 const StyledQuotePerson = styled.span`
+  font-family: NotoSansCJKtc;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;

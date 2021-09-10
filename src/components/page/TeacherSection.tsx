@@ -34,6 +34,7 @@ const StyledSection = styled.section`
 
   h2 {
     font-size: 60px;
+    font-family: NotoSansCJKtc;
     color: #fff;
   }
 
@@ -41,6 +42,7 @@ const StyledSection = styled.section`
     font-size: 40px;
     margin-top: 4px;
     color: #fff;
+    font-family: NotoSansCJKtc;
     padding-bottom: 56px;
   }
 
@@ -49,6 +51,7 @@ const StyledSection = styled.section`
   }
 
   .name {
+    font-family: NotoSansCJKtc;
     font-size: 24px;
     margin-top: 24px;
     margin-bottom: 12px;
@@ -57,6 +60,7 @@ const StyledSection = styled.section`
   }
 
   .description {
+    font-family: NotoSansCJKtc;
     font-size: 16px;
     letter-spacing: 0.2px;
     color: #fff;
@@ -64,6 +68,7 @@ const StyledSection = styled.section`
   }
 
   .type {
+    font-family: NotoSansCJKtc;
     font-size: 12px;
     background-color: rgba(255, 255, 255, 0.1);
     margin-top: 12px;
