@@ -13,7 +13,7 @@ const StyledCard = styled.div`
   background-color: #fff;
 
   img {
-    margin-bottom: 16px;
+    margin-bottom: 32px;
   }
 
   h3 {

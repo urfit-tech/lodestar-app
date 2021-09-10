@@ -9,13 +9,13 @@ const StyledSectionLayout = styled.section<{ variant?: 'primary-color' }>`
 
   h2 {
     font-family: NotoSansCJKtc;
-    font-size: 40px;
+    font-size: 28px;
     font-weight: bold;
+    letter-spacing: 0.23px;
+    color: var(--gray-darker);
     text-align: center;
-    line-height: 1.35;
-    letter-spacing: 0.5px;
     color: ${props => (props.variant === 'primary-color' ? 'white' : 'var(--gray-darker)')};
-    margin-bottom: 40px;
+    margin-bottom: 42px;
   }
 `
 
@@ -33,6 +33,14 @@ export const SectionLayout: React.FC<{ title?: string; variant?: 'primary-color'
     </StyledSectionLayout>
   )
 }
+
+const StyledCol = styled.div`
+  @media (min-width: 320px) and (max-width: ${BREAK_POINT - 1}px) {
+    &:nth-child(n + 5) {
+      display: none;
+    }
+  }
+`
 
 const StyledCard = styled.div`
   overflow: hidden;
@@ -88,7 +96,7 @@ const PodcastCollectionSection: React.FC<{
     <SectionLayout title={title}>
       <div className="row">
         {podcasts.map(podcast => (
-          <div key={podcast.id} className="col-6 col-lg-3 my-3">
+          <StyledCol key={podcast.id} className="col-6 col-lg-3 my-3">
             <StyledCard>
               <img src={podcast.coverUrl || ''} alt={podcast.title} />
               <StyledCardContent>
@@ -99,7 +107,7 @@ const PodcastCollectionSection: React.FC<{
                 ))}
               </StyledCardContent>
             </StyledCard>
-          </div>
+          </StyledCol>
         ))}
       </div>
       <div className="text-center">
