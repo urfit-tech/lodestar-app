@@ -1,4 +1,7 @@
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
+import { BREAK_POINT } from '../common/Responsive'
 
 const StyledSectionLayout = styled.section<{ variant?: 'primary-color' }>`
   ${props => props.variant === 'primary-color' && `background: ${props.theme['@primary-color']}`};
@@ -31,6 +34,49 @@ export const SectionLayout: React.FC<{ title?: string; variant?: 'primary-color'
   )
 }
 
+const StyledCard = styled.div`
+  border-radius: 4px;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+`
+
+const StyledCardContent = styled.div`
+  padding: 20px;
+  h3 {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+    color: var(--gray-darker);
+  }
+
+  div.unit {
+    font-family: NotoSansCJKtc;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    color: var(--gray-dark);
+  }
+
+  span.tag {
+    border: solid 1px ${props => props.theme['@primary-color']};
+    border-radius: 12px;
+    padding: 3px 8px;
+    font-family: NotoSansCJKtc;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+    color: ${props => props.theme['@primary-color']};
+  }
+
+  @media (min-width: ${BREAK_POINT}px) {
+    padding: 24px;
+  }
+`
+
+const StyledLink = styled(Link)`
+  color: ${props => props.theme['@primary-color']};
+`
+
 const PodcastCollectionSection: React.FC<{
   options: {
     title?: string
@@ -41,17 +87,24 @@ const PodcastCollectionSection: React.FC<{
     <SectionLayout title={title}>
       <div className="row">
         {podcasts.map(podcast => (
-          <div className="col-3">
-            <img key={podcast.id} src={podcast.coverUrl || ''} alt={podcast.title} />
-            <div>
-              {podcast.title}
-              {podcast.programCount}
-              {podcast.categoryNames.map(name => (
-                <span>{name}</span>
-              ))}
-            </div>
+          <div key={podcast.id} className="col-6 col-lg-3 my-3">
+            <StyledCard>
+              <img src={podcast.coverUrl || ''} alt={podcast.title} />
+              <StyledCardContent>
+                <h3>{podcast.title}</h3>
+                <div className="unit mb-3">共 {podcast.programCount} 單元</div>
+                {podcast.categoryNames.map(name => (
+                  <span className="tag mr-2">{name}</span>
+                ))}
+              </StyledCardContent>
+            </StyledCard>
           </div>
         ))}
+      </div>
+      <div className="text-center">
+        <StyledLink className="d-inline-block mt-4" to="/">
+          查看更多 <AngleRightIcon className="d-inline-block m-auto" />
+        </StyledLink>
       </div>
     </SectionLayout>
   )
