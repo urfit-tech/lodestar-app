@@ -124,9 +124,17 @@ const ProgramContentPlayer: React.VFC<
       title: string
     }
     isSwarmifyAvailable: boolean
+    noAnnouncement?: boolean
     onVideoEvent?: (event: VideoEvent) => void
   }
-> = ({ programContentId, programContentBody, nextProgramContent, isSwarmifyAvailable, onVideoEvent }) => {
+> = ({
+  programContentId,
+  programContentBody,
+  nextProgramContent,
+  isSwarmifyAvailable,
+  noAnnouncement,
+  onVideoEvent,
+}) => {
   const { formatMessage } = useIntl()
   const videoId = `v-${programContentBody.id}`
   const { id: appId } = useApp()
@@ -140,6 +148,7 @@ const ProgramContentPlayer: React.VFC<
       ? 'smartVideo'
       : 'reactPlayer',
   )
+  console.log({ playerType, urls })
 
   const cachedPlayerConfig: PlayerConfigProps = getPlayerConfig()
 
@@ -152,7 +161,7 @@ const ProgramContentPlayer: React.VFC<
 
   return (
     <>
-      {isSwarmifyAvailable && playerType === 'smartVideo' && (
+      {!noAnnouncement && isSwarmifyAvailable && playerType === 'smartVideo' && (
         <StyledAnnouncement className="mb-3">
           <div className="row">
             <div className="col-12 col-md-9">
@@ -598,7 +607,7 @@ const useUrls = (appId: string, programContentBodyId: string) => {
   } | null>(null)
 
   useEffect(() => {
-    if (!appId || !authToken) {
+    if (!appId) {
       return
     }
 
