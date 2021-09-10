@@ -24,6 +24,7 @@ import MessengerChat from '../components/common/MessengerChat'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ActivityIntroSection from '../components/page/ActivityIntroSection'
 import ActivitySection from '../components/page/ActivitySection'
+import BlndCTASection from '../components/page/BlndCTASection'
 import BlndPostSection from '../components/page/BlndPostSection'
 import CoverSection from '../components/page/CoverSection'
 import CreatorSection from '../components/page/CreatorSection'
@@ -89,6 +90,7 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
     messenger: MessengerChat,
     // custom
     homeBlndPost: BlndPostSection,
+    homeBlndCTA: BlndCTASection,
     homeMisaFeature: MisaFeatureSection,
     homeMisaNav: MisaNavigationBar,
     homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
