@@ -101,7 +101,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const { member: currentMember } = useMember(currentMemberId || '')
 
   const sessionStorageKey = `lodestar.sharing_code.${defaultProductId}`
-  const [sharingCode] = useQueryParam('sharing', StringParam) || window.sessionStorage.getItem(sessionStorageKey)
+  const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
   sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
 
   // checkout
