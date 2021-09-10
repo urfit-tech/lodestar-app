@@ -109,7 +109,7 @@ export const StyledMenuItem = styled(MenuItem)`
 export const StyledLayoutContent = styled(Layout.Content)`
   position: relative;
   height: calc(100vh - 4rem);
-  overflow-y: auto;
+  overflow: hidden auto;
 
   &.full-height {
     padding-top: 4rem;
