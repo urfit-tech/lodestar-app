@@ -35,6 +35,7 @@ export const SectionLayout: React.FC<{ title?: string; variant?: 'primary-color'
 }
 
 const StyledCard = styled.div`
+  overflow: hidden;
   border-radius: 4px;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
   background-color: #fff;
@@ -103,12 +104,18 @@ const PodcastCollectionSection: React.FC<{
       </div>
       <div className="text-center">
         <StyledLink className="d-inline-block mt-4" to="/">
-          查看更多 <AngleRightIcon className="d-inline-block m-auto" />
+          <MoreLink to="/" />
         </StyledLink>
       </div>
     </SectionLayout>
   )
 }
+
+export const MoreLink: React.VFC<{ to: string }> = ({ to }) => (
+  <StyledLink className="d-inline-block mt-4" to={to}>
+    查看更多 <AngleRightIcon className="d-inline-block m-auto" />
+  </StyledLink>
+)
 
 const useNewestPodcastCollection: () => {
   podcasts: {
@@ -124,7 +131,7 @@ const useNewestPodcastCollection: () => {
       .fill(null)
       .map((_, i) => ({
         id: i.toString(),
-        coverUrl: 'https://static.kolable.com/images/littlestar/podcast-cover2.png',
+        coverUrl: 'https://static.kolable.com/images/littlestar/podcast-cover3.png',
         title: '第 28 期 - 我從那裡來？',
         programCount: 10,
         categoryNames: ['親子', '公衛防疫'],

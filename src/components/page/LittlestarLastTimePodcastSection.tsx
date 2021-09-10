@@ -4,6 +4,16 @@ import { ReactComponent as PlayIcon } from '../../images/play.svg'
 import { BREAK_POINT } from '../common/Responsive'
 import { SectionLayout } from './PodcastCollectionSection'
 
+const StyledImg = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 8px 8px 0 0;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    border-radius: 8px;
+  }
+`
+
 const StyledCard = styled.div`
   height: 100%;
   padding: 40px;
@@ -72,7 +82,9 @@ const LittlestarLastTimePodcastSection: React.VFC<{
   return (
     <SectionLayout title={title}>
       <div className="row">
-        <img className="col-lg-6 p-lg-0 h-100" src={podcast.coverUrl} alt={podcast.title} />
+        <div className="col-lg-6 p-lg-0">
+          <StyledImg src={podcast.coverUrl} alt={podcast.title} />
+        </div>
         <div className="col-lg-6 p-lg-0 d-flex">
           <StyledCard className="flex-grow-1 d-flex flex-column justify-content-between m-0 m-lg-auto">
             <div className="mb-3">
@@ -106,7 +118,7 @@ const useLatestPodcast: () => {
 } = () => {
   return {
     podcast: {
-      coverUrl: 'https://static.kolable.com/images/littlestar/podcast-cover1.png',
+      coverUrl: 'https://static.kolable.com/images/littlestar/podcast-cover3.png',
       title: '正確的洗手',
       programTitle: '第 35 期 - 對抗病毒大作戰 第 4 則',
       categoryNames: ['親子', '公衛防疫'],

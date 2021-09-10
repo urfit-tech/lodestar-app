@@ -1,4 +1,59 @@
-import { SectionLayout } from './PodcastCollectionSection'
+import styled from 'styled-components'
+import { MultiLineTruncationMixin } from '../common'
+import { BREAK_POINT } from '../common/Responsive'
+import { MoreLink, SectionLayout } from './PodcastCollectionSection'
+
+const StyledCard = styled.div`
+  border-radius: 12px;
+  margin: 0 auto;
+  padding: 40px;
+  max-width: 640px;
+  width: 100%;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+
+  img {
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    font-family: PingFangTC;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: var(--gray-darker);
+  }
+
+  p {
+    ${MultiLineTruncationMixin}
+    -webkit-line-clamp: 4;
+    font-family: NotoSansCJKtc;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.2px;
+    color: var(--gray-darker);
+  }
+
+  span.tag {
+    border: solid 1px ${props => props.theme['@primary-color']};
+    border-radius: 12px;
+    padding: 3px 8px;
+    font-family: NotoSansCJKtc;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+    color: ${props => props.theme['@primary-color']};
+  }
+
+  @media (min-width: ${BREAK_POINT}px) {
+    padding: 24px;
+
+    img {
+      margin-bottom: 0;
+    }
+  }
+`
 
 const LittlestarFeaturedPodcastSection: React.FC<{
   options: {
@@ -8,14 +63,23 @@ const LittlestarFeaturedPodcastSection: React.FC<{
   const { podcast } = useFeaturePodcast()
   return (
     <SectionLayout title={title} variant="primary-color">
-      <img src={podcast.coverUrl} alt={podcast.title} />
-      <div>
-        {podcast.title}
-        {podcast.description}
-        {podcast.categoryNames.map(name => (
-          <span>{name}</span>
-        ))}
-      </div>
+      <StyledCard>
+        <div className="row">
+          <img className="col-12 col-lg-5" src={podcast.coverUrl} alt={podcast.title} />
+          <div className="col-12 col-lg-7 d-flex align-items-center">
+            <div>
+              <h3 className="mb-3">{podcast.title}</h3>
+              {podcast.categoryNames.map(name => (
+                <span className="tag mr-2">{name}</span>
+              ))}
+              <p className="mt-4">{podcast.description}</p>
+              <div className="text-right">
+                <MoreLink to="/" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </StyledCard>
     </SectionLayout>
   )
 }
