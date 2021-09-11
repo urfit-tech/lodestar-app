@@ -430,6 +430,29 @@ const SmartVideo: React.FC<{
     smartVideoPlayer.current = { _lock: true }
 
     getVideoPlayer(videoId).then(player => {
+      if (navigator.userAgent.toLowerCase().indexOf('iphone') >= 0) {
+        const video = document.querySelector(`#${videoId} video`)
+        if (video) {
+          const createTrack = (label: string, src: string) => {
+            const track = document.createElement('track')
+            track.kind = 'captions'
+            track.label = label
+            track.src = src
+            track.addEventListener('load', function () {
+              ;(this as any).mode = 'showing'
+              ;(video as any).textTracks[0].mode = 'showing' // thanks Firefox
+            })
+            return track
+          }
+          video.innerHTML = ''
+          urls.texttracks.forEach((texttrackUrl, idx) => {
+            const track = createTrack('Default', texttrackUrl)
+            track.default = idx === 0
+            video.appendChild(track)
+          })
+        }
+      }
+
       player.on('pause', (e: Event) => {
         onEvent({
           type: 'pause',
