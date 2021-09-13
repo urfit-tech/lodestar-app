@@ -1,5 +1,7 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
+import { useMediaQuery } from 'react-responsive'
+import { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import OnSaleCallToActionSection from '../../components/project/OnSaleCallToActionSection'
 import OnSaleCommentSection from '../../components/project/OnSaleCommentSection'
@@ -23,13 +25,14 @@ const OnSalePage: React.VFC<ProjectProps> = ({
   abstract,
   description,
   introduction,
+  introductionDesktop,
   contents,
   updates,
   comments,
   projectPlans,
 }) => {
   const { settings } = useApp()
-
+  const isDesktop = useMediaQuery({ minWidth: BREAK_POINT })
   let seoMeta: { title?: string; description?: string } | undefined
   try {
     seoMeta = JSON.parse(settings['seo.meta']).ProjectPage[`${id}`]
@@ -71,7 +74,9 @@ const OnSalePage: React.VFC<ProjectProps> = ({
         {...contents.slogan}
       />
 
-      <OnSaleIntroductionSection introduction={introduction || ''} />
+      <OnSaleIntroductionSection
+        introduction={(isDesktop && introductionDesktop ? introductionDesktop : introduction) || ''}
+      />
 
       <OnSaleSkillSection {...contents.skill} />
       <OnSaleRoadmapSection roadmaps={contents.roadmaps} />
