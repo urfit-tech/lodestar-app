@@ -14,6 +14,10 @@ const StyledImg = styled.img`
   }
 `
 
+const StyledRow = styled.div`
+  max-width: 700px;
+`
+
 const StyledCard = styled.div`
   height: 100%;
   padding: 40px;
@@ -81,7 +85,7 @@ const LittlestarLastTimePodcastSection: React.VFC<{
 
   return (
     <SectionLayout title={title}>
-      <div className="row">
+      <StyledRow className="row mx-auto">
         <div className="col-lg-6 p-lg-0">
           <StyledImg src={podcast.coverUrl} alt={podcast.title} />
         </div>
@@ -103,7 +107,7 @@ const LittlestarLastTimePodcastSection: React.VFC<{
             </div>
           </StyledCard>
         </div>
-      </div>
+      </StyledRow>
     </SectionLayout>
   )
 }
