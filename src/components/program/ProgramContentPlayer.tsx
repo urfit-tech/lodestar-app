@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Icon } from '@chakra-ui/react'
+import { CircularProgress, Icon } from '@chakra-ui/react'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
@@ -9,7 +9,6 @@ import { ProgressContext } from '../../contexts/ProgressContext'
 import { getFileDownloadableLink } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
-import { ReactComponent as InfoOIcon } from '../../images/info-o.svg'
 import { ProgramContentBodyProps } from '../../types/program'
 import { useAuth } from '../auth/AuthContext'
 
@@ -141,15 +140,14 @@ const ProgramContentPlayer: React.VFC<
   const { loadingProgress, programContentProgress } = useContext(ProgressContext)
   const urls = useUrls(appId, programContentBody.id)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
-  const [playerType, setPlayerType] = useState<'smartVideo' | 'reactPlayer'>(
-    isSwarmifyAvailable &&
-      (localStorage.getItem('kolable.feature.swarmify') === null ||
-        localStorage.getItem('kolable.feature.swarmify') === '1')
-      ? 'smartVideo'
-      : 'reactPlayer',
-  )
-  console.log({ playerType, urls })
-
+  const playerType = 'smartVideo'
+  // const [playerType, setPlayerType] = useState<'smartVideo' | 'reactPlayer'>(
+  //   isSwarmifyAvailable &&
+  //     (localStorage.getItem('kolable.feature.swarmify') === null ||
+  //       localStorage.getItem('kolable.feature.swarmify') === '1')
+  //     ? 'smartVideo'
+  //     : 'reactPlayer',
+  // )
   const cachedPlayerConfig: PlayerConfigProps = getPlayerConfig()
 
   if (loadingProgress) {
@@ -161,7 +159,7 @@ const ProgramContentPlayer: React.VFC<
 
   return (
     <>
-      {!noAnnouncement && isSwarmifyAvailable && playerType === 'smartVideo' && (
+      {/*!noAnnouncement && isSwarmifyAvailable && playerType === 'smartVideo' && (
         <StyledAnnouncement className="mb-3">
           <div className="row">
             <div className="col-12 col-md-9">
@@ -184,14 +182,14 @@ const ProgramContentPlayer: React.VFC<
             </div>
           </div>
         </StyledAnnouncement>
-      )}
+      )*/}
 
       <StyledContainer>
         {nextProgramContent && isCoverShowing && (
           <ProgramContentPlayerCover nextProgramContent={nextProgramContent} onSetIsCoverShowing={setIsCoverShowing} />
         )}
 
-        {playerType === 'reactPlayer' && (
+        {/*playerType === 'reactPlayer' && (
           <VimeoPlayer
             config={{
               playbackRate: cachedPlayerConfig.playbackRate || 1,
@@ -206,7 +204,7 @@ const ProgramContentPlayer: React.VFC<
               onVideoEvent?.(e)
             }}
           />
-        )}
+          )*/}
 
         {playerType === 'smartVideo' && urls && (
           <SmartVideo
