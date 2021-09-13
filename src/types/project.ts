@@ -69,6 +69,7 @@ export type ProjectIntroProps = ProjectBasicProps & {
 export type ProjectProps = ProjectBasicProps & {
   template: string | null
   introduction: string | null
+  introductionDesktop: string | null
   updates: any
   comments: any
   contents: any

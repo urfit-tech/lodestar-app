@@ -7419,6 +7419,7 @@ export interface GET_PROJECT_project_by_pk {
   target_unit: string;
   template: string | null;
   introduction: string | null;
+  introduction_desktop: string | null;
   updates: any | null;
   comments: any | null;
   contents: any | null;
@@ -11541,6 +11542,7 @@ export enum project_update_column {
   expired_at = "expired_at",
   id = "id",
   introduction = "introduction",
+  introduction_desktop = "introduction_desktop",
   is_countdown_timer_visible = "is_countdown_timer_visible",
   is_participants_visible = "is_participants_visible",
   position = "position",
@@ -19133,6 +19135,7 @@ export interface project_bool_exp {
   expired_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   introduction?: String_comparison_exp | null;
+  introduction_desktop?: String_comparison_exp | null;
   is_countdown_timer_visible?: Boolean_comparison_exp | null;
   is_participants_visible?: Boolean_comparison_exp | null;
   position?: Int_comparison_exp | null;
@@ -19210,6 +19213,7 @@ export interface project_insert_input {
   expired_at?: any | null;
   id?: any | null;
   introduction?: string | null;
+  introduction_desktop?: string | null;
   is_countdown_timer_visible?: boolean | null;
   is_participants_visible?: boolean | null;
   position?: number | null;
