@@ -97,7 +97,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
   enrollmentCount,
 }) => {
   const { formatMessage } = useIntl()
-  const isDesktop = useMediaQuery({ query: `(min-width: ${BREAK_POINT}px)` })
+  const isDesktop = useMediaQuery({ minWidth: BREAK_POINT })
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
   const { settings } = useApp()
   const tabRef = useRef<HTMLDivElement>(null)
@@ -200,7 +200,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
           <Tabs.TabPane tab={formatMessage(productMessages.project.tab.intro)} key="introduction">
             {projectPlans && (
               <FundingIntroductionPane
-                introduction={(isDesktop ? introductionDesktop || introduction : introduction) || ''}
+                introduction={(isDesktop && introductionDesktop ? introductionDesktop : introduction) || ''}
                 projectPlans={projectPlans}
               />
             )}
