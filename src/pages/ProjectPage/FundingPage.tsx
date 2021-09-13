@@ -2,6 +2,7 @@ import { Affix, Button, Tabs } from 'antd'
 import React, { useRef } from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
+import { useMediaQuery } from 'react-responsive'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../components/common/Responsive'
@@ -87,6 +88,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
   targetAmount,
   targetUnit,
   introduction,
+  introductionDesktop,
   projectSections,
   projectPlans,
   isParticipantsVisible,
@@ -95,6 +97,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
   enrollmentCount,
 }) => {
   const { formatMessage } = useIntl()
+  const isDesktop = useMediaQuery({ query: `(min-width: ${BREAK_POINT}px)` })
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
   const { settings } = useApp()
   const tabRef = useRef<HTMLDivElement>(null)
@@ -195,7 +198,12 @@ const FundingPage: React.VFC<ProjectProps> = ({
           }}
         >
           <Tabs.TabPane tab={formatMessage(productMessages.project.tab.intro)} key="introduction">
-            {projectPlans && <FundingIntroductionPane introduction={introduction || ''} projectPlans={projectPlans} />}
+            {projectPlans && (
+              <FundingIntroductionPane
+                introduction={(isDesktop ? introductionDesktop || introduction : introduction) || ''}
+                projectPlans={projectPlans}
+              />
+            )}
           </Tabs.TabPane>
           {projectSections &&
             projectSections.map(projectSection =>
