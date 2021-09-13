@@ -39,7 +39,7 @@ const StyledCustomRatioImage = styled(CustomRatioImage)`
   transition: transform 0.5s ease-in-out;
 `
 const StyleTitle = styled.h2`
-  font-family: NotoSansCJKtc;
+  font-family: Noto Sans TC;
   font-size: 28px;
   letter-spacing: 0.23px;
   text-align: center;
@@ -59,7 +59,7 @@ const StyledSubTitle = styled.h3`
   letter-spacing: 1px;
   text-align: center;
   color: #fff;
-  font-family: NotoSansCJKtc;
+  font-family: Noto Sans TC;
 
   @media (min-width: ${BREAK_POINT}px) {
     font-size: 60px;
@@ -78,7 +78,7 @@ const StyledPostCard = styled(Link)`
   }
 `
 const StyledPostTitle = styled.h4`
-  font-family: NotoSansCJKtc;
+  font-family: Noto Sans TC;
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 0.8px;

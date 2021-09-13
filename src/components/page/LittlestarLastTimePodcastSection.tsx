@@ -26,7 +26,7 @@ const StyledCard = styled.div`
   }
 
   h3 {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 24px;
     font-weight: bold;
     letter-spacing: 0.3px;
@@ -34,7 +34,7 @@ const StyledCard = styled.div`
   }
 
   h4 {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 16px;
     font-weight: 500;
     letter-spacing: 0.2px;
@@ -42,7 +42,7 @@ const StyledCard = styled.div`
   }
 
   span.tag {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 12px;
     font-weight: 500;
     line-height: 1.83;

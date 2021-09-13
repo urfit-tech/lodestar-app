@@ -8,7 +8,7 @@ const StyledSectionLayout = styled.section<{ variant?: 'primary-color' }>`
   padding: 80px 0;
 
   h2 {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 28px;
     font-weight: bold;
     letter-spacing: 0.23px;
@@ -59,7 +59,7 @@ const StyledCardContent = styled.div`
   }
 
   div.unit {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.4px;
@@ -70,7 +70,7 @@ const StyledCardContent = styled.div`
     border: solid 1px ${props => props.theme['@primary-color']};
     border-radius: 12px;
     padding: 3px 8px;
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.6px;

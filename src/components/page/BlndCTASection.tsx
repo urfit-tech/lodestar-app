@@ -16,14 +16,14 @@ const StyledSection = styled.section`
     padding: 120px 166px;
   }
   .join-us h2 {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 40px;
     font-weight: bold;
     line-height: 1;
     color: #fff;
   }
   .join-us h3 {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 18px;
     color: #fff;
   }

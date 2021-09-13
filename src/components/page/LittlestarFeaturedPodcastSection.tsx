@@ -27,7 +27,7 @@ const StyledCard = styled.div`
   p {
     ${MultiLineTruncationMixin}
     -webkit-line-clamp: 4;
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 16px;
     font-weight: 500;
     line-height: 1.5;
@@ -39,7 +39,7 @@ const StyledCard = styled.div`
     border: solid 1px ${props => props.theme['@primary-color']};
     border-radius: 12px;
     padding: 3px 8px;
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.6px;

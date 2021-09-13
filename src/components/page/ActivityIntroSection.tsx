@@ -36,7 +36,7 @@ const StyledTitle = styled.h2`
   font-size: 40px;
   line-height: 1.1;
   letter-spacing: 1px;
-  font-family: NotoSansCJKtc;
+  font-family: Noto Sans TC;
 
   @media (min-width: ${BREAK_POINT}px) {
     font-size: clamp(40px, 3.5vw, 60px);
@@ -46,7 +46,7 @@ const StyledTitle = styled.h2`
 `
 const StyledSubTitle = styled.h3`
   color: #fff;
-  font-family: NotoSansCJKtc;
+  font-family: Noto Sans TC;
 
   font-size: 28px;
   font-weight: 600;
@@ -71,7 +71,7 @@ const StyledQuote = styled.p`
   }
 `
 const StyledQuotePerson = styled.span`
-  font-family: NotoSansCJKtc;
+  font-family: Noto Sans TC;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
