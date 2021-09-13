@@ -24,12 +24,16 @@ import MessengerChat from '../components/common/MessengerChat'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ActivityIntroSection from '../components/page/ActivityIntroSection'
 import ActivitySection from '../components/page/ActivitySection'
+import BlndCTASection from '../components/page/BlndCTASection'
 import BlndPostSection from '../components/page/BlndPostSection'
 import CoverSection from '../components/page/CoverSection'
 import CreatorSection from '../components/page/CreatorSection'
 import CustomCoverSection from '../components/page/CustomCoverSection'
+import LittlestarFeaturedPodcastSection from '../components/page/LittlestarFeaturedPodcastSection'
+import LittlestarLastTimePodcastSection from '../components/page/LittlestarLastTimePodcastSection'
 import MisaFeatureSection from '../components/page/MisaFeatureSection'
 import MisaNavigationBar from '../components/page/MisaNavigationBar'
+import PodcastCollectionSection from '../components/page/PodcastCollectionSection'
 import PostSection from '../components/page/PostSection'
 import ProgramIntroSection from '../components/page/ProgramIntroSection'
 import ProgramSection from '../components/page/ProgramSection'
@@ -69,22 +73,28 @@ export const StyledSection = styled.section`
 
 const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
   const sectionConverter = {
+    // general
     homeActivity: ActivitySection,
-    homeCover: CoverSection,
+    homeActivityIntro: ActivityIntroSection,
     homeCreator: CreatorSection,
+    homeCover: CoverSection,
+    homeCustomCover: CustomCoverSection,
     homePost: PostSection,
     homeProgram: ProgramSection,
     homeProgramCategory: ProgramSection,
-    messenger: MessengerChat,
+    homeProgramIntro: ProgramIntroSection,
+    homePodcastCollection: PodcastCollectionSection,
+    homeReferrer: ReferrerSection,
     homeStatic: StaticBlock,
     homeTeacher: TeacherSection,
-    homeCustomCover: CustomCoverSection,
-    homeProgramIntro: ProgramIntroSection,
-    homeReferrer: ReferrerSection,
+    messenger: MessengerChat,
+    // custom
+    homeBlndPost: BlndPostSection,
+    homeBlndCTA: BlndCTASection,
     homeMisaFeature: MisaFeatureSection,
     homeMisaNav: MisaNavigationBar,
-    homeBlndPost: BlndPostSection,
-    homeActivityIntro: ActivityIntroSection,
+    homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
+    homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
   }
 
   return (

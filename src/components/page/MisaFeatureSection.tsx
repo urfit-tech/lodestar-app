@@ -9,7 +9,7 @@ const StyledFeature = styled.section`
   }
 
   h2 {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 40px;
     font-weight: bold;
     text-align: center;
@@ -19,7 +19,7 @@ const StyledFeature = styled.section`
   }
 
   h3 {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 20px;
     font-weight: bold;
     line-height: 1.3;
@@ -28,7 +28,7 @@ const StyledFeature = styled.section`
     color: var(--gray-darker);
   }
   p {
-    font-family: NotoSansCJKtc;
+    font-family: Noto Sans TC;
     font-size: 16px;
     font-weight: 500;
     line-height: 1.5;

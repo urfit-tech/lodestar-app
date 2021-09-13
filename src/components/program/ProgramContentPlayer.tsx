@@ -124,9 +124,17 @@ const ProgramContentPlayer: React.VFC<
       title: string
     }
     isSwarmifyAvailable: boolean
+    noAnnouncement?: boolean
     onVideoEvent?: (event: VideoEvent) => void
   }
-> = ({ programContentId, programContentBody, nextProgramContent, isSwarmifyAvailable, onVideoEvent }) => {
+> = ({
+  programContentId,
+  programContentBody,
+  nextProgramContent,
+  isSwarmifyAvailable,
+  noAnnouncement,
+  onVideoEvent,
+}) => {
   const { formatMessage } = useIntl()
   const videoId = `v-${programContentBody.id}`
   const { id: appId } = useApp()
@@ -140,6 +148,7 @@ const ProgramContentPlayer: React.VFC<
       ? 'smartVideo'
       : 'reactPlayer',
   )
+  console.log({ playerType, urls })
 
   const cachedPlayerConfig: PlayerConfigProps = getPlayerConfig()
 
@@ -152,7 +161,7 @@ const ProgramContentPlayer: React.VFC<
 
   return (
     <>
-      {isSwarmifyAvailable && playerType === 'smartVideo' && (
+      {!noAnnouncement && isSwarmifyAvailable && playerType === 'smartVideo' && (
         <StyledAnnouncement className="mb-3">
           <div className="row">
             <div className="col-12 col-md-9">
@@ -421,6 +430,29 @@ const SmartVideo: React.FC<{
     smartVideoPlayer.current = { _lock: true }
 
     getVideoPlayer(videoId).then(player => {
+      if (navigator.userAgent.toLowerCase().indexOf('iphone') >= 0) {
+        const video = document.querySelector(`#${videoId} video`)
+        if (video) {
+          const createTrack = (label: string, src: string) => {
+            const track = document.createElement('track')
+            track.kind = 'captions'
+            track.label = label
+            track.src = src
+            track.addEventListener('load', function () {
+              ;(this as any).mode = 'showing'
+              ;(video as any).textTracks[0].mode = 'showing' // thanks Firefox
+            })
+            return track
+          }
+          video.innerHTML = ''
+          urls.texttracks.forEach((texttrackUrl, idx) => {
+            const track = createTrack('Default', texttrackUrl)
+            track.default = idx === 0
+            video.appendChild(track)
+          })
+        }
+      }
+
       player.on('pause', (e: Event) => {
         onEvent({
           type: 'pause',
@@ -598,7 +630,7 @@ const useUrls = (appId: string, programContentBodyId: string) => {
   } | null>(null)
 
   useEffect(() => {
-    if (!appId || !authToken) {
+    if (!appId) {
       return
     }
 

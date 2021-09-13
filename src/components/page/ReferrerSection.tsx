@@ -12,7 +12,7 @@ type Info = {
 }
 
 const StyledTitle = styled.h2`
-  font-family: NotoSansCJKtc;
+  font-family: Noto Sans TC;
   font-size: 40px;
   font-weight: bold;
   text-align: center;
