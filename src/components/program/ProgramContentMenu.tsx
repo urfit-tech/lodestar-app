@@ -201,20 +201,16 @@ const ContentSection: React.VFC<{
       </StyledContentSectionTitle>
 
       <StyledContentSectionBody active={isCollapse}>
-        {programContentSection.contents
-          ?.filter(programContent => programContent.publishedAt && programContent.publishedAt <= new Date())
-          .map(programContent => (
-            <SortBySectionItem
-              key={programContent.id}
-              programContent={programContent}
-              progress={
-                contentProgress.find(progress => progress.programContentId === programContent.id)?.progress || 0
-              }
-              programPackageId={programPackageId}
-              onSetIsCollapse={setIsCollapse}
-              onClick={() => onSelect?.(programContent.id)}
-            />
-          ))}
+        {programContentSection.contents?.map(programContent => (
+          <SortBySectionItem
+            key={programContent.id}
+            programContent={programContent}
+            progress={contentProgress.find(progress => progress.programContentId === programContent.id)?.progress || 0}
+            programPackageId={programPackageId}
+            onSetIsCollapse={setIsCollapse}
+            onClick={() => onSelect?.(programContent.id)}
+          />
+        ))}
       </StyledContentSectionBody>
     </StyledContentSection>
   )
@@ -299,17 +295,13 @@ const ProgramContentDateMenu: React.VFC<{
   const { programContentProgress } = useContext(ProgressContext)
   const programContents = flatten(program.contentSections.map(programContentSection => programContentSection.contents))
 
-  const publishedProgramContents = programContents.filter(
-    programContent => programContent.publishedAt && programContent.publishedAt <= new Date(),
-  )
-
   if (programContents.length === 0) {
     return <EmptyMenu />
   }
 
   return (
     <div>
-      {publishedProgramContents.map(programContent => (
+      {programContents.map(programContent => (
         <SortByDateItem
           key={programContent.id}
           programContent={programContent}
