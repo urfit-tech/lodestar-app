@@ -1,4 +1,5 @@
 import { InvoiceProps, ShippingProps } from './checkout'
+import { Category } from './general'
 
 export type MerchandiseBasicProps = {
   id: string
@@ -8,10 +9,7 @@ export type MerchandiseBasicProps = {
   minPrice: number
   maxPrice: number
   tags: string[]
-  categories: {
-    id: string
-    name: string
-  }[]
+  categories: Category[]
   images: {
     id: string
     url: string
