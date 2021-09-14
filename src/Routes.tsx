@@ -214,6 +214,16 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
   },
 
   // product - podcast
+  podcast_albums_collection: {
+    path: '/podcast-albums',
+    pageName: 'PodcastAlbumCollectionPage',
+    authenticated: false,
+  },
+  podcast_albums: {
+    path: '/podcast-albums/:podcastAlbumId',
+    pageName: 'PodcastAlbumPage',
+    authenticated: false,
+  },
   podcast_program_collection: {
     path: '/podcasts',
     pageName: 'PodcastProgramCollectionPage',
