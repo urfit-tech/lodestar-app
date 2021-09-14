@@ -17,7 +17,7 @@ import { useProjectIntroCollection } from '../hooks/project'
 import { ReactComponent as FundraisingIcon } from '../images/fundraising.svg'
 import { ReactComponent as PreOrderIcon } from '../images/pre-order.svg'
 import { ReactComponent as PromotionIcon } from '../images/promotion.svg'
-import { CategoryProps } from '../types/general'
+import { Category } from '../types/general'
 
 const messages = defineMessages({
   exploreProjects: { id: 'project.label.exploreProjects', defaultMessage: '探索專案' },
@@ -66,7 +66,7 @@ const ProjectCollectionPage: React.VFC = () => {
   const { pageTitle } = useNav()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
 
-  const categories: CategoryProps[] = uniqBy(
+  const categories: Category[] = uniqBy(
     category => category.id,
     flatten(projects.map(project => project.categories).filter(notEmpty)),
   )

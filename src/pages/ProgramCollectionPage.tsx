@@ -18,7 +18,7 @@ import { notEmpty } from '../helpers'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
-import { CategoryProps } from '../types/general'
+import { Category } from '../types/general'
 
 const StyledButton = styled(ChakraButton)`
   && {
@@ -54,7 +54,7 @@ const ProgramCollectionPage: React.VFC = () => {
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
 
-  const categories: CategoryProps[] = uniqBy(
+  const categories: Category[] = uniqBy(
     category => category.id,
     flatten(programs.map(program => program.categories).filter(notEmpty)),
   )

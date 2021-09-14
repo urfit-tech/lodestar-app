@@ -14,6 +14,7 @@ import LanguageContext from '../contexts/LanguageContext'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { usePublishedActivityCollection } from '../hooks/activity'
 import { useNav } from '../hooks/data'
+import { Category } from '../types/general'
 
 type Banner = { desktop: string; mobile: string }
 
@@ -50,10 +51,10 @@ const ActivityCollectionPage = () => {
     categoryId: active ? active : undefined,
   })
 
-  const categories: {
-    id: string
-    name: string
-  }[] = uniqBy(category => category.id, unnest(activities.map(activity => activity.categories)))
+  const categories: Category[] = uniqBy(
+    category => category.id,
+    unnest(activities.map(activity => activity.categories)),
+  )
 
   let collectionBanner: Banner | null
   try {

@@ -60,10 +60,7 @@ export type PodcastProgramPopoverProps = {
   listPrice: number
   salePrice: number | null
   description?: string | null
-  categories: {
-    id: string
-    name: string
-  }[]
+  categories: Category[]
   instructor?: {
     id: string
     avatarUrl?: string | null
