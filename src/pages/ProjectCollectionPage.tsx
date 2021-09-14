@@ -3,6 +3,7 @@ import { Button, Icon as AntdIcon } from 'antd'
 import { flatten, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
+import { AiFillAppstore } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -119,7 +120,7 @@ const ProjectCollectionPage: React.VFC = () => {
       <StyledCoverSection>
         <div className="container">
           <StyledBannerTitle>
-            <AntdIcon type="appstore" theme="filled" className="mr-2" />
+            <Icon as={AiFillAppstore} className="mr-2" />
             <span>{title || pageTitle || formatMessage(messages.exploreProjects)}</span>
           </StyledBannerTitle>
 

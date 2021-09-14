@@ -1,8 +1,10 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Icon } from 'antd'
+import { Icon } from '@chakra-ui/react'
+import { Button } from 'antd'
 import gql from 'graphql-tag'
 import { flatten, uniqBy } from 'ramda'
 import React, { useState } from 'react'
+import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -86,7 +88,7 @@ const CreatorDisplayedPage: React.VFC<{}> = () => {
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle className="d-flex align-items-center">
-            <Icon type="appstore" theme="filled" className="mr-3" />
+            <Icon as={AiFillAppstore} className="mr-3" />
             <span>{pageTitle}</span>
           </StyledBannerTitle>
 
