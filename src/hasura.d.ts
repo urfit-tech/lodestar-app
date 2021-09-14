@@ -9980,6 +9980,8 @@ export enum member_note_constraint {
 export enum member_note_update_column {
   author_id = "author_id",
   created_at = "created_at",
+  deleted_at = "deleted_at",
+  deleted_from = "deleted_from",
   description = "description",
   duration = "duration",
   id = "id",
@@ -10025,6 +10027,24 @@ export enum member_permission_extra_update_column {
   id = "id",
   member_id = "member_id",
   permission_id = "permission_id",
+  updated_at = "updated_at",
+}
+
+/**
+ * unique or primary key constraints on table "member_permission_group"
+ */
+export enum member_permission_group_constraint {
+  member_permission_group_pkey = "member_permission_group_pkey",
+}
+
+/**
+ * update columns of table "member_permission_group"
+ */
+export enum member_permission_group_update_column {
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
+  permission_group_id = "permission_group_id",
   updated_at = "updated_at",
 }
 
@@ -10455,6 +10475,7 @@ export enum order_executor_update_column {
  * unique or primary key constraints on table "order_log"
  */
 export enum order_log_constraint {
+  order_log_custom_id_key = "order_log_custom_id_key",
   order_log_id_key = "order_log_id_key",
   order_log_pkey = "order_log_pkey",
 }
@@ -10465,6 +10486,7 @@ export enum order_log_constraint {
 export enum order_log_update_column {
   auto_renewed_at = "auto_renewed_at",
   created_at = "created_at",
+  custom_id = "custom_id",
   deliver_message = "deliver_message",
   delivered_at = "delivered_at",
   discount_coupon_id = "discount_coupon_id",
@@ -10613,6 +10635,7 @@ export enum package_update_column {
  * unique or primary key constraints on table "payment_log"
  */
 export enum payment_log_constraint {
+  payment_log_custom_no_key = "payment_log_custom_no_key",
   payment_log_no_key = "payment_log_no_key",
   payment_log_pkey = "payment_log_pkey",
 }
@@ -10622,6 +10645,7 @@ export enum payment_log_constraint {
  */
 export enum payment_log_update_column {
   created_at = "created_at",
+  custom_no = "custom_no",
   gateway = "gateway",
   method = "method",
   no = "no",
@@ -10639,6 +10663,44 @@ export enum payment_log_update_column {
  */
 export enum permission_constraint {
   permission_pkey = "permission_pkey",
+}
+
+/**
+ * unique or primary key constraints on table "permission_group"
+ */
+export enum permission_group_constraint {
+  permission_group_name_app_id_key = "permission_group_name_app_id_key",
+  permission_group_pkey = "permission_group_pkey",
+}
+
+/**
+ * unique or primary key constraints on table "permission_group_permission"
+ */
+export enum permission_group_permission_constraint {
+  permission_group_permission_permission_group_id_permission_id_k = "permission_group_permission_permission_group_id_permission_id_k",
+  permission_group_permission_pkey = "permission_group_permission_pkey",
+}
+
+/**
+ * update columns of table "permission_group_permission"
+ */
+export enum permission_group_permission_update_column {
+  created_at = "created_at",
+  id = "id",
+  permission_group_id = "permission_group_id",
+  permission_id = "permission_id",
+  updated_at = "updated_at",
+}
+
+/**
+ * update columns of table "permission_group"
+ */
+export enum permission_group_update_column {
+  app_id = "app_id",
+  created_at = "created_at",
+  id = "id",
+  name = "name",
+  updated_at = "updated_at",
 }
 
 /**
@@ -14507,6 +14569,7 @@ export interface member_bool_exp {
   member_notes?: member_note_bool_exp | null;
   member_oauths?: member_oauth_bool_exp | null;
   member_permission_extras?: member_permission_extra_bool_exp | null;
+  member_permission_groups?: member_permission_group_bool_exp | null;
   member_permissions?: member_permission_bool_exp | null;
   member_phones?: member_phone_bool_exp | null;
   member_properties?: member_property_bool_exp | null;
@@ -14757,6 +14820,7 @@ export interface member_insert_input {
   member_notes?: member_note_arr_rel_insert_input | null;
   member_oauths?: member_oauth_arr_rel_insert_input | null;
   member_permission_extras?: member_permission_extra_arr_rel_insert_input | null;
+  member_permission_groups?: member_permission_group_arr_rel_insert_input | null;
   member_phones?: member_phone_arr_rel_insert_input | null;
   member_properties?: member_property_arr_rel_insert_input | null;
   member_shops?: member_shop_arr_rel_insert_input | null;
@@ -14855,11 +14919,14 @@ export interface member_note_bool_exp {
   author?: member_bool_exp | null;
   author_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  deleted_at?: timestamptz_comparison_exp | null;
+  deleted_from?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
   duration?: Int_comparison_exp | null;
   id?: String_comparison_exp | null;
   member?: member_bool_exp | null;
   memberByAuthorId?: member_bool_exp | null;
+  memberByDeleteFrom?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   member_note_attachments?: member_note_attachment_bool_exp | null;
   metadata?: jsonb_comparison_exp | null;
@@ -14877,11 +14944,14 @@ export interface member_note_insert_input {
   author?: member_obj_rel_insert_input | null;
   author_id?: string | null;
   created_at?: any | null;
+  deleted_at?: any | null;
+  deleted_from?: string | null;
   description?: string | null;
   duration?: number | null;
   id?: string | null;
   member?: member_obj_rel_insert_input | null;
   memberByAuthorId?: member_obj_rel_insert_input | null;
+  memberByDeleteFrom?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   member_note_attachments?: member_note_attachment_arr_rel_insert_input | null;
   metadata?: any | null;
@@ -15024,6 +15094,52 @@ export interface member_permission_extra_on_conflict {
   constraint: member_permission_extra_constraint;
   update_columns: member_permission_extra_update_column[];
   where?: member_permission_extra_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "member_permission_group"
+ */
+export interface member_permission_group_arr_rel_insert_input {
+  data: member_permission_group_insert_input[];
+  on_conflict?: member_permission_group_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "member_permission_group". All fields are combined with a logical 'AND'.
+ */
+export interface member_permission_group_bool_exp {
+  _and?: (member_permission_group_bool_exp | null)[] | null;
+  _not?: member_permission_group_bool_exp | null;
+  _or?: (member_permission_group_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  permission_group?: permission_group_bool_exp | null;
+  permission_group_id?: uuid_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "member_permission_group"
+ */
+export interface member_permission_group_insert_input {
+  created_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  permission_group?: permission_group_obj_rel_insert_input | null;
+  permission_group_id?: any | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "member_permission_group"
+ */
+export interface member_permission_group_on_conflict {
+  constraint: member_permission_group_constraint;
+  update_columns: member_permission_group_update_column[];
+  where?: member_permission_group_bool_exp | null;
 }
 
 /**
@@ -15776,6 +15892,7 @@ export interface merchandise_spec_inventory_status_bool_exp {
   merchandise_spec_id?: uuid_comparison_exp | null;
   total_quantity?: bigint_comparison_exp | null;
   undelivered_quantity?: bigint_comparison_exp | null;
+  unpaid_quantity?: bigint_comparison_exp | null;
 }
 
 /**
@@ -16117,6 +16234,7 @@ export interface order_log_bool_exp {
   auto_renewed_at?: timestamptz_comparison_exp | null;
   coupon?: coupon_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  custom_id?: String_comparison_exp | null;
   deliver_message?: String_comparison_exp | null;
   delivered_at?: timestamptz_comparison_exp | null;
   discount_coupon_id?: uuid_comparison_exp | null;
@@ -16155,6 +16273,7 @@ export interface order_log_insert_input {
   auto_renewed_at?: any | null;
   coupon?: coupon_obj_rel_insert_input | null;
   created_at?: any | null;
+  custom_id?: string | null;
   deliver_message?: string | null;
   delivered_at?: any | null;
   discount_coupon_id?: any | null;
@@ -16571,6 +16690,7 @@ export interface payment_log_bool_exp {
   _not?: payment_log_bool_exp | null;
   _or?: (payment_log_bool_exp | null)[] | null;
   created_at?: timestamptz_comparison_exp | null;
+  custom_no?: String_comparison_exp | null;
   gateway?: String_comparison_exp | null;
   method?: String_comparison_exp | null;
   no?: numeric_comparison_exp | null;
@@ -16590,6 +16710,7 @@ export interface payment_log_bool_exp {
  */
 export interface payment_log_insert_input {
   created_at?: any | null;
+  custom_no?: string | null;
   gateway?: string | null;
   method?: string | null;
   no?: any | null;
@@ -16626,6 +16747,96 @@ export interface permission_bool_exp {
   member_permission_extras?: member_permission_extra_bool_exp | null;
   role_permissions?: role_permission_bool_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "permission_group". All fields are combined with a logical 'AND'.
+ */
+export interface permission_group_bool_exp {
+  _and?: (permission_group_bool_exp | null)[] | null;
+  _not?: permission_group_bool_exp | null;
+  _or?: (permission_group_bool_exp | null)[] | null;
+  app_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  name?: String_comparison_exp | null;
+  permission_group_permissions?: permission_group_permission_bool_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "permission_group"
+ */
+export interface permission_group_insert_input {
+  app_id?: string | null;
+  created_at?: any | null;
+  id?: any | null;
+  name?: string | null;
+  permission_group_permissions?: permission_group_permission_arr_rel_insert_input | null;
+  updated_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "permission_group"
+ */
+export interface permission_group_obj_rel_insert_input {
+  data: permission_group_insert_input;
+  on_conflict?: permission_group_on_conflict | null;
+}
+
+/**
+ * on conflict condition type for table "permission_group"
+ */
+export interface permission_group_on_conflict {
+  constraint: permission_group_constraint;
+  update_columns: permission_group_update_column[];
+  where?: permission_group_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "permission_group_permission"
+ */
+export interface permission_group_permission_arr_rel_insert_input {
+  data: permission_group_permission_insert_input[];
+  on_conflict?: permission_group_permission_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "permission_group_permission". All fields are combined with a logical 'AND'.
+ */
+export interface permission_group_permission_bool_exp {
+  _and?: (permission_group_permission_bool_exp | null)[] | null;
+  _not?: permission_group_permission_bool_exp | null;
+  _or?: (permission_group_permission_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  permission?: permission_bool_exp | null;
+  permission_group?: permission_group_bool_exp | null;
+  permission_group_id?: uuid_comparison_exp | null;
+  permission_id?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "permission_group_permission"
+ */
+export interface permission_group_permission_insert_input {
+  created_at?: any | null;
+  id?: any | null;
+  permission?: permission_obj_rel_insert_input | null;
+  permission_group?: permission_group_obj_rel_insert_input | null;
+  permission_group_id?: any | null;
+  permission_id?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "permission_group_permission"
+ */
+export interface permission_group_permission_on_conflict {
+  constraint: permission_group_permission_constraint;
+  update_columns: permission_group_permission_update_column[];
+  where?: permission_group_permission_bool_exp | null;
 }
 
 /**

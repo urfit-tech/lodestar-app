@@ -300,7 +300,7 @@ export const useProgram = (programId: string) => {
             id
             title
             description
-            program_contents(where: { published_at: { _is_null: false } }, order_by: { position: asc }) {
+            program_contents(where: { published_at: { _lte: "now()" } }, order_by: { position: asc }) {
               id
               title
               abstract
