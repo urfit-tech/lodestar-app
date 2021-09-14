@@ -1,24 +1,21 @@
 import { Button, SkeletonText } from '@chakra-ui/react'
 import { render } from 'mustache'
-import queryString from 'query-string'
 import React, { useContext, useEffect, useRef } from 'react'
 import ReactGA from 'react-ga'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { useAuth } from '../components/auth/AuthContext'
+import BlurredBanner from '../components/common/BlurredBanner'
 import Responsive, { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import PerpetualProgramBanner from '../components/program/ProgramBanner/PerpetualProgramBanner'
-import SubscriptionProgramBanner from '../components/program/ProgramBanner/SubscriptionProgramBanner'
 import ProgramContentListSection from '../components/program/ProgramContentListSection'
 import ProgramInfoBlock from '../components/program/ProgramInfoBlock'
 import ProgramInstructorCollectionBlock from '../components/program/ProgramInstructorCollectionBlock'
 import ProgramPerpetualPlanCard from '../components/program/ProgramPerpetualPlanCard'
 import ProgramSubscriptionPlanSection from '../components/program/ProgramSubscriptionPlanSection'
-import ReviewCollectionBlock from '../components/review/ReviewCollectionBlock'
 import { useApp } from '../containers/common/AppContext'
 import PodcastPlayerContext from '../contexts/PodcastPlayerContext'
 import { desktopViewMixin, rgba } from '../helpers'
@@ -32,7 +29,7 @@ const StyledIntroWrapper = styled.div`
     padding-left: 35px;
   `)}
 `
-const ProgramAbstract = styled.span`
+const StyledProgramAbstract = styled.span`
   padding-right: 2px;
   padding-bottom: 2px;
   background-image: linear-gradient(
@@ -45,7 +42,7 @@ const ProgramAbstract = styled.span`
   font-weight: bold;
   white-space: pre-line;
 `
-const ProgramIntroBlock = styled.div`
+const StyledProgramIntroBlock = styled.div`
   position: relative;
   padding-top: 2.5rem;
   padding-bottom: 6rem;
@@ -70,19 +67,15 @@ const StyledButtonWrapper = styled.div`
   background: white;
 `
 
-const ProgramPage: React.VFC = () => {
+const PodcastAlbumPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { programId } = useParams<{ programId: string }>()
-  const { pathname } = useLocation()
+  const { podcastAlbumId: id } = useParams<{ podcastAlbumId: string }>()
   const { currentMemberId } = useAuth()
-  const { id: appId, settings, enabledModules } = useApp()
+  const { id: appId, settings } = useApp()
   const { visible } = useContext(PodcastPlayerContext)
-  const { loadingProgram, program } = useProgram(programId)
+  const { loadingProgram: loading, program: podcastAlbum } = useProgram(id)
 
   const planBlockRef = useRef<HTMLDivElement | null>(null)
-  const customerReviewBlockRef = useRef<HTMLDivElement>(null)
-  const location = useLocation()
-  const params = queryString.parse(location.search)
 
   let seoMeta:
     | {
@@ -91,40 +84,34 @@ const ProgramPage: React.VFC = () => {
       }
     | undefined
   try {
-    seoMeta = JSON.parse(settings['seo.meta'])?.ProgramPage
+    seoMeta = JSON.parse(settings['seo.meta'])?.PodcastAlbumPage
   } catch (error) {}
 
-  const siteTitle = program?.title
+  const siteTitle = podcastAlbum?.title
     ? seoMeta?.title
-      ? `${render(seoMeta.title, { programTitle: program.title })}`
-      : program.title
+      ? `${render(seoMeta.title, { programTitle: podcastAlbum.title })}`
+      : podcastAlbum.title
     : appId
 
-  const siteDescription = program?.abstract || settings['open_graph.description']
-  const siteImage = program?.coverUrl || settings['open_graph.image']
+  const siteDescription = podcastAlbum?.abstract || settings['open_graph.description']
+  const siteImage = podcastAlbum?.coverUrl || settings['open_graph.image']
 
   useEffect(() => {
-    if (customerReviewBlockRef.current && params.moveToBlock) {
-      customerReviewBlockRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [customerReviewBlockRef, params])
-
-  useEffect(() => {
-    if (program) {
+    if (podcastAlbum) {
       ReactGA.plugin.execute('ec', 'addProduct', {
-        id: program.id,
-        name: program.title,
-        category: 'Program',
-        price: `${program.listPrice}`,
+        id: podcastAlbum.id,
+        name: podcastAlbum.title,
+        category: 'podcastAlbum',
+        price: `${podcastAlbum.listPrice}`,
         quantity: '1',
         currency: 'TWD',
       })
       ReactGA.plugin.execute('ec', 'setAction', 'detail')
       ReactGA.ga('send', 'pageview')
     }
-  }, [program])
+  }, [podcastAlbum])
 
-  if (loadingProgram) {
+  if (loading) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -132,14 +119,14 @@ const ProgramPage: React.VFC = () => {
     )
   }
 
-  if (!program) {
+  if (!podcastAlbum) {
     return <ForbiddenPage />
   }
 
   const ldData = JSON.stringify({
     '@context': 'http://schema.org',
     '@type': 'Product',
-    name: program.title,
+    name: podcastAlbum.title,
     image: siteImage,
     description: siteDescription,
     url: window.location.href,
@@ -151,7 +138,7 @@ const ProgramPage: React.VFC = () => {
   })
 
   return (
-    <DefaultLayout white footerBottomSpace={program.isSubscription ? '60px' : '132px'}>
+    <DefaultLayout white footerBottomSpace={podcastAlbum.isSubscription ? '60px' : '132px'}>
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDescription} />
@@ -163,70 +150,50 @@ const ProgramPage: React.VFC = () => {
         <script type="application/ld+json">{ldData}</script>
       </Helmet>
 
-      <div>
-        {program.isSubscription ? (
-          <SubscriptionProgramBanner program={program} />
-        ) : (
-          <PerpetualProgramBanner program={program} />
-        )}
+      <PodcastAlbumBanner
+      // coverUrl={podcastAlbum.coverUrl}
+      // title={podcastAlbum.title}
+      // count={1234}
+      // categories={[]}
+      />
 
-        <ProgramIntroBlock>
-          <div className="container">
-            <div className="row">
-              {!program.isSubscription && (
-                <StyledIntroWrapper className="col-12 col-lg-4">
-                  <ProgramInfoBlock program={program} />
-                </StyledIntroWrapper>
-              )}
+      <StyledProgramIntroBlock>
+        <div className="container">
+          <div className="row">
+            {!podcastAlbum.isSubscription && (
+              <StyledIntroWrapper className="col-12 col-lg-4">
+                <ProgramInfoBlock program={podcastAlbum} />
+              </StyledIntroWrapper>
+            )}
 
-              <div className="col-12 col-lg-8">
-                <div className="mb-5">
-                  <ProgramAbstract>{program.abstract}</ProgramAbstract>
-                </div>
+            <div className="col-12 col-lg-8 mb-5">
+              <StyledProgramAbstract>{podcastAlbum.abstract}</StyledProgramAbstract>
 
-                <div className="mb-5">
-                  <BraftContent>{program.description}</BraftContent>
-                </div>
-
-                <div className="mb-5">
-                  <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
-                </div>
+              <div className="my-5">
+                <BraftContent>{podcastAlbum.description}</BraftContent>
               </div>
 
-              {program.isSubscription && (
-                <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                  <div className="mb-5">
-                    <ProgramSubscriptionPlanSection program={program} />
-                  </div>
-                </StyledIntroWrapper>
-              )}
+              <ProgramContentListSection memberId={currentMemberId || ''} program={podcastAlbum} />
             </div>
 
-            <div className="row">
-              <div className="col-12 col-lg-8">
-                <div className="mb-5">
-                  <ProgramInstructorCollectionBlock program={program} />
-                </div>
-              </div>
-            </div>
-            <div id="customer-review" ref={customerReviewBlockRef}>
-              {enabledModules.customer_review && (
-                <div className="row">
-                  <div className="col-12 col-lg-8">
-                    <div className="mb-5">
-                      <ReviewCollectionBlock path={pathname} targetId={programId} />
-                    </div>
-                  </div>
-                </div>
-              )}
+            {podcastAlbum.isSubscription && (
+              <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4 mb-5">
+                <ProgramSubscriptionPlanSection program={podcastAlbum} />
+              </StyledIntroWrapper>
+            )}
+          </div>
+
+          <div className="row">
+            <div className="col-12 col-lg-8 mb-5">
+              <ProgramInstructorCollectionBlock program={podcastAlbum} />
             </div>
           </div>
-        </ProgramIntroBlock>
-      </div>
+        </div>
+      </StyledProgramIntroBlock>
 
       <Responsive.Default>
         <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-          {program.isSubscription ? (
+          {podcastAlbum.isSubscription ? (
             <StyledButtonWrapper>
               <Button
                 variant="primary"
@@ -237,7 +204,7 @@ const ProgramPage: React.VFC = () => {
               </Button>
             </StyledButtonWrapper>
           ) : (
-            <ProgramPerpetualPlanCard memberId={currentMemberId || ''} program={program} />
+            <ProgramPerpetualPlanCard memberId={currentMemberId || ''} program={podcastAlbum} />
           )}
         </FixedBottomBlock>
       </Responsive.Default>
@@ -245,4 +212,31 @@ const ProgramPage: React.VFC = () => {
   )
 }
 
-export default ProgramPage
+const PodcastAlbumBanner: React.VFC<{
+  // coverUrl: string | null
+  // title: string
+  // count: number
+  // categoryNames: string[]
+}> = (
+  {
+    // coverUrl, categoryNames, count, title
+  },
+) => {
+  const {
+    podcastAlbum: { coverUrl, count, title, categoryNames },
+  } = usePodcastAlbum()
+  return <BlurredBanner coverUrl={coverUrl}>12341</BlurredBanner>
+}
+
+const usePodcastAlbum = () => {
+  return {
+    podcastAlbum: {
+      coverUrl: 'https://static.kolable.com/images/littlestar/podcast-cover3.png',
+      count: 10,
+      title: '第 28 期 - 我從那裡來？',
+      categoryNames: ['親子', '公衛防疫'],
+    },
+  }
+}
+
+export default PodcastAlbumPage
