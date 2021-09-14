@@ -1,6 +1,7 @@
-import { Icon } from 'antd'
+import { Icon } from '@chakra-ui/react'
 import moment from 'moment'
 import React from 'react'
+import { AiOutlineCalendar } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
@@ -61,7 +62,7 @@ const MembershipCardBlock: React.VFC<{
       <StyledTitle>{title}</StyledTitle>
 
       <StyledSubTitle>
-        <Icon type="calendar" className="mr-2" />
+        <Icon as={AiOutlineCalendar} className="mr-2" />
         {expiredAt
           ? formatMessage(
               { id: 'common.expiredTime', defaultMessage: '{expiredTime} 止' },

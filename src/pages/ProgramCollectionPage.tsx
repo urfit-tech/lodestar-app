@@ -1,9 +1,9 @@
-import { Button as ChakraButton, SkeletonText } from '@chakra-ui/react'
-import { Icon } from 'antd'
+import { Button as ChakraButton, Icon, SkeletonText } from '@chakra-ui/react'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { Helmet } from 'react-helmet'
+import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
@@ -120,7 +120,7 @@ const ProgramCollectionPage: React.VFC = () => {
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
-            <Icon type="appstore" theme="filled" className="mr-3" />
+            <Icon as={AiFillAppstore} className="mr-3" />
             <span>{title || pageTitle || formatMessage(productMessages.program.title.explore)}</span>
           </StyledBannerTitle>
           {!noSelector && (

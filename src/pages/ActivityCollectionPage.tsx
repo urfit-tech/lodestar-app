@@ -1,7 +1,8 @@
-import { Button } from '@chakra-ui/react'
-import { Icon, Skeleton } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
+import { Skeleton } from 'antd'
 import { uniqBy, unnest } from 'ramda'
 import React, { useContext } from 'react'
+import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
@@ -69,7 +70,7 @@ const ActivityCollectionPage = () => {
         <div className="container">
           {!noTitle && (
             <StyledBannerTitle>
-              <Icon type="appstore" theme="filled" className="mr-3" />
+              <Icon as={AiFillAppstore} className="mr-3" />
               <span>
                 {pageTitle ||
                   categories.find(category => category.id === active)?.name ||

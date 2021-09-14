@@ -1,5 +1,6 @@
-import { Icon } from 'antd'
+import { Icon } from '@chakra-ui/react'
 import React from 'react'
+import { AiOutlineCalendar } from 'react-icons/ai'
 import styled from 'styled-components'
 import FundingProgressBlock from '../../components/project/FundingProgressBlock'
 import ProjectEnrollmentCounts from '../../containers/project/ProjectEnrollmentCounts'
@@ -94,7 +95,7 @@ const FundingSummaryBlock: React.VFC<{
         <>
           {isCountdownTimerVisible && (
             <StyledCountDownBlock className="mb-3 p-4">
-              <Icon type="calendar" className="mr-2" />
+              <Icon as={AiOutlineCalendar} className="mr-2" />
               <CountDownTimeBlock expiredAt={expiredAt} />
             </StyledCountDownBlock>
           )}

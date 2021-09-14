@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from 'antd'
+import { Icon } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { flatten, uniqBy } from 'ramda'
 import React from 'react'
+import { AiOutlineRight } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -66,7 +67,7 @@ const PopularPodcastCollection: React.VFC = () => {
         >
           <AvatarImage size={64} src={creator.avatarUrl} className="flex-shrink-0 mr-4" />
           <StyledCreatorName className="flex-grow-1 mr-3">{creator.name}</StyledCreatorName>
-          <StyledIcon type="right" />
+          <StyledIcon as={AiOutlineRight} />
         </Link>
       ))}
     </div>

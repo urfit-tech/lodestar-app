@@ -1,6 +1,8 @@
-import { Icon, Skeleton } from 'antd'
+import { Icon } from '@chakra-ui/react'
+import { Skeleton } from 'antd'
 import React from 'react'
 import { Helmet } from 'react-helmet'
+import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -87,7 +89,7 @@ const CreatorCollectionPage: React.VFC = () => {
       <StyledSection>
         <div className="py-5 container">
           <StyledTitle>
-            <Icon type="appstore" theme="filled" className="mr-3" />
+            <Icon as={AiFillAppstore} className="mr-3" />
             <span>{pageTitle || formatMessage(usersMessages.content.creatorList)}</span>
           </StyledTitle>
         </div>
