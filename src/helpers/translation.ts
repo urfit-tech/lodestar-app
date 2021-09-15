@@ -488,6 +488,8 @@ export const checkoutMessages = {
     paypal: { id: 'checkout.label.paypal', defaultMessage: 'PayPal - 限非台灣地區' },
     parenting: { id: 'checkout.label.parenting', defaultMessage: '親子天下' },
     commonhealth: { id: 'checkout.label.commonhealth', defaultMessage: '康健' },
+    cw_commonhealth: { id: 'checkout.label.cw_commonhealth', defaultMessage: '康健' },
+    cw_parenting: { id: 'checkout.label.cw_parenting', defaultMessage: '親子天下' },
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
     groupBuyingPlan: {
       id: 'checkout.label.groupBuyingTitle',
