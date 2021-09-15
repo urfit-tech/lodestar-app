@@ -19,7 +19,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
             desktop: { columnAmount: 3, columnRatio: [4, 4, 4] },
           }}
         >
-          <ActivityBlock />
+          <ActivityBlock activityIds={[]} />
         </Layout>
       </div>
 

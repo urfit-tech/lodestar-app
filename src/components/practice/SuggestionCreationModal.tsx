@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { Button, ButtonGroup, useDisclosure, useToast } from '@chakra-ui/react'
 import { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
+import { omit } from 'ramda'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { defineMessages, useIntl } from 'react-intl'
@@ -80,8 +81,9 @@ const SuggestionCreationModal: React.VFC<SuggestionCreationModalProps> = ({ thre
       >
         <Controller
           name="suggest"
-          as={
+          render={({ field }) => (
             <StyledBraftEditor
+              {...omit(['value'], field)}
               language="zh-hant"
               controls={[
                 'bold',
@@ -97,7 +99,7 @@ const SuggestionCreationModal: React.VFC<SuggestionCreationModalProps> = ({ thre
               contentClassName="short-bf-content"
               media={{ uploadFn: createUploadFn(appId, authToken) }}
             />
-          }
+          )}
           control={control}
         />
       </CommonModal>

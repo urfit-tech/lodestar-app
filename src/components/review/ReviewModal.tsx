@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
+import { omit } from 'ramda'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
@@ -112,7 +113,15 @@ const ReviewModal: React.VFC<{
   const [updateReview] = useMutation<hasura.UPDATE_REVIEW, hasura.UPDATE_REVIEWVariables>(UPDATE_REVIEW)
   const toast = useToast()
 
-  const { control, errors, register, handleSubmit, setError, reset, setValue } = useForm<{
+  const {
+    control,
+    formState: { errors },
+    register,
+    handleSubmit,
+    setError,
+    reset,
+    setValue,
+  } = useForm<{
     title: string
     starRating: number
     content: EditorState
@@ -228,22 +237,23 @@ const ReviewModal: React.VFC<{
           <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.score)}</StyledFormLabel>
           <Controller
             name="starRating"
-            as={
+            render={({ field }) => (
               <ReactStarsWrapper
+                {...omit(['value'], field)}
                 name="starRating"
                 value={memberReviews && memberReviews[0]?.score ? memberReviews[0]?.score : 5}
-                onStarClick={(rating: React.SetStateAction<number>) => setValue('starRating', rating)}
-                onStarHover={(rating: React.SetStateAction<number>) => setValue('starRating', rating)}
+                onStarClick={rating => setValue('starRating', rating)}
+                onStarHover={rating => setValue('starRating', rating)}
                 renderStarIcon={(nextValue, prevValue) => (nextValue > prevValue ? <StarGrayIcon /> : <StarIcon />)}
               />
-            }
+            )}
             control={control}
           />
 
           <StyledFormLabel className="mt-4" htmlFor="title">
             {formatMessage(reviewMessages.modal.title)}
           </StyledFormLabel>
-          <StyledInputTitle id="title" name="title" ref={register({ validate: validateTitle })} autoComplete="off" />
+          <StyledInputTitle id="title" {...register('title', { validate: validateTitle })} autoComplete="off" />
           <StyledFormControl isInvalid={!!errors?.title} className="mt-1">
             <FormErrorMessage className="mt-1">{errors?.title?.message}</FormErrorMessage>
           </StyledFormControl>
@@ -251,13 +261,15 @@ const ReviewModal: React.VFC<{
           <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.content)}</StyledFormLabel>
           <Controller
             name="content"
-            as={
+            render={({ field }) => (
               <StyledEditor
+                {...omit(['value'], field)}
+                defaultValue={BraftEditor.createEditorState((memberReviews && memberReviews[0]?.content) || '')}
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
                 media={{ uploadFn: createUploadFn(appId, authToken) }}
               />
-            }
+            )}
             control={control}
           />
           <StyledFormControl isInvalid={!!errors?.content} className="mt-1">
@@ -267,13 +279,15 @@ const ReviewModal: React.VFC<{
           <StyledFormLabel className="mt-4">{formatMessage(reviewMessages.modal.private)}</StyledFormLabel>
           <Controller
             name="privateContent"
-            as={
+            render={({ field: { value: defaultValue, ...field } }) => (
               <StyledEditor
+                {...omit(['value'], field)}
+                defaultValue={BraftEditor.createEditorState((memberReviews && memberReviews[0]?.privateContent) || '')}
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
                 media={{ uploadFn: createUploadFn(appId, authToken) }}
               />
-            }
+            )}
             control={control}
           />
 

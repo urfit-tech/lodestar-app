@@ -4,6 +4,7 @@ import { Button as AntdButton } from 'antd'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
+import { omit } from 'ramda'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { defineMessages, useIntl } from 'react-intl'
@@ -104,7 +105,13 @@ const MerchandiseOrderContactModal: React.VFC<{ orderId: string }> = ({ orderId 
     useOrderContact(orderId, currentMemberId || '')
 
   const { formatMessage } = useIntl()
-  const { control, handleSubmit, setValue, errors, setError } = useForm<{
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    setError,
+  } = useForm<{
     message: EditorState
   }>({
     defaultValues: { message: BraftEditor.createEditorState('') },
@@ -156,15 +163,16 @@ const MerchandiseOrderContactModal: React.VFC<{ orderId: string }> = ({ orderId 
         <form onSubmit={handleSave}>
           <Controller
             name="message"
-            as={
+            render={({ field }) => (
               <StyledEditor
+                {...omit(['value'], field)}
                 isInvalid={!!errors?.message}
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
                 media={{ uploadFn: createUploadFn(appId, authToken) }}
                 placeholder={formatMessage(messages.fillMessageContent)}
               />
-            }
+            )}
             control={control}
           />
           <StyledFormControl isInvalid={!!errors?.message} className="mt-1">

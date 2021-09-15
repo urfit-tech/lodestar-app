@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
+import { omit } from 'ramda'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { defineMessages, useIntl } from 'react-intl'
@@ -68,13 +69,18 @@ const PracticeUploadModal: React.VFC<{
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
-  const { register, control, handleSubmit, errors } = useForm<{
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<{
     title: string
     description?: EditorState
   }>({
     defaultValues: {
       title: practice?.title,
-      description: BraftEditor.createEditorState(practice?.description || ''),
     },
   })
 
@@ -211,17 +217,20 @@ const PracticeUploadModal: React.VFC<{
         <FormControl isRequired isInvalid={!!errors?.title?.message} className="my-4">
           <FormLabel>{formatMessage(commonMessages.label.title)}</FormLabel>
           <StyledInputWrapper>
-            <Input
-              name="title"
-              ref={register({ required: formatMessage(messages.fillTitleNotice) })}
-              variant="outline"
-            />
+            <Input {...register('title', { required: formatMessage(messages.fillTitleNotice) })} variant="outline" />
           </StyledInputWrapper>
           <FormErrorMessage>{errors?.title?.message}</FormErrorMessage>
         </FormControl>
         <Controller
           name="description"
-          as={<BraftEditor className="mb-4" placeholder={formatMessage(messages.fillDescriptionPlease)} />}
+          render={({ field }) => (
+            <BraftEditor
+              {...omit(['value'], field)}
+              defaultValue={BraftEditor.createEditorState(practice?.description)}
+              className="mb-4"
+              placeholder={formatMessage(messages.fillDescriptionPlease)}
+            />
+          )}
           control={control}
         />
         <div className="mb-4">

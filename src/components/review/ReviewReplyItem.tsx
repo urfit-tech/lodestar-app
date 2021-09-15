@@ -16,6 +16,7 @@ import {
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
+import { omit } from 'ramda'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
@@ -92,11 +93,12 @@ const ReviewReplyItem: React.VFC<ReviewReplyItemProps & { onRefetch?: () => void
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { authToken, currentMemberId } = useAuth()
-  const { control, errors, handleSubmit, setError } = useForm<{ reply: EditorState }>({
-    defaultValues: {
-      reply: BraftEditor.createEditorState(content || ''),
-    },
-  })
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    setError,
+  } = useForm<{ reply: EditorState }>()
   const toast = useToast()
   const [replyEditing, setReplyEditing] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -217,13 +219,15 @@ const ReviewReplyItem: React.VFC<ReviewReplyItemProps & { onRefetch?: () => void
           <form onSubmit={handleSave}>
             <Controller
               name="reply"
-              as={
+              render={({ field }) => (
                 <StyledEditor
+                  {...omit(['value'], field)}
+                  defaultValue={BraftEditor.createEditorState(content || '')}
                   language="zh-hant"
                   controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
                   media={{ uploadFn: createUploadFn(appId, authToken) }}
                 />
-              }
+              )}
               control={control}
             />
             <StyledFormControl isInvalid={!!errors?.reply} className="mt-1">

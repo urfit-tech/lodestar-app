@@ -112,7 +112,7 @@
     "react-ga": "^3.1.2",
     "react-gtm-module": "^2.0.8",
     "react-helmet": "^6.1.0",
-    "react-hook-form": "^6.11.0",
+    "react-hook-form": "^7.15.3",
     "react-hot-loader": "^4.12.21",
     "react-hotjar": "^2.2.0",
     "react-icons": "^3.11.0",

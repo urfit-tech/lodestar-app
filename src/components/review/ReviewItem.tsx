@@ -3,6 +3,7 @@ import { Button, ButtonGroup, useToast } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
 import moment from 'moment'
+import { omit } from 'ramda'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
@@ -79,11 +80,7 @@ const ReviewItem: React.VFC<ReviewProps & { onRefetch?: () => void; targetId: st
   const { authToken, currentMemberId } = useAuth()
   const { handleSubmit, control, reset } = useForm<{
     replyContent: EditorState
-  }>({
-    defaultValues: {
-      replyContent: BraftEditor.createEditorState((reviewReplies.length !== 0 && reviewReplies[0].content) || ''),
-    },
-  })
+  }>()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [replyEditing, setReplyEditing] = useState(false)
 
@@ -154,13 +151,17 @@ const ReviewItem: React.VFC<ReviewProps & { onRefetch?: () => void; targetId: st
                 <form onSubmit={handleSave}>
                   <Controller
                     name="replyContent"
-                    as={
+                    render={({ field }) => (
                       <StyledEditor
+                        {...omit(['value'], field)}
+                        defaultValue={BraftEditor.createEditorState(
+                          (reviewReplies.length !== 0 && reviewReplies[0].content) || '',
+                        )}
                         language="zh-hant"
                         controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
                         media={{ uploadFn: createUploadFn(appId, authToken) }}
                       />
-                    }
+                    )}
                     control={control}
                   />
                   <ButtonGroup mt={4} className="d-flex justify-content-end">
