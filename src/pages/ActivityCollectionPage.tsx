@@ -1,5 +1,4 @@
-import { Button, Icon } from '@chakra-ui/react'
-import { Skeleton } from 'antd'
+import { Button, Icon, Skeleton } from '@chakra-ui/react'
 import { uniqBy, unnest } from 'ramda'
 import React, { useContext } from 'react'
 import { AiFillAppstore } from 'react-icons/ai'
@@ -39,6 +38,11 @@ const StyledCollectionBanner = styled.div<{ src: Banner }>`
   }
 `
 
+const StyledSkeleton = styled(Skeleton)`
+  width: 96px;
+  height: 28px;
+`
+
 const ActivityCollectionPage = () => {
   const { settings } = useApp()
   const { currentLanguage } = useContext(LanguageContext)
@@ -69,12 +73,16 @@ const ActivityCollectionPage = () => {
       <StyledBanner>
         <div className="container">
           {!noTitle && (
-            <StyledBannerTitle>
+            <StyledBannerTitle className="d-flex align-items-center">
               <Icon as={AiFillAppstore} className="mr-3" />
               <span>
-                {pageTitle ||
+                {pageTitle === undefined ? (
+                  <StyledSkeleton height="28px" />
+                ) : (
+                  pageTitle ||
                   categories.find(category => category.id === active)?.name ||
-                  formatMessage(productMessages.activity.title.default)}
+                  formatMessage(productMessages.activity.title.default)
+                )}
               </span>
             </StyledBannerTitle>
           )}
