@@ -153,10 +153,11 @@ export const useEnrolledProductIds = (memberId: string) => {
 
 export const useNav = () => {
   const location = useLocation()
-  const { navs } = useApp()
+  const { loading, navs } = useApp()
   const { currentLanguage } = useContext(LanguageContext)
 
   return {
+    loading,
     navs: navs.filter(nav => nav.locale === currentLanguage),
     pageTitle: navs.find(nav => nav.locale === currentLanguage && nav.href === location.pathname + location.search)
       ?.label,
