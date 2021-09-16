@@ -1,3 +1,4 @@
+import { Category } from './general'
 import { MerchandiseProps } from './merchandise'
 
 export type PostLinkProps = {
@@ -15,10 +16,7 @@ export type PostPreviewProps = PostLinkProps & {
     name: string
   }
   publishedAt: Date | null
-  categories: {
-    id: string
-    name: string
-  }[]
+  categories: Category[]
   tags: string[]
 }
 

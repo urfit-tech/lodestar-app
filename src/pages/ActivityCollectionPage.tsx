@@ -1,7 +1,7 @@
-import { Button } from '@chakra-ui/react'
-import { Icon, Skeleton } from 'antd'
+import { Button, Icon, Skeleton } from '@chakra-ui/react'
 import { uniqBy, unnest } from 'ramda'
 import React, { useContext } from 'react'
+import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
@@ -14,6 +14,7 @@ import LanguageContext from '../contexts/LanguageContext'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { usePublishedActivityCollection } from '../hooks/activity'
 import { useNav } from '../hooks/data'
+import { Category } from '../types/general'
 
 type Banner = { desktop: string; mobile: string }
 
@@ -37,6 +38,11 @@ const StyledCollectionBanner = styled.div<{ src: Banner }>`
   }
 `
 
+const StyledSkeleton = styled(Skeleton)`
+  width: 96px;
+  height: 28px;
+`
+
 const ActivityCollectionPage = () => {
   const { settings } = useApp()
   const { currentLanguage } = useContext(LanguageContext)
@@ -50,10 +56,10 @@ const ActivityCollectionPage = () => {
     categoryId: active ? active : undefined,
   })
 
-  const categories: {
-    id: string
-    name: string
-  }[] = uniqBy(category => category.id, unnest(activities.map(activity => activity.categories)))
+  const categories: Category[] = uniqBy(
+    category => category.id,
+    unnest(activities.map(activity => activity.categories)),
+  )
 
   let collectionBanner: Banner | null
   try {
@@ -67,12 +73,16 @@ const ActivityCollectionPage = () => {
       <StyledBanner>
         <div className="container">
           {!noTitle && (
-            <StyledBannerTitle>
-              <Icon type="appstore" theme="filled" className="mr-3" />
+            <StyledBannerTitle className="d-flex align-items-center">
+              <Icon as={AiFillAppstore} className="mr-3" />
               <span>
-                {pageTitle ||
+                {pageTitle === undefined ? (
+                  <StyledSkeleton height="28px" />
+                ) : (
+                  pageTitle ||
                   categories.find(category => category.id === active)?.name ||
-                  formatMessage(productMessages.activity.title.default)}
+                  formatMessage(productMessages.activity.title.default)
+                )}
               </span>
             </StyledBannerTitle>
           )}

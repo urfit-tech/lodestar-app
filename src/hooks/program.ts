@@ -4,7 +4,7 @@ import { sum, uniq } from 'ramda'
 import { useMemo } from 'react'
 import { useAuth } from '../components/auth/AuthContext'
 import hasura from '../hasura'
-import { CategoryProps } from '../types/general'
+import { Category } from '../types/general'
 import {
   PeriodType,
   ProgramBriefProps,
@@ -121,7 +121,7 @@ export const usePublishedProgramCollection = (options?: {
 
   const programs: (ProgramBriefProps & {
     supportLocales: string[] | null
-    categories: CategoryProps[]
+    categories: Category[]
     roles: ProgramRoleProps[]
     plans: ProgramPlanProps[]
   })[] =
@@ -300,7 +300,7 @@ export const useProgram = (programId: string) => {
             id
             title
             description
-            program_contents(where: { published_at: { _is_null: false } }, order_by: { position: asc }) {
+            program_contents(where: { published_at: { _lte: "now()" } }, order_by: { position: asc }) {
               id
               title
               abstract
@@ -333,7 +333,7 @@ export const useProgram = (programId: string) => {
   )
   const program:
     | (ProgramProps & {
-        categories: CategoryProps[]
+        categories: Category[]
         tags: string[]
         roles: ProgramRoleProps[]
         plans: ProgramPlanProps[]

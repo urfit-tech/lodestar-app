@@ -1,4 +1,4 @@
-import { CategoryProps } from './general'
+import { Category } from './general'
 
 type ProjectSectionProps = {
   id: string
@@ -60,7 +60,7 @@ export type ProjectBasicProps = {
   isCountdownTimerVisible: boolean
   totalSales: number
   enrollmentCount: number
-  categories: CategoryProps[]
+  categories: Category[]
 }
 export type ProjectIntroProps = ProjectBasicProps & {
   projectPlans?: ProjectPlanBasicProps[]
@@ -69,6 +69,7 @@ export type ProjectIntroProps = ProjectBasicProps & {
 export type ProjectProps = ProjectBasicProps & {
   template: string | null
   introduction: string | null
+  introductionDesktop: string | null
   updates: any
   comments: any
   contents: any

@@ -8,7 +8,7 @@ import {
   ActivityTicketSessionProps,
   ActivityTicketSessionType,
 } from '../types/activity'
-import { CategoryProps } from '../types/general'
+import { Category } from '../types/general'
 
 export const usePublishedActivityCollection = (options?: { categoryId?: string }) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_ACTIVITY_COLLECTION>(
@@ -57,7 +57,7 @@ export const usePublishedActivityCollection = (options?: { categoryId?: string }
   )
 
   const activities: (ActivityProps & {
-    categories: CategoryProps[]
+    categories: Category[]
     participantCount: number
     totalSeats: number
   })[] =
@@ -220,7 +220,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
       sessions: Pick<ActivityTicketSessionProps, 'id' | 'type' | 'title'>[]
       enrollments: { orderId: string; orderProductId: string }[]
     }[]
-    categories: CategoryProps[]
+    categories: Category[]
     sessionIds: string[]
   } | null = data?.activity_by_pk
     ? {
@@ -419,7 +419,7 @@ export const useActivityTicket = (ticketId: string) => {
     | (ActivityTicketProps & {
         sessions: ActivityTicketSessionProps[]
         activity: Pick<ActivityProps, 'id' | 'title' | 'coverUrl'> & {
-          categories: (CategoryProps & { position: number })[]
+          categories: (Category & { position: number })[]
         }
       })
     | null =

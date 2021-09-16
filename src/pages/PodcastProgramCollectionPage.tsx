@@ -1,8 +1,10 @@
-import { Button, Icon } from 'antd'
+import { Icon } from '@chakra-ui/icons'
+import { Button } from 'antd'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { Helmet } from 'react-helmet'
+import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useAuth } from '../components/auth/AuthContext'
 import { AuthModalContext } from '../components/auth/AuthModal'
@@ -95,7 +97,7 @@ const PodcastProgramCollectionPage: React.VFC = () => {
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
-            <Icon type="appstore" theme="filled" className="mr-3" />
+            <Icon as={AiFillAppstore} className="mr-3" />
             <span>{pageTitle || formatMessage(productMessages.podcast.title.broadcast)}</span>
           </StyledBannerTitle>
 

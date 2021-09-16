@@ -87,6 +87,7 @@ export const useProject = (projectId: string) => {
           target_unit
           template
           introduction
+          introduction_desktop
           updates
           comments
           contents
@@ -161,6 +162,7 @@ export const useProject = (projectId: string) => {
           targetUnit: data.project_by_pk.target_unit as ProjectIntroProps['targetUnit'],
           template: data.project_by_pk.template,
           introduction: data.project_by_pk.introduction,
+          introductionDesktop: data.project_by_pk.introduction_desktop,
           updates: data.project_by_pk.updates || [],
           comments: data.project_by_pk.comments || [],
           contents: data.project_by_pk.contents || [],

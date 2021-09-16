@@ -1,3 +1,12 @@
+import { Category } from './general'
+
+export type PodcastAlbum = {
+  id: string
+  title: string
+  coverUrl: string | null
+  categories: Category[]
+}
+
 export type PodcastProgramBriefProps = {
   id: string
   coverUrl: string | null
@@ -8,10 +17,7 @@ export type PodcastProgramBriefProps = {
   duration: number
   durationSecond: number
   description: string | null
-  categories: {
-    id: string
-    name: string
-  }[]
+  categories: Category[]
   instructor: {
     id: string
     avatarUrl: string | null
@@ -28,10 +34,7 @@ export type PodcastProgramContent = {
   description: string | null
   coverUrl: string | null
   publishedAt: Date
-  categories: {
-    id: string
-    name: string
-  }[]
+  categories: Category[]
   tags: string[]
   url: string
   instructorIds: string[]

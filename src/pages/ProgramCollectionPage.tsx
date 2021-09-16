@@ -1,9 +1,9 @@
-import { Button as ChakraButton, SkeletonText } from '@chakra-ui/react'
-import { Icon } from 'antd'
+import { Button as ChakraButton, Icon, SkeletonText } from '@chakra-ui/react'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { Helmet } from 'react-helmet'
+import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
@@ -18,7 +18,7 @@ import { notEmpty } from '../helpers'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
-import { CategoryProps } from '../types/general'
+import { Category } from '../types/general'
 
 const StyledButton = styled(ChakraButton)`
   && {
@@ -54,7 +54,7 @@ const ProgramCollectionPage: React.VFC = () => {
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
 
-  const categories: CategoryProps[] = uniqBy(
+  const categories: Category[] = uniqBy(
     category => category.id,
     flatten(programs.map(program => program.categories).filter(notEmpty)),
   )
@@ -120,7 +120,7 @@ const ProgramCollectionPage: React.VFC = () => {
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
-            <Icon type="appstore" theme="filled" className="mr-3" />
+            <Icon as={AiFillAppstore} className="mr-3" />
             <span>{title || pageTitle || formatMessage(productMessages.program.title.explore)}</span>
           </StyledBannerTitle>
           {!noSelector && (

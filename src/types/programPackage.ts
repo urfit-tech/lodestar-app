@@ -1,4 +1,5 @@
 import { PeriodType } from '../types/program'
+import { Category } from './general'
 
 export type ProgramPackageProps = {
   id: string
@@ -26,8 +27,5 @@ export type ProgramPackageProgramProps = {
   id: string
   title: string
   coverUrl?: string | null
-  categories: {
-    id: string
-    name: string
-  }[]
+  categories: Category[]
 }

@@ -1,6 +1,7 @@
 import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import QRCode from 'qrcode.react'
 import React, { useState } from 'react'
+import { AiOutlineRight } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
 import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -196,7 +197,7 @@ const ActivityTicketPage: React.VFC<{
             <StyledLink to={`/activities/${ticket.activity.id}`} target="_blank">
               <Button colorScheme="link" isFullWidth>
                 <span>{formatMessage(commonMessages.link.more)}</span>
-                <Icon type="right" />
+                <Icon as={AiOutlineRight} />
               </Button>
             </StyledLink>
           </div>

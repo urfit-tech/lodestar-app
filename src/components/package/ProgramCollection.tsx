@@ -1,6 +1,8 @@
-import { Button, Icon } from 'antd'
+import { Icon } from '@chakra-ui/react'
+import { Button } from 'antd'
 import { uniq } from 'ramda'
 import React, { useState } from 'react'
+import { AiOutlineRight, AiOutlineUnorderedList } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
@@ -73,13 +75,13 @@ const ProgramCollection: React.VFC<{
         <StyledSwitchButton className="mb-3">
           {displayType === 'grid' && (
             <div onClick={() => setDisplayType('list')}>
-              <Icon type="unordered-list" className="mr-2" />
+              <Icon as={AiOutlineUnorderedList} className="mr-2" />
               <span>{formatMessage(commonMessages.term.list)}</span>
             </div>
           )}
           {displayType === 'list' && (
             <div onClick={() => setDisplayType('grid')}>
-              <Icon type="appstore" className="mr-2" />
+              <Icon as={AiOutlineRight} className="mr-2" />
               <span>{formatMessage(commonMessages.term.grid)}</span>
             </div>
           )}

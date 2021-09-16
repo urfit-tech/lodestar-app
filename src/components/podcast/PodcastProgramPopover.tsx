@@ -13,6 +13,7 @@ import { durationFullFormatter } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { usePodcastPlanIds } from '../../hooks/podcast'
 import { ReactComponent as MicrophoneIcon } from '../../images/microphone.svg'
+import { Category } from '../../types/general'
 import { CommonTitleMixin } from '../common'
 import { AvatarImage } from '../common/Image'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
@@ -60,10 +61,7 @@ export type PodcastProgramPopoverProps = {
   listPrice: number
   salePrice: number | null
   description?: string | null
-  categories: {
-    id: string
-    name: string
-  }[]
+  categories: Category[]
   instructor?: {
     id: string
     avatarUrl?: string | null

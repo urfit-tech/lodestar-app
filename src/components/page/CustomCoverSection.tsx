@@ -14,7 +14,7 @@ const SliderWrapper = styled.div<{ desktopHeight?: string; mobileHeight?: string
     height: 510px;
   }
   @media (min-width: 992px) {
-    padding-top: 36%;
+    padding-top: 32%;
   }
 `
 
