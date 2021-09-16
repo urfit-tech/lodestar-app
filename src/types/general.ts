@@ -53,3 +53,4 @@ export type Module =
   | 'xuemi_pt'
 
 export type ProductRoleName = 'owner' | 'instructor' | 'assistant' | 'app-owner'
+export type StatusType = 'loading' | 'error' | 'success' | 'idle'

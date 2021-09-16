@@ -8311,6 +8311,66 @@ export interface GET_ORDERS_PRODUCTVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PODCAST_ALBUMS
+// ====================================================
+
+export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories {
+  __typename: "podcast_album_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories_category | null;
+}
+
+export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_podcast_programs_aggregate_aggregate {
+  __typename: "podcast_album_podcast_program_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_podcast_programs_aggregate {
+  __typename: "podcast_album_podcast_program_aggregate";
+  aggregate: GET_PODCAST_ALBUMS_podcast_album_podcast_album_podcast_programs_aggregate_aggregate | null;
+}
+
+export interface GET_PODCAST_ALBUMS_podcast_album {
+  __typename: "podcast_album";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  /**
+   * An array relationship
+   */
+  podcast_album_categories: GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories[];
+  /**
+   * An aggregated array relationship
+   */
+  podcast_album_podcast_programs_aggregate: GET_PODCAST_ALBUMS_podcast_album_podcast_album_podcast_programs_aggregate;
+}
+
+export interface GET_PODCAST_ALBUMS {
+  /**
+   * fetch data from the table: "podcast_album"
+   */
+  podcast_album: GET_PODCAST_ALBUMS_podcast_album[];
+}
+
+export interface GET_PODCAST_ALBUMSVariables {
+  categoryId?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_LAST_EXERCISE
 // ====================================================
 
