@@ -3,6 +3,7 @@ import { uniqBy, unnest } from 'ramda'
 import React, { useContext } from 'react'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
+import { useLocation } from 'react-router'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Activity from '../components/activity/Activity'
@@ -44,14 +45,19 @@ const StyledSkeleton = styled(Skeleton)`
 `
 
 const ActivityCollectionPage = () => {
-  const { settings } = useApp()
-  const { currentLanguage } = useContext(LanguageContext)
-  const { pageTitle } = useNav()
-  const { formatMessage } = useIntl()
   const [active = null] = useQueryParam('categories', StringParam)
   const [classification = null, setClassification] = useQueryParam('classification', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
   const [noTitle] = useQueryParam('noTitle', BooleanParam)
+  const location = useLocation()
+  const { settings } = useApp()
+  const { loading, navs } = useNav()
+  const { currentLanguage } = useContext(LanguageContext)
+  const pageTitle = navs.find(
+    nav =>
+      nav.locale === currentLanguage && nav.href === `${location.pathname}${active ? `?categories=${active}` : ''}`,
+  )?.label
+  const { formatMessage } = useIntl()
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection({
     categoryId: active ? active : undefined,
   })
@@ -76,7 +82,7 @@ const ActivityCollectionPage = () => {
             <StyledBannerTitle className="d-flex align-items-center">
               <Icon as={AiFillAppstore} className="mr-3" />
               <span>
-                {pageTitle === undefined ? (
+                {loading ? (
                   <StyledSkeleton height="28px" />
                 ) : (
                   pageTitle ||
