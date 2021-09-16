@@ -1,24 +1,30 @@
-import { Button as ChakraButton, SkeletonText } from '@chakra-ui/react'
-import { Icon } from 'antd'
+import { useQuery } from '@apollo/react-hooks'
+import { Button as ChakraButton, Icon, SkeletonText } from '@chakra-ui/react'
+import gql from 'graphql-tag'
 import { flatten, uniqBy } from 'ramda'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { Helmet } from 'react-helmet'
-import { useIntl } from 'react-intl'
+import { AiFillAppstore } from 'react-icons/ai'
+import { defineMessages, useIntl } from 'react-intl'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import { useAuth } from '../components/auth/AuthContext'
+import { MultiLineTruncationMixin } from '../components/common'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import ProgramCard from '../components/program/ProgramCard'
-import ProgramCollectionBanner from '../components/program/ProgramCollectionBanner'
 import { useApp } from '../containers/common/AppContext'
-import LanguageContext from '../contexts/LanguageContext'
+import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
-import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
-import { CategoryProps } from '../types/general'
+import EmptyCover from '../images/empty-cover.png'
+import { Category, StatusType } from '../types/general'
+import { PodcastAlbum } from '../types/podcast'
+
+const messages = defineMessages({
+  totalUnit: { id: 'podcast.content.totalUnit', defaultMessage: '共 {unitCount} 單元' },
+})
 
 const StyledButton = styled(ChakraButton)`
   && {
@@ -29,58 +35,85 @@ const StyledButton = styled(ChakraButton)`
   }
 `
 
-const PodcastAlbumCollectionPage: React.VFC = () => {
+const StyledCard = styled.div`
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+`
+
+const StyledCardImg = styled.img`
+  object-fit: cover;
+  aspect-ratio: 1;
+`
+
+const StyledCardTitle = styled.h3`
+  ${MultiLineTruncationMixin}
+  color: var(--gray-darker);
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  height: 44px;
+`
+
+const StyledUnit = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: var(--gray-dark);
+`
+
+const PodcastAlbumCard: React.VFC<Pick<PodcastAlbum, 'title' | 'coverUrl'> & { unitCount: number }> = ({
+  title,
+  coverUrl,
+  unitCount,
+}) => {
   const { formatMessage } = useIntl()
 
-  const [defaultActive] = useQueryParam('active', StringParam)
-  const [type] = useQueryParam('type', StringParam)
-  const [title] = useQueryParam('title', StringParam)
-  const [noPrice] = useQueryParam('noPrice', BooleanParam)
-  const [noMeta] = useQueryParam('noMeta', BooleanParam)
-  const [noSelector] = useQueryParam('noSelector', BooleanParam)
-  const [noBanner] = useQueryParam('noBanner', BooleanParam)
-  const [permitted] = useQueryParam('permitted', BooleanParam)
+  return (
+    <StyledCard>
+      <StyledCardImg src={coverUrl || EmptyCover} alt="podcast-album" />
+      <div className="p-4">
+        <StyledCardTitle className="mb-1">{title}</StyledCardTitle>
+        <StyledUnit>{formatMessage(messages.totalUnit, { unitCount })}</StyledUnit>
+      </div>
+    </StyledCard>
+  )
+}
 
-  const { currentMemberId } = useAuth()
+const PodcastAlbumCollectionPage: React.VFC = () => {
+  const [defaultActive] = useQueryParam('active', StringParam)
+  const [title] = useQueryParam('title', StringParam)
+  const [noSelector] = useQueryParam('noSelector', BooleanParam)
+
   const { settings } = useApp()
   const { pageTitle } = useNav()
-  const { currentLanguage } = useContext(LanguageContext)
-
-  const { loadingPrograms, errorPrograms, programs } = usePublishedProgramCollection({
-    isPrivate: permitted ? undefined : false,
+  const { formatMessage } = useIntl()
+  const { status, podcastAlbums } = usePodcastAlbumCollection({
     categoryId: defaultActive || undefined,
   })
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
 
-  const categories: CategoryProps[] = uniqBy(
+  const categories: Category[] = uniqBy(
     category => category.id,
-    flatten(programs.map(program => program.categories).filter(notEmpty)),
+    flatten(podcastAlbums.map(podcastAlbum => podcastAlbum.categories).filter(notEmpty)),
   )
 
   useEffect(() => {
-    if (programs) {
-      programs.forEach((program, index) => {
-        const listPrice =
-          program.isSubscription && program.plans.length > 0 ? program.plans[0].listPrice : program.listPrice || 0
-        const salePrice =
-          program.isSubscription && program.plans.length > 0 && (program.plans[0].soldAt?.getTime() || 0) > Date.now()
-            ? program.plans[0].salePrice
-            : (program.soldAt?.getTime() || 0) > Date.now()
-            ? program.salePrice
-            : undefined
+    if (podcastAlbums) {
+      podcastAlbums.forEach((podcastAlbum, index) => {
         ReactGA.plugin.execute('ec', 'addImpression', {
-          id: program.id,
-          name: program.title,
-          category: 'Program',
-          price: `${salePrice || listPrice}`,
+          id: podcastAlbum.id,
+          name: podcastAlbum.title,
+          category: 'PodcastAlbum',
+          // price: `${salePrice || listPrice}`,
           position: index + 1,
         })
       })
       ReactGA.ga('send', 'pageview')
     }
-  }, [programs])
+  }, [podcastAlbums])
 
   let seoMeta:
     | {
@@ -120,7 +153,7 @@ const PodcastAlbumCollectionPage: React.VFC = () => {
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
-            <Icon type="appstore" theme="filled" className="mr-3" />
+            <Icon as={AiFillAppstore} className="mr-3" />
             <span>{title || pageTitle || formatMessage(productMessages.program.title.explore)}</span>
           </StyledBannerTitle>
 
@@ -152,36 +185,26 @@ const PodcastAlbumCollectionPage: React.VFC = () => {
 
       <StyledCollection>
         <div className="container">
-          {!noBanner && settings['program_collection_banner.enabled'] === 'true' && (
-            <ProgramCollectionBanner
-              link={settings['program_collection_banner.link']}
-              imgUrls={{
-                0: settings['program_collection_banner.img_url@0'],
-                425: settings['program_collection_banner.img_url@425'],
-              }}
-            />
-          )}
           <div className="row">
-            {loadingPrograms ? (
+            {status === 'loading' ? (
               <SkeletonText mt="1" noOfLines={4} spacing="4" />
-            ) : !!errorPrograms ? (
+            ) : status === 'error' ? (
               <div>{formatMessage(commonMessages.status.readingFail)}</div>
             ) : (
-              programs
+              podcastAlbums
                 .filter(
-                  program =>
-                    (!selectedCategoryId || program.categories.some(category => category.id === selectedCategoryId)) &&
-                    (!program.supportLocales || program.supportLocales.find(locale => locale === currentLanguage)),
+                  podcastAlbum =>
+                    !selectedCategoryId || podcastAlbum.categories.some(category => category.id === selectedCategoryId),
                 )
-                .map(program => (
-                  <div key={program.id} className="col-12 col-md-6 col-lg-4 mb-4">
-                    <ProgramCard
-                      program={program}
-                      programType={type}
-                      isEnrolled={enrolledProgramIds.includes(program.id)}
-                      noPrice={!!noPrice}
-                      withMeta={!noMeta}
-                    />
+                .map(podcastAlbum => (
+                  <div key={podcastAlbum.id} className="col-6 col-md-3 mb-4">
+                    <Link to={`/podcast-albums/${podcastAlbum.id}`}>
+                      <PodcastAlbumCard
+                        coverUrl={podcastAlbum.coverUrl}
+                        title={podcastAlbum.title}
+                        unitCount={podcastAlbum.unitCount}
+                      />
+                    </Link>
                   </div>
                 ))
             )}
@@ -190,6 +213,52 @@ const PodcastAlbumCollectionPage: React.VFC = () => {
       </StyledCollection>
     </DefaultLayout>
   )
+}
+
+const usePodcastAlbumCollection: (options: { categoryId?: string }) => {
+  status: StatusType
+  podcastAlbums: (PodcastAlbum & { unitCount: number })[]
+  refetch: () => void
+} = ({ categoryId }) => {
+  const { loading, data, error, refetch } = useQuery<hasura.GET_PODCAST_ALBUMS>(
+    gql`
+      query GET_PODCAST_ALBUMS($categoryId: uuid) {
+        podcast_album {
+          id
+          cover_url
+          title
+          podcast_album_categories {
+            id
+            category {
+              id
+              name
+            }
+          }
+          podcast_album_podcast_programs_aggregate {
+            aggregate {
+              count
+            }
+          }
+        }
+      }
+    `,
+  )
+
+  return {
+    status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
+    podcastAlbums:
+      data?.podcast_album.map(v => ({
+        id: v.id,
+        coverUrl: v.cover_url,
+        title: v.title,
+        unitCount: v.podcast_album_podcast_programs_aggregate?.aggregate?.count || 0,
+        categories: v.podcast_album_categories.map(v => ({
+          id: v.category?.id || '',
+          name: v.category?.name || '',
+        })),
+      })) || [],
+    refetch,
+  }
 }
 
 export default PodcastAlbumCollectionPage
