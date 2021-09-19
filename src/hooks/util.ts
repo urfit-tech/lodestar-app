@@ -111,13 +111,7 @@ export const useSwarmify = () => {
   const { currentMember, isAuthenticating } = useAuth()
   const swarmcdnkey = settings['swarmify.cdn_key']
 
-  if (
-    theme &&
-    !isAuthenticating &&
-    swarmcdnkey &&
-    settings['feature.swarmify.enabled'] === '1' &&
-    localStorage.getItem('kolable.feature.swarmify') !== '0'
-  ) {
+  if (theme && !isAuthenticating && swarmcdnkey && settings['feature.swarmify.enabled'] === '1') {
     const swarmoptions = {
       swarmcdnkey,
       theme: {
