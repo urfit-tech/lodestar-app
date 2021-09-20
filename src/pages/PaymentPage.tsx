@@ -52,7 +52,8 @@ const usePayForm = (paymentNo: number) => {
         )
         .then(({ data: { code, result } }) => {
           if (code === 'SUCCESS') {
-            switch (result.gateway) {
+            const gateway = result.gateway?.split('_')[0]
+            switch (gateway) {
               case 'paypal':
                 if (result.url) {
                   window.location.href = result.url
@@ -61,15 +62,7 @@ const usePayForm = (paymentNo: number) => {
                 }
                 break
               case 'spgateway':
-              case 'cw_commonhealth':
-                if (result.html) {
-                  setPayForm(<GatewayForm formHtml={result.html} clientBackUrl={clientBackUrl} />)
-                } else {
-                  // window.location.assign(`/members/${currentMemberId}`)
-                  history.push(`/members/${currentMemberId}`)
-                }
-                break
-              case 'cw_parenting':
+              case 'cw':
                 if (result.html) {
                   setPayForm(<GatewayForm formHtml={result.html} clientBackUrl={clientBackUrl} />)
                 } else {
