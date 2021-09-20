@@ -61,8 +61,15 @@ const usePayForm = (paymentNo: number) => {
                 }
                 break
               case 'spgateway':
-              case 'parenting':
-              case 'commonhealth':
+              case 'cw_commonhealth':
+                if (result.html) {
+                  setPayForm(<GatewayForm formHtml={result.html} clientBackUrl={clientBackUrl} />)
+                } else {
+                  // window.location.assign(`/members/${currentMemberId}`)
+                  history.push(`/members/${currentMemberId}`)
+                }
+                break
+              case 'cw_parenting':
                 if (result.html) {
                   setPayForm(<GatewayForm formHtml={result.html} clientBackUrl={clientBackUrl} />)
                 } else {
