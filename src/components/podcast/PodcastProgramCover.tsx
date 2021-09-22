@@ -88,33 +88,33 @@ const PodcastProgramCover: React.VFC<{
     setupPlaylist,
   } = useContext(PodcastPlayerContext)
   const { enrolledPodcastProgramIds } = useEnrolledPodcastProgramIds(memberId)
-  const { publicPodcastProgramIds } = usePublicPodcastProgramIds(podcastAlbumId || '')
+  const { publicPodcastProgramIds, status } = usePublicPodcastProgramIds(podcastAlbumId || '')
   const [isPlayerInitialized, setIsPlayerInitialized] = useState(false)
 
   useEffect(() => {
-    if (!playlist && !isPlayerInitialized) {
+    if (playlist === null && !isPlayerInitialized && status === 'success') {
       setIsPlayerInitialized(true)
-      setupPlaylist &&
-        setupPlaylist(
-          podcastAlbumId
-            ? {
-                id: null,
-                podcastProgramIds: publicPodcastProgramIds,
-                currentIndex: 0,
-              }
-            : enrolledPodcastProgramIds.includes(podcastProgramId)
-            ? {
-                id: null,
-                podcastProgramIds: enrolledPodcastProgramIds,
-                currentIndex: enrolledPodcastProgramIds.findIndex(id => id === podcastProgramId),
-              }
-            : {
-                id: null,
-                podcastProgramIds: [podcastProgramId],
-                currentIndex: 0,
-                isPreview: true,
-              },
-        )
+
+      setupPlaylist?.(
+        podcastAlbumId
+          ? {
+              id: null,
+              podcastProgramIds: publicPodcastProgramIds,
+              currentIndex: 0,
+            }
+          : enrolledPodcastProgramIds.includes(podcastProgramId)
+          ? {
+              id: null,
+              podcastProgramIds: enrolledPodcastProgramIds,
+              currentIndex: enrolledPodcastProgramIds.findIndex(id => id === podcastProgramId),
+            }
+          : {
+              id: null,
+              podcastProgramIds: [podcastProgramId],
+              currentIndex: 0,
+              isPreview: true,
+            },
+      )
     }
   }, [
     enrolledPodcastProgramIds,
@@ -124,6 +124,7 @@ const PodcastProgramCover: React.VFC<{
     isPlayerInitialized,
     setupPlaylist,
     publicPodcastProgramIds,
+    status,
   ])
 
   const handlePlay = () => {
