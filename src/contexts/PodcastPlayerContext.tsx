@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useCallback, useState } from 'react'
 import { usePodcastProgramContent } from '../hooks/podcast'
 import { PodcastProgramContent } from '../types/podcast'
 
@@ -86,12 +86,15 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         },
         setIsPlaying,
         setPlaylist,
-        setupPlaylist: playlist => {
-          setPlaylist(playlist)
-          setPlaylistMode('loop')
-          !visible && setVisible(true)
-          setIsPlaying(false)
-        },
+        setupPlaylist: useCallback(
+          playlist => {
+            setPlaylist(playlist)
+            setPlaylistMode('loop')
+            !visible && setVisible(true)
+            setIsPlaying(false)
+          },
+          [visible],
+        ),
         playNow: playlist => {
           setPlaylist(playlist)
           setPlaylistMode('loop')

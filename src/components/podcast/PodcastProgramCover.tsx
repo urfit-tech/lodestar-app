@@ -87,45 +87,52 @@ const PodcastProgramCover: React.VFC<{
     setIsPlaying,
     setupPlaylist,
   } = useContext(PodcastPlayerContext)
-  const { enrolledPodcastProgramIds } = useEnrolledPodcastProgramIds(memberId)
-  const { publicPodcastProgramIds, status } = usePublicPodcastProgramIds(podcastAlbumId || '')
+  const { loadingPodcastProgramId, errorPodcastProgramId, enrolledPodcastProgramIds } =
+    useEnrolledPodcastProgramIds(memberId)
+  const { publicPodcastProgramIds, status: publicPodcastProgramIdsStatus } = usePublicPodcastProgramIds(
+    podcastAlbumId || '',
+  )
   const [isPlayerInitialized, setIsPlayerInitialized] = useState(false)
 
   useEffect(() => {
-    if (playlist === null && !isPlayerInitialized && status === 'success') {
-      setIsPlayerInitialized(true)
-
-      setupPlaylist?.(
-        podcastAlbumId
-          ? {
-              id: null,
-              podcastProgramIds: publicPodcastProgramIds,
-              currentIndex: 0,
-            }
-          : enrolledPodcastProgramIds.includes(podcastProgramId)
-          ? {
-              id: null,
-              podcastProgramIds: enrolledPodcastProgramIds,
-              currentIndex: enrolledPodcastProgramIds.findIndex(id => id === podcastProgramId),
-            }
-          : {
-              id: null,
-              podcastProgramIds: [podcastProgramId],
-              currentIndex: 0,
-              isPreview: true,
-            },
-      )
+    if (playlist === null && !isPlayerInitialized) {
+      if (loadingPodcastProgramId === false && errorPodcastProgramId === undefined) {
+        setupPlaylist?.(
+          enrolledPodcastProgramIds.includes(podcastProgramId)
+            ? {
+                id: null,
+                podcastProgramIds: enrolledPodcastProgramIds,
+                currentIndex: enrolledPodcastProgramIds.findIndex(id => id === podcastProgramId),
+              }
+            : {
+                id: null,
+                podcastProgramIds: [podcastProgramId],
+                currentIndex: 0,
+                isPreview: true,
+              },
+        )
+        setIsPlayerInitialized(true)
+      }
     }
   }, [
     enrolledPodcastProgramIds,
     playlist,
-    podcastAlbumId,
     podcastProgramId,
     isPlayerInitialized,
     setupPlaylist,
-    publicPodcastProgramIds,
-    status,
+    loadingPodcastProgramId,
+    errorPodcastProgramId,
   ])
+
+  useEffect(() => {
+    if (podcastAlbumId && publicPodcastProgramIdsStatus === 'success' && setupPlaylist !== undefined) {
+      setupPlaylist({
+        id: null,
+        podcastProgramIds: publicPodcastProgramIds,
+        currentIndex: 0,
+      })
+    }
+  }, [podcastAlbumId, publicPodcastProgramIdsStatus, setupPlaylist])
 
   const handlePlay = () => {
     if (isPlayerInitialized && visible && setIsPlaying) {
