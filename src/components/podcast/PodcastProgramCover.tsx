@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
-import { useEnrolledPodcastProgramIds } from '../../hooks/podcast'
+import { useEnrolledPodcastProgramIds, usePublicPodcastProgramIds } from '../../hooks/podcast'
 import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -69,12 +69,13 @@ const StyledLink = styled(Link)`
 const PodcastProgramCover: React.VFC<{
   memberId: string
   podcastProgramId: string
+  podcastAlbumId?: string
   coverUrl: string | null
   title: string
   publishedAt: Date
   tags: string[]
   description?: string | null
-}> = ({ memberId, podcastProgramId, coverUrl, title, publishedAt, tags, description }) => {
+}> = ({ memberId, podcastProgramId, podcastAlbumId, coverUrl, title, publishedAt, tags, description }) => {
   const {
     isPlaying,
     visible,
@@ -87,6 +88,7 @@ const PodcastProgramCover: React.VFC<{
     setupPlaylist,
   } = useContext(PodcastPlayerContext)
   const { enrolledPodcastProgramIds } = useEnrolledPodcastProgramIds(memberId)
+  const { publicPodcastProgramIds } = usePublicPodcastProgramIds(podcastAlbumId || '')
   const [isPlayerInitialized, setIsPlayerInitialized] = useState(false)
 
   useEffect(() => {
@@ -94,7 +96,13 @@ const PodcastProgramCover: React.VFC<{
       setIsPlayerInitialized(true)
       setupPlaylist &&
         setupPlaylist(
-          enrolledPodcastProgramIds.includes(podcastProgramId)
+          podcastAlbumId
+            ? {
+                id: null,
+                podcastProgramIds: publicPodcastProgramIds,
+                currentIndex: 0,
+              }
+            : enrolledPodcastProgramIds.includes(podcastProgramId)
             ? {
                 id: null,
                 podcastProgramIds: enrolledPodcastProgramIds,
@@ -108,7 +116,15 @@ const PodcastProgramCover: React.VFC<{
               },
         )
     }
-  }, [enrolledPodcastProgramIds, playlist, podcastProgramId, isPlayerInitialized, setupPlaylist])
+  }, [
+    enrolledPodcastProgramIds,
+    playlist,
+    podcastAlbumId,
+    podcastProgramId,
+    isPlayerInitialized,
+    setupPlaylist,
+    publicPodcastProgramIds,
+  ])
 
   const handlePlay = () => {
     if (isPlayerInitialized && visible && setIsPlaying) {
@@ -130,6 +146,12 @@ const PodcastProgramCover: React.VFC<{
             id: null,
             podcastProgramIds: enrolledPodcastProgramIds,
             currentIndex: enrolledPodcastProgramIds.findIndex(id => id === podcastProgramId),
+          }
+        : podcastAlbumId
+        ? {
+            id: null,
+            podcastProgramIds: publicPodcastProgramIds,
+            currentIndex: 0,
           }
         : {
             id: null,

@@ -6082,6 +6082,49 @@ export interface UPDATE_PODCAST_PROGRAM_POSITIONSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM
+// ====================================================
+
+export interface GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program {
+  __typename: "podcast_program";
+  id: any;
+}
+
+export interface GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs {
+  __typename: "podcast_album_podcast_program";
+  id: any;
+  /**
+   * An object relationship
+   */
+  podcast_program: GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program | null;
+}
+
+export interface GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM_podcast_album_by_pk {
+  __typename: "podcast_album";
+  id: any;
+  /**
+   * An array relationship
+   */
+  podcast_album_podcast_programs: GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs[];
+}
+
+export interface GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM {
+  /**
+   * fetch data from the table: "podcast_album" using primary key columns
+   */
+  podcast_album_by_pk: GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM_podcast_album_by_pk | null;
+}
+
+export interface GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUMVariables {
+  id: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PODCAST_ALBUM
 // ====================================================
 
