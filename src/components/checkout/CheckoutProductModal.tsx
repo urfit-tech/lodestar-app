@@ -59,6 +59,11 @@ export type CheckoutProductModalProps = {
   warningText?: string
   startedAt?: Date
   shippingMethods?: ShippingMethodProps[]
+  isFieldsValidate?: (fieldsValue: { invoice: InvoiceProps; shipping: ShippingProps }) => {
+    isValidInvoice: boolean
+    isValidShipping: boolean
+  }
+  renderInvoice?: () => React.ReactNode
   renderProductSelector?: (options: {
     productId: string
     onProductChange: (productId: string) => void
@@ -68,12 +73,14 @@ export type CheckoutProductModalProps = {
 
 const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   defaultProductId,
-  renderTrigger,
-  renderProductSelector,
-  renderTerms,
   warningText,
   startedAt,
   shippingMethods,
+  isFieldsValidate,
+  renderInvoice,
+  renderTrigger,
+  renderProductSelector,
+  renderTerms,
 }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -342,12 +349,14 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         {(totalPrice > 0 || target.discountDownPrice) && (
           <>
             <div ref={invoiceRef} className="mb-5">
-              <InvoiceInput
-                value={invoice}
-                onChange={value => setInvoice(value)}
-                isValidating={isValidating}
-                shouldSameToShippingCheckboxDisplay={target.isPhysical}
-              />
+              {renderInvoice?.() || (
+                <InvoiceInput
+                  value={invoice}
+                  onChange={value => setInvoice(value)}
+                  isValidating={isValidating}
+                  shouldSameToShippingCheckboxDisplay={target.isPhysical}
+                />
+              )}
             </div>
             <div className="mb-3">
               <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
