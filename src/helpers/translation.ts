@@ -191,7 +191,7 @@ export const commonMessages = {
     reply: { id: 'common.button.reply', defaultMessage: '回覆' },
     leaveQuestion: { id: 'common.button.leaveQuestion', defaultMessage: '留下你的問題...' },
     allCategory: { id: 'common.button.all', defaultMessage: '全部分類' },
-    joinNow: { id: 'common.button.join.now', defaultMessage: '立即加入' },
+    joinNow: { id: 'common.button.joinNow', defaultMessage: '立即加入' },
     pledge: { id: 'common.button.pledge', defaultMessage: '前往參與' },
     intro: { id: 'common.button.introduction', defaultMessage: '簡介' },
     expand: { id: 'common.button.expand', defaultMessage: '展開內容並試聽' },
@@ -756,6 +756,7 @@ export const practiceMessages = {
     delete: { id: 'practice.button.delete', defaultMessage: '刪除作業' },
   }),
 }
+
 export const productMessages = {
   activity: {
     tab: defineMessages({
@@ -1449,6 +1450,21 @@ export const projectMessages = {
     totalParticipants: {
       id: 'project.text.totalParticipants',
       defaultMessage: '已有 {count} {count, plural, one {人} other {人}}參與',
+    },
+  }),
+}
+
+export const podcastAlbumMessages = {
+  label: defineMessages({
+    freePublic: {
+      id: 'podcastAlbum.label.freePublic',
+      defaultMessage: '免費公開',
+    },
+  }),
+  text: defineMessages({
+    sectionCount: {
+      id: 'podcastAlbum.text.sectionCount',
+      defaultMessage: '共 {sectionCount} 單元',
     },
   }),
 }
