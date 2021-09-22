@@ -220,10 +220,13 @@ const usePodcastAlbumCollection: (options: { categoryId?: string }) => {
   podcastAlbums: (PodcastAlbum & { unitCount: number })[]
   refetch: () => void
 } = ({ categoryId }) => {
-  const { loading, data, error, refetch } = useQuery<hasura.GET_PODCAST_ALBUMS>(
+  const condition: hasura.GET_PODCAST_ALBUMSVariables['condition'] = categoryId
+    ? { podcast_album_categories: { category: { id: { _eq: categoryId } } } }
+    : undefined
+  const { loading, data, error, refetch } = useQuery<hasura.GET_PODCAST_ALBUMS, hasura.GET_PODCAST_ALBUMSVariables>(
     gql`
-      query GET_PODCAST_ALBUMS($categoryId: uuid) {
-        podcast_album {
+      query GET_PODCAST_ALBUMS($condition: podcast_album_bool_exp) {
+        podcast_album(where: $condition) {
           id
           cover_url
           title
@@ -242,6 +245,7 @@ const usePodcastAlbumCollection: (options: { categoryId?: string }) => {
         }
       }
     `,
+    { variables: { condition } },
   )
 
   return {

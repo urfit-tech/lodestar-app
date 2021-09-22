@@ -6082,6 +6082,93 @@ export interface UPDATE_PODCAST_PROGRAM_POSITIONSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PODCAST_ALBUM
+// ====================================================
+
+export interface GET_PODCAST_ALBUM_podcast_album_by_pk_author {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+}
+
+export interface GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_categories {
+  __typename: "podcast_album_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_categories_category | null;
+}
+
+export interface GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program_podcast_program_body {
+  __typename: "podcast_program_body";
+  id: any;
+}
+
+export interface GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program {
+  __typename: "podcast_program";
+  id: any;
+  title: string;
+  duration_second: any;
+  /**
+   * An object relationship
+   */
+  podcast_program_body: GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program_podcast_program_body | null;
+}
+
+export interface GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs {
+  __typename: "podcast_album_podcast_program";
+  id: any;
+  /**
+   * An object relationship
+   */
+  podcast_program: GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program | null;
+}
+
+export interface GET_PODCAST_ALBUM_podcast_album_by_pk {
+  __typename: "podcast_album";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  description: string | null;
+  is_public: boolean;
+  /**
+   * An object relationship
+   */
+  author: GET_PODCAST_ALBUM_podcast_album_by_pk_author | null;
+  /**
+   * An array relationship
+   */
+  podcast_album_categories: GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_categories[];
+  /**
+   * An array relationship
+   */
+  podcast_album_podcast_programs: GET_PODCAST_ALBUM_podcast_album_by_pk_podcast_album_podcast_programs[];
+}
+
+export interface GET_PODCAST_ALBUM {
+  /**
+   * fetch data from the table: "podcast_album" using primary key columns
+   */
+  podcast_album_by_pk: GET_PODCAST_ALBUM_podcast_album_by_pk | null;
+}
+
+export interface GET_PODCAST_ALBUMVariables {
+  id: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PRACTICE
 // ====================================================
 
@@ -8465,7 +8552,7 @@ export interface GET_PODCAST_ALBUMS {
 }
 
 export interface GET_PODCAST_ALBUMSVariables {
-  categoryId?: any | null;
+  condition?: podcast_album_bool_exp | null;
 }
 
 /* tslint:disable */
@@ -17134,6 +17221,60 @@ export interface playlist_podcast_program_on_conflict {
   constraint: playlist_podcast_program_constraint;
   update_columns: playlist_podcast_program_update_column[];
   where?: playlist_podcast_program_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "podcast_album". All fields are combined with a logical 'AND'.
+ */
+export interface podcast_album_bool_exp {
+  _and?: (podcast_album_bool_exp | null)[] | null;
+  _not?: podcast_album_bool_exp | null;
+  _or?: (podcast_album_bool_exp | null)[] | null;
+  abstract?: String_comparison_exp | null;
+  app_id?: String_comparison_exp | null;
+  author?: member_public_bool_exp | null;
+  author_id?: String_comparison_exp | null;
+  cover_url?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  description?: String_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  is_deleted?: Boolean_comparison_exp | null;
+  is_public?: Boolean_comparison_exp | null;
+  podcast_album_categories?: podcast_album_category_bool_exp | null;
+  podcast_album_podcast_programs?: podcast_album_podcast_program_bool_exp | null;
+  published_at?: timestamptz_comparison_exp | null;
+  title?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "podcast_album_category". All fields are combined with a logical 'AND'.
+ */
+export interface podcast_album_category_bool_exp {
+  _and?: (podcast_album_category_bool_exp | null)[] | null;
+  _not?: podcast_album_category_bool_exp | null;
+  _or?: (podcast_album_category_bool_exp | null)[] | null;
+  category?: category_bool_exp | null;
+  category_id?: String_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  podast_album?: podcast_album_bool_exp | null;
+  podcast_album_id?: uuid_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "podcast_album_podcast_program". All fields are combined with a logical 'AND'.
+ */
+export interface podcast_album_podcast_program_bool_exp {
+  _and?: (podcast_album_podcast_program_bool_exp | null)[] | null;
+  _not?: podcast_album_podcast_program_bool_exp | null;
+  _or?: (podcast_album_podcast_program_bool_exp | null)[] | null;
+  id?: uuid_comparison_exp | null;
+  podcast_album?: podcast_album_bool_exp | null;
+  podcast_album_id?: uuid_comparison_exp | null;
+  podcast_program?: podcast_program_bool_exp | null;
+  podcast_program_id?: uuid_comparison_exp | null;
+  position?: Int_comparison_exp | null;
 }
 
 /**
