@@ -606,6 +606,109 @@ export interface GET_ENROLLED_PROGRAM_PACKAGESVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PODCAST_ALBUM_BY_CATEGORY_NAME
+// ====================================================
+
+export interface GET_PODCAST_ALBUM_BY_CATEGORY_NAME_podcast_album_podcast_album_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_PODCAST_ALBUM_BY_CATEGORY_NAME_podcast_album_podcast_album_categories {
+  __typename: "podcast_album_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_PODCAST_ALBUM_BY_CATEGORY_NAME_podcast_album_podcast_album_categories_category | null;
+}
+
+export interface GET_PODCAST_ALBUM_BY_CATEGORY_NAME_podcast_album {
+  __typename: "podcast_album";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  abstract: string | null;
+  /**
+   * An array relationship
+   */
+  podcast_album_categories: GET_PODCAST_ALBUM_BY_CATEGORY_NAME_podcast_album_podcast_album_categories[];
+}
+
+export interface GET_PODCAST_ALBUM_BY_CATEGORY_NAME {
+  /**
+   * fetch data from the table: "podcast_album"
+   */
+  podcast_album: GET_PODCAST_ALBUM_BY_CATEGORY_NAME_podcast_album[];
+}
+
+export interface GET_PODCAST_ALBUM_BY_CATEGORY_NAMEVariables {
+  categoryName?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PODCAST_ALBUM_COLLECTION
+// ====================================================
+
+export interface GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_categories {
+  __typename: "podcast_album_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_categories_category | null;
+}
+
+export interface GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_podcast_programs_aggregate_aggregate {
+  __typename: "podcast_album_podcast_program_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_podcast_programs_aggregate {
+  __typename: "podcast_album_podcast_program_aggregate";
+  aggregate: GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_podcast_programs_aggregate_aggregate | null;
+}
+
+export interface GET_PODCAST_ALBUM_COLLECTION_podcast_album {
+  __typename: "podcast_album";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  /**
+   * An array relationship
+   */
+  podcast_album_categories: GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_categories[];
+  /**
+   * An aggregated array relationship
+   */
+  podcast_album_podcast_programs_aggregate: GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_podcast_programs_aggregate;
+}
+
+export interface GET_PODCAST_ALBUM_COLLECTION {
+  /**
+   * fetch data from the table: "podcast_album"
+   */
+  podcast_album: GET_PODCAST_ALBUM_COLLECTION_podcast_album[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_MEMBER_CREDIT_CARDS
 // ====================================================
 
