@@ -650,8 +650,11 @@ export const useUpdatePodcastProgramPositions = () => {
   return updatePodcastProgramPositions
 }
 
-export const usePublicPodcastProgramIds = (id: string) => {
-  const { data } = useQuery<
+export const usePublicPodcastProgramIds: (id: string) => {
+  status: 'loading' | 'error' | 'success' | 'idle'
+  publicPodcastProgramIds: string[]
+} = id => {
+  const { loading, error, data } = useQuery<
     hasura.GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM,
     hasura.GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUMVariables
   >(
@@ -671,10 +674,9 @@ export const usePublicPodcastProgramIds = (id: string) => {
     { variables: { id } },
   )
 
-  const publicPodcastProgramIds =
-    data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.podcast_program?.id) || []
-
   return {
-    publicPodcastProgramIds,
+    status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
+    publicPodcastProgramIds:
+      data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.podcast_program?.id) || [],
   }
 }
