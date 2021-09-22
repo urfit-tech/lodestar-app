@@ -213,8 +213,14 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
   const handleSubmit = () => {
     !isValidating && setIsValidating(true)
-    const isValidShipping = !target.isPhysical || validateShipping(shipping)
-    const isValidInvoice = validateInvoice(invoice).length === 0
+    let isValidShipping = false
+    let isValidInvoice = false
+    if (isFieldsValidate) {
+      ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
+    } else {
+      isValidShipping = !target.isPhysical || validateShipping(shipping)
+      isValidInvoice = validateInvoice(invoice).length === 0
+    }
 
     if (totalPrice > 0 && payment === null) {
       paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })

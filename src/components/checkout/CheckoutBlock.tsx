@@ -173,8 +173,14 @@ const CheckoutBlock: React.VFC<{
     }
 
     !isValidating && setIsValidating(true)
-    const isValidShipping = !hasPhysicalProduct || validateShipping(shipping)
-    const isValidInvoice = validateInvoice(invoice).length === 0
+    let isValidShipping = false
+    let isValidInvoice = false
+    if (isFieldsValidate) {
+      ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
+    } else {
+      isValidShipping = !hasPhysicalProduct || validateShipping(shipping)
+      isValidInvoice = validateInvoice(invoice).length === 0
+    }
 
     refetchCartProductsWithInventory()
     if (
