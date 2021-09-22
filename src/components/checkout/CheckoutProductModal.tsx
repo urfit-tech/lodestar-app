@@ -66,24 +66,6 @@ export type CheckoutProductModalProps = {
   renderTerms?: () => React.ReactElement
 }
 
-const cachedCartInfo: {
-  shipping: ShippingProps | null
-  invoice: InvoiceProps | null
-  payment: PaymentProps | null
-} = {
-  shipping: null,
-  invoice: null,
-  payment: null,
-}
-try {
-  const cachedShipping = localStorage.getItem('kolable.cart.shipping')
-  const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
-  const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
-  cachedCartInfo.shipping = cachedShipping && JSON.parse(cachedShipping)
-  cachedCartInfo.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
-  cachedCartInfo.payment = cachedPayment && JSON.parse(cachedPayment)
-} catch {}
-
 const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   defaultProductId,
   renderTrigger,
@@ -103,6 +85,28 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const sessionStorageKey = `lodestar.sharing_code.${defaultProductId}`
   const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
   sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
+
+  const cachedCartInfo: {
+    shipping: ShippingProps | null
+    invoice: InvoiceProps | null
+    payment: PaymentProps | null
+  } = {
+    shipping: null,
+    invoice: {
+      name: currentMember?.name || '',
+      phone: '',
+      email: currentMember?.email || '',
+    },
+    payment: null,
+  }
+  try {
+    const cachedShipping = localStorage.getItem('kolable.cart.shipping')
+    const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
+    const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
+    cachedCartInfo.shipping = cachedShipping && JSON.parse(cachedShipping)
+    cachedCartInfo.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
+    cachedCartInfo.payment = cachedPayment && JSON.parse(cachedPayment)
+  } catch {}
 
   // checkout
   const [productId, setProductId] = useState(defaultProductId)

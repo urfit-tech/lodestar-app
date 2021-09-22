@@ -83,7 +83,7 @@ const CheckoutBlock: React.VFC<{
       storeName: '',
     },
     invoice: {
-      name: '',
+      name: member?.name || '',
       phone: '',
       email: member?.email || '',
     },
