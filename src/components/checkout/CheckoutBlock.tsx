@@ -47,8 +47,13 @@ const CheckoutBlock: React.VFC<{
   member: MemberProps | null
   shopId: string
   cartProducts: CartProductProps[]
+  isFieldsValidate?: (fieldsValue: { invoice: InvoiceProps; shipping: ShippingProps }) => {
+    isValidInvoice: boolean
+    isValidShipping: boolean
+  }
+  renderInvoice?: () => React.ReactNode
   renderTerms?: () => React.ReactNode
-}> = ({ member, shopId, cartProducts, renderTerms }) => {
+}> = ({ member, shopId, cartProducts, isFieldsValidate, renderInvoice, renderTerms }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
@@ -289,15 +294,18 @@ const CheckoutBlock: React.VFC<{
               </div>
             </AdminCard>
           </div>
+
           <div ref={invoiceRef} className="mb-3">
-            <AdminCard>
-              <InvoiceInput
-                value={invoice}
-                onChange={value => setInvoice(value)}
-                isValidating={isValidating}
-                shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
-              />
-            </AdminCard>
+            {renderInvoice?.() || (
+              <AdminCard>
+                <InvoiceInput
+                  value={invoice}
+                  onChange={value => setInvoice(value)}
+                  isValidating={isValidating}
+                  shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
+                />
+              </AdminCard>
+            )}
           </div>
         </>
       )}
