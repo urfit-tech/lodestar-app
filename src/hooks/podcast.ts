@@ -649,3 +649,32 @@ export const useUpdatePodcastProgramPositions = () => {
 
   return updatePodcastProgramPositions
 }
+
+export const usePublicPodcastProgramIds = (id: string) => {
+  const { data } = useQuery<
+    hasura.GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM,
+    hasura.GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUMVariables
+  >(
+    gql`
+      query GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM($id: uuid!) {
+        podcast_album_by_pk(id: $id) {
+          id
+          podcast_album_podcast_programs(order_by: { position: asc }) {
+            id
+            podcast_program {
+              id
+            }
+          }
+        }
+      }
+    `,
+    { variables: { id } },
+  )
+
+  const publicPodcastProgramIds =
+    data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.podcast_program?.id) || []
+
+  return {
+    publicPodcastProgramIds,
+  }
+}

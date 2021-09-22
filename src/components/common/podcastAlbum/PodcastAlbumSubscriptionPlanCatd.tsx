@@ -28,7 +28,7 @@ const PodcastAlbumSubscriptionPlanCard: React.VFC<{
 }> = ({ podcastAlbum }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { isAuthenticated, currentMemberId } = useAuth()
+  const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
 
   return (
@@ -41,7 +41,9 @@ const PodcastAlbumSubscriptionPlanCard: React.VFC<{
         <Button
           colorScheme="primary"
           isFullWidth
-          onClick={() => history.push(`/members/${currentMemberId}?tabkey=podcast`)}
+          onClick={() =>
+            history.push(`/podcasts/${podcastAlbum.podcastPrograms[0].id}?podcastAlbumId=${podcastAlbum.id}`)
+          }
         >
           {formatMessage(commonMessages.button.joinNow)}
         </Button>

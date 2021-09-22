@@ -24,7 +24,7 @@ export const usePodcastAlbum = (id: string) => {
               name
             }
           }
-          podcast_album_podcast_programs {
+          podcast_album_podcast_programs(order_by: { position: asc }) {
             id
             podcast_program {
               id
@@ -40,7 +40,7 @@ export const usePodcastAlbum = (id: string) => {
     `,
     { variables: { id } },
   )
-  console.log(data)
+
   const podcastAlbum: PodcastAlbum & {
     podcastPrograms: { id: string; title: string; durationSecond: number }[]
   } = {
