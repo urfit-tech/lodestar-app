@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button as ChakraButton, Icon, SkeletonText } from '@chakra-ui/react'
+import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { flatten, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
@@ -26,7 +26,7 @@ const messages = defineMessages({
   totalUnit: { id: 'podcast.content.totalUnit', defaultMessage: '共 {unitCount} 單元' },
 })
 
-const StyledButton = styled(ChakraButton)`
+const StyledButton = styled(Button)`
   && {
     height: 2.75rem;
     padding-left: 1.5rem;

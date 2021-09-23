@@ -1,4 +1,4 @@
-import { Divider, Skeleton } from 'antd'
+import { Divider, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -23,7 +23,7 @@ const PodcastAlbumInstructorCollectionBlock: React.VFC<{
   return (
     <div>
       <StyledTitle>{customTitle || formatMessage(productMessages.program.title.instructorIntro)}</StyledTitle>
-      <Divider className="mt-1" />
+      <Divider className="mb-3" />
       <CreatorCollection key={podcastAlbum.id} creatorId={podcastAlbum.author.id} />
     </div>
   )
@@ -33,7 +33,12 @@ const CreatorCollection: React.VFC<{ creatorId: string }> = ({ creatorId }) => {
   const { loadingMember, member } = usePublicMember(creatorId)
 
   if (loadingMember || !member) {
-    return <Skeleton active avatar />
+    return (
+      <>
+        <SkeletonCircle size="10" />
+        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+      </>
+    )
   }
 
   return (

@@ -1,5 +1,4 @@
-import { Icon } from '@chakra-ui/react'
-import { Divider } from 'antd'
+import { Divider, Icon } from '@chakra-ui/react'
 import React from 'react'
 import { BiMicrophone } from 'react-icons/bi'
 import { useIntl } from 'react-intl'
