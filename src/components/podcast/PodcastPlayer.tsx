@@ -4,7 +4,7 @@ import { ButtonProps } from 'antd/lib/button'
 import isMobile from 'is-mobile'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
@@ -188,6 +188,7 @@ const PodcastPlayer: React.VFC<{
     currentPodcastProgram,
     loadingPodcastProgram,
     maxDuration,
+    isPodcastProgramChanged,
     togglePlaylistMode,
     shift,
     closePlayer,
@@ -206,10 +207,12 @@ const PodcastPlayer: React.VFC<{
   }
 
   // initialize when changing podcast program
-  if (currentPodcastProgram?.id !== currentPlayingId && maxDuration > 0 && setMaxDuration) {
-    setMaxDuration(0)
-    setProgress(0)
-  }
+  useEffect(() => {
+    if (isPodcastProgramChanged && setMaxDuration) {
+      setMaxDuration(0)
+      setProgress(0)
+    }
+  }, [isPodcastProgramChanged, setMaxDuration])
 
   return (
     <StyledWrapper>
@@ -324,7 +327,7 @@ const PodcastPlayer: React.VFC<{
                   className="mx-2 mx-lg-3"
                   height="44px"
                   onClick={() => {
-                    setIsPlaying && setIsPlaying(!isPlaying)
+                    setIsPlaying?.(!isPlaying)
                     if (isMobile() && progress === 0) {
                       setIsAudioLoading(true)
                       setTimeout(() => {
