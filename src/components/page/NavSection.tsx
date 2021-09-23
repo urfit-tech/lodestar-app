@@ -1,19 +1,20 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import Responsive from '../common/Responsive'
 
 type NavItem = {
-  padding?: string
-  backgroundColor?: string
-  color?: string
-  fontSize?: string
-  fontWeight?: string | number
-  height?: string
-  letterSpacing?: string | number
-  transition?: string
-  hover?: {
-    color?: string
-    backgroundColor?: string
-    borderRadius?: string
+  padding: string
+  backgroundColor: string
+  color: string
+  fontSize: string
+  fontWeight: string | number
+  height: string
+  letterSpacing: string | number
+  transition: string
+  hover: {
+    color: string
+    backgroundColor: string
+    borderRadius: string
   }
 }
 
@@ -68,11 +69,10 @@ const NavSection: React.VFC<{
   options: {
     backgroundColor?: string
     height?: string
-    navList?: { id: string; title?: string; link?: string }[]
+    navList?: { id: string; title?: string; mobileTitle?: string; link?: string }[]
     itemStyle?: NavItem
   }
 }> = ({ options }) => {
-  console.log(options.itemStyle)
   return (
     <StyledBar>
       <StyledWrapper backgroundColor={options.backgroundColor || ''}>
@@ -80,11 +80,17 @@ const NavSection: React.VFC<{
           ? options.navList.map(nav =>
               nav.link ? (
                 <Link to={nav.link}>
-                  <StyledItem itemStyle={options.itemStyle}>{nav.title}</StyledItem>
+                  <StyledItem itemStyle={options.itemStyle}>
+                    <Responsive.Default>{nav.mobileTitle}</Responsive.Default>
+                    <Responsive.Desktop>{nav.title}</Responsive.Desktop>
+                  </StyledItem>
                 </Link>
               ) : (
                 <a href={`#${nav.id}`}>
-                  <StyledItem itemStyle={options.itemStyle}>{nav.title}</StyledItem>
+                  <StyledItem itemStyle={options.itemStyle}>
+                    <Responsive.Default>{nav.mobileTitle}</Responsive.Default>
+                    <Responsive.Desktop>{nav.title}</Responsive.Desktop>
+                  </StyledItem>
                 </a>
               ),
             )
