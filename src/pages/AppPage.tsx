@@ -27,6 +27,7 @@ import {
   ProgramSection,
   ReferrerSection,
   StaticBlock,
+  StaticCoverSection,
   TeacherSection,
 } from '../components/page'
 import hasura from '../hasura'
@@ -78,6 +79,7 @@ const AppPage: React.VFC = () => {
     homeActivity: ActivitySection,
     homeActivityIntro: ActivityIntroSection,
     homeCreator: CreatorSection,
+    homeStaticCover: StaticCoverSection,
     homeCover: CoverSection,
     homeCustomCover: CustomCoverSection,
     homeNav: NavSection,
@@ -106,7 +108,6 @@ const AppPage: React.VFC = () => {
   if (!appPage) {
     return <NotFoundPage />
   }
-  
   return (
     <DefaultLayout {...appPage.options}>
       {appPage.craftData ? (
