@@ -5548,6 +5548,7 @@ export interface GET_PODCAST_PROGRAM_WITH_BODY_podcast_program_by_pk_podcast_pro
 
 export interface GET_PODCAST_PROGRAM_WITH_BODY_podcast_program_by_pk_podcast_program_categories {
   __typename: "podcast_program_category";
+  id: any;
   /**
    * An object relationship
    */
@@ -5561,6 +5562,7 @@ export interface GET_PODCAST_PROGRAM_WITH_BODY_podcast_program_by_pk_podcast_pro
 
 export interface GET_PODCAST_PROGRAM_WITH_BODY_podcast_program_by_pk_podcast_program_tags {
   __typename: "podcast_program_tag";
+  id: any;
   /**
    * An object relationship
    */
@@ -5569,11 +5571,13 @@ export interface GET_PODCAST_PROGRAM_WITH_BODY_podcast_program_by_pk_podcast_pro
 
 export interface GET_PODCAST_PROGRAM_WITH_BODY_podcast_program_by_pk_podcast_program_body {
   __typename: "podcast_program_body";
+  id: any;
   description: string | null;
 }
 
 export interface GET_PODCAST_PROGRAM_WITH_BODY_podcast_program_by_pk_podcast_program_roles {
   __typename: "podcast_program_role";
+  id: any;
   /**
    * instructor
    */
