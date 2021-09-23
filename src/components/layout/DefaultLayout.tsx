@@ -109,7 +109,7 @@ const DefaultLayout: React.FC<{
                 .filter(nav => nav.block === 'header')
                 .map(nav =>
                   nav.external ? (
-                    <Menu>
+                    <Menu key={nav.id}>
                       <MenuButton
                         as={
                           settings['style.header.menu_button.animation.enable'] === '1'
@@ -150,7 +150,7 @@ const DefaultLayout: React.FC<{
                       )}
                     </Menu>
                   ) : (
-                    <Menu>
+                    <Menu key={nav.id}>
                       <MenuButton
                         as={
                           settings['style.header.menu_button.animation.enable'] === '1'

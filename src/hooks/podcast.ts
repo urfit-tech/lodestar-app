@@ -363,20 +363,24 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
           published_at
           creator_id
           podcast_program_categories {
+            id
             category {
               id
               name
             }
           }
           podcast_program_tags {
+            id
             tag {
               name
             }
           }
           podcast_program_body {
+            id
             description
           }
           podcast_program_roles {
+            id
             name
             member_id
           }
