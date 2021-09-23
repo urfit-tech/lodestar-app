@@ -24,7 +24,7 @@ const StyledAdminCard = styled(AdminCard)`
   }
 `
 const PodcastAlbumSubscriptionPlanCard: React.VFC<{
-  podcastAlbum: PodcastAlbum
+  podcastAlbum: Pick<PodcastAlbum, 'isPublic' | 'id' | 'podcastPrograms'>
 }> = ({ podcastAlbum }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()

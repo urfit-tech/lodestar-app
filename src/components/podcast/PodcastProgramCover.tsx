@@ -89,9 +89,7 @@ const PodcastProgramCover: React.VFC<{
   } = useContext(PodcastPlayerContext)
   const { loadingPodcastProgramId, errorPodcastProgramId, enrolledPodcastProgramIds } =
     useEnrolledPodcastProgramIds(memberId)
-  const { publicPodcastProgramIds, status: publicPodcastProgramIdsStatus } = usePublicPodcastProgramIds(
-    podcastAlbumId || '',
-  )
+  const { publicPodcastProgramIds, status: publicPodcastProgramIdsStatus } = usePublicPodcastProgramIds(podcastAlbumId)
   const [isPlayerInitialized, setIsPlayerInitialized] = useState(false)
 
   useEffect(() => {

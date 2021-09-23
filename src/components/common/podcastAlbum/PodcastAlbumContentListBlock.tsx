@@ -47,16 +47,16 @@ const StyledDuration = styled.span`
 `
 
 const PodcastAlbumContentListBlock: React.VFC<{
-  podcastAlbum: PodcastAlbum
-}> = ({ podcastAlbum }) => {
+  podcastPrograms: PodcastAlbum['podcastPrograms']
+}> = ({ podcastPrograms }) => {
   const { formatMessage } = useIntl()
 
   return (
     <>
       <StyledTitle>{formatMessage(productMessages.program.title.content)}</StyledTitle>
-      <Divider className="mt-1" />
+      <Divider className="mb-3" />
 
-      {podcastAlbum.podcastPrograms.map(podcastProgram => (
+      {podcastPrograms.map(podcastProgram => (
         <PodcastAlbumContentItem key={podcastProgram.id}>
           <StyledTitleWrapper className="d-flex align-items-center">
             <StyleIcon as={BiMicrophone} className="mr-2" />

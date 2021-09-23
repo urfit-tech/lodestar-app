@@ -654,7 +654,7 @@ export const useUpdatePodcastProgramPositions = () => {
   return updatePodcastProgramPositions
 }
 
-export const usePublicPodcastProgramIds: (id: string) => {
+export const usePublicPodcastProgramIds: (id?: string) => {
   status: 'loading' | 'error' | 'success' | 'idle'
   publicPodcastProgramIds: string[]
 } = id => {
@@ -675,7 +675,7 @@ export const usePublicPodcastProgramIds: (id: string) => {
         }
       }
     `,
-    { variables: { id } },
+    { variables: { id: id || '' } },
   )
 
   return {
