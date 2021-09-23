@@ -20,6 +20,7 @@ import {
   // LittlestarLastTimePodcastSection,
   MisaFeatureSection,
   MisaNavigationBar,
+  NavSection,
   PodcastAlbumCollectionSection,
   PostSection,
   ProgramIntroSection,
@@ -70,33 +71,33 @@ export const StyledSection = styled.section`
   background: white;
 `
 
-const sectionConverter = {
-  // general
-  homeActivity: ActivitySection,
-  homeActivityIntro: ActivityIntroSection,
-  homeCreator: CreatorSection,
-  homeCover: CoverSection,
-  homeCustomCover: CustomCoverSection,
-  homePost: PostSection,
-  homeProgram: ProgramSection,
-  homeProgramCategory: ProgramSection,
-  homeProgramIntro: ProgramIntroSection,
-  homePodcastCollection: PodcastAlbumCollectionSection,
-  homeReferrer: ReferrerSection,
-  homeStatic: StaticBlock,
-  homeTeacher: TeacherSection,
-  messenger: MessengerChat,
-  // custom
-  homeBlndPost: BlndPostSection,
-  homeBlndCTA: BlndCTASection,
-  homeMisaFeature: MisaFeatureSection,
-  homeMisaNav: MisaNavigationBar,
-  // homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
-  homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
-}
-
 const AppPage: React.VFC = () => {
   const { loadingAppPage, appPage } = usePage(window.location.pathname)
+  const sectionConverter = {
+    // general
+    homeActivity: ActivitySection,
+    homeActivityIntro: ActivityIntroSection,
+    homeCreator: CreatorSection,
+    homeCover: CoverSection,
+    homeCustomCover: CustomCoverSection,
+    homeNav: NavSection,
+    homePost: PostSection,
+    homeProgram: ProgramSection,
+    homeProgramCategory: ProgramSection,
+    homeProgramIntro: ProgramIntroSection,
+    homePodcastCollection: PodcastAlbumCollectionSection,
+    homeReferrer: ReferrerSection,
+    homeStatic: StaticBlock,
+    homeTeacher: TeacherSection,
+    messenger: MessengerChat,
+    // custom
+    homeBlndPost: BlndPostSection,
+    homeBlndCTA: BlndCTASection,
+    homeMisaFeature: MisaFeatureSection,
+    homeMisaNav: MisaNavigationBar,
+    // homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
+    homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
+  }
 
   if (loadingAppPage) {
     return <LoadingPage />
@@ -105,6 +106,7 @@ const AppPage: React.VFC = () => {
   if (!appPage) {
     return <NotFoundPage />
   }
+  
   return (
     <DefaultLayout {...appPage.options}>
       {appPage.craftData ? (

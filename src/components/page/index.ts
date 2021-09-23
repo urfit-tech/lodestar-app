@@ -9,6 +9,7 @@ export { default as LittlestarFeaturedPodcastSection } from './LittlestarFeature
 export { default as LittlestarLastTimePodcastSection } from './LittlestarLastTimePodcastSection'
 export { default as MisaFeatureSection } from './MisaFeatureSection'
 export { default as MisaNavigationBar } from './MisaNavigationBar'
+export { default as NavSection } from './NavSection'
 export { default as PodcastAlbumCollectionSection } from './PodcastAlbumCollectionSection'
 export { default as PostSection } from './PostSection'
 export { default as ProgramIntroSection } from './ProgramIntroSection'
