@@ -47,8 +47,13 @@ const CheckoutBlock: React.VFC<{
   member: MemberProps | null
   shopId: string
   cartProducts: CartProductProps[]
+  isFieldsValidate?: (fieldsValue: { invoice: InvoiceProps; shipping: ShippingProps }) => {
+    isValidInvoice: boolean
+    isValidShipping: boolean
+  }
+  renderInvoice?: () => React.ReactNode
   renderTerms?: () => React.ReactNode
-}> = ({ member, shopId, cartProducts, renderTerms }) => {
+}> = ({ member, shopId, cartProducts, isFieldsValidate, renderInvoice, renderTerms }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
@@ -83,7 +88,7 @@ const CheckoutBlock: React.VFC<{
       storeName: '',
     },
     invoice: {
-      name: '',
+      name: member?.name || '',
       phone: '',
       email: member?.email || '',
     },
@@ -168,8 +173,14 @@ const CheckoutBlock: React.VFC<{
     }
 
     !isValidating && setIsValidating(true)
-    const isValidShipping = !hasPhysicalProduct || validateShipping(shipping)
-    const isValidInvoice = validateInvoice(invoice).length === 0
+    let isValidShipping = false
+    let isValidInvoice = false
+    if (isFieldsValidate) {
+      ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
+    } else {
+      isValidShipping = !hasPhysicalProduct || validateShipping(shipping)
+      isValidInvoice = validateInvoice(invoice).length === 0
+    }
 
     refetchCartProductsWithInventory()
     if (
@@ -289,15 +300,18 @@ const CheckoutBlock: React.VFC<{
               </div>
             </AdminCard>
           </div>
+
           <div ref={invoiceRef} className="mb-3">
-            <AdminCard>
-              <InvoiceInput
-                value={invoice}
-                onChange={value => setInvoice(value)}
-                isValidating={isValidating}
-                shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
-              />
-            </AdminCard>
+            {renderInvoice?.() || (
+              <AdminCard>
+                <InvoiceInput
+                  value={invoice}
+                  onChange={value => setInvoice(value)}
+                  isValidating={isValidating}
+                  shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
+                />
+              </AdminCard>
+            )}
           </div>
         </>
       )}
