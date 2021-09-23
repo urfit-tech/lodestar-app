@@ -41,9 +41,7 @@ export const usePodcastAlbum = (id: string) => {
     { variables: { id } },
   )
 
-  const podcastAlbum: PodcastAlbum & {
-    podcastPrograms: { id: string; title: string; durationSecond: number }[]
-  } = {
+  const podcastAlbum: PodcastAlbum = {
     id: data?.podcast_album_by_pk?.id,
     title: data?.podcast_album_by_pk?.title || '',
     coverUrl: data?.podcast_album_by_pk?.cover_url || '',

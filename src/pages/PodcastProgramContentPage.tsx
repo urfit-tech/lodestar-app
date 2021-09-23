@@ -48,7 +48,7 @@ const PodcastProgramContentPage: React.VFC = () => {
             <PodcastProgramCover
               memberId={currentMemberId}
               podcastProgramId={podcastProgramId}
-              podcastAlbumId={podcastAlbumId || ''}
+              podcastAlbumId={podcastAlbumId || undefined}
               coverUrl={podcastProgram.coverUrl}
               title={podcastProgram.title}
               publishedAt={podcastProgram.publishedAt}

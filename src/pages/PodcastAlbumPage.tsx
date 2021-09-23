@@ -8,7 +8,7 @@ import styled, { css } from 'styled-components'
 import PodcastAlbumBanner from '../components/common/podcastAlbum/PodcastAlbumBanner'
 import PodcastAlbumContentListBlock from '../components/common/podcastAlbum/PodcastAlbumContentListBlock'
 import PodcastAlbumInstructorCollectionBlock from '../components/common/podcastAlbum/PodcastAlbumInstructorCollectionBlock'
-import PodcastAlbumSubscriptionPlanCard from '../components/common/podcastAlbum/PodcastAlbumSubscriptionPlanCatd'
+import PodcastAlbumSubscriptionPlanCard from '../components/common/podcastAlbum/PodcastAlbumSubscriptionPlanCard'
 import Responsive, { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -138,7 +138,7 @@ const PodcastAlbumPage: React.VFC = () => {
               <div className="my-5">
                 <BraftContent>{podcastAlbum.description}</BraftContent>
               </div>
-              <PodcastAlbumContentListBlock podcastAlbum={podcastAlbum} />
+              <PodcastAlbumContentListBlock podcastPrograms={podcastAlbum.podcastPrograms} />
             </div>
           </div>
 
