@@ -18,6 +18,7 @@ type PodcastPlayerProps = {
   playlistMode: PlaylistModeType
   currentPlayingId: string
   currentPodcastProgram: PodcastProgramContent | null
+  isPodcastProgramChanged: boolean
   loadingPodcastProgram: boolean
   togglePlaylistMode?: () => void
   setIsPlaying?: React.Dispatch<React.SetStateAction<boolean>>
@@ -36,6 +37,7 @@ const PodcastPlayerContext = createContext<PodcastPlayerProps>({
   playlistMode: 'loop',
   currentPlayingId: '',
   currentPodcastProgram: null,
+  isPodcastProgramChanged: false,
   loadingPodcastProgram: false,
   maxDuration: 0,
 })
@@ -58,10 +60,11 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         isPlaying,
         playlist,
         playlistMode,
-        currentPlayingId,
         loadingPodcastProgram,
+        currentPlayingId,
         currentPodcastProgram: podcastProgram,
         maxDuration,
+        isPodcastProgramChanged: podcastProgram?.id !== currentPlayingId && maxDuration > 0,
         togglePlaylistMode: () => {
           if (playlistMode === 'loop') {
             setPlaylistMode('single-loop')
