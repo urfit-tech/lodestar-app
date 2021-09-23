@@ -1669,4 +1669,12 @@ export const codeMessages = defineMessages({
     id: 'code.E_SETUP_PAYPAL',
     defaultMessage: 'Paypal 環境設定失敗',
   },
+  E_CW_SETUP: {
+    id: 'code.E_CW_SETUP',
+    defaultMessage: 'CW 環境設定失敗',
+  },
+  E_CW_SERVICE: {
+    id: 'code.E_CW_SERVICE',
+    defaultMessage: 'CW 導入付款頁失敗',
+  },
 })

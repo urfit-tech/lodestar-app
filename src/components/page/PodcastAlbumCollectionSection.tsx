@@ -1,6 +1,13 @@
+import { useQuery } from '@apollo/react-hooks'
+import { Skeleton } from '@chakra-ui/skeleton'
+import gql from 'graphql-tag'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import hasura from '../../hasura'
+import { notEmpty } from '../../helpers'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
+import EmptyCover from '../../images/empty-cover.png'
+import { MultiLineTruncationMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledSectionLayout = styled.section<{ variant?: 'primary-color' }>`
@@ -49,13 +56,21 @@ const StyledCard = styled.div`
   background-color: #fff;
 `
 
+export const StyledCardImg = styled.img`
+  object-fit: cover;
+  aspect-ratio: 1;
+`
+
 const StyledCardContent = styled.div`
   padding: 20px;
+
   h3 {
+    ${MultiLineTruncationMixin}
     font-size: 16px;
     font-weight: bold;
     letter-spacing: 0.2px;
     color: var(--gray-darker);
+    height: 44px;
   }
 
   div.unit {
@@ -64,6 +79,10 @@ const StyledCardContent = styled.div`
     font-weight: 500;
     letter-spacing: 0.4px;
     color: var(--gray-dark);
+  }
+
+  div.tag-group {
+    height: 20px;
   }
 
   span.tag {
@@ -86,34 +105,41 @@ const StyledLink = styled(Link)`
   color: ${props => props.theme['@primary-color']};
 `
 
-const PodcastCollectionSection: React.FC<{
+const PodcastAlbumCollectionSection: React.FC<{
   options: {
     title?: string
   }
 }> = ({ options: { title } }) => {
-  const { podcasts } = useNewestPodcastCollection()
+  const { status, podcastAlbums } = useNewestPodcastAlbumCollection()
+
+  if (status === 'loading') {
+    return <Skeleton />
+  }
+
   return (
     <SectionLayout title={title}>
       <div className="row">
-        {podcasts.map(podcast => (
-          <StyledCol key={podcast.id} className="col-6 col-lg-3 my-3">
-            <StyledCard>
-              <img src={podcast.coverUrl || ''} alt={podcast.title} />
-              <StyledCardContent>
-                <h3>{podcast.title}</h3>
-                <div className="unit mb-3">共 {podcast.programCount} 單元</div>
-                {podcast.categoryNames.map(name => (
-                  <span className="tag mr-2">{name}</span>
-                ))}
-              </StyledCardContent>
-            </StyledCard>
+        {podcastAlbums.map(podcastAlbum => (
+          <StyledCol key={podcastAlbum.id} className="col-6 col-lg-3 my-3">
+            <Link to={`/podcast-albums/${podcastAlbum.id}`}>
+              <StyledCard>
+                <StyledCardImg src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
+                <StyledCardContent>
+                  <h3>{podcastAlbum.title}</h3>
+                  <div className="unit mb-3">共 {podcastAlbum.programCount} 單元</div>
+                  <div className="tag-group">
+                    {podcastAlbum.categoryNames.map(name => (
+                      <span className="tag mr-2">{name}</span>
+                    ))}
+                  </div>
+                </StyledCardContent>
+              </StyledCard>
+            </Link>
           </StyledCol>
         ))}
       </div>
       <div className="text-center">
-        <StyledLink className="d-inline-block mt-4" to="/">
-          <MoreLink to="/" />
-        </StyledLink>
+        <MoreLink to="/podcast-albums" />
       </div>
     </SectionLayout>
   )
@@ -125,8 +151,9 @@ export const MoreLink: React.VFC<{ to: string }> = ({ to }) => (
   </StyledLink>
 )
 
-const useNewestPodcastCollection: () => {
-  podcasts: {
+const useNewestPodcastAlbumCollection: () => {
+  status: string
+  podcastAlbums: {
     id: string
     coverUrl: string | null
     title: string
@@ -134,17 +161,39 @@ const useNewestPodcastCollection: () => {
     categoryNames: string[]
   }[]
 } = () => {
+  const { loading, data, error } = useQuery<hasura.GET_PODCAST_ALBUM_COLLECTION>(gql`
+    query GET_PODCAST_ALBUM_COLLECTION {
+      podcast_album {
+        id
+        cover_url
+        title
+        podcast_album_categories {
+          id
+          category {
+            id
+            name
+          }
+        }
+        podcast_album_podcast_programs_aggregate {
+          aggregate {
+            count
+          }
+        }
+      }
+    }
+  `)
+
   return {
-    podcasts: Array(8)
-      .fill(null)
-      .map((_, i) => ({
-        id: i.toString(),
-        coverUrl: 'https://static.kolable.com/images/littlestar/podcast-cover3.png',
-        title: '第 28 期 - 我從那裡來？',
-        programCount: 10,
-        categoryNames: ['親子', '公衛防疫'],
-      })),
+    status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
+    podcastAlbums:
+      data?.podcast_album.map(v => ({
+        id: v.id,
+        coverUrl: v.cover_url,
+        title: v.title,
+        programCount: v.podcast_album_podcast_programs_aggregate?.aggregate?.count || 0,
+        categoryNames: v.podcast_album_categories.map(w => w.category?.name).filter(notEmpty),
+      })) || [],
   }
 }
 
-export default PodcastCollectionSection
+export default PodcastAlbumCollectionSection

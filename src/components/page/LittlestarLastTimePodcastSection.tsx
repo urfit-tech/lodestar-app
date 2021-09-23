@@ -2,7 +2,7 @@ import { Icon } from '@chakra-ui/icons'
 import styled from 'styled-components'
 import { ReactComponent as PlayIcon } from '../../images/play.svg'
 import { BREAK_POINT } from '../common/Responsive'
-import { SectionLayout } from './PodcastCollectionSection'
+import { SectionLayout } from './PodcastAlbumCollectionSection'
 
 const StyledImg = styled.img`
   width: 100%;
