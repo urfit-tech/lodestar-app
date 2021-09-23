@@ -363,20 +363,24 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
           published_at
           creator_id
           podcast_program_categories {
+            id
             category {
               id
               name
             }
           }
           podcast_program_tags {
+            id
             tag {
               name
             }
           }
           podcast_program_body {
+            id
             description
           }
           podcast_program_roles {
+            id
             name
             member_id
           }
@@ -648,4 +652,35 @@ export const useUpdatePodcastProgramPositions = () => {
   `)
 
   return updatePodcastProgramPositions
+}
+
+export const usePublicPodcastProgramIds: (id?: string) => {
+  status: 'loading' | 'error' | 'success' | 'idle'
+  publicPodcastProgramIds: string[]
+} = id => {
+  const { loading, error, data } = useQuery<
+    hasura.GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM,
+    hasura.GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUMVariables
+  >(
+    gql`
+      query GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM($id: uuid!) {
+        podcast_album_by_pk(id: $id) {
+          id
+          podcast_album_podcast_programs(order_by: { position: asc }) {
+            id
+            podcast_program {
+              id
+            }
+          }
+        }
+      }
+    `,
+    { variables: { id: id || '' } },
+  )
+
+  return {
+    status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
+    publicPodcastProgramIds:
+      data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.podcast_program?.id) || [],
+  }
 }

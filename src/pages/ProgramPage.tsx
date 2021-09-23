@@ -79,7 +79,6 @@ const ProgramPage: React.VFC = () => {
   const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program } = useProgram(programId)
 
-  const containerRef = useRef<HTMLDivElement | null>(null)
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
@@ -164,7 +163,7 @@ const ProgramPage: React.VFC = () => {
         <script type="application/ld+json">{ldData}</script>
       </Helmet>
 
-      <div ref={containerRef}>
+      <div>
         {program.isSubscription ? (
           <SubscriptionProgramBanner program={program} />
         ) : (

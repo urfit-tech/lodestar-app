@@ -34,6 +34,7 @@ const AvatarBlock = styled.div`
 const StyledTitle = styled.div`
   justify-content: center;
   ${CommonTitleMixin}
+  font-size:18px;
 
   a {
     color: var(--gray-darker);

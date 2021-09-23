@@ -1,9 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
+import { BREAK_POINT } from './Responsive'
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ width?: { desktop: string; mobile: string } }>`
   position: relative;
-  overflow: hidden;
+  overflow: ${props => (props.width ? 'visible' : 'hidden')};
+  height: ${props => (props.width ? props.width.mobile : 'auto')};
+  @media (min-width: ${BREAK_POINT}px) {
+    height: ${props => (props.width ? props.width.desktop : 'auto')};
+  }
 `
 const BackgroundWrapper = styled.div`
   position: absolute;
@@ -29,9 +34,10 @@ const ContentWrapper = styled.div`
 
 const BlurredBanner: React.FC<{
   coverUrl?: string | null
-}> = ({ coverUrl, children }) => {
+  width?: { desktop: string; mobile: string }
+}> = ({ coverUrl, width, children }) => {
   return (
-    <StyledWrapper>
+    <StyledWrapper width={width}>
       <BackgroundWrapper>
         <BlurredCover coverUrl={coverUrl} />
       </BackgroundWrapper>
