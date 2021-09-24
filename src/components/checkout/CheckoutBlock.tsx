@@ -244,6 +244,11 @@ const CheckoutBlock: React.VFC<{
       ReactPixel.track('AddPaymentInfo', {
         value: check ? sum(check.orderProducts.map(prop('price'))) - sum(check.orderDiscounts.map(prop('price'))) : 0,
         currency: 'TWD',
+        contents: check.orderProducts.map(orderProduct => ({
+          id: orderProduct.productId,
+          name: orderProduct.name,
+          quantity: 1,
+        })),
       })
     }
 
