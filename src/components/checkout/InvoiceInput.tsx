@@ -55,7 +55,8 @@ const InvoiceInput: React.VFC<{
   onChange?: (value: InvoiceProps) => void
   isValidating?: boolean
   shouldSameToShippingCheckboxDisplay?: boolean
-}> = ({ value, onChange, isValidating, shouldSameToShippingCheckboxDisplay }) => {
+  renderMemberInfoInput?: () => React.ReactNode
+}> = ({ value, onChange, isValidating, shouldSameToShippingCheckboxDisplay, renderMemberInfoInput }) => {
   const { formatMessage } = useIntl()
   const { loading, settings, enabledModules } = useApp()
 
@@ -211,53 +212,55 @@ const InvoiceInput: React.VFC<{
         </div>
       )}
 
-      <div className="row">
-        <div className="col-12 col-lg-3">
-          <Form.Item
-            label={formatMessage(checkoutMessages.form.label.name)}
-            required
-            validateStatus={isValidating && errorFields.includes('name') ? 'error' : undefined}
-            help={errorFields.includes('name') && formatMessage(checkoutMessages.form.message.errorName)}
-          >
-            <Input
-              ref={nameRef}
-              placeholder={formatMessage(checkoutMessages.form.message.nameText)}
-              defaultValue={value ? value.name : ''}
-              onBlur={() => handleChange({})}
-            />
-          </Form.Item>
+      {renderMemberInfoInput?.() || (
+        <div className="row">
+          <div className="col-12 col-lg-3">
+            <Form.Item
+              label={formatMessage(checkoutMessages.form.label.name)}
+              required
+              validateStatus={isValidating && errorFields.includes('name') ? 'error' : undefined}
+              help={errorFields.includes('name') && formatMessage(checkoutMessages.form.message.errorName)}
+            >
+              <Input
+                ref={nameRef}
+                placeholder={formatMessage(checkoutMessages.form.message.nameText)}
+                defaultValue={value ? value.name : ''}
+                onBlur={() => handleChange({})}
+              />
+            </Form.Item>
+          </div>
+          <div className="col-12 col-lg-3">
+            <Form.Item
+              label={formatMessage(checkoutMessages.form.label.phone)}
+              required
+              validateStatus={isValidating && errorFields.includes('phone') ? 'error' : undefined}
+              help={errorFields.includes('phone') && formatMessage(checkoutMessages.form.message.errorPhone)}
+            >
+              <Input
+                ref={phoneRef}
+                placeholder={formatMessage(checkoutMessages.form.message.phone)}
+                defaultValue={value ? value.phone : ''}
+                onBlur={() => handleChange({})}
+              />
+            </Form.Item>
+          </div>
+          <div className="col-12 col-lg-6">
+            <Form.Item
+              label={formatMessage(checkoutMessages.form.label.email)}
+              required
+              validateStatus={isValidating && errorFields.includes('email') ? 'error' : undefined}
+              help={errorFields.includes('email') && formatMessage(checkoutMessages.form.message.errorEmail)}
+            >
+              <Input
+                ref={emailRef}
+                placeholder={formatMessage(checkoutMessages.form.message.emailText)}
+                defaultValue={value ? value.email : ''}
+                onBlur={() => handleChange({})}
+              />
+            </Form.Item>
+          </div>
         </div>
-        <div className="col-12 col-lg-3">
-          <Form.Item
-            label={formatMessage(checkoutMessages.form.label.phone)}
-            required
-            validateStatus={isValidating && errorFields.includes('phone') ? 'error' : undefined}
-            help={errorFields.includes('phone') && formatMessage(checkoutMessages.form.message.errorPhone)}
-          >
-            <Input
-              ref={phoneRef}
-              placeholder={formatMessage(checkoutMessages.form.message.phone)}
-              defaultValue={value ? value.phone : ''}
-              onBlur={() => handleChange({})}
-            />
-          </Form.Item>
-        </div>
-        <div className="col-12 col-lg-6">
-          <Form.Item
-            label={formatMessage(checkoutMessages.form.label.email)}
-            required
-            validateStatus={isValidating && errorFields.includes('email') ? 'error' : undefined}
-            help={errorFields.includes('email') && formatMessage(checkoutMessages.form.message.errorEmail)}
-          >
-            <Input
-              ref={emailRef}
-              placeholder={formatMessage(checkoutMessages.form.message.emailText)}
-              defaultValue={value ? value.email : ''}
-              onBlur={() => handleChange({})}
-            />
-          </Form.Item>
-        </div>
-      </div>
+      )}
 
       <div className="row mb-4">
         <div className="col-12 col-lg-6">

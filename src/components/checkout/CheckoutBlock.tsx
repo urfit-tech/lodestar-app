@@ -51,7 +51,11 @@ const CheckoutBlock: React.VFC<{
     isValidInvoice: boolean
     isValidShipping: boolean
   }
-  renderInvoice?: () => React.ReactNode
+  renderInvoice?: (props: {
+    invoice: InvoiceProps
+    setInvoice: React.Dispatch<React.SetStateAction<InvoiceProps>>
+    isValidating: boolean
+  }) => React.ReactNode
   renderTerms?: () => React.ReactNode
 }> = ({ member, shopId, cartProducts, isFieldsValidate, renderInvoice, renderTerms }) => {
   const { formatMessage } = useIntl()
@@ -302,7 +306,7 @@ const CheckoutBlock: React.VFC<{
           </div>
 
           <div ref={invoiceRef} className="mb-3">
-            {renderInvoice?.() || (
+            {renderInvoice?.({ invoice, setInvoice, isValidating }) || (
               <AdminCard>
                 <InvoiceInput
                   value={invoice}
