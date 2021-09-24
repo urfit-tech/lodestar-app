@@ -63,7 +63,11 @@ export type CheckoutProductModalProps = {
     isValidInvoice: boolean
     isValidShipping: boolean
   }
-  renderInvoice?: () => React.ReactNode
+  renderInvoice?: (props: {
+    invoice: InvoiceProps
+    setInvoice: React.Dispatch<React.SetStateAction<InvoiceProps>>
+    isValidating: boolean
+  }) => React.ReactNode
   renderProductSelector?: (options: {
     productId: string
     onProductChange: (productId: string) => void
@@ -355,7 +359,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         {(totalPrice > 0 || target.discountDownPrice) && (
           <>
             <div ref={invoiceRef} className="mb-5">
-              {renderInvoice?.() || (
+              {renderInvoice?.({ invoice, setInvoice, isValidating }) || (
                 <InvoiceInput
                   value={invoice}
                   onChange={value => setInvoice(value)}
