@@ -29,6 +29,7 @@ import {
   StaticBlock,
   StaticCoverSection,
   TeacherSection,
+  IntroSection,
 } from '../components/page'
 import hasura from '../hasura'
 import { ReactComponent as AngleRightIcon } from '../images/angle-right.svg'
@@ -91,6 +92,7 @@ const AppPage: React.VFC = () => {
     homeReferrer: ReferrerSection,
     homeStatic: StaticBlock,
     homeTeacher: TeacherSection,
+    homeIntro: IntroSection,
     messenger: MessengerChat,
     // custom
     homeBlndPost: BlndPostSection,
