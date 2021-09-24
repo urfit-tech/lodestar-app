@@ -9,7 +9,7 @@ type NavItem = {
   fontSize: string
   fontWeight: string | number
   height: string
-  letterSpacing: string | number
+  letterSpacing: string
   transition: string
   hover: {
     color: string
@@ -41,21 +41,15 @@ const StyledItem = styled.div<{
   padding: ${props => props.itemStyle?.padding || `12px 10px`};
   color: ${props => props.itemStyle?.color || '#585858'};
   background-color: ${props => props.itemStyle?.backgroundColor};
-
-  font-size: ${props => props.itemStyle?.fontSize};
+  font-size: ${props => props.itemStyle?.fontSize || '1rem'};
   font-weight: ${props =>
     props.itemStyle?.fontWeight
-      ? typeof props.itemStyle.fontWeight === 'string'
-        ? `${props.itemStyle.fontWeight}`
-        : props.itemStyle.fontWeight
+      ? typeof props.itemStyle?.fontWeight === 'string'
+        ? `${props.itemStyle?.fontWeight}`
+        : props.itemStyle?.fontWeight
       : 500};
   height: ${props => props.itemStyle?.height || '40px'};
-  letter-spacing: ${props =>
-    props.itemStyle?.letterSpacing
-      ? typeof props.itemStyle.letterSpacing === 'string'
-        ? `${props.itemStyle.letterSpacing}`
-        : props.itemStyle.letterSpacing
-      : '0.2px'};
+  letter-spacing: ${props => props.itemStyle?.letterSpacing || '0.2px'};
   transition: ${props => props.itemStyle?.transition};
 
   &:hover {
