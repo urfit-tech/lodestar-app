@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useCallback, useState } from 'react'
 import { usePodcastProgramContent } from '../hooks/podcast'
 import { PodcastProgramContent } from '../types/podcast'
 
@@ -18,6 +18,7 @@ type PodcastPlayerProps = {
   playlistMode: PlaylistModeType
   currentPlayingId: string
   currentPodcastProgram: PodcastProgramContent | null
+  isPodcastProgramChanged: boolean
   loadingPodcastProgram: boolean
   togglePlaylistMode?: () => void
   setIsPlaying?: React.Dispatch<React.SetStateAction<boolean>>
@@ -36,6 +37,7 @@ const PodcastPlayerContext = createContext<PodcastPlayerProps>({
   playlistMode: 'loop',
   currentPlayingId: '',
   currentPodcastProgram: null,
+  isPodcastProgramChanged: false,
   loadingPodcastProgram: false,
   maxDuration: 0,
 })
@@ -58,10 +60,11 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         isPlaying,
         playlist,
         playlistMode,
-        currentPlayingId,
         loadingPodcastProgram,
+        currentPlayingId,
         currentPodcastProgram: podcastProgram,
         maxDuration,
+        isPodcastProgramChanged: podcastProgram?.id !== currentPlayingId && maxDuration > 0,
         togglePlaylistMode: () => {
           if (playlistMode === 'loop') {
             setPlaylistMode('single-loop')
@@ -86,12 +89,15 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         },
         setIsPlaying,
         setPlaylist,
-        setupPlaylist: playlist => {
-          setPlaylist(playlist)
-          setPlaylistMode('loop')
-          !visible && setVisible(true)
-          setIsPlaying(false)
-        },
+        setupPlaylist: useCallback(
+          playlist => {
+            setPlaylist(playlist)
+            setPlaylistMode('loop')
+            !visible && setVisible(true)
+            setIsPlaying(false)
+          },
+          [visible],
+        ),
         playNow: playlist => {
           setPlaylist(playlist)
           setPlaylistMode('loop')

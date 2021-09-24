@@ -163,7 +163,7 @@ const useNewestPodcastAlbumCollection: () => {
 } = () => {
   const { loading, data, error } = useQuery<hasura.GET_PODCAST_ALBUM_COLLECTION>(gql`
     query GET_PODCAST_ALBUM_COLLECTION {
-      podcast_album {
+      podcast_album(where: { published_at: { _is_null: false } }) {
         id
         cover_url
         title

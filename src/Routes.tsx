@@ -214,6 +214,16 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
   },
 
   // product - podcast
+  podcast_albums_collection: {
+    path: '/podcast-albums',
+    pageName: 'PodcastAlbumCollectionPage',
+    authenticated: false,
+  },
+  podcast_albums: {
+    path: '/podcast-albums/:podcastAlbumId',
+    pageName: 'PodcastAlbumPage',
+    authenticated: false,
+  },
   podcast_program_collection: {
     path: '/podcasts',
     pageName: 'PodcastProgramCollectionPage',
@@ -363,60 +373,62 @@ const Routes: React.VFC<{ extra?: { [routeKey: string]: RouteProps } }> = ({ ext
   }
 
   return (
-    <Suspense fallback={<LoadingPage />}>
-      <Switch>
-        {Object.keys(routesMap).map(routeKey => {
-          const routeProps = routesMap[routeKey as keyof typeof routesProps]
-          return (
-            <Route
-              exact
-              key={routeKey}
-              path={routeProps.path}
-              render={props =>
-                typeof routeProps.pageName === 'string' ? (
-                  <LoadablePage
-                    {...props}
-                    pageName={routeProps.pageName}
-                    authenticated={routeProps.authenticated}
-                    allowedUserRole={routeProps.allowedUserRole}
-                  />
-                ) : (
-                  routeProps.pageName
-                )
-              }
-            />
-          )
-        })}
-        <Route
-          exact
-          path="/settings"
-          render={props => (
-            <Redirect
-              to={{
-                pathname: '/settings/profile',
-                state: { from: props.location },
-              }}
-            />
-          )}
-        />
-        <Route
-          exact
-          path="/funding/:fundingId"
-          render={props => (
-            <Redirect
-              to={{
-                pathname: `/projects/${props.match.params.fundingId}`,
-                state: { from: props.location },
-              }}
-            />
-          )}
-        />
-        <Route path="/error" component={() => <NotFoundPage variant="error" />} />
-        <Route path="/repairing" component={() => <NotFoundPage variant="repairing" />} />
-        <Route component={NotFoundPage} />
-      </Switch>
+    <>
+      <Suspense fallback={<LoadingPage />}>
+        <Switch>
+          {Object.keys(routesMap).map(routeKey => {
+            const routeProps = routesMap[routeKey as keyof typeof routesProps]
+            return (
+              <Route
+                exact
+                key={routeKey}
+                path={routeProps.path}
+                render={props =>
+                  typeof routeProps.pageName === 'string' ? (
+                    <LoadablePage
+                      {...props}
+                      pageName={routeProps.pageName}
+                      authenticated={routeProps.authenticated}
+                      allowedUserRole={routeProps.allowedUserRole}
+                    />
+                  ) : (
+                    routeProps.pageName
+                  )
+                }
+              />
+            )
+          })}
+          <Route
+            exact
+            path="/settings"
+            render={props => (
+              <Redirect
+                to={{
+                  pathname: '/settings/profile',
+                  state: { from: props.location },
+                }}
+              />
+            )}
+          />
+          <Route
+            exact
+            path="/funding/:fundingId"
+            render={props => (
+              <Redirect
+                to={{
+                  pathname: `/projects/${props.match.params.fundingId}`,
+                  state: { from: props.location },
+                }}
+              />
+            )}
+          />
+          <Route path="/error" component={() => <NotFoundPage variant="error" />} />
+          <Route path="/repairing" component={() => <NotFoundPage variant="repairing" />} />
+          <Route component={NotFoundPage} />
+        </Switch>
+      </Suspense>
       <PodcastPlayerBlock />
-    </Suspense>
+    </>
   )
 }
 

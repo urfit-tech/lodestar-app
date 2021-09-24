@@ -2,6 +2,7 @@ import { SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { useAuth } from '../components/auth/AuthContext'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
@@ -27,6 +28,7 @@ const StyledContentWrapper = styled.div`
 
 const PodcastProgramContentPage: React.VFC = () => {
   const { podcastProgramId } = useParams<{ podcastProgramId: string }>()
+  const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
   const { currentMemberId } = useAuth()
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(podcastProgramId)
 
@@ -46,6 +48,7 @@ const PodcastProgramContentPage: React.VFC = () => {
             <PodcastProgramCover
               memberId={currentMemberId}
               podcastProgramId={podcastProgramId}
+              podcastAlbumId={podcastAlbumId || undefined}
               coverUrl={podcastProgram.coverUrl}
               title={podcastProgram.title}
               publishedAt={podcastProgram.publishedAt}
