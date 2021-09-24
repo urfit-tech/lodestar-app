@@ -85,6 +85,7 @@ const useAddProgramToCart = (program: Pick<ProgramProps, 'id' | 'title' | 'listP
     handleAddCartProgram: () => {
       if (settings['tracking.fb_pixel_id']) {
         ReactPixel.track('AddToCart', {
+          content_name: program.title || program.id,
           value: program.listPrice,
           currency: 'TWD',
         })

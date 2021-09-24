@@ -77,6 +77,7 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
   const handleClick = async () => {
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
+        content_name: `${merchandise.title} - ${merchandiseSpec.title}`,
         value: merchandiseSpec.listPrice,
         currency: 'TWD',
       })

@@ -232,6 +232,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
+        content_name: target.title || productId,
         value: totalPrice,
         currency: 'TWD',
       })

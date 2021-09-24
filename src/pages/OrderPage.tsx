@@ -38,6 +38,17 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
         ReactPixel.track('Purchase', {
           value: productPrice - discountPrice - shippingFee,
           currency: 'TWD',
+          content_type: order.order_products.length > 1 ? 'product_group' : 'product',
+          contents: order.order_products.map(order_product => {
+            const [productType, productId] = order_product.product_id.split('_')
+            return {
+              id: productId,
+              content_type: productType,
+              content_name: order_product.name,
+              quantity: order_product.options ? order_product.options['quantity'] || 1 : 1,
+              price: order_product.price,
+            }
+          }),
         })
       }
 
