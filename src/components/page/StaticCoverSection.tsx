@@ -1,7 +1,9 @@
 import styled from 'styled-components'
+import { useOnceAnimation } from '../../helpers'
 import { BREAK_POINT } from '../common/Responsive'
 
 type StaticCover = {
+  animation: string
   coverInfo: {
     desktop: { url: string; height: string }
     mobile: { url: string; height: string }
@@ -9,7 +11,7 @@ type StaticCover = {
   }
 }
 
-const StyledCoverWrapper = styled.div<StaticCover>`
+const StyledCoverWrapper = styled.div<Pick<StaticCover, 'coverInfo'>>`
   background-size: cover;
   background-position: center;
   background-image: ${props => props.coverInfo.mobile?.url && `url(${props.coverInfo.mobile?.url})`};
@@ -21,7 +23,15 @@ const StyledCoverWrapper = styled.div<StaticCover>`
 `
 
 const StaticCoverSection: React.VFC<{ options: StaticCover }> = ({ options }) => {
-  return <StyledCoverWrapper coverInfo={options.coverInfo} />
+  const { ref, activated } = useOnceAnimation()
+
+  return (
+    <StyledCoverWrapper
+      ref={ref}
+      className={`${options?.animation && activated ? `animate__animated ${options.animation}` : ''}`}
+      coverInfo={options.coverInfo}
+    />
+  )
 }
 
 export default StaticCoverSection
