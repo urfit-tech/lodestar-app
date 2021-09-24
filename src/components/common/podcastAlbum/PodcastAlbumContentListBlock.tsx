@@ -1,11 +1,14 @@
 import { Divider, Icon } from '@chakra-ui/react'
-import React from 'react'
+import React, { useContext } from 'react'
 import { BiMicrophone } from 'react-icons/bi'
 import { useIntl } from 'react-intl'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { durationFullFormatter } from '../../../helpers'
 import { productMessages } from '../../../helpers/translation'
 import { PodcastAlbum } from '../../../types/podcastAlbum'
+import { useAuth } from '../../auth/AuthContext'
+import { AuthModalContext } from '../../auth/AuthModal'
 
 const StyledTitle = styled.h2`
   font-size: 24px;
@@ -49,6 +52,9 @@ const PodcastAlbumContentListBlock: React.VFC<{
   podcastPrograms: PodcastAlbum['podcastPrograms']
 }> = ({ podcastPrograms }) => {
   const { formatMessage } = useIntl()
+  const history = useHistory()
+  const { isAuthenticated } = useAuth()
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
 
   return (
     <>
@@ -56,7 +62,16 @@ const PodcastAlbumContentListBlock: React.VFC<{
       <Divider className="mb-3" />
 
       {podcastPrograms.map(podcastProgram => (
-        <PodcastAlbumContentItem key={podcastProgram.id}>
+        <PodcastAlbumContentItem
+          key={podcastProgram.id}
+          onClick={() => {
+            if (isAuthenticated) {
+              history.push(`/podcasts/${podcastProgram.id}`)
+            } else {
+              setAuthModalVisible?.(true)
+            }
+          }}
+        >
           <StyledTitleWrapper className="d-flex align-items-center">
             <StyleIcon as={BiMicrophone} className="mr-2" />
             <span>{podcastProgram.title}</span>
