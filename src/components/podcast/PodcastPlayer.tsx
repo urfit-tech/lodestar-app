@@ -1,10 +1,11 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button, Divider, Icon as AntdIcon, Popover } from 'antd'
+import { Button, Divider, Popover } from 'antd'
 import { ButtonProps } from 'antd/lib/button'
 import isMobile from 'is-mobile'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { AiOutlineLoading } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
@@ -138,14 +139,14 @@ const StyledButton = styled(Button)<{ variant?: 'overlay' | 'bar'; height?: stri
   div {
     color: var(--gray-darker);
   }
-  .anticon {
+  .chakra-icon {
     font-size: 24px;
     color: ${props => (props.variant === 'overlay' ? 'var(--gray-darker)' : 'white')};
   }
   ${props =>
     props.variant === 'bar'
       ? css`
-          &:hover .anticon {
+          &:hover .chakra-icon {
             color: #cdcdcd;
           }
         `
@@ -157,7 +158,7 @@ const StyledShiftButton = styled(StyledButton)`
   }
 `
 const CloseBlock = styled.div`
-  .anticon {
+  .chakra-icon {
     font-size: 16px;
   }
   ${desktopViewMixin(css`
@@ -165,7 +166,7 @@ const CloseBlock = styled.div`
     top: 0;
     bottom: 0;
     left: 0;
-    .anticon {
+    .chakra-icon {
       font-size: 20px;
     }
   `)}
@@ -339,12 +340,9 @@ const PodcastPlayer: React.VFC<{
                   }}
                 >
                   {loadingPodcastProgram || maxDuration === 0 || isAudioLoading ? (
-                    <AntdIcon type="loading" style={{ fontSize: '44px' }} />
+                    <Icon as={AiOutlineLoading} style={{ fontSize: '44px' }} />
                   ) : (
-                    <AntdIcon
-                      component={() => (isPlaying ? <Icon as={PauseCircleIcon} /> : <Icon as={PlayCircleIcon} />)}
-                      style={{ fontSize: '44px' }}
-                    />
+                    <Icon as={isPlaying ? PauseCircleIcon : PlayCircleIcon} style={{ fontSize: '44px' }} />
                   )}
                 </StyledButton>
                 <StyledButton
