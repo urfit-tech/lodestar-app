@@ -28,10 +28,10 @@ const StyledBar = styled.div`
   text-align: center;
   z-index: 1;
 `
-const StyledWrapper = styled.div<{ padding?: string; height?: string; backgroundColor?: string }>`
-  padding: ${props => props.padding || '8px 0px'};
+const StyledWrapper = styled.div<{ backgroundColor?: string; height?: string; padding?: string }>`
   background-color: ${props => props.backgroundColor};
   height: ${props => props.height || '56px'};
+  padding: ${props => props.padding || '8px 0px'};
 `
 const StyledItem = styled.div<{
   itemStyle?: NavItem
@@ -69,13 +69,14 @@ const NavSection: React.VFC<{
   options: {
     backgroundColor?: string
     height?: string
+    padding?: string
     navList?: { id: string; title?: string; mobileTitle?: string; link?: string }[]
     itemStyle?: NavItem
   }
 }> = ({ options }) => {
   return (
     <StyledBar>
-      <StyledWrapper backgroundColor={options.backgroundColor || ''}>
+      <StyledWrapper backgroundColor={options.backgroundColor || ''} height={options.height} padding={options.padding}>
         {options.navList
           ? options.navList.map(nav =>
               nav.link ? (
