@@ -55,7 +55,12 @@ const InvoiceInput: React.VFC<{
   onChange?: (value: InvoiceProps) => void
   isValidating?: boolean
   shouldSameToShippingCheckboxDisplay?: boolean
-  renderMemberInfoInput?: () => React.ReactNode
+  renderMemberInfoInput?: (props: {
+    value?: InvoiceProps
+    nameRef: React.MutableRefObject<Input | null>
+    phoneRef: React.MutableRefObject<Input | null>
+    emailRef: React.MutableRefObject<Input | null>
+  }) => React.ReactNode
 }> = ({ value, onChange, isValidating, shouldSameToShippingCheckboxDisplay, renderMemberInfoInput }) => {
   const { formatMessage } = useIntl()
   const { loading, settings, enabledModules } = useApp()
@@ -212,7 +217,7 @@ const InvoiceInput: React.VFC<{
         </div>
       )}
 
-      {renderMemberInfoInput?.() || (
+      {renderMemberInfoInput?.({ value, nameRef, phoneRef, emailRef }) || (
         <div className="row">
           <div className="col-12 col-lg-3">
             <Form.Item
