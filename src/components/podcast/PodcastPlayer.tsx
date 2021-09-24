@@ -138,7 +138,7 @@ const StyledButton = styled(Button)<{ variant?: 'overlay' | 'bar'; height?: stri
   div {
     color: var(--gray-darker);
   }
-  .anticon {
+  svg {
     font-size: 24px;
     color: ${props => (props.variant === 'overlay' ? 'var(--gray-darker)' : 'white')};
   }
