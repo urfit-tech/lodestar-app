@@ -30,6 +30,7 @@ const BlurredCover = styled.div<{ coverUrl?: string | null }>`
 const ContentWrapper = styled.div`
   position: relative;
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+  height: 100%;
 `
 
 const BlurredBanner: React.FC<{
