@@ -221,8 +221,8 @@ const usePodcastAlbumCollection: (options: { categoryId?: string }) => {
   refetch: () => void
 } = ({ categoryId }) => {
   const condition: hasura.GET_PODCAST_ALBUMSVariables['condition'] = categoryId
-    ? { podcast_album_categories: { category: { id: { _eq: categoryId } } } }
-    : undefined
+    ? { published_at: { _is_null: false }, podcast_album_categories: { category: { id: { _eq: categoryId } } } }
+    : { published_at: { _is_null: false } }
   const { loading, data, error, refetch } = useQuery<hasura.GET_PODCAST_ALBUMS, hasura.GET_PODCAST_ALBUMSVariables>(
     gql`
       query GET_PODCAST_ALBUMS($condition: podcast_album_bool_exp) {
