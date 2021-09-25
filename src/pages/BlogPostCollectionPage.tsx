@@ -11,7 +11,6 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { desktopViewMixin } from '../helpers'
 import { usePostPreviewCollection } from '../hooks/blog'
-import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
 const StyledBanner = styled.div`
@@ -54,14 +53,10 @@ const StyledAbstract = styled.div`
 const BlogPostCollectionPage: React.VFC = () => {
   const [categories] = useQueryParam('categories', StringParam)
   const [tags] = useQueryParam('tags', StringParam)
-  const { loading, enabledModules } = useApp()
+  const app = useApp()
   const { posts } = usePostPreviewCollection({ tags: tags?.split(','), categories: categories || '' })
 
-  if (loading) {
-    return <LoadingPage />
-  }
-
-  if (!enabledModules.blog) {
+  if (!app.loading && !app.enabledModules.blog) {
     return <NotFoundPage />
   }
 

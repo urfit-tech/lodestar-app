@@ -4,7 +4,6 @@ import React, { useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { Redirect, useParams } from 'react-router-dom'
 import { useProject } from '../../hooks/project'
-import LoadingPage from '../LoadingPage'
 import FundingPage from './FundingPage'
 import ModularPage from './ModularPage'
 import OnSalePage from './OnSalePage'
@@ -36,10 +35,6 @@ const ProjectPage: React.VFC = () => {
       ReactGA.ga('send', 'pageview')
     }
   }, [project])
-
-  if (loadingProject) {
-    return <LoadingPage />
-  }
 
   if (errorProject || !project || (project.publishedAt && project.publishedAt.getTime() > Date.now())) {
     return <Redirect to="/" />

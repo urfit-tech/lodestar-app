@@ -1,4 +1,6 @@
+import { useQuery } from '@apollo/react-hooks'
 import { Editor, Frame } from '@craftjs/core'
+import gql from 'graphql-tag'
 import CraftActivity from 'lodestar-app-element/src/components/craft/CraftActivity'
 import CraftBackground from 'lodestar-app-element/src/components/craft/CraftBackground'
 import CraftButton from 'lodestar-app-element/src/components/craft/CraftButton'
@@ -40,8 +42,20 @@ import ProgramSection from '../components/page/ProgramSection'
 import ReferrerSection from '../components/page/ReferrerSection'
 import StaticBlock from '../components/page/StaticBlock'
 import TeacherSection from '../components/page/TeacherSection'
-import { AppPageProps } from '../hooks/page'
+import { useApp } from '../containers/common/AppContext'
+import hasura from '../hasura'
 import { ReactComponent as AngleRightIcon } from '../images/angle-right.svg'
+import LoadingPage from './LoadingPage'
+import NotFoundPage from './NotFoundPage'
+
+type SectionType =
+  | 'homeCover'
+  | 'homeActivity'
+  | 'homeCreator'
+  | 'homePost'
+  | 'homeProgram'
+  | 'homeProgramCategory'
+  | 'messenger'
 
 export const SectionTitle = styled.div<{ white?: boolean }>`
   margin: 0 auto;
@@ -71,35 +85,45 @@ export const StyledSection = styled.section`
   background: white;
 `
 
-const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
-  const sectionConverter = {
-    // general
-    homeActivity: ActivitySection,
-    homeActivityIntro: ActivityIntroSection,
-    homeCreator: CreatorSection,
-    homeCover: CoverSection,
-    homeCustomCover: CustomCoverSection,
-    homePost: PostSection,
-    homeProgram: ProgramSection,
-    homeProgramCategory: ProgramSection,
-    homeProgramIntro: ProgramIntroSection,
-    homePodcastCollection: PodcastAlbumCollectionSection,
-    homeReferrer: ReferrerSection,
-    homeStatic: StaticBlock,
-    homeTeacher: TeacherSection,
-    messenger: MessengerChat,
-    // custom
-    homeBlndPost: BlndPostSection,
-    homeBlndCTA: BlndCTASection,
-    homeMisaFeature: MisaFeatureSection,
-    homeMisaNav: MisaNavigationBar,
-    // homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
-    homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
+const sectionConverter = {
+  // general
+  homeActivity: ActivitySection,
+  homeActivityIntro: ActivityIntroSection,
+  homeCreator: CreatorSection,
+  homeCover: CoverSection,
+  homeCustomCover: CustomCoverSection,
+  homePost: PostSection,
+  homeProgram: ProgramSection,
+  homeProgramCategory: ProgramSection,
+  homeProgramIntro: ProgramIntroSection,
+  homePodcastCollection: PodcastAlbumCollectionSection,
+  homeReferrer: ReferrerSection,
+  homeStatic: StaticBlock,
+  homeTeacher: TeacherSection,
+  messenger: MessengerChat,
+  // custom
+  homeBlndPost: BlndPostSection,
+  homeBlndCTA: BlndCTASection,
+  homeMisaFeature: MisaFeatureSection,
+  homeMisaNav: MisaNavigationBar,
+  // homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
+  homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
+}
+
+const AppPage: React.VFC = () => {
+  const { loadingAppPage, appPage } = usePage(window.location.pathname)
+
+  if (loadingAppPage) {
+    return <LoadingPage />
+  }
+
+  if (!appPage) {
+    return <NotFoundPage />
   }
 
   return (
-    <DefaultLayout {...page.options}>
-      {page.craftData ? (
+    <DefaultLayout {...appPage.options}>
+      {appPage.craftData ? (
         <Editor
           enabled={false}
           resolver={{
@@ -123,10 +147,10 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
             CraftInstructor,
           }}
         >
-          <Frame data={JSON.stringify(page.craftData)} />
+          <Frame data={JSON.stringify(appPage.craftData)} />
         </Editor>
       ) : (
-        page.appPageSections.map(section => {
+        appPage.appPageSections.map(section => {
           const Section = sectionConverter[section.type]
           if (!sectionConverter[section.type]) {
             return <></>
@@ -136,6 +160,73 @@ const AppPage: React.VFC<{ page: AppPageProps }> = ({ page }) => {
       )}
     </DefaultLayout>
   )
+}
+
+const usePage = (path: string) => {
+  const { id: appId } = useApp()
+  const { loading, error, data } = useQuery<hasura.GET_PAGE, hasura.GET_PAGEVariables>(
+    gql`
+      query GET_PAGE($path: String, $appId: String) {
+        app_page(
+          where: {
+            path: { _eq: $path }
+            app_id: { _eq: $appId }
+            published_at: { _is_null: false }
+            is_deleted: { _eq: false }
+          }
+        ) {
+          id
+          path
+          options
+          craft_data
+          app_page_sections(order_by: { position: asc }) {
+            id
+            options
+            type
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        appId,
+        path,
+      },
+    },
+  )
+
+  type AppPageSectionProps = {
+    id: string
+    options: any
+    type: SectionType
+  }
+
+  const appPage: {
+    id: string | null
+    path: string | null
+    craftData: { [key: string]: string } | null
+    options: { [key: string]: string } | null
+    appPageSections: AppPageSectionProps[]
+  } | null = data?.app_page
+    ? {
+        id: data.app_page[0] ? data.app_page[0].id : null,
+        path: data.app_page[0] ? data.app_page[0].path : null,
+        craftData: data.app_page[0] ? data.app_page[0].craft_data : null,
+        options: data.app_page[0]?.options || null,
+        appPageSections: data.app_page[0]
+          ? data.app_page[0].app_page_sections.map((v: { id: string; options: any; type: string }) => ({
+              id: v.id,
+              options: v.options,
+              type: v.type as SectionType,
+            }))
+          : [],
+      }
+    : null
+  return {
+    loadingAppPage: loading,
+    errorAppPage: error,
+    appPage,
+  }
 }
 
 export default AppPage

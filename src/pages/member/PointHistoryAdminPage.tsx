@@ -14,8 +14,7 @@ import { useApp } from '../../containers/common/AppContext'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as PointIcon } from '../../images/point.svg'
-import LoadingPage from '../LoadingPage'
-import NotFoundPage from '../NotFoundPage'
+import ForbiddenPage from '../ForbiddenPage'
 
 const messages = defineMessages({
   currentOwnedPoints: { id: 'payment.label.currentOwnedPoints', defaultMessage: '目前擁有' },
@@ -69,14 +68,10 @@ const StyledInactivatedLabel = styled(StyledLabel)`
 const PointHistoryAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { loading, enabledModules } = useApp()
+  const app = useApp()
 
-  if (loading) {
-    return <LoadingPage />
-  }
-
-  if (!enabledModules.point) {
-    return <NotFoundPage />
+  if (!app.loading && !app.enabledModules.point) {
+    return <ForbiddenPage />
   }
 
   return (

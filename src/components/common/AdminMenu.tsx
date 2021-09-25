@@ -22,8 +22,8 @@ import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
-import { routesProps } from '../../Routes'
 import { useAuth } from '../auth/AuthContext'
+import { useAppRouter } from './AppRouter'
 
 const StyledMenu = styled(Menu)`
   && {
@@ -41,6 +41,7 @@ export type RenderMemberAdminMenuProps = {
 
 export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
   const { id: appId } = useApp()
+  const { routesMap } = useAppRouter()
   const { formatMessage } = useIntl()
   const history = useHistory()
 
@@ -52,7 +53,7 @@ export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
     } else if (key.startsWith('management_system')) {
       window.open(`//${managementDomain?.domain[0]}/admin`)
     } else {
-      const route = routesProps[key]
+      const route = routesMap[key]
       route ? history.push(route.path) : alert(formatMessage(commonMessages.alert.noPath))
     }
   }

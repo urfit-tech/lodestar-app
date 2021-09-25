@@ -18,8 +18,7 @@ import { notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import DefaultAvatar from '../images/avatar.svg'
-import LoadingPage from './LoadingPage'
-import NotFoundPage from './NotFoundPage'
+import ForbiddenPage from './ForbiddenPage'
 
 const StyledCreatorName = styled.h2`
   height: 20px;
@@ -63,18 +62,14 @@ export const StyledCreatorTag = styled.span`
 `
 
 const CreatorDisplayedPage: React.VFC<{}> = () => {
-  const { loading, enabledModules } = useApp()
+  const app = useApp()
   const { pageTitle } = useNav()
   const { formatMessage } = useIntl()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
-  const { loadingCreators, errorCreators, creators } = usePublishedCreator()
+  const { creators } = usePublishedCreator()
 
-  if (loading || loadingCreators) {
-    return <LoadingPage />
-  }
-
-  if (!enabledModules.creator_display || errorCreators) {
-    return <NotFoundPage />
+  if (!app.loading && !app.enabledModules.creator_display) {
+    return <ForbiddenPage />
   }
 
   const categories = uniqBy(v => v.name, flatten(creators.map(v => v.categories).filter(notEmpty)))
