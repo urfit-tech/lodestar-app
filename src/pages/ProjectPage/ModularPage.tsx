@@ -19,7 +19,7 @@ import ProjectTourSection from '../../components/project/ProjectTourSection'
 import { useApp } from '../../containers/common/AppContext'
 import { useProject } from '../../hooks/project'
 import EmptyCover from '../../images/empty-cover.png'
-import LoadingPage from '../LoadingPage'
+import NotFoundPage from '../NotFoundPage'
 
 const ModularPage: React.VFC<{
   projectId: string
@@ -38,7 +38,7 @@ const ModularPage: React.VFC<{
   }, [])
 
   if (!project) {
-    return <LoadingPage />
+    return <NotFoundPage />
   }
 
   let seoMeta: { title?: string; description?: string } | undefined

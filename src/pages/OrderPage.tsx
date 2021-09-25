@@ -12,8 +12,8 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
-import ForbiddenPage from './ForbiddenPage'
 import LoadingPage from './LoadingPage'
+import NotFoundPage from './NotFoundPage'
 
 const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
   const { formatMessage } = useIntl()
@@ -106,9 +106,8 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   if (loading) {
     return <LoadingPage />
   }
-
   if (!order) {
-    return <ForbiddenPage />
+    return <NotFoundPage />
   }
 
   return (

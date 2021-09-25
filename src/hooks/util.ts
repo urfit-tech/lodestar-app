@@ -1,22 +1,14 @@
-import { filter } from 'ramda'
 import { useContext, useEffect, useRef } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import TagManager from 'react-gtm-module'
 import { hotjar } from 'react-hotjar'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router-dom'
 import { ThemeContext } from 'styled-components'
 import { useAuth } from '../components/auth/AuthContext'
 import { useApp } from '../containers/common/AppContext'
 import LanguageContext from '../contexts/LanguageContext'
 import { productMessages } from '../helpers/translation'
-import { routesProps } from '../Routes'
-
-export const useRouteKeys = () => {
-  const location = useLocation()
-  return Object.keys(filter(routeProps => routeProps.path === location.pathname, routesProps))
-}
 
 export const useInterval = (callback: Function, delay: number | null, immediately?: boolean) => {
   const savedCallback = useRef<Function>()

@@ -44,7 +44,7 @@ const PodcastProgramContentPage: React.VFC = () => {
     <DefaultLayout noFooter>
       <div className="row no-gutters">
         <div className="col-12 col-lg-4">
-          {typeof currentMemberId === 'string' && (
+          {currentMemberId && (
             <PodcastProgramCover
               memberId={currentMemberId}
               podcastProgramId={podcastProgramId}

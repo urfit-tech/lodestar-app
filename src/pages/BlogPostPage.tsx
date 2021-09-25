@@ -20,6 +20,7 @@ import { useAddPostViews, usePost } from '../hooks/blog'
 import { ReactComponent as CalendarAltOIcon } from '../images/calendar-alt-o.svg'
 import { ReactComponent as EyeIcon } from '../images/eye.svg'
 import { ReactComponent as UserOIcon } from '../images/user-o.svg'
+import ForbiddenPage from './ForbiddenPage'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
@@ -57,7 +58,7 @@ const StyledSubTitle = styled.div`
 const BlogPostPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { postId } = useParams<{ postId: string }>()
-  const { id: appId, loading, enabledModules, settings } = useApp()
+  const app = useApp()
   const { loadingPost, post } = usePost(postId)
   const addPostView = useAddPostViews()
 
@@ -97,11 +98,13 @@ const BlogPostPage: React.VFC = () => {
     return layoutContentElem.removeEventListener('scroll', () => handleScroll())
   }, [handleScroll])
 
-  if (loading || loadingPost) {
+  if (!app.loading && !app.enabledModules.blog) {
+    return <ForbiddenPage />
+  }
+  if (loadingPost) {
     return <LoadingPage />
   }
-
-  if (!enabledModules.blog || !post) {
+  if (!post) {
     return <NotFoundPage />
   }
 
@@ -120,14 +123,14 @@ const BlogPostPage: React.VFC = () => {
 
   let seoMeta: { title?: string } | undefined
   try {
-    seoMeta = JSON.parse(settings['seo.meta']).ActivityPage
+    seoMeta = JSON.parse(app.settings['seo.meta']).ActivityPage
   } catch (error) {}
 
   const siteTitle = post.title
     ? seoMeta?.title
       ? `${render(seoMeta.title, { activityTitle: post.title })}`
       : post.title
-    : appId
+    : app.id
 
   const siteDescription = BraftEditor.createEditorState(post.description)
     .toHTML()

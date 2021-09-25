@@ -10,8 +10,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { useApp } from '../containers/common/AppContext'
 import { desktopViewMixin } from '../helpers'
 import { usePostPreviewCollection } from '../hooks/blog'
-import LoadingPage from './LoadingPage'
-import NotFoundPage from './NotFoundPage'
+import ForbiddenPage from './ForbiddenPage'
 
 const PopularPostsBlock = styled.div`
   ${desktopViewMixin(css`
@@ -21,17 +20,13 @@ const PopularPostsBlock = styled.div`
 
 const BlogPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { loading, enabledModules } = useApp()
+  const app = useApp()
 
   const { posts } = usePostPreviewCollection()
   const latestPosts = posts.slice(0, 3)
 
-  if (loading) {
-    return <LoadingPage />
-  }
-
-  if (!enabledModules.blog) {
-    return <NotFoundPage />
+  if (!app.loading && !app.enabledModules.blog) {
+    return <ForbiddenPage />
   }
 
   return (

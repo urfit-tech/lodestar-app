@@ -16,8 +16,6 @@ import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
-import LoadingPage from '../LoadingPage'
-import NotFoundPage from '../NotFoundPage'
 
 const messages = defineMessages({
   currentOwnedCoins: { id: 'payment.label.currentOwnedCoins', defaultMessage: '目前擁有' },
@@ -71,15 +69,6 @@ const StyledInactivatedLabel = styled(StyledLabel)`
 const CoinHistoryAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { loading, enabledModules } = useApp()
-
-  if (loading) {
-    return <LoadingPage />
-  }
-
-  if (!enabledModules.coin) {
-    return <NotFoundPage />
-  }
 
   return (
     <MemberAdminLayout content={{ icon: CoinIcon, title: formatMessage(commonMessages.content.coinsAdmin) }}>
