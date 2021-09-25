@@ -117,43 +117,47 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
 
   const settings = Object.fromEntries(data?.app_by_pk?.app_settings.map(v => [v.key, v.value]) || [])
 
-  const app: AppProps = data?.app_by_pk
-    ? {
-        loading: false,
-        id: data.app_by_pk.id,
-        name: data.app_by_pk.name || '',
-        title: data.app_by_pk.title,
-        description: data.app_by_pk.description,
-        enabledModules: Object.fromEntries(data.app_by_pk.app_modules.map(v => [v.module_id, true]) || []),
-        navs: data.app_by_pk.app_navs.map(appNav => ({
-          id: appNav.id,
-          block: appNav.block,
-          position: appNav.position,
-          label: appNav.label,
-          icon: appNav.icon,
-          href: appNav.href,
-          external: appNav.external,
-          locale: appNav.locale,
-          tag: appNav.tag,
-          subNavs: appNav.sub_app_navs.map(v => ({
-            id: v.id,
-            block: v.block,
-            position: v.position,
-            label: v.label,
-            icon: v.icon,
-            href: v.href,
-            external: v.external,
-            locale: v.locale,
-            tag: v.tag,
-          })),
-        })),
-        settings,
-        currencyId: settings['currency_id'] || 'TWD',
-        currencies: Object.fromEntries(
-          data.currency.map(v => [v.id, { id: v.id, label: v.label, unit: v.unit, minorUnits: v.minor_units }]),
-        ),
-      }
-    : defaultAppProps
+  const app: AppProps = React.useMemo(
+    () =>
+      data?.app_by_pk
+        ? {
+            loading: false,
+            id: data.app_by_pk.id,
+            name: data.app_by_pk.name || '',
+            title: data.app_by_pk.title,
+            description: data.app_by_pk.description,
+            enabledModules: Object.fromEntries(data.app_by_pk.app_modules.map(v => [v.module_id, true]) || []),
+            navs: data.app_by_pk.app_navs.map(appNav => ({
+              id: appNav.id,
+              block: appNav.block,
+              position: appNav.position,
+              label: appNav.label,
+              icon: appNav.icon,
+              href: appNav.href,
+              external: appNav.external,
+              locale: appNav.locale,
+              tag: appNav.tag,
+              subNavs: appNav.sub_app_navs.map(v => ({
+                id: v.id,
+                block: v.block,
+                position: v.position,
+                label: v.label,
+                icon: v.icon,
+                href: v.href,
+                external: v.external,
+                locale: v.locale,
+                tag: v.tag,
+              })),
+            })),
+            settings,
+            currencyId: settings['currency_id'] || 'TWD',
+            currencies: Object.fromEntries(
+              data.currency.map(v => [v.id, { id: v.id, label: v.label, unit: v.unit, minorUnits: v.minor_units }]),
+            ),
+          }
+        : defaultAppProps,
+    [data?.app_by_pk, data?.currency, settings],
+  )
 
   useEffect(() => {
     if (!authToken) {
