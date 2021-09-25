@@ -1,6 +1,6 @@
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Redirect } from 'react-router-dom'
-import { useApp } from '../containers/common/AppContext'
 import AppPage from './AppPage'
 
 const HomePage: React.VFC = () => {

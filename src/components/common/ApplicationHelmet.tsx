@@ -1,7 +1,7 @@
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Organization, WithContext } from 'schema-dts'
-import { useApp } from '../../containers/common/AppContext'
 import { useGA, useGTM, useHotjar, usePixel, useSwarmify } from '../../hooks/util'
 
 const ApplicationHelmet: React.VFC = () => {

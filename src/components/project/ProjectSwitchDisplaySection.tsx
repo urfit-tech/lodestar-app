@@ -1,8 +1,8 @@
 import { useApolloClient } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect } from 'react'
 import hasura from '../../hasura'
-import { useAuth } from '../auth/AuthContext'
 
 const ProjectSwitchDisplaySection: React.VFC<{
   projectId: string

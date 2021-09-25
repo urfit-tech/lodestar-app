@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { uniq } from 'ramda'
-import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { MemberProps, MemberPublicProps, MemberSocialType, SocialCardProps, UserRole } from '../types/member'

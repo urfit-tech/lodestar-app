@@ -1,15 +1,15 @@
 import { AttachmentIcon } from '@chakra-ui/icons'
 import { IconButton, Progress } from '@chakra-ui/react'
 import { Spin } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
 import { byteToSize, downloadFile, getFileDownloadableLink, getFileExtension, getFileName } from '../../helpers'
 import { programMessages } from '../../helpers/translation'
 import { useProgramContentMaterial } from '../../hooks/program'
 import { ReactComponent as DownloadIcon } from '../../images/download.svg'
-import { useAuth } from '../auth/AuthContext'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledMaterial = styled.div`

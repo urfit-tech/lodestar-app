@@ -1,7 +1,7 @@
 import { Skeleton } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import styled from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
 import { usePublishedActivityCollection } from '../../hooks/activity'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { SectionTitle, StyledLink, StyledSection } from '../../pages/AppPage'

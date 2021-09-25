@@ -1,4 +1,5 @@
 import { Divider, Icon } from '@chakra-ui/react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext } from 'react'
 import { BiMicrophone } from 'react-icons/bi'
 import { useIntl } from 'react-intl'
@@ -7,7 +8,6 @@ import styled from 'styled-components'
 import { durationFullFormatter } from '../../../helpers'
 import { productMessages } from '../../../helpers/translation'
 import { PodcastAlbum } from '../../../types/podcastAlbum'
-import { useAuth } from '../../auth/AuthContext'
 import { AuthModalContext } from '../../auth/AuthModal'
 
 const StyledTitle = styled.h2`

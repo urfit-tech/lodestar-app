@@ -1,9 +1,9 @@
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { issueMessages } from '../../helpers/translation'
 import { useIssueReply } from '../../hooks/issue'
 import { ProgramRoleProps } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
 import IssueReplyCreationBlock from './IssueReplyCreationBlock'
 import IssueReplyItem from './IssueReplyItem'
 

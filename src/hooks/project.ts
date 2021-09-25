@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
-import { useAuth } from '../components/auth/AuthContext'
 import hasura from '../hasura'
 import { ProjectIntroProps, ProjectProps } from '../types/project'
 

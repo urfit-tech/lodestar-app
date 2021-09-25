@@ -3,6 +3,7 @@ import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { handleError } from '../../helpers'
@@ -13,7 +14,6 @@ import {
   profileMessages,
   settingsMessages,
 } from '../../helpers/translation'
-import { useAuth } from '../auth/AuthContext'
 import AdminCard from '../common/AdminCard'
 import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'

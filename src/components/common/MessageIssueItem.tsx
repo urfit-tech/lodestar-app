@@ -1,12 +1,12 @@
 import { Divider } from '@chakra-ui/react'
 import { Menu, message } from 'antd'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { issueMessages } from '../../helpers/translation'
 import { useIssueReply, useMutateIssue } from '../../hooks/issue'
 import { ProgramRoleProps } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
 import MessageItem from '../common/MessageItem'
 import MessageItemAction from '../common/MessageItemAction'
 import MessageItemContent from '../common/MessageItemContent'
@@ -43,9 +43,8 @@ const MessageIssueItem: React.VFC<{
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { issueReplies, refetchIssueReplies } = useIssueReply(issueId)
-  const { updateIssue, deleteIssue, insertIssueReaction, deleteIssueReaction, insertIssueReply } = useMutateIssue(
-    issueId,
-  )
+  const { updateIssue, deleteIssue, insertIssueReaction, deleteIssueReaction, insertIssueReply } =
+    useMutateIssue(issueId)
 
   return (
     <MessageItem focus={!qIssueReplyId && qIssueId === issueId}>

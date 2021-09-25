@@ -1,6 +1,6 @@
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext } from 'react'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
-import { useAuth } from '../auth/AuthContext'
 import PodcastPlayer from './PodcastPlayer'
 
 const PodcastPlayerBlock: React.VFC = () => {

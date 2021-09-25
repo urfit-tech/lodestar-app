@@ -1,7 +1,8 @@
 import { Tag } from 'antd'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import moment from 'moment'
-import React, { useContext } from 'react'
-import styled, { ThemeContext } from 'styled-components'
+import React from 'react'
+import styled from 'styled-components'
 import { ProductRoleName } from '../../types/general'
 import { ProgramRoleProps } from '../../types/program'
 import MemberAvatar from '../common/MemberAvatar'
@@ -18,7 +19,7 @@ const MessageItemHeader: React.VFC<{
   memberId: string
   createdAt: Date
 }> = ({ programRoles, memberId, createdAt }) => {
-  const theme = useContext(ThemeContext)
+  const theme = useAppTheme()
   return (
     <div className="d-flex align-items-center justify-content-between mb-2">
       <div className="d-flex align-items-center justify-content-center">

@@ -1,4 +1,5 @@
 import { Affix, Button, Tabs } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useRef } from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -14,7 +15,6 @@ import FundingIntroductionPane from '../../components/project/FundingIntroductio
 import FundingPlansPane from '../../components/project/FundingPlansPane'
 import FundingSummaryBlock from '../../components/project/FundingSummaryBlock'
 import FundingUpdatesPane from '../../components/project/FundingUpdatesPane'
-import { useApp } from '../../containers/common/AppContext'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProjectProps } from '../../types/project'

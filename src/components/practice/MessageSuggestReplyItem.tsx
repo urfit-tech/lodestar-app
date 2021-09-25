@@ -1,10 +1,10 @@
 import { Menu, message } from 'antd'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { issueMessages } from '../../helpers/translation'
 import { useMutateIssueReply } from '../../hooks/issue'
 import { ProgramRoleProps } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
 import MessageItem from '../common/MessageItem'
 import MessageItemAction from '../common/MessageItemAction'
 import MessageItemContent from '../common/MessageItemContent'
@@ -20,12 +20,8 @@ const MessageSuggestReplyItem: React.VFC<{
   title?: string | undefined
   onRefetch?: () => Promise<any>
 }> = ({ suggestReplyId, programRoles, memberId, createdAt, content, onRefetch, reactedMemberIds }) => {
-  const {
-    updateIssueReply,
-    deleteIssueReply,
-    insertIssueReplyReaction,
-    deleteIssueReplyReaction,
-  } = useMutateIssueReply(suggestReplyId)
+  const { updateIssueReply, deleteIssueReply, insertIssueReplyReaction, deleteIssueReplyReaction } =
+    useMutateIssueReply(suggestReplyId)
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
 

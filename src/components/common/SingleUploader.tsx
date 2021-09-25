@@ -2,11 +2,11 @@ import { Button, message, Spin, Upload } from 'antd'
 import { UploadProps } from 'antd/lib/upload'
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface'
 import axios, { Canceler } from 'axios'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { uploadFile } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useAuth } from '../auth/AuthContext'
 
 const SingleUploader: React.VFC<
   UploadProps & {

@@ -1,8 +1,8 @@
 import { Button, Divider, Dropdown, Icon, Menu } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { NavLinks, SocialLinks, StyledFooter } from '.'
-import { useApp } from '../../../containers/common/AppContext'
 import LanguageContext from '../../../contexts/LanguageContext'
 import { BREAK_POINT } from '../Responsive'
 

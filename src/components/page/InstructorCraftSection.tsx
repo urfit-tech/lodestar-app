@@ -1,8 +1,8 @@
 import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
 import InstructorBlock from 'lodestar-app-element/src/components/blocks/InstructorBlock'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import styled from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
 import { SectionTitle } from '../../pages/AppPage'
 
 const StyledContainer = styled.div`

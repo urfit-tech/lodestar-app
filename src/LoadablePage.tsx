@@ -1,6 +1,6 @@
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import ReactPixel from 'react-facebook-pixel'
-import { useApp } from './containers/common/AppContext'
 import { useGAPageView } from './hooks/util'
 
 const LoadablePage: React.VFC<{ pageName: string }> = ({ pageName }) => {

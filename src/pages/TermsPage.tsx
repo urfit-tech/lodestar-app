@@ -1,9 +1,9 @@
 import { Card, Typography } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { useApp } from '../containers/common/AppContext'
 import { termMessages } from '../helpers/translation'
 
 const StyledTitle = styled(Typography.Title)`

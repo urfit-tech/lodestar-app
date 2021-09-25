@@ -1,16 +1,17 @@
 import { Button } from '@chakra-ui/react'
 import { Dropdown, Icon, Menu, Tag } from 'antd'
 import BraftEditor from 'braft-editor'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import styled, { ThemeContext } from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
+import styled from 'styled-components'
 import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import { ProductRoleName } from '../../types/general'
 import { ProgramRoleName } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from './MemberAvatar'
 import { StyledEditor } from './MessageReplyCreationForm'
 import ProductRoleFormatter from './ProductRoleFormatter'
@@ -49,7 +50,7 @@ const MessageReplyItem: React.VFC<{
   onRefetch?: () => void
 }> = ({ content, createdAt, memberId, roleName, onRefetch }) => {
   const { formatMessage } = useIntl()
-  const theme = useContext(ThemeContext)
+  const theme = useAppTheme()
   const { currentMemberId, authToken } = useAuth()
   const { id: appId } = useApp()
 

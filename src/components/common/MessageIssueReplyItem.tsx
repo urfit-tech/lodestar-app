@@ -1,11 +1,11 @@
 import { Menu, message } from 'antd'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { issueMessages } from '../../helpers/translation'
 import { useMutateIssueReply } from '../../hooks/issue'
 import { ProgramRoleProps } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
 import MessageItem from '../common/MessageItem'
 import MessageItemAction from '../common/MessageItemAction'
 import MessageItemContent from '../common/MessageItemContent'
@@ -22,12 +22,8 @@ const MessageIssueReplyItem: React.VFC<{
   onRefetch?: () => Promise<any>
 }> = ({ issueReplyId, programRoles, memberId, createdAt, content, onRefetch, reactedMemberIds }) => {
   const [qIssueReplyId] = useQueryParam('issueReplyId', StringParam)
-  const {
-    updateIssueReply,
-    deleteIssueReply,
-    insertIssueReplyReaction,
-    deleteIssueReplyReaction,
-  } = useMutateIssueReply(issueReplyId)
+  const { updateIssueReply, deleteIssueReply, insertIssueReplyReaction, deleteIssueReplyReaction } =
+    useMutateIssueReply(issueReplyId)
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
 

@@ -1,4 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -11,7 +12,6 @@ import { useEnrolledProgramIds } from '../../hooks/program'
 import { ReactComponent as ArrowRightIcon } from '../../images/angle-right.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramBriefProps } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
 import PodcastProgramPopover from '../podcast/PodcastProgramPopover'
 
 const StyledTitle = styled.div`

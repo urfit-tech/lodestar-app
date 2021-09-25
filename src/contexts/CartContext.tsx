@@ -1,9 +1,9 @@
 import { useApolloClient, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniqBy } from 'ramda'
 import React, { useCallback, useEffect, useState } from 'react'
-import { useAuth } from '../components/auth/AuthContext'
-import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 import { CartProductProps } from '../types/checkout'
 import { ProductType } from '../types/product'
@@ -72,35 +72,38 @@ export const CartProvider: React.FC = ({ children }) => {
           fetchPolicy: 'no-cache',
         })
         .then(({ data }) => {
-          const cartProducts: CartProductProps[] = uniqBy(cartProduct => cartProduct.productId, [
-            // remote cart product
-            ...data.cart_product.map(cartProduct => ({
-              productId: cartProduct.product.id,
-              shopId: cartProduct.product.id.startsWith('MerchandiseSpec_')
-                ? data.merchandise_spec.find(v => v.id === cartProduct.product.id.replace('MerchandiseSpec_', ''))
-                    ?.merchandise.member_shop_id || ''
-                : '',
-              enrollments: cartProduct.product.product_enrollments.map(enrollment => ({
-                memberId: enrollment.member_id,
-                isPhysical: enrollment.is_physical,
-              })),
-              options: cartProductOptions[cartProduct.product.id],
-            })),
-            // local cart product
-            ...cachedCartProducts.map(cartProduct => ({
-              ...cartProduct,
-              shopId: cartProduct.productId.startsWith('MerchandiseSpec_')
-                ? data.merchandise_spec.find(v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''))
-                    ?.merchandise.member_shop_id || ''
-                : '',
-              enrollments: data.product
-                .find(product => product.id === cartProduct.productId)
-                ?.product_enrollments.map(enrollment => ({
+          const cartProducts: CartProductProps[] = uniqBy(
+            cartProduct => cartProduct.productId,
+            [
+              // remote cart product
+              ...data.cart_product.map(cartProduct => ({
+                productId: cartProduct.product.id,
+                shopId: cartProduct.product.id.startsWith('MerchandiseSpec_')
+                  ? data.merchandise_spec.find(v => v.id === cartProduct.product.id.replace('MerchandiseSpec_', ''))
+                      ?.merchandise.member_shop_id || ''
+                  : '',
+                enrollments: cartProduct.product.product_enrollments.map(enrollment => ({
                   memberId: enrollment.member_id,
                   isPhysical: enrollment.is_physical,
                 })),
-            })),
-          ])
+                options: cartProductOptions[cartProduct.product.id],
+              })),
+              // local cart product
+              ...cachedCartProducts.map(cartProduct => ({
+                ...cartProduct,
+                shopId: cartProduct.productId.startsWith('MerchandiseSpec_')
+                  ? data.merchandise_spec.find(v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''))
+                      ?.merchandise.member_shop_id || ''
+                  : '',
+                enrollments: data.product
+                  .find(product => product.id === cartProduct.productId)
+                  ?.product_enrollments.map(enrollment => ({
+                    memberId: enrollment.member_id,
+                    isPhysical: enrollment.is_physical,
+                  })),
+              })),
+            ],
+          )
 
           const filteredProducts = cartProducts.filter(cartProduct =>
             cartProduct && cartProduct.enrollments

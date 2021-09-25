@@ -8281,7 +8281,7 @@ graphql-tag@2.12.4:
   dependencies:
     tslib "^2.1.0"
 
-graphql-tag@^2.10.1, graphql-tag@^2.10.3:
+graphql-tag@^2.10.1, graphql-tag@^2.10.3, graphql-tag@^2.12.5:
   version "2.12.5"
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.12.5.tgz#5cff974a67b417747d05c8d9f5f3cb4495d0db8f"
   integrity sha512-5xNhP4063d16Pz3HBtKprutsPrmHZi5IdUGOWRxA2B6VF7BIRGOHZ5WQvDmJXZuPcBg7rYwaFxvQYjqkSdR3TQ==
@@ -10277,6 +10277,11 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
+libphonenumber-js@^1.9.34:
+  version "1.9.34"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.9.34.tgz#ddddc778a9b2f53c70500fcf10c9483596e3574f"
+  integrity sha512-gHTNU9xTtVgSp30IDX/57W4pETMXDIYXFfwEOJVXiYosiY7Hc7ogJwlBjOqlCcU04X0aA8DT57hdwUC1sJBJnA==
+
 libphonenumber-js@^1.9.7:
   version "1.9.26"
   resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.9.26.tgz#888aca88a4019d0b108e45db8e0509d55785ae45"
@@ -10601,9 +10606,10 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/5c19b5670a51b10f6c090c243338bd8bad862b73"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/06b8366c116fbcc408b499c087056ef2bb21e902"
   dependencies:
     "@apollo/react-hooks" "^3.1.5"
+    "@bobthered/tailwindcss-palette-generator" "^2.0.0"
     "@chakra-ui/react" "1.1.2"
     "@craftjs/core" "0.1.0-beta.20"
     "@emotion/react" "^11"
@@ -10619,9 +10625,16 @@ lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
     "@types/react-slick" "^0.23.4"
     "@types/styled-components" "^5.1.1"
     "@types/uuid" "^8.3.1"
+    apollo-cache-inmemory "^1.6.6"
+    apollo-client "^2.6.10"
+    apollo-link "^1.2.14"
+    apollo-link-error "^1.1.13"
+    apollo-link-http "^1.5.17"
     axios "^0.21.1"
     framer-motion "^2.9.4"
-    graphql-tag "^2.10.3"
+    graphql-tag "^2.12.5"
+    jsonwebtoken "^8.5.1"
+    libphonenumber-js "^1.9.34"
     moment "^2.29.1"
     node-sass "^4.14.1"
     query-string "^7.0.1"
@@ -10630,6 +10643,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
     react "^17.0.2"
     react-color "^2.19.3"
     react-dom "^17.0.2"
+    react-ga "^3.3.0"
     react-intl "^5.20.9"
     react-is "^17.0.2"
     react-responsive "^8.1.0"
@@ -13766,7 +13780,7 @@ react-focus-lock@2.4.1:
     use-callback-ref "^1.2.1"
     use-sidecar "^1.0.1"
 
-react-ga@^3.1.2:
+react-ga@^3.1.2, react-ga@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/react-ga/-/react-ga-3.3.0.tgz#c91f407198adcb3b49e2bc5c12b3fe460039b3ca"
   integrity sha512-o8RScHj6Lb8cwy3GMrVH6NJvL+y0zpJvKtc0+wmH7Bt23rszJmnqEQxRbyrqUzk9DTJIHoP42bfO5rswC9SWBQ==

@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniq } from 'ramda'
 import { useMemo } from 'react'
-import { useAuth } from '../components/auth/AuthContext'
 import hasura from '../hasura'
 import { Category } from '../types/general'
 import {

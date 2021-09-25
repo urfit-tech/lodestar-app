@@ -1,9 +1,10 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, SkeletonText } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { useActivitySession } from '../../hooks/activity'
@@ -11,7 +12,6 @@ import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg
 import { ReactComponent as MapOIcon } from '../../images/map-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { ReactComponent as VideoIcon } from '../../images/video.svg'
-import { useAuth } from '../auth/AuthContext'
 
 const StyledWrapper = styled.div`
   padding: 1.5rem 0;

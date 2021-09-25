@@ -1,18 +1,19 @@
 import { Button } from '@chakra-ui/react'
 import { Dropdown, Icon, Menu, message, Tag } from 'antd'
 import BraftEditor from 'braft-editor'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import styled, { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { useApp } from '../../containers/common/AppContext'
 import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import { useMutateIssueReply } from '../../hooks/issue'
 import { ProductRoleName } from '../../types/general'
 import { ProgramRoleProps } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -54,7 +55,7 @@ const IssueReplyItem: React.VFC<{
 }> = ({ programRoles, issueReplyId, content, reactedMemberIds, createdAt, memberId, onRefetch }) => {
   const { formatMessage } = useIntl()
   const [qIssueReplyId] = useQueryParam('issueReplyId', StringParam)
-  const theme = useContext(ThemeContext)
+  const theme = useAppTheme()
   const { currentMemberId, authToken } = useAuth()
   const { id: appId } = useApp()
 

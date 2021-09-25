@@ -19,6 +19,7 @@ import CraftProject from 'lodestar-app-element/src/components/craft/CraftProject
 import CraftStatistics from 'lodestar-app-element/src/components/craft/CraftStatistics'
 import CraftTitle from 'lodestar-app-element/src/components/craft/CraftTitle'
 import CraftTitleAndParagraph from 'lodestar-app-element/src/components/craft/CraftTitleAndParagraph'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -42,7 +43,6 @@ import ProgramSection from '../components/page/ProgramSection'
 import ReferrerSection from '../components/page/ReferrerSection'
 import StaticBlock from '../components/page/StaticBlock'
 import TeacherSection from '../components/page/TeacherSection'
-import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 import { ReactComponent as AngleRightIcon } from '../images/angle-right.svg'
 import LoadingPage from './LoadingPage'
@@ -120,7 +120,6 @@ const AppPage: React.VFC = () => {
   if (!appPage) {
     return <NotFoundPage />
   }
-
   return (
     <DefaultLayout {...appPage.options}>
       {appPage.craftData ? (

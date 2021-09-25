@@ -1,11 +1,11 @@
 import { Button } from '@chakra-ui/react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages, podcastAlbumMessages } from '../../../helpers/translation'
 import { PodcastAlbum } from '../../../types/podcastAlbum'
-import { useAuth } from '../../auth/AuthContext'
 import { AuthModalContext } from '../../auth/AuthModal'
 import AdminCard from '../AdminCard'
 

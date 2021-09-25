@@ -1,7 +1,7 @@
 import { Icon, Typography } from 'antd'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { useAuth } from '../auth/AuthContext'
 
 const StyledAction = styled.span<{ reacted?: boolean }>`
   padding: 0;

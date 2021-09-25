@@ -1,3 +1,4 @@
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useMediaQuery } from 'react-responsive'
@@ -12,7 +13,6 @@ import OnSaleProjectPlanSection from '../../components/project/OnSaleProjectPlan
 import OnSaleRoadmapSection from '../../components/project/OnSaleRoadmapSection'
 import OnSaleSkillSection from '../../components/project/OnSaleSkillSection'
 import OnSaleTrialSection from '../../components/project/OnSaleTrialSection'
-import { useApp } from '../../containers/common/AppContext'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProjectProps } from '../../types/project'
 

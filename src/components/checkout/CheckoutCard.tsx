@@ -1,11 +1,11 @@
 import { Button } from '@chakra-ui/react'
 import { CardProps } from 'antd/lib/card'
 import { camelCase } from 'lodash'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { prop, sum } from 'ramda'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
-import { ThemeContext } from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages } from '../../helpers/translation'
 import { CartProductProps, CheckProps, InvoiceProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
@@ -22,7 +22,7 @@ const CheckoutCard: React.VFC<
   }
 > = ({ discountId, check, cartProducts, invoice, shipping, loading, onCheckout, ...cardProps }) => {
   const { formatMessage } = useIntl()
-  const theme = useContext(ThemeContext)
+  const theme = useAppTheme()
   const { currencyId: appCurrencyId } = useApp()
 
   return (
