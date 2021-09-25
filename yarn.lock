@@ -10707,7 +10707,7 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/9b1105c8ad43cac5115e3425210bcf13425ce3a9"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/01dffc1ee30678289e05c81943e74ac7e746e0db"
   dependencies:
     "@apollo/react-hooks" "^3.1.5"
     "@chakra-ui/react" "1.1.2"
