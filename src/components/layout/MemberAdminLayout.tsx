@@ -1,9 +1,11 @@
 import { Icon } from '@chakra-ui/icons'
+import { filter } from 'ramda'
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
-import { useRouteKeys } from '../../hooks/util'
 import { MemberAdminMenu } from '../common/AdminMenu'
+import { useAppRouter } from '../common/AppRouter'
 import Responsive from '../common/Responsive'
 import DefaultLayout from './DefaultLayout'
 
@@ -28,7 +30,9 @@ const MemberAdminLayout: React.FC<{
     icon?: React.FC
   }
 }> = ({ content, children }) => {
-  const defaultSelectedKeys = useRouteKeys()
+  const location = useLocation()
+  const { routesMap } = useAppRouter()
+  const defaultSelectedKeys = Object.keys(filter(routeProps => routeProps.path === location.pathname, routesMap))
   const { renderMemberAdminMenu } = useCustomRenderer()
 
   return (

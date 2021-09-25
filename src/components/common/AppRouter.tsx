@@ -1,238 +1,240 @@
-import React, { Suspense } from 'react'
-import { Redirect, Route, Switch } from 'react-router-dom'
-import PodcastPlayerBlock from './components/podcast/PodcastPlayerBlock'
-import { useApp } from './containers/common/AppContext'
-import LoadablePage from './LoadablePage'
-import LoadingPage from './pages/LoadingPage'
-import NotFoundPage from './pages/NotFoundPage'
-import { UserRole } from './types/member'
+import React, { useContext } from 'react'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
+import { QueryParamProvider } from 'use-query-params'
+import LoadablePage from '../../LoadablePage'
+import AppPage from '../../pages/AppPage'
+import LoadingPage from '../../pages/LoadingPage'
+import NotFoundPage from '../../pages/NotFoundPage'
+import { UserRole } from '../../types/member'
+import PodcastPlayerBlock from '../podcast/PodcastPlayerBlock'
 
 export type RouteProps = {
   path: string
   pageName: string | React.ReactElement
-  authenticated: boolean
-  allowedUserRole?: UserRole
+  allowedUserRole: UserRole
 }
-export const routesProps: { [routeKey: string]: RouteProps } = {
+type RoutesMap = { [routeKey: string]: RouteProps }
+
+const defaultRoutesMap: RoutesMap = {
+  // system
+  error: {
+    path: '/error',
+    pageName: <NotFoundPage variant="error" />,
+    allowedUserRole: 'anonymous',
+  },
+  repairing: {
+    path: '/repairing',
+    pageName: <NotFoundPage variant="repairing" />,
+    allowedUserRole: 'anonymous',
+  },
   // all users
+  home: {
+    path: '/',
+    pageName: 'HomePage',
+    allowedUserRole: 'anonymous',
+  },
   auth: {
     path: '/auth',
     pageName: 'AuthPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   line_binding: {
     path: '/line-binding',
     pageName: 'LineBindingPage',
-    authenticated: true,
+    allowedUserRole: 'general-member',
   },
   forgot_password: {
     path: '/forgot-password',
     pageName: 'ForgotPasswordPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   check_email: {
     path: '/check-email',
     pageName: 'CheckEmailPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   reset_password: {
     path: '/reset-password',
     pageName: 'ResetPasswordPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   reset_password_success: {
     path: '/reset-password-success',
     pageName: 'ResetPasswordSuccessPage',
-    authenticated: false,
-  },
-  loading: {
-    path: '/loading',
-    pageName: 'LoadingPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   oauth2: {
     path: '/oauth2',
     pageName: 'OAuth2Page',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   oauth2_provider: {
     path: '/oauth2/:provider',
     pageName: 'OAuth2Page',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   terms: {
     path: '/terms',
     pageName: 'TermsPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   about: {
     path: '/about',
     pageName: 'AboutPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   creator_collection: {
     path: '/creators',
     pageName: 'CreatorCollectionPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   creator: {
     path: '/creators/:creatorId',
     pageName: 'CreatorPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   creator_display: {
     path: '/creators-display',
     pageName: 'CreatorDisplayedPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
-
   member: {
     path: '/members/:memberId',
     pageName: 'MemberPage',
-    authenticated: true,
+    allowedUserRole: 'general-member',
   },
   member_contract: {
     path: '/members/:memberId/contracts/:memberContractId',
     pageName: 'ContractPage',
-    authenticated: true,
+    allowedUserRole: 'general-member',
   },
 
   order_task: {
     path: '/tasks/order/:taskId',
     pageName: 'OrderTaskPage',
-    authenticated: true,
+    allowedUserRole: 'general-member',
   },
   payment_task: {
     path: '/tasks/payment/:taskId',
     pageName: 'PaymentTaskPage',
-    authenticated: true,
+    allowedUserRole: 'general-member',
   },
 
   payment: {
     path: '/payments/:paymentNo',
     pageName: 'PaymentPage',
-    authenticated: true,
+    allowedUserRole: 'general-member',
   },
 
   payment_tappay: {
     path: '/payments/:paymentNo/tappay',
     pageName: 'PaymentTapPayPage',
-    authenticated: true,
+    allowedUserRole: 'general-member',
   },
 
   search: {
     path: '/search',
     pageName: 'SearchPage',
-    authenticated: false,
-  },
-
-  // CVS store select callback
-  cvs_popup_callback: {
-    path: '/cvs',
-    pageName: 'CvsPopupCallbackPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
 
   // system - checkout
   order: {
     path: '/orders/:orderId',
     pageName: 'OrderPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   order_product: {
     path: '/orders/:orderId/products/:orderProductId',
     pageName: 'OrderProductPage',
-    authenticated: true,
+    allowedUserRole: 'general-member',
   },
   cart: {
     path: '/cart',
     pageName: 'CartPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
 
   // product - program
   program_collection: {
     path: '/programs',
     pageName: 'ProgramCollectionPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   program: {
     path: '/programs/:programId',
     pageName: 'ProgramPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   notification: {
     path: '/notifications',
     pageName: 'NotificationPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   program_content_collection: {
     path: '/programs/:programId/contents',
     pageName: 'ProgramContentCollectionPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   program_content: {
     path: '/programs/:programId/contents/:programContentId',
     pageName: 'ProgramContentPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   program_package: {
     path: '/program-packages/:programPackageId',
     pageName: 'ProgramPackagePage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   program_package_content: {
     path: '/program-packages/:programPackageId/contents',
     pageName: 'ProgramPackageContentPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
 
   // product - activity
   activity_collection: {
     path: '/activities',
     pageName: 'ActivityCollectionPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   activity: {
     path: '/activities/:activityId',
     pageName: 'ActivityPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
 
   // product - project
   project_collection: {
     path: '/projects',
     pageName: 'ProjectCollectionPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   project: {
     path: '/projects/:projectId',
     pageName: 'ProjectPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
 
   // product - podcast
   podcast_albums_collection: {
     path: '/podcast-albums',
     pageName: 'PodcastAlbumCollectionPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   podcast_albums: {
     path: '/podcast-albums/:podcastAlbumId',
     pageName: 'PodcastAlbumPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   podcast_program_collection: {
     path: '/podcasts',
     pageName: 'PodcastProgramCollectionPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   podcast_program_content: {
     path: '/podcasts/:podcastProgramId',
     pageName: 'PodcastProgramContentPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
 
@@ -240,196 +242,161 @@ export const routesProps: { [routeKey: string]: RouteProps } = {
   merchandises_collection: {
     path: '/merchandises',
     pageName: 'MerchandiseCollectionPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   merchandises: {
     path: '/merchandises/:merchandiseId',
     pageName: 'MerchandisePage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
+  },
+  // CVS store select callback
+  cvs_popup_callback: {
+    path: '/cvs',
+    pageName: 'CvsPopupCallbackPage',
+    allowedUserRole: 'anonymous',
   },
 
   // blog
   blog: {
     path: '/blog',
     pageName: 'BlogPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   blog_post_collection: {
     path: '/posts',
     pageName: 'BlogPostCollectionPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
   blog_post: {
     path: '/posts/:postId',
     pageName: 'BlogPostPage',
-    authenticated: false,
+    allowedUserRole: 'anonymous',
   },
 
   // practice
   practice: {
     path: '/practices/:practiceId',
     pageName: 'PracticePage',
-    authenticated: true,
+    allowedUserRole: 'general-member',
   },
 
   // general member admin
+  member_settings: {
+    path: '/settings',
+    pageName: <Redirect to={{ pathname: '/settings/profile' }} />,
+    allowedUserRole: 'general-member',
+  },
   member_profile_admin: {
     path: '/settings/profile',
     pageName: 'member/ProfileAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_contracts_admin: {
     path: '/settings/contracts',
     pageName: 'member/ContractCollectionAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_coins_admin: {
     path: '/settings/coins',
     pageName: 'member/CoinHistoryAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_points_admin: {
     path: '/settings/points',
     pageName: 'member/PointHistoryAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_orders_admin: {
     path: '/settings/orders',
     pageName: 'member/OrderCollectionAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_program_issues_admin: {
     path: '/settings/program-issues',
     pageName: 'member/ProgramIssueCollectionAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_product_issues_admin: {
     path: '/settings/product-issues',
     pageName: 'member/ProductIssueCollectionAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_practices_admin: {
     path: '/settings/practices',
     pageName: 'member/PracticeCollectionAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_coupons_admin: {
     path: '/settings/coupons',
     pageName: 'member/CouponCollectionAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_voucher_admin: {
     path: '/settings/voucher',
     pageName: 'member/VoucherCollectionAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_group_buying_admin: {
     path: '/settings/group-buying',
     pageName: 'GroupBuyingCollectionPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_account_admin: {
     path: '/settings/account',
     pageName: 'member/AccountAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_cards_admin: {
     path: '/settings/cards',
     pageName: 'member/CardCollectionAdminPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
   member_social_cards: {
     path: '/settings/social-cards',
     pageName: 'member/SocialCardCollectionPage',
-    authenticated: true,
     allowedUserRole: 'general-member',
   },
+  // deprecated
+  funding: {
+    path: '/funding/:projectId',
+    pageName: 'ProjectPage',
+    allowedUserRole: 'anonymous',
+  },
 }
-
-const Routes: React.VFC<{ extra?: { [routeKey: string]: RouteProps } }> = ({ extra }) => {
-  const { settings } = useApp()
-
+const AppRouterContext = React.createContext<{ routesMap: RoutesMap }>({ routesMap: {} })
+const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
   const routesMap: { [routeKey: string]: RouteProps } = {
-    home: {
-      path: '/',
-      pageName: settings['home.redirect'] ? <Redirect to={settings['home.redirect']} /> : 'HomePage',
-      authenticated: false,
-    },
-    ...routesProps,
+    ...defaultRoutesMap,
     ...extra,
   }
-
+  const routes = Object.keys(routesMap).map(routeKey => {
+    const { path, pageName } = routesMap[routeKey as keyof typeof routesMap]
+    return (
+      <Route
+        exact
+        key={routeKey}
+        path={path}
+        render={() => (
+          <React.Suspense fallback={<LoadingPage />}>
+            {typeof pageName === 'string' ? <LoadablePage pageName={pageName} /> : pageName}
+          </React.Suspense>
+        )}
+      />
+    )
+  })
   return (
-    <>
-      <Suspense fallback={<LoadingPage />}>
-        <Switch>
-          {Object.keys(routesMap).map(routeKey => {
-            const routeProps = routesMap[routeKey as keyof typeof routesProps]
-            return (
-              <Route
-                exact
-                key={routeKey}
-                path={routeProps.path}
-                render={props =>
-                  typeof routeProps.pageName === 'string' ? (
-                    <LoadablePage
-                      {...props}
-                      pageName={routeProps.pageName}
-                      authenticated={routeProps.authenticated}
-                      allowedUserRole={routeProps.allowedUserRole}
-                    />
-                  ) : (
-                    routeProps.pageName
-                  )
-                }
-              />
-            )
-          })}
-          <Route
-            exact
-            path="/settings"
-            render={props => (
-              <Redirect
-                to={{
-                  pathname: '/settings/profile',
-                  state: { from: props.location },
-                }}
-              />
-            )}
-          />
-          <Route
-            exact
-            path="/funding/:fundingId"
-            render={props => (
-              <Redirect
-                to={{
-                  pathname: `/projects/${props.match.params.fundingId}`,
-                  state: { from: props.location },
-                }}
-              />
-            )}
-          />
-          <Route path="/error" component={() => <NotFoundPage variant="error" />} />
-          <Route path="/repairing" component={() => <NotFoundPage variant="repairing" />} />
-          <Route component={NotFoundPage} />
-        </Switch>
-      </Suspense>
-      <PodcastPlayerBlock />
-    </>
+    <AppRouterContext.Provider value={{ routesMap }}>
+      <BrowserRouter>
+        <QueryParamProvider ReactRouterRoute={Route}>
+          <Switch>
+            {routes}
+            <Route component={AppPage} />
+          </Switch>
+          <PodcastPlayerBlock />
+        </QueryParamProvider>
+      </BrowserRouter>
+    </AppRouterContext.Provider>
   )
 }
-
-export default Routes
+export const useAppRouter = () => useContext(AppRouterContext)
+export default AppRouter
