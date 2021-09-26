@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { useOnceAnimation } from '../../helpers'
 import { BREAK_POINT } from '../common/Responsive'
 
 type Intro = {
@@ -70,9 +71,18 @@ const StyledContent = styled.div<Pick<Intro, 'contentWrapper'>>`
 `
 
 const IntroSection: React.VFC<{ options: Intro }> = ({ options }) => {
+  const { ref, activated } = useOnceAnimation()
   return (
     <StyledSection className="d-lg-flex justify-content-center align-content-center" padding={options.padding}>
-      <StyledImage imageInfo={options.imageInfo} src={options.imageInfo.url} alt={options.imageInfo.alt} />
+      <StyledImage
+        ref={ref}
+        imageInfo={options.imageInfo}
+        src={options.imageInfo.url}
+        alt={options.imageInfo.alt}
+        className={`${
+          options?.imageInfo?.animation && activated ? `animate__animated ${options?.imageInfo?.animation}` : ''
+        }`}
+      />
       <div>
         <StyledTitle titleInfo={options.titleInfo}>{options.titleInfo.title}</StyledTitle>
         <StyledContent contentWrapper={options.contentWrapper}>
