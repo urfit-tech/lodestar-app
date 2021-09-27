@@ -18,6 +18,7 @@ type ImageLabel = {
 }
 
 type Intro = {
+  id: string
   padding: string
   imageInfo: {
     position: 'right'
@@ -115,7 +116,11 @@ const IntroSection: React.VFC<{ options: Intro }> = ({ options }) => {
   const { ref, activated } = useOnceAnimation()
 
   return (
-    <StyledSection className="d-lg-flex justify-content-center align-content-center" padding={options?.padding}>
+    <StyledSection
+      id={options?.id}
+      className="d-lg-flex justify-content-center align-content-center"
+      padding={options?.padding}
+    >
       <StyledImage
         className={`${
           options?.imageInfo?.animation && activated ? `animate__animated ${options.imageInfo.animation}` : ''

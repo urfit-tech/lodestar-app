@@ -15,6 +15,7 @@ import {
   BlndPostSection,
   CoverSection,
   CreatorSection,
+  CreatorListSection,
   CustomCoverSection,
   LittlestarFeaturedPodcastSection,
   // LittlestarLastTimePodcastSection,
@@ -73,35 +74,37 @@ export const StyledSection = styled.section`
   background: white;
 `
 
+const sectionConverter = {
+  // general
+  homeActivity: ActivitySection,
+  homeActivityIntro: ActivityIntroSection,
+  homeCreator: CreatorSection,
+  homeCreatorList: CreatorListSection,
+  homeCover: CoverSection,
+  homeCustomCover: CustomCoverSection,
+  homeStaticCover: StaticCoverSection,
+  homeNav: NavSection,
+  homePost: PostSection,
+  homeProgram: ProgramSection,
+  homeProgramCategory: ProgramSection,
+  homeProgramIntro: ProgramIntroSection,
+  homePodcastCollection: PodcastAlbumCollectionSection,
+  homeReferrer: ReferrerSection,
+  homeStatic: StaticBlock,
+  homeTeacher: TeacherSection,
+  homeIntro: IntroSection,
+  messenger: MessengerChat,
+  // custom
+  homeBlndPost: BlndPostSection,
+  homeBlndCTA: BlndCTASection,
+  homeMisaFeature: MisaFeatureSection,
+  homeMisaNav: MisaNavigationBar,
+  // homeLittlesarLastTimePodcast: LittlestarLastTimePodcastSection,
+  homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
+}
+
 const AppPage: React.VFC = () => {
   const { loadingAppPage, appPage } = usePage(window.location.pathname)
-  const sectionConverter = {
-    // general
-    homeActivity: ActivitySection,
-    homeActivityIntro: ActivityIntroSection,
-    homeCreator: CreatorSection,
-    homeStaticCover: StaticCoverSection,
-    homeCover: CoverSection,
-    homeCustomCover: CustomCoverSection,
-    homeNav: NavSection,
-    homePost: PostSection,
-    homeProgram: ProgramSection,
-    homeProgramCategory: ProgramSection,
-    homeProgramIntro: ProgramIntroSection,
-    homePodcastCollection: PodcastAlbumCollectionSection,
-    homeReferrer: ReferrerSection,
-    homeStatic: StaticBlock,
-    homeTeacher: TeacherSection,
-    homeIntro: IntroSection,
-    messenger: MessengerChat,
-    // custom
-    homeBlndPost: BlndPostSection,
-    homeBlndCTA: BlndCTASection,
-    homeMisaFeature: MisaFeatureSection,
-    homeMisaNav: MisaNavigationBar,
-    // homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
-    homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
-  }
 
   if (loadingAppPage) {
     return <LoadingPage />
