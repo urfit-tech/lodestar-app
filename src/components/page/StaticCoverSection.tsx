@@ -14,11 +14,11 @@ type StaticCover = {
 const StyledCoverWrapper = styled.div<Pick<StaticCover, 'coverInfo'>>`
   background-size: cover;
   background-position: center;
-  background-image: ${props => props.coverInfo.mobile?.url && `url(${props.coverInfo.mobile?.url})`};
-  height: ${props => props.coverInfo.mobile?.height};
+  background-image: ${props => props?.coverInfo?.mobile?.url && `url(${props.coverInfo.mobile.url})`};
+  height: ${props => props?.coverInfo?.mobile?.height};
   @media (min-width: ${BREAK_POINT}px) {
-    background-image: ${props => props.coverInfo.desktop?.url && `url(${props.coverInfo.desktop.url})`};
-    height: ${props => props.coverInfo.desktop?.height};
+    background-image: ${props => props?.coverInfo?.desktop?.url && `url(${props.coverInfo.desktop.url})`};
+    height: ${props => props?.coverInfo?.desktop?.height};
   }
 `
 
@@ -29,7 +29,7 @@ const StaticCoverSection: React.VFC<{ options: StaticCover }> = ({ options }) =>
     <StyledCoverWrapper
       ref={ref}
       className={`${options?.animation && activated ? `animate__animated ${options.animation}` : ''}`}
-      coverInfo={options.coverInfo}
+      coverInfo={options?.coverInfo}
     />
   )
 }
