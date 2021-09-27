@@ -247,7 +247,7 @@ const CheckoutBlock: React.VFC<{
         contents: check.orderProducts.map(orderProduct => ({
           id: orderProduct.productId,
           name: orderProduct.name,
-          quantity: 1,
+          quantity: orderProduct.options?.quantity || 1,
         })),
       })
     }
