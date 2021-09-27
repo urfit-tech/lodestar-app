@@ -101,6 +101,7 @@ const PodcastProgramPopover: React.FC<
   const handleClick = async () => {
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
+        content_name: title || podcastProgramId,
         value: listPrice,
         currency: 'TWD',
       })
