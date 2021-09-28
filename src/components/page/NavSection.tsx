@@ -67,22 +67,22 @@ const NavSection: React.VFC<{
     navList?: { id: string; title?: string; mobileTitle?: string; link?: string }[]
     itemStyle?: NavItem
   }
-}> = ({ options }) => {
+}> = ({ options: { backgroundColor, height, padding, navList, itemStyle } }) => {
   return (
     <StyledBar>
-      <StyledWrapper backgroundColor={options.backgroundColor || ''} height={options.height} padding={options.padding}>
-        {options.navList
-          ? options.navList.map(nav =>
+      <StyledWrapper backgroundColor={backgroundColor} height={height} padding={padding}>
+        {navList
+          ? navList.map(nav =>
               nav.link ? (
                 <Link to={nav.link}>
-                  <StyledItem itemStyle={options.itemStyle}>
+                  <StyledItem itemStyle={itemStyle}>
                     <Responsive.Default>{nav.mobileTitle}</Responsive.Default>
                     <Responsive.Desktop>{nav.title}</Responsive.Desktop>
                   </StyledItem>
                 </Link>
               ) : (
                 <a href={`#${nav.id}`}>
-                  <StyledItem itemStyle={options.itemStyle}>
+                  <StyledItem itemStyle={itemStyle}>
                     <Responsive.Default>{nav.mobileTitle}</Responsive.Default>
                     <Responsive.Desktop>{nav.title}</Responsive.Desktop>
                   </StyledItem>

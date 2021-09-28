@@ -18,21 +18,21 @@ type TableList = {
   dataList: { title: string; list: any[] }[]
 }
 const StyledSection = styled.div<Pick<TableList, 'padding'>>`
-  padding: ${props => props?.padding || '100px 0'};
+  padding: ${props => props.padding || '100px 0'};
 `
 const StyledTitle = styled.div<Pick<TableList, 'titleInfo'>>`
   text-align: center;
-  font-size: ${props => props?.titleInfo?.fontSize || '1rem'};
+  font-size: ${props => props.titleInfo?.fontSize || '1rem'};
   font-weight: ${props =>
-    props?.titleInfo?.fontWeight
+    props.titleInfo?.fontWeight
       ? typeof props.titleInfo?.fontWeight === 'string'
         ? `${props.titleInfo?.fontWeight}`
         : props.titleInfo?.fontWeight
       : 500};
-  color: ${props => props?.titleInfo?.color || '#585858'};
-  margin: ${props => props?.titleInfo?.mobileMargin};
+  color: ${props => props.titleInfo?.color || '#585858'};
+  margin: ${props => props.titleInfo?.mobileMargin};
   @media (min-width: ${BREAK_POINT}px) {
-    margin: ${props => props?.titleInfo?.desktopMargin};
+    margin: ${props => props.titleInfo?.desktopMargin};
   }
 `
 const StyledTableWrapper = styled.div`
@@ -55,19 +55,21 @@ const StyledTable = styled(Table)`
   width: 930px;
 `
 
-const TableListSection: React.VFC<{ options: TableList }> = ({ options }) => {
-  const columns = options?.columnInfo?.columns.map(column => column.name) || []
+const TableListSection: React.VFC<{ options: TableList }> = ({
+  options: { id, padding, titleInfo, columnInfo, dataList },
+}) => {
+  const columns = columnInfo?.columns.map(column => column.name) || []
   return (
-    <StyledSection id={options?.id} className="container" padding={options?.padding}>
-      <StyledTitle titleInfo={options.titleInfo}>{options.titleInfo.title || ''}</StyledTitle>
-      {options.dataList.map(data => (
+    <StyledSection id={id} className="container" padding={padding}>
+      <StyledTitle titleInfo={titleInfo}>{titleInfo.title || ''}</StyledTitle>
+      {dataList.map(data => (
         <StyledTableWrapper>
           <StyledTableTitle className="mb-3">{data.title}</StyledTableTitle>
           <StyledTable responsive>
             <thead>
               <tr>
-                {options.columnInfo.columns.map((column, index) => (
-                  <th>{options.columnInfo.display.includes(index) ? column.title : ''}</th>
+                {columnInfo.columns.map((column, index) => (
+                  <th>{columnInfo.display.includes(index) ? column.title : ''}</th>
                 ))}
               </tr>
             </thead>

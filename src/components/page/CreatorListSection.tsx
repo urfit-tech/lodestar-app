@@ -23,15 +23,15 @@ const StyledSection = styled.div`
   background: #f7f8f8;
 `
 const StyledTitle = styled.div<Pick<CreatorList, 'titleInfo'>>`
-  font-size: ${props => props?.titleInfo?.fontSize || '1rem'};
+  font-size: ${props => props.titleInfo?.fontSize || '1rem'};
   font-weight: ${props =>
-    props?.titleInfo?.fontWeight
+    props.titleInfo?.fontWeight
       ? typeof props.titleInfo?.fontWeight === 'string'
         ? `${props.titleInfo?.fontWeight}`
         : props.titleInfo?.fontWeight
       : 500};
-  color: ${props => props?.titleInfo?.color || '#585858'};
-  margin: ${props => props?.titleInfo?.mobileMargin};
+  color: ${props => props.titleInfo?.color || '#585858'};
+  margin: ${props => props.titleInfo?.mobileMargin};
 `
 const StyledCreatorCardWrapper = styled.div`
   margin-bottom: 40px;
@@ -64,7 +64,9 @@ const StyledCreatorName = styled.div`
   text-align: center;
 `
 
-const CreatorListSection: React.VFC<{ options: CreatorList & { excludeIds?: string[] } }> = ({ options }) => {
+const CreatorListSection: React.VFC<{ options: CreatorList & { excludeIds?: string[] } }> = ({
+  options: { id, titleInfo, excludeIds },
+}) => {
   const { loadingCreators, creators } = usePublishedCreator()
 
   if (loadingCreators)
@@ -75,14 +77,14 @@ const CreatorListSection: React.VFC<{ options: CreatorList & { excludeIds?: stri
     )
 
   return (
-    <StyledSection id={options?.id}>
-      <StyledTitle className="d-flex justify-content-center" titleInfo={options?.titleInfo}>
-        {options?.titleInfo?.title}
+    <StyledSection id={id}>
+      <StyledTitle className="d-flex justify-content-center" titleInfo={titleInfo}>
+        {titleInfo?.title}
       </StyledTitle>
       <div className="container">
         <div className="row">
           {creators
-            .filter(creator => !options.excludeIds?.includes(creator.id || ''))
+            .filter(creator => !excludeIds?.includes(creator.id || ''))
             .map(v => (
               <StyledCreatorCardWrapper key={v.id} className="col-12">
                 <StyledCreatorCard url={v.pictureUrl || DefaultAvatar}></StyledCreatorCard>
