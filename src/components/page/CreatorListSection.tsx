@@ -18,7 +18,10 @@ type CreatorList = {
   id: string
   titleInfo: TitleInfo
 }
-
+const StyledSection = styled.div`
+  padding: 80px 0 65px 0;
+  background: #f7f8f8;
+`
 const StyledTitle = styled.div<Pick<CreatorList, 'titleInfo'>>`
   font-size: ${props => props?.titleInfo?.fontSize || '1rem'};
   font-weight: ${props =>
@@ -72,21 +75,23 @@ const CreatorListSection: React.VFC<{ options: CreatorList & { excludeIds?: stri
     )
 
   return (
-    <div id={options?.id} className="container">
+    <StyledSection id={options?.id}>
       <StyledTitle className="d-flex justify-content-center" titleInfo={options?.titleInfo}>
         {options?.titleInfo?.title}
       </StyledTitle>
-      <div className="row">
-        {creators
-          .filter(creator => !options.excludeIds?.includes(creator.id || ''))
-          .map(v => (
-            <StyledCreatorCardWrapper key={v.id} className="col-12">
-              <StyledCreatorCard url={v.pictureUrl || DefaultAvatar}></StyledCreatorCard>
-              <StyledCreatorName className="mt-2 d-flex justify-content-center">{v.name || ''}</StyledCreatorName>
-            </StyledCreatorCardWrapper>
-          ))}
+      <div className="container">
+        <div className="row">
+          {creators
+            .filter(creator => !options.excludeIds?.includes(creator.id || ''))
+            .map(v => (
+              <StyledCreatorCardWrapper key={v.id} className="col-12">
+                <StyledCreatorCard url={v.pictureUrl || DefaultAvatar}></StyledCreatorCard>
+                <StyledCreatorName className="mt-2 d-flex justify-content-center">{v.name || ''}</StyledCreatorName>
+              </StyledCreatorCardWrapper>
+            ))}
+        </div>
       </div>
-    </div>
+    </StyledSection>
   )
 }
 

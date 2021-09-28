@@ -29,6 +29,7 @@ import {
   ReferrerSection,
   StaticBlock,
   StaticCoverSection,
+  TableListSection,
   TeacherSection,
   IntroSection,
 } from '../components/page'
@@ -94,6 +95,7 @@ const sectionConverter = {
   homeTeacher: TeacherSection,
   homeIntro: IntroSection,
   messenger: MessengerChat,
+  homeTableList: TableListSection,
   // custom
   homeBlndPost: BlndPostSection,
   homeBlndCTA: BlndCTASection,
