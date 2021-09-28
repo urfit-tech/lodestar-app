@@ -302,7 +302,7 @@ const InvoiceInput: React.VFC<{
           {selectedType === 'donation' && (
             <Select<string> value={selectedCharity} onChange={v => handleChange({ invoiceCharity: v })}>
               {customCharities.map(v => (
-                <Select.Option value={v.code}>
+                <Select.Option key={v.code} value={v.code}>
                   {v.code} {v.name}
                 </Select.Option>
               ))}
