@@ -8,10 +8,7 @@ import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { useActivitySession } from '../../hooks/activity'
-import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
-import { ReactComponent as MapOIcon } from '../../images/map-o.svg'
-import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
-import { ReactComponent as VideoIcon } from '../../images/video.svg'
+import { CalendarOIcon, MapOIcon, UserOIcon, VideoIcon } from '../../images'
 
 const StyledWrapper = styled.div`
   padding: 1.5rem 0;

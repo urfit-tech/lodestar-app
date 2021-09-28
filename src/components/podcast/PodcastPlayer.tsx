@@ -12,22 +12,24 @@ import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastPlayerContext, { PlaylistModeType } from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
-import { ReactComponent as Backward5Icon } from '../../images/backward-5.svg'
-import { ReactComponent as EllipsisIcon } from '../../images/ellipsis.svg'
-import { ReactComponent as Forward5Icon } from '../../images/forward-5.svg'
-import { ReactComponent as NextIcon } from '../../images/icon-next.svg'
-import { ReactComponent as PrevIcon } from '../../images/icon-prev.svg'
-import { ReactComponent as LoopIcon } from '../../images/loop.svg'
-import { ReactComponent as PlayRate05xIcon } from '../../images/multiple-0-5.svg'
-import { ReactComponent as PlayRate10xIcon } from '../../images/multiple-1-0.svg'
-import { ReactComponent as PlayRate15xIcon } from '../../images/multiple-1-5.svg'
-import { ReactComponent as PlayRate20xIcon } from '../../images/multiple-2-0.svg'
-import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
-import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
-import { ReactComponent as PlaylistIcon } from '../../images/playlist.svg'
-import { ReactComponent as ShuffleIcon } from '../../images/shuffle.svg'
-import { ReactComponent as SingleLoopIcon } from '../../images/single-loop.svg'
-import { ReactComponent as TimesIcon } from '../../images/times.svg'
+import {
+  Backward5Icon,
+  EllipsisIcon,
+  Forward5Icon,
+  LoopIcon,
+  NextIcon,
+  PauseCircleIcon,
+  PlayCircleIcon,
+  PlaylistIcon,
+  PlayRate05xIcon,
+  PlayRate10xIcon,
+  PlayRate15xIcon,
+  PlayRate20xIcon,
+  PrevIcon,
+  ShuffleIcon,
+  SingleLoopIcon,
+  TimesIcon,
+} from '../../images'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 import PlaylistOverlay from './PlaylistOverlay'
 
