@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { durationFullFormatter } from '../../../helpers'
-import { productMessages } from '../../../helpers/translation'
+import { podcastAlbumMessages } from '../../../helpers/translation'
 import { PodcastAlbum } from '../../../types/podcastAlbum'
 import { AuthModalContext } from '../../auth/AuthModal'
 
@@ -58,7 +58,7 @@ const PodcastAlbumContentListBlock: React.VFC<{
 
   return (
     <>
-      <StyledTitle>{formatMessage(productMessages.program.title.content)}</StyledTitle>
+      <StyledTitle>{formatMessage(podcastAlbumMessages.label.podcastContent)}</StyledTitle>
       <Divider className="mb-3" />
 
       {podcastPrograms.map(podcastProgram => (
