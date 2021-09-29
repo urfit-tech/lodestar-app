@@ -1,4 +1,5 @@
 import { Skeleton } from 'antd'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { usePublishedCreator } from '../../hooks/member'
 import DefaultAvatar from '../../images/avatar.svg'
@@ -37,12 +38,13 @@ const StyledCreatorCardWrapper = styled.div`
   margin-bottom: 40px;
   flex: 0 0 50%;
   max-width: 50%;
+
   @media (min-width: ${BREAK_POINT}px) {
     flex: 0 0 20%;
     max-width: 20%;
   }
 `
-const StyledCreatorCard = styled.div<{ url: string }>`
+const StyledCreatorAvatar = styled.div<{ url: string }>`
   width: 120px;
   height: 120px;
   background-size: cover;
@@ -80,6 +82,7 @@ const StyledCreatorAbstract = styled.div`
 const CreatorListSection: React.VFC<{ options: CreatorList & { excludeIds?: string[] } }> = ({
   options: { id, titleInfo, excludeIds },
 }) => {
+  const history = useHistory()
   const { loadingCreators, creators } = usePublishedCreator()
 
   if (loadingCreators)
@@ -100,10 +103,16 @@ const CreatorListSection: React.VFC<{ options: CreatorList & { excludeIds?: stri
             .filter(creator => !excludeIds?.includes(creator.id || ''))
             .map(v => (
               <StyledCreatorCardWrapper key={v.id} className="col-12">
-                <StyledCreatorCard url={v.pictureUrl || DefaultAvatar}></StyledCreatorCard>
-                <StyledCreatorName className="mt-2 text-left">{v.name || ''}</StyledCreatorName>
-                <StyledCreatorTitle className="mb-3 text-left">{v.title || ''}</StyledCreatorTitle>
-                <StyledCreatorAbstract className="text-left">{v.abstract || ''}</StyledCreatorAbstract>
+                <div
+                  className="m-2"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => history.push(`/creators/${v.id}?tabkey=introduction`)}
+                >
+                  <StyledCreatorAvatar url={v.pictureUrl || DefaultAvatar} />
+                  <StyledCreatorName className="mt-2 text-left">{v.name || ''}</StyledCreatorName>
+                  <StyledCreatorTitle className="mb-3 text-left">{v.title || ''}</StyledCreatorTitle>
+                  <StyledCreatorAbstract className="text-left">{v.abstract || ''}</StyledCreatorAbstract>
+                </div>
               </StyledCreatorCardWrapper>
             ))}
         </div>
