@@ -73,7 +73,7 @@ const StyledCreatorTitle = styled.div`
   font-weight: 500;
 `
 const StyledCreatorAbstract = styled.div`
-  color: #9b9b9b9b;
+  color: var(--gray-dark);
   font-size: 14px;
   letter-spacing: 0.4px;
   font-weight: 500;
