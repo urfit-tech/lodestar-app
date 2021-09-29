@@ -61,7 +61,20 @@ const StyledCreatorCard = styled.div<{ url: string }>`
   }
 `
 const StyledCreatorName = styled.div`
-  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 0.77px;
+`
+const StyledCreatorTitle = styled.div`
+  font-size: 14px;
+  letter-spacing: 0.18px;
+  font-weight: 500;
+`
+const StyledCreatorAbstract = styled.div`
+  color: #9b9b9b9b;
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  font-weight: 500;
 `
 
 const CreatorListSection: React.VFC<{ options: CreatorList & { excludeIds?: string[] } }> = ({
@@ -88,7 +101,9 @@ const CreatorListSection: React.VFC<{ options: CreatorList & { excludeIds?: stri
             .map(v => (
               <StyledCreatorCardWrapper key={v.id} className="col-12">
                 <StyledCreatorCard url={v.pictureUrl || DefaultAvatar}></StyledCreatorCard>
-                <StyledCreatorName className="mt-2 d-flex justify-content-center">{v.name || ''}</StyledCreatorName>
+                <StyledCreatorName className="mt-2 text-left">{v.name || ''}</StyledCreatorName>
+                <StyledCreatorTitle className="mb-3 text-left">{v.title || ''}</StyledCreatorTitle>
+                <StyledCreatorAbstract className="text-left">{v.abstract || ''}</StyledCreatorAbstract>
               </StyledCreatorCardWrapper>
             ))}
         </div>
