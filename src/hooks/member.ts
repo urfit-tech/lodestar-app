@@ -332,3 +332,64 @@ export const useLatestCreator = (topInstructorIds: string[], appId: string) => {
     latestCreators,
   }
 }
+
+export const usePublishedCreator = () => {
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_CREATOR>(gql`
+    query GET_PUBLISHED_CREATOR {
+      creator(where: { published_at: { _is_null: false } }, order_by: { position: asc, published_at: desc }) {
+        id
+        name
+        picture_url
+        member {
+          title
+          abstract
+        }
+        creator_categories {
+          id
+          category {
+            id
+            name
+          }
+        }
+        member_specialities(limit: 3) {
+          id
+          tag_name
+        }
+      }
+    }
+  `)
+
+  const creators: {
+    id: string | null
+    name: string | null
+    title: string | null
+    pictureUrl: string | null
+    abstract: string | null
+    categories: {
+      id: string
+      name: string
+    }[]
+    specialtyNames: string[]
+  }[] =
+    loading || error || !data
+      ? []
+      : data.creator.map(v => ({
+          id: v.id,
+          name: v.name,
+          pictureUrl: v.picture_url,
+          title: v.member?.title || null,
+          abstract: v.member?.abstract || null,
+          categories: v.creator_categories.map(w => ({
+            id: w.category.id,
+            name: w.category.name,
+          })),
+          specialtyNames: v.member_specialities.map(w => w.tag_name),
+        }))
+
+  return {
+    loadingCreators: loading,
+    errorCreators: error,
+    creators,
+    refetchCreators: refetch,
+  }
+}

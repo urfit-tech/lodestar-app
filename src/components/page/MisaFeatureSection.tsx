@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
+import { useOnceAnimation } from '../../helpers'
 
 const StyledFeature = styled.section`
   padding: 80px 0;
@@ -43,25 +43,6 @@ const StyledFeature = styled.section`
     }
   }
 `
-
-export const useOnceAnimation = () => {
-  const ref = useRef<HTMLImageElement>(null)
-  const [activated, setActivated] = useState(false)
-
-  useEffect(() => {
-    if (ref.current === null || activated) {
-      return
-    }
-
-    const element = ref.current
-    const observer = new IntersectionObserver(entries => entries.forEach(v => v.isIntersecting && setActivated(true)))
-    observer.observe(element)
-
-    return () => observer.unobserve(element)
-  }, [activated])
-
-  return { ref, activated }
-}
 
 const MisaFeatureSection: React.VFC<{
   options: {
