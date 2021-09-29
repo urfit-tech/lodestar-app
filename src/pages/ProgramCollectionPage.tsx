@@ -98,8 +98,8 @@ const ProgramCollectionPage: React.VFC = () => {
         ;(window as any).dataLayer = (window as any).dataLayer || []
         ;(window as any).dataLayer.push({ ecommerce: null })
         ;(window as any).dataLayer.push({
-          currencyCode: appCurrencyId || 'TWD',
           ecommerce: {
+            currencyCode: appCurrencyId || 'TWD',
             impressions: productImpressions,
           },
         })
