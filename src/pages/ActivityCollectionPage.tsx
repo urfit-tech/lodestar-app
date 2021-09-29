@@ -79,7 +79,7 @@ const ActivityCollectionPage = () => {
       ;(window as any).dataLayer.push({ ecommerce: null })
       ;(window as any).dataLayer.push({
         ecommerce: {
-          currencyCode: appCurrencyId,
+          currencyCode: appCurrencyId || 'TWD',
           impressions: activities
             .filter(
               activity =>
