@@ -36,9 +36,9 @@ export type ProgramProps = ProgramBriefProps & {
 
 export type ProgramRoleProps = {
   id: string
-  aurhorRole: ProgramRoleName
-  aurhorId: string
-  authorName: string
+  name: ProgramRoleName
+  memberId: string
+  memberName: string
 }
 
 export type ProgramPlanProps = {

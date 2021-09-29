@@ -34,7 +34,7 @@ export type PracticeProps = PracticePreviewProps & {
   programContentId: string
   programContentTitle: string
   programId: string
-  programRoles?: ProgramRoleProps[]
+  programRoles?: Pick<ProgramRoleProps, 'id' | 'memberId' | 'name'>[]
   programTitle: string
   description: string | null
   suggests: PracticeSuggestProps[]

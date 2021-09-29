@@ -86,7 +86,7 @@ const ProgramCollectionPage: React.VFC = () => {
             price: salePrice || listPrice,
             brand: settings['title'] || appId,
             category: program.categories.map(category => category.name).join('|'),
-            variant: program.roles.map(role => role.authorName).join('|'),
+            variant: program.roles.map(role => role.memberName).join('|'),
             list: 'Program',
             position: index + 1,
           })

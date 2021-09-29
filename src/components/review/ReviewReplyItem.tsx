@@ -266,7 +266,7 @@ const useProgramRole = (targetId: string) => {
     },
   )
 
-  const programRole: ProgramRoleProps[] =
+  const programRole: Pick<ProgramRoleProps, 'id' | 'memberId' | 'name'>[] =
     data?.program_role?.map(v => ({
       id: v.id,
       memberId: v.member_id,
