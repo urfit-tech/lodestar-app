@@ -1462,7 +1462,7 @@ export const podcastAlbumMessages = {
     },
     podcastContent: {
       id: 'podcastAlbum.label.podcastContent',
-      defaultMessage: '音頻內容',
+      defaultMessage: '專輯內容',
     },
   }),
   text: defineMessages({
