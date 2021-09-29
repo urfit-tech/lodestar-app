@@ -1,4 +1,4 @@
-import { Skeleton } from 'antd'
+import { Skeleton } from '@chakra-ui/react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { usePublishedCreator } from '../../hooks/member'
