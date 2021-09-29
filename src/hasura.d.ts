@@ -1569,103 +1569,6 @@ export interface GET_MEMBER_ORDERSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_APP
-// ====================================================
-
-export interface GET_APP_currency {
-  __typename: "currency";
-  id: string;
-  label: string;
-  unit: string;
-  minor_units: number | null;
-}
-
-export interface GET_APP_app_by_pk_app_modules {
-  __typename: "app_module";
-  id: any;
-  /**
-   * activity | appointment | blog | invoice | learning_statistics | locale | member_card | merchandise | podcast | program_package | qrcode | social_connect | tempo_delivery | voucher | creator_display
-   */
-  module_id: string;
-}
-
-export interface GET_APP_app_by_pk_app_navs_sub_app_navs {
-  __typename: "app_nav";
-  id: any;
-  block: string;
-  position: number;
-  label: string;
-  icon: string | null;
-  href: string;
-  external: boolean;
-  locale: string;
-  tag: string | null;
-}
-
-export interface GET_APP_app_by_pk_app_navs {
-  __typename: "app_nav";
-  id: any;
-  block: string;
-  position: number;
-  label: string;
-  icon: string | null;
-  href: string;
-  external: boolean;
-  locale: string;
-  tag: string | null;
-  /**
-   * An array relationship
-   */
-  sub_app_navs: GET_APP_app_by_pk_app_navs_sub_app_navs[];
-}
-
-export interface GET_APP_app_by_pk_app_settings {
-  __typename: "app_setting";
-  key: string;
-  value: string;
-}
-
-export interface GET_APP_app_by_pk {
-  __typename: "app";
-  id: string;
-  name: string | null;
-  title: string | null;
-  description: string | null;
-  /**
-   * An array relationship
-   */
-  app_modules: GET_APP_app_by_pk_app_modules[];
-  /**
-   * An array relationship
-   */
-  app_navs: GET_APP_app_by_pk_app_navs[];
-  /**
-   * An array relationship
-   */
-  app_settings: GET_APP_app_by_pk_app_settings[];
-}
-
-export interface GET_APP {
-  /**
-   * fetch data from the table: "currency"
-   */
-  currency: GET_APP_currency[];
-  /**
-   * fetch data from the table: "app" using primary key columns
-   */
-  app_by_pk: GET_APP_app_by_pk | null;
-}
-
-export interface GET_APPVariables {
-  appId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_PODCAST_PROGRAM_INSTRUCTOR_COLLECTION
 // ====================================================
 
@@ -5316,46 +5219,6 @@ export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPECVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_PAGE
-// ====================================================
-
-export interface GET_PAGE_app_page_app_page_sections {
-  __typename: "app_page_section";
-  id: any;
-  options: any | null;
-  type: string;
-}
-
-export interface GET_PAGE_app_page {
-  __typename: "app_page";
-  id: any;
-  path: string | null;
-  options: any | null;
-  craft_data: any | null;
-  /**
-   * An array relationship
-   */
-  app_page_sections: GET_PAGE_app_page_app_page_sections[];
-}
-
-export interface GET_PAGE {
-  /**
-   * fetch data from the table: "app_page"
-   */
-  app_page: GET_PAGE_app_page[];
-}
-
-export interface GET_PAGEVariables {
-  path?: string | null;
-  appId?: string | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_PODCAST_PROGRAM_COLLECTION
 // ====================================================
 
@@ -6657,6 +6520,12 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories {
   category: GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories_category;
 }
 
+export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles_member {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+}
+
 export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles {
   __typename: "program_role";
   id: any;
@@ -6664,7 +6533,10 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles {
    * instructor / assistant 
    */
   name: string;
-  member_id: string;
+  /**
+   * An object relationship
+   */
+  member: GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles_member | null;
 }
 
 export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_plans_currency {
@@ -7965,6 +7837,46 @@ export interface GET_PRODUCT_EDITOR_IDS {
 
 export interface GET_PRODUCT_EDITOR_IDSVariables {
   targetId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PAGE
+// ====================================================
+
+export interface GET_PAGE_app_page_app_page_sections {
+  __typename: "app_page_section";
+  id: any;
+  options: any | null;
+  type: string;
+}
+
+export interface GET_PAGE_app_page {
+  __typename: "app_page";
+  id: any;
+  path: string | null;
+  options: any | null;
+  craft_data: any | null;
+  /**
+   * An array relationship
+   */
+  app_page_sections: GET_PAGE_app_page_app_page_sections[];
+}
+
+export interface GET_PAGE {
+  /**
+   * fetch data from the table: "app_page"
+   */
+  app_page: GET_PAGE_app_page[];
+}
+
+export interface GET_PAGEVariables {
+  path?: string | null;
+  appId?: string | null;
 }
 
 /* tslint:disable */

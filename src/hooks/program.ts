@@ -71,7 +71,10 @@ export const usePublishedProgramCollection = (options?: {
           program_roles(where: { name: { _eq: "instructor" } }) {
             id
             name
-            member_id
+            member {
+              id
+              name
+            }
           }
           program_plans(order_by: { created_at: asc }, limit: 1) {
             id
@@ -153,8 +156,9 @@ export const usePublishedProgramCollection = (options?: {
             })),
             roles: program.program_roles.map(programRole => ({
               id: programRole.id,
-              name: programRole.name as ProgramRoleName,
-              memberId: programRole.member_id,
+              authorRole: programRole.name as ProgramRoleName,
+              authorId: programRole.member?.id,
+              authorName: programRole.member?.name,
             })),
             plans: program.program_plans.map(programPlan => ({
               id: programPlan.id,
