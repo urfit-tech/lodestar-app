@@ -1,34 +1,43 @@
-import { Select } from 'antd'
-import { SelectProps } from 'antd/lib/select'
+import { Select, Spinner } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { productMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
 
-type ProgramSelectorProps = SelectProps<string> & {
+type ProgramSelectorProps = {
+  value: string
   memberId: string
+  onChange?: (value: string) => void
 }
 
-export const EnrolledProgramSelector: React.VFC<ProgramSelectorProps> = ({ memberId, ...selectProps }) => {
+export const EnrolledProgramSelector: React.VFC<ProgramSelectorProps> = ({ value, memberId, onChange }) => {
   const { formatMessage } = useIntl()
   const { enrolledProgramIds, loadingProgramIds } = useEnrolledProgramIds(memberId)
 
+  if (loadingProgramIds) {
+    return <Spinner />
+  }
+
   return (
-    <Select loading={loadingProgramIds} style={{ width: '100%' }} defaultValue="all" {...selectProps}>
-      <Select.Option key="all">{formatMessage(productMessages.program.select.option.allPrograms)}</Select.Option>
+    <Select
+      bg="white"
+      style={{ width: '100%' }}
+      defaultValue="all"
+      value={value}
+      onChange={e => onChange?.(e.target.value)}
+    >
+      <option key="all">{formatMessage(productMessages.program.select.option.allPrograms)}</option>
       {enrolledProgramIds
         .filter(enrolledProgramId => !!enrolledProgramId)
         .map(programId => (
-          <Select.Option key={programId}>
-            <ProgramSelectOptionValue programId={programId} />
-          </Select.Option>
+          <ProgramSelectOption key={programId} programId={programId} />
         ))}
     </Select>
   )
 }
 
-const ProgramSelectOptionValue: React.VFC<{ programId: string }> = ({ programId }) => {
+const ProgramSelectOption: React.VFC<{ programId: string }> = ({ programId }) => {
   const { program } = useProgram(programId)
 
-  return <>{program && program.title}</>
+  return <option value={programId}>{program && program.title}</option>
 }

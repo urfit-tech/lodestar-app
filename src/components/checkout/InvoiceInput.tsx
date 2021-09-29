@@ -1,5 +1,5 @@
-import { SkeletonText } from '@chakra-ui/react'
-import { Checkbox, Form, Input, Select } from 'antd'
+import { Select, SkeletonText } from '@chakra-ui/react'
+import { Checkbox, Form, Input } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -270,59 +270,59 @@ const InvoiceInput: React.VFC<{
       <div className="row mb-4">
         <div className="col-12 col-lg-6">
           {enabledModules.invoice ? (
-            <Select<InvoiceType | null>
-              value={selectedType}
-              onChange={v =>
+            <Select
+              value={selectedType || ''}
+              onChange={e =>
                 handleChange({
-                  invoiceType: v,
-                  invoiceOption: v === 'electronic' ? 'send-to-email' : null,
+                  invoiceType: e.target.value.length ? (e.target.value as InvoiceType) : null,
+                  invoiceOption: e.target.value === 'electronic' ? 'send-to-email' : null,
                 })
               }
             >
-              <Select.Option value="electronic">
-                {formatMessage(checkoutMessages.form.label.electronicInvoice)}
-              </Select.Option>
-              <Select.Option value="donation">{formatMessage(checkoutMessages.form.label.donateInvoice)}</Select.Option>
-              <Select.Option value="uniform-number">
-                {formatMessage(checkoutMessages.form.label.uniformNumber)}
-              </Select.Option>
+              <option value="electronic">{formatMessage(checkoutMessages.form.label.electronicInvoice)}</option>
+              <option value="donation">{formatMessage(checkoutMessages.form.label.donateInvoice)}</option>
+              <option value="uniform-number">{formatMessage(checkoutMessages.form.label.uniformNumber)}</option>
             </Select>
           ) : (
-            <Select<InvoiceType | null> value={selectedType} onChange={v => handleChange({ invoiceType: v })}>
-              <Select.Option value="hardcopy">
-                {formatMessage(checkoutMessages.form.label.hardcopyInvoice)}
-              </Select.Option>
-              <Select.Option value="hardcopy-uniform-number">
+            <Select
+              value={selectedType || ''}
+              onChange={e =>
+                handleChange({ invoiceType: e.target.value.length ? (e.target.value as InvoiceType) : null })
+              }
+            >
+              <option value="hardcopy">{formatMessage(checkoutMessages.form.label.hardcopyInvoice)}</option>
+              <option value="hardcopy-uniform-number">
                 {formatMessage(checkoutMessages.form.label.hardcopyUniformNumberInvoice)}
-              </Select.Option>
+              </option>
             </Select>
           )}
         </div>
         <div className="col-12 col-lg-6">
           {selectedType === 'donation' && (
-            <Select<string> value={selectedCharity} onChange={v => handleChange({ invoiceCharity: v })}>
+            <Select value={selectedCharity} onChange={e => handleChange({ invoiceCharity: e.target.value })}>
               {customCharities.map(v => (
-                <Select.Option key={v.code} value={v.code}>
+                <option key={v.code} value={v.code}>
                   {v.code} {v.name}
-                </Select.Option>
+                </option>
               ))}
-              <Select.Option value="25885">25885 財團法人伊甸社會福利基金會</Select.Option>
-              <Select.Option value="5380">5380 社團法人台灣失智症協會</Select.Option>
-              <Select.Option value="8957282">8957282 財團法人流浪動物之家基金會</Select.Option>
+              <option value="25885">25885 財團法人伊甸社會福利基金會</option>
+              <option value="5380">5380 社團法人台灣失智症協會</option>
+              <option value="8957282">8957282 財團法人流浪動物之家基金會</option>
             </Select>
           )}
 
           {selectedType === 'electronic' && (
-            <Select<InvoiceOption | null> value={selectedOption} onChange={v => handleChange({ invoiceOption: v })}>
-              <Select.Option value="send-to-email">
-                {formatMessage(checkoutMessages.form.label.sendToEmail)}
-              </Select.Option>
-              <Select.Option value="use-phone-bar-code">
-                {formatMessage(checkoutMessages.form.label.usePhoneBarCode)}
-              </Select.Option>
-              <Select.Option value="citizen-digital-certificate">
+            <Select
+              value={selectedOption || ''}
+              onChange={e =>
+                handleChange({ invoiceOption: e.target.value.length ? (e.target.value as InvoiceOption) : null })
+              }
+            >
+              <option value="send-to-email">{formatMessage(checkoutMessages.form.label.sendToEmail)}</option>
+              <option value="use-phone-bar-code">{formatMessage(checkoutMessages.form.label.usePhoneBarCode)}</option>
+              <option value="citizen-digital-certificate">
                 {formatMessage(checkoutMessages.form.label.citizenCode)}
-              </Select.Option>
+              </option>
             </Select>
           )}
         </div>
