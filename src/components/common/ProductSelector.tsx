@@ -1,18 +1,8 @@
-import { Spin, TreeSelect } from 'antd'
+import { Spinner } from '@chakra-ui/react'
+import { TreeSelect } from 'antd'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
-
-const { formatMessage } = useIntl()
-
-const ProductTypeLabel: { [key: string]: string } = {
-  Program: formatMessage(commonMessages.ui.allPrograms),
-  ProgramPlan: formatMessage(commonMessages.ui.allSubscriptions),
-  ProgramContent: formatMessage(commonMessages.ui.allCourseContents),
-  Card: formatMessage(commonMessages.ui.allMemberCards),
-  ActivityTicket: formatMessage(commonMessages.ui.allActivities),
-  Merchandise: formatMessage(commonMessages.ui.allMerchandise),
-}
 
 type ProductSelectorProps = {
   loading?: boolean
@@ -27,8 +17,17 @@ type ProductSelectorProps = {
 }
 const ProductSelector: React.VFC<ProductSelectorProps> = ({ loading, error, products, value, onChange }) => {
   const { formatMessage } = useIntl()
+  const ProductTypeLabel: { [key: string]: string } = {
+    Program: formatMessage(commonMessages.ui.allPrograms),
+    ProgramPlan: formatMessage(commonMessages.ui.allSubscriptions),
+    ProgramContent: formatMessage(commonMessages.ui.allCourseContents),
+    Card: formatMessage(commonMessages.ui.allMemberCards),
+    ActivityTicket: formatMessage(commonMessages.ui.allActivities),
+    Merchandise: formatMessage(commonMessages.ui.allMerchandise),
+  }
+
   if (loading) {
-    return <Spin />
+    return <Spinner />
   }
 
   if (error) {

@@ -1,4 +1,5 @@
-import { Button, message, Spin, Upload } from 'antd'
+import { Spinner } from '@chakra-ui/spinner'
+import { Button, message, Upload } from 'antd'
 import { UploadProps } from 'antd/lib/upload'
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface'
 import axios, { Canceler } from 'axios'
@@ -87,7 +88,7 @@ const SingleUploader: React.VFC<
         trigger({ loading, value })
       ) : loading ? (
         <div>
-          <Spin />
+          <Spinner />
           <div style={{ color: '#585858' }}>{formatMessage(commonMessages.status.uploading)}</div>
         </div>
       ) : (

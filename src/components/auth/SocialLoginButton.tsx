@@ -1,5 +1,4 @@
 import { Button, Icon, Spinner } from '@chakra-ui/react'
-import { Spin } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -113,7 +112,7 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
   const [back] = useQueryParam('back', StringParam)
 
   if (loading) {
-    return <Spin />
+    return <Spinner />
   }
 
   return (

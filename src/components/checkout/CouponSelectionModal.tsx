@@ -1,5 +1,5 @@
-import { Button, Input } from '@chakra-ui/react'
-import { Divider, message, Spin } from 'antd'
+import { Button, Input, Spinner } from '@chakra-ui/react'
+import { Divider, message } from 'antd'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
@@ -72,7 +72,7 @@ const CouponSelectionModal: React.VFC<{
         isOpen={visible}
       >
         {loadingCoupons ? (
-          <Spin />
+          <Spinner />
         ) : (
           coupons
             .filter(coupon => !coupon.status.outdated && !coupon.status.used)

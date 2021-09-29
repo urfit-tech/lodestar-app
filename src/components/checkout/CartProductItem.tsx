@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
-import { Spin, Typography } from 'antd'
+import { Spinner } from '@chakra-ui/react'
+import { Typography } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -56,7 +57,7 @@ const CartProductItem: React.VFC<{
   }, [id, pluralProductQuantity])
 
   if (!target) {
-    return <Spin size="large" />
+    return <Spinner size="lg" />
   }
 
   const [productType] = id.split('_') as [ProductType, string]
