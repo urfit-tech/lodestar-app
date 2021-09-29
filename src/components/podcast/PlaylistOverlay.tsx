@@ -27,6 +27,7 @@ const StyledWrapper = styled.div`
   background: white;
   box-shadow: 0 6px 6px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  padding: 0;
 `
 const StyledListTitle = styled.div`
   color: var(--gray-dark);
