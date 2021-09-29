@@ -156,9 +156,9 @@ export const usePublishedProgramCollection = (options?: {
             })),
             roles: program.program_roles.map(programRole => ({
               id: programRole.id,
-              authorRole: programRole.name as ProgramRoleName,
-              authorId: programRole.member?.id,
-              authorName: programRole.member?.name,
+              name: programRole.name as ProgramRoleName,
+              memberId: programRole.member?.id || '',
+              memberName: programRole.member?.name || '',
             })),
             plans: program.program_plans.map(programPlan => ({
               id: programPlan.id,
@@ -271,7 +271,10 @@ export const useProgram = (programId: string) => {
           program_roles {
             id
             name
-            member_id
+            member {
+              id
+              name
+            }
           }
           program_plans(order_by: { created_at: asc }) {
             id
@@ -373,7 +376,8 @@ export const useProgram = (programId: string) => {
           roles: data.program_by_pk.program_roles.map(programRole => ({
             id: programRole.id,
             name: programRole.name as ProgramRoleName,
-            memberId: programRole.member_id,
+            memberId: programRole.member?.id || '',
+            memberName: programRole.member?.name || '',
           })),
           plans: data.program_by_pk.program_plans.map(programPlan => ({
             id: programPlan.id,

@@ -15,7 +15,7 @@ const StyledTag = styled(Tag)<{ variant?: string }>`
 `
 
 const MessageItemHeader: React.VFC<{
-  programRoles: ProgramRoleProps[]
+  programRoles: Pick<ProgramRoleProps, 'id' | 'memberId' | 'name'>[]
   memberId: string
   createdAt: Date
 }> = ({ programRoles, memberId, createdAt }) => {
