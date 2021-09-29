@@ -18,7 +18,7 @@ import {
   CreatorListSection,
   CustomCoverSection,
   LittlestarFeaturedPodcastSection,
-  // LittlestarLastTimePodcastSection,
+  LittlestarLastTimePodcastSection,
   MisaFeatureSection,
   MisaNavigationBar,
   NavSection,
@@ -101,7 +101,7 @@ const sectionConverter = {
   homeBlndCTA: BlndCTASection,
   homeMisaFeature: MisaFeatureSection,
   homeMisaNav: MisaNavigationBar,
-  // homeLittlesarLastTimePodcast: LittlestarLastTimePodcastSection,
+  homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
   homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
 }
 
