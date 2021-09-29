@@ -76,6 +76,7 @@ const ActivityCollectionPage = () => {
   useEffect(() => {
     if (activities && settings['tracking.gtm_id']) {
       ;(window as any).dataLayer = (window as any).dataLayer || []
+      ;(window as any).dataLayer.push({ ecommerce: null })
       ;(window as any).dataLayer.push({
         ecommerce: {
           currencyCode: appCurrencyId,
