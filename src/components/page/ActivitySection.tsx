@@ -12,7 +12,7 @@ const StyledAngleRightIcon = styled(AngleRightIcon)`
 `
 
 const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number } }> = ({ options }) => {
-  const { enabledModules } = useApp()
+  const { enabledModules, settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 
   if (loadingActivities)
@@ -25,6 +25,25 @@ const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number
     )
 
   if (activities.length === 0 || errorActivities || !enabledModules.activity) return null
+
+  if (settings['tracking.gtm_id'] && activities) {
+    ;(window as any).dataLayer = (window as any).dataLayer || []
+    ;(window as any).dataLayer.push({ ecommerce: null })
+    ;(window as any).dataLayer.push({
+      ecommerce: {
+        currencyCode: appCurrencyId || 'TWD',
+        impressions: activities.slice(0, options?.colAmount || 3).map((activity, index) => ({
+          id: activity.id,
+          name: activity.title,
+          brand: settings['title'] || appId,
+          category: activity.categories.map(category => category.name).join('|'),
+          variant: activity.organizerId,
+          list: 'Activity',
+          position: index + 1,
+        })),
+      },
+    })
+  }
 
   return (
     <StyledSection className="page-section">
