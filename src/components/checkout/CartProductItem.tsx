@@ -1,6 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Spinner } from '@chakra-ui/react'
 import { Typography } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -50,11 +51,35 @@ const CartProductItem: React.VFC<{
   const { updatePluralCartProductQuantity } = useContext(CartContext)
   const { target } = useSimpleProduct({ id })
   const [pluralProductQuantity, setPluralProductQuantity] = useState(quantity || 1)
+  const { settings, id: appId } = useApp()
 
   useEffect(() => {
     updatePluralCartProductQuantity?.(id, pluralProductQuantity)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, pluralProductQuantity])
+    if (settings['tracking.gtm_id'] && target) {
+      const CartProductItemEventData = {
+        name: target.title,
+        id: target.id,
+        price: target.isOnSale ? target.salePrice : target.listPrice || 0,
+        brand: settings['title'] || appId,
+        categories: target.categories && target.categories.join('|'),
+        variant: target.roles && target.roles.join('|'),
+        quantity: pluralProductQuantity,
+      }
+      ;(window as any).dataLayer = (window as any).dataLayer || []
+      ;(window as any).dataLayer.push({ ecommerce: null })
+      // FIXME: put each product to products array instead put each product per event
+      ;(window as any).dataLayer.push({
+        event: 'checkout',
+        ecommerce: {
+          checkout: {
+            actionField: { step: 1, option: 'credit' },
+            products: [CartProductItemEventData],
+          },
+        },
+      })
+    }
+  }, [id, pluralProductQuantity, target, settings, appId])
 
   if (!target) {
     return <Spinner size="lg" />
