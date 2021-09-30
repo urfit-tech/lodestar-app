@@ -29,6 +29,8 @@ type TargetProps = {
   isPhysical?: boolean
   isCustomized?: boolean
   groupBuyingPeople?: number
+  categories?: string[]
+  roles?: string[]
 }
 
 export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Date }) => {
@@ -58,6 +60,8 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
             ? data.program_by_pk.sale_price
             : undefined,
         isSubscription: false,
+        categories: data.program_by_pk.program_categories.map(v => v.category.name),
+        roles: data.program_by_pk.program_roles.filter(v => v.name === 'instructor').map(v => v.member?.name || ''),
       }
     : data?.program_plan_by_pk
     ? {
@@ -212,6 +216,22 @@ const GET_PRODUCT_SIMPLE = gql`
       list_price
       sale_price
       sold_at
+      program_categories(order_by: { position: asc }) {
+        id
+        category {
+          id
+          name
+        }
+      }
+      program_roles {
+        id
+        name
+        member_id
+        member {
+          id
+          name
+        }
+      }
     }
     program_plan_by_pk(id: $targetId) {
       id
