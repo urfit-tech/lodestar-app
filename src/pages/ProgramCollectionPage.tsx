@@ -18,6 +18,7 @@ import { notEmpty } from '../helpers'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
+import { ProductImpressionField } from '../types/ecommerce'
 import { Category } from '../types/general'
 
 const StyledButton = styled(ChakraButton)`
@@ -42,7 +43,7 @@ const ProgramCollectionPage: React.VFC = () => {
   const [permitted] = useQueryParam('permitted', BooleanParam)
 
   const { currentMemberId } = useAuth()
-  const { settings } = useApp()
+  const { settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { pageTitle } = useNav()
   const { currentLanguage } = useContext(LanguageContext)
 
@@ -61,6 +62,7 @@ const ProgramCollectionPage: React.VFC = () => {
 
   useEffect(() => {
     if (programs) {
+      const productImpressions: ProductImpressionField[] = []
       programs.forEach((program, index) => {
         const listPrice =
           program.isSubscription && program.plans.length > 0 ? program.plans[0].listPrice : program.listPrice || 0
@@ -77,8 +79,31 @@ const ProgramCollectionPage: React.VFC = () => {
           price: `${salePrice || listPrice}`,
           position: index + 1,
         })
+        if (settings['tracking.gtm_id']) {
+          productImpressions.push({
+            name: program.title,
+            id: program.id,
+            price: salePrice || listPrice,
+            brand: settings['title'] || appId,
+            category: program.categories.map(category => category.name).join('|'),
+            variant: program.roles.map(role => role.memberName).join('|'),
+            list: 'Program',
+            position: index + 1,
+          })
+        }
       })
       ReactGA.ga('send', 'pageview')
+
+      if (productImpressions.length > 0) {
+        ;(window as any).dataLayer = (window as any).dataLayer || []
+        ;(window as any).dataLayer.push({ ecommerce: null })
+        ;(window as any).dataLayer.push({
+          ecommerce: {
+            currencyCode: appCurrencyId || 'TWD',
+            impressions: productImpressions,
+          },
+        })
+      }
     }
   }, [programs])
 
