@@ -38,6 +38,7 @@ export type ProgramRoleProps = {
   id: string
   name: ProgramRoleName
   memberId: string
+  memberName: string
 }
 
 export type ProgramPlanProps = {
