@@ -204,6 +204,7 @@ const ProgramCollectionPage: React.VFC = () => {
                       isEnrolled={enrolledProgramIds.includes(program.id)}
                       noPrice={!!noPrice}
                       withMeta={!noMeta}
+                      pageFrom={'CollectionPage'}
                     />
                   </div>
                 ))

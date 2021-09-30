@@ -8,6 +8,7 @@ import { durationFormatter } from '../../helpers'
 import { productMessages, reviewMessages } from '../../helpers/translation'
 import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import EmptyCover from '../../images/empty-cover.png'
+import { Category } from '../../types/general'
 import { ProgramBriefProps, ProgramPlanProps, ProgramRoleProps } from '../../types/program'
 import { MultiLineTruncationMixin } from '../common'
 import { CustomRatioImage } from '../common/Image'
@@ -58,6 +59,7 @@ const StyledMetaBlock = styled.div`
 
 const ProgramCard: React.VFC<{
   program: ProgramBriefProps & {
+    categories?: Category[]
     roles: ProgramRoleProps[]
     plans: ProgramPlanProps[]
   }
@@ -69,6 +71,7 @@ const ProgramCard: React.VFC<{
   noTotalDuration?: boolean
   withMeta?: boolean
   withProgress?: boolean
+  pageFrom?: string
   renderCover?: (cover: string) => React.ReactElement
   renderCustomDescription?: () => React.ReactElement
 }> = ({
@@ -80,13 +83,14 @@ const ProgramCard: React.VFC<{
   noPrice,
   noTotalDuration,
   withMeta,
+  pageFrom,
   renderCover,
   renderCustomDescription,
 }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { productEditorIds } = useProductEditorIds(program.id)
-  const { enabledModules, settings } = useApp()
+  const { enabledModules, settings, id: appId } = useApp()
 
   const instructorId = program.roles.length > 0 && program.roles[0].memberId
   const listPrice =
@@ -100,6 +104,31 @@ const ProgramCard: React.VFC<{
   const periodAmount = program.isSubscription && program.plans.length > 0 ? program.plans[0].periodAmount : null
   const periodType = program.isSubscription && program.plans.length > 0 ? program.plans[0].periodType : null
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
+
+  const handleClick = () => {
+    if (settings['tracking.gtm_id']) {
+      ;(window as any).dataLayer = (window as any).dataLayer || []
+      ;(window as any).dataLayer.push({ ecommerce: null })
+      ;(window as any).dataLayer.push({
+        event: 'productClick',
+        ecommerce: {
+          click: {
+            actionField: { list: pageFrom || '' },
+            product: [
+              {
+                name: program.title,
+                id: program.id,
+                price: salePrice || listPrice,
+                brand: settings['title'] || appId,
+                category: program.categories && program.categories.map(category => category.name).join('|'),
+                variant: program.roles.map(role => role.memberId).join('|'),
+              },
+            ],
+          },
+        },
+      })
+    }
+  }
 
   return (
     <>
@@ -117,6 +146,7 @@ const ProgramCard: React.VFC<{
             ? `/programs/${program.id}/contents`
             : `/programs/${program.id}` + (programType ? `?type=${programType}` : '')
         }
+        onClick={handleClick}
       >
         <StyledWrapper>
           {renderCover ? (
