@@ -14,9 +14,10 @@ import {
   BlndCTASection,
   BlndPostSection,
   CoverSection,
-  CreatorSection,
   CreatorListSection,
+  CreatorSection,
   CustomCoverSection,
+  IntroSection,
   LittlestarFeaturedPodcastSection,
   // LittlestarLastTimePodcastSection,
   MisaFeatureSection,
@@ -31,7 +32,6 @@ import {
   StaticCoverSection,
   TableListSection,
   TeacherSection,
-  IntroSection,
 } from '../components/page'
 import hasura from '../hasura'
 import { ReactComponent as AngleRightIcon } from '../images/angle-right.svg'
@@ -134,7 +134,7 @@ const AppPage: React.VFC = () => {
   )
 }
 
-const usePage = (path: string) => {
+export const usePage = (path: string) => {
   const { id: appId } = useApp()
   const { loading, error, data } = useQuery<hasura.GET_PAGE, hasura.GET_PAGEVariables>(
     gql`
