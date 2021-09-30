@@ -18,12 +18,12 @@ const StyledTitle = styled.div`
   margin-bottom: 0.75rem;
   ${CommonTitleMixin}
 `
-const StyledDescription = styled.div`
+export const StyledDescription = styled.div`
   color: var(--gray-dark);
   font-size: 14px;
   letter-spacing: 0.4px;
 `
-const StyledRemark = styled.div`
+export const StyledRemark = styled.div`
   color: var(--gray-darker);
   font-size: 14px;
   line-height: 1.57;
@@ -61,7 +61,24 @@ const InvoiceInput: React.VFC<{
     phoneRef: React.MutableRefObject<Input | null>
     emailRef: React.MutableRefObject<Input | null>
   }) => React.ReactNode
-}> = ({ value, onChange, isValidating, shouldSameToShippingCheckboxDisplay, renderMemberInfoInput }) => {
+  renderDescription?: () => React.ReactNode
+  renderUniformNumber?: (props: {
+    value?: InvoiceProps
+    uniformNumberRef: React.MutableRefObject<Input | null>
+    uniformTitleRef: React.MutableRefObject<Input | null>
+    isValidating?: boolean
+    errorFields: string[]
+    handleChange: () => void
+  }) => React.ReactNode
+}> = ({
+  value,
+  onChange,
+  isValidating,
+  shouldSameToShippingCheckboxDisplay,
+  renderMemberInfoInput,
+  renderDescription,
+  renderUniformNumber,
+}) => {
   const { formatMessage } = useIntl()
   const { loading, settings, enabledModules } = useApp()
 
@@ -203,11 +220,13 @@ const InvoiceInput: React.VFC<{
   return (
     <StyledWrapper>
       <StyledTitle>{formatMessage(checkoutMessages.form.label.invoice)}</StyledTitle>
-      <StyledDescription className="mb-4">
-        {enabledModules.invoice
-          ? formatMessage(checkoutMessages.form.message.warningEmail)
-          : formatMessage(checkoutMessages.form.message.warningHardcopy)}
-      </StyledDescription>
+      {renderDescription?.() || (
+        <StyledDescription className="mb-4">
+          {enabledModules.invoice
+            ? formatMessage(checkoutMessages.form.message.warningEmail)
+            : formatMessage(checkoutMessages.form.message.warningHardcopy)}
+        </StyledDescription>
+      )}
 
       {shouldSameToShippingCheckboxDisplay && (
         <div className="mb-4">
@@ -366,43 +385,51 @@ const InvoiceInput: React.VFC<{
         </div>
       )}
 
-      {(selectedType === 'uniform-number' || selectedType === 'hardcopy-uniform-number') && (
-        <div className="row">
-          <div className="col-12 col-lg-6">
-            <Form.Item
-              label={formatMessage(checkoutMessages.form.label.uniformNumber)}
-              required
-              validateStatus={isValidating && errorFields.includes('uniformNumber') ? 'error' : undefined}
-            >
-              <Input
-                ref={uniformNumberRef}
-                placeholder={formatMessage(checkoutMessages.form.message.uniformNumberText)}
-                defaultValue={value ? value.uniformNumber : undefined}
-                onBlur={() => handleChange({})}
-              />
-            </Form.Item>
+      {(selectedType === 'uniform-number' || selectedType === 'hardcopy-uniform-number') &&
+        (renderUniformNumber?.({
+          value,
+          uniformNumberRef,
+          uniformTitleRef,
+          handleChange: () => handleChange({}),
+          isValidating,
+          errorFields,
+        }) || (
+          <div className="row">
+            <div className="col-12 col-lg-6">
+              <Form.Item
+                label={formatMessage(checkoutMessages.form.label.uniformNumber)}
+                required
+                validateStatus={isValidating && errorFields.includes('uniformNumber') ? 'error' : undefined}
+              >
+                <Input
+                  ref={uniformNumberRef}
+                  placeholder={formatMessage(checkoutMessages.form.message.uniformNumberText)}
+                  defaultValue={value ? value.uniformNumber : undefined}
+                  onBlur={() => handleChange({})}
+                />
+              </Form.Item>
+            </div>
+            <div className="col-12 col-lg-6">
+              <Form.Item
+                label={formatMessage(checkoutMessages.form.label.uniformTitle)}
+                required
+                validateStatus={isValidating && errorFields.includes('uniformTitle') ? 'error' : undefined}
+              >
+                <Input
+                  ref={uniformTitleRef}
+                  placeholder={formatMessage(checkoutMessages.form.message.uniformTitleText)}
+                  defaultValue={value ? value.uniformTitle : undefined}
+                  onBlur={() => handleChange({})}
+                />
+              </Form.Item>
+            </div>
+            <div className="col-12">
+              {selectedType === 'uniform-number' && (
+                <StyledRemark>{formatMessage(checkoutMessages.form.message.uniformNumberRemark)}</StyledRemark>
+              )}
+            </div>
           </div>
-          <div className="col-12 col-lg-6">
-            <Form.Item
-              label={formatMessage(checkoutMessages.form.label.uniformTitle)}
-              required
-              validateStatus={isValidating && errorFields.includes('uniformTitle') ? 'error' : undefined}
-            >
-              <Input
-                ref={uniformTitleRef}
-                placeholder={formatMessage(checkoutMessages.form.message.uniformTitleText)}
-                defaultValue={value ? value.uniformTitle : undefined}
-                onBlur={() => handleChange({})}
-              />
-            </Form.Item>
-          </div>
-          <div className="col-12">
-            {selectedType === 'uniform-number' && (
-              <StyledRemark>{formatMessage(checkoutMessages.form.message.uniformNumberRemark)}</StyledRemark>
-            )}
-          </div>
-        </div>
-      )}
+        ))}
 
       {(selectedType === 'hardcopy' || selectedType === 'hardcopy-uniform-number') && (
         <div className="row">
