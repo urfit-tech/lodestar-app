@@ -12,6 +12,7 @@ import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
+import { useSimpleProductCollection } from '../hooks/common'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
@@ -19,6 +20,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
+  const getSimpleProductCollection = useSimpleProductCollection()
   const { settings, id: appId } = useApp()
   const { loading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
     GET_ORDERS_PRODUCT,
@@ -113,39 +115,44 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
       }
 
       if (settings['tracking.gtm_id']) {
-        ;(window as any).dataLayer = (window as any).dataLayer || []
-        ;(window as any).dataLayer.push({ ecommerce: null })
-        ;(window as any).dataLayer.push({
-          ecommerce: {
-            purchase: {
-              actionField: {
-                id: order.id,
-                affiliation: settings['title'] || appId,
-                revenue: productPrice - discountPrice - shippingFee,
-                shipping: shippingFee,
-                coupon:
-                  order.order_discounts.length > 0
-                    ? order.order_discounts[0].type === 'Coupon'
-                      ? order.order_discounts[0].target
-                      : null
-                    : null,
+        const orderProductIds = order.order_products.map(orderProduct => orderProduct.product_id)
+
+        getSimpleProductCollection(orderProductIds)
+          .then(simpleProducts => {
+            ;(window as any).dataLayer = (window as any).dataLayer || []
+            ;(window as any).dataLayer.push({ ecommerce: null })
+            ;(window as any).dataLayer.push({
+              ecommerce: {
+                purchase: {
+                  actionField: {
+                    id: order.id,
+                    affiliation: settings['title'] || appId,
+                    revenue: productPrice - discountPrice - shippingFee,
+                    shipping: shippingFee,
+                    coupon: order.order_discounts
+                      .map(orderDiscount => `${orderDiscount.type}_${orderDiscount.target}`)
+                      .join(' | '),
+                  },
+                  products: simpleProducts.map(simpleProduct => {
+                    const [_, productId] = simpleProduct.id.split('_')
+                    const currenctOrderProduct = order.order_products.find(
+                      orderProduct => orderProduct.product_id === simpleProduct.id,
+                    )
+                    return {
+                      id: productId,
+                      name: simpleProduct.title,
+                      price: simpleProduct.isOnSale ? simpleProduct.salePrice : simpleProduct.listPrice,
+                      category: simpleProduct.categories?.join('|'),
+                      brand: settings['title'] || appId,
+                      quantity: currenctOrderProduct?.options['quantity'] || 1,
+                      variant: simpleProduct.roles?.join('|'),
+                    }
+                  }),
+                },
               },
-              products: order.order_products.map(orderProduct => {
-                const [productType, productId] = orderProduct.product_id.split('_')
-                // FIXME: need to fetch categories, roles
-                return {
-                  id: productId,
-                  name: orderProduct.name,
-                  price: orderProduct.price,
-                  category: productType, // TODO: need to change to categories
-                  brand: settings['title'] || appId,
-                  quantity: orderProduct.options['quantity'] || 1,
-                  variant: '', // TODO: need to get instructor name
-                }
-              }),
-            },
-          },
-        })
+            })
+          })
+          .catch()
       }
     }
   }, [order, settings, withTracking])
