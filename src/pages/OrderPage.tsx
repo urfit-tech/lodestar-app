@@ -19,7 +19,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
-  const { settings } = useApp()
+  const { settings, id: appId } = useApp()
   const { loading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
     GET_ORDERS_PRODUCT,
     { variables: { orderId: orderId } },
@@ -110,6 +110,42 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
         ReactGA.plugin.execute('ecommerce', 'clear', {})
 
         ReactGA.ga('send', 'pageview')
+      }
+
+      if (settings['tracking.gtm_id']) {
+        ;(window as any).dataLayer = (window as any).dataLayer || []
+        ;(window as any).dataLayer.push({ ecommerce: null })
+        ;(window as any).dataLayer.push({
+          ecommerce: {
+            purchase: {
+              actionField: {
+                id: order.id,
+                affiliation: settings['title'] || appId,
+                revenue: productPrice - discountPrice - shippingFee,
+                shipping: shippingFee,
+                coupon:
+                  order.order_discounts.length > 0
+                    ? order.order_discounts[0].type === 'Coupon'
+                      ? order.order_discounts[0].target
+                      : null
+                    : null,
+              },
+              products: order.order_products.map(orderProduct => {
+                const [productType, productId] = orderProduct.product_id.split('_')
+                // FIXME: need to fetch categories, roles
+                return {
+                  id: productId,
+                  name: orderProduct.name,
+                  price: orderProduct.price,
+                  category: productType, // TODO: need to change to categories
+                  brand: settings['title'] || appId,
+                  quantity: orderProduct.options['quantity'] || 1,
+                  variant: '', // TODO: need to get instructor name
+                }
+              }),
+            },
+          },
+        })
       }
     }
   }, [order, settings, withTracking])
