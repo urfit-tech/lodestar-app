@@ -40,7 +40,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
               key={program.id}
               className={`col-12 col-lg-${(options?.colAmount && 12 / options?.colAmount) || 4} mb-5`}
             >
-              <ProgramCard program={program} withMeta noInstructor />
+              <ProgramCard program={program} withMeta noInstructor pageFrom={'HomePage'} />
             </div>
           ))}
         </div>
