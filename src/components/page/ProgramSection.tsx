@@ -50,6 +50,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
           return {
             id: program.id,
             name: program.title,
+            price: salePrice || listPrice,
             brand: settings['title'] || appId,
             category: program.categories.map(category => category.name).join('|'),
             variant: program.roles.map(role => role.memberName).join('|'),
