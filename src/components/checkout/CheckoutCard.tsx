@@ -70,7 +70,7 @@ const CheckoutCard: React.VFC<
             className="col-12 offset-md-8 col-md-4 text-right"
             style={{
               fontSize: '24px',
-              color: theme['@primary-color'],
+              color: theme.colors.primary[500],
             }}
           >
             <span className="mr-2">{formatMessage(checkoutMessages.content.total)}</span>
