@@ -39,6 +39,11 @@ const ActivityOrganizer = styled(Col)`
     }
   }
 `
+const StyledTitle = styled.h2`
+  margin: 0;
+  font-size: 24px;
+`
+
 const ActivityPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -140,8 +145,8 @@ const ActivityPage: React.VFC = () => {
               <BraftContent>{activity.description}</BraftContent>
             </div>
 
-            <h2 className="mb-0">{formatMessage(productMessages.activity.title.event)}</h2>
-            <Divider className="mt-0" />
+            <StyledTitle>{formatMessage(productMessages.activity.title.event)}</StyledTitle>
+            <Divider className="mb-4" />
 
             {activity.sessionIds.map(id => (
               <div key={id} className="mb-4">
@@ -242,8 +247,8 @@ const ActivityPage: React.VFC = () => {
 
         <Row className="mb-5">
           <ActivityOrganizer xs={12} lg={8}>
-            <h2 className="mb-0">{formatMessage(productMessages.activity.title.organizer)}</h2>
-            <Divider className="mt-0" />
+            <StyledTitle className="mb-0">{formatMessage(productMessages.activity.title.organizer)}</StyledTitle>
+            <Divider className="mb-4" />
 
             <ActivityOrganizerIntro memberId={activity.organizerId} />
           </ActivityOrganizer>

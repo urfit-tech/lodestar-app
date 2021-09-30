@@ -60,7 +60,7 @@ const MerchandiseSpecItem: React.VFC<{
 
   return (
     <div>
-      <Divider />
+      <Divider className="mb-4" />
 
       <div className="d-flex align-items-center">
         <CustomRatioImage
