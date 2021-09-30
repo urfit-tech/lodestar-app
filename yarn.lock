@@ -3256,7 +3256,16 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@16 || 17", "@types/react@>=16.14.8", "@types/react@>=16.9.11", "@types/react@^17.0.0", "@types/react@^17.0.4", "@types/react@^17.0.5":
+"@types/react@*", "@types/react@^17.0.0":
+  version "17.0.25"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.25.tgz#8b88c226e54910762decc9de2aa36b4dc9240503"
+  integrity sha512-IXrzSOr3CVbEQgmjEdCWF57J7CVaJ7lL/n4penxHm8h0XIcr0AxqGucogh2zj3qRxgk4M4JImOP/MfomkPOhvQ==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@16 || 17", "@types/react@>=16.14.8", "@types/react@>=16.9.11", "@types/react@^17.0.4", "@types/react@^17.0.5":
   version "17.0.24"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.24.tgz#7e1b3f78d0fc53782543f9bce6d949959a5880bd"
   integrity sha512-eIpyco99gTH+FTI3J7Oi/OH8MZoFMJuztNRimDOJwH4iGIsKV2qkGnk4M9VzlaVWeEEWLWSQRy0FEA0Kz218cg==
@@ -10593,7 +10602,7 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/b31ac710242136301ab82268f16850ac08cfeff3"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/f06dd3e0638964cd89057efd794dea3e9155b7ad"
   dependencies:
     "@apollo/react-hooks" "^3.1.5"
     "@bobthered/tailwindcss-palette-generator" "^2.0.0"

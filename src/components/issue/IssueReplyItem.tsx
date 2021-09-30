@@ -102,7 +102,7 @@ const IssueReplyItem: React.VFC<{
                 .filter(role => role.memberId === memberId)
                 .map(role =>
                   role.name === 'instructor' ? (
-                    <StyledTag key={role.id} color={theme['@primary-color']} className="ml-2 mr-0">
+                    <StyledTag key={role.id} color={theme.colors.primary[500]} className="ml-2 mr-0">
                       <ProductRoleFormatter value={role.name as ProductRoleName} />
                     </StyledTag>
                   ) : role.name === 'assistant' ? (
