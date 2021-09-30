@@ -75,7 +75,7 @@ const ProjectPlanBlock: React.VFC<ProjectPlanBlockProps> = ({ title, description
         {isExpired ? formatMessage(commonMessages.status.projectFinished) : formatMessage(commonMessages.status.onSale)}
       </StyledTag>
 
-      <Divider className="mb-3" />
+      <Divider className="my-3" />
 
       <StyledProjectPlanTitle className="mb-3">{title}</StyledProjectPlanTitle>
       <StyledDescription>
