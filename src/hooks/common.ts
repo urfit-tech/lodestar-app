@@ -354,10 +354,10 @@ const GET_PRODUCT_SIMPLE = gql`
   }
 `
 
-export const useProductCollection = () => {
+export const useSimpleProductCollection = () => {
   const { formatMessage } = useIntl()
   const apolloClient = useApolloClient()
-  const getProductCollection = async (productIds: string[]) => {
+  const getSimpleProductCollection = async (productIds: string[]) => {
     const productsCollection: TargetProps[] = []
     for (let productId of productIds) {
       const [, targetId] = productId.split('_')
@@ -530,7 +530,7 @@ export const useProductCollection = () => {
     return productsCollection
   }
 
-  return getProductCollection
+  return getSimpleProductCollection
 }
 
 export const useMemberValidation = (email: string) => {

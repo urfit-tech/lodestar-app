@@ -13,7 +13,7 @@ import CartContext from '../../contexts/CartContext'
 import hasura from '../../hasura'
 import { checkoutMessages } from '../../helpers/translation'
 import { useMemberShop } from '../../hooks/checkout'
-import { useProductCollection } from '../../hooks/common'
+import { useSimpleProductCollection } from '../../hooks/common'
 import EmptyAvatar from '../../images/avatar.svg'
 import { CartProductProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
@@ -35,19 +35,18 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   const { removeCartProducts } = useContext(CartContext)
   const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
   const { memberShop } = useMemberShop(shopId)
-  const getProductCollection = useProductCollection()
+  const getSimpleProductCollection = useSimpleProductCollection()
   const { settings, id: appId } = useApp()
 
   useEffect(() => {
     refetch && refetch()
   })
 
-  // useEffect(() => {
   if (settings['tracking.gtm_id'] && cartProducts) {
     const cartProductIds = cartProducts.map(cartProduct => cartProduct.productId)
 
-    getProductCollection(cartProductIds)
-      .then(products => {
+    getSimpleProductCollection(cartProductIds)
+      .then(simpleProducts => {
         ;(window as any).dataLayer = (window as any).dataLayer || []
         ;(window as any).dataLayer.push({ ecommerce: null })
         ;(window as any).dataLayer.push({
@@ -55,15 +54,15 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
           ecommerce: {
             checkout: {
               actionField: { step: 1, option: 'credit' },
-              products: products.map(product => ({
-                name: product.title,
-                id: product.id,
-                price: product.isOnSale ? product.salePrice : product.listPrice || 0,
+              products: simpleProducts.map(simpleProduct => ({
+                name: simpleProduct.title,
+                id: simpleProduct.id,
+                price: simpleProduct.isOnSale ? simpleProduct.salePrice : simpleProduct.listPrice || 0,
                 brand: settings['title'] || appId,
-                categories: product.categories && product.categories.join('|'),
-                variant: product.roles && product.roles.join('|'),
+                categories: simpleProduct.categories?.join('|'),
+                variant: simpleProduct.roles?.join('|'),
                 quantity:
-                  cartProducts.find(cartProduct => cartProduct.productId.split('_')[1] === product.id)?.options
+                  cartProducts.find(cartProduct => cartProduct.productId.split('_')[1] === simpleProduct.id)?.options
                     ?.quantity || 1,
               })),
             },
@@ -72,8 +71,6 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
       })
       .catch()
   }
-  //}
-  //, [cartProducts])
 
   if (loading) {
     return (
