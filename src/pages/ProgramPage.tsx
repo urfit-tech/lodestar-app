@@ -152,7 +152,7 @@ const ProgramPage: React.VFC = () => {
         },
       })
     }
-  }, [program])
+  }, [program, pageFrom, appId, settings])
 
   if (loadingProgram) {
     return (
