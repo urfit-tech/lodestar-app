@@ -653,6 +653,73 @@ export interface GET_PODCAST_ALBUM_BY_CATEGORY_NAMEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_LAST_WATCHED_PODCAST_PROGRAM
+// ====================================================
+
+export interface GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_program {
+  __typename: "podcast_program";
+  id: any;
+  title: string;
+}
+
+export interface GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_album_podcast_album_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_album_podcast_album_categories {
+  __typename: "podcast_album_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_album_podcast_album_categories_category | null;
+}
+
+export interface GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_album {
+  __typename: "podcast_album";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  /**
+   * An array relationship
+   */
+  podcast_album_categories: GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_album_podcast_album_categories[];
+}
+
+export interface GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress {
+  __typename: "podcast_program_progress";
+  id: any;
+  progress: any;
+  last_progress: any;
+  /**
+   * An object relationship
+   */
+  podcast_program: GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_program;
+  /**
+   * An object relationship
+   */
+  podcast_album: GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_album | null;
+}
+
+export interface GET_LAST_WATCHED_PODCAST_PROGRAM {
+  /**
+   * fetch data from the table: "podcast_program_progress"
+   */
+  podcast_program_progress: GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress[];
+}
+
+export interface GET_LAST_WATCHED_PODCAST_PROGRAMVariables {
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PODCAST_ALBUM_COLLECTION
 // ====================================================
 
@@ -6089,6 +6156,34 @@ export interface GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUM {
 
 export interface GET_PUBLIC_PODCAST_PROGRAMS_IDS_BY_PODCAST_ALBUMVariables {
   id: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PODCAST_PROGRAM_PROGRESS
+// ====================================================
+
+export interface GET_PODCAST_PROGRAM_PROGRESS_podcast_program_progress {
+  __typename: "podcast_program_progress";
+  id: any;
+  progress: any;
+  last_progress: any;
+}
+
+export interface GET_PODCAST_PROGRAM_PROGRESS {
+  /**
+   * fetch data from the table: "podcast_program_progress"
+   */
+  podcast_program_progress: GET_PODCAST_PROGRAM_PROGRESS_podcast_program_progress[];
+}
+
+export interface GET_PODCAST_PROGRAM_PROGRESSVariables {
+  programPodcastId: any;
+  memberId: string;
 }
 
 /* tslint:disable */
