@@ -104,8 +104,8 @@ const LittlestarLastTimePodcastSection: React.FC<{
         <div className="col-lg-6 p-lg-0 d-flex">
           <StyledCard className="flex-grow-1 d-flex flex-column justify-content-between m-0 m-lg-auto">
             <div className="mb-3">
-              <h3 className="mb-4">{lastWatchedPodcastProgram.podcastAlbum.title}</h3>
-              <h4 className="mb-2">{lastWatchedPodcastProgram.title}</h4>
+              <h3 className="mb-4">{lastWatchedPodcastProgram.title}</h3>
+              <h4 className="mb-2">{lastWatchedPodcastProgram.podcastAlbum.title}</h4>
               {lastWatchedPodcastProgram.podcastAlbum.categoryNames.map(name => (
                 <span className="tag mr-1">{name}</span>
               ))}
