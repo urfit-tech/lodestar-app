@@ -3734,6 +3734,41 @@ export interface GET_PHYSICAL_PRODUCTSVariables {
 // GraphQL query operation: GET_PRODUCT_SIMPLE
 // ====================================================
 
+export interface GET_PRODUCT_SIMPLE_program_by_pk_program_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_PRODUCT_SIMPLE_program_by_pk_program_categories {
+  __typename: "program_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_PRODUCT_SIMPLE_program_by_pk_program_categories_category;
+}
+
+export interface GET_PRODUCT_SIMPLE_program_by_pk_program_roles_member {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+}
+
+export interface GET_PRODUCT_SIMPLE_program_by_pk_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+  /**
+   * An object relationship
+   */
+  member: GET_PRODUCT_SIMPLE_program_by_pk_program_roles_member | null;
+}
+
 export interface GET_PRODUCT_SIMPLE_program_by_pk {
   __typename: "program";
   id: any;
@@ -3743,6 +3778,14 @@ export interface GET_PRODUCT_SIMPLE_program_by_pk {
   list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
+  /**
+   * An array relationship
+   */
+  program_categories: GET_PRODUCT_SIMPLE_program_by_pk_program_categories[];
+  /**
+   * An array relationship
+   */
+  program_roles: GET_PRODUCT_SIMPLE_program_by_pk_program_roles[];
 }
 
 export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program {
@@ -4943,6 +4986,68 @@ export interface GET_LATEST_CREATOR {
 export interface GET_LATEST_CREATORVariables {
   topInstructorIds: string[];
   appId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PUBLISHED_CREATOR
+// ====================================================
+
+export interface GET_PUBLISHED_CREATOR_creator_member {
+  __typename: "member_public";
+  title: string | null;
+  abstract: string | null;
+}
+
+export interface GET_PUBLISHED_CREATOR_creator_creator_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_PUBLISHED_CREATOR_creator_creator_categories {
+  __typename: "creator_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_PUBLISHED_CREATOR_creator_creator_categories_category;
+}
+
+export interface GET_PUBLISHED_CREATOR_creator_member_specialities {
+  __typename: "member_speciality";
+  id: any;
+  tag_name: string;
+}
+
+export interface GET_PUBLISHED_CREATOR_creator {
+  __typename: "creator";
+  id: string | null;
+  name: string | null;
+  picture_url: string | null;
+  /**
+   * An object relationship
+   */
+  member: GET_PUBLISHED_CREATOR_creator_member | null;
+  /**
+   * An array relationship
+   */
+  creator_categories: GET_PUBLISHED_CREATOR_creator_creator_categories[];
+  /**
+   * An array relationship
+   */
+  member_specialities: GET_PUBLISHED_CREATOR_creator_member_specialities[];
+}
+
+export interface GET_PUBLISHED_CREATOR {
+  /**
+   * fetch data from the table: "creator"
+   */
+  creator: GET_PUBLISHED_CREATOR_creator[];
 }
 
 /* tslint:disable */
@@ -7917,68 +8022,6 @@ export interface AGREE_MEMBER_CONTRACTVariables {
   agreedAt: any;
   agreedIp: string;
   agreedOptions?: any | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_PUBLISHED_CREATOR
-// ====================================================
-
-export interface GET_PUBLISHED_CREATOR_creator_member {
-  __typename: "member_public";
-  title: string | null;
-  abstract: string | null;
-}
-
-export interface GET_PUBLISHED_CREATOR_creator_creator_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface GET_PUBLISHED_CREATOR_creator_creator_categories {
-  __typename: "creator_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: GET_PUBLISHED_CREATOR_creator_creator_categories_category;
-}
-
-export interface GET_PUBLISHED_CREATOR_creator_member_specialities {
-  __typename: "member_speciality";
-  id: any;
-  tag_name: string;
-}
-
-export interface GET_PUBLISHED_CREATOR_creator {
-  __typename: "creator";
-  id: string | null;
-  name: string | null;
-  picture_url: string | null;
-  /**
-   * An object relationship
-   */
-  member: GET_PUBLISHED_CREATOR_creator_member | null;
-  /**
-   * An array relationship
-   */
-  creator_categories: GET_PUBLISHED_CREATOR_creator_creator_categories[];
-  /**
-   * An array relationship
-   */
-  member_specialities: GET_PUBLISHED_CREATOR_creator_member_specialities[];
-}
-
-export interface GET_PUBLISHED_CREATOR {
-  /**
-   * fetch data from the table: "creator"
-   */
-  creator: GET_PUBLISHED_CREATOR_creator[];
 }
 
 /* tslint:disable */
