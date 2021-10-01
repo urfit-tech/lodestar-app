@@ -171,6 +171,7 @@ const useLastWatchedPodcastAlbumPodcastProgram: (memberId: string) => {
     `,
     {
       variables: { memberId },
+      fetchPolicy: 'no-cache',
     },
   )
   const [lastWatchedPodcastAlbumPodcastProgram = null] = data?.podcast_program_progress || []
