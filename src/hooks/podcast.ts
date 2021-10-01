@@ -684,3 +684,44 @@ export const usePublicPodcastProgramIds: (id?: string) => {
       data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.podcast_program?.id) || [],
   }
 }
+
+export const usePodcastProgramProgress: (
+  programPodcastId: string,
+  memberId: string,
+) => {
+  podcastProgramProgressStatus: 'loading' | 'error' | 'success' | 'idle'
+  podcastProgramProgress: {
+    id: string
+    progress: number
+    lastProgress: number
+  } | null
+  refetchPodcastProgramProgress: () => void
+} = (programPodcastId, memberId) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_PODCAST_PROGRAM_PROGRESS,
+    hasura.GET_PODCAST_PROGRAM_PROGRESSVariables
+  >(
+    gql`
+      query GET_PODCAST_PROGRAM_PROGRESS($programPodcastId: uuid!, $memberId: String!) {
+        podcast_program_progress(
+          where: { podcast_program_id: { _eq: $programPodcastId }, member_id: { _eq: $memberId } }
+        ) {
+          id
+          progress
+          last_progress
+        }
+      }
+    `,
+    { variables: { programPodcastId, memberId } },
+  )
+  const [podcastProgramProgress = null] = data?.podcast_program_progress || []
+  return {
+    podcastProgramProgressStatus: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
+    podcastProgramProgress: podcastProgramProgress && {
+      id: podcastProgramProgress.id,
+      progress: podcastProgramProgress.progress,
+      lastProgress: podcastProgramProgress.last_progress,
+    },
+    refetchPodcastProgramProgress: refetch,
+  }
+}

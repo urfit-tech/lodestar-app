@@ -1,5 +1,6 @@
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { createContext, useCallback, useState } from 'react'
-import { usePodcastProgramContent } from '../hooks/podcast'
+import { usePodcastProgramContent, usePodcastProgramProgress } from '../hooks/podcast'
 import { PodcastProgramContent } from '../types/podcast'
 
 type PlaylistContentProps = {
@@ -20,6 +21,8 @@ type PodcastPlayerProps = {
   currentPodcastProgram: PodcastProgramContent | null
   isPodcastProgramChanged: boolean
   loadingPodcastProgram: boolean
+  progress: number
+  lastProgress: number
   togglePlaylistMode?: () => void
   setIsPlaying?: React.Dispatch<React.SetStateAction<boolean>>
   setPlaylist?: (playlist: PlaylistContentProps) => void
@@ -28,6 +31,7 @@ type PodcastPlayerProps = {
   shift?: (quantity: 1 | -1) => void
   closePlayer?: () => void
   setMaxDuration?: React.Dispatch<React.SetStateAction<number>>
+  refetchPodcastProgramProgress?: () => void
 }
 
 const PodcastPlayerContext = createContext<PodcastPlayerProps>({
@@ -40,18 +44,24 @@ const PodcastPlayerContext = createContext<PodcastPlayerProps>({
   isPodcastProgramChanged: false,
   loadingPodcastProgram: false,
   maxDuration: 0,
+  progress: 0,
+  lastProgress: 0,
 })
 
 export const PodcastPlayerProvider: React.FC = ({ children }) => {
+  const { currentMemberId } = useAuth()
   const [visible, setVisible] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [maxDuration, setMaxDuration] = useState(0)
   const [playlist, setPlaylist] = useState<PlaylistContentProps | null>(null)
   const [playlistMode, setPlaylistMode] = useState<PlaylistModeType>('loop')
   const [shuffledPodcastProgramIds, setShuffledPodcastProgramIds] = useState<string[]>([])
-
   const currentPlayingId = playlist?.podcastProgramIds[playlist.currentIndex] || ''
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(currentPlayingId)
+  const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(
+    currentPlayingId,
+    currentMemberId || '',
+  )
 
   return (
     <PodcastPlayerContext.Provider
@@ -63,6 +73,8 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         loadingPodcastProgram,
         currentPlayingId,
         currentPodcastProgram: podcastProgram,
+        progress: podcastProgramProgress?.progress || 0,
+        lastProgress: podcastProgramProgress?.lastProgress || 0,
         maxDuration,
         isPodcastProgramChanged: podcastProgram?.id !== currentPlayingId && maxDuration > 0,
         togglePlaylistMode: () => {
@@ -142,6 +154,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           setPlaylist(null)
         },
         setMaxDuration,
+        refetchPodcastProgramProgress,
       }}
     >
       {children}

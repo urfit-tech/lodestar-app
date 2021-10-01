@@ -76,7 +76,7 @@ const StyledCard = styled.div`
     }
     a:hover {
       opacity: 0.9;
-      color: ${props => props.theme['@primary-color']};
+      color: #fff;
     }
   }
 `
@@ -89,8 +89,8 @@ const LittlestarLastTimePodcastSection: React.FC<{
   const { currentMemberId } = useAuth()
   const { lastWatchedPodcastAlbumPodcastProgram } = useLastWatchedPodcastAlbumPodcastProgram(currentMemberId || '')
 
-  if (!lastWatchedPodcastAlbumPodcastProgram) return <></>
-  console.log(lastWatchedPodcastAlbumPodcastProgram)
+  if (!currentMemberId || !lastWatchedPodcastAlbumPodcastProgram) return <></>
+
   return (
     <SectionLayout title={title}>
       <StyledRow className="row mx-auto">
@@ -103,8 +103,8 @@ const LittlestarLastTimePodcastSection: React.FC<{
         <div className="col-lg-6 p-lg-0 d-flex">
           <StyledCard className="flex-grow-1 d-flex flex-column justify-content-between m-0 m-lg-auto">
             <div className="mb-3">
-              <h3 className="mb-4">{lastWatchedPodcastAlbumPodcastProgram?.title}</h3>
-              <h4 className="mb-2">{lastWatchedPodcastAlbumPodcastProgram?.podcastProgramTitle}</h4>
+              <h3 className="mb-4">{lastWatchedPodcastAlbumPodcastProgram?.podcastAlbum.title}</h3>
+              <h4 className="mb-2">{lastWatchedPodcastAlbumPodcastProgram?.title}</h4>
               {lastWatchedPodcastAlbumPodcastProgram?.categoryNames.map(name => (
                 <span className="tag mr-1">{name}</span>
               ))}
@@ -112,7 +112,9 @@ const LittlestarLastTimePodcastSection: React.FC<{
 
             <div>
               <div className="play">
-                <Link to={`/podcasts/${lastWatchedPodcastAlbumPodcastProgram.id}`}>
+                <Link
+                  to={`/podcasts/${lastWatchedPodcastAlbumPodcastProgram.id}?podcastAlbumId=${lastWatchedPodcastAlbumPodcastProgram.podcastAlbum.id}`}
+                >
                   繼續播放
                   <Icon className="ml-2" as={PlayIcon} />
                 </Link>
@@ -130,9 +132,12 @@ const useLastWatchedPodcastAlbumPodcastProgram: (memberId: string) => {
   lastWatchedPodcastAlbumPodcastProgram: {
     id: string
     title: string
-    podcastProgramTitle: string
     coverUrl: string | null
     categoryNames: string[]
+    podcastAlbum: {
+      id: string
+      title: string
+    }
   } | null
 } = memberId => {
   const { loading, error, data } = useQuery<
@@ -175,12 +180,15 @@ const useLastWatchedPodcastAlbumPodcastProgram: (memberId: string) => {
       id: lastWatchedPodcastAlbumPodcastProgram.podcast_program.id,
       lastProgress: lastWatchedPodcastAlbumPodcastProgram.last_progress,
       title: lastWatchedPodcastAlbumPodcastProgram.podcast_album?.title || '',
-      podcastProgramTitle: lastWatchedPodcastAlbumPodcastProgram.podcast_program.title,
       coverUrl: lastWatchedPodcastAlbumPodcastProgram.podcast_album?.cover_url || '',
       categoryNames:
         lastWatchedPodcastAlbumPodcastProgram.podcast_album?.podcast_album_categories.map(
           category => category.category?.name || '',
         ) || [],
+      podcastAlbum: {
+        id: lastWatchedPodcastAlbumPodcastProgram.podcast_album?.id || '',
+        title: lastWatchedPodcastAlbumPodcastProgram.podcast_program.title || '',
+      },
     },
   }
 }
