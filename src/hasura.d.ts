@@ -8557,6 +8557,7 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk_order_discounts {
    */
   type: string;
   target: string;
+  name: string;
 }
 
 export interface GET_ORDERS_PRODUCT_order_log_by_pk {

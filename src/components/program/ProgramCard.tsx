@@ -144,7 +144,7 @@ const ProgramCard: React.VFC<{
         to={
           isEnrolled
             ? `/programs/${program.id}/contents`
-            : `/programs/${program.id}` + (programType ? `?type=${programType}` : '')
+            : `/programs/${program.id}` + (programType ? `?type=${programType}` : '') + `?pageFrom=${pageFrom}`
         }
         onClick={handleClick}
       >

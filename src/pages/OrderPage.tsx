@@ -130,16 +130,15 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                     revenue: productPrice - discountPrice - shippingFee,
                     shipping: shippingFee,
                     coupon: order.order_discounts
-                      .map(orderDiscount => `${orderDiscount.type}_${orderDiscount.target}`)
+                      .map(orderDiscount => `${orderDiscount.type}_${orderDiscount.name}`)
                       .join(' | '),
                   },
                   products: simpleProducts.map(simpleProduct => {
-                    const [_, productId] = simpleProduct.id.split('_')
                     const currenctOrderProduct = order.order_products.find(
-                      orderProduct => orderProduct.product_id === simpleProduct.id,
+                      orderProduct => orderProduct.product_id === `${simpleProduct.productType}_${simpleProduct.id}`,
                     )
                     return {
-                      id: productId,
+                      id: simpleProduct.id,
                       name: simpleProduct.title,
                       price: simpleProduct.isOnSale ? simpleProduct.salePrice : simpleProduct.listPrice,
                       category: simpleProduct.categories?.join('|'),
@@ -259,6 +258,7 @@ const GET_ORDERS_PRODUCT = gql`
       order_discounts {
         type
         target
+        name
       }
       shipping
       invoice
