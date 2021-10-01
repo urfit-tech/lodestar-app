@@ -15,13 +15,14 @@ import {
 } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid'
-import { useApp } from '../../containers/common/AppContext'
 import hasura from '../../hasura'
 import { createUploadFn } from '../../helpers'
 import { commonMessages, reviewMessages } from '../../helpers/translation'
@@ -30,7 +31,6 @@ import { ReactComponent as MoreIcon } from '../../images/ellipsis.svg'
 import { ProductRoleName } from '../../types/general'
 import { ProgramRoleName, ProgramRoleProps } from '../../types/program'
 import { ReviewReplyItemProps } from '../../types/review'
-import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -266,7 +266,7 @@ const useProgramRole = (targetId: string) => {
     },
   )
 
-  const programRole: ProgramRoleProps[] =
+  const programRole: Pick<ProgramRoleProps, 'id' | 'memberId' | 'name'>[] =
     data?.program_role?.map(v => ({
       id: v.id,
       memberId: v.member_id,

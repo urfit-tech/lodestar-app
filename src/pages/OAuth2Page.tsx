@@ -1,15 +1,14 @@
 import { message } from 'antd'
 import axios from 'axios'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useCallback, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { useAuth } from '../components/auth/AuthContext'
-import { useApp } from '../containers/common/AppContext'
 import { handleError } from '../helpers'
 import { profileMessages } from '../helpers/translation'
 import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
-import LoadingPage from './LoadingPage'
 
 type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth'
 
@@ -122,7 +121,7 @@ const DefaultOauth2Section: React.VFC = () => {
     }
   }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
 
-  return <LoadingPage />
+  return <div>Oauth2 processing...</div>
 }
 
 const Oauth2Section: React.VFC = () => {
@@ -172,7 +171,7 @@ const Oauth2Section: React.VFC = () => {
     }
   }, [accountLinkToken, appId, code, currentMemberId, history, host, isAuthenticating, provider, redirect, socialLogin])
 
-  return <LoadingPage />
+  return <div>Oauth2 processing...</div>
 }
 
 export default OAuth2Page

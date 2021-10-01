@@ -1,4 +1,5 @@
 import { SkeletonText } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { render } from 'mustache'
 import React, { useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
@@ -12,7 +13,6 @@ import PodcastAlbumSubscriptionPlanCard from '../components/common/podcastAlbum/
 import Responsive, { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { useApp } from '../containers/common/AppContext'
 import PodcastPlayerContext from '../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../helpers'
 import { usePodcastAlbum } from '../hooks/podcastAlbum'
@@ -138,7 +138,10 @@ const PodcastAlbumPage: React.VFC = () => {
               <div className="my-5">
                 <BraftContent>{podcastAlbum.description}</BraftContent>
               </div>
-              <PodcastAlbumContentListBlock podcastPrograms={podcastAlbum.podcastPrograms} />
+              <PodcastAlbumContentListBlock
+                podcastAlbumId={podcastAlbum.id}
+                podcastPrograms={podcastAlbum.podcastPrograms}
+              />
             </div>
           </div>
 

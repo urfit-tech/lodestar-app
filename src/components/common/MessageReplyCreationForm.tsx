@@ -2,11 +2,11 @@ import { Button } from '@chakra-ui/react'
 import { Form, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages, issueMessages } from '../../helpers/translation'
-import { useAuth } from '../auth/AuthContext'
 import MemberAvatar from '../common/MemberAvatar'
 
 export const StyledEditor = styled(BraftEditor)`

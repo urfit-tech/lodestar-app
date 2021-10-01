@@ -1,4 +1,5 @@
-import { Spin, Typography } from 'antd'
+import { Spinner } from '@chakra-ui/react'
+import { Typography } from 'antd'
 import moment from 'moment'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -88,10 +89,10 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
 
   if (loading || !target) {
     if (variant === 'coupon-product') {
-      return <Spin size="small" className="d-block" />
+      return <Spinner size="sm" className="d-block" />
     }
 
-    return <Spin size="large" />
+    return <Spinner size="lg" />
   }
 
   const {

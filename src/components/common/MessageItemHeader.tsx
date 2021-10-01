@@ -1,7 +1,8 @@
 import { Tag } from 'antd'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import moment from 'moment'
-import React, { useContext } from 'react'
-import styled, { ThemeContext } from 'styled-components'
+import React from 'react'
+import styled from 'styled-components'
 import { ProductRoleName } from '../../types/general'
 import { ProgramRoleProps } from '../../types/program'
 import MemberAvatar from '../common/MemberAvatar'
@@ -14,11 +15,11 @@ const StyledTag = styled(Tag)<{ variant?: string }>`
 `
 
 const MessageItemHeader: React.VFC<{
-  programRoles: ProgramRoleProps[]
+  programRoles: Pick<ProgramRoleProps, 'id' | 'memberId' | 'name'>[]
   memberId: string
   createdAt: Date
 }> = ({ programRoles, memberId, createdAt }) => {
-  const theme = useContext(ThemeContext)
+  const theme = useAppTheme()
   return (
     <div className="d-flex align-items-center justify-content-between mb-2">
       <div className="d-flex align-items-center justify-content-center">
@@ -29,7 +30,7 @@ const MessageItemHeader: React.VFC<{
               .filter(role => role.memberId === memberId)
               .map(role =>
                 role.name === 'instructor' ? (
-                  <StyledTag key={role.id} color={theme['@primary-color']} className="ml-2 mr-0">
+                  <StyledTag key={role.id} color={theme.colors.primary[500]} className="ml-2 mr-0">
                     <ProductRoleFormatter value={role.name as ProductRoleName} />
                   </StyledTag>
                 ) : role.name === 'assistant' ? (

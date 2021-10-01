@@ -1,7 +1,8 @@
 import { Divider, Icon, Tag, Typography } from 'antd'
-import React, { useContext } from 'react'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
+import React from 'react'
 import { useIntl } from 'react-intl'
-import styled, { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import { durationFormatter } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
@@ -65,7 +66,7 @@ const ProgramContentListSection: React.VFC<{
   }
 }> = ({ memberId, program }) => {
   const { formatMessage } = useIntl()
-  const theme = useContext(ThemeContext)
+  const theme = useAppTheme()
   const { enrolledProgramIds } = useEnrolledProgramIds(memberId)
 
   const isEnrolled = enrolledProgramIds.includes(program.id)
@@ -105,7 +106,7 @@ const ProgramContentListSection: React.VFC<{
                         programContentId={programContent.id}
                         render={({ setVisible }) => (
                           <StyledObscure onClick={() => setVisible(true)}>
-                            <StyledTag color={theme['@primary-color']}>
+                            <StyledTag color={theme.colors.primary[500]}>
                               {formatMessage(productMessages.program.content.trial)}
                             </StyledTag>
                           </StyledObscure>

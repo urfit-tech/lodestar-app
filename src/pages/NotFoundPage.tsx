@@ -6,12 +6,9 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages } from '../helpers/translation'
-import { usePage } from '../hooks/page'
 import { ReactComponent as routeErrorIcon } from '../images/404.svg'
 import { ReactComponent as error2Icon } from '../images/error-2.svg'
 import { ReactComponent as errorIcon } from '../images/error.svg'
-import AppPage from './AppPage'
-import LoadingPage from './LoadingPage'
 
 const StyledWrapper = styled.div`
   padding: 5rem 1rem;
@@ -59,15 +56,6 @@ const NotFoundPage: React.VFC<{
 }> = ({ variant }) => {
   const { formatMessage } = useIntl()
   let history = useHistory()
-  const { loadingAppPage, appPage, errorAppPage } = usePage(window.location.pathname)
-
-  if (loadingAppPage) {
-    return <LoadingPage />
-  }
-
-  if (!loadingAppPage && !errorAppPage && appPage.path) {
-    return <AppPage page={appPage} />
-  }
 
   const handleClick =
     variant === 'error'

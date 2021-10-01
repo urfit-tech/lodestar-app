@@ -1,18 +1,18 @@
 import { SkeletonText } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useAuth } from '../../components/auth/AuthContext'
 import MembershipCardBlock from '../../components/common/MembershipCardBlock'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
-import { useApp } from '../../containers/common/AppContext'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCards, useMembershipCard } from '../../hooks/card'
 import { useMember } from '../../hooks/member'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
-import NotFoundPage from '../NotFoundPage'
+import ForbiddenPage from '../ForbiddenPage'
 
 const StyledContainer = styled.div`
   margin-bottom: 1.25rem;
@@ -26,10 +26,10 @@ const StyledContainer = styled.div`
 const CardCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { loading, enabledModules } = useApp()
+  const app = useApp()
   const { enrolledMembershipCards } = useEnrolledMembershipCards(currentMemberId || '')
 
-  if (loading) {
+  if (app.loading) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -37,8 +37,8 @@ const CardCollectionAdminPage: React.VFC = () => {
     )
   }
 
-  if (!enabledModules.member_card) {
-    return <NotFoundPage />
+  if (!app.loading && !app.enabledModules.member_card) {
+    return <ForbiddenPage />
   }
 
   return (

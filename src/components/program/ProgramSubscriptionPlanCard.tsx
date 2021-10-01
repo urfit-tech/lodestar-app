@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext } from 'react'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -8,7 +9,6 @@ import CheckoutProductModal from '../../components/checkout/CheckoutProductModal
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useEnrolledPlanIds, useProgram } from '../../hooks/program'
 import { ProgramPlanProps } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
 import { AuthModalContext } from '../auth/AuthModal'
 import AdminCard from '../common/AdminCard'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'

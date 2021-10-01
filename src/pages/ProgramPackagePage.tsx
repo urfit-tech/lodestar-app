@@ -1,10 +1,10 @@
 import { Button } from '@chakra-ui/react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { createRef, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { useAuth } from '../components/auth/AuthContext'
 import { CommonLargeTitleMixin } from '../components/common'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -45,9 +45,8 @@ const ProgramPackagePage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { programPackageId } = useParams<{ programPackageId: string }>()
   const { currentMemberId } = useAuth()
-  const { loadingProgramPackage, errorProgramPackage, programPackageIntroduction } = useProgramPackageIntroduction(
-    programPackageId,
-  )
+  const { loadingProgramPackage, errorProgramPackage, programPackageIntroduction } =
+    useProgramPackageIntroduction(programPackageId)
   const { loadingProgramPackageIds, enrolledProgramPackagePlanIds } = useEnrolledProgramPackagePlanIds(
     currentMemberId || '',
   )

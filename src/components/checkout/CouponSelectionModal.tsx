@@ -1,6 +1,7 @@
-import { Button, Input } from '@chakra-ui/react'
-import { Divider, message, Spin } from 'antd'
+import { Button, Input, Spinner } from '@chakra-ui/react'
+import { Divider, message } from 'antd'
 import axios from 'axios'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -9,7 +10,6 @@ import { handleError } from '../../helpers'
 import { checkoutMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import { useCouponCollection } from '../../hooks/data'
 import { CouponProps, OrderDiscountProps, OrderProductProps } from '../../types/checkout'
-import { useAuth } from '../auth/AuthContext'
 import CommonModal from '../common/CommonModal'
 import CouponCard from './CouponCard'
 
@@ -72,7 +72,7 @@ const CouponSelectionModal: React.VFC<{
         isOpen={visible}
       >
         {loadingCoupons ? (
-          <Spin />
+          <Spinner />
         ) : (
           coupons
             .filter(coupon => !coupon.status.outdated && !coupon.status.used)

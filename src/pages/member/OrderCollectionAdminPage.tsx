@@ -1,6 +1,6 @@
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { useAuth } from '../../components/auth/AuthContext'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import OrderCollectionAdminCard from '../../components/sale/OrderCollectionAdminCard'
 import { commonMessages } from '../../helpers/translation'

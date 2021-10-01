@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
-import { useAuth } from '../components/auth/AuthContext'
-import { useApp } from '../containers/common/AppContext'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import hasura from '../hasura'
 
 const useIssue = (threadId: string) => {

@@ -11,12 +11,12 @@ import {
   SkeletonText,
   Spinner,
 } from '@chakra-ui/react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { useAuth } from '../components/auth/AuthContext'
 import { CommonTitleMixin } from '../components/common'
 import MemberAvatar, { MemberName } from '../components/common/MemberAvatar'
 import { BraftContent } from '../components/common/StyledBraftEditor'

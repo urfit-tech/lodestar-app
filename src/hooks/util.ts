@@ -1,22 +1,14 @@
-import { filter } from 'ramda'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useContext, useEffect, useRef } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import TagManager from 'react-gtm-module'
 import { hotjar } from 'react-hotjar'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router-dom'
-import { ThemeContext } from 'styled-components'
-import { useAuth } from '../components/auth/AuthContext'
-import { useApp } from '../containers/common/AppContext'
 import LanguageContext from '../contexts/LanguageContext'
 import { productMessages } from '../helpers/translation'
-import { routesProps } from '../Routes'
-
-export const useRouteKeys = () => {
-  const location = useLocation()
-  return Object.keys(filter(routeProps => routeProps.path === location.pathname, routesProps))
-}
 
 export const useInterval = (callback: Function, delay: number | null, immediately?: boolean) => {
   const savedCallback = useRef<Function>()
@@ -106,7 +98,7 @@ export const useGTM = () => {
 
 export const useSwarmify = () => {
   const { formatMessage } = useIntl()
-  const theme = useContext(ThemeContext)
+  const theme = useAppTheme()
   const { settings } = useApp()
   const { currentMember, isAuthenticating } = useAuth()
   const swarmcdnkey = settings['swarmify.cdn_key']
@@ -116,7 +108,7 @@ export const useSwarmify = () => {
       swarmcdnkey,
       theme: {
         button: 'circle',
-        primaryColor: theme ? theme['@primary-color'] : '#000',
+        primaryColor: theme ? theme.colors.primary?.[500] : '#000',
       },
       plugins: {},
     }

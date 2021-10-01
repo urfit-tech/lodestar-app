@@ -1,11 +1,11 @@
 import { Divider } from '@chakra-ui/react'
 import { Menu, message } from 'antd'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { issueMessages } from '../../helpers/translation'
 import { useIssueReply, useMutateIssue } from '../../hooks/issue'
 import { ProgramRoleProps } from '../../types/program'
-import { useAuth } from '../auth/AuthContext'
 import MessageItem from '../common/MessageItem'
 import MessageItemAction from '../common/MessageItemAction'
 import MessageItemContent from '../common/MessageItemContent'
@@ -24,7 +24,7 @@ const MessageSuggestItem: React.VFC<{
   memberId: string
   description: string
   suggestReplyCount: number
-  programRoles: ProgramRoleProps[]
+  programRoles: Pick<ProgramRoleProps, 'id' | 'name' | 'memberId'>[]
   reactedMemberIds: string[]
   createdAt: Date
   title?: string
@@ -42,9 +42,8 @@ const MessageSuggestItem: React.VFC<{
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { issueReplies, refetchIssueReplies } = useIssueReply(suggestId)
-  const { updateIssue, deleteIssue, insertIssueReaction, deleteIssueReaction, insertIssueReply } = useMutateIssue(
-    suggestId,
-  )
+  const { updateIssue, deleteIssue, insertIssueReaction, deleteIssueReaction, insertIssueReply } =
+    useMutateIssue(suggestId)
 
   return (
     <MessageItem>

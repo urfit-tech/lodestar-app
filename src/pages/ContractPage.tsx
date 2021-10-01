@@ -12,7 +12,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { dateFormatter, handleError } from '../helpers'
 import { useMemberContract } from '../hooks/data'
-import LoadingPage from './LoadingPage'
+import NotFoundPage from './NotFoundPage'
 
 const StyledTitle = styled(Typography.Title)`
   && {
@@ -73,7 +73,7 @@ const ContractPage: React.VFC = () => {
   }, [])
 
   if (!memberContract) {
-    return <LoadingPage />
+    return <NotFoundPage />
   }
 
   const handleCheck = (e: CheckboxChangeEvent) => {

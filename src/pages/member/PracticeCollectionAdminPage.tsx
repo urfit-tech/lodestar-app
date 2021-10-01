@@ -1,7 +1,7 @@
 import { SkeletonText } from '@chakra-ui/react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useAuth } from '../../components/auth/AuthContext'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import PracticeAdminCard from '../../components/practice/PracticeAdminCard'
 import { EnrolledProgramSelector } from '../../components/program/ProgramSelector'

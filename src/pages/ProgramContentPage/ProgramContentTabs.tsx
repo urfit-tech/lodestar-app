@@ -1,11 +1,11 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import IssueThreadBlock from '../../components/issue/IssueThreadBlock'
 import PracticeDisplayedCollection from '../../components/practice/PracticeDisplayedCollection'
 import ProgramContentMaterialBlock from '../../components/program/ProgramContentMaterialBlock'
-import { useApp } from '../../containers/common/AppContext'
 import { programMessages } from '../../helpers/translation'
 import {
   ProgramContentAttachmentProps,

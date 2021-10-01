@@ -4,6 +4,8 @@ import { SkeletonText } from '@chakra-ui/react'
 import { Tabs } from 'antd'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
@@ -13,7 +15,6 @@ import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import Activity from '../components/activity/Activity'
 import CreatorBriefCard from '../components/appointment/CreatorBriefCard'
-import { useAuth } from '../components/auth/AuthContext'
 import { AuthModalContext } from '../components/auth/AuthModal'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import { BREAK_POINT } from '../components/common/Responsive'
@@ -24,7 +25,6 @@ import PodcastProgramBriefCard from '../components/podcast/PodcastProgramBriefCa
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
 import ProgramCard from '../components/program/ProgramCard'
 import ProjectIntroCard from '../components/project/ProjectIntroCard'
-import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { ReactComponent as SearchIcon } from '../images/search.svg'
@@ -660,6 +660,7 @@ const useSearchProductCollection = (
           id: programRole.id,
           name: 'instructor',
           memberId: programRole.member?.id || '',
+          memberName: programRole.member?.name || '',
         })),
         plans: program.program_plans.map(programPlan => ({
           id: programPlan.id,

@@ -1,7 +1,7 @@
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import styled from 'styled-components'
 import { StyledFooter, StyledNavAnchor, StyledNavLink } from '.'
-import { useApp } from '../../../containers/common/AppContext'
 import { BREAK_POINT } from '../Responsive'
 
 const StyledLinkBlock = styled.div`

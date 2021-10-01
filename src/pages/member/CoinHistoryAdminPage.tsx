@@ -2,22 +2,20 @@ import { useQuery } from '@apollo/react-hooks'
 import { Button, SkeletonText, Tab, TabPanels, Tabs } from '@chakra-ui/react'
 import { message } from 'antd'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { sum } from 'ramda'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useAuth } from '../../components/auth/AuthContext'
 import { EmptyBlock } from '../../components/common'
 import AdminCard from '../../components/common/AdminCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
-import { useApp } from '../../containers/common/AppContext'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
-import LoadingPage from '../LoadingPage'
-import NotFoundPage from '../NotFoundPage'
 
 const messages = defineMessages({
   currentOwnedCoins: { id: 'payment.label.currentOwnedCoins', defaultMessage: '目前擁有' },
@@ -71,15 +69,6 @@ const StyledInactivatedLabel = styled(StyledLabel)`
 const CoinHistoryAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { loading, enabledModules } = useApp()
-
-  if (loading) {
-    return <LoadingPage />
-  }
-
-  if (!enabledModules.coin) {
-    return <NotFoundPage />
-  }
 
   return (
     <MemberAdminLayout content={{ icon: CoinIcon, title: formatMessage(commonMessages.content.coinsAdmin) }}>

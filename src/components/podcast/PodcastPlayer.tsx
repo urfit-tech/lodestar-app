@@ -1,7 +1,10 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, Divider, Popover } from 'antd'
 import { ButtonProps } from 'antd/lib/button'
+import axios from 'axios'
 import isMobile from 'is-mobile'
+import { throttle } from 'lodash'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import React, { useContext, useEffect, useRef, useState } from 'react'
@@ -10,24 +13,27 @@ import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import PodcastPlayerContext, { PlaylistModeType } from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
-import { ReactComponent as Backward5Icon } from '../../images/backward-5.svg'
-import { ReactComponent as EllipsisIcon } from '../../images/ellipsis.svg'
-import { ReactComponent as Forward5Icon } from '../../images/forward-5.svg'
-import { ReactComponent as NextIcon } from '../../images/icon-next.svg'
-import { ReactComponent as PrevIcon } from '../../images/icon-prev.svg'
-import { ReactComponent as LoopIcon } from '../../images/loop.svg'
-import { ReactComponent as PlayRate05xIcon } from '../../images/multiple-0-5.svg'
-import { ReactComponent as PlayRate10xIcon } from '../../images/multiple-1-0.svg'
-import { ReactComponent as PlayRate15xIcon } from '../../images/multiple-1-5.svg'
-import { ReactComponent as PlayRate20xIcon } from '../../images/multiple-2-0.svg'
-import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
-import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
-import { ReactComponent as PlaylistIcon } from '../../images/playlist.svg'
-import { ReactComponent as ShuffleIcon } from '../../images/shuffle.svg'
-import { ReactComponent as SingleLoopIcon } from '../../images/single-loop.svg'
-import { ReactComponent as TimesIcon } from '../../images/times.svg'
+import {
+  Backward5Icon,
+  EllipsisIcon,
+  Forward5Icon,
+  LoopIcon,
+  NextIcon,
+  PauseCircleIcon,
+  PlayCircleIcon,
+  PlaylistIcon,
+  PlayRate05xIcon,
+  PlayRate10xIcon,
+  PlayRate15xIcon,
+  PlayRate20xIcon,
+  PrevIcon,
+  ShuffleIcon,
+  SingleLoopIcon,
+  TimesIcon,
+} from '../../images'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 import PlaylistOverlay from './PlaylistOverlay'
 
@@ -190,18 +196,23 @@ const PodcastPlayer: React.VFC<{
     loadingPodcastProgram,
     maxDuration,
     isPodcastProgramChanged,
+    progress: totalProgress,
+    lastProgress,
     togglePlaylistMode,
     shift,
     closePlayer,
     setIsPlaying,
     setMaxDuration,
+    refetchPodcastProgramProgress,
   } = useContext(PodcastPlayerContext)
+  const { authToken } = useAuth()
   const playerRef = useRef<ReactPlayer | null>(null)
   const [progress, setProgress] = useState(0)
   const [isSeeking, setIsSeeking] = useState(false)
   const [playRate, setPlayRate] = useState(1)
   const [showAction, setShowAction] = useState(false)
   const [isAudioLoading, setIsAudioLoading] = useState(false)
+  const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
 
   const handlePlayRate = () => {
     playRate < 1 ? setPlayRate(1) : playRate < 1.5 ? setPlayRate(1.5) : playRate < 2 ? setPlayRate(2) : setPlayRate(0.5)
@@ -214,6 +225,28 @@ const PodcastPlayer: React.VFC<{
       setProgress(0)
     }
   }, [isPodcastProgramChanged, setMaxDuration])
+
+  const upsertPodcastProgramProgress = throttle(async (progress: number) => {
+    axios
+      .post(
+        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/podcast-program-progress`,
+        {
+          podcastProgramId: currentPlayingId,
+          memberId: memberId,
+          progress: progress > totalProgress ? progress : totalProgress,
+          lastProgress: progress,
+          podcastAlbumId: podcastAlbumId || null,
+        },
+        { headers: { authorization: `Bearer ${authToken}` } },
+      )
+      .then(({ data: { code } }) => {
+        if (code === 'SUCCESS') {
+          refetchPodcastProgramProgress?.()
+          return
+        }
+      })
+      .catch(() => {})
+  }, 3000)
 
   return (
     <StyledWrapper>
@@ -230,8 +263,9 @@ const PodcastPlayer: React.VFC<{
             setMaxDuration && setMaxDuration(parseFloat(duration.toFixed(1)))
           }}
           onProgress={progress => {
-            if (!isSeeking) {
+            if (progress.played !== 0 && !isSeeking) {
               setProgress(progress.playedSeconds)
+              upsertPodcastProgramProgress(progress.played)
             }
           }}
           onEnded={() => {

@@ -1,5 +1,5 @@
-import { Button } from '@chakra-ui/react'
-import { Dropdown, Icon, Menu, Select } from 'antd'
+import { Button, Select } from '@chakra-ui/react'
+import { Dropdown, Icon, Menu } from 'antd'
 import { max, min } from 'lodash'
 import { repeat } from 'ramda'
 import React, { useContext, useState } from 'react'
@@ -239,18 +239,18 @@ const MerchandiseBlock: React.VFC<{
         <StyledInfo className="d-flex align-items-center mb-4">
           <div className="d-inline-block mr-4 flex-shrink-0">{formatMessage(messages.specification)}</div>
           <div className="flex-grow-1">
-            <Select<string>
+            <Select
               value={selectedSpec.id}
-              onChange={value => {
-                const target = merchandise.specs.find(spec => spec.id === value)
+              onChange={e => {
+                const target = merchandise.specs.find(spec => spec.id === e.target.value)
                 target && setSelectedSpec(target)
               }}
               style={{ width: '100%' }}
             >
               {merchandise.specs.map(spec => (
-                <Select.Option key={spec.id} value={spec.id}>
+                <option key={spec.id} value={spec.id}>
                   {spec.title}
-                </Select.Option>
+                </option>
               ))}
             </Select>
           </div>

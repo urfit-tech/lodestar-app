@@ -1,3 +1,4 @@
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import ModularBriefFooter from '../../components/common/Footer/ModularBriefFooter'
@@ -16,10 +17,9 @@ import ProjectStaticSection from '../../components/project/ProjectStaticSection'
 import ProjectStatisticsSection from '../../components/project/ProjectStatisticsSection'
 import ProjectSwitchDisplaySection from '../../components/project/ProjectSwitchDisplaySection'
 import ProjectTourSection from '../../components/project/ProjectTourSection'
-import { useApp } from '../../containers/common/AppContext'
 import { useProject } from '../../hooks/project'
 import EmptyCover from '../../images/empty-cover.png'
-import LoadingPage from '../LoadingPage'
+import NotFoundPage from '../NotFoundPage'
 
 const ModularPage: React.VFC<{
   projectId: string
@@ -38,7 +38,7 @@ const ModularPage: React.VFC<{
   }, [])
 
   if (!project) {
-    return <LoadingPage />
+    return <NotFoundPage />
   }
 
   let seoMeta: { title?: string; description?: string } | undefined

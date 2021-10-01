@@ -1,9 +1,10 @@
 import { Icon } from '@chakra-ui/icons'
 import { Progress } from 'antd'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import moment from 'moment'
-import React, { useContext } from 'react'
+import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import styled, { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import { CustomRatioImage } from '../../components/common/Image'
 import PriceLabel from '../../components/common/PriceLabel'
 import { projectMessages } from '../../helpers/translation'
@@ -86,7 +87,7 @@ const ProjectIntroCard: React.VFC<ProjectIntroProps> = ({
   enrollmentCount,
 }) => {
   const { formatMessage } = useIntl()
-  const theme = useContext(ThemeContext)
+  const theme = useAppTheme()
 
   return (
     <StyledCard>
@@ -111,7 +112,7 @@ const ProjectIntroCard: React.VFC<ProjectIntroProps> = ({
                 }
                 width={50}
                 strokeWidth={12}
-                strokeColor={theme['@primary-color']}
+                strokeColor={theme.colors.primary[500]}
                 format={() =>
                   `${
                     !targetAmount

@@ -1,18 +1,17 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Card, List, Tag } from 'antd'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../../components/auth/AuthContext'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
-import { useApp } from '../../containers/common/AppContext'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
-import LoadingPage from '../LoadingPage'
-import NotFoundPage from '../NotFoundPage'
+import ForbiddenPage from '../ForbiddenPage'
 
 const messages = defineMessages({
   duration: { id: 'contract.label.duration', defaultMessage: '服務期間' },
@@ -24,7 +23,7 @@ const messages = defineMessages({
 const ContractCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { loading, enabledModules } = useApp()
+  const app = useApp()
   const { data: memberContractsData } = useQuery<hasura.GET_MEMBER_CONTRACTS, hasura.GET_MEMBER_CONTRACTSVariables>(
     GET_MEMBER_CONTRACTS,
     {
@@ -32,12 +31,8 @@ const ContractCollectionAdminPage: React.VFC = () => {
     },
   )
 
-  if (loading) {
-    return <LoadingPage />
-  }
-
-  if (!enabledModules.contract) {
-    return <NotFoundPage />
+  if (!app.loading && !app.enabledModules.contract) {
+    return <ForbiddenPage />
   }
 
   const data =

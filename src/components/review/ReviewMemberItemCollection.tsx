@@ -1,12 +1,12 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { HTMLAttributes, useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReviewProps } from '../../types/review'
-import { useAuth } from '../auth/AuthContext'
 import { StyledDivider } from './ReviewCollectionBlock'
 import ReviewItem from './ReviewItem'
 

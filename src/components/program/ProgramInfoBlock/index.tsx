@@ -1,14 +1,16 @@
 import { Button } from '@chakra-ui/react'
 import { Affix, Card } from 'antd'
 import { isEmpty } from 'lodash'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { useApp } from '../../../containers/common/AppContext'
 import { commonMessages } from '../../../helpers/translation'
 import { usePublicMember } from '../../../hooks/member'
 import { useEnrolledProgramIds } from '../../../hooks/program'
+import { Category } from '../../../types/general'
 import {
   ProgramContentProps,
   ProgramContentSectionProps,
@@ -16,7 +18,6 @@ import {
   ProgramProps,
   ProgramRoleProps,
 } from '../../../types/program'
-import { useAuth } from '../../auth/AuthContext'
 import ProgramPaymentButton from '../../checkout/ProgramPaymentButton'
 import CountDownTimeBlock from '../../common/CountDownTimeBlock'
 import { AvatarImage } from '../../common/Image'
@@ -53,6 +54,7 @@ const StyledCountDownBlock = styled.div`
 const ProgramInfoBlock: React.VFC<{
   program: ProgramProps & {
     roles: ProgramRoleProps[]
+    categories: Category[]
     plans: ProgramPlanProps[]
     contentSections: (ProgramContentSectionProps & {
       contents: ProgramContentProps[]

@@ -1,4 +1,6 @@
 import { Button as ChakraButton, Icon, SkeletonText } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -7,17 +9,16 @@ import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import { useAuth } from '../components/auth/AuthContext'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ProgramCard from '../components/program/ProgramCard'
 import ProgramCollectionBanner from '../components/program/ProgramCollectionBanner'
-import { useApp } from '../containers/common/AppContext'
 import LanguageContext from '../contexts/LanguageContext'
 import { notEmpty } from '../helpers'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
+import { ProductImpressionField } from '../types/ecommerce'
 import { Category } from '../types/general'
 
 const StyledButton = styled(ChakraButton)`
@@ -42,7 +43,7 @@ const ProgramCollectionPage: React.VFC = () => {
   const [permitted] = useQueryParam('permitted', BooleanParam)
 
   const { currentMemberId } = useAuth()
-  const { settings } = useApp()
+  const { settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { pageTitle } = useNav()
   const { currentLanguage } = useContext(LanguageContext)
 
@@ -61,6 +62,7 @@ const ProgramCollectionPage: React.VFC = () => {
 
   useEffect(() => {
     if (programs) {
+      const productImpressions: ProductImpressionField[] = []
       programs.forEach((program, index) => {
         const listPrice =
           program.isSubscription && program.plans.length > 0 ? program.plans[0].listPrice : program.listPrice || 0
@@ -77,8 +79,31 @@ const ProgramCollectionPage: React.VFC = () => {
           price: `${salePrice || listPrice}`,
           position: index + 1,
         })
+        if (settings['tracking.gtm_id']) {
+          productImpressions.push({
+            name: program.title,
+            id: program.id,
+            price: salePrice || listPrice,
+            brand: settings['title'] || appId,
+            category: program.categories.map(category => category.name).join('|'),
+            variant: program.roles.map(role => role.memberName).join('|'),
+            list: 'Program',
+            position: index + 1,
+          })
+        }
       })
       ReactGA.ga('send', 'pageview')
+
+      if (productImpressions.length > 0) {
+        ;(window as any).dataLayer = (window as any).dataLayer || []
+        ;(window as any).dataLayer.push({ ecommerce: null })
+        ;(window as any).dataLayer.push({
+          ecommerce: {
+            currencyCode: appCurrencyId || 'TWD',
+            impressions: productImpressions,
+          },
+        })
+      }
     }
   }, [programs])
 
@@ -179,6 +204,7 @@ const ProgramCollectionPage: React.VFC = () => {
                       isEnrolled={enrolledProgramIds.includes(program.id)}
                       noPrice={!!noPrice}
                       withMeta={!noMeta}
+                      pageFrom={'CollectionPage'}
                     />
                   </div>
                 ))

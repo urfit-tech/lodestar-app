@@ -1,5 +1,7 @@
 import { Icon, Input, SkeletonText, useToast } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { prop, sum } from 'ramda'
 import React, { useContext, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -7,7 +9,6 @@ import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { useAuth } from '../../components/auth/AuthContext'
 import CartProductTableCard, { useProductInventory } from '../../components/checkout/CartProductTableCard'
 import CheckoutCard from '../../components/checkout/CheckoutCard'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
@@ -15,7 +16,6 @@ import InvoiceInput, { validateInvoice } from '../../components/checkout/Invoice
 import ShippingInput, { csvShippingMethods, validateShipping } from '../../components/checkout/ShippingInput'
 import AdminCard from '../../components/common/AdminCard'
 import DefaultLayout from '../../components/layout/DefaultLayout'
-import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { rgba } from '../../helpers'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
@@ -99,7 +99,7 @@ const CheckoutBlock: React.VFC<{
     payment: {
       gateway: settings['payment.perpetual.default_gateway'] || 'spgateway',
       method: settings['payment.perpetual.default_gateway_method'] || 'credit',
-    },
+    } as PaymentProps,
   }
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
@@ -244,6 +244,11 @@ const CheckoutBlock: React.VFC<{
       ReactPixel.track('AddPaymentInfo', {
         value: check ? sum(check.orderProducts.map(prop('price'))) - sum(check.orderDiscounts.map(prop('price'))) : 0,
         currency: 'TWD',
+        contents: check.orderProducts.map(orderProduct => ({
+          id: orderProduct.productId,
+          name: orderProduct.name,
+          quantity: orderProduct.options?.quantity || 1,
+        })),
       })
     }
 

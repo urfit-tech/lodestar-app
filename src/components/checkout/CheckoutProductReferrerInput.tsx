@@ -1,7 +1,7 @@
 import { FormControl, FormErrorMessage } from '@chakra-ui/react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { useAuth } from '../../components/auth/AuthContext'
 import { commonMessages } from '../../helpers/translation'
 import { Input } from '../common/CommonForm'
 

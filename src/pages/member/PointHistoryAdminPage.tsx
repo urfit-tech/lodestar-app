@@ -2,20 +2,19 @@ import { useQuery } from '@apollo/react-hooks'
 import { Button, SkeletonText } from '@chakra-ui/react'
 import { message, Tabs } from 'antd'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useAuth } from '../../components/auth/AuthContext'
 import { EmptyBlock } from '../../components/common'
 import AdminCard from '../../components/common/AdminCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
-import { useApp } from '../../containers/common/AppContext'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as PointIcon } from '../../images/point.svg'
-import LoadingPage from '../LoadingPage'
-import NotFoundPage from '../NotFoundPage'
+import ForbiddenPage from '../ForbiddenPage'
 
 const messages = defineMessages({
   currentOwnedPoints: { id: 'payment.label.currentOwnedPoints', defaultMessage: '目前擁有' },
@@ -69,14 +68,10 @@ const StyledInactivatedLabel = styled(StyledLabel)`
 const PointHistoryAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { loading, enabledModules } = useApp()
+  const app = useApp()
 
-  if (loading) {
-    return <LoadingPage />
-  }
-
-  if (!enabledModules.point) {
-    return <NotFoundPage />
+  if (!app.loading && !app.enabledModules.point) {
+    return <ForbiddenPage />
   }
 
   return (

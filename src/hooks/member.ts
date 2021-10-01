@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { uniq } from 'ramda'
-import { useApp } from '../containers/common/AppContext'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { MemberProps, MemberPublicProps, MemberSocialType, SocialCardProps, UserRole } from '../types/member'
@@ -330,5 +330,66 @@ export const useLatestCreator = (topInstructorIds: string[], appId: string) => {
     loadingLatestCreators: loading,
     errorLatestCreators: error,
     latestCreators,
+  }
+}
+
+export const usePublishedCreator = () => {
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_CREATOR>(gql`
+    query GET_PUBLISHED_CREATOR {
+      creator(where: { published_at: { _is_null: false } }, order_by: { position: asc, published_at: desc }) {
+        id
+        name
+        picture_url
+        member {
+          title
+          abstract
+        }
+        creator_categories {
+          id
+          category {
+            id
+            name
+          }
+        }
+        member_specialities(limit: 3) {
+          id
+          tag_name
+        }
+      }
+    }
+  `)
+
+  const creators: {
+    id: string | null
+    name: string | null
+    title: string | null
+    pictureUrl: string | null
+    abstract: string | null
+    categories: {
+      id: string
+      name: string
+    }[]
+    specialtyNames: string[]
+  }[] =
+    loading || error || !data
+      ? []
+      : data.creator.map(v => ({
+          id: v.id,
+          name: v.name,
+          pictureUrl: v.picture_url,
+          title: v.member?.title || null,
+          abstract: v.member?.abstract || null,
+          categories: v.creator_categories.map(w => ({
+            id: w.category.id,
+            name: w.category.name,
+          })),
+          specialtyNames: v.member_specialities.map(w => w.tag_name),
+        }))
+
+  return {
+    loadingCreators: loading,
+    errorCreators: error,
+    creators,
+    refetchCreators: refetch,
   }
 }

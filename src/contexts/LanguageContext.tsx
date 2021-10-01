@@ -1,8 +1,8 @@
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
 import 'moment/locale/zh-tw'
 import React, { createContext, useEffect, useState } from 'react'
 import { IntlProvider } from 'react-intl'
-import { useApp } from '../containers/common/AppContext'
 
 const supportedLanguages = ['zh', 'zh-cn', 'en', 'vi', 'acsi']
 

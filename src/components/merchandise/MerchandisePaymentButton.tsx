@@ -1,16 +1,16 @@
 import { Button, Icon } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
-import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CartIcon } from '../../images/cart.svg'
 import { MerchandiseProps, MerchandiseSpecProps } from '../../types/merchandise'
-import { useAuth } from '../auth/AuthContext'
 import { AuthModalContext } from '../auth/AuthModal'
 
 const MerchandisePaymentButton: React.VFC<{
@@ -77,6 +77,7 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
   const handleClick = async () => {
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
+        content_name: `${merchandise.title} - ${merchandiseSpec.title}`,
         value: merchandiseSpec.listPrice,
         currency: 'TWD',
       })

@@ -1,9 +1,9 @@
 import { SkeletonText } from '@chakra-ui/react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { useAuth } from '../components/auth/AuthContext'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -44,7 +44,7 @@ const PodcastProgramContentPage: React.VFC = () => {
     <DefaultLayout noFooter>
       <div className="row no-gutters">
         <div className="col-12 col-lg-4">
-          {typeof currentMemberId === 'string' && (
+          {currentMemberId && (
             <PodcastProgramCover
               memberId={currentMemberId}
               podcastProgramId={podcastProgramId}

@@ -1,12 +1,13 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniq } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
-import { useAuth } from '../components/auth/AuthContext'
-import { useApp } from '../containers/common/AppContext'
 import { PodcastProgramProps } from '../containers/podcast/PodcastProgramTimeline'
 import hasura from '../hasura'
 import { getFileDownloadableLink, notEmpty } from '../helpers'
+import { StatusType } from '../types/general'
 import { PlaylistProps, PodcastProgramContent, PodcastProgramContentProps } from '../types/podcast'
 
 export const usePodcastProgramCollection = (creatorId?: string) => {
@@ -682,5 +683,44 @@ export const usePublicPodcastProgramIds: (id?: string) => {
     status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
     publicPodcastProgramIds:
       data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.podcast_program?.id) || [],
+  }
+}
+
+export const usePodcastProgramProgress: (programPodcastId: string) => {
+  podcastProgramProgressStatus: StatusType
+  podcastProgramProgress: {
+    id: string
+    progress: number
+    lastProgress: number
+  } | null
+  refetchPodcastProgramProgress: () => void
+} = programPodcastId => {
+  const { currentMemberId } = useAuth()
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_PODCAST_PROGRAM_PROGRESS,
+    hasura.GET_PODCAST_PROGRAM_PROGRESSVariables
+  >(
+    gql`
+      query GET_PODCAST_PROGRAM_PROGRESS($programPodcastId: uuid!, $memberId: String!) {
+        podcast_program_progress(
+          where: { podcast_program_id: { _eq: $programPodcastId }, member_id: { _eq: $memberId } }
+        ) {
+          id
+          progress
+          last_progress
+        }
+      }
+    `,
+    { variables: { programPodcastId, memberId: currentMemberId || '' } },
+  )
+  const [podcastProgramProgress = null] = data?.podcast_program_progress || []
+  return {
+    podcastProgramProgressStatus: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
+    podcastProgramProgress: podcastProgramProgress && {
+      id: podcastProgramProgress.id,
+      progress: podcastProgramProgress.progress,
+      lastProgress: podcastProgramProgress.last_progress,
+    },
+    refetchPodcastProgramProgress: refetch,
   }
 }

@@ -1,6 +1,8 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button } from '@chakra-ui/react'
-import { Layout, PageHeader, Spin } from 'antd'
+import { Button, Spinner } from '@chakra-ui/react'
+import { Layout, PageHeader } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { AiOutlineProfile } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
@@ -8,11 +10,9 @@ import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { useAuth } from '../components/auth/AuthContext'
 import AdminCard from '../components/common/AdminCard'
 import { StyledLayoutContent } from '../components/layout/DefaultLayout.styled'
 import ProgramContentMenu from '../components/program/ProgramContentMenu'
-import { useApp } from '../containers/common/AppContext'
 import { ProgressProvider } from '../contexts/ProgressContext'
 import { commonMessages } from '../helpers/translation'
 import { useProgram } from '../hooks/program'
@@ -105,7 +105,7 @@ const ProgramContentCollectionPage: React.VFC = () => {
         <div className="container py-5">
           <AdminCard>
             {!currentMemberId || loadingProgram || !program ? (
-              <Spin />
+              <Spinner />
             ) : (
               <ProgressProvider programId={program.id} memberId={currentMemberId}>
                 <ProgramContentMenu program={program} />

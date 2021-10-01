@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniq } from 'ramda'
 import { useMemo } from 'react'
-import { useAuth } from '../components/auth/AuthContext'
 import hasura from '../hasura'
 import { Category } from '../types/general'
 import {
@@ -71,7 +71,10 @@ export const usePublishedProgramCollection = (options?: {
           program_roles(where: { name: { _eq: "instructor" } }) {
             id
             name
-            member_id
+            member {
+              id
+              name
+            }
           }
           program_plans(order_by: { created_at: asc }, limit: 1) {
             id
@@ -154,7 +157,8 @@ export const usePublishedProgramCollection = (options?: {
             roles: program.program_roles.map(programRole => ({
               id: programRole.id,
               name: programRole.name as ProgramRoleName,
-              memberId: programRole.member_id,
+              memberId: programRole.member?.id || '',
+              memberName: programRole.member?.name || '',
             })),
             plans: program.program_plans.map(programPlan => ({
               id: programPlan.id,
@@ -267,7 +271,10 @@ export const useProgram = (programId: string) => {
           program_roles {
             id
             name
-            member_id
+            member {
+              id
+              name
+            }
           }
           program_plans(order_by: { created_at: asc }) {
             id
@@ -369,7 +376,8 @@ export const useProgram = (programId: string) => {
           roles: data.program_by_pk.program_roles.map(programRole => ({
             id: programRole.id,
             name: programRole.name as ProgramRoleName,
-            memberId: programRole.member_id,
+            memberId: programRole.member?.id || '',
+            memberName: programRole.member?.name || '',
           })),
           plans: data.program_by_pk.program_plans.map(programPlan => ({
             id: programPlan.id,

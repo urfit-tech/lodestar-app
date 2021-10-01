@@ -1,16 +1,17 @@
-import { Menu, MenuButton, MenuItem, MenuList, useTheme } from '@chakra-ui/react'
+import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
 import AuthButton from '../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import NotificationContext from '../../contexts/NotificationContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
-import { useAuth } from '../auth/AuthContext'
 import AuthModal, { AuthModalContext } from '../auth/AuthModal'
 import CartDropdown from '../checkout/CartDropdown'
 import Footer from '../common/Footer'
@@ -65,7 +66,7 @@ const DefaultLayout: React.FC<{
   children,
 }) => {
   const { formatMessage } = useIntl()
-  const theme = useTheme()
+  const theme = useAppTheme()
   const { renderFooter } = useCustomRenderer()
   const { currentMemberId, isAuthenticated, currentMember } = useAuth()
   const { name, settings, enabledModules } = useApp()

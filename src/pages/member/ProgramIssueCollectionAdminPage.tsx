@@ -1,14 +1,14 @@
 import { useQuery } from '@apollo/react-hooks'
-import { SkeletonText } from '@chakra-ui/react'
-import { Checkbox, Select } from 'antd'
+import { Select, SkeletonText } from '@chakra-ui/react'
+import { Checkbox } from 'antd'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useAuth } from '../../components/auth/AuthContext'
 import IssueAdminCard from '../../components/issue/IssueAdminCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { EnrolledProgramSelector } from '../../components/program/ProgramSelector'
-import { useApp } from '../../containers/common/AppContext'
 import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as BookIcon } from '../../images/book.svg'
@@ -26,10 +26,15 @@ const ProgramIssueCollectionAdminPage = () => {
     >
       <div className="row no-gutters mb-4">
         <div className="col-12 col-sm-2 pr-sm-3 mb-3 mb-sm-0">
-          <Select style={{ width: '100%' }} value={selectedStatus} onChange={(key: string) => setSelectedStatus(key)}>
-            <Select.Option key="unsolved">{formatMessage(commonMessages.form.option.unsolved)}</Select.Option>
-            <Select.Option key="solved">{formatMessage(commonMessages.form.option.solved)}</Select.Option>
-            <Select.Option key="all">{formatMessage(commonMessages.form.option.all)}</Select.Option>
+          <Select
+            bg="white"
+            style={{ width: '100%' }}
+            value={selectedStatus}
+            onChange={e => setSelectedStatus(e.target.value)}
+          >
+            <option key="unsolved">{formatMessage(commonMessages.form.option.unsolved)}</option>
+            <option key="solved">{formatMessage(commonMessages.form.option.solved)}</option>
+            <option key="all">{formatMessage(commonMessages.form.option.all)}</option>
           </Select>
         </div>
         <div className="col-12 col-sm-8 pr-sm-3 mb-3 mb-sm-0">

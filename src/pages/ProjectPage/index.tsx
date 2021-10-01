@@ -37,11 +37,11 @@ const ProjectPage: React.VFC = () => {
     }
   }, [project])
 
-  if (loadingProject) {
+  if (loadingProject || !project) {
     return <LoadingPage />
   }
 
-  if (errorProject || !project || (project.publishedAt && project.publishedAt.getTime() > Date.now())) {
+  if (errorProject || (project.publishedAt && project.publishedAt.getTime() > Date.now())) {
     return <Redirect to="/" />
   }
 

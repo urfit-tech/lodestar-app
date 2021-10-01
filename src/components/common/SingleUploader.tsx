@@ -1,12 +1,13 @@
-import { Button, message, Spin, Upload } from 'antd'
+import { Spinner } from '@chakra-ui/spinner'
+import { Button, message, Upload } from 'antd'
 import { UploadProps } from 'antd/lib/upload'
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface'
 import axios, { Canceler } from 'axios'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { uploadFile } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useAuth } from '../auth/AuthContext'
 
 const SingleUploader: React.VFC<
   UploadProps & {
@@ -87,7 +88,7 @@ const SingleUploader: React.VFC<
         trigger({ loading, value })
       ) : loading ? (
         <div>
-          <Spin />
+          <Spinner />
           <div style={{ color: '#585858' }}>{formatMessage(commonMessages.status.uploading)}</div>
         </div>
       ) : (

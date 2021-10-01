@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
+import React from 'react'
 import MessengerCustomerChat from 'react-messenger-customer-chat'
-import { ThemeContext } from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
 
 type MessengerChatProps = {
   options: {
@@ -26,7 +26,7 @@ type MessengerChatProps = {
 }
 const MessengerChat: React.VFC<MessengerChatProps> = ({ options: { appId, themeColor, ...options } }) => {
   const { settings } = useApp()
-  const themeContext = useContext(ThemeContext)
+  const theme = useAppTheme()
 
   if (!appId && !settings['auth.facebook_app_id']) {
     return null
@@ -35,7 +35,7 @@ const MessengerChat: React.VFC<MessengerChatProps> = ({ options: { appId, themeC
   return (
     <MessengerCustomerChat
       appId={appId || settings['auth.facebook_app_id']}
-      themeColor={themeColor || themeContext['@primary-color']}
+      themeColor={themeColor || theme.colors.primary[500]}
       {...options}
     />
   )

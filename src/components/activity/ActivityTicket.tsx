@@ -1,9 +1,9 @@
 import { Icon } from '@chakra-ui/icons'
 import { Divider, Tag } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
@@ -116,7 +116,7 @@ const ActivityTicket: React.VFC<
       <StyledPrice>
         <PriceLabel listPrice={price} />
       </StyledPrice>
-      <Divider />
+      <Divider className="mb-4" />
       <StyledSubTitle>{formatMessage(productMessages.activity.title.sessions)}</StyledSubTitle>
       {activityTicketSessions.map(session => (
         <StyledTag key={session.id} variant="solid" className="mb-2 mr-1">

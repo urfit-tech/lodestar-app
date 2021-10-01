@@ -1,19 +1,19 @@
 import { SkeletonText } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
-import { useApp } from '../../containers/common/AppContext'
 import VoucherCollectionBlock from '../../containers/voucher/VoucherCollectionBlock'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
-import NotFoundPage from '../NotFoundPage'
+import ForbiddenPage from '../ForbiddenPage'
 
 const VoucherCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { loading, enabledModules } = useApp()
+  const app = useApp()
 
-  if (loading) {
+  if (app.loading) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -21,8 +21,8 @@ const VoucherCollectionAdminPage: React.VFC = () => {
     )
   }
 
-  if (!enabledModules.voucher) {
-    return <NotFoundPage />
+  if (!app.loading && !app.enabledModules.voucher) {
+    return <ForbiddenPage />
   }
 
   return (

@@ -1,5 +1,7 @@
 import { Button, Divider, SkeletonText, useDisclosure } from '@chakra-ui/react'
 import { camelCase } from 'lodash'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
@@ -14,14 +16,12 @@ import ShippingInput, { validateShipping } from '../../components/checkout/Shipp
 import CommonModal from '../../components/common/CommonModal'
 import PriceLabel from '../../components/common/PriceLabel'
 import ProductItem from '../../components/common/ProductItem'
-import { useApp } from '../../containers/common/AppContext'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
 import { useMemberValidation, useSimpleProduct } from '../../hooks/common'
 import { useMember, useUpdateMemberMetadata } from '../../hooks/member'
 import { InvoiceProps, PaymentProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import { ShippingMethodProps } from '../../types/merchandise'
-import { useAuth } from '../auth/AuthContext'
 import { BREAK_POINT } from '../common/Responsive'
 import CheckoutGroupBuyingForm from './CheckoutGroupBuyingForm'
 import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
@@ -97,27 +97,30 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
   sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
 
-  const cachedCartInfo: {
+  const cachedCartInfo = useMemo<{
     shipping: ShippingProps | null
     invoice: InvoiceProps | null
     payment: PaymentProps | null
-  } = {
-    shipping: null,
-    invoice: {
-      name: currentMember?.name || '',
-      phone: '',
-      email: currentMember?.email || '',
-    },
-    payment: null,
-  }
-  try {
-    const cachedShipping = localStorage.getItem('kolable.cart.shipping')
-    const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
-    const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
-    cachedCartInfo.shipping = cachedShipping && JSON.parse(cachedShipping)
-    cachedCartInfo.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
-    cachedCartInfo.payment = cachedPayment && JSON.parse(cachedPayment)
-  } catch {}
+  }>(() => {
+    const defaultCartInfo = {
+      shipping: null,
+      invoice: {
+        name: currentMember?.name || '',
+        phone: '',
+        email: currentMember?.email || '',
+      },
+      payment: null,
+    }
+    try {
+      const cachedShipping = localStorage.getItem('kolable.cart.shipping')
+      const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
+      const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
+      cachedCartInfo.shipping = cachedShipping && JSON.parse(cachedShipping)
+      cachedCartInfo.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
+      cachedCartInfo.payment = cachedPayment && JSON.parse(cachedPayment)
+    } catch {}
+    return defaultCartInfo
+  }, [currentMember?.name, currentMember?.email])
 
   // checkout
   const [productId, setProductId] = useState(defaultProductId)
@@ -155,9 +158,9 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
   const [payment, setPayment] = useState<PaymentProps | null | undefined>()
 
-  const initialPayment: PaymentProps = useMemo(
+  const initialPayment = useMemo(
     () =>
-      target?.isSubscription
+      (target?.isSubscription
         ? {
             gateway: settings['payment.subscription.default_gateway'] || 'tappay',
             method: 'credit',
@@ -167,8 +170,8 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
             method: settings['payment.perpetual.default_gateway_method'] || 'credit',
             ...memberCartInfo.payment,
             ...cachedCartInfo.payment,
-          },
-    [target?.isSubscription, settings, memberCartInfo.payment],
+          }) as PaymentProps,
+    [target?.isSubscription, settings, memberCartInfo.payment, cachedCartInfo.payment],
   )
 
   useEffect(() => {
@@ -253,6 +256,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
+        content_name: target.title || productId,
         value: totalPrice,
         currency: 'TWD',
       })

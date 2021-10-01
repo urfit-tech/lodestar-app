@@ -1,5 +1,6 @@
 import { Button, Icon } from '@chakra-ui/react'
 import { Popover } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
@@ -7,7 +8,6 @@ import { BsPlus } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { useApp } from '../../containers/common/AppContext'
 import CartContext from '../../contexts/CartContext'
 import { durationFullFormatter } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -101,6 +101,7 @@ const PodcastProgramPopover: React.FC<
   const handleClick = async () => {
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
+        content_name: title || podcastProgramId,
         value: listPrice,
         currency: 'TWD',
       })
