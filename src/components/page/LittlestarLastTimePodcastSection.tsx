@@ -14,6 +14,8 @@ const StyledImg = styled.img`
   width: 100%;
   height: 100%;
   border-radius: 8px 8px 0 0;
+  aspect-ratio: 1;
+  object-fit: cover;
 
   @media (min-width: ${BREAK_POINT}px) {
     border-radius: 8px;
