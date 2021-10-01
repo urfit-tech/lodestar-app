@@ -11,7 +11,8 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import CartContext from '../../contexts/CartContext'
 import { handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { ProgramProps } from '../../types/program'
+import { Category } from '../../types/general'
+import { ProgramPlanProps, ProgramProps, ProgramRoleProps } from '../../types/program'
 
 const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
   span {
@@ -30,7 +31,14 @@ const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
     `}
 `
 
-const ProgramPaymentButton: React.VFC<{ program: ProgramProps; variant?: string }> = ({ program, variant }) => {
+const ProgramPaymentButton: React.VFC<{
+  program: ProgramProps & {
+    plans: ProgramPlanProps[]
+    categories: Category[]
+    roles: ProgramRoleProps[]
+  }
+  variant?: string
+}> = ({ program, variant }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isProgramInCart, handleAddCartProgram } = useAddProgramToCart(program)
@@ -72,8 +80,14 @@ const ProgramPaymentButton: React.VFC<{ program: ProgramProps; variant?: string 
   )
 }
 
-const useAddProgramToCart = (program: Pick<ProgramProps, 'id' | 'title' | 'listPrice' | 'salePrice'>) => {
-  const { settings } = useApp()
+const useAddProgramToCart = (
+  program: ProgramProps & {
+    plans: ProgramPlanProps[]
+    categories: Category[]
+    roles: ProgramRoleProps[]
+  },
+) => {
+  const { settings, id: appId, currencyId: appCurrencyId } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
 
   const sessionStorageKey = `lodestar.sharing_code.Program_${program.id}`
@@ -101,6 +115,38 @@ const useAddProgramToCart = (program: Pick<ProgramProps, 'id' | 'title' | 'listP
         })
         ReactGA.plugin.execute('ec', 'setAction', 'add')
         ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+      }
+
+      if (settings['tracking.gtm_id']) {
+        const listPrice =
+          program.isSubscription && program.plans.length > 0 ? program.plans[0].listPrice : program.listPrice || 0
+        const salePrice =
+          program.isSubscription && program.plans.length > 0 && (program.plans[0].soldAt?.getTime() || 0) > Date.now()
+            ? program.plans[0].salePrice
+            : (program.soldAt?.getTime() || 0) > Date.now()
+            ? program.salePrice
+            : undefined
+        ;(window as any).dataLayer = (window as any).dataLayer || []
+        ;(window as any).dataLayer.push({ ecommerce: null })
+        ;(window as any).dataLayer.push({
+          event: 'addToCart',
+          ecommerce: {
+            currencyCode: appCurrencyId || 'TWD',
+            add: {
+              products: [
+                {
+                  id: program.id,
+                  name: program.title,
+                  price: salePrice || listPrice,
+                  brand: settings['title'] || appId,
+                  category: program.categories.map(category => category.name).join('|'),
+                  variant: program.roles.map(role => role.memberName).join('|'),
+                  quantity: 1,
+                },
+              ],
+            },
+          },
+        })
       }
 
       return addCartProduct?.('Program', program.id, {
