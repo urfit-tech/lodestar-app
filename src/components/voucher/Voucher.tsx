@@ -131,7 +131,7 @@ const Voucher: React.VFC<VoucherProps> = ({
 
       {action && (
         <>
-          <Divider />
+          <Divider className="mb-3" />
           <StyledAction className="d-flex justify-content-between align-items-center">{action}</StyledAction>
         </>
       )}
