@@ -89,22 +89,23 @@ const LittlestarLastTimePodcastSection: React.FC<{
 }> = ({ options: { title } }) => {
   const { status, lastWatchedPodcastProgram } = useLastWatchedPodcastProgram()
 
-  if (status === 'loading' || !lastWatchedPodcastProgram) return <Skeleton />
+  if (status === 'loading') return <Skeleton />
+  if (lastWatchedPodcastProgram === null) return <></>
 
   return (
     <SectionLayout title={title}>
       <StyledRow className="row mx-auto">
         <div className="col-lg-6 p-lg-0">
           <StyledImg
-            src={lastWatchedPodcastProgram.podcastAlbum?.coverUrl || ''}
-            alt={lastWatchedPodcastProgram?.title}
+            src={lastWatchedPodcastProgram.podcastAlbum.coverUrl || ''}
+            alt={lastWatchedPodcastProgram.title}
           />
         </div>
         <div className="col-lg-6 p-lg-0 d-flex">
           <StyledCard className="flex-grow-1 d-flex flex-column justify-content-between m-0 m-lg-auto">
             <div className="mb-3">
-              <h3 className="mb-4">{lastWatchedPodcastProgram?.podcastAlbum.title}</h3>
-              <h4 className="mb-2">{lastWatchedPodcastProgram?.title}</h4>
+              <h3 className="mb-4">{lastWatchedPodcastProgram.podcastAlbum.title}</h3>
+              <h4 className="mb-2">{lastWatchedPodcastProgram.title}</h4>
               {lastWatchedPodcastProgram.podcastAlbum.categoryNames.map(name => (
                 <span className="tag mr-1">{name}</span>
               ))}
