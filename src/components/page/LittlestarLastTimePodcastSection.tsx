@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Icon } from '@chakra-ui/icons'
+import { Skeleton } from '@chakra-ui/skeleton'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { Link } from 'react-router-dom'
@@ -86,26 +87,25 @@ const LittlestarLastTimePodcastSection: React.FC<{
     title?: string
   }
 }> = ({ options: { title } }) => {
-  const { currentMemberId } = useAuth()
-  const { lastWatchedPodcastAlbumPodcastProgram } = useLastWatchedPodcastAlbumPodcastProgram(currentMemberId || '')
+  const { status, lastWatchedPodcastProgram } = useLastWatchedPodcastProgram()
 
-  if (!currentMemberId || !lastWatchedPodcastAlbumPodcastProgram) return <></>
+  if (status === 'loading' || !lastWatchedPodcastProgram) return <Skeleton />
 
   return (
     <SectionLayout title={title}>
       <StyledRow className="row mx-auto">
         <div className="col-lg-6 p-lg-0">
           <StyledImg
-            src={lastWatchedPodcastAlbumPodcastProgram?.coverUrl || ''}
-            alt={lastWatchedPodcastAlbumPodcastProgram?.title}
+            src={lastWatchedPodcastProgram.podcastAlbum?.coverUrl || ''}
+            alt={lastWatchedPodcastProgram?.title}
           />
         </div>
         <div className="col-lg-6 p-lg-0 d-flex">
           <StyledCard className="flex-grow-1 d-flex flex-column justify-content-between m-0 m-lg-auto">
             <div className="mb-3">
-              <h3 className="mb-4">{lastWatchedPodcastAlbumPodcastProgram?.podcastAlbum.title}</h3>
-              <h4 className="mb-2">{lastWatchedPodcastAlbumPodcastProgram?.title}</h4>
-              {lastWatchedPodcastAlbumPodcastProgram?.categoryNames.map(name => (
+              <h3 className="mb-4">{lastWatchedPodcastProgram?.podcastAlbum.title}</h3>
+              <h4 className="mb-2">{lastWatchedPodcastProgram?.title}</h4>
+              {lastWatchedPodcastProgram.podcastAlbum.categoryNames.map(name => (
                 <span className="tag mr-1">{name}</span>
               ))}
             </div>
@@ -113,7 +113,7 @@ const LittlestarLastTimePodcastSection: React.FC<{
             <div>
               <div className="play">
                 <Link
-                  to={`/podcasts/${lastWatchedPodcastAlbumPodcastProgram.id}?podcastAlbumId=${lastWatchedPodcastAlbumPodcastProgram.podcastAlbum.id}`}
+                  to={`/podcasts/${lastWatchedPodcastProgram.id}?podcastAlbumId=${lastWatchedPodcastProgram.podcastAlbum.id}`}
                 >
                   繼續播放
                   <Icon className="ml-2" as={PlayIcon} />
@@ -127,19 +127,20 @@ const LittlestarLastTimePodcastSection: React.FC<{
   )
 }
 
-const useLastWatchedPodcastAlbumPodcastProgram: (memberId: string) => {
+const useLastWatchedPodcastProgram: () => {
   status: 'loading' | 'error' | 'success' | 'idle'
-  lastWatchedPodcastAlbumPodcastProgram: {
+  lastWatchedPodcastProgram: {
     id: string
     title: string
-    coverUrl: string | null
-    categoryNames: string[]
     podcastAlbum: {
       id: string
       title: string
+      coverUrl: string | null
+      categoryNames: string[]
     }
   } | null
-} = memberId => {
+} = () => {
+  const { currentMemberId } = useAuth()
   const { loading, error, data } = useQuery<
     hasura.GET_LAST_WATCHED_PODCAST_PROGRAM,
     hasura.GET_LAST_WATCHED_PODCAST_PROGRAMVariables
@@ -170,25 +171,25 @@ const useLastWatchedPodcastAlbumPodcastProgram: (memberId: string) => {
       }
     `,
     {
-      variables: { memberId },
+      variables: { memberId: currentMemberId || '' },
       fetchPolicy: 'no-cache',
     },
   )
-  const [lastWatchedPodcastAlbumPodcastProgram = null] = data?.podcast_program_progress || []
+  const [lastWatchedPodcastProgram = null] = data?.podcast_program_progress || []
   return {
     status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
-    lastWatchedPodcastAlbumPodcastProgram: lastWatchedPodcastAlbumPodcastProgram && {
-      id: lastWatchedPodcastAlbumPodcastProgram.podcast_program.id,
-      lastProgress: lastWatchedPodcastAlbumPodcastProgram.last_progress,
-      title: lastWatchedPodcastAlbumPodcastProgram.podcast_album?.title || '',
-      coverUrl: lastWatchedPodcastAlbumPodcastProgram.podcast_album?.cover_url || '',
-      categoryNames:
-        lastWatchedPodcastAlbumPodcastProgram.podcast_album?.podcast_album_categories.map(
-          category => category.category?.name || '',
-        ) || [],
+    lastWatchedPodcastProgram: lastWatchedPodcastProgram && {
+      id: lastWatchedPodcastProgram.podcast_program.id,
+      lastProgress: lastWatchedPodcastProgram.last_progress,
+      title: lastWatchedPodcastProgram.podcast_program.title || '',
       podcastAlbum: {
-        id: lastWatchedPodcastAlbumPodcastProgram.podcast_album?.id || '',
-        title: lastWatchedPodcastAlbumPodcastProgram.podcast_program.title || '',
+        id: lastWatchedPodcastProgram.podcast_album?.id || '',
+        title: lastWatchedPodcastProgram.podcast_album?.title || '',
+        coverUrl: lastWatchedPodcastProgram.podcast_album?.cover_url || '',
+        categoryNames:
+          lastWatchedPodcastProgram.podcast_album?.podcast_album_categories.map(
+            category => category.category?.name || '',
+          ) || [],
       },
     },
   }

@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { PodcastProgramProps } from '../containers/podcast/PodcastProgramTimeline'
 import hasura from '../hasura'
 import { getFileDownloadableLink, notEmpty } from '../helpers'
+import { StatusType } from '../types/general'
 import { PlaylistProps, PodcastProgramContent, PodcastProgramContentProps } from '../types/podcast'
 
 export const usePodcastProgramCollection = (creatorId?: string) => {
@@ -685,18 +686,16 @@ export const usePublicPodcastProgramIds: (id?: string) => {
   }
 }
 
-export const usePodcastProgramProgress: (
-  programPodcastId: string,
-  memberId: string,
-) => {
-  podcastProgramProgressStatus: 'loading' | 'error' | 'success' | 'idle'
+export const usePodcastProgramProgress: (programPodcastId: string) => {
+  podcastProgramProgressStatus: StatusType
   podcastProgramProgress: {
     id: string
     progress: number
     lastProgress: number
   } | null
   refetchPodcastProgramProgress: () => void
-} = (programPodcastId, memberId) => {
+} = programPodcastId => {
+  const { currentMemberId } = useAuth()
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_PODCAST_PROGRAM_PROGRESS,
     hasura.GET_PODCAST_PROGRAM_PROGRESSVariables
@@ -712,7 +711,7 @@ export const usePodcastProgramProgress: (
         }
       }
     `,
-    { variables: { programPodcastId, memberId } },
+    { variables: { programPodcastId, memberId: currentMemberId || '' } },
   )
   const [podcastProgramProgress = null] = data?.podcast_program_progress || []
   return {

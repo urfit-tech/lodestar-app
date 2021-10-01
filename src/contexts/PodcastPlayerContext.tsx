@@ -1,4 +1,3 @@
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { createContext, useCallback, useState } from 'react'
 import { usePodcastProgramContent, usePodcastProgramProgress } from '../hooks/podcast'
 import { PodcastProgramContent } from '../types/podcast'
@@ -49,7 +48,6 @@ const PodcastPlayerContext = createContext<PodcastPlayerProps>({
 })
 
 export const PodcastPlayerProvider: React.FC = ({ children }) => {
-  const { currentMemberId } = useAuth()
   const [visible, setVisible] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [maxDuration, setMaxDuration] = useState(0)
@@ -58,10 +56,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const [shuffledPodcastProgramIds, setShuffledPodcastProgramIds] = useState<string[]>([])
   const currentPlayingId = playlist?.podcastProgramIds[playlist.currentIndex] || ''
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(currentPlayingId)
-  const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(
-    currentPlayingId,
-    currentMemberId || '',
-  )
+  const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(currentPlayingId)
 
   return (
     <PodcastPlayerContext.Provider
