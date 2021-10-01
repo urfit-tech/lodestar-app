@@ -123,13 +123,42 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                   <Icon
                     as={AiOutlineClose}
                     className="flex-shrink-0"
-                    onClick={() => {
+                    onClick={async () => {
                       ReactGA.plugin.execute('ec', 'addProduct', {
                         id: cartProduct.productId,
                         quantity: `${cartProduct.options?.quantity || 1}`,
                       })
                       ReactGA.plugin.execute('ec', 'setAction', 'remove')
                       ReactGA.ga('send', 'event', 'UX', 'click', 'remove from cart')
+                      try {
+                        const simpleProduct = (await getSimpleProductCollection([cartProduct.productId]))[0]
+                        ;(window as any).dataLayer = (window as any).dataLayer || []
+                        ;(window as any).dataLayer.push({ ecommerce: null })
+                        ;(window as any).dataLayer.push({
+                          event: 'removeFromCart',
+                          ecommerce: {
+                            remove: {
+                              products: [
+                                {
+                                  name: simpleProduct.title,
+                                  id: simpleProduct.id,
+                                  price: simpleProduct.isOnSale
+                                    ? simpleProduct.salePrice
+                                    : simpleProduct.listPrice || 0,
+                                  brand: settings['title'] || appId,
+                                  categories: simpleProduct.categories?.join('|'),
+                                  variant: simpleProduct.roles?.join('|'),
+                                  quantity:
+                                    cartProducts.find(
+                                      cartProduct => cartProduct.productId.split('_')[1] === simpleProduct.id,
+                                    )?.options?.quantity || 1,
+                                },
+                              ],
+                            },
+                          },
+                        })
+                      } catch {}
+
                       removeCartProducts && removeCartProducts([cartProduct.productId])
                     }}
                   />
