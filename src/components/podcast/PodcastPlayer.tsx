@@ -235,7 +235,7 @@ const PodcastPlayer: React.VFC<{
           memberId: memberId,
           progress: progress > totalProgress ? progress : totalProgress,
           lastProgress: progress,
-          podcastAlbumId: podcastAlbumId,
+          podcastAlbumId: podcastAlbumId || null,
         },
         { headers: { authorization: `Bearer ${authToken}` } },
       )
