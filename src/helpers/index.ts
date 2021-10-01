@@ -167,16 +167,16 @@ export const getNotificationIconType = (type: string) => {
   }
 }
 
-export const rgba = (hexColor: string, alpha: number) => {
-  hexColor = hexColor.replace('#', '')
+export const rgba = (hexCode: string, alpha: number) => {
+  const hexColor = (hexCode || '#2d313a').replace('#', '')
   const r = parseInt(hexColor.slice(0, 2), 16)
   const g = parseInt(hexColor.slice(2, 4), 16)
   const b = parseInt(hexColor.slice(4, 6), 16)
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
-export const hexToHsl = (hexColor: string) => {
-  hexColor = hexColor.replace('#', '')
+export const hexToHsl = (hexCode: string) => {
+  const hexColor = (hexCode || '#2d313a').replace('#', '')
   const r = parseInt(hexColor.slice(0, 2), 16) / 255
   const g = parseInt(hexColor.slice(2, 4), 16) / 255
   const b = parseInt(hexColor.slice(4, 6), 16) / 255
