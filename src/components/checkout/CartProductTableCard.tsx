@@ -41,36 +41,38 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   useEffect(() => {
     refetch && refetch()
   })
+  useEffect(() => {
+    if (settings['tracking.gtm_id'] && cartProducts) {
+      const cartProductIds = cartProducts.map(cartProduct => cartProduct.productId)
 
-  if (settings['tracking.gtm_id'] && cartProducts) {
-    const cartProductIds = cartProducts.map(cartProduct => cartProduct.productId)
-
-    getSimpleProductCollection(cartProductIds)
-      .then(simpleProducts => {
-        ;(window as any).dataLayer = (window as any).dataLayer || []
-        ;(window as any).dataLayer.push({ ecommerce: null })
-        ;(window as any).dataLayer.push({
-          event: 'checkout',
-          ecommerce: {
-            checkout: {
-              actionField: { step: 1, option: 'credit' },
-              products: simpleProducts.map(simpleProduct => ({
-                name: simpleProduct.title,
-                id: simpleProduct.id,
-                price: simpleProduct.isOnSale ? simpleProduct.salePrice : simpleProduct.listPrice || 0,
-                brand: settings['title'] || appId,
-                categories: simpleProduct.categories?.join('|'),
-                variant: simpleProduct.roles?.join('|'),
-                quantity:
-                  cartProducts.find(cartProduct => cartProduct.productId.split('_')[1] === simpleProduct.id)?.options
-                    ?.quantity || 1,
-              })),
+      getSimpleProductCollection(cartProductIds)
+        .then(simpleProducts => {
+          ;(window as any).dataLayer = (window as any).dataLayer || []
+          ;(window as any).dataLayer.push({ ecommerce: null })
+          ;(window as any).dataLayer.push({
+            event: 'checkout',
+            ecommerce: {
+              checkout: {
+                // FIXME: action option fetch from payment method
+                actionField: { step: 1, option: 'credit' },
+                products: simpleProducts.map(simpleProduct => ({
+                  name: simpleProduct.title,
+                  id: simpleProduct.id,
+                  price: simpleProduct.isOnSale ? simpleProduct.salePrice : simpleProduct.listPrice || 0,
+                  brand: settings['title'] || appId,
+                  categories: simpleProduct.categories?.join('|'),
+                  variant: simpleProduct.roles?.join('|'),
+                  quantity:
+                    cartProducts.find(cartProduct => cartProduct.productId.split('_')[1] === simpleProduct.id)?.options
+                      ?.quantity || 1,
+                })),
+              },
             },
-          },
+          })
         })
-      })
-      .catch()
-  }
+        .catch()
+    }
+  }, [cartProducts, settings])
 
   if (loading) {
     return (
