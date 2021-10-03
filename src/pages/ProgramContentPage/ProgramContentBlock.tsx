@@ -1,12 +1,14 @@
 import { LockIcon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
+import { StreamPlayerApi } from '@cloudflare/stream-react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import LanguageContext from 'lodestar-app-element/src/contexts/LanguageContext'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
@@ -40,11 +42,13 @@ const ProgramContentBlock: React.VFC<{
   }
   programContentId: string
 }> = ({ program, programContentId }) => {
+  const { currentLanguage } = useContext(LanguageContext)
   const { formatMessage } = useIntl()
   const { loading: loadingApp, enabledModules, settings } = useApp()
   const { authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
+  const streamRef = useRef<StreamPlayerApi>()
 
   const instructor = program.roles.filter(role => role.name === 'instructor')[0]
 
@@ -86,7 +90,6 @@ const ProgramContentBlock: React.VFC<{
 
   const insertProgramProgress = throttle(async (progress: number) => {
     const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
-
     return await insertProgress(programContentId, {
       progress: currentProgress > 1 ? 1 : Math.max(currentProgress, initialProgress),
       lastProgress: progress,
@@ -102,41 +105,38 @@ const ProgramContentBlock: React.VFC<{
         </StyledUnPurchased>
       )}
 
-      {programContent.programContentBody?.type === 'video' && (
-        <ProgramContentPlayer
-          key={programContent.id}
-          programContentId={programContentId}
-          programContentBody={programContent.programContentBody}
-          nextProgramContent={nextProgramContent}
-          isSwarmifyAvailable={settings['feature.swarmify.enabled'] === '1'}
-          onVideoEvent={e => {
-            if (e.type === 'progress') {
-              insertProgramProgress(e.progress)
+      <ProgramContentPlayer
+        key={programContent.id}
+        programContentId={programContentId}
+        nextProgramContent={nextProgramContent}
+        isSwarmifyAvailable={settings['feature.swarmify.enabled'] === '1'}
+        onVideoEvent={e => {
+          if (e.type === 'progress') {
+            insertProgramProgress(e.progress)
+          } else {
+            axios
+              .post(
+                `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+                {
+                  programContentId,
+                  data: e.videoState,
+                },
+                { headers: { authorization: `Bearer ${authToken}` } },
+              )
+              .then(({ data: { code, result } }) => {
+                if (code === 'SUCCESS') {
+                  return
+                }
+              })
+              .catch(() => {})
+            if (e.type === 'ended') {
+              insertProgramProgress(1)?.then(() => refetchProgress())
             } else {
-              axios
-                .post(
-                  `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
-                  {
-                    programContentId,
-                    data: e.videoState,
-                  },
-                  { headers: { authorization: `Bearer ${authToken}` } },
-                )
-                .then(({ data: { code, result } }) => {
-                  if (code === 'SUCCESS') {
-                    return
-                  }
-                })
-                .catch(() => {})
-              if (e.type === 'ended') {
-                insertProgramProgress(1)?.then(() => refetchProgress())
-              } else {
-                refetchProgress()
-              }
+              refetchProgress()
             }
-          }}
-        />
-      )}
+          }
+        }}
+      />
 
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise']) && (
         <StyledContentBlock className="mb-3">

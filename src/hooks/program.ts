@@ -326,6 +326,13 @@ export const useProgram = (programId: string) => {
                 data
                 created_at
               }
+              program_content_videos {
+                attachment {
+                  id
+                  size
+                  options
+                }
+              }
             }
             program_contents_aggregate(where: { published_at: { _is_null: false } }) {
               aggregate {
@@ -423,6 +430,11 @@ export const useProgram = (programId: string) => {
                 data: v.data,
                 createdAt: v.created_at,
               })),
+              videos: programContent.program_content_videos.map(v => ({
+                id: v.attachment.id,
+                size: v.attachment.size,
+                options: v.attachment.options,
+              })),
             })),
           })),
         }
@@ -467,6 +479,13 @@ export const useProgramContent = (programContentId: string) => {
             id
             data
             created_at
+          }
+          program_content_videos {
+            attachment {
+              id
+              size
+              options
+            }
           }
           program_content_attachments {
             attachment_id
@@ -516,6 +535,11 @@ export const useProgramContent = (programContentId: string) => {
               id: v.id,
               data: v.data,
               createdAt: v.created_at,
+            })),
+            videos: data.program_content_by_pk.program_content_videos.map(v => ({
+              id: v.attachment.id,
+              size: v.attachment.size,
+              options: v.attachment.options,
             })),
             attachments: data.program_content_by_pk.program_content_attachments.map(u => ({
               id: u.attachment_id,

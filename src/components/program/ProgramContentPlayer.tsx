@@ -1,4 +1,5 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
+import { StreamPlayerApi } from '@cloudflare/stream-react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useRef, useState } from 'react'
@@ -9,8 +10,9 @@ import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { getFileDownloadableLink } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
+import { useProgramContent } from '../../hooks/program'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
-import { ProgramContentBodyProps } from '../../types/program'
+import VideoPlayer from '../common/VideoPlayer'
 
 const StyledContainer = styled.div`
   position: relative;
@@ -117,7 +119,6 @@ function getPlayerConfig(): PlayerConfigProps {
 const ProgramContentPlayer: React.VFC<
   ReactPlayerProps & {
     programContentId: string
-    programContentBody: ProgramContentBodyProps
     nextProgramContent?: {
       id: string
       title: string
@@ -126,29 +127,14 @@ const ProgramContentPlayer: React.VFC<
     noAnnouncement?: boolean
     onVideoEvent?: (event: VideoEvent) => void
   }
-> = ({
-  programContentId,
-  programContentBody,
-  nextProgramContent,
-  isSwarmifyAvailable,
-  noAnnouncement,
-  onVideoEvent,
-}) => {
+> = ({ programContentId, nextProgramContent, isSwarmifyAvailable, noAnnouncement, onVideoEvent }) => {
   const { formatMessage } = useIntl()
-  const videoId = `v-${programContentBody.id}`
+  const streamRef = useRef<StreamPlayerApi>()
+  const lastEndedTime = useRef<number>(0)
   const { id: appId } = useApp()
+  const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const { loadingProgress, programContentProgress } = useContext(ProgressContext)
-  const urls = useUrls(appId, programContentBody.id)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
-  const playerType = 'smartVideo'
-  // const [playerType, setPlayerType] = useState<'smartVideo' | 'reactPlayer'>(
-  //   isSwarmifyAvailable &&
-  //     (localStorage.getItem('kolable.feature.swarmify') === null ||
-  //       localStorage.getItem('kolable.feature.swarmify') === '1')
-  //     ? 'smartVideo'
-  //     : 'reactPlayer',
-  // )
-  const cachedPlayerConfig: PlayerConfigProps = getPlayerConfig()
 
   if (loadingProgress) {
     return null
@@ -157,70 +143,99 @@ const ProgramContentPlayer: React.VFC<
   const lastProgress =
     programContentProgress?.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
 
+  const getCurrentProgress = (player: StreamPlayerApi) => Number(player.currentTime) / Number((player as any).duration)
+
   return (
     <>
-      {/*!noAnnouncement && isSwarmifyAvailable && playerType === 'smartVideo' && (
-        <StyledAnnouncement className="mb-3">
-          <div className="row">
-            <div className="col-12 col-md-9">
-              <Icon viewBox="0 0 20 20" className="mr-2">
-                <InfoOIcon />
-              </Icon>
-              {formatMessage(messages.switchToStablePlayer)}
-            </div>
-            <div className="col-12 col-md-3 text-right">
-              <Button
-                variant="link"
-                onClick={() => {
-                  setPlayerType('reactPlayer')
-                  localStorage.setItem('kolable.feature.swarmify', '0')
-                  window.location.reload()
-                }}
-              >
-                {formatMessage(messages.switchPlayer)}
-              </Button>
-            </div>
-          </div>
-        </StyledAnnouncement>
-      )*/}
-
-      <StyledContainer>
-        {nextProgramContent && isCoverShowing && (
-          <ProgramContentPlayerCover nextProgramContent={nextProgramContent} onSetIsCoverShowing={setIsCoverShowing} />
-        )}
-
-        {/*playerType === 'reactPlayer' && (
-          <VimeoPlayer
-            config={{
-              playbackRate: cachedPlayerConfig.playbackRate || 1,
-              volume: cachedPlayerConfig.volume || 1,
-            }}
-            videoId={programContentBody.data.vimeoVideoId}
-            lastProgress={lastProgress}
-            onEvent={e => {
-              if (e.type === 'ended') {
-                setIsCoverShowing(true)
+      {programContent?.videos?.map(video => (
+        <StyledContainer>
+          {nextProgramContent && isCoverShowing && (
+            <ProgramContentPlayerCover
+              nextProgramContent={nextProgramContent}
+              onSetIsCoverShowing={setIsCoverShowing}
+            />
+          )}
+          <VideoPlayer
+            key={video.id}
+            height="400px"
+            videoId={video.id}
+            streamRef={streamRef}
+            autoplay
+            onProgress={() => {
+              if (streamRef.current) {
+                const progress = getCurrentProgress(streamRef.current)
+                const endedAt = streamRef.current.currentTime
+                onVideoEvent?.({
+                  type: 'progress',
+                  progress,
+                  videoState: {
+                    playbackRate: (streamRef.current as any).playbackRate,
+                    startedAt: lastEndedTime.current,
+                    endedAt,
+                  },
+                })
+                lastEndedTime.current = endedAt
               }
-              onVideoEvent?.(e)
+            }}
+            onSeeked={() => {
+              if (streamRef.current) {
+                const progress = getCurrentProgress(streamRef.current)
+                const endedAt = streamRef.current.currentTime
+                onVideoEvent?.({
+                  type: 'seeked',
+                  progress,
+                  videoState: {
+                    playbackRate: (streamRef.current as any).playbackRate,
+                    startedAt: lastEndedTime.current,
+                    endedAt,
+                  },
+                })
+                lastEndedTime.current = endedAt
+              }
+            }}
+            onLoadStart={() => {
+              if (streamRef.current) {
+                const initialPlaybackRate = Number(localStorage.getItem('kolable.player.playbackRate')) || 1
+                const initialVolume = Number(localStorage.getItem('kolable.player.volume')) || 1
+                ;(streamRef.current as any).playbackRate = initialPlaybackRate
+                ;(streamRef.current as any).volume = initialVolume
+              }
+            }}
+            onVolumeChange={() => {
+              if (streamRef.current) {
+                localStorage.setItem('kolable.player.volume', (streamRef.current as any).volume)
+              }
+            }}
+            onRateChange={() => {
+              if (streamRef.current) {
+                localStorage.setItem('kolable.player.playbackRate', (streamRef.current as any).playbackRate)
+              }
+            }}
+            onDurationChange={() => {
+              if (streamRef.current) {
+                streamRef.current.currentTime = (streamRef.current as any).duration * lastProgress
+              }
+            }}
+            onEnded={() => {
+              setIsCoverShowing(true)
+              if (streamRef.current) {
+                const progress = getCurrentProgress(streamRef.current)
+                const endedAt = streamRef.current.currentTime
+                onVideoEvent?.({
+                  type: 'ended',
+                  progress,
+                  videoState: {
+                    playbackRate: (streamRef.current as any).playbackRate,
+                    startedAt: lastEndedTime.current,
+                    endedAt,
+                  },
+                })
+                lastEndedTime.current = endedAt
+              }
             }}
           />
-          )*/}
-
-        {playerType === 'smartVideo' && urls && (
-          <SmartVideo
-            videoId={videoId}
-            urls={urls}
-            lastProgress={lastProgress}
-            getConfig={getPlayerConfig}
-            onEvent={e => {
-              if (e.type === 'ended') {
-                setIsCoverShowing(true)
-              }
-              onVideoEvent?.(e)
-            }}
-          />
-        )}
-      </StyledContainer>
+        </StyledContainer>
+      ))}
     </>
   )
 }

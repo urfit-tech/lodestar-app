@@ -6973,6 +6973,21 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
   created_at: any | null;
 }
 
+export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos_attachment {
+  __typename: "attachment";
+  id: any;
+  size: number;
+  options: any | null;
+}
+
+export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos {
+  __typename: "program_content_video";
+  /**
+   * An object relationship
+   */
+  attachment: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos_attachment;
+}
+
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents {
   __typename: "program_content";
   id: any;
@@ -6995,6 +7010,10 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
    * An array relationship
    */
   program_content_materials: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_materials[];
+  /**
+   * An array relationship
+   */
+  program_content_videos: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos[];
 }
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_aggregate_aggregate {
@@ -7112,6 +7131,21 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_mater
   created_at: any | null;
 }
 
+export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos_attachment {
+  __typename: "attachment";
+  id: any;
+  size: number;
+  options: any | null;
+}
+
+export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos {
+  __typename: "program_content_video";
+  /**
+   * An object relationship
+   */
+  attachment: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos_attachment;
+}
+
 export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_attachments {
   __typename: "program_content_attachment";
   attachment_id: any | null;
@@ -7147,6 +7181,10 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk {
    * An array relationship
    */
   program_content_materials: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_materials[];
+  /**
+   * An array relationship
+   */
+  program_content_videos: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos[];
   /**
    * An array relationship
    */
@@ -9758,12 +9796,18 @@ export enum attachment_constraint {
  */
 export enum attachment_update_column {
   app_id = "app_id",
+  author_id = "author_id",
+  content_type = "content_type",
   created_at = "created_at",
   data = "data",
+  filename = "filename",
   id = "id",
   is_deleted = "is_deleted",
+  name = "name",
   options = "options",
+  size = "size",
   target = "target",
+  thumbnail_url = "thumbnail_url",
   type = "type",
   updated_at = "updated_at",
 }
@@ -11650,6 +11694,24 @@ export enum program_content_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "program_content_video"
+ */
+export enum program_content_video_constraint {
+  program_content_stream_pkey = "program_content_stream_pkey",
+}
+
+/**
+ * update columns of table "program_content_video"
+ */
+export enum program_content_video_update_column {
+  attachment_id = "attachment_id",
+  created_at = "created_at",
+  id = "id",
+  program_content_id = "program_content_id",
+  updated_at = "updated_at",
+}
+
+/**
  * unique or primary key constraints on table "program_package_category"
  */
 export enum program_package_category_constraint {
@@ -13436,6 +13498,14 @@ export interface appointment_schedule_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "attachment"
+ */
+export interface attachment_arr_rel_insert_input {
+  data: attachment_insert_input[];
+  on_conflict?: attachment_on_conflict | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "attachment". All fields are combined with a logical 'AND'.
  */
 export interface attachment_bool_exp {
@@ -13443,12 +13513,19 @@ export interface attachment_bool_exp {
   _not?: attachment_bool_exp | null;
   _or?: (attachment_bool_exp | null)[] | null;
   app_id?: String_comparison_exp | null;
+  author?: member_bool_exp | null;
+  author_id?: String_comparison_exp | null;
+  content_type?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   data?: jsonb_comparison_exp | null;
+  filename?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_deleted?: Boolean_comparison_exp | null;
+  name?: String_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
+  size?: Int_comparison_exp | null;
   target?: String_comparison_exp | null;
+  thumbnail_url?: String_comparison_exp | null;
   type?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
@@ -13458,12 +13535,19 @@ export interface attachment_bool_exp {
  */
 export interface attachment_insert_input {
   app_id?: string | null;
+  author?: member_obj_rel_insert_input | null;
+  author_id?: string | null;
+  content_type?: string | null;
   created_at?: any | null;
   data?: any | null;
+  filename?: string | null;
   id?: any | null;
   is_deleted?: boolean | null;
+  name?: string | null;
   options?: any | null;
+  size?: number | null;
   target?: string | null;
+  thumbnail_url?: string | null;
   type?: string | null;
   updated_at?: any | null;
 }
@@ -14890,6 +14974,7 @@ export interface member_bool_exp {
   assignRulesByTargetMemberId?: xuemi_assign_rule_bool_exp | null;
   assign_rules?: xuemi_assign_rule_bool_exp | null;
   assigned_at?: timestamptz_comparison_exp | null;
+  attachments?: attachment_bool_exp | null;
   attends?: attend_bool_exp | null;
   coin_logs?: coin_log_bool_exp | null;
   coin_statuses?: coin_status_bool_exp | null;
@@ -15142,6 +15227,7 @@ export interface member_insert_input {
   assignRulesByTargetMemberId?: xuemi_assign_rule_arr_rel_insert_input | null;
   assign_rules?: xuemi_assign_rule_arr_rel_insert_input | null;
   assigned_at?: any | null;
+  attachments?: attachment_arr_rel_insert_input | null;
   attends?: attend_arr_rel_insert_input | null;
   coin_logs?: coin_log_arr_rel_insert_input | null;
   comment_reactions?: comment_reaction_arr_rel_insert_input | null;
@@ -18805,6 +18891,7 @@ export interface program_content_bool_exp {
   program_content_progress?: program_content_progress_bool_exp | null;
   program_content_section?: program_content_section_bool_exp | null;
   program_content_type?: program_content_type_bool_exp | null;
+  program_content_videos?: program_content_video_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
   sale_free?: program_content_sale_free_bool_exp | null;
   sale_price?: numeric_comparison_exp | null;
@@ -18851,6 +18938,7 @@ export interface program_content_insert_input {
   program_content_plans?: program_content_plan_arr_rel_insert_input | null;
   program_content_progress?: program_content_progress_arr_rel_insert_input | null;
   program_content_section?: program_content_section_obj_rel_insert_input | null;
+  program_content_videos?: program_content_video_arr_rel_insert_input | null;
   published_at?: any | null;
   sale_price?: any | null;
   sold_at?: any | null;
@@ -19111,6 +19199,52 @@ export interface program_content_type_bool_exp {
   id?: uuid_comparison_exp | null;
   program_content?: program_content_bool_exp | null;
   type?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "program_content_video"
+ */
+export interface program_content_video_arr_rel_insert_input {
+  data: program_content_video_insert_input[];
+  on_conflict?: program_content_video_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "program_content_video". All fields are combined with a logical 'AND'.
+ */
+export interface program_content_video_bool_exp {
+  _and?: (program_content_video_bool_exp | null)[] | null;
+  _not?: program_content_video_bool_exp | null;
+  _or?: (program_content_video_bool_exp | null)[] | null;
+  attachment?: attachment_bool_exp | null;
+  attachment_id?: uuid_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  program_content?: program_content_bool_exp | null;
+  program_content_id?: uuid_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_content_video"
+ */
+export interface program_content_video_insert_input {
+  attachment?: attachment_obj_rel_insert_input | null;
+  attachment_id?: any | null;
+  created_at?: any | null;
+  id?: any | null;
+  program_content?: program_content_obj_rel_insert_input | null;
+  program_content_id?: any | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on conflict condition type for table "program_content_video"
+ */
+export interface program_content_video_on_conflict {
+  constraint: program_content_video_constraint;
+  update_columns: program_content_video_update_column[];
+  where?: program_content_video_bool_exp | null;
 }
 
 /**

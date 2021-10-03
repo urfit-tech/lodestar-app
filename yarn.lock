@@ -1859,6 +1859,11 @@
   dependencies:
     "@chakra-ui/utils" "1.0.2"
 
+"@cloudflare/stream-react@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@cloudflare/stream-react/-/stream-react-1.2.0.tgz#7324ba93d8424460fbb0005a95cddb9f54a3a00b"
+  integrity sha512-uLsKstcNOrTH19UEFxHWUX6h8SM9Ytr1Qyo6dIObuDUQ40g/cJgNnNnFn4gcGWf3zPwXQN3LkRmVol5MU/rU2Q==
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.4.tgz#f864ae85004d0fcab6f50be9141c4da368d1656a"
@@ -10708,7 +10713,7 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/8227b51ec0a0bd57d30aafeffbfbbb110f96b4ac"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/4356c83d66bea7c741988c4b5f1d8ed903644288"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"

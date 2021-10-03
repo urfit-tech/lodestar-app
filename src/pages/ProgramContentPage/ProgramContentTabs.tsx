@@ -107,7 +107,7 @@ const ProgramContentTabs: React.VFC<{
         </StyledTabList>
         <TabPanels>
           {tabContents.map(v => (
-            <StyledTabPanel>{v.content}</StyledTabPanel>
+            <StyledTabPanel key={v.key}>{v.content}</StyledTabPanel>
           ))}
         </TabPanels>
       </Tabs>
