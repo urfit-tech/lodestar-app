@@ -169,6 +169,22 @@ const TermsPage: React.VFC = () => {
               一旦註冊及代表「同意購買須知」，即表示您已經同意並願意完全遵守本購買須知所有內容；且若為民法規定之無行為能力人、限制行為能力人，則視為由無行為能力人之法定代理人代為購買本課程，或限制行為能力人之法定代理人已同意購買本課程。
             </p>
           </StyledCard>
+
+          <StyledCard>
+            <StyledTitle level={2}>Facebook 資料刪除指示</StyledTitle>
+            <p>
+              根據 Facebook 政策，我們必須提供「Facebook 資料刪除指示說明」，如果您想刪除此平台上的 Facebook
+              登入應用數據，您可以按照以下步驟進行：
+            </p>
+            <p>
+              <ol>
+                <li>進入您的 Facebook 帳號的「設定和隱私」選單並點擊「設定」</li>
+                <li>向下滾動並點擊「應用程式和網站」</li>
+                <li>找到並點擊此應用程式（{name}）</li>
+                <li>點擊「移除」按鈕，即成功地刪除了您的應用程式活動。</li>
+              </ol>
+            </p>
+          </StyledCard>
         </div>
       </StyledSection>
     </DefaultLayout>
