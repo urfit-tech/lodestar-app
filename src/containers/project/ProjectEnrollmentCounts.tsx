@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Spin } from 'antd'
+import { Spinner } from '@chakra-ui/spinner'
 import gql from 'graphql-tag'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -21,7 +21,7 @@ const ProjectEnrollmentCounts: React.VFC<{
   })
 
   if (loading) {
-    return <Spin />
+    return <Spinner />
   }
 
   if (error || !data) {

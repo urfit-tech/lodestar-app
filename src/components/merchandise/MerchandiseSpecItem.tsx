@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Divider } from '@chakra-ui/react'
-import { Button, Spin } from 'antd'
+import { Divider, Spinner } from '@chakra-ui/react'
+import { Button } from 'antd'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -37,7 +37,7 @@ const MerchandiseSpecItem: React.VFC<{
   const [isDownloading, setIsDownloading] = useState<boolean>(false)
 
   if (!appId || loadingMerchandiseSpec) {
-    return <Spin />
+    return <Spinner />
   }
 
   if (!merchandiseSpec) {
@@ -60,7 +60,7 @@ const MerchandiseSpecItem: React.VFC<{
 
   return (
     <div>
-      <Divider />
+      <Divider className="mb-4" />
 
       <div className="d-flex align-items-center">
         <CustomRatioImage

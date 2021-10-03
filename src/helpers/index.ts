@@ -3,6 +3,7 @@ import { RcFile } from 'antd/lib/upload'
 import axios, { AxiosRequestConfig } from 'axios'
 import moment from 'moment'
 import queryString from 'query-string'
+import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { css, FlattenSimpleInterpolation } from 'styled-components'
 import { v4 as uuid } from 'uuid'
@@ -337,3 +338,22 @@ export const isHTMLString = (str: string) =>
     .replace(/(<([^>]+)>)/gi, '')
     // remove extra space at start and end
     .trim()
+
+export const useOnceAnimation = () => {
+  const ref = useRef<HTMLImageElement>(null)
+  const [activated, setActivated] = useState(false)
+
+  useEffect(() => {
+    if (ref.current === null || activated) {
+      return
+    }
+
+    const element = ref.current
+    const observer = new IntersectionObserver(entries => entries.forEach(v => v.isIntersecting && setActivated(true)))
+    observer.observe(element)
+
+    return () => observer.unobserve(element)
+  }, [activated])
+
+  return { ref, activated }
+}

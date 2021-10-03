@@ -116,7 +116,7 @@ const ActivityTicket: React.VFC<
       <StyledPrice>
         <PriceLabel listPrice={price} />
       </StyledPrice>
-      <Divider />
+      <Divider className="mb-4" />
       <StyledSubTitle>{formatMessage(productMessages.activity.title.sessions)}</StyledSubTitle>
       {activityTicketSessions.map(session => (
         <StyledTag key={session.id} variant="solid" className="mb-2 mr-1">

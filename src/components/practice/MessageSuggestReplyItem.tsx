@@ -14,7 +14,7 @@ const MessageSuggestReplyItem: React.VFC<{
   suggestReplyId: string
   memberId: string
   content: string
-  programRoles: ProgramRoleProps[]
+  programRoles: Pick<ProgramRoleProps, 'id' | 'name' | 'memberId'>[]
   reactedMemberIds: string[]
   createdAt: Date
   title?: string | undefined

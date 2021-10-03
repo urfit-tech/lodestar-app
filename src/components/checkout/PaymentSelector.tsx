@@ -1,4 +1,5 @@
-import { Form, Select } from 'antd'
+import { Select } from '@chakra-ui/react'
+import { Form } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -79,6 +80,7 @@ const PaymentSelector: React.FC<{
   return (
     <Form.Item
       className="mb-0"
+      style={{ width: '50%' }}
       required
       validateStatus={isValidating && !selectedPaymentMethod ? 'error' : undefined}
       help={isValidating && !selectedPaymentMethod && formatMessage(checkoutMessages.label.paymentMethodPlaceholder)}
@@ -86,7 +88,6 @@ const PaymentSelector: React.FC<{
       <StyledTitle>{formatMessage(checkoutMessages.label.paymentMethod)}</StyledTitle>
       <StyledDescription className="mb-4">{formatMessage(checkoutMessages.message.warningPayment)}</StyledDescription>
       <Select
-        style={{ width: '50%' }}
         value={
           selectedPaymentMethod &&
           paymentOptions.some(
@@ -95,13 +96,13 @@ const PaymentSelector: React.FC<{
             ? JSON.stringify(selectedPaymentMethod)
             : undefined
         }
-        onChange={(v: string) => v && handleChange(JSON.parse(v))}
+        onChange={e => handleChange(JSON.parse(e.target.value))}
         placeholder={formatMessage(checkoutMessages.label.paymentMethodPlaceholder)}
       >
         {paymentOptions.map(option => (
-          <Select.Option key={option.name} value={JSON.stringify(option.payment)}>
+          <option key={option.name} value={JSON.stringify(option.payment)}>
             {option.name}
-          </Select.Option>
+          </option>
         ))}
       </Select>
     </Form.Item>

@@ -195,6 +195,7 @@ const PerpetualPlanBlock: React.VFC<{
   const handleClick = async () => {
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
+        content_name: `${projectTitle} - ${title}`,
         value: salePrice ?? listPrice,
         currency: 'TWD',
       })

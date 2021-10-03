@@ -1,48 +1,38 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Editor, Frame } from '@craftjs/core'
 import gql from 'graphql-tag'
-import CraftActivity from 'lodestar-app-element/src/components/craft/CraftActivity'
-import CraftBackground from 'lodestar-app-element/src/components/craft/CraftBackground'
-import CraftButton from 'lodestar-app-element/src/components/craft/CraftButton'
-import CraftCard from 'lodestar-app-element/src/components/craft/CraftCard'
-import CraftCarousel from 'lodestar-app-element/src/components/craft/CraftCarousel'
-import CraftCarouselContainer from 'lodestar-app-element/src/components/craft/CraftCarouselContainer'
-import CraftCollapse from 'lodestar-app-element/src/components/craft/CraftCollapse'
-import CraftContainer from 'lodestar-app-element/src/components/craft/CraftContainer'
-import CraftImage from 'lodestar-app-element/src/components/craft/CraftImage'
-import CraftInstructor from 'lodestar-app-element/src/components/craft/CraftInstructor'
-import CraftLayout from 'lodestar-app-element/src/components/craft/CraftLayout'
-import CraftParagraph from 'lodestar-app-element/src/components/craft/CraftParagraph'
-import CraftPodcastProgram from 'lodestar-app-element/src/components/craft/CraftPodcastProgram'
-import CraftProgram from 'lodestar-app-element/src/components/craft/CraftProgram'
-import CraftProject from 'lodestar-app-element/src/components/craft/CraftProject'
-import CraftStatistics from 'lodestar-app-element/src/components/craft/CraftStatistics'
-import CraftTitle from 'lodestar-app-element/src/components/craft/CraftTitle'
-import CraftTitleAndParagraph from 'lodestar-app-element/src/components/craft/CraftTitleAndParagraph'
+import * as craftComponents from 'lodestar-app-element/src/components/craft'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import MessengerChat from '../components/common/MessengerChat'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import ActivityIntroSection from '../components/page/ActivityIntroSection'
-import ActivitySection from '../components/page/ActivitySection'
-import BlndCTASection from '../components/page/BlndCTASection'
-import BlndPostSection from '../components/page/BlndPostSection'
-import CoverSection from '../components/page/CoverSection'
-import CreatorSection from '../components/page/CreatorSection'
-import CustomCoverSection from '../components/page/CustomCoverSection'
-import LittlestarFeaturedPodcastSection from '../components/page/LittlestarFeaturedPodcastAlbumSection'
-// import LittlestarLastTimePodcastSection from '../components/page/LittlestarLastTimePodcastSection'
-import MisaFeatureSection from '../components/page/MisaFeatureSection'
-import MisaNavigationBar from '../components/page/MisaNavigationBar'
-import PodcastAlbumCollectionSection from '../components/page/PodcastAlbumCollectionSection'
-import PostSection from '../components/page/PostSection'
-import ProgramIntroSection from '../components/page/ProgramIntroSection'
-import ProgramSection from '../components/page/ProgramSection'
-import ReferrerSection from '../components/page/ReferrerSection'
-import StaticBlock from '../components/page/StaticBlock'
-import TeacherSection from '../components/page/TeacherSection'
+import {
+  ActivityIntroSection,
+  ActivitySection,
+  BlndCTASection,
+  BlndPostSection,
+  CoverSection,
+  CreatorListSection,
+  CreatorSection,
+  CustomCoverSection,
+  IntroSection,
+  LittlestarFeaturedPodcastSection,
+  LittlestarLastTimePodcastSection,
+  MisaFeatureSection,
+  MisaNavigationBar,
+  NavSection,
+  PodcastAlbumCollectionSection,
+  PostSection,
+  ProgramIntroSection,
+  ProgramSection,
+  ReferrerSection,
+  StaticBlock,
+  StaticCoverSection,
+  TableListSection,
+  TeacherSection,
+} from '../components/page'
 import hasura from '../hasura'
 import { ReactComponent as AngleRightIcon } from '../images/angle-right.svg'
 import LoadingPage from './LoadingPage'
@@ -90,8 +80,11 @@ const sectionConverter = {
   homeActivity: ActivitySection,
   homeActivityIntro: ActivityIntroSection,
   homeCreator: CreatorSection,
+  homeCreatorList: CreatorListSection,
   homeCover: CoverSection,
   homeCustomCover: CustomCoverSection,
+  homeStaticCover: StaticCoverSection,
+  homeNav: NavSection,
   homePost: PostSection,
   homeProgram: ProgramSection,
   homeProgramCategory: ProgramSection,
@@ -100,13 +93,15 @@ const sectionConverter = {
   homeReferrer: ReferrerSection,
   homeStatic: StaticBlock,
   homeTeacher: TeacherSection,
+  homeIntro: IntroSection,
   messenger: MessengerChat,
+  homeTableList: TableListSection,
   // custom
   homeBlndPost: BlndPostSection,
   homeBlndCTA: BlndCTASection,
   homeMisaFeature: MisaFeatureSection,
   homeMisaNav: MisaNavigationBar,
-  // homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
+  homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
   homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
 }
 
@@ -123,29 +118,7 @@ const AppPage: React.VFC = () => {
   return (
     <DefaultLayout {...appPage.options}>
       {appPage.craftData ? (
-        <Editor
-          enabled={false}
-          resolver={{
-            CraftContainer,
-            CraftLayout,
-            CraftTitle,
-            CraftParagraph,
-            CraftTitleAndParagraph,
-            CraftButton,
-            CraftCarousel,
-            CraftCarouselContainer,
-            CraftStatistics,
-            CraftImage,
-            CraftCard,
-            CraftCollapse,
-            CraftBackground,
-            CraftProgram,
-            CraftProject,
-            CraftActivity,
-            CraftPodcastProgram,
-            CraftInstructor,
-          }}
-        >
+        <Editor enabled={false} resolver={craftComponents}>
           <Frame data={JSON.stringify(appPage.craftData)} />
         </Editor>
       ) : (
@@ -161,7 +134,7 @@ const AppPage: React.VFC = () => {
   )
 }
 
-const usePage = (path: string) => {
+export const usePage = (path: string) => {
   const { id: appId } = useApp()
   const { loading, error, data } = useQuery<hasura.GET_PAGE, hasura.GET_PAGEVariables>(
     gql`

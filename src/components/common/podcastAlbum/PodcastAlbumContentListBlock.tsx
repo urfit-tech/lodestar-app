@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { durationFullFormatter } from '../../../helpers'
-import { productMessages } from '../../../helpers/translation'
+import { podcastAlbumMessages } from '../../../helpers/translation'
 import { PodcastAlbum } from '../../../types/podcastAlbum'
 import { AuthModalContext } from '../../auth/AuthModal'
 
@@ -49,8 +49,9 @@ const StyledDuration = styled.span`
 `
 
 const PodcastAlbumContentListBlock: React.VFC<{
+  podcastAlbumId: PodcastAlbum['id']
   podcastPrograms: PodcastAlbum['podcastPrograms']
-}> = ({ podcastPrograms }) => {
+}> = ({ podcastAlbumId, podcastPrograms }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
@@ -58,7 +59,7 @@ const PodcastAlbumContentListBlock: React.VFC<{
 
   return (
     <>
-      <StyledTitle>{formatMessage(productMessages.program.title.content)}</StyledTitle>
+      <StyledTitle>{formatMessage(podcastAlbumMessages.label.podcastContent)}</StyledTitle>
       <Divider className="mb-3" />
 
       {podcastPrograms.map(podcastProgram => (
@@ -66,7 +67,7 @@ const PodcastAlbumContentListBlock: React.VFC<{
           key={podcastProgram.id}
           onClick={() => {
             if (isAuthenticated) {
-              history.push(`/podcasts/${podcastProgram.id}`)
+              history.push(`/podcasts/${podcastProgram.id}?podcastAlbumId=${podcastAlbumId}`)
             } else {
               setAuthModalVisible?.(true)
             }

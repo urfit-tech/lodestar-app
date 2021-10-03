@@ -1,5 +1,6 @@
 import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
-import { Card, Select } from 'antd'
+import { Select } from '@chakra-ui/react'
+import { Card } from 'antd'
 import { flatten, sum } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineCalendar, AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
@@ -126,9 +127,9 @@ const ProgramContentMenu: React.VFC<{
       <StyledHead className="d-flex justify-content-between align-items-center">
         <span>{formatMessage(productMessages.program.content.programList)}</span>
         <StyledSelectBlock>
-          <Select size="default" value={sortBy} onChange={(value: string) => setSortBy(value)}>
-            <Select.Option value="section">{formatMessage(productMessages.program.select.option.unit)}</Select.Option>
-            <Select.Option value="date">{formatMessage(productMessages.program.select.option.time)}</Select.Option>
+          <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value)}>
+            <option value="section">{formatMessage(productMessages.program.select.option.unit)}</option>
+            <option value="date">{formatMessage(productMessages.program.select.option.time)}</option>
           </Select>
         </StyledSelectBlock>
       </StyledHead>

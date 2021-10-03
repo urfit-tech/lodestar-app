@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { usePublicMember } from '../../../hooks/member'
 import { useEnrolledProgramIds } from '../../../hooks/program'
+import { Category } from '../../../types/general'
 import {
   ProgramContentProps,
   ProgramContentSectionProps,
@@ -53,6 +54,7 @@ const StyledCountDownBlock = styled.div`
 const ProgramInfoBlock: React.VFC<{
   program: ProgramProps & {
     roles: ProgramRoleProps[]
+    categories: Category[]
     plans: ProgramPlanProps[]
     contentSections: (ProgramContentSectionProps & {
       contents: ProgramContentProps[]

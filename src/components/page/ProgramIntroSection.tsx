@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useOnceAnimation } from '../../helpers'
 import { usePublishedProgramCollection } from '../../hooks/program'
 import { BREAK_POINT } from '../common/Responsive'
 import ProgramCard from '../program/ProgramCard'
-import { useOnceAnimation } from './MisaFeatureSection'
 import { StyledCarousel } from './TeacherSection'
 
 const StyledColumn = styled.div<{ backgroundImage: string }>`

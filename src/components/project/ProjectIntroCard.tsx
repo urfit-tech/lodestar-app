@@ -112,7 +112,7 @@ const ProjectIntroCard: React.VFC<ProjectIntroProps> = ({
                 }
                 width={50}
                 strokeWidth={12}
-                strokeColor={theme['@primary-color']}
+                strokeColor={theme.colors.primary[500]}
                 format={() =>
                   `${
                     !targetAmount

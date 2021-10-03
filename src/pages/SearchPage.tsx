@@ -660,6 +660,7 @@ const useSearchProductCollection = (
           id: programRole.id,
           name: 'instructor',
           memberId: programRole.member?.id || '',
+          memberName: programRole.member?.name || '',
         })),
         plans: program.program_plans.map(programPlan => ({
           id: programPlan.id,

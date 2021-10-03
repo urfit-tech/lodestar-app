@@ -97,27 +97,30 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
   const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
   sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
 
-  const cachedCartInfo: {
+  const cachedCartInfo = useMemo<{
     shipping: ShippingProps | null
     invoice: InvoiceProps | null
     payment: PaymentProps | null
-  } = {
-    shipping: null,
-    invoice: {
-      name: currentMember?.name || '',
-      phone: '',
-      email: currentMember?.email || '',
-    },
-    payment: null,
-  }
-  try {
-    const cachedShipping = localStorage.getItem('kolable.cart.shipping')
-    const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
-    const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
-    cachedCartInfo.shipping = cachedShipping && JSON.parse(cachedShipping)
-    cachedCartInfo.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
-    cachedCartInfo.payment = cachedPayment && JSON.parse(cachedPayment)
-  } catch {}
+  }>(() => {
+    const defaultCartInfo = {
+      shipping: null,
+      invoice: {
+        name: currentMember?.name || '',
+        phone: '',
+        email: currentMember?.email || '',
+      },
+      payment: null,
+    }
+    try {
+      const cachedShipping = localStorage.getItem('kolable.cart.shipping')
+      const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
+      const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
+      cachedCartInfo.shipping = cachedShipping && JSON.parse(cachedShipping)
+      cachedCartInfo.invoice = cachedInvoice && JSON.parse(cachedInvoice).value
+      cachedCartInfo.payment = cachedPayment && JSON.parse(cachedPayment)
+    } catch {}
+    return defaultCartInfo
+  }, [currentMember?.name, currentMember?.email])
 
   // checkout
   const [productId, setProductId] = useState(defaultProductId)
@@ -253,6 +256,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
 
     if (settings['tracking.fb_pixel_id']) {
       ReactPixel.track('AddToCart', {
+        content_name: target.title || productId,
         value: totalPrice,
         currency: 'TWD',
       })

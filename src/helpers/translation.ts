@@ -1460,6 +1460,10 @@ export const podcastAlbumMessages = {
       id: 'podcastAlbum.label.freePublic',
       defaultMessage: '免費公開',
     },
+    podcastContent: {
+      id: 'podcastAlbum.label.podcastContent',
+      defaultMessage: '專輯內容',
+    },
   }),
   text: defineMessages({
     sectionCount: {

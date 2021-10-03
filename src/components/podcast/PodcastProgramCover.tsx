@@ -188,7 +188,7 @@ const PodcastProgramCover: React.VFC<{
 
       <div className="d-flex align-items-center justify-content-between">
         <div className="flex-grow-1 mr-2">
-          <Divider />
+          <Divider className="mb-3" />
         </div>
         <div className="flex-shrink-0">
           {loadingPodcastProgram || maxDuration === 0 ? (

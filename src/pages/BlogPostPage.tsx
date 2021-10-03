@@ -200,7 +200,7 @@ const BlogPostPage: React.VFC = () => {
                 </Link>
               ))}
             </div>
-            <Divider />
+            <Divider className="mb-3" />
             <div className="py-3">
               {post?.author && (
                 <CreatorCard

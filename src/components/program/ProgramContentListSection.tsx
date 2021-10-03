@@ -106,7 +106,7 @@ const ProgramContentListSection: React.VFC<{
                         programContentId={programContent.id}
                         render={({ setVisible }) => (
                           <StyledObscure onClick={() => setVisible(true)}>
-                            <StyledTag color={theme['@primary-color']}>
+                            <StyledTag color={theme.colors.primary[500]}>
                               {formatMessage(productMessages.program.content.trial)}
                             </StyledTag>
                           </StyledObscure>

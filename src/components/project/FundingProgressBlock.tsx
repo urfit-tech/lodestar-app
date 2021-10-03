@@ -133,7 +133,7 @@ const FundingProgressBlock: React.VFC<{
         }
         status="normal"
         width={70}
-        strokeColor={theme['@primary-color']}
+        strokeColor={theme.colors.primary[500]}
         strokeWidth={10}
       />
 

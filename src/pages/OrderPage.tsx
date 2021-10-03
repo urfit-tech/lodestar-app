@@ -12,6 +12,7 @@ import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
+import { useSimpleProductCollection } from '../hooks/common'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
@@ -19,7 +20,8 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
-  const { settings } = useApp()
+  const getSimpleProductCollection = useSimpleProductCollection()
+  const { settings, id: appId } = useApp()
   const { loading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
     GET_ORDERS_PRODUCT,
     { variables: { orderId: orderId } },
@@ -38,6 +40,17 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
         ReactPixel.track('Purchase', {
           value: productPrice - discountPrice - shippingFee,
           currency: 'TWD',
+          content_type: order.order_products.length > 1 ? 'product_group' : 'product',
+          contents: order.order_products.map(order_product => {
+            const [productType, productId] = order_product.product_id.split('_')
+            return {
+              id: productId,
+              content_type: productType,
+              content_name: order_product.name,
+              quantity: order_product.options ? order_product.options['quantity'] || 1 : 1,
+              price: order_product.price,
+            }
+          }),
         })
       }
 
@@ -99,6 +112,46 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
         ReactGA.plugin.execute('ecommerce', 'clear', {})
 
         ReactGA.ga('send', 'pageview')
+      }
+
+      if (settings['tracking.gtm_id']) {
+        const orderProductIds = order.order_products.map(orderProduct => orderProduct.product_id)
+
+        getSimpleProductCollection(orderProductIds)
+          .then(simpleProducts => {
+            ;(window as any).dataLayer = (window as any).dataLayer || []
+            ;(window as any).dataLayer.push({ ecommerce: null })
+            ;(window as any).dataLayer.push({
+              ecommerce: {
+                purchase: {
+                  actionField: {
+                    id: order.id,
+                    affiliation: settings['title'] || appId,
+                    revenue: productPrice - discountPrice - shippingFee,
+                    shipping: shippingFee,
+                    coupon: order.order_discounts
+                      .map(orderDiscount => `${orderDiscount.type}_${orderDiscount.name}`)
+                      .join(' | '),
+                  },
+                  products: simpleProducts.map(simpleProduct => {
+                    const currenctOrderProduct = order.order_products.find(
+                      orderProduct => orderProduct.product_id === `${simpleProduct.productType}_${simpleProduct.id}`,
+                    )
+                    return {
+                      id: simpleProduct.id,
+                      name: simpleProduct.title,
+                      price: simpleProduct.isOnSale ? simpleProduct.salePrice : simpleProduct.listPrice,
+                      category: simpleProduct.categories?.join('|'),
+                      brand: settings['title'] || appId,
+                      quantity: currenctOrderProduct?.options['quantity'] || 1,
+                      variant: simpleProduct.roles?.join('|'),
+                    }
+                  }),
+                },
+              },
+            })
+          })
+          .catch()
       }
     }
   }, [order, settings, withTracking])
@@ -205,6 +258,7 @@ const GET_ORDERS_PRODUCT = gql`
       order_discounts {
         type
         target
+        name
       }
       shipping
       invoice

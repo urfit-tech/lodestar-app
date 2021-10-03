@@ -1,4 +1,5 @@
-import { Box, useRadio, UseRadioProps, useTheme } from '@chakra-ui/react'
+import { Box, useRadio, UseRadioProps } from '@chakra-ui/react'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 
 const RadioCard: React.FC<
   {
@@ -6,7 +7,7 @@ const RadioCard: React.FC<
     children: React.ReactNode
   } & UseRadioProps
 > = ({ size, children, ...props }) => {
-  const theme = useTheme()
+  const theme = useAppTheme()
   const { getInputProps, getCheckboxProps } = useRadio(props)
   const input = getInputProps()
   const checkbox = getCheckboxProps()

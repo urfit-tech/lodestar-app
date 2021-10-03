@@ -1,4 +1,14 @@
-import { Button, Icon, SkeletonText } from '@chakra-ui/react'
+import {
+  Button,
+  Icon,
+  IconButton,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  SkeletonText,
+  useDisclosure,
+} from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import QRCode from 'qrcode.react'
@@ -14,8 +24,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { handleError } from '../helpers'
 import { activityMessages, commonMessages, productMessages } from '../helpers/translation'
 import { useActivityAttendance, useActivityTicket, useAttendSession } from '../hooks/activity'
-import { ReactComponent as MapOIcon } from '../images/map-o.svg'
-import { ReactComponent as VideoIcon } from '../images/video.svg'
+import { MapOIcon, TimesIcon, VideoIcon } from '../images'
 
 const StyledContainer = styled.div`
   padding: 2.5rem 15px 5rem;
@@ -40,10 +49,20 @@ const StyledMeta = styled.div`
     margin-bottom: 0.5rem;
   }
 `
+const StyledModalBody = styled(ModalBody)`
+  && {
+    padding: 0;
+    iframe {
+      width: 100%;
+      height: 100%;
+    }
+  }
+`
 
 const messages = defineMessages({
   attended: { id: 'activity.ui.attended', defaultMessage: '已簽到' },
   attendNow: { id: 'activity.ui.attendNow', defaultMessage: '立即簽到' },
+  enterLinkPage: { id: 'activity.ui.enterLinkPage', defaultMessage: '進入直播頁面' },
 })
 
 const ActivityTicketPage: React.VFC<{
@@ -55,6 +74,7 @@ const ActivityTicketPage: React.VFC<{
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { enabledModules } = useApp()
+  const { isOpen, onClose, onOpen } = useDisclosure()
   const { loadingTicket, errorTicket, ticket } = useActivityTicket(activityTicketId)
   const { loadingAttendance, attendance, refetchAttendance } = useActivityAttendance(memberId, activityTicketId)
   const { attendActivitySession, leaveActivitySession } = useAttendSession()
@@ -134,10 +154,40 @@ const ActivityTicketPage: React.VFC<{
                             <div className="d-flex align-items-center">
                               <Icon as={VideoIcon} className="mr-2" />
                               <span>
-                                <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}</span>
-                                <a href={ticketSession.onlineLink} target="_blank" rel="noopener noreferrer">
-                                  <Button variant="link">{ticketSession.onlineLink}</Button>
-                                </a>
+                                {ticketSession.onlineLink.startsWith('https') ? (
+                                  <div className="d-flex align-items-center" style={{ lineHeight: 1 }}>
+                                    <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}:</span>
+                                    <a href={ticketSession.onlineLink} target="_blank" rel="noopener noreferrer">
+                                      <Button variant="link">{ticketSession.onlineLink}</Button>
+                                    </a>
+                                  </div>
+                                ) : ticketSession.onlineLink.startsWith('<iframe') ? (
+                                  <>
+                                    <Modal onClose={onClose} size="full" isOpen={isOpen}>
+                                      <ModalContent style={{ margin: 0 }}>
+                                        <div className="d-flex align-items-center p-3">
+                                          <IconButton
+                                            className="flex-shrink-0"
+                                            aria-label="close"
+                                            onClick={onClose}
+                                            icon={<TimesIcon />}
+                                          />
+                                          <ModalHeader className="flex-grow-1 py-0">
+                                            {ticket.activity.title}
+                                          </ModalHeader>
+                                        </div>
+                                        <StyledModalBody
+                                          dangerouslySetInnerHTML={{ __html: ticketSession.onlineLink }}
+                                        />
+                                      </ModalContent>
+                                    </Modal>
+                                    <Button variant="link" onClick={onOpen}>
+                                      {formatMessage(messages.enterLinkPage)}
+                                    </Button>
+                                  </>
+                                ) : (
+                                  ticketSession.onlineLink
+                                )}
                               </span>
                             </div>
                           )}

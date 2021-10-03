@@ -12,6 +12,7 @@ import { CustomRendererProps, CustomRendererProvider } from './contexts/CustomRe
 import { LanguageProvider } from './contexts/LanguageContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { PodcastPlayerProvider } from './contexts/PodcastPlayerContext'
+import './styles.scss'
 
 const Application: React.FC<{
   appId: string

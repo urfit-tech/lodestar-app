@@ -1,7 +1,7 @@
 import { Button, Icon, Skeleton } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { uniqBy, unnest } from 'ramda'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
@@ -50,7 +50,7 @@ const ActivityCollectionPage = () => {
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
   const [noTitle] = useQueryParam('noTitle', BooleanParam)
   const location = useLocation()
-  const { settings } = useApp()
+  const { settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { loading, navs } = useNav()
   const { currentLanguage } = useContext(LanguageContext)
   const pageTitle = navs.find(
@@ -73,6 +73,36 @@ const ActivityCollectionPage = () => {
   } catch {
     collectionBanner = null
   }
+  useEffect(() => {
+    if (activities && settings['tracking.gtm_id']) {
+      ;(window as any).dataLayer = (window as any).dataLayer || []
+      ;(window as any).dataLayer.push({ ecommerce: null })
+      ;(window as any).dataLayer.push({
+        ecommerce: {
+          currencyCode: appCurrencyId || 'TWD',
+          impressions: activities
+            .filter(
+              activity =>
+                classification === null || activity.categories.some(category => category.id === classification),
+            )
+            .filter(
+              activity =>
+                !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage),
+            )
+            .map((activity, index) => ({
+              name: activity.title,
+              id: activity.id,
+              brand: settings['title'] || appId,
+              category: activity.categories.map(category => category.name).join('|'),
+              variant: activity.organizerId,
+              list: 'Activity',
+              position: index + 1,
+            })),
+        },
+      })
+    }
+  }, [activities, currentLanguage, classification])
+
   return (
     <DefaultLayout white>
       {collectionBanner && <StyledCollectionBanner src={collectionBanner}></StyledCollectionBanner>}

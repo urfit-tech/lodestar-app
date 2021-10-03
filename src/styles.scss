@@ -1,19 +1,3 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC:400,500,700&display=swap&subset=chinese-traditional');
-
-* {
-  -webkit-overflow-scrolling: touch;
-}
-
-body {
-  font-family: 'Roboto', 'Noto Sans TC', sans-serif !important;
-}
-
-i.anticon svg {
-  display: inline-block !important;
-  vertical-align: text-top !important;
-}
-
 // ant design
 .ant-btn {
   span {
@@ -80,34 +64,4 @@ i.anticon svg {
 
 .fb_customer_chat_bubble_pop_in {
   bottom: 100px !important;
-}
-
-// custom component
-.text-left {
-  text-align: left;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-right {
-  text-align: right;
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
-// color palette
-:root {
-  --success: #4ed1b3;
-  --warning: #ffbe1e;
-  --error: #ff7d62;
-  --gray-darker: #585858;
-  --gray: #cdcece;
-  --gray-light: #ececec;
-  --gray-lighter: #f7f8f8;
-  --gray-dark: #9b9b9b;
-  --black-45: rgba(0, 0, 0, 0.45);
 }

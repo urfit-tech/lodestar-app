@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { Redirect, useParams } from 'react-router-dom'
 import { useProject } from '../../hooks/project'
+import LoadingPage from '../LoadingPage'
 import FundingPage from './FundingPage'
 import ModularPage from './ModularPage'
 import OnSalePage from './OnSalePage'
@@ -36,7 +37,11 @@ const ProjectPage: React.VFC = () => {
     }
   }, [project])
 
-  if (errorProject || !project || (project.publishedAt && project.publishedAt.getTime() > Date.now())) {
+  if (loadingProject || !project) {
+    return <LoadingPage />
+  }
+
+  if (errorProject || (project.publishedAt && project.publishedAt.getTime() > Date.now())) {
     return <Redirect to="/" />
   }
 

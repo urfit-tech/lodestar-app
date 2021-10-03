@@ -1,6 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button } from '@chakra-ui/react'
-import { Layout, PageHeader, Spin } from 'antd'
+import { Button, Spinner } from '@chakra-ui/react'
+import { Layout, PageHeader } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
@@ -105,7 +105,7 @@ const ProgramContentCollectionPage: React.VFC = () => {
         <div className="container py-5">
           <AdminCard>
             {!currentMemberId || loadingProgram || !program ? (
-              <Spin />
+              <Spinner />
             ) : (
               <ProgressProvider programId={program.id} memberId={currentMemberId}>
                 <ProgramContentMenu program={program} />

@@ -108,7 +108,7 @@ export const useSwarmify = () => {
       swarmcdnkey,
       theme: {
         button: 'circle',
-        primaryColor: theme ? theme['@primary-color'] : '#000',
+        primaryColor: theme ? theme.colors.primary?.[500] : '#000',
       },
       plugins: {},
     }

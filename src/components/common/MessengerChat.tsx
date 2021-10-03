@@ -35,7 +35,7 @@ const MessengerChat: React.VFC<MessengerChatProps> = ({ options: { appId, themeC
   return (
     <MessengerCustomerChat
       appId={appId || settings['auth.facebook_app_id']}
-      themeColor={themeColor || theme['@primary-color']}
+      themeColor={themeColor || theme.colors.primary[500]}
       {...options}
     />
   )

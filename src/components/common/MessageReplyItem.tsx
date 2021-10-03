@@ -66,7 +66,7 @@ const MessageReplyItem: React.VFC<{
             memberId={memberId}
             renderText={() =>
               roleName === 'instructor' ? (
-                <StyledTag color={theme['@primary-color']} className="ml-2 mr-0">
+                <StyledTag color={theme.colors.primary[500]} className="ml-2 mr-0">
                   <ProductRoleFormatter value={roleName as ProductRoleName} />
                 </StyledTag>
               ) : roleName === 'assistant' ? (

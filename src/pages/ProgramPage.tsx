@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -83,6 +84,7 @@ const ProgramPage: React.VFC = () => {
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const params = queryString.parse(location.search)
+  const [pageFrom] = useQueryParam('pageFrom', StringParam)
 
   let seoMeta:
     | {
@@ -111,18 +113,46 @@ const ProgramPage: React.VFC = () => {
 
   useEffect(() => {
     if (program) {
+      const listPrice =
+        program.isSubscription && program.plans.length > 0 ? program.plans[0].listPrice : program.listPrice || 0
+      const salePrice =
+        program.isSubscription && program.plans.length > 0 && (program.plans[0].soldAt?.getTime() || 0) > Date.now()
+          ? program.plans[0].salePrice
+          : (program.soldAt?.getTime() || 0) > Date.now()
+          ? program.salePrice
+          : undefined
+
       ReactGA.plugin.execute('ec', 'addProduct', {
         id: program.id,
         name: program.title,
         category: 'Program',
-        price: `${program.listPrice}`,
+        price: `${salePrice || listPrice}`,
         quantity: '1',
         currency: 'TWD',
       })
       ReactGA.plugin.execute('ec', 'setAction', 'detail')
       ReactGA.ga('send', 'pageview')
+      ;(window as any).dataLayer = (window as any).dataLayer || []
+      ;(window as any).dataLayer.push({ ecommerce: null })
+      ;(window as any).dataLayer.push({
+        ecommerce: {
+          detail: {
+            actionField: { list: pageFrom || '' },
+            products: [
+              {
+                name: program.title,
+                id: program.id,
+                price: salePrice || listPrice,
+                brand: settings['title'] || appId,
+                category: program.categories.map(category => category.name).join('|'),
+                variant: program.roles.map(role => role.memberName).join('|'),
+              },
+            ],
+          },
+        },
+      })
     }
-  }, [program])
+  }, [program, pageFrom, appId, settings])
 
   if (loadingProgram) {
     return (
