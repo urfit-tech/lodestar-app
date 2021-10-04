@@ -430,7 +430,7 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
   }, [data, error, loading, url])
 
   return {
-    loadingPodcastProgram: loading && loadingUrl,
+    loadingPodcastProgram: loading || loadingUrl,
     errorPodcastProgram: error,
     podcastProgram,
     refetchPodcastProgram: refetch,
