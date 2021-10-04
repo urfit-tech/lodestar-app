@@ -6,6 +6,7 @@ type PlaylistContentProps = {
   id: string | null
   podcastProgramIds: string[]
   currentIndex: number
+  podcastAlbumId?: string
   isPreview?: boolean
 }
 export type PlaylistModeType = 'loop' | 'single-loop' | 'random'
@@ -14,7 +15,7 @@ type PodcastPlayerProps = {
   visible: boolean
   isPlaying: boolean
   maxDuration: number
-  playlist: PlaylistContentProps | null
+  playlistContent: PlaylistContentProps | null
   playlistMode: PlaylistModeType
   currentPlayingId: string
   currentPodcastProgram: PodcastProgramContent | null
@@ -24,9 +25,9 @@ type PodcastPlayerProps = {
   lastProgress: number
   togglePlaylistMode?: () => void
   setIsPlaying?: React.Dispatch<React.SetStateAction<boolean>>
-  setPlaylist?: (playlist: PlaylistContentProps) => void
-  setupPlaylist?: (playlist: PlaylistContentProps) => void
-  playNow?: (playlist: PlaylistContentProps) => void
+  setPlaylistContent?: (playlistContent: PlaylistContentProps) => void
+  setupPlaylist?: (playlistContent: PlaylistContentProps) => void
+  playNow?: (playlistContent: PlaylistContentProps) => void
   shift?: (quantity: 1 | -1) => void
   closePlayer?: () => void
   setMaxDuration?: React.Dispatch<React.SetStateAction<number>>
@@ -36,7 +37,7 @@ type PodcastPlayerProps = {
 const PodcastPlayerContext = createContext<PodcastPlayerProps>({
   visible: false,
   isPlaying: false,
-  playlist: null,
+  playlistContent: null,
   playlistMode: 'loop',
   currentPlayingId: '',
   currentPodcastProgram: null,
@@ -51,10 +52,10 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const [visible, setVisible] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [maxDuration, setMaxDuration] = useState(0)
-  const [playlist, setPlaylist] = useState<PlaylistContentProps | null>(null)
+  const [playlistContent, setPlaylistContent] = useState<PlaylistContentProps | null>(null)
   const [playlistMode, setPlaylistMode] = useState<PlaylistModeType>('loop')
   const [shuffledPodcastProgramIds, setShuffledPodcastProgramIds] = useState<string[]>([])
-  const currentPlayingId = playlist?.podcastProgramIds[playlist.currentIndex] || ''
+  const currentPlayingId = playlistContent?.podcastProgramIds[playlistContent.currentIndex] || ''
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(currentPlayingId)
   const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(currentPlayingId)
 
@@ -63,7 +64,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
       value={{
         visible,
         isPlaying,
-        playlist,
+        playlistContent,
         playlistMode,
         loadingPodcastProgram,
         currentPlayingId,
@@ -77,9 +78,9 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
             setPlaylistMode('single-loop')
           } else if (playlistMode === 'single-loop') {
             setPlaylistMode('random')
-            const currentPodcastProgramId = playlist?.podcastProgramIds[playlist.currentIndex] || ''
+            const currentPodcastProgramId = playlistContent?.podcastProgramIds[playlistContent.currentIndex] || ''
             const tmpList = [
-              ...(playlist?.podcastProgramIds.filter(
+              ...(playlistContent?.podcastProgramIds.filter(
                 podcastProgramId => podcastProgramId !== currentPodcastProgramId,
               ) || []),
             ]
@@ -95,58 +96,58 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           }
         },
         setIsPlaying,
-        setPlaylist,
+        setPlaylistContent,
         setupPlaylist: useCallback(
-          playlist => {
-            setPlaylist(playlist)
+          playlistContent => {
+            setPlaylistContent(playlistContent)
             setPlaylistMode('loop')
             !visible && setVisible(true)
             setIsPlaying(false)
           },
           [visible],
         ),
-        playNow: playlist => {
-          setPlaylist(playlist)
+        playNow: playlistContent => {
+          setPlaylistContent(playlistContent)
           setPlaylistMode('loop')
           !visible && setVisible(true)
           setIsPlaying(true)
         },
         shift: quantity => {
-          if (!playlist) {
+          if (!playlistContent) {
             return
           }
 
           if (playlistMode === 'random') {
             const currentShuffledIndex = shuffledPodcastProgramIds.findIndex(
-              podcastProgramId => podcastProgramId === playlist.podcastProgramIds[playlist.currentIndex],
+              podcastProgramId => podcastProgramId === playlistContent.podcastProgramIds[playlistContent.currentIndex],
             )
             const targetPodcastProgramId = shuffledPodcastProgramIds[currentShuffledIndex + quantity]
             if (!targetPodcastProgramId) {
               return
             }
-            const targetIndex = playlist.podcastProgramIds.findIndex(
+            const targetIndex = playlistContent.podcastProgramIds.findIndex(
               podcastProgramId => podcastProgramId === targetPodcastProgramId,
             )
             if (targetIndex > -1) {
-              setPlaylist({
-                ...playlist,
+              setPlaylistContent({
+                ...playlistContent,
                 currentIndex: targetIndex,
               })
             }
           } else if (playlistMode === 'loop') {
-            setPlaylist({
-              ...playlist,
-              currentIndex: playlist.podcastProgramIds[playlist.currentIndex + quantity]
-                ? playlist.currentIndex + quantity
+            setPlaylistContent({
+              ...playlistContent,
+              currentIndex: playlistContent.podcastProgramIds[playlistContent.currentIndex + quantity]
+                ? playlistContent.currentIndex + quantity
                 : quantity > 0
                 ? 0
-                : playlist.podcastProgramIds.length - 1,
+                : playlistContent.podcastProgramIds.length - 1,
             })
           }
         },
         closePlayer: () => {
           setVisible(false)
-          setPlaylist(null)
+          setPlaylistContent(null)
         },
         setMaxDuration,
         refetchPodcastProgramProgress,

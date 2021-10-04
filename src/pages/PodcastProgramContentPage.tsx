@@ -3,7 +3,6 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -28,7 +27,6 @@ const StyledContentWrapper = styled.div`
 
 const PodcastProgramContentPage: React.VFC = () => {
   const { podcastProgramId } = useParams<{ podcastProgramId: string }>()
-  const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
   const { currentMemberId } = useAuth()
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(podcastProgramId)
 
@@ -48,7 +46,6 @@ const PodcastProgramContentPage: React.VFC = () => {
             <PodcastProgramCover
               memberId={currentMemberId}
               podcastProgramId={podcastProgramId}
-              podcastAlbumId={podcastAlbumId || undefined}
               coverUrl={podcastProgram.coverUrl}
               title={podcastProgram.title}
               publishedAt={podcastProgram.publishedAt}

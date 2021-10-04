@@ -662,6 +662,11 @@ export interface GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podca
   title: string;
 }
 
+export interface GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_album_podcast_album_podcast_programs {
+  __typename: "podcast_album_podcast_program";
+  podcast_program_id: any;
+}
+
 export interface GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_album_podcast_album_categories_category {
   __typename: "category";
   id: string;
@@ -682,6 +687,10 @@ export interface GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podca
   id: any;
   title: string;
   cover_url: string | null;
+  /**
+   * An array relationship
+   */
+  podcast_album_podcast_programs: GET_LAST_WATCHED_PODCAST_PROGRAM_podcast_program_progress_podcast_album_podcast_album_podcast_programs[];
   /**
    * An array relationship
    */
@@ -17435,6 +17444,7 @@ export interface podcast_album_bool_exp {
   is_public?: Boolean_comparison_exp | null;
   podcast_album_categories?: podcast_album_category_bool_exp | null;
   podcast_album_podcast_programs?: podcast_album_podcast_program_bool_exp | null;
+  podcast_program_progresses?: podcast_program_progress_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -17846,6 +17856,26 @@ export interface podcast_program_on_conflict {
   constraint: podcast_program_constraint;
   update_columns: podcast_program_update_column[];
   where?: podcast_program_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "podcast_program_progress". All fields are combined with a logical 'AND'.
+ */
+export interface podcast_program_progress_bool_exp {
+  _and?: (podcast_program_progress_bool_exp | null)[] | null;
+  _not?: podcast_program_progress_bool_exp | null;
+  _or?: (podcast_program_progress_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  last_progress?: numeric_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  podcast_album?: podcast_album_bool_exp | null;
+  podcast_album_id?: uuid_comparison_exp | null;
+  podcast_program?: podcast_program_bool_exp | null;
+  podcast_program_id?: uuid_comparison_exp | null;
+  progress?: numeric_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
 }
 
 /**

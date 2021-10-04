@@ -120,12 +120,11 @@ const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ member
                 return
               }
               history.push(`/podcasts/${enrolledPodcastPrograms[0].id}`)
-              playNow &&
-                playNow({
-                  id: null,
-                  podcastProgramIds: enrolledPodcastPrograms.map(podcastProgram => podcastProgram.id),
-                  currentIndex: 0,
-                })
+              playNow?.({
+                id: null,
+                podcastProgramIds: enrolledPodcastPrograms.map(podcastProgram => podcastProgram.id),
+                currentIndex: 0,
+              })
             }}
           >
             {formatMessage(productMessages.podcast.title.allPodcast)} ({totalPodcastProgramCount})
@@ -151,12 +150,11 @@ const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ member
                   return
                 }
                 history.push(`/podcasts/${playlist.podcastProgramIds[0]}`)
-                playNow &&
-                  playNow({
-                    id: playlist.id,
-                    podcastProgramIds: playlist.podcastProgramIds,
-                    currentIndex: 0,
-                  })
+                playNow?.({
+                  id: playlist.id,
+                  podcastProgramIds: playlist.podcastProgramIds,
+                  currentIndex: 0,
+                })
               }}
             />
           ))}
