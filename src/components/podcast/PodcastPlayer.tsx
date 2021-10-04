@@ -176,6 +176,29 @@ const CloseBlock = styled.div`
     }
   `)}
 `
+const StyledRotateIcon = styled(Icon)`
+  font-size: 44px;
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+
+  @-moz-keyframes spin {
+    100% {
+      -moz-transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes spin {
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+  @keyframes spin {
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+`
 
 const durationFormat: (time: number) => string = time => {
   return `${Math.floor(time / 60)}:${Math.floor(time % 60)
@@ -372,7 +395,7 @@ const PodcastPlayer: React.VFC<{
                   }}
                 >
                   {loadingPodcastProgram || maxDuration === 0 || isAudioLoading ? (
-                    <Icon as={AiOutlineLoading} style={{ fontSize: '44px' }} />
+                    <StyledRotateIcon as={AiOutlineLoading} />
                   ) : (
                     <Icon as={isPlaying ? PauseCircleIcon : PlayCircleIcon} style={{ fontSize: '44px' }} />
                   )}
