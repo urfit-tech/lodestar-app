@@ -1,10 +1,13 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Icon } from '@chakra-ui/icons'
+import { Button } from '@chakra-ui/react'
 import { Skeleton } from '@chakra-ui/skeleton'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import hasura from '../../hasura'
 import { ReactComponent as PlayIcon } from '../../images/play.svg'
 import { BREAK_POINT } from '../common/Responsive'
@@ -84,12 +87,20 @@ const StyledCard = styled.div`
   }
 `
 
+const StyledLinkButton = styled(Button)`
+  && {
+    color: white;
+  }
+`
+
 const LittlestarLastTimePodcastSection: React.FC<{
   options: {
     title?: string
   }
 }> = ({ options: { title } }) => {
   const { status, lastWatchedPodcastProgram } = useLastWatchedPodcastProgram()
+  const { playNow } = useContext(PodcastPlayerContext)
+  const history = useHistory()
 
   if (status === 'loading') return <Skeleton />
   if (lastWatchedPodcastProgram === null) return <></>
@@ -115,12 +126,23 @@ const LittlestarLastTimePodcastSection: React.FC<{
 
             <div>
               <div className="play">
-                <Link
-                  to={`/podcasts/${lastWatchedPodcastProgram.id}?podcastAlbumId=${lastWatchedPodcastProgram.podcastAlbum.id}`}
+                <StyledLinkButton
+                  variant="link"
+                  onClick={() => {
+                    history.push(`/podcasts/${lastWatchedPodcastProgram.id}`)
+                    playNow?.({
+                      id: null,
+                      podcastAlbumId: lastWatchedPodcastProgram.podcastAlbum.id,
+                      podcastProgramIds: lastWatchedPodcastProgram.podcastAlbum.podcastProgramIds,
+                      currentIndex: lastWatchedPodcastProgram.podcastAlbum.podcastProgramIds.findIndex(
+                        podcastProgramId => podcastProgramId === lastWatchedPodcastProgram.id,
+                      ),
+                    })
+                  }}
+                  rightIcon={<Icon className="ml-2" as={PlayIcon} />}
                 >
                   繼續播放
-                  <Icon className="ml-2" as={PlayIcon} />
-                </Link>
+                </StyledLinkButton>
               </div>
             </div>
           </StyledCard>
@@ -139,6 +161,7 @@ const useLastWatchedPodcastProgram: () => {
       id: string
       title: string
       coverUrl: string | null
+      podcastProgramIds: string[]
       categoryNames: string[]
     }
   } | null
@@ -162,6 +185,9 @@ const useLastWatchedPodcastProgram: () => {
             id
             title
             cover_url
+            podcast_album_podcast_programs {
+              podcast_program_id
+            }
             podcast_album_categories {
               id
               category {
@@ -189,6 +215,8 @@ const useLastWatchedPodcastProgram: () => {
         id: lastWatchedPodcastProgram.podcast_album?.id || '',
         title: lastWatchedPodcastProgram.podcast_album?.title || '',
         coverUrl: lastWatchedPodcastProgram.podcast_album?.cover_url || '',
+        podcastProgramIds:
+          lastWatchedPodcastProgram.podcast_album?.podcast_album_podcast_programs.map(v => v.podcast_program_id) || [],
         categoryNames:
           lastWatchedPodcastProgram.podcast_album?.podcast_album_categories.map(
             category => category.category?.name || '',

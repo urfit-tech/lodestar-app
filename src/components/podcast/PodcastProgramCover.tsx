@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
-import { useEnrolledPodcastProgramIds, usePublicPodcastProgramIds } from '../../hooks/podcast'
+import { useEnrolledPodcastProgramIds } from '../../hooks/podcast'
 import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -69,17 +69,16 @@ const StyledLink = styled(Link)`
 const PodcastProgramCover: React.VFC<{
   memberId: string
   podcastProgramId: string
-  podcastAlbumId?: string
   coverUrl: string | null
   title: string
   publishedAt: Date
   tags: string[]
   description?: string | null
-}> = ({ memberId, podcastProgramId, podcastAlbumId, coverUrl, title, publishedAt, tags, description }) => {
+}> = ({ memberId, podcastProgramId, coverUrl, title, publishedAt, tags, description }) => {
   const {
     isPlaying,
     visible,
-    playlist,
+    playlistContent,
     currentPlayingId,
     loadingPodcastProgram,
     maxDuration,
@@ -87,13 +86,13 @@ const PodcastProgramCover: React.VFC<{
     setIsPlaying,
     setupPlaylist,
   } = useContext(PodcastPlayerContext)
-  const { loadingPodcastProgramId, errorPodcastProgramId, enrolledPodcastProgramIds } =
-    useEnrolledPodcastProgramIds(memberId)
-  const { publicPodcastProgramIds, status: publicPodcastProgramIdsStatus } = usePublicPodcastProgramIds(podcastAlbumId)
+  const { loadingPodcastProgramId, errorPodcastProgramId, enrolledPodcastProgramIds } = useEnrolledPodcastProgramIds(
+    memberId,
+  )
   const [isPlayerInitialized, setIsPlayerInitialized] = useState(false)
 
   useEffect(() => {
-    if (playlist === null && !isPlayerInitialized) {
+    if (playlistContent === null && !isPlayerInitialized) {
       if (loadingPodcastProgramId === false && errorPodcastProgramId === undefined) {
         setupPlaylist?.(
           enrolledPodcastProgramIds.includes(podcastProgramId)
@@ -114,23 +113,13 @@ const PodcastProgramCover: React.VFC<{
     }
   }, [
     enrolledPodcastProgramIds,
-    playlist,
+    playlistContent,
     podcastProgramId,
     isPlayerInitialized,
     setupPlaylist,
     loadingPodcastProgramId,
     errorPodcastProgramId,
   ])
-
-  useEffect(() => {
-    if (podcastAlbumId && publicPodcastProgramIdsStatus === 'success' && setupPlaylist !== undefined) {
-      setupPlaylist({
-        id: null,
-        podcastProgramIds: publicPodcastProgramIds,
-        currentIndex: 0,
-      })
-    }
-  }, [podcastAlbumId, publicPodcastProgramIdsStatus, setupPlaylist])
 
   const handlePlay = () => {
     if (isPlayerInitialized && visible && setIsPlaying) {
@@ -140,11 +129,11 @@ const PodcastProgramCover: React.VFC<{
     if (!playNow) {
       return
     }
-    const position = playlist?.podcastProgramIds.findIndex(id => id === podcastProgramId)
+    const position = playlistContent?.podcastProgramIds.findIndex(id => id === podcastProgramId) || 0
     playNow(
-      playlist && position && position > -1
+      playlistContent && position && position > -1
         ? {
-            ...playlist,
+            ...playlistContent,
             currentIndex: position,
           }
         : enrolledPodcastProgramIds.includes(podcastProgramId)
@@ -152,12 +141,6 @@ const PodcastProgramCover: React.VFC<{
             id: null,
             podcastProgramIds: enrolledPodcastProgramIds,
             currentIndex: enrolledPodcastProgramIds.findIndex(id => id === podcastProgramId),
-          }
-        : podcastAlbumId
-        ? {
-            id: null,
-            podcastProgramIds: publicPodcastProgramIds,
-            currentIndex: 0,
           }
         : {
             id: null,

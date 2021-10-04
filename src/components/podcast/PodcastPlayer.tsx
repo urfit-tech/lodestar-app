@@ -13,7 +13,6 @@ import { defineMessages, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import PodcastPlayerContext, { PlaylistModeType } from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
 import {
@@ -188,7 +187,7 @@ const PodcastPlayer: React.VFC<{
   memberId: string
 }> = ({ memberId }) => {
   const {
-    playlist,
+    playlistContent,
     playlistMode,
     isPlaying,
     currentPlayingId,
@@ -212,7 +211,6 @@ const PodcastPlayer: React.VFC<{
   const [playRate, setPlayRate] = useState(1)
   const [showAction, setShowAction] = useState(false)
   const [isAudioLoading, setIsAudioLoading] = useState(false)
-  const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
 
   const handlePlayRate = () => {
     playRate < 1 ? setPlayRate(1) : playRate < 1.5 ? setPlayRate(1.5) : playRate < 2 ? setPlayRate(2) : setPlayRate(0.5)
@@ -235,7 +233,7 @@ const PodcastPlayer: React.VFC<{
           memberId: memberId,
           progress: progress > totalProgress ? progress : totalProgress,
           lastProgress: progress,
-          podcastAlbumId: podcastAlbumId || null,
+          podcastAlbumId: playlistContent?.podcastAlbumId || null,
         },
         { headers: { authorization: `Bearer ${authToken}` } },
       )
@@ -397,11 +395,11 @@ const PodcastPlayer: React.VFC<{
                 <PlayModeButton variant="bar" mode={playlistMode} className="ml-4" onChange={togglePlaylistMode} />
               </Responsive.Desktop>
 
-              {!playlist?.isPreview && (
+              {!playlistContent?.isPreview && (
                 <Popover
                   placement="topRight"
                   trigger="click"
-                  content={<PlaylistOverlay memberId={memberId} defaultPlaylistId={playlist?.id || ''} />}
+                  content={<PlaylistOverlay memberId={memberId} defaultPlaylistId={playlistContent?.id || ''} />}
                 >
                   <StyledButton type="link" variant="bar" className="ml-lg-4" onClick={() => setShowAction(false)}>
                     <Icon as={PlaylistIcon} />

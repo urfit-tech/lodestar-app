@@ -4,6 +4,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages, podcastAlbumMessages } from '../../../helpers/translation'
 import { PodcastAlbum } from '../../../types/podcastAlbum'
 import { AuthModalContext } from '../../auth/AuthModal'
@@ -30,6 +31,7 @@ const PodcastAlbumSubscriptionPlanCard: React.VFC<{
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
+  const { playNow } = useContext(PodcastPlayerContext)
 
   return (
     <StyledAdminCard key={podcastAlbum.isPublic ? podcastAlbum.id : ''}>
@@ -41,9 +43,15 @@ const PodcastAlbumSubscriptionPlanCard: React.VFC<{
         <Button
           colorScheme="primary"
           isFullWidth
-          onClick={() =>
-            history.push(`/podcasts/${podcastAlbum.podcastPrograms[0].id}?podcastAlbumId=${podcastAlbum.id}`)
-          }
+          onClick={() => {
+            history.push(`/podcasts/${podcastAlbum.podcastPrograms[0].id}`)
+            playNow?.({
+              id: null,
+              podcastAlbumId: podcastAlbum.id,
+              podcastProgramIds: podcastAlbum.podcastPrograms.map(podcastProgram => podcastProgram.id),
+              currentIndex: 0,
+            })
+          }}
         >
           {formatMessage(commonMessages.button.joinNow)}
         </Button>

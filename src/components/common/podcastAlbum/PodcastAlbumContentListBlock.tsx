@@ -5,6 +5,7 @@ import { BiMicrophone } from 'react-icons/bi'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { durationFullFormatter } from '../../../helpers'
 import { podcastAlbumMessages } from '../../../helpers/translation'
 import { PodcastAlbum } from '../../../types/podcastAlbum'
@@ -56,6 +57,7 @@ const PodcastAlbumContentListBlock: React.VFC<{
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
+  const { playNow } = useContext(PodcastPlayerContext)
 
   return (
     <>
@@ -68,6 +70,12 @@ const PodcastAlbumContentListBlock: React.VFC<{
           onClick={() => {
             if (isAuthenticated) {
               history.push(`/podcasts/${podcastProgram.id}?podcastAlbumId=${podcastAlbumId}`)
+              playNow?.({
+                id: null,
+                podcastAlbumId: podcastAlbumId,
+                podcastProgramIds: podcastPrograms.map(podcastProgram => podcastProgram.id),
+                currentIndex: 0,
+              })
             } else {
               setAuthModalVisible?.(true)
             }
