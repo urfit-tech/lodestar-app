@@ -200,14 +200,11 @@ const AllPodcastProgramBlock: React.VFC<{
           isPlaying={podcastProgram.id === currentPlayingId}
           onPlay={podcastProgramId => {
             history.push(`/podcasts/${podcastProgramId}`)
-            playNow &&
-              playNow({
-                id: null,
-                podcastProgramIds: enrolledPodcastPrograms.map(podcastProgram => podcastProgram.id),
-                currentIndex: enrolledPodcastPrograms.findIndex(
-                  podcastProgram => podcastProgram.id === podcastProgramId,
-                ),
-              })
+            playNow?.({
+              id: null,
+              podcastProgramIds: enrolledPodcastPrograms.map(podcastProgram => podcastProgram.id),
+              currentIndex: enrolledPodcastPrograms.findIndex(podcastProgram => podcastProgram.id === podcastProgramId),
+            })
           }}
           onEdit={podcastProgramId => {
             setVisible(true)
@@ -306,12 +303,11 @@ const PlaylistPodcastProgramBlock: React.VFC<{
             isPlaying={podcastProgram.id === currentPlayingId}
             onPlay={podcastProgramId => {
               history.push(`/podcasts/${podcastProgramId}`)
-              playNow &&
-                playNow({
-                  id: playlistId,
-                  podcastProgramIds: podcastPrograms.map(podcastProgram => podcastProgram.id),
-                  currentIndex: podcastPrograms.findIndex(podcastProgram => podcastProgram.id === podcastProgramId),
-                })
+              playNow?.({
+                id: playlistId,
+                podcastProgramIds: podcastPrograms.map(podcastProgram => podcastProgram.id),
+                currentIndex: podcastPrograms.findIndex(podcastProgram => podcastProgram.id === podcastProgramId),
+              })
             }}
             onEdit={podcastProgramId => {
               setVisible(true)
