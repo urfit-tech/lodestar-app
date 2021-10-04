@@ -348,6 +348,7 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
   const { id: appId } = useApp()
   const { authToken } = useAuth()
   const [url, setUrl] = useState('')
+  const [loadingUrl, setLoadingUrl] = useState(false)
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_PODCAST_PROGRAM_WITH_BODY,
     hasura.GET_PODCAST_PROGRAM_WITH_BODYVariables
@@ -396,9 +397,11 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
   const audioFilename = filename ? filename : contentType ? `${podcastProgramId}.${contentType}` : null
 
   useEffect(() => {
+    setLoadingUrl(true)
     audioFilename &&
       getFileDownloadableLink(`audios/${appId}/${audioFilename}`, authToken).then(url => {
         setUrl(url)
+        setLoadingUrl(false)
       })
   }, [appId, audioFilename, authToken])
 
@@ -427,7 +430,7 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
   }, [data, error, loading, url])
 
   return {
-    loadingPodcastProgram: loading,
+    loadingPodcastProgram: loading && loadingUrl,
     errorPodcastProgram: error,
     podcastProgram,
     refetchPodcastProgram: refetch,
@@ -655,7 +658,9 @@ export const useUpdatePodcastProgramPositions = () => {
   return updatePodcastProgramPositions
 }
 
-export const usePublicPodcastProgramIds: (id?: string) => {
+export const usePublicPodcastProgramIds: (
+  id?: string,
+) => {
   status: 'loading' | 'error' | 'success' | 'idle'
   publicPodcastProgramIds: string[]
 } = id => {
@@ -686,7 +691,9 @@ export const usePublicPodcastProgramIds: (id?: string) => {
   }
 }
 
-export const usePodcastProgramProgress: (programPodcastId: string) => {
+export const usePodcastProgramProgress: (
+  programPodcastId: string,
+) => {
   podcastProgramProgressStatus: StatusType
   podcastProgramProgress: {
     id: string
