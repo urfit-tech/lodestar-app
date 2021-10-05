@@ -1,7 +1,8 @@
 import { Stream, StreamProps } from '@cloudflare/stream-react'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import LanguageContext from '../../contexts/LanguageContext'
 import { commonMessages } from '../../helpers/translation'
 
 const VideoPlayer: React.VFC<{ videoId: string; animated?: boolean } & Partial<StreamProps>> = ({
@@ -9,6 +10,7 @@ const VideoPlayer: React.VFC<{ videoId: string; animated?: boolean } & Partial<S
   animated,
   ...streamProps
 }) => {
+  const { currentLanguage } = useContext(LanguageContext)
   const { authToken, isAuthenticating } = useAuth()
   const [streamOptions, setStreamOptions] = useState<{ token: string; poster: string }>()
   useEffect(() => {
@@ -39,6 +41,7 @@ const VideoPlayer: React.VFC<{ videoId: string; animated?: boolean } & Partial<S
   ) : streamOptions ? (
     <Stream
       controls
+      defaultTextTrack={currentLanguage}
       poster={animated ? streamOptions.poster.replace('jpg', 'gif') : streamOptions.poster}
       {...streamProps}
       src={streamOptions.token}
