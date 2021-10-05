@@ -8655,6 +8655,31 @@ export interface GET_ORDERS_PRODUCTVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_ORDER_ID
+// ====================================================
+
+export interface GET_ORDER_ID_payment_log {
+  __typename: "payment_log";
+  order_id: string;
+}
+
+export interface GET_ORDER_ID {
+  /**
+   * fetch data from the table: "payment_log"
+   */
+  payment_log: GET_ORDER_ID_payment_log[];
+}
+
+export interface GET_ORDER_IDVariables {
+  paymentNo: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PODCAST_ALBUMS
 // ====================================================
 

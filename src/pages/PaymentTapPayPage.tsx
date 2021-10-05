@@ -1,6 +1,8 @@
+import { useQuery } from '@apollo/react-hooks'
 import { Button } from '@chakra-ui/react'
 import { message } from 'antd'
 import axios from 'axios'
+import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useCallback, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -10,6 +12,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { StyledContainer } from '../components/layout/DefaultLayout.styled'
 import CreditCardSelector, { CardHolder } from '../components/payment/CreditCardSelector'
 import TapPayForm, { TPCreditCard } from '../components/payment/TapPayForm'
+import hasura from '../hasura'
 import { codeMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
 import { useTappay } from '../hooks/util'
@@ -47,6 +50,17 @@ const PaymentTapPayBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { paymentNo } = useParams<{ paymentNo: string }>()
+  const { data } = useQuery<hasura.GET_ORDER_ID, hasura.GET_ORDER_IDVariables>(
+    gql`
+      query GET_ORDER_ID($paymentNo: numeric!) {
+        payment_log(where: { no: { _eq: $paymentNo } }) {
+          order_id
+        }
+      }
+    `,
+    { variables: { paymentNo } },
+  )
+  const orderId = data?.payment_log[0]?.order_id || null
 
   const [tpCreditCard, setTpCreditCard] = useState<TPCreditCard | null>(null)
   const [memberCreditCardId, setMemberCreditCardId] = useState<string | null>(null)
@@ -57,7 +71,7 @@ const PaymentTapPayBlock: React.VFC = () => {
 
   const isCreditCardReady = Boolean(memberCreditCardId || tpCreditCard?.canGetPrime)
 
-  const handlePaymentPay = async () => {
+  const handlePaymentPayAsync = async () => {
     setIsPaying(true)
     try {
       if (memberCreditCardId) {
@@ -69,7 +83,7 @@ const PaymentTapPayBlock: React.VFC = () => {
           email: member?.email || 'test@gmail.com',
         })
       }
-      history.push(`/members/${currentMemberId}`)
+      history.push(`/orders/${orderId}?tracking=1`)
     } catch (err) {
       message.error(err)
     }
@@ -89,8 +103,8 @@ const PaymentTapPayBlock: React.VFC = () => {
             colorScheme="primary"
             isFullWidth
             isLoading={isPaying}
-            isDisabled={!isCreditCardReady}
-            onClick={() => handlePaymentPay()}
+            isDisabled={!isCreditCardReady || orderId === null}
+            onClick={handlePaymentPayAsync}
           >
             付款
           </Button>
