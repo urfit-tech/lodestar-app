@@ -420,7 +420,10 @@ export const useProgram = (programId: string) => {
               abstract: programContent.abstract,
               metadata: programContent.metadata,
               duration: programContent.duration,
-              contentType: programContent.program_content_type?.type || '',
+              contentType:
+                programContent.program_content_videos.length > 0
+                  ? 'video'
+                  : programContent.program_content_type?.type || '',
               publishedAt: new Date(programContent.published_at),
               listPrice: programContent.list_price,
               salePrice: programContent.sale_price,
@@ -518,7 +521,10 @@ export const useProgramContent = (programContentId: string) => {
             abstract: data.program_content_by_pk.abstract,
             metadata: data.program_content_by_pk.metadata,
             duration: data.program_content_by_pk.duration,
-            contentType: data.program_content_by_pk.program_content_body?.type,
+            contentType:
+              data.program_content_by_pk.program_content_videos.length > 0
+                ? 'video'
+                : data.program_content_by_pk.program_content_body?.type,
             publishedAt: new Date(data.program_content_by_pk.published_at),
             listPrice: data.program_content_by_pk.list_price,
             salePrice: data.program_content_by_pk.sale_price,
