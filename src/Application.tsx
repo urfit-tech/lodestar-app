@@ -20,9 +20,9 @@ const Application: React.FC<{
   customRender?: CustomRendererProps
 }> = ({ appId, extraRouteProps, customRender }) => {
   return (
-    <LodestarAppProvider appId={appId}>
-      <LanguageProvider>
-        <ErrorBoundary>
+    <ErrorBoundary>
+      <LodestarAppProvider appId={appId}>
+        <LanguageProvider>
           <CartProvider>
             <NotificationProvider>
               <PodcastPlayerProvider>
@@ -35,9 +35,9 @@ const Application: React.FC<{
               </PodcastPlayerProvider>
             </NotificationProvider>
           </CartProvider>
-        </ErrorBoundary>
-      </LanguageProvider>
-    </LodestarAppProvider>
+        </LanguageProvider>
+      </LodestarAppProvider>
+    </ErrorBoundary>
   )
 }
 
