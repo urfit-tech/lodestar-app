@@ -1,4 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
+import { usePublicMember } from 'lodestar-app-element/src/hooks/data'
 import moment from 'moment'
 import React from 'react'
 import styled from 'styled-components'
@@ -35,7 +36,9 @@ const FeaturingPostItem: React.VFC<
   PostPreviewProps & {
     variant?: 'headline' | 'featuring'
   }
-> = ({ coverUrl, videoUrl, title, author, publishedAt, variant }) => {
+> = ({ coverUrl, videoUrl, title, authorId, publishedAt, variant }) => {
+  const { member } = usePublicMember(authorId)
+
   return (
     <StyledWrapper className="mb-3">
       <PostPreviewCover variant="featuring" coverUrl={coverUrl} withVideo={typeof videoUrl === 'string'} />
@@ -43,7 +46,7 @@ const FeaturingPostItem: React.VFC<
         <StyledPostTitle className={variant}>{title}</StyledPostTitle>
         <StyledPostMeta>
           <Icon as={UserOIcon} className="mr-1" />
-          <span className="mr-2">{author.name}</span>
+          <span className="mr-2">{member?.name || ''}</span>
           <Icon as={CalendarAltOIcon} className="mr-1" />
           <span>{publishedAt ? moment(publishedAt).format('YYYY-MM-DD') : ''}</span>
         </StyledPostMeta>

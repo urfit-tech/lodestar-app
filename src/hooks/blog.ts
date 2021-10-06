@@ -30,11 +30,7 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
           post_roles(where: { name: { _eq: "author" } }) {
             id
             name
-            member {
-              id
-              name
-              username
-            }
+            member_id
           }
           post_categories(order_by: { category: { position: asc } }) {
             id
@@ -73,10 +69,7 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
             coverUrl: post.cover_url,
             videoUrl: post.video_url,
             abstract: post.abstract,
-            author: {
-              id: post.post_roles[0]?.member?.id || '',
-              name: post.post_roles[0]?.member?.name || post.post_roles[0]?.member?.username || '',
-            },
+            authorId: post.post_roles[0]?.member_id || '',
             publishedAt: post.published_at ? new Date(post.published_at) : null,
             categories: post.post_categories.map(postCategory => ({
               id: postCategory.category.id,
