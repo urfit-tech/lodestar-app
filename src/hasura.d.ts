@@ -6719,12 +6719,6 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories {
   category: GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories_category;
 }
 
-export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles_member {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-}
-
 export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles {
   __typename: "program_role";
   id: any;
@@ -6732,10 +6726,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles {
    * instructor / assistant 
    */
   name: string;
-  /**
-   * An object relationship
-   */
-  member: GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles_member | null;
+  member_id: string;
 }
 
 export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_plans_currency {
@@ -6905,12 +6896,6 @@ export interface GET_PROGRAM_program_by_pk_program_tags {
   tag: GET_PROGRAM_program_by_pk_program_tags_tag;
 }
 
-export interface GET_PROGRAM_program_by_pk_program_roles_member {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-}
-
 export interface GET_PROGRAM_program_by_pk_program_roles {
   __typename: "program_role";
   id: any;
@@ -6918,10 +6903,7 @@ export interface GET_PROGRAM_program_by_pk_program_roles {
    * instructor / assistant 
    */
   name: string;
-  /**
-   * An object relationship
-   */
-  member: GET_PROGRAM_program_by_pk_program_roles_member | null;
+  member_id: string;
 }
 
 export interface GET_PROGRAM_program_by_pk_program_plans_currency {

@@ -1,5 +1,4 @@
 import React from 'react'
-import NotFoundPage from '../../pages/NotFoundPage'
 
 type errorState = {
   hasError: boolean
@@ -17,7 +16,7 @@ class ErrorBoundary extends React.Component<{}, errorState> {
   }
   render() {
     if (this.state.hasError) {
-      return <NotFoundPage variant="error" />
+      return <div>Something went wrong. Please try again.</div>
     }
 
     return this.props.children
