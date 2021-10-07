@@ -64,7 +64,7 @@ const PodcastAlbumContentListBlock: React.VFC<{
       <StyledTitle>{formatMessage(podcastAlbumMessages.label.podcastContent)}</StyledTitle>
       <Divider className="mb-3" />
 
-      {podcastPrograms.map(podcastProgram => (
+      {podcastPrograms.map((podcastProgram, index) => (
         <PodcastAlbumContentItem
           key={podcastProgram.id}
           onClick={() => {
@@ -74,7 +74,7 @@ const PodcastAlbumContentListBlock: React.VFC<{
                 id: null,
                 podcastAlbumId: podcastAlbumId,
                 podcastProgramIds: podcastPrograms.map(podcastProgram => podcastProgram.id),
-                currentIndex: 0,
+                currentIndex: index,
               })
             } else {
               setAuthModalVisible?.(true)

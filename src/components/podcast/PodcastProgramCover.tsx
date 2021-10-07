@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineLoading } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
 import { useEnrolledPodcastProgramIds } from '../../hooks/podcast'
@@ -113,6 +114,7 @@ const PodcastProgramCover: React.VFC<{
     memberId,
   )
   const [isPlayerInitialized, setIsPlayerInitialized] = useState(false)
+  const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
 
   useEffect(() => {
     if (playlistContent === null && !isPlayerInitialized) {
