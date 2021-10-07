@@ -6729,12 +6729,6 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories {
   category: GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories_category;
 }
 
-export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles_member {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-}
-
 export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles {
   __typename: "program_role";
   id: any;
@@ -6742,10 +6736,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles {
    * instructor / assistant 
    */
   name: string;
-  /**
-   * An object relationship
-   */
-  member: GET_PUBLISHED_PROGRAM_COLLECTION_program_program_roles_member | null;
+  member_id: string;
 }
 
 export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_plans_currency {
@@ -6915,12 +6906,6 @@ export interface GET_PROGRAM_program_by_pk_program_tags {
   tag: GET_PROGRAM_program_by_pk_program_tags_tag;
 }
 
-export interface GET_PROGRAM_program_by_pk_program_roles_member {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-}
-
 export interface GET_PROGRAM_program_by_pk_program_roles {
   __typename: "program_role";
   id: any;
@@ -6928,10 +6913,7 @@ export interface GET_PROGRAM_program_by_pk_program_roles {
    * instructor / assistant 
    */
   name: string;
-  /**
-   * An object relationship
-   */
-  member: GET_PROGRAM_program_by_pk_program_roles_member | null;
+  member_id: string;
 }
 
 export interface GET_PROGRAM_program_by_pk_program_plans_currency {
@@ -6982,21 +6964,6 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
   created_at: any | null;
 }
 
-export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos_attachment {
-  __typename: "attachment";
-  id: any;
-  size: number;
-  options: any | null;
-}
-
-export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos {
-  __typename: "program_content_video";
-  /**
-   * An object relationship
-   */
-  attachment: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos_attachment;
-}
-
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents {
   __typename: "program_content";
   id: any;
@@ -7019,10 +6986,6 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
    * An array relationship
    */
   program_content_materials: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_materials[];
-  /**
-   * An array relationship
-   */
-  program_content_videos: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos[];
 }
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_aggregate_aggregate {
@@ -7140,21 +7103,6 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_mater
   created_at: any | null;
 }
 
-export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos_attachment {
-  __typename: "attachment";
-  id: any;
-  size: number;
-  options: any | null;
-}
-
-export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos {
-  __typename: "program_content_video";
-  /**
-   * An object relationship
-   */
-  attachment: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos_attachment;
-}
-
 export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_attachments {
   __typename: "program_content_attachment";
   attachment_id: any | null;
@@ -7190,10 +7138,6 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk {
    * An array relationship
    */
   program_content_materials: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_materials[];
-  /**
-   * An array relationship
-   */
-  program_content_videos: GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos[];
   /**
    * An array relationship
    */
@@ -9834,12 +9778,14 @@ export enum attachment_update_column {
   content_type = "content_type",
   created_at = "created_at",
   data = "data",
+  duration = "duration",
   filename = "filename",
   id = "id",
   is_deleted = "is_deleted",
   name = "name",
   options = "options",
   size = "size",
+  status = "status",
   target = "target",
   thumbnail_url = "thumbnail_url",
   type = "type",
@@ -13552,12 +13498,14 @@ export interface attachment_bool_exp {
   content_type?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   data?: jsonb_comparison_exp | null;
+  duration?: numeric_comparison_exp | null;
   filename?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_deleted?: Boolean_comparison_exp | null;
   name?: String_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
-  size?: Int_comparison_exp | null;
+  size?: numeric_comparison_exp | null;
+  status?: String_comparison_exp | null;
   target?: String_comparison_exp | null;
   thumbnail_url?: String_comparison_exp | null;
   type?: String_comparison_exp | null;
@@ -13574,12 +13522,14 @@ export interface attachment_insert_input {
   content_type?: string | null;
   created_at?: any | null;
   data?: any | null;
+  duration?: any | null;
   filename?: string | null;
   id?: any | null;
   is_deleted?: boolean | null;
   name?: string | null;
   options?: any | null;
-  size?: number | null;
+  size?: any | null;
+  status?: string | null;
   target?: string | null;
   thumbnail_url?: string | null;
   type?: string | null;

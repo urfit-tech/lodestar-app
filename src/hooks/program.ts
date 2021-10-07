@@ -71,10 +71,7 @@ export const usePublishedProgramCollection = (options?: {
           program_roles(where: { name: { _eq: "instructor" } }) {
             id
             name
-            member {
-              id
-              name
-            }
+            member_id
           }
           program_plans(order_by: { created_at: asc }, limit: 1) {
             id
@@ -157,8 +154,9 @@ export const usePublishedProgramCollection = (options?: {
             roles: program.program_roles.map(programRole => ({
               id: programRole.id,
               name: programRole.name as ProgramRoleName,
-              memberId: programRole.member?.id || '',
-              memberName: programRole.member?.name || '',
+              // FIXME: change type definition
+              memberId: programRole.member_id,
+              memberName: programRole.member_id,
             })),
             plans: program.program_plans.map(programPlan => ({
               id: programPlan.id,
@@ -271,10 +269,7 @@ export const useProgram = (programId: string) => {
           program_roles {
             id
             name
-            member {
-              id
-              name
-            }
+            member_id
           }
           program_plans(order_by: { created_at: asc }) {
             id
@@ -326,13 +321,6 @@ export const useProgram = (programId: string) => {
                 data
                 created_at
               }
-              program_content_videos {
-                attachment {
-                  id
-                  size
-                  options
-                }
-              }
             }
             program_contents_aggregate(where: { published_at: { _is_null: false } }) {
               aggregate {
@@ -383,8 +371,9 @@ export const useProgram = (programId: string) => {
           roles: data.program_by_pk.program_roles.map(programRole => ({
             id: programRole.id,
             name: programRole.name as ProgramRoleName,
-            memberId: programRole.member?.id || '',
-            memberName: programRole.member?.name || '',
+            // FIXME: change type definition
+            memberId: programRole.member_id,
+            memberName: programRole.member_id,
           })),
           plans: data.program_by_pk.program_plans.map(programPlan => ({
             id: programPlan.id,
@@ -420,10 +409,7 @@ export const useProgram = (programId: string) => {
               abstract: programContent.abstract,
               metadata: programContent.metadata,
               duration: programContent.duration,
-              contentType:
-                programContent.program_content_videos.length > 0
-                  ? 'video'
-                  : programContent.program_content_type?.type || '',
+              contentType: programContent.program_content_type?.type || '',
               publishedAt: new Date(programContent.published_at),
               listPrice: programContent.list_price,
               salePrice: programContent.sale_price,
@@ -432,11 +418,6 @@ export const useProgram = (programId: string) => {
                 id: v.id,
                 data: v.data,
                 createdAt: v.created_at,
-              })),
-              videos: programContent.program_content_videos.map(v => ({
-                id: v.attachment.id,
-                size: v.attachment.size,
-                options: v.attachment.options,
               })),
             })),
           })),
@@ -483,13 +464,6 @@ export const useProgramContent = (programContentId: string) => {
             data
             created_at
           }
-          program_content_videos {
-            attachment {
-              id
-              size
-              options
-            }
-          }
           program_content_attachments {
             attachment_id
             data
@@ -521,10 +495,7 @@ export const useProgramContent = (programContentId: string) => {
             abstract: data.program_content_by_pk.abstract,
             metadata: data.program_content_by_pk.metadata,
             duration: data.program_content_by_pk.duration,
-            contentType:
-              data.program_content_by_pk.program_content_videos.length > 0
-                ? 'video'
-                : data.program_content_by_pk.program_content_body?.type,
+            contentType: data.program_content_by_pk.program_content_body?.type,
             publishedAt: new Date(data.program_content_by_pk.published_at),
             listPrice: data.program_content_by_pk.list_price,
             salePrice: data.program_content_by_pk.sale_price,
@@ -541,11 +512,6 @@ export const useProgramContent = (programContentId: string) => {
               id: v.id,
               data: v.data,
               createdAt: v.created_at,
-            })),
-            videos: data.program_content_by_pk.program_content_videos.map(v => ({
-              id: v.attachment.id,
-              size: v.attachment.size,
-              options: v.attachment.options,
             })),
             attachments: data.program_content_by_pk.program_content_attachments.map(u => ({
               id: u.attachment_id,
