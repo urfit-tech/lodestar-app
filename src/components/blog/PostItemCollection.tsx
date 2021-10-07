@@ -68,7 +68,7 @@ const PostItemCollection: React.VFC<{
                   <PostPreviewCover coverUrl={post.coverUrl} withVideo={typeof post.videoUrl === 'string'} />
                 </div>
                 <StyledPostTitle>{post.title}</StyledPostTitle>
-                <PostPreviewMeta author={post.author} publishedAt={post.publishedAt} />
+                <PostPreviewMeta authorId={post.authorId} publishedAt={post.publishedAt} />
               </Link>
             </div>
           ))}

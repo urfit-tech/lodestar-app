@@ -97,7 +97,7 @@ const BlogPostCollectionPage: React.VFC = () => {
                   <div className="col-6 col-lg-8 pl-3 pl-lg-4">
                     <StyledPostTitle className="list-item">{post.title}</StyledPostTitle>
                     <div className="mb-lg-4">
-                      <PostPreviewMeta author={post.author} publishedAt={post.publishedAt} />
+                      <PostPreviewMeta authorId={post.authorId} publishedAt={post.publishedAt} />
                     </div>
                     <StyledAbstract>{post.abstract}</StyledAbstract>
                   </div>
