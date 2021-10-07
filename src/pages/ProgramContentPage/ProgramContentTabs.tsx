@@ -12,7 +12,6 @@ import {
   ProgramContentBodyProps,
   ProgramContentMaterialProps,
   ProgramContentProps,
-  ProgramProps,
   ProgramRoleProps,
 } from '../../types/program'
 import { StyledContentBlock } from './index.styled'
@@ -31,18 +30,20 @@ export const StyledTabPanel = styled(TabPanel)`
 `
 
 const ProgramContentTabs: React.VFC<{
-  program: ProgramProps & { roles: ProgramRoleProps[] }
+  programId: string
+  programRoles: ProgramRoleProps[]
   programContent: ProgramContentProps & {
     programContentBody: ProgramContentBodyProps | null
     materials: ProgramContentMaterialProps[]
     attachments: ProgramContentAttachmentProps[]
   }
-}> = ({ program, programContent }) => {
+  issueEnabled?: boolean
+}> = ({ programId, programRoles, programContent, issueEnabled = false }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const [activeKey, setActiveKey] = useState('issue')
 
-  const isIssueThreadVisible = program.isIssuesOpen
+  const isIssueThreadVisible = issueEnabled
   const isPracticesVisible = enabledModules.practice && programContent.programContentBody?.type === 'practice'
   const isMaterialVisible = programContent.materials.length !== 0
 
@@ -71,8 +72,8 @@ const ProgramContentTabs: React.VFC<{
       isVisible: isIssueThreadVisible,
       content: (
         <IssueThreadBlock
-          programRoles={program.roles || []}
-          threadId={`/programs/${program.id}/contents/${programContent.id}`}
+          programRoles={programRoles}
+          threadId={`/programs/${programId}/contents/${programContent.id}`}
         />
       ),
     },

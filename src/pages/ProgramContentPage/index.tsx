@@ -67,14 +67,19 @@ const ProgramContentPage: React.VFC = () => {
           history.push(`/programs/${programId}/contents${programPackageId !== null ? `?back=${programPackageId}` : ''}`)
         }
       />
-
       {program && currentMemberId && (
         <ProgressProvider programId={program.id} memberId={currentMemberId}>
           <StyledLayoutContent>
             <div className="row no-gutters">
               <div className={menuVisible ? 'd-lg-block col-lg-9 d-none' : 'col-12'}>
                 <StyledLayoutContent>
-                  <ProgramContentBlock program={program} programContentId={programContentId} />
+                  <ProgramContentBlock
+                    programId={program.id}
+                    programRoles={program.roles}
+                    programContentSections={program.contentSections}
+                    programContentId={programContentId}
+                    issueEnabled={program.isIssuesOpen}
+                  />
                 </StyledLayoutContent>
               </div>
               <div className={menuVisible ? 'col-12 col-lg-3' : 'd-none'}>

@@ -1,14 +1,12 @@
 import { LockIcon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
-import { StreamPlayerApi } from '@cloudflare/stream-react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import LanguageContext from 'lodestar-app-element/src/contexts/LanguageContext'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
@@ -17,7 +15,7 @@ import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
-import { ProgramContentProps, ProgramContentSectionProps, ProgramProps, ProgramRoleProps } from '../../types/program'
+import { ProgramContentProps, ProgramContentSectionProps, ProgramRoleProps } from '../../types/program'
 import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
@@ -36,27 +34,25 @@ const StyledTitle = styled.h3`
 `
 
 const ProgramContentBlock: React.VFC<{
-  program: ProgramProps & {
-    roles: ProgramRoleProps[]
-    contentSections: (ProgramContentSectionProps & { contents: ProgramContentProps[] })[]
-  }
+  programId: string
+  programRoles: ProgramRoleProps[]
+  programContentSections: (ProgramContentSectionProps & { contents: ProgramContentProps[] })[]
   programContentId: string
-}> = ({ program, programContentId }) => {
-  const { currentLanguage } = useContext(LanguageContext)
+  issueEnabled?: boolean
+}> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
   const { formatMessage } = useIntl()
   const { loading: loadingApp, enabledModules, settings } = useApp()
   const { authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const streamRef = useRef<StreamPlayerApi>()
 
-  const instructor = program.roles.filter(role => role.name === 'instructor')[0]
+  const instructor = programRoles.filter(role => role.name === 'instructor')[0]
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
     programContentProgress?.find(progress => progress.programContentId === programContentId)?.progress || 0
 
-  const nextProgramContent = flatten(program.contentSections.map(v => v.contents)).find(
+  const nextProgramContent = flatten(programContentSections.map(v => v.contents)).find(
     (_, i, contents) => contents[i - 1]?.id === programContentId,
   )
 
@@ -74,7 +70,7 @@ const ProgramContentBlock: React.VFC<{
     insertProgress(programContentId, {
       progress: 1,
       lastProgress: 1,
-    }).then(() => refetchProgress())
+    })
   }, [
     initialProgress,
     insertProgress,
@@ -87,7 +83,6 @@ const ProgramContentBlock: React.VFC<{
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
-
   const insertProgramProgress = throttle(async (progress: number) => {
     const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
     return await insertProgress(programContentId, {
@@ -109,7 +104,6 @@ const ProgramContentBlock: React.VFC<{
         key={programContent.id}
         programContentId={programContentId}
         nextProgramContent={nextProgramContent}
-        isSwarmifyAvailable={settings['feature.swarmify.enabled'] === '1'}
         onVideoEvent={e => {
           if (e.type === 'progress') {
             insertProgramProgress(e.progress)
@@ -131,8 +125,6 @@ const ProgramContentBlock: React.VFC<{
               .catch(() => {})
             if (e.type === 'ended') {
               insertProgramProgress(1)?.then(() => refetchProgress())
-            } else {
-              refetchProgress()
             }
           }
         }}
@@ -167,7 +159,12 @@ const ProgramContentBlock: React.VFC<{
         <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
       )}
 
-      <ProgramContentTabs program={program} programContent={programContent} />
+      <ProgramContentTabs
+        programId={programId}
+        programRoles={programRoles}
+        programContent={programContent}
+        issueEnabled={issueEnabled}
+      />
 
       {programContent.programContentBody?.type !== 'practice' && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />

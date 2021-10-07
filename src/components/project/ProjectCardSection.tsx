@@ -404,16 +404,7 @@ const ProgramContentTrialPlayer: React.VFC<{
 
       <StyledPlayerWrapper className="text-center">
         {onPrev && <Icon as={AngleThinLeftIcon} onClick={() => onPrev()} />}
-        <ProgramContentPlayer
-          programContentId={programContentId}
-          programContentBody={{
-            id: data.program_content_by_pk.program_content_body.id,
-            type: '',
-            description: '',
-            data: data.program_content_by_pk.program_content_body.data,
-          }}
-          isSwarmifyAvailable={false}
-        />
+        <ProgramContentPlayer programContentId={programContentId} />
         {onNext && <Icon as={AngleThinRightIcon} onClick={() => onNext()} />}
       </StyledPlayerWrapper>
     </>

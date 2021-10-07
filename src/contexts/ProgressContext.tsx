@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { flatten } from 'ramda'
-import React, { createContext } from 'react'
+import React, { createContext, useMemo } from 'react'
 import hasura from '../hasura'
 
 type ProgressProps = {
@@ -111,19 +111,22 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
     { variables: { programId, memberId } },
   )
 
-  const programContentProgress: ProgressProps['programContentProgress'] =
-    loading || error || !data
-      ? undefined
-      : flatten(
-          data.program_content_body.map(contentBody =>
-            contentBody.program_contents.map(content => ({
-              programContentId: content.id,
-              programContentSectionId: content.content_section_id,
-              progress: content.program_content_progress[0]?.progress || 0,
-              lastProgress: content.program_content_progress[0]?.last_progress || 0,
-            })),
+  const programContentProgress: ProgressProps['programContentProgress'] = useMemo(
+    () =>
+      loading || error || !data
+        ? undefined
+        : flatten(
+            data.program_content_body.map(contentBody =>
+              contentBody.program_contents.map(content => ({
+                programContentId: content.id,
+                programContentSectionId: content.content_section_id,
+                progress: content.program_content_progress[0]?.progress || 0,
+                lastProgress: content.program_content_progress[0]?.last_progress || 0,
+              })),
+            ),
           ),
-        )
+    [data, error, loading],
+  )
 
   return {
     loadingProgress: loading,

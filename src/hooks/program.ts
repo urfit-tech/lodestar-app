@@ -349,92 +349,95 @@ export const useProgram = (programId: string) => {
           contents: ProgramContentProps[]
         })[]
       })
-    | null =
-    loading || error || !data || !data.program_by_pk
-      ? null
-      : {
-          id: data.program_by_pk.id,
-          coverUrl: data.program_by_pk.cover_url,
-          title: data.program_by_pk.title,
-          abstract: data.program_by_pk.abstract,
-          publishedAt: new Date(data.program_by_pk.published_at),
-          isSubscription: data.program_by_pk.is_subscription,
-          isSoldOut: data.program_by_pk.is_sold_out,
-          listPrice: data.program_by_pk.list_price,
-          salePrice: data.program_by_pk.sale_price,
-          soldAt: data.program_by_pk.sold_at && new Date(data.program_by_pk.sold_at),
-          description: data.program_by_pk.description,
-          coverVideoUrl: data.program_by_pk.cover_video_url,
-          isIssuesOpen: data.program_by_pk.is_issues_open,
-          isPrivate: data.program_by_pk.is_private,
-          isCountdownTimerVisible: data.program_by_pk.is_countdown_timer_visible,
-          isIntroductionSectionVisible: data.program_by_pk.is_introduction_section_visible,
-          tags: data.program_by_pk.program_tags.map(programTag => programTag.tag.name),
-          categories: data.program_by_pk.program_categories.map(programCategory => ({
-            id: programCategory.category.id,
-            name: programCategory.category.name,
-          })),
-          roles: data.program_by_pk.program_roles.map(programRole => ({
-            id: programRole.id,
-            name: programRole.name as ProgramRoleName,
-            memberId: programRole.member_id,
-            memberName: programRole.member_id,
-          })),
-          plans: data.program_by_pk.program_plans.map(programPlan => ({
-            id: programPlan.id,
-            type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
-            title: programPlan.title || '',
-            description: programPlan.description,
-            gains: programPlan.gains,
-            currency: {
-              id: programPlan.currency.id,
-              label: programPlan.currency.label,
-              unit: programPlan.currency.unit,
-              name: programPlan.currency.name,
-            },
-            listPrice: programPlan.list_price,
-            salePrice: programPlan.sale_price,
-            soldAt: programPlan.sold_at && new Date(programPlan.sold_at),
-            discountDownPrice: programPlan.discount_down_price,
-            periodAmount: programPlan.period_amount,
-            periodType: programPlan.period_type as PeriodType,
-            startedAt: programPlan.started_at,
-            endedAt: programPlan.ended_at,
-            isParticipantsVisible: programPlan.is_participants_visible,
-            publishedAt: programPlan.published_at,
-            isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
-          })),
-          contentSections: data.program_by_pk.program_content_sections.map(programContentSection => ({
-            id: programContentSection.id,
-            title: programContentSection.title,
-            description: programContentSection.description,
-            contents: programContentSection.program_contents.map(programContent => ({
-              id: programContent.id,
-              title: programContent.title,
-              abstract: programContent.abstract,
-              metadata: programContent.metadata,
-              duration: programContent.duration,
-              contentType:
-                programContent.program_content_videos.length > 0
-                  ? 'video'
-                  : programContent.program_content_type?.type || '',
-              publishedAt: new Date(programContent.published_at),
-              listPrice: programContent.list_price,
-              salePrice: programContent.sale_price,
-              soldAt: programContent.sold_at && new Date(programContent.sold_at),
-              materials: programContent.program_content_materials.map(v => ({
-                id: v.id,
-                data: v.data,
-                createdAt: v.created_at,
-              })),
-              videos: programContent.program_content_videos.map(v => ({
-                id: v.attachment.id,
-                size: v.attachment.size,
-                options: v.attachment.options,
+    | null = useMemo(
+    () =>
+      loading || error || !data || !data.program_by_pk
+        ? null
+        : {
+            id: data.program_by_pk.id,
+            coverUrl: data.program_by_pk.cover_url,
+            title: data.program_by_pk.title,
+            abstract: data.program_by_pk.abstract,
+            publishedAt: new Date(data.program_by_pk.published_at),
+            isSubscription: data.program_by_pk.is_subscription,
+            isSoldOut: data.program_by_pk.is_sold_out,
+            listPrice: data.program_by_pk.list_price,
+            salePrice: data.program_by_pk.sale_price,
+            soldAt: data.program_by_pk.sold_at && new Date(data.program_by_pk.sold_at),
+            description: data.program_by_pk.description,
+            coverVideoUrl: data.program_by_pk.cover_video_url,
+            isIssuesOpen: data.program_by_pk.is_issues_open,
+            isPrivate: data.program_by_pk.is_private,
+            isCountdownTimerVisible: data.program_by_pk.is_countdown_timer_visible,
+            isIntroductionSectionVisible: data.program_by_pk.is_introduction_section_visible,
+            tags: data.program_by_pk.program_tags.map(programTag => programTag.tag.name),
+            categories: data.program_by_pk.program_categories.map(programCategory => ({
+              id: programCategory.category.id,
+              name: programCategory.category.name,
+            })),
+            roles: data.program_by_pk.program_roles.map(programRole => ({
+              id: programRole.id,
+              name: programRole.name as ProgramRoleName,
+              memberId: programRole.member_id,
+              memberName: programRole.member_id,
+            })),
+            plans: data.program_by_pk.program_plans.map(programPlan => ({
+              id: programPlan.id,
+              type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
+              title: programPlan.title || '',
+              description: programPlan.description,
+              gains: programPlan.gains,
+              currency: {
+                id: programPlan.currency.id,
+                label: programPlan.currency.label,
+                unit: programPlan.currency.unit,
+                name: programPlan.currency.name,
+              },
+              listPrice: programPlan.list_price,
+              salePrice: programPlan.sale_price,
+              soldAt: programPlan.sold_at && new Date(programPlan.sold_at),
+              discountDownPrice: programPlan.discount_down_price,
+              periodAmount: programPlan.period_amount,
+              periodType: programPlan.period_type as PeriodType,
+              startedAt: programPlan.started_at,
+              endedAt: programPlan.ended_at,
+              isParticipantsVisible: programPlan.is_participants_visible,
+              publishedAt: programPlan.published_at,
+              isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
+            })),
+            contentSections: data.program_by_pk.program_content_sections.map(programContentSection => ({
+              id: programContentSection.id,
+              title: programContentSection.title,
+              description: programContentSection.description,
+              contents: programContentSection.program_contents.map(programContent => ({
+                id: programContent.id,
+                title: programContent.title,
+                abstract: programContent.abstract,
+                metadata: programContent.metadata,
+                duration: programContent.duration,
+                contentType:
+                  programContent.program_content_videos.length > 0
+                    ? 'video'
+                    : programContent.program_content_type?.type || '',
+                publishedAt: new Date(programContent.published_at),
+                listPrice: programContent.list_price,
+                salePrice: programContent.sale_price,
+                soldAt: programContent.sold_at && new Date(programContent.sold_at),
+                materials: programContent.program_content_materials.map(v => ({
+                  id: v.id,
+                  data: v.data,
+                  createdAt: v.created_at,
+                })),
+                videos: programContent.program_content_videos.map(v => ({
+                  id: v.attachment.id,
+                  size: v.attachment.size,
+                  options: v.attachment.options,
+                })),
               })),
             })),
-          })),
-        }
+          },
+    [data, error, loading],
+  )
 
   return {
     loadingProgram: loading,
