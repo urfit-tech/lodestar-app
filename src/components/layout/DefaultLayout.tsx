@@ -4,7 +4,7 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
@@ -65,6 +65,7 @@ const DefaultLayout: React.FC<{
   renderAuthModalTitle,
   children,
 }) => {
+  const history = useHistory()
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
   const { renderFooter } = useCustomRenderer()
@@ -158,7 +159,7 @@ const DefaultLayout: React.FC<{
                             ? StyledNavAnimationButton
                             : StyledNavButton
                         }
-                        onClick={() => nav.href && (window.location.href = nav.href)}
+                        onClick={() => nav.href && history.push(nav.href)}
                       >
                         {nav.label}
                         {nav.tag && (
