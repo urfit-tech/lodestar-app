@@ -129,8 +129,8 @@ const PodcastProgramCover: React.VFC<{
                 id: null,
                 podcastAlbumId: podcastAlbumId,
                 podcastProgramIds: podcastAlbumPodcastProgramIds,
-                currentIndex: 0,
-                title: podcastAlbumTitle,
+                currentIndex: podcastAlbumPodcastProgramIds.findIndex(id => (id = podcastProgramId)),
+                title: `${podcastAlbumTitle} (${podcastAlbumPodcastProgramIds.length})`,
               }
             : {
                 id: null,
@@ -162,8 +162,8 @@ const PodcastProgramCover: React.VFC<{
             ? {
                 id: null,
                 podcastProgramIds: enrolledPodcastProgramIds,
-                currentIndex: 0,
-                title: `${creatorName}的專輯`,
+                currentIndex: enrolledPodcastProgramIds.findIndex(id => (id = podcastProgramId)),
+                title: `${creatorName}的專輯 (${enrolledPodcastProgramIds.length})`,
               }
             : {
                 id: null,
