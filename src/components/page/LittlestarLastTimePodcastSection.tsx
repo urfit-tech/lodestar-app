@@ -137,6 +137,7 @@ const LittlestarLastTimePodcastSection: React.FC<{
                       currentIndex: lastWatchedPodcastProgram.podcastAlbum.podcastProgramIds.findIndex(
                         podcastProgramId => podcastProgramId === lastWatchedPodcastProgram.id,
                       ),
+                      title: lastWatchedPodcastProgram.podcastAlbum.title,
                     })
                   }}
                   rightIcon={<Icon className="ml-2" as={PlayIcon} />}

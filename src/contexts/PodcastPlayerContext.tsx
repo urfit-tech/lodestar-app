@@ -6,6 +6,7 @@ type PlaylistContentProps = {
   id: string | null
   podcastProgramIds: string[]
   currentIndex: number
+  title?: string
   podcastAlbumId?: string
   isPreview?: boolean
 }

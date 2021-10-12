@@ -124,6 +124,7 @@ const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ member
                 id: null,
                 podcastProgramIds: enrolledPodcastPrograms.map(podcastProgram => podcastProgram.id),
                 currentIndex: 0,
+                title: `${formatMessage(productMessages.podcast.title.allPodcast)} (${enrolledPodcastPrograms.length})`,
               })
             }}
           >
@@ -154,6 +155,7 @@ const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ member
                   id: playlist.id,
                   podcastProgramIds: playlist.podcastProgramIds,
                   currentIndex: 0,
+                  title: `${playlist.title} (${playlist.podcastProgramIds.length})`,
                 })
               }}
             />

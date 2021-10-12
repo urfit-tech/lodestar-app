@@ -1,13 +1,13 @@
 import { Icon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
-import { Button, Dropdown, Icon as AntdIcon, List, Menu } from 'antd'
+import { Button, Icon as AntdIcon, List, Menu } from 'antd'
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import { ReactSortable } from 'react-sortablejs'
 import styled, { css } from 'styled-components'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
-import { productMessages } from '../../helpers/translation'
+import { podcastMessages, productMessages } from '../../helpers/translation'
 import {
   useEnrolledPodcastPrograms,
   usePlaylistCollection,
@@ -88,10 +88,10 @@ const PlaylistOverlay: React.VFC<{
   defaultPlaylistId: string | null
 }> = ({ memberId, defaultPlaylistId }) => {
   const { formatMessage } = useIntl()
-  const { playlists, totalPodcastProgramCount, refetchPlaylists } = usePlaylistCollection(memberId)
-
-  const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(defaultPlaylistId)
-  const selectedPlaylist = playlists.find(playlist => playlist.id === selectedPlaylistId)
+  const { playlistContent } = useContext(PodcastPlayerContext)
+  const { playlists, refetchPlaylists } = usePlaylistCollection(memberId)
+  // const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(defaultPlaylistId)
+  // const selectedPlaylist = playlists.find(playlist => playlist.id === selectedPlaylistId)
 
   return (
     <StyledWrapper>
@@ -100,45 +100,40 @@ const PlaylistOverlay: React.VFC<{
         header={
           <div className="d-flex align-items-center justify-content-between py-2 px-3">
             <StyledListTitle>
-              {selectedPlaylistId ? selectedPlaylist?.title : formatMessage(productMessages.podcast.title.allPodcast)} (
-              {selectedPlaylistId ? selectedPlaylist?.podcastProgramIds.length : totalPodcastProgramCount})
+              {playlistContent?.title || formatMessage(podcastMessages.label.nowPlaying)}
             </StyledListTitle>
 
-            <Dropdown
-              overlay={
-                <StyledMenu className="px-2">
-                  <Menu.Item onClick={() => setSelectedPlaylistId(null)}>
-                    {formatMessage(productMessages.podcast.title.allPodcast)} ({totalPodcastProgramCount})
-                  </Menu.Item>
-                  {playlists.map(playlist => (
-                    <Menu.Item key={playlist.id} onClick={() => setSelectedPlaylistId(playlist.id)}>
-                      {playlist.title} ({playlist.podcastProgramIds.length})
+            {/* <Dropdown
+                overlay={
+                  <StyledMenu className="px-2">
+                    <Menu.Item onClick={() => setSelectedPlaylistId(null)}>
+                      {formatMessage(productMessages.podcast.title.allPodcast)} ({totalPodcastProgramCount})
                     </Menu.Item>
-                  ))}
-                </StyledMenu>
-              }
-              trigger={['click']}
-              placement="bottomRight"
-            >
-              <StyledButton type="link" size="small" color="var(--gray-darker)">
-                <span>{formatMessage(productMessages.podcast.title.playlist)}</span>
-                <AntdIcon type="caret-down" />
-              </StyledButton>
-            </Dropdown>
+                    {playlists.map(playlist => (
+                      <Menu.Item key={playlist.id} onClick={() => setSelectedPlaylistId(playlist.id)}>
+                        {playlist.title} ({playlist.podcastProgramIds.length})
+                      </Menu.Item>
+                    ))}
+                  </StyledMenu>
+                }
+                trigger={['click']}
+                placement="bottomRight"
+              >
+                <StyledButton type="link" size="small" color="var(--gray-darker)">
+                  <span>{formatMessage(productMessages.podcast.title.playlist)}</span>
+                  <AntdIcon type="caret-down" />
+                </StyledButton>
+              </Dropdown> */}
           </div>
         }
       >
         <StyledListContent>
-          {selectedPlaylistId ? (
-            <PlaylistPodcastProgramBlock
-              memberId={memberId}
-              playlists={playlists}
-              playlistId={selectedPlaylistId}
-              onRefetch={refetchPlaylists}
-            />
-          ) : (
-            <AllPodcastProgramBlock memberId={memberId} playlists={playlists} onRefetch={refetchPlaylists} />
-          )}
+          <PlaylistPodcastProgramBlock
+            memberId={memberId}
+            playlists={playlists}
+            playlistId={defaultPlaylistId}
+            onRefetch={refetchPlaylists}
+          />
         </StyledListContent>
       </List>
     </StyledWrapper>
@@ -153,6 +148,7 @@ const AllPodcastProgramBlock: React.VFC<{
   onRefetch?: () => Promise<any>
 }> = ({ memberId, playlists, onRefetch }) => {
   const history = useHistory()
+  const { formatMessage } = useIntl()
   const { currentPlayingId, playNow } = useContext(PodcastPlayerContext)
   const { loadingPodcastProgramIds, enrolledPodcastPrograms } = useEnrolledPodcastPrograms(memberId)
 
@@ -204,6 +200,7 @@ const AllPodcastProgramBlock: React.VFC<{
               id: null,
               podcastProgramIds: enrolledPodcastPrograms.map(podcastProgram => podcastProgram.id),
               currentIndex: enrolledPodcastPrograms.findIndex(podcastProgram => podcastProgram.id === podcastProgramId),
+              title: formatMessage(productMessages.podcast.title.allPodcast),
             })
           }}
           onEdit={podcastProgramId => {
@@ -221,12 +218,14 @@ const PlaylistPodcastProgramBlock: React.VFC<{
   playlists: (PlaylistProps & {
     podcastProgramIds: string[]
   })[]
-  playlistId: string
+  playlistId: string | null
   onRefetch?: () => Promise<any>
 }> = ({ memberId, playlists, playlistId, onRefetch }) => {
   const history = useHistory()
   const { currentPlayingId, playNow } = useContext(PodcastPlayerContext)
-  const { loadingPodcastPrograms, podcastPrograms, refetchPodcastPrograms } = usePlaylistPodcastPrograms(playlistId)
+  const { loadingPodcastPrograms, podcastPrograms, refetchPodcastPrograms } = usePlaylistPodcastPrograms(
+    playlistId || '',
+  )
   const updatePodcastProgramPositions = useUpdatePodcastProgramPositions()
 
   const [visible, setVisible] = useState(false)
@@ -304,7 +303,7 @@ const PlaylistPodcastProgramBlock: React.VFC<{
             onPlay={podcastProgramId => {
               history.push(`/podcasts/${podcastProgramId}`)
               playNow?.({
-                id: playlistId,
+                id: playlistId || null,
                 podcastProgramIds: podcastPrograms.map(podcastProgram => podcastProgram.id),
                 currentIndex: podcastPrograms.findIndex(podcastProgram => podcastProgram.id === podcastProgramId),
               })

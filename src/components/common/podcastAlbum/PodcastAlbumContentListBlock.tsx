@@ -50,9 +50,9 @@ const StyledDuration = styled.span`
 `
 
 const PodcastAlbumContentListBlock: React.VFC<{
-  podcastAlbumId: PodcastAlbum['id']
+  podcastAlbum: PodcastAlbum
   podcastPrograms: PodcastAlbum['podcastPrograms']
-}> = ({ podcastAlbumId, podcastPrograms }) => {
+}> = ({ podcastAlbum, podcastPrograms }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
@@ -69,12 +69,13 @@ const PodcastAlbumContentListBlock: React.VFC<{
           key={podcastProgram.id}
           onClick={() => {
             if (isAuthenticated) {
-              history.push(`/podcasts/${podcastProgram.id}?podcastAlbumId=${podcastAlbumId}`)
+              history.push(`/podcasts/${podcastProgram.id}?podcastAlbumId=${podcastAlbum.id}`)
               playNow?.({
                 id: null,
-                podcastAlbumId: podcastAlbumId,
+                podcastAlbumId: podcastAlbum.id,
                 podcastProgramIds: podcastPrograms.map(podcastProgram => podcastProgram.id),
                 currentIndex: index,
+                title: podcastAlbum.title,
               })
             } else {
               setAuthModalVisible?.(true)
