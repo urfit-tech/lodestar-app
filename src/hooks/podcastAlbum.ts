@@ -3,6 +3,37 @@ import gql from 'graphql-tag'
 import hasura from '../hasura'
 import { PodcastAlbum } from '../types/podcastAlbum'
 
+export const usePodcastAlbumPodcastProgramIds = (podcastAlbumId: string) => {
+  const { loading, error, data } = useQuery<
+    hasura.GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS,
+    hasura.GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDSVariables
+  >(
+    gql`
+      query GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS($podcastAlbumId: uuid!) {
+        podcast_album_by_pk(id: $podcastAlbumId) {
+          id
+          title
+          podcast_album_podcast_programs(order_by: { position: asc }) {
+            id
+            podcast_program {
+              id
+            }
+          }
+        }
+      }
+    `,
+    { variables: { podcastAlbumId } },
+  )
+
+  return {
+    loading,
+    error,
+    podcastAlbumTitle: data?.podcast_album_by_pk?.title || '',
+    podcastAlbumPodcastProgramIds:
+      data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.podcast_program?.id) || [],
+  }
+}
+
 export const usePodcastAlbum = (id: string) => {
   const { loading, error, data } = useQuery<hasura.GET_PODCAST_ALBUM, hasura.GET_PODCAST_ALBUMVariables>(
     gql`

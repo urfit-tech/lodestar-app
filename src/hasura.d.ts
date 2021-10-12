@@ -5630,6 +5630,50 @@ export interface GET_PUBLISHED_PODCAST_PLANSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID
+// ====================================================
+
+export interface GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID_podcast_program_enrollment_podcast_program_creator {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+}
+
+export interface GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID_podcast_program_enrollment_podcast_program {
+  __typename: "podcast_program";
+  id: any;
+  /**
+   * An object relationship
+   */
+  creator: GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID_podcast_program_enrollment_podcast_program_creator | null;
+}
+
+export interface GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID_podcast_program_enrollment {
+  __typename: "podcast_program_enrollment";
+  /**
+   * An object relationship
+   */
+  podcast_program: GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID_podcast_program_enrollment_podcast_program | null;
+}
+
+export interface GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID {
+  /**
+   * fetch data from the table: "podcast_program_enrollment"
+   */
+  podcast_program_enrollment: GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID_podcast_program_enrollment[];
+}
+
+export interface GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_IDVariables {
+  memberId: string;
+  creatorId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ENROLLED_PODCAST_PLAN
 // ====================================================
 
@@ -6183,6 +6227,50 @@ export interface GET_PODCAST_PROGRAM_PROGRESS {
 export interface GET_PODCAST_PROGRAM_PROGRESSVariables {
   programPodcastId: any;
   memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS
+// ====================================================
+
+export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program {
+  __typename: "podcast_program";
+  id: any;
+}
+
+export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk_podcast_album_podcast_programs {
+  __typename: "podcast_album_podcast_program";
+  id: any;
+  /**
+   * An object relationship
+   */
+  podcast_program: GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program | null;
+}
+
+export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk {
+  __typename: "podcast_album";
+  id: any;
+  title: string;
+  /**
+   * An array relationship
+   */
+  podcast_album_podcast_programs: GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk_podcast_album_podcast_programs[];
+}
+
+export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS {
+  /**
+   * fetch data from the table: "podcast_album" using primary key columns
+   */
+  podcast_album_by_pk: GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk | null;
+}
+
+export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDSVariables {
+  podcastAlbumId: any;
 }
 
 /* tslint:disable */

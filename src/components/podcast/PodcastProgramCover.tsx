@@ -8,7 +8,8 @@ import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
-import { usePodcastAlbum } from '../../hooks/podcastAlbum'
+import { useEnrolledPodcastProgramWithCreatorId } from '../../hooks/podcast'
+import { usePodcastAlbumPodcastProgramIds } from '../../hooks/podcastAlbum'
 import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -113,7 +114,11 @@ const PodcastProgramCover: React.VFC<{
 
   const [isPlayerInitialized, setIsPlayerInitialized] = useState(false)
   const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
-  const { loading, podcastAlbum } = usePodcastAlbum(podcastAlbumId || '')
+  const [instructorId] = useQueryParam('instructorId', StringParam)
+  const { loading, podcastAlbumTitle, podcastAlbumPodcastProgramIds } = usePodcastAlbumPodcastProgramIds(
+    podcastAlbumId || '',
+  )
+  const { status, enrolledPodcastProgramIds, creatorName } = useEnrolledPodcastProgramWithCreatorId(instructorId || '')
 
   useEffect(() => {
     if (playlistContent === null && !isPlayerInitialized) {
@@ -123,9 +128,9 @@ const PodcastProgramCover: React.VFC<{
             ? {
                 id: null,
                 podcastAlbumId: podcastAlbumId,
-                podcastProgramIds: podcastAlbum.podcastPrograms.map(podcastProgram => podcastProgram.id),
+                podcastProgramIds: podcastAlbumPodcastProgramIds,
                 currentIndex: 0,
-                title: podcastAlbum.title,
+                title: podcastAlbumTitle,
               }
             : {
                 id: null,
@@ -138,14 +143,48 @@ const PodcastProgramCover: React.VFC<{
       }
     }
   }, [
+    isPlayerInitialized,
     loading,
-    title,
+    playlistContent,
     podcastAlbumId,
-    podcastAlbum,
+    podcastAlbumPodcastProgramIds,
+    podcastAlbumTitle,
+    podcastProgramId,
+    setupPlaylist,
+    title,
+  ])
+
+  useEffect(() => {
+    if (playlistContent === null && !isPlayerInitialized) {
+      if (status === 'success') {
+        setupPlaylist?.(
+          instructorId
+            ? {
+                id: null,
+                podcastProgramIds: enrolledPodcastProgramIds,
+                currentIndex: 0,
+                title: `${creatorName}的專輯`,
+              }
+            : {
+                id: null,
+                podcastProgramIds: [podcastProgramId],
+                currentIndex: 0,
+                title,
+              },
+        )
+        setIsPlayerInitialized(true)
+      }
+    }
+  }, [
+    creatorName,
+    enrolledPodcastProgramIds,
+    instructorId,
+    isPlayerInitialized,
     playlistContent,
     podcastProgramId,
-    isPlayerInitialized,
     setupPlaylist,
+    status,
+    title,
   ])
 
   const handlePlay = () => {
