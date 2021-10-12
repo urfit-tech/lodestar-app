@@ -5718,6 +5718,45 @@ export interface GET_ENROLLED_PODCAST_PLANVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PODCAST_PROGRAM
+// ====================================================
+
+export interface GET_PODCAST_PROGRAM_podcast_program_by_pk_creator {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_PODCAST_PROGRAM_podcast_program_by_pk {
+  __typename: "podcast_program";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  duration: any;
+  /**
+   * An object relationship
+   */
+  creator: GET_PODCAST_PROGRAM_podcast_program_by_pk_creator | null;
+}
+
+export interface GET_PODCAST_PROGRAM {
+  /**
+   * fetch data from the table: "podcast_program" using primary key columns
+   */
+  podcast_program_by_pk: GET_PODCAST_PROGRAM_podcast_program_by_pk | null;
+}
+
+export interface GET_PODCAST_PROGRAMVariables {
+  podcastProgramId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PODCAST_PROGRAM_WITH_BODY
 // ====================================================
 

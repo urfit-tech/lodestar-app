@@ -380,7 +380,56 @@ export const useEnrolledPodcastPlansCreators = (memberId: string) => {
     refetchPodcastPlan: refetch,
   }
 }
+export const usePodcastProgram: (
+  podcastProgramId: string,
+) => {
+  status: 'loading' | 'error' | 'success' | 'idle'
+  podcastProgram: {
+    id: string
+    title: string
+    coverUrl: string
+    duration: number
+    creator: {
+      id: string
+      name: string
+      avatarUrl: string
+    }
+  }
+} = podcastProgramId => {
+  const { loading, error, data } = useQuery<hasura.GET_PODCAST_PROGRAM, hasura.GET_PODCAST_PROGRAMVariables>(
+    gql`
+      query GET_PODCAST_PROGRAM($podcastProgramId: uuid!) {
+        podcast_program_by_pk(id: $podcastProgramId) {
+          id
+          title
+          cover_url
+          duration
+          creator {
+            id
+            name
+            picture_url
+          }
+        }
+      }
+    `,
+    { variables: { podcastProgramId } },
+  )
 
+  return {
+    status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
+    podcastProgram: {
+      id: data?.podcast_program_by_pk?.id || '',
+      title: data?.podcast_program_by_pk?.title || '',
+      coverUrl: data?.podcast_program_by_pk?.cover_url || '',
+      duration: data?.podcast_program_by_pk?.duration || 0,
+      creator: {
+        id: data?.podcast_program_by_pk?.creator?.id || '',
+        name: data?.podcast_program_by_pk?.creator?.name || '',
+        avatarUrl: data?.podcast_program_by_pk?.creator?.picture_url || '',
+      },
+    },
+  }
+}
 export const usePodcastProgramContent = (podcastProgramId: string) => {
   const { id: appId } = useApp()
   const { authToken } = useAuth()
