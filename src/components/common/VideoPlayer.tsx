@@ -12,6 +12,7 @@ const VideoPlayer: React.VFC<{ videoId: string; animated?: boolean } & Partial<S
 }) => {
   const { currentLanguage } = useContext(LanguageContext)
   const { authToken, isAuthenticating } = useAuth()
+  const [initialized, setInitialized] = useState(false)
   const [streamOptions, setStreamOptions] = useState<{
     data: {
       token: string
@@ -20,33 +21,36 @@ const VideoPlayer: React.VFC<{ videoId: string; animated?: boolean } & Partial<S
     error: Error | null
   }>()
   useEffect(() => {
-    axios
-      .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/videos/${videoId}/token`,
-        {},
-        {
-          headers: {
-            Authorization: authToken && `Bearer ${authToken}`,
-          },
-        },
-      )
-      .then(({ data }) => {
-        if (data.code === 'SUCCESS') {
-          setStreamOptions({
-            data: {
-              token: data.result.token,
-              poster: data.result.cloudflareOptions.thumbnail,
+    if (!initialized && authToken && videoId) {
+      setInitialized(true)
+      axios
+        .post(
+          `${process.env.REACT_APP_API_BASE_ROOT}/videos/${videoId}/token`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
             },
-            error: null,
-          })
-        } else {
-          setStreamOptions({
-            data: null,
-            error: new Error(data.error),
-          })
-        }
-      })
-  }, [authToken, videoId])
+          },
+        )
+        .then(({ data }) => {
+          if (data.code === 'SUCCESS') {
+            setStreamOptions({
+              data: {
+                token: data.result.token,
+                poster: data.result.cloudflareOptions.thumbnail,
+              },
+              error: null,
+            })
+          } else {
+            setStreamOptions({
+              data: null,
+              error: new Error(data.error),
+            })
+          }
+        })
+    }
+  }, [initialized, videoId, authToken])
   return isAuthenticating ? (
     <div className="text-center">Authenticating...</div>
   ) : streamOptions?.data ? (
