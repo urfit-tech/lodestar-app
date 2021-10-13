@@ -55,10 +55,28 @@ const StyledCard = styled.div`
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
   background-color: #fff;
 `
-export const StyledCardImg = styled.div<{ url: string }>`
-  background-size: cover;
-  padding-top: 100%;
-  background-image: ${props => props?.url && `url(${props.url})`};
+export const StyledCardImgWrapper = styled.div`
+  position: relative;
+  ::before {
+    float: left;
+    padding-top: 100%;
+    content: '';
+  }
+  ::after {
+    display: block;
+    content: '';
+    clear: both;
+  }
+  > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `
 const StyledCardContent = styled.div`
   padding: 20px;
@@ -122,7 +140,9 @@ const PodcastAlbumCollectionSection: React.FC<{
           <StyledCol key={podcastAlbum.id} className="col-6 col-lg-3 my-3">
             <Link to={`/podcast-albums/${podcastAlbum.id}`}>
               <StyledCard>
-                <StyledCardImg url={podcastAlbum.coverUrl || EmptyCover} />
+                <StyledCardImgWrapper>
+                  <img src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
+                </StyledCardImgWrapper>
                 <StyledCardContent>
                   <h3>{podcastAlbum.title}</h3>
                   <div className="unit mb-3">共 {podcastAlbum.programCount} 單元</div>
