@@ -72,7 +72,7 @@ const LittlestarFeaturedPodcastAlbumSection: React.FC<{
         <StyledCard>
           <div className="row">
             <div className="col-12 col-lg-5">
-              <StyledCardImg src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
+              <StyledCardImg url={podcastAlbum.coverUrl || EmptyCover} />
             </div>
             <div className="col-12 col-lg-7 d-flex align-items-center">
               <div className="flex-grow-1">
@@ -95,7 +95,9 @@ const LittlestarFeaturedPodcastAlbumSection: React.FC<{
   )
 }
 
-const useFeaturePodcastAlbum: (filter: { categoryName?: string }) => {
+const useFeaturePodcastAlbum: (filter: {
+  categoryName?: string
+}) => {
   status: string
   podcastAlbum: {
     id: string
