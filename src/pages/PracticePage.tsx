@@ -187,7 +187,7 @@ const PracticePage: React.VFC = () => {
                 isCoverRequired={practice.isCoverRequired}
                 practice={practice}
                 onRefetch={refetchPractice}
-                onSubmit={() => window.location.reload(true)}
+                onSubmit={() => window.location.reload()}
               />
 
               <Menu>
