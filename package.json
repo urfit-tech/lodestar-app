@@ -54,7 +54,6 @@
     "@types/qrcode.react": "^1.0.1",
     "@types/ramda": "0.27.45",
     "@types/rc-slider": "^8.6.6",
-    "@types/howler": "^2.2.4",
     "@types/react": "17.0.0",
     "@types/react-bootstrap": "^1.0.1",
     "@types/react-dom": "17.0.0",
@@ -87,7 +86,6 @@
     "env-cmd": "^10.1.0",
     "framer-motion": "2.9.4",
     "graphql-tag": "^2.12.5",
-    "howler": "^2.2.3",
     "husky": "4.3.8",
     "jsonwebtoken": "8.5.1",
     "less": "^3.13.1",
@@ -118,6 +116,7 @@
     "react-hook-form": "^6.11.0",
     "react-hot-loader": "^4.12.21",
     "react-hotjar": "^2.2.0",
+    "react-howler": "^5.2.0",
     "react-icons": "^3.11.0",
     "react-intl": "5.20.9",
     "react-intl-translations-manager": "^5.0.3",
@@ -148,5 +147,6 @@
       "organize-imports-cli",
       "prettier --write"
     ]
-  }
+  },
+  "devDependencies": {}
 }
