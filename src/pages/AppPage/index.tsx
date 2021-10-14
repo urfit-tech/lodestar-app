@@ -1,13 +1,13 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Editor, Frame } from '@craftjs/core'
+import { Editor } from '@craftjs/core'
 import gql from 'graphql-tag'
 import * as craftComponents from 'lodestar-app-element/src/components/craft'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import MessengerChat from '../components/common/MessengerChat'
-import DefaultLayout from '../components/layout/DefaultLayout'
+import MessengerChat from '../../components/common/MessengerChat'
+import DefaultLayout from '../../components/layout/DefaultLayout'
 import {
   ActivityIntroSection,
   ActivitySection,
@@ -32,11 +32,12 @@ import {
   StaticCoverSection,
   TableListSection,
   TeacherSection,
-} from '../components/page'
-import hasura from '../hasura'
-import { ReactComponent as AngleRightIcon } from '../images/angle-right.svg'
-import LoadingPage from './LoadingPage'
-import NotFoundPage from './NotFoundPage'
+} from '../../components/page'
+import hasura from '../../hasura'
+import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
+import LoadingPage from '../LoadingPage'
+import NotFoundPage from '../NotFoundPage'
+import CraftBlock from './CraftBlock'
 
 type SectionType =
   | 'homeCover'
@@ -106,7 +107,8 @@ const sectionConverter = {
 }
 
 const AppPage: React.VFC = () => {
-  const { loadingAppPage, appPage } = usePage(window.location.pathname)
+  const location = useLocation()
+  const { loadingAppPage, appPage } = usePage(location.pathname)
 
   if (loadingAppPage) {
     return <LoadingPage />
@@ -119,7 +121,7 @@ const AppPage: React.VFC = () => {
     <DefaultLayout {...appPage.options}>
       {appPage.craftData ? (
         <Editor enabled={false} resolver={craftComponents}>
-          <Frame data={JSON.stringify(appPage.craftData)} />
+          <CraftBlock craftData={appPage.craftData} />
         </Editor>
       ) : (
         appPage.appPageSections.map(section => {
