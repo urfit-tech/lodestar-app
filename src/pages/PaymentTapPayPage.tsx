@@ -85,7 +85,9 @@ const PaymentTapPayBlock: React.VFC = () => {
       }
       history.push(`/orders/${orderId}?tracking=1`)
     } catch (err) {
-      if (err instanceof Error) message.error(err)
+      if (err instanceof Error) {
+        message.error(err)
+      }
     }
     setIsPaying(false)
   }
