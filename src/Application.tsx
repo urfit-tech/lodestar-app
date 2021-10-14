@@ -6,6 +6,7 @@ import { LodestarAppProvider } from 'lodestar-app-element/src/contexts/LodestarA
 import React from 'react'
 import ApplicationHelmet from './components/common/ApplicationHelmet'
 import AppRouter, { RouteProps } from './components/common/AppRouter'
+import GlobalPodcastPlayer from './components/podcast/GlobalPodcastPlayer'
 import ErrorBoundary from './containers/common/ErrorBoundary'
 import { CartProvider } from './contexts/CartContext'
 import { CustomRendererProps, CustomRendererProvider } from './contexts/CustomRendererContext'
@@ -29,7 +30,9 @@ const Application: React.FC<{
                 <ConfigProvider locale={zhTW}>
                   <CustomRendererProvider renderer={customRender}>
                     <ApplicationHelmet />
-                    <AppRouter extra={extraRouteProps} />
+                    <AppRouter extra={extraRouteProps}>
+                      <GlobalPodcastPlayer />
+                    </AppRouter>
                   </CustomRendererProvider>
                 </ConfigProvider>
               </PodcastPlayerProvider>

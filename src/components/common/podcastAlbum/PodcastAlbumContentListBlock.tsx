@@ -57,7 +57,7 @@ const PodcastAlbumContentListBlock: React.VFC<{
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { playNow } = useContext(PodcastPlayerContext)
+  const { setup } = useContext(PodcastPlayerContext)
 
   return (
     <>
@@ -70,12 +70,10 @@ const PodcastAlbumContentListBlock: React.VFC<{
           onClick={() => {
             if (isAuthenticated) {
               history.push(`/podcasts/${podcastProgram.id}?podcastAlbumId=${podcastAlbum.id}`)
-              playNow?.({
-                id: null,
-                podcastAlbumId: podcastAlbum.id,
+              setup?.({
+                title: podcastAlbum.title,
                 podcastProgramIds: podcastPrograms.map(podcastProgram => podcastProgram.id),
                 currentIndex: index,
-                title: podcastAlbum.title,
               })
             } else {
               setAuthModalVisible?.(true)

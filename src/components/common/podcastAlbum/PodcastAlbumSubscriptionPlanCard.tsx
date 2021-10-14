@@ -31,7 +31,7 @@ const PodcastAlbumSubscriptionPlanCard: React.VFC<{
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { playNow } = useContext(PodcastPlayerContext)
+  const { setup } = useContext(PodcastPlayerContext)
 
   return (
     <StyledAdminCard key={podcastAlbum.isPublic ? podcastAlbum.id : ''}>
@@ -45,12 +45,10 @@ const PodcastAlbumSubscriptionPlanCard: React.VFC<{
           isFullWidth
           onClick={() => {
             history.push(`/podcasts/${podcastAlbum.podcastPrograms[0].id}`)
-            playNow?.({
-              id: null,
-              podcastAlbumId: podcastAlbum.id,
+            setup?.({
+              title: podcastAlbum.title,
               podcastProgramIds: podcastAlbum.podcastPrograms.map(podcastProgram => podcastProgram.id),
               currentIndex: 0,
-              title: podcastAlbum.title,
             })
           }}
         >

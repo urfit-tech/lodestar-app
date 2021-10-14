@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { podcastMessages } from '../../helpers/translation'
-import { usePlaylistCollection, usePodcastProgram } from '../../hooks/podcast'
+import { usePodcastProgram } from '../../hooks/podcast'
 import EmptyCover from '../../images/empty-cover.png'
 import { AvatarImage, CustomRatioImage } from '../common/Image'
 
@@ -73,16 +73,10 @@ const StyledButton = styled(Button)<{ color?: string }>`
   }
 `
 
-const PlaylistOverlay: React.VFC<{
-  memberId: string
-  defaultPlaylistId: string | null
-}> = ({ memberId, defaultPlaylistId }) => {
+const PlaylistOverlay: React.VFC<{}> = () => {
   const history = useHistory()
   const { formatMessage } = useIntl()
-  const { playlistContent, currentPlayingId, playNow } = useContext(PodcastPlayerContext)
-  const { playlists, refetchPlaylists } = usePlaylistCollection(memberId)
-  // const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(defaultPlaylistId)
-  // const selectedPlaylist = playlists.find(playlist => playlist.id === selectedPlaylistId)
+  const { title, setup, podcastProgramIds, currentIndex } = useContext(PodcastPlayerContext)
 
   return (
     <StyledWrapper>
@@ -90,9 +84,7 @@ const PlaylistOverlay: React.VFC<{
         size="small"
         header={
           <div className="d-flex align-items-center justify-content-between py-2 px-3">
-            <StyledListTitle>
-              {playlistContent?.title || formatMessage(podcastMessages.label.nowPlaying)}
-            </StyledListTitle>
+            <StyledListTitle>{title || formatMessage(podcastMessages.label.nowPlaying)}</StyledListTitle>
 
             {/* <Dropdown
                 overlay={
@@ -119,16 +111,13 @@ const PlaylistOverlay: React.VFC<{
         }
       >
         <StyledListContent>
-          {playlistContent?.podcastProgramIds.map((podcastProgramId, index) => (
+          {podcastProgramIds.map((podcastProgramId, index) => (
             <PlayListItem
               podcastProgramId={podcastProgramId}
-              isPlaying={podcastProgramId === currentPlayingId}
+              isPlaying={index === currentIndex}
               onPlay={podcastProgramId => {
                 history.push(`/podcasts/${podcastProgramId}`)
-                playNow?.({
-                  id: null,
-                  podcastAlbumId: playlistContent.podcastAlbumId,
-                  podcastProgramIds: playlistContent.podcastProgramIds,
+                setup?.({
                   currentIndex: index,
                 })
               }}

@@ -45,7 +45,7 @@ const StyledInput = styled.input``
 const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { playNow } = useContext(PodcastPlayerContext)
+  const { setup } = useContext(PodcastPlayerContext)
   const { enrolledPodcastPrograms, refetchPodcastProgramIds } = useEnrolledPodcastPrograms(memberId)
   const { enrolledPodcastPlansCreators, refetchPodcastPlan } = useEnrolledPodcastPlansCreators(memberId)
   const { playlists, totalPodcastProgramCount, refetchPlaylists } = usePlaylistCollection(memberId)
@@ -120,8 +120,7 @@ const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ member
                 return
               }
               history.push(`/podcasts/${enrolledPodcastPrograms[0].id}`)
-              playNow?.({
-                id: null,
+              setup?.({
                 podcastProgramIds: enrolledPodcastPrograms.map(podcastProgram => podcastProgram.id),
                 currentIndex: 0,
                 title: `${formatMessage(productMessages.podcast.title.allPodcast)} (${enrolledPodcastPrograms.length})`,
@@ -151,8 +150,7 @@ const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ member
                   return
                 }
                 history.push(`/podcasts/${playlist.podcastProgramIds[0]}`)
-                playNow?.({
-                  id: playlist.id,
+                setup?.({
                   podcastProgramIds: playlist.podcastProgramIds,
                   currentIndex: 0,
                   title: `${playlist.title} (${playlist.podcastProgramIds.length})`,

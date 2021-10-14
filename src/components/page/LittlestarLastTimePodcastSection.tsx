@@ -99,7 +99,7 @@ const LittlestarLastTimePodcastSection: React.FC<{
   }
 }> = ({ options: { title } }) => {
   const { status, lastWatchedPodcastProgram } = useLastWatchedPodcastProgram()
-  const { playNow } = useContext(PodcastPlayerContext)
+  const { setup } = useContext(PodcastPlayerContext)
   const history = useHistory()
 
   if (status === 'loading') return <Skeleton />
@@ -130,14 +130,12 @@ const LittlestarLastTimePodcastSection: React.FC<{
                   variant="link"
                   onClick={() => {
                     history.push(`/podcasts/${lastWatchedPodcastProgram.id}`)
-                    playNow?.({
-                      id: null,
-                      podcastAlbumId: lastWatchedPodcastProgram.podcastAlbum.id,
+                    setup?.({
+                      title: lastWatchedPodcastProgram.podcastAlbum.title,
                       podcastProgramIds: lastWatchedPodcastProgram.podcastAlbum.podcastProgramIds,
                       currentIndex: lastWatchedPodcastProgram.podcastAlbum.podcastProgramIds.findIndex(
                         podcastProgramId => podcastProgramId === lastWatchedPodcastProgram.id,
                       ),
-                      title: lastWatchedPodcastProgram.podcastAlbum.title,
                     })
                   }}
                   rightIcon={<Icon className="ml-2" as={PlayIcon} />}

@@ -1,15 +1,11 @@
 import { Icon } from '@chakra-ui/react'
 import { Button, Divider } from 'antd'
 import moment from 'moment'
-import React, { useContext, useEffect, useState } from 'react'
-import { AiOutlineLoading } from 'react-icons/ai'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
-import { useEnrolledPodcastProgramWithCreatorId } from '../../hooks/podcast'
-import { usePodcastAlbumPodcastProgramIds } from '../../hooks/podcastAlbum'
 import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -100,112 +96,20 @@ const PodcastProgramCover: React.VFC<{
   tags: string[]
   description?: string | null
 }> = ({ memberId, podcastProgramId, coverUrl, title, publishedAt, tags, description }) => {
-  const {
-    isPlaying,
-    visible,
-    playlistContent,
-    currentPlayingId,
-    loadingPodcastProgram,
-    maxDuration,
-    playNow,
-    setIsPlaying,
-    setupPlaylist,
-  } = useContext(PodcastPlayerContext)
-
-  const [isPlayerInitialized, setIsPlayerInitialized] = useState(false)
-  const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
-  const [instructorId] = useQueryParam('instructorId', StringParam)
-  const { loading, podcastAlbumTitle, podcastAlbumPodcastProgramIds } = usePodcastAlbumPodcastProgramIds(
-    podcastAlbumId || '',
+  const { podcastProgramIds, currentIndex, loading: loadingPodcast, setup, sound, playing } = useContext(
+    PodcastPlayerContext,
   )
-  const { status, enrolledPodcastProgramIds, creatorName } = useEnrolledPodcastProgramWithCreatorId(instructorId || '')
-
-  useEffect(() => {
-    if (playlistContent === null && !isPlayerInitialized) {
-      if (loading === false) {
-        setupPlaylist?.(
-          podcastAlbumId
-            ? {
-                id: null,
-                podcastAlbumId: podcastAlbumId,
-                podcastProgramIds: podcastAlbumPodcastProgramIds,
-                currentIndex: podcastAlbumPodcastProgramIds.findIndex(id => (id = podcastProgramId)),
-                title: `${podcastAlbumTitle} (${podcastAlbumPodcastProgramIds.length})`,
-              }
-            : {
-                id: null,
-                podcastProgramIds: [podcastProgramId],
-                currentIndex: 0,
-                title,
-              },
-        )
-        setIsPlayerInitialized(true)
-      }
-    }
-  }, [
-    isPlayerInitialized,
-    loading,
-    playlistContent,
-    podcastAlbumId,
-    podcastAlbumPodcastProgramIds,
-    podcastAlbumTitle,
-    podcastProgramId,
-    setupPlaylist,
-    title,
-  ])
-
-  useEffect(() => {
-    if (playlistContent === null && !isPlayerInitialized) {
-      if (status === 'success') {
-        setupPlaylist?.(
-          instructorId
-            ? {
-                id: null,
-                podcastProgramIds: enrolledPodcastProgramIds,
-                currentIndex: enrolledPodcastProgramIds.findIndex(id => (id = podcastProgramId)),
-                title: `${creatorName}的專輯 (${enrolledPodcastProgramIds.length})`,
-              }
-            : {
-                id: null,
-                podcastProgramIds: [podcastProgramId],
-                currentIndex: 0,
-                title,
-              },
-        )
-        setIsPlayerInitialized(true)
-      }
-    }
-  }, [
-    creatorName,
-    enrolledPodcastProgramIds,
-    instructorId,
-    isPlayerInitialized,
-    playlistContent,
-    podcastProgramId,
-    setupPlaylist,
-    status,
-    title,
-  ])
 
   const handlePlay = () => {
-    if (isPlayerInitialized && visible && setIsPlaying) {
-      setIsPlaying(true)
-      return
-    }
-    if (!playNow) {
-      return
-    }
-    const position = playlistContent?.podcastProgramIds.findIndex(id => id === podcastProgramId) || 0
-    playNow(
-      playlistContent && position && position > -1
+    const position = podcastProgramIds.findIndex(id => id === podcastProgramId) || 0
+    setup?.(
+      position < 0
         ? {
-            ...playlistContent,
-            currentIndex: position,
-          }
-        : {
-            id: null,
             podcastProgramIds: [podcastProgramId],
             currentIndex: 0,
+          }
+        : {
+            currentIndex: position,
           },
     )
   }
@@ -233,17 +137,26 @@ const PodcastProgramCover: React.VFC<{
           <Divider className="mb-3" />
         </div>
         <div className="flex-shrink-0">
-          {loadingPodcastProgram || maxDuration === 0 ? (
-            <StyledRotateIcon as={AiOutlineLoading} />
-          ) : podcastProgramId === currentPlayingId ? (
-            <Button type="link" onClick={() => setIsPlaying && setIsPlaying(!isPlaying)}>
-              {isPlaying ? <StyledIcon as={PauseCircleIcon} /> : <StyledIcon as={PlayCircleIcon} />}
-            </Button>
-          ) : (
-            <Button type="link" loading={loadingPodcastProgram} onClick={handlePlay}>
-              <StyledIcon as={PlayCircleIcon} />
-            </Button>
-          )}
+          {
+            // loadingPodcast ? (
+            //   <StyledRotateIcon as={AiOutlineLoading} />
+            // ) :
+
+            podcastProgramId === podcastProgramIds[currentIndex] ? (
+              <Button
+                type="link"
+                onClick={() => {
+                  playing ? sound?.pause() : sound?.play()
+                }}
+              >
+                {playing ? <StyledIcon as={PauseCircleIcon} /> : <StyledIcon as={PlayCircleIcon} />}
+              </Button>
+            ) : (
+              <Button type="link" onClick={handlePlay}>
+                <StyledIcon as={PlayCircleIcon} />
+              </Button>
+            )
+          }
         </div>
       </div>
     </StyledWrapper>

@@ -5,7 +5,6 @@ import LoadablePage from '../../LoadablePage'
 import AppPage from '../../pages/AppPage'
 import LoadingPage from '../../pages/LoadingPage'
 import NotFoundPage from '../../pages/NotFoundPage'
-import PodcastPlayerBlock from '../podcast/PodcastPlayerBlock'
 
 export type RouteProps = {
   path: string
@@ -326,7 +325,7 @@ const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
             {routes}
             <Route component={AppPage} />
           </Switch>
-          <PodcastPlayerBlock />
+          {children}
         </QueryParamProvider>
       </BrowserRouter>
     </AppRouterContext.Provider>

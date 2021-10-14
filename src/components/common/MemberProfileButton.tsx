@@ -131,7 +131,7 @@ export const CustomNavLinks: React.VFC = () => {
 const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElement> }> = ({ onClick }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { closePlayer } = useContext(PodcastPlayerContext)
+  const { close } = useContext(PodcastPlayerContext)
   const { logout } = useAuth()
 
   return (
@@ -140,7 +140,7 @@ const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElemen
       onClick={
         onClick ||
         (() => {
-          closePlayer && closePlayer()
+          close?.()
           logout && logout()
           history.push('/')
           message.success('已成功登出')
@@ -162,7 +162,7 @@ const MemberProfileButton: React.VFC<{
 }> = member => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { closePlayer } = useContext(PodcastPlayerContext)
+  const { close } = useContext(PodcastPlayerContext)
   const { renderMemberProfile, renderMemberAdminMenu, renderLogout, renderMyPageNavItem } = useCustomRenderer()
   const { logout } = useAuth()
   const { enabledModules } = useApp()
@@ -203,7 +203,7 @@ const MemberProfileButton: React.VFC<{
 
         {renderLogout?.({
           logout: () => {
-            closePlayer?.()
+            close?.()
             logout?.()
           },
           DefaultLogout,
