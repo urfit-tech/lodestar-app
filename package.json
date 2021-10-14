@@ -46,6 +46,7 @@
     "@emotion/react": "11",
     "@emotion/styled": "11",
     "@types/braft-editor": "^2.2.0",
+    "@types/howler": "^2.2.4",
     "@types/jsonwebtoken": "8.5.0",
     "@types/lodash": "^4.14.157",
     "@types/moment-timezone": "^0.5.13",
@@ -147,6 +148,5 @@
       "organize-imports-cli",
       "prettier --write"
     ]
-  },
-  "devDependencies": {}
+  }
 }
