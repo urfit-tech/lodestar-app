@@ -1,4 +1,5 @@
 import { Button, Popover } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AuthModalContext } from '../../components/auth/AuthModal'
@@ -12,14 +13,31 @@ const AuthButton: React.VFC = () => {
   const { renderAuthButton } = useCustomRenderer()
   const { setVisible } = useContext(AuthModalContext)
 
+  const { settings } = useApp()
+
+  const handleClick = () => {
+    if (settings['auth.parenting.client_id'] && settings['auth.email.disabled']) {
+      const state = btoa(JSON.stringify({ provider: 'parenting', redirect: window.location.pathname }))
+      const redirect_uri = encodeURIComponent(`${window.location.origin}/oauth2/parenting`)
+      const oauthLink = `https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id=${settings['auth.parenting.client_id']}&redirect_uri=${redirect_uri}&state=${state}&scope=`
+      //.replace('{{CLIENT_ID}}', `${settings['auth.parenting.client_id']}`)
+      //.replace('{{REDIRECT_URI}}', encodeURIComponent(`${window.location.origin}/oauth2/parenting`))
+      //.replace('{{SCOPE}}', '')
+      window.location.assign(oauthLink)
+    } else {
+      setVisible && setVisible(true)
+    }
+  }
+
   return (
     <>
       <Responsive.Default>
         {renderAuthButton?.(setVisible) || (
-          <Button className="ml-2 mr-2" onClick={() => setVisible && setVisible(true)}>
+          <Button className="ml-2 mr-2" onClick={handleClick}>
             {formatMessage(commonMessages.button.login)}
           </Button>
         )}
+
         <Popover
           placement="bottomRight"
           trigger="click"
@@ -37,7 +55,7 @@ const AuthButton: React.VFC = () => {
 
       <Responsive.Desktop>
         {renderAuthButton?.(setVisible) || (
-          <Button className="ml-2" onClick={() => setVisible && setVisible(true)}>
+          <Button className="ml-2" onClick={handleClick}>
             {formatMessage(commonMessages.button.loginRegister)}
           </Button>
         )}
