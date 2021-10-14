@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import hasura from '../../hasura'
+import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as PlayIcon } from '../../images/play.svg'
 import { BREAK_POINT } from '../common/Responsive'
 import { SectionLayout } from './PodcastAlbumCollectionSection'
@@ -110,7 +111,7 @@ const LittlestarLastTimePodcastSection: React.FC<{
       <StyledRow className="row mx-auto">
         <div className="col-lg-6 p-lg-0">
           <StyledImg
-            src={lastWatchedPodcastProgram.podcastAlbum.coverUrl || ''}
+            src={lastWatchedPodcastProgram.podcastAlbum.coverUrl || EmptyCover}
             alt={lastWatchedPodcastProgram.title}
           />
         </div>
@@ -175,7 +176,7 @@ const useLastWatchedPodcastProgram: () => {
     gql`
       query GET_LAST_WATCHED_PODCAST_PROGRAM($memberId: String!) {
         podcast_program_progress(
-          where: { member_id: { _eq: $memberId }, last_progress: { _neq: 0 } }
+          where: { member_id: { _eq: $memberId }, last_progress: { _neq: 0 }, podcast_album_id: { _is_null: false } }
           order_by: { updated_at: desc }
           limit: 1
         ) {
