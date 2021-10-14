@@ -163,7 +163,7 @@ const PodcastProgramPopover: React.FC<
 
       <div>
         {isEnrolled ? (
-          <Link to={`/podcasts/${podcastProgramId}`}>
+          <Link to={`/podcasts/${podcastProgramId}?instructorId=${instructor?.id}`}>
             <Button variant="outline" isFullWidth>
               {formatMessage(commonMessages.button.enterPodcast)}
             </Button>

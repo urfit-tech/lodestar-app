@@ -1453,6 +1453,14 @@ export const projectMessages = {
     },
   }),
 }
+export const podcastMessages = {
+  label: defineMessages({
+    nowPlaying: {
+      id: 'podcast.label.nowPlaying',
+      defaultMessage: '現正播放',
+    },
+  }),
+}
 
 export const podcastAlbumMessages = {
   label: defineMessages({

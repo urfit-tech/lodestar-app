@@ -279,7 +279,11 @@ const CreatorTabs: React.VFC<{
                       )
 
                       if (isEnrolledPodcastPlan) {
-                        return <Link to={`/podcasts/${podcastProgram.id}`}>{elem}</Link>
+                        return (
+                          <Link to={`/podcasts/${podcastProgram.id}?instructorId=${podcastProgram?.instructor?.id}`}>
+                            {elem}
+                          </Link>
+                        )
                       }
 
                       return (

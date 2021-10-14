@@ -289,6 +289,43 @@ export const usePublishedPodcastPlans = (memberId: string) => {
   }
 }
 
+export const useEnrolledPodcastProgramWithCreatorId: (
+  creatorId: string,
+) => {
+  status: 'loading' | 'error' | 'success' | 'idle'
+  enrolledPodcastProgramIds: string[]
+  creatorName: string
+} = creatorId => {
+  const { currentMemberId } = useAuth()
+  const { loading, error, data } = useQuery<
+    hasura.GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID,
+    hasura.GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_IDVariables
+  >(
+    gql`
+      query GET_ENROLLED_PODCAST_PROGRAM_WITH_CREATOR_ID($memberId: String!, $creatorId: String) {
+        podcast_program_enrollment(
+          where: { member_id: { _eq: $memberId }, podcast_program: { creator: { id: { _eq: $creatorId } } } }
+        ) {
+          podcast_program {
+            id
+            creator {
+              id
+              name
+            }
+          }
+        }
+      }
+    `,
+    { variables: { memberId: currentMemberId || '', creatorId } },
+  )
+
+  return {
+    status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
+    enrolledPodcastProgramIds: (data && data.podcast_program_enrollment.map(v => v.podcast_program?.id)) || [],
+    creatorName: (data && data.podcast_program_enrollment[0]?.podcast_program?.creator?.name) || '',
+  }
+}
+
 export const useEnrolledPodcastPlansCreators = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_ENROLLED_PODCAST_PLAN,
@@ -343,7 +380,56 @@ export const useEnrolledPodcastPlansCreators = (memberId: string) => {
     refetchPodcastPlan: refetch,
   }
 }
+export const usePodcastProgram: (
+  podcastProgramId: string,
+) => {
+  status: 'loading' | 'error' | 'success' | 'idle'
+  podcastProgram: {
+    id: string
+    title: string
+    coverUrl: string
+    duration: number
+    creator: {
+      id: string
+      name: string
+      avatarUrl: string
+    }
+  }
+} = podcastProgramId => {
+  const { loading, error, data } = useQuery<hasura.GET_PODCAST_PROGRAM, hasura.GET_PODCAST_PROGRAMVariables>(
+    gql`
+      query GET_PODCAST_PROGRAM($podcastProgramId: uuid!) {
+        podcast_program_by_pk(id: $podcastProgramId) {
+          id
+          title
+          cover_url
+          duration
+          creator {
+            id
+            name
+            picture_url
+          }
+        }
+      }
+    `,
+    { variables: { podcastProgramId } },
+  )
 
+  return {
+    status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
+    podcastProgram: {
+      id: data?.podcast_program_by_pk?.id || '',
+      title: data?.podcast_program_by_pk?.title || '',
+      coverUrl: data?.podcast_program_by_pk?.cover_url || '',
+      duration: data?.podcast_program_by_pk?.duration || 0,
+      creator: {
+        id: data?.podcast_program_by_pk?.creator?.id || '',
+        name: data?.podcast_program_by_pk?.creator?.name || '',
+        avatarUrl: data?.podcast_program_by_pk?.creator?.picture_url || '',
+      },
+    },
+  }
+}
 export const usePodcastProgramContent = (podcastProgramId: string) => {
   const { id: appId } = useApp()
   const { authToken } = useAuth()

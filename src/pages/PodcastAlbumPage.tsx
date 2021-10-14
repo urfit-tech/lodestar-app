@@ -139,7 +139,7 @@ const PodcastAlbumPage: React.VFC = () => {
                 <BraftContent>{podcastAlbum.description}</BraftContent>
               </div>
               <PodcastAlbumContentListBlock
-                podcastAlbumId={podcastAlbum.id}
+                podcastAlbum={podcastAlbum}
                 podcastPrograms={podcastAlbum.podcastPrograms}
               />
             </div>
