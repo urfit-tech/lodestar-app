@@ -205,24 +205,27 @@ const DefaultLayout: React.FC<{
               {isAuthenticated &&
                 (renderMyPageNavItem?.({
                   memberId: currentMemberId,
-                }) || (
-                  <Menu>
-                    <MenuButton
-                      as={
-                        settings['style.header.menu_button.animation.enable'] === '1'
-                          ? StyledNavAnimationButton
-                          : StyledNavButton
-                      }
-                      onClick={() => (window.location.href = `/members/${currentMemberId}`)}
-                    >
-                      {formatMessage(commonMessages.button.myPage)}
-                    </MenuButton>
-                  </Menu>
-                ))}
+                }) ||
+                  (!(settings['nav.my_page.disable'] === '1') && (
+                    <Menu>
+                      <MenuButton
+                        as={
+                          settings['style.header.menu_button.animation.enable'] === '1'
+                            ? StyledNavAnimationButton
+                            : StyledNavButton
+                        }
+                        onClick={() => (window.location.href = `/members/${currentMemberId}`)}
+                      >
+                        {formatMessage(commonMessages.button.myPage)}
+                      </MenuButton>
+                    </Menu>
+                  )))}
             </Responsive.Desktop>
 
-            {!noCart && (renderCartButton ? renderCartButton() : <CartDropdown />)}
-            {currentMemberId && <NotificationDropdown />}
+            {!noCart &&
+              !(settings['feature.cart.disable'] === '1') &&
+              (renderCartButton ? renderCartButton() : <CartDropdown />)}
+            {currentMemberId && !(settings['feature.notify.disable'] === '1') && <NotificationDropdown />}
             {currentMemberId && currentMember ? (
               <MemberProfileButton
                 id={currentMemberId}

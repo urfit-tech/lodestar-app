@@ -165,7 +165,7 @@ const MemberProfileButton: React.VFC<{
   const { close } = useContext(PodcastPlayerContext)
   const { renderMemberProfile, renderMemberAdminMenu, renderLogout, renderMyPageNavItem } = useCustomRenderer()
   const { logout } = useAuth()
-  const { enabledModules } = useApp()
+  const { enabledModules, settings } = useApp()
 
   const content = (
     <Wrapper>
@@ -189,12 +189,13 @@ const MemberProfileButton: React.VFC<{
 
         <Responsive.Default>
           <CustomNavLinks />
-          {renderMyPageNavItem?.({ memberId: member.id }) || (
-            <BorderedItem onClick={() => history.push(`/members/${member.id}`)} style={{ cursor: 'pointer' }}>
-              <BlankIcon className="mr-2" />
-              {formatMessage(commonMessages.content.myPage)}
-            </BorderedItem>
-          )}
+          {renderMyPageNavItem?.({ memberId: member.id }) ||
+            (!(settings['nav.my_page.disable'] === '1') && (
+              <BorderedItem onClick={() => history.push(`/members/${member.id}`)} style={{ cursor: 'pointer' }}>
+                <BlankIcon className="mr-2" />
+                {formatMessage(commonMessages.content.myPage)}
+              </BorderedItem>
+            ))}
         </Responsive.Default>
 
         <BorderedItem className="shift-left">
