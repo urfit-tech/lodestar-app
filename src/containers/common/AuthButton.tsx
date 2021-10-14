@@ -20,9 +20,6 @@ const AuthButton: React.VFC = () => {
       const state = btoa(JSON.stringify({ provider: 'parenting', redirect: window.location.pathname }))
       const redirect_uri = encodeURIComponent(`${window.location.origin}/oauth2/parenting`)
       const oauthLink = `https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id=${settings['auth.parenting.client_id']}&redirect_uri=${redirect_uri}&state=${state}&scope=`
-      //.replace('{{CLIENT_ID}}', `${settings['auth.parenting.client_id']}`)
-      //.replace('{{REDIRECT_URI}}', encodeURIComponent(`${window.location.origin}/oauth2/parenting`))
-      //.replace('{{SCOPE}}', '')
       window.location.assign(oauthLink)
     } else {
       setVisible && setVisible(true)
