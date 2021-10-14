@@ -53,7 +53,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
         })
           .then(() => {
             message.success(formatMessage(commonMessages.event.successfullySaved))
-            window.location.reload(true)
+            window.location.reload()
           })
           .catch(err => message.error(err.message))
       }
