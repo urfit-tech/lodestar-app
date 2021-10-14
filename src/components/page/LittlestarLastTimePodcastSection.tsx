@@ -120,7 +120,9 @@ const LittlestarLastTimePodcastSection: React.FC<{
               <h3 className="mb-4">{lastWatchedPodcastProgram.title}</h3>
               <h4 className="mb-2">{lastWatchedPodcastProgram.podcastAlbum.title}</h4>
               {lastWatchedPodcastProgram.podcastAlbum.categoryNames.map(name => (
-                <span className="tag mr-1">{name}</span>
+                <span className="tag mr-1" key={name}>
+                  {name}
+                </span>
               ))}
             </div>
 
@@ -172,7 +174,11 @@ const useLastWatchedPodcastProgram: () => {
   >(
     gql`
       query GET_LAST_WATCHED_PODCAST_PROGRAM($memberId: String!) {
-        podcast_program_progress(where: { member_id: { _eq: $memberId } }, order_by: { updated_at: desc }, limit: 1) {
+        podcast_program_progress(
+          where: { member_id: { _eq: $memberId }, last_progress: { _neq: 0 } }
+          order_by: { updated_at: desc }
+          limit: 1
+        ) {
           id
           progress
           last_progress
