@@ -50,31 +50,30 @@ const StyledDuration = styled.span`
 `
 
 const PodcastAlbumContentListBlock: React.VFC<{
-  podcastAlbumId: PodcastAlbum['id']
+  podcastAlbum: PodcastAlbum
   podcastPrograms: PodcastAlbum['podcastPrograms']
-}> = ({ podcastAlbumId, podcastPrograms }) => {
+}> = ({ podcastAlbum, podcastPrograms }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { playNow } = useContext(PodcastPlayerContext)
+  const { setup } = useContext(PodcastPlayerContext)
 
   return (
     <>
       <StyledTitle>{formatMessage(podcastAlbumMessages.label.podcastContent)}</StyledTitle>
       <Divider className="mb-3" />
 
-      {podcastPrograms.map(podcastProgram => (
+      {podcastPrograms.map((podcastProgram, index) => (
         <PodcastAlbumContentItem
           key={podcastProgram.id}
           onClick={() => {
             if (isAuthenticated) {
-              history.push(`/podcasts/${podcastProgram.id}?podcastAlbumId=${podcastAlbumId}`)
-              playNow?.({
-                id: null,
-                podcastAlbumId: podcastAlbumId,
+              history.push(`/podcasts/${podcastProgram.id}?podcastAlbumId=${podcastAlbum.id}`)
+              setup?.({
+                title: podcastAlbum.title,
                 podcastProgramIds: podcastPrograms.map(podcastProgram => podcastProgram.id),
-                currentIndex: 0,
+                currentIndex: index,
               })
             } else {
               setAuthModalVisible?.(true)

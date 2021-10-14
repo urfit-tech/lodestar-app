@@ -1,19 +1,14 @@
+import { ButtonProps } from '@chakra-ui/button'
 import { Icon } from '@chakra-ui/icons'
 import { Button, Divider, Popover } from 'antd'
-import { ButtonProps } from 'antd/lib/button'
-import axios from 'axios'
-import isMobile from 'is-mobile'
-import { throttle } from 'lodash'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { AiOutlineLoading } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
-import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import PodcastPlayerContext, { PlaylistModeType } from '../../contexts/PodcastPlayerContext'
+import { PodcastPlayerMode } from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
 import {
   Backward5Icon,
@@ -207,114 +202,60 @@ const durationFormat: (time: number) => string = time => {
 }
 
 const PodcastPlayer: React.VFC<{
-  memberId: string
-}> = ({ memberId }) => {
-  const {
-    playlistContent,
-    playlistMode,
-    isPlaying,
-    currentPlayingId,
-    currentPodcastProgram,
-    loadingPodcastProgram,
-    maxDuration,
-    isPodcastProgramChanged,
-    progress: totalProgress,
-    lastProgress,
-    togglePlaylistMode,
-    shift,
-    closePlayer,
-    setIsPlaying,
-    setMaxDuration,
-    refetchPodcastProgramProgress,
-  } = useContext(PodcastPlayerContext)
-  const { authToken } = useAuth()
-  const playerRef = useRef<ReactPlayer | null>(null)
-  const [progress, setProgress] = useState(0)
-  const [isSeeking, setIsSeeking] = useState(false)
-  const [playRate, setPlayRate] = useState(1)
+  loading?: boolean
+  playing?: boolean
+  title: string
+  link: string
+  duration: number
+  progress: number
+  playRate?: number
+  mode: PodcastPlayerMode
+  onPlay?: () => void
+  onPause?: () => void
+  onBackward?: (seconds?: number) => void
+  onForward?: (seconds?: number) => void
+  onPlayRateChange?: (playRate: number) => void
+  onModeChange?: (mode: PodcastPlayerMode) => void
+  onBeforeSeek?: (progress: number) => void
+  onSeek?: (progress: number) => void
+  onAfterSeek?: (progress: number) => void
+  onClose?: () => void
+  onPrev?: () => void
+  onNext?: () => void
+}> = ({
+  loading,
+  playing,
+  title,
+  link,
+  duration,
+  progress,
+  playRate = 1,
+  mode = 'loop',
+  onPlay,
+  onPause,
+  onBackward,
+  onForward,
+  onPlayRateChange,
+  onModeChange,
+  onBeforeSeek,
+  onSeek,
+  onAfterSeek,
+  onClose,
+  onPrev,
+  onNext,
+}) => {
   const [showAction, setShowAction] = useState(false)
-  const [isAudioLoading, setIsAudioLoading] = useState(false)
-
-  const handlePlayRate = () => {
-    playRate < 1 ? setPlayRate(1) : playRate < 1.5 ? setPlayRate(1.5) : playRate < 2 ? setPlayRate(2) : setPlayRate(0.5)
-  }
-
-  // initialize when changing podcast program
-  useEffect(() => {
-    if (isPodcastProgramChanged && setMaxDuration) {
-      setMaxDuration(0)
-      setProgress(0)
-    }
-  }, [isPodcastProgramChanged, setMaxDuration])
-
-  const upsertPodcastProgramProgress = throttle(async (progress: number) => {
-    axios
-      .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/podcast-program-progress`,
-        {
-          podcastProgramId: currentPlayingId,
-          memberId: memberId,
-          progress: progress > totalProgress ? progress : totalProgress,
-          lastProgress: progress,
-          podcastAlbumId: playlistContent?.podcastAlbumId || null,
-        },
-        { headers: { authorization: `Bearer ${authToken}` } },
-      )
-      .then(({ data: { code } }) => {
-        if (code === 'SUCCESS') {
-          refetchPodcastProgramProgress?.()
-          return
-        }
-      })
-      .catch(() => {})
-  }, 3000)
-
   return (
     <StyledWrapper>
-      {!loadingPodcastProgram && currentPodcastProgram && (
-        <ReactPlayer
-          ref={playerRef}
-          url={currentPodcastProgram.url}
-          style={{ display: 'none' }}
-          playsinline
-          playing={isPlaying && currentPodcastProgram.id === currentPlayingId}
-          playbackRate={playRate}
-          progressInterval={500}
-          onDuration={duration => {
-            setMaxDuration && setMaxDuration(parseFloat(duration.toFixed(1)))
-          }}
-          onProgress={progress => {
-            if (progress.played !== 0 && !isSeeking) {
-              setProgress(progress.playedSeconds)
-              upsertPodcastProgramProgress(progress.played)
-            }
-          }}
-          onEnded={() => {
-            setIsPlaying && setIsPlaying(false)
-            if (playlistMode === 'single-loop') {
-              setTimeout(() => {
-                setProgress(0)
-                setIsPlaying && setIsPlaying(true)
-              }, 500)
-            } else {
-              setTimeout(() => {
-                setProgress(maxDuration)
-                shift && shift(1)
-              }, 500)
-            }
-          }}
-        />
-      )}
-
       <Responsive.Default>
         <OverlayBlock active={showAction}>
           <ActionBlock className="d-flex align-items-center justify-content-around">
             <div className="flex-grow-1 text-center">
-              <PlayRateButton variant="overlay" playRate={playRate} onChange={handlePlayRate} />
+              <PlayRateButton variant="overlay" playRate={playRate} onChange={rate => onPlayRateChange?.(rate)} />
             </div>
             <Divider type="vertical" style={{ height: '49px' }} />
             <div className="flex-grow-1 text-center">
-              <PlayModeButton variant="overlay" mode={playlistMode} onChange={togglePlaylistMode} />
+              <PlayModeButton variant="overlay" mode={mode} onChange={mode => onModeChange?.(mode)} />
             </div>
           </ActionBlock>
         </OverlayBlock>
@@ -323,15 +264,12 @@ const PodcastPlayer: React.VFC<{
       <div className="pt-3">
         <StyledSlider
           height={8}
-          max={maxDuration}
+          max={duration}
           step={0.1}
           value={progress}
-          onBeforeChange={() => setIsSeeking(true)}
-          onChange={value => setProgress(value)}
-          onAfterChange={value => {
-            setIsSeeking(false)
-            playerRef.current && playerRef.current.seekTo(value, 'seconds')
-          }}
+          onBeforeChange={value => onBeforeSeek?.(value)}
+          onChange={value => onSeek?.(value)}
+          onAfterChange={value => onAfterSeek?.(value)}
         />
       </div>
 
@@ -339,42 +277,38 @@ const PodcastPlayer: React.VFC<{
         <div className="container">
           <Responsive.Default>
             <div className="d-flex align-items-center justify-content-between">
-              <StyledLink to={`/podcasts/${currentPodcastProgram?.id || ''}`}>
-                <StyledTitle className="flex-grow-1">{currentPodcastProgram?.title}</StyledTitle>
+              <StyledLink to={link}>
+                <StyledTitle className="flex-grow-1">{title}</StyledTitle>
               </StyledLink>
               <StyledDuration className="flex-shrink-0">
-                {durationFormat(progress)}/{durationFormat(maxDuration)}
+                {durationFormat(progress)}/{durationFormat(duration)}
               </StyledDuration>
             </div>
           </Responsive.Default>
 
           <div className="row flex-nowrap py-2">
             <CloseBlock className="col-1 d-flex align-items-center">
-              <StyledButton type="link" variant="bar" onClick={() => closePlayer && closePlayer()}>
+              <StyledButton type="link" variant="bar" onClick={() => onClose?.()}>
                 <Icon as={TimesIcon} />
               </StyledButton>
             </CloseBlock>
 
             <div className="col-2 col-lg-4 d-flex d-lg-block align-items-center justify-content-start">
               <Responsive.Desktop>
-                <Link to={`/podcasts/${currentPodcastProgram?.id || ''}`}>
-                  <StyledTitle>{currentPodcastProgram?.title}</StyledTitle>
+                <Link to={link}>
+                  <StyledTitle>{title}</StyledTitle>
                 </Link>
                 <StyledDuration>
-                  {durationFormat(progress)}/{durationFormat(maxDuration)}
+                  {durationFormat(progress)}/{durationFormat(duration)}
                 </StyledDuration>
               </Responsive.Desktop>
             </div>
             <div className="col-6 col-lg-4 d-flex align-items-center justify-content-center">
-              <StyledShiftButton type="link" variant="bar" onClick={() => shift && shift(-1)}>
+              <StyledShiftButton type="link" variant="bar" onClick={() => onPrev?.()}>
                 <Icon as={PrevIcon} />
               </StyledShiftButton>
               <StyledButtonGroup className="d-flex align-items-center justify-content-center">
-                <StyledButton
-                  type="link"
-                  variant="bar"
-                  onClick={() => playerRef.current?.seekTo(playerRef.current.getCurrentTime() - 5)}
-                >
+                <StyledButton type="link" variant="bar" onClick={() => onBackward?.()}>
                   <Icon as={Backward5Icon} />
                 </StyledButton>
                 <StyledButton
@@ -382,54 +316,32 @@ const PodcastPlayer: React.VFC<{
                   variant="bar"
                   className="mx-2 mx-lg-3"
                   height="44px"
-                  onClick={() => {
-                    setIsPlaying?.(!isPlaying)
-                    if (isMobile() && progress === 0) {
-                      setIsAudioLoading(true)
-                      setTimeout(() => {
-                        setIsAudioLoading(false)
-                      }, 2500)
-                    } else {
-                      setIsAudioLoading(false)
-                    }
-                  }}
+                  onClick={() => (playing ? onPause?.() : onPlay?.())}
                 >
-                  {loadingPodcastProgram || maxDuration === 0 || isAudioLoading ? (
+                  {loading ? (
                     <StyledRotateIcon as={AiOutlineLoading} />
                   ) : (
-                    <Icon as={isPlaying ? PauseCircleIcon : PlayCircleIcon} style={{ fontSize: '44px' }} />
+                    <Icon as={playing ? PauseCircleIcon : PlayCircleIcon} style={{ fontSize: '44px' }} />
                   )}
                 </StyledButton>
-                <StyledButton
-                  type="link"
-                  variant="bar"
-                  onClick={() => playerRef.current?.seekTo(playerRef.current.getCurrentTime() + 5)}
-                >
+                <StyledButton type="link" variant="bar" onClick={() => onForward?.()}>
                   <Icon as={Forward5Icon} />
                 </StyledButton>
               </StyledButtonGroup>
-              <StyledShiftButton type="link" variant="bar" onClick={() => shift && shift(1)}>
+              <StyledShiftButton type="link" variant="bar" onClick={() => onNext?.()}>
                 <Icon as={NextIcon} />
               </StyledShiftButton>
             </div>
             <div className="col-3 col-lg-4 d-flex align-items-center justify-content-end">
               <Responsive.Desktop>
-                <PlayRateButton variant="bar" playRate={playRate} onChange={handlePlayRate} />
-                <PlayModeButton variant="bar" mode={playlistMode} className="ml-4" onChange={togglePlaylistMode} />
+                <PlayRateButton variant="bar" playRate={playRate} onChange={rate => onPlayRateChange?.(rate)} />
+                <PlayModeButton variant="bar" mode={mode} className="ml-4" onChange={mode => onModeChange?.(mode)} />
               </Responsive.Desktop>
-
-              {!playlistContent?.isPreview && (
-                <Popover
-                  placement="topRight"
-                  trigger="click"
-                  content={<PlaylistOverlay memberId={memberId} defaultPlaylistId={playlistContent?.id || ''} />}
-                >
-                  <StyledButton type="link" variant="bar" className="ml-lg-4" onClick={() => setShowAction(false)}>
-                    <Icon as={PlaylistIcon} />
-                  </StyledButton>
-                </Popover>
-              )}
-
+              <Popover placement="topRight" trigger="click" content={<PlaylistOverlay />}>
+                <StyledButton type="link" variant="bar" className="ml-lg-4" onClick={() => setShowAction(false)}>
+                  <Icon as={PlaylistIcon} />
+                </StyledButton>
+              </Popover>
               <Responsive.Default>
                 <StyledButton
                   type="link"
@@ -449,16 +361,24 @@ const PodcastPlayer: React.VFC<{
 }
 
 const PlayRateButton: React.VFC<
-  ButtonProps & {
+  Omit<ButtonProps, 'variant' | 'mode' | 'onChange'> & {
     variant: 'overlay' | 'bar'
     playRate: number
-    onChange?: () => void
+    onChange?: (playRate: number) => void
   }
-> = ({ variant, playRate, onChange, ...props }) => {
+> = ({ variant, playRate, onChange, ...buttonProps }) => {
   const { formatMessage } = useIntl()
 
   return (
-    <StyledButton type="link" variant={variant} onClick={() => onChange && onChange()} {...props}>
+    <StyledButton
+      type="link"
+      variant={variant}
+      onClick={() => {
+        const changedRate = playRate < 1 ? 1 : playRate < 1.5 ? 1.5 : playRate < 2 ? 2 : 0.5
+        onChange?.(changedRate)
+      }}
+      {...buttonProps}
+    >
       {playRate < 1 ? (
         <Icon as={PlayRate05xIcon} />
       ) : playRate < 1.5 ? (
@@ -474,16 +394,19 @@ const PlayRateButton: React.VFC<
 }
 
 const PlayModeButton: React.VFC<
-  ButtonProps & {
+  Omit<ButtonProps, 'variant' | 'mode' | 'onChange'> & {
     variant: 'overlay' | 'bar'
-    mode: PlaylistModeType
-    onChange?: () => void
+    mode: PodcastPlayerMode
+    onChange?: (mode: PodcastPlayerMode) => void
   }
-> = ({ variant, mode, onChange, ...props }) => {
+> = ({ variant, mode, onChange, ...buttonProps }) => {
   const { formatMessage } = useIntl()
-
+  const handleClick = () => {
+    const changedMode = mode === 'loop' ? 'single-loop' : mode === 'single-loop' ? 'random' : 'loop'
+    onChange?.(changedMode)
+  }
   return (
-    <StyledButton type="link" variant={variant} onClick={() => onChange && onChange()} {...props}>
+    <StyledButton type="link" variant={variant} onClick={handleClick} {...buttonProps}>
       {mode === 'loop' ? (
         <Icon as={LoopIcon} />
       ) : mode === 'single-loop' ? (
@@ -491,7 +414,6 @@ const PlayModeButton: React.VFC<
       ) : (
         <Icon as={ShuffleIcon} />
       )}
-
       {variant === 'overlay' && (
         <div>
           {formatMessage(

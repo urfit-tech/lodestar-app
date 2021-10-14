@@ -86,6 +86,7 @@
     "env-cmd": "^10.1.0",
     "framer-motion": "2.9.4",
     "graphql-tag": "^2.12.5",
+    "howler": "^2.2.3",
     "husky": "4.3.8",
     "jsonwebtoken": "8.5.1",
     "less": "^3.13.1",
@@ -146,5 +147,8 @@
       "organize-imports-cli",
       "prettier --write"
     ]
+  },
+  "devDependencies": {
+    "@types/howler": "^2.2.4"
   }
 }

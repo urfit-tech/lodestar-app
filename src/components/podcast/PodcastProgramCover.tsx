@@ -1,13 +1,11 @@
 import { Icon } from '@chakra-ui/react'
 import { Button, Divider } from 'antd'
 import moment from 'moment'
-import React, { useContext, useEffect, useState } from 'react'
-import { AiOutlineLoading } from 'react-icons/ai'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
-import { useEnrolledPodcastProgramIds } from '../../hooks/podcast'
 import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -98,78 +96,20 @@ const PodcastProgramCover: React.VFC<{
   tags: string[]
   description?: string | null
 }> = ({ memberId, podcastProgramId, coverUrl, title, publishedAt, tags, description }) => {
-  const {
-    isPlaying,
-    visible,
-    playlistContent,
-    currentPlayingId,
-    loadingPodcastProgram,
-    maxDuration,
-    playNow,
-    setIsPlaying,
-    setupPlaylist,
-  } = useContext(PodcastPlayerContext)
-  const { loadingPodcastProgramId, errorPodcastProgramId, enrolledPodcastProgramIds } = useEnrolledPodcastProgramIds(
-    memberId,
+  const { podcastProgramIds, currentIndex, loading: loadingPodcast, setup, sound, playing } = useContext(
+    PodcastPlayerContext,
   )
-  const [isPlayerInitialized, setIsPlayerInitialized] = useState(false)
-
-  useEffect(() => {
-    if (playlistContent === null && !isPlayerInitialized) {
-      if (loadingPodcastProgramId === false && errorPodcastProgramId === undefined) {
-        setupPlaylist?.(
-          enrolledPodcastProgramIds.includes(podcastProgramId)
-            ? {
-                id: null,
-                podcastProgramIds: enrolledPodcastProgramIds,
-                currentIndex: enrolledPodcastProgramIds.findIndex(id => id === podcastProgramId),
-              }
-            : {
-                id: null,
-                podcastProgramIds: [podcastProgramId],
-                currentIndex: 0,
-                isPreview: true,
-              },
-        )
-        setIsPlayerInitialized(true)
-      }
-    }
-  }, [
-    enrolledPodcastProgramIds,
-    playlistContent,
-    podcastProgramId,
-    isPlayerInitialized,
-    setupPlaylist,
-    loadingPodcastProgramId,
-    errorPodcastProgramId,
-  ])
 
   const handlePlay = () => {
-    if (isPlayerInitialized && visible && setIsPlaying) {
-      setIsPlaying(true)
-      return
-    }
-    if (!playNow) {
-      return
-    }
-    const position = playlistContent?.podcastProgramIds.findIndex(id => id === podcastProgramId) || 0
-    playNow(
-      playlistContent && position && position > -1
+    const position = podcastProgramIds.findIndex(id => id === podcastProgramId) || 0
+    setup?.(
+      position < 0
         ? {
-            ...playlistContent,
-            currentIndex: position,
-          }
-        : enrolledPodcastProgramIds.includes(podcastProgramId)
-        ? {
-            id: null,
-            podcastProgramIds: enrolledPodcastProgramIds,
-            currentIndex: enrolledPodcastProgramIds.findIndex(id => id === podcastProgramId),
-          }
-        : {
-            id: null,
             podcastProgramIds: [podcastProgramId],
             currentIndex: 0,
-            isPreview: true,
+          }
+        : {
+            currentIndex: position,
           },
     )
   }
@@ -197,17 +137,26 @@ const PodcastProgramCover: React.VFC<{
           <Divider className="mb-3" />
         </div>
         <div className="flex-shrink-0">
-          {loadingPodcastProgram || maxDuration === 0 ? (
-            <StyledRotateIcon as={AiOutlineLoading} />
-          ) : podcastProgramId === currentPlayingId ? (
-            <Button type="link" onClick={() => setIsPlaying && setIsPlaying(!isPlaying)}>
-              {isPlaying ? <StyledIcon as={PauseCircleIcon} /> : <StyledIcon as={PlayCircleIcon} />}
-            </Button>
-          ) : (
-            <Button type="link" loading={loadingPodcastProgram} onClick={handlePlay}>
-              <StyledIcon as={PlayCircleIcon} />
-            </Button>
-          )}
+          {
+            // loadingPodcast ? (
+            //   <StyledRotateIcon as={AiOutlineLoading} />
+            // ) :
+
+            podcastProgramId === podcastProgramIds[currentIndex] ? (
+              <Button
+                type="link"
+                onClick={() => {
+                  playing ? sound?.pause() : sound?.play()
+                }}
+              >
+                {playing ? <StyledIcon as={PauseCircleIcon} /> : <StyledIcon as={PlayCircleIcon} />}
+              </Button>
+            ) : (
+              <Button type="link" onClick={handlePlay}>
+                <StyledIcon as={PlayCircleIcon} />
+              </Button>
+            )
+          }
         </div>
       </div>
     </StyledWrapper>
