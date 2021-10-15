@@ -226,7 +226,7 @@ const usePodcastAlbumCollection: (options: { categoryId?: string }) => {
   const { loading, data, error, refetch } = useQuery<hasura.GET_PODCAST_ALBUMS, hasura.GET_PODCAST_ALBUMSVariables>(
     gql`
       query GET_PODCAST_ALBUMS($condition: podcast_album_bool_exp) {
-        podcast_album(where: $condition) {
+        podcast_album(where: $condition, order_by: { published_at: desc }) {
           id
           cover_url
           title
