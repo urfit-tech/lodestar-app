@@ -6,7 +6,7 @@ import { notEmpty } from '../../helpers'
 import EmptyCover from '../../images/empty-cover.png'
 import { MultiLineTruncationMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
-import { MoreLink, SectionLayout, StyledCardImg } from './PodcastAlbumCollectionSection'
+import { MoreLink, SectionLayout, StyledCardImgWrapper } from './PodcastAlbumCollectionSection'
 const StyledCard = styled.div`
   border-radius: 12px;
   margin: 0 auto;
@@ -72,7 +72,9 @@ const LittlestarFeaturedPodcastAlbumSection: React.FC<{
         <StyledCard>
           <div className="row">
             <div className="col-12 col-lg-5">
-              <StyledCardImg src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
+              <StyledCardImgWrapper>
+                <img src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
+              </StyledCardImgWrapper>
             </div>
             <div className="col-12 col-lg-7 d-flex align-items-center">
               <div className="flex-grow-1">
@@ -95,7 +97,9 @@ const LittlestarFeaturedPodcastAlbumSection: React.FC<{
   )
 }
 
-const useFeaturePodcastAlbum: (filter: { categoryName?: string }) => {
+const useFeaturePodcastAlbum: (filter: {
+  categoryName?: string
+}) => {
   status: string
   podcastAlbum: {
     id: string

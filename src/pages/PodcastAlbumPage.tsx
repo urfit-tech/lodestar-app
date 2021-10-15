@@ -128,13 +128,21 @@ const PodcastAlbumPage: React.VFC = () => {
       <StyledPodcastAlbumIntroBlock>
         <div className="container">
           <div className="row">
-            <Responsive.Desktop>
-              <StyledIntroWrapper className="col-12 col-lg-4">
-                {podcastAlbum.isPublic && <PodcastAlbumSubscriptionPlanCard podcastAlbum={podcastAlbum} />}
-              </StyledIntroWrapper>
-            </Responsive.Desktop>
+            {!(settings['podcast_album.subscription_plan_card_is_public.disable'] === '1' && podcastAlbum.isPublic) && (
+              <Responsive.Desktop>
+                <StyledIntroWrapper className="col-12 col-lg-4">
+                  {podcastAlbum.isPublic && <PodcastAlbumSubscriptionPlanCard podcastAlbum={podcastAlbum} />}
+                </StyledIntroWrapper>
+              </Responsive.Desktop>
+            )}
 
-            <div className="col-12 col-lg-8 mb-5">
+            <div
+              className={`col-12 mb-5 ${
+                !(
+                  settings['podcast_album.subscription_plan_card_is_public.disable'] === '1' && podcastAlbum.isPublic
+                ) && 'col-lg-8'
+              }`}
+            >
               <div className="my-5">
                 <BraftContent>{podcastAlbum.description}</BraftContent>
               </div>
@@ -145,19 +153,23 @@ const PodcastAlbumPage: React.VFC = () => {
             </div>
           </div>
 
-          <div className="row">
-            <div className="col-12 col-lg-8 mb-5">
-              <PodcastAlbumInstructorCollectionBlock podcastAlbum={podcastAlbum} />
+          {!(settings['podcast_album.instuctor_collection.disable'] === '1') && (
+            <div className="row">
+              <div className="col-12 col-lg-8 mb-5">
+                <PodcastAlbumInstructorCollectionBlock podcastAlbum={podcastAlbum} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </StyledPodcastAlbumIntroBlock>
 
-      <Responsive.Default>
-        <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-          <PodcastAlbumSubscriptionPlanCard podcastAlbum={podcastAlbum} />
-        </FixedBottomBlock>
-      </Responsive.Default>
+      {!(settings['podcast_album.subscription_plan_card_is_public.disable'] === '1' && podcastAlbum.isPublic) && (
+        <Responsive.Default>
+          <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
+            <PodcastAlbumSubscriptionPlanCard podcastAlbum={podcastAlbum} />
+          </FixedBottomBlock>
+        </Responsive.Default>
+      )}
     </DefaultLayout>
   )
 }
