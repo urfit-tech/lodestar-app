@@ -21,7 +21,7 @@ const VideoPlayer: React.VFC<{ videoId: string; animated?: boolean } & Partial<S
     error: Error | null
   }>()
   useEffect(() => {
-    if (!initialized && authToken && videoId) {
+    if (!initialized && videoId) {
       setInitialized(true)
       axios
         .post(
