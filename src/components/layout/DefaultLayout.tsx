@@ -221,8 +221,8 @@ const DefaultLayout: React.FC<{
                 ))}
             </Responsive.Desktop>
 
-            {!noCart && (renderCartButton ? renderCartButton() : <CartDropdown />)}
-            {currentMemberId && <NotificationDropdown />}
+            {!noCart && !settings['feature.cart.disable'] && (renderCartButton ? renderCartButton() : <CartDropdown />)}
+            {currentMemberId && !settings['feature.notify.disable'] && <NotificationDropdown />}
             {currentMemberId && currentMember ? (
               <MemberProfileButton
                 id={currentMemberId}
