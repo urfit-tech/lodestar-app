@@ -17,3 +17,5 @@ export type PodcastAlbum = {
     durationSecond: number
   }[]
 }
+
+export type PodcastAlbumPreview = Pick<PodcastAlbum, 'id' | 'title'> & { podcastProgramIds: string[] }

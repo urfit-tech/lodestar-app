@@ -1,15 +1,15 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import hasura from '../hasura'
-import { PodcastAlbum } from '../types/podcastAlbum'
+import { PodcastAlbum, PodcastAlbumPreview } from '../types/podcastAlbum'
 
-export const usePodcastAlbumPodcastProgramIds = (podcastAlbumId: string) => {
+export const usePodcastAlbumPreview = (podcastAlbumId: string) => {
   const { loading, error, data } = useQuery<
-    hasura.GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS,
-    hasura.GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDSVariables
+    hasura.GET_PODCAST_ALBUM_PREVIEW,
+    hasura.GET_PODCAST_ALBUM_PREVIEWVariables
   >(
     gql`
-      query GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS($podcastAlbumId: uuid!) {
+      query GET_PODCAST_ALBUM_PREVIEW($podcastAlbumId: uuid!) {
         podcast_album_by_pk(id: $podcastAlbumId) {
           id
           title
@@ -25,12 +25,16 @@ export const usePodcastAlbumPodcastProgramIds = (podcastAlbumId: string) => {
     { variables: { podcastAlbumId } },
   )
 
+  const podcastAlbumPreview: PodcastAlbumPreview = {
+    id: data?.podcast_album_by_pk?.id,
+    title: data?.podcast_album_by_pk?.title || '',
+    podcastProgramIds: data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.id) || [],
+  }
+
   return {
-    loading,
+    loadingPodcastAlbumPreview: loading,
     error,
-    podcastAlbumTitle: data?.podcast_album_by_pk?.title || '',
-    podcastAlbumPodcastProgramIds:
-      data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.podcast_program?.id) || [],
+    podcastAlbumPreview,
   }
 }
 

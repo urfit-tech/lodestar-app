@@ -3,12 +3,14 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import PodcastProgramCover from '../components/podcast/PodcastProgramCover'
 import CreatorCard from '../containers/common/CreatorCard'
 import { usePodcastProgramContent } from '../hooks/podcast'
+import { usePodcastAlbumPreview } from '../hooks/podcastAlbum'
 
 const StyledContentWrapper = styled.div`
   padding: 2.5rem 1rem 4rem;
@@ -27,10 +29,12 @@ const StyledContentWrapper = styled.div`
 
 const PodcastProgramContentPage: React.VFC = () => {
   const { podcastProgramId } = useParams<{ podcastProgramId: string }>()
+  const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
   const { currentMemberId } = useAuth()
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(podcastProgramId)
+  const { loadingPodcastAlbumPreview, podcastAlbumPreview } = usePodcastAlbumPreview(podcastAlbumId || '')
 
-  if (loadingPodcastProgram || !podcastProgram) {
+  if (loadingPodcastProgram || !podcastProgram || loadingPodcastAlbumPreview || !podcastAlbumPreview) {
     return (
       <DefaultLayout noFooter>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -46,6 +50,7 @@ const PodcastProgramContentPage: React.VFC = () => {
             <PodcastProgramCover
               memberId={currentMemberId}
               podcastProgramId={podcastProgramId}
+              podcastAlbum={podcastAlbumPreview}
               coverUrl={podcastProgram.coverUrl}
               title={podcastProgram.title}
               publishedAt={podcastProgram.publishedAt}

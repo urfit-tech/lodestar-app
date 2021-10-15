@@ -12,6 +12,7 @@ type PodcastPlayerContextValue = {
   playing: boolean
   currentIndex: number
   podcastProgramIds: string[]
+  podcastAlbumId: string
   visible: boolean
   mode: PodcastPlayerMode
   rate: number
@@ -21,7 +22,12 @@ type PodcastPlayerContextValue = {
   changeMode?: (mode: PodcastPlayerMode) => void
   close?: () => void
   shift?: (quantity: number) => void
-  setup?: (options: { title?: string; podcastProgramIds?: string[]; currentIndex?: number }) => void
+  setup?: (options: {
+    title?: string
+    podcastProgramIds?: string[]
+    podcastAlbumId?: string
+    currentIndex?: number
+  }) => void
 }
 
 const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
@@ -31,6 +37,7 @@ const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
   playing: Boolean(Number(localStorage.getItem('podcast.playing') || 1)),
   currentIndex: Number(localStorage.getItem('podcast.currentIndex')) || 0,
   podcastProgramIds: JSON.parse(localStorage.getItem('podcastProgramIds') || '[]') || [],
+  podcastAlbumId: localStorage.getItem('podcastAlbumId') || '',
   currentPodcastProgramContent: null,
   visible: false,
   mode: 'loop',
@@ -45,6 +52,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const [mode, setMode] = useState(defaultPodcastPlayerContext.mode)
   const [currentIndex, setCurrentIndex] = useState(defaultPodcastPlayerContext.currentIndex)
   const [podcastProgramIds, setPodcastProgramIds] = useState<string[]>(defaultPodcastPlayerContext.podcastProgramIds)
+  const [podcastAlbumId, setPodcastAlbumId] = useState<string>(defaultPodcastPlayerContext.podcastAlbumId)
   const currentPodcastProgramId = podcastProgramIds[currentIndex]
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(currentPodcastProgramId)
   const [playing, setPlaying] = useState(defaultPodcastPlayerContext.playing)
@@ -67,6 +75,10 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
     localStorage.setItem('podcast.rate', JSON.stringify(rate))
   }, [rate])
 
+  useEffect(() => {
+    localStorage.setItem('podcastAlbumId', podcastAlbumId)
+  }, [podcastAlbumId])
+
   return (
     <PodcastPlayerContext.Provider
       value={{
@@ -77,6 +89,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         rate,
         currentIndex,
         podcastProgramIds,
+        podcastAlbumId,
         currentPodcastProgramContent: podcastProgram,
         visible,
         mode,
@@ -98,6 +111,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           options.title && setTitle(options.title)
           options.podcastProgramIds && setPodcastProgramIds(options.podcastProgramIds)
           options.currentIndex && setCurrentIndex(options.currentIndex)
+          options.podcastAlbumId && setPodcastAlbumId(options.podcastAlbumId)
         },
       }}
     >

@@ -73,6 +73,7 @@ const PodcastAlbumContentListBlock: React.VFC<{
               setup?.({
                 title: podcastAlbum.title,
                 podcastProgramIds: podcastPrograms.map(podcastProgram => podcastProgram.id),
+                podcastAlbumId: podcastAlbum.id,
                 currentIndex: index,
               })
             } else {

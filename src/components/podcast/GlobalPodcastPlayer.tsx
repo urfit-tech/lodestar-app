@@ -23,6 +23,7 @@ const GlobalPodcastPlayer: React.VFC = () => {
     podcastProgramIds,
     currentIndex,
     currentPodcastProgramContent,
+    podcastAlbumId,
   } = useContext(PodcastPlayerContext)
   const { currentMemberId, authToken } = useAuth()
   useInterval(() => {
@@ -37,7 +38,7 @@ const GlobalPodcastPlayer: React.VFC = () => {
           memberId: currentMemberId,
           progress: progress, // TODO: changed if progress more than before
           lastProgress: progress,
-          podcastAlbumId: null, // TODO: check what to do here
+          podcastAlbumId: podcastAlbumId,
         },
         { headers: { authorization: `Bearer ${authToken}` } },
       )

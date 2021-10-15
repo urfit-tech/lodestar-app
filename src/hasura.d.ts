@@ -6274,41 +6274,41 @@ export interface GET_PODCAST_PROGRAM_PROGRESSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS
+// GraphQL query operation: GET_PODCAST_ALBUM_PREVIEW
 // ====================================================
 
-export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program {
+export interface GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program {
   __typename: "podcast_program";
   id: any;
 }
 
-export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk_podcast_album_podcast_programs {
+export interface GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs {
   __typename: "podcast_album_podcast_program";
   id: any;
   /**
    * An object relationship
    */
-  podcast_program: GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program | null;
+  podcast_program: GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program | null;
 }
 
-export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk {
+export interface GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk {
   __typename: "podcast_album";
   id: any;
   title: string;
   /**
    * An array relationship
    */
-  podcast_album_podcast_programs: GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk_podcast_album_podcast_programs[];
+  podcast_album_podcast_programs: GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs[];
 }
 
-export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS {
+export interface GET_PODCAST_ALBUM_PREVIEW {
   /**
    * fetch data from the table: "podcast_album" using primary key columns
    */
-  podcast_album_by_pk: GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDS_podcast_album_by_pk | null;
+  podcast_album_by_pk: GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk | null;
 }
 
-export interface GET_PODCAST_ALBUM_PODCAST_PROGRAM_IDSVariables {
+export interface GET_PODCAST_ALBUM_PREVIEWVariables {
   podcastAlbumId: any;
 }
 

@@ -9,6 +9,7 @@ import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
 import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
+import { PodcastAlbumPreview } from '../../types/podcastAlbum'
 import { BraftContent } from '../common/StyledBraftEditor'
 const StyledWrapper = styled.div<{ coverUrl?: string }>`
   padding: 4rem 1.5rem;
@@ -91,15 +92,18 @@ const StyledRotateIcon = styled(Icon)`
 const PodcastProgramCover: React.VFC<{
   memberId: string
   podcastProgramId: string
+  podcastAlbum: PodcastAlbumPreview
   coverUrl: string | null
   title: string
   publishedAt: Date
   tags: string[]
   description?: string | null
-}> = ({ memberId, podcastProgramId, coverUrl, title, publishedAt, tags, description }) => {
+}> = ({ memberId, podcastProgramId, podcastAlbum, coverUrl, title, publishedAt, tags, description }) => {
   const {
     podcastProgramIds,
     currentIndex,
+    title: currentTitle,
+    podcastAlbumId: currentPodcastAlbumId,
     loading: loadingPodcast,
     setup,
     changePlayingState,
@@ -107,17 +111,38 @@ const PodcastProgramCover: React.VFC<{
   } = useContext(PodcastPlayerContext)
 
   const handlePlay = () => {
-    const position = podcastProgramIds.findIndex(id => id === podcastProgramId) || 0
-    setup?.(
-      position < 0
-        ? {
-            podcastProgramIds: [podcastProgramId],
-            currentIndex: 0,
-          }
-        : {
-            currentIndex: position,
-          },
-    )
+    const position = podcastAlbum.id
+      ? podcastAlbum.podcastProgramIds.findIndex(id => id === podcastProgramId)
+      : podcastProgramIds.findIndex(id => id === podcastProgramId) || 0
+
+    podcastAlbum.id
+      ? setup?.(
+          podcastAlbum.id === currentPodcastAlbumId
+            ? {
+                currentIndex: position,
+              }
+            : position < 0
+            ? {
+                title: podcastAlbum.title,
+                podcastProgramIds: podcastAlbum.podcastProgramIds,
+                currentIndex: 0,
+              }
+            : {
+                title: podcastAlbum.title,
+                podcastProgramIds: podcastAlbum.podcastProgramIds,
+                currentIndex: position,
+              },
+        )
+      : setup?.(
+          position < 0
+            ? {
+                podcastProgramIds: [podcastProgramId],
+                currentIndex: 0,
+              }
+            : {
+                currentIndex: position,
+              },
+        )
   }
 
   return (
