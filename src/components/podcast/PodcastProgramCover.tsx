@@ -2,6 +2,7 @@ import { Icon } from '@chakra-ui/react'
 import { Button, Divider } from 'antd'
 import moment from 'moment'
 import React, { useContext } from 'react'
+import { AiOutlineLoading } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
@@ -96,9 +97,14 @@ const PodcastProgramCover: React.VFC<{
   tags: string[]
   description?: string | null
 }> = ({ memberId, podcastProgramId, coverUrl, title, publishedAt, tags, description }) => {
-  const { podcastProgramIds, currentIndex, loading: loadingPodcast, setup, sound, playing } = useContext(
-    PodcastPlayerContext,
-  )
+  const {
+    podcastProgramIds,
+    currentIndex,
+    loading: loadingPodcast,
+    setup,
+    changePlayingState,
+    playing,
+  } = useContext(PodcastPlayerContext)
 
   const handlePlay = () => {
     const position = podcastProgramIds.findIndex(id => id === podcastProgramId) || 0
@@ -137,26 +143,19 @@ const PodcastProgramCover: React.VFC<{
           <Divider className="mb-3" />
         </div>
         <div className="flex-shrink-0">
-          {
-            // loadingPodcast ? (
-            //   <StyledRotateIcon as={AiOutlineLoading} />
-            // ) :
-
-            podcastProgramId === podcastProgramIds[currentIndex] ? (
-              <Button
-                type="link"
-                onClick={() => {
-                  playing ? sound?.pause() : sound?.play()
-                }}
-              >
+          {podcastProgramId === podcastProgramIds[currentIndex] ? (
+            loadingPodcast ? (
+              <StyledRotateIcon as={AiOutlineLoading} />
+            ) : (
+              <Button type="link" onClick={() => changePlayingState?.(!playing)}>
                 {playing ? <StyledIcon as={PauseCircleIcon} /> : <StyledIcon as={PlayCircleIcon} />}
               </Button>
-            ) : (
-              <Button type="link" onClick={handlePlay}>
-                <StyledIcon as={PlayCircleIcon} />
-              </Button>
             )
-          }
+          ) : (
+            <Button type="link" onClick={handlePlay}>
+              <StyledIcon as={PlayCircleIcon} />
+            </Button>
+          )}
         </div>
       </div>
     </StyledWrapper>

@@ -1,5 +1,5 @@
-import { Howl } from 'howler'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useRef, useState } from 'react'
+import ReactHowler from 'react-howler'
 import { usePodcastProgramContent } from '../hooks/podcast'
 import { PodcastProgramContent } from '../types/podcast'
 
@@ -7,14 +7,17 @@ export type PodcastPlayerMode = 'loop' | 'single-loop' | 'random'
 
 type PodcastPlayerContextValue = {
   title: string
-  sound: Howl | null
+  sound: ReactHowler | null
   loading: boolean
   playing: boolean
   currentIndex: number
   podcastProgramIds: string[]
   visible: boolean
   mode: PodcastPlayerMode
+  rate: number
   currentPodcastProgramContent: PodcastProgramContent | null
+  changePlayingState?: (state: boolean) => void
+  changeRate?: (rate: number) => void
   changeMode?: (mode: PodcastPlayerMode) => void
   close?: () => void
   shift?: (quantity: number) => void
@@ -25,26 +28,32 @@ const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
   title: '',
   sound: null,
   loading: true,
-  playing: false,
+  playing: Boolean(Number(localStorage.getItem('podcast.playing') || 1)),
   currentIndex: Number(localStorage.getItem('podcast.currentIndex')) || 0,
   podcastProgramIds: JSON.parse(localStorage.getItem('podcastProgramIds') || '[]') || [],
   currentPodcastProgramContent: null,
   visible: false,
   mode: 'loop',
+  rate: Number(localStorage.getItem('podcast.rate')) || 1,
 }
 const PodcastPlayerContext = createContext<PodcastPlayerContextValue>(defaultPodcastPlayerContext)
 
 export const PodcastPlayerProvider: React.FC = ({ children }) => {
+  const howlerRef = useRef<ReactHowler>()
   const [title, setTitle] = useState('')
   const [visible, setVisible] = useState(false)
-  const [sound, setSound] = useState<Howl | null>(null)
   const [mode, setMode] = useState(defaultPodcastPlayerContext.mode)
   const [currentIndex, setCurrentIndex] = useState(defaultPodcastPlayerContext.currentIndex)
   const [podcastProgramIds, setPodcastProgramIds] = useState<string[]>(defaultPodcastPlayerContext.podcastProgramIds)
   const currentPodcastProgramId = podcastProgramIds[currentIndex]
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(currentPodcastProgramId)
   const [playing, setPlaying] = useState(defaultPodcastPlayerContext.playing)
+  const [rate, setRate] = useState(defaultPodcastPlayerContext.rate)
   // const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(currentPodcastProgramId)
+
+  useEffect(() => {
+    localStorage.setItem('podcast.playing', Number(playing).toString())
+  }, [playing])
 
   useEffect(() => {
     localStorage.setItem('podcastProgramIds', JSON.stringify(podcastProgramIds))
@@ -55,60 +64,31 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   }, [currentIndex])
 
   useEffect(() => {
-    setSound(sound => {
-      sound?.unload()
-      if (podcastProgram?.url) {
-        return new Howl({
-          html5: true,
-          autoplay: true,
-          src: podcastProgram.url,
-          onplay: () => {
-            setVisible(true)
-            setPlaying(true)
-          },
-          onpause: () => {
-            setPlaying(false)
-          },
-          onstop: () => {
-            setPlaying(false)
-          },
-          onend: () => {
-            setPlaying(false)
-            if (mode === 'single-loop') {
-              sound?.seek(0)
-              sound?.play()
-            } else if (mode === 'loop') {
-              setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
-            } else if (mode === 'random') {
-              setCurrentIndex(
-                index =>
-                  (index + Math.floor(Math.random() * (podcastProgramIds.length - 1))) % podcastProgramIds.length,
-              )
-            }
-          },
-        })
-      } else {
-        return null
-      }
-    })
-  }, [podcastProgram?.url, podcastProgramIds.length])
+    localStorage.setItem('podcast.rate', JSON.stringify(rate))
+  }, [rate])
+
   return (
     <PodcastPlayerContext.Provider
       value={{
         title,
-        sound,
+        sound: howlerRef.current || null,
         loading: loadingPodcastProgram,
         playing,
+        rate,
         currentIndex,
         podcastProgramIds,
         currentPodcastProgramContent: podcastProgram,
         visible,
         mode,
+        changePlayingState: state => setPlaying(state),
+        changeRate: rate => {
+          setRate(rate)
+        },
         changeMode: mode => {
           setMode(mode || (mode === 'loop' ? 'single-loop' : mode === 'single-loop' ? 'random' : 'loop'))
         },
         close: () => {
-          sound?.pause()
+          setPlaying(false)
           setVisible(false)
         },
         shift: quantity => {
@@ -121,6 +101,34 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         },
       }}
     >
+      {podcastProgram?.url && (
+        <ReactHowler
+          html5
+          key={podcastProgramIds[currentIndex]}
+          ref={ref => ref && (howlerRef.current = ref)}
+          src={podcastProgram.url}
+          playing={playing}
+          rate={rate}
+          onPlay={() => {
+            setVisible(true)
+            setPlaying(true)
+          }}
+          onPause={() => setPlaying(false)}
+          onStop={() => setPlaying(false)}
+          onEnd={() => {
+            if (mode === 'single-loop') {
+              howlerRef.current?.seek(0)
+            } else if (mode === 'loop') {
+              setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
+            } else if (mode === 'random') {
+              setCurrentIndex(
+                index =>
+                  (index + Math.floor(Math.random() * (podcastProgramIds.length - 1))) % podcastProgramIds.length,
+              )
+            }
+          }}
+        />
+      )}
       {children}
     </PodcastPlayerContext.Provider>
   )

@@ -1,12 +1,5 @@
 import { Category } from './general'
 
-export type PodcastAlbum = {
-  id: string
-  title: string
-  coverUrl: string | null
-  categories: Category[]
-}
-
 export type PodcastProgramBriefProps = {
   id: string
   coverUrl: string | null

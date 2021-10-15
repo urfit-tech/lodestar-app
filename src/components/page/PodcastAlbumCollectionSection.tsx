@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Skeleton } from '@chakra-ui/skeleton'
 import gql from 'graphql-tag'
+import Responsive from 'lodestar-app-element/src/components/Responsive'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
@@ -55,12 +56,29 @@ const StyledCard = styled.div`
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
   background-color: #fff;
 `
-
-export const StyledCardImg = styled.img`
-  object-fit: cover;
-  aspect-ratio: 1;
+export const StyledCardImgWrapper = styled.div`
+  position: relative;
+  ::before {
+    float: left;
+    padding-top: 100%;
+    content: '';
+  }
+  ::after {
+    display: block;
+    content: '';
+    clear: both;
+  }
+  > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `
-
 const StyledCardContent = styled.div`
   padding: 20px;
 
@@ -123,15 +141,21 @@ const PodcastAlbumCollectionSection: React.FC<{
           <StyledCol key={podcastAlbum.id} className="col-6 col-lg-3 my-3">
             <Link to={`/podcast-albums/${podcastAlbum.id}`}>
               <StyledCard>
-                <StyledCardImg src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
+                <StyledCardImgWrapper>
+                  <img src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
+                </StyledCardImgWrapper>
                 <StyledCardContent>
                   <h3>{podcastAlbum.title}</h3>
                   <div className="unit mb-3">共 {podcastAlbum.programCount} 單元</div>
-                  <div className="tag-group">
-                    {podcastAlbum.categoryNames.map(name => (
-                      <span className="tag mr-2">{name}</span>
-                    ))}
-                  </div>
+                  <Responsive.Desktop>
+                    <div className="tag-group">
+                      {podcastAlbum.categoryNames.map(name => (
+                        <span className="tag mr-2" key={name}>
+                          {name}
+                        </span>
+                      ))}
+                    </div>
+                  </Responsive.Desktop>
                 </StyledCardContent>
               </StyledCard>
             </Link>
@@ -163,7 +187,7 @@ const useNewestPodcastAlbumCollection: () => {
 } = () => {
   const { loading, data, error } = useQuery<hasura.GET_PODCAST_ALBUM_COLLECTION>(gql`
     query GET_PODCAST_ALBUM_COLLECTION {
-      podcast_album(where: { published_at: { _is_null: false } }) {
+      podcast_album(where: { published_at: { _is_null: false } }, order_by: { published_at: desc }) {
         id
         cover_url
         title
