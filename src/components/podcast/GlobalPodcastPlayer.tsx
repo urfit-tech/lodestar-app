@@ -31,6 +31,9 @@ const GlobalPodcastPlayer: React.VFC = () => {
   }, 500)
   useInterval(() => {
     playing &&
+      podcastProgramIds[currentIndex] &&
+      currentMemberId &&
+      authToken &&
       axios.post(
         `${process.env.REACT_APP_API_BASE_ROOT}/tasks/podcast-program-progress`,
         {

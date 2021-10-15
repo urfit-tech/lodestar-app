@@ -1,4 +1,3 @@
-import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../../common/Responsive'
 
@@ -25,7 +24,7 @@ export const StyledVideoWrapper = styled.div<{ backgroundImage?: string }>`
   background-size: cover;
   background-position: center;
 `
-export const StyledReactPlayer = styled(ReactPlayer)`
+export const StyledPlayer = styled.div`
   position: absolute;
   top: 0;
   right: 0;

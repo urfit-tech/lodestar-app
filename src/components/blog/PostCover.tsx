@@ -3,13 +3,13 @@ import { Button, Icon as AntdIcon } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import ReactPlayer from 'react-player'
 import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../helpers'
 import { ReactComponent as ArrowUpCircleIcon } from '../../images/arrow-up-circle.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as ShopOIcon } from '../../images/shop-o.svg'
 import { MerchandiseProps } from '../../types/merchandise'
+import { StyledPlayer } from '../program/ProgramBanner'
 import MerchandiseModal from './MerchandiseModal'
 
 const messages = defineMessages({
@@ -169,19 +169,19 @@ const PostCover: React.VFC<{
             <Icon as={ArrowUpCircleIcon} className="cursor-pointer" onClick={() => backToTop()} />
             <AntdIcon type="close" className="cursor-pointer" onClick={() => setIsClosed(true)} />
           </StyledHeader>
-          <StyledVideoWrapper>
-            <ReactPlayer
-              url={coverUrl || undefined}
-              width="100%"
-              height="100%"
-              style={{
-                position: 'absolute',
-                top: '0',
-                left: '0',
-              }}
-              controls
-            />
-          </StyledVideoWrapper>
+          {coverUrl && (
+            <StyledVideoWrapper>
+              <StyledPlayer>
+                <video
+                  className="smartvideo"
+                  src={coverUrl}
+                  controls
+                  autoPlay
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </StyledPlayer>
+            </StyledVideoWrapper>
+          )}
         </StyledVideoBlock>
       </div>
 

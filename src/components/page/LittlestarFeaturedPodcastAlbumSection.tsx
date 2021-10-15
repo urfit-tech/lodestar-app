@@ -97,9 +97,7 @@ const LittlestarFeaturedPodcastAlbumSection: React.FC<{
   )
 }
 
-const useFeaturePodcastAlbum: (filter: {
-  categoryName?: string
-}) => {
+const useFeaturePodcastAlbum: (filter: { categoryName?: string }) => {
   status: string
   podcastAlbum: {
     id: string

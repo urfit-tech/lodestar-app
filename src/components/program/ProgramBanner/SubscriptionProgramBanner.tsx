@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { StyledReactPlayer, StyledTags, StyledTitle, StyledVideoWrapper } from '.'
+import { StyledPlayer, StyledTags, StyledTitle, StyledVideoWrapper } from '.'
 import { productMessages } from '../../../helpers/translation'
 import { Program, ProgramRole } from '../../../types/program'
 import MemberAvatar from '../../common/MemberAvatar'
@@ -64,7 +64,15 @@ const SubscriptionProgramBanner: React.VFC<{
       <StyledMediaBlock>
         <StyledVideoWrapper backgroundImage={program.coverUrl || ''}>
           {program.coverVideoUrl && (
-            <StyledReactPlayer controls url={program.coverVideoUrl} width="100%" height="100%" />
+            <StyledPlayer>
+              <video
+                className="smartvideo"
+                src={program.coverVideoUrl}
+                controls
+                autoPlay
+                style={{ width: '100%', height: '100%' }}
+              />
+            </StyledPlayer>
           )}
         </StyledVideoWrapper>
       </StyledMediaBlock>
