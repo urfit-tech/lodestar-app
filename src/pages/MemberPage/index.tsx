@@ -1,11 +1,13 @@
 import { SkeletonText, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { Typography } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Redirect, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import { renderMemberAbstract } from '../../components/common/CustomRender'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MerchandiseOrderCollectionBlock from '../../components/merchandise/MerchandiseOrderCollectionBlock'
@@ -45,6 +47,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   const { formatMessage } = useIntl()
   const { memberId } = useParams<{ memberId: string }>()
   const { isAuthenticated, currentMemberId, currentUserRole } = useAuth()
+  const { id: appId, settings } = useApp()
   const { member } = usePublicMember(memberId)
   const { loadingProgramPackageIds, enrolledProgramPackagePlanIds } = useEnrolledProgramPackagePlanIds(memberId)
   const { loadingEnrolledProjectPlanIds, enrolledProjectPlanIds } = useEnrolledProjectPlanIds(memberId)
@@ -159,9 +162,15 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
               {renderText?.(member) || (
                 <>
                   <Typography.Title level={4}>{member && member.name}</Typography.Title>
-                  <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
-                    {member && <p>{member.abstract}</p>}
-                  </Typography.Paragraph>
+                  {settings['feature.custom_member_abstract.enable'] ? (
+                    <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
+                      {renderMemberAbstract(appId)}
+                    </Typography.Paragraph>
+                  ) : (
+                    <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
+                      {member && <p>{member.abstract}</p>}
+                    </Typography.Paragraph>
+                  )}
                 </>
               )}
             </div>

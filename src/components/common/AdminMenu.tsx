@@ -203,7 +203,14 @@ export const MemberAdminMenu: React.VFC<
         defaultMenuItems,
       }) || (
         <AdminMenu {...props} style={{ background: 'transparent', border: 'none' }}>
-          {defaultMenuItems.map(v => v.item)}
+          {defaultMenuItems
+            .filter(v => {
+              if (settings['nav.personal_setting.disable']) {
+                return v.key !== 'member_profile_admin'
+              }
+              return v
+            })
+            .map(v => v.item)}
         </AdminMenu>
       )}
     </>
