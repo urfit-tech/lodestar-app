@@ -147,13 +147,15 @@ const PodcastAlbumCollectionSection: React.FC<{
                 <StyledCardContent>
                   <h3>{podcastAlbum.title}</h3>
                   <div className="unit mb-3">共 {podcastAlbum.programCount} 單元</div>
-                  <div className="tag-group">
-                    {podcastAlbum.categoryNames.map(name => (
-                      <span className="tag mr-2" key={name}>
-                        {name}
-                      </span>
-                    ))}
-                  </div>
+                  <Responsive.Desktop>
+                    <div className="tag-group">
+                      {podcastAlbum.categoryNames.map(name => (
+                        <span className="tag mr-2" key={name}>
+                          {name}
+                        </span>
+                      ))}
+                    </div>
+                  </Responsive.Desktop>
                 </StyledCardContent>
               </StyledCard>
             </Link>
