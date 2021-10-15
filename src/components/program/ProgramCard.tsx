@@ -9,7 +9,7 @@ import { productMessages, reviewMessages } from '../../helpers/translation'
 import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import EmptyCover from '../../images/empty-cover.png'
 import { Category } from '../../types/general'
-import { ProgramBriefProps, ProgramPlanProps, ProgramRoleProps } from '../../types/program'
+import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../../types/program'
 import { MultiLineTruncationMixin } from '../common'
 import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
@@ -60,8 +60,8 @@ const StyledMetaBlock = styled.div`
 const ProgramCard: React.VFC<{
   program: ProgramBriefProps & {
     categories?: Category[]
-    roles: ProgramRoleProps[]
-    plans: ProgramPlanProps[]
+    roles: ProgramRole[]
+    plans: ProgramPlan[]
   }
   variant?: 'brief'
   programType?: string | null

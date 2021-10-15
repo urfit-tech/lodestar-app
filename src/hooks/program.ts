@@ -7,16 +7,16 @@ import hasura from '../hasura'
 import { Category } from '../types/general'
 import {
   PeriodType,
+  Program,
   ProgramBriefProps,
+  ProgramContent,
   ProgramContentAttachmentProps,
   ProgramContentBodyProps,
   ProgramContentMaterialProps,
-  ProgramContentProps,
-  ProgramContentSectionProps,
-  ProgramPlanProps,
-  ProgramProps,
+  ProgramContentSection,
+  ProgramPlan,
+  ProgramRole,
   ProgramRoleName,
-  ProgramRoleProps,
 } from '../types/program'
 
 export const usePublishedProgramCollection = (options?: {
@@ -122,8 +122,8 @@ export const usePublishedProgramCollection = (options?: {
   const programs: (ProgramBriefProps & {
     supportLocales: string[] | null
     categories: Category[]
-    roles: ProgramRoleProps[]
-    plans: ProgramPlanProps[]
+    roles: ProgramRole[]
+    plans: ProgramPlan[]
   })[] =
     loading || error || !data
       ? []
@@ -292,6 +292,7 @@ export const useProgram = (programId: string) => {
             ended_at
             is_participants_visible
             published_at
+            auto_renewed
             is_countdown_timer_visible
           }
           program_content_sections(
@@ -340,13 +341,15 @@ export const useProgram = (programId: string) => {
     { variables: { programId } },
   )
   const program:
-    | (ProgramProps & {
+    | (Program & {
         categories: Category[]
         tags: string[]
-        roles: ProgramRoleProps[]
-        plans: ProgramPlanProps[]
-        contentSections: (ProgramContentSectionProps & {
-          contents: ProgramContentProps[]
+        roles: ProgramRole[]
+        plans: (ProgramPlan & {
+          isSubscription: boolean
+        })[]
+        contentSections: (ProgramContentSection & {
+          contents: ProgramContent[]
         })[]
       })
     | null = useMemo(
@@ -393,6 +396,7 @@ export const useProgram = (programId: string) => {
                 unit: programPlan.currency.unit,
                 name: programPlan.currency.name,
               },
+              isSubscription: programPlan.auto_renewed,
               listPrice: programPlan.list_price,
               salePrice: programPlan.sale_price,
               soldAt: programPlan.sold_at && new Date(programPlan.sold_at),
@@ -503,7 +507,7 @@ export const useProgramContent = (programContentId: string) => {
   )
 
   const programContent:
-    | (ProgramContentProps & {
+    | (ProgramContent & {
         programContentBody: ProgramContentBodyProps | null
         materials: ProgramContentMaterialProps[]
         attachments: ProgramContentAttachmentProps[]

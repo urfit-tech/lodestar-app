@@ -14,7 +14,7 @@ import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import { useMutateIssue } from '../../hooks/issue'
 import { ProductRoleName } from '../../types/general'
-import { ProgramRoleProps } from '../../types/program'
+import { ProgramRole } from '../../types/program'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -54,7 +54,7 @@ const StyledTag = styled(Tag)<{ variant?: string }>`
 `
 
 type IssueItemProps = FormComponentProps & {
-  programRoles: ProgramRoleProps[]
+  programRoles: ProgramRole[]
   issueId: string
   title: string
   description: string

@@ -12,7 +12,7 @@ import CartContext from '../../contexts/CartContext'
 import { handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { Category } from '../../types/general'
-import { ProgramPlanProps, ProgramProps, ProgramRoleProps } from '../../types/program'
+import { Program, ProgramPlan, ProgramRole } from '../../types/program'
 
 const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
   span {
@@ -32,10 +32,10 @@ const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
 `
 
 const ProgramPaymentButton: React.VFC<{
-  program: ProgramProps & {
-    plans: ProgramPlanProps[]
+  program: Program & {
+    plans: ProgramPlan[]
     categories: Category[]
-    roles: ProgramRoleProps[]
+    roles: ProgramRole[]
   }
   variant?: string
 }> = ({ program, variant }) => {
@@ -81,10 +81,10 @@ const ProgramPaymentButton: React.VFC<{
 }
 
 const useAddProgramToCart = (
-  program: ProgramProps & {
-    plans: ProgramPlanProps[]
+  program: Program & {
+    plans: ProgramPlan[]
     categories: Category[]
-    roles: ProgramRoleProps[]
+    roles: ProgramRole[]
   },
 ) => {
   const { settings, id: appId, currencyId: appCurrencyId } = useApp()

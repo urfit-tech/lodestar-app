@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { StyledReactPlayer, StyledTags, StyledTitle, StyledVideoWrapper } from '.'
-import { ProgramProps } from '../../../types/program'
+import { Program } from '../../../types/program'
 import BlurredBanner from '../../common/BlurredBanner'
 import { BREAK_POINT } from '../../common/Responsive'
 
@@ -25,7 +25,7 @@ const StyledLink = styled(Link)`
 `
 
 const PerpetualProgramBanner: React.VFC<{
-  program: ProgramProps & {
+  program: Program & {
     tags: string[]
   }
 }> = ({ program }) => {

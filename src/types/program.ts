@@ -25,7 +25,7 @@ export type ProgramBriefProps = {
   totalDuration?: number
 }
 
-export type ProgramProps = ProgramBriefProps & {
+export type Program = ProgramBriefProps & {
   description: string | null
   coverVideoUrl: string | null
   isIssuesOpen: boolean
@@ -34,14 +34,14 @@ export type ProgramProps = ProgramBriefProps & {
   isIntroductionSectionVisible?: boolean
 }
 
-export type ProgramRoleProps = {
+export type ProgramRole = {
   id: string
   name: ProgramRoleName
   memberId: string
   memberName: string
 }
 
-export type ProgramPlanProps = {
+export type ProgramPlan = {
   id: string
   type: ProgramPlanType
   title: string
@@ -62,14 +62,14 @@ export type ProgramPlanProps = {
   isCountdownTimerVisible?: boolean
 }
 
-export type ProgramContentSectionProps = {
+export type ProgramContentSection = {
   id: string
   title: string
   description: string | null
   materialsCount?: number
 }
 
-export type ProgramContentProps = {
+export type ProgramContent = {
   id: string
   title: string
   abstract: string | null

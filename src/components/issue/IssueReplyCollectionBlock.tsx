@@ -3,12 +3,12 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { issueMessages } from '../../helpers/translation'
 import { useIssueReply } from '../../hooks/issue'
-import { ProgramRoleProps } from '../../types/program'
+import { ProgramRole } from '../../types/program'
 import IssueReplyCreationBlock from './IssueReplyCreationBlock'
 import IssueReplyItem from './IssueReplyItem'
 
 const IssueReplyCollectionBlock: React.VFC<{
-  programRoles: ProgramRoleProps[]
+  programRoles: ProgramRole[]
   issueId: string
 }> = ({ programRoles, issueId }) => {
   const { formatMessage } = useIntl()

@@ -29,7 +29,7 @@ import { commonMessages, reviewMessages } from '../../helpers/translation'
 import { useMutateReviewReply } from '../../hooks/review'
 import { ReactComponent as MoreIcon } from '../../images/ellipsis.svg'
 import { ProductRoleName } from '../../types/general'
-import { ProgramRoleName, ProgramRoleProps } from '../../types/program'
+import { ProgramRole, ProgramRoleName } from '../../types/program'
 import { ReviewReplyItemProps } from '../../types/review'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
@@ -266,7 +266,7 @@ const useProgramRole = (targetId: string) => {
     },
   )
 
-  const programRole: Pick<ProgramRoleProps, 'id' | 'memberId' | 'name'>[] =
+  const programRole: Pick<ProgramRole, 'id' | 'memberId' | 'name'>[] =
     data?.program_role?.map(v => ({
       id: v.id,
       memberId: v.member_id,

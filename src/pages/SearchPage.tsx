@@ -32,7 +32,7 @@ import { ActivityProps, ActivityTicketProps } from '../types/activity'
 import { Category } from '../types/general'
 import { MerchandiseBriefProps } from '../types/merchandise'
 import { PodcastProgramBriefProps } from '../types/podcast'
-import { PeriodType, ProgramBriefProps, ProgramPlanProps, ProgramRoleProps } from '../types/program'
+import { PeriodType, ProgramBriefProps, ProgramPlan, ProgramRole } from '../types/program'
 import { ProjectIntroProps } from '../types/project'
 
 const messages = defineMessages({
@@ -619,8 +619,8 @@ const useSearchProductCollection = (
   const searchResults: {
     [key: string]: any
     programs: (ProgramBriefProps & {
-      roles: ProgramRoleProps[]
-      plans: ProgramPlanProps[]
+      roles: ProgramRole[]
+      plans: ProgramPlan[]
       isEnrolled: boolean
     })[]
     activities: (ActivityProps & {

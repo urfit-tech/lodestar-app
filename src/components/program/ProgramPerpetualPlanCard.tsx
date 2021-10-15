@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
 import { Category } from '../../types/general'
-import { ProgramPlanProps, ProgramProps, ProgramRoleProps } from '../../types/program'
+import { Program, ProgramPlan, ProgramRole } from '../../types/program'
 import ProgramPaymentButton from '../checkout/ProgramPaymentButton'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import PriceLabel from '../common/PriceLabel'
@@ -27,10 +27,10 @@ const StyledCountDownBlock = styled.div`
 
 const ProgramPerpetualPlanCard: React.VFC<{
   memberId: string
-  program: ProgramProps & {
-    plans: ProgramPlanProps[]
+  program: Program & {
+    plans: ProgramPlan[]
     categories: Category[]
-    roles: ProgramRoleProps[]
+    roles: ProgramRole[]
   }
 }> = ({ memberId, program }) => {
   const { enrolledProgramIds } = useEnrolledProgramIds(memberId)

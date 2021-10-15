@@ -15,7 +15,7 @@ import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
-import { ProgramContentProps, ProgramContentSectionProps, ProgramRoleProps } from '../../types/program'
+import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
 import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
@@ -35,8 +35,8 @@ const StyledTitle = styled.h3`
 
 const ProgramContentBlock: React.VFC<{
   programId: string
-  programRoles: ProgramRoleProps[]
-  programContentSections: (ProgramContentSectionProps & { contents: ProgramContentProps[] })[]
+  programRoles: ProgramRole[]
+  programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]
   programContentId: string
   issueEnabled?: boolean
 }> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {

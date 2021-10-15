@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { durationFormatter } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
-import { ProgramContentProps, ProgramContentSectionProps, ProgramProps } from '../../types/program'
+import { Program, ProgramContent, ProgramContentSection } from '../../types/program'
 import ProgramContentTrialModal from './ProgramContentTrialModal'
 
 const StyledTitle = styled.h2`
@@ -59,9 +59,9 @@ const StyledDuration = styled.span`
 
 const ProgramContentListSection: React.VFC<{
   memberId: string
-  program: ProgramProps & {
-    contentSections: (ProgramContentSectionProps & {
-      contents: ProgramContentProps[]
+  program: Program & {
+    contentSections: (ProgramContentSection & {
+      contents: ProgramContent[]
     })[]
   }
 }> = ({ memberId, program }) => {

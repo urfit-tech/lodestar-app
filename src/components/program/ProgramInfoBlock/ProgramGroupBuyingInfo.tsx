@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { Category } from '../../../types/general'
-import { ProgramPlanProps, ProgramProps, ProgramRoleProps } from '../../../types/program'
+import { Program, ProgramPlan, ProgramRole } from '../../../types/program'
 import CheckoutProductModal from '../../checkout/CheckoutProductModal'
 import { useAddProgramToCart } from '../../checkout/ProgramPaymentButton'
 import PriceLabel from '../../common/PriceLabel'
@@ -52,12 +52,12 @@ const messages = defineMessages({
 
 const ProgramGroupBuyingInfo: React.FC<{
   isOnSale: boolean
-  program: ProgramProps & {
-    plans: ProgramPlanProps[]
+  program: Program & {
+    plans: ProgramPlan[]
     categories: Category[]
-    roles: ProgramRoleProps[]
+    roles: ProgramRole[]
   }
-  programPlans: Pick<ProgramPlanProps, 'id' | 'title' | 'listPrice' | 'salePrice'>[]
+  programPlans: Pick<ProgramPlan, 'id' | 'title' | 'listPrice' | 'salePrice'>[]
   hideProgramPlanPrice?: boolean
 }> = ({ isOnSale, hideProgramPlanPrice, program, programPlans }) => {
   const { formatMessage } = useIntl()

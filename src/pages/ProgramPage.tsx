@@ -203,12 +203,6 @@ const ProgramPage: React.VFC = () => {
         <ProgramIntroBlock>
           <div className="container">
             <div className="row">
-              {!program.isSubscription && (
-                <StyledIntroWrapper className="col-12 col-lg-4">
-                  <ProgramInfoBlock program={program} />
-                </StyledIntroWrapper>
-              )}
-
               <div className="col-12 col-lg-8">
                 <div className="mb-5">
                   <ProgramAbstract>{program.abstract}</ProgramAbstract>
@@ -222,14 +216,20 @@ const ProgramPage: React.VFC = () => {
                   <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
                 </div>
               </div>
-
-              {program.isSubscription && (
-                <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
+              <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
+                {program.isSubscription ? (
                   <div className="mb-5">
-                    <ProgramSubscriptionPlanSection program={program} />
+                    <ProgramSubscriptionPlanSection
+                      program={program}
+                      renderOneTimeSubscription={programPlan => (
+                        <ProgramInfoBlock variant="subscription" program={program} programPlan={programPlan} />
+                      )}
+                    />
                   </div>
-                </StyledIntroWrapper>
-              )}
+                ) : (
+                  <ProgramInfoBlock variant="perpetual" program={program} />
+                )}
+              </StyledIntroWrapper>
             </div>
 
             <div className="row">

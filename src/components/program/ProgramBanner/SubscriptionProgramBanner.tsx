@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { StyledReactPlayer, StyledTags, StyledTitle, StyledVideoWrapper } from '.'
 import { productMessages } from '../../../helpers/translation'
-import { ProgramProps, ProgramRoleProps } from '../../../types/program'
+import { Program, ProgramRole } from '../../../types/program'
 import MemberAvatar from '../../common/MemberAvatar'
 import { BREAK_POINT } from '../../common/Responsive'
 
@@ -51,9 +51,9 @@ const StyledLink = styled(Link)`
 `
 
 const SubscriptionProgramBanner: React.VFC<{
-  program: ProgramProps & {
+  program: Program & {
     tags: string[]
-    roles: ProgramRoleProps[]
+    roles: ProgramRole[]
   }
 }> = ({ program }) => {
   const { formatMessage } = useIntl()

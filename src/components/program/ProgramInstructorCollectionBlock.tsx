@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
-import { ProgramProps, ProgramRoleProps } from '../../types/program'
+import { Program, ProgramRole } from '../../types/program'
 import CreatorCard from '../common/CreatorCard'
 
 const StyledTitle = styled.h2`
@@ -14,8 +14,8 @@ const StyledTitle = styled.h2`
 `
 
 const ProgramInstructorCollectionBlock: React.VFC<{
-  program: ProgramProps & {
-    roles: ProgramRoleProps[]
+  program: Program & {
+    roles: ProgramRole[]
   }
   title?: string
 }> = ({ program, title }) => {
@@ -35,7 +35,7 @@ const ProgramInstructorCollectionBlock: React.VFC<{
   )
 }
 
-const RoleProfile: React.VFC<{ role: ProgramRoleProps }> = ({ role }) => {
+const RoleProfile: React.VFC<{ role: ProgramRole }> = ({ role }) => {
   const { loadingMember, member } = usePublicMember(role.memberId)
 
   if (loadingMember || !member) {

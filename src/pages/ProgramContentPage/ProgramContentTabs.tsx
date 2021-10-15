@@ -8,11 +8,11 @@ import PracticeDisplayedCollection from '../../components/practice/PracticeDispl
 import ProgramContentMaterialBlock from '../../components/program/ProgramContentMaterialBlock'
 import { programMessages } from '../../helpers/translation'
 import {
+  ProgramContent,
   ProgramContentAttachmentProps,
   ProgramContentBodyProps,
   ProgramContentMaterialProps,
-  ProgramContentProps,
-  ProgramRoleProps,
+  ProgramRole,
 } from '../../types/program'
 import { StyledContentBlock } from './index.styled'
 
@@ -31,8 +31,8 @@ export const StyledTabPanel = styled(TabPanel)`
 
 const ProgramContentTabs: React.VFC<{
   programId: string
-  programRoles: ProgramRoleProps[]
-  programContent: ProgramContentProps & {
+  programRoles: ProgramRole[]
+  programContent: ProgramContent & {
     programContentBody: ProgramContentBodyProps | null
     materials: ProgramContentMaterialProps[]
     attachments: ProgramContentAttachmentProps[]

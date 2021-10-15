@@ -23,7 +23,7 @@ export type ProgramPackagePlanProps = {
   enrollmentCount: number
 }
 
-export type ProgramPackageProgramProps = {
+export type ProgramPackageProgram = {
   id: string
   title: string
   coverUrl?: string | null

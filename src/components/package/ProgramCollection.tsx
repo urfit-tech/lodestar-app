@@ -6,7 +6,7 @@ import { AiOutlineRight, AiOutlineUnorderedList } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
-import { ProgramPackageProgramProps } from '../../types/programPackage'
+import { ProgramPackageProgram } from '../../types/programPackage'
 
 const StyledCategoryButton = styled(Button)<{ selected?: boolean }>`
   transition: background-color 0.2s ease-in-out;
@@ -30,9 +30,9 @@ const StyledSwitchButton = styled.div`
 `
 
 const ProgramCollection: React.VFC<{
-  programs: ProgramPackageProgramProps[]
+  programs: ProgramPackageProgram[]
   renderItem: React.VFC<{
-    program: ProgramPackageProgramProps
+    program: ProgramPackageProgram
     displayType: 'grid' | 'list'
   }>
   defaultDisplayType?: 'grid' | 'list'

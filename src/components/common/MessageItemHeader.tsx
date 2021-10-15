@@ -4,7 +4,7 @@ import moment from 'moment'
 import React from 'react'
 import styled from 'styled-components'
 import { ProductRoleName } from '../../types/general'
-import { ProgramRoleProps } from '../../types/program'
+import { ProgramRole } from '../../types/program'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
 
@@ -15,7 +15,7 @@ const StyledTag = styled(Tag)<{ variant?: string }>`
 `
 
 const MessageItemHeader: React.VFC<{
-  programRoles: Pick<ProgramRoleProps, 'id' | 'memberId' | 'name'>[]
+  programRoles: Pick<ProgramRole, 'id' | 'memberId' | 'name'>[]
   memberId: string
   createdAt: Date
 }> = ({ programRoles, memberId, createdAt }) => {

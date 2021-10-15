@@ -5,14 +5,14 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import ExerciseBlock from '../../components/exercise/ExerciseBlock'
 import hasura from '../../hasura'
 import {
+  ProgramContent,
   ProgramContentAttachmentProps,
   ProgramContentBodyProps,
   ProgramContentMaterialProps,
-  ProgramContentProps,
 } from '../../types/program'
 
 const ProgramContentExerciseBlock: React.VFC<{
-  programContent: ProgramContentProps & {
+  programContent: ProgramContent & {
     programContentBody: ProgramContentBodyProps | null
     materials: ProgramContentMaterialProps[]
     attachments: ProgramContentAttachmentProps[]

@@ -5,7 +5,7 @@ import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { issueMessages } from '../../helpers/translation'
 import { useIssueReply, useMutateIssue } from '../../hooks/issue'
-import { ProgramRoleProps } from '../../types/program'
+import { ProgramRole } from '../../types/program'
 import MessageItem from '../common/MessageItem'
 import MessageItemAction from '../common/MessageItemAction'
 import MessageItemContent from '../common/MessageItemContent'
@@ -24,7 +24,7 @@ const MessageSuggestItem: React.VFC<{
   memberId: string
   description: string
   suggestReplyCount: number
-  programRoles: Pick<ProgramRoleProps, 'id' | 'name' | 'memberId'>[]
+  programRoles: Pick<ProgramRole, 'id' | 'name' | 'memberId'>[]
   reactedMemberIds: string[]
   createdAt: Date
   title?: string

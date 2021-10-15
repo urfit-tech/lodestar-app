@@ -3,7 +3,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
-import { ProgramContentProps, ProgramContentSectionProps, ProgramProps } from '../../../types/program'
+import { Program, ProgramContent, ProgramContentSection } from '../../../types/program'
 import { BREAK_POINT } from '../../common/Responsive'
 
 const StyledCountBlock = styled.div`
@@ -35,9 +35,9 @@ const StyledCountBlock = styled.div`
 `
 
 const ProgramContentCountBlock: React.VFC<{
-  program: ProgramProps & {
-    contentSections: (ProgramContentSectionProps & {
-      contents: ProgramContentProps[]
+  program: Program & {
+    contentSections: (ProgramContentSection & {
+      contents: ProgramContent[]
     })[]
   }
 }> = ({ program }) => {

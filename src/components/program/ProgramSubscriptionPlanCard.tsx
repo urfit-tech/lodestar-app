@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useEnrolledPlanIds, useProgram } from '../../hooks/program'
-import { ProgramPlanProps } from '../../types/program'
+import { ProgramPlan } from '../../types/program'
 import { AuthModalContext } from '../auth/AuthModal'
 import AdminCard from '../common/AdminCard'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
@@ -43,7 +43,7 @@ const StyledBraftContent = styled.div`
 `
 const ProgramSubscriptionPlanCard: React.VFC<{
   programId: string
-  programPlan: ProgramPlanProps
+  programPlan: ProgramPlan
 }> = ({ programId, programPlan }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()

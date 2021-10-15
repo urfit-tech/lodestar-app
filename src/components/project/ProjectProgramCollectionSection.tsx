@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { ReactComponent as RocketIcon } from '../../images/icon-rocket.svg'
-import { ProgramPackageProgramProps } from '../../types/programPackage'
+import { ProgramPackageProgram } from '../../types/programPackage'
 import ProgramCollection from '../package/ProgramCollection'
 import { ProgramDisplayedListItem } from '../program/ProgramDisplayedListItem'
 
@@ -135,7 +135,7 @@ const useEnrolledPrivateTeachProgram = (memberId: string, programCategory: strin
     },
   )
 
-  const programs: ProgramPackageProgramProps[] =
+  const programs: ProgramPackageProgram[] =
     data?.program_plan_enrollment
       .sort((a, b) => {
         const dateCompare = normalizeTimeToSecond(a.ended_at) - normalizeTimeToSecond(b.ended_at)

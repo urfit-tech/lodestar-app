@@ -1,48 +1,24 @@
 import { Button } from '@chakra-ui/react'
-import { Affix, Card } from 'antd'
-import { isEmpty } from 'lodash'
+import { Affix } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { isEmpty } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
-import { usePublicMember } from '../../../hooks/member'
 import { useEnrolledProgramIds } from '../../../hooks/program'
 import { Category } from '../../../types/general'
-import {
-  ProgramContentProps,
-  ProgramContentSectionProps,
-  ProgramPlanProps,
-  ProgramProps,
-  ProgramRoleProps,
-} from '../../../types/program'
+import { Program, ProgramContent, ProgramContentSection, ProgramPlan, ProgramRole } from '../../../types/program'
 import ProgramPaymentButton from '../../checkout/ProgramPaymentButton'
 import CountDownTimeBlock from '../../common/CountDownTimeBlock'
-import { AvatarImage } from '../../common/Image'
 import PriceLabel from '../../common/PriceLabel'
 import Responsive from '../../common/Responsive'
 import ProgramContentCountBlock from './ProgramContentCountBlock'
 import ProgramGroupBuyingInfo from './ProgramGroupBuyingInfo'
-
-const ProgramInfoCard = styled(Card)`
-  && {
-    margin-bottom: 2.5rem;
-    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
-  }
-
-  .ant-card-body {
-    padding: 1rem;
-  }
-`
-const StyledInstructorName = styled.div`
-  margin-bottom: 28px;
-  color: #585858;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-`
+import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoCard'
+import ProgramPlanPaymentButton from './ProgramPlanPaymentButton'
 
 const StyledCountDownBlock = styled.div`
   margin-top: 15px;
@@ -51,63 +27,87 @@ const StyledCountDownBlock = styled.div`
   }
 `
 
-const ProgramInfoBlock: React.VFC<{
-  program: ProgramProps & {
-    roles: ProgramRoleProps[]
-    categories: Category[]
-    plans: ProgramPlanProps[]
-    contentSections: (ProgramContentSectionProps & {
-      contents: ProgramContentProps[]
-    })[]
+const ProgramInfoBlock: React.VFC<
+  (
+    | {
+        variant: 'perpetual'
+        programPlan?: never
+      }
+    | {
+        variant: 'subscription'
+        programPlan: ProgramPlan
+      }
+  ) & {
+    program: Program & {
+      roles: ProgramRole[]
+      categories: Category[]
+      plans: ProgramPlan[]
+      contentSections: (ProgramContentSection & {
+        contents: ProgramContent[]
+      })[]
+    }
   }
-}> = ({ program }) => {
-  const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
+> = ({ variant, program, programPlan }) => {
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
-  const { member } = usePublicMember(instructorId)
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
-  const { enabledModules } = useApp()
-
-  const isEnrolled = enrolledProgramIds.includes(program.id)
   const isOnSale = (program.soldAt?.getTime() || 0) > Date.now()
+  const { enabledModules } = useApp()
+  const { currentMemberId } = useAuth()
+  const { formatMessage } = useIntl()
+  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const isEnrolled = enrolledProgramIds.includes(program.id)
 
   return (
     <>
       <Responsive.Default>
-        <ProgramInfoCard>
+        <StyledProgramInfoCard>
           <ProgramContentCountBlock program={program} />
-        </ProgramInfoCard>
+        </StyledProgramInfoCard>
       </Responsive.Default>
 
       <Responsive.Desktop>
-        <Affix offsetTop={40} target={() => document.getElementById('layout-content')}>
-          <ProgramInfoCard>
-            {member && (
-              <>
-                <Link to={`/creators/${member.id}?tabkey=introduction`}>
-                  <AvatarImage src={member.pictureUrl || ''} size={96} className="my-3 mx-auto" />
-                </Link>
-                <Link to={`/creators/${member.id}?tabkey=introduction`}>
-                  <StyledInstructorName>{member.name}</StyledInstructorName>
-                </Link>
-              </>
-            )}
+        {variant === 'perpetual' ? (
+          <Affix offsetTop={40} target={() => document.getElementById('layout-content')}>
+            <ProgramInfoCard instructorId={instructorId} program={program}>
+              <div className="text-center mb-3">
+                {isEmpty(program.plans.filter(v => v.publishedAt)) && (
+                  <PriceLabel
+                    variant="inline"
+                    listPrice={program.listPrice || 0}
+                    salePrice={isOnSale ? program.salePrice || 0 : undefined}
+                  />
+                )}
+                {program.isCountdownTimerVisible && program?.soldAt && isOnSale && (
+                  <StyledCountDownBlock>
+                    <CountDownTimeBlock expiredAt={program.soldAt} icon />
+                  </StyledCountDownBlock>
+                )}
+              </div>
 
-            <ProgramContentCountBlock program={program} />
-
-            <div className="text-center mb-3">
-              {isEmpty(program.plans.filter(v => v.publishedAt)) && (
-                <PriceLabel
-                  variant="inline"
-                  listPrice={program.listPrice || 0}
-                  salePrice={isOnSale ? program.salePrice || 0 : undefined}
+              {isEnrolled ? (
+                <Link to={`/programs/${program.id}/contents`}>
+                  <Button variant="outline" colorScheme="primary" isFullWidth>
+                    {formatMessage(commonMessages.button.enter)}
+                  </Button>
+                </Link>
+              ) : enabledModules.group_buying && program.plans.filter(v => v.publishedAt).length > 0 ? (
+                <ProgramGroupBuyingInfo
+                  isOnSale={isOnSale}
+                  program={program}
+                  programPlans={program.plans.filter(v => v.publishedAt)}
                 />
+              ) : (
+                <ProgramPaymentButton program={program} variant="multiline" />
               )}
-              {program.isCountdownTimerVisible && program?.soldAt && isOnSale && (
-                <StyledCountDownBlock>
-                  <CountDownTimeBlock expiredAt={program.soldAt} icon />
-                </StyledCountDownBlock>
-              )}
+            </ProgramInfoCard>
+          </Affix>
+        ) : variant === 'subscription' && programPlan ? (
+          <ProgramInfoCard instructorId={instructorId} program={program}>
+            <div className="text-center mb-3">
+              <PriceLabel
+                variant="inline"
+                listPrice={programPlan.listPrice || 0}
+                salePrice={isOnSale ? programPlan.salePrice || 0 : undefined}
+              />
             </div>
 
             {isEnrolled ? (
@@ -116,17 +116,11 @@ const ProgramInfoBlock: React.VFC<{
                   {formatMessage(commonMessages.button.enter)}
                 </Button>
               </Link>
-            ) : enabledModules.group_buying && program.plans.filter(v => v.publishedAt).length > 0 ? (
-              <ProgramGroupBuyingInfo
-                isOnSale={isOnSale}
-                program={program}
-                programPlans={program.plans.filter(v => v.publishedAt)}
-              />
             ) : (
-              <ProgramPaymentButton program={program} variant="multiline" />
+              <ProgramPlanPaymentButton programPlan={programPlan} />
             )}
           </ProgramInfoCard>
-        </Affix>
+        ) : null}
       </Responsive.Desktop>
     </>
   )

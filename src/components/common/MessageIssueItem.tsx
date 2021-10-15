@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { issueMessages } from '../../helpers/translation'
 import { useIssueReply, useMutateIssue } from '../../hooks/issue'
-import { ProgramRoleProps } from '../../types/program'
+import { ProgramRole } from '../../types/program'
 import MessageItem from '../common/MessageItem'
 import MessageItemAction from '../common/MessageItemAction'
 import MessageItemContent from '../common/MessageItemContent'
@@ -20,7 +20,7 @@ const MessageIssueItem: React.VFC<{
   memberId: string
   description: string
   issueReplyCount: number
-  programRoles: ProgramRoleProps[]
+  programRoles: ProgramRole[]
   reactedMemberIds: string[]
   createdAt: Date
   solvedAt: Date | null

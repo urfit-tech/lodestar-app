@@ -12,7 +12,7 @@ import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
-import { ProgramContentProps, ProgramContentSectionProps, ProgramProps } from '../../types/program'
+import { Program, ProgramContent, ProgramContentSection } from '../../types/program'
 
 const StyledIcon = styled(Icon)`
   font-size: 16px;
@@ -109,9 +109,9 @@ const messages = defineMessages({
 })
 
 const ProgramContentMenu: React.VFC<{
-  program: ProgramProps & {
-    contentSections: (ProgramContentSectionProps & {
-      contents: ProgramContentProps[]
+  program: Program & {
+    contentSections: (ProgramContentSection & {
+      contents: ProgramContent[]
     })[]
   }
   onSelect?: (programContentId: string) => void
@@ -145,9 +145,9 @@ const ProgramContentMenu: React.VFC<{
 }
 
 const ProgramContentSectionMenu: React.VFC<{
-  program: ProgramProps & {
-    contentSections: (ProgramContentSectionProps & {
-      contents: ProgramContentProps[]
+  program: Program & {
+    contentSections: (ProgramContentSection & {
+      contents: ProgramContent[]
     })[]
   }
   programPackageId: string | null
@@ -175,8 +175,8 @@ const ProgramContentSectionMenu: React.VFC<{
 }
 
 const ContentSection: React.VFC<{
-  programContentSection: ProgramContentSectionProps & {
-    contents: ProgramContentProps[]
+  programContentSection: ProgramContentSection & {
+    contents: ProgramContent[]
   }
   programPackageId: string | null
   defaultCollapse?: boolean
@@ -218,7 +218,7 @@ const ContentSection: React.VFC<{
 }
 
 const SortBySectionItem: React.VFC<{
-  programContent: ProgramContentProps
+  programContent: ProgramContent
   progress: number
   programPackageId: string | null
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
@@ -285,9 +285,9 @@ const SortBySectionItem: React.VFC<{
 }
 
 const ProgramContentDateMenu: React.VFC<{
-  program: ProgramProps & {
-    contentSections: (ProgramContentSectionProps & {
-      contents: ProgramContentProps[]
+  program: Program & {
+    contentSections: (ProgramContentSection & {
+      contents: ProgramContent[]
     })[]
   }
   programPackageId: string | null
@@ -318,7 +318,7 @@ const ProgramContentDateMenu: React.VFC<{
 }
 
 const SortByDateItem: React.VFC<{
-  programContent: ProgramContentProps
+  programContent: ProgramContent
   progress: number
   programPackageId: string | null
   onClick?: () => void

@@ -7065,6 +7065,7 @@ export interface GET_PROGRAM_program_by_pk_program_plans {
   ended_at: any | null;
   is_participants_visible: boolean;
   published_at: any | null;
+  auto_renewed: boolean;
   is_countdown_timer_visible: boolean;
 }
 

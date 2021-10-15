@@ -9,7 +9,7 @@ import { useProgramContentProgress } from '../../contexts/ProgressContext'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import EmptyCover from '../../images/empty-cover.png'
-import { ProgramPackageProgramProps } from '../../types/programPackage'
+import { ProgramPackageProgram } from '../../types/programPackage'
 import { CommonTitleMixin } from '../common'
 import ProgressBar from '../common/ProgressBar'
 import { BREAK_POINT } from '../common/Responsive'
@@ -79,7 +79,7 @@ const StyledProgressBar = styled.div`
 `
 
 export const ProgramDisplayedListItem: React.VFC<{
-  program: ProgramPackageProgramProps & {
+  program: ProgramPackageProgram & {
     expiredAt?: Date | null
   }
   memberId?: string | null

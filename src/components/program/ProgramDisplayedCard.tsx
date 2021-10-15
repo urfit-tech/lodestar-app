@@ -4,7 +4,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useProgramContentProgress } from '../../contexts/ProgressContext'
 import EmptyCover from '../../images/empty-cover.png'
-import { ProgramPackageProgramProps } from '../../types/programPackage'
+import { ProgramPackageProgram } from '../../types/programPackage'
 import { CommonTitleMixin } from '../common'
 import ProgressBar from '../common/ProgressBar'
 
@@ -25,7 +25,7 @@ const StyledProgramTitle = styled(Typography.Title)`
 `
 
 export const ProgramDisplayedCard: React.VFC<{
-  program: ProgramPackageProgramProps
+  program: ProgramPackageProgram
   memberId?: string | null
 }> = ({ program, memberId }) => {
   const { programContentProgress } = useProgramContentProgress(program.id, memberId || '')

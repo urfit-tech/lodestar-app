@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import hasura from '../hasura'
 import { PeriodType } from '../types/program'
-import { ProgramPackagePlanProps, ProgramPackageProgramProps, ProgramPackageProps } from '../types/programPackage'
+import { ProgramPackagePlanProps, ProgramPackageProgram, ProgramPackageProps } from '../types/programPackage'
 
 export const useProgramPackageIntroduction = (programPackageId: string) => {
   const { loading, error, data, refetch } = useQuery<
@@ -60,7 +60,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
 
   const programPackageIntroduction: ProgramPackageProps & {
     programPackagePlans: ProgramPackagePlanProps[]
-    includedPrograms: ProgramPackageProgramProps[]
+    includedPrograms: ProgramPackageProgram[]
   } =
     loading || error || !data || !data.program_package_by_pk
       ? {
@@ -246,7 +246,7 @@ export const useProgramPackage = (programPackageId: string, memberId: string | n
     data?.program_package_plan_enrollment.some(
       planEnrollment => planEnrollment.program_package_plan?.is_tempo_delivery,
     ) || false
-  const programs: ProgramPackageProgramProps[] =
+  const programs: ProgramPackageProgram[] =
     loading || error || !data || !data.program_package_by_pk
       ? []
       : data.program_package_by_pk.program_package_programs

@@ -13,7 +13,7 @@ import { createUploadFn, rgba } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import { useMutateIssueReply } from '../../hooks/issue'
 import { ProductRoleName } from '../../types/general'
-import { ProgramRoleProps } from '../../types/program'
+import { ProgramRole } from '../../types/program'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -45,7 +45,7 @@ const StyledTag = styled(Tag)`
 `
 
 const IssueReplyItem: React.VFC<{
-  programRoles: ProgramRoleProps[]
+  programRoles: ProgramRole[]
   issueReplyId: string
   content: string
   reactedMemberIds: string[]

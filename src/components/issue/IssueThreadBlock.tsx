@@ -3,13 +3,13 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
 import { useIssue } from '../../hooks/issue'
-import { ProgramRoleProps } from '../../types/program'
+import { ProgramRole } from '../../types/program'
 import MessageIssueItem from '../common/MessageIssueItem'
 import IssueCreationModal from './IssueCreationModal'
 
 const IssueThreadBlock: React.VFC<{
   threadId: string
-  programRoles: ProgramRoleProps[]
+  programRoles: ProgramRole[]
 }> = ({ threadId, programRoles }) => {
   const { formatMessage } = useIntl()
   const { loadingIssues, errorIssues, issues, refetchIssues } = useIssue(threadId)

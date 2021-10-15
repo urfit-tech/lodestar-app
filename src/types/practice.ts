@@ -1,5 +1,5 @@
 import { EditorState } from 'braft-editor'
-import { ProgramRoleProps } from '../types/program'
+import { ProgramRole } from '../types/program'
 export type PracticePreviewProps = {
   id: string
   title: string
@@ -34,7 +34,7 @@ export type PracticeProps = PracticePreviewProps & {
   programContentId: string
   programContentTitle: string
   programId: string
-  programRoles?: Pick<ProgramRoleProps, 'id' | 'memberId' | 'name'>[]
+  programRoles?: Pick<ProgramRole, 'id' | 'memberId' | 'name'>[]
   programTitle: string
   description: string | null
   suggests: PracticeSuggestProps[]
