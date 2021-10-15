@@ -20,7 +20,7 @@ import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import EmptyCover from '../images/empty-cover.png'
 import { Category, StatusType } from '../types/general'
-import { PodcastAlbum } from '../types/podcast'
+import { PodcastAlbum } from '../types/podcastAlbum'
 
 const messages = defineMessages({
   totalUnit: { id: 'podcast.content.totalUnit', defaultMessage: '共 {unitCount} 單元' },
@@ -217,7 +217,7 @@ const PodcastAlbumCollectionPage: React.VFC = () => {
 
 const usePodcastAlbumCollection: (options: { categoryId?: string }) => {
   status: StatusType
-  podcastAlbums: (PodcastAlbum & { unitCount: number })[]
+  podcastAlbums: (Pick<PodcastAlbum, 'id' | 'coverUrl' | 'title' | 'categories'> & { unitCount: number })[]
   refetch: () => void
 } = ({ categoryId }) => {
   const condition: hasura.GET_PODCAST_ALBUMSVariables['condition'] = categoryId
