@@ -219,12 +219,7 @@ const ProgramPage: React.VFC = () => {
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
                 {program.isSubscription ? (
                   <div className="mb-5">
-                    <ProgramSubscriptionPlanSection
-                      program={program}
-                      renderOneTimeSubscription={programPlan => (
-                        <ProgramInfoBlock variant="subscription" program={program} programPlan={programPlan} />
-                      )}
-                    />
+                    <ProgramSubscriptionPlanSection program={program} />
                   </div>
                 ) : (
                   <ProgramInfoBlock variant="perpetual" program={program} />

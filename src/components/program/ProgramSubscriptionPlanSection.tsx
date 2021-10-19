@@ -8,19 +8,14 @@ const ProgramSubscriptionPlanSection: React.VFC<{
       isSubscription: boolean
     })[]
   }
-  renderOneTimeSubscription?: (programPlan: ProgramPlan) => React.ReactElement
-}> = ({ program, renderOneTimeSubscription }) => {
+}> = ({ program }) => {
   return (
     <div id="subscription">
       {program.plans
         .filter(programPlan => programPlan.publishedAt)
         .map(programPlan => (
           <div key={programPlan.id} className="mb-3">
-            {programPlan.isSubscription ? (
-              <ProgramSubscriptionPlanCard programId={program.id} programPlan={programPlan} />
-            ) : (
-              renderOneTimeSubscription?.(programPlan)
-            )}
+            <ProgramSubscriptionPlanCard programId={program.id} programPlan={programPlan} />
           </div>
         ))}
     </div>

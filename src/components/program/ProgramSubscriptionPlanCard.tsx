@@ -14,6 +14,7 @@ import AdminCard from '../common/AdminCard'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
+import ProgramPlanPaymentButton from './ProgramInfoBlock/ProgramPlanPaymentButton'
 
 const StyledAdminCard = styled(AdminCard)`
   color: ${props => props.theme['@label-color']};
@@ -43,8 +44,11 @@ const StyledBraftContent = styled.div`
 `
 const ProgramSubscriptionPlanCard: React.VFC<{
   programId: string
-  programPlan: ProgramPlan
+  programPlan: ProgramPlan & {
+    isSubscription: boolean
+  }
 }> = ({ programId, programPlan }) => {
+  console.log(programPlan.isSubscription)
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
@@ -93,7 +97,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
         >
           {formatMessage(commonMessages.button.enter)}
         </Button>
-      ) : (
+      ) : programPlan.isSubscription ? (
         <CheckoutProductModal
           renderTrigger={({ isLoading, onOpen, isSubscription }) => (
             <Button
@@ -131,6 +135,8 @@ const ProgramSubscriptionPlanCard: React.VFC<{
               : ''
           }
         />
+      ) : (
+        <ProgramPlanPaymentButton programPlan={programPlan} />
       )}
     </StyledAdminCard>
   )

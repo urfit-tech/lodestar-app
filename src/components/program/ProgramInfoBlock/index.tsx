@@ -18,7 +18,6 @@ import Responsive from '../../common/Responsive'
 import ProgramContentCountBlock from './ProgramContentCountBlock'
 import ProgramGroupBuyingInfo from './ProgramGroupBuyingInfo'
 import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoCard'
-import ProgramPlanPaymentButton from './ProgramPlanPaymentButton'
 
 const StyledCountDownBlock = styled.div`
   margin-top: 15px;
@@ -65,49 +64,21 @@ const ProgramInfoBlock: React.VFC<
       </Responsive.Default>
 
       <Responsive.Desktop>
-        {variant === 'perpetual' ? (
-          <Affix offsetTop={40} target={() => document.getElementById('layout-content')}>
-            <ProgramInfoCard instructorId={instructorId} program={program}>
-              <div className="text-center mb-3">
-                {isEmpty(program.plans.filter(v => v.publishedAt)) && (
-                  <PriceLabel
-                    variant="inline"
-                    listPrice={program.listPrice || 0}
-                    salePrice={isOnSale ? program.salePrice || 0 : undefined}
-                  />
-                )}
-                {program.isCountdownTimerVisible && program?.soldAt && isOnSale && (
-                  <StyledCountDownBlock>
-                    <CountDownTimeBlock expiredAt={program.soldAt} icon />
-                  </StyledCountDownBlock>
-                )}
-              </div>
-
-              {isEnrolled ? (
-                <Link to={`/programs/${program.id}/contents`}>
-                  <Button variant="outline" colorScheme="primary" isFullWidth>
-                    {formatMessage(commonMessages.button.enter)}
-                  </Button>
-                </Link>
-              ) : enabledModules.group_buying && program.plans.filter(v => v.publishedAt).length > 0 ? (
-                <ProgramGroupBuyingInfo
-                  isOnSale={isOnSale}
-                  program={program}
-                  programPlans={program.plans.filter(v => v.publishedAt)}
-                />
-              ) : (
-                <ProgramPaymentButton program={program} variant="multiline" />
-              )}
-            </ProgramInfoCard>
-          </Affix>
-        ) : variant === 'subscription' && programPlan ? (
+        <Affix offsetTop={40} target={() => document.getElementById('layout-content')}>
           <ProgramInfoCard instructorId={instructorId} program={program}>
             <div className="text-center mb-3">
-              <PriceLabel
-                variant="inline"
-                listPrice={programPlan.listPrice || 0}
-                salePrice={isOnSale ? programPlan.salePrice || 0 : undefined}
-              />
+              {isEmpty(program.plans.filter(v => v.publishedAt)) && (
+                <PriceLabel
+                  variant="inline"
+                  listPrice={program.listPrice || 0}
+                  salePrice={isOnSale ? program.salePrice || 0 : undefined}
+                />
+              )}
+              {program.isCountdownTimerVisible && program?.soldAt && isOnSale && (
+                <StyledCountDownBlock>
+                  <CountDownTimeBlock expiredAt={program.soldAt} icon />
+                </StyledCountDownBlock>
+              )}
             </div>
 
             {isEnrolled ? (
@@ -116,11 +87,17 @@ const ProgramInfoBlock: React.VFC<
                   {formatMessage(commonMessages.button.enter)}
                 </Button>
               </Link>
+            ) : enabledModules.group_buying && program.plans.filter(v => v.publishedAt).length > 0 ? (
+              <ProgramGroupBuyingInfo
+                isOnSale={isOnSale}
+                program={program}
+                programPlans={program.plans.filter(v => v.publishedAt)}
+              />
             ) : (
-              <ProgramPlanPaymentButton programPlan={programPlan} />
+              <ProgramPaymentButton program={program} variant="multiline" />
             )}
           </ProgramInfoCard>
-        ) : null}
+        </Affix>
       </Responsive.Desktop>
     </>
   )
