@@ -9,12 +9,20 @@ import { ReactComponent as ArrowUpCircleIcon } from '../../images/arrow-up-circl
 import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as ShopOIcon } from '../../images/shop-o.svg'
 import { MerchandiseProps } from '../../types/merchandise'
-import { StyledPlayer } from '../program/ProgramBanner'
 import MerchandiseModal from './MerchandiseModal'
 
 const messages = defineMessages({
   checkMerchandises: { id: 'common.ui.checkMerchandises', defaultMessage: '查看商品' },
 })
+
+const StyledPlayer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: black;
+`
 
 const StyledPictureCover = styled.div<{ pictureUrl: string }>`
   height: 26rem;

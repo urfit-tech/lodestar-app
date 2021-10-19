@@ -1,11 +1,12 @@
-import { Divider, Skeleton } from 'antd'
+import { SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import CreatorCard from '../../components/common/CreatorCard'
+import { StyledDivider } from '../../components/review/ReviewCollectionBlock'
 import { productMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { Program, ProgramRole } from '../../types/program'
-import CreatorCard from '../common/CreatorCard'
 
 const StyledTitle = styled.h2`
   font-size: 24px;
@@ -24,7 +25,7 @@ const ProgramInstructorCollectionBlock: React.VFC<{
   return (
     <div>
       <StyledTitle>{title || formatMessage(productMessages.program.title.instructorIntro)}</StyledTitle>
-      <Divider className="mt-1" />
+      <StyledDivider className="mt-1" />
 
       {program.roles
         .filter(role => role.name === 'instructor')
@@ -39,7 +40,12 @@ const RoleProfile: React.VFC<{ role: ProgramRole }> = ({ role }) => {
   const { loadingMember, member } = usePublicMember(role.memberId)
 
   if (loadingMember || !member) {
-    return <Skeleton active avatar />
+    return (
+      <>
+        <SkeletonCircle size="10" />
+        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+      </>
+    )
   }
 
   return (

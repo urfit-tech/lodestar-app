@@ -2,11 +2,42 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { StyledPlayer, StyledTags, StyledTitle, StyledVideoWrapper } from '.'
+import MemberAvatar from '../../../components/common/MemberAvatar'
+import { BREAK_POINT } from '../../../components/common/Responsive'
 import { productMessages } from '../../../helpers/translation'
 import { Program, ProgramRole } from '../../../types/program'
-import MemberAvatar from '../../common/MemberAvatar'
-import { BREAK_POINT } from '../../common/Responsive'
+
+const StyledTags = styled.div`
+  margin-bottom: 1rem;
+  color: white;
+  font-size: 14px;
+`
+const StyledTitle = styled.h1`
+  margin: 0;
+  color: white;
+  font-size: 28px;
+  line-height: 1.23;
+  letter-spacing: 0.23px;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    font-size: 40px;
+  }
+`
+const StyledVideoWrapper = styled.div<{ backgroundImage?: string }>`
+  position: relative;
+  padding-top: 56.25%;
+  ${props => props.backgroundImage && `background-image: url(${props.backgroundImage});`}
+  background-size: cover;
+  background-position: center;
+`
+const StyledPlayer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: black;
+`
 
 const StyledWrapper = styled.div`
   background: #f7f8f8;
