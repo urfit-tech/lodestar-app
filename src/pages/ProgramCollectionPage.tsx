@@ -61,6 +61,12 @@ const ProgramCollectionPage: React.VFC = () => {
   )
 
   useEffect(() => {
+    if (defaultActive) {
+      setSelectedCategoryId(defaultActive)
+    }
+  }, [defaultActive])
+
+  useEffect(() => {
     if (programs) {
       const productImpressions: ProductImpressionField[] = []
       programs.forEach((program, index) => {
