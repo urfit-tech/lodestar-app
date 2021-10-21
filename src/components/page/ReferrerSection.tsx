@@ -1,4 +1,4 @@
-import Carousel from 'lodestar-app-element/src/components/Carousel'
+import Carousel from 'lodestar-app-element/src/components/common/Carousel'
 import React from 'react'
 import styled from 'styled-components'
 import { StyledSection } from '../../pages/AppPage'

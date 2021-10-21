@@ -1,5 +1,5 @@
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
 import InstructorBlock from 'lodestar-app-element/src/components/blocks/InstructorBlock'
+import BackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import styled from 'styled-components'

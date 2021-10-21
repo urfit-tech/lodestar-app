@@ -1,5 +1,5 @@
-import Carousel from 'lodestar-app-element/src/components/Carousel'
 import { generateCustomParagraphStyle, generateCustomTitleStyle } from 'lodestar-app-element/src/components/common'
+import Carousel from 'lodestar-app-element/src/components/common/Carousel'
 import { ParagraphProps, TitleProps } from 'lodestar-app-element/src/types/style'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'

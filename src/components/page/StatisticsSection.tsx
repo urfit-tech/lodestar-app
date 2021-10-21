@@ -1,5 +1,5 @@
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
-import Stat from 'lodestar-app-element/src/components/Stat'
+import BackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
+import Stat from 'lodestar-app-element/src/components/common/Stat'
 import React from 'react'
 import styled from 'styled-components'
 import { SectionTitle } from '../../pages/AppPage'

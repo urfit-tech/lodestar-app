@@ -1,5 +1,5 @@
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
-import Card from 'lodestar-app-element/src/components/Card'
+import Card from 'lodestar-app-element/src/components/cards/Card'
+import BackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
 import React from 'react'
 import { SectionTitle } from '../../pages/AppPage'
 

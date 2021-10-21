@@ -1,5 +1,5 @@
-import Article from 'lodestar-app-element/src/components/Article'
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
+import Article from 'lodestar-app-element/src/components/common/Article'
+import BackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
 import React from 'react'
 
 const ArticleSection: React.FC<{

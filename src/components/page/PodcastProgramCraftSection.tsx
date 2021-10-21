@@ -1,6 +1,6 @@
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
 import PodcastProgramBlock from 'lodestar-app-element/src/components/blocks/PodcastProgramBlock'
-import Layout from 'lodestar-app-element/src/components/Layout'
+import BackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
+import Layout from 'lodestar-app-element/src/components/common/Layout'
 import React from 'react'
 import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
 
