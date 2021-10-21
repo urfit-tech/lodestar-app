@@ -3035,11 +3035,6 @@
     "@types/react" "*"
     hoist-non-react-statics "^3.3.0"
 
-"@types/howler@*":
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/@types/howler/-/howler-2.2.4.tgz#fb7d02bc335d20cc141987f16c195b1af77d756a"
-  integrity sha512-/Bs5TyNUWuXPnWe3RB6bS6giQzGHRXmSycq4Mo/2i4C6zwfR7foaAAx1Vo5pMyOAT/ufTfU6WZQHhdvCDBKRig==
-
 "@types/html-minifier-terser@^5.0.0":
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/@types/html-minifier-terser/-/html-minifier-terser-5.1.2.tgz#693b316ad323ea97eed6b38ed1a3cc02b1672b57"
@@ -3238,14 +3233,6 @@
   resolved "https://registry.yarnpkg.com/@types/react-helmet/-/react-helmet-6.1.4.tgz#3e54a3eb37ba7fb34ffafc64f425be4e68df03b9"
   integrity sha512-jyx50RNZXVaTGHY3MsoRPNpeiVk8b0XTPgD/O6KHF6COTDnG/+lRjPYvTK5nfWtR3xDOux0w6bHLAsaHo2ZLTA==
   dependencies:
-    "@types/react" "*"
-
-"@types/react-howler@^3.7.3":
-  version "3.7.3"
-  resolved "https://registry.yarnpkg.com/@types/react-howler/-/react-howler-3.7.3.tgz#d0b97ca48e13c6e425bd5c266b8df26a01352c5e"
-  integrity sha512-M6QwQpa8YIPskOME8c+HL3mde6qTAW5vI5oK0K4RcxIE0H5ZkPqc0ZNyKAoaaEINXMJLKCwGaLO5DUQ19iPzRw==
-  dependencies:
-    "@types/howler" "*"
     "@types/react" "*"
 
 "@types/react-is@^17.0.2":
@@ -10733,9 +10720,9 @@ lodash.xorby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element.git#master:
+lodestar-app-element@urfit-tech/lodestar-app-element.git#0.1.0-rc:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/345d9eef30a64926b9b6f423c72fea5ddf3d50c0"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/757649b0afe1f9435570d2571b3393ff66a721e3"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -11471,9 +11458,9 @@ node-releases@^1.1.61:
   integrity sha512-rB1DUFUNAN4Gn9keO2K1efO35IDK7yKHCdCaIMvFO7yUYmmZYeDjnGKle26G4rwj+LKRQpjyUUvMkPglwGCYNQ==
 
 node-releases@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.0.tgz#67dc74903100a7deb044037b8a2e5f453bb05400"
-  integrity sha512-aA87l0flFYMzCHpTM3DERFSYxc6lv/BltdbRTOMZuxZ0cwZCD3mejE5n9vLhSJCN++/eOqr77G1IO5uXxlQYWA==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.1.tgz#3d1d395f204f1f2f29a54358b9fb678765ad2fc5"
+  integrity sha512-CqyzN6z7Q6aMeF/ktcMVTzhAHCEpf8SOarwpzpf8pNBY2k5/oM34UHldUwp8VKI7uxct2HxSRdJjBaZeESzcxA==
 
 node-sass@4.14.1:
   version "4.14.1"
