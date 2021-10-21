@@ -2,9 +2,9 @@ import { sum } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { BREAK_POINT } from '../../../components/common/Responsive'
 import { commonMessages } from '../../../helpers/translation'
 import { Program, ProgramContent, ProgramContentSection } from '../../../types/program'
-import { BREAK_POINT } from '../../common/Responsive'
 
 const StyledCountBlock = styled.div`
   text-align: center;

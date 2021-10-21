@@ -10,22 +10,21 @@ import { useIntl } from 'react-intl'
 import { useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import Responsive, { BREAK_POINT } from '../components/common/Responsive'
-import { BraftContent } from '../components/common/StyledBraftEditor'
-import DefaultLayout from '../components/layout/DefaultLayout'
-import PerpetualProgramBanner from '../components/program/ProgramBanner/PerpetualProgramBanner'
-import SubscriptionProgramBanner from '../components/program/ProgramBanner/SubscriptionProgramBanner'
-import ProgramContentListSection from '../components/program/ProgramContentListSection'
-import ProgramInfoBlock from '../components/program/ProgramInfoBlock'
-import ProgramInstructorCollectionBlock from '../components/program/ProgramInstructorCollectionBlock'
-import ProgramPerpetualPlanCard from '../components/program/ProgramPerpetualPlanCard'
-import ProgramSubscriptionPlanSection from '../components/program/ProgramSubscriptionPlanSection'
-import ReviewCollectionBlock from '../components/review/ReviewCollectionBlock'
-import PodcastPlayerContext from '../contexts/PodcastPlayerContext'
-import { desktopViewMixin, rgba } from '../helpers'
-import { commonMessages } from '../helpers/translation'
-import { useProgram } from '../hooks/program'
-import ForbiddenPage from './ForbiddenPage'
+import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
+import { BraftContent } from '../../components/common/StyledBraftEditor'
+import DefaultLayout from '../../components/layout/DefaultLayout'
+import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
+import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
+import { desktopViewMixin, rgba } from '../../helpers'
+import { commonMessages } from '../../helpers/translation'
+import { useProgram } from '../../hooks/program'
+import ForbiddenPage from '../ForbiddenPage'
+import { PerpetualProgramBanner, SubscriptionProgramBanner } from './ProgramBanner'
+import ProgramContentListSection from './ProgramContentListSection'
+import ProgramInfoBlock from './ProgramInfoBlock'
+import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
+import ProgramPerpetualPlanCard from './ProgramPerpetualPlanCard'
+import ProgramSubscriptionPlanCard from './ProgramSubscriptionPlanCard'
 
 const StyledIntroWrapper = styled.div`
   ${desktopViewMixin(css`
@@ -219,15 +218,18 @@ const ProgramPage: React.VFC = () => {
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
                 {program.isSubscription ? (
                   <div className="mb-5">
-                    <ProgramSubscriptionPlanSection
-                      program={program}
-                      renderOneTimeSubscription={programPlan => (
-                        <ProgramInfoBlock variant="subscription" program={program} programPlan={programPlan} />
-                      )}
-                    />
+                    <div id="subscription">
+                      {program.plans
+                        .filter(programPlan => programPlan.publishedAt)
+                        .map(programPlan => (
+                          <div key={programPlan.id} className="mb-3">
+                            <ProgramSubscriptionPlanCard programId={program.id} programPlan={programPlan} />
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 ) : (
-                  <ProgramInfoBlock variant="perpetual" program={program} />
+                  <ProgramInfoBlock program={program} />
                 )}
               </StyledIntroWrapper>
             </div>

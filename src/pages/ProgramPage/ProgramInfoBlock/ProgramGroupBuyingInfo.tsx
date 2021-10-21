@@ -3,13 +3,13 @@ import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import CheckoutProductModal from '../../../components/checkout/CheckoutProductModal'
+import { useAddProgramToCart } from '../../../components/checkout/ProgramPaymentButton'
+import PriceLabel from '../../../components/common/PriceLabel'
+import { BREAK_POINT } from '../../../components/common/Responsive'
 import { commonMessages } from '../../../helpers/translation'
 import { Category } from '../../../types/general'
 import { Program, ProgramPlan, ProgramRole } from '../../../types/program'
-import CheckoutProductModal from '../../checkout/CheckoutProductModal'
-import { useAddProgramToCart } from '../../checkout/ProgramPaymentButton'
-import PriceLabel from '../../common/PriceLabel'
-import { BREAK_POINT } from '../../common/Responsive'
 
 const StyledTitle = styled.span`
   font-size: 14px;

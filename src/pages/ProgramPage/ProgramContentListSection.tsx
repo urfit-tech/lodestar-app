@@ -3,11 +3,11 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import ProgramContentTrialModal from '../../components/program/ProgramContentTrialModal'
 import { durationFormatter } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
 import { Program, ProgramContent, ProgramContentSection } from '../../types/program'
-import ProgramContentTrialModal from './ProgramContentTrialModal'
 
 const StyledTitle = styled.h2`
   font-size: 24px;

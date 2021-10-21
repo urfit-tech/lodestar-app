@@ -41,7 +41,7 @@ const ProgramContentBlock: React.VFC<{
   issueEnabled?: boolean
 }> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
   const { formatMessage } = useIntl()
-  const { loading: loadingApp, enabledModules, settings } = useApp()
+  const { loading: loadingApp, enabledModules } = useApp()
   const { authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)

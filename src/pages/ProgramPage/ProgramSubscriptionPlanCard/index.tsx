@@ -5,15 +5,16 @@ import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import CheckoutProductModal from '../../components/checkout/CheckoutProductModal'
-import { commonMessages, productMessages } from '../../helpers/translation'
-import { useEnrolledPlanIds, useProgram } from '../../hooks/program'
-import { ProgramPlan } from '../../types/program'
-import { AuthModalContext } from '../auth/AuthModal'
-import AdminCard from '../common/AdminCard'
-import CountDownTimeBlock from '../common/CountDownTimeBlock'
-import PriceLabel from '../common/PriceLabel'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { AuthModalContext } from '../../../components/auth/AuthModal'
+import CheckoutProductModal from '../../../components/checkout/CheckoutProductModal'
+import AdminCard from '../../../components/common/AdminCard'
+import CountDownTimeBlock from '../../../components/common/CountDownTimeBlock'
+import PriceLabel from '../../../components/common/PriceLabel'
+import { BraftContent } from '../../../components/common/StyledBraftEditor'
+import { commonMessages, productMessages } from '../../../helpers/translation'
+import { useEnrolledPlanIds, useProgram } from '../../../hooks/program'
+import { ProgramPlan } from '../../../types/program'
+import ProgramPlanPaymentButton from './ProgramPlanPaymentButton'
 
 const StyledAdminCard = styled(AdminCard)`
   color: ${props => props.theme['@label-color']};
@@ -43,8 +44,11 @@ const StyledBraftContent = styled.div`
 `
 const ProgramSubscriptionPlanCard: React.VFC<{
   programId: string
-  programPlan: ProgramPlan
+  programPlan: ProgramPlan & {
+    isSubscription: boolean
+  }
 }> = ({ programId, programPlan }) => {
+  console.log(programPlan.isSubscription)
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
@@ -93,7 +97,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
         >
           {formatMessage(commonMessages.button.enter)}
         </Button>
-      ) : (
+      ) : programPlan.isSubscription ? (
         <CheckoutProductModal
           renderTrigger={({ isLoading, onOpen, isSubscription }) => (
             <Button
@@ -131,6 +135,8 @@ const ProgramSubscriptionPlanCard: React.VFC<{
               : ''
           }
         />
+      ) : (
+        <ProgramPlanPaymentButton programPlan={programPlan} />
       )}
     </StyledAdminCard>
   )
