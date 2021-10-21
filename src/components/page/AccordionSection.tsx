@@ -1,5 +1,5 @@
-import Accordion from 'lodestar-app-element/src/components/Accordion'
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
+import Accordion from 'lodestar-app-element/src/components/accordions/Accordion'
+import BackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
 import React from 'react'
 import { SectionTitle } from '../../pages/AppPage'
 

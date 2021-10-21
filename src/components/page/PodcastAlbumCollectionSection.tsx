@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Skeleton } from '@chakra-ui/skeleton'
 import gql from 'graphql-tag'
-import Responsive from 'lodestar-app-element/src/components/Responsive'
+import Responsive from 'lodestar-app-element/src/components/common/Responsive'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'

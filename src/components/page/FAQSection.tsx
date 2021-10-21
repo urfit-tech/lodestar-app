@@ -1,4 +1,4 @@
-import Article from 'lodestar-app-element/src/components/Article'
+import Article from 'lodestar-app-element/src/components/common/Article'
 import React from 'react'
 import styled from 'styled-components'
 import { SectionTitle, StyledSection } from '../../pages/AppPage'

@@ -1,4 +1,4 @@
-import LodestarBackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
+import LodestarBackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
 import React from 'react'
 import styled from 'styled-components'
 

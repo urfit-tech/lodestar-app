@@ -1,14 +1,14 @@
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
 import ProjectBlock from 'lodestar-app-element/src/components/blocks/ProjectBlock'
-import Layout from 'lodestar-app-element/src/components/Layout'
-import { ProjectType } from 'lodestar-app-element/src/types/data'
+import BackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
+import Layout from 'lodestar-app-element/src/components/common/Layout'
+import { Project } from 'lodestar-app-element/src/types/data'
 import React from 'react'
 import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
 
 const ProjectSection: React.FC<{
   options: {
     title?: string
-    projectType?: ProjectType
+    projectType?: Project['type']
   }
 }> = ({ options: { title, projectType } }) => {
   return (
