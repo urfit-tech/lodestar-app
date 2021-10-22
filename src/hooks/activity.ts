@@ -207,19 +207,11 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
     coverUrl: string | null
     publishedAt: Date | null
     organizerId: string
-    tickets: {
-      id: string
-      title: string
-      price: number
-      count: number
-      description: string | null
-      isPublished: boolean
-      startedAt: Date
-      endedAt: Date
+    tickets: (ActivityTicketProps & {
       participants: number
       sessions: Pick<ActivityTicketSessionProps, 'id' | 'type' | 'title'>[]
       enrollments: { orderId: string; orderProductId: string }[]
-    }[]
+    })[]
     categories: Category[]
     sessionIds: string[]
   } | null = data?.activity_by_pk
