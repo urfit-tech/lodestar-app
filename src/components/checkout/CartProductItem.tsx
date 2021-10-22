@@ -1,6 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Spinner } from '@chakra-ui/react'
 import { Typography } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -47,6 +48,7 @@ const CartProductItem: React.VFC<{
   buyableQuantity: number | null
 }> = ({ id, quantity, buyableQuantity }) => {
   const { formatMessage } = useIntl()
+  const { enabledModules } = useApp()
   const { updatePluralCartProductQuantity } = useContext(CartContext)
   const { target } = useSimpleProduct({ id })
   const [pluralProductQuantity, setPluralProductQuantity] = useState(quantity || 1)
@@ -86,7 +88,8 @@ const CartProductItem: React.VFC<{
           </StyledInventoryBlock>
         )}
 
-        {((productType === 'ProjectPlan' && isLimited === true) ||
+        {((productType === 'ActivityTicket' && enabledModules.group_buying_ticket) ||
+          (productType === 'ProjectPlan' && isLimited === true) ||
           (productType === 'MerchandiseSpec' && isPhysical === true)) &&
           !!buyableQuantity &&
           buyableQuantity > 0 && (
