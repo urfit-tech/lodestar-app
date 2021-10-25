@@ -1645,6 +1645,32 @@ export interface GET_MEMBER_ORDERSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: UPDATE_VOUCHER_MEMBER
+// ====================================================
+
+export interface UPDATE_VOUCHER_MEMBER_update_voucher_by_pk {
+  __typename: "voucher";
+  id: any;
+}
+
+export interface UPDATE_VOUCHER_MEMBER {
+  /**
+   * update single row of the table: "voucher"
+   */
+  update_voucher_by_pk: UPDATE_VOUCHER_MEMBER_update_voucher_by_pk | null;
+}
+
+export interface UPDATE_VOUCHER_MEMBERVariables {
+  voucherId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PODCAST_PROGRAM_INSTRUCTOR_COLLECTION
 // ====================================================
 
@@ -1856,6 +1882,7 @@ export interface GET_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan {
   description: string | null;
   started_at: any | null;
   ended_at: any | null;
+  is_transferable: boolean;
   product_quantity_limit: number;
   /**
    * An array relationship
@@ -12427,6 +12454,7 @@ export enum voucher_plan_update_column {
   description = "description",
   ended_at = "ended_at",
   id = "id",
+  is_transferable = "is_transferable",
   product_quantity_limit = "product_quantity_limit",
   started_at = "started_at",
   title = "title",
@@ -21026,6 +21054,7 @@ export interface voucher_plan_bool_exp {
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
+  is_transferable?: Boolean_comparison_exp | null;
   product_quantity_limit?: Int_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
   title?: String_comparison_exp | null;
@@ -21042,6 +21071,7 @@ export interface voucher_plan_insert_input {
   description?: string | null;
   ended_at?: any | null;
   id?: any | null;
+  is_transferable?: boolean | null;
   product_quantity_limit?: number | null;
   started_at?: any | null;
   title?: string | null;

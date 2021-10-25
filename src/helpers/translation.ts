@@ -408,6 +408,8 @@ export const commonMessages = {
       id: 'common.text.fillInEnrolledEmail',
       defaultMessage: '請填寫對方在站上註冊的電子信箱',
     },
+    selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
+    delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
   }),
 }
 
