@@ -41,6 +41,7 @@ const VoucherCollectionBlock: React.VFC = () => {
       available: !!voucher.status && !voucher.status.outdated && !voucher.status.used,
       productIds: voucher.voucher_code.voucher_plan.voucher_plan_products.map(product => product.product_id),
       description: decodeURI(voucher.voucher_code.voucher_plan.description || ''),
+      isTransferable: voucher.voucher_code.voucher_plan.is_transferable,
     })) || []
 
   const handleInsert = (setLoading: React.Dispatch<React.SetStateAction<boolean>>, code: string) => {
@@ -115,6 +116,7 @@ const VoucherCollectionBlock: React.VFC = () => {
       disabledProductIds={enrolledProductIds}
       onInsert={handleInsert}
       onExchange={handleExchange}
+      onRefetch={refetch}
     />
   )
 }
@@ -151,6 +153,7 @@ const GET_VOUCHER_COLLECTION = gql`
           description
           started_at
           ended_at
+          is_transferable
           product_quantity_limit
           voucher_plan_products {
             id
