@@ -31,7 +31,7 @@ const StyledTitle = styled.h3`
 `
 
 const messages = defineMessages({
-  gift: { id: 'common.text.gift', defaultMessage: '轉贈' },
+  transfer: { id: 'common.text.transfer', defaultMessage: '轉贈' },
 })
 
 const VoucherDeliverModal: React.VFC<{
@@ -80,7 +80,7 @@ const VoucherDeliverModal: React.VFC<{
   return (
     <>
       <Button className="mr-2" variant="outline" onClick={onOpen}>
-        {formatMessage(messages.gift)}
+        {formatMessage(messages.transfer)}
       </Button>
       <CommonModal
         isOpen={isOpen}

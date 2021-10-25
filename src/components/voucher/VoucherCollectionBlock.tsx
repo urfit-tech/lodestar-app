@@ -40,7 +40,7 @@ const VoucherCollectionBlock: React.VFC<{
     ...voucher,
     extra: (
       <>
-        {enabledModules.gift && voucher.isTransferable && (
+        {enabledModules.transfer_voucher && voucher.isTransferable && (
           <VoucherDeliverModal title={voucher.title} voucherId={voucher.id} onRefetch={onRefetch} />
         )}
         <VoucherExchangeModal
