@@ -226,10 +226,16 @@ export const useProductInventory = (cartProducts: CartProductProps[]) => {
 }
 
 const GET_PRODUCT_INVENTORY = gql`
-  query GET_PRODUCT_INVENTORY($productIds: [String!]) {
+  query GET_PRODUCT_INVENTORY($productIds: [String!], $activityTicketIds: [uuid!]) {
     product_inventory_status(where: { product_id: { _in: $productIds } }) {
       product_id
       buyable_quantity
+    }
+    activity_ticket_enrollment_count(where: { activity_ticket_id: { _in: $activityTicketIds } }) {
+      activity_id
+      activity_ticket_id
+      buyable_quantity
+      count
     }
   }
 `
