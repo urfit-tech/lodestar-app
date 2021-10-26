@@ -13,15 +13,28 @@ export interface GET_PRODUCT_INVENTORY_product_inventory_status {
   buyable_quantity: any | null;
 }
 
+export interface GET_PRODUCT_INVENTORY_activity_ticket_enrollment_count {
+  __typename: "activity_ticket_enrollment_count";
+  activity_id: any | null;
+  activity_ticket_id: any | null;
+  count: any | null;
+  buyable_quantity: any | null;
+}
+
 export interface GET_PRODUCT_INVENTORY {
   /**
    * fetch data from the table: "product_inventory_status"
    */
   product_inventory_status: GET_PRODUCT_INVENTORY_product_inventory_status[];
+  /**
+   * fetch data from the table: "activity_ticket_enrollment_count"
+   */
+  activity_ticket_enrollment_count: GET_PRODUCT_INVENTORY_activity_ticket_enrollment_count[];
 }
 
 export interface GET_PRODUCT_INVENTORYVariables {
   productIds?: string[] | null;
+  activityTicketIds?: any[] | null;
 }
 
 /* tslint:disable */

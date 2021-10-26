@@ -1,4 +1,4 @@
-import { Icon, Input, SkeletonText, useToast } from '@chakra-ui/react'
+import { Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -26,6 +26,8 @@ import { CartProductProps, InvoiceProps, PaymentProps, ShippingProps } from '../
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import { CommonTitleMixin } from '../common'
+import CheckoutGroupBuyingForm, { StyledBlockTitle, StyledListItem } from './CheckoutGroupBuyingForm'
+import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
 import PaymentSelector from './PaymentSelector'
 
 const StyledTitle = styled.div`
@@ -132,12 +134,19 @@ const CheckoutBlock: React.VFC<{
   const invoiceRef = useRef<HTMLDivElement | null>(null)
   const referrerRef = useRef<HTMLDivElement | null>(null)
   const paymentMethodRef = useRef<HTMLDivElement | null>(null)
+  const groupBuyingRef = useRef<HTMLDivElement | null>(null)
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
   const [payment, setPayment] = useState<PaymentProps | null>(null)
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
+  const [groupBuying, setGroupBuying] = useState<{
+    [productId: string]: {
+      memberIds: string[]
+      withError: boolean
+    }
+  }>({})
 
   const { memberId: referrerId, validateStatus } = useMemberValidation(referrerEmail)
 
@@ -151,7 +160,14 @@ const CheckoutBlock: React.VFC<{
     options: cartProducts.reduce<{ [ProductId: string]: any }>(
       (accumulator, currentValue) => ({
         ...accumulator,
-        [currentValue.productId]: currentValue.options,
+        [currentValue.productId]: {
+          ...currentValue.options,
+          ...(groupBuying[currentValue.productId]
+            ? {
+                groupBuyingPartnerIds: groupBuying[currentValue.productId].memberIds,
+              }
+            : {}),
+        },
       }),
       {},
     ),
@@ -233,7 +249,10 @@ const CheckoutBlock: React.VFC<{
       referrerRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
-
+    if (Object.values(groupBuying).some(groupBuy => groupBuy.withError)) {
+      groupBuyingRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
     if (totalPrice > 0 && payment === null) {
       paymentMethodRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
@@ -277,6 +296,13 @@ const CheckoutBlock: React.VFC<{
     history.push(`/tasks/order/${taskId}`)
   }
 
+  const groupBuyingEnabledVerify = (cartProduct: CartProductProps) => {
+    if (cartProduct.productId.includes('ActivityTicket')) {
+      return enabledModules.group_buying_ticket && cartProduct.options?.quantity > 1
+    }
+    return false
+  }
+
   return (
     <div className="container py-5">
       <Typography.Title level={3} className="mb-4">
@@ -287,6 +313,35 @@ const CheckoutBlock: React.VFC<{
       <div ref={cartRef}>
         <CartProductTableCard className="mb-3" shopId={shopId} cartProducts={cartProducts} />
       </div>
+      {cartProducts.some(groupBuyingEnabledVerify) && (
+        <AdminCard className="mb-3">
+          <div ref={groupBuyingRef}>
+            <StyledBlockTitle className="mb-3">{formatMessage(checkoutMessages.label.groupBuying)}</StyledBlockTitle>
+            <OrderedList className="mb-4">
+              <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription1)}</StyledListItem>
+              <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription2)}</StyledListItem>
+              <StyledListItem>
+                {formatMessage(checkoutMessages.text.groupBuyingDescription3, { modal: <GroupBuyingRuleModal /> })}
+              </StyledListItem>
+            </OrderedList>
+            {cartProducts.map(
+              cartProduct =>
+                groupBuyingEnabledVerify(cartProduct) && (
+                  <CheckoutGroupBuyingForm
+                    productId={cartProduct.productId}
+                    partnerCount={cartProduct.options?.quantity ? cartProduct.options.quantity - 1 : 1}
+                    onChange={value =>
+                      setGroupBuying(groupBuy => ({
+                        ...groupBuy,
+                        [cartProduct.productId]: value,
+                      }))
+                    }
+                  />
+                ),
+            )}
+          </div>
+        </AdminCard>
+      )}
       {hasPhysicalProduct && (
         <div ref={shippingRef} className="mb-3">
           <AdminCard>
