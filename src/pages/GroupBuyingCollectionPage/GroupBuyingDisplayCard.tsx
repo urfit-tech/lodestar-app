@@ -14,7 +14,7 @@ import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { MultiLineTruncationMixin } from '../../components/common'
 import { Input } from '../../components/common/CommonForm'
@@ -36,11 +36,6 @@ const StyledTitle = styled.h3`
   letter-spacing: 0.2px;
   color: var(--gray-darker);
 `
-
-const messages = defineMessages({
-  selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
-  delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
-})
 
 const GroupBuyingDeliverModal: React.VFC<{
   partnerMemberIds: string[]
@@ -134,9 +129,9 @@ const GroupBuyingDeliverModal: React.VFC<{
           />
           <FormErrorMessage>
             {memberId === currentMemberId
-              ? formatMessage(messages.selfDeliver)
+              ? formatMessage(commonMessages.text.selfDeliver)
               : partnerMemberIds.includes(memberId || '')
-              ? formatMessage(messages.delivered)
+              ? formatMessage(commonMessages.text.delivered)
               : validateStatus === 'error'
               ? formatMessage(commonMessages.text.notFoundMemberEmail)
               : undefined}

@@ -1,7 +1,9 @@
 import { SkeletonText } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import VoucherCollectionTabs from '../../components/voucher/VoucherCollectionTabs'
+import VoucherDeliverModal from '../../components/voucher/VoucherDeliverModal'
 import VoucherExchangeModal from '../../components/voucher/VoucherExchangeModal'
 import VoucherInsertBlock from '../../components/voucher/VoucherInsertBlock'
 import { commonMessages } from '../../helpers/translation'
@@ -22,8 +24,10 @@ const VoucherCollectionBlock: React.VFC<{
     selectedProductIds: string[],
     voucherId: string,
   ) => void
-}> = ({ memberId, loading, error, voucherCollection, disabledProductIds, onExchange, onInsert }) => {
+  onRefetch?: () => void
+}> = ({ memberId, loading, error, voucherCollection, disabledProductIds, onExchange, onInsert, onRefetch }) => {
   const { formatMessage } = useIntl()
+  const { enabledModules } = useApp()
   if (!memberId || loading) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
@@ -35,15 +39,20 @@ const VoucherCollectionBlock: React.VFC<{
   const vouchers = voucherCollection.map(voucher => ({
     ...voucher,
     extra: (
-      <VoucherExchangeModal
-        productQuantityLimit={voucher.productQuantityLimit}
-        productIds={voucher.productIds}
-        disabledProductIds={disabledProductIds}
-        onExchange={(setVisible, setLoading, selectedProductIds) =>
-          onExchange(setVisible, setLoading, selectedProductIds, voucher.id)
-        }
-        description={voucher.description}
-      />
+      <>
+        {enabledModules.transfer_voucher && voucher.isTransferable && (
+          <VoucherDeliverModal title={voucher.title} voucherId={voucher.id} onRefetch={onRefetch} />
+        )}
+        <VoucherExchangeModal
+          productQuantityLimit={voucher.productQuantityLimit}
+          productIds={voucher.productIds}
+          disabledProductIds={disabledProductIds}
+          onExchange={(setVisible, setLoading, selectedProductIds) =>
+            onExchange(setVisible, setLoading, selectedProductIds, voucher.id)
+          }
+          description={voucher.description}
+        />
+      </>
     ),
   }))
 
