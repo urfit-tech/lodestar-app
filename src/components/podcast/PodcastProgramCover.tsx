@@ -102,7 +102,6 @@ const PodcastProgramCover: React.VFC<{
   const {
     podcastProgramIds,
     currentIndex,
-    title: currentTitle,
     podcastAlbumId: currentPodcastAlbumId,
     loading: loadingPodcast,
     setup,
@@ -113,36 +112,25 @@ const PodcastProgramCover: React.VFC<{
   const handlePlay = () => {
     const position = podcastAlbum.id
       ? podcastAlbum.podcastProgramIds.findIndex(id => id === podcastProgramId)
-      : podcastProgramIds.findIndex(id => id === podcastProgramId) || 0
+      : podcastProgramIds.findIndex(id => id === podcastProgramId)
 
     podcastAlbum.id
       ? setup?.(
           podcastAlbum.id === currentPodcastAlbumId
             ? {
-                currentIndex: position,
-              }
-            : position < 0
-            ? {
-                title: podcastAlbum.title,
-                podcastProgramIds: podcastAlbum.podcastProgramIds,
-                currentIndex: 0,
+                currentIndex: position < 0 ? 0 : position,
               }
             : {
                 title: podcastAlbum.title,
                 podcastProgramIds: podcastAlbum.podcastProgramIds,
-                currentIndex: position,
+                currentIndex: position < 0 ? 0 : position,
               },
         )
-      : setup?.(
-          position < 0
-            ? {
-                podcastProgramIds: [podcastProgramId],
-                currentIndex: 0,
-              }
-            : {
-                currentIndex: position,
-              },
-        )
+      : setup?.({
+          podcastProgramIds: [podcastProgramId],
+          currentIndex: position < 0 ? 0 : position,
+        })
+    changePlayingState?.(!playing)
   }
 
   return (
@@ -177,8 +165,8 @@ const PodcastProgramCover: React.VFC<{
               </Button>
             )
           ) : (
-            <Button type="link" onClick={handlePlay}>
-              <StyledIcon as={PlayCircleIcon} />
+            <Button type="link" onClick={() => handlePlay()}>
+              {playing ? <StyledIcon as={PauseCircleIcon} /> : <StyledIcon as={PlayCircleIcon} />}
             </Button>
           )}
         </div>
