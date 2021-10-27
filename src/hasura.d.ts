@@ -6317,18 +6317,10 @@ export interface GET_PODCAST_PROGRAM_PROGRESSVariables {
 // GraphQL query operation: GET_PODCAST_ALBUM_PREVIEW
 // ====================================================
 
-export interface GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program {
-  __typename: "podcast_program";
-  id: any;
-}
-
 export interface GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs {
   __typename: "podcast_album_podcast_program";
   id: any;
-  /**
-   * An object relationship
-   */
-  podcast_program: GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program | null;
+  podcast_program_id: any;
 }
 
 export interface GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk {
@@ -11999,6 +11991,8 @@ export enum program_plan_update_column {
   period_type = "period_type",
   program_id = "program_id",
   published_at = "published_at",
+  remind_period_amount = "remind_period_amount",
+  remind_period_type = "remind_period_type",
   sale_price = "sale_price",
   sold_at = "sold_at",
   started_at = "started_at",
@@ -19828,6 +19822,8 @@ export interface program_plan_bool_exp {
   program_id?: uuid_comparison_exp | null;
   program_plan_enrollments?: program_plan_enrollment_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
+  remind_period_amount?: Int_comparison_exp | null;
+  remind_period_type?: String_comparison_exp | null;
   sale_price?: numeric_comparison_exp | null;
   sold_at?: timestamptz_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
@@ -19875,6 +19871,8 @@ export interface program_plan_insert_input {
   program_content_permissions?: program_content_plan_arr_rel_insert_input | null;
   program_id?: any | null;
   published_at?: any | null;
+  remind_period_amount?: number | null;
+  remind_period_type?: string | null;
   sale_price?: any | null;
   sold_at?: any | null;
   started_at?: any | null;

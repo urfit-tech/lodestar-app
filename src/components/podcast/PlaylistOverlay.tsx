@@ -4,6 +4,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { podcastMessages } from '../../helpers/translation'
 import { usePodcastProgram } from '../../hooks/podcast'
@@ -77,6 +78,7 @@ const PlaylistOverlay: React.VFC<{}> = () => {
   const history = useHistory()
   const { formatMessage } = useIntl()
   const { title, setup, podcastProgramIds, currentIndex } = useContext(PodcastPlayerContext)
+  const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
 
   return (
     <StyledWrapper>
@@ -116,7 +118,9 @@ const PlaylistOverlay: React.VFC<{}> = () => {
               podcastProgramId={podcastProgramId}
               isPlaying={index === currentIndex}
               onPlay={podcastProgramId => {
-                history.push(`/podcasts/${podcastProgramId}`)
+                history.push(
+                  `/podcasts/${podcastProgramId}${podcastAlbumId ? `?podcastAlbumId=${podcastAlbumId}` : ''}`,
+                )
                 setup?.({
                   currentIndex: index,
                 })
