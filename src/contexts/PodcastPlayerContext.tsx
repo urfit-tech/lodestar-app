@@ -110,8 +110,8 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         setup: options => {
           options.title && setTitle(options.title)
           options.podcastProgramIds && setPodcastProgramIds(options.podcastProgramIds)
-          options.currentIndex && setCurrentIndex(options.currentIndex)
           options.podcastAlbumId && setPodcastAlbumId(options.podcastAlbumId)
+          typeof options.currentIndex === 'number' && setCurrentIndex(options.currentIndex)
         },
       }}
     >
