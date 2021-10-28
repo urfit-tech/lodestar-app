@@ -1,0 +1,5 @@
+email,type,target,name,price,startedAt,endedAt,status
+member1@sample.com,Program,1231-34114-124134,範例課程,100,2021-10-03,,SUCCESS
+member2@sample.com,Program,1231-34114-124134,範例課程,100,,2021-10-03,FAILED
+member3@sample.com,Program,1231-34114-124134,範例課程,100,,,UNPAID
+member4@sample.com,Program,1231-34114-124134,範例課程,100,2021-10-03,2022-10-03,REFUND
