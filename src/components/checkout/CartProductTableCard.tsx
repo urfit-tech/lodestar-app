@@ -197,20 +197,16 @@ export const useProductInventory = (cartProducts: CartProductProps[]) => {
     },
   })
 
-  const activityTicketEnrollment =
+  const activityTicketInventories =
     data?.activity_ticket_enrollment_count?.map(v => ({
-      id: v.activity_ticket_id,
+      productId: `ActivityTicket_${v.activity_ticket_id}`,
       buyableQuantity: v.buyable_quantity,
     })) || []
 
   const productInventories =
-    data?.product_inventory_status.map(productInventory => ({
-      productId: productInventory.product_id || '',
-      buyableQuantity: productInventory.product_id?.includes('ActivityTicket')
-        ? activityTicketEnrollment.find(
-            activityTicket => activityTicket?.id === productInventory?.product_id?.split('_')[1],
-          )?.buyableQuantity
-        : productInventory.buyable_quantity,
+    data?.product_inventory_status.map(v => ({
+      productId: v.product_id || '',
+      buyableQuantity: v.buyable_quantity,
     })) || []
 
   return {
@@ -219,7 +215,9 @@ export const useProductInventory = (cartProducts: CartProductProps[]) => {
     cartProductsWithInventory: cartProducts.map(cartProduct => ({
       ...cartProduct,
       buyableQuantity: null,
-      ...productInventories.find(cartProductsInventory => cartProduct.productId === cartProductsInventory.productId),
+      ...[...productInventories, ...activityTicketInventories].find(
+        cartProductsInventory => cartProduct.productId === cartProductsInventory.productId,
+      ),
     })),
     refetch,
   }
