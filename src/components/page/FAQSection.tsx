@@ -41,30 +41,24 @@ const FAQSection: React.FC<{
               <Article.Title
                 highlight
                 className="mb-3"
-                customStyle={{
+                style={{
                   textAlign: 'left',
                   fontSize: 16,
                   fontWeight: 'bold',
                   color: '#ff5760',
-                  mt: 0,
-                  mr: 0,
-                  mb: 0,
-                  ml: 10,
+                  margin: '0 0 0 10px',
                 }}
               >
                 {v.title}
               </Article.Title>
               <Article.Content
-                customStyle={{
+                style={{
                   textAlign: 'left',
                   fontSize: 16,
                   fontWeight: 'normal',
                   lineHeight: 1.7,
                   color: '#585858',
-                  mt: 0,
-                  mr: 0,
-                  mb: 0,
-                  ml: 0,
+                  margin: 0,
                 }}
               >
                 {v.description}

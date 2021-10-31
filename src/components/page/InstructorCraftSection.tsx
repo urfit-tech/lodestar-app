@@ -1,5 +1,4 @@
-import InstructorBlock from 'lodestar-app-element/src/components/blocks/InstructorBlock'
-import BackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
+import { CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import styled from 'styled-components'
@@ -18,12 +17,10 @@ const InstructorSection: React.FC<{
 }> = ({ options }) => {
   const { id } = useApp()
   return (
-    <BackgroundSection>
+    <CraftSection>
       <SectionTitle>{options?.title || '專業師資'}</SectionTitle>
-      <StyledContainer>
-        <InstructorBlock appId={id} />
-      </StyledContainer>
-    </BackgroundSection>
+      <StyledContainer>{/* <InstructorBlock appId={id} /> */}</StyledContainer>
+    </CraftSection>
   )
 }
 

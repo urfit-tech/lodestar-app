@@ -1,8 +1,8 @@
-import LodestarBackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
+import { CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import styled from 'styled-components'
 
-const StyledBackgroundSection = styled(LodestarBackgroundSection)`
+const StyledBackgroundSection = styled(CraftSection)`
   height: 240px;
 
   @media (min-width: 768px) {
@@ -17,14 +17,8 @@ const BackgroundSection: React.FC<{
     <StyledBackgroundSection
       customStyle={{
         backgroundImage: backgroundUrl || '',
-        mt: '0',
-        mb: '0',
-        mr: '0',
-        ml: '0',
-        pt: '0',
-        pb: '0',
-        pr: '0',
-        pl: '0',
+        margin: 0,
+        padding: 0,
       }}
     />
   )

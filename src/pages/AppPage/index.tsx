@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Editor } from '@craftjs/core'
 import gql from 'graphql-tag'
-import * as craftComponents from 'lodestar-app-element/src/components/craft'
+import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -120,7 +120,7 @@ const AppPage: React.VFC = () => {
   return (
     <DefaultLayout {...appPage.options}>
       {appPage.craftData ? (
-        <Editor enabled={false} resolver={craftComponents}>
+        <Editor enabled={false} resolver={CraftElement}>
           <CraftBlock craftData={appPage.craftData} />
         </Editor>
       ) : (

@@ -1,5 +1,5 @@
 import Card from 'lodestar-app-element/src/components/cards/Card'
-import BackgroundSection from 'lodestar-app-element/src/components/common/BackgroundSection'
+import { CraftCard, CraftImage, CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import { SectionTitle } from '../../pages/AppPage'
 
@@ -15,7 +15,7 @@ const FeatureDescriptionSection: React.FC<{
   }
 }> = ({ options: { backgroundUrl, title, infos = [] } }) => {
   return (
-    <BackgroundSection
+    <CraftSection
       customStyle={{
         backgroundImage: backgroundUrl || '',
         mt: '0',
@@ -35,60 +35,41 @@ const FeatureDescriptionSection: React.FC<{
         <div className="row justify-content-center">
           {infos.map(v => (
             <div className="col-12 col-md-4 mb-4">
-              <Card
-                isDark={!!backgroundUrl}
+              <CraftCard
+                darkMode={!!backgroundUrl}
                 customStyle={{
-                  direction: 'column',
-                  bordered: true,
-                  shadow: true,
-                  mt: '0',
-                  mb: '0',
-                  mr: '0',
-                  ml: '0',
-                  pt: '20',
-                  pb: '20',
-                  pr: '20',
-                  pl: '20',
+                  margin: 0,
+                  padding: 20,
                 }}
               >
-                <Card.Image
-                  src={v.iconSrc}
+                <CraftImage
                   customStyle={{
-                    mt: '0',
-                    mb: '24',
-                    mr: '0',
-                    ml: '0',
-                    pt: '0',
-                    pb: '0',
-                    pr: '0',
-                    pl: '0',
+                    backgroundImage: `url(${v.iconSrc})`,
+                    margin: '0 0 24px 0',
+                    padding: 0,
                   }}
-                  alt="icon"
                 />
-                <Card.Title isDark={!!backgroundUrl} className="mb-3">
+                <Card.Title darkMode={!!backgroundUrl} className="mb-3">
                   {v.title}
                 </Card.Title>
                 <Card.Content
-                  customStyle={{
+                  style={{
                     fontSize: 14,
                     textAlign: 'left',
                     fontWeight: 'normal',
                     lineHeight: 1.5,
                     color: !!backgroundUrl ? 'white' : 'black',
-                    mt: '0',
-                    mb: '0',
-                    mr: '0',
-                    ml: '0',
+                    margin: 0,
                   }}
                 >
                   {v.description}
                 </Card.Content>
-              </Card>
+              </CraftCard>
             </div>
           ))}
         </div>
       </div>
-    </BackgroundSection>
+    </CraftSection>
   )
 }
 

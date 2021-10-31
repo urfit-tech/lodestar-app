@@ -1,6 +1,12 @@
 import Carousel from 'lodestar-app-element/src/components/common/Carousel'
+import {
+  CraftButton,
+  CraftParagraph,
+  CraftSection,
+  CraftTitle,
+} from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 const CoverSection: React.VFC<{
   options: {
@@ -23,43 +29,43 @@ const CoverSection: React.VFC<{
     <section>
       <Carousel dots infinite arrows={false} autoplay autoplaySpeed={5000} variant="cover">
         {options.coverInfos.map(v => (
-          <Carousel.Slide
-            srcDesktop={v.srcDesktop}
-            srcMobile={v.srcMobile}
-            title={v.title}
-            subtitle={v.subtitle}
-            buttonText={v.link && v.buttonText ? <Link to={v.link}>{v.buttonText}</Link> : undefined}
-            onClick={() => {
-              if (v.buttonText) {
-                return
-              }
-              if (!v.link) return
-              v.external ? window.open(v.link) : history.push(v.link)
+          <CraftSection
+            responsive={{
+              desktop: {
+                customStyle: {
+                  backgroundImage: `url(${v.srcDesktop})`,
+                },
+              },
+              mobile: {
+                customStyle: {
+                  backgroundImage: `url(${v.srcMobile})`,
+                },
+              },
             }}
-            customStyle={{
-              title: {
+          >
+            <CraftTitle
+              title={v.title}
+              customStyle={{
                 fontSize: 40,
                 textAlign: 'center',
                 fontWeight: 'bold',
                 color: '#fff',
-                mt: 0,
-                mr: 0,
-                mb: 0,
-                ml: 0,
-              },
-              paragraph: {
+                margin: 0,
+              }}
+            />
+            <CraftParagraph
+              content={v.subtitle}
+              customStyle={{
                 textAlign: 'center',
                 fontSize: 20,
                 fontWeight: 'normal',
                 lineHeight: 1.5,
                 color: '#fff',
-                mt: 0,
-                mr: 0,
-                mb: 0,
-                ml: 0,
-              },
-            }}
-          />
+                margin: 0,
+              }}
+            />
+            <CraftButton title={v.buttonText} link={v.link} />
+          </CraftSection>
         ))}
       </Carousel>
     </section>
