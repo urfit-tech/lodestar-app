@@ -94,7 +94,7 @@
     "libphonenumber-js": "1.9.34",
     "lint-staged": "10.5.4",
     "lodash": "^4.17.15",
-    "lodestar-app-element": "urfit-tech/lodestar-app-element#a62840704a92303a632ce039ab501292a73e761c",
+    "lodestar-app-element": "urfit-tech/lodestar-app-element#b1d3ab6d3dda640bc1f18de0887fe409e652ee51",
     "moment-timezone": "^0.5.31",
     "mustache": "^4.2.0",
     "node-sass": "4.14.1",
