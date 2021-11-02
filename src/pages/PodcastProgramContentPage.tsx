@@ -1,4 +1,5 @@
 import { SkeletonText } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useParams } from 'react-router-dom'
@@ -31,6 +32,7 @@ const PodcastProgramContentPage: React.VFC = () => {
   const { podcastProgramId } = useParams<{ podcastProgramId: string }>()
   const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
   const { currentMemberId } = useAuth()
+  const { settings } = useApp()
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(podcastProgramId)
   const { loadingPodcastAlbumPreview, podcastAlbumPreview } = usePodcastAlbumPreview(podcastAlbumId || '')
 
@@ -62,11 +64,12 @@ const PodcastProgramContentPage: React.VFC = () => {
 
         <div className="col-12 col-lg-8">
           <StyledContentWrapper>
-            {podcastProgram.instructorIds.map(instructorId => (
-              <div key={instructorId} className="mb-5">
-                <CreatorCard id={instructorId} />
-              </div>
-            ))}
+            {!settings['podcast_program_content_page.creator_card.disable'] &&
+              podcastProgram.instructorIds.map(instructorId => (
+                <div key={instructorId} className="mb-5">
+                  <CreatorCard id={instructorId} />
+                </div>
+              ))}
             <div className="mb-5">
               <BraftContent>{podcastProgram.description ? podcastProgram.description : null}</BraftContent>
             </div>
