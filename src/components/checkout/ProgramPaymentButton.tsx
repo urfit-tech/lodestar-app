@@ -41,6 +41,7 @@ const ProgramPaymentButton: React.VFC<{
 }> = ({ program, variant }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
+  const { settings } = useApp()
   const { isProgramInCart, handleAddCartProgram } = useAddProgramToCart(program)
 
   return program.isSoldOut ? (
@@ -53,7 +54,7 @@ const ProgramPaymentButton: React.VFC<{
     </Button>
   ) : (
     <div className={variant === 'multiline' ? 'd-flex flex-column' : 'd-flex'}>
-      {program.listPrice !== 0 && (
+      {program.listPrice !== 0 && !settings['feature.cart.disable'] && (
         <StyleButton
           className="mr-2"
           variant="outline"
