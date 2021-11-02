@@ -42,9 +42,28 @@ const StyledCard = styled.div`
   overflow: hidden;
 `
 
-const StyledCardImg = styled.img`
-  object-fit: cover;
-  aspect-ratio: 1;
+const StyledCardImgWrapper = styled.div`
+  position: relative;
+  ::before {
+    float: left;
+    padding-top: 100%;
+    content: '';
+  }
+  ::after {
+    display: block;
+    content: '';
+    clear: both;
+  }
+  > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `
 
 const StyledCardTitle = styled.h3`
@@ -72,7 +91,9 @@ const PodcastAlbumCard: React.VFC<Pick<PodcastAlbum, 'title' | 'coverUrl'> & { u
 
   return (
     <StyledCard>
-      <StyledCardImg src={coverUrl || EmptyCover} alt="podcast-album" />
+      <StyledCardImgWrapper>
+        <img src={coverUrl || EmptyCover} alt={title} />
+      </StyledCardImgWrapper>
       <div className="p-4">
         <StyledCardTitle className="mb-1">{title}</StyledCardTitle>
         <StyledUnit>{formatMessage(messages.totalUnit, { unitCount })}</StyledUnit>
