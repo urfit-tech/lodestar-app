@@ -17,6 +17,7 @@ type PodcastPlayerContextValue = {
   mode: PodcastPlayerMode
   rate: number
   currentPodcastProgramContent: PodcastProgramContent | null
+  podcastProgramUrl: string
   changePlayingState?: (state: boolean) => void
   changeRate?: (rate: number) => void
   changeMode?: (mode: PodcastPlayerMode) => void
@@ -28,6 +29,8 @@ type PodcastPlayerContextValue = {
     podcastAlbumId?: string
     currentIndex?: number
   }) => void
+  setPodcastProgramUrl?: React.Dispatch<React.SetStateAction<string>>
+  setSeek?: React.Dispatch<React.SetStateAction<number>>
 }
 
 const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
@@ -42,6 +45,7 @@ const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
   visible: false,
   mode: 'loop',
   rate: Number(localStorage.getItem('podcast.rate')) || 1,
+  podcastProgramUrl: '',
 }
 const PodcastPlayerContext = createContext<PodcastPlayerContextValue>(defaultPodcastPlayerContext)
 
@@ -58,6 +62,16 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const [playing, setPlaying] = useState(defaultPodcastPlayerContext.playing)
   const [rate, setRate] = useState(defaultPodcastPlayerContext.rate)
   // const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(currentPodcastProgramId)
+  const [podcastProgramUrl, setPodcastProgramUrl] = useState(podcastProgram?.url || '')
+  const [seek, setSeek] = useState(0)
+
+  useEffect(() => {
+    howlerRef.current?.seek(seek)
+  }, [seek])
+
+  useEffect(() => {
+    podcastProgram?.url && setPodcastProgramUrl(podcastProgram?.url)
+  }, [podcastProgram?.url])
 
   useEffect(() => {
     localStorage.setItem('podcast.playing', Number(playing).toString())
@@ -93,6 +107,9 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         currentPodcastProgramContent: podcastProgram,
         visible,
         mode,
+        podcastProgramUrl: podcastProgramUrl,
+        setPodcastProgramUrl: url => setPodcastProgramUrl(url),
+        setSeek: currentSeek => setSeek(currentSeek),
         changePlayingState: state => setPlaying(state),
         changeRate: rate => {
           setRate(rate)
@@ -115,12 +132,12 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         },
       }}
     >
-      {podcastProgram?.url && (
+      {!loadingPodcastProgram && podcastProgram?.url && (
         <ReactHowler
           html5
-          key={podcastProgramIds[currentIndex]}
+          key={podcastProgramUrl}
           ref={ref => ref && (howlerRef.current = ref)}
-          src={podcastProgram.url}
+          src={podcastProgramUrl}
           playing={playing}
           rate={rate}
           onPlay={() => {
@@ -132,13 +149,19 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           onEnd={() => {
             if (mode === 'single-loop') {
               howlerRef.current?.seek(0)
+              setPlaying(false)
+              setTimeout(() => setPlaying(true), 100)
             } else if (mode === 'loop') {
               setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
+              setPlaying(false)
+              setTimeout(() => setPlaying(true), 100)
             } else if (mode === 'random') {
               setCurrentIndex(
                 index =>
                   (index + Math.floor(Math.random() * (podcastProgramIds.length - 1))) % podcastProgramIds.length,
               )
+              setPlaying(false)
+              setTimeout(() => setPlaying(true), 100)
             }
           }}
         />
