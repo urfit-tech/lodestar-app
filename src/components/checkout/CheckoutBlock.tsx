@@ -199,7 +199,7 @@ const CheckoutBlock: React.VFC<{
       ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
     } else {
       isValidShipping = !hasPhysicalProduct || validateShipping(shipping)
-      isValidInvoice = validateInvoice(invoice).length === 0
+      isValidInvoice = settings['feature.invoice.disable'] ? true : validateInvoice(invoice).length === 0
     }
 
     refetchCartProductsWithInventory()
@@ -366,16 +366,17 @@ const CheckoutBlock: React.VFC<{
           </div>
 
           <div ref={invoiceRef} className="mb-3">
-            {renderInvoice?.({ invoice, setInvoice, isValidating }) || (
-              <AdminCard>
-                <InvoiceInput
-                  value={invoice}
-                  onChange={value => setInvoice(value)}
-                  isValidating={isValidating}
-                  shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
-                />
-              </AdminCard>
-            )}
+            {renderInvoice?.({ invoice, setInvoice, isValidating }) ||
+              (!settings['feature.invoice.disable'] && (
+                <AdminCard>
+                  <InvoiceInput
+                    value={invoice}
+                    onChange={value => setInvoice(value)}
+                    isValidating={isValidating}
+                    shouldSameToShippingCheckboxDisplay={hasPhysicalProduct}
+                  />
+                </AdminCard>
+              ))}
           </div>
         </>
       )}
