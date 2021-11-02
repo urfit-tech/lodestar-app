@@ -1,4 +1,5 @@
 import { Button, Icon } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import React, { useContext } from 'react'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
@@ -30,6 +31,7 @@ const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
 const ProgramPlanPaymentButton: React.VFC<{ programPlan: ProgramPlan }> = ({ programPlan }) => {
   const { formatMessage } = useIntl()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
+  const { settings } = useApp()
   const sessionStorageKey = `lodestar.sharing_code.ProgramPlan_${programPlan.id}`
   const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
   sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
@@ -51,18 +53,19 @@ const ProgramPlanPaymentButton: React.VFC<{ programPlan: ProgramPlan }> = ({ pro
         </Button>
       ) : (
         <div className="d-flex flex-column">
-          <StyleButton
-            className="mr-2"
-            variant="outline"
-            colorScheme="primary"
-            isFullWidth
-            isMultiline
-            onClick={handleAddCart}
-          >
-            <Icon as={AiOutlineShoppingCart} />
-            <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
-          </StyleButton>
-
+          {!settings['feature.cart.disable'] && (
+            <StyleButton
+              className="mr-2"
+              variant="outline"
+              colorScheme="primary"
+              isFullWidth
+              isMultiline
+              onClick={handleAddCart}
+            >
+              <Icon as={AiOutlineShoppingCart} />
+              <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
+            </StyleButton>
+          )}
           <Button colorScheme="primary" isFullWidth onClick={() => handleAddCart()?.then(() => history.push('/cart'))}>
             {programPlan.listPrice === 0
               ? formatMessage(commonMessages.button.join)
