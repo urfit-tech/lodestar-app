@@ -1,5 +1,6 @@
 import { SkeletonText } from '@chakra-ui/react'
 import { Button, List, Menu } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -10,6 +11,7 @@ import { podcastMessages } from '../../helpers/translation'
 import { usePodcastProgram } from '../../hooks/podcast'
 import EmptyCover from '../../images/empty-cover.png'
 import { AvatarImage, CustomRatioImage } from '../common/Image'
+import { BREAK_POINT } from '../common/Responsive'
 
 const StyledWrapper = styled.div`
   width: 100vw;
@@ -60,6 +62,15 @@ const StyledTitle = styled.div`
   letter-spacing: 0.2px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+
+  max-width: 190px;
+  @media (min-width: 375px) {
+    max-width: 295px;
+  }
+  @media (min-width: ${BREAK_POINT}px) {
+    max-width: 315px;
+  }
 `
 const StyledInstructorName = styled.div`
   color: var(--gray-dark);
@@ -139,6 +150,7 @@ const PlayListItem: React.VFC<{
   onPlay?: (podcastProgramId: string) => void
 }> = ({ podcastProgramId, isPlaying, onPlay }) => {
   const { status, podcastProgram } = usePodcastProgram(podcastProgramId)
+  const { settings } = useApp()
 
   if (status !== 'success') {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -158,12 +170,18 @@ const PlayListItem: React.VFC<{
         <StyledDuration>{`${podcastProgram.duration}`.padStart(2, '0')}:00</StyledDuration>
       </StyledCoverBlock>
 
-      <div className="flex-grow-1 cursor-pointer" onClick={() => onPlay && onPlay(podcastProgramId)}>
+      <div
+        className="flex-grow-1 cursor-pointer"
+        style={{ position: 'relative' }}
+        onClick={() => onPlay && onPlay(podcastProgramId)}
+      >
         <StyledTitle>{podcastProgram.title}</StyledTitle>
-        <div className="d-flex align-items-center">
-          <AvatarImage size="24px" src={podcastProgram.creator.avatarUrl} className="mr-1 flex-shrink-0" />
-          <StyledInstructorName className="flex-grow-1">{podcastProgram.creator.name}</StyledInstructorName>
-        </div>
+        {!settings['playlist_overlay.creator_display.disable'] && (
+          <div className="d-flex align-items-center">
+            <AvatarImage size="24px" src={podcastProgram.creator.avatarUrl} className="mr-1 flex-shrink-0" />
+            <StyledInstructorName className="flex-grow-1">{podcastProgram.creator.name}</StyledInstructorName>
+          </div>
+        )}
       </div>
     </StyledListItem>
   )
