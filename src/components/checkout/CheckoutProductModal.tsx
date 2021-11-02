@@ -227,7 +227,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
       ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
     } else {
       isValidShipping = !target.isPhysical || validateShipping(shipping)
-      isValidInvoice = validateInvoice(invoice).length === 0
+      isValidInvoice = settings['feature.invoice.disable'] ? true : validateInvoice(invoice).length === 0
     }
 
     if (totalPrice > 0 && payment === null) {
@@ -372,14 +372,15 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
         {(totalPrice > 0 || target.discountDownPrice) && (
           <>
             <div ref={invoiceRef} className="mb-5">
-              {renderInvoice?.({ invoice, setInvoice, isValidating }) || (
-                <InvoiceInput
-                  value={invoice}
-                  onChange={value => setInvoice(value)}
-                  isValidating={isValidating}
-                  shouldSameToShippingCheckboxDisplay={target.isPhysical}
-                />
-              )}
+              {renderInvoice?.({ invoice, setInvoice, isValidating }) ||
+                (!settings['feature.invoice.disable'] && (
+                  <InvoiceInput
+                    value={invoice}
+                    onChange={value => setInvoice(value)}
+                    isValidating={isValidating}
+                    shouldSameToShippingCheckboxDisplay={target.isPhysical}
+                  />
+                ))}
             </div>
             <div className="mb-3">
               <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
