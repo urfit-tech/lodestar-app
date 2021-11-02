@@ -8,7 +8,6 @@ import { AiOutlineLoading } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { v4 } from 'uuid'
 import PodcastPlayerContext, { PodcastPlayerMode } from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
 import {
@@ -246,24 +245,20 @@ const PodcastPlayer: React.VFC<{
   onNext,
 }) => {
   const [showAction, setShowAction] = useState(false)
-  const { sound, podcastProgramUrl, setPodcastProgramUrl, setSeek } = useContext(PodcastPlayerContext)
+  const { sound, setSeek, durationInfo, setDurationInfo } = useContext(PodcastPlayerContext)
 
   const onRateChange = (rate: number) => {
     const tmpSeek = sound?.seek()
-    const hashCode = v4()
-    const tmpUrl = `${podcastProgramUrl}&hash=${hashCode}`
     onPlayRateChange?.(rate)
-    setPodcastProgramUrl?.(tmpUrl)
     setSeek?.(tmpSeek || 0)
+    setDurationInfo?.({ progress, duration })
   }
 
   const onModeChange = (mode: PodcastPlayerMode) => {
     const tmpSeek = sound?.seek()
-    const hashCode = v4()
-    const tmpUrl = `${podcastProgramUrl}&hash=${hashCode}`
     onPlayModeChange?.(mode)
-    setPodcastProgramUrl?.(tmpUrl)
     setSeek?.(tmpSeek || 0)
+    setDurationInfo?.({ progress, duration })
   }
 
   return (
@@ -302,7 +297,9 @@ const PodcastPlayer: React.VFC<{
                 <StyledTitle className="flex-grow-1">{title}</StyledTitle>
               </StyledLink>
               <StyledDuration className="flex-shrink-0">
-                {durationFormat(progress)}/{durationFormat(duration)}
+                {durationInfo.duration === 0
+                  ? `${durationFormat(progress)} / ${durationFormat(duration)}`
+                  : `${durationFormat(durationInfo.progress)} / ${durationFormat(durationInfo.duration)}`}
               </StyledDuration>
             </div>
           </Responsive.Default>
@@ -320,7 +317,9 @@ const PodcastPlayer: React.VFC<{
                   <StyledTitle>{title}</StyledTitle>
                 </Link>
                 <StyledDuration>
-                  {durationFormat(progress)}/{durationFormat(duration)}
+                  {durationInfo.duration === 0
+                    ? `${durationFormat(progress)} / ${durationFormat(duration)}`
+                    : `${durationFormat(durationInfo.progress)} / ${durationFormat(durationInfo.duration)}`}
                 </StyledDuration>
               </Responsive.Desktop>
             </div>
