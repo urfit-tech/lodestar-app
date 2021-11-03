@@ -1,9 +1,7 @@
-import { generateCustomParagraphStyle, generateCustomTitleStyle } from 'lodestar-app-element/src/components/common'
 import Carousel from 'lodestar-app-element/src/components/common/Carousel'
-import { ParagraphProps, TitleProps } from 'lodestar-app-element/src/types/style'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { CSSObject } from 'styled-components'
 
 const SliderWrapper = styled.div<{ desktopHeight?: string; mobileHeight?: string }>`
   position: relative;
@@ -33,46 +31,30 @@ const StyledCoverBackground = styled.div<{ srcDesktop: string; srcMobile: string
     background-image: url(${props => props.srcDesktop});
   }
 `
-const StyledCoverHeading = styled.h2<{ customStyle?: TitleProps }>`
+const StyledCoverHeading = styled.h2<{ customStyle?: CSSObject }>`
   color: ${props => props.customStyle?.color || 'white'};
   font-size: 28px;
   font-weight: 500;
   letter-spacing: 0.23px;
-  ${props => props.customStyle && `text-align: ${props.customStyle.textAlign}`};
+  text-align: ${props => props.customStyle?.textAlign};
 
   @media (min-width: 992px) {
     font-size: 52px;
     line-height: 1.3;
     letter-spacing: 1px;
-
-    && {
-      ${generateCustomTitleStyle}
-    }
   }
 `
 
-const StyledParagraph = styled.p<{ customStyle?: ParagraphProps }>`
+const StyledParagraph = styled.p<{ customStyle?: CSSObject }>`
   color: #fff;
   font-size: 16px;
-  font-weight: ${props =>
-    props.customStyle &&
-    (props.customStyle.fontWeight === 'bold'
-      ? 800
-      : props.customStyle.fontWeight === 'normal'
-      ? 500
-      : props.customStyle.fontWeight === 'lighter'
-      ? 200
-      : 500)};
+  font-weight: ${props => props.customStyle?.fontWeight};
   line-height: 1.69;
   letter-spacing: 0.2px;
 
   @media (min-width: 992px) {
     font-size: 27px;
     text-align: center;
-  }
-
-  && {
-    ${generateCustomParagraphStyle}
   }
 `
 

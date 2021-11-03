@@ -1,4 +1,5 @@
 import Carousel from 'lodestar-app-element/src/components/common/Carousel'
+import { CraftCard } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import styled from 'styled-components'
 import { StyledSection } from '../../pages/AppPage'
@@ -76,47 +77,48 @@ const SliderSection: React.FC<{
           ]}
         >
           {infos.map(v => (
-            <Carousel.DialogCard
-              title={v.title}
-              description={v.description}
-              avatarSrc={v.imgSrc}
-              name={v.name}
-              customStyle={{
-                card: {
-                  bordered: true,
-                  shadow: true,
-                  mt: '20',
-                  mb: '54',
-                  mr: '20',
-                  ml: '20',
-                  pt: '32',
-                  pb: '32',
-                  pr: '32',
-                  pl: '32',
-                },
-                title: {
-                  textAlign: 'left',
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                  color: '#585858',
-                  mt: '0',
-                  mb: '0',
-                  mr: '0',
-                  ml: '0',
-                },
-                paragraph: {
-                  textAlign: 'left',
-                  fontSize: 16,
-                  fontWeight: 'normal',
-                  lineHeight: 1.7,
-                  color: '#585858',
-                  mt: '0',
-                  mb: '0',
-                  mr: '0',
-                  ml: '0',
-                },
-              }}
-            />
+            <CraftCard />
+            // <Carousel.DialogCard
+            //   title={v.title}
+            //   description={v.description}
+            //   avatarSrc={v.imgSrc}
+            //   name={v.name}
+            //   customStyle={{
+            //     card: {
+            //       bordered: true,
+            //       shadow: true,
+            //       mt: '20',
+            //       mb: '54',
+            //       mr: '20',
+            //       ml: '20',
+            //       pt: '32',
+            //       pb: '32',
+            //       pr: '32',
+            //       pl: '32',
+            //     },
+            //     title: {
+            //       textAlign: 'left',
+            //       fontSize: 20,
+            //       fontWeight: 'bold',
+            //       color: '#585858',
+            //       mt: '0',
+            //       mb: '0',
+            //       mr: '0',
+            //       ml: '0',
+            //     },
+            //     paragraph: {
+            //       textAlign: 'left',
+            //       fontSize: 16,
+            //       fontWeight: 'normal',
+            //       lineHeight: 1.7,
+            //       color: '#585858',
+            //       mt: '0',
+            //       mb: '0',
+            //       mr: '0',
+            //       ml: '0',
+            //     },
+            //   }}
+            // />
           ))}
         </Carousel>
       </StyledContainer>
