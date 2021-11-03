@@ -1511,14 +1511,6 @@
     "@chakra-ui/icon" "1.0.0"
     "@types/react" "16.9.44"
 
-"@chakra-ui/icons@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@chakra-ui/icons/-/icons-1.0.0.tgz#eb4d2592b471e8d59cabf8616bf20c85e877b756"
-  integrity sha512-Y/YaGtIYPoctY9vm5frmmcnSd7YQdRk6uksLqDqI9cJyfjfmuOaecyMG1ryKngovoxZeUlDGkC/Bef81RHIB9w==
-  dependencies:
-    "@chakra-ui/icon" "1.0.0"
-    "@types/react" "16.9.44"
-
 "@chakra-ui/icons@^1.0.0":
   version "1.0.16"
   resolved "https://registry.yarnpkg.com/@chakra-ui/icons/-/icons-1.0.16.tgz#b8bb0f258c6b883cb050bd840fffc08834db932a"
@@ -10789,9 +10781,9 @@ lodash.xorby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#cb855ed58f0f6593641ac15d8bba6b104970893b:
+lodestar-app-element@urfit-tech/lodestar-app-element#de8ab950c5f378c22ea45ed200c56b649be478b6:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/cb855ed58f0f6593641ac15d8bba6b104970893b"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/de8ab950c5f378c22ea45ed200c56b649be478b6"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -10819,10 +10811,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#cb855ed58f0f6593641ac15d8bb
     apollo-link-http "1.5.17"
     axios "0.21.4"
     braft-editor "2.3.9"
-<<<<<<< HEAD
     classnames "^2.3.1"
-=======
->>>>>>> [FEATURE] hide invoice input for cart and modal
     framer-motion "2.9.4"
     graphql-tag "2.12.5"
     jsonwebtoken "8.5.1"
