@@ -64,7 +64,7 @@ const GlobalPodcastPlayer: React.VFC = () => {
           onBackward={(seconds = 5) => sound?.seek(sound.seek() - seconds)}
           onForward={(seconds = 5) => sound?.seek(sound.seek() + seconds)}
           onPlayRateChange={rate => changeRate?.(rate)}
-          onModeChange={mode => changeMode?.(mode)}
+          onPlayModeChange={mode => changeMode?.(mode)}
           onSeek={progress => sound?.seek(progress)}
           onClose={() => close?.()}
           onPrev={() => shift?.(-1)}

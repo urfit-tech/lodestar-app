@@ -15,9 +15,7 @@ export const usePodcastAlbumPreview = (podcastAlbumId: string) => {
           title
           podcast_album_podcast_programs(order_by: { position: asc }) {
             id
-            podcast_program {
-              id
-            }
+            podcast_program_id
           }
         }
       }
@@ -28,7 +26,7 @@ export const usePodcastAlbumPreview = (podcastAlbumId: string) => {
   const podcastAlbumPreview: PodcastAlbumPreview = {
     id: data?.podcast_album_by_pk?.id,
     title: data?.podcast_album_by_pk?.title || '',
-    podcastProgramIds: data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.id) || [],
+    podcastProgramIds: data?.podcast_album_by_pk?.podcast_album_podcast_programs.map(v => v.podcast_program_id) || [],
   }
 
   return {
