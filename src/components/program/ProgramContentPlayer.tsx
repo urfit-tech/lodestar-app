@@ -175,7 +175,7 @@ const ProgramContentPlayer: React.VFC<{
             }}
             onDurationChange={() => {
               if (streamRef.current && !streamRef.current.currentTime) {
-                streamRef.current.currentTime = (streamRef.current as any).duration * lastProgress
+                streamRef.current.currentTime = (streamRef.current as any).duration * (lastProgress || 0)
               }
             }}
             onEnded={() => {
