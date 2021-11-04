@@ -13,8 +13,8 @@ import styled from 'styled-components'
 import ActivityBanner from '../components/activity/ActivityBanner'
 import ActivitySessionItem from '../components/activity/ActivitySessionItem'
 import ActivityTicket from '../components/activity/ActivityTicket'
+import ActivityTicketPaymentButton from '../components/activity/ActivityTicketPaymentButton'
 import { AuthModalContext } from '../components/auth/AuthModal'
-import CheckoutProductModal from '../components/checkout/CheckoutProductModal'
 import CreatorCard from '../components/common/CreatorCard'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
@@ -201,31 +201,7 @@ const ActivityPage: React.VFC = () => {
                               {formatMessage(commonMessages.button.cutoff)}
                             </Button>
                           ) : isAuthenticated ? (
-                            <CheckoutProductModal
-                              defaultProductId={`ActivityTicket_${ticket.id}`}
-                              renderTrigger={({ isLoading, onOpen }) => (
-                                <Button
-                                  colorScheme="primary"
-                                  isFullWidth
-                                  isDisabled={isLoading}
-                                  onClick={() => {
-                                    ReactGA.plugin.execute('ec', 'addProduct', {
-                                      id: ticket.id,
-                                      name: `${activity.title} - ${ticket.title}`,
-                                      category: 'ActivityTicket',
-                                      price: `${ticket.price}`,
-                                      quantity: '1',
-                                      currency: 'TWD',
-                                    })
-                                    ReactGA.plugin.execute('ec', 'setAction', 'add')
-                                    ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                                    onOpen?.()
-                                  }}
-                                >
-                                  {formatMessage(commonMessages.button.register)}
-                                </Button>
-                              )}
-                            />
+                            <ActivityTicketPaymentButton ticket={ticket} />
                           ) : (
                             <Button
                               colorScheme="primary"

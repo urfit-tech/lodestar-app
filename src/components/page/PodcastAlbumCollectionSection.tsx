@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Skeleton } from '@chakra-ui/skeleton'
 import gql from 'graphql-tag'
-import Responsive from 'lodestar-app-element/src/components/Responsive'
+import Responsive from 'lodestar-app-element/src/components/common/Responsive'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
@@ -56,7 +56,7 @@ const StyledCard = styled.div`
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
   background-color: #fff;
 `
-export const StyledCardImgWrapper = styled.div`
+const StyledCardImgWrapper = styled.div`
   position: relative;
   ::before {
     float: left;
@@ -149,7 +149,7 @@ const PodcastAlbumCollectionSection: React.FC<{
                   <div className="unit mb-3">共 {podcastAlbum.programCount} 單元</div>
                   <Responsive.Desktop>
                     <div className="tag-group">
-                      {podcastAlbum.categoryNames.map(name => (
+                      {podcastAlbum.categoryNames.slice(0, 1).map(name => (
                         <span className="tag mr-2" key={name}>
                           {name}
                         </span>

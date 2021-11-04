@@ -1,5 +1,5 @@
-import Article from 'lodestar-app-element/src/components/Article'
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
+import Article from 'lodestar-app-element/src/components/common/Article'
+import { CraftParagraph, CraftSection, CraftTitle } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 
 const ArticleSection: React.FC<{
@@ -9,53 +9,39 @@ const ArticleSection: React.FC<{
   }
 }> = ({ options: { title, description } }) => {
   return (
-    <BackgroundSection
+    <CraftSection
       customStyle={{
-        mt: '0',
-        mb: '0',
-        mr: '0',
-        ml: '0',
-        pt: '64',
-        pb: '64',
-        pr: '20',
-        pl: '20',
+        margin: 0,
+        padding: '64px 20px',
       }}
     >
       <div className="container">
         <Article>
-          <Article.Title
+          <CraftTitle
             className="mb-4"
+            title={title || ''}
             customStyle={{
               textAlign: 'left',
               fontSize: 24,
               fontWeight: 'bold',
               color: '#585858',
-              mt: 0,
-              mr: 0,
-              mb: 0,
-              ml: 0,
+              margin: 0,
             }}
-          >
-            {title}
-          </Article.Title>
-          <Article.Content
+          />
+          <CraftParagraph
+            content={description || ''}
             customStyle={{
               textAlign: 'left',
               fontSize: 16,
               fontWeight: 'normal',
               lineHeight: 1.7,
               color: '#585858',
-              mt: 0,
-              mr: 0,
-              mb: 0,
-              ml: 0,
+              margin: 0,
             }}
-          >
-            {description}
-          </Article.Content>
+          />
         </Article>
       </div>
-    </BackgroundSection>
+    </CraftSection>
   )
 }
 

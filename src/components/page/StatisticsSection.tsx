@@ -1,5 +1,5 @@
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
-import Stat from 'lodestar-app-element/src/components/Stat'
+import { CraftParagraph, CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
+import Stat from 'lodestar-app-element/src/components/common/Stat'
 import React from 'react'
 import styled from 'styled-components'
 import { SectionTitle } from '../../pages/AppPage'
@@ -27,7 +27,7 @@ const StatisticsSection: React.FC<{
   }
 }> = ({ options: { background = null, title, imgUrl, infos = [] } }) => {
   return (
-    <BackgroundSection
+    <CraftSection
       customStyle={{
         backgroundImage: background || '',
         mt: '0',
@@ -56,36 +56,26 @@ const StatisticsSection: React.FC<{
               {infos.map(v => (
                 <Stat>
                   <Stat.Image
-                    src={v.iconSrc}
-                    customStyle={{
-                      mt: '0',
-                      mb: '24',
-                      mr: '0',
-                      ml: '0',
-                      pt: '0',
-                      pb: '0',
-                      pr: '0',
-                      pl: '0',
+                    style={{
+                      backgroundImage: `url(${v.iconSrc})`,
+                      margin: '0 0 24px 0',
+                      padding: 0,
                     }}
                   />
                   <Stat.Digit isDark={!!background} className="mb-3 text-center">
                     {v.digit}
                   </Stat.Digit>
-                  <Stat.Content
+                  <CraftParagraph
+                    content={v.description}
                     customStyle={{
                       textAlign: 'center',
                       fontSize: '20',
                       fontWeight: 'normal',
                       lineHeight: 1,
                       color: !!background ? 'white' : '#585858',
-                      mt: '20',
-                      mb: '20',
-                      mr: '20',
-                      ml: '20',
+                      margin: 20,
                     }}
-                  >
-                    {v.description}
-                  </Stat.Content>
+                  />
                   <p className="text-center"></p>
                 </Stat>
               ))}
@@ -93,7 +83,7 @@ const StatisticsSection: React.FC<{
           </div>
         </div>
       </div>
-    </BackgroundSection>
+    </CraftSection>
   )
 }
 

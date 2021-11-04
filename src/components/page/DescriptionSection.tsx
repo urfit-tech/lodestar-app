@@ -1,4 +1,4 @@
-import Article from 'lodestar-app-element/src/components/Article'
+import Article from 'lodestar-app-element/src/components/common/Article'
 import React from 'react'
 import { StyledSection } from '../../pages/AppPage'
 
@@ -20,30 +20,22 @@ const DescriptionSection: React.FC<{
               <Article className="my-5">
                 <Article.DescriptionTitle
                   className="mb-4"
-                  customStyle={{
+                  style={{
                     textAlign: 'left',
                     fontSize: 24,
                     fontWeight: 'bold',
                     color: '#585858',
-                    mt: 0,
-                    mr: 0,
-                    mb: 0,
-                    ml: 0,
                   }}
                 >
                   {v.title}
                 </Article.DescriptionTitle>
                 <Article.Content
-                  customStyle={{
+                  style={{
                     textAlign: 'left',
                     fontSize: 16,
                     fontWeight: 'normal',
                     lineHeight: 1.7,
                     color: '#585858',
-                    mt: 0,
-                    mr: 0,
-                    mb: 0,
-                    ml: 0,
                   }}
                 >
                   {v.description}

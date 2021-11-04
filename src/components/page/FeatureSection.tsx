@@ -1,5 +1,5 @@
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
-import Card from 'lodestar-app-element/src/components/Card'
+import Card from 'lodestar-app-element/src/components/cards/Card'
+import { CraftCard, CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import styled from 'styled-components'
 import { SectionTitle } from '../../pages/AppPage'
@@ -20,7 +20,7 @@ const FeatureSection: React.FC<{
   }
 }> = ({ options: { backgroundUrl = null, title, infos = [] } }) => {
   return (
-    <BackgroundSection
+    <CraftSection
       customStyle={{
         backgroundImage: backgroundUrl || '',
         mt: '0',
@@ -39,31 +39,22 @@ const FeatureSection: React.FC<{
 
         <div className="d-flex flex-column flex-md-row">
           {infos.map(v => (
-            <Card
-              isDark={!!backgroundUrl}
+            <CraftCard
+              darkMode={!!backgroundUrl}
               customStyle={{
-                direction: 'row',
-                bordered: false,
-                shadow: false,
-                mt: '24',
-                mb: '24',
-                mr: '0',
-                ml: '0',
-                pt: '0',
-                pb: '0',
-                pr: '0',
-                pl: '0',
+                margin: '24px 0',
+                padding: 0,
               }}
             >
               <StyledImage src={v.iconSrc} className="mr-3" alt="icon" />
-              <Card.Title isDark={!!backgroundUrl} className="my-auto">
+              <Card.Title darkMode={!!backgroundUrl} className="my-auto">
                 {v.title}
               </Card.Title>
-            </Card>
+            </CraftCard>
           ))}
         </div>
       </div>
-    </BackgroundSection>
+    </CraftSection>
   )
 }
 

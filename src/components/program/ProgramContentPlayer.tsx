@@ -101,7 +101,10 @@ const ProgramContentPlayer: React.VFC<{
   }
 
   const lastProgress =
-    programContentProgress?.find(progress => progress.programContentId === programContentId)?.lastProgress || 0
+    !!programContentProgress?.find(progress => progress.programContentId === programContentId)?.lastProgress ||
+    !(programContentProgress?.find(progress => progress.programContentId === programContentId)?.progress === 1)
+      ? programContentProgress?.find(progress => progress.programContentId === programContentId)?.lastProgress
+      : 0
 
   const getCurrentProgress = (player: StreamPlayerApi) => Number(player.currentTime) / Number((player as any).duration)
 
@@ -172,7 +175,7 @@ const ProgramContentPlayer: React.VFC<{
             }}
             onDurationChange={() => {
               if (streamRef.current && !streamRef.current.currentTime) {
-                streamRef.current.currentTime = (streamRef.current as any).duration * lastProgress
+                streamRef.current.currentTime = (streamRef.current as any).duration * (lastProgress || 0)
               }
             }}
             onEnded={() => {

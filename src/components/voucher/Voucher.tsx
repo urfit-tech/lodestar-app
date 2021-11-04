@@ -94,6 +94,7 @@ export type VoucherProps = {
   available: boolean
   extra?: React.ReactNode
   action?: React.ReactNode
+  isTransferable?: boolean
 }
 const Voucher: React.VFC<VoucherProps> = ({
   title,

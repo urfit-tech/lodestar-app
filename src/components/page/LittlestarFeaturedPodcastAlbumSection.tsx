@@ -6,7 +6,8 @@ import { notEmpty } from '../../helpers'
 import EmptyCover from '../../images/empty-cover.png'
 import { MultiLineTruncationMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
-import { MoreLink, SectionLayout, StyledCardImgWrapper } from './PodcastAlbumCollectionSection'
+import { MoreLink, SectionLayout } from './PodcastAlbumCollectionSection'
+
 const StyledCard = styled.div`
   border-radius: 12px;
   margin: 0 auto;
@@ -15,10 +16,6 @@ const StyledCard = styled.div`
   width: 100%;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
   background-color: #fff;
-
-  img {
-    margin-bottom: 32px;
-  }
 
   h3 {
     font-family: PingFangTC;
@@ -59,6 +56,18 @@ const StyledCard = styled.div`
   }
 `
 
+const StyledCardImgWrapper = styled.div`
+  img {
+    margin-bottom: 32px;
+  }
+
+  @media (min-width: ${BREAK_POINT}px) {
+    img {
+      margin-bottom: 0;
+    }
+  }
+`
+
 const LittlestarFeaturedPodcastAlbumSection: React.FC<{
   options: {
     title?: string
@@ -71,11 +80,9 @@ const LittlestarFeaturedPodcastAlbumSection: React.FC<{
       {podcastAlbum && (
         <StyledCard>
           <div className="row">
-            <div className="col-12 col-lg-5">
-              <StyledCardImgWrapper>
-                <img src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
-              </StyledCardImgWrapper>
-            </div>
+            <StyledCardImgWrapper className="col-12 col-lg-5">
+              <img src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
+            </StyledCardImgWrapper>
             <div className="col-12 col-lg-7 d-flex align-items-center">
               <div className="flex-grow-1">
                 <h3 className="mb-3">{podcastAlbum.title}</h3>

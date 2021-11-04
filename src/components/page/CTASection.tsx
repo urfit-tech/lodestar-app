@@ -1,6 +1,10 @@
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
-import Button from 'lodestar-app-element/src/components/Button'
-import HeadingSnippet from 'lodestar-app-element/src/components/HeadingSnippet'
+import {
+  CraftButton,
+  CraftParagraph,
+  CraftSection,
+  CraftTitle,
+} from 'lodestar-app-element/src/components/common/CraftElement'
+import HeadingSnippet from 'lodestar-app-element/src/components/common/HeadingSnippet'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -34,7 +38,7 @@ const CTASection: React.FC<{
   }
 }> = ({ options: { mode, direction, title, description, link, backgroundUrl = null } }) => {
   return (
-    <BackgroundSection
+    <CraftSection
       customStyle={{
         backgroundImage: backgroundUrl || '',
         mt: '0',
@@ -51,7 +55,8 @@ const CTASection: React.FC<{
       <StyledContainer className="container" row={direction === 'row'}>
         <HeadingSnippet direction={direction || 'row'}>
           {title && (
-            <HeadingSnippet.Title
+            <CraftTitle
+              title={title}
               customStyle={{
                 textAlign: direction === 'row' ? 'left' : 'center',
                 fontSize: 28,
@@ -62,12 +67,11 @@ const CTASection: React.FC<{
                 mb: 0,
                 ml: 0,
               }}
-            >
-              {title}
-            </HeadingSnippet.Title>
+            />
           )}
           {description && (
-            <HeadingSnippet.Content
+            <CraftParagraph
+              content={description}
               customStyle={{
                 textAlign: direction === 'row' ? 'left' : 'center',
                 fontSize: 20,
@@ -79,23 +83,19 @@ const CTASection: React.FC<{
                 mb: 0,
                 ml: 0,
               }}
-            >
-              {description}
-            </HeadingSnippet.Content>
+            />
           )}
         </HeadingSnippet>
 
         <div>
           {link && (
             <Link to={link.path}>
-              <Button size="lg" variant="solid">
-                {link.text}
-              </Button>
+              <CraftButton title={link.text} size="lg" variant="solid" />
             </Link>
           )}
         </div>
       </StyledContainer>
-    </BackgroundSection>
+    </CraftSection>
   )
 }
 

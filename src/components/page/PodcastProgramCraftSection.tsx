@@ -1,6 +1,4 @@
-import BackgroundSection from 'lodestar-app-element/src/components/BackgroundSection'
-import PodcastProgramBlock from 'lodestar-app-element/src/components/blocks/PodcastProgramBlock'
-import Layout from 'lodestar-app-element/src/components/Layout'
+import { CraftLayout, CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
 
@@ -8,19 +6,20 @@ const PodcastProgramSection: React.VFC<{ options: { title?: string; colAmount?: 
   options,
 }) => {
   return (
-    <BackgroundSection>
+    <CraftSection>
       <SectionTitle>{options?.title || '精選廣播'}</SectionTitle>
 
       <div className="container">
-        <Layout
-          customStyle={{
-            type: 'grid',
-            mobile: { columnAmount: 1, columnRatio: [12] },
-            desktop: { columnAmount: 2, columnRatio: [6, 6] },
+        <CraftLayout
+          ratios={[6, 6]}
+          responsive={{
+            mobile: {
+              ratios: [12],
+            },
           }}
         >
-          <PodcastProgramBlock />
-        </Layout>
+          {/* <PodcastProgramBlock /> */}
+        </CraftLayout>
       </div>
 
       <div className="text-center">
@@ -28,7 +27,7 @@ const PodcastProgramSection: React.VFC<{ options: { title?: string; colAmount?: 
           查看更多 <StyledAngleRightIcon />
         </StyledLink>
       </div>
-    </BackgroundSection>
+    </CraftSection>
   )
 }
 

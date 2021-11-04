@@ -109,7 +109,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
         </>
       )}
 
-      <List itemLayout="horizontal" className="mb-4">
+      <List itemLayout="horizontal" className={cartProducts.length !== 0 ? 'mb-4' : ''}>
         {cartProducts.map(
           cartProduct =>
             cartProduct.productId && (
@@ -191,16 +191,23 @@ export const useProductInventory = (cartProducts: CartProductProps[]) => {
   >(GET_PRODUCT_INVENTORY, {
     variables: {
       productIds: cartProducts.map(cartProduct => cartProduct.productId),
+      activityTicketIds: cartProducts
+        .filter(cartProduct => cartProduct.productId.includes('ActivityTicket'))
+        .map(cartProduct => cartProduct.productId.split('_')[1]),
     },
   })
 
+  const activityTicketInventories =
+    data?.activity_ticket_enrollment_count?.map(v => ({
+      productId: `ActivityTicket_${v.activity_ticket_id}`,
+      buyableQuantity: v.buyable_quantity,
+    })) || []
+
   const productInventories =
-    loading || error || !data
-      ? []
-      : data.product_inventory_status.map(productInventory => ({
-          productId: productInventory.product_id || '',
-          buyableQuantity: productInventory.buyable_quantity,
-        }))
+    data?.product_inventory_status.map(v => ({
+      productId: v.product_id || '',
+      buyableQuantity: v.buyable_quantity,
+    })) || []
 
   return {
     loading,
@@ -208,17 +215,25 @@ export const useProductInventory = (cartProducts: CartProductProps[]) => {
     cartProductsWithInventory: cartProducts.map(cartProduct => ({
       ...cartProduct,
       buyableQuantity: null,
-      ...productInventories.find(cartProductsInventory => cartProduct.productId === cartProductsInventory.productId),
+      ...[...productInventories, ...activityTicketInventories].find(
+        cartProductsInventory => cartProduct.productId === cartProductsInventory.productId,
+      ),
     })),
     refetch,
   }
 }
 
 const GET_PRODUCT_INVENTORY = gql`
-  query GET_PRODUCT_INVENTORY($productIds: [String!]) {
+  query GET_PRODUCT_INVENTORY($productIds: [String!], $activityTicketIds: [uuid!]) {
     product_inventory_status(where: { product_id: { _in: $productIds } }) {
       product_id
       buyable_quantity
+    }
+    activity_ticket_enrollment_count(where: { activity_ticket_id: { _in: $activityTicketIds } }) {
+      activity_id
+      activity_ticket_id
+      buyable_quantity
+      count
     }
   }
 `

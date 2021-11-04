@@ -13,15 +13,28 @@ export interface GET_PRODUCT_INVENTORY_product_inventory_status {
   buyable_quantity: any | null;
 }
 
+export interface GET_PRODUCT_INVENTORY_activity_ticket_enrollment_count {
+  __typename: "activity_ticket_enrollment_count";
+  activity_id: any | null;
+  activity_ticket_id: any | null;
+  count: any | null;
+  buyable_quantity: any | null;
+}
+
 export interface GET_PRODUCT_INVENTORY {
   /**
    * fetch data from the table: "product_inventory_status"
    */
   product_inventory_status: GET_PRODUCT_INVENTORY_product_inventory_status[];
+  /**
+   * fetch data from the table: "activity_ticket_enrollment_count"
+   */
+  activity_ticket_enrollment_count: GET_PRODUCT_INVENTORY_activity_ticket_enrollment_count[];
 }
 
 export interface GET_PRODUCT_INVENTORYVariables {
   productIds?: string[] | null;
+  activityTicketIds?: any[] | null;
 }
 
 /* tslint:disable */
@@ -1645,6 +1658,32 @@ export interface GET_MEMBER_ORDERSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: UPDATE_VOUCHER_MEMBER
+// ====================================================
+
+export interface UPDATE_VOUCHER_MEMBER_update_voucher_by_pk {
+  __typename: "voucher";
+  id: any;
+}
+
+export interface UPDATE_VOUCHER_MEMBER {
+  /**
+   * update single row of the table: "voucher"
+   */
+  update_voucher_by_pk: UPDATE_VOUCHER_MEMBER_update_voucher_by_pk | null;
+}
+
+export interface UPDATE_VOUCHER_MEMBERVariables {
+  voucherId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PODCAST_PROGRAM_INSTRUCTOR_COLLECTION
 // ====================================================
 
@@ -1856,6 +1895,7 @@ export interface GET_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan {
   description: string | null;
   started_at: any | null;
   ended_at: any | null;
+  is_transferable: boolean;
   product_quantity_limit: number;
   /**
    * An array relationship
@@ -6277,18 +6317,10 @@ export interface GET_PODCAST_PROGRAM_PROGRESSVariables {
 // GraphQL query operation: GET_PODCAST_ALBUM_PREVIEW
 // ====================================================
 
-export interface GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program {
-  __typename: "podcast_program";
-  id: any;
-}
-
 export interface GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs {
   __typename: "podcast_album_podcast_program";
   id: any;
-  /**
-   * An object relationship
-   */
-  podcast_program: GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk_podcast_album_podcast_programs_podcast_program | null;
+  podcast_program_id: any;
 }
 
 export interface GET_PODCAST_ALBUM_PREVIEW_podcast_album_by_pk {
@@ -11959,6 +11991,8 @@ export enum program_plan_update_column {
   period_type = "period_type",
   program_id = "program_id",
   published_at = "published_at",
+  remind_period_amount = "remind_period_amount",
+  remind_period_type = "remind_period_type",
   sale_price = "sale_price",
   sold_at = "sold_at",
   started_at = "started_at",
@@ -12427,6 +12461,7 @@ export enum voucher_plan_update_column {
   description = "description",
   ended_at = "ended_at",
   id = "id",
+  is_transferable = "is_transferable",
   product_quantity_limit = "product_quantity_limit",
   started_at = "started_at",
   title = "title",
@@ -19787,6 +19822,8 @@ export interface program_plan_bool_exp {
   program_id?: uuid_comparison_exp | null;
   program_plan_enrollments?: program_plan_enrollment_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
+  remind_period_amount?: Int_comparison_exp | null;
+  remind_period_type?: String_comparison_exp | null;
   sale_price?: numeric_comparison_exp | null;
   sold_at?: timestamptz_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
@@ -19834,6 +19871,8 @@ export interface program_plan_insert_input {
   program_content_permissions?: program_content_plan_arr_rel_insert_input | null;
   program_id?: any | null;
   published_at?: any | null;
+  remind_period_amount?: number | null;
+  remind_period_type?: string | null;
   sale_price?: any | null;
   sold_at?: any | null;
   started_at?: any | null;
@@ -21026,6 +21065,7 @@ export interface voucher_plan_bool_exp {
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
+  is_transferable?: Boolean_comparison_exp | null;
   product_quantity_limit?: Int_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
   title?: String_comparison_exp | null;
@@ -21042,6 +21082,7 @@ export interface voucher_plan_insert_input {
   description?: string | null;
   ended_at?: any | null;
   id?: any | null;
+  is_transferable?: boolean | null;
   product_quantity_limit?: number | null;
   started_at?: any | null;
   title?: string | null;

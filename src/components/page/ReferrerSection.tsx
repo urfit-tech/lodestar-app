@@ -1,4 +1,10 @@
-import Carousel from 'lodestar-app-element/src/components/Carousel'
+import Carousel from 'lodestar-app-element/src/components/common/Carousel'
+import {
+  CraftCard,
+  CraftImage,
+  CraftParagraph,
+  CraftTitle,
+} from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import styled from 'styled-components'
 import { StyledSection } from '../../pages/AppPage'
@@ -55,47 +61,36 @@ const ReferrerSection: React.FC<{
           ]}
         >
           {infos?.map(v => (
-            <Carousel.ReferrerCard
-              title={v.title}
-              name={v.name}
-              description={v.description}
-              avatarSrc={v.imgSrc}
+            <CraftCard
               customStyle={{
-                card: {
-                  bordered: false,
-                  shadow: false,
-                  mt: '0',
-                  mb: '20',
-                  mr: '44',
-                  ml: '44',
-                  pt: '0',
-                  pb: '0',
-                  pr: '0',
-                  pl: '0',
-                },
-                title: {
+                margin: '0 44px 20px 44px',
+                padding: 0,
+              }}
+            >
+              <CraftImage customStyle={{ backgroundImage: `url(${v.imgSrc})` }} />
+              <CraftTitle title={v.name} />
+              <CraftTitle
+                title={v.title}
+                customStyle={{
+                  margin: '0 0 16px 0',
                   textAlign: 'center',
                   fontSize: 16,
                   fontWeight: 'bold',
                   color: '#585858',
-                  mt: '0',
-                  mb: '16',
-                  mr: '0',
-                  ml: '0',
-                },
-                paragraph: {
+                }}
+              />
+              <CraftParagraph
+                content={v.description}
+                customStyle={{
                   textAlign: 'center',
                   fontSize: 14,
                   fontWeight: 'normal',
                   lineHeight: 1.57,
                   color: '#585858',
-                  mt: '0',
-                  mb: '32',
-                  mr: '0',
-                  ml: '0',
-                },
-              }}
-            />
+                  margin: '0 32px 0 0 ',
+                }}
+              />
+            </CraftCard>
           ))}
         </Carousel>
       </StyledContainer>
