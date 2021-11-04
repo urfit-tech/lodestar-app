@@ -30,14 +30,14 @@ const CoverSection: React.VFC<{
         autoplaySpeed={5000}
         variant="cover"
         customStyle={{
-          height: options.sectionHeight?.mobileHeight,
+          height: options.sectionHeight?.mobileHeight || '360px',
         }}
         // FIXME: Carousel props
         responsive={
           {
             desktop: {
               customStyle: {
-                height: options.sectionHeight?.desktopHeight,
+                height: options.sectionHeight?.desktopHeight || '610px',
               },
             },
           } as any
