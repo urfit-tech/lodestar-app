@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Editor } from '@craftjs/core'
+import { Editor, Frame } from '@craftjs/core'
 import gql from 'graphql-tag'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -124,13 +124,19 @@ const AppPage: React.VFC = () => {
           <CraftBlock craftData={appPage.craftData} />
         </Editor>
       ) : (
-        appPage.appPageSections.map(section => {
-          const Section = sectionConverter[section.type]
-          if (!sectionConverter[section.type]) {
-            return <></>
-          }
-          return <Section key={section.id} options={section.options} />
-        })
+        <Editor enabled={false} resolver={CraftElement}>
+          <Frame>
+            <>
+              {appPage.appPageSections.map(section => {
+                const Section = sectionConverter[section.type]
+                if (!sectionConverter[section.type]) {
+                  return <></>
+                }
+                return <Section key={section.id} options={section.options} />
+              })}
+            </>
+          </Frame>
+        </Editor>
       )}
     </DefaultLayout>
   )
