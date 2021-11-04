@@ -106,6 +106,7 @@ const StyledSubTitle = styled.h3`
 `
 
 export const StyledCarousel = styled(Carousel)`
+  height: 400px;
   && {
     .slick-prev:before,
     .slick-next:before {
