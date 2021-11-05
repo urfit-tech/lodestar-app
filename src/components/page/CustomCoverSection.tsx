@@ -6,10 +6,10 @@ import styled, { CSSObject } from 'styled-components'
 const SliderWrapper = styled.div<{ desktopHeight?: string; mobileHeight?: string }>`
   position: relative;
   padding-top: 70%;
-  height: 360px;
+  height: ${props => props.mobileHeight || '360px'};
 
   @media (min-width: 426px) {
-    height: 510px;
+    height: ${props => props.desktopHeight || '610px'};
   }
   @media (min-width: 992px) {
     padding-top: 32%;
@@ -70,7 +70,7 @@ const StyledCoverButton = styled.div`
   }
 `
 
-const Slide: React.FC<{
+export const Slide: React.FC<{
   srcDesktop: string
   srcMobile: string
   title: string
