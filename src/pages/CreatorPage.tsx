@@ -11,6 +11,7 @@ import { useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import Activity from '../components/activity/Activity'
 import AppointmentCollectionTabs from '../components/appointment/AppointmentCollectionTabs'
 import { AuthModalContext } from '../components/auth/AuthModal'
 import PostItemCollection from '../components/blog/PostItemCollection'
@@ -25,6 +26,7 @@ import ProgramCard from '../components/program/ProgramCard'
 import PodcastProgramTimeline from '../containers/podcast/PodcastProgramTimeline'
 import { desktopViewMixin } from '../helpers'
 import { commonMessages, usersMessages } from '../helpers/translation'
+import { usePublishedActivityCollection } from '../hooks/activity'
 import { useAppointmentPlanCollection } from '../hooks/appointment'
 import { usePostPreviewCollection } from '../hooks/blog'
 import { usePublicMember } from '../hooks/member'
@@ -103,6 +105,7 @@ const CreatorTabs: React.VFC<{
 
   const { currentMemberId, isAuthenticated } = useAuth()
   const { programs } = usePublishedProgramCollection({ instructorId: creatorId, isPrivate: false })
+  const { activities } = usePublishedActivityCollection({ organizerId: creatorId })
   const { posts } = usePostPreviewCollection({ authorId: creatorId })
   const { podcastPlanIds } = usePodcastPlanIds(creatorId)
   const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(currentMemberId || '')
@@ -214,6 +217,24 @@ const CreatorTabs: React.VFC<{
                 programs.map(program => (
                   <div key={program.id} className="col-12 col-lg-4 mb-4">
                     <ProgramCard program={program} />
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </Tabs.TabPane>
+
+        <Tabs.TabPane tab={formatMessage(usersMessages.tab.addActivities)} key="activities">
+          <div className="container py-4">
+            <div className="row">
+              {activities.length === 0 ? (
+                <StyledDescription className="ml-3">
+                  {formatMessage(commonMessages.content.noActivity)}
+                </StyledDescription>
+              ) : (
+                activities.map(activity => (
+                  <div key={activity.id} className="col-12 col-lg-4 mb-4">
+                    <Activity {...activity} />
                   </div>
                 ))
               )}
