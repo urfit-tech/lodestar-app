@@ -17,8 +17,8 @@ export interface GET_PRODUCT_INVENTORY_activity_ticket_enrollment_count {
   __typename: "activity_ticket_enrollment_count";
   activity_id: any | null;
   activity_ticket_id: any | null;
-  count: any | null;
   buyable_quantity: any | null;
+  count: number | null;
 }
 
 export interface GET_PRODUCT_INVENTORY {
