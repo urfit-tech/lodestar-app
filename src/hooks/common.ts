@@ -31,6 +31,7 @@ type TargetProps = {
   groupBuyingPeople?: number
   categories?: string[]
   roles?: string[]
+  sku?: string | null
 }
 
 export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Date }) => {
@@ -208,6 +209,11 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
 
 const GET_PRODUCT_SIMPLE = gql`
   query GET_PRODUCT_SIMPLE($targetId: uuid!, $startedAt: timestamptz) {
+    product(where: { target: { _eq: $targetId } }) {
+      id
+      target
+      sku
+    }
     program_by_pk(id: $targetId) {
       id
       title
@@ -524,7 +530,9 @@ export const useSimpleProductCollection = () => {
               isSubscription: false,
             }
           : null
-        if (target) productsCollection.push(target)
+        if (target) {
+          productsCollection.push({ ...target, sku: data?.product[0].sku })
+        }
       } catch {}
     }
     return productsCollection
