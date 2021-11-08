@@ -17,8 +17,8 @@ export interface GET_PRODUCT_INVENTORY_activity_ticket_enrollment_count {
   __typename: "activity_ticket_enrollment_count";
   activity_id: any | null;
   activity_ticket_id: any | null;
-  count: any | null;
   buyable_quantity: any | null;
+  count: number | null;
 }
 
 export interface GET_PRODUCT_INVENTORY {
@@ -2312,6 +2312,10 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION {
    * fetch data from the table: "activity"
    */
   activity: GET_PUBLISHED_ACTIVITY_COLLECTION_activity[];
+}
+
+export interface GET_PUBLISHED_ACTIVITY_COLLECTIONVariables {
+  organizerId?: string | null;
 }
 
 /* tslint:disable */
