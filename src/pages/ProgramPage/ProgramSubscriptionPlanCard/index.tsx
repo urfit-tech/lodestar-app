@@ -48,7 +48,6 @@ const ProgramSubscriptionPlanCard: React.VFC<{
     isSubscription: boolean
   }
 }> = ({ programId, programPlan }) => {
-  console.log(programPlan.isSubscription)
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()

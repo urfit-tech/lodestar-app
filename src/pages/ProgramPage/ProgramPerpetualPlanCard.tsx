@@ -38,7 +38,7 @@ const ProgramPerpetualPlanCard: React.VFC<{
   const { enabledModules } = useApp()
 
   const isEnrolled = enrolledProgramIds.includes(program.id)
-  const isOnSale = (program.soldAt?.getTime() || 0) > Date.now()
+  const isOnSale = (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
 
   return (
     <StyledWrapper className="py-2">
@@ -61,12 +61,12 @@ const ProgramPerpetualPlanCard: React.VFC<{
             <div className="text-center mb-2">
               <PriceLabel
                 variant="inline"
-                listPrice={program.listPrice || 0}
-                salePrice={isOnSale ? program.salePrice : undefined}
+                listPrice={program.plans[0]?.listPrice || 0}
+                salePrice={isOnSale ? program.plans[0]?.salePrice : undefined}
               />
-              {program.isCountdownTimerVisible && program?.soldAt && isOnSale && (
+              {program.isCountdownTimerVisible && program.plans[0]?.soldAt && isOnSale && (
                 <StyledCountDownBlock>
-                  <CountDownTimeBlock expiredAt={program.soldAt} icon />
+                  <CountDownTimeBlock expiredAt={program.plans[0]?.soldAt} icon />
                 </StyledCountDownBlock>
               )}
             </div>

@@ -93,16 +93,15 @@ const ProgramCard: React.VFC<{
   const { enabledModules, settings, id: appId } = useApp()
 
   const instructorId = program.roles.length > 0 && program.roles[0].memberId
-  const listPrice =
-    program.isSubscription && program.plans.length > 0 ? program.plans[0].listPrice : program.listPrice || 0
+  const listPrice = program.plans[0]?.listPrice || 0
   const salePrice =
-    program.isSubscription && program.plans.length > 0 && (program.plans[0].soldAt?.getTime() || 0) > Date.now()
-      ? program.plans[0].salePrice
-      : (program.soldAt?.getTime() || 0) > Date.now()
-      ? program.salePrice
+    program.plans.length > 1 && (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
+      ? program.plans[0]?.salePrice
+      : (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
+      ? program.plans[0]?.salePrice
       : undefined
-  const periodAmount = program.isSubscription && program.plans.length > 0 ? program.plans[0].periodAmount : null
-  const periodType = program.isSubscription && program.plans.length > 0 ? program.plans[0].periodType : null
+  const periodAmount = program.plans.length > 1 ? program.plans[0]?.periodAmount : null
+  const periodType = program.plans.length > 1 ? program.plans[0]?.periodType : null
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
 
   const handleClick = () => {
@@ -178,7 +177,7 @@ const ProgramCard: React.VFC<{
               <StyledMetaBlock className="d-flex flex-row-reverse justify-content-between align-items-center">
                 {!noPrice && (
                   <div>
-                    {program.isSubscription && program.plans.length === 0 ? (
+                    {program.plans.length === 0 ? (
                       <span>{formatMessage(productMessages.program.content.notForSale)}</span>
                     ) : (
                       <PriceLabel
@@ -192,7 +191,7 @@ const ProgramCard: React.VFC<{
                   </div>
                 )}
 
-                {!program.isSubscription && !noTotalDuration && !!program.totalDuration && (
+                {program.plans.length === 1 && !noTotalDuration && !!program.totalDuration && (
                   <div>{durationFormatter(program.totalDuration)}</div>
                 )}
               </StyledMetaBlock>

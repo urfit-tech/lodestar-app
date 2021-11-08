@@ -57,7 +57,7 @@ const ProgramInfoCard: React.FC<{
   }
 }> = ({ instructorId, program }) => {
   const { member } = usePublicMember(instructorId)
-  const isOnSale = (program.soldAt?.getTime() || 0) > Date.now()
+  const isOnSale = (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
   const { enabledModules } = useApp()
   const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
@@ -83,13 +83,13 @@ const ProgramInfoCard: React.FC<{
         {isEmpty(program.plans.filter(v => v.publishedAt)) && (
           <PriceLabel
             variant="inline"
-            listPrice={program.listPrice || 0}
-            salePrice={isOnSale ? program.salePrice || 0 : undefined}
+            listPrice={program.plans[0]?.listPrice || 0}
+            salePrice={isOnSale ? program.plans[0]?.salePrice || 0 : undefined}
           />
         )}
-        {program.isCountdownTimerVisible && program?.soldAt && isOnSale && (
+        {program.isCountdownTimerVisible && program.plans[0]?.soldAt && isOnSale && (
           <StyledCountDownBlock>
-            <CountDownTimeBlock expiredAt={program.soldAt} icon />
+            <CountDownTimeBlock expiredAt={program.plans[0]?.soldAt} icon />
           </StyledCountDownBlock>
         )}
       </div>

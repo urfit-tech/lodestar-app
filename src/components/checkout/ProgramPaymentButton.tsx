@@ -54,29 +54,34 @@ const ProgramPaymentButton: React.VFC<{
     </Button>
   ) : (
     <div className={variant === 'multiline' ? 'd-flex flex-column' : 'd-flex'}>
-      {program.listPrice !== 0 && !settings['feature.cart.disable'] && (
-        <StyleButton
-          className="mr-2"
-          variant="outline"
-          colorScheme="primary"
-          isFullWidth={variant === 'multiline'}
-          isMultiline={variant === 'multiline'}
-          onClick={handleAddCartProgram}
-        >
-          <Icon as={AiOutlineShoppingCart} />
-          <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
-        </StyleButton>
-      )}
-
-      <Button
-        colorScheme="primary"
-        isFullWidth
-        onClick={() => handleAddCartProgram()?.then(() => history.push('/cart'))}
-      >
-        {program.listPrice === 0
-          ? formatMessage(commonMessages.button.join)
-          : formatMessage(commonMessages.ui.purchase)}
-      </Button>
+      {program.plans.map(plan => {
+        return (
+          <>
+            {plan.listPrice !== 0 && !settings['feature.cart.disable'] && (
+              <StyleButton
+                className="mr-2"
+                variant="outline"
+                colorScheme="primary"
+                isFullWidth={variant === 'multiline'}
+                isMultiline={variant === 'multiline'}
+                onClick={handleAddCartProgram}
+              >
+                <Icon as={AiOutlineShoppingCart} />
+                <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
+              </StyleButton>
+            )}
+            <Button
+              colorScheme="primary"
+              isFullWidth
+              onClick={() => handleAddCartProgram(plan.id)?.then(() => history.push('/cart'))}
+            >
+              {plan.listPrice === 0
+                ? formatMessage(commonMessages.button.join)
+                : formatMessage(commonMessages.ui.purchase)}
+            </Button>
+          </>
+        )
+      })}
     </div>
   )
 }
@@ -97,11 +102,19 @@ const useAddProgramToCart = (
 
   return {
     isProgramInCart: isProductInCart?.('Program', program.id),
-    handleAddCartProgram: () => {
+    handleAddCartProgram: (programPlanId: string) => {
+      const programPlan = program.plans.find(plan => plan.id === programPlanId)
+      if (!programPlan) {
+        return
+      }
+      const price =
+        (programPlan.soldAt && programPlan.soldAt?.getTime() < Date.now()
+          ? programPlan.listPrice
+          : programPlan.salePrice) || 0
       if (settings['tracking.fb_pixel_id']) {
         ReactPixel.track('AddToCart', {
           content_name: program.title || program.id,
-          value: program.listPrice,
+          value: price,
           currency: 'TWD',
         })
       }
@@ -110,7 +123,7 @@ const useAddProgramToCart = (
           id: program.id,
           name: program.title,
           category: 'Program',
-          price: `${program.listPrice}`,
+          price,
           quantity: '1',
           currency: 'TWD',
         })
@@ -119,14 +132,6 @@ const useAddProgramToCart = (
       }
 
       if (settings['tracking.gtm_id']) {
-        const listPrice =
-          program.isSubscription && program.plans.length > 0 ? program.plans[0].listPrice : program.listPrice || 0
-        const salePrice =
-          program.isSubscription && program.plans.length > 0 && (program.plans[0].soldAt?.getTime() || 0) > Date.now()
-            ? program.plans[0].salePrice
-            : (program.soldAt?.getTime() || 0) > Date.now()
-            ? program.salePrice
-            : undefined
         ;(window as any).dataLayer = (window as any).dataLayer || []
         ;(window as any).dataLayer.push({ ecommerce: null })
         ;(window as any).dataLayer.push({
@@ -138,7 +143,7 @@ const useAddProgramToCart = (
                 {
                   id: program.id,
                   name: program.title,
-                  price: salePrice || listPrice,
+                  price,
                   brand: settings['title'] || appId,
                   category: program.categories.map(category => category.name).join('|'),
                   variant: program.roles.map(role => role.memberName).join('|'),

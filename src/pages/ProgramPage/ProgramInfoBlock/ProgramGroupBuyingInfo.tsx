@@ -71,8 +71,8 @@ const ProgramGroupBuyingInfo: React.FC<{
           <StyledTitle>{formatMessage(messages.perpetualProgram)}</StyledTitle>
           <PriceLabel
             variant="inline"
-            listPrice={program.listPrice || 0}
-            salePrice={isOnSale ? program.salePrice : undefined}
+            listPrice={program.plans[0]?.listPrice || 0}
+            salePrice={isOnSale ? program.plans[0]?.salePrice : undefined}
           />
         </span>
         {!hideProgramPlanPrice &&
@@ -95,16 +95,18 @@ const ProgramGroupBuyingInfo: React.FC<{
               {program.isSoldOut ? (
                 <MenuItem isDisabled>{formatMessage(commonMessages.button.soldOut)}</MenuItem>
               ) : (
-                <StyledMenuItem
-                  onClick={() =>
-                    isProgramInCart ? history.push(`/cart`) : handleAddCartProgram()?.then(() => history.push('/cart'))
-                  }
-                >
-                  <StyledTitle className="mr-1">{formatMessage(messages.perpetualProgram)}</StyledTitle>
-                  <PriceLabel
-                    listPrice={isOnSale ? program.salePrice || program.listPrice || 0 : program.listPrice || 0}
-                  />
-                </StyledMenuItem>
+                program.plans.map(plan => (
+                  <StyledMenuItem
+                    onClick={() =>
+                      isProgramInCart
+                        ? history.push(`/cart`)
+                        : handleAddCartProgram(plan.id)?.then(() => history.push('/cart'))
+                    }
+                  >
+                    <StyledTitle className="mr-1">{formatMessage(messages.perpetualProgram)}</StyledTitle>
+                    <PriceLabel listPrice={isOnSale ? plan.salePrice || plan.listPrice || 0 : plan.listPrice || 0} />
+                  </StyledMenuItem>
+                ))
               )}
 
               {programPlans.map(v => (

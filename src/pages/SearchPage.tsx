@@ -120,13 +120,12 @@ const SearchResultBlock: React.VFC<{
     if (searchResults) {
       let index = 1
       for (let program of searchResults.programs) {
-        const listPrice =
-          program.isSubscription && program.plans.length > 0 ? program.plans[0].listPrice : program.listPrice || 0
+        const listPrice = program.plans[0]?.listPrice || 0
         const salePrice =
-          program.isSubscription && program.plans.length > 0 && (program.plans[0].soldAt?.getTime() || 0) > Date.now()
-            ? program.plans[0].salePrice
-            : (program.soldAt?.getTime() || 0) > Date.now()
-            ? program.salePrice
+          (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
+            ? program.plans[0]?.salePrice
+            : (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
+            ? program.plans[0]?.salePrice
             : undefined
         ReactGA.plugin.execute('ec', 'addImpression', {
           id: program.id,

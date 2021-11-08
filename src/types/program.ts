@@ -16,12 +16,7 @@ export type ProgramBriefProps = {
   title: string
   abstract: string | null
   publishedAt: Date | null
-  isSubscription: boolean
   isPrivate: boolean
-  listPrice: number | null
-  salePrice: number | null
-  soldAt: Date | null
-
   totalDuration?: number
 }
 
