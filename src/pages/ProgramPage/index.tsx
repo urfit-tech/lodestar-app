@@ -19,11 +19,11 @@ import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
 import ForbiddenPage from '../ForbiddenPage'
-import { PerpetualProgramBanner, SubscriptionProgramBanner } from './ProgramBanner'
+import { PerpetualProgramBanner } from './ProgramBanner'
 import ProgramContentListSection from './ProgramContentListSection'
-import ProgramInfoBlock from './ProgramInfoBlock'
+import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
+import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
 import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
-import ProgramPerpetualPlanCard from './ProgramPerpetualPlanCard'
 import ProgramSubscriptionPlanCard from './ProgramSubscriptionPlanCard'
 
 const StyledIntroWrapper = styled.div`
@@ -171,6 +171,7 @@ const ProgramPage: React.VFC = () => {
       description: settings['open_graph.description'],
     },
   })
+  const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
 
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
@@ -186,19 +187,21 @@ const ProgramPage: React.VFC = () => {
       </Helmet>
 
       <div>
-        {program.plans.length > 1 ? (
-          <SubscriptionProgramBanner program={program} />
-        ) : (
-          <PerpetualProgramBanner program={program} />
-        )}
-
+        <PerpetualProgramBanner program={program} />
         <ProgramIntroBlock>
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-8">
-                <div className="mb-5">
-                  <ProgramAbstract>{program.abstract}</ProgramAbstract>
-                </div>
+                <Responsive.Default>
+                  <StyledProgramInfoCard>
+                    <ProgramContentCountBlock program={program} />
+                  </StyledProgramInfoCard>
+                </Responsive.Default>
+                {program.abstract && (
+                  <div className="mb-5">
+                    <ProgramAbstract>{program.abstract}</ProgramAbstract>
+                  </div>
+                )}
 
                 <div className="mb-5">
                   <BraftContent>{program.description}</BraftContent>
@@ -209,21 +212,21 @@ const ProgramPage: React.VFC = () => {
                 </div>
               </div>
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                {program.plans.length > 1 ? (
-                  <div className="mb-5">
-                    <div id="subscription">
-                      {program.plans
-                        .filter(programPlan => programPlan.publishedAt)
-                        .map(programPlan => (
-                          <div key={programPlan.id} className="mb-3">
-                            <ProgramSubscriptionPlanCard programId={program.id} programPlan={programPlan} />
-                          </div>
-                        ))}
-                    </div>
+                <Responsive.Desktop>
+                  <ProgramInfoCard instructorId={instructorId} program={program} />
+                </Responsive.Desktop>
+
+                <div className="mb-5">
+                  <div id="subscription">
+                    {program.plans
+                      .filter(programPlan => programPlan.publishedAt)
+                      .map(programPlan => (
+                        <div key={programPlan.id} className="mb-3">
+                          <ProgramSubscriptionPlanCard programId={program.id} programPlan={programPlan} />
+                        </div>
+                      ))}
                   </div>
-                ) : (
-                  <ProgramInfoBlock program={program} />
-                )}
+                </div>
               </StyledIntroWrapper>
             </div>
 
@@ -251,19 +254,15 @@ const ProgramPage: React.VFC = () => {
 
       <Responsive.Default>
         <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-          {program.plans.length > 1 ? (
-            <StyledButtonWrapper>
-              <Button
-                variant="primary"
-                isFullWidth
-                onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                {formatMessage(commonMessages.button.viewSubscription)}
-              </Button>
-            </StyledButtonWrapper>
-          ) : (
-            <ProgramPerpetualPlanCard memberId={currentMemberId || ''} program={program} />
-          )}
+          <StyledButtonWrapper>
+            <Button
+              variant="primary"
+              isFullWidth
+              onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              {formatMessage(commonMessages.button.viewProject)}
+            </Button>
+          </StyledButtonWrapper>
         </FixedBottomBlock>
       </Responsive.Default>
     </DefaultLayout>
