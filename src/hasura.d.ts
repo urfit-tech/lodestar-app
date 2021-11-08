@@ -2314,6 +2314,10 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION {
   activity: GET_PUBLISHED_ACTIVITY_COLLECTION_activity[];
 }
 
+export interface GET_PUBLISHED_ACTIVITY_COLLECTIONVariables {
+  organizerId?: string | null;
+}
+
 /* tslint:disable */
 /* eslint-disable */
 // @generated
