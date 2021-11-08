@@ -1,14 +1,11 @@
 import { Card } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { isEmpty } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import CountDownTimeBlock from '../../../components/common/CountDownTimeBlock'
 import { AvatarImage } from '../../../components/common/Image'
-import PriceLabel from '../../../components/common/PriceLabel'
 import { usePublicMember } from '../../../hooks/member'
 import { useEnrolledProgramIds } from '../../../hooks/program'
 import { Category } from '../../../types/general'
@@ -72,23 +69,7 @@ const ProgramInfoCard: React.FC<{
           </Link>
         </>
       )}
-
       <ProgramContentCountBlock program={program} />
-
-      <div className="text-center mb-3">
-        {isEmpty(program.plans.filter(v => v.publishedAt)) && (
-          <PriceLabel
-            variant="inline"
-            listPrice={program.plans[0]?.listPrice || 0}
-            salePrice={isOnSale ? program.plans[0]?.salePrice || 0 : undefined}
-          />
-        )}
-        {program.isCountdownTimerVisible && program.plans[0]?.soldAt && isOnSale && (
-          <StyledCountDownBlock>
-            <CountDownTimeBlock expiredAt={program.plans[0]?.soldAt} icon />
-          </StyledCountDownBlock>
-        )}
-      </div>
     </StyledProgramInfoCard>
   )
 }
