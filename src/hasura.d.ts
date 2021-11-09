@@ -4145,6 +4145,40 @@ export interface GET_PRODUCT_SIMPLEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PRODUCT_SKU
+// ====================================================
+
+export interface GET_PRODUCT_SKU_product {
+  __typename: "product";
+  /**
+   * {type}_{target}, ex: Program_123-456, ProgramPlan_123-456
+   */
+  id: string;
+  /**
+   * Program / ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   */
+  type: string;
+  target: string;
+  sku: string | null;
+}
+
+export interface GET_PRODUCT_SKU {
+  /**
+   * fetch data from the table: "product"
+   */
+  product: GET_PRODUCT_SKU_product[];
+}
+
+export interface GET_PRODUCT_SKUVariables {
+  targetId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: SEARCH_MEMBER
 // ====================================================
 
