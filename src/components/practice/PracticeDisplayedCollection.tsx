@@ -1,4 +1,5 @@
 import { Box, Icon, SkeletonText } from '@chakra-ui/react'
+import { CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -12,7 +13,6 @@ import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as RocketIcon } from '../../images/icon-rocket.svg'
 import { PracticePreviewProps } from '../../types/practice'
-import { CommonTextMixin } from '../common'
 import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
 

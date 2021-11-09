@@ -1,4 +1,9 @@
 import { FormControl, FormErrorMessage, FormLabel, ListItem } from '@chakra-ui/react'
+import {
+  CommonLargeTextMixin,
+  CommonTextMixin,
+  CommonTitleMixin,
+} from 'lodestar-app-element/src/components/common/index'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniq } from 'ramda'
 import React, { useEffect, useState } from 'react'
@@ -6,7 +11,6 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { checkoutMessages, commonMessages } from '../../../helpers/translation'
 import { useSearchMembers, useSimpleProduct } from '../../../hooks/common'
-import { CommonLargeTextMixin, CommonTextMixin, CommonTitleMixin } from '../../common'
 import { Input } from '../../common/CommonForm'
 
 export const StyledBlockTitle = styled.h2`
