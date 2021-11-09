@@ -1,5 +1,6 @@
 import { Button, Icon } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
+import { CommonLargeTextMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import React, { memo, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -7,7 +8,6 @@ import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.s
 import { ReactComponent as ErrorCircleIcon } from '../../images/error-circle.svg'
 import { ReactComponent as TickIcon } from '../../images/tick.svg'
 import { ExerciseProps } from '../../types/program'
-import { CommonLargeTextMixin, CommonTextMixin } from '../common'
 import { BraftContent } from '../common/StyledBraftEditor'
 
 const messages = defineMessages({

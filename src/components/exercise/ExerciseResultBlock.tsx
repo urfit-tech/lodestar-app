@@ -1,11 +1,15 @@
 import { Button, CircularProgress, CircularProgressLabel } from '@chakra-ui/react'
+import {
+  CommonLargeTextMixin,
+  CommonTextMixin,
+  CommonTitleMixin,
+} from 'lodestar-app-element/src/components/common/index'
 import { sum } from 'ramda'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import { ExerciseProps } from '../../types/program'
-import { CommonLargeTextMixin, CommonTextMixin, CommonTitleMixin } from '../common'
 
 const messages = defineMessages({
   yourExerciseResult: { id: 'program.label.yourExerciseResult', defaultMessage: '你的測驗成果' },
