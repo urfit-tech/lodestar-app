@@ -209,11 +209,6 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
 
 const GET_PRODUCT_SIMPLE = gql`
   query GET_PRODUCT_SIMPLE($targetId: uuid!, $startedAt: timestamptz) {
-    product(where: { target: { _eq: $targetId } }) {
-      id
-      target
-      sku
-    }
     program_by_pk(id: $targetId) {
       id
       title
@@ -359,6 +354,16 @@ const GET_PRODUCT_SIMPLE = gql`
     }
   }
 `
+const GET_PRODUCT_SKU = gql`
+  query GET_PRODUCT_SKU($targetId: String!) {
+    product(where: { target: { _eq: $targetId } }) {
+      id
+      type
+      target
+      sku
+    }
+  }
+`
 
 export const useSimpleProductCollection = () => {
   const { formatMessage } = useIntl()
@@ -374,6 +379,15 @@ export const useSimpleProductCollection = () => {
             targetId,
           },
         })
+        const { data: productData } = await apolloClient.query<hasura.GET_PRODUCT_SKU, hasura.GET_PRODUCT_SKUVariables>(
+          {
+            query: GET_PRODUCT_SKU,
+            variables: {
+              targetId,
+            },
+          },
+        )
+        const productCollection = productData.product
         const target: TargetProps | null = data?.program_by_pk
           ? {
               id: data.program_by_pk.id,
@@ -393,6 +407,7 @@ export const useSimpleProductCollection = () => {
               roles: data.program_by_pk.program_roles
                 .filter(v => v.name === 'instructor')
                 .map(v => v.member?.name || ''),
+              sku: productCollection.find(product => product.type === 'Program')?.sku,
             }
           : data?.program_plan_by_pk
           ? {
@@ -413,6 +428,7 @@ export const useSimpleProductCollection = () => {
               periodType: data.program_plan_by_pk.period_type as PeriodType,
               groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
               isSubscription: !!data.program_plan_by_pk?.auto_renewed,
+              sku: productCollection.find(product => product.type === 'ProgramPlan')?.sku,
             }
           : data?.program_package_plan_by_pk
           ? {
@@ -433,6 +449,7 @@ export const useSimpleProductCollection = () => {
               periodAmount: data.program_package_plan_by_pk.period_amount,
               periodType: data.program_package_plan_by_pk.period_type as PeriodType,
               isSubscription: data.program_package_plan_by_pk.is_subscription,
+              sku: productCollection.find(product => product.type === 'ProgramPackagePlan')?.sku,
             }
           : data?.activity_ticket_by_pk
           ? {
@@ -442,6 +459,7 @@ export const useSimpleProductCollection = () => {
               listPrice: data.activity_ticket_by_pk.price,
               coverUrl: data.activity_ticket_by_pk.activity?.cover_url || undefined,
               isSubscription: false,
+              sku: productCollection.find(product => product.type === 'ActivityTicket')?.sku,
             }
           : data?.card_by_pk
           ? {
@@ -471,6 +489,7 @@ export const useSimpleProductCollection = () => {
               isLimited: data.project_plan_by_pk.is_limited,
               isPhysical: data.project_plan_by_pk.is_physical,
               isSubscription: data.project_plan_by_pk.is_subscription,
+              sku: productCollection.find(product => product.type === 'ProjectPlan')?.sku,
             }
           : data?.podcast_program_by_pk
           ? {
@@ -488,6 +507,7 @@ export const useSimpleProductCollection = () => {
                   ? data.podcast_program_by_pk.sale_price
                   : undefined,
               isSubscription: false,
+              sku: productCollection.find(product => product.type === 'PodcastProgram')?.sku,
             }
           : data?.podcast_plan_by_pk && data.podcast_plan_by_pk.creator
           ? {
@@ -498,6 +518,7 @@ export const useSimpleProductCollection = () => {
               }`,
               coverUrl: 'https://static.kolable.com/images/reservation.svg',
               isSubscription: data.podcast_plan_by_pk.is_subscription,
+              sku: productCollection.find(product => product.type === 'PodcastPlan')?.sku,
             }
           : data?.appointment_plan_by_pk
           ? {
@@ -508,6 +529,7 @@ export const useSimpleProductCollection = () => {
               startedAt: data.appointment_plan_by_pk.appointment_periods[0]?.started_at,
               endedAt: data.appointment_plan_by_pk.appointment_periods[0]?.ended_at,
               isSubscription: false,
+              sku: productCollection.find(product => product.type === 'AppointmentPlan')?.sku,
             }
           : data?.merchandise_spec_by_pk
           ? {
@@ -528,10 +550,11 @@ export const useSimpleProductCollection = () => {
               isPhysical: data.merchandise_spec_by_pk.merchandise.is_physical,
               isCustomized: data.merchandise_spec_by_pk.merchandise.is_customized,
               isSubscription: false,
+              sku: productCollection.find(product => product.type === 'AppointmentPlan')?.sku,
             }
           : null
         if (target) {
-          productsCollection.push({ ...target, sku: data?.product[0].sku })
+          productsCollection.push(target)
         }
       } catch {}
     }

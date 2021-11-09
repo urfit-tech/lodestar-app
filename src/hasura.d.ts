@@ -3844,16 +3844,6 @@ export interface GET_PHYSICAL_PRODUCTSVariables {
 // GraphQL query operation: GET_PRODUCT_SIMPLE
 // ====================================================
 
-export interface GET_PRODUCT_SIMPLE_product {
-  __typename: "product";
-  /**
-   * {type}_{target}, ex: Program_123-456, ProgramPlan_123-456
-   */
-  id: string;
-  target: string;
-  sku: string | null;
-}
-
 export interface GET_PRODUCT_SIMPLE_program_by_pk_program_categories_category {
   __typename: "category";
   id: string;
@@ -4103,10 +4093,6 @@ export interface GET_PRODUCT_SIMPLE_merchandise_spec_by_pk {
 
 export interface GET_PRODUCT_SIMPLE {
   /**
-   * fetch data from the table: "product"
-   */
-  product: GET_PRODUCT_SIMPLE_product[];
-  /**
    * fetch data from the table: "program" using primary key columns
    */
   program_by_pk: GET_PRODUCT_SIMPLE_program_by_pk | null;
@@ -4151,6 +4137,40 @@ export interface GET_PRODUCT_SIMPLE {
 export interface GET_PRODUCT_SIMPLEVariables {
   targetId: any;
   startedAt?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PRODUCT_SKU
+// ====================================================
+
+export interface GET_PRODUCT_SKU_product {
+  __typename: "product";
+  /**
+   * {type}_{target}, ex: Program_123-456, ProgramPlan_123-456
+   */
+  id: string;
+  /**
+   * Program / ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   */
+  type: string;
+  target: string;
+  sku: string | null;
+}
+
+export interface GET_PRODUCT_SKU {
+  /**
+   * fetch data from the table: "product"
+   */
+  product: GET_PRODUCT_SKU_product[];
+}
+
+export interface GET_PRODUCT_SKUVariables {
+  targetId: string;
 }
 
 /* tslint:disable */
