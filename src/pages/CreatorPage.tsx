@@ -232,11 +232,13 @@ const CreatorTabs: React.VFC<{
                   {formatMessage(commonMessages.content.noActivity)}
                 </StyledDescription>
               ) : (
-                activities.map(activity => (
-                  <div key={activity.id} className="col-12 col-lg-4 mb-4">
-                    <Activity {...activity} />
-                  </div>
-                ))
+                activities
+                  .filter(activity => activity.endedAt && activity.endedAt.getTime() > Date.now())
+                  .map(activity => (
+                    <div key={activity.id} className="col-12 col-lg-4 mb-4">
+                      <Activity {...activity} />
+                    </div>
+                  ))
               )}
             </div>
           </div>
