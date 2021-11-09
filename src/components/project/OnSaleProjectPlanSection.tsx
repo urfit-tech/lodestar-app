@@ -1,9 +1,9 @@
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import { ProjectPlanProps } from '../../types/project'
-import { CommonTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 import ProjectPlanCard from './ProjectPlanCard'
 

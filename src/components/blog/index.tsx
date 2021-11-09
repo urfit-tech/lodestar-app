@@ -1,7 +1,7 @@
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
 import { defineMessages } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../helpers'
-import { CommonTitleMixin } from '../common'
 
 export const messages = defineMessages({
   latest: { id: 'blog.label.latest', defaultMessage: '最新' },

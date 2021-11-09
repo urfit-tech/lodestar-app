@@ -1,12 +1,12 @@
 import { Select } from '@chakra-ui/react'
 import { Form } from 'antd'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { checkoutMessages } from '../../helpers/translation'
 import { PaymentGatewayType, PaymentMethodType, PaymentProps } from '../../types/checkout'
-import { CommonTitleMixin } from '../common'
 
 const StyledTitle = styled.h1`
   margin-bottom: 0.75rem;

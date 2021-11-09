@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/react'
 import { Skeleton } from 'antd'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
 import React from 'react'
@@ -10,7 +11,6 @@ import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages } from '../../helpers/translation'
 import { useActivityTicket } from '../../hooks/activity'
 import EmptyCover from '../../images/empty-cover.png'
-import { CommonTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledWrapper = styled.div`

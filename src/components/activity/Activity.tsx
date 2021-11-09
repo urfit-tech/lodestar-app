@@ -1,4 +1,5 @@
 import { Icon } from '@chakra-ui/react'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import moment from 'moment'
 import React from 'react'
 import { AiOutlineCalendar, AiOutlineUser } from 'react-icons/ai'
@@ -8,7 +9,6 @@ import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { ActivityProps } from '../../types/activity'
-import { CommonTitleMixin } from '../common'
 
 const StyledWrapper = styled.div`
   overflow: hidden;
