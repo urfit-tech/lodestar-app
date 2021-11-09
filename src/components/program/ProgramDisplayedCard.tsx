@@ -1,11 +1,11 @@
 import { Typography } from 'antd'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { sum } from 'ramda'
 import React from 'react'
 import styled from 'styled-components'
 import { useProgramContentProgress } from '../../contexts/ProgressContext'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramPackageProgram } from '../../types/programPackage'
-import { CommonTitleMixin } from '../common'
 import ProgressBar from '../common/ProgressBar'
 
 const StyledProgramCover = styled.div<{ src: string }>`

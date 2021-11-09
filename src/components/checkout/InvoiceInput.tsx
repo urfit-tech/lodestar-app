@@ -1,5 +1,6 @@
 import { Select, SkeletonText } from '@chakra-ui/react'
 import { Checkbox, Form, Input } from 'antd'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -7,7 +8,6 @@ import styled from 'styled-components'
 import { validationRegExp } from '../../helpers'
 import { checkoutMessages } from '../../helpers/translation'
 import { InvoiceProps, ShippingProps } from '../../types/checkout'
-import { CommonTitleMixin } from '../common'
 
 const StyledWrapper = styled.div`
   .ant-select {
