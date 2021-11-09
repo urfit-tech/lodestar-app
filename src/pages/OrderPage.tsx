@@ -122,6 +122,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
             ;(window as any).dataLayer = (window as any).dataLayer || []
             ;(window as any).dataLayer.push({ ecommerce: null })
             ;(window as any).dataLayer.push({
+              event: 'purchase',
               ecommerce: {
                 purchase: {
                   actionField: {
