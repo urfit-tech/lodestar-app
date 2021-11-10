@@ -5,6 +5,8 @@ import CheckoutGroupBuyingForm, {
   StyledBlockTitle,
   StyledListItem,
 } from 'lodestar-app-element/src/components/form/CheckoutGroupBuyingForm'
+import InvoiceInput, { validateInvoice } from 'lodestar-app-element/src/components/input/InvoiceInput'
+import PaymentSelector from 'lodestar-app-element/src/components/selectors/PaymentSelector'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { prop, sum } from 'ramda'
@@ -17,7 +19,6 @@ import styled from 'styled-components'
 import CartProductTableCard, { useProductInventory } from '../../components/checkout/CartProductTableCard'
 import CheckoutCard from '../../components/checkout/CheckoutCard'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
-import InvoiceInput, { validateInvoice } from '../../components/checkout/InvoiceInput'
 import ShippingInput, { csvShippingMethods, validateShipping } from '../../components/checkout/ShippingInput'
 import AdminCard from '../../components/common/AdminCard'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -31,7 +32,6 @@ import { CartProductProps, InvoiceProps, PaymentProps, ShippingProps } from '../
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
-import PaymentSelector from './PaymentSelector'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}

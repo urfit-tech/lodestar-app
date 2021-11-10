@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Skeleton } from '@chakra-ui/skeleton'
 import gql from 'graphql-tag'
+import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import Responsive from 'lodestar-app-element/src/components/common/Responsive'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -8,7 +9,6 @@ import hasura from '../../hasura'
 import { notEmpty } from '../../helpers'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import EmptyCover from '../../images/empty-cover.png'
-import { MultiLineTruncationMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledSectionLayout = styled.section<{ variant?: 'primary-color' }>`
