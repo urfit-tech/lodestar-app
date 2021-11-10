@@ -1,6 +1,10 @@
 import { Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
+import CheckoutGroupBuyingForm, {
+  StyledBlockTitle,
+  StyledListItem,
+} from 'lodestar-app-element/src/components/form/CheckoutGroupBuyingForm'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { prop, sum } from 'ramda'
@@ -26,7 +30,6 @@ import { useUpdateMemberMetadata } from '../../hooks/member'
 import { CartProductProps, InvoiceProps, PaymentProps, ShippingProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
-import CheckoutGroupBuyingForm, { StyledBlockTitle, StyledListItem } from './CheckoutGroupBuyingForm'
 import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
 import PaymentSelector from './PaymentSelector'
 
