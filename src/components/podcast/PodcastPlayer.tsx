@@ -245,20 +245,18 @@ const PodcastPlayer: React.VFC<{
   onNext,
 }) => {
   const [showAction, setShowAction] = useState(false)
-  const { sound, setSeek, durationInfo, setDurationInfo } = useContext(PodcastPlayerContext)
+  const { sound, setSeek } = useContext(PodcastPlayerContext)
 
   const onRateChange = (rate: number) => {
     const tmpSeek = sound?.seek()
     onPlayRateChange?.(rate)
     setSeek?.(tmpSeek || 0)
-    setDurationInfo?.({ progress, duration })
   }
 
   const onModeChange = (mode: PodcastPlayerMode) => {
     const tmpSeek = sound?.seek()
     onPlayModeChange?.(mode)
     setSeek?.(tmpSeek || 0)
-    setDurationInfo?.({ progress, duration })
   }
 
   return (
@@ -296,11 +294,7 @@ const PodcastPlayer: React.VFC<{
               <StyledLink to={link}>
                 <StyledTitle className="flex-grow-1">{title}</StyledTitle>
               </StyledLink>
-              <StyledDuration className="flex-shrink-0">
-                {durationInfo.duration === 0
-                  ? `${durationFormat(progress)} / ${durationFormat(duration)}`
-                  : `${durationFormat(durationInfo.progress)} / ${durationFormat(durationInfo.duration)}`}
-              </StyledDuration>
+              <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
             </div>
           </Responsive.Default>
 
@@ -316,11 +310,7 @@ const PodcastPlayer: React.VFC<{
                 <Link to={link}>
                   <StyledTitle>{title}</StyledTitle>
                 </Link>
-                <StyledDuration>
-                  {durationInfo.duration === 0
-                    ? `${durationFormat(progress)} / ${durationFormat(duration)}`
-                    : `${durationFormat(durationInfo.progress)} / ${durationFormat(durationInfo.duration)}`}
-                </StyledDuration>
+                <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
               </Responsive.Desktop>
             </div>
             <div className="col-6 col-lg-4 d-flex align-items-center justify-content-center">
