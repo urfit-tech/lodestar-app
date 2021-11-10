@@ -1,5 +1,8 @@
 import { Button, Divider, OrderedList, SkeletonText, useDisclosure } from '@chakra-ui/react'
 import { camelCase } from 'lodash'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
+import CheckoutProductReferrerInput from 'lodestar-app-element/src/components/input/CheckoutProductReferrerInput'
+import GroupBuyingRuleModal from 'lodestar-app-element/src/components/modals/GroupBuyingRuleModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
@@ -24,9 +27,42 @@ import { InvoiceProps, PaymentProps, ShippingOptionIdType, ShippingProps } from 
 import { ShippingMethodProps } from '../../types/merchandise'
 import { BREAK_POINT } from '../common/Responsive'
 import CheckoutGroupBuyingForm, { StyledBlockTitle, StyledListItem } from './CheckoutGroupBuyingForm'
-import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
-import { StyledCheckoutBlock, StyledCheckoutPrice, StyledTitle, StyledWarningText } from './CheckoutProductModal.styled'
-import CheckoutProductReferrerInput from './CheckoutProductReferrerInput'
+
+export const StyledTitle = styled.h1`
+  ${CommonTitleMixin}
+`
+export const StyledSubTitle = styled.div`
+  margin-bottom: 0.75rem;
+  ${CommonTitleMixin}
+`
+export const StyledWarningText = styled.p`
+  margin-top: 1.25rem;
+  color: var(--gray-dark);
+  font-size: 12px;
+`
+export const StyledCheckoutBlock = styled.div`
+  color: var(--gray-darker);
+  font-size: 14px;
+  line-height: 1.71;
+  letter-spacing: 0.4px;
+
+  > div {
+    margin-bottom: 0.75rem;
+
+    > span:first-child {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+`
+export const StyledCheckoutPrice = styled.div`
+  color: ${props => props.theme['@primary-color']};
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  text-align: right;
+`
 
 const StyledSubmitBlock = styled.div`
   @media (max-width: ${BREAK_POINT}px) {
