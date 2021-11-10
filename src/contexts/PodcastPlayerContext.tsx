@@ -18,7 +18,6 @@ type PodcastPlayerContextValue = {
   mode: PodcastPlayerMode
   rate: number
   currentPodcastProgramContent: PodcastProgramContent | null
-  durationInfo: { progress: number; duration: number }
   changePlayingState?: (state: boolean) => void
   changeRate?: (rate: number) => void
   changeMode?: (mode: PodcastPlayerMode) => void
@@ -30,7 +29,6 @@ type PodcastPlayerContextValue = {
     podcastAlbumId?: string
     currentIndex?: number
   }) => void
-  setDurationInfo?: React.Dispatch<React.SetStateAction<{ progress: number; duration: number }>>
   setSeek?: React.Dispatch<React.SetStateAction<number>>
 }
 
@@ -46,7 +44,6 @@ const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
   visible: false,
   mode: 'loop',
   rate: Number(localStorage.getItem('podcast.rate')) || 1,
-  durationInfo: { progress: 0, duration: 0 },
 }
 const PodcastPlayerContext = createContext<PodcastPlayerContextValue>(defaultPodcastPlayerContext)
 
@@ -65,8 +62,8 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   // const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(currentPodcastProgramId)
   const [seek, setSeek] = useState(0)
 
-  // memo duration and progress
-  const [durationInfo, setDurationInfo] = useState({ progress: 0, duration: 0 })
+  // handle single loop
+  const [loop, setLoop] = useState(false)
 
   useLayoutEffect(() => {
     howlerRef.current?.seek(seek)
@@ -109,7 +106,6 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         currentPodcastProgramContent: podcastProgram,
         visible,
         mode,
-        durationInfo,
         setSeek: currentSeek => setSeek(currentSeek),
         changePlayingState: state => setPlaying(state),
         changeRate: rate => {
@@ -131,7 +127,6 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           options.podcastAlbumId && setPodcastAlbumId(options.podcastAlbumId)
           typeof options.currentIndex === 'number' && setCurrentIndex(options.currentIndex)
         },
-        setDurationInfo: durationInfo => setDurationInfo(durationInfo),
       }}
     >
       {podcastProgram?.url && (
@@ -147,12 +142,15 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           }}
           onPause={() => setPlaying(false)}
           onStop={() => setPlaying(false)}
+          loop={loop}
           onEnd={() => {
             if (mode === 'single-loop') {
-              howlerRef.current?.seek(0)
+              setLoop(true)
             } else if (mode === 'loop') {
+              setLoop(false)
               setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
             } else if (mode === 'random') {
+              setLoop(false)
               setCurrentIndex(
                 index =>
                   (index + Math.floor(Math.random() * (podcastProgramIds.length - 1))) % podcastProgramIds.length,
