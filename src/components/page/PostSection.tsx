@@ -1,5 +1,6 @@
 import { Skeleton } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
+import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment-timezone'
 import React from 'react'
@@ -13,7 +14,6 @@ import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { SectionTitle, StyledLink, StyledSection } from '../../pages/AppPage'
 import { StyledPostTitle } from '../blog'
-import { MultiLineTruncationMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledCustomRatioImage = styled(CustomRatioImage)`

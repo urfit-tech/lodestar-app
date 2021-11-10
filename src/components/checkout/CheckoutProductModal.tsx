@@ -1,8 +1,14 @@
 import { Button, Divider, OrderedList, SkeletonText, useDisclosure } from '@chakra-ui/react'
 import { camelCase } from 'lodash'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
+import CheckoutGroupBuyingForm, {
+  StyledBlockTitle,
+  StyledListItem,
+} from 'lodestar-app-element/src/components/form/CheckoutGroupBuyingForm'
 import CheckoutProductReferrerInput from 'lodestar-app-element/src/components/input/CheckoutProductReferrerInput'
+import InvoiceInput, { validateInvoice } from 'lodestar-app-element/src/components/input/InvoiceInput'
 import GroupBuyingRuleModal from 'lodestar-app-element/src/components/modals/GroupBuyingRuleModal'
+import PaymentSelector from 'lodestar-app-element/src/components/selectors/PaymentSelector'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
@@ -13,8 +19,6 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
-import InvoiceInput, { validateInvoice } from '../../components/checkout/InvoiceInput'
-import PaymentSelector from '../../components/checkout/PaymentSelector'
 import ShippingInput, { validateShipping } from '../../components/checkout/ShippingInput'
 import CommonModal from '../../components/common/CommonModal'
 import PriceLabel from '../../components/common/PriceLabel'
@@ -26,7 +30,6 @@ import { useMember, useUpdateMemberMetadata } from '../../hooks/member'
 import { InvoiceProps, PaymentProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import { ShippingMethodProps } from '../../types/merchandise'
 import { BREAK_POINT } from '../common/Responsive'
-import CheckoutGroupBuyingForm, { StyledBlockTitle, StyledListItem } from './CheckoutGroupBuyingForm'
 
 export const StyledTitle = styled.h1`
   ${CommonTitleMixin}

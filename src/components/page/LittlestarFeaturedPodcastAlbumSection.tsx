@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { notEmpty } from '../../helpers'
 import EmptyCover from '../../images/empty-cover.png'
-import { MultiLineTruncationMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 import { MoreLink, SectionLayout } from './PodcastAlbumCollectionSection'
 
