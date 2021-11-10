@@ -75,31 +75,30 @@ const LittlestarFeaturedPodcastAlbumSection: React.FC<{
 }> = ({ options: { title } }) => {
   const { podcastAlbum } = useFeaturePodcastAlbum({ categoryName: title })
 
+  if (!podcastAlbum) return <></>
   return (
     <SectionLayout title={title} variant="primary-color">
-      {podcastAlbum && (
-        <StyledCard>
-          <div className="row">
-            <StyledCardImgWrapper className="col-12 col-lg-5">
-              <img src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
-            </StyledCardImgWrapper>
-            <div className="col-12 col-lg-7 d-flex align-items-center">
-              <div className="flex-grow-1">
-                <h3 className="mb-3">{podcastAlbum.title}</h3>
-                {podcastAlbum.categoryNames.map(name => (
-                  <span className="tag mr-2">{name}</span>
-                ))}
-                <div className="mt-4">
-                  <p>{podcastAlbum.description}</p>
-                </div>
-                <div className="text-right">
-                  <MoreLink to={`/podcast-albums/${podcastAlbum.id}`} />
-                </div>
+      <StyledCard>
+        <div className="row">
+          <StyledCardImgWrapper className="col-12 col-lg-5">
+            <img src={podcastAlbum.coverUrl || EmptyCover} alt={podcastAlbum.title} />
+          </StyledCardImgWrapper>
+          <div className="col-12 col-lg-7 d-flex align-items-center">
+            <div className="flex-grow-1">
+              <h3 className="mb-3">{podcastAlbum.title}</h3>
+              {podcastAlbum.categoryNames.map(name => (
+                <span className="tag mr-2">{name}</span>
+              ))}
+              <div className="mt-4">
+                <p>{podcastAlbum.description}</p>
+              </div>
+              <div className="text-right">
+                <MoreLink to={`/podcast-albums/${podcastAlbum.id}`} />
               </div>
             </div>
           </div>
-        </StyledCard>
-      )}
+        </div>
+      </StyledCard>
     </SectionLayout>
   )
 }
@@ -121,7 +120,10 @@ const useFeaturePodcastAlbum: (filter: { categoryName?: string }) => {
     gql`
       query GET_PODCAST_ALBUM_BY_CATEGORY_NAME($categoryName: String) {
         podcast_album(
-          where: { podcast_album_categories: { category: { name: { _eq: $categoryName } } } }
+          where: {
+            podcast_album_categories: { category: { name: { _eq: $categoryName } } }
+            published_at: { _lt: "now()" }
+          }
           limit: 1
           order_by: { published_at: desc }
         ) {
