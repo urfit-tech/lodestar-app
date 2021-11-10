@@ -294,6 +294,7 @@ export const useProgram = (programId: string) => {
             published_at
             auto_renewed
             is_countdown_timer_visible
+            group_buying_people
           }
           program_content_sections(
             where: { program_contents: { published_at: { _is_null: false } } }
@@ -347,6 +348,7 @@ export const useProgram = (programId: string) => {
         roles: ProgramRole[]
         plans: (ProgramPlan & {
           isSubscription: boolean
+          groupBuyingPeople: number
         })[]
         contentSections: (ProgramContentSection & {
           contents: ProgramContent[]
@@ -404,6 +406,7 @@ export const useProgram = (programId: string) => {
               isParticipantsVisible: programPlan.is_participants_visible,
               publishedAt: programPlan.published_at,
               isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
+              groupBuyingPeople: programPlan.group_buying_people || 1,
             })),
             contentSections: data.program_by_pk.program_content_sections.map(programContentSection => ({
               id: programContentSection.id,

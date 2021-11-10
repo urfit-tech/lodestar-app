@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext } from 'react'
 import ReactGA from 'react-ga'
@@ -42,10 +43,12 @@ const StyledBraftContent = styled.div`
   margin-bottom: 12px;
   font-size: 14px;
 `
-const ProgramSubscriptionPlanCard: React.VFC<{
+
+const ProgramPlanCard: React.VFC<{
   programId: string
   programPlan: ProgramPlan & {
     isSubscription: boolean
+    groupBuyingPeople: number
   }
 }> = ({ programId, programPlan }) => {
   const { formatMessage } = useIntl()
@@ -53,6 +56,7 @@ const ProgramSubscriptionPlanCard: React.VFC<{
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { program } = useProgram(programId)
+  const { enabledModules } = useApp()
 
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
 
@@ -127,12 +131,41 @@ const ProgramSubscriptionPlanCard: React.VFC<{
             </Button>
           )}
           defaultProductId={`ProgramPlan_${programPlan.id}`}
-          // TODO: Should take care of this warningText (maybe it would move to bottom)
           warningText={
             listPrice <= 0 || (typeof salePrice === 'number' && salePrice <= 0)
               ? formatMessage(productMessages.program.defaults.warningText)
               : ''
           }
+        />
+      ) : enabledModules.group_buying && programPlan.groupBuyingPeople > 1 ? (
+        <CheckoutProductModal
+          defaultProductId={`ProgramPlan_${programPlan.id}`}
+          renderTrigger={({ isLoading, onOpen }) => (
+            <Button
+              colorScheme="primary"
+              isFullWidth
+              isDisabled={isAuthenticated && isLoading}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  setAuthModalVisible?.(true)
+                } else {
+                  ReactGA.plugin.execute('ec', 'addProduct', {
+                    id: programPlan.id,
+                    name: programPlan.title,
+                    category: 'ProgramPlan',
+                    price: `${programPlan.listPrice}`,
+                    quantity: '1',
+                    currency: currencyId,
+                  })
+                  ReactGA.plugin.execute('ec', 'setAction', 'add')
+                  ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+                  onOpen?.()
+                }
+              }}
+            >
+              {formatMessage(commonMessages.ui.groupBuy)}
+            </Button>
+          )}
         />
       ) : (
         <ProgramPlanPaymentButton programPlan={programPlan} />
@@ -141,4 +174,4 @@ const ProgramSubscriptionPlanCard: React.VFC<{
   )
 }
 
-export default ProgramSubscriptionPlanCard
+export default ProgramPlanCard

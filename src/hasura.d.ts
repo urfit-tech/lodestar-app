@@ -7137,6 +7137,7 @@ export interface GET_PROGRAM_program_by_pk_program_plans {
   published_at: any | null;
   auto_renewed: boolean;
   is_countdown_timer_visible: boolean;
+  group_buying_people: any | null;
 }
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_type {

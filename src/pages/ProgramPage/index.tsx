@@ -24,7 +24,7 @@ import ProgramContentListSection from './ProgramContentListSection'
 import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
 import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
 import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
-import ProgramSubscriptionPlanCard from './ProgramSubscriptionPlanCard'
+import ProgramPlanCard from './ProgramPlanCard'
 
 const StyledIntroWrapper = styled.div`
   ${desktopViewMixin(css`
@@ -222,7 +222,7 @@ const ProgramPage: React.VFC = () => {
                       .filter(programPlan => programPlan.publishedAt)
                       .map(programPlan => (
                         <div key={programPlan.id} className="mb-3">
-                          <ProgramSubscriptionPlanCard programId={program.id} programPlan={programPlan} />
+                          <ProgramPlanCard programId={program.id} programPlan={programPlan} />
                         </div>
                       ))}
                   </div>
