@@ -4,8 +4,8 @@ import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
 import CheckoutGroupBuyingForm, {
   StyledBlockTitle,
   StyledListItem,
-} from 'lodestar-app-element/src/components/form/CheckoutGroupBuyingForm'
-import InvoiceInput, { validateInvoice } from 'lodestar-app-element/src/components/input/InvoiceInput'
+} from 'lodestar-app-element/src/components/forms/CheckoutGroupBuyingForm'
+import InvoiceInput, { validateInvoice } from 'lodestar-app-element/src/components/inputs/InvoiceInput'
 import PaymentSelector from 'lodestar-app-element/src/components/selectors/PaymentSelector'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
