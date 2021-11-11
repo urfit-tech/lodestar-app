@@ -102,6 +102,7 @@ export const commonMessages = {
     physical: { id: 'common.ui.physical', defaultMessage: '實體' },
     virtual: { id: 'common.ui.virtual', defaultMessage: '虛擬' },
     allCategory: { id: 'common.ui.allCategory', defaultMessage: '全部分類' },
+    groupBuy: { id: 'common.ui.groupBuy', defaultMessage: '立即團購' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },

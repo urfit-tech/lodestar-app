@@ -19,12 +19,12 @@ import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
 import ForbiddenPage from '../ForbiddenPage'
-import { PerpetualProgramBanner, SubscriptionProgramBanner } from './ProgramBanner'
+import { PerpetualProgramBanner } from './ProgramBanner'
 import ProgramContentListSection from './ProgramContentListSection'
-import ProgramInfoBlock from './ProgramInfoBlock'
+import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
+import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
 import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
-import ProgramPerpetualPlanCard from './ProgramPerpetualPlanCard'
-import ProgramSubscriptionPlanCard from './ProgramSubscriptionPlanCard'
+import ProgramPlanCard from './ProgramPlanCard'
 
 const StyledIntroWrapper = styled.div`
   ${desktopViewMixin(css`
@@ -112,43 +112,36 @@ const ProgramPage: React.VFC = () => {
 
   useEffect(() => {
     if (program) {
-      const listPrice =
-        program.isSubscription && program.plans.length > 0 ? program.plans[0].listPrice : program.listPrice || 0
-      const salePrice =
-        program.isSubscription && program.plans.length > 0 && (program.plans[0].soldAt?.getTime() || 0) > Date.now()
-          ? program.plans[0].salePrice
-          : (program.soldAt?.getTime() || 0) > Date.now()
-          ? program.salePrice
-          : undefined
-
-      ReactGA.plugin.execute('ec', 'addProduct', {
-        id: program.id,
-        name: program.title,
-        category: 'Program',
-        price: `${salePrice || listPrice}`,
-        quantity: '1',
-        currency: 'TWD',
-      })
-      ReactGA.plugin.execute('ec', 'setAction', 'detail')
       ReactGA.ga('send', 'pageview')
-      ;(window as any).dataLayer = (window as any).dataLayer || []
-      ;(window as any).dataLayer.push({ ecommerce: null })
-      ;(window as any).dataLayer.push({
-        ecommerce: {
-          detail: {
-            actionField: { list: pageFrom || '' },
-            products: [
-              {
-                name: program.title,
-                id: program.id,
-                price: salePrice || listPrice,
-                brand: settings['title'] || appId,
-                category: program.categories.map(category => category.name).join('|'),
-                variant: program.roles.map(role => role.memberName).join('|'),
-              },
-            ],
+      program.plans.forEach(plan => {
+        const price = plan.soldAt && plan.soldAt.getTime() < Date.now() ? plan.listPrice : plan.salePrice || 0
+        ReactGA.plugin.execute('ec', 'addProduct', {
+          id: program.id,
+          name: program.title,
+          category: 'Program',
+          price,
+          quantity: '1',
+          currency: 'TWD',
+        })
+        ReactGA.plugin.execute('ec', 'setAction', 'detail')
+        ;(window as any).dataLayer = (window as any).dataLayer || []
+        ;(window as any).dataLayer.push({
+          ecommerce: {
+            detail: {
+              actionField: { list: pageFrom || '' },
+              products: [
+                {
+                  name: program.title,
+                  id: program.id,
+                  price,
+                  brand: settings['title'] || appId,
+                  category: program.categories.map(category => category.name).join('|'),
+                  variant: program.roles.map(role => role.memberName).join('|'),
+                },
+              ],
+            },
           },
-        },
+        })
       })
     }
   }, [program, pageFrom, appId, settings])
@@ -178,9 +171,10 @@ const ProgramPage: React.VFC = () => {
       description: settings['open_graph.description'],
     },
   })
+  const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
 
   return (
-    <DefaultLayout white footerBottomSpace={program.isSubscription ? '60px' : '132px'}>
+    <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDescription} />
@@ -193,19 +187,21 @@ const ProgramPage: React.VFC = () => {
       </Helmet>
 
       <div>
-        {program.isSubscription ? (
-          <SubscriptionProgramBanner program={program} />
-        ) : (
-          <PerpetualProgramBanner program={program} />
-        )}
-
+        <PerpetualProgramBanner program={program} />
         <ProgramIntroBlock>
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-8">
-                <div className="mb-5">
-                  <ProgramAbstract>{program.abstract}</ProgramAbstract>
-                </div>
+                <Responsive.Default>
+                  <StyledProgramInfoCard>
+                    <ProgramContentCountBlock program={program} />
+                  </StyledProgramInfoCard>
+                </Responsive.Default>
+                {program.abstract && (
+                  <div className="mb-5">
+                    <ProgramAbstract>{program.abstract}</ProgramAbstract>
+                  </div>
+                )}
 
                 <div className="mb-5">
                   <BraftContent>{program.description}</BraftContent>
@@ -216,21 +212,21 @@ const ProgramPage: React.VFC = () => {
                 </div>
               </div>
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                {program.isSubscription ? (
-                  <div className="mb-5">
-                    <div id="subscription">
-                      {program.plans
-                        .filter(programPlan => programPlan.publishedAt)
-                        .map(programPlan => (
-                          <div key={programPlan.id} className="mb-3">
-                            <ProgramSubscriptionPlanCard programId={program.id} programPlan={programPlan} />
-                          </div>
-                        ))}
-                    </div>
+                <Responsive.Desktop>
+                  <ProgramInfoCard instructorId={instructorId} program={program} />
+                </Responsive.Desktop>
+
+                <div className="mb-5">
+                  <div id="subscription">
+                    {program.plans
+                      .filter(programPlan => programPlan.publishedAt)
+                      .map(programPlan => (
+                        <div key={programPlan.id} className="mb-3">
+                          <ProgramPlanCard programId={program.id} programPlan={programPlan} />
+                        </div>
+                      ))}
                   </div>
-                ) : (
-                  <ProgramInfoBlock program={program} />
-                )}
+                </div>
               </StyledIntroWrapper>
             </div>
 
@@ -258,19 +254,15 @@ const ProgramPage: React.VFC = () => {
 
       <Responsive.Default>
         <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-          {program.isSubscription ? (
-            <StyledButtonWrapper>
-              <Button
-                variant="primary"
-                isFullWidth
-                onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                {formatMessage(commonMessages.button.viewSubscription)}
-              </Button>
-            </StyledButtonWrapper>
-          ) : (
-            <ProgramPerpetualPlanCard memberId={currentMemberId || ''} program={program} />
-          )}
+          <StyledButtonWrapper>
+            <Button
+              variant="primary"
+              isFullWidth
+              onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              {formatMessage(commonMessages.button.viewProject)}
+            </Button>
+          </StyledButtonWrapper>
         </FixedBottomBlock>
       </Responsive.Default>
     </DefaultLayout>
