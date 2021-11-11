@@ -37,7 +37,7 @@ const StyledCard = styled.div`
   background-color: ${props => props.theme['@primary-color']};
 
   @media (min-width: ${BREAK_POINT}px) {
-    height: 75%;
+    height: 85%;
     border-radius: 0 8px 8px 0;
   }
 
@@ -88,6 +88,20 @@ const StyledCard = styled.div`
   }
 `
 
+const StyledTitle = styled.h3`
+  display: -webkit-box;
+  -webkit-line-clamp: 3; // rows number
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  overflow: hidden;
+`
+const StyledSubTitle = styled.h4`
+  display: -webkit-box;
+  -webkit-line-clamp: 1; // rows number
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  overflow: hidden;
+`
 const StyledLinkButton = styled(Button)`
   && {
     color: white;
@@ -118,8 +132,8 @@ const LittlestarLastTimePodcastSection: React.FC<{
         <div className="col-lg-6 p-lg-0 d-flex">
           <StyledCard className="flex-grow-1 d-flex flex-column justify-content-between m-0 m-lg-auto">
             <div className="mb-3">
-              <h3 className="mb-4">{lastWatchedPodcastProgram.title}</h3>
-              <h4 className="mb-2">{lastWatchedPodcastProgram.podcastAlbum.title}</h4>
+              <StyledTitle className="mb-4">{lastWatchedPodcastProgram.title}</StyledTitle>
+              <StyledSubTitle className="mb-2">{lastWatchedPodcastProgram.podcastAlbum.title}</StyledSubTitle>
               {lastWatchedPodcastProgram.podcastAlbum.categoryNames.map(name => (
                 <span className="tag mr-1" key={name}>
                   {name}
