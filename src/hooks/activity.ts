@@ -10,11 +10,17 @@ import {
 } from '../types/activity'
 import { Category } from '../types/general'
 
-export const usePublishedActivityCollection = (options?: { categoryId?: string }) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GET_PUBLISHED_ACTIVITY_COLLECTION>(
+export const usePublishedActivityCollection = (options?: { organizerId?: string; categoryId?: string }) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_PUBLISHED_ACTIVITY_COLLECTION,
+    hasura.GET_PUBLISHED_ACTIVITY_COLLECTIONVariables
+  >(
     gql`
-      query GET_PUBLISHED_ACTIVITY_COLLECTION {
-        activity(where: { published_at: { _is_null: false } }, order_by: [{ position: asc }, { published_at: desc }]) {
+      query GET_PUBLISHED_ACTIVITY_COLLECTION($organizerId: String) {
+        activity(
+          where: { organizer_id: { _eq: $organizerId }, published_at: { _is_null: false } }
+          order_by: [{ position: asc }, { published_at: desc }]
+        ) {
           id
           cover_url
           title
@@ -54,6 +60,7 @@ export const usePublishedActivityCollection = (options?: { categoryId?: string }
         }
       }
     `,
+    { variables: { organizerId: options?.organizerId } },
   )
 
   const activities: (ActivityProps & {

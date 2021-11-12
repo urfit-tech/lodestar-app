@@ -1,23 +1,16 @@
-import { Button } from '@chakra-ui/react'
 import { Card } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { isEmpty } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import ProgramPaymentButton from '../../../components/checkout/ProgramPaymentButton'
-import CountDownTimeBlock from '../../../components/common/CountDownTimeBlock'
 import { AvatarImage } from '../../../components/common/Image'
-import PriceLabel from '../../../components/common/PriceLabel'
-import { commonMessages } from '../../../helpers/translation'
 import { usePublicMember } from '../../../hooks/member'
 import { useEnrolledProgramIds } from '../../../hooks/program'
 import { Category } from '../../../types/general'
 import { Program, ProgramContent, ProgramContentSection, ProgramPlan, ProgramRole } from '../../../types/program'
 import ProgramContentCountBlock from './ProgramContentCountBlock'
-import ProgramGroupBuyingInfo from './ProgramGroupBuyingInfo'
 
 const StyledCountDownBlock = styled.div`
   margin-top: 15px;
@@ -57,7 +50,7 @@ const ProgramInfoCard: React.FC<{
   }
 }> = ({ instructorId, program }) => {
   const { member } = usePublicMember(instructorId)
-  const isOnSale = (program.soldAt?.getTime() || 0) > Date.now()
+  const isOnSale = (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
   const { enabledModules } = useApp()
   const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
@@ -76,39 +69,7 @@ const ProgramInfoCard: React.FC<{
           </Link>
         </>
       )}
-
       <ProgramContentCountBlock program={program} />
-
-      <div className="text-center mb-3">
-        {isEmpty(program.plans.filter(v => v.publishedAt)) && (
-          <PriceLabel
-            variant="inline"
-            listPrice={program.listPrice || 0}
-            salePrice={isOnSale ? program.salePrice || 0 : undefined}
-          />
-        )}
-        {program.isCountdownTimerVisible && program?.soldAt && isOnSale && (
-          <StyledCountDownBlock>
-            <CountDownTimeBlock expiredAt={program.soldAt} icon />
-          </StyledCountDownBlock>
-        )}
-      </div>
-
-      {isEnrolled ? (
-        <Link to={`/programs/${program.id}/contents`}>
-          <Button variant="outline" colorScheme="primary" isFullWidth>
-            {formatMessage(commonMessages.button.enter)}
-          </Button>
-        </Link>
-      ) : enabledModules.group_buying && program.plans.filter(v => v.publishedAt).length > 0 ? (
-        <ProgramGroupBuyingInfo
-          isOnSale={isOnSale}
-          program={program}
-          programPlans={program.plans.filter(v => v.publishedAt)}
-        />
-      ) : (
-        <ProgramPaymentButton program={program} variant="multiline" />
-      )}
     </StyledProgramInfoCard>
   )
 }

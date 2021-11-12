@@ -123,44 +123,44 @@ const ProgramContentListSection: React.VFC<{
     )
   }
 
-  if (program.isSubscription) {
-    // subscription program
-    if (!program.isIntroductionSectionVisible) {
-      if (trialProgramContents.length === 0) {
-        return null
-      }
-      return (
-        <>
-          <StyledTitle>{formatMessage(productMessages.program.title.trial)}</StyledTitle>
-          <Divider className="mt-1" />
+  // if (program.isSubscription) {
+  //   // subscription program
+  //   if (!program.isIntroductionSectionVisible) {
+  //     if (trialProgramContents.length === 0) {
+  //       return null
+  //     }
+  //     return (
+  //       <>
+  //         <StyledTitle>{formatMessage(productMessages.program.title.trial)}</StyledTitle>
+  //         <Divider className="mt-1" />
 
-          {trialProgramContents.map(programContent => {
-            return (
-              <ProgramContentTrialModal
-                key={programContent.id}
-                programContentId={programContent.id}
-                render={({ setVisible }) => (
-                  <ProgramContentItem onClick={() => setVisible(true)}>
-                    <Typography.Text>
-                      {programContent.duration ? (
-                        <Icon type="video-camera" className="mr-2" />
-                      ) : (
-                        <Icon type="file-text" className="mr-2" />
-                      )}
-                      {programContent.title}
-                    </Typography.Text>
+  //         {trialProgramContents.map(programContent => {
+  //           return (
+  //             <ProgramContentTrialModal
+  //               key={programContent.id}
+  //               programContentId={programContent.id}
+  //               render={({ setVisible }) => (
+  //                 <ProgramContentItem onClick={() => setVisible(true)}>
+  //                   <Typography.Text>
+  //                     {programContent.duration ? (
+  //                       <Icon type="video-camera" className="mr-2" />
+  //                     ) : (
+  //                       <Icon type="file-text" className="mr-2" />
+  //                     )}
+  //                     {programContent.title}
+  //                   </Typography.Text>
 
-                    <StyledDuration>{durationFormatter(programContent.duration) || ''}</StyledDuration>
-                  </ProgramContentItem>
-                )}
-              />
-            )
-          })}
-        </>
-      )
-    }
-    return <ProgramContentSectionBlock />
-  }
+  //                   <StyledDuration>{durationFormatter(programContent.duration) || ''}</StyledDuration>
+  //                 </ProgramContentItem>
+  //               )}
+  //             />
+  //           )
+  //         })}
+  //       </>
+  //     )
+  //   }
+  //   return <ProgramContentSectionBlock />
+  // }
 
   // perpetual program
   return <ProgramContentSectionBlock />

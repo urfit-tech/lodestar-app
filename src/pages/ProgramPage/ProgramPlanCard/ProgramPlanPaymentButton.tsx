@@ -38,7 +38,6 @@ const ProgramPlanPaymentButton: React.VFC<{ programPlan: ProgramPlan }> = ({ pro
   const history = useHistory()
 
   const handleAddCart = () => {
-    console.log('ProgramPlan', programPlan.id)
     return addCartProduct?.('ProgramPlan', programPlan.id, {
       from: window.location.pathname,
       sharingCode,

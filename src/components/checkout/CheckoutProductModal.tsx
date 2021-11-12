@@ -345,7 +345,7 @@ const CheckoutProductModal: React.VFC<CheckoutProductModalProps> = ({
           </div>
         )}
 
-        {enabledModules.group_buying && !!target.groupBuyingPeople && (
+        {enabledModules.group_buying && !!target.groupBuyingPeople && target.groupBuyingPeople > 1 && (
           <div ref={groupBuyingRef}>
             <StyledBlockTitle className="mb-3">{formatMessage(checkoutMessages.label.groupBuying)}</StyledBlockTitle>
             <OrderedList className="mb-4">

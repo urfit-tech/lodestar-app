@@ -101,7 +101,8 @@ const ProgramContentPlayer: React.VFC<{
   }
 
   const lastProgress =
-    !!programContentProgress?.find(progress => progress.programContentId === programContentId)?.lastProgress ||
+    (!!programContentProgress?.find(progress => progress.programContentId === programContentId)?.lastProgress &&
+      programContentProgress?.find(progress => progress.programContentId === programContentId)?.lastProgress !== 1) ||
     !(programContentProgress?.find(progress => progress.programContentId === programContentId)?.progress === 1)
       ? programContentProgress?.find(progress => progress.programContentId === programContentId)?.lastProgress
       : 0

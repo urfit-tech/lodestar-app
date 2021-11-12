@@ -1,4 +1,3 @@
-import { Affix } from 'antd'
 import React from 'react'
 import Responsive from '../../../components/common/Responsive'
 import { Category } from '../../../types/general'
@@ -27,9 +26,7 @@ const ProgramInfoBlock: React.VFC<{
       </Responsive.Default>
 
       <Responsive.Desktop>
-        <Affix offsetTop={40} target={() => document.getElementById('layout-content')}>
-          <ProgramInfoCard instructorId={instructorId} program={program} />
-        </Affix>
+        <ProgramInfoCard instructorId={instructorId} program={program} />
       </Responsive.Desktop>
     </>
   )

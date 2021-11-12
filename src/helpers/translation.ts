@@ -102,6 +102,7 @@ export const commonMessages = {
     physical: { id: 'common.ui.physical', defaultMessage: '實體' },
     virtual: { id: 'common.ui.virtual', defaultMessage: '虛擬' },
     allCategory: { id: 'common.ui.allCategory', defaultMessage: '全部分類' },
+    groupBuy: { id: 'common.ui.groupBuy', defaultMessage: '立即團購' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },
@@ -330,6 +331,10 @@ export const commonMessages = {
     noPodcast: {
       id: 'common.noPodcast',
       defaultMessage: '目前還沒有建立廣播',
+    },
+    noActivity: {
+      id: 'common.noActivity',
+      defaultMessage: '目前還沒有建立活動',
     },
     noAppointment: {
       id: 'common.noAppointment',
@@ -1413,6 +1418,7 @@ export const usersMessages = {
   tab: defineMessages({
     intro: { id: 'users.tab.member.intro', defaultMessage: '介紹' },
     addPrograms: { id: 'common.member.course', defaultMessage: '開設課程' },
+    addActivities: { id: 'common.member.activity', defaultMessage: '開設活動' },
     mediaPost: { id: 'common.tab.mediaPost', defaultMessage: '媒體文章' },
     podcasts: { id: 'common.member.podcasts', defaultMessage: '廣播頻道' },
     appointments: { id: 'common.tab.appointments', defaultMessage: '預約服務' },
