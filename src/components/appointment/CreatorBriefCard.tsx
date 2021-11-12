@@ -1,7 +1,7 @@
+import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import React from 'react'
 import styled, { css } from 'styled-components'
 import DefaultAvatar from '../../images/avatar.svg'
-import { MultiLineTruncationMixin } from '../common'
 import { CustomRatioImage } from '../common/Image'
 
 const StyledCardBody = styled.div<{ variant?: string }>`

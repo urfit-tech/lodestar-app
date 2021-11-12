@@ -9,11 +9,11 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import gql from 'graphql-tag'
+import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { MultiLineTruncationMixin } from '../../components/common'
 import { Input } from '../../components/common/CommonForm'
 import CommonModal from '../../components/common/CommonModal'
 import types from '../../hasura'

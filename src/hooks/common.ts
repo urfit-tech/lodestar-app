@@ -4,7 +4,6 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useIntl } from 'react-intl'
 import hasura from '../hasura'
-import { notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { ProductType } from '../types/product'
 import { PeriodType } from '../types/program'
@@ -595,42 +594,4 @@ export const useMemberValidation = (email: string) => {
     validateStatus,
     refetchMemberId: refetch,
   }
-}
-
-export const useSearchMembers = () => {
-  const apolloClient = useApolloClient()
-  const { id: appId } = useApp()
-  const searchMembers = async (emails: string[]) => {
-    try {
-      const { data } = await apolloClient.query<hasura.SEARCH_MEMBERS, hasura.SEARCH_MEMBERSVariables>({
-        query: gql`
-          query SEARCH_MEMBERS($emails: [String!]!, $appId: String!) {
-            member_public(where: { email: { _in: $emails }, app_id: { _eq: $appId } }) {
-              id
-              email
-            }
-          }
-        `,
-        variables: {
-          emails: emails.filter(notEmpty),
-          appId,
-        },
-        fetchPolicy: 'no-cache',
-      })
-
-      const members =
-        data?.member_public
-          .filter(v => v.id && v.email)
-          .map(v => ({
-            id: v.id || '',
-            email: v.email || '',
-          })) || []
-
-      return members
-    } catch {
-      return []
-    }
-  }
-
-  return searchMembers
 }

@@ -1,6 +1,6 @@
 import { Form } from 'antd'
+import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
 import styled from 'styled-components'
-import { CommonLargeTitleMixin } from '../common'
 
 export const StyledBanner = styled.div`
   padding: 4rem 0;

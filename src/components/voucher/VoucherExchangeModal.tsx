@@ -1,11 +1,11 @@
 import { Button, Divider } from '@chakra-ui/react'
 import { Checkbox, Modal } from 'antd'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import ProductItem from '../../components/common/ProductItem'
 import { commonMessages, voucherMessages } from '../../helpers/translation'
-import { CommonTitleMixin } from '../common'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
