@@ -118,7 +118,7 @@ const CoverSection: React.VFC<{
 
   return (
     <section>
-      <Carousel dots infinite arrows={false} autoplay autoplaySpeed={5000} variant="cover">
+      <Carousel dots dotsClass="slick-dots" infinite arrows={false} autoplay autoplaySpeed={5000} variant="cover">
         {options.coverInfos.map(v => (
           <Slide
             srcDesktop={v.srcDesktop}

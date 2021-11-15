@@ -139,14 +139,11 @@ const ProgramIntroSection: React.VFC<{
             autoplay
             autoplaySpeed={10000}
             slidesToShow={2}
-            responsive={[
-              {
-                breakpoint: BREAK_POINT,
-                settings: {
-                  slidesToShow: 1,
-                },
+            responsive={{
+              mobile: {
+                slidesToShow: 1,
               },
-            ]}
+            }}
           >
             {programs.map(program => (
               <div className="px-5 px-lg-2">
