@@ -1,4 +1,4 @@
-import Carousel from 'lodestar-app-element/src/components/common/Carousel'
+import { CraftCarousel } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import styled from 'styled-components'
 import AngleThinLeft from '../../images/angle-thin-left.svg'
@@ -105,9 +105,10 @@ const StyledSubTitle = styled.h3`
   font-family: Noto Sans TC;
 `
 
-export const StyledCarousel = styled(Carousel)`
+export const StyledCarousel = styled(CraftCarousel)`
   height: 400px;
   && {
+    overflow: unset;
     .slick-prev:before,
     .slick-next:before {
       content: '';
@@ -167,21 +168,18 @@ const TeacherSection: React.FC<{
           arrows={true}
           autoplay
           autoplaySpeed={10000}
-          slidesToShow={4}
-          responsive={[
-            {
-              breakpoint: 1280,
-              settings: {
-                slidesToShow: 3,
-              },
+          slidesToShow={2}
+          responsive={{
+            desktop: {
+              slidesToShow: 4,
             },
-            {
-              breakpoint: BREAK_POINT,
-              settings: {
-                slidesToShow: 1,
-              },
+            tablet: {
+              slidesToShow: 3,
             },
-          ]}
+            mobile: {
+              slidesToShow: 1,
+            },
+          }}
         >
           {teachers.map(teacher => (
             <div>

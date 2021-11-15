@@ -1,6 +1,6 @@
-import Carousel from 'lodestar-app-element/src/components/common/Carousel'
 import {
   CraftCard,
+  CraftCarousel,
   CraftImage,
   CraftParagraph,
   CraftTitle,
@@ -8,7 +8,6 @@ import {
 import React from 'react'
 import styled from 'styled-components'
 import { StyledSection } from '../../pages/AppPage'
-import { BREAK_POINT } from '../common/Responsive'
 
 type Info = {
   imgSrc: string
@@ -44,21 +43,18 @@ const ReferrerSection: React.FC<{
     <StyledSection>
       <StyledTitle className="mb-5">{title}</StyledTitle>
       <StyledContainer>
-        <Carousel
+        <CraftCarousel
           dots
           infinite
           arrows={false}
           autoplay
           autoplaySpeed={5000}
           slidesToShow={3}
-          responsive={[
-            {
-              breakpoint: BREAK_POINT,
-              settings: {
-                slidesToShow: 1,
-              },
+          responsive={{
+            mobile: {
+              slidesToShow: 1,
             },
-          ]}
+          }}
         >
           {infos?.map(v => (
             <CraftCard
@@ -92,7 +88,7 @@ const ReferrerSection: React.FC<{
               />
             </CraftCard>
           ))}
-        </Carousel>
+        </CraftCarousel>
       </StyledContainer>
     </StyledSection>
   )
