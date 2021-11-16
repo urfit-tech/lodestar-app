@@ -8,7 +8,10 @@ const SliderWrapper = styled.div<{ desktopHeight?: string; mobileHeight?: string
   padding-top: 70%;
   height: ${props => props.mobileHeight || '360px'};
 
-  @media (min-width: 426px) {
+  @media (min-width: 576px) {
+    height: ${props => props.desktopHeight || '610px'};
+  }
+  @media (min-width: 992px) {
     height: ${props => props.desktopHeight || '610px'};
   }
   @media (min-width: 992px) {
