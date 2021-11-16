@@ -29,22 +29,27 @@ const CoverSection: React.VFC<{
         autoplay
         autoplaySpeed={5000}
         variant="cover"
-        customStyle={{
-          height: options.sectionHeight?.mobileHeight || '360px',
-        }}
-        // FIXME: Carousel props
-        responsive={
-          {
-            desktop: {
-              customStyle: {
-                height: options.sectionHeight?.desktopHeight || '610px',
-              },
+        responsive={{
+          desktop: {
+            customStyle: {
+              paddingTop: '32%',
             },
-          } as any
-        }
+          },
+          tablet: {
+            customStyle: {
+              paddingTop: '70%',
+            },
+          },
+          mobile: {
+            customStyle: {
+              paddingTop: '70%',
+            },
+          },
+        }}
       >
         {options.coverInfos.map(v => (
           <Slide
+            variant="normal"
             srcDesktop={v.srcDesktop}
             srcMobile={v.srcMobile}
             title={v.title}
@@ -57,7 +62,6 @@ const CoverSection: React.VFC<{
               if (!v.link) return
               v.external ? window.open(v.link) : history.push(v.link)
             }}
-            sectionHeight={options.sectionHeight}
           />
         ))}
       </CraftCarousel>
