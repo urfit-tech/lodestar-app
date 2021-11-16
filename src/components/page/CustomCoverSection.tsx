@@ -1,4 +1,4 @@
-import Carousel from 'lodestar-app-element/src/components/common/Carousel'
+import { CraftCarousel } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import styled, { CSSObject } from 'styled-components'
@@ -118,7 +118,32 @@ const CoverSection: React.VFC<{
 
   return (
     <section>
-      <Carousel dots dotsClass="slick-dots" infinite arrows={false} autoplay autoplaySpeed={5000} variant="cover">
+      <CraftCarousel
+        dots
+        dotsClass="slick-dots"
+        infinite
+        arrows={false}
+        autoplay
+        autoplaySpeed={5000}
+        variant="cover"
+        responsive={{
+          desktop: {
+            customStyle: {
+              height: options.sectionHeight?.desktopHeight || '612px',
+            },
+          },
+          tablet: {
+            customStyle: {
+              height: options.sectionHeight?.desktopHeight || '612px',
+            },
+          },
+          mobile: {
+            customStyle: {
+              height: options.sectionHeight?.mobileHeight || '360px',
+            },
+          },
+        }}
+      >
         {options.coverInfos.map(v => (
           <Slide
             srcDesktop={v.srcDesktop}
@@ -136,7 +161,7 @@ const CoverSection: React.VFC<{
             sectionHeight={options.sectionHeight}
           />
         ))}
-      </Carousel>
+      </CraftCarousel>
     </section>
   )
 }
