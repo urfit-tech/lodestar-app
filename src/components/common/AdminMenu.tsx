@@ -88,7 +88,12 @@ export const MemberAdminMenu: React.VFC<
     },
     {
       key: 'member_profile_admin',
-      item: (
+      item: settings['custom.member_profile_admin.link'] ? (
+        <Menu.Item key="_blank" data-href={`${settings['custom.member_profile_admin.link']}`}>
+          <Icon as={UserIcon} className="mr-2" />
+          {formatMessage(commonMessages.content.personalSettings)}
+        </Menu.Item>
+      ) : (
         <Menu.Item key="member_profile_admin">
           <Icon as={UserIcon} className="mr-2" />
           {formatMessage(commonMessages.content.personalSettings)}
