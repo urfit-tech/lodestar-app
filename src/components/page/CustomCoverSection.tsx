@@ -3,17 +3,10 @@ import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import styled, { CSSObject } from 'styled-components'
 
-const SliderWrapper = styled.div<{ desktopHeight?: string; mobileHeight?: string }>`
+const SliderWrapper = styled.div<{ variant: 'normal' | 'custom' }>`
   position: relative;
-  padding-top: 70%;
-  height: ${props => props.mobileHeight || '360px'};
+  padding-top: ${props => (props.variant === 'custom' ? '96%' : '70%')};
 
-  @media (min-width: 576px) {
-    height: ${props => props.desktopHeight || '610px'};
-  }
-  @media (min-width: 992px) {
-    height: ${props => props.desktopHeight || '610px'};
-  }
   @media (min-width: 992px) {
     padding-top: 32%;
   }
@@ -74,16 +67,16 @@ const StyledCoverButton = styled.div`
 `
 
 export const Slide: React.FC<{
+  variant: 'normal' | 'custom'
   srcDesktop: string
   srcMobile: string
   title: string
   subtitle: string
   onClick?: () => void
   buttonText?: React.ReactElement | string
-  sectionHeight?: { desktopHeight?: string; mobileHeight?: string }
-}> = ({ srcDesktop, srcMobile, title, subtitle, buttonText, onClick, sectionHeight }) => {
+}> = ({ variant, srcDesktop, srcMobile, title, subtitle, buttonText, onClick }) => {
   return (
-    <SliderWrapper {...sectionHeight}>
+    <SliderWrapper variant={variant}>
       <StyledCoverBackground
         srcDesktop={srcDesktop}
         srcMobile={srcMobile}
@@ -132,23 +125,24 @@ const CoverSection: React.VFC<{
         responsive={{
           desktop: {
             customStyle: {
-              height: options.sectionHeight?.desktopHeight || '612px',
+              paddingTop: '32%',
             },
           },
           tablet: {
             customStyle: {
-              height: options.sectionHeight?.desktopHeight || '612px',
+              paddingTop: '96%',
             },
           },
           mobile: {
             customStyle: {
-              height: options.sectionHeight?.mobileHeight || '360px',
+              paddingTop: '96%',
             },
           },
         }}
       >
         {options.coverInfos.map(v => (
           <Slide
+            variant="custom"
             srcDesktop={v.srcDesktop}
             srcMobile={v.srcMobile}
             title={v.title}
@@ -161,7 +155,6 @@ const CoverSection: React.VFC<{
               if (!v.link) return
               v.external ? window.open(v.link) : history.push(v.link)
             }}
-            sectionHeight={options.sectionHeight}
           />
         ))}
       </CraftCarousel>
