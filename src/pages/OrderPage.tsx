@@ -135,16 +135,16 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                       .join(' | '),
                   },
                   products: simpleProducts.map(simpleProduct => {
-                    const currenctOrderProduct = order.order_products.find(
+                    const currentOrderProduct = order.order_products.find(
                       orderProduct => orderProduct.product_id === `${simpleProduct.productType}_${simpleProduct.id}`,
                     )
                     return {
-                      id: simpleProduct.id,
+                      id: simpleProduct.sku || simpleProduct.id,
                       name: simpleProduct.title,
                       price: simpleProduct.isOnSale ? simpleProduct.salePrice : simpleProduct.listPrice,
                       category: simpleProduct.categories?.join('|'),
                       brand: settings['title'] || appId,
-                      quantity: currenctOrderProduct?.options['quantity'] || 1,
+                      quantity: currentOrderProduct?.options['quantity'] || 1,
                       variant: simpleProduct.roles?.join('|'),
                     }
                   }),
