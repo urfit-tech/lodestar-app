@@ -178,6 +178,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
             ended_at
             price
             title
+            currency_id
             activity_session_tickets {
               id
               activity_session_type
@@ -238,6 +239,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
           startedAt: new Date(v.started_at),
           endedAt: new Date(v.ended_at),
           isPublished: v.is_published,
+          currencyId: v.currency_id,
           sessions: v.activity_session_tickets.map(v => ({
             id: v.activity_session.id,
             type: v.activity_session_type as ActivityTicketSessionType,
@@ -375,7 +377,7 @@ export const useActivityTicket = (ticketId: string) => {
           ended_at
           count
           price
-
+          currency_id
           activity_session_tickets(order_by: { activity_session: { started_at: asc } }) {
             id
             activity_session_type
@@ -433,6 +435,7 @@ export const useActivityTicket = (ticketId: string) => {
           description: data.activity_ticket_by_pk.description,
           isPublished: data.activity_ticket_by_pk.is_published,
           title: data.activity_ticket_by_pk.title,
+          currencyId: data.activity_ticket_by_pk.currency_id,
           sessions: data.activity_ticket_by_pk.activity_session_tickets.map(activitySessionTicket => ({
             id: activitySessionTicket.activity_session.id,
             type: activitySessionTicket.activity_session_type as ActivityTicketSessionType,

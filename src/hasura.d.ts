@@ -2592,6 +2592,7 @@ export interface GET_ACTIVITY_activity_by_pk_activity_tickets {
   ended_at: any;
   price: any;
   title: string;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -2819,6 +2820,7 @@ export interface GET_TICKET_activity_ticket_by_pk {
    */
   count: number;
   price: any;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -4647,6 +4649,33 @@ export interface GET_EXPIRED_OWNED_PRODUCTS {
 export interface GET_EXPIRED_OWNED_PRODUCTSVariables {
   memberId: string;
   productType: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
+// GraphQL query operation: GET_COIN_STATUS
+// ====================================================
+
+
+export interface GET_COIN_STATUS_coin_status {
+  __typename: "coin_status";
+  remaining: any | null;
+}
+
+export interface GET_COIN_STATUS {
+  /**
+   * fetch data from the table: "coin_status"
+   */
+  coin_status: GET_COIN_STATUS_coin_status[];
+}
+
+export interface GET_COIN_STATUSVariables {
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -8828,33 +8857,6 @@ export interface GET_GROUP_BUYING_ORDERVariables {
 
 
 // ====================================================
-// GraphQL query operation: GET_COIN_STATUS
-// ====================================================
-
-
-export interface GET_COIN_STATUS_coin_status {
-  __typename: "coin_status";
-  remaining: any | null;
-}
-
-export interface GET_COIN_STATUS {
-  /**
-   * fetch data from the table: "coin_status"
-   */
-  coin_status: GET_COIN_STATUS_coin_status[];
-}
-
-export interface GET_COIN_STATUSVariables {
-  memberId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-
-// ====================================================
 // GraphQL query operation: GET_COIN_LOG_COLLECTION
 // ====================================================
 
@@ -9566,6 +9568,7 @@ export interface SEARCH_PRODUCT_COLLECTION_activity_activity_tickets_aggregate_n
   ended_at: any;
   price: any;
   title: string;
+  currency_id: string;
 }
 
 export interface SEARCH_PRODUCT_COLLECTION_activity_activity_tickets_aggregate_aggregate_sum {
@@ -11624,6 +11627,7 @@ export enum order_product_update_column {
   created_at = "created_at",
   currency_id = "currency_id",
   deliverables = "deliverables",
+  delivered_at = "delivered_at",
   description = "description",
   ended_at = "ended_at",
   id = "id",
@@ -17490,6 +17494,7 @@ export interface order_product_bool_exp {
   currency?: currency_bool_exp | null;
   currency_id?: String_comparison_exp | null;
   deliverables?: jsonb_comparison_exp | null;
+  delivered_at?: timestamp_comparison_exp | null;
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17560,6 +17565,7 @@ export interface order_product_insert_input {
   currency?: currency_obj_rel_insert_input | null;
   currency_id?: string | null;
   deliverables?: any | null;
+  delivered_at?: any | null;
   description?: string | null;
   ended_at?: any | null;
   id?: any | null;
@@ -21434,6 +21440,21 @@ export interface tag_on_conflict {
   constraint: tag_constraint;
   update_columns: tag_update_column[];
   where?: tag_bool_exp | null;
+}
+
+/**
+ * expression to compare columns of type timestamp. All fields are combined with logical 'AND'.
+ */
+export interface timestamp_comparison_exp {
+  _eq?: any | null;
+  _gt?: any | null;
+  _gte?: any | null;
+  _in?: any[] | null;
+  _is_null?: boolean | null;
+  _lt?: any | null;
+  _lte?: any | null;
+  _neq?: any | null;
+  _nin?: any[] | null;
 }
 
 /**

@@ -9,6 +9,7 @@ import styled, { css } from 'styled-components'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
 import { ActivityTicketProps } from '../../types/activity'
+import CoinCheckoutModal from '../checkout/CoinCheckoutModal'
 
 const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
   span {
@@ -47,6 +48,12 @@ const ActivityTicketPaymentButton: React.VFC<{
         <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
           {formatMessage(commonMessages.button.cart)}
         </Button>
+      ) : ticket.currencyId === 'LSC' ? (
+        <CoinCheckoutModal
+          productId={'ActivityTicket_' + ticket.id}
+          currencyId={ticket.currencyId}
+          amount={ticket.price}
+        />
       ) : (
         <div className="d-flex flex-column">
           {ticket.price !== 0 && !settings['feature.cart.disable'] && (

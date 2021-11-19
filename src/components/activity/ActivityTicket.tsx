@@ -87,6 +87,7 @@ const ActivityTicket: React.VFC<
   title,
   description,
   price,
+  currencyId,
   count,
   startedAt,
   endedAt,
@@ -114,7 +115,7 @@ const ActivityTicket: React.VFC<
         {variant === 'admin' && <StyledLabel active={status === '販售中'}>{status}</StyledLabel>}
       </StyledTitle>
       <StyledPrice>
-        <PriceLabel listPrice={price} />
+        <PriceLabel listPrice={price} currencyId={currencyId} />
       </StyledPrice>
       <Divider className="mb-4" />
       <StyledSubTitle>{formatMessage(productMessages.activity.title.sessions)}</StyledSubTitle>
