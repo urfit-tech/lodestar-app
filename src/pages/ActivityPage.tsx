@@ -172,6 +172,7 @@ const ActivityPage: React.VFC = () => {
                         isPublished={ticket.isPublished}
                         activityTicketSessions={ticket.sessions}
                         participants={ticket.participants}
+                        currencyId={ticket.currencyId}
                         extra={
                           !activity ||
                           !activity.publishedAt ||
