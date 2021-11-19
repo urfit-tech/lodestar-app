@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { ProductType } from 'lodestar-app-element/src/types/product'
+import { sum } from 'ramda'
 import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
 import LanguageContext from '../contexts/LanguageContext'
@@ -298,5 +299,23 @@ export const useExpiredOwnedProducts = (memberId: string, productType: ProductTy
     errorExpiredOwnedProducts: error,
     expiredOwnedProducts,
     refetchExpiredOwnedProducts: refetch,
+  }
+}
+
+export const useCoinStatus = (memberId: string) => {
+  const { data } = useQuery<hasura.GET_COIN_STATUS>(
+    gql`
+      query GET_COIN_STATUS($memberId: String!) {
+        coin_status(where: { member_id: { _eq: $memberId } }) {
+          remaining
+        }
+      }
+    `,
+    {
+      variables: { memberId },
+    },
+  )
+  return {
+    ownedCoins: sum(data?.coin_status.map(v => v.remaining || 0) || []),
   }
 }
