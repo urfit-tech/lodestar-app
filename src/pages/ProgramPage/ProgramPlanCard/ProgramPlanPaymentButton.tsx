@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import CoinCheckoutModal from '../../../components/checkout/CoinCheckoutModal'
 import CartContext from '../../../contexts/CartContext'
 import { commonMessages } from '../../../helpers/translation'
 import { ProgramPlan } from '../../../types/program'
@@ -28,7 +29,12 @@ const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
     `}
 `
 
-const ProgramPlanPaymentButton: React.VFC<{ programPlan: ProgramPlan }> = ({ programPlan }) => {
+const ProgramPlanPaymentButton: React.VFC<{
+  programPlan: ProgramPlan & {
+    isSubscription: boolean
+    groupBuyingPeople: number
+  }
+}> = ({ programPlan }) => {
   const { formatMessage } = useIntl()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
   const { settings } = useApp()
@@ -36,6 +42,7 @@ const ProgramPlanPaymentButton: React.VFC<{ programPlan: ProgramPlan }> = ({ pro
   const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
   sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
   const history = useHistory()
+  const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
 
   const handleAddCart = () => {
     return addCartProduct?.('ProgramPlan', programPlan.id, {
@@ -52,7 +59,7 @@ const ProgramPlanPaymentButton: React.VFC<{ programPlan: ProgramPlan }> = ({ pro
         </Button>
       ) : (
         <div className="d-flex flex-column">
-          {!settings['feature.cart.disable'] && (
+          {!settings['feature.cart.disable'] && programPlan.currency.id !== 'LSC' && (
             <StyleButton
               className="mr-2"
               variant="outline"
@@ -65,11 +72,24 @@ const ProgramPlanPaymentButton: React.VFC<{ programPlan: ProgramPlan }> = ({ pro
               <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
             </StyleButton>
           )}
-          <Button colorScheme="primary" isFullWidth onClick={() => handleAddCart()?.then(() => history.push('/cart'))}>
-            {programPlan.listPrice === 0
-              ? formatMessage(commonMessages.button.join)
-              : formatMessage(commonMessages.ui.purchase)}
-          </Button>
+
+          {!programPlan.isSubscription && programPlan.currency.id === 'LSC' ? (
+            <CoinCheckoutModal
+              productId={'ProgramPlan_' + programPlan.id}
+              currencyId={programPlan.currency.id}
+              amount={isOnSale && programPlan.salePrice ? programPlan.salePrice : programPlan.listPrice}
+            />
+          ) : (
+            <Button
+              colorScheme="primary"
+              isFullWidth
+              onClick={() => handleAddCart()?.then(() => history.push('/cart'))}
+            >
+              {programPlan.listPrice === 0
+                ? formatMessage(commonMessages.button.join)
+                : formatMessage(commonMessages.ui.purchase)}
+            </Button>
+          )}
         </div>
       )}
     </>
