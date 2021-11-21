@@ -25,7 +25,7 @@ const CartContext = React.createContext<{
 })
 
 export const CartProvider: React.FC = ({ children }) => {
-  const { id: appId } = useApp()
+  const { id: appId, settings } = useApp()
   const apolloClient = useApolloClient()
   const { currentMemberId } = useAuth()
   const [updateCartProducts] = useMutation<hasura.UPDATE_CART_PRODUCTS, hasura.UPDATE_CART_PRODUCTSVariables>(
@@ -159,9 +159,9 @@ export const CartProvider: React.FC = ({ children }) => {
           const repeatedCartProduct = cachedCartProducts.find(
             cartProduct => cartProduct.productId === `${productType}_${productTarget}`,
           )
-          const newCartProducts = cachedCartProducts.filter(
-            cartProduct => cartProduct.productId !== `${productType}_${productTarget}`,
-          )
+          const newCartProducts = Number(settings['feature.cart.disable'])
+            ? []
+            : cachedCartProducts.filter(cartProduct => cartProduct.productId !== `${productType}_${productTarget}`)
 
           newCartProducts.push({
             productId: `${productType}_${productTarget}`,
