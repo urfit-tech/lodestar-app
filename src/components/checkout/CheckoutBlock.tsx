@@ -370,7 +370,7 @@ const CheckoutBlock: React.VFC<{
 
           <div ref={invoiceRef} className="mb-3">
             {renderInvoice?.({ invoice, setInvoice, isValidating }) ||
-              (!settings['feature.invoice.disable'] && (
+              (settings['feature.invoice.disable'] !== '1' && (
                 <AdminCard>
                   <InvoiceInput
                     value={invoice}
