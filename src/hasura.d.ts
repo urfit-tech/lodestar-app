@@ -8787,6 +8787,10 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk {
    */
   status: string;
   /**
+   * {type: "perpetual" | "subscription" | "groupBuying", gateway: "spgateway" | "parenting" | "tappay", method: "credit" | "vacc" | "cvs" | "instflag" | "unionpay" | "webatm" | "barcode" }
+   */
+  payment_model: any | null;
+  /**
    * An aggregated array relationship
    */
   order_discounts_aggregate: GET_ORDERS_PRODUCT_order_log_by_pk_order_discounts_aggregate;
