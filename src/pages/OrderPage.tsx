@@ -2,10 +2,11 @@ import { useQuery } from '@apollo/react-hooks'
 import { Button, Icon, Typography } from 'antd'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import React, { useEffect } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import { BooleanParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
@@ -15,6 +16,13 @@ import { commonMessages } from '../helpers/translation'
 import { useSimpleProductCollection } from '../hooks/common'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
+
+const messages = defineMessages({
+  orderSuccessHint: {
+    id: 'common.text.orderSuccessHint',
+    defaultMessage: '若你選擇「{method}」需於付款完成後，{waitingDays} 個工作日才會開通。',
+  },
+})
 
 const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
   const { formatMessage } = useIntl()
@@ -164,6 +172,38 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
     return <NotFoundPage />
   }
 
+  const orderSuccessHintFormat = (paymentMethod?: string) => {
+    switch (paymentMethod) {
+      case 'vacc':
+        return (
+          <Typography.Text className="mb-4">
+            {formatMessage(messages.orderSuccessHint, {
+              method: formatMessage(checkoutMessages.label.vacc),
+              waitingDays: '1-2',
+            })}
+          </Typography.Text>
+        )
+      case 'cvs':
+        return (
+          <Typography.Text className="mb-4">
+            {formatMessage(messages.orderSuccessHint, {
+              method: formatMessage(checkoutMessages.label.cvs),
+              waitingDays: '1-2',
+            })}
+          </Typography.Text>
+        )
+      case 'barcode':
+        return (
+          <Typography.Text className="mb-4">
+            {formatMessage(messages.orderSuccessHint, {
+              method: formatMessage(checkoutMessages.label.barcode),
+              waitingDays: '等待 3-5',
+            })}
+          </Typography.Text>
+        )
+    }
+  }
+
   return (
     render?.({ order }) || (
       <DefaultLayout noFooter>
@@ -199,7 +239,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                   <Typography.Title level={4} className="mb-3">
                     {formatMessage(commonMessages.title.purchasedItemAvailable)}
                   </Typography.Title>
-                  <Typography.Text className="mb-4">{formatMessage(commonMessages.content.atm)}</Typography.Text>
+                  {orderSuccessHintFormat(order.payment_model?.method)}
                 </>
               ) : (
                 <>
@@ -235,6 +275,7 @@ const GET_ORDERS_PRODUCT = gql`
       id
       message
       status
+      payment_model
       order_discounts_aggregate {
         aggregate {
           sum {
