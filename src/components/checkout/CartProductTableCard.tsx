@@ -109,7 +109,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                               products: [
                                 {
                                   name: simpleProduct.title,
-                                  id: simpleProduct.id,
+                                  id: simpleProduct.sku || simpleProduct.id,
                                   price: simpleProduct.isOnSale
                                     ? simpleProduct.salePrice
                                     : simpleProduct.listPrice || 0,
