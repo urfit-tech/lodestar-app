@@ -3,6 +3,7 @@ import Axios from 'axios'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
 import { prop, sum } from 'ramda'
 import { useCallback, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -12,7 +13,6 @@ import {
   InvoiceProps,
   OrderDiscountProps,
   OrderProductProps,
-  PaymentProps,
   ShippingOptionProps,
   ShippingProps,
 } from '../types/checkout'
