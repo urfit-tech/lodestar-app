@@ -1,13 +1,9 @@
-import { useInterval } from '@chakra-ui/hooks'
-import axios from 'axios'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { Helmet } from 'react-helmet'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import PodcastPlayer from './PodcastPlayer'
 
 const GlobalPodcastPlayer: React.VFC = () => {
-  const [progress, setProgress] = useState(0)
   const {
     visible,
     close,
@@ -18,34 +14,14 @@ const GlobalPodcastPlayer: React.VFC = () => {
     changeMode,
     playing,
     rate,
+    progress,
     changeRate,
     changePlayingState,
     podcastProgramIds,
     currentIndex,
     currentPodcastProgramContent,
-    podcastAlbumId,
   } = useContext(PodcastPlayerContext)
-  const { currentMemberId, authToken } = useAuth()
-  useInterval(() => {
-    sound && setProgress(sound.seek())
-  }, 500)
-  useInterval(() => {
-    playing &&
-      podcastProgramIds[currentIndex] &&
-      currentMemberId &&
-      authToken &&
-      axios.post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/podcast-program-progress`,
-        {
-          podcastProgramId: podcastProgramIds[currentIndex],
-          memberId: currentMemberId,
-          progress: progress, // TODO: changed if progress more than before
-          lastProgress: progress,
-          podcastAlbumId: podcastAlbumId,
-        },
-        { headers: { authorization: `Bearer ${authToken}` } },
-      )
-  }, 3000)
+
   return (
     <>
       <Helmet>{currentPodcastProgramContent?.title && <title>{currentPodcastProgramContent.title}</title>}</Helmet>

@@ -1,6 +1,8 @@
-import React, { createContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useInterval } from '@chakra-ui/react'
+import axios from 'axios'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import React, { createContext, useEffect, useRef, useState } from 'react'
 import ReactHowler from 'react-howler'
-import { v4 } from 'uuid'
 import { usePodcastProgramContent } from '../hooks/podcast'
 import { PodcastProgramContent } from '../types/podcast'
 
@@ -17,6 +19,7 @@ type PodcastPlayerContextValue = {
   visible: boolean
   mode: PodcastPlayerMode
   rate: number
+  progress: number
   currentPodcastProgramContent: PodcastProgramContent | null
   changePlayingState?: (state: boolean) => void
   changeRate?: (rate: number) => void
@@ -44,14 +47,16 @@ const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
   visible: false,
   mode: 'loop',
   rate: Number(localStorage.getItem('podcast.rate')) || 1,
+  progress: 0,
 }
 const PodcastPlayerContext = createContext<PodcastPlayerContextValue>(defaultPodcastPlayerContext)
 
 export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const howlerRef = useRef<ReactHowler>()
+  const modeRef = useRef<PodcastPlayerMode>(defaultPodcastPlayerContext.mode)
+  const { currentMemberId, authToken } = useAuth()
   const [title, setTitle] = useState('')
   const [visible, setVisible] = useState(false)
-  const [mode, setMode] = useState(defaultPodcastPlayerContext.mode)
   const [currentIndex, setCurrentIndex] = useState(defaultPodcastPlayerContext.currentIndex)
   const [podcastProgramIds, setPodcastProgramIds] = useState<string[]>(defaultPodcastPlayerContext.podcastProgramIds)
   const [podcastAlbumId, setPodcastAlbumId] = useState<string>(defaultPodcastPlayerContext.podcastAlbumId)
@@ -59,15 +64,13 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(currentPodcastProgramId)
   const [playing, setPlaying] = useState(defaultPodcastPlayerContext.playing)
   const [rate, setRate] = useState(defaultPodcastPlayerContext.rate)
+  const [soundLoading, setSoundLoading] = useState(true)
   // const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(currentPodcastProgramId)
-  const [seek, setSeek] = useState(0)
+  const [progress, setProgress] = useState(0)
 
-  // handle single loop
-  const [loop, setLoop] = useState(false)
-
-  useLayoutEffect(() => {
-    howlerRef.current?.seek(seek)
-  }, [seek])
+  useEffect(() => {
+    howlerRef.current && howlerRef.current.howler.rate(rate)
+  }, [rate])
 
   useEffect(() => {
     localStorage.setItem('podcast.playing', Number(playing).toString())
@@ -78,6 +81,8 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   }, [podcastProgramIds])
 
   useEffect(() => {
+    setSoundLoading(true)
+    setProgress(0)
     localStorage.setItem('podcast.currentIndex', JSON.stringify(currentIndex))
   }, [currentIndex])
 
@@ -89,15 +94,31 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
     localStorage.setItem('podcastAlbumId', podcastAlbumId)
   }, [podcastAlbumId])
 
-  // reInit howler to set rate or mode
-  const podcastProgramUrl = `${podcastProgram?.url}&hash=${v4()}`
+  useInterval(() => {
+    howlerRef.current && setProgress(howlerRef.current.seek())
+  }, 500)
 
+  useInterval(() => {
+    if (playing && podcastProgramIds[currentIndex] && currentMemberId && authToken) {
+      axios.post(
+        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/podcast-program-progress`,
+        {
+          podcastProgramId: podcastProgramIds[currentIndex],
+          memberId: currentMemberId,
+          progress: progress, // TODO: changed if progress more than before
+          lastProgress: progress,
+          podcastAlbumId: podcastAlbumId,
+        },
+        { headers: { authorization: `Bearer ${authToken}` } },
+      )
+    }
+  }, 5000)
   return (
     <PodcastPlayerContext.Provider
       value={{
         title,
         sound: howlerRef.current || null,
-        loading: loadingPodcastProgram,
+        loading: loadingPodcastProgram || soundLoading,
         playing,
         rate,
         currentIndex,
@@ -105,14 +126,14 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         podcastAlbumId,
         currentPodcastProgramContent: podcastProgram,
         visible,
-        mode,
-        setSeek: currentSeek => setSeek(currentSeek),
+        mode: modeRef.current,
+        progress,
         changePlayingState: state => setPlaying(state),
         changeRate: rate => {
           setRate(rate)
         },
         changeMode: mode => {
-          setMode(mode || (mode === 'loop' ? 'single-loop' : mode === 'single-loop' ? 'random' : 'loop'))
+          modeRef.current = mode
         },
         close: () => {
           setPlaying(false)
@@ -133,29 +154,29 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         <ReactHowler
           html5
           ref={ref => ref && (howlerRef.current = ref)}
-          src={podcastProgramUrl}
+          src={podcastProgram.url}
           playing={playing}
-          rate={rate}
           onPlay={() => {
             setVisible(true)
             setPlaying(true)
           }}
           onPause={() => setPlaying(false)}
           onStop={() => setPlaying(false)}
-          loop={loop}
           onEnd={() => {
-            if (mode === 'single-loop') {
-              setLoop(true)
-            } else if (mode === 'loop') {
-              setLoop(false)
+            if (modeRef.current === 'single-loop') {
+              howlerRef.current?.seek(0)
+            } else if (modeRef.current === 'loop') {
               setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
-            } else if (mode === 'random') {
-              setLoop(false)
+            } else if (modeRef.current === 'random') {
               setCurrentIndex(
                 index =>
                   (index + Math.floor(Math.random() * (podcastProgramIds.length - 1))) % podcastProgramIds.length,
               )
             }
+          }}
+          onLoad={() => setSoundLoading(false)}
+          onLoadError={() => {
+            alert('無法載入此音檔，請重新整理頁面')
           }}
         />
       )}

@@ -3,12 +3,12 @@ import { Icon } from '@chakra-ui/icons'
 import { Button, Divider, Popover } from 'antd'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { AiOutlineLoading } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import PodcastPlayerContext, { PodcastPlayerMode } from '../../contexts/PodcastPlayerContext'
+import { PodcastPlayerMode } from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../../helpers'
 import {
   Backward5Icon,
@@ -245,19 +245,6 @@ const PodcastPlayer: React.VFC<{
   onNext,
 }) => {
   const [showAction, setShowAction] = useState(false)
-  const { sound, setSeek } = useContext(PodcastPlayerContext)
-
-  const onRateChange = (rate: number) => {
-    const tmpSeek = sound?.seek()
-    onPlayRateChange?.(rate)
-    setSeek?.(tmpSeek || 0)
-  }
-
-  const onModeChange = (mode: PodcastPlayerMode) => {
-    const tmpSeek = sound?.seek()
-    onPlayModeChange?.(mode)
-    setSeek?.(tmpSeek || 0)
-  }
 
   return (
     <StyledWrapper>
@@ -265,11 +252,11 @@ const PodcastPlayer: React.VFC<{
         <OverlayBlock active={showAction}>
           <ActionBlock className="d-flex align-items-center justify-content-around">
             <div className="flex-grow-1 text-center">
-              <PlayRateButton variant="overlay" playRate={playRate} onChange={rate => onRateChange(rate)} />
+              <PlayRateButton variant="overlay" playRate={playRate} onChange={rate => onPlayRateChange?.(rate)} />
             </div>
             <Divider type="vertical" style={{ height: '49px' }} />
             <div className="flex-grow-1 text-center">
-              <PlayModeButton variant="overlay" mode={mode} onChange={mode => onModeChange?.(mode)} />
+              <PlayModeButton variant="overlay" mode={mode} onChange={mode => onPlayModeChange?.(mode)} />
             </div>
           </ActionBlock>
         </OverlayBlock>
@@ -344,8 +331,13 @@ const PodcastPlayer: React.VFC<{
             </div>
             <div className="col-3 col-lg-4 d-flex align-items-center justify-content-end">
               <Responsive.Desktop>
-                <PlayRateButton variant="bar" playRate={playRate} onChange={rate => onRateChange(rate)} />
-                <PlayModeButton variant="bar" mode={mode} className="ml-4" onChange={mode => onModeChange?.(mode)} />
+                <PlayRateButton variant="bar" playRate={playRate} onChange={rate => onPlayRateChange?.(rate)} />
+                <PlayModeButton
+                  variant="bar"
+                  mode={mode}
+                  className="ml-4"
+                  onChange={mode => onPlayModeChange?.(mode)}
+                />
               </Responsive.Desktop>
               <Popover placement="topRight" trigger="click" content={<PlaylistOverlay />}>
                 <StyledButton type="link" variant="bar" className="ml-lg-4" onClick={() => setShowAction(false)}>

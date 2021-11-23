@@ -214,7 +214,7 @@ const DefaultLayout: React.FC<{
                             ? StyledNavAnimationButton
                             : StyledNavButton
                         }
-                        onClick={() => (window.location.href = `/members/${currentMemberId}`)}
+                        onClick={() => history.push(`/members/${currentMemberId}`)}
                       >
                         {formatMessage(commonMessages.button.myPage)}
                       </MenuButton>
