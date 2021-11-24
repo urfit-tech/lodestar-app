@@ -1,4 +1,5 @@
-import { InvoiceProps, PaymentProps, ShippingProps } from '../types/checkout'
+import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
+import { InvoiceProps, ShippingProps } from '../types/checkout'
 
 export type UserRole = 'app-owner' | 'content-creator' | 'general-member' | 'anonymous'
 export type AuthState = 'login' | 'register' | 'forgotPassword' | 'confirm'
