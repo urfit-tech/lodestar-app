@@ -263,3 +263,32 @@ export const useUploadAttachments = () => {
     }
   }
 }
+
+export const useExpiredOwnedProducts = (memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_EXPIRED_OWNED_PRODUCTS,
+    hasura.GET_EXPIRED_OWNED_PRODUCTSVariables
+  >(
+    gql`
+      query GET_EXPIRED_OWNED_PRODUCTS($memberId: String!) {
+        order_product(
+          where: { order_log: { member_id: { _eq: $memberId } }, ended_at: { _is_null: false, _lt: "now()" } }
+        ) {
+          id
+          product_id
+        }
+      }
+    `,
+    {
+      variables: { memberId },
+    },
+  )
+  const expiredOwnedProducts = data?.order_product.map(v => v.product_id)
+
+  return {
+    loadingExpiredOwnedProducts: loading,
+    errorExpiredOwnedProducts: error,
+    expiredOwnedProducts,
+    refetchExpiredOwnedProducts: refetch,
+  }
+}

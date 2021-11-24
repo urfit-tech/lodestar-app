@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl'
 import RadioCard from '../../components/RadioCard'
 import hasura from '../../hasura'
 import { commonMessages, productMessages, programMessages } from '../../helpers/translation'
+import { useExpiredOwnedProducts } from '../../hooks/data'
 import ProgramCard from './ProgramCard'
 
 const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
@@ -23,17 +24,9 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
     variables: { memberId },
   })
 
-  const {
-    loading: loadingExpiredOwnedPrograms,
-    error: errorExpiredOwnedPrograms,
-    data: expiredOwnedPrograms,
-    refetch: refetchExpiredOwnedPrograms,
-  } = useQuery<hasura.GET_OWNED_EXPIRED_PROGRAMS, hasura.GET_OWNED_EXPIRED_PROGRAMSVariables>(
-    GET_OWNED_EXPIRED_PROGRAMS,
-    {
-      variables: { memberId },
-    },
-  )
+  const { loadingExpiredOwnedProducts, errorExpiredOwnedProducts, expiredOwnedProducts, refetchExpiredOwnedProducts } =
+    useExpiredOwnedProducts(memberId)
+
   const {
     loading: loadingExpiredProgramByProgramPlans,
     error: errorExpiredProgramByProgramPlans,
@@ -43,16 +36,16 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
     GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS,
     {
       variables: {
-        programPlanIds: expiredOwnedPrograms?.order_product
-          .filter(product => product.product_id.split('_')[0] === 'ProgramPlan')
-          .map(orderProduct => orderProduct.product_id.split('_')[1]),
+        programPlanIds: expiredOwnedProducts
+          ?.filter(productId => productId.split('_')[0] === 'ProgramPlan')
+          .map(productId => productId.split('_')[1]),
       },
     },
   )
 
   useEffect(() => {
     refetchOwnedPrograms && refetchOwnedPrograms()
-    refetchExpiredOwnedPrograms && refetchExpiredOwnedPrograms()
+    refetchExpiredOwnedProducts && refetchExpiredOwnedProducts()
     refetchExpiredProgramByProgramPlans && refetchExpiredProgramByProgramPlans()
   })
 
@@ -74,7 +67,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
   })
   const group = getRootProps()
 
-  if (loadingOwnedPrograms || loadingExpiredOwnedPrograms || loadingExpiredProgramByProgramPlans) {
+  if (loadingOwnedPrograms || loadingExpiredOwnedProducts || loadingExpiredProgramByProgramPlans) {
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(productMessages.program.title.course)}</Typography.Title>
@@ -85,10 +78,10 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
 
   if (
     errorOwnedPrograms ||
-    errorExpiredOwnedPrograms ||
+    errorExpiredOwnedProducts ||
     errorExpiredProgramByProgramPlans ||
     !ownedPrograms ||
-    !expiredOwnedPrograms
+    !expiredOwnedProducts
   ) {
     return (
       <div className="container py-3">
@@ -109,9 +102,9 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
 
   const expiredProgramIds = uniq(
     flatten([
-      ...expiredOwnedPrograms?.order_product
-        ?.filter(product => product.product_id.split('_')[0] === 'Program')
-        .map(product => product.product_id.split('_')[1]),
+      ...expiredOwnedProducts
+        ?.filter(productId => productId.split('_')[0] === 'Program')
+        .map(productId => productId.split('_')[1]),
       ...(expiredProgramByProgramPlans?.program_plan.map(programPlan => programPlan.program_id) || []),
     ]),
   )
@@ -158,17 +151,6 @@ const GET_OWNED_PROGRAMS = gql`
       program_plan {
         program_id
       }
-    }
-  }
-`
-
-const GET_OWNED_EXPIRED_PROGRAMS = gql`
-  query GET_OWNED_EXPIRED_PROGRAMS($memberId: String!) {
-    order_product(
-      where: { order_log: { member_id: { _eq: $memberId } }, ended_at: { _is_null: false, _lt: "now()" } }
-    ) {
-      id
-      product_id
     }
   }
 `
