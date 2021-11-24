@@ -237,6 +237,8 @@ export const commonMessages = {
     target: { id: 'common.term.target', defaultMessage: '對象：' },
     from: { id: 'common.term.from', defaultMessage: '來自：' },
     date: { id: 'common.term.date', defaultMessage: '日期：' },
+    availableForLimitTime: { id: 'common.label.availableForLimitTime', defaultMessage: '可觀看' },
+    isExpired: { id: 'common.label.isExpired', defaultMessage: '已到期' },
   }),
   form: {
     message: defineMessages({
@@ -351,6 +353,10 @@ export const commonMessages = {
     repairingDescription: {
       id: 'common.text.repairingDescription',
       defaultMessage: '目前正在進行網站維護，請暫時停止使用',
+    },
+    noProgramPackage: {
+      id: 'common.content.noProgramPackage',
+      defaultMessage: '沒有參與任何課程組合',
     },
   }),
   unknown: defineMessages({
@@ -663,8 +669,6 @@ export const programMessages = {
   label: defineMessages({
     practiceUpload: { id: 'program.ui.practiceUpload', defaultMessage: '作業上傳' },
     discussion: { id: 'program.ui.discussion', defaultMessage: '問題討論' },
-    availableForLimitTime: { id: 'program.label.availableForLimitTime', defaultMessage: '可觀看' },
-    isExpired: { id: 'program.label.isExpired', defaultMessage: '已到期' },
   }),
   text: defineMessages({
     uploadPractice: { id: 'program.text.uploadPractice', defaultMessage: '快上傳成果吧！' },
