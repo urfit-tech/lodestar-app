@@ -675,6 +675,8 @@ export const programMessages = {
   label: defineMessages({
     practiceUpload: { id: 'program.ui.practiceUpload', defaultMessage: '作業上傳' },
     discussion: { id: 'program.ui.discussion', defaultMessage: '問題討論' },
+    availableForLimitTime: { id: 'program.label.availableForLimitTime', defaultMessage: '可觀看' },
+    isExpired: { id: 'program.label.isExpired', defaultMessage: '已到期' },
   }),
   text: defineMessages({
     uploadPractice: { id: 'program.text.uploadPractice', defaultMessage: '快上傳成果吧！' },
