@@ -1,16 +1,18 @@
 import { useQuery } from '@apollo/react-hooks'
-import { SkeletonText } from '@chakra-ui/react'
+import { Box, HStack, SkeletonText, useRadioGroup } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import gql from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
-import { sum, uniqBy } from 'ramda'
-import React from 'react'
+import { flatten, sum, uniq, uniqBy } from 'ramda'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
+import { useExpiredOwnedProducts } from '../../hooks/data'
 import EmptyCover from '../../images/empty-cover.png'
+import RadioCard from '../RadioCard'
 
 const StyledCard = styled.div`
   overflow: hidden;
@@ -37,8 +39,56 @@ const StyledTitle = styled(Typography.Title)`
 
 const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
+  const [isExpired, setIsExpired] = useState(false)
   const { loading, error, programPackages } = useEnrolledProgramPackage(memberId)
-  if (loading) {
+  const { loadingExpiredOwnedProducts, errorExpiredOwnedProducts, expiredOwnedProducts } =
+    useExpiredOwnedProducts(memberId)
+  const {
+    loading: loadingProgramPackageByProgramPackagePlans,
+    error: errorProgramPackageByProgramPackagePlans,
+    data: programPackageByProgramPackagePlans,
+  } = useQuery<
+    hasura.GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS,
+    hasura.GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDSVariables
+  >(GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS, {
+    variables: {
+      programPackagePlanIds:
+        expiredOwnedProducts
+          ?.filter(productId => productId.split('_')[0] === 'ProgramPackagePlan')
+          .map(productId => productId.split('_')[1]) || [],
+    },
+  })
+  const expiredProgramPackageIds = uniq(
+    flatten([
+      ...(programPackageByProgramPackagePlans?.program_package_plan.map(
+        programPackagePlan => programPackagePlan.program_package_id,
+      ) || []),
+    ]),
+  )
+  const {
+    loadingProgramPackages,
+    errorProgramPackages,
+    programPackages: expiredProgramPackages,
+  } = useProgramPackages(expiredProgramPackageIds)
+
+  const options = [
+    formatMessage(commonMessages.label.availableForLimitTime),
+    formatMessage(commonMessages.label.isExpired),
+  ]
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: 'isExpired',
+    defaultValue: formatMessage(commonMessages.label.availableForLimitTime),
+    onChange: v => {
+      if (v === formatMessage(commonMessages.label.isExpired)) {
+        setIsExpired(true)
+      } else {
+        setIsExpired(false)
+      }
+    },
+  })
+  const group = getRootProps()
+
+  if (loading || loadingExpiredOwnedProducts || loadingProgramPackageByProgramPackagePlans || loadingProgramPackages) {
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(commonMessages.ui.packages)}</Typography.Title>
@@ -47,7 +97,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ member
     )
   }
 
-  if (error) {
+  if (error || errorExpiredOwnedProducts || errorProgramPackageByProgramPackagePlans || errorProgramPackages) {
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(commonMessages.ui.packages)}</Typography.Title>
@@ -58,31 +108,96 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ member
 
   return (
     <div className="container py-3">
-      <Typography.Title level={4} className="mb-4">
-        {formatMessage(commonMessages.ui.packages)}
-      </Typography.Title>
-      <div className="row">
-        {programPackages.map(programPackage => (
-          <div key={programPackage.id} className="col-12 col-md-6 col-lg-4 mb-4">
-            <Link to={`/program-packages/${programPackage.id}/contents?memberId=${memberId}`}>
-              <StyledCard>
-                <StyledCover src={programPackage.coverUrl || EmptyCover} />
-                <StyledDescription>
-                  <StyledTitle level={2} ellipsis={{ rows: 2 }}>
-                    {programPackage.title}
-                  </StyledTitle>
-                </StyledDescription>
-              </StyledCard>
-            </Link>
-          </div>
-        ))}
+      <div className="d-flex justify-content-between">
+        <Typography.Title level={4} className="mb-4">
+          {formatMessage(commonMessages.ui.packages)}
+        </Typography.Title>
+        {expiredProgramPackageIds.length !== 0 && (
+          <HStack {...group}>
+            {options.map(value => {
+              const radio = getRadioProps({ value })
+              return (
+                <RadioCard key={value} {...radio} size="md">
+                  {value}
+                </RadioCard>
+              )
+            })}
+          </HStack>
+        )}
       </div>
+
+      {programPackages.length === 0 && !isExpired && (
+        <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>
+      )}
+      {(programPackages.length !== 0 || expiredProgramPackages.length !== 0) && (
+        <div className="row">
+          {(!isExpired ? programPackages : expiredProgramPackages).map(programPackage => (
+            <Box
+              key={programPackage.id}
+              className="col-12 col-md-6 col-lg-4 mb-4"
+              opacity={!isExpired ? '100%' : '50%'}
+            >
+              <Link to={`/program-packages/${programPackage.id}/contents?memberId=${memberId}`}>
+                <StyledCard>
+                  <StyledCover src={programPackage.coverUrl || EmptyCover} />
+                  <StyledDescription>
+                    <StyledTitle level={2} ellipsis={{ rows: 2 }}>
+                      {programPackage.title}
+                    </StyledTitle>
+                  </StyledDescription>
+                </StyledCard>
+              </Link>
+            </Box>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
 export default ProgramPackageCollectionBlock
 
+const GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS = gql`
+  query GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS($programPackagePlanIds: [uuid!]) {
+    program_package_plan(where: { id: { _in: $programPackagePlanIds } }) {
+      id
+      program_package_id
+    }
+  }
+`
+const useProgramPackages = (programPackageIds: string[]) => {
+  const { loading, error, data } = useQuery<hasura.GET_PROGRAM_PACKAGES, hasura.GET_PROGRAM_PACKAGESVariables>(
+    gql`
+      query GET_PROGRAM_PACKAGES($programPackageIds: [uuid!]) {
+        program_package(where: { id: { _in: $programPackageIds } }) {
+          id
+          cover_url
+          title
+        }
+      }
+    `,
+    {
+      variables: { programPackageIds },
+    },
+  )
+
+  const programPackages: {
+    id: string
+    coverUrl: string | undefined
+    title: string
+  }[] =
+    data?.program_package.map(v => ({
+      id: v.id,
+      coverUrl: v.cover_url || undefined,
+      title: v.title,
+    })) || []
+
+  return {
+    loadingProgramPackages: loading,
+    errorProgramPackages: error,
+    programPackages,
+  }
+}
 const useEnrolledProgramPackage = (memberId: string) => {
   const { loading, error, data } = useQuery<
     hasura.GET_ENROLLED_PROGRAM_PACKAGES,

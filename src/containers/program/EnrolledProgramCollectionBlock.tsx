@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import RadioCard from '../../components/RadioCard'
 import hasura from '../../hasura'
-import { commonMessages, productMessages, programMessages } from '../../helpers/translation'
+import { commonMessages, productMessages } from '../../helpers/translation'
 import { useExpiredOwnedProducts } from '../../hooks/data'
 import ProgramCard from './ProgramCard'
 
@@ -38,7 +38,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
       variables: {
         programPlanIds: expiredOwnedProducts
           ?.filter(productId => productId.split('_')[0] === 'ProgramPlan')
-          .map(productId => productId.split('_')[1]),
+          .map(productId => productId.split('_')[1] || []),
       },
     },
   )
@@ -50,15 +50,14 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
   })
 
   const options = [
-    formatMessage(programMessages.label.availableForLimitTime),
-    formatMessage(programMessages.label.isExpired),
+    formatMessage(commonMessages.label.availableForLimitTime),
+    formatMessage(commonMessages.label.isExpired),
   ]
-
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'isExpired',
-    defaultValue: formatMessage(programMessages.label.availableForLimitTime),
+    defaultValue: formatMessage(commonMessages.label.availableForLimitTime),
     onChange: v => {
-      if (v === formatMessage(programMessages.label.isExpired)) {
+      if (v === formatMessage(commonMessages.label.isExpired)) {
         setIsExpired(true)
       } else {
         setIsExpired(false)
@@ -126,10 +125,8 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
           </HStack>
         )}
       </div>
-
-      {programIds.length === 0 ? (
-        <div>{formatMessage(productMessages.program.content.noProgram)}</div>
-      ) : (
+      {programIds.length === 0 && !isExpired && <div>{formatMessage(productMessages.program.content.noProgram)}</div>}{' '}
+      {(programIds.length !== 0 || expiredProgramIds.length !== 0) && (
         <div className="row">
           {(!isExpired ? programIds : expiredProgramIds).map(programId => (
             <div key={programId} className="col-12 mb-4 col-md-6 col-lg-4">
