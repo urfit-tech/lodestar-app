@@ -39,7 +39,7 @@ const messages = defineMessages({
   noTagContent: { id: 'common.text.noTagContent', defaultMessage: '找不到關於這個標籤的內容' },
   noSearchResult: { id: 'common.text.noSearchResult', defaultMessage: '找不到相關內容' },
   program: { id: 'common.product.program', defaultMessage: '線上課程' },
-  activity: { id: 'common.product.activity', defaultMessage: '線下實體' },
+  activity: { id: 'common.product.activity', defaultMessage: '活動' },
   podcast: { id: 'common.product.podcast', defaultMessage: '廣播' },
   creator: { id: 'common.product.creator', defaultMessage: '大師' },
   merchandise: { id: 'common.product.merchandise', defaultMessage: '商品' },
