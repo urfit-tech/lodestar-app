@@ -38,12 +38,12 @@ type PodcastPlayerContextValue = {
 const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
   title: '',
   loading: true,
-  playing: Boolean(Number(localStorage.getItem('podcast.playing') || 1)),
+  playing: false,
   currentIndex: Number(localStorage.getItem('podcast.currentIndex')) || 0,
   podcastProgramIds: JSON.parse(localStorage.getItem('podcastProgramIds') || '[]') || [],
   podcastAlbumId: localStorage.getItem('podcastAlbumId') || '',
   currentPodcastProgramContent: null,
-  visible: false,
+  visible: Boolean(Number(localStorage.getItem('podcast.playing') || 0)),
   mode: (localStorage.getItem('podcast.mode') || 'loop') as PodcastPlayerMode,
   rate: Number(localStorage.getItem('podcast.rate')) || 1,
   duration: 0,
@@ -56,7 +56,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const modeRef = useRef<PodcastPlayerMode>(defaultPodcastPlayerContext.mode)
   const { currentMemberId, authToken } = useAuth()
   const [title, setTitle] = useState('')
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(defaultPodcastPlayerContext.visible)
   const [currentIndex, setCurrentIndex] = useState(defaultPodcastPlayerContext.currentIndex)
   const [podcastProgramIds, setPodcastProgramIds] = useState<string[]>(defaultPodcastPlayerContext.podcastProgramIds)
   const [podcastAlbumId, setPodcastAlbumId] = useState<string>(defaultPodcastPlayerContext.podcastAlbumId)
@@ -77,7 +77,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('podcast.playing', Number(playing).toString())
     playing && setVisible(true)
-    playing ? audioRef.current?.play().catch(error => alert(error)) : audioRef.current?.pause()
+    playing ? audioRef.current?.play() : audioRef.current?.pause()
   }, [playing])
 
   useEffect(() => {
@@ -126,9 +126,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
-          onCanPlay={() => {
-            setSoundLoading(false)
-          }}
+          onCanPlay={() => setSoundLoading(false)}
           onEnded={() => {
             if (modeRef.current === 'single-loop') {
               if (audioRef.current) {
