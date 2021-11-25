@@ -153,6 +153,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
       {podcastProgram?.url && (
         <ReactHowler
           html5
+          key={podcastProgram.url}
           ref={ref => ref && (howlerRef.current = ref)}
           src={podcastProgram.url}
           playing={playing}
