@@ -182,7 +182,7 @@ const ContentSection: React.VFC<{
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
 }> = ({ programContentSection, programPackageId, defaultCollapse, onSelect }) => {
-  const { programContentProgress } = useContext(ProgressContext)
+  const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
 
   const contentProgress =
@@ -293,7 +293,7 @@ const ProgramContentDateMenu: React.VFC<{
   programPackageId: string | null
   onSelect?: (programContentId: string) => void
 }> = ({ program, programPackageId, onSelect }) => {
-  const { programContentProgress } = useContext(ProgressContext)
+  const programContentProgress = useProgramContentProgress()
   const programContents = flatten(program.contentSections.map(programContentSection => programContentSection.contents))
 
   if (programContents.length === 0) {
@@ -366,5 +366,16 @@ const SortByDateItem: React.VFC<{
 const EmptyMenu: React.VFC = () => (
   <Card style={{ textAlign: 'center', color: '#9b9b9b' }}>初次購買還沒有新的內容喔～</Card>
 )
+
+const useProgramContentProgress = () => {
+  const { programContentId } = useParams<{ programContentId: string }>()
+  const { programContentProgress, refetchProgress } = useContext(ProgressContext)
+
+  useEffect(() => {
+    refetchProgress?.()
+  }, [programContentId, refetchProgress])
+
+  return programContentProgress
+}
 
 export default ProgramContentMenu
