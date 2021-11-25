@@ -119,16 +119,12 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           audioRef.current = ref
         }}
         src={podcastProgram?.url}
+        loop={modeRef.current === 'single-loop'}
         onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={() => {
-          if (modeRef.current === 'single-loop') {
-            if (audioRef.current) {
-              audioRef.current.currentTime = 0
-              audioRef.current.play()
-            }
-          } else if (modeRef.current === 'loop') {
+          if (modeRef.current === 'loop') {
             setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
           } else if (modeRef.current === 'random') {
             setCurrentIndex(
@@ -161,6 +157,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           changeMode: mode => {
             modeRef.current = mode
             localStorage.setItem('podcast.mode', mode)
+            audioRef.current && (audioRef.current.loop = mode === 'single-loop')
           },
           close: () => {
             setPlaying(false)
