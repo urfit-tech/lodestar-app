@@ -102,7 +102,6 @@ const PodcastProgramCover: React.VFC<{
   const {
     podcastProgramIds,
     currentIndex,
-    podcastAlbumId: currentPodcastAlbumId,
     loading: loadingPodcast,
     setup,
     changePlayingState,
@@ -110,21 +109,12 @@ const PodcastProgramCover: React.VFC<{
   } = useContext(PodcastPlayerContext)
 
   const handlePlay = () => {
-    const position = podcastAlbum.id
-      ? podcastAlbum.podcastProgramIds.findIndex(id => id === podcastProgramId)
-      : podcastProgramIds.findIndex(id => id === podcastProgramId)
-
-    setup?.(
-      podcastAlbum
-        ? {
-            title: podcastAlbum.title,
-            podcastProgramIds: podcastAlbum.podcastProgramIds,
-            currentIndex: position < 0 ? 0 : position,
-          }
-        : {
-            currentIndex: position < 0 ? 0 : position,
-          },
-    )
+    const position = podcastProgramIds.findIndex(id => id === podcastProgramId)
+    setup?.({
+      title,
+      podcastProgramIds: position < 0 ? [podcastProgramId] : podcastProgramIds,
+      currentIndex: position < 0 ? 0 : position,
+    })
     changePlayingState?.(!playing)
   }
 

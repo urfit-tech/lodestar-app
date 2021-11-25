@@ -289,9 +289,7 @@ export const usePublishedPodcastPlans = (memberId: string) => {
   }
 }
 
-export const useEnrolledPodcastProgramWithCreatorId: (
-  creatorId: string,
-) => {
+export const useEnrolledPodcastProgramWithCreatorId: (creatorId: string) => {
   status: 'loading' | 'error' | 'success' | 'idle'
   enrolledPodcastProgramIds: string[]
   creatorName: string
@@ -380,9 +378,7 @@ export const useEnrolledPodcastPlansCreators = (memberId: string) => {
     refetchPodcastPlan: refetch,
   }
 }
-export const usePodcastProgram: (
-  podcastProgramId: string,
-) => {
+export const usePodcastProgram: (podcastProgramId: string) => {
   status: 'loading' | 'error' | 'success' | 'idle'
   podcastProgram: {
     id: string
@@ -483,12 +479,14 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
   const audioFilename = filename ? filename : contentType ? `${podcastProgramId}.${contentType}` : null
 
   useEffect(() => {
-    setLoadingUrl(true)
-    audioFilename &&
-      getFileDownloadableLink(`audios/${appId}/${audioFilename}`, authToken).then(url => {
-        setUrl(url)
-        setLoadingUrl(false)
-      })
+    if (audioFilename) {
+      setLoadingUrl(true)
+      getFileDownloadableLink(`audios/${appId}/${audioFilename}`, authToken)
+        .then(url => {
+          setUrl(url)
+        })
+        .finally(() => setLoadingUrl(false))
+    }
   }, [appId, audioFilename, authToken])
 
   const podcastProgram = useMemo<PodcastProgramContent | null>(() => {
@@ -744,9 +742,7 @@ export const useUpdatePodcastProgramPositions = () => {
   return updatePodcastProgramPositions
 }
 
-export const usePublicPodcastProgramIds: (
-  id?: string,
-) => {
+export const usePublicPodcastProgramIds: (id?: string) => {
   status: 'loading' | 'error' | 'success' | 'idle'
   publicPodcastProgramIds: string[]
 } = id => {
@@ -777,9 +773,7 @@ export const usePublicPodcastProgramIds: (
   }
 }
 
-export const usePodcastProgramProgress: (
-  programPodcastId: string,
-) => {
+export const usePodcastProgramProgress: (programPodcastId: string) => {
   podcastProgramProgressStatus: StatusType
   podcastProgramProgress: {
     id: string

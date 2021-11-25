@@ -7,6 +7,8 @@ import { PodcastProgramContent } from '../types/podcast'
 
 export type PodcastPlayerMode = 'loop' | 'single-loop' | 'random'
 
+const dummyAudio =
+  'data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV'
 type PodcastPlayerContextValue = {
   title: string
   loading: boolean
@@ -32,7 +34,6 @@ type PodcastPlayerContextValue = {
     podcastAlbumId?: string
     currentIndex?: number
   }) => void
-  setSeek?: React.Dispatch<React.SetStateAction<number>>
 }
 
 const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
@@ -64,7 +65,6 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(currentPodcastProgramId)
   const [playing, setPlaying] = useState(defaultPodcastPlayerContext.playing)
   const [rate, setRate] = useState(defaultPodcastPlayerContext.rate)
-  const [soundLoading, setSoundLoading] = useState(true)
   const [duration, setDuration] = useState(0)
   // const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(currentPodcastProgramId)
   const [progress, setProgress] = useState(0)
@@ -85,7 +85,6 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   }, [podcastProgramIds])
 
   useEffect(() => {
-    setSoundLoading(true)
     setProgress(0)
     localStorage.setItem('podcast.currentIndex', JSON.stringify(currentIndex))
   }, [currentIndex])
@@ -115,39 +114,33 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   }, 5000)
   return (
     <>
-      {podcastProgram?.url && (
-        <audio
-          key={podcastProgram.url}
-          ref={ref => {
-            audioRef.current = ref
-          }}
-          src={podcastProgram.url}
-          autoPlay
-          onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
-          onPlay={() => setPlaying(true)}
-          onPause={() => setPlaying(false)}
-          onCanPlay={() => setSoundLoading(false)}
-          onEnded={() => {
-            if (modeRef.current === 'single-loop') {
-              if (audioRef.current) {
-                audioRef.current.currentTime = 0
-                audioRef.current.play()
-              }
-            } else if (modeRef.current === 'loop') {
-              setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
-            } else if (modeRef.current === 'random') {
-              setCurrentIndex(
-                index =>
-                  (index + Math.floor(Math.random() * (podcastProgramIds.length - 1))) % podcastProgramIds.length,
-              )
+      <audio
+        ref={ref => {
+          audioRef.current = ref
+        }}
+        src={podcastProgram?.url}
+        onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => {
+          if (modeRef.current === 'single-loop') {
+            if (audioRef.current) {
+              audioRef.current.currentTime = 0
+              audioRef.current.play()
             }
-          }}
-        />
-      )}
+          } else if (modeRef.current === 'loop') {
+            setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
+          } else if (modeRef.current === 'random') {
+            setCurrentIndex(
+              index => (index + Math.floor(Math.random() * (podcastProgramIds.length - 1))) % podcastProgramIds.length,
+            )
+          }
+        }}
+      />
       <PodcastPlayerContext.Provider
         value={{
           title,
-          loading: loadingPodcastProgram || soundLoading,
+          loading: loadingPodcastProgram,
           playing,
           rate,
           currentIndex,
@@ -158,7 +151,10 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           mode: modeRef.current,
           duration,
           progress,
-          changePlayingState: state => setPlaying(state),
+          changePlayingState: state => {
+            audioRef.current && (audioRef.current.autoplay = state)
+            setPlaying(state)
+          },
           changeRate: rate => {
             setRate(rate)
           },
