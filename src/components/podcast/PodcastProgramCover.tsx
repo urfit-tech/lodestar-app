@@ -114,22 +114,17 @@ const PodcastProgramCover: React.VFC<{
       ? podcastAlbum.podcastProgramIds.findIndex(id => id === podcastProgramId)
       : podcastProgramIds.findIndex(id => id === podcastProgramId)
 
-    podcastAlbum.id
-      ? setup?.(
-          podcastAlbum.id === currentPodcastAlbumId
-            ? {
-                currentIndex: position < 0 ? 0 : position,
-              }
-            : {
-                title: podcastAlbum.title,
-                podcastProgramIds: podcastAlbum.podcastProgramIds,
-                currentIndex: position < 0 ? 0 : position,
-              },
-        )
-      : setup?.({
-          podcastProgramIds: [podcastProgramId],
-          currentIndex: position < 0 ? 0 : position,
-        })
+    setup?.(
+      podcastAlbum
+        ? {
+            title: podcastAlbum.title,
+            podcastProgramIds: podcastAlbum.podcastProgramIds,
+            currentIndex: position < 0 ? 0 : position,
+          }
+        : {
+            currentIndex: position < 0 ? 0 : position,
+          },
+    )
     changePlayingState?.(!playing)
   }
 
