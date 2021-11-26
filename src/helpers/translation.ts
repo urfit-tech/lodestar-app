@@ -667,6 +667,7 @@ export const programMessages = {
   text: defineMessages({
     uploadPractice: { id: 'program.text.uploadPractice', defaultMessage: '快上傳成果吧！' },
     groupBuying: { id: 'program.text.groupBuying', defaultMessage: '{count} 人同行' },
+    noAuth: { id: 'program.text.noAuth', defaultMessage: '沒有此頁瀏覽權限' },
   }),
   tab: defineMessages({
     downloadMaterials: {

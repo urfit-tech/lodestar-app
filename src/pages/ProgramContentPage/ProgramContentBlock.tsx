@@ -97,50 +97,45 @@ const ProgramContentBlock: React.VFC<{
 
   return (
     <div id="program_content_block" className="pt-4 p-sm-4">
-      {programContent.contentType !== 'video' && !programContent.programContentBody && (
+      {((programContent.contentType === 'video' && !hasProgramContentPermission) ||
+        (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
         <StyledUnPurchased className="p-2 text-center">
           <LockIcon className="mr-2" />
           {formatMessage(productMessages.program.content.unPurchased)}
         </StyledUnPurchased>
       )}
 
-      {programContent.contentType === 'video' &&
-        (hasProgramContentPermission ? (
-          <ProgramContentPlayer
-            key={programContent.id}
-            programContentId={programContentId}
-            nextProgramContent={nextProgramContent}
-            onVideoEvent={e => {
-              if (e.type === 'progress') {
-                insertProgramProgress(e.progress)
-              } else {
-                axios
-                  .post(
-                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
-                    {
-                      programContentId,
-                      data: e.videoState,
-                    },
-                    { headers: { authorization: `Bearer ${authToken}` } },
-                  )
-                  .then(({ data: { code, result } }) => {
-                    if (code === 'SUCCESS') {
-                      return
-                    }
-                  })
-                  .catch(() => {})
-                if (e.type === 'ended') {
-                  insertProgramProgress(1)?.then(() => refetchProgress())
-                }
+      {programContent.contentType === 'video' && hasProgramContentPermission && (
+        <ProgramContentPlayer
+          key={programContent.id}
+          programContentId={programContentId}
+          nextProgramContent={nextProgramContent}
+          onVideoEvent={e => {
+            if (e.type === 'progress') {
+              insertProgramProgress(e.progress)
+            } else {
+              axios
+                .post(
+                  `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+                  {
+                    programContentId,
+                    data: e.videoState,
+                  },
+                  { headers: { authorization: `Bearer ${authToken}` } },
+                )
+                .then(({ data: { code, result } }) => {
+                  if (code === 'SUCCESS') {
+                    return
+                  }
+                })
+                .catch(() => {})
+              if (e.type === 'ended') {
+                insertProgramProgress(1)?.then(() => refetchProgress())
               }
-            }}
-          />
-        ) : (
-          <StyledUnPurchased className="p-2 text-center">
-            <LockIcon className="mr-2" />
-            {formatMessage(productMessages.program.content.unPurchased)}
-          </StyledUnPurchased>
-        ))}
+            }
+          }}
+        />
+      )}
 
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise']) && (
         <StyledContentBlock className="mb-3">
