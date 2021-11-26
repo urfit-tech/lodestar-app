@@ -88,7 +88,12 @@ export const MemberAdminMenu: React.VFC<
     },
     {
       key: 'member_profile_admin',
-      item: (
+      item: settings['custom.member_profile_admin.link'] ? (
+        <Menu.Item key="_blank_member_profile_admin" data-href={`${settings['custom.member_profile_admin.link']}`}>
+          <Icon as={UserIcon} className="mr-2" />
+          {formatMessage(commonMessages.content.personalSettings)}
+        </Menu.Item>
+      ) : (
         <Menu.Item key="member_profile_admin">
           <Icon as={UserIcon} className="mr-2" />
           {formatMessage(commonMessages.content.personalSettings)}
@@ -205,7 +210,7 @@ export const MemberAdminMenu: React.VFC<
         <AdminMenu {...props} style={{ background: 'transparent', border: 'none' }}>
           {defaultMenuItems
             .filter(v => {
-              if (settings['nav.personal_setting.disable']) {
+              if (settings['nav.personal_setting.disable'] === '1') {
                 return v.key !== 'member_profile_admin'
               }
               return v

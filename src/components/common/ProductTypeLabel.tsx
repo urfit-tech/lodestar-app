@@ -9,7 +9,7 @@ const messages = defineMessages({
   programPackagePlan: { id: 'common.package', defaultMessage: '課程組合' },
   projectPlan: { id: 'common.project', defaultMessage: '專案方案' },
   card: { id: 'common.memberCard', defaultMessage: '會員卡' },
-  activityTicket: { id: 'common.activity', defaultMessage: '線下實體' },
+  activityTicket: { id: 'common.activity', defaultMessage: '活動' },
   merchandise: { id: 'common.merchandise', defaultMessage: '商品' },
   podcastProgram: { id: 'common.podcast', defaultMessage: '廣播' },
   podcastPlan: { id: 'common.podcast.subscription', defaultMessage: '廣播頻道' },

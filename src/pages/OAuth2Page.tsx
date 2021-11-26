@@ -9,6 +9,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { handleError } from '../helpers'
 import { profileMessages } from '../helpers/translation'
 import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
+import LoadingPage from '../pages/LoadingPage'
 
 type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth'
 
@@ -121,7 +122,7 @@ const DefaultOauth2Section: React.VFC = () => {
     }
   }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
 
-  return <div>Oauth2 processing...</div>
+  return <LoadingPage />
 }
 
 const Oauth2Section: React.VFC = () => {
@@ -171,7 +172,7 @@ const Oauth2Section: React.VFC = () => {
     }
   }, [accountLinkToken, appId, code, currentMemberId, history, host, isAuthenticating, provider, redirect, socialLogin])
 
-  return <div>Oauth2 processing...</div>
+  return <LoadingPage />
 }
 
 export default OAuth2Page

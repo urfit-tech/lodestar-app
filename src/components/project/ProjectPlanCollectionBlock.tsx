@@ -1,11 +1,11 @@
 import { Divider } from '@chakra-ui/react'
 import { Tag } from 'antd'
+import { CommonLargeTitleMixin, CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
-import { CommonLargeTitleMixin, CommonTitleMixin } from '../common'
 import { BraftContent } from '../common/StyledBraftEditor'
 
 const StyledWrapper = styled.div`

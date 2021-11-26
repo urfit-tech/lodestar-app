@@ -1,4 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
+import { Icon, LockIcon } from '@chakra-ui/icons'
 import { Button, Spinner } from '@chakra-ui/react'
 import { Layout, PageHeader } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -14,7 +14,7 @@ import AdminCard from '../components/common/AdminCard'
 import { StyledLayoutContent } from '../components/layout/DefaultLayout.styled'
 import ProgramContentMenu from '../components/program/ProgramContentMenu'
 import { ProgressProvider } from '../contexts/ProgressContext'
-import { commonMessages } from '../helpers/translation'
+import { commonMessages, programMessages } from '../helpers/translation'
 import { useProgram } from '../hooks/program'
 
 const StyledPCPageHeader = styled(PageHeader)`
@@ -60,6 +60,11 @@ const ProgramContentCollectionPage: React.VFC = () => {
   const [productId] = useQueryParam('back', StringParam)
   const { currentMemberId } = useAuth()
   const { loadingProgram, program } = useProgram(programId)
+  const { isAuthenticating, isAuthenticated } = useAuth()
+
+  if (isAuthenticating || loadingProgram) {
+    return <></>
+  }
 
   return (
     <Layout>
@@ -100,22 +105,48 @@ const ProgramContentCollectionPage: React.VFC = () => {
           }
         }}
       />
-
       <StyledLayoutContent>
         <div className="container py-5">
-          <AdminCard>
-            {!currentMemberId || loadingProgram || !program ? (
-              <Spinner />
-            ) : (
-              <ProgressProvider programId={program.id} memberId={currentMemberId}>
-                <ProgramContentMenu program={program} />
-              </ProgressProvider>
-            )}
-          </AdminCard>
+          {isAuthenticated === false ? (
+            <ProgramContentNoAuthBlock />
+          ) : (
+            <AdminCard>
+              {!currentMemberId || loadingProgram || !program ? (
+                <Spinner />
+              ) : (
+                <ProgressProvider programId={program.id} memberId={currentMemberId}>
+                  <ProgramContentMenu program={program} />
+                </ProgressProvider>
+              )}
+            </AdminCard>
+          )}
         </div>
       </StyledLayoutContent>
     </Layout>
   )
 }
+
+const StyledNoAuthBlock = styled.div`
+  color: ${props => props.theme['@primary-color']};
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1;
+`
+
+const StyledText = styled.span`
+  vertical-align: bottom;
+`
+
+const ProgramContentNoAuthBlock: React.VFC = () => {
+  const { formatMessage } = useIntl()
+  return (
+    <StyledNoAuthBlock className="p-2 text-center">
+      <LockIcon className="mr-2" />
+      <StyledText>{formatMessage(programMessages.text.noAuth)}</StyledText>
+    </StyledNoAuthBlock>
+  )
+}
+
+export { ProgramContentNoAuthBlock }
 
 export default ProgramContentCollectionPage

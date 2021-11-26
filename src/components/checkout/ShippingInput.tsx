@@ -1,13 +1,13 @@
 import { Button, Form, Input, Radio } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import { camelCase } from 'lodash'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { checkoutMessages } from '../../helpers/translation'
 import { ShippingOptionProps, ShippingProps } from '../../types/checkout'
-import { CommonTitleMixin } from '../common'
 import PriceLabel from '../common/PriceLabel'
 
 export const csvShippingMethods = ['seven-eleven', 'family-mart', 'ok-mart', 'hi-life']

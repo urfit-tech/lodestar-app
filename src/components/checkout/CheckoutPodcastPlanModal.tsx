@@ -1,7 +1,9 @@
+import CheckoutProductModal, {
+  CheckoutProductModalProps,
+} from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import React from 'react'
 import { usePublishedPodcastPlans } from '../../hooks/podcast'
 import PodcastPlanSelector from '../podcast/PodcastPlanSelector'
-import CheckoutProductModal, { CheckoutProductModalProps } from './CheckoutProductModal'
 
 const CheckoutPodcastPlanModal: React.VFC<
   {

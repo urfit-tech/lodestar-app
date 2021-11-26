@@ -1,6 +1,6 @@
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import React from 'react'
 import styled from 'styled-components'
-import { CommonTitleMixin } from '../common'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledSection = styled.section`

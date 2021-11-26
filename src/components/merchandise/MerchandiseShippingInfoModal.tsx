@@ -1,11 +1,11 @@
 import { Button, Icon, useDisclosure } from '@chakra-ui/react'
+import { CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { shippingMethodFormatter } from '../../helpers'
 import { ReactComponent as IconList } from '../../images/list-o.svg'
 import { InvoiceProps, ShippingProps } from '../../types/checkout'
-import { CommonTextMixin } from '../common'
 import CommonModal from '../common/CommonModal'
 
 const messages = defineMessages({

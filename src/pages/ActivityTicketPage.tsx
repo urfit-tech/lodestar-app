@@ -9,6 +9,7 @@ import {
   SkeletonText,
   useDisclosure,
 } from '@chakra-ui/react'
+import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import QRCode from 'qrcode.react'
@@ -19,7 +20,6 @@ import { Link, Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import ActivityBanner from '../components/activity/ActivityBanner'
 import ActivitySessionItem from '../components/activity/ActivitySessionItem'
-import { CommonLargeTitleMixin } from '../components/common'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { handleError } from '../helpers'
 import { activityMessages, commonMessages, productMessages } from '../helpers/translation'

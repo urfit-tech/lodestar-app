@@ -108,11 +108,15 @@ const OrderCollectionAdminCard: React.VFC<
       dataIndex: 'id',
       key: 'id',
       width: '100px',
-      render: (text: string) => (
-        <Tooltip title={text}>
-          <span>{text.split('-')[0]}</span>
-        </Tooltip>
-      ),
+      render: (text: string) => {
+        const uuidRegexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi
+        const orderNo = uuidRegexExp.test(text) ? text.split('-')[0] : text
+        return (
+          <Tooltip title={orderNo}>
+            <span>{orderNo}</span>
+          </Tooltip>
+        )
+      },
     },
     {
       title: formatMessage(saleMessages.column.title.purchaseDate),

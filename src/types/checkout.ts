@@ -98,13 +98,3 @@ export type InvoiceProps = {
 
 export type PaymentMethodType = 'credit' | 'vacc' | 'cvs' | 'instflag' | 'unionpay' | 'webatm' | 'barcode'
 export type PaymentGatewayType = 'spgateway' | 'tappay' | 'parenting' | 'paypal' | 'commonhealth'
-
-export type PaymentProps =
-  | {
-      gateway: Extract<PaymentGatewayType, 'spgateway'>
-      method: PaymentMethodType
-    }
-  | {
-      gateway: Exclude<PaymentGatewayType, 'spgateway'>
-      method: Extract<PaymentMethodType, 'credit'>
-    }

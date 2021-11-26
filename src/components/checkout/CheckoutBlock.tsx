@@ -1,7 +1,15 @@
 import { Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
+import CheckoutGroupBuyingForm, {
+  StyledBlockTitle,
+  StyledListItem,
+} from 'lodestar-app-element/src/components/forms/CheckoutGroupBuyingForm'
+import InvoiceInput, { validateInvoice } from 'lodestar-app-element/src/components/inputs/InvoiceInput'
+import PaymentSelector from 'lodestar-app-element/src/components/selectors/PaymentSelector'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
 import { prop, sum } from 'ramda'
 import React, { useContext, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -12,7 +20,6 @@ import styled from 'styled-components'
 import CartProductTableCard, { useProductInventory } from '../../components/checkout/CartProductTableCard'
 import CheckoutCard from '../../components/checkout/CheckoutCard'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
-import InvoiceInput, { validateInvoice } from '../../components/checkout/InvoiceInput'
 import ShippingInput, { csvShippingMethods, validateShipping } from '../../components/checkout/ShippingInput'
 import AdminCard from '../../components/common/AdminCard'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -22,13 +29,10 @@ import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck, useMemberShop, usePhysicalProductCollection } from '../../hooks/checkout'
 import { useMemberValidation } from '../../hooks/common'
 import { useUpdateMemberMetadata } from '../../hooks/member'
-import { CartProductProps, InvoiceProps, PaymentProps, ShippingProps } from '../../types/checkout'
+import { CartProductProps, InvoiceProps, ShippingProps } from '../../types/checkout'
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
-import { CommonTitleMixin } from '../common'
-import CheckoutGroupBuyingForm, { StyledBlockTitle, StyledListItem } from './CheckoutGroupBuyingForm'
 import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
-import PaymentSelector from './PaymentSelector'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
@@ -371,7 +375,7 @@ const CheckoutBlock: React.VFC<{
 
           <div ref={invoiceRef} className="mb-3">
             {renderInvoice?.({ invoice, setInvoice, isValidating }) ||
-              (!settings['feature.invoice.disable'] && (
+              (settings['feature.invoice.disable'] !== '1' && (
                 <AdminCard>
                   <InvoiceInput
                     value={invoice}

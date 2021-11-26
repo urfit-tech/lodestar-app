@@ -1,7 +1,9 @@
+import { useQuery } from '@apollo/react-hooks'
 import { LockIcon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
+import gql from 'graphql-tag'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -13,6 +15,7 @@ import { BraftContent } from '../../components/common/StyledBraftEditor'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
+import hasura from '../../hasura'
 import { productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
@@ -45,6 +48,7 @@ const ProgramContentBlock: React.VFC<{
   const { authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
+  const hasProgramContentPermission = useHasProgramContentPermission(programContentId)
 
   const instructor = programRoles.filter(role => role.name === 'instructor')[0]
 
@@ -93,42 +97,45 @@ const ProgramContentBlock: React.VFC<{
 
   return (
     <div id="program_content_block" className="pt-4 p-sm-4">
-      {!programContent.programContentBody && (
+      {((programContent.contentType === 'video' && !hasProgramContentPermission) ||
+        (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
         <StyledUnPurchased className="p-2 text-center">
           <LockIcon className="mr-2" />
           {formatMessage(productMessages.program.content.unPurchased)}
         </StyledUnPurchased>
       )}
 
-      <ProgramContentPlayer
-        key={programContent.id}
-        programContentId={programContentId}
-        nextProgramContent={nextProgramContent}
-        onVideoEvent={e => {
-          if (e.type === 'progress') {
-            insertProgramProgress(e.progress)
-          } else {
-            axios
-              .post(
-                `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
-                {
-                  programContentId,
-                  data: e.videoState,
-                },
-                { headers: { authorization: `Bearer ${authToken}` } },
-              )
-              .then(({ data: { code, result } }) => {
-                if (code === 'SUCCESS') {
-                  return
-                }
-              })
-              .catch(() => {})
-            if (e.type === 'ended') {
-              insertProgramProgress(1)?.then(() => refetchProgress())
+      {programContent.contentType === 'video' && hasProgramContentPermission && (
+        <ProgramContentPlayer
+          key={programContent.id}
+          programContentId={programContentId}
+          nextProgramContent={nextProgramContent}
+          onVideoEvent={e => {
+            if (e.type === 'progress') {
+              insertProgramProgress(e.progress)
+            } else {
+              axios
+                .post(
+                  `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+                  {
+                    programContentId,
+                    data: e.videoState,
+                  },
+                  { headers: { authorization: `Bearer ${authToken}` } },
+                )
+                .then(({ data: { code, result } }) => {
+                  if (code === 'SUCCESS') {
+                    return
+                  }
+                })
+                .catch(() => {})
+              if (e.type === 'ended') {
+                insertProgramProgress(1)?.then(() => refetchProgress())
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
+      )}
 
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise']) && (
         <StyledContentBlock className="mb-3">
@@ -171,6 +178,27 @@ const ProgramContentBlock: React.VFC<{
       )}
     </div>
   )
+}
+
+const useHasProgramContentPermission: (id: string) => boolean = id => {
+  const { currentMemberId } = useAuth()
+  const { data } = useQuery<hasura.GET_PROGRAM_CONTENT_PERMISSION, hasura.GET_PROGRAM_CONTENT_PERMISSIONVariables>(
+    gql`
+      query GET_PROGRAM_CONTENT_PERMISSION($id: uuid!, $currentMemberId: String!) {
+        program_content_enrollment(where: { program_content_id: { _eq: $id }, member_id: { _eq: $currentMemberId } }) {
+          program_content_id
+        }
+      }
+    `,
+    {
+      variables: {
+        id,
+        currentMemberId: currentMemberId || '',
+      },
+    },
+  )
+
+  return !!data?.program_content_enrollment?.length
 }
 
 export default ProgramContentBlock

@@ -22,7 +22,7 @@ const messages = defineMessages({
   allScope: { id: 'common.product.allScope', defaultMessage: '全站折抵' },
   allProgram: { id: 'common.product.allProgram', defaultMessage: '全部單次課程' },
   allProgramPlan: { id: 'common.product.allProgramPlan', defaultMessage: '全部訂閱課程' },
-  allActivityTicket: { id: 'common.product.allActivityTicket', defaultMessage: '全部線下實體' },
+  allActivityTicket: { id: 'common.product.allActivityTicket', defaultMessage: '全部活動' },
   allPodcastProgram: { id: 'common.product.allPodcastProgram', defaultMessage: '全部廣播' },
   allPodcastPlan: { id: 'common.product.allPodcastPlan', defaultMessage: '全部廣播訂閱頻道' },
   allAppointmentPlan: { id: 'common.product.allAppointmentPlan', defaultMessage: '全部預約' },
@@ -65,9 +65,9 @@ const CouponDescriptionModal: React.VFC<
   }
 > = ({ coupon, ...modalProps }) => {
   const { formatMessage } = useIntl()
-  const withDescription = !(BraftEditor.createEditorState(
-    coupon.couponCode.couponPlan.description || '',
-  ) as EditorState).isEmpty()
+  const withDescription = !(
+    BraftEditor.createEditorState(coupon.couponCode.couponPlan.description || '') as EditorState
+  ).isEmpty()
   return (
     <StyledModal title={null} footer={null} {...modalProps}>
       <StyledTitle>{coupon.couponCode.couponPlan.title}</StyledTitle>

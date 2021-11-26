@@ -13,6 +13,7 @@ import ProgramContentMenu from '../../components/program/ProgramContentMenu'
 import { ProgressProvider } from '../../contexts/ProgressContext'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
+import { ProgramContentNoAuthBlock } from '../ProgramContentCollectionPage'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 
@@ -24,12 +25,16 @@ const ProgramContentPage: React.VFC = () => {
     programContentId: string
   }>()
   const { enabledModules } = useApp()
-  const { currentMemberId } = useAuth()
-  const { program } = useProgram(programId)
+  const { currentMemberId, isAuthenticating } = useAuth()
+  const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const { search } = useLocation()
   const query = new URLSearchParams(search)
   const programPackageId = query.get('back')
+
+  if (isAuthenticating || loadingProgram) {
+    return <></>
+  }
 
   return (
     <Layout>
@@ -67,9 +72,10 @@ const ProgramContentPage: React.VFC = () => {
           history.push(`/programs/${programId}/contents${programPackageId !== null ? `?back=${programPackageId}` : ''}`)
         }
       />
-      {program && currentMemberId && (
-        <ProgressProvider programId={program.id} memberId={currentMemberId}>
-          <StyledLayoutContent>
+
+      <StyledLayoutContent>
+        {program && currentMemberId ? (
+          <ProgressProvider programId={program.id} memberId={currentMemberId}>
             <div className="row no-gutters">
               <div className={menuVisible ? 'd-lg-block col-lg-9 d-none' : 'col-12'}>
                 <StyledLayoutContent>
@@ -91,9 +97,13 @@ const ProgramContentPage: React.VFC = () => {
                 </StyledSideBar>
               </div>
             </div>
-          </StyledLayoutContent>
-        </ProgressProvider>
-      )}
+          </ProgressProvider>
+        ) : (
+          <div className="container py-5">
+            <ProgramContentNoAuthBlock />
+          </div>
+        )}
+      </StyledLayoutContent>
     </Layout>
   )
 }

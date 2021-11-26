@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { SkeletonText } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import gql from 'graphql-tag'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { sum, uniqBy } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -10,7 +11,6 @@ import styled from 'styled-components'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
-import { CommonTitleMixin } from '../common'
 
 const StyledCard = styled.div`
   overflow: hidden;
