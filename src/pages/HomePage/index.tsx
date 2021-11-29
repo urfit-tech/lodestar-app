@@ -1,3 +1,4 @@
+import { Skeleton } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { isEmpty } from 'ramda'
 import React, { useContext } from 'react'
@@ -17,6 +18,7 @@ const HomePage: React.FC = () => {
   const { settings } = useApp()
   const theme = useContext(ThemeContext)
   const {
+    loading,
     lastWatchedProgramContents,
     latestPrograms,
     affordablePrograms,
@@ -33,6 +35,14 @@ const HomePage: React.FC = () => {
         themeColor={theme['@primary-color']}
       />
       <CoverSection />
+
+      {loading && (
+        <div className="container mb-5">
+          <Skeleton height="20px" my="10px" />
+          <Skeleton height="20px" my="10px" />
+          <Skeleton height="20px" my="10px" />
+        </div>
+      )}
 
       {!isEmpty(lastWatchedProgramContents) && (
         <ProgramContentEnrolledSection programContents={lastWatchedProgramContents} />
