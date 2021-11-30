@@ -25,7 +25,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
   })
 
   const { loadingExpiredOwnedProducts, errorExpiredOwnedProducts, expiredOwnedProducts, refetchExpiredOwnedProducts } =
-    useExpiredOwnedProducts(memberId)
+    useExpiredOwnedProducts(memberId, 'ProgramPlan')
 
   const {
     loading: loadingExpiredProgramByProgramPlans,
@@ -36,9 +36,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
     GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS,
     {
       variables: {
-        programPlanIds: expiredOwnedProducts
-          ?.filter(productId => productId.split('_')[0] === 'ProgramPlan')
-          .map(productId => productId.split('_')[1] || []),
+        programPlanIds: expiredOwnedProducts?.map(productId => productId.split('_')[1] || []),
       },
     },
   )

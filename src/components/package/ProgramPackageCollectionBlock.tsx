@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
-import { useExpiredOwnedProducts } from '../../hooks/data'
 import EmptyCover from '../../images/empty-cover.png'
 import RadioCard from '../RadioCard'
 
@@ -37,12 +36,14 @@ const StyledTitle = styled(Typography.Title)`
   }
 `
 
-const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
+const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackagePlanIds: string[] }> = ({
+  memberId,
+  programPackagePlanIds,
+}) => {
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
   const { loading, error, programPackages } = useEnrolledProgramPackage(memberId)
-  const { loadingExpiredOwnedProducts, errorExpiredOwnedProducts, expiredOwnedProducts } =
-    useExpiredOwnedProducts(memberId)
+
   const {
     loading: loadingProgramPackageByProgramPackagePlans,
     error: errorProgramPackageByProgramPackagePlans,
@@ -52,10 +53,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ member
     hasura.GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDSVariables
   >(GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS, {
     variables: {
-      programPackagePlanIds:
-        expiredOwnedProducts
-          ?.filter(productId => productId.split('_')[0] === 'ProgramPackagePlan')
-          .map(productId => productId.split('_')[1]) || [],
+      programPackagePlanIds,
     },
   })
   const expiredProgramPackageIds = uniq(
@@ -88,7 +86,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ member
   })
   const group = getRootProps()
 
-  if (loading || loadingExpiredOwnedProducts || loadingProgramPackageByProgramPackagePlans || loadingProgramPackages) {
+  if (loading || loadingProgramPackageByProgramPackagePlans || loadingProgramPackages) {
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(commonMessages.ui.packages)}</Typography.Title>
@@ -97,7 +95,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ member
     )
   }
 
-  if (error || errorExpiredOwnedProducts || errorProgramPackageByProgramPackagePlans || errorProgramPackages) {
+  if (error || errorProgramPackageByProgramPackagePlans || errorProgramPackages) {
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(commonMessages.ui.packages)}</Typography.Title>
