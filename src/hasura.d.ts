@@ -4635,10 +4635,22 @@ export interface INSERT_ATTACHMENTVariables {
 // ====================================================
 
 
+export interface GET_EXPIRED_OWNED_PRODUCTS_order_product_product {
+  __typename: "product";
+  /**
+   * {type}_{target}, ex: Program_123-456, ProgramPlan_123-456
+   */
+  id: string;
+  target: string;
+}
+
 export interface GET_EXPIRED_OWNED_PRODUCTS_order_product {
   __typename: "order_product";
   id: any;
-  product_id: string;
+  /**
+   * An object relationship
+   */
+  product: GET_EXPIRED_OWNED_PRODUCTS_order_product_product;
 }
 
 export interface GET_EXPIRED_OWNED_PRODUCTS {
@@ -4650,6 +4662,7 @@ export interface GET_EXPIRED_OWNED_PRODUCTS {
 
 export interface GET_EXPIRED_OWNED_PRODUCTSVariables {
   memberId: string;
+  productType: string;
 }
 
 /* tslint:disable */

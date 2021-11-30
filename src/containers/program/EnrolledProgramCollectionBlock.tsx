@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { HStack, useRadioGroup } from '@chakra-ui/react'
 import { Skeleton, Typography } from 'antd'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { flatten, uniq } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -14,6 +15,7 @@ import ProgramCard from './ProgramCard'
 const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
+  const { settings } = useApp()
 
   const {
     loading: loadingOwnedPrograms,
@@ -36,7 +38,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
     GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS,
     {
       variables: {
-        programPlanIds: expiredOwnedProducts?.map(productId => productId.split('_')[1] || []),
+        programPlanIds: expiredOwnedProducts,
       },
     },
   )
@@ -98,19 +100,14 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
   )
 
   const expiredProgramIds = uniq(
-    flatten([
-      ...expiredOwnedProducts
-        ?.filter(productId => productId.split('_')[0] === 'Program')
-        .map(productId => productId.split('_')[1]),
-      ...(expiredProgramByProgramPlans?.program_plan.map(programPlan => programPlan.program_id) || []),
-    ]),
+    flatten([...(expiredProgramByProgramPlans?.program_plan.map(programPlan => programPlan.program_id) || [])]),
   )
 
   return (
     <div className="container py-3">
       <div className="d-flex justify-content-between">
         <Typography.Title level={4}>{formatMessage(productMessages.program.title.course)}</Typography.Title>
-        {expiredProgramIds.length !== 0 && (
+        {expiredProgramIds.length !== 0 && settings['feature.expiredProgramPlan.enable'] === '1' && (
           <HStack {...group}>
             {options.map(value => {
               const radio = getRadioProps({ value })

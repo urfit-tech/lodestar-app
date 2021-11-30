@@ -271,25 +271,27 @@ export const useExpiredOwnedProducts = (memberId: string, productType: ProductTy
     hasura.GET_EXPIRED_OWNED_PRODUCTSVariables
   >(
     gql`
-      query GET_EXPIRED_OWNED_PRODUCTS($memberId: String!) {
+      query GET_EXPIRED_OWNED_PRODUCTS($memberId: String!, $productType: String!) {
         order_product(
           where: {
+            product: { type: { _eq: $productType } }
             order_log: { status: { _eq: "SUCCESS" }, member_id: { _eq: $memberId } }
             ended_at: { _is_null: false, _lt: "now()" }
           }
         ) {
           id
-          product_id
+          product {
+            id
+            target
+          }
         }
       }
     `,
     {
-      variables: { memberId },
+      variables: { memberId, productType },
     },
   )
-  const expiredOwnedProducts = data?.order_product
-    .filter(v => v.product_id.split('_')[0] === productType)
-    .map(w => w.product_id)
+  const expiredOwnedProducts = data?.order_product.map(v => v.product).map(w => w.target) || []
 
   return {
     loadingExpiredOwnedProducts: loading,
