@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { ProductType } from 'lodestar-app-element/src/types/product'
 import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
 import LanguageContext from '../contexts/LanguageContext'
@@ -264,7 +265,7 @@ export const useUploadAttachments = () => {
   }
 }
 
-export const useExpiredOwnedProducts = (memberId: string) => {
+export const useExpiredOwnedProducts = (memberId: string, productType: ProductType) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_EXPIRED_OWNED_PRODUCTS,
     hasura.GET_EXPIRED_OWNED_PRODUCTSVariables
@@ -272,7 +273,10 @@ export const useExpiredOwnedProducts = (memberId: string) => {
     gql`
       query GET_EXPIRED_OWNED_PRODUCTS($memberId: String!) {
         order_product(
-          where: { order_log: { member_id: { _eq: $memberId } }, ended_at: { _is_null: false, _lt: "now()" } }
+          where: {
+            order_log: { status: { _eq: "SUCCESS" }, member_id: { _eq: $memberId } }
+            ended_at: { _is_null: false, _lt: "now()" }
+          }
         ) {
           id
           product_id
@@ -283,7 +287,9 @@ export const useExpiredOwnedProducts = (memberId: string) => {
       variables: { memberId },
     },
   )
-  const expiredOwnedProducts = data?.order_product.map(v => v.product_id)
+  const expiredOwnedProducts = data?.order_product
+    .filter(v => v.product_id.split('_')[0] === productType)
+    .map(w => w.product_id)
 
   return {
     loadingExpiredOwnedProducts: loading,
