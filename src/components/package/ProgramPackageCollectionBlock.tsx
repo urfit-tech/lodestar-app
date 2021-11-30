@@ -3,6 +3,7 @@ import { Box, HStack, SkeletonText, useRadioGroup } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import gql from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { flatten, sum, uniq, uniqBy } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -43,6 +44,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
   const { loading, error, programPackages } = useEnrolledProgramPackage(memberId)
+  const { settings } = useApp()
 
   const {
     loading: loadingProgramPackageByProgramPackagePlans,
@@ -110,7 +112,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
         <Typography.Title level={4} className="mb-4">
           {formatMessage(commonMessages.ui.packages)}
         </Typography.Title>
-        {expiredProgramPackageIds.length !== 0 && (
+        {settings['feature.expiredProgramPackagePlan.enable'] === '1' && expiredProgramPackageIds.length > 0 && (
           <HStack {...group}>
             {options.map(value => {
               const radio = getRadioProps({ value })
@@ -124,12 +126,13 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
         )}
       </div>
 
-      {programPackages.length === 0 && !isExpired && (
-        <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>
-      )}
-      {(programPackages.length !== 0 || expiredProgramPackages.length !== 0) && (
+      {programPackages.length === 0 &&
+        !isExpired &&
+        settings['feature.expiredProgramPackagePlan.enable'] === '1' &&
+        expiredProgramPackages.length > 0 && <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>}
+      {(programPackages.length > 0 || expiredProgramPackages.length > 0) && (
         <div className="row">
-          {(!isExpired ? programPackages : expiredProgramPackages).map(programPackage => (
+          {(isExpired ? expiredProgramPackages : programPackages).map(programPackage => (
             <Box
               key={programPackage.id}
               className="col-12 col-md-6 col-lg-4 mb-4"
