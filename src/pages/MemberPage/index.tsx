@@ -92,7 +92,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
         <>
           <EnrolledProgramCollectionBlock memberId={memberId} />
           {(enrolledProgramPackagePlanIds.length > 0 ||
-            (settings['feature.expiredProgramPackagePlan.enable'] === '1' && expiredOwnedProducts.length > 0)) && (
+            (settings['feature.expired_program_package_plan.enable'] === '1' && expiredOwnedProducts.length > 0)) && (
             <ProgramPackageCollectionBlock memberId={memberId} programPackagePlanIds={expiredOwnedProducts} />
           )}
         </>

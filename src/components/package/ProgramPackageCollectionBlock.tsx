@@ -112,7 +112,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
         <Typography.Title level={4} className="mb-4">
           {formatMessage(commonMessages.ui.packages)}
         </Typography.Title>
-        {settings['feature.expiredProgramPackagePlan.enable'] === '1' && expiredProgramPackageIds.length > 0 && (
+        {settings['feature.expired_program_package_plan.enable'] === '1' && expiredProgramPackageIds.length > 0 && (
           <HStack {...group}>
             {options.map(value => {
               const radio = getRadioProps({ value })
@@ -128,7 +128,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
 
       {programPackages.length === 0 &&
         !isExpired &&
-        settings['feature.expiredProgramPackagePlan.enable'] === '1' &&
+        settings['feature.expired_program_package_plan.enable'] === '1' &&
         expiredProgramPackages.length > 0 && <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>}
       {(programPackages.length > 0 || expiredProgramPackages.length > 0) && (
         <div className="row">
