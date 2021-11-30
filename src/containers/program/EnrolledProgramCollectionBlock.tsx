@@ -126,7 +126,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
       {programIds.length === 0 && !isExpired && <div>{formatMessage(productMessages.program.content.noProgram)}</div>}{' '}
       {(programIds.length !== 0 || expiredProgramIds.length !== 0) && (
         <div className="row">
-          {(!isExpired ? programIds : expiredProgramIds).map(programId => (
+          {(isExpired ? expiredProgramIds : programIds).map(programId => (
             <div key={programId} className="col-12 mb-4 col-md-6 col-lg-4">
               <ProgramCard memberId={memberId} programId={programId} withProgress={!isExpired} withMask={!isExpired} />
             </div>
