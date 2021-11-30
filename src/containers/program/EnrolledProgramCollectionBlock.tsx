@@ -107,7 +107,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
     <div className="container py-3">
       <div className="d-flex justify-content-between">
         <Typography.Title level={4}>{formatMessage(productMessages.program.title.course)}</Typography.Title>
-        {expiredProgramIds.length !== 0 && settings['feature.expiredProgramPlan.enable'] === '1' && (
+        {expiredProgramIds.length !== 0 && settings['feature.expired_program_plan.enable'] === '1' && (
           <HStack {...group}>
             {options.map(value => {
               const radio = getRadioProps({ value })
