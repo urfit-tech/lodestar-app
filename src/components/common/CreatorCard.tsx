@@ -15,7 +15,6 @@ const StyledWrapper = styled.div`
   padding: 2.5rem 1.5rem;
   background: white;
   text-align: center;
-  margin-bottom: 40px;
 
   @media (min-width: ${BREAK_POINT}px) {
     display: flex;
