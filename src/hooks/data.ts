@@ -291,7 +291,7 @@ export const useExpiredOwnedProducts = (memberId: string, productType: ProductTy
       variables: { memberId, productType },
     },
   )
-  const expiredOwnedProducts = data?.order_product.map(v => v.product).map(w => w.target) || []
+  const expiredOwnedProducts = data?.order_product.map(v => v.product.target) || []
 
   return {
     loadingExpiredOwnedProducts: loading,
