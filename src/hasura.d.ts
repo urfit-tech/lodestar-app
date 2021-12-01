@@ -578,6 +578,44 @@ export interface READ_NOTIFICATIONVariables {
 
 
 // ====================================================
+// GraphQL query operation: GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS
+// ====================================================
+
+
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan_program_package {
+  __typename: "program_package";
+  id: any;
+  cover_url: string | null;
+  title: string;
+}
+
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan {
+  __typename: "program_package_plan";
+  id: any;
+  /**
+   * An object relationship
+   */
+  program_package: GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan_program_package;
+}
+
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS {
+  /**
+   * fetch data from the table: "program_package_plan"
+   */
+  program_package_plan: GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan[];
+}
+
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDSVariables {
+  programPackagePlanIds?: any[] | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
 // GraphQL query operation: GET_ENROLLED_PROGRAM_PACKAGES
 // ====================================================
 
@@ -1839,6 +1877,34 @@ export interface GET_OWNED_PROGRAMS {
 
 export interface GET_OWNED_PROGRAMSVariables {
   memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
+// GraphQL query operation: GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS
+// ====================================================
+
+
+export interface GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS_program_plan {
+  __typename: "program_plan";
+  id: any;
+  program_id: any;
+}
+
+export interface GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS {
+  /**
+   * fetch data from the table: "program_plan"
+   */
+  program_plan: GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS_program_plan[];
+}
+
+export interface GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDSVariables {
+  programPlanIds?: any[] | null;
 }
 
 /* tslint:disable */
@@ -4537,6 +4603,47 @@ export interface INSERT_ATTACHMENT {
 
 export interface INSERT_ATTACHMENTVariables {
   attachments: attachment_insert_input[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
+// GraphQL query operation: GET_EXPIRED_OWNED_PRODUCTS
+// ====================================================
+
+
+export interface GET_EXPIRED_OWNED_PRODUCTS_order_product_product {
+  __typename: "product";
+  /**
+   * {type}_{target}, ex: Program_123-456, ProgramPlan_123-456
+   */
+  id: string;
+  target: string;
+}
+
+export interface GET_EXPIRED_OWNED_PRODUCTS_order_product {
+  __typename: "order_product";
+  id: any;
+  /**
+   * An object relationship
+   */
+  product: GET_EXPIRED_OWNED_PRODUCTS_order_product_product;
+}
+
+export interface GET_EXPIRED_OWNED_PRODUCTS {
+  /**
+   * fetch data from the table: "order_product"
+   */
+  order_product: GET_EXPIRED_OWNED_PRODUCTS_order_product[];
+}
+
+export interface GET_EXPIRED_OWNED_PRODUCTSVariables {
+  memberId: string;
+  productType: string;
 }
 
 /* tslint:disable */
@@ -12382,7 +12489,9 @@ export enum program_plan_update_column {
   group_buying_people = "group_buying_people",
   id = "id",
   is_countdown_timer_visible = "is_countdown_timer_visible",
+  is_deleted = "is_deleted",
   is_participants_visible = "is_participants_visible",
+  is_primary = "is_primary",
   list_price = "list_price",
   period_amount = "period_amount",
   period_type = "period_type",
@@ -20211,7 +20320,9 @@ export interface program_plan_bool_exp {
   group_buying_people?: numeric_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_countdown_timer_visible?: Boolean_comparison_exp | null;
+  is_deleted?: Boolean_comparison_exp | null;
   is_participants_visible?: Boolean_comparison_exp | null;
+  is_primary?: Boolean_comparison_exp | null;
   list_price?: numeric_comparison_exp | null;
   period_amount?: numeric_comparison_exp | null;
   period_type?: String_comparison_exp | null;
@@ -20261,7 +20372,9 @@ export interface program_plan_insert_input {
   group_buying_people?: any | null;
   id?: any | null;
   is_countdown_timer_visible?: boolean | null;
+  is_deleted?: boolean | null;
   is_participants_visible?: boolean | null;
+  is_primary?: boolean | null;
   list_price?: any | null;
   period_amount?: any | null;
   period_type?: string | null;
