@@ -37,9 +37,9 @@ const StyledTitle = styled(Typography.Title)`
   }
 `
 
-const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackagePlanIds: string[] }> = ({
+const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; expiredOwnedProgramPackagePlanIds: string[] }> = ({
   memberId,
-  programPackagePlanIds,
+  expiredOwnedProgramPackagePlanIds,
 }) => {
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
@@ -50,7 +50,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
     loadingProgramPackages,
     errorProgramPackages,
     programPackages: expiredProgramPackages,
-  } = useProgramPackages(programPackagePlanIds)
+  } = useProgramPackages(expiredOwnedProgramPackagePlanIds)
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'isExpired',
