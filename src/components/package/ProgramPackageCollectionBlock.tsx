@@ -111,28 +111,23 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
         !isExpired &&
         settings['feature.expired_program_package_plan.enable'] === '1' &&
         expiredProgramPackages.length > 0 && <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>}
-      {(programPackages.length > 0 || expiredProgramPackages.length > 0) && (
-        <div className="row">
-          {(isExpired ? expiredProgramPackages : programPackages).map(programPackage => (
-            <Box
-              key={programPackage.id}
-              className="col-12 col-md-6 col-lg-4 mb-4"
-              opacity={!isExpired ? '100%' : '50%'}
-            >
-              <Link to={`/program-packages/${programPackage.id}/contents?memberId=${memberId}`}>
-                <StyledCard>
-                  <StyledCover src={programPackage.coverUrl || EmptyCover} />
-                  <StyledDescription>
-                    <StyledTitle level={2} ellipsis={{ rows: 2 }}>
-                      {programPackage.title}
-                    </StyledTitle>
-                  </StyledDescription>
-                </StyledCard>
-              </Link>
-            </Box>
-          ))}
-        </div>
-      )}
+
+      <div className="row">
+        {(isExpired ? expiredProgramPackages : programPackages).map(programPackage => (
+          <Box key={programPackage.id} className="col-12 col-md-6 col-lg-4 mb-4" opacity={isExpired ? '50%' : '100%'}>
+            <Link to={`/program-packages/${programPackage.id}/contents?memberId=${memberId}`}>
+              <StyledCard>
+                <StyledCover src={programPackage.coverUrl || EmptyCover} />
+                <StyledDescription>
+                  <StyledTitle level={2} ellipsis={{ rows: 2 }}>
+                    {programPackage.title}
+                  </StyledTitle>
+                </StyledDescription>
+              </StyledCard>
+            </Link>
+          </Box>
+        ))}
+      </div>
     </div>
   )
 }
