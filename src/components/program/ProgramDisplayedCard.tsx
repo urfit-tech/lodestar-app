@@ -2,6 +2,7 @@ import { Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { sum } from 'ramda'
 import React from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useProgramContentProgress } from '../../contexts/ProgressContext'
 import EmptyCover from '../../images/empty-cover.png'
@@ -37,12 +38,14 @@ export const ProgramDisplayedCard: React.VFC<{
     : 0
 
   return (
-    <div className="mb-4">
-      <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
-      <StyledProgramTitle level={2} ellipsis={{ rows: 2 }} className="mb-3">
-        {program.title}
-      </StyledProgramTitle>
-      {memberId && <ProgressBar percent={viewRate} />}
-    </div>
+    <Link to={`/programs/${program.id}`}>
+      <div className="mb-4">
+        <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
+        <StyledProgramTitle level={2} ellipsis={{ rows: 2 }} className="mb-3">
+          {program.title}
+        </StyledProgramTitle>
+        {memberId && <ProgressBar percent={viewRate} />}
+      </div>
+    </Link>
   )
 }
