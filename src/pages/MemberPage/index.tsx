@@ -51,7 +51,8 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   const { id: appId, settings } = useApp()
   const { member } = usePublicMember(memberId)
   const { loadingProgramPackageIds, enrolledProgramPackagePlanIds } = useEnrolledProgramPackagePlanIds(memberId)
-  const { loadingExpiredOwnedProducts, expiredOwnedProducts } = useExpiredOwnedProducts(memberId, 'ProgramPackagePlan')
+  const { loadingExpiredOwnedProducts, expiredOwnedProducts: expiredOwnedProgramPackagePlanIds } =
+    useExpiredOwnedProducts(memberId, 'ProgramPackagePlan')
   const { loadingEnrolledProjectPlanIds, enrolledProjectPlanIds } = useEnrolledProjectPlanIds(memberId)
   const { loadingTickets, enrolledActivityTickets } = useEnrolledActivityTickets(memberId)
   const { loadingPodcastProgramIds, enrolledPodcastPrograms } = useEnrolledPodcastPrograms(memberId)
@@ -92,8 +93,12 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
         <>
           <EnrolledProgramCollectionBlock memberId={memberId} />
           {(enrolledProgramPackagePlanIds.length > 0 ||
-            (settings['feature.expired_program_package_plan.enable'] === '1' && expiredOwnedProducts.length > 0)) && (
-            <ProgramPackageCollectionBlock memberId={memberId} programPackagePlanIds={expiredOwnedProducts} />
+            (settings['feature.expired_program_package_plan.enable'] === '1' &&
+              expiredOwnedProgramPackagePlanIds.length > 0)) && (
+            <ProgramPackageCollectionBlock
+              memberId={memberId}
+              expiredOwnedProgramPackagePlanIds={expiredOwnedProgramPackagePlanIds}
+            />
           )}
         </>
       ),
