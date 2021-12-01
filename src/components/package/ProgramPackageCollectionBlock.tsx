@@ -4,7 +4,7 @@ import { Typography } from 'antd'
 import gql from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { flatten, sum, uniq, uniqBy } from 'ramda'
+import { sum, uniqBy } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -47,29 +47,10 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
   const { settings } = useApp()
 
   const {
-    loading: loadingProgramPackageByProgramPackagePlans,
-    error: errorProgramPackageByProgramPackagePlans,
-    data: programPackageByProgramPackagePlans,
-  } = useQuery<
-    hasura.GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS,
-    hasura.GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDSVariables
-  >(GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS, {
-    variables: {
-      programPackagePlanIds,
-    },
-  })
-  const expiredProgramPackageIds = uniq(
-    flatten([
-      ...(programPackageByProgramPackagePlans?.program_package_plan.map(
-        programPackagePlan => programPackagePlan.program_package_id,
-      ) || []),
-    ]),
-  )
-  const {
     loadingProgramPackages,
     errorProgramPackages,
     programPackages: expiredProgramPackages,
-  } = useProgramPackages(expiredProgramPackageIds)
+  } = useProgramPackages(programPackagePlanIds)
 
   const options = [
     formatMessage(commonMessages.label.availableForLimitTime),
@@ -88,7 +69,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
   })
   const group = getRootProps()
 
-  if (loading || loadingProgramPackageByProgramPackagePlans || loadingProgramPackages) {
+  if (loading || loadingProgramPackages) {
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(commonMessages.ui.packages)}</Typography.Title>
@@ -97,7 +78,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
     )
   }
 
-  if (error || errorProgramPackageByProgramPackagePlans || errorProgramPackages) {
+  if (error || errorProgramPackages) {
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(commonMessages.ui.packages)}</Typography.Title>
@@ -112,7 +93,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
         <Typography.Title level={4} className="mb-4">
           {formatMessage(commonMessages.ui.packages)}
         </Typography.Title>
-        {settings['feature.expired_program_package_plan.enable'] === '1' && expiredProgramPackageIds.length > 0 && (
+        {settings['feature.expired_program_package_plan.enable'] === '1' && expiredProgramPackages.length > 0 && (
           <HStack {...group}>
             {options.map(value => {
               const radio = getRadioProps({ value })
@@ -158,27 +139,25 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
 
 export default ProgramPackageCollectionBlock
 
-const GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS = gql`
-  query GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS($programPackagePlanIds: [uuid!]) {
-    program_package_plan(where: { id: { _in: $programPackagePlanIds } }) {
-      id
-      program_package_id
-    }
-  }
-`
-const useProgramPackages = (programPackageIds: string[]) => {
-  const { loading, error, data } = useQuery<hasura.GET_PROGRAM_PACKAGES, hasura.GET_PROGRAM_PACKAGESVariables>(
+const useProgramPackages = (programPackagePlanIds: string[]) => {
+  const { loading, error, data } = useQuery<
+    hasura.GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS,
+    hasura.GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDSVariables
+  >(
     gql`
-      query GET_PROGRAM_PACKAGES($programPackageIds: [uuid!]) {
-        program_package(where: { id: { _in: $programPackageIds } }) {
+      query GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS($programPackagePlanIds: [uuid!]) {
+        program_package_plan(where: { id: { _in: $programPackagePlanIds } }, distinct_on: program_package_id) {
           id
-          cover_url
-          title
+          program_package {
+            id
+            cover_url
+            title
+          }
         }
       }
     `,
     {
-      variables: { programPackageIds },
+      variables: { programPackagePlanIds },
     },
   )
 
@@ -187,10 +166,10 @@ const useProgramPackages = (programPackageIds: string[]) => {
     coverUrl: string | undefined
     title: string
   }[] =
-    data?.program_package.map(v => ({
-      id: v.id,
-      coverUrl: v.cover_url || undefined,
-      title: v.title,
+    data?.program_package_plan.map(v => ({
+      id: v.program_package.id,
+      coverUrl: v.program_package.cover_url || undefined,
+      title: v.program_package.title,
     })) || []
 
   return {
@@ -199,6 +178,7 @@ const useProgramPackages = (programPackageIds: string[]) => {
     programPackages,
   }
 }
+
 const useEnrolledProgramPackage = (memberId: string) => {
   const { loading, error, data } = useQuery<
     hasura.GET_ENROLLED_PROGRAM_PACKAGES,
