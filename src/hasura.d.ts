@@ -578,54 +578,35 @@ export interface READ_NOTIFICATIONVariables {
 
 
 // ====================================================
-// GraphQL query operation: GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS
+// GraphQL query operation: GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS
 // ====================================================
 
 
-export interface GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan {
-  __typename: "program_package_plan";
-  id: any;
-  program_package_id: any;
-}
-
-export interface GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS {
-  /**
-   * fetch data from the table: "program_package_plan"
-   */
-  program_package_plan: GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan[];
-}
-
-export interface GET_PROGRAM_PACKAGE_IDS_BY_PROGRAM_PACKAGE_PLAN_IDSVariables {
-  programPackagePlanIds?: any[] | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-
-// ====================================================
-// GraphQL query operation: GET_PROGRAM_PACKAGES
-// ====================================================
-
-
-export interface GET_PROGRAM_PACKAGES_program_package {
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan_program_package {
   __typename: "program_package";
   id: any;
   cover_url: string | null;
   title: string;
 }
 
-export interface GET_PROGRAM_PACKAGES {
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan {
+  __typename: "program_package_plan";
+  id: any;
   /**
-   * fetch data from the table: "program_package"
+   * An object relationship
    */
-  program_package: GET_PROGRAM_PACKAGES_program_package[];
+  program_package: GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan_program_package;
 }
 
-export interface GET_PROGRAM_PACKAGESVariables {
-  programPackageIds?: any[] | null;
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS {
+  /**
+   * fetch data from the table: "program_package_plan"
+   */
+  program_package_plan: GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan[];
+}
+
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDSVariables {
+  programPackagePlanIds?: any[] | null;
 }
 
 /* tslint:disable */
