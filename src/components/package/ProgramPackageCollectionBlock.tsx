@@ -52,10 +52,6 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
     programPackages: expiredProgramPackages,
   } = useProgramPackages(programPackagePlanIds)
 
-  const options = [
-    formatMessage(commonMessages.label.availableForLimitTime),
-    formatMessage(commonMessages.label.isExpired),
-  ]
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'isExpired',
     defaultValue: formatMessage(commonMessages.label.availableForLimitTime),
@@ -95,7 +91,10 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; programPackag
         </Typography.Title>
         {settings['feature.expired_program_package_plan.enable'] === '1' && expiredProgramPackages.length > 0 && (
           <HStack {...group}>
-            {options.map(value => {
+            {[
+              formatMessage(commonMessages.label.availableForLimitTime),
+              formatMessage(commonMessages.label.isExpired),
+            ].map(value => {
               const radio = getRadioProps({ value })
               return (
                 <RadioCard key={value} {...radio} size="md">
