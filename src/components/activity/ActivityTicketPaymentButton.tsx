@@ -1,4 +1,5 @@
 import { Button, Icon } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import React, { useContext } from 'react'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
@@ -30,6 +31,7 @@ const ActivityTicketPaymentButton: React.VFC<{
   ticket: ActivityTicketProps
 }> = ({ ticket }) => {
   const { formatMessage } = useIntl()
+  const { settings } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
   const history = useHistory()
 
@@ -47,17 +49,19 @@ const ActivityTicketPaymentButton: React.VFC<{
         </Button>
       ) : (
         <div className="d-flex flex-column">
-          <StyleButton
-            className="mr-2"
-            variant="outline"
-            colorScheme="primary"
-            isFullWidth
-            isMultiline
-            onClick={handleAddCart}
-          >
-            <Icon as={AiOutlineShoppingCart} />
-            <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
-          </StyleButton>
+          {ticket.price !== 0 && !settings['feature.cart.disable'] && (
+            <StyleButton
+              className="mr-2"
+              variant="outline"
+              colorScheme="primary"
+              isFullWidth
+              isMultiline
+              onClick={handleAddCart}
+            >
+              <Icon as={AiOutlineShoppingCart} />
+              <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
+            </StyleButton>
+          )}
 
           <Button colorScheme="primary" isFullWidth onClick={() => handleAddCart()?.then(() => history.push('/cart'))}>
             {ticket.price === 0 ? formatMessage(commonMessages.button.join) : formatMessage(commonMessages.ui.purchase)}
