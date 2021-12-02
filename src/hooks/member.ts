@@ -144,7 +144,7 @@ export const useUpdateMemberMetadata = () => {
       $metadata: jsonb
       $memberPhones: [member_phone_insert_input!]!
     ) {
-      update_member(where: { id: { _eq: $memberId } }, _set: { metadata: $metadata }) {
+      update_member(where: { id: { _eq: $memberId } }, _append: { metadata: $metadata }) {
         affected_rows
       }
       insert_member_phone(
