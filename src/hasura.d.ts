@@ -4160,7 +4160,10 @@ export interface GET_PRODUCT_SIMPLE_program_package_plan_by_pk {
   sold_at: any | null;
   discount_down_price: any | null;
   period_amount: any;
-  period_type: string;
+  /**
+   * Y / M / W / D
+   */
+  period_type: string | null;
   is_subscription: boolean;
   /**
    * An object relationship
@@ -7973,7 +7976,10 @@ export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_
   is_subscription: boolean;
   is_participants_visible: boolean;
   period_amount: any;
-  period_type: string;
+  /**
+   * Y / M / W / D
+   */
+  period_type: string | null;
   list_price: any;
   sale_price: any | null;
   sold_at: any | null;
@@ -12536,6 +12542,7 @@ export enum program_role_constraint {
  * update columns of table "program_role"
  */
 export enum program_role_update_column {
+  created_at = "created_at",
   id = "id",
   member_id = "member_id",
   name = "name",
@@ -20467,6 +20474,7 @@ export interface program_role_bool_exp {
   _and?: (program_role_bool_exp | null)[] | null;
   _not?: program_role_bool_exp | null;
   _or?: (program_role_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_public_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -20479,6 +20487,7 @@ export interface program_role_bool_exp {
  * input type for inserting data into table "program_role"
  */
 export interface program_role_insert_input {
+  created_at?: any | null;
   id?: any | null;
   member_id?: string | null;
   name?: string | null;
