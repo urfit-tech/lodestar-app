@@ -44,7 +44,7 @@ const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
   podcastProgramIds: JSON.parse(localStorage.getItem('podcastProgramIds') || '[]') || [],
   podcastAlbumId: localStorage.getItem('podcastAlbumId') || '',
   currentPodcastProgramContent: null,
-  visible: Boolean(Number(localStorage.getItem('podcast.playing') || 0)),
+  visible: false,
   mode: (localStorage.getItem('podcast.mode') || 'loop') as PodcastPlayerMode,
   rate: Number(localStorage.getItem('podcast.rate')) || 1,
   duration: 0,
