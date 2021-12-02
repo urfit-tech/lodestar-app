@@ -114,7 +114,13 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; expiredOwnedP
       <div className="row">
         {(isExpired ? expiredProgramPackages : programPackages).map(programPackage => (
           <Box key={programPackage.id} className="col-12 col-md-6 col-lg-4 mb-4" opacity={isExpired ? '50%' : '100%'}>
-            <Link to={`/program-packages/${programPackage.id}/contents?memberId=${memberId}`}>
+            <Link
+              to={
+                isExpired
+                  ? `/program-packages/${programPackage.id}`
+                  : `/program-packages/${programPackage.id}/contents?memberId=${memberId}`
+              }
+            >
               <StyledCard>
                 <StyledCover src={programPackage.coverUrl || EmptyCover} />
                 <StyledDescription>
