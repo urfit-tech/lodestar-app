@@ -455,6 +455,7 @@ const useSearchProductCollection = (
               ended_at
               price
               title
+              currency_id
             }
             aggregate {
               sum {
@@ -720,6 +721,7 @@ const useSearchProductCollection = (
             endedAt: new Date(ticket.ended_at),
             price: ticket.price,
             count: ticket.count,
+            currencyId: ticket.currency_id,
             description: ticket.description,
             isPublished: ticket.is_published,
           })),

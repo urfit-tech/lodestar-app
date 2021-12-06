@@ -14,6 +14,7 @@ import AdminCard from '../../components/common/AdminCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
+import { useCoinStatus } from '../../hooks/data'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
 
@@ -238,24 +239,6 @@ const CoinHistoryCollectionTabs: React.VFC<{
       </TabPanels>
     </Tabs>
   )
-}
-
-const useCoinStatus = (memberId: string) => {
-  const { data } = useQuery<hasura.GET_COIN_STATUS>(
-    gql`
-      query GET_COIN_STATUS($memberId: String!) {
-        coin_status(where: { member_id: { _eq: $memberId } }) {
-          remaining
-        }
-      }
-    `,
-    {
-      variables: { memberId },
-    },
-  )
-  return {
-    ownedCoins: sum(data?.coin_status.map(v => v.remaining || 0) || []),
-  }
 }
 
 const useCoinLogCollections = ({ memberId, current }: { memberId: string; current: Date }) => {

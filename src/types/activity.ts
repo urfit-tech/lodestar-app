@@ -27,6 +27,7 @@ export type ActivityTicketProps = {
   title: string
   startedAt: Date
   endedAt: Date
+  currencyId: string
   price: number
   count: number
   description: string | null
