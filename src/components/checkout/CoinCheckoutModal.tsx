@@ -17,7 +17,9 @@ import PriceLabel from '../common/PriceLabel'
 
 const StyledTitle = styled.h3`
   ${MultiLineTruncationMixin}
-  font-size: 16px;
+  text-align:center;
+  font-size: 20px;
+  padding: 0.5rem 2.5rem 0 2.5rem;
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: 0.2px;
