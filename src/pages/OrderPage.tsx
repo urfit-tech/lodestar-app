@@ -271,7 +271,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                     {formatMessage(commonMessages.title.creditCardConfirm)}
                   </Typography.Title>
                   <div className="d-flex justify-content-center flex-column flex-sm-row mt-2">
-                    <Link to="/" className="mb-3 mb-sm-0 mr-sm-4">
+                    <Link to="/" className="mb-3 mb-sm-0 mr-sm-2">
                       <Button>{formatMessage(commonMessages.button.home)}</Button>
                     </Link>
                     <Link to="/settings/orders" className="ml-sm-2">
