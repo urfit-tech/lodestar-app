@@ -24,7 +24,7 @@ type MessengerChatProps = {
     onCustomerChatDialogHide?: () => void
   }
 }
-const MessengerChat: React.VFC<MessengerChatProps> = ({ options: { appId, themeColor, ...options } }) => {
+const MessengerChat: React.VFC<MessengerChatProps> = ({ options: { appId, pageId, themeColor, ...options } }) => {
   const { settings } = useApp()
   const theme = useAppTheme()
 
@@ -35,6 +35,7 @@ const MessengerChat: React.VFC<MessengerChatProps> = ({ options: { appId, themeC
   return (
     <MessengerCustomerChat
       appId={appId || settings['auth.facebook_app_id']}
+      pageId={pageId || settings['auth.facebook_page_id']}
       themeColor={themeColor || theme.colors.primary[500]}
       {...options}
     />
