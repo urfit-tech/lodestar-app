@@ -1,3 +1,4 @@
+import { Box } from '@chakra-ui/react'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { sum } from 'ramda'
 import React from 'react'
@@ -44,7 +45,8 @@ const ProgramCard: React.VFC<{
   noInstructor?: boolean
   noPrice?: boolean
   withProgress?: boolean
-}> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress }) => {
+  isExpired?: boolean
+}> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress, isExpired }) => {
   const { program } = useProgram(programId)
   const { enrolledProgramIds } = useEnrolledProgramIds(memberId)
   const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
@@ -55,7 +57,7 @@ const ProgramCard: React.VFC<{
   const isEnrolled = enrolledProgramIds.includes(programId)
 
   return (
-    <>
+    <Box opacity={isExpired ? '50%' : '100%'}>
       {!noInstructor && program?.roles && (
         <AvatarPlaceHolder className="my-3">
           {program.roles
@@ -69,7 +71,9 @@ const ProgramCard: React.VFC<{
 
       <Link
         to={
-          isEnrolled
+          isExpired
+            ? `/programs/${programId}`
+            : isEnrolled
             ? `/programs/${programId}/contents`
             : `/programs/${programId}` + (programType ? `?type=${programType}` : '')
         }
@@ -89,7 +93,7 @@ const ProgramCard: React.VFC<{
           </StyledMeta>
         </StyledWrapper>
       </Link>
-    </>
+    </Box>
   )
 }
 

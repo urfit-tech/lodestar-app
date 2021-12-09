@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { Button, Icon, Typography } from 'antd'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import React, { useEffect } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -22,6 +23,7 @@ const messages = defineMessages({
     id: 'common.text.orderSuccessHint',
     defaultMessage: '若你選擇「{method}」需於付款完成後，{waitingDays} 個工作日才會開通。',
   },
+  orderTracking: { id: 'common.text.orderTracking', defaultMessage: '訂單查詢' },
 })
 
 const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
@@ -30,6 +32,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   const [withTracking] = useQueryParam('tracking', BooleanParam)
   const getSimpleProductCollection = useSimpleProductCollection()
   const { settings, id: appId } = useApp()
+  const { currentMemberId } = useAuth()
   const { loading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
     GET_ORDERS_PRODUCT,
     { variables: { orderId: orderId } },
@@ -226,6 +229,9 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                     {formatMessage(commonMessages.title.purchasedItemPreparing)}
                   </Typography.Title>
                   <Typography.Text className="mb-4">{formatMessage(commonMessages.content.prepare)}</Typography.Text>
+                  <Link to="/">
+                    <Button>{formatMessage(commonMessages.button.home)}</Button>
+                  </Link>
                 </>
               ) : order.status === 'SUCCESS' ? (
                 <>
@@ -240,6 +246,14 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                     {formatMessage(commonMessages.title.purchasedItemAvailable)}
                   </Typography.Title>
                   {orderSuccessHintFormat(order.payment_model?.method)}
+                  <div className="d-flex justify-content-center flex-column flex-sm-row mt-2">
+                    <Link to={`/members/${currentMemberId}`} className="mb-3 mb-sm-0 mr-sm-2">
+                      <Button>{formatMessage(commonMessages.button.myPage)}</Button>
+                    </Link>
+                    <Link to="/settings/orders" className="ml-sm-2">
+                      <Button>{formatMessage(messages.orderTracking)}</Button>
+                    </Link>
+                  </div>
                 </>
               ) : (
                 <>
@@ -256,11 +270,16 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                   <Typography.Title level={4} className="mb-3">
                     {formatMessage(commonMessages.title.creditCardConfirm)}
                   </Typography.Title>
+                  <div className="d-flex justify-content-center flex-column flex-sm-row mt-2">
+                    <Link to="/" className="mb-3 mb-sm-0 mr-sm-2">
+                      <Button>{formatMessage(commonMessages.button.home)}</Button>
+                    </Link>
+                    <Link to="/settings/orders" className="ml-sm-2">
+                      <Button>{formatMessage(commonMessages.ui.repay)}</Button>
+                    </Link>
+                  </div>
                 </>
               )}
-              <Link to="/">
-                <Button>{formatMessage(commonMessages.button.home)}</Button>
-              </Link>
             </div>
           </AdminCard>
         </div>

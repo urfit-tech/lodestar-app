@@ -1,4 +1,5 @@
 import { Button, Icon } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import React, { useContext } from 'react'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
@@ -8,6 +9,7 @@ import styled, { css } from 'styled-components'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
 import { ActivityTicketProps } from '../../types/activity'
+import CoinCheckoutModal from '../checkout/CoinCheckoutModal'
 
 const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
   span {
@@ -30,6 +32,7 @@ const ActivityTicketPaymentButton: React.VFC<{
   ticket: ActivityTicketProps
 }> = ({ ticket }) => {
   const { formatMessage } = useIntl()
+  const { settings } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
   const history = useHistory()
 
@@ -45,19 +48,27 @@ const ActivityTicketPaymentButton: React.VFC<{
         <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
           {formatMessage(commonMessages.button.cart)}
         </Button>
+      ) : ticket.currencyId === 'LSC' ? (
+        <CoinCheckoutModal
+          productId={'ActivityTicket_' + ticket.id}
+          currencyId={ticket.currencyId}
+          amount={ticket.price}
+        />
       ) : (
         <div className="d-flex flex-column">
-          <StyleButton
-            className="mr-2"
-            variant="outline"
-            colorScheme="primary"
-            isFullWidth
-            isMultiline
-            onClick={handleAddCart}
-          >
-            <Icon as={AiOutlineShoppingCart} />
-            <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
-          </StyleButton>
+          {ticket.price !== 0 && !settings['feature.cart.disable'] && (
+            <StyleButton
+              className="mr-2"
+              variant="outline"
+              colorScheme="primary"
+              isFullWidth
+              isMultiline
+              onClick={handleAddCart}
+            >
+              <Icon as={AiOutlineShoppingCart} />
+              <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
+            </StyleButton>
+          )}
 
           <Button colorScheme="primary" isFullWidth onClick={() => handleAddCart()?.then(() => history.push('/cart'))}>
             {ticket.price === 0 ? formatMessage(commonMessages.button.join) : formatMessage(commonMessages.ui.purchase)}

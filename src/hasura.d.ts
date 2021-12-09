@@ -578,6 +578,44 @@ export interface READ_NOTIFICATIONVariables {
 
 
 // ====================================================
+// GraphQL query operation: GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS
+// ====================================================
+
+
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan_program_package {
+  __typename: "program_package";
+  id: any;
+  cover_url: string | null;
+  title: string;
+}
+
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan {
+  __typename: "program_package_plan";
+  id: any;
+  /**
+   * An object relationship
+   */
+  program_package: GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan_program_package;
+}
+
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS {
+  /**
+   * fetch data from the table: "program_package_plan"
+   */
+  program_package_plan: GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS_program_package_plan[];
+}
+
+export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDSVariables {
+  programPackagePlanIds?: any[] | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
 // GraphQL query operation: GET_ENROLLED_PROGRAM_PACKAGES
 // ====================================================
 
@@ -1848,6 +1886,34 @@ export interface GET_OWNED_PROGRAMSVariables {
 
 
 // ====================================================
+// GraphQL query operation: GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS
+// ====================================================
+
+
+export interface GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS_program_plan {
+  __typename: "program_plan";
+  id: any;
+  program_id: any;
+}
+
+export interface GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS {
+  /**
+   * fetch data from the table: "program_plan"
+   */
+  program_plan: GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS_program_plan[];
+}
+
+export interface GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDSVariables {
+  programPlanIds?: any[] | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
 // GraphQL query operation: GET_PROJECT_ENROLLMENT_COUNT
 // ====================================================
 
@@ -2526,6 +2592,7 @@ export interface GET_ACTIVITY_activity_by_pk_activity_tickets {
   ended_at: any;
   price: any;
   title: string;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -2587,6 +2654,7 @@ export interface GET_ACTIVITYVariables {
 
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity {
   __typename: "activity";
+  title: string;
   is_participants_visible: boolean;
 }
 
@@ -2753,6 +2821,7 @@ export interface GET_TICKET_activity_ticket_by_pk {
    */
   count: number;
   price: any;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -4093,8 +4162,11 @@ export interface GET_PRODUCT_SIMPLE_program_package_plan_by_pk {
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any | null;
-  period_amount: any;
-  period_type: string;
+  period_amount: any | null;
+  /**
+   * Y / M / W / D
+   */
+  period_type: string | null;
   is_subscription: boolean;
   /**
    * An object relationship
@@ -4537,6 +4609,74 @@ export interface INSERT_ATTACHMENT {
 
 export interface INSERT_ATTACHMENTVariables {
   attachments: attachment_insert_input[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
+// GraphQL query operation: GET_EXPIRED_OWNED_PRODUCTS
+// ====================================================
+
+
+export interface GET_EXPIRED_OWNED_PRODUCTS_order_product_product {
+  __typename: "product";
+  /**
+   * {type}_{target}, ex: Program_123-456, ProgramPlan_123-456
+   */
+  id: string;
+  target: string;
+}
+
+export interface GET_EXPIRED_OWNED_PRODUCTS_order_product {
+  __typename: "order_product";
+  id: any;
+  /**
+   * An object relationship
+   */
+  product: GET_EXPIRED_OWNED_PRODUCTS_order_product_product;
+}
+
+export interface GET_EXPIRED_OWNED_PRODUCTS {
+  /**
+   * fetch data from the table: "order_product"
+   */
+  order_product: GET_EXPIRED_OWNED_PRODUCTS_order_product[];
+}
+
+export interface GET_EXPIRED_OWNED_PRODUCTSVariables {
+  memberId: string;
+  productType: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
+// GraphQL query operation: GET_COIN_STATUS
+// ====================================================
+
+
+export interface GET_COIN_STATUS_coin_status {
+  __typename: "coin_status";
+  remaining: any | null;
+}
+
+export interface GET_COIN_STATUS {
+  /**
+   * fetch data from the table: "coin_status"
+   */
+  coin_status: GET_COIN_STATUS_coin_status[];
+}
+
+export interface GET_COIN_STATUSVariables {
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -7865,8 +8005,11 @@ export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_
   description: string | null;
   is_subscription: boolean;
   is_participants_visible: boolean;
-  period_amount: any;
-  period_type: string;
+  period_amount: any | null;
+  /**
+   * Y / M / W / D
+   */
+  period_type: string | null;
   list_price: any;
   sale_price: any | null;
   sold_at: any | null;
@@ -8715,33 +8858,6 @@ export interface GET_GROUP_BUYING_ORDERVariables {
 
 
 // ====================================================
-// GraphQL query operation: GET_COIN_STATUS
-// ====================================================
-
-
-export interface GET_COIN_STATUS_coin_status {
-  __typename: "coin_status";
-  remaining: any | null;
-}
-
-export interface GET_COIN_STATUS {
-  /**
-   * fetch data from the table: "coin_status"
-   */
-  coin_status: GET_COIN_STATUS_coin_status[];
-}
-
-export interface GET_COIN_STATUSVariables {
-  memberId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-
-// ====================================================
 // GraphQL query operation: GET_COIN_LOG_COLLECTION
 // ====================================================
 
@@ -9453,6 +9569,7 @@ export interface SEARCH_PRODUCT_COLLECTION_activity_activity_tickets_aggregate_n
   ended_at: any;
   price: any;
   title: string;
+  currency_id: string;
 }
 
 export interface SEARCH_PRODUCT_COLLECTION_activity_activity_tickets_aggregate_aggregate_sum {
@@ -11511,6 +11628,7 @@ export enum order_product_update_column {
   created_at = "created_at",
   currency_id = "currency_id",
   deliverables = "deliverables",
+  delivered_at = "delivered_at",
   description = "description",
   ended_at = "ended_at",
   id = "id",
@@ -12382,7 +12500,9 @@ export enum program_plan_update_column {
   group_buying_people = "group_buying_people",
   id = "id",
   is_countdown_timer_visible = "is_countdown_timer_visible",
+  is_deleted = "is_deleted",
   is_participants_visible = "is_participants_visible",
+  is_primary = "is_primary",
   list_price = "list_price",
   period_amount = "period_amount",
   period_type = "period_type",
@@ -12427,6 +12547,7 @@ export enum program_role_constraint {
  * update columns of table "program_role"
  */
 export enum program_role_update_column {
+  created_at = "created_at",
   id = "id",
   member_id = "member_id",
   name = "name",
@@ -17209,6 +17330,7 @@ export interface order_executor_bool_exp {
   order_id?: String_comparison_exp | null;
   order_log?: order_log_bool_exp | null;
   ratio?: numeric_comparison_exp | null;
+  sharing?: order_executor_sharing_bool_exp | null;
 }
 
 /**
@@ -17230,6 +17352,24 @@ export interface order_executor_on_conflict {
   constraint: order_executor_constraint;
   update_columns: order_executor_update_column[];
   where?: order_executor_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "order_executor_sharing". All fields are combined with a logical 'AND'.
+ */
+export interface order_executor_sharing_bool_exp {
+  _and?: (order_executor_sharing_bool_exp | null)[] | null;
+  _not?: order_executor_sharing_bool_exp | null;
+  _or?: (order_executor_sharing_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  executor?: member_bool_exp | null;
+  executor_id?: String_comparison_exp | null;
+  order_executor?: order_executor_bool_exp | null;
+  order_executor_id?: uuid_comparison_exp | null;
+  order_id?: String_comparison_exp | null;
+  order_log?: order_log_bool_exp | null;
+  ratio?: numeric_comparison_exp | null;
+  total_price?: numeric_comparison_exp | null;
 }
 
 /**
@@ -17374,6 +17514,7 @@ export interface order_product_bool_exp {
   currency?: currency_bool_exp | null;
   currency_id?: String_comparison_exp | null;
   deliverables?: jsonb_comparison_exp | null;
+  delivered_at?: timestamp_comparison_exp | null;
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17444,6 +17585,7 @@ export interface order_product_insert_input {
   currency?: currency_obj_rel_insert_input | null;
   currency_id?: string | null;
   deliverables?: any | null;
+  delivered_at?: any | null;
   description?: string | null;
   ended_at?: any | null;
   id?: any | null;
@@ -20211,7 +20353,9 @@ export interface program_plan_bool_exp {
   group_buying_people?: numeric_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_countdown_timer_visible?: Boolean_comparison_exp | null;
+  is_deleted?: Boolean_comparison_exp | null;
   is_participants_visible?: Boolean_comparison_exp | null;
+  is_primary?: Boolean_comparison_exp | null;
   list_price?: numeric_comparison_exp | null;
   period_amount?: numeric_comparison_exp | null;
   period_type?: String_comparison_exp | null;
@@ -20261,7 +20405,9 @@ export interface program_plan_insert_input {
   group_buying_people?: any | null;
   id?: any | null;
   is_countdown_timer_visible?: boolean | null;
+  is_deleted?: boolean | null;
   is_participants_visible?: boolean | null;
+  is_primary?: boolean | null;
   list_price?: any | null;
   period_amount?: any | null;
   period_type?: string | null;
@@ -20354,6 +20500,7 @@ export interface program_role_bool_exp {
   _and?: (program_role_bool_exp | null)[] | null;
   _not?: program_role_bool_exp | null;
   _or?: (program_role_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_public_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -20366,6 +20513,7 @@ export interface program_role_bool_exp {
  * input type for inserting data into table "program_role"
  */
 export interface program_role_insert_input {
+  created_at?: any | null;
   id?: any | null;
   member_id?: string | null;
   name?: string | null;
@@ -21312,6 +21460,21 @@ export interface tag_on_conflict {
   constraint: tag_constraint;
   update_columns: tag_update_column[];
   where?: tag_bool_exp | null;
+}
+
+/**
+ * expression to compare columns of type timestamp. All fields are combined with logical 'AND'.
+ */
+export interface timestamp_comparison_exp {
+  _eq?: any | null;
+  _gt?: any | null;
+  _gte?: any | null;
+  _in?: any[] | null;
+  _is_null?: boolean | null;
+  _lt?: any | null;
+  _lte?: any | null;
+  _neq?: any | null;
+  _nin?: any[] | null;
 }
 
 /**

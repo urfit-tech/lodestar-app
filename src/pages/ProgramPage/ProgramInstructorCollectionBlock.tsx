@@ -49,24 +49,26 @@ const RoleProfile: React.VFC<{ role: ProgramRole }> = ({ role }) => {
   }
 
   return (
-    <CreatorCard
-      id={member.id}
-      avatarUrl={member.pictureUrl}
-      title={member.name || member.username}
-      labels={[
-        {
-          id: role.id,
-          name: role.name,
-        },
-      ]}
-      jobTitle={member.title}
-      description={member.abstract}
-      withProgram
-      withPodcast
-      withAppointment
-      withBlog
-      noPadding
-    />
+    <div style={{ marginBottom: '40px' }}>
+      <CreatorCard
+        id={member.id}
+        avatarUrl={member.pictureUrl}
+        title={member.name || member.username}
+        labels={[
+          {
+            id: role.id,
+            name: role.name,
+          },
+        ]}
+        jobTitle={member.title}
+        description={member.abstract}
+        withProgram
+        withPodcast
+        withAppointment
+        withBlog
+        noPadding
+      />
+    </div>
   )
 }
 

@@ -17,6 +17,7 @@ import ProjectPlanCollectionBlock from '../../containers/project/ProjectPlanColl
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledActivityTickets } from '../../hooks/activity'
 import { useEnrolledAppointmentCollection } from '../../hooks/appointment'
+import { useExpiredOwnedProducts } from '../../hooks/data'
 import { usePublicMember } from '../../hooks/member'
 import { useOrderLogsWithMerchandiseSpec } from '../../hooks/merchandise'
 import { useEnrolledPodcastPrograms } from '../../hooks/podcast'
@@ -50,6 +51,8 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   const { id: appId, settings } = useApp()
   const { member } = usePublicMember(memberId)
   const { loadingProgramPackageIds, enrolledProgramPackagePlanIds } = useEnrolledProgramPackagePlanIds(memberId)
+  const { loadingExpiredOwnedProducts, expiredOwnedProducts: expiredOwnedProgramPackagePlanIds } =
+    useExpiredOwnedProducts(memberId, 'ProgramPackagePlan')
   const { loadingEnrolledProjectPlanIds, enrolledProjectPlanIds } = useEnrolledProjectPlanIds(memberId)
   const { loadingTickets, enrolledActivityTickets } = useEnrolledActivityTickets(memberId)
   const { loadingPodcastProgramIds, enrolledPodcastPrograms } = useEnrolledPodcastPrograms(memberId)
@@ -70,7 +73,8 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
     loadingTickets ||
     loadingPodcastProgramIds ||
     loadingEnrolledAppointments ||
-    loadingOrderLogs
+    loadingOrderLogs ||
+    loadingExpiredOwnedProducts
   ) {
     content = <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
@@ -88,7 +92,14 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       content: (
         <>
           <EnrolledProgramCollectionBlock memberId={memberId} />
-          {enrolledProgramPackagePlanIds.length > 0 && <ProgramPackageCollectionBlock memberId={memberId} />}
+          {(enrolledProgramPackagePlanIds.length > 0 ||
+            (settings['feature.expired_program_package_plan.enable'] === '1' &&
+              expiredOwnedProgramPackagePlanIds.length > 0)) && (
+            <ProgramPackageCollectionBlock
+              memberId={memberId}
+              expiredOwnedProgramPackagePlanIds={expiredOwnedProgramPackagePlanIds}
+            />
+          )}
         </>
       ),
     },
