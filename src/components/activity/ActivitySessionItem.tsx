@@ -1,14 +1,29 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button, SkeletonText } from '@chakra-ui/react'
+import {
+  Button,
+  IconButton,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  SkeletonText,
+  useDisclosure,
+} from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { useActivitySession } from '../../hooks/activity'
-import { CalendarOIcon, MapOIcon, UserOIcon, VideoIcon } from '../../images'
+import { CalendarOIcon, MapOIcon, TimesIcon, UserOIcon, VideoIcon } from '../../images'
+
+const messages = defineMessages({
+  attended: { id: 'activity.ui.attended', defaultMessage: '已簽到' },
+  attendNow: { id: 'activity.ui.attendNow', defaultMessage: '立即簽到' },
+  enterLinkPage: { id: 'activity.ui.enterLinkPage', defaultMessage: '進入直播頁面' },
+})
 
 const StyledWrapper = styled.div`
   padding: 1.5rem 0;
@@ -30,6 +45,16 @@ const StyledContent = styled.div`
   }
 `
 
+const StyledModalBody = styled(ModalBody)`
+  && {
+    padding: 0;
+    iframe {
+      width: 100%;
+      height: 100%;
+    }
+  }
+`
+
 const ActivitySessionItem: React.VFC<{
   activitySessionId: string
   renderSessionType?: string
@@ -43,6 +68,7 @@ const ActivitySessionItem: React.VFC<{
     sessionId: activitySessionId,
     memberId: currentMemberId || '',
   })
+  const { isOpen, onClose, onOpen } = useDisclosure()
 
   if (loadingSession) {
     return (
@@ -74,23 +100,52 @@ const ActivitySessionItem: React.VFC<{
         {renderLocation || (
           <>
             {(sessionType === 'offline' || sessionType === 'both') && (
-              <div>
+              <div className="mt-2">
                 <Icon as={MapOIcon} className="mr-2" />
                 <span>{session.location}</span>
               </div>
             )}
+
             {enabledModules.activity_online && session.onlineLink && (
-              <div className="d-flex align-items-center">
-                <Icon as={VideoIcon} className="mr-2" />
-                {session.isEnrolled ? (
-                  <span>
-                    <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}</span>
-                    <a href={session.onlineLink} target="_blank" rel="noopener noreferrer">
-                      <Button variant="link">{session.onlineLink}</Button>
-                    </a>
-                  </span>
-                ) : (
-                  formatMessage(activityMessages.text.live)
+              <div className="mt-2">
+                {session.isEnrolled === false && formatMessage(activityMessages.text.live)}
+                {session.isEnrolled === true && (
+                  <div className="d-flex align-items-center">
+                    <Icon as={VideoIcon} className="mr-2" />
+
+                    {['https', '<iframe'].some(prefix => session.onlineLink?.startsWith(prefix)) === false && (
+                      <span>{session.onlineLink}</span>
+                    )}
+                    {session.onlineLink.startsWith('https') && (
+                      <div className="d-flex align-items-center" style={{ lineHeight: 1 }}>
+                        <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}:</span>
+                        <a href={session.onlineLink} target="_blank" rel="noopener noreferrer">
+                          <Button variant="link">{session.onlineLink}</Button>
+                        </a>
+                      </div>
+                    )}
+                    {session.onlineLink.startsWith('<iframe') && (
+                      <>
+                        <Button variant="link" onClick={onOpen}>
+                          {formatMessage(messages.enterLinkPage)}
+                        </Button>
+                        <Modal onClose={onClose} size="full" isOpen={isOpen}>
+                          <ModalContent style={{ margin: 0 }}>
+                            <div className="d-flex align-items-center p-3">
+                              <IconButton
+                                className="flex-shrink-0"
+                                aria-label="close"
+                                onClick={onClose}
+                                icon={<TimesIcon />}
+                              />
+                              <ModalHeader className="flex-grow-1 py-0">{session.activity.title}</ModalHeader>
+                            </div>
+                            <StyledModalBody dangerouslySetInnerHTML={{ __html: session.onlineLink }} />
+                          </ModalContent>
+                        </Modal>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
             )}

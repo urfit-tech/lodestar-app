@@ -2654,6 +2654,7 @@ export interface GET_ACTIVITYVariables {
 
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity {
   __typename: "activity";
+  title: string;
   is_participants_visible: boolean;
 }
 
@@ -4161,7 +4162,7 @@ export interface GET_PRODUCT_SIMPLE_program_package_plan_by_pk {
   sale_price: any | null;
   sold_at: any | null;
   discount_down_price: any | null;
-  period_amount: any;
+  period_amount: any | null;
   /**
    * Y / M / W / D
    */
@@ -8004,7 +8005,7 @@ export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_
   description: string | null;
   is_subscription: boolean;
   is_participants_visible: boolean;
-  period_amount: any;
+  period_amount: any | null;
   /**
    * Y / M / W / D
    */
@@ -17329,6 +17330,7 @@ export interface order_executor_bool_exp {
   order_id?: String_comparison_exp | null;
   order_log?: order_log_bool_exp | null;
   ratio?: numeric_comparison_exp | null;
+  sharing?: order_executor_sharing_bool_exp | null;
 }
 
 /**
@@ -17350,6 +17352,24 @@ export interface order_executor_on_conflict {
   constraint: order_executor_constraint;
   update_columns: order_executor_update_column[];
   where?: order_executor_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "order_executor_sharing". All fields are combined with a logical 'AND'.
+ */
+export interface order_executor_sharing_bool_exp {
+  _and?: (order_executor_sharing_bool_exp | null)[] | null;
+  _not?: order_executor_sharing_bool_exp | null;
+  _or?: (order_executor_sharing_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  executor?: member_bool_exp | null;
+  executor_id?: String_comparison_exp | null;
+  order_executor?: order_executor_bool_exp | null;
+  order_executor_id?: uuid_comparison_exp | null;
+  order_id?: String_comparison_exp | null;
+  order_log?: order_log_bool_exp | null;
+  ratio?: numeric_comparison_exp | null;
+  total_price?: numeric_comparison_exp | null;
 }
 
 /**

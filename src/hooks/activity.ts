@@ -280,6 +280,7 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
           description
           threshold
           activity {
+            title
             is_participants_visible
           }
           activity_session_tickets {
@@ -320,6 +321,9 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
     onlineLink: string | null
     description: string | null
     threshold: number | null
+    activity: {
+      title: string
+    }
     isParticipantsVisible: boolean
     isEnrolled: boolean
     enrollmentAmount: { online: number; offline: number }
@@ -336,6 +340,9 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
           onlineLink: data.activity_session_by_pk.online_link,
           description: data.activity_session_by_pk.description,
           threshold: data.activity_session_by_pk.threshold,
+          activity: {
+            title: data.activity_session_by_pk.activity.title,
+          },
           isParticipantsVisible: data.activity_session_by_pk.activity.is_participants_visible,
           isEnrolled: data.activity_session_by_pk.activity_enrollments.length > 0,
           enrollmentAmount: {
