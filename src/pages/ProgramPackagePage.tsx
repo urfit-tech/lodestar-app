@@ -147,13 +147,17 @@ const ProgramPackagePage: React.VFC = () => {
                 programs={programPackageIntroduction.includedPrograms}
                 renderItem={({ displayType, program }) =>
                   displayType === 'grid' ? (
-                    <div className="col-12 col-md-6 col-lg-4">
-                      <ProgramDisplayedCard key={program.id} program={program} />
-                    </div>
+                    <Link to={`/programs/${program.id}`}>
+                      <div className="col-12 col-md-6 col-lg-4">
+                        <ProgramDisplayedCard key={program.id} program={program} />
+                      </div>
+                    </Link>
                   ) : displayType === 'list' ? (
-                    <div className="col-12">
-                      <ProgramDisplayedListItem key={program.id} program={program} />
-                    </div>
+                    <Link to={`/programs/${program.id}`}>
+                      <div className="col-12">
+                        <ProgramDisplayedListItem key={program.id} program={program} />
+                      </div>
+                    </Link>
                   ) : null
                 }
               />
