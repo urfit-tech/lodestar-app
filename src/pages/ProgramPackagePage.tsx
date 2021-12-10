@@ -4,7 +4,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { createRef, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -143,13 +143,17 @@ const ProgramPackagePage: React.VFC = () => {
                 programs={programPackageIntroduction.includedPrograms}
                 renderItem={({ displayType, program }) =>
                   displayType === 'grid' ? (
-                    <div className="col-12 col-md-6 col-lg-4">
-                      <ProgramDisplayedCard key={program.id} program={program} />
-                    </div>
+                    <Link to={`/programs/${program.id}`}>
+                      <div className="col-12 col-md-6 col-lg-4">
+                        <ProgramDisplayedCard key={program.id} program={program} />
+                      </div>
+                    </Link>
                   ) : displayType === 'list' ? (
-                    <div className="col-12">
-                      <ProgramDisplayedListItem key={program.id} program={program} />
-                    </div>
+                    <Link to={`/programs/${program.id}`}>
+                      <div className="col-12">
+                        <ProgramDisplayedListItem key={program.id} program={program} />
+                      </div>
+                    </Link>
                   ) : null
                 }
               />
