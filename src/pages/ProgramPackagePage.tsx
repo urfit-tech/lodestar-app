@@ -107,13 +107,17 @@ const ProgramPackagePage: React.VFC = () => {
                   programs={programPackageIntroduction.includedPrograms}
                   renderItem={({ displayType, program }) =>
                     displayType === 'grid' ? (
-                      <div className="col-12 col-md-6 col-lg-6 mb-4">
-                        <ProgramDisplayedCard key={program.id} program={program} />
-                      </div>
+                      <Link to={`/programs/${program.id}`}>
+                        <div className="col-12 col-md-6 col-lg-6 mb-4">
+                          <ProgramDisplayedCard key={program.id} program={program} />
+                        </div>
+                      </Link>
                     ) : displayType === 'list' ? (
-                      <div className="col-12">
-                        <ProgramDisplayedListItem key={program.id} program={program} />
-                      </div>
+                      <Link to={`/programs/${program.id}`}>
+                        <div className="col-12">
+                          <ProgramDisplayedListItem key={program.id} program={program} />
+                        </div>
+                      </Link>
                     ) : null
                   }
                 />
@@ -143,17 +147,13 @@ const ProgramPackagePage: React.VFC = () => {
                 programs={programPackageIntroduction.includedPrograms}
                 renderItem={({ displayType, program }) =>
                   displayType === 'grid' ? (
-                    <Link to={`/programs/${program.id}`}>
-                      <div className="col-12 col-md-6 col-lg-4">
-                        <ProgramDisplayedCard key={program.id} program={program} />
-                      </div>
-                    </Link>
+                    <div className="col-12 col-md-6 col-lg-4">
+                      <ProgramDisplayedCard key={program.id} program={program} />
+                    </div>
                   ) : displayType === 'list' ? (
-                    <Link to={`/programs/${program.id}`}>
-                      <div className="col-12">
-                        <ProgramDisplayedListItem key={program.id} program={program} />
-                      </div>
-                    </Link>
+                    <div className="col-12">
+                      <ProgramDisplayedListItem key={program.id} program={program} />
+                    </div>
                   ) : null
                 }
               />
