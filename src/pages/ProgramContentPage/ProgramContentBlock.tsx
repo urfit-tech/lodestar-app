@@ -173,7 +173,7 @@ const ProgramContentBlock: React.VFC<{
         issueEnabled={issueEnabled}
       />
 
-      {programContent.programContentBody?.type !== 'practice' && (
+      {programContent.programContentBody?.type !== 'practice' && instructor && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />
       )}
     </div>
