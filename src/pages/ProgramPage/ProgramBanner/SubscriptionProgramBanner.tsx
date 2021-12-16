@@ -1,5 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import MemberAvatar from '../../../components/common/MemberAvatar'
@@ -96,13 +97,17 @@ const SubscriptionProgramBanner: React.VFC<{
         <StyledVideoWrapper backgroundImage={program.coverUrl || ''}>
           {program.coverVideoUrl && (
             <StyledPlayer>
-              <video
-                className="smartvideo"
-                src={program.coverVideoUrl}
-                controls
-                autoPlay
-                style={{ width: '100%', height: '100%' }}
-              />
+              {program.coverVideoUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
+                <video
+                  className="smartvideo"
+                  src={program.coverVideoUrl}
+                  controls
+                  autoPlay
+                  style={{ width: '100%', height: '100%' }}
+                />
+              ) : (
+                <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />
+              )}
             </StyledPlayer>
           )}
         </StyledVideoWrapper>
