@@ -20,8 +20,7 @@ const messages = defineMessages({
   description: { id: 'promotion.text.description', defaultMessage: '使用描述' },
 
   allScope: { id: 'common.product.allScope', defaultMessage: '全站折抵' },
-  allProgram: { id: 'common.product.allProgram', defaultMessage: '全部單次課程' },
-  allProgramPlan: { id: 'common.product.allProgramPlan', defaultMessage: '全部訂閱課程' },
+  allProgramPlan: { id: 'common.product.allProgramPlan', defaultMessage: '全部課程方案' },
   allActivityTicket: { id: 'common.product.allActivityTicket', defaultMessage: '全部活動' },
   allPodcastProgram: { id: 'common.product.allPodcastProgram', defaultMessage: '全部廣播' },
   allPodcastPlan: { id: 'common.product.allPodcastPlan', defaultMessage: '全部廣播訂閱頻道' },
