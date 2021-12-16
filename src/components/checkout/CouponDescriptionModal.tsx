@@ -100,12 +100,6 @@ const CouponDescriptionModal: React.VFC<
       <StyledTitle>{formatMessage(messages.discountTarget)}</StyledTitle>
       <div className="mb-4">
         {coupon.couponCode.couponPlan.scope === null && <div>{formatMessage(messages.allScope)}</div>}
-        {coupon.couponCode.couponPlan.scope?.includes('Program') && (
-          <div className="mb-2">
-            <Icon as={CheckIcon} className="mr-2" />
-            <span>{formatMessage(messages.allProgram)}</span>
-          </div>
-        )}
         {coupon.couponCode.couponPlan.scope?.includes('ProgramPlan') && (
           <div className="mb-2">
             <Icon as={CheckIcon} className="mr-2" />
