@@ -3,6 +3,7 @@ import { Button, Icon as AntdIcon } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
+import ReactPlayer from 'react-player'
 import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../helpers'
 import { ReactComponent as ArrowUpCircleIcon } from '../../images/arrow-up-circle.svg'
@@ -180,13 +181,17 @@ const PostCover: React.VFC<{
           {coverUrl && (
             <StyledVideoWrapper>
               <StyledPlayer>
-                <video
-                  className="smartvideo"
-                  src={coverUrl}
-                  controls
-                  autoPlay
-                  style={{ width: '100%', height: '100%' }}
-                />
+                {coverUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
+                  <video
+                    className="smartvideo"
+                    src={coverUrl}
+                    controls
+                    autoPlay
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                ) : (
+                  <ReactPlayer url={coverUrl} width="100%" height="100%" controls />
+                )}
               </StyledPlayer>
             </StyledVideoWrapper>
           )}

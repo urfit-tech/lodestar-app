@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 
 const StyledPlayer = styled.div`
@@ -27,7 +28,11 @@ const FundingCoverBlock: React.VFC<{
     <StyledWrapper coverType={coverType} coverUrl={coverUrl}>
       {coverType === 'video' && (
         <StyledPlayer>
-          <video className="smartvideo" src={coverUrl} controls autoPlay style={{ width: '100%', height: '100%' }} />
+          {coverUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
+            <video className="smartvideo" src={coverUrl} controls autoPlay style={{ width: '100%', height: '100%' }} />
+          ) : (
+            <ReactPlayer url={coverUrl} width="100%" height="100%" controls />
+          )}
         </StyledPlayer>
       )}
     </StyledWrapper>
