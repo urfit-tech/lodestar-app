@@ -12,6 +12,7 @@ import {
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
+import { HiExternalLink } from 'react-icons/hi'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
@@ -117,16 +118,18 @@ const ActivitySessionItem: React.VFC<{
                       <span>{session.onlineLink}</span>
                     )}
                     {session.onlineLink.startsWith('https') && (
-                      <div className="d-flex align-items-center" style={{ lineHeight: 1 }}>
-                        <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}:</span>
+                      <div className="d-flex align-items-center" style={{ lineHeight: 1.5 }}>
                         <a href={session.onlineLink} target="_blank" rel="noopener noreferrer">
-                          <Button variant="link">{session.onlineLink}</Button>
+                          <div className="d-flex align-items-center">
+                            <div className="mr-1">{formatMessage(activityMessages.text.liveLink)}</div>
+                            <HiExternalLink />
+                          </div>
                         </a>
                       </div>
                     )}
                     {session.onlineLink.startsWith('<iframe') && (
                       <>
-                        <Button variant="link" onClick={onOpen}>
+                        <Button variant="link" onClick={onOpen} style={{ lineHeight: 1.5 }}>
                           {formatMessage(messages.enterLinkPage)}
                         </Button>
                         <Modal onClose={onClose} size="full" isOpen={isOpen}>
