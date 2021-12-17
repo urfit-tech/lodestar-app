@@ -7,7 +7,6 @@ const ProductTypeFormatter: React.VFC<{ value: ProductType }> = ({ value }) => {
   const { formatMessage } = useIntl()
 
   switch (value) {
-    case 'Program':
     case 'ProgramPlan':
     case 'ProgramContent':
       return <>{formatMessage(commonMessages.ui.programs)}</>

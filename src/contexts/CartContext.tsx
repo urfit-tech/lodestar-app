@@ -10,10 +10,10 @@ import { ProductType } from '../types/product'
 
 const CartContext = React.createContext<{
   cartProducts: CartProductProps[]
-  isProductInCart?: (productType: ProductType, productTarget: string) => boolean
+  isProductInCart?: (productType: 'Program' | ProductType, productTarget: string) => boolean
   getCartProduct?: (productId: string) => CartProductProps | null
   addCartProduct?: (
-    productType: ProductType,
+    productType: 'Program' | ProductType,
     productTarget: string,
     productOptions?: { [key: string]: any },
   ) => Promise<void>
@@ -144,14 +144,14 @@ export const CartProvider: React.FC = ({ children }) => {
     <CartContext.Provider
       value={{
         cartProducts,
-        isProductInCart: (productType: ProductType, productTarget: string) =>
+        isProductInCart: (productType: 'Program' | ProductType, productTarget: string) =>
           cartProducts.some(cartProduct => cartProduct.productId === `${productType}_${productTarget}`),
         getCartProduct: (productId: string) => {
           const targetCartProduct = cartProducts.find(cartProduct => cartProduct.productId === productId)
           return targetCartProduct || null
         },
         addCartProduct: async (
-          productType: ProductType,
+          productType: 'Program' | ProductType,
           productTarget: string,
           productOptions?: { [key: string]: any },
         ) => {

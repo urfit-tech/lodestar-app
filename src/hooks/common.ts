@@ -10,7 +10,7 @@ import { PeriodType } from '../types/program'
 
 type TargetProps = {
   id: string
-  productType: ProductType | null
+  productType: ('Program' | ProductType) | null
   title: string
   isSubscription: boolean
   coverUrl?: string | null
