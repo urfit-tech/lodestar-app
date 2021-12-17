@@ -11,12 +11,12 @@ import { profileMessages } from '../helpers/translation'
 import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
 import LoadingPage from '../pages/LoadingPage'
 
-type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth'
+type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth' | 'cw'
 
 const OAuth2Page: React.VFC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
 
-  if (['parenting', 'commonhealth'].includes(provider)) {
+  if (['parenting', 'commonhealth', 'cw'].includes(provider)) {
     return <Oauth2Section />
   }
 
