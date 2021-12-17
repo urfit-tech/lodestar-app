@@ -1,3 +1,4 @@
+import { CheckIcon } from '@chakra-ui/icons'
 import {
   Button,
   Icon,
@@ -217,7 +218,7 @@ const ActivityTicketPage: React.VFC<{
                                 .finally(() => setLoading(false))
                             }}
                           >
-                            <Icon type="check" /> {formatMessage(messages.attended)}
+                            <CheckIcon className="mr-1" /> {formatMessage(messages.attended)}
                           </Button>
                         ) : (
                           <Button
