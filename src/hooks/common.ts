@@ -10,7 +10,7 @@ import { PeriodType } from '../types/program'
 
 type TargetProps = {
   id: string
-  productType: ('Program' | ProductType) | null
+  productType: ProductType | null
   title: string
   isSubscription: boolean
   coverUrl?: string | null
@@ -47,23 +47,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     },
   )
 
-  const target: TargetProps | null = data?.program_by_pk
-    ? {
-        id: data.program_by_pk.id,
-        productType: 'Program',
-        title: data.program_by_pk.title,
-        coverUrl: data.program_by_pk.cover_url || undefined,
-        listPrice: data.program_by_pk.list_price,
-        isOnSale: data.program_by_pk.sold_at ? new Date(data.program_by_pk.sold_at).getTime() > Date.now() : false,
-        salePrice:
-          data.program_by_pk.sold_at && new Date(data.program_by_pk.sold_at).getTime() > Date.now()
-            ? data.program_by_pk.sale_price
-            : undefined,
-        isSubscription: false,
-        categories: data.program_by_pk.program_categories.map(v => v.category.name),
-        roles: data.program_by_pk.program_roles.filter(v => v.name === 'instructor').map(v => v.member?.name || ''),
-      }
-    : data?.program_plan_by_pk
+  const target: TargetProps | null = data?.program_plan_by_pk
     ? {
         id: data.program_plan_by_pk.id,
         productType: 'ProgramPlan',
@@ -208,31 +192,6 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
 
 const GET_PRODUCT_SIMPLE = gql`
   query GET_PRODUCT_SIMPLE($targetId: uuid!, $startedAt: timestamptz) {
-    program_by_pk(id: $targetId) {
-      id
-      title
-      cover_url
-      is_subscription
-      list_price
-      sale_price
-      sold_at
-      program_categories(order_by: { position: asc }) {
-        id
-        category {
-          id
-          name
-        }
-      }
-      program_roles {
-        id
-        name
-        member_id
-        member {
-          id
-          name
-        }
-      }
-    }
     program_plan_by_pk(id: $targetId) {
       id
       title
@@ -387,28 +346,7 @@ export const useSimpleProductCollection = () => {
           },
         )
         const productCollection = productData.product
-        const target: TargetProps | null = data?.program_by_pk
-          ? {
-              id: data.program_by_pk.id,
-              productType: 'Program',
-              title: data.program_by_pk.title,
-              coverUrl: data.program_by_pk.cover_url || undefined,
-              listPrice: data.program_by_pk.list_price,
-              isOnSale: data.program_by_pk.sold_at
-                ? new Date(data.program_by_pk.sold_at).getTime() > Date.now()
-                : false,
-              salePrice:
-                data.program_by_pk.sold_at && new Date(data.program_by_pk.sold_at).getTime() > Date.now()
-                  ? data.program_by_pk.sale_price
-                  : undefined,
-              isSubscription: false,
-              categories: data.program_by_pk.program_categories.map(v => v.category.name),
-              roles: data.program_by_pk.program_roles
-                .filter(v => v.name === 'instructor')
-                .map(v => v.member?.name || ''),
-              sku: productCollection.find(product => product.type === 'Program')?.sku,
-            }
-          : data?.program_plan_by_pk
+        const target: TargetProps | null = data?.program_plan_by_pk
           ? {
               id: data.program_plan_by_pk.id,
               productType: 'ProgramPlan',

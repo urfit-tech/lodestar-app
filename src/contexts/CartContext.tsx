@@ -10,10 +10,10 @@ import { ProductType } from '../types/product'
 
 const CartContext = React.createContext<{
   cartProducts: CartProductProps[]
-  isProductInCart?: (productType: 'Program' | ProductType, productTarget: string) => boolean
+  isProductInCart?: (productType: ProductType, productTarget: string) => boolean
   getCartProduct?: (productId: string) => CartProductProps | null
   addCartProduct?: (
-    productType: 'Program' | ProductType,
+    productType: ProductType,
     productTarget: string,
     productOptions?: { [key: string]: any },
   ) => Promise<void>
@@ -105,11 +105,13 @@ export const CartProvider: React.FC = ({ children }) => {
             ],
           )
 
-          const filteredProducts = cartProducts.filter(cartProduct =>
-            cartProduct && cartProduct.enrollments
-              ? cartProduct.enrollments.length === 0 ||
-                cartProduct.enrollments.map(enrollment => enrollment.isPhysical).includes(true)
-              : false,
+          const filteredProducts = cartProducts.filter(
+            cartProduct =>
+              cartProduct.productId.startsWith('Program_') === false &&
+              (cartProduct.enrollments
+                ? cartProduct.enrollments.length === 0 ||
+                  cartProduct.enrollments.map(enrollment => enrollment.isPhysical).includes(true)
+                : false),
           )
 
           localStorage.setItem('kolable.cart._products', JSON.stringify(filteredProducts))
@@ -144,14 +146,14 @@ export const CartProvider: React.FC = ({ children }) => {
     <CartContext.Provider
       value={{
         cartProducts,
-        isProductInCart: (productType: 'Program' | ProductType, productTarget: string) =>
+        isProductInCart: (productType: ProductType, productTarget: string) =>
           cartProducts.some(cartProduct => cartProduct.productId === `${productType}_${productTarget}`),
         getCartProduct: (productId: string) => {
           const targetCartProduct = cartProducts.find(cartProduct => cartProduct.productId === productId)
           return targetCartProduct || null
         },
         addCartProduct: async (
-          productType: 'Program' | ProductType,
+          productType: ProductType,
           productTarget: string,
           productOptions?: { [key: string]: any },
         ) => {
