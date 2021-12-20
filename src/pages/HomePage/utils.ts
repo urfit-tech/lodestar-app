@@ -25,7 +25,7 @@ const programFieldsFragment = gql`
     list_price
     sale_price
     sold_at
-    program_roles(where: { name: { _eq: "instructor" } }) {
+    program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc }) {
       id
       name
       member_id
