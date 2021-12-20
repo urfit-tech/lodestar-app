@@ -1365,6 +1365,7 @@ export const usersMessages = {
     mediaPost: { id: 'common.tab.mediaPost', defaultMessage: '媒體文章' },
     podcasts: { id: 'common.member.podcasts', defaultMessage: '廣播頻道' },
     appointments: { id: 'common.tab.appointments', defaultMessage: '預約服務' },
+    merchandises: { id: 'common.tab.merchandises', defaultMessage: '商店商品' },
     notYet: { id: 'common.notYet', defaultMessage: '未啟用' },
     available: { id: 'common.available', defaultMessage: '可使用' },
     expired: { id: 'common.expired', defaultMessage: '已失效' },

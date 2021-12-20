@@ -10,7 +10,7 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
+import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Activity from '../components/activity/Activity'
 import AppointmentCollectionTabs from '../components/appointment/AppointmentCollectionTabs'
 import { AuthModalContext } from '../components/auth/AuthModal'
@@ -20,6 +20,7 @@ import CreatorIntroBlock from '../components/common/CreatorIntroBlock'
 import OverviewBlock from '../components/common/OverviewBlock'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import MerchandiseCollectionBlock from '../components/merchandise/MerchandiseCollectionBlock'
 import PodcastProgramCard from '../components/podcast/PodcastProgramCard'
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
 import ProgramCard from '../components/program/ProgramCard'
@@ -30,6 +31,7 @@ import { usePublishedActivityCollection } from '../hooks/activity'
 import { useAppointmentPlanCollection } from '../hooks/appointment'
 import { usePostPreviewCollection } from '../hooks/blog'
 import { usePublicMember } from '../hooks/member'
+import { useMerchandiseCollection } from '../hooks/merchandise'
 import { useEnrolledPodcastPlansCreators, usePodcastPlanIds, usePodcastProgramCollection } from '../hooks/podcast'
 import { usePublishedProgramCollection } from '../hooks/program'
 import { MemberPublicProps } from '../types/member'
@@ -102,6 +104,8 @@ const CreatorTabs: React.VFC<{
   const { formatMessage } = useIntl()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { enabledModules, settings } = useApp()
+  const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
+  const [isMerchandisesPhysical] = useQueryParam('isPhysical', BooleanParam)
 
   const { currentMemberId, isAuthenticated } = useAuth()
   const { programs } = usePublishedProgramCollection({ instructorId: creatorId, isPrivate: false })
@@ -111,9 +115,10 @@ const CreatorTabs: React.VFC<{
   const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(currentMemberId || '')
   const { podcastPrograms } = usePodcastProgramCollection(creatorId)
   const { appointmentPlans } = useAppointmentPlanCollection(creatorId, moment().endOf('minute').toDate())
-
-  const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
-
+  const { merchandises } = useMerchandiseCollection({
+    isPhysical: isMerchandisesPhysical !== undefined ? !!isMerchandisesPhysical : undefined,
+    ownerId: creatorId,
+  })
   const isEnrolledPodcastPlan = enrolledPodcastPlansCreators
     .map(enrolledPodcastPlansCreator => enrolledPodcastPlansCreator.id)
     .includes(creatorId)
@@ -361,6 +366,13 @@ const CreatorTabs: React.VFC<{
                   />
                 </div>
               </div>
+            </div>
+          </Tabs.TabPane>
+        )}
+        {enabledModules.merchandise && (
+          <Tabs.TabPane tab={formatMessage(usersMessages.tab.merchandises)} key="merchandises">
+            <div className="container py-4">
+              <MerchandiseCollectionBlock merchandises={merchandises} />
             </div>
           </Tabs.TabPane>
         )}
