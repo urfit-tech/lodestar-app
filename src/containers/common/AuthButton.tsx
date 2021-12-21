@@ -18,14 +18,14 @@ const AuthButton: React.VFC = () => {
   const handleClick = () => {
     if (settings['auth.parenting.client_id'] && settings['auth.email.disabled']) {
       const state = btoa(JSON.stringify({ provider: 'parenting', redirect: window.location.pathname }))
-      const redirect_uri = encodeURIComponent(`${window.location.origin}/oauth2/parenting`)
-      const oauthLink = `https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id=${settings['auth.parenting.client_id']}&redirect_uri=${redirect_uri}&state=${state}&scope=`
+      const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/parenting`)
+      const oauthLink = `https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id=${settings['auth.parenting.client_id']}&redirect_uri=${redirectUri}&state=${state}&scope=`
       window.location.assign(oauthLink)
     } else if (settings['auth.cw.client_id'] && settings['auth.email.disabled']) {
       const state = btoa(JSON.stringify({ provider: 'cw', redirect: window.location.pathname }))
-      const redirect_uri = encodeURIComponent(`${window.location.origin}/oauth2/cw`)
+      const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/cw`)
       const endpoint = settings[`auth.cw.endpoint`] || 'https://dev-account.cwg.tw'
-      const oauthLink = `${endpoint}/oauth/v1.0/authorize?response_type=code&client_id=${settings['auth.cw.client_id']}&redirect_uri=${redirect_uri}&state=${state}&scope=social`
+      const oauthLink = `${endpoint}/oauth/v1.0/authorize?response_type=code&client_id=${settings['auth.cw.client_id']}&redirect_uri=${redirectUri}&state=${state}&scope=social`
       window.location.assign(oauthLink)
     } else {
       setVisible && setVisible(true)
