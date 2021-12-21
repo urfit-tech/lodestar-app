@@ -1,5 +1,4 @@
 export type ProductType =
-  | 'Program'
   | 'ProgramPlan'
   | 'ProgramContent'
   | 'ProgramPackagePlan'

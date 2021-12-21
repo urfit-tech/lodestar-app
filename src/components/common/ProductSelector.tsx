@@ -1,5 +1,6 @@
 import { Spinner } from '@chakra-ui/react'
 import { TreeSelect } from 'antd'
+import { keys } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
@@ -17,7 +18,10 @@ type ProductSelectorProps = {
 }
 const ProductSelector: React.VFC<ProductSelectorProps> = ({ loading, error, products, value, onChange }) => {
   const { formatMessage } = useIntl()
-  const ProductTypeLabel: { [key: string]: string } = {
+  const ProductTypeLabel: Record<
+    'Program' | 'ProgramPlan' | 'ProgramContent' | 'Card' | 'ActivityTicket' | 'Merchandise',
+    string
+  > = {
     Program: formatMessage(commonMessages.ui.allPrograms),
     ProgramPlan: formatMessage(commonMessages.ui.allSubscriptions),
     ProgramContent: formatMessage(commonMessages.ui.allCourseContents),
@@ -34,7 +38,7 @@ const ProductSelector: React.VFC<ProductSelectorProps> = ({ loading, error, prod
     return <div>{formatMessage(commonMessages.status.loadingProductError)}</div>
   }
 
-  const treeData = Object.keys(ProductTypeLabel)
+  const treeData = keys(ProductTypeLabel)
     .filter(
       productType => ProductTypeLabel[productType] && products.filter(product => product.type === productType).length,
     )

@@ -75,7 +75,7 @@ type OrderRow = {
     endedAt: Date | null
     product: {
       id: string
-      type: string
+      type: ProductType
     }
     quantity: number
     currencyId: string
@@ -148,7 +148,7 @@ const OrderCollectionAdminCard: React.VFC<
           <OrderProductRow key={orderProduct.id} className="d-table-row">
             <OrderProductCell className="pr-4">
               {orderProduct.product.type ? (
-                <ProductTypeLabel productType={orderProduct.product.type as ProductType} />
+                <ProductTypeLabel productType={orderProduct.product.type} />
               ) : (
                 <>{formatMessage(commonMessages.unknown.type)}</>
               )}
@@ -307,7 +307,7 @@ const useOrderLogCollection = (memberId: string) => {
           endedAt: orderProduct.ended_at,
           product: {
             id: orderProduct.product.id,
-            type: orderProduct.product.type,
+            type: orderProduct.product.type as ProductType,
           },
           quantity: orderProduct.options?.quantity,
           currencyId: orderProduct.currency_id,
