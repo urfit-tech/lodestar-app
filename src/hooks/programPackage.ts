@@ -33,7 +33,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
           }
           program_package_plans(
             where: { published_at: { _is_null: false } }
-            order_by: { position: asc, created_at: desc }
+            order_by: { position: asc, created_at: asc }
           ) {
             id
             title

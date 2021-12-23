@@ -62,7 +62,7 @@ const CartProductItem: React.VFC<{
     return <Spinner size="lg" />
   }
 
-  const [productType] = id.split('_') as [ProductType, string]
+  const [productType] = id.split('_') as [ProductType]
   const { title, coverUrl, isOnSale, listPrice, salePrice, isLimited, isPhysical } = target
 
   return (

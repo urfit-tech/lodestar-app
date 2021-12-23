@@ -1,3 +1,4 @@
+import { CheckIcon } from '@chakra-ui/icons'
 import {
   Button,
   Icon,
@@ -15,6 +16,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import QRCode from 'qrcode.react'
 import React, { useState } from 'react'
 import { AiOutlineRight } from 'react-icons/ai'
+import { HiExternalLink } from 'react-icons/hi'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, Redirect } from 'react-router-dom'
 import styled from 'styled-components'
@@ -118,7 +120,7 @@ const ActivityTicketPage: React.VFC<{
                   {invoice.email}
                 </div>
               )}
-              {typeof invoice.phone === 'string' && (
+              {typeof invoice.phone === 'string' && invoice.phone.length !== 0 && (
                 <div>
                   {formatMessage(productMessages.activity.content.phone)}
                   {invoice.phone}
@@ -155,14 +157,16 @@ const ActivityTicketPage: React.VFC<{
                               <Icon as={VideoIcon} className="mr-2" />
                               <span>
                                 {ticketSession.onlineLink.startsWith('https') ? (
-                                  <div className="d-flex align-items-center" style={{ lineHeight: 1 }}>
-                                    <span className="mr-1">{formatMessage(activityMessages.text.liveLink)}:</span>
+                                  <div className="d-flex align-items-center" style={{ lineHeight: 1.5 }}>
                                     <a href={ticketSession.onlineLink} target="_blank" rel="noopener noreferrer">
-                                      <Button variant="link">{ticketSession.onlineLink}</Button>
+                                      <div className="d-flex align-items-center">
+                                        <div className="mr-1">{formatMessage(activityMessages.text.liveLink)}</div>
+                                        <HiExternalLink />
+                                      </div>
                                     </a>
                                   </div>
                                 ) : ticketSession.onlineLink.startsWith('<iframe') ? (
-                                  <>
+                                  <div className="d-flex align-items-center">
                                     <Modal onClose={onClose} size="full" isOpen={isOpen}>
                                       <ModalContent style={{ margin: 0 }}>
                                         <div className="d-flex align-items-center p-3">
@@ -181,10 +185,10 @@ const ActivityTicketPage: React.VFC<{
                                         />
                                       </ModalContent>
                                     </Modal>
-                                    <Button variant="link" onClick={onOpen}>
+                                    <Button variant="link" onClick={onOpen} style={{ lineHeight: 1.5 }}>
                                       {formatMessage(messages.enterLinkPage)}
                                     </Button>
-                                  </>
+                                  </div>
                                 ) : (
                                   ticketSession.onlineLink
                                 )}
@@ -214,7 +218,7 @@ const ActivityTicketPage: React.VFC<{
                                 .finally(() => setLoading(false))
                             }}
                           >
-                            <Icon type="check" /> {formatMessage(messages.attended)}
+                            <CheckIcon className="mr-1" /> {formatMessage(messages.attended)}
                           </Button>
                         ) : (
                           <Button

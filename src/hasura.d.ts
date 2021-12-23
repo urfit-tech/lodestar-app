@@ -5592,6 +5592,7 @@ export interface GET_MERCHANDISE_COLLECTION {
 export interface GET_MERCHANDISE_COLLECTIONVariables {
   search?: string | null;
   isPhysical?: boolean | null;
+  ownerId?: string | null;
 }
 
 /* tslint:disable */

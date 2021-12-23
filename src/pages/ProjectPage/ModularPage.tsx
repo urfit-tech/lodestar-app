@@ -98,6 +98,7 @@ const ModularPage: React.VFC<{
                   key={projectSection.id}
                   options={{
                     appId: settings['auth.facebook_app_id'],
+                    pageId: settings['auth.facebook_page_id'],
                     ...projectSection.options,
                   }}
                 />

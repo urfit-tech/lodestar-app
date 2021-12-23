@@ -105,11 +105,13 @@ export const CartProvider: React.FC = ({ children }) => {
             ],
           )
 
-          const filteredProducts = cartProducts.filter(cartProduct =>
-            cartProduct && cartProduct.enrollments
-              ? cartProduct.enrollments.length === 0 ||
-                cartProduct.enrollments.map(enrollment => enrollment.isPhysical).includes(true)
-              : false,
+          const filteredProducts = cartProducts.filter(
+            cartProduct =>
+              cartProduct.productId.startsWith('Program_') === false &&
+              (cartProduct.enrollments
+                ? cartProduct.enrollments.length === 0 ||
+                  cartProduct.enrollments.map(enrollment => enrollment.isPhysical).includes(true)
+                : false),
           )
 
           localStorage.setItem('kolable.cart._products', JSON.stringify(filteredProducts))

@@ -9,17 +9,18 @@ export const useMerchandiseCollection = (options?: {
   search?: string | null
   isPhysical?: boolean
   categories?: string
+  ownerId?: string
 }) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_MERCHANDISE_COLLECTION,
     hasura.GET_MERCHANDISE_COLLECTIONVariables
   >(
     gql`
-      query GET_MERCHANDISE_COLLECTION($search: String, $isPhysical: Boolean) {
+      query GET_MERCHANDISE_COLLECTION($search: String, $isPhysical: Boolean, $ownerId: String) {
         merchandise(
           where: {
             published_at: { _is_null: false }
-            member_shop: { published_at: { _is_null: false } }
+            member_shop: { published_at: { _is_null: false }, member_id: { _eq: $ownerId } }
             title: { _like: $search }
             is_physical: { _eq: $isPhysical }
           }
@@ -54,8 +55,9 @@ export const useMerchandiseCollection = (options?: {
     `,
     {
       variables: {
-        search: `%${options?.search}%`,
+        search: options?.search ? `%${options?.search}%` : undefined,
         isPhysical: options?.isPhysical,
+        ownerId: options?.ownerId,
       },
     },
   )
