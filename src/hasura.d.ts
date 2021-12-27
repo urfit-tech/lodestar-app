@@ -9203,6 +9203,7 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk {
    * {type: "perpetual" | "subscription" | "groupBuying", gateway: "spgateway" | "parenting" | "tappay", method: "credit" | "vacc" | "cvs" | "instflag" | "unionpay" | "webatm" | "barcode" }
    */
   payment_model: any | null;
+  custom_id: string | null;
   /**
    * An aggregated array relationship
    */
