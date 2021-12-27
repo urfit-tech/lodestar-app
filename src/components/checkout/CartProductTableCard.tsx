@@ -115,7 +115,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                                     : simpleProduct.listPrice || 0,
                                   brand: settings['title'] || appId,
                                   category: simpleProduct.categories?.join('|'),
-                                  variant: simpleProduct.roles?.join('|'),
+                                  variant: simpleProduct.authors?.map(author => author.role).join('|') || [],
                                   quantity:
                                     cartProducts.find(
                                       cartProduct => cartProduct.productId.split('_')[1] === simpleProduct.id,

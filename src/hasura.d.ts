@@ -4067,28 +4067,28 @@ export interface GET_PHYSICAL_PRODUCTSVariables {
 // ====================================================
 
 
-export interface GET_PRODUCT_SIMPLE_program_by_pk_program_categories_category {
+export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_categories_category {
   __typename: "category";
   id: string;
   name: string;
 }
 
-export interface GET_PRODUCT_SIMPLE_program_by_pk_program_categories {
+export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_categories {
   __typename: "program_category";
   id: any;
   /**
    * An object relationship
    */
-  category: GET_PRODUCT_SIMPLE_program_by_pk_program_categories_category;
+  category: GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_categories_category;
 }
 
-export interface GET_PRODUCT_SIMPLE_program_by_pk_program_roles_member {
+export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_roles_member {
   __typename: "member_public";
   id: string | null;
   name: string | null;
 }
 
-export interface GET_PRODUCT_SIMPLE_program_by_pk_program_roles {
+export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_roles {
   __typename: "program_role";
   id: any;
   /**
@@ -4099,26 +4099,7 @@ export interface GET_PRODUCT_SIMPLE_program_by_pk_program_roles {
   /**
    * An object relationship
    */
-  member: GET_PRODUCT_SIMPLE_program_by_pk_program_roles_member | null;
-}
-
-export interface GET_PRODUCT_SIMPLE_program_by_pk {
-  __typename: "program";
-  id: any;
-  title: string;
-  cover_url: string | null;
-  is_subscription: boolean;
-  list_price: any | null;
-  sale_price: any | null;
-  sold_at: any | null;
-  /**
-   * An array relationship
-   */
-  program_categories: GET_PRODUCT_SIMPLE_program_by_pk_program_categories[];
-  /**
-   * An array relationship
-   */
-  program_roles: GET_PRODUCT_SIMPLE_program_by_pk_program_roles[];
+  member: GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_roles_member | null;
 }
 
 export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program {
@@ -4126,6 +4107,14 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program {
   id: any;
   title: string;
   cover_url: string | null;
+  /**
+   * An array relationship
+   */
+  program_categories: GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_categories[];
+  /**
+   * An array relationship
+   */
+  program_roles: GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_roles[];
 }
 
 export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
@@ -4318,10 +4307,6 @@ export interface GET_PRODUCT_SIMPLE_merchandise_spec_by_pk {
 }
 
 export interface GET_PRODUCT_SIMPLE {
-  /**
-   * fetch data from the table: "program" using primary key columns
-   */
-  program_by_pk: GET_PRODUCT_SIMPLE_program_by_pk | null;
   /**
    * fetch data from the table: "program_plan" using primary key columns
    */
