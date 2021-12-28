@@ -10380,6 +10380,7 @@ export enum app_setting_constraint {
  */
 export enum app_setting_update_column {
   app_id = "app_id",
+  created_at = "created_at",
   id = "id",
   key = "key",
   value = "value",
@@ -13976,6 +13977,7 @@ export interface app_setting_bool_exp {
   _or?: (app_setting_bool_exp | null)[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   key?: String_comparison_exp | null;
   setting?: setting_bool_exp | null;
@@ -13988,6 +13990,7 @@ export interface app_setting_bool_exp {
 export interface app_setting_insert_input {
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
+  created_at?: any | null;
   id?: any | null;
   key?: string | null;
   setting?: setting_obj_rel_insert_input | null;
