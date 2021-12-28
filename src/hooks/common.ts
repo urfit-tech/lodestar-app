@@ -29,7 +29,7 @@ type TargetProps = {
   isCustomized?: boolean
   groupBuyingPeople?: number
   categories?: string[]
-  roles?: string[]
+  authors?: { id: string; name: string; role: string }[]
   sku?: string | null
 }
 
@@ -207,6 +207,22 @@ const GET_PRODUCT_SIMPLE = gql`
         id
         title
         cover_url
+        program_categories(order_by: { position: asc }) {
+          id
+          category {
+            id
+            name
+          }
+        }
+        program_roles {
+          id
+          name
+          member_id
+          member {
+            id
+            name
+          }
+        }
       }
       auto_renewed
     }
@@ -312,7 +328,7 @@ const GET_PRODUCT_SIMPLE = gql`
     }
   }
 `
-const GET_PRODUCT_SKU = gql`
+export const GET_PRODUCT_SKU = gql`
   query GET_PRODUCT_SKU($targetId: String!) {
     product(where: { target: { _eq: $targetId } }) {
       id
@@ -365,6 +381,12 @@ export const useSimpleProductCollection = () => {
               periodType: data.program_plan_by_pk.period_type as PeriodType,
               groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
               isSubscription: !!data.program_plan_by_pk?.auto_renewed,
+              categories: data.program_plan_by_pk.program.program_categories.map(v => v.category.name),
+              authors: data.program_plan_by_pk.program.program_roles.map(v => ({
+                id: v.member?.id || '',
+                name: v.member?.name || '',
+                role: v.name,
+              })),
               sku: productCollection.find(product => product.type === 'ProgramPlan')?.sku,
             }
           : data?.program_package_plan_by_pk
