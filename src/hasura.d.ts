@@ -4067,28 +4067,28 @@ export interface GET_PHYSICAL_PRODUCTSVariables {
 // ====================================================
 
 
-export interface GET_PRODUCT_SIMPLE_program_by_pk_program_categories_category {
+export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_categories_category {
   __typename: "category";
   id: string;
   name: string;
 }
 
-export interface GET_PRODUCT_SIMPLE_program_by_pk_program_categories {
+export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_categories {
   __typename: "program_category";
   id: any;
   /**
    * An object relationship
    */
-  category: GET_PRODUCT_SIMPLE_program_by_pk_program_categories_category;
+  category: GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_categories_category;
 }
 
-export interface GET_PRODUCT_SIMPLE_program_by_pk_program_roles_member {
+export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_roles_member {
   __typename: "member_public";
   id: string | null;
   name: string | null;
 }
 
-export interface GET_PRODUCT_SIMPLE_program_by_pk_program_roles {
+export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_roles {
   __typename: "program_role";
   id: any;
   /**
@@ -4099,26 +4099,7 @@ export interface GET_PRODUCT_SIMPLE_program_by_pk_program_roles {
   /**
    * An object relationship
    */
-  member: GET_PRODUCT_SIMPLE_program_by_pk_program_roles_member | null;
-}
-
-export interface GET_PRODUCT_SIMPLE_program_by_pk {
-  __typename: "program";
-  id: any;
-  title: string;
-  cover_url: string | null;
-  is_subscription: boolean;
-  list_price: any | null;
-  sale_price: any | null;
-  sold_at: any | null;
-  /**
-   * An array relationship
-   */
-  program_categories: GET_PRODUCT_SIMPLE_program_by_pk_program_categories[];
-  /**
-   * An array relationship
-   */
-  program_roles: GET_PRODUCT_SIMPLE_program_by_pk_program_roles[];
+  member: GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_roles_member | null;
 }
 
 export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program {
@@ -4126,6 +4107,14 @@ export interface GET_PRODUCT_SIMPLE_program_plan_by_pk_program {
   id: any;
   title: string;
   cover_url: string | null;
+  /**
+   * An array relationship
+   */
+  program_categories: GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_categories[];
+  /**
+   * An array relationship
+   */
+  program_roles: GET_PRODUCT_SIMPLE_program_plan_by_pk_program_program_roles[];
 }
 
 export interface GET_PRODUCT_SIMPLE_program_plan_by_pk {
@@ -4318,10 +4307,6 @@ export interface GET_PRODUCT_SIMPLE_merchandise_spec_by_pk {
 }
 
 export interface GET_PRODUCT_SIMPLE {
-  /**
-   * fetch data from the table: "program" using primary key columns
-   */
-  program_by_pk: GET_PRODUCT_SIMPLE_program_by_pk | null;
   /**
    * fetch data from the table: "program_plan" using primary key columns
    */
@@ -9218,6 +9203,7 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk {
    * {type: "perpetual" | "subscription" | "groupBuying", gateway: "spgateway" | "parenting" | "tappay", method: "credit" | "vacc" | "cvs" | "instflag" | "unionpay" | "webatm" | "barcode" }
    */
   payment_model: any | null;
+  custom_id: string | null;
   /**
    * An aggregated array relationship
    */
@@ -10394,6 +10380,7 @@ export enum app_setting_constraint {
  */
 export enum app_setting_update_column {
   app_id = "app_id",
+  created_at = "created_at",
   id = "id",
   key = "key",
   value = "value",
@@ -13990,6 +13977,7 @@ export interface app_setting_bool_exp {
   _or?: (app_setting_bool_exp | null)[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   key?: String_comparison_exp | null;
   setting?: setting_bool_exp | null;
@@ -14002,6 +13990,7 @@ export interface app_setting_bool_exp {
 export interface app_setting_insert_input {
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
+  created_at?: any | null;
   id?: any | null;
   key?: string | null;
   setting?: setting_obj_rel_insert_input | null;

@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/react-hooks'
 import { Button, SkeletonText } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -15,8 +16,10 @@ import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
-import { desktopViewMixin, rgba } from '../../helpers'
+import hasura from '../../hasura'
+import { desktopViewMixin, getCookie, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
+import { GET_PRODUCT_SKU } from '../../hooks/common'
 import { useProgram } from '../../hooks/program'
 import ForbiddenPage from '../ForbiddenPage'
 import { PerpetualProgramBanner } from './ProgramBanner'
@@ -74,11 +77,11 @@ const ProgramPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { programId } = useParams<{ programId: string }>()
   const { pathname } = useLocation()
-  const { currentMemberId } = useAuth()
+  const { currentMemberId, currentMember } = useAuth()
   const { id: appId, settings, enabledModules } = useApp()
   const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program } = useProgram(programId)
-
+  const apolloClient = useApolloClient()
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
@@ -113,8 +116,16 @@ const ProgramPage: React.VFC = () => {
   useEffect(() => {
     if (program) {
       ReactGA.ga('send', 'pageview')
-      program.plans.forEach(plan => {
+      ;(window as any).dataLayer = (window as any).dataLayer || []
+
+      program.plans.forEach(async plan => {
         const price = plan.soldAt && plan.soldAt.getTime() < Date.now() ? plan.listPrice : plan.salePrice || 0
+        const { data } = await apolloClient.query<hasura.GET_PRODUCT_SKU, hasura.GET_PRODUCT_SKUVariables>({
+          query: GET_PRODUCT_SKU,
+          variables: {
+            targetId: plan.id,
+          },
+        })
         ReactGA.plugin.execute('ec', 'addProduct', {
           id: program.id,
           name: program.title,
@@ -124,21 +135,85 @@ const ProgramPage: React.VFC = () => {
           currency: 'TWD',
         })
         ReactGA.plugin.execute('ec', 'setAction', 'detail')
-        ;(window as any).dataLayer = (window as any).dataLayer || []
+        // gtm ecc
         ;(window as any).dataLayer.push({
+          event: 'detail',
           ecommerce: {
             detail: {
               actionField: { list: pageFrom || '' },
               products: [
                 {
-                  name: program.title,
                   id: program.id,
+                  name: program.title,
                   price,
                   brand: settings['title'] || appId,
                   category: program.categories.map(category => category.name).join('|'),
                   variant: program.roles.map(role => role.memberName).join('|'),
                 },
               ],
+            },
+          },
+        })
+        // salesforce
+        ;(window as any).dataLayer.push({
+          event: 'sfData',
+          memberData: {
+            user_id: currentMemberId || '',
+            social_id: currentMemberId || '',
+            env: process.env.NODE_ENV === 'production' ? 'prod' : 'develop',
+            email: currentMember?.email || '',
+            dmp_id: getCookie('__eruid') || '',
+          },
+          itemData: {
+            products: [
+              {
+                id: programId,
+                item: data?.product[0].sku || programId,
+                title: program.title,
+                url: window.location.href,
+                type: 'elearning',
+                price,
+                author: {
+                  id:
+                    program.roles
+                      ?.filter(role => role.name === 'instructor')
+                      .map(role => role.memberId)
+                      .join('|') || '',
+                  name:
+                    program.roles
+                      ?.filter(role => role.name === 'instructor')
+                      .map(role => role.memberName)
+                      .join('|') || '',
+                },
+                channels: {
+                  master: {
+                    id: program.categories.map(category => category.name),
+                  },
+                },
+              },
+            ],
+            article: {
+              id: programId,
+              title: program.title,
+              url: window.location.href,
+              type: 'elearning',
+              author: {
+                id:
+                  program.roles
+                    ?.filter(role => role.name === 'instructor')
+                    .map(role => role.memberId)
+                    .join('|') || '',
+                name:
+                  program.roles
+                    ?.filter(role => role.name === 'instructor')
+                    .map(role => role.memberName)
+                    .join('|') || '',
+              },
+              channels: {
+                master: {
+                  id: program.categories.map(category => category.name),
+                },
+              },
             },
           },
         })

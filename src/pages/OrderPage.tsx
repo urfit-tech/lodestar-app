@@ -13,6 +13,7 @@ import { BooleanParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
+import { getCookie, notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { useSimpleProductCollection } from '../hooks/common'
 import LoadingPage from './LoadingPage'
@@ -32,7 +33,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   const [withTracking] = useQueryParam('tracking', BooleanParam)
   const getSimpleProductCollection = useSimpleProductCollection()
   const { settings, id: appId } = useApp()
-  const { currentMemberId } = useAuth()
+  const { currentMemberId, currentMember } = useAuth()
   const { loading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
     GET_ORDERS_PRODUCT,
     { variables: { orderId: orderId } },
@@ -46,6 +47,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
       const productPrice = order.order_products_aggregate?.aggregate?.sum?.price || 0
       const discountPrice = order.order_discounts_aggregate?.aggregate?.sum?.price || 0
       const shippingFee = (order.shipping && order.shipping['fee']) || 0
+      const orderProductIds = order.order_products.map(orderProduct => orderProduct.product_id)
 
       if (settings['tracking.fb_pixel_id']) {
         ReactPixel.track('Purchase', {
@@ -125,48 +127,90 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
         ReactGA.ga('send', 'pageview')
       }
 
-      if (settings['tracking.gtm_id']) {
-        const orderProductIds = order.order_products.map(orderProduct => orderProduct.product_id)
+      getSimpleProductCollection(orderProductIds).then(products => {
+        const productList = order.order_products
+          .map(orderProduct => {
+            const currentProduct = products.find(
+              product => `${product.productType}_${product.id}` === orderProduct.product_id,
+            )
+            if (currentProduct === undefined) return undefined
 
-        getSimpleProductCollection(orderProductIds)
-          .then(simpleProducts => {
-            ;(window as any).dataLayer = (window as any).dataLayer || []
-            ;(window as any).dataLayer.push({ ecommerce: null })
-            ;(window as any).dataLayer.push({
-              event: 'purchase',
-              ecommerce: {
-                purchase: {
-                  actionField: {
-                    id: order.id,
-                    affiliation: settings['title'] || appId,
-                    revenue: productPrice - discountPrice - shippingFee,
-                    shipping: shippingFee,
-                    coupon: order.order_discounts
-                      .map(orderDiscount => `${orderDiscount.type}_${orderDiscount.name}`)
-                      .join(' | '),
-                  },
-                  products: simpleProducts.map(simpleProduct => {
-                    const currentOrderProduct = order.order_products.find(
-                      orderProduct => orderProduct.product_id === `${simpleProduct.productType}_${simpleProduct.id}`,
-                    )
-                    return {
-                      id: simpleProduct.sku || simpleProduct.id,
-                      name: simpleProduct.title,
-                      price: simpleProduct.isOnSale ? simpleProduct.salePrice : simpleProduct.listPrice,
-                      category: simpleProduct.categories?.join('|'),
-                      brand: settings['title'] || appId,
-                      quantity: currentOrderProduct?.options['quantity'] || 1,
-                      variant: simpleProduct.roles?.join('|'),
-                    }
-                  }),
+            return {
+              id: currentProduct.id,
+              item: currentProduct.sku || currentProduct.id,
+              title: currentProduct.title,
+              // TODO: base on product type to get url
+              url: `${window.location.origin}/programs/${currentProduct.id}`,
+              type: 'elearning',
+              order_number: order?.custom_id,
+              price: currentProduct.listPrice || currentProduct.salePrice,
+              author:
+                currentProduct?.authors
+                  ?.filter(author => author.role === 'instructor')
+                  .map(author => ({ id: author.id, name: author.name })) || [],
+              channels: {
+                master: {
+                  id: currentProduct?.categories || [],
                 },
               },
-            })
+            }
           })
-          .catch()
-      }
+          .filter(notEmpty)
+
+        // salesforce
+        ;(window as any).dataLayer = (window as any).dataLayer || []
+        ;(window as any).dataLayer.push({
+          event: 'sfData',
+          memberData: {
+            user_id: currentMemberId || '',
+            social_id: currentMemberId || '',
+            env: process.env.NODE_ENV === 'production' ? 'prod' : 'develop',
+            email: currentMember?.email || '',
+            dmp_id: getCookie('__eruid') || '',
+          },
+          itemData: {
+            products: productList,
+          },
+        })
+
+        // gtm ecc
+        ;(window as any).dataLayer.push({ ecommerce: null })
+        ;(window as any).dataLayer.push({
+          event: 'purchase',
+          ecommerce: {
+            purchase: {
+              actionField: {
+                id: order.id,
+                affiliation: settings['title'] || appId,
+                revenue: productPrice - discountPrice - shippingFee,
+                shipping: shippingFee,
+                coupon: order.order_discounts
+                  .map(orderDiscount => `${orderDiscount.type}_${orderDiscount.name}`)
+                  .join(' | '),
+              },
+              products: products.map(product => {
+                const currentOrderProduct = order.order_products.find(
+                  orderProduct => orderProduct.product_id === `${product.productType}_${product.id}`,
+                )
+                return {
+                  id: product.sku || product.id,
+                  name: product.title,
+                  price: product.isOnSale ? product.salePrice : product.listPrice,
+                  category: product.categories?.join('|'),
+                  brand: settings['title'] || appId,
+                  quantity: currentOrderProduct?.options['quantity'] || 1,
+                  variant: product.authors
+                    ?.filter(author => author.role === 'instructor')
+                    .map(author => author.name)
+                    .join('|'),
+                }
+              }),
+            },
+          },
+        })
+      })
     }
-  }, [order, settings, withTracking])
+  }, [order, settings, withTracking, currentMemberId])
 
   if (loading) {
     return <LoadingPage />
@@ -295,6 +339,7 @@ const GET_ORDERS_PRODUCT = gql`
       message
       status
       payment_model
+      custom_id
       order_discounts_aggregate {
         aggregate {
           sum {
