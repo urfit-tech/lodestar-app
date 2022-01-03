@@ -68,7 +68,7 @@ export const usePublishedProgramCollection = (options?: {
               name
             }
           }
-          program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc }) {
+          program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc, id: desc }) {
             id
             name
             member_id
@@ -265,7 +265,7 @@ export const useProgram = (programId: string) => {
               name
             }
           }
-          program_roles(order_by: { created_at: asc }) {
+          program_roles(order_by: { created_at: asc, id: desc }) {
             id
             name
             member_id
