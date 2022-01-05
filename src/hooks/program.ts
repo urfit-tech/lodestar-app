@@ -327,6 +327,7 @@ export const useProgram = (programId: string) => {
                   id
                   size
                   options
+                  data
                 }
               }
             }
@@ -435,6 +436,7 @@ export const useProgram = (programId: string) => {
                   id: v.attachment.id,
                   size: v.attachment.size,
                   options: v.attachment.options,
+                  data: v.attachment.data,
                 })),
               })),
             })),
@@ -488,6 +490,7 @@ export const useProgramContent = (programContentId: string) => {
               id
               size
               options
+              data
             }
           }
           program_content_attachments {
@@ -546,6 +549,7 @@ export const useProgramContent = (programContentId: string) => {
               id: v.attachment.id,
               size: v.attachment.size,
               options: v.attachment.options,
+              data: v.attachment.data,
             })),
             attachments: data.program_content_by_pk.program_content_attachments.map(u => ({
               id: u.attachment_id,
