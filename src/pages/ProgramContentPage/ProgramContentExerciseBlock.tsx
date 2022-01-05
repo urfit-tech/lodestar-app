@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { StringParam, useQueryParam } from 'use-query-params'
 import ExerciseBlock from '../../components/exercise/ExerciseBlock'
@@ -20,7 +21,8 @@ const ProgramContentExerciseBlock: React.VFC<{
   nextProgramContentId?: string
 }> = ({ programContent, nextProgramContentId }) => {
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
-  const { loadingLastExercise, lastExercise } = useLastExercise(programContent.id, exerciseId)
+  const { currentMemberId } = useAuth()
+  const { loadingLastExercise, lastExercise } = useLastExercise(programContent.id, currentMemberId, exerciseId)
 
   if (loadingLastExercise || !programContent.programContentBody?.data?.questions) {
     return null
@@ -62,10 +64,11 @@ const ProgramContentExerciseBlock: React.VFC<{
   )
 }
 
-const useLastExercise = (programContentId: string, exerciseId?: string | null) => {
+const useLastExercise = (programContentId: string, memberId: string | null, exerciseId?: string | null) => {
   const condition: hasura.GET_LAST_EXERCISEVariables['condition'] = {
     id: exerciseId ? { _eq: exerciseId } : undefined,
     program_content_id: { _eq: programContentId },
+    member_id: { _eq: memberId },
   }
 
   const { loading, error, data, refetch } = useQuery<hasura.GET_LAST_EXERCISE, hasura.GET_LAST_EXERCISEVariables>(
