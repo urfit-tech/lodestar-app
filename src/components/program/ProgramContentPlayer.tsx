@@ -144,6 +144,7 @@ const ProgramContentPlayer: React.VFC<
             <StyledReactPlayerWrapper>
               <ReactPlayer
                 ref={playerRef}
+                playing={true}
                 url={video.data.url}
                 controls
                 progressInterval={5000}
@@ -162,6 +163,9 @@ const ProgramContentPlayer: React.VFC<
                   const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
                   playerRef.current.seekTo(duration * progress, 'seconds')
                   lastEndedTime.current = duration * progress
+                }}
+                onPlaybackRateChange={() => {
+                  // FIXME: youtube can not get anything
                 }}
                 onProgress={state => {
                   if (!playerRef.current || lastEndedTime.current === null) {
