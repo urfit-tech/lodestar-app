@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Divider, Spinner } from '@chakra-ui/react'
+import { Divider, Progress, Spinner } from '@chakra-ui/react'
 import { Button } from 'antd'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -35,6 +35,7 @@ const MerchandiseSpecItem: React.VFC<{
   const { id: appId } = useApp()
   const { loadingMerchandiseSpec, merchandiseSpec } = useMerchandiseSpec(merchandiseSpecId)
   const [isDownloading, setIsDownloading] = useState<boolean>(false)
+  const [downloadProgress, setDownloadProgress] = useState(0)
 
   if (!appId || loadingMerchandiseSpec) {
     return <Spinner />
@@ -76,37 +77,47 @@ const MerchandiseSpecItem: React.VFC<{
 
         {merchandiseSpec.merchandise.isPhysical && <StyledQuantity className="px-4">x{quantity}</StyledQuantity>}
 
-        {files.length > 0 && (
-          <Button
-            loading={isDownloading}
-            onClick={async () => {
-              setIsDownloading(true)
-              let counter = 0
-              files.forEach(async file => {
-                const fileKey =
-                  file.from === 'merchandise'
-                    ? `merchandise_files/${appId}/${merchandiseSpec.merchandise.id}_${file.name}`
-                    : `merchandise_files/${appId}/${orderProductId}_${file.name}`
-                const fileLink = await getFileDownloadableLink(fileKey, authToken)
-                const fileRequest = new Request(fileLink)
-
-                try {
-                  const response = await fetch(fileRequest)
-
-                  response.url &&
-                    downloadFile(file.name, { url: response.url }).then(() => {
+        {files.length > 0 &&
+          (isDownloading ? (
+            <div className="d-flex align-items-center">
+              <Progress className="mr-2" width="80px" value={downloadProgress} size="xs" colorScheme="green" />
+              {downloadProgress}%
+            </div>
+          ) : (
+            <Button
+              loading={isDownloading}
+              onClick={async () => {
+                setIsDownloading(true)
+                let counter = 0
+                for (let file of files) {
+                  const fileKey =
+                    file.from === 'merchandise'
+                      ? `merchandise_files/${appId}/${merchandiseSpec.merchandise.id}_${file.name}`
+                      : `merchandise_files/${appId}/${orderProductId}_${file.name}`
+                  const fileLink = await getFileDownloadableLink(fileKey, authToken)
+                  const fileRequest = new Request(fileLink)
+                  try {
+                    const response = await fetch(fileRequest)
+                    setDownloadProgress(0)
+                    if (response.url) {
+                      await downloadFile(file.name, {
+                        url: response.url,
+                        onDownloadProgress: ({ loaded, total }) => {
+                          setDownloadProgress(Math.floor((loaded / total) * 100))
+                        },
+                      })
                       counter += 1
                       counter === files.length && setIsDownloading(false)
-                    })
-                } catch (error) {
-                  process.env.NODE_ENV === 'development' && console.error(error)
+                    }
+                  } catch (error) {
+                    process.env.NODE_ENV === 'development' && console.error(error)
+                  }
                 }
-              })
-            }}
-          >
-            {isDownloading ? formatMessage(messages.isDownloading) : formatMessage(messages.download)}
-          </Button>
-        )}
+              }}
+            >
+              {isDownloading ? formatMessage(messages.isDownloading) : formatMessage(messages.download)}
+            </Button>
+          ))}
       </div>
     </div>
   )
