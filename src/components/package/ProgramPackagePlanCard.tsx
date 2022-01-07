@@ -74,7 +74,7 @@ const ProgramPackagePlanCard: React.VFC<
         periodAmount={isSubscription ? periodAmount : undefined}
       />
       <Divider className="my-3" />
-      {!isSubscription && (
+      {!isSubscription && periodAmount && periodType && (
         <StyledHighlight className="mb-3">
           {formatMessage(productMessages.programPackage.label.availableForLimitTime, {
             amount: periodAmount,
