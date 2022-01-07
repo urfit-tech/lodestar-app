@@ -24,7 +24,7 @@ export const useMerchandiseCollection = (options?: {
             title: { _like: $search }
             is_physical: { _eq: $isPhysical }
           }
-          order_by: { position: asc }
+          order_by: { position: asc, published_at: desc, updated_at: desc }
         ) {
           id
           title
