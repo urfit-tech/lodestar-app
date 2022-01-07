@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { sum, uniqBy } from 'ramda'
 import hasura from '../hasura'
 import { PeriodType } from '../types/program'
 import { ProgramPackagePlanProps, ProgramPackageProgram, ProgramPackageProps } from '../types/programPackage'
@@ -139,41 +140,84 @@ export const useEnrolledProgramPackagePlanIds = (memberId: string) => {
   }
 }
 
-export const useEnrolledProgramPackageIds = (memberId: string, programPackageId: string) => {
-  const { loading, data, error, refetch } = useQuery<
-    hasura.GET_ENROLLED_PROGRAM_PACKAGE,
-    hasura.GET_ENROLLED_PROGRAM_PACKAGEVariables
+export const useEnrolledProgramPackage = (
+  memberId: string,
+  options?: { programPackageId?: string; programPackagePlanId?: string },
+) => {
+  const { loading, error, data } = useQuery<
+    hasura.GET_ENROLLED_PROGRAM_PACKAGES,
+    hasura.GET_ENROLLED_PROGRAM_PACKAGESVariables
   >(
     gql`
-      query GET_ENROLLED_PROGRAM_PACKAGE($memberId: String!, $programPackageId: uuid!) {
-        program_package_plan_enrollment(
+      query GET_ENROLLED_PROGRAM_PACKAGES($memberId: String!, $programPackageId: uuid, $programPackagePlanId: uuid) {
+        program_package(
           where: {
-            member_id: { _eq: $memberId }
-            program_package_plan: { program_package_id: { _eq: $programPackageId } }
+            id: { _eq: $programPackageId }
+            program_package_plans: {
+              id: { _eq: $programPackagePlanId }
+              program_package_plan_enrollments: { member_id: { _eq: $memberId } }
+            }
           }
+          distinct_on: id
         ) {
-          program_package_plan_id
-          program_package_plan {
-            program_package_id
+          id
+          cover_url
+          title
+          published_at
+          program_package_programs(where: { program: { published_at: { _lt: "now()" } } }) {
+            id
+            program {
+              id
+              program_content_sections {
+                id
+                program_contents {
+                  id
+                  duration
+                }
+              }
+            }
+            program_tempo_deliveries {
+              id
+            }
           }
         }
       }
     `,
-    { variables: { memberId, programPackageId } },
+    {
+      variables: {
+        memberId,
+        programPackageId: options?.programPackageId,
+        programPackagePlanId: options?.programPackagePlanId,
+      },
+    },
   )
 
-  const enrolledProgramPackageIds =
-    loading || !!error || !data
-      ? []
-      : data.program_package_plan_enrollment.map(
-          programPackagePlanEnrollment => programPackagePlanEnrollment.program_package_plan?.program_package_id,
-        )
-
+  const programPackages = data
+    ? uniqBy(pp => pp.id, data.program_package).map(pp => ({
+        id: pp.id,
+        coverUrl: pp.cover_url || undefined,
+        title: pp.title,
+        programs: pp.program_package_programs.map(p => ({
+          id: p.program.id,
+          isDelivered: !!p.program_tempo_deliveries.length,
+        })),
+        totalDuration: sum(
+          pp.program_package_programs
+            .map(p =>
+              p.program.program_content_sections
+                .map(programContentSection =>
+                  programContentSection.program_contents.map(programContent => programContent.duration),
+                )
+                .flat(),
+            )
+            .flat(),
+        ),
+      }))
+    : []
   return {
-    loadingProgramPackageIds: loading,
-    enrolledProgramPackageIds,
-    errorProgramPackageIds: error,
-    refetchProgramPackageIds: refetch,
+    loading,
+    error,
+    data: programPackages,
   }
 }
 
