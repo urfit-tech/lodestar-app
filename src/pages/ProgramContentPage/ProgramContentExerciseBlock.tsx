@@ -22,7 +22,11 @@ const ProgramContentExerciseBlock: React.VFC<{
 }> = ({ programContent, nextProgramContentId }) => {
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const { currentMemberId } = useAuth()
-  const { loadingLastExercise, lastExercise } = useLastExercise(programContent.id, currentMemberId, exerciseId)
+  const { loadingLastExercise, lastExercise } = useLastExercise(
+    programContent.id,
+    currentMemberId || '',
+    exerciseId || '',
+  )
 
   if (loadingLastExercise || !programContent.programContentBody?.data?.questions) {
     return null
@@ -64,9 +68,9 @@ const ProgramContentExerciseBlock: React.VFC<{
   )
 }
 
-const useLastExercise = (programContentId: string, memberId: string | null, exerciseId?: string | null) => {
+const useLastExercise = (programContentId: string, memberId: string, exerciseId: string) => {
   const condition: hasura.GET_LAST_EXERCISEVariables['condition'] = {
-    id: exerciseId ? { _eq: exerciseId } : undefined,
+    id: { _eq: exerciseId },
     program_content_id: { _eq: programContentId },
     member_id: { _eq: memberId },
   }
