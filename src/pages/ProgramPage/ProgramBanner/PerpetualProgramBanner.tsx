@@ -59,6 +59,12 @@ const StyledLink = styled(Link)`
   color: white;
 `
 
+const StyledButton = styled(Button)`
+  && {
+    width: 250px;
+  }
+`
+
 const PerpetualProgramBanner: React.VFC<{
   program: Program & {
     tags: string[]
@@ -83,7 +89,7 @@ const PerpetualProgramBanner: React.VFC<{
         <StyledTitle className="text-center">{program.title}</StyledTitle>
         {isEnrolledByProgramPackage && (
           <div className="mt-4 text-center">
-            <Button
+            <StyledButton
               colorScheme="primary"
               disabled={!isDelivered}
               onClick={() => {
@@ -91,7 +97,7 @@ const PerpetualProgramBanner: React.VFC<{
               }}
             >
               {isDelivered ? formatMessage(commonMessages.button.enter) : formatMessage(commonMessages.button.unOpened)}
-            </Button>
+            </StyledButton>
           </div>
         )}
       </StyledTitleBlock>
