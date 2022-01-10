@@ -1,5 +1,7 @@
+import { useQuery } from '@apollo/react-hooks'
 import { message } from 'antd'
 import axios from 'axios'
+import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -7,6 +9,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { StyledContainer } from '../components/layout/DefaultLayout.styled'
 import GatewayForm from '../components/payment/GatewayForm'
+import hasura from '../hasura'
 import { handleError } from '../helpers'
 import { codeMessages } from '../helpers/translation'
 
@@ -27,6 +30,17 @@ const usePayForm = (paymentNo: number) => {
   const { authToken, currentMemberId } = useAuth()
   const [loadingForm, setLoadingForm] = useState(false)
   const [PayForm, setPayForm] = useState<React.ReactElement | null>(null)
+  const { data } = useQuery<hasura.GET_ORDER_ID, hasura.GET_ORDER_IDVariables>(
+    gql`
+      query GET_ORDER_ID($paymentNo: numeric!) {
+        payment_log(where: { no: { _eq: $paymentNo } }) {
+          order_id
+        }
+      }
+    `,
+    { variables: { paymentNo } },
+  )
+  const orderId = data?.payment_log[0]?.order_id || null
 
   useEffect(() => {
     const clientBackUrl = window.location.origin
@@ -58,7 +72,7 @@ const usePayForm = (paymentNo: number) => {
                 if (result.url) {
                   window.location.href = result.url
                 } else {
-                  history.push(`/members/${currentMemberId}`)
+                  history.push(`/orders/${orderId}?tracking=1`)
                 }
                 break
               case 'spgateway':
@@ -66,8 +80,7 @@ const usePayForm = (paymentNo: number) => {
                 if (result.html) {
                   setPayForm(<GatewayForm formHtml={result.html} clientBackUrl={clientBackUrl} />)
                 } else {
-                  // window.location.assign(`/members/${currentMemberId}`)
-                  history.push(`/members/${currentMemberId}`)
+                  history.push(`/orders/${orderId}?tracking=1`)
                 }
                 break
               case 'tappay':
