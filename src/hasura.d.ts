@@ -4601,6 +4601,33 @@ export interface GET_COIN_STATUSVariables {
 
 
 // ====================================================
+// GraphQL query operation: GET_ORDER_ID
+// ====================================================
+
+
+export interface GET_ORDER_ID_payment_log {
+  __typename: "payment_log";
+  order_id: string;
+}
+
+export interface GET_ORDER_ID {
+  /**
+   * fetch data from the table: "payment_log"
+   */
+  payment_log: GET_ORDER_ID_payment_log[];
+}
+
+export interface GET_ORDER_IDVariables {
+  paymentNo: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
 // GraphQL query operation: GET_ISSUE_THREAD
 // ====================================================
 
@@ -9221,33 +9248,6 @@ export interface GET_ORDERS_PRODUCTVariables {
 
 
 // ====================================================
-// GraphQL query operation: GET_ORDER_ID
-// ====================================================
-
-
-export interface GET_ORDER_ID_payment_log {
-  __typename: "payment_log";
-  order_id: string;
-}
-
-export interface GET_ORDER_ID {
-  /**
-   * fetch data from the table: "payment_log"
-   */
-  payment_log: GET_ORDER_ID_payment_log[];
-}
-
-export interface GET_ORDER_IDVariables {
-  paymentNo: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-
-// ====================================================
 // GraphQL query operation: GET_PODCAST_ALBUMS
 // ====================================================
 
@@ -11055,6 +11055,7 @@ export enum member_oauth_constraint {
 export enum member_oauth_update_column {
   id = "id",
   member_id = "member_id",
+  options = "options",
   provider = "provider",
   provider_user_id = "provider_user_id",
 }
@@ -12152,6 +12153,9 @@ export enum product_inventory_update_column {
  * update columns of table "product"
  */
 export enum product_update_column {
+  coin_back = "coin_back",
+  coin_period_amount = "coin_period_amount",
+  coin_period_type = "coin_period_type",
   id = "id",
   sku = "sku",
   target = "target",
@@ -16100,6 +16104,7 @@ export interface member_oauth_bool_exp {
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
   provider?: String_comparison_exp | null;
   provider_user_id?: String_comparison_exp | null;
 }
@@ -16111,6 +16116,7 @@ export interface member_oauth_insert_input {
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  options?: any | null;
   provider?: string | null;
   provider_user_id?: string | null;
 }
@@ -19129,6 +19135,9 @@ export interface product_bool_exp {
   _or?: (product_bool_exp | null)[] | null;
   card_discounts?: card_discount_bool_exp | null;
   cart_products?: cart_product_bool_exp | null;
+  coin_back?: numeric_comparison_exp | null;
+  coin_period_amount?: Int_comparison_exp | null;
+  coin_period_type?: String_comparison_exp | null;
   coupon_plan_products?: coupon_plan_product_bool_exp | null;
   id?: String_comparison_exp | null;
   order_products?: order_product_bool_exp | null;
@@ -19162,6 +19171,9 @@ export interface product_enrollment_bool_exp {
 export interface product_insert_input {
   card_discounts?: card_discount_arr_rel_insert_input | null;
   cart_products?: cart_product_arr_rel_insert_input | null;
+  coin_back?: any | null;
+  coin_period_amount?: number | null;
+  coin_period_type?: string | null;
   coupon_plan_products?: coupon_plan_product_arr_rel_insert_input | null;
   id?: string | null;
   order_products?: order_product_arr_rel_insert_input | null;
