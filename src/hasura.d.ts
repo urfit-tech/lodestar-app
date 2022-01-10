@@ -7463,6 +7463,7 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
   id: any;
   size: any;
   options: any | null;
+  data: any | null;
 }
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos {
@@ -7623,6 +7624,7 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_video
   id: any;
   size: any;
   options: any | null;
+  data: any | null;
 }
 
 export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos {
@@ -10284,7 +10286,7 @@ export enum app_nav_update_column {
  * unique or primary key constraints on table "app_page"
  */
 export enum app_page_constraint {
-  app_page_path_app_id_key = "app_page_path_app_id_key",
+  app_page_path_app_id_is_deleted_key = "app_page_path_app_id_is_deleted_key",
   app_page_pkey = "app_page_pkey",
 }
 
