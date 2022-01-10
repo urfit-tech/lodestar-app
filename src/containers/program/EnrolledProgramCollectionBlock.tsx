@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { HStack, useRadioGroup } from '@chakra-ui/react'
-import { Skeleton, Typography } from 'antd'
+import { HStack, SkeletonText, useRadioGroup } from '@chakra-ui/react'
+import { Typography } from 'antd'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { flatten, uniq } from 'ramda'
@@ -70,7 +70,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(productMessages.program.title.course)}</Typography.Title>
-        <Skeleton active avatar />
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </div>
     )
   }

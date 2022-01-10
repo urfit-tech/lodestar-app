@@ -616,76 +616,6 @@ export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDSVariables {
 
 
 // ====================================================
-// GraphQL query operation: GET_ENROLLED_PROGRAM_PACKAGES
-// ====================================================
-
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections_program_contents {
-  __typename: "program_content";
-  id: any;
-  /**
-   * sec
-   */
-  duration: any | null;
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections {
-  __typename: "program_content_section";
-  id: any;
-  /**
-   * An array relationship
-   */
-  program_contents: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections_program_contents[];
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program {
-  __typename: "program";
-  id: any;
-  /**
-   * An array relationship
-   */
-  program_content_sections: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections[];
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs {
-  __typename: "program_package_program";
-  id: any;
-  /**
-   * An object relationship
-   */
-  program: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program;
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package {
-  __typename: "program_package";
-  id: any;
-  cover_url: string | null;
-  title: string;
-  published_at: any | null;
-  /**
-   * An array relationship
-   */
-  program_package_programs: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs[];
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES {
-  /**
-   * fetch data from the table: "program_package"
-   */
-  program_package: GET_ENROLLED_PROGRAM_PACKAGES_program_package[];
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGESVariables {
-  memberId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-
-// ====================================================
 // GraphQL query operation: GET_PODCAST_ALBUM_BY_CATEGORY_NAME
 // ====================================================
 
@@ -8067,34 +7997,78 @@ export interface GET_ENROLLED_PROGRAM_PACKAGE_PLAN_IDSVariables {
 
 
 // ====================================================
-// GraphQL query operation: GET_ENROLLED_PROGRAM_PACKAGE
+// GraphQL query operation: GET_ENROLLED_PROGRAM_PACKAGES
 // ====================================================
 
 
-export interface GET_ENROLLED_PROGRAM_PACKAGE_program_package_plan_enrollment_program_package_plan {
-  __typename: "program_package_plan";
-  program_package_id: any;
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections_program_contents {
+  __typename: "program_content";
+  id: any;
+  /**
+   * sec
+   */
+  duration: any | null;
 }
 
-export interface GET_ENROLLED_PROGRAM_PACKAGE_program_package_plan_enrollment {
-  __typename: "program_package_plan_enrollment";
-  program_package_plan_id: any | null;
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections {
+  __typename: "program_content_section";
+  id: any;
+  /**
+   * An array relationship
+   */
+  program_contents: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections_program_contents[];
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program {
+  __typename: "program";
+  id: any;
+  /**
+   * An array relationship
+   */
+  program_content_sections: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections[];
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_tempo_deliveries {
+  __typename: "program_tempo_delivery";
+  id: any;
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs {
+  __typename: "program_package_program";
+  id: any;
   /**
    * An object relationship
    */
-  program_package_plan: GET_ENROLLED_PROGRAM_PACKAGE_program_package_plan_enrollment_program_package_plan | null;
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGE {
+  program: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program;
   /**
-   * fetch data from the table: "program_package_plan_enrollment"
+   * An array relationship
    */
-  program_package_plan_enrollment: GET_ENROLLED_PROGRAM_PACKAGE_program_package_plan_enrollment[];
+  program_tempo_deliveries: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_tempo_deliveries[];
 }
 
-export interface GET_ENROLLED_PROGRAM_PACKAGEVariables {
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package {
+  __typename: "program_package";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  published_at: any | null;
+  /**
+   * An array relationship
+   */
+  program_package_programs: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs[];
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES {
+  /**
+   * fetch data from the table: "program_package"
+   */
+  program_package: GET_ENROLLED_PROGRAM_PACKAGES_program_package[];
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGESVariables {
   memberId: string;
-  programPackageId: any;
+  programPackageId?: any | null;
+  programPackagePlanId?: any | null;
 }
 
 /* tslint:disable */
