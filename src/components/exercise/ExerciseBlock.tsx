@@ -33,6 +33,7 @@ const ExerciseBlock: React.VFC<
   title,
   nextProgramContentId,
   isTaken,
+  isAnswerer,
 }) => {
   const { currentMemberId } = useAuth()
   const { insertExercise } = useMutateExercise()
@@ -126,6 +127,7 @@ const ExerciseBlock: React.VFC<
         questions={questions}
         nextProgramContentId={nextProgramContentId}
         onReAnswer={() => {
+          if (!isAnswerer) return
           setQuestions(
             defaultQuestions.map(question => ({
               ...question,
@@ -138,6 +140,7 @@ const ExerciseBlock: React.VFC<
           setStatus('answering')
         }}
         onReview={() => setStatus('review')}
+        isAnswerer={isAnswerer}
       />
     )
   }

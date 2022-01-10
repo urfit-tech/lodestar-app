@@ -106,6 +106,7 @@ export type ExerciseProps = {
   isAvailableToRetry: boolean
   passingScore: number
   questions: QuestionProps[]
+  isAnswerer?: boolean
 }
 
 export type QuestionProps = {

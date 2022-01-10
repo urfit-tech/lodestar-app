@@ -60,7 +60,7 @@ const ExerciseResultBlock: React.VFC<
     onReAnswer?: () => void
     onReview?: () => void
   }
-> = ({ questions, passingScore, isAvailableToRetry, nextProgramContentId, onReAnswer, onReview }) => {
+> = ({ questions, passingScore, isAvailableToRetry, nextProgramContentId, isAnswerer, onReAnswer, onReview }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const {
@@ -115,7 +115,7 @@ const ExerciseResultBlock: React.VFC<
           {formatMessage(messages.showDetail)}
         </StyledButton>
         {isAvailableToRetry && (
-          <StyledButton onClick={onReAnswer} variant="outline">
+          <StyledButton onClick={onReAnswer} variant="outline" disabled={!isAnswerer}>
             {formatMessage(messages.restartExercise)}
           </StyledButton>
         )}
