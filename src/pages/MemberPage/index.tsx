@@ -163,30 +163,32 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   return (
     <DefaultLayout>
       <div className=" py-4 py-sm-5" style={{ background: 'white' }}>
-        {!member ? (
-          <SkeletonText mt="1" noOfLines={4} spacing="4" />
-        ) : (
-          <div className="container d-flex flex-column flex-sm-row align-items-center">
-            <MemberAvatar memberId={memberId || ''} withName={false} size={128} />
+        <div className="container d-flex flex-column flex-sm-row align-items-center">
+          {!member ? (
+            <SkeletonText mt="1" noOfLines={4} spacing="4" w="100%" />
+          ) : (
+            <>
+              <MemberAvatar memberId={member.id} withName={false} size={128} />
 
-            <div className="d-flex flex-column align-items-center align-items-sm-start flex-sm-grow-1 ml-sm-4">
-              {renderText?.(member) || (
-                <>
-                  <Typography.Title level={4}>{member && member.name}</Typography.Title>
-                  {settings['feature.custom_member_abstract.enable'] ? (
-                    <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
-                      {renderMemberAbstract(appId)}
-                    </Typography.Paragraph>
-                  ) : (
-                    <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
-                      {member && <p>{member.abstract}</p>}
-                    </Typography.Paragraph>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        )}
+              <div className="d-flex flex-column align-items-center align-items-sm-start flex-sm-grow-1 ml-sm-4">
+                {renderText?.(member) || (
+                  <>
+                    <Typography.Title level={4}>{member.name}</Typography.Title>
+                    {settings['feature.custom_member_abstract.enable'] ? (
+                      <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
+                        {renderMemberAbstract(appId)}
+                      </Typography.Paragraph>
+                    ) : (
+                      <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
+                        <p>{member.abstract}</p>
+                      </Typography.Paragraph>
+                    )}
+                  </>
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
       {content}
     </DefaultLayout>

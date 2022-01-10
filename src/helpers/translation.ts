@@ -154,6 +154,7 @@ export const commonMessages = {
     download: { id: 'common.button.download', defaultMessage: '下載名單' },
     attend: { id: 'common.button.attend', defaultMessage: '進入會議' },
     unreleased: { id: 'common.button.unreleased', defaultMessage: '尚未發售' },
+    unOpened: { id: 'common.button.unOpened', defaultMessage: '尚未開放' },
     soldOut: { id: 'common.button.soldOut', defaultMessage: '已售完' },
     cutoff: { id: 'common.button.cutoff', defaultMessage: '已截止' },
     cutoffProject: { id: 'common.button.cutoff.project', defaultMessage: '專案已結束' },
