@@ -44,7 +44,7 @@ const usePayForm = (paymentNo: number) => {
 
   useEffect(() => {
     const clientBackUrl = window.location.origin
-    if (authToken) {
+    if (authToken && orderId) {
       setLoadingForm(true)
       const apiBaseRoot = process.env.REACT_APP_API_BASE_ROOT?.startsWith('http')
         ? process.env.REACT_APP_API_BASE_ROOT
@@ -98,7 +98,7 @@ const usePayForm = (paymentNo: number) => {
         .catch(handleError)
         .finally(() => setLoadingForm(false))
     }
-  }, [authToken, currentMemberId, formatMessage, history, paymentNo])
+  }, [authToken, currentMemberId, formatMessage, history, paymentNo, orderId])
   return { loadingForm, PayForm }
 }
 export default PaymentPage
