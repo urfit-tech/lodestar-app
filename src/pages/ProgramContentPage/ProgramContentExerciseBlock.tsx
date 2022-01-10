@@ -22,11 +22,7 @@ const ProgramContentExerciseBlock: React.VFC<{
 }> = ({ programContent, nextProgramContentId }) => {
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const { currentMemberId } = useAuth()
-  const { loadingLastExercise, lastExercise } = useLastExercise(
-    programContent.id,
-    currentMemberId || '',
-    exerciseId || '',
-  )
+  const { loadingLastExercise, lastExercise } = useLastExercise(programContent.id, currentMemberId || '', exerciseId)
 
   if (loadingLastExercise || !programContent.programContentBody?.data?.questions) {
     return null
@@ -64,15 +60,16 @@ const ProgramContentExerciseBlock: React.VFC<{
       isAvailableToGoBack={!!programContent.metadata?.isAvailableToGoBack}
       isAvailableToRetry={!!programContent.metadata?.isAvailableToRetry}
       passingScore={programContent.metadata?.passingScore || 0}
+      isAnswerer={currentMemberId === lastExercise?.memberId}
     />
   )
 }
 
-const useLastExercise = (programContentId: string, memberId: string, exerciseId: string) => {
+const useLastExercise = (programContentId: string, memberId: string, exerciseId?: string | null) => {
   const condition: hasura.GET_LAST_EXERCISEVariables['condition'] = {
-    id: { _eq: exerciseId },
+    id: exerciseId ? { _eq: exerciseId } : undefined,
     program_content_id: { _eq: programContentId },
-    member_id: { _eq: memberId },
+    member_id: exerciseId ? undefined : { _eq: memberId },
   }
 
   const { loading, error, data, refetch } = useQuery<hasura.GET_LAST_EXERCISE, hasura.GET_LAST_EXERCISEVariables>(
@@ -81,6 +78,7 @@ const useLastExercise = (programContentId: string, memberId: string, exerciseId:
         exercise(where: $condition, order_by: [{ created_at: desc }], limit: 1) {
           id
           answer
+          member_id
         }
       }
     `,
@@ -94,6 +92,7 @@ const useLastExercise = (programContentId: string, memberId: string, exerciseId:
     ? {
         id: data.exercise[0].id,
         answer: data.exercise[0].answer,
+        memberId: data.exercise[0].member_id,
       }
     : null
 

@@ -9346,6 +9346,7 @@ export interface GET_LAST_EXERCISE_exercise {
   __typename: "exercise";
   id: any;
   answer: any | null;
+  member_id: string;
 }
 
 export interface GET_LAST_EXERCISE {
