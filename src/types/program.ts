@@ -77,7 +77,7 @@ export type ProgramContent = {
   salePrice: number | null
   soldAt: Date | null
   materials?: ProgramContentMaterialProps[]
-  videos?: { id: string; size: number; options: any }[]
+  videos?: { id: string; size: number; options: any; data: any }[]
 }
 
 export type ProgramContentBodyProps = {
