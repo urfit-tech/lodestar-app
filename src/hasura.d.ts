@@ -8030,6 +8030,26 @@ export interface GET_ENROLLED_PROGRAM_PACKAGE_PLAN_IDSVariables {
 // ====================================================
 
 
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate_aggregate {
+  __typename: "program_package_plan_enrollment_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate {
+  __typename: "program_package_plan_enrollment_aggregate";
+  aggregate: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans {
+  __typename: "program_package_plan";
+  id: any;
+  is_tempo_delivery: boolean;
+  /**
+   * An aggregated array relationship
+   */
+  program_package_plan_enrollments_aggregate: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate;
+}
+
 export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections_program_contents {
   __typename: "program_content";
   id: any;
@@ -8084,6 +8104,10 @@ export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package {
   /**
    * An array relationship
    */
+  program_package_plans: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans[];
+  /**
+   * An array relationship
+   */
   program_package_programs: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs[];
 }
 
@@ -8098,6 +8122,7 @@ export interface GET_ENROLLED_PROGRAM_PACKAGESVariables {
   memberId: string;
   programPackageId?: any | null;
   programPackagePlanId?: any | null;
+  programId?: any | null;
 }
 
 /* tslint:disable */
