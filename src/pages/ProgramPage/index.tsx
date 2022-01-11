@@ -82,7 +82,7 @@ const ProgramPage: React.VFC = () => {
   const { id: appId, settings, enabledModules } = useApp()
   const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program } = useProgram(programId)
-  const enrolledProgramPackage = useEnrolledProgramPackage(currentMemberId || '')
+  const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
   const apolloClient = useApolloClient()
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
@@ -223,7 +223,7 @@ const ProgramPage: React.VFC = () => {
     }
   }, [program, pageFrom, appId, settings])
 
-  if (loadingProgram || enrolledProgramPackage.loading) {
+  if (loadingProgram || enrolledProgramPackages.loading) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -249,10 +249,16 @@ const ProgramPage: React.VFC = () => {
     },
   })
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
-  const enrolledProgramPackageProgram = enrolledProgramPackage.data.flatMap(programPackage => programPackage.programs)
 
-  const isEnrolledByProgramPackage = enrolledProgramPackageProgram.some(program => program.id === programId)
-  const isDelivered = enrolledProgramPackageProgram.some(program => program.id === programId && program.isDelivered)
+  const isEnrolledByProgramPackage = !!enrolledProgramPackages.data
+
+  const isDelivered = isEnrolledByProgramPackage
+    ? enrolledProgramPackages.data.some(programPackage =>
+        programPackage.enrolledPlans.some(plan => !plan.isTempoDelivery)
+          ? true
+          : programPackage.programs.some(program => program.id === programId && program.isDelivered),
+      )
+    : false
 
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>

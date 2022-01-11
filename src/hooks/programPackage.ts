@@ -142,14 +142,19 @@ export const useEnrolledProgramPackagePlanIds = (memberId: string) => {
 
 export const useEnrolledProgramPackage = (
   memberId: string,
-  options?: { programPackageId?: string; programPackagePlanId?: string },
+  options?: { programPackageId?: string; programPackagePlanId?: string; programId?: string },
 ) => {
   const { loading, error, data } = useQuery<
     hasura.GET_ENROLLED_PROGRAM_PACKAGES,
     hasura.GET_ENROLLED_PROGRAM_PACKAGESVariables
   >(
     gql`
-      query GET_ENROLLED_PROGRAM_PACKAGES($memberId: String!, $programPackageId: uuid, $programPackagePlanId: uuid) {
+      query GET_ENROLLED_PROGRAM_PACKAGES(
+        $memberId: String!
+        $programPackageId: uuid
+        $programPackagePlanId: uuid
+        $programId: uuid
+      ) {
         program_package(
           where: {
             id: { _eq: $programPackageId }
@@ -157,6 +162,7 @@ export const useEnrolledProgramPackage = (
               id: { _eq: $programPackagePlanId }
               program_package_plan_enrollments: { member_id: { _eq: $memberId } }
             }
+            program_package_programs: { program_id: { _eq: $programId } }
           }
           distinct_on: id
         ) {
@@ -164,6 +170,15 @@ export const useEnrolledProgramPackage = (
           cover_url
           title
           published_at
+          program_package_plans {
+            id
+            is_tempo_delivery
+            program_package_plan_enrollments_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
           program_package_programs(where: { program: { published_at: { _lt: "now()" } } }) {
             id
             program {
@@ -188,6 +203,7 @@ export const useEnrolledProgramPackage = (
         memberId,
         programPackageId: options?.programPackageId,
         programPackagePlanId: options?.programPackagePlanId,
+        programId: options?.programId,
       },
     },
   )
@@ -197,6 +213,12 @@ export const useEnrolledProgramPackage = (
         id: pp.id,
         coverUrl: pp.cover_url || undefined,
         title: pp.title,
+        enrolledPlans: pp.program_package_plans
+          .filter(plan => plan.program_package_plan_enrollments_aggregate.aggregate?.count)
+          .map(plan => ({
+            id: plan.id,
+            isTempoDelivery: plan.is_tempo_delivery,
+          })),
         programs: pp.program_package_programs.map(p => ({
           id: p.program.id,
           isDelivered: !!p.program_tempo_deliveries.length,
