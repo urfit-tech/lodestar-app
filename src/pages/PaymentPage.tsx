@@ -29,7 +29,7 @@ const usePayForm = (paymentNo: number) => {
   const { authToken, currentMemberId } = useAuth()
   const [loadingForm, setLoadingForm] = useState(false)
   const [PayForm, setPayForm] = useState<React.ReactElement | null>(null)
-  const orderId = useOrderId(toString(paymentNo))
+  const { orderId } = useOrderId(toString(paymentNo))
 
   useEffect(() => {
     const clientBackUrl = window.location.origin
