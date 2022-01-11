@@ -89,15 +89,20 @@ const PerpetualProgramBanner: React.VFC<{
         <StyledTitle className="text-center">{program.title}</StyledTitle>
         {isEnrolledByProgramPackage && (
           <div className="mt-4 text-center">
-            <StyledButton
-              colorScheme="primary"
-              disabled={!isDelivered}
-              onClick={() => {
-                history.push(`/programs/${program.id}/contents`)
-              }}
-            >
-              {isDelivered ? formatMessage(commonMessages.button.enter) : formatMessage(commonMessages.button.unOpened)}
-            </StyledButton>
+            {isDelivered ? (
+              <StyledButton
+                colorScheme="primary"
+                onClick={() => {
+                  history.push(`/programs/${program.id}/contents`)
+                }}
+              >
+                {formatMessage(commonMessages.button.enter)}
+              </StyledButton>
+            ) : (
+              <StyledButton colorScheme="gray" color="darkGray" isActive>
+                {formatMessage(commonMessages.button.unOpened)}
+              </StyledButton>
+            )}
           </div>
         )}
       </StyledTitleBlock>

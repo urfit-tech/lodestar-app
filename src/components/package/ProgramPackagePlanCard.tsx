@@ -103,7 +103,9 @@ const ProgramPackagePlanCard: React.VFC<
       <div>
         {isEnrolled ? (
           <Link to={`/program-packages/${programPackageId}/contents`}>
-            <Button block>{formatMessage(commonMessages.button.enter)}</Button>
+            <Button variant="outline" colorScheme="primary" isFullWidth>
+              {formatMessage(commonMessages.button.enter)}
+            </Button>
           </Link>
         ) : (
           <CheckoutProductModal
