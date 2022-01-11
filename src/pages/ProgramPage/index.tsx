@@ -250,7 +250,7 @@ const ProgramPage: React.VFC = () => {
   })
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
 
-  const isEnrolledByProgramPackage = !!enrolledProgramPackages.data
+  const isEnrolledByProgramPackage = !!enrolledProgramPackages.data.length
 
   const isDelivered = isEnrolledByProgramPackage
     ? enrolledProgramPackages.data.some(programPackage =>
@@ -345,19 +345,21 @@ const ProgramPage: React.VFC = () => {
         </ProgramIntroBlock>
       </div>
 
-      <Responsive.Default>
-        <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-          <StyledButtonWrapper>
-            <Button
-              variant="primary"
-              isFullWidth
-              onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              {formatMessage(commonMessages.button.viewProject)}
-            </Button>
-          </StyledButtonWrapper>
-        </FixedBottomBlock>
-      </Responsive.Default>
+      {!isEnrolledByProgramPackage && (
+        <Responsive.Default>
+          <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
+            <StyledButtonWrapper>
+              <Button
+                variant="primary"
+                isFullWidth
+                onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                {formatMessage(commonMessages.button.viewProject)}
+              </Button>
+            </StyledButtonWrapper>
+          </FixedBottomBlock>
+        </Responsive.Default>
+      )}
     </DefaultLayout>
   )
 }
