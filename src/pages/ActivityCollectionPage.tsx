@@ -75,21 +75,19 @@ const ActivityCollectionPage = () => {
   } catch {
     collectionBanner = null
   }
+
+  const filteredActivities = activities
+    .filter(activity => classification === null || activity.categories.some(category => category.id === classification))
+    .filter(activity => !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage))
+
   useEffect(() => {
     tracking.impress(
-      activities
-        .filter(
-          activity => classification === null || activity.categories.some(category => category.id === classification),
-        )
-        .filter(
-          activity => !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage),
-        )
-        .map(activity => ({ type: 'Activity', id: activity.id })),
+      filteredActivities.map(activity => ({ type: 'Activity', id: activity.id })),
       {
         collection: 'ActivityCollection',
       },
     )
-  }, [activities, classification, currentLanguage, tracking])
+  }, [filteredActivities, tracking])
 
   return (
     <DefaultLayout white>
@@ -145,20 +143,11 @@ const ActivityCollectionPage = () => {
           {errorActivities && <div>{formatMessage(commonMessages.status.readingError)}</div>}
 
           <div className="row">
-            {activities
-              .filter(
-                activity =>
-                  classification === null || activity.categories.some(category => category.id === classification),
-              )
-              .filter(
-                activity =>
-                  !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage),
-              )
-              .map(activity => (
-                <div key={activity.id} className="col-12 col-md-6 col-lg-4 mb-4">
-                  <Activity {...activity} />
-                </div>
-              ))}
+            {filteredActivities.map(activity => (
+              <div key={activity.id} className="col-12 col-md-6 col-lg-4 mb-4">
+                <Activity {...activity} />
+              </div>
+            ))}
           </div>
         </div>
       </StyledCollection>

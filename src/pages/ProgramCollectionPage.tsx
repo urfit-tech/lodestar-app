@@ -61,6 +61,12 @@ const ProgramCollectionPage: React.VFC = () => {
     flatten(programs.map(program => program.categories).filter(notEmpty)),
   )
 
+  const filteredPrograms = programs.filter(
+    program =>
+      (!selectedCategoryId || program.categories?.some(category => category.id === selectedCategoryId)) &&
+      (!program.supportLocales || program.supportLocales.find(locale => locale === currentLanguage)),
+  )
+
   useEffect(() => {
     if (defaultActive) {
       setSelectedCategoryId(defaultActive)
@@ -72,12 +78,12 @@ const ProgramCollectionPage: React.VFC = () => {
   }, [])
   useEffect(() => {
     tracking.impress(
-      programs.map(program => ({ type: 'Program', id: program.id })),
+      filteredPrograms.map(program => ({ type: 'Program', id: program.id })),
       {
         collection: 'ProgramCollection',
       },
     )
-  }, [programs, tracking])
+  }, [filteredPrograms, tracking])
 
   let seoMeta:
     | {
@@ -162,24 +168,18 @@ const ProgramCollectionPage: React.VFC = () => {
             ) : !!errorPrograms ? (
               <div>{formatMessage(commonMessages.status.readingFail)}</div>
             ) : (
-              programs
-                .filter(
-                  program =>
-                    (!selectedCategoryId || program.categories?.some(category => category.id === selectedCategoryId)) &&
-                    (!program.supportLocales || program.supportLocales.find(locale => locale === currentLanguage)),
-                )
-                .map(program => (
-                  <div key={program.id} className="col-12 col-md-6 col-lg-4 mb-4">
-                    <ProgramCard
-                      program={program}
-                      programType={type}
-                      isEnrolled={enrolledProgramIds.includes(program.id)}
-                      noPrice={!!noPrice}
-                      withMeta={!noMeta}
-                      pageFrom={'CollectionPage'}
-                    />
-                  </div>
-                ))
+              filteredPrograms.map(program => (
+                <div key={program.id} className="col-12 col-md-6 col-lg-4 mb-4">
+                  <ProgramCard
+                    program={program}
+                    programType={type}
+                    isEnrolled={enrolledProgramIds.includes(program.id)}
+                    noPrice={!!noPrice}
+                    withMeta={!noMeta}
+                    pageFrom={'CollectionPage'}
+                  />
+                </div>
+              ))
             )}
           </div>
         </div>
