@@ -77,12 +77,13 @@ const ProgramCollectionPage: React.VFC = () => {
     ReactGA.ga('send', 'pageview')
   }, [])
   useEffect(() => {
-    tracking.impress(
-      filteredPrograms.map(program => ({ type: 'Program', id: program.id })),
-      {
-        collection: 'ProgramCollection',
-      },
-    )
+    filteredPrograms.length > 0 &&
+      tracking.impress(
+        filteredPrograms.map(program => ({ type: 'Program', id: program.id })),
+        {
+          collection: 'ProgramCollection',
+        },
+      )
   }, [filteredPrograms, tracking])
 
   let seoMeta:

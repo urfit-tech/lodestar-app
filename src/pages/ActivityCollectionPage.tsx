@@ -81,12 +81,13 @@ const ActivityCollectionPage = () => {
     .filter(activity => !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage))
 
   useEffect(() => {
-    tracking.impress(
-      filteredActivities.map(activity => ({ type: 'Activity', id: activity.id })),
-      {
-        collection: 'ActivityCollection',
-      },
-    )
+    filteredActivities.length > 0 &&
+      tracking.impress(
+        filteredActivities.map(activity => ({ type: 'Activity', id: activity.id })),
+        {
+          collection: 'ActivityCollection',
+        },
+      )
   }, [filteredActivities, tracking])
 
   return (
