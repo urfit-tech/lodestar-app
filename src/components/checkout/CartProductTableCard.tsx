@@ -4,6 +4,7 @@ import { List } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { TrackingInstance, useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { Fragment, useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { AiOutlineClose } from 'react-icons/ai'
@@ -31,6 +32,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   withCartLink,
   ...cardProps
 }) => {
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { removeCartProducts } = useContext(CartContext)
   const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
@@ -98,36 +100,9 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                       })
                       ReactGA.plugin.execute('ec', 'setAction', 'remove')
                       ReactGA.ga('send', 'event', 'UX', 'click', 'remove from cart')
-                      try {
-                        const simpleProduct = (await getSimpleProductCollection([cartProduct.productId]))[0]
-                        ;(window as any).dataLayer = (window as any).dataLayer || []
-                        ;(window as any).dataLayer.push({ ecommerce: null })
-                        ;(window as any).dataLayer.push({
-                          event: 'removeFromCart',
-                          ecommerce: {
-                            remove: {
-                              products: [
-                                {
-                                  name: simpleProduct.title,
-                                  id: simpleProduct.sku || simpleProduct.id,
-                                  price: simpleProduct.isOnSale
-                                    ? simpleProduct.salePrice
-                                    : simpleProduct.listPrice || 0,
-                                  brand: settings['title'] || appId,
-                                  category: simpleProduct.categories?.join('|'),
-                                  variant: simpleProduct.authors?.map(author => author.role).join('|') || [],
-                                  quantity:
-                                    cartProducts.find(
-                                      cartProduct => cartProduct.productId.split('_')[1] === simpleProduct.id,
-                                    )?.options?.quantity || 1,
-                                },
-                              ],
-                            },
-                          },
-                        })
-                      } catch {}
-
                       removeCartProducts && removeCartProducts([cartProduct.productId])
+                      const [type, id] = cartProduct.productId.split('_')
+                      tracking.removeFromCart({ type, id } as TrackingInstance)
                     }}
                   />
                 </div>

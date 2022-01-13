@@ -1,20 +1,22 @@
 import { SkeletonText } from '@chakra-ui/react'
 import { Icon, Typography } from 'antd'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { TrackingInstance, useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { groupBy } from 'ramda'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
 import CartProductTableCard from '../components/checkout/CartProductTableCard'
 import CheckoutBlock from '../components/checkout/CheckoutBlock'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import CartContext from '../contexts/CartContext'
-import { getCookie, notEmpty } from '../helpers'
 import { checkoutMessages } from '../helpers/translation'
 import { useSimpleProductCollection } from '../hooks/common'
 import { useMember } from '../hooks/member'
 
 const CartPage: React.VFC = () => {
+  const tracking = useTracking()
+  const [checkoutAlready, setCheckoutAlready] = useState(false)
   const { formatMessage } = useIntl()
   const [shopId] = useQueryParam('shopId', StringParam)
   const { cartProducts } = useContext(CartContext)
@@ -33,58 +35,17 @@ const CartPage: React.VFC = () => {
   }, [shopId])
 
   useEffect(() => {
-    if (cartProducts.length > 0) {
-      const cartProductIds = cartProducts.map(product => product.productId)
-      getSimpleProductCollection(cartProductIds).then(products => {
-        const productList = cartProducts
-          .map(cartProduct => {
-            const currentProduct = products.find(
-              product => `${product.productType}_${product.id}` === cartProduct.productId,
-            )
-
-            if (currentProduct === undefined) return undefined
-
-            return {
-              id: currentProduct.id,
-              item: currentProduct.sku || currentProduct.id,
-              title: currentProduct.title,
-              // TODO: base on product type to get url
-              url: `${window.location.origin}/programs/${currentProduct.id}`,
-              type: 'elearning',
-              price: currentProduct.salePrice || currentProduct.listPrice,
-              author:
-                currentProduct?.authors
-                  ?.filter(author => author.role === 'instructor')
-                  .map(author => ({ id: author.id, name: author.name })) || [],
-              channels: {
-                master: {
-                  id: currentProduct?.categories || [],
-                },
-              },
-            }
-          })
-          .filter(notEmpty)
-
-        // salesforce
-        if (productList.length > 0) {
-          ;(window as any).dataLayer = (window as any).dataLayer || []
-          ;(window as any).dataLayer.push({
-            event: 'sfData',
-            memberData: {
-              user_id: currentMemberId || '',
-              social_id: currentMemberId || '',
-              env: process.env.NODE_ENV === 'production' ? 'prod' : 'develop',
-              email: currentMember?.email || '',
-              dmp_id: getCookie('__eruid') || '',
-            },
-            itemData: {
-              products: productList,
-            },
-          })
-        }
-      })
+    if (!checkoutAlready) {
+      tracking
+        .checkout(
+          cartProducts.map(cartProduct => {
+            const [type, id] = cartProduct.productId.split('_')
+            return { type, id } as TrackingInstance
+          }),
+        )
+        .then(() => setCheckoutAlready)
     }
-  }, [currentMemberId])
+  }, [checkoutAlready, cartProducts, tracking])
 
   if (isAuthenticating || loadingMember) {
     return (

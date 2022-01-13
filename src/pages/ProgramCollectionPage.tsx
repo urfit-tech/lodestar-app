@@ -1,6 +1,7 @@
 import { Button as ChakraButton, Icon, SkeletonText } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -18,7 +19,6 @@ import { notEmpty } from '../helpers'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
-import { ProductImpressionField } from '../types/ecommerce'
 import { Category } from '../types/general'
 
 const StyledButton = styled(ChakraButton)`
@@ -31,6 +31,7 @@ const StyledButton = styled(ChakraButton)`
 `
 
 const ProgramCollectionPage: React.VFC = () => {
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
 
   const [defaultActive] = useQueryParam('active', StringParam)
@@ -67,50 +68,16 @@ const ProgramCollectionPage: React.VFC = () => {
   }, [defaultActive])
 
   useEffect(() => {
-    if (programs) {
-      const productImpressions: ProductImpressionField[] = []
-      programs.forEach((program, index) => {
-        const listPrice = program.plans[0]?.listPrice || 0
-        const salePrice =
-          (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
-            ? program.plans[0]?.salePrice
-            : (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
-            ? program.plans[0]?.salePrice
-            : undefined
-        ReactGA.plugin.execute('ec', 'addImpression', {
-          id: program.id,
-          name: program.title,
-          category: 'Program',
-          price: `${salePrice || listPrice}`,
-          position: index + 1,
-        })
-        if (settings['tracking.gtm_id']) {
-          productImpressions.push({
-            name: program.title,
-            id: program.id,
-            price: salePrice || listPrice,
-            brand: settings['title'] || appId,
-            category: program.categories.map(category => category.name).join('|'),
-            variant: program.roles.map(role => role.memberName).join('|'),
-            list: 'Program',
-            position: index + 1,
-          })
-        }
-      })
-      ReactGA.ga('send', 'pageview')
-
-      if (productImpressions.length > 0) {
-        ;(window as any).dataLayer = (window as any).dataLayer || []
-        ;(window as any).dataLayer.push({ ecommerce: null })
-        ;(window as any).dataLayer.push({
-          ecommerce: {
-            currencyCode: appCurrencyId || 'TWD',
-            impressions: productImpressions,
-          },
-        })
-      }
-    }
-  }, [programs])
+    ReactGA.ga('send', 'pageview')
+  }, [])
+  useEffect(() => {
+    tracking.impress(
+      programs.map(program => ({ type: 'Program', id: program.id })),
+      {
+        collection: 'ProgramCollection',
+      },
+    )
+  }, [programs, tracking])
 
   let seoMeta:
     | {

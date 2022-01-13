@@ -1,6 +1,7 @@
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -87,6 +88,7 @@ const ProgramCard: React.VFC<{
   renderCover,
   renderCustomDescription,
 }) => {
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { productEditorIds } = useProductEditorIds(program.id)
@@ -105,28 +107,15 @@ const ProgramCard: React.VFC<{
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
 
   const handleClick = () => {
-    if (settings['tracking.gtm_id']) {
-      ;(window as any).dataLayer = (window as any).dataLayer || []
-      ;(window as any).dataLayer.push({ ecommerce: null })
-      ;(window as any).dataLayer.push({
-        event: 'productClick',
-        ecommerce: {
-          click: {
-            actionField: { list: pageFrom || '' },
-            product: [
-              {
-                name: program.title,
-                id: program.id,
-                price: salePrice || listPrice,
-                brand: settings['title'] || appId,
-                category: program.categories && program.categories.map(category => category.name).join('|'),
-                variant: program.roles.map(role => role.memberId).join('|'),
-              },
-            ],
-          },
-        },
-      })
-    }
+    tracking.click(
+      {
+        type: 'Program',
+        id: program.id,
+      },
+      {
+        collection: pageFrom,
+      },
+    )
   }
 
   return (

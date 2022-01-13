@@ -1,5 +1,6 @@
 import { Button, Icon, Skeleton } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { uniqBy, unnest } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { AiFillAppstore } from 'react-icons/ai'
@@ -45,6 +46,7 @@ const StyledSkeleton = styled(Skeleton)`
 `
 
 const ActivityCollectionPage = () => {
+  const tracking = useTracking()
   const [active = null] = useQueryParam('categories', StringParam)
   const [classification = null, setClassification] = useQueryParam('classification', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
@@ -74,34 +76,20 @@ const ActivityCollectionPage = () => {
     collectionBanner = null
   }
   useEffect(() => {
-    if (activities && settings['tracking.gtm_id']) {
-      ;(window as any).dataLayer = (window as any).dataLayer || []
-      ;(window as any).dataLayer.push({ ecommerce: null })
-      ;(window as any).dataLayer.push({
-        ecommerce: {
-          currencyCode: appCurrencyId || 'TWD',
-          impressions: activities
-            .filter(
-              activity =>
-                classification === null || activity.categories.some(category => category.id === classification),
-            )
-            .filter(
-              activity =>
-                !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage),
-            )
-            .map((activity, index) => ({
-              name: activity.title,
-              id: activity.id,
-              brand: settings['title'] || appId,
-              category: activity.categories.map(category => category.name).join('|'),
-              variant: activity.organizerId,
-              list: 'Activity',
-              position: index + 1,
-            })),
-        },
-      })
-    }
-  }, [activities, currentLanguage, classification])
+    tracking.impress(
+      activities
+        .filter(
+          activity => classification === null || activity.categories.some(category => category.id === classification),
+        )
+        .filter(
+          activity => !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage),
+        )
+        .map(activity => ({ type: 'Activity', id: activity.id })),
+      {
+        collection: 'ActivityCollection',
+      },
+    )
+  }, [activities, classification, currentLanguage, tracking])
 
   return (
     <DefaultLayout white>

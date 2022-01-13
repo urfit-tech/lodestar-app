@@ -1,6 +1,7 @@
 import { Skeleton } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React from 'react'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { usePublishedActivityCollection } from '../../hooks/activity'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
@@ -12,8 +13,17 @@ const StyledAngleRightIcon = styled(AngleRightIcon)`
 `
 
 const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number } }> = ({ options }) => {
+  const tracking = useTracking()
   const { enabledModules, settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
+
+  useEffect(() => {
+    !loadingActivities &&
+      tracking.impress(
+        activities.map(activity => ({ type: 'Activity', id: activity.id })),
+        { collection: `ActivitySection` },
+      )
+  }, [activities, loadingActivities, tracking])
 
   if (loadingActivities)
     return (
@@ -25,25 +35,6 @@ const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number
     )
 
   if (activities.length === 0 || errorActivities || !enabledModules.activity) return null
-
-  if (settings['tracking.gtm_id'] && activities) {
-    ;(window as any).dataLayer = (window as any).dataLayer || []
-    ;(window as any).dataLayer.push({ ecommerce: null })
-    ;(window as any).dataLayer.push({
-      ecommerce: {
-        currencyCode: appCurrencyId || 'TWD',
-        impressions: activities.slice(0, options?.colAmount || 3).map((activity, index) => ({
-          id: activity.id,
-          name: activity.title,
-          brand: settings['title'] || appId,
-          category: activity.categories.map(category => category.name).join('|'),
-          variant: activity.organizerId,
-          list: 'Activity',
-          position: index + 1,
-        })),
-      },
-    })
-  }
 
   return (
     <StyledSection className="page-section">
