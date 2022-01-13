@@ -1,9 +1,8 @@
-import { useQuery } from '@apollo/react-hooks'
 import { Button } from '@chakra-ui/react'
 import { message } from 'antd'
 import axios from 'axios'
-import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { toString } from 'ramda'
 import React, { useCallback, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -12,8 +11,8 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { StyledContainer } from '../components/layout/DefaultLayout.styled'
 import CreditCardSelector, { CardHolder } from '../components/payment/CreditCardSelector'
 import TapPayForm, { TPCreditCard } from '../components/payment/TapPayForm'
-import hasura from '../hasura'
 import { codeMessages } from '../helpers/translation'
+import { useOrderId } from '../hooks/data'
 import { useMember } from '../hooks/member'
 import { useTappay } from '../hooks/util'
 
@@ -50,17 +49,7 @@ const PaymentTapPayBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { paymentNo } = useParams<{ paymentNo: string }>()
-  const { data } = useQuery<hasura.GET_ORDER_ID, hasura.GET_ORDER_IDVariables>(
-    gql`
-      query GET_ORDER_ID($paymentNo: numeric!) {
-        payment_log(where: { no: { _eq: $paymentNo } }) {
-          order_id
-        }
-      }
-    `,
-    { variables: { paymentNo } },
-  )
-  const orderId = data?.payment_log[0]?.order_id || null
+  const orderId = useOrderId(toString(paymentNo))
 
   const [tpCreditCard, setTpCreditCard] = useState<TPCreditCard | null>(null)
   const [memberCreditCardId, setMemberCreditCardId] = useState<string | null>(null)

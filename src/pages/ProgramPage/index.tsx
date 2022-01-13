@@ -21,6 +21,7 @@ import { desktopViewMixin, getCookie, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { GET_PRODUCT_SKU } from '../../hooks/common'
 import { useProgram } from '../../hooks/program'
+import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import ForbiddenPage from '../ForbiddenPage'
 import { PerpetualProgramBanner } from './ProgramBanner'
 import ProgramContentListSection from './ProgramContentListSection'
@@ -81,6 +82,7 @@ const ProgramPage: React.VFC = () => {
   const { id: appId, settings, enabledModules } = useApp()
   const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program } = useProgram(programId)
+  const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
   const apolloClient = useApolloClient()
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
@@ -221,7 +223,7 @@ const ProgramPage: React.VFC = () => {
     }
   }, [program, pageFrom, appId, settings])
 
-  if (loadingProgram) {
+  if (loadingProgram || enrolledProgramPackages.loading) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -248,6 +250,16 @@ const ProgramPage: React.VFC = () => {
   })
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
 
+  const isEnrolledByProgramPackage = !!enrolledProgramPackages.data.length
+
+  const isDelivered = isEnrolledByProgramPackage
+    ? enrolledProgramPackages.data.some(programPackage =>
+        programPackage.enrolledPlans.some(plan => !plan.isTempoDelivery)
+          ? true
+          : programPackage.programs.some(program => program.id === programId && program.isDelivered),
+      )
+    : false
+
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
       <Helmet>
@@ -262,7 +274,11 @@ const ProgramPage: React.VFC = () => {
       </Helmet>
 
       <div>
-        <PerpetualProgramBanner program={program} />
+        <PerpetualProgramBanner
+          program={program}
+          isEnrolledByProgramPackage={isEnrolledByProgramPackage}
+          isDelivered={isDelivered}
+        />
         <ProgramIntroBlock>
           <div className="container">
             <div className="row">
@@ -291,17 +307,19 @@ const ProgramPage: React.VFC = () => {
                   <ProgramInfoCard instructorId={instructorId} program={program} />
                 </Responsive.Desktop>
 
-                <div className="mb-5">
-                  <div id="subscription">
-                    {program.plans
-                      .filter(programPlan => programPlan.publishedAt)
-                      .map(programPlan => (
-                        <div key={programPlan.id} className="mb-3">
-                          <ProgramPlanCard programId={program.id} programPlan={programPlan} />
-                        </div>
-                      ))}
+                {!isEnrolledByProgramPackage && (
+                  <div className="mb-5">
+                    <div id="subscription">
+                      {program.plans
+                        .filter(programPlan => programPlan.publishedAt)
+                        .map(programPlan => (
+                          <div key={programPlan.id} className="mb-3">
+                            <ProgramPlanCard programId={program.id} programPlan={programPlan} />
+                          </div>
+                        ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </StyledIntroWrapper>
             </div>
 
@@ -327,19 +345,21 @@ const ProgramPage: React.VFC = () => {
         </ProgramIntroBlock>
       </div>
 
-      <Responsive.Default>
-        <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-          <StyledButtonWrapper>
-            <Button
-              variant="primary"
-              isFullWidth
-              onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              {formatMessage(commonMessages.button.viewProject)}
-            </Button>
-          </StyledButtonWrapper>
-        </FixedBottomBlock>
-      </Responsive.Default>
+      {!isEnrolledByProgramPackage && (
+        <Responsive.Default>
+          <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
+            <StyledButtonWrapper>
+              <Button
+                variant="primary"
+                isFullWidth
+                onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                {formatMessage(commonMessages.button.viewProject)}
+              </Button>
+            </StyledButtonWrapper>
+          </FixedBottomBlock>
+        </Responsive.Default>
+      )}
     </DefaultLayout>
   )
 }

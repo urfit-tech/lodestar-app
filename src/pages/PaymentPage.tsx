@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { toString } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -9,6 +10,7 @@ import { StyledContainer } from '../components/layout/DefaultLayout.styled'
 import GatewayForm from '../components/payment/GatewayForm'
 import { handleError } from '../helpers'
 import { codeMessages } from '../helpers/translation'
+import { useOrderId } from '../hooks/data'
 
 const PaymentPage: React.VFC = () => {
   const { paymentNo } = useParams<{ paymentNo: string }>()
@@ -27,10 +29,11 @@ const usePayForm = (paymentNo: number) => {
   const { authToken, currentMemberId } = useAuth()
   const [loadingForm, setLoadingForm] = useState(false)
   const [PayForm, setPayForm] = useState<React.ReactElement | null>(null)
+  const { orderId } = useOrderId(toString(paymentNo))
 
   useEffect(() => {
     const clientBackUrl = window.location.origin
-    if (authToken) {
+    if (authToken && orderId) {
       setLoadingForm(true)
       const apiBaseRoot = process.env.REACT_APP_API_BASE_ROOT?.startsWith('http')
         ? process.env.REACT_APP_API_BASE_ROOT
@@ -58,7 +61,7 @@ const usePayForm = (paymentNo: number) => {
                 if (result.url) {
                   window.location.href = result.url
                 } else {
-                  history.push(`/members/${currentMemberId}`)
+                  history.push(`/orders/${orderId}?tracking=1`)
                 }
                 break
               case 'spgateway':
@@ -66,8 +69,7 @@ const usePayForm = (paymentNo: number) => {
                 if (result.html) {
                   setPayForm(<GatewayForm formHtml={result.html} clientBackUrl={clientBackUrl} />)
                 } else {
-                  // window.location.assign(`/members/${currentMemberId}`)
-                  history.push(`/members/${currentMemberId}`)
+                  history.push(`/orders/${orderId}?tracking=1`)
                 }
                 break
               case 'tappay':
@@ -85,7 +87,7 @@ const usePayForm = (paymentNo: number) => {
         .catch(handleError)
         .finally(() => setLoadingForm(false))
     }
-  }, [authToken, currentMemberId, formatMessage, history, paymentNo])
+  }, [authToken, currentMemberId, formatMessage, history, paymentNo, orderId])
   return { loadingForm, PayForm }
 }
 export default PaymentPage

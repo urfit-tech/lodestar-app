@@ -74,7 +74,7 @@ const ProgramPackagePlanCard: React.VFC<
         periodAmount={isSubscription ? periodAmount : undefined}
       />
       <Divider className="my-3" />
-      {!isSubscription && (
+      {!isSubscription && periodAmount && periodType && (
         <StyledHighlight className="mb-3">
           {formatMessage(productMessages.programPackage.label.availableForLimitTime, {
             amount: periodAmount,
@@ -103,7 +103,9 @@ const ProgramPackagePlanCard: React.VFC<
       <div>
         {isEnrolled ? (
           <Link to={`/program-packages/${programPackageId}/contents`}>
-            <Button block>{formatMessage(commonMessages.button.enter)}</Button>
+            <Button variant="outline" colorScheme="primary" isFullWidth>
+              {formatMessage(commonMessages.button.enter)}
+            </Button>
           </Link>
         ) : (
           <CheckoutProductModal

@@ -4,13 +4,13 @@ import { Typography } from 'antd'
 import gql from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { sum, uniqBy } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
+import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import EmptyCover from '../../images/empty-cover.png'
 import RadioCard from '../RadioCard'
 
@@ -43,7 +43,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; expiredOwnedP
 }) => {
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
-  const { loading, error, programPackages } = useEnrolledProgramPackage(memberId)
+  const { loading, error, data: programPackages } = useEnrolledProgramPackage(memberId)
   const { settings } = useApp()
 
   const {
@@ -175,71 +175,6 @@ const useProgramPackages = (programPackagePlanIds: string[]) => {
   return {
     loadingProgramPackages: loading,
     errorProgramPackages: error,
-    programPackages,
-  }
-}
-
-const useEnrolledProgramPackage = (memberId: string) => {
-  const { loading, error, data } = useQuery<
-    hasura.GET_ENROLLED_PROGRAM_PACKAGES,
-    hasura.GET_ENROLLED_PROGRAM_PACKAGESVariables
-  >(
-    gql`
-      query GET_ENROLLED_PROGRAM_PACKAGES($memberId: String!) {
-        program_package(
-          where: { program_package_plans: { program_package_plan_enrollments: { member_id: { _eq: $memberId } } } }
-          distinct_on: id
-        ) {
-          id
-          cover_url
-          title
-          published_at
-          program_package_programs(where: { program: { published_at: { _is_null: false } } }) {
-            id
-            program {
-              id
-              program_content_sections {
-                id
-                program_contents {
-                  id
-                  duration
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      variables: {
-        memberId,
-      },
-    },
-  )
-
-  const programPackages =
-    loading || !!error || !data
-      ? []
-      : uniqBy(programPackage => programPackage.id, data.program_package).map(programPackage => ({
-          id: programPackage.id,
-          coverUrl: programPackage.cover_url || undefined,
-          title: programPackage.title,
-          programCount: programPackage.program_package_programs.length,
-          totalDuration: sum(
-            programPackage.program_package_programs
-              .map(programPackageProgram =>
-                programPackageProgram.program.program_content_sections
-                  .map(programContentSection =>
-                    programContentSection.program_contents.map(programContent => programContent.duration),
-                  )
-                  .flat(),
-              )
-              .flat(),
-          ),
-        }))
-  return {
-    loading,
-    error,
     programPackages,
   }
 }

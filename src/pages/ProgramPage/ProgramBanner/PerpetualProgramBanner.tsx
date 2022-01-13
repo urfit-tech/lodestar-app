@@ -1,9 +1,12 @@
+import { Button } from '@chakra-ui/react'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import BlurredBanner from '../../../components/common/BlurredBanner'
 import { BREAK_POINT } from '../../../components/common/Responsive'
+import { commonMessages } from '../../../helpers/translation'
 import { Program } from '../../../types/program'
 
 const StyledTags = styled.div`
@@ -56,11 +59,22 @@ const StyledLink = styled(Link)`
   color: white;
 `
 
+const StyledButton = styled(Button)`
+  && {
+    width: 250px;
+  }
+`
+
 const PerpetualProgramBanner: React.VFC<{
   program: Program & {
     tags: string[]
   }
-}> = ({ program }) => {
+  isEnrolledByProgramPackage?: boolean
+  isDelivered?: boolean
+}> = ({ program, isEnrolledByProgramPackage, isDelivered }) => {
+  const history = useHistory()
+  const { formatMessage } = useIntl()
+
   return (
     <BlurredBanner coverUrl={program.coverUrl || undefined}>
       <StyledTitleBlock noVideo={!program.coverVideoUrl}>
@@ -73,6 +87,24 @@ const PerpetualProgramBanner: React.VFC<{
         </StyledTags>
 
         <StyledTitle className="text-center">{program.title}</StyledTitle>
+        {isEnrolledByProgramPackage && (
+          <div className="mt-4 text-center">
+            {isDelivered ? (
+              <StyledButton
+                colorScheme="primary"
+                onClick={() => {
+                  history.push(`/programs/${program.id}/contents`)
+                }}
+              >
+                {formatMessage(commonMessages.button.enter)}
+              </StyledButton>
+            ) : (
+              <StyledButton colorScheme="gray" color="darkGray" isActive>
+                {formatMessage(commonMessages.button.unOpened)}
+              </StyledButton>
+            )}
+          </div>
+        )}
       </StyledTitleBlock>
 
       {program.coverVideoUrl && (

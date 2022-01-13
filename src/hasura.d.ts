@@ -616,76 +616,6 @@ export interface GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDSVariables {
 
 
 // ====================================================
-// GraphQL query operation: GET_ENROLLED_PROGRAM_PACKAGES
-// ====================================================
-
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections_program_contents {
-  __typename: "program_content";
-  id: any;
-  /**
-   * sec
-   */
-  duration: any | null;
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections {
-  __typename: "program_content_section";
-  id: any;
-  /**
-   * An array relationship
-   */
-  program_contents: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections_program_contents[];
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program {
-  __typename: "program";
-  id: any;
-  /**
-   * An array relationship
-   */
-  program_content_sections: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections[];
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs {
-  __typename: "program_package_program";
-  id: any;
-  /**
-   * An object relationship
-   */
-  program: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program;
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package {
-  __typename: "program_package";
-  id: any;
-  cover_url: string | null;
-  title: string;
-  published_at: any | null;
-  /**
-   * An array relationship
-   */
-  program_package_programs: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs[];
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGES {
-  /**
-   * fetch data from the table: "program_package"
-   */
-  program_package: GET_ENROLLED_PROGRAM_PACKAGES_program_package[];
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGESVariables {
-  memberId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-
-// ====================================================
 // GraphQL query operation: GET_PODCAST_ALBUM_BY_CATEGORY_NAME
 // ====================================================
 
@@ -4671,6 +4601,33 @@ export interface GET_COIN_STATUSVariables {
 
 
 // ====================================================
+// GraphQL query operation: GET_ORDER_ID
+// ====================================================
+
+
+export interface GET_ORDER_ID_payment_log {
+  __typename: "payment_log";
+  order_id: string;
+}
+
+export interface GET_ORDER_ID {
+  /**
+   * fetch data from the table: "payment_log"
+   */
+  payment_log: GET_ORDER_ID_payment_log[];
+}
+
+export interface GET_ORDER_IDVariables {
+  paymentNo: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
 // GraphQL query operation: GET_ISSUE_THREAD
 // ====================================================
 
@@ -7533,6 +7490,7 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
   id: any;
   size: any;
   options: any | null;
+  data: any | null;
 }
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_videos {
@@ -7693,6 +7651,7 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_video
   id: any;
   size: any;
   options: any | null;
+  data: any | null;
 }
 
 export interface GET_PROGRAM_CONTENT_program_content_by_pk_program_content_videos {
@@ -8067,34 +8026,103 @@ export interface GET_ENROLLED_PROGRAM_PACKAGE_PLAN_IDSVariables {
 
 
 // ====================================================
-// GraphQL query operation: GET_ENROLLED_PROGRAM_PACKAGE
+// GraphQL query operation: GET_ENROLLED_PROGRAM_PACKAGES
 // ====================================================
 
 
-export interface GET_ENROLLED_PROGRAM_PACKAGE_program_package_plan_enrollment_program_package_plan {
-  __typename: "program_package_plan";
-  program_package_id: any;
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate_aggregate {
+  __typename: "program_package_plan_enrollment_aggregate_fields";
+  count: number | null;
 }
 
-export interface GET_ENROLLED_PROGRAM_PACKAGE_program_package_plan_enrollment {
-  __typename: "program_package_plan_enrollment";
-  program_package_plan_id: any | null;
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate {
+  __typename: "program_package_plan_enrollment_aggregate";
+  aggregate: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans {
+  __typename: "program_package_plan";
+  id: any;
+  is_tempo_delivery: boolean;
+  /**
+   * An aggregated array relationship
+   */
+  program_package_plan_enrollments_aggregate: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate;
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections_program_contents {
+  __typename: "program_content";
+  id: any;
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections {
+  __typename: "program_content_section";
+  id: any;
+  /**
+   * An array relationship
+   */
+  program_contents: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections_program_contents[];
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program {
+  __typename: "program";
+  id: any;
+  /**
+   * An array relationship
+   */
+  program_content_sections: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_program_content_sections[];
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_tempo_deliveries {
+  __typename: "program_tempo_delivery";
+  id: any;
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs {
+  __typename: "program_package_program";
+  id: any;
   /**
    * An object relationship
    */
-  program_package_plan: GET_ENROLLED_PROGRAM_PACKAGE_program_package_plan_enrollment_program_package_plan | null;
-}
-
-export interface GET_ENROLLED_PROGRAM_PACKAGE {
+  program: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program;
   /**
-   * fetch data from the table: "program_package_plan_enrollment"
+   * An array relationship
    */
-  program_package_plan_enrollment: GET_ENROLLED_PROGRAM_PACKAGE_program_package_plan_enrollment[];
+  program_tempo_deliveries: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs_program_tempo_deliveries[];
 }
 
-export interface GET_ENROLLED_PROGRAM_PACKAGEVariables {
+export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package {
+  __typename: "program_package";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  published_at: any | null;
+  /**
+   * An array relationship
+   */
+  program_package_plans: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans[];
+  /**
+   * An array relationship
+   */
+  program_package_programs: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_programs[];
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGES {
+  /**
+   * fetch data from the table: "program_package"
+   */
+  program_package: GET_ENROLLED_PROGRAM_PACKAGES_program_package[];
+}
+
+export interface GET_ENROLLED_PROGRAM_PACKAGESVariables {
   memberId: string;
-  programPackageId: any;
+  programPackageId?: any | null;
+  programPackagePlanId?: any | null;
+  programId?: any | null;
 }
 
 /* tslint:disable */
@@ -9245,33 +9273,6 @@ export interface GET_ORDERS_PRODUCTVariables {
 
 
 // ====================================================
-// GraphQL query operation: GET_ORDER_ID
-// ====================================================
-
-
-export interface GET_ORDER_ID_payment_log {
-  __typename: "payment_log";
-  order_id: string;
-}
-
-export interface GET_ORDER_ID {
-  /**
-   * fetch data from the table: "payment_log"
-   */
-  payment_log: GET_ORDER_ID_payment_log[];
-}
-
-export interface GET_ORDER_IDVariables {
-  paymentNo: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-
-// ====================================================
 // GraphQL query operation: GET_PODCAST_ALBUMS
 // ====================================================
 
@@ -9370,6 +9371,7 @@ export interface GET_LAST_EXERCISE_exercise {
   __typename: "exercise";
   id: any;
   answer: any | null;
+  member_id: string;
 }
 
 export interface GET_LAST_EXERCISE {
@@ -12177,6 +12179,9 @@ export enum product_inventory_update_column {
  * update columns of table "product"
  */
 export enum product_update_column {
+  coin_back = "coin_back",
+  coin_period_amount = "coin_period_amount",
+  coin_period_type = "coin_period_type",
   id = "id",
   sku = "sku",
   target = "target",
@@ -19156,6 +19161,9 @@ export interface product_bool_exp {
   _or?: (product_bool_exp | null)[] | null;
   card_discounts?: card_discount_bool_exp | null;
   cart_products?: cart_product_bool_exp | null;
+  coin_back?: numeric_comparison_exp | null;
+  coin_period_amount?: Int_comparison_exp | null;
+  coin_period_type?: String_comparison_exp | null;
   coupon_plan_products?: coupon_plan_product_bool_exp | null;
   id?: String_comparison_exp | null;
   order_products?: order_product_bool_exp | null;
@@ -19189,6 +19197,9 @@ export interface product_enrollment_bool_exp {
 export interface product_insert_input {
   card_discounts?: card_discount_arr_rel_insert_input | null;
   cart_products?: cart_product_arr_rel_insert_input | null;
+  coin_back?: any | null;
+  coin_period_amount?: number | null;
+  coin_period_type?: string | null;
   coupon_plan_products?: coupon_plan_product_arr_rel_insert_input | null;
   id?: string | null;
   order_products?: order_product_arr_rel_insert_input | null;

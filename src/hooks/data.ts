@@ -319,3 +319,17 @@ export const useCoinStatus = (memberId: string) => {
     ownedCoins: sum(data?.coin_status.map(v => v.remaining || 0) || []),
   }
 }
+
+export const useOrderId = (paymentNo: string) => {
+  const { data } = useQuery<hasura.GET_ORDER_ID, hasura.GET_ORDER_IDVariables>(
+    gql`
+      query GET_ORDER_ID($paymentNo: numeric!) {
+        payment_log(where: { no: { _eq: $paymentNo } }) {
+          order_id
+        }
+      }
+    `,
+    { variables: { paymentNo } },
+  )
+  return { orderId: data?.payment_log[0]?.order_id || null }
+}
