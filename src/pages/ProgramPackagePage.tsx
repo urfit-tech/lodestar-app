@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/react'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { createRef, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
@@ -43,6 +44,7 @@ const messages = defineMessages({
 })
 
 const ProgramPackagePage: React.VFC = () => {
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { programPackageId } = useParams<{ programPackageId: string }>()
   const { currentMemberId } = useAuth()
@@ -54,6 +56,13 @@ const ProgramPackagePage: React.VFC = () => {
   const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const planBlockRef = createRef<HTMLDivElement>()
+
+  useEffect(() => {
+    tracking.detail({
+      type: 'ProgramPackage',
+      id: programPackageId,
+    })
+  }, [programPackageId, tracking])
 
   useEffect(() => {
     if (programPackageIntroduction) {

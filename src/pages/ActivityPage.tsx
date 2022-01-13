@@ -2,6 +2,7 @@ import { Button, Divider, SkeletonText } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { render } from 'mustache'
 import React, { useEffect } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
@@ -45,12 +46,20 @@ const StyledTitle = styled.h2`
 `
 
 const ActivityPage: React.VFC = () => {
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { activityId } = useParams<{ activityId: string }>()
   const { isAuthenticated, currentMemberId } = useAuth()
   const { settings, id: appId } = useApp()
   const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
+
+  useEffect(() => {
+    tracking.detail({
+      type: 'Activity',
+      id: activityId,
+    })
+  }, [activityId, tracking])
 
   useEffect(() => {
     if (activity) {
