@@ -119,11 +119,14 @@ const ProgramPage: React.VFC = () => {
     ReactGA.ga('send', 'pageview')
   }, [])
   useEffect(() => {
-    tracking.detail({
-      type: 'Program',
-      id: programId,
-    })
-  }, [programId, tracking])
+    tracking.detail(
+      {
+        type: 'program',
+        id: programId,
+      },
+      { collection: pageFrom || undefined },
+    )
+  }, [pageFrom, programId, tracking])
 
   if (loadingProgram || enrolledProgramPackages.loading) {
     return (

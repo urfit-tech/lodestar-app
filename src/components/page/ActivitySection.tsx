@@ -20,7 +20,7 @@ const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number
   useEffect(() => {
     !loadingActivities &&
       tracking.impress(
-        activities.map(activity => ({ type: 'Activity', id: activity.id })),
+        activities.map(activity => ({ type: 'activity', id: activity.id })),
         { collection: `ActivitySection` },
       )
   }, [activities, loadingActivities, tracking])

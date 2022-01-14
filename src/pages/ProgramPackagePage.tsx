@@ -7,6 +7,7 @@ import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ProgramCollection from '../components/package/ProgramCollection'
@@ -54,15 +55,19 @@ const ProgramPackagePage: React.VFC = () => {
     currentMemberId || '',
   )
   const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const [pageFrom] = useQueryParam('pageFrom', StringParam)
 
   const planBlockRef = createRef<HTMLDivElement>()
 
   useEffect(() => {
-    tracking.detail({
-      type: 'ProgramPackage',
-      id: programPackageId,
-    })
-  }, [programPackageId, tracking])
+    tracking.detail(
+      {
+        type: 'program_package',
+        id: programPackageId,
+      },
+      { collection: pageFrom || undefined },
+    )
+  }, [pageFrom, programPackageId, tracking])
 
   useEffect(() => {
     if (programPackageIntroduction) {

@@ -109,7 +109,7 @@ const ProgramCard: React.VFC<{
   const handleClick = () => {
     tracking.click(
       {
-        type: 'Program',
+        type: 'program',
         id: program.id,
       },
       {

@@ -83,7 +83,7 @@ const ActivityCollectionPage = () => {
   useEffect(() => {
     filteredActivities.length > 0 &&
       tracking.impress(
-        filteredActivities.map(activity => ({ type: 'Activity', id: activity.id })),
+        filteredActivities.map(activity => ({ type: 'activity', id: activity.id })),
         {
           collection: 'ActivityCollection',
         },

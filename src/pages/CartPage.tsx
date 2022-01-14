@@ -1,7 +1,7 @@
 import { SkeletonText } from '@chakra-ui/react'
 import { Icon, Typography } from 'antd'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { TrackingInstance, useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { groupBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -11,8 +11,8 @@ import CheckoutBlock from '../components/checkout/CheckoutBlock'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import CartContext from '../contexts/CartContext'
 import { checkoutMessages } from '../helpers/translation'
-import { useSimpleProductCollection } from '../hooks/common'
 import { useMember } from '../hooks/member'
+import { getResourceByProductId } from '../hooks/util'
 
 const CartPage: React.VFC = () => {
   const tracking = useTracking()
@@ -20,9 +20,8 @@ const CartPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const [shopId] = useQueryParam('shopId', StringParam)
   const { cartProducts } = useContext(CartContext)
-  const { isAuthenticating, currentMemberId, currentMember } = useAuth()
+  const { isAuthenticating, currentMemberId } = useAuth()
   const { loadingMember, member } = useMember(currentMemberId || '')
-  const getSimpleProductCollection = useSimpleProductCollection()
   const cartProductGroups = groupBy(cartProduct => cartProduct.shopId || '', cartProducts)
   const shopIds = Object.keys(cartProductGroups)
   // "Scroll To Top" every cart router change if not top
@@ -34,18 +33,13 @@ const CartPage: React.VFC = () => {
     }
   }, [shopId])
 
+  // TODO: put checkout into better place
   useEffect(() => {
-    if (!checkoutAlready) {
+    !checkoutAlready &&
       tracking
-        .checkout(
-          cartProducts.map(cartProduct => {
-            const [type, id] = cartProduct.productId.split('_')
-            return { type, id } as TrackingInstance
-          }),
-        )
-        .then(() => setCheckoutAlready)
-    }
-  }, [checkoutAlready, cartProducts, tracking])
+        .checkout(cartProducts.map(cartProduct => getResourceByProductId(cartProduct.productId)))
+        .finally(() => setCheckoutAlready(true))
+  }, [tracking, cartProducts, checkoutAlready])
 
   if (isAuthenticating || loadingMember) {
     return (

@@ -69,7 +69,7 @@ const ProgramPlanPaymentButton: React.VFC<{
               isFullWidth
               isMultiline
               onClick={() => {
-                tracking.addToCart({ type: 'ProgramPlan', id: programPlan.id })
+                tracking.addToCart({ type: 'program_plan', id: programPlan.id })
                 handleAddCart()
               }}
             >
@@ -89,7 +89,7 @@ const ProgramPlanPaymentButton: React.VFC<{
               colorScheme="primary"
               isFullWidth
               onClick={() => {
-                tracking.addToCart({ type: 'ProgramPlan', id: programPlan.id }, { direct: true })
+                tracking.addToCart({ type: 'program_plan', id: programPlan.id }, { direct: true })
                 handleAddCart()?.then(() => history.push('/cart'))
               }}
             >

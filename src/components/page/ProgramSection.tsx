@@ -26,7 +26,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
   useEffect(() => {
     !loadingPrograms &&
       tracking.impress(
-        programs.map(program => ({ type: 'Program', id: program.id })),
+        programs.map(program => ({ type: 'program', id: program.id })),
         { collection: `ProgramSection` },
       )
   }, [loadingPrograms, programs, tracking])
@@ -53,7 +53,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
               key={program.id}
               className={`col-12 col-lg-${(options?.colAmount && 12 / options?.colAmount) || 4} mb-5`}
             >
-              <ProgramCard program={program} withMeta noInstructor pageFrom={'HomePage'} />
+              <ProgramCard program={program} withMeta noInstructor pageFrom={window.location.pathname} />
             </div>
           ))}
         </div>

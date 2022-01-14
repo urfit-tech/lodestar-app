@@ -7,6 +7,7 @@ const LoadablePage: React.VFC<{ pageName: string }> = ({ pageName }) => {
   const { settings } = useApp()
   useGAPageView()
   settings['tracking.fb_pixel_id'] && ReactPixel.pageView()
+
   const PageComponent = React.lazy(() => import(`./pages/${pageName}`))
   return <PageComponent />
 }

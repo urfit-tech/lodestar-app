@@ -79,7 +79,7 @@ const ProgramCollectionPage: React.VFC = () => {
   useEffect(() => {
     filteredPrograms.length > 0 &&
       tracking.impress(
-        filteredPrograms.map(program => ({ type: 'Program', id: program.id })),
+        filteredPrograms.map(program => ({ type: 'program', id: program.id })),
         {
           collection: 'ProgramCollection',
         },
@@ -177,7 +177,7 @@ const ProgramCollectionPage: React.VFC = () => {
                     isEnrolled={enrolledProgramIds.includes(program.id)}
                     noPrice={!!noPrice}
                     withMeta={!noMeta}
-                    pageFrom={'CollectionPage'}
+                    pageFrom={window.location.pathname}
                   />
                 </div>
               ))

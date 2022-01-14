@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import ActivityBanner from '../components/activity/ActivityBanner'
 import ActivitySessionItem from '../components/activity/ActivitySessionItem'
 import ActivityTicket from '../components/activity/ActivityTicket'
@@ -53,13 +54,17 @@ const ActivityPage: React.VFC = () => {
   const { isAuthenticated, currentMemberId } = useAuth()
   const { settings, id: appId } = useApp()
   const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
+  const [pageFrom] = useQueryParam('pageFrom', StringParam)
 
   useEffect(() => {
-    tracking.detail({
-      type: 'Activity',
-      id: activityId,
-    })
-  }, [activityId, tracking])
+    tracking.detail(
+      {
+        type: 'activity',
+        id: activityId,
+      },
+      { collection: pageFrom || undefined },
+    )
+  }, [activityId, pageFrom, tracking])
 
   useEffect(() => {
     if (activity) {
