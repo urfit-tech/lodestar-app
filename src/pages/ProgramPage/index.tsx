@@ -14,6 +14,7 @@ import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
+import { Detail } from '../../components/common/Tracking'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
@@ -118,15 +119,6 @@ const ProgramPage: React.VFC = () => {
   useEffect(() => {
     ReactGA.ga('send', 'pageview')
   }, [])
-  useEffect(() => {
-    tracking.detail(
-      {
-        type: 'program',
-        id: programId,
-      },
-      { collection: pageFrom || undefined },
-    )
-  }, [pageFrom, programId, tracking])
 
   if (loadingProgram || enrolledProgramPackages.loading) {
     return (
@@ -167,6 +159,7 @@ const ProgramPage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
+      <Detail type="program" id={program.id} />
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDescription} />

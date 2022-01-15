@@ -24,11 +24,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
   })
 
   useEffect(() => {
-    !loadingPrograms &&
-      tracking.impress(
-        programs.map(program => ({ type: 'program', id: program.id })),
-        { collection: `ProgramSection` },
-      )
+    !loadingPrograms && tracking.impress(programs.map(program => ({ type: 'program', id: program.id })))
   }, [loadingPrograms, programs, tracking])
 
   if (loadingPrograms)

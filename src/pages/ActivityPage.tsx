@@ -2,7 +2,6 @@ import { Button, Divider, SkeletonText } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { render } from 'mustache'
 import React, { useEffect } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
@@ -11,7 +10,6 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import ActivityBanner from '../components/activity/ActivityBanner'
 import ActivitySessionItem from '../components/activity/ActivitySessionItem'
 import ActivityTicket from '../components/activity/ActivityTicket'
@@ -20,6 +18,7 @@ import { AuthModalContext } from '../components/auth/AuthModal'
 import CreatorCard from '../components/common/CreatorCard'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
+import { Detail } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useActivity } from '../hooks/activity'
@@ -47,24 +46,12 @@ const StyledTitle = styled.h2`
 `
 
 const ActivityPage: React.VFC = () => {
-  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { activityId } = useParams<{ activityId: string }>()
   const { isAuthenticated, currentMemberId } = useAuth()
   const { settings, id: appId } = useApp()
   const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
-  const [pageFrom] = useQueryParam('pageFrom', StringParam)
-
-  useEffect(() => {
-    tracking.detail(
-      {
-        type: 'activity',
-        id: activityId,
-      },
-      { collection: pageFrom || undefined },
-    )
-  }, [activityId, pageFrom, tracking])
 
   useEffect(() => {
     if (activity) {
@@ -136,6 +123,7 @@ const ActivityPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      <Detail type="activity" id={activityId} />
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDescription} />

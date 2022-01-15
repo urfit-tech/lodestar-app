@@ -1,14 +1,13 @@
 import { Button } from '@chakra-ui/react'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { createRef, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import { BraftContent } from '../components/common/StyledBraftEditor'
+import { Detail } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ProgramCollection from '../components/package/ProgramCollection'
 import ProgramPackageBanner from '../components/package/ProgramPackageBanner'
@@ -45,7 +44,6 @@ const messages = defineMessages({
 })
 
 const ProgramPackagePage: React.VFC = () => {
-  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { programPackageId } = useParams<{ programPackageId: string }>()
   const { currentMemberId } = useAuth()
@@ -55,19 +53,8 @@ const ProgramPackagePage: React.VFC = () => {
     currentMemberId || '',
   )
   const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
-  const [pageFrom] = useQueryParam('pageFrom', StringParam)
 
   const planBlockRef = createRef<HTMLDivElement>()
-
-  useEffect(() => {
-    tracking.detail(
-      {
-        type: 'program_package',
-        id: programPackageId,
-      },
-      { collection: pageFrom || undefined },
-    )
-  }, [pageFrom, programPackageId, tracking])
 
   useEffect(() => {
     if (programPackageIntroduction) {
@@ -103,6 +90,8 @@ const ProgramPackagePage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace="4rem">
+      <Detail type="program_package" id={programPackageId} />
+
       <ProgramPackageBanner
         title={programPackageIntroduction.title}
         coverUrl={programPackageIntroduction.coverUrl}

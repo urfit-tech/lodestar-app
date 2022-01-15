@@ -16,6 +16,7 @@ import LanguageContext from '../contexts/LanguageContext'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { usePublishedActivityCollection } from '../hooks/activity'
 import { useNav } from '../hooks/data'
+import { ActivityProps } from '../types/activity'
 import { Category } from '../types/general'
 
 type Banner = { desktop: string; mobile: string }
@@ -80,16 +81,6 @@ const ActivityCollectionPage = () => {
     .filter(activity => classification === null || activity.categories.some(category => category.id === classification))
     .filter(activity => !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage))
 
-  useEffect(() => {
-    filteredActivities.length > 0 &&
-      tracking.impress(
-        filteredActivities.map(activity => ({ type: 'activity', id: activity.id })),
-        {
-          collection: 'ActivityCollection',
-        },
-      )
-  }, [filteredActivities, tracking])
-
   return (
     <DefaultLayout white>
       {collectionBanner && <StyledCollectionBanner src={collectionBanner}></StyledCollectionBanner>}
@@ -142,17 +133,33 @@ const ActivityCollectionPage = () => {
         <div className="container">
           {loadingActivities && <Skeleton />}
           {errorActivities && <div>{formatMessage(commonMessages.status.readingError)}</div>}
-
-          <div className="row">
-            {filteredActivities.map(activity => (
-              <div key={activity.id} className="col-12 col-md-6 col-lg-4 mb-4">
-                <Activity {...activity} />
-              </div>
-            ))}
-          </div>
+          <ActivityCollection activities={activities} />
         </div>
       </StyledCollection>
     </DefaultLayout>
+  )
+}
+
+const ActivityCollection: React.FC<{
+  activities: (ActivityProps & {
+    categories: Category[]
+    participantCount: number
+    totalSeats: number
+  })[]
+}> = ({ activities }) => {
+  const tracking = useTracking()
+  useEffect(() => {
+    activities.length > 0 && tracking.impress(activities.map(activity => ({ type: 'activity', id: activity.id })))
+  }, [activities, tracking])
+
+  return (
+    <div className="row">
+      {activities.map(activity => (
+        <div key={activity.id} className="col-12 col-md-6 col-lg-4 mb-4">
+          <Activity {...activity} />
+        </div>
+      ))}
+    </div>
   )
 }
 

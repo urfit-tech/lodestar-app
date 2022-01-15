@@ -18,11 +18,7 @@ const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 
   useEffect(() => {
-    !loadingActivities &&
-      tracking.impress(
-        activities.map(activity => ({ type: 'activity', id: activity.id })),
-        { collection: `ActivitySection` },
-      )
+    !loadingActivities && tracking.impress(activities.map(activity => ({ type: 'activity', id: activity.id })))
   }, [activities, loadingActivities, tracking])
 
   if (loadingActivities)

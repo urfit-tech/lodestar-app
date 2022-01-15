@@ -20,6 +20,7 @@ import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
 import { Category } from '../types/general'
+import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../types/program'
 
 const StyledButton = styled(ChakraButton)`
   && {
@@ -35,10 +36,7 @@ const ProgramCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
 
   const [defaultActive] = useQueryParam('active', StringParam)
-  const [type] = useQueryParam('type', StringParam)
   const [title] = useQueryParam('title', StringParam)
-  const [noPrice] = useQueryParam('noPrice', BooleanParam)
-  const [noMeta] = useQueryParam('noMeta', BooleanParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
   const [noBanner] = useQueryParam('noBanner', BooleanParam)
   const [permitted] = useQueryParam('permitted', BooleanParam)
@@ -47,12 +45,12 @@ const ProgramCollectionPage: React.VFC = () => {
   const { settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { pageTitle } = useNav()
   const { currentLanguage } = useContext(LanguageContext)
+  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const { loadingPrograms, errorPrograms, programs } = usePublishedProgramCollection({
     isPrivate: permitted ? undefined : false,
     categoryId: defaultActive || undefined,
   })
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
 
@@ -76,15 +74,6 @@ const ProgramCollectionPage: React.VFC = () => {
   useEffect(() => {
     ReactGA.ga('send', 'pageview')
   }, [])
-  useEffect(() => {
-    filteredPrograms.length > 0 &&
-      tracking.impress(
-        filteredPrograms.map(program => ({ type: 'program', id: program.id })),
-        {
-          collection: 'ProgramCollection',
-        },
-      )
-  }, [filteredPrograms, tracking])
 
   let seoMeta:
     | {
@@ -163,29 +152,50 @@ const ProgramCollectionPage: React.VFC = () => {
               }}
             />
           )}
-          <div className="row">
-            {loadingPrograms ? (
-              <SkeletonText mt="1" noOfLines={4} spacing="4" />
-            ) : !!errorPrograms ? (
-              <div>{formatMessage(commonMessages.status.readingFail)}</div>
-            ) : (
-              filteredPrograms.map(program => (
-                <div key={program.id} className="col-12 col-md-6 col-lg-4 mb-4">
-                  <ProgramCard
-                    program={program}
-                    programType={type}
-                    isEnrolled={enrolledProgramIds.includes(program.id)}
-                    noPrice={!!noPrice}
-                    withMeta={!noMeta}
-                    pageFrom={window.location.pathname}
-                  />
-                </div>
-              ))
-            )}
-          </div>
+          {loadingPrograms ? (
+            <SkeletonText mt="1" noOfLines={4} spacing="4" />
+          ) : !!errorPrograms ? (
+            <div>{formatMessage(commonMessages.status.readingFail)}</div>
+          ) : (
+            <ProgramCollection programs={filteredPrograms} enrolledProgramIds={enrolledProgramIds} />
+          )}
         </div>
       </StyledCollection>
     </DefaultLayout>
+  )
+}
+
+const ProgramCollection: React.FC<{
+  programs: (ProgramBriefProps & {
+    supportLocales: string[] | null
+    categories: Category[]
+    roles: ProgramRole[]
+    plans: ProgramPlan[]
+  })[]
+  enrolledProgramIds: string[]
+}> = ({ programs, enrolledProgramIds }) => {
+  const tracking = useTracking()
+  const [type] = useQueryParam('type', StringParam)
+  const [noPrice] = useQueryParam('noPrice', BooleanParam)
+  const [noMeta] = useQueryParam('noMeta', BooleanParam)
+  useEffect(() => {
+    programs.length > 0 && tracking.impress(programs.map(program => ({ type: 'program', id: program.id })))
+  }, [programs, tracking])
+  return (
+    <div className="row">
+      {programs.map(program => (
+        <div key={program.id} className="col-12 col-md-6 col-lg-4 mb-4">
+          <ProgramCard
+            program={program}
+            programType={type}
+            isEnrolled={enrolledProgramIds.includes(program.id)}
+            noPrice={!!noPrice}
+            withMeta={!noMeta}
+            pageFrom={window.location.pathname}
+          />
+        </div>
+      ))}
+    </div>
   )
 }
 
