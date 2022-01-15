@@ -3,10 +3,6 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { TrackingInstance } from 'lodestar-app-element/src/hooks/tracking'
 import { useContext, useEffect, useRef } from 'react'
-import ReactPixel from 'react-facebook-pixel'
-import ReactGA from 'react-ga'
-import TagManager from 'react-gtm-module'
-import { hotjar } from 'react-hotjar'
 import { useIntl } from 'react-intl'
 import LanguageContext from '../contexts/LanguageContext'
 import { productMessages } from '../helpers/translation'
@@ -47,54 +43,6 @@ export const useTappay = () => {
     )
 
   return { TPDirect }
-}
-
-export const useGA = () => {
-  const { settings } = useApp()
-
-  if (settings['tracking.ga_id']) {
-    ReactGA.initialize(settings['tracking.ga_id'])
-    ReactGA.plugin.require('ecommerce')
-    ReactGA.plugin.require('ec')
-  }
-}
-
-export const useGAPageView = () => {
-  useEffect(() => {
-    ReactGA.pageview(window.location.pathname + window.location.search)
-  }, [])
-}
-
-export const usePixel = () => {
-  const { settings } = useApp()
-
-  settings['tracking.fb_pixel_id'] && ReactPixel.init(settings['tracking.fb_pixel_id'])
-}
-
-export const useHotjar = () => {
-  const { settings } = useApp()
-
-  try {
-    settings['tracking.hotjar_id'] &&
-      settings['tracking.hotjar_sv'] &&
-      hotjar.initialize(parseInt(settings['tracking.hotjar_id']), parseInt(settings['tracking.hotjar_sv']))
-  } catch (error) {
-    process.env.NODE_ENV === 'development' && console.error(error)
-  }
-}
-
-export const useGTM = () => {
-  const { settings } = useApp()
-
-  try {
-    if (settings['tracking.gtm_id']) {
-      TagManager.initialize({
-        gtmId: settings['tracking.gtm_id'],
-      })
-    }
-  } catch (error) {
-    process.env.NODE_ENV === 'development' && console.error(error)
-  }
 }
 
 export const useSwarmify = () => {
