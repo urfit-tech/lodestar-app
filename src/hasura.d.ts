@@ -1630,7 +1630,7 @@ export interface GET_MEMBER_ORDERS_order_log_order_products_product {
    */
   id: string;
   /**
-   * Program / ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
    */
   type: string;
 }
@@ -2050,7 +2050,7 @@ export interface GET_CART_PRODUCT_COLLECTION_cart_product_product {
    */
   id: string;
   /**
-   * Program / ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
    */
   type: string;
   /**
@@ -2085,7 +2085,7 @@ export interface GET_CART_PRODUCT_COLLECTION_product {
    */
   id: string;
   /**
-   * Program / ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
    */
   type: string;
   /**
@@ -3830,7 +3830,7 @@ export interface GET_ORDER_PRODUCT_order_product_by_pk_product {
    */
   id: string;
   /**
-   * Program / ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
    */
   type: string;
   target: string;
@@ -4298,7 +4298,7 @@ export interface GET_PRODUCT_SKU_product {
    */
   id: string;
   /**
-   * Program / ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
    */
   type: string;
   target: string;
@@ -10159,6 +10159,7 @@ export enum activity_session_ticket_update_column {
  */
 export enum activity_session_update_column {
   activity_id = "activity_id",
+  deleted_at = "deleted_at",
   description = "description",
   ended_at = "ended_at",
   id = "id",
@@ -10200,6 +10201,7 @@ export enum activity_ticket_update_column {
   activity_id = "activity_id",
   count = "count",
   currency_id = "currency_id",
+  deleted_at = "deleted_at",
   description = "description",
   ended_at = "ended_at",
   id = "id",
@@ -10215,6 +10217,7 @@ export enum activity_ticket_update_column {
 export enum activity_update_column {
   app_id = "app_id",
   cover_url = "cover_url",
+  deleted_at = "deleted_at",
   description = "description",
   id = "id",
   is_participants_visible = "is_participants_visible",
@@ -13164,6 +13167,7 @@ export interface activity_bool_exp {
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
+  deleted_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_participants_visible?: Boolean_comparison_exp | null;
@@ -13252,6 +13256,7 @@ export interface activity_insert_input {
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
   cover_url?: string | null;
+  deleted_at?: any | null;
   description?: string | null;
   id?: any | null;
   is_participants_visible?: boolean | null;
@@ -13300,6 +13305,7 @@ export interface activity_session_bool_exp {
   activity_enrollments?: activity_enrollment_bool_exp | null;
   activity_id?: uuid_comparison_exp | null;
   activity_session_tickets?: activity_session_ticket_bool_exp | null;
+  deleted_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -13319,6 +13325,7 @@ export interface activity_session_insert_input {
   activity_attendances?: activity_attendance_arr_rel_insert_input | null;
   activity_id?: any | null;
   activity_session_tickets?: activity_session_ticket_arr_rel_insert_input | null;
+  deleted_at?: any | null;
   description?: string | null;
   ended_at?: any | null;
   id?: any | null;
@@ -13471,6 +13478,7 @@ export interface activity_ticket_bool_exp {
   count?: Int_comparison_exp | null;
   currency?: currency_bool_exp | null;
   currency_id?: String_comparison_exp | null;
+  deleted_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -13505,6 +13513,7 @@ export interface activity_ticket_insert_input {
   count?: number | null;
   currency?: currency_obj_rel_insert_input | null;
   currency_id?: string | null;
+  deleted_at?: any | null;
   description?: string | null;
   ended_at?: any | null;
   id?: any | null;

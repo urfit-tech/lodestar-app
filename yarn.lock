@@ -10851,9 +10851,9 @@ lodash.xorby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#v1.3.4:
+lodestar-app-element@urfit-tech/lodestar-app-element#v1.3.5:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/044660c5e08963cf02cafe8c9a5a935459a9873e"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/e715dc931c74ccaa96d62e2b5a0a2d67c8d257a7"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -10898,6 +10898,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#v1.3.4:
     react-dom "17.0.2"
     react-facebook-pixel "1.0.4"
     react-ga "3.3.0"
+    react-hotjar "^4.0.0"
     react-icons "4.3.1"
     react-intl "5.20.9"
     react-is "^17.0.2"
@@ -14111,6 +14112,11 @@ react-hotjar@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-hotjar/-/react-hotjar-2.2.1.tgz#5f06d15a146960262dba612657c828c8b58da8a3"
   integrity sha512-rkHdsFDfI7HCKeAwkHPf8Vq7ZbpX0oE4/5GgVvNambWw8z0PSKKxi59qWYX7H+dDYjchiL3z3hrAFQ+PohgQOA==
+
+react-hotjar@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-hotjar/-/react-hotjar-4.0.0.tgz#b98b6baf7da19cd63565a81dee40d0d62702bacd"
+  integrity sha512-jRk2aWZkK2MMWRj+DBhpwTG5jfhae5DMLoVGbRGqPjZDmKYTtV/tD1/0kmFIlw4pInHKaukQriJ14CQg8MGvww==
 
 react-howler@^5.2.0:
   version "5.2.0"

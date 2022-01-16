@@ -4,16 +4,16 @@ import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useEffect } from 'react'
 import ReactPixel from 'react-facebook-pixel'
-import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import { BooleanParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
+import { Purchase } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
-import { getCookie, notEmpty } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { useSimpleProductCollection } from '../hooks/common'
 import LoadingPage from './LoadingPage'
@@ -28,6 +28,7 @@ const messages = defineMessages({
 })
 
 const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
@@ -40,15 +41,11 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   )
   const order = data?.order_log_by_pk
 
-  // TODO: get orderId and show items
-
   useEffect(() => {
     if (order && order.status === 'SUCCESS' && withTracking) {
       const productPrice = order.order_products_aggregate?.aggregate?.sum?.price || 0
       const discountPrice = order.order_discounts_aggregate?.aggregate?.sum?.price || 0
       const shippingFee = (order.shipping && order.shipping['fee']) || 0
-      const orderProductIds = order.order_products.map(orderProduct => orderProduct.product_id)
-
       if (settings['tracking.fb_pixel_id']) {
         ReactPixel.track('Purchase', {
           value: productPrice - discountPrice - shippingFee,
@@ -66,151 +63,8 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
           }),
         })
       }
-
-      if (settings['tracking.ga_id']) {
-        ;(window as any).dataLayer = (window as any).dataLayer || []
-        ;(window as any).dataLayer.push({
-          transactionId: order.id,
-          transactionTotal: productPrice - discountPrice - shippingFee,
-          transactionShipping: shippingFee,
-          transactionProducts: order.order_products.map(order_product => {
-            const [productType, productId] = order_product.product_id.split('_')
-            return {
-              sku: productId,
-              name: order_product.name,
-              category: productType,
-              price: `${order_product.price}`,
-              quantity: `${order_product.options ? order_product.options['quantity'] || 1 : 1}`,
-              currency: 'TWD',
-            }
-          }),
-        })
-        ReactGA.plugin.execute('ecommerce', 'addTransaction', {
-          id: order.id,
-          revenue: productPrice - discountPrice - shippingFee,
-          shipping: shippingFee,
-        })
-        for (let order_product of order.order_products) {
-          const [productType, productId] = order_product.product_id.split('_')
-          ReactGA.plugin.execute('ecommerce', 'addItem', {
-            id: order.id,
-            sku: productId,
-            name: order_product.name,
-            category: productType,
-            price: `${order_product.price}`,
-            quantity: `${order_product.options ? order_product.options['quantity'] || 1 : 1}`,
-            currency: 'TWD',
-          })
-          ReactGA.plugin.execute('ec', 'addProduct', {
-            id: productId,
-            name: order_product.name,
-            category: productType,
-            price: `${order_product.price}`,
-            quantity: `${order_product.options ? order_product.options['quantity'] || 1 : 1}`,
-            currency: 'TWD',
-          })
-        }
-        ReactGA.plugin.execute('ec', 'setAction', 'purchase', {
-          id: order.id,
-          revenue: productPrice - discountPrice - shippingFee,
-          shipping: shippingFee,
-          coupon:
-            order.order_discounts.length > 0
-              ? order.order_discounts[0].type === 'Coupon'
-                ? order.order_discounts[0].target
-                : null
-              : null,
-        })
-        ReactGA.plugin.execute('ecommerce', 'send', {})
-        ReactGA.plugin.execute('ecommerce', 'clear', {})
-
-        ReactGA.ga('send', 'pageview')
-      }
-
-      getSimpleProductCollection(orderProductIds).then(products => {
-        const productList = order.order_products
-          .map(orderProduct => {
-            const currentProduct = products.find(
-              product => `${product.productType}_${product.id}` === orderProduct.product_id,
-            )
-            if (currentProduct === undefined) return undefined
-
-            return {
-              id: currentProduct.id,
-              item: currentProduct.sku || currentProduct.id,
-              title: currentProduct.title,
-              // TODO: base on product type to get url
-              url: `${window.location.origin}/programs/${currentProduct.id}`,
-              type: 'elearning',
-              order_number: order?.custom_id,
-              price: currentProduct.listPrice || currentProduct.salePrice,
-              author:
-                currentProduct?.authors
-                  ?.filter(author => author.role === 'instructor')
-                  .map(author => ({ id: author.id, name: author.name })) || [],
-              channels: {
-                master: {
-                  id: currentProduct?.categories || [],
-                },
-              },
-            }
-          })
-          .filter(notEmpty)
-
-        // salesforce
-        ;(window as any).dataLayer = (window as any).dataLayer || []
-        ;(window as any).dataLayer.push({
-          event: 'sfData',
-          memberData: {
-            user_id: currentMemberId || '',
-            social_id: currentMemberId || '',
-            env: process.env.NODE_ENV === 'production' ? 'prod' : 'develop',
-            email: currentMember?.email || '',
-            dmp_id: getCookie('__eruid') || '',
-          },
-          itemData: {
-            products: productList,
-          },
-        })
-
-        // gtm ecc
-        ;(window as any).dataLayer.push({ ecommerce: null })
-        ;(window as any).dataLayer.push({
-          event: 'purchase',
-          ecommerce: {
-            purchase: {
-              actionField: {
-                id: order.id,
-                affiliation: settings['title'] || appId,
-                revenue: productPrice - discountPrice - shippingFee,
-                shipping: shippingFee,
-                coupon: order.order_discounts
-                  .map(orderDiscount => `${orderDiscount.type}_${orderDiscount.name}`)
-                  .join(' | '),
-              },
-              products: products.map(product => {
-                const currentOrderProduct = order.order_products.find(
-                  orderProduct => orderProduct.product_id === `${product.productType}_${product.id}`,
-                )
-                return {
-                  id: product.sku || product.id,
-                  name: product.title,
-                  price: product.isOnSale ? product.salePrice : product.listPrice,
-                  category: product.categories?.join('|'),
-                  brand: settings['title'] || appId,
-                  quantity: currentOrderProduct?.options['quantity'] || 1,
-                  variant: product.authors
-                    ?.filter(author => author.role === 'instructor')
-                    .map(author => author.name)
-                    .join('|'),
-                }
-              }),
-            },
-          },
-        })
-      })
     }
-  }, [order, settings, withTracking, currentMemberId])
+  }, [order, settings, withTracking])
 
   if (loading) {
     return <LoadingPage />
@@ -254,6 +108,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   return (
     render?.({ order }) || (
       <DefaultLayout noFooter>
+        {order.status === 'SUCCESS' && withTracking && <Purchase orderId={order.id} />}
         <div
           className="container d-flex align-items-center justify-content-center"
           style={{ height: 'calc(100vh - 64px)' }}

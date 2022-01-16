@@ -1,6 +1,7 @@
 import { Skeleton } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React from 'react'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { usePublishedProgramCollection } from '../../hooks/program'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
@@ -14,11 +15,17 @@ const StyledAngleRightIcon = styled(AngleRightIcon)`
 const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,
 }) => {
+  const tracking = useTracking()
+
   const { settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { loadingPrograms, errorPrograms, programs } = usePublishedProgramCollection({
     isPrivate: false,
     categoryId: options?.categoryId,
   })
+
+  useEffect(() => {
+    !loadingPrograms && tracking.impress(programs.map(program => ({ type: 'program', id: program.id })))
+  }, [loadingPrograms, programs, tracking])
 
   if (loadingPrograms)
     return (
@@ -31,35 +38,6 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
 
   if (programs.length === 0 || errorPrograms) return null
 
-  if (settings['tracking.gtm_id'] && programs) {
-    ;(window as any).dataLayer = (window as any).dataLayer || []
-    ;(window as any).dataLayer.push({ ecommerce: null })
-    ;(window as any).dataLayer.push({
-      ecommerce: {
-        currencyCode: appCurrencyId || 'TWD',
-        impressions: programs.slice(0, options?.colAmount || 3).map((program, index) => {
-          const listPrice = program.plans[0]?.listPrice || 0
-          const salePrice =
-            (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
-              ? program.plans[0]?.salePrice
-              : (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
-              ? program.plans[0]?.salePrice
-              : undefined
-          return {
-            id: program.id,
-            name: program.title,
-            price: salePrice || listPrice,
-            brand: settings['title'] || appId,
-            category: program.categories.map(category => category.name).join('|'),
-            variant: program.roles.map(role => role.memberName).join('|'),
-            list: 'Program',
-            position: index + 1,
-          }
-        }),
-      },
-    })
-  }
-
   return (
     <StyledSection className="page-section">
       <SectionTitle>{options?.title || '線上課程'}</SectionTitle>
@@ -71,7 +49,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
               key={program.id}
               className={`col-12 col-lg-${(options?.colAmount && 12 / options?.colAmount) || 4} mb-5`}
             >
-              <ProgramCard program={program} withMeta noInstructor pageFrom={'HomePage'} />
+              <ProgramCard program={program} withMeta noInstructor pageFrom={window.location.pathname} />
             </div>
           ))}
         </div>

@@ -7,6 +7,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { BraftContent } from '../components/common/StyledBraftEditor'
+import { Detail } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ProgramCollection from '../components/package/ProgramCollection'
 import ProgramPackageBanner from '../components/package/ProgramPackageBanner'
@@ -89,6 +90,8 @@ const ProgramPackagePage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace="4rem">
+      <Detail type="program_package" id={programPackageId} />
+
       <ProgramPackageBanner
         title={programPackageIntroduction.title}
         coverUrl={programPackageIntroduction.coverUrl}

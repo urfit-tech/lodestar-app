@@ -2,25 +2,24 @@ import { SkeletonText } from '@chakra-ui/react'
 import { Icon, Typography } from 'antd'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { groupBy } from 'ramda'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
 import CartProductTableCard from '../components/checkout/CartProductTableCard'
 import CheckoutBlock from '../components/checkout/CheckoutBlock'
+import { Checkout } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import CartContext from '../contexts/CartContext'
-import { getCookie, notEmpty } from '../helpers'
 import { checkoutMessages } from '../helpers/translation'
-import { useSimpleProductCollection } from '../hooks/common'
 import { useMember } from '../hooks/member'
 
 const CartPage: React.VFC = () => {
   const { formatMessage } = useIntl()
+  const [checkoutAlready, setCheckoutAlready] = useState(false)
   const [shopId] = useQueryParam('shopId', StringParam)
   const { cartProducts } = useContext(CartContext)
-  const { isAuthenticating, currentMemberId, currentMember } = useAuth()
+  const { isAuthenticating, currentMemberId } = useAuth()
   const { loadingMember, member } = useMember(currentMemberId || '')
-  const getSimpleProductCollection = useSimpleProductCollection()
   const cartProductGroups = groupBy(cartProduct => cartProduct.shopId || '', cartProducts)
   const shopIds = Object.keys(cartProductGroups)
   // "Scroll To Top" every cart router change if not top
@@ -32,60 +31,6 @@ const CartPage: React.VFC = () => {
     }
   }, [shopId])
 
-  useEffect(() => {
-    if (cartProducts.length > 0) {
-      const cartProductIds = cartProducts.map(product => product.productId)
-      getSimpleProductCollection(cartProductIds).then(products => {
-        const productList = cartProducts
-          .map(cartProduct => {
-            const currentProduct = products.find(
-              product => `${product.productType}_${product.id}` === cartProduct.productId,
-            )
-
-            if (currentProduct === undefined) return undefined
-
-            return {
-              id: currentProduct.id,
-              item: currentProduct.sku || currentProduct.id,
-              title: currentProduct.title,
-              // TODO: base on product type to get url
-              url: `${window.location.origin}/programs/${currentProduct.id}`,
-              type: 'elearning',
-              price: currentProduct.salePrice || currentProduct.listPrice,
-              author:
-                currentProduct?.authors
-                  ?.filter(author => author.role === 'instructor')
-                  .map(author => ({ id: author.id, name: author.name })) || [],
-              channels: {
-                master: {
-                  id: currentProduct?.categories || [],
-                },
-              },
-            }
-          })
-          .filter(notEmpty)
-
-        // salesforce
-        if (productList.length > 0) {
-          ;(window as any).dataLayer = (window as any).dataLayer || []
-          ;(window as any).dataLayer.push({
-            event: 'sfData',
-            memberData: {
-              user_id: currentMemberId || '',
-              social_id: currentMemberId || '',
-              env: process.env.NODE_ENV === 'production' ? 'prod' : 'develop',
-              email: currentMember?.email || '',
-              dmp_id: getCookie('__eruid') || '',
-            },
-            itemData: {
-              products: productList,
-            },
-          })
-        }
-      })
-    }
-  }, [currentMemberId])
-
   if (isAuthenticating || loadingMember) {
     return (
       <DefaultLayout>
@@ -93,9 +38,14 @@ const CartPage: React.VFC = () => {
       </DefaultLayout>
     )
   }
-
   return (
     <DefaultLayout>
+      {!checkoutAlready && (
+        <Checkout
+          productIds={cartProducts.map(cartProduct => cartProduct.productId)}
+          onCheckout={() => setCheckoutAlready(true)}
+        />
+      )}
       {/* group cart products by product owner */}
       {shopIds.length > 1 && typeof shopId === 'undefined' && (
         <div className="container py-5">

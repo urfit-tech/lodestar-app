@@ -1,6 +1,7 @@
 import { Button, Icon } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext } from 'react'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -35,6 +36,7 @@ const ProgramPlanPaymentButton: React.VFC<{
     groupBuyingPeople: number
   }
 }> = ({ programPlan }) => {
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
   const { settings } = useApp()
@@ -66,7 +68,10 @@ const ProgramPlanPaymentButton: React.VFC<{
               colorScheme="primary"
               isFullWidth
               isMultiline
-              onClick={handleAddCart}
+              onClick={() => {
+                tracking.addToCart({ type: 'program_plan', id: programPlan.id })
+                handleAddCart()
+              }}
             >
               <Icon as={AiOutlineShoppingCart} />
               <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
@@ -83,7 +88,10 @@ const ProgramPlanPaymentButton: React.VFC<{
             <Button
               colorScheme="primary"
               isFullWidth
-              onClick={() => handleAddCart()?.then(() => history.push('/cart'))}
+              onClick={() => {
+                tracking.addToCart({ type: 'program_plan', id: programPlan.id }, { direct: true })
+                handleAddCart()?.then(() => history.push('/cart'))
+              }}
             >
               {programPlan.listPrice === 0
                 ? formatMessage(commonMessages.button.join)

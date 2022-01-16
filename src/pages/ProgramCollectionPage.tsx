@@ -1,6 +1,7 @@
 import { Button as ChakraButton, Icon, SkeletonText } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -18,8 +19,8 @@ import { notEmpty } from '../helpers'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
-import { ProductImpressionField } from '../types/ecommerce'
 import { Category } from '../types/general'
+import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../types/program'
 
 const StyledButton = styled(ChakraButton)`
   && {
@@ -31,13 +32,11 @@ const StyledButton = styled(ChakraButton)`
 `
 
 const ProgramCollectionPage: React.VFC = () => {
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
 
   const [defaultActive] = useQueryParam('active', StringParam)
-  const [type] = useQueryParam('type', StringParam)
   const [title] = useQueryParam('title', StringParam)
-  const [noPrice] = useQueryParam('noPrice', BooleanParam)
-  const [noMeta] = useQueryParam('noMeta', BooleanParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
   const [noBanner] = useQueryParam('noBanner', BooleanParam)
   const [permitted] = useQueryParam('permitted', BooleanParam)
@@ -46,18 +45,24 @@ const ProgramCollectionPage: React.VFC = () => {
   const { settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { pageTitle } = useNav()
   const { currentLanguage } = useContext(LanguageContext)
+  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const { loadingPrograms, errorPrograms, programs } = usePublishedProgramCollection({
     isPrivate: permitted ? undefined : false,
     categoryId: defaultActive || undefined,
   })
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
 
   const categories: Category[] = uniqBy(
     category => category.id,
     flatten(programs.map(program => program.categories).filter(notEmpty)),
+  )
+
+  const filteredPrograms = programs.filter(
+    program =>
+      (!selectedCategoryId || program.categories?.some(category => category.id === selectedCategoryId)) &&
+      (!program.supportLocales || program.supportLocales.find(locale => locale === currentLanguage)),
   )
 
   useEffect(() => {
@@ -67,50 +72,8 @@ const ProgramCollectionPage: React.VFC = () => {
   }, [defaultActive])
 
   useEffect(() => {
-    if (programs) {
-      const productImpressions: ProductImpressionField[] = []
-      programs.forEach((program, index) => {
-        const listPrice = program.plans[0]?.listPrice || 0
-        const salePrice =
-          (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
-            ? program.plans[0]?.salePrice
-            : (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
-            ? program.plans[0]?.salePrice
-            : undefined
-        ReactGA.plugin.execute('ec', 'addImpression', {
-          id: program.id,
-          name: program.title,
-          category: 'Program',
-          price: `${salePrice || listPrice}`,
-          position: index + 1,
-        })
-        if (settings['tracking.gtm_id']) {
-          productImpressions.push({
-            name: program.title,
-            id: program.id,
-            price: salePrice || listPrice,
-            brand: settings['title'] || appId,
-            category: program.categories.map(category => category.name).join('|'),
-            variant: program.roles.map(role => role.memberName).join('|'),
-            list: 'Program',
-            position: index + 1,
-          })
-        }
-      })
-      ReactGA.ga('send', 'pageview')
-
-      if (productImpressions.length > 0) {
-        ;(window as any).dataLayer = (window as any).dataLayer || []
-        ;(window as any).dataLayer.push({ ecommerce: null })
-        ;(window as any).dataLayer.push({
-          ecommerce: {
-            currencyCode: appCurrencyId || 'TWD',
-            impressions: productImpressions,
-          },
-        })
-      }
-    }
-  }, [programs])
+    ReactGA.ga('send', 'pageview')
+  }, [])
 
   let seoMeta:
     | {
@@ -189,35 +152,50 @@ const ProgramCollectionPage: React.VFC = () => {
               }}
             />
           )}
-          <div className="row">
-            {loadingPrograms ? (
-              <SkeletonText mt="1" noOfLines={4} spacing="4" />
-            ) : !!errorPrograms ? (
-              <div>{formatMessage(commonMessages.status.readingFail)}</div>
-            ) : (
-              programs
-                .filter(
-                  program =>
-                    (!selectedCategoryId || program.categories?.some(category => category.id === selectedCategoryId)) &&
-                    (!program.supportLocales || program.supportLocales.find(locale => locale === currentLanguage)),
-                )
-                .map(program => (
-                  <div key={program.id} className="col-12 col-md-6 col-lg-4 mb-4">
-                    <ProgramCard
-                      program={program}
-                      programType={type}
-                      isEnrolled={enrolledProgramIds.includes(program.id)}
-                      noPrice={!!noPrice}
-                      withMeta={!noMeta}
-                      pageFrom={'CollectionPage'}
-                    />
-                  </div>
-                ))
-            )}
-          </div>
+          {loadingPrograms ? (
+            <SkeletonText mt="1" noOfLines={4} spacing="4" />
+          ) : !!errorPrograms ? (
+            <div>{formatMessage(commonMessages.status.readingFail)}</div>
+          ) : (
+            <ProgramCollection programs={filteredPrograms} enrolledProgramIds={enrolledProgramIds} />
+          )}
         </div>
       </StyledCollection>
     </DefaultLayout>
+  )
+}
+
+const ProgramCollection: React.FC<{
+  programs: (ProgramBriefProps & {
+    supportLocales: string[] | null
+    categories: Category[]
+    roles: ProgramRole[]
+    plans: ProgramPlan[]
+  })[]
+  enrolledProgramIds: string[]
+}> = ({ programs, enrolledProgramIds }) => {
+  const tracking = useTracking()
+  const [type] = useQueryParam('type', StringParam)
+  const [noPrice] = useQueryParam('noPrice', BooleanParam)
+  const [noMeta] = useQueryParam('noMeta', BooleanParam)
+  useEffect(() => {
+    programs.length > 0 && tracking.impress(programs.map(program => ({ type: 'program', id: program.id })))
+  }, [programs, tracking])
+  return (
+    <div className="row">
+      {programs.map(program => (
+        <div key={program.id} className="col-12 col-md-6 col-lg-4 mb-4">
+          <ProgramCard
+            program={program}
+            programType={type}
+            isEnrolled={enrolledProgramIds.includes(program.id)}
+            noPrice={!!noPrice}
+            withMeta={!noMeta}
+            pageFrom={window.location.pathname}
+          />
+        </div>
+      ))}
+    </div>
   )
 }
 

@@ -18,6 +18,7 @@ import { AuthModalContext } from '../components/auth/AuthModal'
 import CreatorCard from '../components/common/CreatorCard'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
+import { Detail } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useActivity } from '../hooks/activity'
@@ -122,6 +123,7 @@ const ActivityPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      <Detail type="activity" id={activityId} />
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDescription} />
