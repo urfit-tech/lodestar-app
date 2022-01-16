@@ -3,8 +3,7 @@ import { Button, Divider, Icon, SkeletonText } from '@chakra-ui/react'
 import { List } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import gql from 'graphql-tag'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { TrackingInstance, useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { Fragment, useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { AiOutlineClose } from 'react-icons/ai'
@@ -14,7 +13,6 @@ import CartContext from '../../contexts/CartContext'
 import hasura from '../../hasura'
 import { checkoutMessages } from '../../helpers/translation'
 import { useMemberShop } from '../../hooks/checkout'
-import { useSimpleProductCollection } from '../../hooks/common'
 import EmptyAvatar from '../../images/avatar.svg'
 import { CartProductProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
@@ -37,12 +35,10 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   const { removeCartProducts } = useContext(CartContext)
   const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
   const { memberShop } = useMemberShop(shopId)
-  const getSimpleProductCollection = useSimpleProductCollection()
-  const { settings, id: appId } = useApp()
 
   useEffect(() => {
     refetch && refetch()
-  })
+  }, [refetch])
 
   if (loading) {
     return (
@@ -92,7 +88,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                   />
                   <Icon
                     as={AiOutlineClose}
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 cursor-pointer"
                     onClick={async () => {
                       ReactGA.plugin.execute('ec', 'addProduct', {
                         id: cartProduct.productId,
@@ -101,8 +97,6 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                       ReactGA.plugin.execute('ec', 'setAction', 'remove')
                       ReactGA.ga('send', 'event', 'UX', 'click', 'remove from cart')
                       removeCartProducts && removeCartProducts([cartProduct.productId])
-                      const [type, id] = cartProduct.productId.split('_')
-                      tracking.removeFromCart({ type, id } as TrackingInstance)
                     }}
                   />
                 </div>

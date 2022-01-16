@@ -1,23 +1,21 @@
 import { SkeletonText } from '@chakra-ui/react'
 import { Icon, Typography } from 'antd'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { groupBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
 import CartProductTableCard from '../components/checkout/CartProductTableCard'
 import CheckoutBlock from '../components/checkout/CheckoutBlock'
+import { Checkout } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import CartContext from '../contexts/CartContext'
 import { checkoutMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
-import { getResourceByProductId } from '../hooks/util'
 
 const CartPage: React.VFC = () => {
-  const tracking = useTracking()
-  const [checkoutAlready, setCheckoutAlready] = useState(false)
   const { formatMessage } = useIntl()
+  const [checkoutAlready, setCheckoutAlready] = useState(false)
   const [shopId] = useQueryParam('shopId', StringParam)
   const { cartProducts } = useContext(CartContext)
   const { isAuthenticating, currentMemberId } = useAuth()
@@ -33,14 +31,6 @@ const CartPage: React.VFC = () => {
     }
   }, [shopId])
 
-  // TODO: put checkout into better place
-  useEffect(() => {
-    !checkoutAlready &&
-      tracking
-        .checkout(cartProducts.map(cartProduct => getResourceByProductId(cartProduct.productId)))
-        .finally(() => setCheckoutAlready(true))
-  }, [tracking, cartProducts, checkoutAlready])
-
   if (isAuthenticating || loadingMember) {
     return (
       <DefaultLayout>
@@ -48,9 +38,14 @@ const CartPage: React.VFC = () => {
       </DefaultLayout>
     )
   }
-
   return (
     <DefaultLayout>
+      {!checkoutAlready && (
+        <Checkout
+          productIds={cartProducts.map(cartProduct => cartProduct.productId)}
+          onCheckout={() => setCheckoutAlready(true)}
+        />
+      )}
       {/* group cart products by product owner */}
       {shopIds.length > 1 && typeof shopId === 'undefined' && (
         <div className="container py-5">

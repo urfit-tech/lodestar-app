@@ -11,6 +11,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import { BooleanParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
+import { Purchase } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
@@ -39,11 +40,6 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
     { variables: { orderId: orderId } },
   )
   const order = data?.order_log_by_pk
-
-  // TODO: get orderId and show items
-  useEffect(() => {
-    orderId && tracking.purchase(orderId)
-  }, [orderId, tracking])
 
   useEffect(() => {
     if (order && order.status === 'SUCCESS' && withTracking) {
@@ -112,6 +108,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   return (
     render?.({ order }) || (
       <DefaultLayout noFooter>
+        {order.status === 'SUCCESS' && withTracking && <Purchase orderId={order.id} />}
         <div
           className="container d-flex align-items-center justify-content-center"
           style={{ height: 'calc(100vh - 64px)' }}

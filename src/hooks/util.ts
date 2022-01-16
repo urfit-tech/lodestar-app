@@ -1,7 +1,6 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { TrackingInstance } from 'lodestar-app-element/src/hooks/tracking'
 import { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import LanguageContext from '../contexts/LanguageContext'
@@ -147,22 +146,4 @@ export async function sleep(time: number): Promise<void> {
   return new Promise<void>((res, rej) => {
     setTimeout(res, time)
   })
-}
-
-export const getResourceByProductId = (productId: string): TrackingInstance => {
-  const [productType, productTarget] = productId.split('_')
-  switch (productType) {
-    case 'ProgramPackage':
-      return { type: 'program_package', id: productTarget }
-    case 'ProgramPackagePlan':
-      return { type: 'program_package_plan', id: productTarget }
-    case 'Program':
-      return { type: 'program', id: productTarget }
-    case 'ProgramPlan':
-      return { type: 'program_plan', id: productTarget }
-    case 'Activity':
-      return { type: 'activity', id: productTarget }
-    default:
-      return { type: 'unknown', id: productTarget }
-  }
 }
