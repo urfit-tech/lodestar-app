@@ -4,7 +4,7 @@ import { equals } from 'ramda'
 import React, { useEffect } from 'react'
 import { StringParam, useQueryParam } from 'use-query-params'
 
-export const Detail: React.FC<{ type: string; id: string }> = ({ type, id }) => {
+export const Detail: React.FC<{ type: string; id: string }> = React.memo(({ type, id }) => {
   const tracking = useTracking()
   const [pageFrom] = useQueryParam('pageFrom', StringParam)
 
@@ -13,7 +13,7 @@ export const Detail: React.FC<{ type: string; id: string }> = ({ type, id }) => 
   }, [id, pageFrom, tracking, type])
 
   return <></>
-}
+}, equals)
 
 export const Checkout: React.FC<{ productIds: string[]; onCheckout?: () => void }> = React.memo(
   ({ productIds, onCheckout }) => {
@@ -26,11 +26,11 @@ export const Checkout: React.FC<{ productIds: string[]; onCheckout?: () => void 
   (prevProps, nextProps) => equals(prevProps.productIds, nextProps.productIds),
 )
 
-export const Purchase: React.FC<{ orderId: string }> = ({ orderId }) => {
+export const Purchase: React.FC<{ orderId: string }> = React.memo(({ orderId }) => {
   const tracking = useTracking()
   useEffect(() => {
     tracking.purchase(orderId)
   }, [orderId, tracking])
 
   return <></>
-}
+}, equals)
