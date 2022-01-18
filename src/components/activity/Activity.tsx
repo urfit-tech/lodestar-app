@@ -39,15 +39,16 @@ const Activity: React.VFC<
   ActivityProps & {
     participantCount: number
     totalSeats: number
+    onClick?: () => void
   }
-> = ({ id, title, coverUrl, isParticipantsVisible, participantCount, totalSeats, startedAt, endedAt }) => {
+> = ({ id, title, coverUrl, isParticipantsVisible, participantCount, totalSeats, startedAt, endedAt, onClick }) => {
   const { formatMessage } = useIntl()
   const startDate = startedAt ? moment(startedAt).format('YYYY-MM-DD(dd)') : ''
   const endDate = endedAt ? moment(endedAt).format('YYYY-MM-DD(dd)') : ''
 
   return (
     <StyledWrapper>
-      <Link to={`/activities/${id}`}>
+      <Link to={`/activities/${id}`} onClick={onClick}>
         <StyledCover src={coverUrl || EmptyCover} />
 
         <StyledDescription>

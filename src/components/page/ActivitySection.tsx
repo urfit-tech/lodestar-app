@@ -1,7 +1,8 @@
 import { Skeleton } from '@chakra-ui/react'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import React, { useEffect } from 'react'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import React from 'react'
 import styled from 'styled-components'
 import { usePublishedActivityCollection } from '../../hooks/activity'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
@@ -13,13 +14,10 @@ const StyledAngleRightIcon = styled(AngleRightIcon)`
 `
 
 const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number } }> = ({ options }) => {
-  const tracking = useTracking()
   const { enabledModules, settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 
-  useEffect(() => {
-    !loadingActivities && tracking.impress(activities.map(activity => ({ type: 'activity', id: activity.id })))
-  }, [activities, loadingActivities, tracking])
+  const { resourceCollection } = useResourceCollection(activities.map(activity => `${appId}:activity:${activity.id}`))
 
   if (loadingActivities)
     return (
@@ -34,6 +32,7 @@ const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number
 
   return (
     <StyledSection className="page-section">
+      <Tracking.Impression resources={resourceCollection} />
       <SectionTitle>{options?.title || '實體課程'}</SectionTitle>
 
       <div className="container mb-5">

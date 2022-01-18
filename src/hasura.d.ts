@@ -9217,6 +9217,7 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk_order_discounts {
   type: string;
   target: string;
   name: string;
+  price: any;
 }
 
 export interface GET_ORDERS_PRODUCT_order_log_by_pk {

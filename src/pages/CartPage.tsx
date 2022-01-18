@@ -1,13 +1,17 @@
 import { SkeletonText } from '@chakra-ui/react'
 import { Icon, Typography } from 'antd'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { notEmpty } from 'lodestar-app-element/src/helpers'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import { groupBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
 import CartProductTableCard from '../components/checkout/CartProductTableCard'
 import CheckoutBlock from '../components/checkout/CheckoutBlock'
-import { Checkout } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import CartContext from '../contexts/CartContext'
 import { checkoutMessages } from '../helpers/translation'
@@ -18,6 +22,7 @@ const CartPage: React.VFC = () => {
   const [checkoutAlready, setCheckoutAlready] = useState(false)
   const [shopId] = useQueryParam('shopId', StringParam)
   const { cartProducts } = useContext(CartContext)
+  const { id: appId } = useApp()
   const { isAuthenticating, currentMemberId } = useAuth()
   const { loadingMember, member } = useMember(currentMemberId || '')
   const cartProductGroups = groupBy(cartProduct => cartProduct.shopId || '', cartProducts)
@@ -31,6 +36,13 @@ const CartPage: React.VFC = () => {
     }
   }, [shopId])
 
+  const { resourceCollection } = useResourceCollection(
+    cartProducts.map(cartProduct => {
+      const { type, target } = getResourceByProductId(cartProduct.productId)
+      return `${appId}:${type}:${target}`
+    }),
+  )
+
   if (isAuthenticating || loadingMember) {
     return (
       <DefaultLayout>
@@ -41,8 +53,8 @@ const CartPage: React.VFC = () => {
   return (
     <DefaultLayout>
       {!checkoutAlready && (
-        <Checkout
-          productIds={cartProducts.map(cartProduct => cartProduct.productId)}
+        <Tracking.Checkout
+          resources={resourceCollection.filter(notEmpty)}
           onCheckout={() => setCheckoutAlready(true)}
         />
       )}

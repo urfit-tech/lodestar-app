@@ -1,17 +1,20 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Button, Icon, Typography } from 'antd'
 import gql from 'graphql-tag'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { notEmpty } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import React, { useEffect } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import { BooleanParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
-import { Purchase } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
@@ -40,6 +43,13 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
     { variables: { orderId: orderId } },
   )
   const order = data?.order_log_by_pk
+
+  const { resourceCollection: productResourceCollection } = useResourceCollection(
+    order?.order_products.map(v => {
+      const { type, target } = getResourceByProductId(v.product_id)
+      return `${appId}:${type}:${target}`
+    }) || [],
+  )
 
   useEffect(() => {
     if (order && order.status === 'SUCCESS' && withTracking) {
@@ -108,7 +118,16 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   return (
     render?.({ order }) || (
       <DefaultLayout noFooter>
-        {order.status === 'SUCCESS' && withTracking && <Purchase orderId={order.id} />}
+        {order.status === 'SUCCESS' && withTracking && (
+          <Tracking.Purchase
+            orderId={order.id}
+            products={productResourceCollection.filter(notEmpty).map((resource, idx) => ({
+              ...resource,
+              quantity: Number(order.order_products[idx].options?.quantity) || 1,
+            }))}
+            discounts={order.order_discounts.map(v => ({ name: v.name, price: v.price }))}
+          />
+        )}
         <div
           className="container d-flex align-items-center justify-content-center"
           style={{ height: 'calc(100vh - 64px)' }}
@@ -220,6 +239,7 @@ const GET_ORDERS_PRODUCT = gql`
         type
         target
         name
+        price
       }
       shipping
       invoice

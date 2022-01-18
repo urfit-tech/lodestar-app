@@ -1,6 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button } from 'antd'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -34,12 +33,11 @@ const PaymentTaskPage: React.VFC = () => {
   const { taskId } = useParams<{ taskId: string }>()
   const { task, retry } = useTask('payment', taskId)
   const [errorMessage, setErrorMessage] = useState('')
-  const { settings } = useApp()
 
   const taskResult = task?.returnvalue
   useEffect(() => {
     if (taskResult) {
-      tracking.addPaymentInfo(taskResult.paymentNo)
+      tracking.addPaymentInfo()
       history.push(`/payments/${taskResult.paymentNo}`)
     } else {
       setErrorMessage(task?.failedReason || '')

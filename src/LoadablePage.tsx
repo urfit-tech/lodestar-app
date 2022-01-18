@@ -9,7 +9,6 @@ const LoadablePage: React.VFC<{ pageName: string }> = ({ pageName }) => {
   const { settings } = useApp()
 
   useEffect(() => {
-    tracking.view()
     settings['tracking.ga_id'] && ReactGA.pageview(window.location.pathname + window.location.search)
     settings['tracking.fb_pixel_id'] && ReactPixel.pageView()
   }, [settings, tracking])

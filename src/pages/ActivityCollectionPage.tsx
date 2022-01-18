@@ -1,8 +1,10 @@
 import { Button, Icon, Skeleton } from '@chakra-ui/react'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { uniqBy, unnest } from 'ramda'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
@@ -147,16 +149,23 @@ const ActivityCollection: React.FC<{
     totalSeats: number
   })[]
 }> = ({ activities }) => {
+  const { id: appId } = useApp()
   const tracking = useTracking()
-  useEffect(() => {
-    activities.length > 0 && tracking.impress(activities.map(activity => ({ type: 'activity', id: activity.id })))
-  }, [activities, tracking])
+  const { resourceCollection } = useResourceCollection(activities.map(activity => `${appId}:activity:${activity.id}`))
 
   return (
     <div className="row">
-      {activities.map(activity => (
+      <Tracking.Impression resources={resourceCollection} />
+
+      {activities.map((activity, idx) => (
         <div key={activity.id} className="col-12 col-md-6 col-lg-4 mb-4">
-          <Activity {...activity} />
+          <Activity
+            onClick={() => {
+              const resource = resourceCollection[idx]
+              resource && tracking.click(resource, { position: idx + 1 })
+            }}
+            {...activity}
+          />
         </div>
       ))}
     </div>

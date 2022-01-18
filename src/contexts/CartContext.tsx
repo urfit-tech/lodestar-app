@@ -203,7 +203,10 @@ export const CartProvider: React.FC = ({ children }) => {
           const cachedCartProducts = getLocalCartProducts()
           const newCartProduct = cachedCartProducts.filter(cartProduct => !productIds.includes(cartProduct.productId))
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProduct))
-          productIds.forEach(productId => tracking.removeFromCart(getResourceByProductId(productId)))
+          productIds.forEach(productId => {
+            const { type, target } = getResourceByProductId(productId)
+            // tracking.removeFromCart()
+          })
           syncCartProducts()
         },
         clearCart: async () => {

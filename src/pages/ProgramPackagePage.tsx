@@ -1,13 +1,15 @@
 import { Button } from '@chakra-ui/react'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import React, { createRef, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { BraftContent } from '../components/common/StyledBraftEditor'
-import { Detail } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ProgramCollection from '../components/package/ProgramCollection'
 import ProgramPackageBanner from '../components/package/ProgramPackageBanner'
@@ -44,8 +46,10 @@ const messages = defineMessages({
 })
 
 const ProgramPackagePage: React.VFC = () => {
+  const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const { programPackageId } = useParams<{ programPackageId: string }>()
+  const { resourceCollection } = useResourceCollection([`${appId}:program_package:${programPackageId}`])
   const { currentMemberId } = useAuth()
   const { loadingProgramPackage, errorProgramPackage, programPackageIntroduction } =
     useProgramPackageIntroduction(programPackageId)
@@ -90,8 +94,7 @@ const ProgramPackagePage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace="4rem">
-      <Detail type="program_package" id={programPackageId} />
-
+      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <ProgramPackageBanner
         title={programPackageIntroduction.title}
         coverUrl={programPackageIntroduction.coverUrl}

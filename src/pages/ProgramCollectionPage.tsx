@@ -1,6 +1,8 @@
 import { Button as ChakraButton, Icon, SkeletonText } from '@chakra-ui/react'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
@@ -174,16 +176,20 @@ const ProgramCollection: React.FC<{
   })[]
   enrolledProgramIds: string[]
 }> = ({ programs, enrolledProgramIds }) => {
+  const { id: appId } = useApp()
   const tracking = useTracking()
   const [type] = useQueryParam('type', StringParam)
   const [noPrice] = useQueryParam('noPrice', BooleanParam)
   const [noMeta] = useQueryParam('noMeta', BooleanParam)
-  useEffect(() => {
-    programs.length > 0 && tracking.impress(programs.map(program => ({ type: 'program', id: program.id })))
-  }, [programs, tracking])
+
+  const { resourceCollection } = useResourceCollection(
+    appId ? programs.map(program => `${appId}:program:${program.id}`) : [],
+  )
+
   return (
     <div className="row">
-      {programs.map(program => (
+      <Tracking.Impression resources={resourceCollection} />
+      {programs.map((program, idx) => (
         <div key={program.id} className="col-12 col-md-6 col-lg-4 mb-4">
           <ProgramCard
             program={program}
@@ -191,7 +197,10 @@ const ProgramCollection: React.FC<{
             isEnrolled={enrolledProgramIds.includes(program.id)}
             noPrice={!!noPrice}
             withMeta={!noMeta}
-            pageFrom={window.location.pathname}
+            onClick={() => {
+              const resource = resourceCollection[idx]
+              resource && tracking.click(resource, { position: idx + 1 })
+            }}
           />
         </div>
       ))}

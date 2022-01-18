@@ -1,7 +1,9 @@
 import { Skeleton } from '@chakra-ui/react'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { usePublishedProgramCollection } from '../../hooks/program'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
@@ -22,10 +24,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
     isPrivate: false,
     categoryId: options?.categoryId,
   })
-
-  useEffect(() => {
-    !loadingPrograms && tracking.impress(programs.map(program => ({ type: 'program', id: program.id })))
-  }, [loadingPrograms, programs, tracking])
+  const { resourceCollection } = useResourceCollection(programs.map(program => `${appId}:program:${program.id}`))
 
   if (loadingPrograms)
     return (
@@ -40,16 +39,26 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
 
   return (
     <StyledSection className="page-section">
+      <Tracking.Impression resources={resourceCollection} />
+
       <SectionTitle>{options?.title || '線上課程'}</SectionTitle>
 
       <div className="container mb-5">
         <div className="row">
-          {programs.slice(0, options?.colAmount || 3).map(program => (
+          {programs.slice(0, options?.colAmount || 3).map((program, idx) => (
             <div
               key={program.id}
               className={`col-12 col-lg-${(options?.colAmount && 12 / options?.colAmount) || 4} mb-5`}
             >
-              <ProgramCard program={program} withMeta noInstructor pageFrom={window.location.pathname} />
+              <ProgramCard
+                program={program}
+                withMeta
+                noInstructor
+                onClick={() => {
+                  const resource = resourceCollection[idx]
+                  resource && tracking.click(resource, { position: idx + 1 })
+                }}
+              />
             </div>
           ))}
         </div>
