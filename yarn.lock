@@ -10853,7 +10853,7 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/e715dc931c74ccaa96d62e2b5a0a2d67c8d257a7"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/42b87cec41c4f31419cfdd05f14583609b0b3a43"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
