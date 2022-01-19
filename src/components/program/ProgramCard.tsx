@@ -72,7 +72,7 @@ const ProgramCard: React.VFC<{
   noTotalDuration?: boolean
   withMeta?: boolean
   withProgress?: boolean
-  pageFrom?: string
+  onClick?: () => void
   renderCover?: (cover: string) => React.ReactElement
   renderCustomDescription?: () => React.ReactElement
 }> = ({
@@ -84,7 +84,7 @@ const ProgramCard: React.VFC<{
   noPrice,
   noTotalDuration,
   withMeta,
-  pageFrom,
+  onClick,
   renderCover,
   renderCustomDescription,
 }) => {
@@ -106,18 +106,6 @@ const ProgramCard: React.VFC<{
   const periodType = program.plans.length > 1 ? program.plans[0]?.periodType : null
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
 
-  const handleClick = () => {
-    tracking.click(
-      {
-        type: 'program',
-        id: program.id,
-      },
-      {
-        collection: pageFrom,
-      },
-    )
-  }
-
   return (
     <>
       {!noInstructor && instructorId && (
@@ -132,9 +120,9 @@ const ProgramCard: React.VFC<{
         to={
           isEnrolled
             ? `/programs/${program.id}/contents`
-            : `/programs/${program.id}` + (programType ? `?type=${programType}` : '') + `?pageFrom=${pageFrom}`
+            : `/programs/${program.id}` + (programType ? `?type=${programType}` : '')
         }
-        onClick={handleClick}
+        onClick={onClick}
       >
         <StyledWrapper>
           {renderCover ? (

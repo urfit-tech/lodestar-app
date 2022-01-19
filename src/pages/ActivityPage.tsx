@@ -1,7 +1,9 @@
 import { Button, Divider, SkeletonText } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { render } from 'mustache'
 import React, { useEffect } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
@@ -18,7 +20,6 @@ import { AuthModalContext } from '../components/auth/AuthModal'
 import CreatorCard from '../components/common/CreatorCard'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
-import { Detail } from '../components/common/Tracking'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useActivity } from '../hooks/activity'
@@ -51,6 +52,7 @@ const ActivityPage: React.VFC = () => {
   const { activityId } = useParams<{ activityId: string }>()
   const { isAuthenticated, currentMemberId } = useAuth()
   const { settings, id: appId } = useApp()
+  const { resourceCollection } = useResourceCollection([`${appId}:activity:${activityId}`])
   const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
 
   useEffect(() => {
@@ -123,7 +125,7 @@ const ActivityPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
-      <Detail type="activity" id={activityId} />
+      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDescription} />

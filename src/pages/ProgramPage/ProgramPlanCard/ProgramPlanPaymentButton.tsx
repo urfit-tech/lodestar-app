@@ -1,6 +1,7 @@
 import { Button, Icon } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext } from 'react'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
@@ -39,11 +40,12 @@ const ProgramPlanPaymentButton: React.VFC<{
   const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
-  const { settings } = useApp()
+  const { settings, id: appId } = useApp()
   const sessionStorageKey = `lodestar.sharing_code.ProgramPlan_${programPlan.id}`
   const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
   sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
   const history = useHistory()
+  const { resourceCollection } = useResourceCollection([`${appId}:program_plan:${programPlan.id}`])
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
 
   const handleAddCart = () => {
@@ -69,7 +71,7 @@ const ProgramPlanPaymentButton: React.VFC<{
               isFullWidth
               isMultiline
               onClick={() => {
-                tracking.addToCart({ type: 'program_plan', id: programPlan.id })
+                resourceCollection[0] && tracking.addToCart(resourceCollection[0])
                 handleAddCart()
               }}
             >
@@ -89,7 +91,7 @@ const ProgramPlanPaymentButton: React.VFC<{
               colorScheme="primary"
               isFullWidth
               onClick={() => {
-                tracking.addToCart({ type: 'program_plan', id: programPlan.id }, { direct: true })
+                resourceCollection[0] && tracking.addToCart(resourceCollection[0], { direct: true })
                 handleAddCart()?.then(() => history.push('/cart'))
               }}
             >

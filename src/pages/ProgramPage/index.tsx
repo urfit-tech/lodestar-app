@@ -1,8 +1,8 @@
-import { useApolloClient } from '@apollo/react-hooks'
 import { Button, SkeletonText } from '@chakra-ui/react'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { render } from 'mustache'
 import queryString from 'query-string'
 import React, { useContext, useEffect, useRef } from 'react'
@@ -11,10 +11,8 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
-import { Detail } from '../../components/common/Tracking'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
@@ -75,21 +73,19 @@ const StyledButtonWrapper = styled.div`
 `
 
 const ProgramPage: React.VFC = () => {
-  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { programId } = useParams<{ programId: string }>()
   const { pathname } = useLocation()
-  const { currentMemberId, currentMember } = useAuth()
+  const { currentMemberId } = useAuth()
   const { id: appId, settings, enabledModules } = useApp()
+  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`])
   const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
-  const apolloClient = useApolloClient()
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const params = queryString.parse(location.search)
-  const [pageFrom] = useQueryParam('pageFrom', StringParam)
 
   let seoMeta:
     | {
@@ -159,7 +155,7 @@ const ProgramPage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
-      <Detail type="program" id={program.id} />
+      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDescription} />
