@@ -91,13 +91,10 @@ const useReviewPublicCollection = (path: string, appId: string) => {
           updated_at
           review_replies(order_by: { created_at: desc }) {
             id
+            member_id
             content
             created_at
             updated_at
-            member {
-              id
-              role
-            }
           }
         }
       }
@@ -109,7 +106,6 @@ const useReviewPublicCollection = (path: string, appId: string) => {
       },
     },
   )
-
   const publicReviews: ReviewProps[] =
     data?.review_public.map(v => ({
       id: v.id,
@@ -121,8 +117,8 @@ const useReviewPublicCollection = (path: string, appId: string) => {
       updatedAt: new Date(v.updated_at),
       reviewReplies: v?.review_replies.map(v => ({
         id: v.id,
-        reviewReplyMemberId: v.member?.id,
-        memberRole: v.member?.role,
+        reviewReplyMemberId: v.member_id,
+        memberRole: 'general-member',
         content: v.content,
         createdAt: new Date(v.created_at),
         updatedAt: new Date(v.updated_at),
