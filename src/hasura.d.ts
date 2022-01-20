@@ -1531,22 +1531,13 @@ export interface GET_REVIEW_PUBLIC_review_public_aggregate {
   aggregate: GET_REVIEW_PUBLIC_review_public_aggregate_aggregate | null;
 }
 
-export interface GET_REVIEW_PUBLIC_review_public_review_replies_member {
-  __typename: "member_public";
-  id: string | null;
-  role: string | null;
-}
-
 export interface GET_REVIEW_PUBLIC_review_public_review_replies {
   __typename: "review_reply";
   id: any;
+  member_id: string;
   content: string | null;
   created_at: any;
   updated_at: any;
-  /**
-   * An object relationship
-   */
-  member: GET_REVIEW_PUBLIC_review_public_review_replies_member | null;
 }
 
 export interface GET_REVIEW_PUBLIC_review_public {
