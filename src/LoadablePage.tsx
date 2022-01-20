@@ -1,12 +1,18 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React from 'react'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import React, { useEffect } from 'react'
 import ReactPixel from 'react-facebook-pixel'
-import { useGAPageView } from './hooks/util'
+import ReactGA from 'react-ga'
 
 const LoadablePage: React.VFC<{ pageName: string }> = ({ pageName }) => {
+  const tracking = useTracking()
   const { settings } = useApp()
-  useGAPageView()
-  settings['tracking.fb_pixel_id'] && ReactPixel.pageView()
+
+  useEffect(() => {
+    settings['tracking.ga_id'] && ReactGA.pageview(window.location.pathname + window.location.search)
+    settings['tracking.fb_pixel_id'] && ReactPixel.pageView()
+  }, [settings, tracking])
+
   const PageComponent = React.lazy(() => import(`./pages/${pageName}`))
   return <PageComponent />
 }

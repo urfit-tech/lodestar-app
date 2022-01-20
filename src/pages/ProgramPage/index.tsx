@@ -1,7 +1,8 @@
-import { useApolloClient } from '@apollo/react-hooks'
 import { Button, SkeletonText } from '@chakra-ui/react'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { render } from 'mustache'
 import queryString from 'query-string'
 import React, { useContext, useEffect, useRef } from 'react'
@@ -10,16 +11,13 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
-import hasura from '../../hasura'
-import { desktopViewMixin, getCookie, rgba } from '../../helpers'
+import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { GET_PRODUCT_SKU } from '../../hooks/common'
 import { useProgram } from '../../hooks/program'
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import ForbiddenPage from '../ForbiddenPage'
@@ -78,17 +76,16 @@ const ProgramPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { programId } = useParams<{ programId: string }>()
   const { pathname } = useLocation()
-  const { currentMemberId, currentMember } = useAuth()
+  const { currentMemberId } = useAuth()
   const { id: appId, settings, enabledModules } = useApp()
+  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`])
   const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
-  const apolloClient = useApolloClient()
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const params = queryString.parse(location.search)
-  const [pageFrom] = useQueryParam('pageFrom', StringParam)
 
   let seoMeta:
     | {
@@ -116,112 +113,8 @@ const ProgramPage: React.VFC = () => {
   }, [customerReviewBlockRef, params])
 
   useEffect(() => {
-    if (program) {
-      ReactGA.ga('send', 'pageview')
-      ;(window as any).dataLayer = (window as any).dataLayer || []
-
-      program.plans.forEach(async plan => {
-        const price = plan.soldAt && plan.soldAt.getTime() < Date.now() ? plan.listPrice : plan.salePrice || 0
-        const { data } = await apolloClient.query<hasura.GET_PRODUCT_SKU, hasura.GET_PRODUCT_SKUVariables>({
-          query: GET_PRODUCT_SKU,
-          variables: {
-            targetId: plan.id,
-          },
-        })
-        ReactGA.plugin.execute('ec', 'addProduct', {
-          id: program.id,
-          name: program.title,
-          category: 'Program',
-          price,
-          quantity: '1',
-          currency: 'TWD',
-        })
-        ReactGA.plugin.execute('ec', 'setAction', 'detail')
-        // gtm ecc
-        ;(window as any).dataLayer.push({
-          event: 'detail',
-          ecommerce: {
-            detail: {
-              actionField: { list: pageFrom || '' },
-              products: [
-                {
-                  id: program.id,
-                  name: program.title,
-                  price,
-                  brand: settings['title'] || appId,
-                  category: program.categories.map(category => category.name).join('|'),
-                  variant: program.roles.map(role => role.memberName).join('|'),
-                },
-              ],
-            },
-          },
-        })
-        // salesforce
-        ;(window as any).dataLayer.push({
-          event: 'sfData',
-          memberData: {
-            user_id: currentMemberId || '',
-            social_id: currentMemberId || '',
-            env: process.env.NODE_ENV === 'production' ? 'prod' : 'develop',
-            email: currentMember?.email || '',
-            dmp_id: getCookie('__eruid') || '',
-          },
-          itemData: {
-            products: [
-              {
-                id: programId,
-                item: data?.product[0].sku || programId,
-                title: program.title,
-                url: window.location.href,
-                type: 'elearning',
-                price,
-                author: {
-                  id:
-                    program.roles
-                      ?.filter(role => role.name === 'instructor')
-                      .map(role => role.memberId)
-                      .join('|') || '',
-                  name:
-                    program.roles
-                      ?.filter(role => role.name === 'instructor')
-                      .map(role => role.memberName)
-                      .join('|') || '',
-                },
-                channels: {
-                  master: {
-                    id: program.categories.map(category => category.name),
-                  },
-                },
-              },
-            ],
-            article: {
-              id: programId,
-              title: program.title,
-              url: window.location.href,
-              type: 'elearning',
-              author: {
-                id:
-                  program.roles
-                    ?.filter(role => role.name === 'instructor')
-                    .map(role => role.memberId)
-                    .join('|') || '',
-                name:
-                  program.roles
-                    ?.filter(role => role.name === 'instructor')
-                    .map(role => role.memberName)
-                    .join('|') || '',
-              },
-              channels: {
-                master: {
-                  id: program.categories.map(category => category.name),
-                },
-              },
-            },
-          },
-        })
-      })
-    }
-  }, [program, pageFrom, appId, settings])
+    ReactGA.ga('send', 'pageview')
+  }, [])
 
   if (loadingProgram || enrolledProgramPackages.loading) {
     return (
@@ -262,6 +155,7 @@ const ProgramPage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
+      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDescription} />

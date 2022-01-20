@@ -1290,9 +1290,9 @@
     regenerator-runtime "^0.13.4"
 
 "@babel/runtime@^7.0.0", "@babel/runtime@^7.10.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.5.5":
-  version "7.16.5"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.5.tgz#7f3e34bf8bdbbadf03fbb7b1ea0d929569c9487a"
-  integrity sha512-TXWihFIS3Pyv5hzR7j6ihmeLkZfrXGxAr5UfSl8CHf+6q/wpiYDkUau0czckpYG8QmnCIuPpdLtuA9VmuGGyMA==
+  version "7.16.7"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.7.tgz#03ff99f64106588c9c403c6ecb8c3bafbbdff1fa"
+  integrity sha512-9E9FJowqAsytyOY6LG+1KuueckRL+aQW+mKvXRXnuFGyRAyepJPmEo9vgMfXUA6O9u3IeEdv9MAkppFcaQwogQ==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -10851,9 +10851,9 @@ lodash.xorby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#v1.2.2:
+lodestar-app-element@urfit-tech/lodestar-app-element#v1.4.2:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/f0fade45c62ea2db4ad24b2d074d8616af50f9d6"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/85c32500e88a682e8d5e25de08a807b1b15c765d"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -10898,6 +10898,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#v1.2.2:
     react-dom "17.0.2"
     react-facebook-pixel "1.0.4"
     react-ga "3.3.0"
+    react-hotjar "^4.0.0"
     react-icons "4.3.1"
     react-intl "5.20.9"
     react-is "^17.0.2"
@@ -13207,9 +13208,9 @@ prop-types@15.x, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, pro
     react-is "^16.8.1"
 
 prop-types@^15.5.10:
-  version "15.8.0"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.0.tgz#d237e624c45a9846e469f5f31117f970017ff588"
-  integrity sha512-fDGekdaHh65eI3lMi5OnErU6a8Ighg2KjcjQxO7m8VHyWjcPyj5kiOgV1LQDOOOgVy3+5FgjXvdSSX7B8/5/4g==
+  version "15.8.1"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
+  integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
   dependencies:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
@@ -13670,9 +13671,9 @@ rc-pagination@~1.20.11:
     react-lifecycles-compat "^3.0.4"
 
 rc-progress@^3.1.4:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/rc-progress/-/rc-progress-3.2.2.tgz#319afe140f7e25cde2c1378b236a76905b551cf1"
-  integrity sha512-hvYqiFxFQeDGzY8AuARqp4vEGSD54W0KMg8cCcLFyT2tRJnxQyND/9vyUzVMYuaHexou06QsvLoqyBc3BPDVbg==
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/rc-progress/-/rc-progress-3.2.4.tgz#4036acdae2566438545bc4df2203248babaf7549"
+  integrity sha512-M9WWutRaoVkPUPIrTpRIDpX0SPSrVHzxHdCRCbeoBFrd9UFWTYNWRlHsruJM5FH1AZI+BwB4wOJUNNylg/uFSw==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "^2.2.6"
@@ -14111,6 +14112,11 @@ react-hotjar@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-hotjar/-/react-hotjar-2.2.1.tgz#5f06d15a146960262dba612657c828c8b58da8a3"
   integrity sha512-rkHdsFDfI7HCKeAwkHPf8Vq7ZbpX0oE4/5GgVvNambWw8z0PSKKxi59qWYX7H+dDYjchiL3z3hrAFQ+PohgQOA==
+
+react-hotjar@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-hotjar/-/react-hotjar-4.0.0.tgz#b98b6baf7da19cd63565a81dee40d0d62702bacd"
+  integrity sha512-jRk2aWZkK2MMWRj+DBhpwTG5jfhae5DMLoVGbRGqPjZDmKYTtV/tD1/0kmFIlw4pInHKaukQriJ14CQg8MGvww==
 
 react-howler@^5.2.0:
   version "5.2.0"

@@ -2,7 +2,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Organization, WithContext } from 'schema-dts'
-import { useGA, useGTM, useHotjar, usePixel, useSwarmify } from '../../hooks/util'
+import { useSwarmify } from '../../hooks/util'
 
 const ApplicationHelmet: React.VFC = () => {
   const { settings, id: appId } = useApp()
@@ -13,10 +13,6 @@ const ApplicationHelmet: React.VFC = () => {
     logo: settings['seo.logo'],
     url: settings['seo.url'],
   }
-  useGA()
-  usePixel()
-  useHotjar()
-  useGTM()
   useSwarmify()
 
   return (

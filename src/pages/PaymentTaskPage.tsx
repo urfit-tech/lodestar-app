@@ -1,6 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button } from 'antd'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
@@ -27,32 +27,22 @@ const StyledButton = styled(Button)`
 `
 
 const PaymentTaskPage: React.VFC = () => {
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { taskId } = useParams<{ taskId: string }>()
   const { task, retry } = useTask('payment', taskId)
   const [errorMessage, setErrorMessage] = useState('')
-  const { settings } = useApp()
 
+  const taskResult = task?.returnvalue
   useEffect(() => {
-    if (task?.returnvalue) {
-      if (settings['tracking.gtm_id']) {
-        ;(window as any).dataLayer = (window as any).dataLayer || []
-        ;(window as any).dataLayer.push({ ecommerce: null })
-        ;(window as any).dataLayer.push({
-          event: 'checkoutOption',
-          ecommerce: {
-            checkout_option: {
-              actionField: { step: 2, option: 'credit' },
-            },
-          },
-        })
-      }
-      history.push(`/payments/${task.returnvalue.paymentNo}`)
+    if (taskResult) {
+      tracking.addPaymentInfo()
+      history.push(`/payments/${taskResult.paymentNo}`)
     } else {
       setErrorMessage(task?.failedReason || '')
     }
-  }, [history, task])
+  }, [history, task?.failedReason, taskResult, tracking])
 
   if (errorMessage) {
     return (

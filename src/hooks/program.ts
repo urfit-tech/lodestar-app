@@ -38,7 +38,7 @@ export const usePublishedProgramCollection = (options?: {
       ) {
         program(
           where: {
-            published_at: { _is_null: false }
+            published_at: { _lte: "now()" }
             program_roles: { name: { _eq: "instructor" }, member_id: { _eq: $instructorId } }
             is_private: { _eq: $isPrivate }
             is_deleted: { _eq: false }
@@ -73,7 +73,7 @@ export const usePublishedProgramCollection = (options?: {
             name
             member_id
           }
-          program_plans(order_by: { created_at: asc }, limit: 1) {
+          program_plans(where: { published_at: { _lte: "now()" } }, order_by: { created_at: asc }) {
             id
             type
             title
@@ -178,7 +178,7 @@ export const usePublishedProgramCollection = (options?: {
               startedAt: programPlan.started_at && new Date(programPlan.started_at),
               endedAt: programPlan.ended_at && new Date(programPlan.ended_at),
               isParticipantsVisible: programPlan.is_participants_visible,
-              publishedAt: programPlan.published_at,
+              publishedAt: programPlan.published_at && new Date(programPlan.published_at),
               isCountdownTimerVisible: false,
             })),
             totalDuration: sum(

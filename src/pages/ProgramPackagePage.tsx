@@ -1,6 +1,9 @@
 import { Button } from '@chakra-ui/react'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import React, { createRef, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
@@ -43,8 +46,10 @@ const messages = defineMessages({
 })
 
 const ProgramPackagePage: React.VFC = () => {
+  const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const { programPackageId } = useParams<{ programPackageId: string }>()
+  const { resourceCollection } = useResourceCollection([`${appId}:program_package:${programPackageId}`])
   const { currentMemberId } = useAuth()
   const { loadingProgramPackage, errorProgramPackage, programPackageIntroduction } =
     useProgramPackageIntroduction(programPackageId)
@@ -89,6 +94,7 @@ const ProgramPackagePage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace="4rem">
+      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <ProgramPackageBanner
         title={programPackageIntroduction.title}
         coverUrl={programPackageIntroduction.coverUrl}
