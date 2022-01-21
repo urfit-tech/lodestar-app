@@ -33,6 +33,7 @@ import {
   TableListSection,
   TeacherSection,
 } from '../../components/page'
+import HaohaomingSection from '../../components/page/HaohaomingSection'
 import hasura from '../../hasura'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import LoadingPage from '../LoadingPage'
@@ -104,6 +105,7 @@ const sectionConverter = {
   homeMisaNav: MisaNavigationBar,
   homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
   homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
+  homeHaohaoming: HaohaomingSection,
 }
 
 const AppPage: React.VFC = () => {
