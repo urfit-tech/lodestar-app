@@ -123,7 +123,7 @@ const BlogPostPage: React.VFC = () => {
 
   let seoMeta: { title?: string } | undefined
   try {
-    seoMeta = JSON.parse(app.settings['seo.meta']).ActivityPage
+    seoMeta = JSON.parse(app.settings['seo.meta']).BlogPostPage
   } catch (error) {}
 
   const siteTitle = post.title
