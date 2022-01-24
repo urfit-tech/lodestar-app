@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { PhilosophyProp } from './type'
 import { Content, SectionTitle } from './util'
 
 const StyledSection = styled.section`
@@ -41,7 +42,7 @@ const StyledSection = styled.section`
   }
 `
 
-const Philosophy = () => (
+const Philosophy: React.VFC<PhilosophyProp> = ({ title, subtitle, content }) => (
   <StyledSection>
     <div className="container">
       <div className="row">
@@ -50,18 +51,9 @@ const Philosophy = () => (
         </div>
 
         <div className="col-12 col-md-6">
-          <SectionTitle title="真理大道，找回平衡" subtitle="The Way of truth, back to balance" />
+          <SectionTitle title={title || ''} subtitle={subtitle || ''} />
           <Content>
-            <p>
-              {
-                '人生成長的過程中，一路上充滿許多難題，有一些困難是我們沒有辦法改變的，我們就是不斷地在種種難題中學習「好好的存活」。'
-              }
-            </p>
-            <p>
-              {
-                '每個人的本性有差異、環境有差異，唯一沒有差異的就是我們都可以學習操練大腦並自我超越。因此，我們要學習認識一己的本性、接受和別人不同之長處或短處，進而在環境困境中，發揮所長，累積經驗，讓自己的本性與週遭環境有良好之互動，並且有所超越，增長智慧，悠然自得，這就是所謂的心腦操練。'
-              }
-            </p>
+            <p>{content}</p>
           </Content>
         </div>
       </div>

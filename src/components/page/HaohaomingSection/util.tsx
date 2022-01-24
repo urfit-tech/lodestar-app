@@ -34,6 +34,7 @@ export const SectionTitle: React.FC<{
 export const Content = styled.div`
   p {
     margin-bottom: 1em;
+    white-space: pre-line;
   }
 `
 export const StyledAvatar = styled.div<AvatarProps>`

@@ -7,6 +7,7 @@ import Philosophy from './Philosophy'
 import Recommend from './Recommend'
 import Reviews from './Reviews'
 import TeacherIntroduction from './TeacherIntroduction'
+import { CoverProp, FAQsProp, PhilosophyProp, RecommendProp, ReviewsProp, TeacherIntroductionProp } from './type'
 
 const StyleOverrideBlock = styled.div`
   && {
@@ -28,15 +29,24 @@ const StyleOverrideBlock = styled.div`
   }
 `
 
-const HomePage: React.VFC = () => (
+const HomePage: React.VFC<{
+  options: {
+    cover?: CoverProp
+    philosophy?: PhilosophyProp
+    teacherIntroduction?: TeacherIntroductionProp
+    recommend?: RecommendProp
+    reviews?: ReviewsProp
+    faqs?: FAQsProp
+  }
+}> = ({ options }) => (
   <StyleOverrideBlock>
-    <Cover />
+    <Cover {...options.cover} />
     <Courses />
-    <Philosophy />
-    <TeacherIntroduction />
-    <Recommend />
-    <Reviews />
-    <FAQs />
+    <Philosophy {...options.philosophy} />
+    <TeacherIntroduction {...options.teacherIntroduction} />
+    <Recommend {...options.recommend} />
+    <Reviews {...options.reviews} />
+    <FAQs {...options.faqs} />
   </StyleOverrideBlock>
 )
 

@@ -1,6 +1,7 @@
 import { Card, Carousel, Icon } from 'antd'
 import styled from 'styled-components'
 import QuoteMark from '../../../images/quote.png'
+import { RecommendProp } from './type'
 import { Content, SectionTitle, StyledAvatar } from './util'
 
 const StyledSection = styled.section`
@@ -95,51 +96,17 @@ const CardSubTitle = styled.div`
   margin-bottom: 15px;
 `
 
-const recommenders = [
-  {
-    photo: `https://static.kolable.com/images/haohaoming/番茄.jpg`,
-    name: '番茄',
-    jobTitle: 'Elfin restaurant&lounge 精靈餐酒館 共同創辦人',
-    words: '接觸到少年以後氣色變的超好，業績也不斷再創新高！',
-  },
-  {
-    photo: `https://static.kolable.com/images/haohaoming/游弘宇.jpg`,
-    name: '游弘宇',
-    jobTitle: 'YOTTA執行長',
-    words: '少年是我在創業圈遇過最具有執行力與感染力的男人',
-  },
-  {
-    photo: `https://static.kolable.com/images/haohaoming/BEN.jpg`,
-    name: 'Ben',
-    jobTitle: 'ICHEF Co-Founder',
-    words: '講話幽默風趣卻隱含人生哲理的大師級人物。',
-  },
-  {
-    photo: `https://static.kolable.com/images/haohaoming/Ronald.jpg`,
-    name: 'Ronald',
-    jobTitle: '車麻吉創辦人',
-    words: '人生道路的隱形守護神',
-  },
-  {
-    photo: `https://static.kolable.com/images/haohaoming/陳欽章.jpg`,
-    name: '陳欽章醫師',
-    jobTitle: '台灣牙e通創辦人暨執行長 ',
-    words:
-      '空口說白話是玄學，但用無數案例的驗證堆疊出的鐵口直斷，是少年讓人信服之處，讓人相信這是一門經得起檢驗的『科學』',
-  },
-]
-
 const CustomArrow: React.FC<{
   type: string
   onClick?: () => void
 }> = ({ type, onClick }) => <Icon type={type} onClick={onClick} />
 
-const Recommend = () => (
+const Recommend: React.VFC<RecommendProp> = ({ title, subtitle, recommenders }) => (
   <StyledSection>
     <div className="container">
       <div className="row">
         <div className="col-12 col-md-3 d-flex align-items-center section-title">
-          <SectionTitle title="名人推薦" subtitle="RECOMMEND" margin={false} />
+          <SectionTitle title={title || ''} subtitle={subtitle || ''} margin={false} />
         </div>
         <div className="col-12 col-md-9">
           <StyledCarousel
@@ -152,7 +119,7 @@ const Recommend = () => (
             prevArrow={<CustomArrow type="left" />}
             nextArrow={<CustomArrow type="right" />}
           >
-            {recommenders.map(recommender => (
+            {recommenders?.map(recommender => (
               <StyledWrapper key={recommender.name}>
                 <StyledCard>
                   <StyledAvatar src={recommender.photo} size={128} className=" m-3" />
