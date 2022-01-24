@@ -49,7 +49,7 @@ const PaymentTapPayBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { paymentNo } = useParams<{ paymentNo: string }>()
-  const orderId = useOrderId(toString(paymentNo))
+  const { orderId } = useOrderId(toString(paymentNo))
 
   const [tpCreditCard, setTpCreditCard] = useState<TPCreditCard | null>(null)
   const [memberCreditCardId, setMemberCreditCardId] = useState<string | null>(null)
