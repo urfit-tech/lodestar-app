@@ -135,7 +135,7 @@ const ActivityCollectionPage = () => {
         <div className="container">
           {loadingActivities && <Skeleton />}
           {errorActivities && <div>{formatMessage(commonMessages.status.readingError)}</div>}
-          <ActivityCollection activities={activities} />
+          <ActivityCollection activities={filteredActivities} />
         </div>
       </StyledCollection>
     </DefaultLayout>
