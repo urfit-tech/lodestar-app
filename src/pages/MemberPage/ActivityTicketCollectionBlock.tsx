@@ -77,6 +77,9 @@ const ActivityTicketCollectionBlock: React.VFC<{ memberId: string }> = ({ member
                 ))
               : enrolledActivitySessions
                   .filter(session => session.isExpired === isExpired)
+                  .sort((a, b) =>
+                    isExpired ? b.endedAt.getTime() - a.endedAt.getTime() : a.endedAt.getTime() - b.endedAt.getTime(),
+                  )
                   .map(session => (
                     <Link to={`/orders/${session.orderLogId}/products/${session.orderProductId}`} key={session.id}>
                       <div className="mb-4">

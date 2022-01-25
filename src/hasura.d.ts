@@ -2418,13 +2418,13 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTIONVariables {
 
 export interface GET_ENROLLED_ACTIVITY_TICKETS_activity_ticket_enrollment_activity_ticket_activity_session_tickets_activity_session {
   __typename: "activity_session";
+  id: any;
   started_at: any;
   ended_at: any;
 }
 
 export interface GET_ENROLLED_ACTIVITY_TICKETS_activity_ticket_enrollment_activity_ticket_activity_session_tickets {
   __typename: "activity_session_ticket";
-  activity_session_id: any;
   /**
    * An object relationship
    */

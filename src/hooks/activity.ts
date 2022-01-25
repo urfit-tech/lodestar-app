@@ -117,14 +117,17 @@ export const useEnrolledActivityTickets = (memberId: string) => {
   >(
     gql`
       query GET_ENROLLED_ACTIVITY_TICKETS($memberId: String!) {
-        activity_ticket_enrollment(where: { member_id: { _eq: $memberId } }) {
+        activity_ticket_enrollment(
+          where: { member_id: { _eq: $memberId } }
+          order_by: { order_log: { created_at: desc_nulls_last } }
+        ) {
           order_log_id
           order_product_id
           activity_ticket_id
           activity_ticket {
             activity_session_tickets(order_by: { activity_session: { started_at: asc } }) {
-              activity_session_id
               activity_session {
+                id
                 started_at
                 ended_at
               }
@@ -151,6 +154,7 @@ export const useEnrolledActivityTickets = (memberId: string) => {
 
   const enrolledActivitySessions: {
     id: string
+    endedAt: Date
     isExpired: boolean
     orderLogId: string
     orderProductId: string
@@ -160,12 +164,11 @@ export const useEnrolledActivityTickets = (memberId: string) => {
       data?.activity_ticket_enrollment.map(
         te =>
           te.activity_ticket?.activity_session_tickets.map(st => ({
+            id: st.activity_session.id,
+            endedAt: new Date(st.activity_session.ended_at),
+            isExpired: Date.now() > new Date(st.activity_session.ended_at).getTime(),
             orderLogId: te.order_log_id || '',
             orderProductId: te.order_product_id || '',
-            id: st.activity_session_id,
-            isExpired: st.activity_session.ended_at
-              ? Date.now() > new Date(st.activity_session.ended_at).getTime()
-              : false,
           })) || [],
       ) || [],
     ),
