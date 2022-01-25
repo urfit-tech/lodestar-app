@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { sum } from 'ramda'
+import { flatten, prop, sum, uniqBy } from 'ramda'
 import hasura from '../hasura'
 import {
   ActivityProps,
@@ -121,6 +121,15 @@ export const useEnrolledActivityTickets = (memberId: string) => {
           order_log_id
           order_product_id
           activity_ticket_id
+          activity_ticket {
+            activity_session_tickets(order_by: { activity_session: { started_at: asc } }) {
+              activity_session_id
+              activity_session {
+                started_at
+                ended_at
+              }
+            }
+          }
         }
       }
     `,
@@ -140,11 +149,34 @@ export const useEnrolledActivityTickets = (memberId: string) => {
           activityTicketId: ticketEnrollment.activity_ticket_id,
         }))
 
+  const enrolledActivitySessions: {
+    id: string
+    isExpired: boolean
+    orderLogId: string
+    orderProductId: string
+  }[] = uniqBy(
+    prop('id'),
+    flatten(
+      data?.activity_ticket_enrollment.map(
+        te =>
+          te.activity_ticket?.activity_session_tickets.map(st => ({
+            orderLogId: te.order_log_id || '',
+            orderProductId: te.order_product_id || '',
+            id: st.activity_session_id,
+            isExpired: st.activity_session.ended_at
+              ? Date.now() > new Date(st.activity_session.ended_at).getTime()
+              : false,
+          })) || [],
+      ) || [],
+    ),
+  )
+
   return {
     loadingTickets: loading,
     errorTickets: error,
     refetchTickets: refetch,
     enrolledActivityTickets,
+    enrolledActivitySessions,
   }
 }
 
@@ -266,7 +298,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
   }
 }
 
-export const useActivitySession = ({ sessionId, memberId }: { sessionId: string; memberId: string }) => {
+export const useActivitySession = (sessionId: string, memberId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_ACTIVITY_SESSION, hasura.GET_ACTIVITY_SESSIONVariables>(
     gql`
       query GET_ACTIVITY_SESSION($sessionId: uuid!, $memberId: String!) {
@@ -281,6 +313,7 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
           threshold
           activity {
             title
+            cover_url
             is_participants_visible
           }
           activity_session_tickets {
@@ -323,6 +356,7 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
     threshold: number | null
     activity: {
       title: string
+      coverUrl: string | null
     }
     isParticipantsVisible: boolean
     isEnrolled: boolean
@@ -342,6 +376,7 @@ export const useActivitySession = ({ sessionId, memberId }: { sessionId: string;
           threshold: data.activity_session_by_pk.threshold,
           activity: {
             title: data.activity_session_by_pk.activity.title,
+            coverUrl: data.activity_session_by_pk.activity.cover_url,
           },
           isParticipantsVisible: data.activity_session_by_pk.activity.is_participants_visible,
           isEnrolled: data.activity_session_by_pk.activity_enrollments.length > 0,

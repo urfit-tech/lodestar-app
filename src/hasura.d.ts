@@ -2416,11 +2416,38 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTIONVariables {
 // ====================================================
 
 
+export interface GET_ENROLLED_ACTIVITY_TICKETS_activity_ticket_enrollment_activity_ticket_activity_session_tickets_activity_session {
+  __typename: "activity_session";
+  started_at: any;
+  ended_at: any;
+}
+
+export interface GET_ENROLLED_ACTIVITY_TICKETS_activity_ticket_enrollment_activity_ticket_activity_session_tickets {
+  __typename: "activity_session_ticket";
+  activity_session_id: any;
+  /**
+   * An object relationship
+   */
+  activity_session: GET_ENROLLED_ACTIVITY_TICKETS_activity_ticket_enrollment_activity_ticket_activity_session_tickets_activity_session;
+}
+
+export interface GET_ENROLLED_ACTIVITY_TICKETS_activity_ticket_enrollment_activity_ticket {
+  __typename: "activity_ticket";
+  /**
+   * An array relationship
+   */
+  activity_session_tickets: GET_ENROLLED_ACTIVITY_TICKETS_activity_ticket_enrollment_activity_ticket_activity_session_tickets[];
+}
+
 export interface GET_ENROLLED_ACTIVITY_TICKETS_activity_ticket_enrollment {
   __typename: "activity_ticket_enrollment";
   order_log_id: string | null;
   order_product_id: any | null;
   activity_ticket_id: any | null;
+  /**
+   * An object relationship
+   */
+  activity_ticket: GET_ENROLLED_ACTIVITY_TICKETS_activity_ticket_enrollment_activity_ticket | null;
 }
 
 export interface GET_ENROLLED_ACTIVITY_TICKETS {
@@ -2576,6 +2603,7 @@ export interface GET_ACTIVITYVariables {
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity {
   __typename: "activity";
   title: string;
+  cover_url: string | null;
   is_participants_visible: boolean;
 }
 
