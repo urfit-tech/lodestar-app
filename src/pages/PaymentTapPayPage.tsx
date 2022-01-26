@@ -2,7 +2,6 @@ import { Button } from '@chakra-ui/react'
 import { message } from 'antd'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { toString } from 'ramda'
 import React, { useCallback, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -49,7 +48,7 @@ const PaymentTapPayBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { paymentNo } = useParams<{ paymentNo: string }>()
-  const { orderId } = useOrderId(toString(paymentNo))
+  const { orderId } = useOrderId(Number(paymentNo))
 
   const [tpCreditCard, setTpCreditCard] = useState<TPCreditCard | null>(null)
   const [memberCreditCardId, setMemberCreditCardId] = useState<string | null>(null)
