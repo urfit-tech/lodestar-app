@@ -320,7 +320,7 @@ export const useCoinStatus = (memberId: string) => {
   }
 }
 
-export const useOrderId = (paymentNo: string) => {
+export const useOrderId = (paymentNo: number) => {
   const { data } = useQuery<hasura.GET_ORDER_ID, hasura.GET_ORDER_IDVariables>(
     gql`
       query GET_ORDER_ID($paymentNo: numeric!) {

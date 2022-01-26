@@ -1,7 +1,6 @@
 import { message } from 'antd'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { toString } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -29,7 +28,7 @@ const usePayForm = (paymentNo: number) => {
   const { authToken, currentMemberId } = useAuth()
   const [loadingForm, setLoadingForm] = useState(false)
   const [PayForm, setPayForm] = useState<React.ReactElement | null>(null)
-  const { orderId } = useOrderId(toString(paymentNo))
+  const { orderId } = useOrderId(Number(paymentNo))
 
   useEffect(() => {
     const clientBackUrl = window.location.origin
