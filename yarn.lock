@@ -10851,9 +10851,9 @@ lodash.xorby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#v1.4.3:
+lodestar-app-element@urfit-tech/lodestar-app-element#v1.4.4:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/38f8c0c744f5e5995edf808e7d3e97d6fbe0d887"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/100ab65093cd27204344ed7d7a767eadac6ebb6e"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
