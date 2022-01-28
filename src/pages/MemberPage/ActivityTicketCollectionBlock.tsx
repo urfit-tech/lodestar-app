@@ -14,12 +14,14 @@ const messages = defineMessages({
   displaySession: { id: 'activity.select.option.displaySession', defaultMessage: '顯示場次' },
 })
 
+type DisplayType = 'ticket' | 'session'
+
 const ActivityTicketCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { loadingTickets, errorTickets, enrolledActivityTickets, enrolledActivitySessions } =
     useEnrolledActivityTickets(memberId)
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
-  const [displayType, setDisplayType] = useState('ticket')
+  const [displayType, setDisplayType] = useState<DisplayType>('session')
 
   const options = [formatMessage(commonMessages.status.participable), formatMessage(commonMessages.status.expired)]
 
@@ -46,7 +48,12 @@ const ActivityTicketCollectionBlock: React.VFC<{ memberId: string }> = ({ member
       ) : (
         <>
           <div className="d-flex justify-content-between mb-3">
-            <Select bg="white" w={180} value={displayType} onChange={e => setDisplayType(e.target.value)}>
+            <Select
+              bg="white"
+              w={180}
+              value={displayType}
+              onChange={e => setDisplayType(e.target.value as DisplayType)}
+            >
               <option value="ticket">{formatMessage(messages.displayTicket)}</option>
               <option value="session">{formatMessage(messages.displaySession)}</option>
             </Select>
