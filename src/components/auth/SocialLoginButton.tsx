@@ -32,13 +32,12 @@ const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ account
   const { settings } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
-  const host = window.location.hostname
 
   return (
     <a
       href={'https://www.facebook.com/v6.0/dialog/oauth?client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&scope={{SCOPE}}&state={{STATE}}&response_type=token'
         .replace('{{CLIENT_ID}}', `${settings['auth.facebook_app_id']}`)
-        .replace('{{REDIRECT_URI}}', `https://${host}/oauth2`)
+        .replace('{{REDIRECT_URI}}', `${window.location.origin}/oauth2`)
         .replace('{{SCOPE}}', 'public_profile,email')
         .replace(
           '{{STATE}}',
@@ -71,13 +70,12 @@ const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLi
   const { settings } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
-  const host = window.location.origin
 
   return (
     <a
       href={'https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=token&scope={{SCOPE}}&access_type=online&redirect_uri={{REDIRECT_URI}}&state={{STATE}}'
         .replace('{{CLIENT_ID}}', `${settings['auth.google_client_id']}`)
-        .replace('{{REDIRECT_URI}}', `${host}/oauth2`)
+        .replace('{{REDIRECT_URI}}', `${window.location.origin}/oauth2`)
         .replace('{{SCOPE}}', 'openid profile email')
         .replace(
           '{{STATE}}',
@@ -119,7 +117,7 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
     <a
       href={'https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&scope={{SCOPE}}'
         .replace('{{CLIENT_ID}}', `${settings['auth.line_client_id']}`)
-        .replace('{{REDIRECT_URI}}', `https://${window.location.hostname}:${window.location.port}/oauth2`)
+        .replace('{{REDIRECT_URI}}', `${window.location.origin}/oauth2`)
         .replace('{{SCOPE}}', 'profile%20openid%20email')
         .replace(
           '{{STATE}}',
@@ -152,7 +150,6 @@ const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accoun
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
-  const host = window.location.origin
 
   if (loading) {
     return <Spinner />
@@ -161,7 +158,7 @@ const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accoun
     <a
       href={'https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&scope={{SCOPE}}'
         .replace('{{CLIENT_ID}}', `${settings['auth.parenting.client_id']}`)
-        .replace('{{REDIRECT_URI}}', encodeURIComponent(`${host}/oauth2/parenting`))
+        .replace('{{REDIRECT_URI}}', encodeURIComponent(`${window.location.origin}/oauth2/parenting`))
         .replace('{{SCOPE}}', '')
         .replace(
           '{{STATE}}',
