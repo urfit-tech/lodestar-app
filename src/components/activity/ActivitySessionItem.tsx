@@ -65,10 +65,7 @@ const ActivitySessionItem: React.VFC<{
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const { currentMemberId } = useAuth()
-  const { loadingSession, errorSession, session } = useActivitySession({
-    sessionId: activitySessionId,
-    memberId: currentMemberId || '',
-  })
+  const { loadingSession, errorSession, session } = useActivitySession(activitySessionId, currentMemberId || '')
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   if (loadingSession) {

@@ -69,6 +69,7 @@ export const commonMessages = {
     projectFinished: { id: 'common.project.finished', defaultMessage: '專案結束' },
     available: { id: 'common.available', defaultMessage: '可使用' },
     sendable: { id: 'common.status.sendable', defaultMessage: '可發送' },
+    participable: { id: 'common.status.participable', defaultMessage: '可參與' },
     sent: { id: 'common.status.sent', defaultMessage: '已發送' },
     received: { id: 'common.status.received', defaultMessage: '已收到' },
   }),
