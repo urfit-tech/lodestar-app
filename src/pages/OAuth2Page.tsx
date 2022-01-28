@@ -81,7 +81,10 @@ const DefaultOauth2Section: React.VFC = () => {
     const clientId = settings['auth.line_client_id']
     const clientSecret = settings['auth.line_client_secret']
     if (!isAuthenticating && !currentMemberId && code && provider === 'line' && clientId && clientSecret) {
-      const redirectUri = `https://${window.location.hostname}:${window.location.port}/oauth2`
+      const hostPath = window.location.port
+        ? `https://${window.location.hostname}:${window.location.port}`
+        : `https://${window.location.hostname}`
+      const redirectUri = `${hostPath}/oauth2`
 
       const params = new URLSearchParams({
         grant_type: 'authorization_code',
