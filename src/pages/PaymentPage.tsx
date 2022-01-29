@@ -13,7 +13,7 @@ import { useOrderId } from '../hooks/data'
 
 const PaymentPage: React.VFC = () => {
   const { paymentNo } = useParams<{ paymentNo: string }>()
-  const { loadingForm, PayForm } = usePayForm(parseInt(paymentNo))
+  const { loadingForm, PayForm } = usePayForm(paymentNo)
 
   return (
     <DefaultLayout noFooter noHeader centeredBox>
@@ -22,13 +22,13 @@ const PaymentPage: React.VFC = () => {
   )
 }
 
-const usePayForm = (paymentNo: number) => {
+const usePayForm = (paymentNo: string) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { authToken, currentMemberId } = useAuth()
   const [loadingForm, setLoadingForm] = useState(false)
   const [PayForm, setPayForm] = useState<React.ReactElement | null>(null)
-  const { orderId } = useOrderId(Number(paymentNo))
+  const { orderId } = useOrderId(paymentNo)
 
   useEffect(() => {
     const clientBackUrl = window.location.origin
