@@ -53,7 +53,7 @@ const PaymentTapPayBlock: React.VFC = () => {
   const [tpCreditCard, setTpCreditCard] = useState<TPCreditCard | null>(null)
   const [memberCreditCardId, setMemberCreditCardId] = useState<string | null>(null)
   const { currentMemberId } = useAuth()
-  const { payPayment, addCreditCard } = usePayment(parseInt(paymentNo))
+  const { payPayment, addCreditCard } = usePayment(paymentNo)
   const { member } = useMember(currentMemberId || '')
   const [isPaying, setIsPaying] = useState(false)
 
@@ -108,7 +108,7 @@ const PaymentTapPayBlock: React.VFC = () => {
   )
 }
 
-const usePayment = (paymentNo: number) => {
+const usePayment = (paymentNo: string) => {
   const { TPDirect } = useTappay()
   const { formatMessage } = useIntl()
   const { authToken } = useAuth()
