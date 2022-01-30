@@ -56,7 +56,9 @@ const VideoPlayer: React.VFC<{ videoId: string; animated?: boolean } & Partial<S
   ) : streamOptions?.data ? (
     <Stream
       controls
-      defaultTextTrack={currentLanguage}
+      // FIXME: disabled default text track because Cloudflare stream issue
+      // https://community.cloudflare.com/t/when-using-require-signed-urls-subtitles-wont-show/351209
+      // defaultTextTrack={currentLanguage}
       poster={animated ? streamOptions.data.poster.replace('jpg', 'gif') : streamOptions.data.poster}
       {...streamProps}
       src={streamOptions.data.token}
