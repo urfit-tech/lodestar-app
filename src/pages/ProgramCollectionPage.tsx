@@ -7,7 +7,6 @@ import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { flatten, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
-import { Helmet } from 'react-helmet'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -102,16 +101,6 @@ const ProgramCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
-      <Helmet>
-        <title>{seoMeta?.title}</title>
-        <meta name="description" content={seoMeta?.description} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoMeta?.title} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:description" content={seoMeta?.description} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>

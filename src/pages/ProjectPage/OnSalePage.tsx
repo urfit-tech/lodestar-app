@@ -1,6 +1,5 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
-import { Helmet } from 'react-helmet'
 import { useMediaQuery } from 'react-responsive'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -13,7 +12,6 @@ import OnSaleProjectPlanSection from '../../components/project/OnSaleProjectPlan
 import OnSaleRoadmapSection from '../../components/project/OnSaleRoadmapSection'
 import OnSaleSkillSection from '../../components/project/OnSaleSkillSection'
 import OnSaleTrialSection from '../../components/project/OnSaleTrialSection'
-import EmptyCover from '../../images/empty-cover.png'
 import { ProjectProps } from '../../types/project'
 
 const OnSalePage: React.VFC<ProjectProps> = ({
@@ -57,17 +55,6 @@ const OnSalePage: React.VFC<ProjectProps> = ({
 
   return (
     <DefaultLayout white noFooter>
-      <Helmet>
-        <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription || ''} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteTitle} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={coverUrl || EmptyCover} />
-        <meta property="og:description" content={siteDescription || ''} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       <OnSaleCoverSection
         cover={{ title, abstract, description, url: coverUrl, type: coverType }}
         expiredAt={expiredAt}

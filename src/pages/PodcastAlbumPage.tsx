@@ -3,7 +3,6 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { render } from 'mustache'
 import React, { useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
-import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastAlbumBanner from '../components/common/podcastAlbum/PodcastAlbumBanner'
@@ -112,17 +111,6 @@ const PodcastAlbumPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
-      <Helmet>
-        <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteTitle} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={siteImage} />
-        <meta property="og:description" content={siteDescription} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       <PodcastAlbumBanner podcastAlbum={podcastAlbum} />
 
       <StyledPodcastAlbumIntroBlock>
