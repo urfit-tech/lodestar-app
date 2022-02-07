@@ -276,6 +276,7 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
             category {
               id
               name
+              position
             }
           }
         }
@@ -311,6 +312,7 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
           categories: project.project_categories.map(projectCategory => ({
             id: projectCategory.category.id,
             name: projectCategory.category.name,
+            position: projectCategory.category.position,
           })),
           projectPlans: project.project_plans.map(project_plan => ({
             id: project_plan.id,

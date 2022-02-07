@@ -66,6 +66,7 @@ export const usePublishedProgramCollection = (options?: {
             category {
               id
               name
+              position
             }
           }
           program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc, id: desc }) {
@@ -150,6 +151,7 @@ export const usePublishedProgramCollection = (options?: {
             categories: program.program_categories.map(programCategory => ({
               id: programCategory.category.id,
               name: programCategory.category.name,
+              position: programCategory.category.position,
             })),
             roles: program.program_roles.map(programRole => ({
               id: programRole.id,

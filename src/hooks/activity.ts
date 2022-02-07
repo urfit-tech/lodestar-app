@@ -33,6 +33,7 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
             category {
               id
               name
+              position
             }
           }
           activity_enrollments_aggregate {
@@ -96,6 +97,7 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
             categories: activity.activity_categories.map(activityCategory => ({
               id: activityCategory.category.id,
               name: activityCategory.category.name,
+              position: activityCategory.category.position,
             })),
 
             participantCount: activity.activity_enrollments_aggregate.aggregate?.count || 0,

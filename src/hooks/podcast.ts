@@ -49,6 +49,7 @@ export const usePodcastProgramCollection = (creatorId?: string) => {
             category {
               id
               name
+              position
             }
           }
         }
@@ -91,6 +92,7 @@ export const usePodcastProgramCollection = (creatorId?: string) => {
             categories: podcastProgram.podcast_program_categories.map(podcastProgramCategory => ({
               id: podcastProgramCategory.category.id,
               name: podcastProgramCategory.category.name,
+              position: podcastProgramCategory.category.position,
             })),
             publishedAt: new Date(podcastProgram.published_at),
             supportLocales: podcastProgram.support_locales,
