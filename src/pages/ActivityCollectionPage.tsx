@@ -3,7 +3,7 @@ import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import { uniqBy, unnest } from 'ramda'
+import { prop, sortBy, uniqBy, unnest } from 'ramda'
 import React, { useContext } from 'react'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -67,9 +67,8 @@ const ActivityCollectionPage = () => {
     categoryId: active ? active : undefined,
   })
 
-  const categories: Category[] = uniqBy(
-    category => category.id,
-    unnest(activities.map(activity => activity.categories)),
+  const categories: Category[] = sortBy(prop('position'))(
+    uniqBy(category => category.id, unnest(activities.map(activity => activity.categories))),
   )
 
   let collectionBanner: Banner | null

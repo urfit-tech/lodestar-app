@@ -2,7 +2,7 @@ import { Icon } from '@chakra-ui/icons'
 import { Button } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { flatten, uniqBy } from 'ramda'
+import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { AiFillAppstore } from 'react-icons/ai'
@@ -29,9 +29,8 @@ const PodcastProgramCollectionPage: React.VFC = () => {
   const { podcastPrograms } = usePodcastProgramCollection()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
 
-  const categories = uniqBy(
-    category => category.id,
-    flatten(podcastPrograms.map(podcastProgram => podcastProgram.categories)),
+  const categories = sortBy(prop('position'))(
+    uniqBy(category => category.id, flatten(podcastPrograms.map(podcastProgram => podcastProgram.categories))),
   )
 
   let seoMeta:

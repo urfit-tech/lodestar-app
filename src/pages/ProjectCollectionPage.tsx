@@ -1,6 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, Icon as AntdIcon } from 'antd'
-import { flatten, uniqBy } from 'ramda'
+import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { AiFillAppstore } from 'react-icons/ai'
@@ -67,9 +67,8 @@ const ProjectCollectionPage: React.VFC = () => {
   const { pageTitle } = useNav()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
 
-  const categories: Category[] = uniqBy(
-    category => category.id,
-    flatten(projects.map(project => project.categories).filter(notEmpty)),
+  const categories: Category[] = sortBy(prop('position'))(
+    uniqBy(category => category.id, flatten(projects.map(project => project.categories).filter(notEmpty))),
   )
 
   useEffect(() => {

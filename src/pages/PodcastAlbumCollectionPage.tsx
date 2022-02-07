@@ -3,7 +3,7 @@ import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { flatten, uniqBy } from 'ramda'
+import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { AiFillAppstore } from 'react-icons/ai'
@@ -115,9 +115,11 @@ const PodcastAlbumCollectionPage: React.VFC = () => {
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(defaultActive || null)
 
-  const categories: Category[] = uniqBy(
-    category => category.id,
-    flatten(podcastAlbums.map(podcastAlbum => podcastAlbum.categories).filter(notEmpty)),
+  const categories: Category[] = sortBy(prop('position'))(
+    uniqBy(
+      category => category.id,
+      flatten(podcastAlbums.map(podcastAlbum => podcastAlbum.categories).filter(notEmpty)),
+    ),
   )
 
   useEffect(() => {
@@ -245,6 +247,7 @@ const usePodcastAlbumCollection: (options: { categoryId?: string }) => {
             category {
               id
               name
+              position
             }
           }
           podcast_album_podcast_programs_aggregate {
@@ -269,6 +272,7 @@ const usePodcastAlbumCollection: (options: { categoryId?: string }) => {
         categories: v.podcast_album_categories.map(v => ({
           id: v.category?.id || '',
           name: v.category?.name || '',
+          position: v.category?.position || 0,
         })),
       })) || [],
     refetch,
