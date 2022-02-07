@@ -2310,6 +2310,7 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_categories_
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_categories {
@@ -5431,6 +5432,7 @@ export interface GET_PUBLISHED_CREATOR_creator_creator_categories_category {
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PUBLISHED_CREATOR_creator_creator_categories {
@@ -5494,6 +5496,7 @@ export interface GET_MERCHANDISE_COLLECTION_merchandise_merchandise_categories_c
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_MERCHANDISE_COLLECTION_merchandise_merchandise_categories {
@@ -5781,6 +5784,7 @@ export interface GET_PODCAST_PROGRAM_COLLECTION_podcast_program_podcast_program_
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PODCAST_PROGRAM_COLLECTION_podcast_program_podcast_program_categories {
@@ -7252,6 +7256,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories_cat
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories {
@@ -8500,6 +8505,7 @@ export interface GET_PROJECT_INTRO_COLLECTION_project_project_categories_categor
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PROJECT_INTRO_COLLECTION_project_project_categories {
@@ -9301,6 +9307,7 @@ export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories_categ
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories {

@@ -2,7 +2,7 @@ import { Icon } from '@chakra-ui/react'
 import { Button } from 'antd'
 import { CommonTextMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { flatten, uniqBy } from 'ramda'
+import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useState } from 'react'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -70,8 +70,9 @@ const CreatorDisplayedPage: React.VFC<{}> = () => {
     return <ForbiddenPage />
   }
 
-  const categories = uniqBy(v => v.name, flatten(creators.map(v => v.categories).filter(notEmpty)))
-
+  const categories = sortBy(prop('position'))(
+    uniqBy(v => v.name, flatten(creators.map(v => v.categories).filter(notEmpty))),
+  )
   const filteredCreators = creators.filter(
     v => !selectedCategoryId || v.categories.map(w => w.id).includes(selectedCategoryId),
   )

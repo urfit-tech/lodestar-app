@@ -4,6 +4,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { uniq } from 'ramda'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
+import { Category } from '../types/general'
 import { MemberProps, MemberPublicProps, MemberSocialType, SocialCardProps, UserRole } from '../types/member'
 
 export const useMember = (memberId: string) => {
@@ -349,6 +350,7 @@ export const usePublishedCreator = () => {
           category {
             id
             name
+            position
           }
         }
         member_specialities(limit: 3) {
@@ -365,10 +367,7 @@ export const usePublishedCreator = () => {
     title: string | null
     pictureUrl: string | null
     abstract: string | null
-    categories: {
-      id: string
-      name: string
-    }[]
+    categories: Category[]
     specialtyNames: string[]
   }[] =
     loading || error || !data
@@ -382,6 +381,7 @@ export const usePublishedCreator = () => {
           categories: v.creator_categories.map(w => ({
             id: w.category.id,
             name: w.category.name,
+            position: w.category.position,
           })),
           specialtyNames: v.member_specialities.map(w => w.tag_name),
         }))
