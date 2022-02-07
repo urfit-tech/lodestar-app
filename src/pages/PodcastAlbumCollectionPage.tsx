@@ -6,7 +6,6 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { flatten, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
-import { Helmet } from 'react-helmet'
 import { AiFillAppstore } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -161,16 +160,6 @@ const PodcastAlbumCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
-      <Helmet>
-        <title>{seoMeta?.title}</title>
-        <meta name="description" content={seoMeta?.description} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoMeta?.title} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:description" content={seoMeta?.description} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>

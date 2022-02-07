@@ -1,7 +1,6 @@
 import { Affix, Button, Tabs } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useRef } from 'react'
-import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useMediaQuery } from 'react-responsive'
 import styled from 'styled-components'
@@ -131,17 +130,6 @@ const FundingPage: React.VFC<ProjectProps> = ({
 
   return (
     <DefaultLayout white noFooter>
-      <Helmet>
-        <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription || ''} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteTitle} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={coverUrl || ''} />
-        <meta property="og:description" content={siteDescription || ''} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       <StyledCover className="container mb-4">
         <div className="row">
           <div className="col-12 col-lg-8">

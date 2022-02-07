@@ -10270,6 +10270,7 @@ export enum app_admin_update_column {
  */
 export enum app_constraint {
   App_pkey = "App_pkey",
+  app_symbol_key = "app_symbol_key",
 }
 
 /**
@@ -17878,7 +17879,7 @@ export interface payment_log_bool_exp {
   custom_no?: String_comparison_exp | null;
   gateway?: String_comparison_exp | null;
   method?: String_comparison_exp | null;
-  no?: numeric_comparison_exp | null;
+  no?: String_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
   order_id?: String_comparison_exp | null;
   order_log?: order_log_bool_exp | null;
@@ -17898,7 +17899,7 @@ export interface payment_log_insert_input {
   custom_no?: string | null;
   gateway?: string | null;
   method?: string | null;
-  no?: any | null;
+  no?: string | null;
   options?: any | null;
   order_id?: string | null;
   order_log?: order_log_obj_rel_insert_input | null;
