@@ -3,7 +3,6 @@ import { Skeleton } from 'antd'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
-import { Helmet } from 'react-helmet'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -76,16 +75,6 @@ const CreatorCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout>
-      <Helmet>
-        <title>{seoMeta?.title}</title>
-        <meta name="description" content={seoMeta?.description} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoMeta?.title} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:description" content={seoMeta?.description} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       <StyledSection>
         <div className="py-5 container">
           <StyledTitle>

@@ -8,7 +8,6 @@ import { render } from 'mustache'
 import React, { useEffect } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import ReactGA from 'react-ga'
-import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -126,17 +125,6 @@ const ActivityPage: React.VFC = () => {
   return (
     <DefaultLayout white>
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
-      <Helmet>
-        <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteTitle} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={activity.coverUrl || ''} />
-        <meta property="og:description" content={siteDescription} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       <ActivityBanner
         coverImage={activity.coverUrl || ''}
         activityTitle={activity.title}

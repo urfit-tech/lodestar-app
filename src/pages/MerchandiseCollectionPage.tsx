@@ -1,6 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
 import { HStack, useRadioGroup } from '@chakra-ui/react'
-import { flatten, uniqBy } from 'ramda'
+import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
@@ -73,9 +73,8 @@ const MerchandiseCollectionPage: React.VFC = () => {
         : merchandise,
     )
 
-  const merchandiseCategories = uniqBy(
-    category => category.id,
-    flatten(filteredMerchandises.map(merchandise => merchandise.categories || [])),
+  const merchandiseCategories = sortBy(prop('position'))(
+    uniqBy(category => category.id, flatten(filteredMerchandises.map(merchandise => merchandise.categories || []))),
   )
 
   const options = [

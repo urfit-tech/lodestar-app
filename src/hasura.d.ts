@@ -2310,6 +2310,7 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_categories_
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_categories {
@@ -5431,6 +5432,7 @@ export interface GET_PUBLISHED_CREATOR_creator_creator_categories_category {
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PUBLISHED_CREATOR_creator_creator_categories {
@@ -5494,6 +5496,7 @@ export interface GET_MERCHANDISE_COLLECTION_merchandise_merchandise_categories_c
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_MERCHANDISE_COLLECTION_merchandise_merchandise_categories {
@@ -5781,6 +5784,7 @@ export interface GET_PODCAST_PROGRAM_COLLECTION_podcast_program_podcast_program_
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PODCAST_PROGRAM_COLLECTION_podcast_program_podcast_program_categories {
@@ -7252,6 +7256,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories_cat
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_categories {
@@ -8500,6 +8505,7 @@ export interface GET_PROJECT_INTRO_COLLECTION_project_project_categories_categor
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PROJECT_INTRO_COLLECTION_project_project_categories {
@@ -9301,6 +9307,7 @@ export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories_categ
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories {
@@ -10270,6 +10277,7 @@ export enum app_admin_update_column {
  */
 export enum app_constraint {
   App_pkey = "App_pkey",
+  app_symbol_key = "app_symbol_key",
 }
 
 /**
@@ -17878,7 +17886,7 @@ export interface payment_log_bool_exp {
   custom_no?: String_comparison_exp | null;
   gateway?: String_comparison_exp | null;
   method?: String_comparison_exp | null;
-  no?: numeric_comparison_exp | null;
+  no?: String_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
   order_id?: String_comparison_exp | null;
   order_log?: order_log_bool_exp | null;
@@ -17898,7 +17906,7 @@ export interface payment_log_insert_input {
   custom_no?: string | null;
   gateway?: string | null;
   method?: string | null;
-  no?: any | null;
+  no?: string | null;
   options?: any | null;
   order_id?: string | null;
   order_log?: order_log_obj_rel_insert_input | null;

@@ -4,9 +4,7 @@ import BraftEditor from 'braft-editor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
-import { render } from 'mustache'
 import React, { useContext } from 'react'
-import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -103,7 +101,7 @@ const CreatorTabs: React.VFC<{
 }> = ({ creatorId, member, onCheckoutModalOpen }) => {
   const { formatMessage } = useIntl()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { enabledModules, settings } = useApp()
+  const { enabledModules } = useApp()
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
   const [isMerchandisesPhysical] = useQueryParam('isPhysical', BooleanParam)
 
@@ -123,55 +121,8 @@ const CreatorTabs: React.VFC<{
     .map(enrolledPodcastPlansCreator => enrolledPodcastPlansCreator.id)
     .includes(creatorId)
 
-  let seoMeta: { title?: string } | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta'])?.CreatorPage
-  } catch (error) {}
-
-  const siteTitle =
-    seoMeta &&
-    seoMeta.title &&
-    render(seoMeta.title, {
-      creatorName: member?.name || '',
-      appointmentPlanTitles:
-        enabledModules.appointment && appointmentPlans.length !== 0
-          ? appointmentPlans
-              .map(appointmentPlan => appointmentPlan.title)
-              .slice(0, 3)
-              .join('、')
-          : '',
-    })
-
-  const siteDescription = member?.abstract || settings['open_graph.description']
-  const siteImage = member?.pictureUrl || settings['open_graph.image']
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: siteTitle,
-    image: siteImage,
-    description: siteDescription,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: settings['seo.name'],
-      description: settings['open_graph.description'],
-    },
-  })
-
   return (
     <>
-      <Helmet>
-        <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteTitle} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={siteImage} />
-        <meta property="og:description" content={siteDescription} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       <Tabs
         activeKey={
           activeKey || (enabledModules.appointment && appointmentPlans.length !== 0 ? 'appointments' : 'introduction')

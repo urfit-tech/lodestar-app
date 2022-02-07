@@ -38,6 +38,7 @@ export const useMerchandiseCollection = (options?: {
             category {
               id
               name
+              position
             }
           }
           merchandise_imgs(where: { type: { _eq: "cover" } }, limit: 1) {
@@ -98,6 +99,7 @@ export const useMerchandiseCollection = (options?: {
             categories: merchandise.merchandise_categories.map(v => ({
               id: v.category.id,
               name: v.category.name,
+              position: v.category.position,
             })),
             images: merchandise.merchandise_imgs.map(v => ({
               id: v.id,
