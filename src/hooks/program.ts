@@ -705,6 +705,41 @@ export const useProgramContentMaterial = (programContentId: string) => {
   }
 }
 
+export const useProgramContentBody = (programContentBodyId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_PROGRAM_CONTENT_BODY,
+    hasura.GET_PROGRAM_CONTENT_BODYVariables
+  >(
+    gql`
+      query GET_PROGRAM_CONTENT_BODY($programContentBodyId: uuid!) {
+        program_content_body_by_pk(id: $programContentBodyId) {
+          id
+          type
+          description
+          data
+        }
+      }
+    `,
+    { variables: { programContentBodyId }, fetchPolicy: 'no-cache' },
+  )
+
+  const programContentBody: ProgramContentBodyProps | null = data?.program_content_body_by_pk
+    ? {
+        id: data.program_content_body_by_pk.id,
+        type: data.program_content_body_by_pk.type,
+        description: data.program_content_body_by_pk.description,
+        data: data.program_content_body_by_pk.data,
+      }
+    : null
+
+  return {
+    loading,
+    error,
+    data: programContentBody,
+    refetch,
+  }
+}
+
 export const useMutateExercise = () => {
   const [insertExercise] = useMutation<hasura.INSERT_EXERCISE, hasura.INSERT_EXERCISEVariables>(gql`
     mutation INSERT_EXERCISE($data: exercise_insert_input!) {
