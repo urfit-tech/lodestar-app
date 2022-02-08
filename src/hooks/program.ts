@@ -315,6 +315,7 @@ export const useProgram = (programId: string) => {
               list_price
               sale_price
               sold_at
+              content_body_id
               program_content_type {
                 id
                 type
@@ -429,6 +430,7 @@ export const useProgram = (programId: string) => {
                 listPrice: programContent.list_price,
                 salePrice: programContent.sale_price,
                 soldAt: programContent.sold_at && new Date(programContent.sold_at),
+                contentBodyId: programContent.content_body_id,
                 materials: programContent.program_content_materials.map(v => ({
                   id: v.id,
                   data: v.data,
@@ -534,6 +536,7 @@ export const useProgramContent = (programContentId: string) => {
             listPrice: data.program_content_by_pk.list_price,
             salePrice: data.program_content_by_pk.sale_price,
             soldAt: data.program_content_by_pk.sold_at && new Date(data.program_content_by_pk.sold_at),
+            contentBodyId: data.program_content_by_pk.program_content_body.id,
             programContentBody: data.program_content_by_pk.program_content_body
               ? {
                   id: data.program_content_by_pk.program_content_body.id,
