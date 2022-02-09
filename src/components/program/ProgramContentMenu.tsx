@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
+import { useProgramContentBody } from '../../hooks/program'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
 import { Program, ProgramContent, ProgramContentSection } from '../../types/program'
@@ -265,10 +266,7 @@ const SortBySectionItem: React.VFC<{
           ) : programContent.contentType === 'practice' ? (
             <StyledIcon as={PracticeIcon} className="mr-2" />
           ) : programContent.contentType === 'exercise' ? (
-            <>
-              <StyledIcon as={QuizIcon} className="mr-2" />
-              <span>{formatMessage(messages.totalQuestion, { count: 3 })}</span>
-            </>
+            <ExerciseQuestionCount contentBodyId={programContent.contentBodyId} />
           ) : (
             <StyledIcon as={AiOutlineFileText} />
           )}
@@ -366,6 +364,19 @@ const SortByDateItem: React.VFC<{
 const EmptyMenu: React.VFC = () => (
   <Card style={{ textAlign: 'center', color: '#9b9b9b' }}>初次購買還沒有新的內容喔～</Card>
 )
+
+const ExerciseQuestionCount: React.VFC<{ contentBodyId: string }> = ({ contentBodyId }) => {
+  const { formatMessage } = useIntl()
+  const { data: programContentBody } = useProgramContentBody(contentBodyId)
+  const count = Array.isArray(programContentBody?.data?.questions) ? programContentBody?.data?.questions?.length : 0
+
+  return (
+    <>
+      <StyledIcon as={QuizIcon} className="mr-2" />
+      <span>{formatMessage(messages.totalQuestion, { count })}</span>
+    </>
+  )
+}
 
 const useProgramContentProgress = () => {
   const { programContentId } = useParams<{ programContentId: string }>()

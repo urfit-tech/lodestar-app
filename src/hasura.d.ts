@@ -7539,6 +7539,7 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
   list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
+  content_body_id: any;
   /**
    * An object relationship
    */
@@ -7882,6 +7883,36 @@ export interface GET_PROGRAM_CONTENT_MATERIAL {
 
 export interface GET_PROGRAM_CONTENT_MATERIALVariables {
   programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
+// GraphQL query operation: GET_PROGRAM_CONTENT_BODY
+// ====================================================
+
+
+export interface GET_PROGRAM_CONTENT_BODY_program_content_body_by_pk {
+  __typename: "program_content_body";
+  id: any;
+  type: string | null;
+  description: string | null;
+  data: any | null;
+}
+
+export interface GET_PROGRAM_CONTENT_BODY {
+  /**
+   * fetch data from the table: "program_content_body" using primary key columns
+   */
+  program_content_body_by_pk: GET_PROGRAM_CONTENT_BODY_program_content_body_by_pk | null;
+}
+
+export interface GET_PROGRAM_CONTENT_BODYVariables {
+  programContentBodyId: any;
 }
 
 /* tslint:disable */

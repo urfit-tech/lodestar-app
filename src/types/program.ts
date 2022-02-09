@@ -72,12 +72,12 @@ export type ProgramContent = {
   duration: number | null
   contentType: string | null
   publishedAt: Date | null
-
   listPrice: number | null
   salePrice: number | null
   soldAt: Date | null
   materials?: ProgramContentMaterialProps[]
   videos?: { id: string; size: number; options: any; data: any }[]
+  contentBodyId: string
 }
 
 export type ProgramContentBodyProps = {
