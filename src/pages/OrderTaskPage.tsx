@@ -43,20 +43,25 @@ const OrderTaskPage: React.VFC = () => {
       return
     }
     if (authToken && task?.finishedOn && task?.returnvalue?.orderId) {
-      axios
-        .post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-          { orderId: task.returnvalue.orderId },
-          { headers: { authorization: `Bearer ${authToken}` } },
-        )
-        .then(({ data: { code, result } }) => {
-          if (code === 'SUCCESS') {
-            history.push(`/tasks/payment/${result.id}`)
-          } else {
-            message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-          }
-        })
-        .catch(handleError)
+      // do not need to pay
+      if (task.returnvalue.totalAmount <= 0) {
+        history.push(`/orders/${task.returnvalue.orderId}?tracking=1`)
+      } else {
+        axios
+          .post(
+            `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+            { orderId: task.returnvalue.orderId, clientBackUrl: window.location.href },
+            { headers: { authorization: `Bearer ${authToken}` } },
+          )
+          .then(({ data: { code, result } }) => {
+            if (code === 'SUCCESS') {
+              history.push(`/tasks/payment/${result.id}`)
+            } else {
+              message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+            }
+          })
+          .catch(handleError)
+      }
     }
   }, [authToken, formatMessage, history, task])
 

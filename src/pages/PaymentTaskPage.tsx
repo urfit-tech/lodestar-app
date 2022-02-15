@@ -38,7 +38,14 @@ const PaymentTaskPage: React.VFC = () => {
   useEffect(() => {
     if (taskResult) {
       tracking.addPaymentInfo()
-      history.push(`/payments/${taskResult.paymentNo}`)
+      console.log({ taskResult })
+      if (taskResult.payForm.url) {
+        window.location.assign(taskResult.payForm.url)
+      } else if (taskResult.payForm.html) {
+        document.write(taskResult.payForm.html)
+      } else {
+        history.push(`/payments/${taskResult.paymentNo}`)
+      }
     } else {
       setErrorMessage(task?.failedReason || '')
     }
