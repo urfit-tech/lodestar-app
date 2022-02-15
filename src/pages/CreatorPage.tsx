@@ -4,7 +4,7 @@ import BraftEditor from 'braft-editor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -120,6 +120,17 @@ const CreatorTabs: React.VFC<{
   const isEnrolledPodcastPlan = enrolledPodcastPlansCreators
     .map(enrolledPodcastPlansCreator => enrolledPodcastPlansCreator.id)
     .includes(creatorId)
+
+  useEffect(() => {
+    if (
+      (activeKey === 'posts' && !enabledModules.blog) ||
+      (activeKey === 'podcasts' && !enabledModules.podcast) ||
+      (activeKey === 'appointments' && !enabledModules.appointment) ||
+      (activeKey === 'merchandises' && !enabledModules.merchandise)
+    ) {
+      setActiveKey('introduction')
+    }
+  }, [activeKey, setActiveKey, enabledModules])
 
   return (
     <>
