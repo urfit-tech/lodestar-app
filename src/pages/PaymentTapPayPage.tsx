@@ -1,19 +1,19 @@
 import { Button } from '@chakra-ui/react'
 import { message } from 'antd'
 import axios from 'axios'
+import TapPayForm, { TPCreditCard } from 'lodestar-app-element/src/components/forms/TapPayForm'
+import CreditCardSelector from 'lodestar-app-element/src/components/selectors/CreditCardSelector'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTappay } from 'lodestar-app-element/src/hooks/util'
 import React, { useCallback, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { StyledContainer } from '../components/layout/DefaultLayout.styled'
-import CreditCardSelector, { CardHolder } from '../components/payment/CreditCardSelector'
-import TapPayForm, { TPCreditCard } from '../components/payment/TapPayForm'
 import { codeMessages } from '../helpers/translation'
 import { useOrderId } from '../hooks/data'
 import { useMember } from '../hooks/member'
-import { useTappay } from '../hooks/util'
 
 const StyledFreeSubscriptionNotice = styled.p`
   color: var(--gray-dark);
@@ -38,7 +38,7 @@ const messages = defineMessages({
 
 const PaymentTapPayPage: React.VFC = () => {
   return (
-    <DefaultLayout noFooter noHeader centeredBox>
+    <DefaultLayout noFooter centeredBox>
       {(window as any)['TPDirect'] && <PaymentTapPayBlock />}
     </DefaultLayout>
   )
@@ -48,13 +48,12 @@ const PaymentTapPayBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { paymentNo } = useParams<{ paymentNo: string }>()
-  const { orderId } = useOrderId(Number(paymentNo))
+  const { orderId } = useOrderId(paymentNo)
 
   const [tpCreditCard, setTpCreditCard] = useState<TPCreditCard | null>(null)
   const [memberCreditCardId, setMemberCreditCardId] = useState<string | null>(null)
-  const { currentMemberId } = useAuth()
-  const { payPayment, addCreditCard } = usePayment(parseInt(paymentNo))
-  const { member } = useMember(currentMemberId || '')
+  const { currentMemberId, isAuthenticating } = useAuth()
+  const { payPayment } = usePayment(paymentNo)
   const [isPaying, setIsPaying] = useState(false)
 
   const isCreditCardReady = Boolean(memberCreditCardId || tpCreditCard?.canGetPrime)
@@ -62,20 +61,10 @@ const PaymentTapPayBlock: React.VFC = () => {
   const handlePaymentPayAsync = async () => {
     setIsPaying(true)
     try {
-      if (memberCreditCardId) {
-        await payPayment(memberCreditCardId)
-      } else {
-        await addCreditCard({
-          phoneNumber: member?.phone || '0987654321',
-          name: member?.name || 'test',
-          email: member?.email || 'test@gmail.com',
-        })
-      }
+      await payPayment(memberCreditCardId)
       history.push(`/orders/${orderId}?tracking=1`)
     } catch (err) {
-      if (err instanceof Error) {
-        message.error(err)
-      }
+      message.error((err as any).toString())
     }
     setIsPaying(false)
   }
@@ -101,6 +90,8 @@ const PaymentTapPayBlock: React.VFC = () => {
 
           <StyledFreeSubscriptionNotice>{formatMessage(messages.freeSubscriptionNotice)}</StyledFreeSubscriptionNotice>
         </div>
+      ) : isAuthenticating ? (
+        <div>Authenticating...</div>
       ) : (
         <div>無法取得會員資料</div>
       )}
@@ -108,71 +99,75 @@ const PaymentTapPayBlock: React.VFC = () => {
   )
 }
 
-const usePayment = (paymentNo: number) => {
+const usePayment = (paymentNo: string) => {
   const { TPDirect } = useTappay()
   const { formatMessage } = useIntl()
-  const { authToken } = useAuth()
+  const { authToken, currentMemberId } = useAuth()
+  const { member } = useMember(currentMemberId || '')
 
   const payPayment = useCallback(
-    (memberCreditCardId: string) =>
+    (memberCreditCardId: string | null) =>
       new Promise((resolve, reject) => {
         if (!authToken) {
           reject('no auth')
         }
-        axios
-          .post(
-            `${process.env.REACT_APP_API_BASE_ROOT}/payment/pay/${paymentNo}`,
-            {
-              memberCreditCardId,
-            },
-            {
-              headers: { authorization: `Bearer ${authToken}` },
-            },
-          )
-          .then(({ data: { code, result } }) => {
-            if (code === 'SUCCESS') {
-              resolve(result)
-            }
-
-            const codeMessage = codeMessages[code as keyof typeof codeMessages]
-            reject(codeMessage ? formatMessage(codeMessage) : code)
+        // pay by card token
+        if (memberCreditCardId) {
+          axios
+            .post(
+              `${process.env.REACT_APP_API_BASE_ROOT}/payment/pay/${paymentNo}`,
+              {
+                memberCreditCardId,
+                cardHolder: {
+                  phoneNumber: member?.phone || '0987654321',
+                  name: member?.name || 'test',
+                  email: member?.email || 'test@gmail.com',
+                },
+              },
+              { headers: { authorization: `Bearer ${authToken}` } },
+            )
+            .then(({ data: { code, result } }) => {
+              if (code === 'SUCCESS') {
+                resolve(result)
+              }
+              const codeMessage = codeMessages[code as keyof typeof codeMessages]
+              reject(codeMessage ? formatMessage(codeMessage) : code)
+            })
+            .catch(reject)
+        }
+        // pay by prime
+        else {
+          TPDirect.card.getPrime(({ status, card, msg }: { status: number; card: { prime: string }; msg: string }) => {
+            axios
+              .post(
+                `${process.env.REACT_APP_API_BASE_ROOT}/payment/pay/${paymentNo}`,
+                {
+                  prime: card.prime,
+                  cardHolder: {
+                    phoneNumber: member?.phone || '0987654321',
+                    name: member?.name || 'test',
+                    email: member?.email || 'test@gmail.com',
+                  },
+                },
+                {
+                  headers: { authorization: `Bearer ${authToken}` },
+                },
+              )
+              .then(({ data: { code, result } }) => {
+                if (code === 'SUCCESS') {
+                  resolve(result)
+                }
+                const codeMessage = codeMessages[code as keyof typeof codeMessages]
+                reject(codeMessage ? formatMessage(codeMessage) : code)
+              })
+              .catch(reject)
           })
-          .catch(reject)
+        }
       }),
-    [authToken, paymentNo, formatMessage],
+    [authToken, TPDirect.card, paymentNo, member?.phone, member?.name, member?.email, formatMessage],
   )
 
-  const addCreditCard = async (cardHolder: CardHolder) => {
-    const memberCreditCardId = await new Promise<string>((resolve, reject) => {
-      TPDirect.card.getPrime(({ status, card: { prime } }: { status: number; card: { prime: string } }) => {
-        if (status !== 0) {
-          console.error('getPrime error')
-        }
-        axios({
-          method: 'POST',
-          url: `${process.env.REACT_APP_API_BASE_ROOT}/payment/credit-cards`,
-          withCredentials: true,
-          data: {
-            prime,
-            cardHolder,
-            paymentNo,
-          },
-          headers: { authorization: `Bearer ${authToken}` },
-        })
-          .then(({ data: { code, result } }) => {
-            if (code === 'SUCCESS') {
-              resolve(result.memberCreditCardId)
-            }
-
-            reject(code)
-          })
-          .catch(reject)
-      })
-    })
-    return memberCreditCardId
-  }
-
-  return { payPayment, addCreditCard }
+  return { payPayment }
 }
 
 export default PaymentTapPayPage

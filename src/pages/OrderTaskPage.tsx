@@ -27,6 +27,12 @@ const StyledButton = styled(Button)`
   width: 160px;
   height: 44px;
 `
+const StyledWarning = styled.div`
+  margin-top: 1rem;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--error);
+`
 
 const OrderTaskPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -43,20 +49,25 @@ const OrderTaskPage: React.VFC = () => {
       return
     }
     if (authToken && task?.finishedOn && task?.returnvalue?.orderId) {
-      axios
-        .post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-          { orderId: task.returnvalue.orderId },
-          { headers: { authorization: `Bearer ${authToken}` } },
-        )
-        .then(({ data: { code, result } }) => {
-          if (code === 'SUCCESS') {
-            history.push(`/tasks/payment/${result.id}`)
-          } else {
-            message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-          }
-        })
-        .catch(handleError)
+      // do not need to pay
+      if (task.returnvalue.totalAmount <= 0) {
+        history.push(`/orders/${task.returnvalue.orderId}?tracking=1`)
+      } else {
+        axios
+          .post(
+            `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+            { orderId: task.returnvalue.orderId, clientBackUrl: window.location.origin },
+            { headers: { authorization: `Bearer ${authToken}` } },
+          )
+          .then(({ data: { code, result } }) => {
+            if (code === 'SUCCESS') {
+              history.push(`/tasks/payment/${result.id}`)
+            } else {
+              message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+            }
+          })
+          .catch(handleError)
+      }
     }
   }, [authToken, formatMessage, history, task])
 
@@ -80,7 +91,12 @@ const OrderTaskPage: React.VFC = () => {
 
   return (
     <DefaultLayout noFooter noHeader centeredBox>
-      <StyledContainer>確認訂單中，請稍候...{(Math.exp(-1 / retry) * 100).toFixed(0)}%</StyledContainer>
+      <StyledContainer>
+        <div className="text-center">
+          確認訂單中，請稍候...{(Math.exp(-1 / retry) * 100).toFixed(0)}%
+          <StyledWarning>請勿重整與返回上一頁</StyledWarning>
+        </div>
+      </StyledContainer>
     </DefaultLayout>
   )
 }

@@ -2,10 +2,9 @@ import { Icon } from '@chakra-ui/icons'
 import { Button } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { flatten, uniqBy } from 'ramda'
+import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
-import { Helmet } from 'react-helmet'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { AuthModalContext } from '../components/auth/AuthModal'
@@ -30,9 +29,8 @@ const PodcastProgramCollectionPage: React.VFC = () => {
   const { podcastPrograms } = usePodcastProgramCollection()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
 
-  const categories = uniqBy(
-    category => category.id,
-    flatten(podcastPrograms.map(podcastProgram => podcastProgram.categories)),
+  const categories = sortBy(prop('position'))(
+    uniqBy(category => category.id, flatten(podcastPrograms.map(podcastProgram => podcastProgram.categories))),
   )
 
   let seoMeta:
@@ -84,16 +82,6 @@ const PodcastProgramCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
-      <Helmet>
-        <title>{seoMeta?.title}</title>
-        <meta name="description" content={seoMeta?.description} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoMeta?.title} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:description" content={seoMeta?.description} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>

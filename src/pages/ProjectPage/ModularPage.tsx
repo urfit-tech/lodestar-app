@@ -1,6 +1,5 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useEffect, useState } from 'react'
-import { Helmet } from 'react-helmet'
 import ModularBriefFooter from '../../components/common/Footer/ModularBriefFooter'
 import MessengerChat from '../../components/common/MessengerChat'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -66,18 +65,6 @@ const ModularPage: React.VFC<{
 
   return (
     <DefaultLayout white noFooter>
-      <Helmet>
-        <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription || ''} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteTitle} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={siteImage || EmptyCover} />
-        <meta property="og:image:url" content={siteImage || EmptyCover} />
-        <meta property="og:image:secure_url" content={siteImage || EmptyCover} />
-        <meta property="og:description" content={siteDescription || ''} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
       {project.projectSections
         .filter(projectSection =>
           displaySectionTypes.find(displaySectionType => projectSection.type === displaySectionType),

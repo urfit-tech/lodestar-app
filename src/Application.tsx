@@ -4,7 +4,6 @@ import 'braft-editor/dist/index.css'
 import 'braft-editor/dist/output.css'
 import { LodestarAppProvider } from 'lodestar-app-element/src/contexts/LodestarAppContext'
 import React from 'react'
-import ApplicationHelmet from './components/common/ApplicationHelmet'
 import AppRouter, { RouteProps } from './components/common/AppRouter'
 import GlobalPodcastPlayer from './components/podcast/GlobalPodcastPlayer'
 import ErrorBoundary from './containers/common/ErrorBoundary'
@@ -29,7 +28,6 @@ const Application: React.FC<{
               <PodcastPlayerProvider>
                 <ConfigProvider locale={zhTW}>
                   <CustomRendererProvider renderer={customRender}>
-                    <ApplicationHelmet />
                     <AppRouter extra={extraRouteProps}>
                       <GlobalPodcastPlayer />
                     </AppRouter>

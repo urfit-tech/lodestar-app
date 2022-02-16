@@ -27,23 +27,6 @@ export const useInterval = (callback: Function, delay: number | null, immediatel
   }, [delay, immediately])
 }
 
-// TODO: should be context
-export const useTappay = () => {
-  const TPDirect = (window as any)['TPDirect']
-  const { settings } = useApp()
-
-  settings['tappay.app_id'] &&
-    settings['tappay.app_key'] &&
-    TPDirect &&
-    TPDirect.setupSDK(
-      settings['tappay.app_id'],
-      settings['tappay.app_key'],
-      settings['tappay.dry_run'] === 'true' ? 'sandbox' : 'production',
-    )
-
-  return { TPDirect }
-}
-
 export const useSwarmify = () => {
   const { formatMessage } = useIntl()
   const theme = useAppTheme()

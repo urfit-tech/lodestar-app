@@ -7,7 +7,6 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { notEmpty } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import React, { useEffect } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -18,7 +17,6 @@ import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
-import { useSimpleProductCollection } from '../hooks/common'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
@@ -31,14 +29,12 @@ const messages = defineMessages({
 })
 
 const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
-  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
-  const getSimpleProductCollection = useSimpleProductCollection()
-  const { settings, id: appId } = useApp()
-  const { currentMemberId, currentMember } = useAuth()
-  const { loading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
+  const { settings, id: appId, loading: isAppLoading } = useApp()
+  const { currentMemberId, isAuthenticating } = useAuth()
+  const { loading: isOrderLoading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
     GET_ORDERS_PRODUCT,
     { variables: { orderId: orderId } },
   )
@@ -76,7 +72,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
     }
   }, [order, settings, withTracking])
 
-  if (loading) {
+  if (isAppLoading || isOrderLoading || isAuthenticating) {
     return <LoadingPage />
   }
   if (!order) {

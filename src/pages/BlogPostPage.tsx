@@ -6,7 +6,6 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
 import { render } from 'mustache'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Helmet } from 'react-helmet'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, Redirect, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -153,17 +152,6 @@ const BlogPostPage: React.VFC = () => {
 
   return (
     <DefaultLayout white noHeader={isScrollingDown}>
-      <Helmet>
-        <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteTitle} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={post.coverUrl || ''} />
-        <meta property="og:description" content={siteDescription} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
-
       {!loadingPost && (
         <PostCover
           title={post?.title || ''}

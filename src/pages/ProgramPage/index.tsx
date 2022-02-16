@@ -7,7 +7,6 @@ import { render } from 'mustache'
 import queryString from 'query-string'
 import React, { useContext, useEffect, useRef } from 'react'
 import ReactGA from 'react-ga'
-import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -156,16 +155,6 @@ const ProgramPage: React.VFC = () => {
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
-      <Helmet>
-        <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteTitle} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={siteImage} />
-        <meta property="og:description" content={siteDescription} />
-        <script type="application/ld+json">{ldData}</script>
-      </Helmet>
 
       <div>
         <PerpetualProgramBanner
