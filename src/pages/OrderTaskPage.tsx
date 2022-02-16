@@ -56,7 +56,7 @@ const OrderTaskPage: React.VFC = () => {
         axios
           .post(
             `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-            { orderId: task.returnvalue.orderId, clientBackUrl: window.location.href },
+            { orderId: task.returnvalue.orderId, clientBackUrl: window.location.origin },
             { headers: { authorization: `Bearer ${authToken}` } },
           )
           .then(({ data: { code, result } }) => {
