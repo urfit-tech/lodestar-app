@@ -27,6 +27,12 @@ const StyledButton = styled(Button)`
   width: 160px;
   height: 44px;
 `
+const StyledWarning = styled.div`
+  margin-top: 1rem;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--error);
+`
 
 const OrderTaskPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -85,7 +91,12 @@ const OrderTaskPage: React.VFC = () => {
 
   return (
     <DefaultLayout noFooter noHeader centeredBox>
-      <StyledContainer>確認訂單中，請稍候...{(Math.exp(-1 / retry) * 100).toFixed(0)}%</StyledContainer>
+      <StyledContainer>
+        <div className="text-center">
+          確認訂單中，請稍候...{(Math.exp(-1 / retry) * 100).toFixed(0)}%
+          <StyledWarning>請勿重整與返回上一頁</StyledWarning>
+        </div>
+      </StyledContainer>
     </DefaultLayout>
   )
 }

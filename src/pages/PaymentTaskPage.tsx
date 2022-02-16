@@ -25,6 +25,12 @@ const StyledButton = styled(Button)`
   width: 160px;
   height: 44px;
 `
+const StyledWarning = styled.div`
+  margin-top: 1rem;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--error);
+`
 
 const PaymentTaskPage: React.VFC = () => {
   const tracking = useTracking()
@@ -38,7 +44,6 @@ const PaymentTaskPage: React.VFC = () => {
   useEffect(() => {
     if (taskResult) {
       tracking.addPaymentInfo()
-      console.log({ taskResult })
       if (taskResult.payForm.url) {
         window.location.assign(taskResult.payForm.url)
       } else if (taskResult.payForm.html) {
@@ -71,7 +76,11 @@ const PaymentTaskPage: React.VFC = () => {
 
   return (
     <DefaultLayout noFooter noHeader centeredBox>
-      <StyledContainer>產生付款資訊中...{(Math.exp(-1 / retry) * 100).toFixed(0)}%</StyledContainer>
+      <StyledContainer>
+        <div className="text-center">
+          產生付款資訊中...{(Math.exp(-1 / retry) * 100).toFixed(0)}%<StyledWarning>請勿重整與返回上一頁</StyledWarning>
+        </div>
+      </StyledContainer>
     </DefaultLayout>
   )
 }
