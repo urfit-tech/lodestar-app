@@ -536,7 +536,7 @@ export const useProgramContent = (programContentId: string) => {
             listPrice: data.program_content_by_pk.list_price,
             salePrice: data.program_content_by_pk.sale_price,
             soldAt: data.program_content_by_pk.sold_at && new Date(data.program_content_by_pk.sold_at),
-            contentBodyId: data.program_content_by_pk.program_content_body.id,
+            contentBodyId: data.program_content_by_pk.program_content_body?.id,
             programContentBody: data.program_content_by_pk.program_content_body
               ? {
                   id: data.program_content_by_pk.program_content_body.id,
