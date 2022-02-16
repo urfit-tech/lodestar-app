@@ -189,7 +189,7 @@ const OrderCollectionAdminCard: React.VFC<
                 axios
                   .post(
                     `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                    { orderId: record.id, clientBackUrl: window.location.href },
+                    { orderId: record.id, clientBackUrl: window.location.origin },
                     { headers: { authorization: `Bearer ${authToken}` } },
                   )
                   .then(({ data: { code, result } }) => {

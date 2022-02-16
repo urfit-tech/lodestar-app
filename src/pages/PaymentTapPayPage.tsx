@@ -4,6 +4,7 @@ import axios from 'axios'
 import TapPayForm, { TPCreditCard } from 'lodestar-app-element/src/components/forms/TapPayForm'
 import CreditCardSelector from 'lodestar-app-element/src/components/selectors/CreditCardSelector'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTappay } from 'lodestar-app-element/src/hooks/util'
 import React, { useCallback, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -13,7 +14,6 @@ import { StyledContainer } from '../components/layout/DefaultLayout.styled'
 import { codeMessages } from '../helpers/translation'
 import { useOrderId } from '../hooks/data'
 import { useMember } from '../hooks/member'
-import { useTappay } from '../hooks/util'
 
 const StyledFreeSubscriptionNotice = styled.p`
   color: var(--gray-dark);
@@ -64,9 +64,7 @@ const PaymentTapPayBlock: React.VFC = () => {
       await payPayment(memberCreditCardId)
       history.push(`/orders/${orderId}?tracking=1`)
     } catch (err) {
-      if (err instanceof Error) {
-        message.error(err)
-      }
+      message.error((err as any).toString())
     }
     setIsPaying(false)
   }
@@ -113,22 +111,20 @@ const usePayment = (paymentNo: string) => {
         if (!authToken) {
           reject('no auth')
         }
-        TPDirect.card.getPrime(({ status, card: { prime } }: { status: number; card: { prime: string } }) => {
+        // pay by card token
+        if (memberCreditCardId) {
           axios
             .post(
               `${process.env.REACT_APP_API_BASE_ROOT}/payment/pay/${paymentNo}`,
               {
                 memberCreditCardId,
-                prime,
                 cardHolder: {
                   phoneNumber: member?.phone || '0987654321',
                   name: member?.name || 'test',
                   email: member?.email || 'test@gmail.com',
                 },
               },
-              {
-                headers: { authorization: `Bearer ${authToken}` },
-              },
+              { headers: { authorization: `Bearer ${authToken}` } },
             )
             .then(({ data: { code, result } }) => {
               if (code === 'SUCCESS') {
@@ -138,7 +134,35 @@ const usePayment = (paymentNo: string) => {
               reject(codeMessage ? formatMessage(codeMessage) : code)
             })
             .catch(reject)
-        })
+        }
+        // pay by prime
+        else {
+          TPDirect.card.getPrime(({ status, card, msg }: { status: number; card: { prime: string }; msg: string }) => {
+            axios
+              .post(
+                `${process.env.REACT_APP_API_BASE_ROOT}/payment/pay/${paymentNo}`,
+                {
+                  prime: card.prime,
+                  cardHolder: {
+                    phoneNumber: member?.phone || '0987654321',
+                    name: member?.name || 'test',
+                    email: member?.email || 'test@gmail.com',
+                  },
+                },
+                {
+                  headers: { authorization: `Bearer ${authToken}` },
+                },
+              )
+              .then(({ data: { code, result } }) => {
+                if (code === 'SUCCESS') {
+                  resolve(result)
+                }
+                const codeMessage = codeMessages[code as keyof typeof codeMessages]
+                reject(codeMessage ? formatMessage(codeMessage) : code)
+              })
+              .catch(reject)
+          })
+        }
       }),
     [authToken, TPDirect.card, paymentNo, member?.phone, member?.name, member?.email, formatMessage],
   )
