@@ -48,6 +48,8 @@ const PaymentTaskPage: React.VFC = () => {
         window.location.assign(taskResult.payForm.url)
       } else if (taskResult.payForm.html) {
         document.write(taskResult.payForm.html)
+      } else if (taskResult.html) {
+        document.write(taskResult.html)
       } else {
         history.push(`/payments/${taskResult.paymentNo}`)
       }
