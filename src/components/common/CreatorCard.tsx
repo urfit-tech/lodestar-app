@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../helpers'
-import { commonMessages } from '../../helpers/translation'
+import { commonMessages, usersMessages } from '../../helpers/translation'
 import { ProgramRoleName } from '../../types/program'
 import { AvatarImage } from './Image'
 import ProductRoleFormatter from './ProductRoleFormatter'
@@ -163,16 +163,16 @@ const CreatorCard: React.VFC<{
               </StyledLink>
             </StyledAction>
           )}
-          {withAppointment && enabledModules.appointment && (
+          {/* {withAppointment && enabledModules.appointment && (
             <StyledAction>
               <StyledLink to={`/creators/${id}?tabkey=appointments`}>
                 {formatMessage(commonMessages.content.appointments)}
               </StyledLink>
             </StyledAction>
-          )}
+          )} */}
           {withBlog && enabledModules.blog && (
             <StyledAction>
-              <StyledLink to={`/creators/${id}?tabkey=posts`}>{formatMessage(commonMessages.content.blog)}</StyledLink>
+              <StyledLink to={`/creators/${id}?tabkey=posts`}>{formatMessage(usersMessages.tab.mediaPost)}</StyledLink>
             </StyledAction>
           )}
         </div>
