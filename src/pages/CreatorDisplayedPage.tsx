@@ -60,13 +60,13 @@ export const StyledCreatorTag = styled.span`
 `
 
 const CreatorDisplayedPage: React.VFC<{}> = () => {
-  const app = useApp()
+  const { loading, enabledModules } = useApp()
   const { pageTitle } = useNav()
   const { formatMessage } = useIntl()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
   const { creators } = usePublishedCreator()
 
-  if (!app.loading && !app.enabledModules.creator_display) {
+  if (!loading && !enabledModules.creator_display) {
     return <ForbiddenPage />
   }
 
@@ -114,7 +114,7 @@ const CreatorDisplayedPage: React.VFC<{}> = () => {
           <div className="row">
             {filteredCreators.map(v => (
               <div className="col-12 col-md-6 col-lg-3 mb-4">
-                <Link to={`/creators/${v.id}?tabkey=appointments`}>
+                <Link to={`/creators/${v.id}${enabledModules.appointment ? '?tabkey=appointments' : ''}`}>
                   <CustomRatioImage
                     width="100%"
                     ratio={1}
