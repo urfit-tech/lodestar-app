@@ -20,7 +20,7 @@ const StyledFeature = styled.section`
 
   h3 {
     font-family: Noto Sans TC;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: bold;
     line-height: 1.3;
     letter-spacing: 0.77px;
@@ -29,7 +29,7 @@ const StyledFeature = styled.section`
   }
   p {
     font-family: Noto Sans TC;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     line-height: 1.5;
     letter-spacing: 0.2px;
