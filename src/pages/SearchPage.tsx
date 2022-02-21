@@ -108,6 +108,7 @@ const SearchResultBlock: React.VFC<{
 }> = ({ memberId, title, tag }) => {
   const { formatMessage } = useIntl()
   const { isAuthenticated } = useAuth()
+  const { enabledModules } = useApp()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [tab, setTab] = useQueryParam('tab', StringParam)
 
@@ -296,7 +297,7 @@ const SearchResultBlock: React.VFC<{
             <div className="row">
               {searchResults.creators.map(creator => (
                 <div key={creator.id} className="col-6 col-lg-3">
-                  <Link to={`/creators/${creator.id}?tabkey=appointments`}>
+                  <Link to={`/creators/${creator.id}${enabledModules.appointment ? '?tabkey=appointments' : ''}`}>
                     <CreatorBriefCard imageUrl={creator.avatarUrl} title={creator.name} meta={creator.abstract} />
                   </Link>
                 </div>
