@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { StyledContainer } from '../components/layout/DefaultLayout.styled'
+import { StyledContainer } from '../components/layout/DefaultLayout/DefaultLayout.styled'
 
 const PaymentPage: React.VFC = () => {
   const { paymentNo } = useParams<{ paymentNo: string }>()
