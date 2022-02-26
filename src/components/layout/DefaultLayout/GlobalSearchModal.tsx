@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Button, Checkbox, Input } from '@chakra-ui/react'
-import { ApolloError } from 'apollo-client'
 import decamelize from 'decamelize'
 import gql from 'graphql-tag'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
@@ -41,21 +40,37 @@ const GlobalSearchFilter: React.VFC<{
   onChange?: () => void
 }> = ({ productType, onChange }) => {
   const { formatMessage } = useIntl()
-  const data = useProductFilterOptionsGet(productType)
+  const { isLoading, filter } = useProductFilterOptions(productType)
 
   return (
     <div>
       <div>
         <h3>{formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選分類' }))}</h3>
-        <div>
-          <Checkbox></Checkbox>
-          <Button colorScheme="primary" variant="outline">
-            categroy
-          </Button>
-        </div>
+        {filter.categories.map(category => (
+          <div>
+            <Checkbox />
+            {category.name}
+            {category.subCategories?.map(subCategory => (
+              <Button colorScheme="primary" variant="outline">
+                {subCategory.name}
+              </Button>
+            ))}
+          </div>
+        ))}
       </div>
       <div>
         <h3>{formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選條件' }))}</h3>
+        {filter.tags.map(tag => (
+          <div>
+            <Checkbox />
+            {tag.name}
+            {tag.subTags?.map(subTag => (
+              <Button colorScheme="primary" variant="outline">
+                {subTag.name}
+              </Button>
+            ))}
+          </div>
+        ))}
       </div>
       <div>
         <h3>{formatMessage(defineMessage({ id: 'common.ui.advancedCondition', defaultMessage: '進階條件' }))}</h3>
@@ -83,13 +98,26 @@ const GlobalSearchFilter: React.VFC<{
   )
 }
 
-const useProductFilterOptionsGet: (productType?: ProductType) => {
+type Category = {
+  id: string
+  name: string
+}
+
+type Tag = {
+  id: string
+  name: string
+}
+
+const useProductFilterOptions: (productType?: ProductType) => {
   isLoading: boolean
-  error?: ApolloError
+  filter: {
+    categories: (Category & { subCategories?: Category[] })[]
+    tags: (Tag & { subTags?: Tag[] })[]
+  }
 } = productType => {
   const decamelizeProductType = decamelize(productType || 'Program')
 
-  const { loading, data, error } = useQuery(gql`
+  const { loading, data } = useQuery(gql`
     query GET_PRODUCT_FILTER_OPTIONS {
       ${decamelizeProductType}_category(where: {category: {name: {_is_null: false}}}, distinct_on: category_id) {
         id
@@ -107,7 +135,10 @@ const useProductFilterOptionsGet: (productType?: ProductType) => {
 
   return {
     isLoading: loading,
-    error,
+    filter: {
+      categories: [],
+      tags: [],
+    },
   }
 }
 
