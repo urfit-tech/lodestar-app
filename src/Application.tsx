@@ -4,6 +4,7 @@ import 'braft-editor/dist/index.css'
 import 'braft-editor/dist/output.css'
 import { LodestarAppProvider } from 'lodestar-app-element/src/contexts/LodestarAppContext'
 import React from 'react'
+import { StyleSheetManager } from 'styled-components'
 import AppRouter, { RouteProps } from './components/common/AppRouter'
 import GlobalPodcastPlayer from './components/podcast/GlobalPodcastPlayer'
 import ErrorBoundary from './containers/common/ErrorBoundary'
@@ -20,25 +21,27 @@ const Application: React.FC<{
   customRender?: CustomRendererProps
 }> = ({ appId, extraRouteProps, customRender }) => {
   return (
-    <ErrorBoundary>
-      <LodestarAppProvider appId={appId}>
-        <LanguageProvider>
-          <CartProvider>
-            <NotificationProvider>
-              <PodcastPlayerProvider>
-                <ConfigProvider locale={zhTW}>
-                  <CustomRendererProvider renderer={customRender}>
-                    <AppRouter extra={extraRouteProps}>
-                      <GlobalPodcastPlayer />
-                    </AppRouter>
-                  </CustomRendererProvider>
-                </ConfigProvider>
-              </PodcastPlayerProvider>
-            </NotificationProvider>
-          </CartProvider>
-        </LanguageProvider>
-      </LodestarAppProvider>
-    </ErrorBoundary>
+    <StyleSheetManager disableCSSOMInjection>
+      <ErrorBoundary>
+        <LodestarAppProvider appId={appId}>
+          <LanguageProvider>
+            <CartProvider>
+              <NotificationProvider>
+                <PodcastPlayerProvider>
+                  <ConfigProvider locale={zhTW}>
+                    <CustomRendererProvider renderer={customRender}>
+                      <AppRouter extra={extraRouteProps}>
+                        <GlobalPodcastPlayer />
+                      </AppRouter>
+                    </CustomRendererProvider>
+                  </ConfigProvider>
+                </PodcastPlayerProvider>
+              </NotificationProvider>
+            </CartProvider>
+          </LanguageProvider>
+        </LodestarAppProvider>
+      </ErrorBoundary>
+    </StyleSheetManager>
   )
 }
 
