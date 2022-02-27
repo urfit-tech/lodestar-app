@@ -1,6 +1,7 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { DeepPick } from 'ts-deep-pick/lib'
 import PageHelmet from '../../components/common/PageHelmet'
+import { getBraftContent } from '../../helpers'
 import { Activity } from '../../types/activity'
 
 type ActivityPageHelmetProps = DeepPick<Activity, 'id' | 'title' | 'description' | 'coverUrl' | 'tags' | 'tickets'>
@@ -10,7 +11,7 @@ const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ 
   return (
     <PageHelmet
       title={activity.title}
-      description={activity.description || app.settings['description']}
+      description={getBraftContent(activity.description || app.settings['description'])}
       keywords={activity.tags}
       jsonLd={[
         {
@@ -18,7 +19,7 @@ const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ 
           '@type': 'Product',
           name: activity.title || app.settings['title'],
           image: activity.coverUrl || app.settings['open_graph.image'],
-          description: activity.description || app.settings['description'],
+          description: getBraftContent(activity.description || app.settings['description']),
           // TODO: add activity SKU
           // sku: activity.sku,
           mpn: activity.id,
@@ -57,7 +58,7 @@ const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ 
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: activity.title || app.settings['title'] },
-        { property: 'og:description', content: activity.description || app.settings['description'] },
+        { property: 'og:description', content: getBraftContent(activity.description || app.settings['description']) },
         { property: 'og:image', content: activity.coverUrl || app.settings['open_graph.image'] },
       ]}
     />

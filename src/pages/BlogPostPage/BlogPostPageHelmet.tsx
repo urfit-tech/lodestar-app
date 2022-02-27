@@ -44,7 +44,7 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
         ...post.tags.map(tag => ({ property: 'article:tag', content: tag })),
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: post.title || app.settings['title'] },
-        { property: 'og:description', content: post.description || app.settings['description'] },
+        { property: 'og:description', content: post.abstract || app.settings['description'] },
         { property: 'og:image', content: post.coverUrl || app.settings['open_graph.image'] },
       ]}
     />

@@ -20,7 +20,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
           '@type': 'Product',
           name: program.title || app.settings['title'],
           image: program.coverUrl || app.settings['open_graph.image'],
-          description: program.description || app.settings['description'],
+          description: program.abstract || app.settings['description'],
           // TODO: add program SKU
           // sku: program.sku,
           mpn: program.id,
@@ -59,7 +59,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: program.title || app.settings['open_graph.title'] },
-        { property: 'og:description', content: program.description || app.settings['open_graph.description'] },
+        { property: 'og:description', content: program.abstract || app.settings['description'] },
         { property: 'og:image', content: program.coverUrl || app.settings['open_graph.image'] },
       ]}
     />

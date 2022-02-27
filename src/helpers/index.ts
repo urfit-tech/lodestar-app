@@ -353,3 +353,42 @@ export const getCookie = (name: string) => {
   const parts = value.split(`; ${name}=`)
   if (parts.length === 2) return parts.pop()?.split(';').shift()
 }
+
+export const hasJsonStructure = (data: string) => {
+  try {
+    JSON.parse(data)
+  } catch (error) {
+    return false
+  }
+  return true
+}
+
+export const getBraftContent = (data: string) => {
+  if (hasJsonStructure(data)) {
+    const json = JSON.parse(data)
+    if (json.blocks) {
+      return json.blocks
+        .map((block: any) => block.text)
+        .join('')
+        .substring(0, 5000)
+    }
+    return ''
+  }
+  return decodeHtmlEntities(data)
+}
+
+export const decodeHtmlEntities = (data: string) => {
+  const entityTables: { [key: string]: string } = {
+    '&nbsp;': '\u00a0',
+    '&darr;': '\u2193',
+    '&hellip;': '\u2026',
+  }
+
+  const entitiesReg = /&([^&;]{2,});?/g
+  return data.replace(/(<([^>]+)>)/gi, '').replace(entitiesReg, match => {
+    if (entityTables.hasOwnProperty(match)) {
+      return entityTables[match]
+    }
+    return match
+  })
+}
