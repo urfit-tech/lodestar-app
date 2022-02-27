@@ -13,14 +13,16 @@ export type PostPreviewProps = PostLinkProps & {
   abstract: string | null
   authorId: string
   publishedAt: Date | null
+  updatedAt: Date
   categories: Category[]
   tags: string[]
 }
 
-export type PostProps = Omit<PostPreviewProps, 'authorId'> & {
+export type Post = Omit<PostPreviewProps, 'authorId'> & {
   author: {
     id: string
     name: string
+    username: string
     avatarUrl: string | null
     abstract: string | null
     withPodcast?: boolean

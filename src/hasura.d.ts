@@ -3119,6 +3119,7 @@ export interface GET_POST_PREVIEW_COLLECTION_post {
   video_url: string | null;
   abstract: string | null;
   published_at: any | null;
+  updated_at: any | null;
   /**
    * An array relationship
    */
@@ -3252,6 +3253,7 @@ export interface GET_POST_post_post_roles_member {
   name: string | null;
   picture_url: string | null;
   abstract: string | null;
+  username: string | null;
 }
 
 export interface GET_POST_post_post_roles {
@@ -3394,6 +3396,7 @@ export interface GET_POST_post {
   abstract: string | null;
   views: number;
   published_at: any | null;
+  updated_at: any | null;
   /**
    * An array relationship
    */
@@ -3418,6 +3421,7 @@ export interface GET_POST_post_by_pk_post_roles_member {
   name: string | null;
   picture_url: string | null;
   abstract: string | null;
+  username: string | null;
 }
 
 export interface GET_POST_post_by_pk_post_roles {
@@ -3560,6 +3564,7 @@ export interface GET_POST_post_by_pk {
   abstract: string | null;
   views: number;
   published_at: any | null;
+  updated_at: any | null;
   /**
    * An array relationship
    */
@@ -9936,6 +9941,7 @@ export interface PostParts_post_roles_member {
   name: string | null;
   picture_url: string | null;
   abstract: string | null;
+  username: string | null;
 }
 
 export interface PostParts_post_roles {
@@ -10078,6 +10084,7 @@ export interface PostParts {
   abstract: string | null;
   views: number;
   published_at: any | null;
+  updated_at: any | null;
   /**
    * An array relationship
    */
