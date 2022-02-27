@@ -2276,6 +2276,11 @@ export interface GET_PROGRAM_CONTENT_PROGRESSVariables {
 // ====================================================
 
 
+export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_tags {
+  __typename: "activity_tag";
+  tag_name: string;
+}
+
 export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_categories_category {
   __typename: "category";
   id: string;
@@ -2347,6 +2352,10 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity {
   is_participants_visible: boolean;
   organizer_id: string;
   support_locales: any | null;
+  /**
+   * An array relationship
+   */
+  activity_tags: GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_tags[];
   /**
    * An array relationship
    */

@@ -23,6 +23,9 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
           is_participants_visible
           organizer_id
           support_locales
+          activity_tags {
+            tag_name
+          }
           activity_categories {
             id
             category {
@@ -73,6 +76,8 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
     | 'categories'
     | 'participantCount'
     | 'totalSeats'
+    | 'tags'
+    | 'publishedAt'
   >[] =
     loading || error || !data
       ? []
@@ -89,7 +94,7 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
             title: activity.title,
             description: '',
             isParticipantsVisible: activity.is_participants_visible,
-            publishedAt: new Date(activity.published_at),
+            publishedAt: activity.published_at ? new Date(activity.published_at) : null,
             startedAt:
               activity.activity_sessions_aggregate.aggregate?.min?.started_at &&
               new Date(activity.activity_sessions_aggregate.aggregate.min.started_at),
@@ -98,13 +103,12 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
               new Date(activity.activity_sessions_aggregate.aggregate.max.ended_at),
             organizerId: activity.organizer_id,
             supportLocales: activity.support_locales,
-
+            tags: activity.activity_tags.map(v => v.tag_name),
             categories: activity.activity_categories.map(activityCategory => ({
               id: activityCategory.category.id,
               name: activityCategory.category.name,
               position: activityCategory.category.position,
             })),
-
             participantCount: activity.activity_enrollments_aggregate.aggregate?.count || 0,
             totalSeats: activity.activity_tickets_aggregate.aggregate?.sum?.count || 0,
           }))

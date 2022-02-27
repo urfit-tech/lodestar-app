@@ -11,16 +11,17 @@ import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { DeepPick } from 'ts-deep-pick/lib'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import ActivityBlock from '../components/activity/ActivityBlock'
-import { BREAK_POINT } from '../components/common/Responsive'
-import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
-import DefaultLayout from '../components/layout/DefaultLayout'
-import LanguageContext from '../contexts/LanguageContext'
-import { commonMessages, productMessages } from '../helpers/translation'
-import { usePublishedActivityCollection } from '../hooks/activity'
-import { useNav } from '../hooks/data'
-import { Activity } from '../types/activity'
-import { Category } from '../types/general'
+import ActivityBlock from '../../components/activity/ActivityBlock'
+import { BREAK_POINT } from '../../components/common/Responsive'
+import { StyledBanner, StyledBannerTitle, StyledCollection } from '../../components/layout'
+import DefaultLayout from '../../components/layout/DefaultLayout'
+import LanguageContext from '../../contexts/LanguageContext'
+import { commonMessages, productMessages } from '../../helpers/translation'
+import { usePublishedActivityCollection } from '../../hooks/activity'
+import { useNav } from '../../hooks/data'
+import { Activity } from '../../types/activity'
+import { Category } from '../../types/general'
+import ActivityCollectionPageHelmet from './ActivityCollectionPageHelmet'
 
 type Banner = { desktop: string; mobile: string }
 
@@ -79,27 +80,25 @@ const ActivityCollectionPage = () => {
     collectionBanner = null
   }
 
+  const activityCollectionPageTitle =
+    pageTitle ||
+    categories.find(category => category.id === active)?.name ||
+    formatMessage(productMessages.activity.title.default)
+
   const filteredActivities = activities
     .filter(activity => classification === null || activity.categories.some(category => category.id === classification))
     .filter(activity => !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage))
 
   return (
     <DefaultLayout white>
+      <ActivityCollectionPageHelmet title={activityCollectionPageTitle} activities={filteredActivities} />
       {collectionBanner && <StyledCollectionBanner src={collectionBanner}></StyledCollectionBanner>}
       <StyledBanner>
         <div className="container">
           {!noTitle && (
             <StyledBannerTitle className="d-flex align-items-center">
               <Icon as={AiFillAppstore} className="mr-3" />
-              <span>
-                {loading ? (
-                  <StyledSkeleton height="28px" />
-                ) : (
-                  pageTitle ||
-                  categories.find(category => category.id === active)?.name ||
-                  formatMessage(productMessages.activity.title.default)
-                )}
-              </span>
+              <span>{loading ? <StyledSkeleton height="28px" /> : activityCollectionPageTitle}</span>
             </StyledBannerTitle>
           )}
 
