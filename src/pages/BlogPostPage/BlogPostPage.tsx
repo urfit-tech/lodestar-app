@@ -5,7 +5,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import { Link, Redirect, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StyledPostMeta } from '../../components/blog'
 import PostCover from '../../components/blog/PostCover'
@@ -104,10 +104,6 @@ const BlogPostPage: React.VFC = () => {
   }
   if (!post) {
     return <NotFoundPage />
-  }
-
-  if (post.codeName && post.codeName !== postId) {
-    return <Redirect to={`/posts/${post.codeName}`} />
   }
 
   try {

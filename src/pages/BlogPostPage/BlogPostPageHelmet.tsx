@@ -47,7 +47,9 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
         { property: 'og:description', content: post.abstract || app.settings['description'] },
         { property: 'og:image', content: post.coverUrl || app.settings['open_graph.image'] },
       ]}
-    />
+    >
+      <link rel="canonical" href={window.location.origin + `/posts/${post.id}`} />
+    </PageHelmet>
   )
 }
 

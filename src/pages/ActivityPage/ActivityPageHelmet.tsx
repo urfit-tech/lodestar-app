@@ -4,6 +4,8 @@ import PageHelmet from '../../components/common/PageHelmet'
 import { getBraftContent } from '../../helpers'
 import { Activity } from '../../types/activity'
 
+// FIXME: it should change to another structured data
+// https://developers.google.com/search/docs/advanced/structured-data/event
 type ActivityPageHelmetProps = DeepPick<Activity, 'id' | 'title' | 'description' | 'coverUrl' | 'tags' | 'tickets'>
 const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ activity }) => {
   const app = useApp()

@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet'
 import { Thing, WithContext } from 'schema-dts'
 import xss from 'xss'
 
-const PageHelmet: React.VFC<
+const PageHelmet: React.FC<
   Partial<{
     title: string
     description: string
@@ -29,6 +29,7 @@ const PageHelmet: React.VFC<
       {openGraph.map(({ property, content }, index) => (
         <meta key={index} property={property} content={xss(content)} />
       ))}
+      {props.children}
     </Helmet>
   )
 }
