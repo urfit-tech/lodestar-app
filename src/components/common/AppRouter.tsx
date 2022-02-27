@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { BrowserRouter, Redirect, Route } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { QueryParamProvider } from 'use-query-params'
 import LoadablePage from '../../LoadablePage'
 import AppPage from '../../pages/AppPage'
@@ -306,25 +306,30 @@ const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
     <AppRouterContext.Provider value={{ routesMap }}>
       <BrowserRouter>
         <QueryParamProvider ReactRouterRoute={Route}>
-          <Route
-            render={() => (
-              <AppPage
-                renderFallback={path => {
-                  const pageName = Object.values(defaultRoutesMap).find(routeMap => routeMap.path === path)?.pageName
-                  return pageName ? (
-                    typeof pageName === 'string' ? (
-                      <React.Suspense fallback={<LoadingPage />}>
-                        <LoadablePage pageName={pageName} />
-                      </React.Suspense>
-                    ) : (
-                      pageName
-                    )
-                  ) : (
-                    <NotFoundPage />
-                  )
-                }}
-              />
-            )}
+          <AppPage
+            renderFallback={() => {
+              return (
+                <React.Suspense fallback={<LoadingPage />}>
+                  <Switch>
+                    {Object.values(defaultRoutesMap).map(routeMap => (
+                      <Route
+                        exact
+                        key={routeMap.path}
+                        path={routeMap.path}
+                        render={() =>
+                          typeof routeMap.pageName === 'string' ? (
+                            <LoadablePage pageName={routeMap.pageName} />
+                          ) : (
+                            routeMap.pageName
+                          )
+                        }
+                      />
+                    ))}
+                    <Route component={NotFoundPage} />
+                  </Switch>
+                </React.Suspense>
+              )
+            }}
           />
           {children}
         </QueryParamProvider>
