@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route } from 'react-router-dom'
 import { QueryParamProvider } from 'use-query-params'
 import LoadablePage from '../../LoadablePage'
 import AppPage from '../../pages/AppPage'
@@ -302,34 +302,36 @@ const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
     ...defaultRoutesMap,
     ...extra,
   }
-  const routes = Object.keys(routesMap).map(routeKey => {
-    const { path, pageName } = routesMap[routeKey as keyof typeof routesMap]
-    return (
-      <Route
-        exact
-        key={routeKey}
-        path={path}
-        render={() => (
-          <React.Suspense fallback={<LoadingPage />}>
-            {typeof pageName === 'string' ? <LoadablePage pageName={pageName} /> : pageName}
-          </React.Suspense>
-        )}
-      />
-    )
-  })
   return (
     <AppRouterContext.Provider value={{ routesMap }}>
       <BrowserRouter>
         <QueryParamProvider ReactRouterRoute={Route}>
-          <Switch>
-            {routes}
-            <Route component={AppPage} />
-          </Switch>
+          <Route
+            render={() => (
+              <AppPage
+                renderFallback={path => {
+                  const pageName = Object.values(defaultRoutesMap).find(routeMap => routeMap.path === path)?.pageName
+                  return pageName ? (
+                    typeof pageName === 'string' ? (
+                      <React.Suspense fallback={<LoadingPage />}>
+                        <LoadablePage pageName={pageName} />
+                      </React.Suspense>
+                    ) : (
+                      pageName
+                    )
+                  ) : (
+                    <NotFoundPage />
+                  )
+                }}
+              />
+            )}
+          />
           {children}
         </QueryParamProvider>
       </BrowserRouter>
     </AppRouterContext.Provider>
   )
 }
+
 export const useAppRouter = () => useContext(AppRouterContext)
 export default AppRouter
