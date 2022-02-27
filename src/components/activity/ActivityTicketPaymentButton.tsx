@@ -8,7 +8,6 @@ import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
-import { ActivityTicketProps } from '../../types/activity'
 import CoinCheckoutModal from '../checkout/CoinCheckoutModal'
 
 const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
@@ -28,35 +27,42 @@ const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
     `}
 `
 
-const ActivityTicketPaymentButton: React.VFC<{
-  ticket: ActivityTicketProps
-}> = ({ ticket }) => {
+type ActivityTicketPaymentButtonProps = {
+  ticketId: string
+  ticketPrice: number
+  ticketCurrencyId: string
+}
+const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> = ({
+  ticketId,
+  ticketPrice,
+  ticketCurrencyId,
+}) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
   const history = useHistory()
 
   const handleAddCart = () => {
-    return addCartProduct?.('ActivityTicket', ticket.id, {
+    return addCartProduct?.('ActivityTicket', ticketId, {
       from: window.location.pathname,
     }).catch(handleError)
   }
 
   return (
     <>
-      {isProductInCart?.('ActivityTicket', ticket.id) ? (
+      {isProductInCart?.('ActivityTicket', ticketId) ? (
         <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
           {formatMessage(commonMessages.button.cart)}
         </Button>
-      ) : ticket.currencyId === 'LSC' ? (
+      ) : ticketCurrencyId === 'LSC' ? (
         <CoinCheckoutModal
-          productId={'ActivityTicket_' + ticket.id}
-          currencyId={ticket.currencyId}
-          amount={ticket.price}
+          productId={'ActivityTicket_' + ticketId}
+          currencyId={ticketCurrencyId}
+          amount={ticketPrice}
         />
       ) : (
         <div className="d-flex flex-column">
-          {ticket.price !== 0 && !settings['feature.cart.disable'] && (
+          {ticketPrice !== 0 && !settings['feature.cart.disable'] && (
             <StyleButton
               className="mr-2"
               variant="outline"
@@ -71,7 +77,7 @@ const ActivityTicketPaymentButton: React.VFC<{
           )}
 
           <Button colorScheme="primary" isFullWidth onClick={() => handleAddCart()?.then(() => history.push('/cart'))}>
-            {ticket.price === 0 ? formatMessage(commonMessages.button.join) : formatMessage(commonMessages.ui.purchase)}
+            {ticketPrice === 0 ? formatMessage(commonMessages.button.join) : formatMessage(commonMessages.ui.purchase)}
           </Button>
         </div>
       )}

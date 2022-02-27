@@ -9,8 +9,9 @@ import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
+import { DeepPick } from 'ts-deep-pick/lib'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import Activity from '../components/activity/Activity'
+import ActivityBlock from '../components/activity/ActivityBlock'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -18,7 +19,7 @@ import LanguageContext from '../contexts/LanguageContext'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { usePublishedActivityCollection } from '../hooks/activity'
 import { useNav } from '../hooks/data'
-import { ActivityProps } from '../types/activity'
+import { Activity } from '../types/activity'
 import { Category } from '../types/general'
 
 type Banner = { desktop: string; mobile: string }
@@ -142,11 +143,10 @@ const ActivityCollectionPage = () => {
 }
 
 const ActivityCollection: React.FC<{
-  activities: (ActivityProps & {
-    categories: Category[]
-    participantCount: number
-    totalSeats: number
-  })[]
+  activities: DeepPick<
+    Activity,
+    'id' | 'title' | 'coverUrl' | 'isParticipantsVisible' | 'participantCount' | 'totalSeats' | 'startedAt' | 'endedAt'
+  >[]
 }> = ({ activities }) => {
   const { id: appId } = useApp()
   const tracking = useTracking()
@@ -158,12 +158,19 @@ const ActivityCollection: React.FC<{
 
       {activities.map((activity, idx) => (
         <div key={activity.id} className="col-12 col-md-6 col-lg-4 mb-4">
-          <Activity
+          <ActivityBlock
+            id={activity.id}
+            title={activity.title}
+            coverUrl={activity.coverUrl || undefined}
+            isParticipantsVisible={activity.isParticipantsVisible}
+            participantCount={activity.participantCount}
+            totalSeats={activity.totalSeats}
+            startedAt={activity.startedAt || undefined}
+            endedAt={activity.endedAt || undefined}
             onClick={() => {
               const resource = resourceCollection[idx]
               resource && tracking.click(resource, { position: idx + 1 })
             }}
-            {...activity}
           />
         </div>
       ))}

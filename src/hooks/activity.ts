@@ -1,14 +1,9 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { flatten, prop, sum, uniqBy } from 'ramda'
+import { DeepPick } from 'ts-deep-pick/lib'
 import hasura from '../hasura'
-import {
-  ActivityProps,
-  ActivityTicketProps,
-  ActivityTicketSessionProps,
-  ActivityTicketSessionType,
-} from '../types/activity'
-import { Category } from '../types/general'
+import { Activity, ActivitySession, ActivityTicket } from '../types/activity'
 
 export const usePublishedActivityCollection = (options?: { organizerId?: string; categoryId?: string }) => {
   const { loading, error, data, refetch } = useQuery<
@@ -64,11 +59,21 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
     { variables: { organizerId: options?.organizerId } },
   )
 
-  const activities: (ActivityProps & {
-    categories: Category[]
-    participantCount: number
-    totalSeats: number
-  })[] =
+  const activities: DeepPick<
+    Activity,
+    | 'id'
+    | 'coverUrl'
+    | 'title'
+    | 'description'
+    | 'isParticipantsVisible'
+    | 'startedAt'
+    | 'endedAt'
+    | 'organizerId'
+    | 'supportLocales'
+    | 'categories'
+    | 'participantCount'
+    | 'totalSeats'
+  >[] =
     loading || error || !data
       ? []
       : data.activity
@@ -196,6 +201,11 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
           title
           description
           published_at
+          is_participants_visible
+          support_locales
+          activity_tags {
+            tag_name
+          }
           activity_categories {
             id
             category {
@@ -245,21 +255,25 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
     },
   )
 
-  const activity: {
-    id: string
-    title: string
-    description: string | null
-    coverUrl: string | null
-    publishedAt: Date | null
-    organizerId: string
-    tickets: (ActivityTicketProps & {
-      participants: number
-      sessions: Pick<ActivityTicketSessionProps, 'id' | 'type' | 'title'>[]
-      enrollments: { orderId: string; orderProductId: string }[]
-    })[]
-    categories: Category[]
-    sessionIds: string[]
-  } | null = data?.activity_by_pk
+  const activity: DeepPick<
+    Activity,
+    | 'id'
+    | 'title'
+    | 'description'
+    | 'coverUrl'
+    | 'publishedAt'
+    | 'organizerId'
+    | 'tags'
+    | 'isParticipantsVisible'
+    | 'supportLocales'
+    | 'tickets'
+    | 'categories'
+    | 'sessions.[].id'
+    | 'ticketSessions.[].ticket.id'
+    | 'ticketSessions.[].session.id'
+    | 'ticketSessions.[].session.title'
+    | 'ticketSessions.[].session.type'
+  > | null = data?.activity_by_pk
     ? {
         id: activityId,
         title: data.activity_by_pk.title,
@@ -267,6 +281,9 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
         coverUrl: data.activity_by_pk.cover_url,
         publishedAt: data.activity_by_pk.published_at ? new Date(data.activity_by_pk.published_at) : null,
         organizerId: data.activity_by_pk.organizer_id,
+        tags: data.activity_by_pk.activity_tags.map(v => v.tag_name),
+        isParticipantsVisible: data.activity_by_pk.is_participants_visible,
+        supportLocales: data.activity_by_pk.support_locales,
         tickets: data.activity_by_pk.activity_tickets.map(v => ({
           id: v.id,
           title: v.title,
@@ -279,7 +296,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
           currencyId: v.currency_id,
           sessions: v.activity_session_tickets.map(v => ({
             id: v.activity_session.id,
-            type: v.activity_session_type as ActivityTicketSessionType,
+            type: v.activity_session_type as ActivitySession['type'],
             title: v.activity_session.title,
           })),
           participants: v.activity_ticket_enrollments_aggregate.aggregate?.count || 0,
@@ -292,7 +309,19 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
           id: v.category.id,
           name: v.category.name,
         })),
-        sessionIds: data.activity_by_pk.activity_sessions.map(v => v.id),
+        sessions: data.activity_by_pk.activity_sessions.map(v => ({
+          id: v.id,
+        })),
+        ticketSessions: data.activity_by_pk.activity_tickets.flatMap(v =>
+          v.activity_session_tickets.map(w => ({
+            ticket: { id: v.id },
+            session: {
+              id: w.activity_session.id,
+              title: w.activity_session.title,
+              type: w.activity_session_type as ActivitySession['type'],
+            },
+          })),
+        ),
       }
     : null
 
@@ -463,14 +492,31 @@ export const useActivityTicket = (ticketId: string) => {
     },
   )
 
-  const ticket:
-    | (ActivityTicketProps & {
-        sessions: ActivityTicketSessionProps[]
-        activity: Pick<ActivityProps, 'id' | 'title' | 'coverUrl'> & {
-          categories: (Category & { position: number })[]
-        }
-      })
-    | null =
+  const ticket: DeepPick<
+    ActivityTicket,
+    | 'id'
+    | 'startedAt'
+    | 'endedAt'
+    | 'price'
+    | 'count'
+    | 'description'
+    | 'isPublished'
+    | 'title'
+    | 'currencyId'
+    | 'sessions.[].id'
+    | 'sessions.[].type'
+    | 'sessions.[].title'
+    | 'sessions.[].description'
+    | 'sessions.[].threshold'
+    | 'sessions.[].startedAt'
+    | 'sessions.[].endedAt'
+    | 'sessions.[].location'
+    | 'sessions.[].onlineLink'
+    | 'activity.id'
+    | 'activity.title'
+    | 'activity.coverUrl'
+    | 'activity.categories'
+  > | null =
     loading || error || !data || !data.activity_ticket_by_pk
       ? null
       : {
@@ -485,7 +531,7 @@ export const useActivityTicket = (ticketId: string) => {
           currencyId: data.activity_ticket_by_pk.currency_id,
           sessions: data.activity_ticket_by_pk.activity_session_tickets.map(activitySessionTicket => ({
             id: activitySessionTicket.activity_session.id,
-            type: activitySessionTicket.activity_session_type as ActivityTicketSessionType,
+            type: activitySessionTicket.activity_session_type as ActivitySession['type'],
             title: activitySessionTicket.activity_session.title,
             description: activitySessionTicket.activity_session.description,
             threshold: activitySessionTicket.activity_session.threshold,
@@ -493,7 +539,6 @@ export const useActivityTicket = (ticketId: string) => {
             endedAt: new Date(activitySessionTicket.activity_session.ended_at),
             location: activitySessionTicket.activity_session.location,
             onlineLink: activitySessionTicket.activity_session.online_link,
-            activityId: data.activity_ticket_by_pk?.activity.id || '',
           })),
           activity: {
             id: data.activity_ticket_by_pk.activity.id,
