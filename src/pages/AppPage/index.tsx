@@ -7,6 +7,7 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import MessengerChat from '../../components/common/MessengerChat'
+import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import {
   ActivityIntroSection,
@@ -110,7 +111,7 @@ const sectionConverter = {
 
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
-  const { loadingAppPage, appPage } = usePage(location.pathname)
+  const { loadingAppPage, errorAppPage, appPage } = usePage(location.pathname)
 
   if (loadingAppPage) {
     return <LoadingPage />
@@ -118,6 +119,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
 
   return appPage ? (
     <DefaultLayout {...appPage.options}>
+      <PageHelmet />
       {appPage.craftData ? (
         <Editor enabled={false} resolver={CraftElement}>
           <CraftBlock craftData={appPage.craftData} />
@@ -206,7 +208,7 @@ export const usePage = (path: string) => {
       }
     : null
   return {
-    loadingAppPage: loading,
+    loadingAppPage: !appId || loading,
     errorAppPage: error,
     appPage,
   }

@@ -16,9 +16,9 @@ const PageHelmet: React.VFC<
   const openGraph = props.openGraph || [
     { property: 'og:type', content: 'website' },
     { property: 'og:url', content: window.location.href },
-    { property: 'og:title', content: app.settings['open_graph.title'] },
-    { property: 'og:description', content: app.settings['open_graph.description'] },
-    { property: 'og:image', content: app.settings['open_graph.image'] },
+    { property: 'og:title', content: app.settings['open_graph.title'] || app.settings['title'] },
+    { property: 'og:description', content: app.settings['open_graph.description'] || app.settings['description'] },
+    { property: 'og:image', content: app.settings['open_graph.image'] || app.settings['logo'] },
   ]
   return (
     <Helmet>
