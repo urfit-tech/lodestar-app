@@ -23,6 +23,7 @@ import PriceLabel from '../common/PriceLabel'
 import ProductTypeLabel from '../common/ProductTypeLabel'
 import ShippingMethodLabel from '../common/ShippingMethodLabel'
 import OrderStatusTag from './OrderStatusTag'
+import RequestRefundModal from './RequestRefundModal'
 
 const StyledContainer = styled.div`
   overflow: auto;
@@ -206,6 +207,7 @@ const OrderCollectionAdminCard: React.VFC<
               {formatMessage(commonMessages.ui.repay)}
             </Button>
           )}
+          {record.status === 'SUCCESS' && <RequestRefundModal orderId={record.id} />}
         </div>
         <div className="col-9">
           {record.shipping?.id && (
