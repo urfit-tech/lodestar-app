@@ -298,7 +298,7 @@ const defaultRoutesMap: RoutesMap = {
 }
 const AppRouterContext = React.createContext<{ routesMap: RoutesMap }>({ routesMap: {} })
 const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
-  const routesMap: { [routeKey: string]: RouteProps } = {
+  const routesMap: RoutesMap = {
     ...defaultRoutesMap,
     ...extra,
   }
@@ -311,7 +311,7 @@ const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
               return (
                 <React.Suspense fallback={<LoadingPage />}>
                   <Switch>
-                    {Object.values(defaultRoutesMap).map(routeMap => (
+                    {Object.values(routesMap).map(routeMap => (
                       <Route
                         exact
                         key={routeMap.path}
