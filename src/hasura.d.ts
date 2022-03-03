@@ -801,36 +801,6 @@ export interface GET_PODCAST_ALBUM_COLLECTION {
 
 
 // ====================================================
-// GraphQL query operation: GET_MEMBER_CREDIT_CARDS
-// ====================================================
-
-
-export interface GET_MEMBER_CREDIT_CARDS_member_card {
-  __typename: "member_card";
-  id: string;
-  card_identifier: string;
-  card_info: any;
-  card_holder: any | null;
-}
-
-export interface GET_MEMBER_CREDIT_CARDS {
-  /**
-   * fetch data from the table: "member_card"
-   */
-  member_card: GET_MEMBER_CREDIT_CARDS_member_card[];
-}
-
-export interface GET_MEMBER_CREDIT_CARDSVariables {
-  memberId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-
-// ====================================================
 // GraphQL mutation operation: DELETE_ATTACHMENTS
 // ====================================================
 
@@ -2306,6 +2276,11 @@ export interface GET_PROGRAM_CONTENT_PROGRESSVariables {
 // ====================================================
 
 
+export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_tags {
+  __typename: "activity_tag";
+  tag_name: string;
+}
+
 export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_categories_category {
   __typename: "category";
   id: string;
@@ -2377,6 +2352,10 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity {
   is_participants_visible: boolean;
   organizer_id: string;
   support_locales: any | null;
+  /**
+   * An array relationship
+   */
+  activity_tags: GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_tags[];
   /**
    * An array relationship
    */
@@ -2473,6 +2452,11 @@ export interface GET_ENROLLED_ACTIVITY_TICKETSVariables {
 // ====================================================
 
 
+export interface GET_ACTIVITY_activity_by_pk_activity_tags {
+  __typename: "activity_tag";
+  tag_name: string;
+}
+
 export interface GET_ACTIVITY_activity_by_pk_activity_categories_category {
   __typename: "category";
   id: string;
@@ -2564,6 +2548,12 @@ export interface GET_ACTIVITY_activity_by_pk {
   title: string;
   description: string | null;
   published_at: any | null;
+  is_participants_visible: boolean;
+  support_locales: any | null;
+  /**
+   * An array relationship
+   */
+  activity_tags: GET_ACTIVITY_activity_by_pk_activity_tags[];
   /**
    * An array relationship
    */
@@ -3138,6 +3128,7 @@ export interface GET_POST_PREVIEW_COLLECTION_post {
   video_url: string | null;
   abstract: string | null;
   published_at: any | null;
+  updated_at: any | null;
   /**
    * An array relationship
    */
@@ -3271,6 +3262,7 @@ export interface GET_POST_post_post_roles_member {
   name: string | null;
   picture_url: string | null;
   abstract: string | null;
+  username: string | null;
 }
 
 export interface GET_POST_post_post_roles {
@@ -3413,6 +3405,7 @@ export interface GET_POST_post {
   abstract: string | null;
   views: number;
   published_at: any | null;
+  updated_at: any | null;
   /**
    * An array relationship
    */
@@ -3437,6 +3430,7 @@ export interface GET_POST_post_by_pk_post_roles_member {
   name: string | null;
   picture_url: string | null;
   abstract: string | null;
+  username: string | null;
 }
 
 export interface GET_POST_post_by_pk_post_roles {
@@ -3579,6 +3573,7 @@ export interface GET_POST_post_by_pk {
   abstract: string | null;
   views: number;
   published_at: any | null;
+  updated_at: any | null;
   /**
    * An array relationship
    */
@@ -4638,7 +4633,7 @@ export interface GET_ORDER_ID {
 }
 
 export interface GET_ORDER_IDVariables {
-  paymentNo: any;
+  paymentNo: string;
 }
 
 /* tslint:disable */
@@ -9955,6 +9950,7 @@ export interface PostParts_post_roles_member {
   name: string | null;
   picture_url: string | null;
   abstract: string | null;
+  username: string | null;
 }
 
 export interface PostParts_post_roles {
@@ -10097,6 +10093,7 @@ export interface PostParts {
   abstract: string | null;
   views: number;
   published_at: any | null;
+  updated_at: any | null;
   /**
    * An array relationship
    */
@@ -11042,6 +11039,7 @@ export enum member_card_update_column {
   card_secret = "card_secret",
   id = "id",
   member_id = "member_id",
+  priority = "priority",
 }
 
 /**
@@ -11632,6 +11630,7 @@ export enum order_log_update_column {
   expired_at = "expired_at",
   id = "id",
   invoice = "invoice",
+  invoice_issued_at = "invoice_issued_at",
   is_deleted = "is_deleted",
   last_paid_at = "last_paid_at",
   member_id = "member_id",
@@ -11650,7 +11649,7 @@ export enum order_log_update_column {
  * unique or primary key constraints on table "order_product"
  */
 export enum order_product_constraint {
-  order_product_order_id_product_id_key = "order_product_order_id_product_id_key",
+  order_product_order_id_name_product_id_key = "order_product_order_id_name_product_id_key",
   order_product_pkey = "order_product_pkey",
 }
 
@@ -11784,6 +11783,7 @@ export enum payment_log_update_column {
   created_at = "created_at",
   custom_no = "custom_no",
   gateway = "gateway",
+  invoice_issued_at = "invoice_issued_at",
   method = "method",
   no = "no",
   options = "options",
@@ -12707,12 +12707,31 @@ export enum project_plan_constraint {
 }
 
 /**
+ * unique or primary key constraints on table "project_plan_product"
+ */
+export enum project_plan_product_constraint {
+  project_plan_product_pkey = "project_plan_product_pkey",
+  project_plan_product_project_plan_id_product_id_key = "project_plan_product_project_plan_id_product_id_key",
+}
+
+/**
+ * update columns of table "project_plan_product"
+ */
+export enum project_plan_product_update_column {
+  id = "id",
+  options = "options",
+  product_id = "product_id",
+  project_plan_id = "project_plan_id",
+}
+
+/**
  * update columns of table "project_plan"
  */
 export enum project_plan_update_column {
   auto_renewed = "auto_renewed",
   cover_url = "cover_url",
   created_at = "created_at",
+  currency_id = "currency_id",
   deliverables = "deliverables",
   description = "description",
   discount_down_price = "discount_down_price",
@@ -15835,6 +15854,7 @@ export interface member_card_bool_exp {
   id?: String_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  priority?: Int_comparison_exp | null;
 }
 
 /**
@@ -15848,6 +15868,7 @@ export interface member_card_insert_input {
   id?: string | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  priority?: number | null;
 }
 
 /**
@@ -17466,6 +17487,7 @@ export interface order_log_bool_exp {
   expired_at?: timestamptz_comparison_exp | null;
   id?: String_comparison_exp | null;
   invoice?: jsonb_comparison_exp | null;
+  invoice_issued_at?: timestamptz_comparison_exp | null;
   is_deleted?: Boolean_comparison_exp | null;
   last_paid_at?: timestamptz_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -17505,6 +17527,7 @@ export interface order_log_insert_input {
   expired_at?: any | null;
   id?: string | null;
   invoice?: any | null;
+  invoice_issued_at?: any | null;
   is_deleted?: boolean | null;
   last_paid_at?: any | null;
   member?: member_obj_rel_insert_input | null;
@@ -17916,6 +17939,7 @@ export interface payment_log_bool_exp {
   created_at?: timestamptz_comparison_exp | null;
   custom_no?: String_comparison_exp | null;
   gateway?: String_comparison_exp | null;
+  invoice_issued_at?: timestamptz_comparison_exp | null;
   method?: String_comparison_exp | null;
   no?: String_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
@@ -17936,6 +17960,7 @@ export interface payment_log_insert_input {
   created_at?: any | null;
   custom_no?: string | null;
   gateway?: string | null;
+  invoice_issued_at?: any | null;
   method?: string | null;
   no?: string | null;
   options?: any | null;
@@ -20839,6 +20864,7 @@ export interface project_plan_bool_exp {
   auto_renewed?: Boolean_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  currency_id?: String_comparison_exp | null;
   deliverables?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
   discount_down_price?: numeric_comparison_exp | null;
@@ -20856,6 +20882,7 @@ export interface project_plan_bool_exp {
   project_id?: uuid_comparison_exp | null;
   project_plan_enrollments?: project_plan_enrollment_bool_exp | null;
   project_plan_inventory_status?: project_plan_inventory_status_bool_exp | null;
+  project_plan_products?: project_plan_product_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
   sale_price?: numeric_comparison_exp | null;
   sold_at?: timestamptz_comparison_exp | null;
@@ -20884,6 +20911,7 @@ export interface project_plan_insert_input {
   auto_renewed?: boolean | null;
   cover_url?: string | null;
   created_at?: any | null;
+  currency_id?: string | null;
   deliverables?: string | null;
   description?: string | null;
   discount_down_price?: any | null;
@@ -20899,6 +20927,7 @@ export interface project_plan_insert_input {
   position?: number | null;
   project?: project_obj_rel_insert_input | null;
   project_id?: any | null;
+  project_plan_products?: project_plan_product_arr_rel_insert_input | null;
   published_at?: any | null;
   sale_price?: any | null;
   sold_at?: any | null;
@@ -20921,12 +20950,64 @@ export interface project_plan_inventory_status_bool_exp {
 }
 
 /**
+ * input type for inserting object relation for remote table "project_plan"
+ */
+export interface project_plan_obj_rel_insert_input {
+  data: project_plan_insert_input;
+  on_conflict?: project_plan_on_conflict | null;
+}
+
+/**
  * on conflict condition type for table "project_plan"
  */
 export interface project_plan_on_conflict {
   constraint: project_plan_constraint;
   update_columns: project_plan_update_column[];
   where?: project_plan_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "project_plan_product"
+ */
+export interface project_plan_product_arr_rel_insert_input {
+  data: project_plan_product_insert_input[];
+  on_conflict?: project_plan_product_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "project_plan_product". All fields are combined with a logical 'AND'.
+ */
+export interface project_plan_product_bool_exp {
+  _and?: (project_plan_product_bool_exp | null)[] | null;
+  _not?: project_plan_product_bool_exp | null;
+  _or?: (project_plan_product_bool_exp | null)[] | null;
+  id?: uuid_comparison_exp | null;
+  options?: jsonb_comparison_exp | null;
+  product?: product_bool_exp | null;
+  product_id?: String_comparison_exp | null;
+  project_plan?: project_plan_bool_exp | null;
+  project_plan_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "project_plan_product"
+ */
+export interface project_plan_product_insert_input {
+  id?: any | null;
+  options?: any | null;
+  product?: product_obj_rel_insert_input | null;
+  product_id?: string | null;
+  project_plan?: project_plan_obj_rel_insert_input | null;
+  project_plan_id?: any | null;
+}
+
+/**
+ * on conflict condition type for table "project_plan_product"
+ */
+export interface project_plan_product_on_conflict {
+  constraint: project_plan_product_constraint;
+  update_columns: project_plan_product_update_column[];
+  where?: project_plan_product_bool_exp | null;
 }
 
 /**

@@ -7,6 +7,7 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import MessengerChat from '../../components/common/MessengerChat'
+import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import {
   ActivityIntroSection,
@@ -108,19 +109,17 @@ const sectionConverter = {
   homeHaohaoming: HaohaomingSection,
 }
 
-const AppPage: React.VFC = () => {
+const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
-  const { loadingAppPage, appPage } = usePage(location.pathname)
+  const { loadingAppPage, errorAppPage, appPage } = usePage(location.pathname)
 
   if (loadingAppPage) {
     return <LoadingPage />
   }
 
-  if (!appPage) {
-    return <NotFoundPage />
-  }
-  return (
+  return appPage ? (
     <DefaultLayout {...appPage.options}>
+      <PageHelmet />
       {appPage.craftData ? (
         <Editor enabled={false} resolver={CraftElement}>
           <CraftBlock craftData={appPage.craftData} />
@@ -141,6 +140,10 @@ const AppPage: React.VFC = () => {
         </Editor>
       )}
     </DefaultLayout>
+  ) : renderFallback ? (
+    renderFallback(location.pathname)
+  ) : (
+    <NotFoundPage />
   )
 }
 
@@ -189,12 +192,12 @@ export const usePage = (path: string) => {
     craftData: { [key: string]: string } | null
     options: { [key: string]: string } | null
     appPageSections: AppPageSectionProps[]
-  } | null = data?.app_page
+  } | null = data?.app_page[0]
     ? {
-        id: data.app_page[0] ? data.app_page[0].id : null,
-        path: data.app_page[0] ? data.app_page[0].path : null,
-        craftData: data.app_page[0] ? data.app_page[0].craft_data : null,
-        options: data.app_page[0]?.options || null,
+        id: data.app_page[0].id,
+        path: data.app_page[0].path,
+        craftData: data.app_page[0].craft_data,
+        options: data.app_page[0].options || null,
         appPageSections: data.app_page[0]
           ? data.app_page[0].app_page_sections.map((v: { id: string; options: any; type: string }) => ({
               id: v.id,
@@ -205,7 +208,7 @@ export const usePage = (path: string) => {
       }
     : null
   return {
-    loadingAppPage: loading,
+    loadingAppPage: !appId || loading,
     errorAppPage: error,
     appPage,
   }

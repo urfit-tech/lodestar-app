@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import Activity from '../components/activity/Activity'
+import ActivityBlock from '../components/activity/ActivityBlock'
 import AppointmentCollectionTabs from '../components/appointment/AppointmentCollectionTabs'
 import { AuthModalContext } from '../components/auth/AuthModal'
 import PostItemCollection from '../components/blog/PostItemCollection'
@@ -192,7 +192,16 @@ const CreatorTabs: React.VFC<{
                   .filter(activity => activity.endedAt && activity.endedAt.getTime() > Date.now())
                   .map(activity => (
                     <div key={activity.id} className="col-12 col-lg-4 mb-4">
-                      <Activity {...activity} />
+                      <ActivityBlock
+                        id={activity.id}
+                        title={activity.title}
+                        coverUrl={activity.coverUrl || undefined}
+                        isParticipantsVisible={activity.isParticipantsVisible}
+                        participantCount={activity.participantCount}
+                        totalSeats={activity.totalSeats}
+                        startedAt={activity.startedAt || undefined}
+                        endedAt={activity.endedAt || undefined}
+                      />
                     </div>
                   ))
               )}

@@ -13,7 +13,6 @@ import {
   ProgramContentAttachmentProps,
   ProgramContentBodyProps,
   ProgramContentMaterialProps,
-  ProgramContentSection,
   ProgramPlan,
   ProgramRole,
   ProgramRoleName,
@@ -345,20 +344,7 @@ export const useProgram = (programId: string) => {
     `,
     { variables: { programId } },
   )
-  const program:
-    | (Program & {
-        categories: Category[]
-        tags: string[]
-        roles: ProgramRole[]
-        plans: (ProgramPlan & {
-          isSubscription: boolean
-          groupBuyingPeople: number
-        })[]
-        contentSections: (ProgramContentSection & {
-          contents: ProgramContent[]
-        })[]
-      })
-    | null = useMemo(
+  const program: Program | null = useMemo(
     () =>
       loading || error || !data || !data.program_by_pk
         ? null

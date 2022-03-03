@@ -11,17 +11,18 @@ import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
-import DefaultLayout from '../components/layout/DefaultLayout'
-import ProgramCard from '../components/program/ProgramCard'
-import ProgramCollectionBanner from '../components/program/ProgramCollectionBanner'
-import LanguageContext from '../contexts/LanguageContext'
-import { notEmpty } from '../helpers'
-import { commonMessages, productMessages } from '../helpers/translation'
-import { useNav } from '../hooks/data'
-import { useEnrolledProgramIds, usePublishedProgramCollection } from '../hooks/program'
-import { Category } from '../types/general'
-import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../types/program'
+import { StyledBanner, StyledBannerTitle, StyledCollection } from '../../components/layout'
+import DefaultLayout from '../../components/layout/DefaultLayout'
+import ProgramCard from '../../components/program/ProgramCard'
+import ProgramCollectionBanner from '../../components/program/ProgramCollectionBanner'
+import LanguageContext from '../../contexts/LanguageContext'
+import { notEmpty } from '../../helpers'
+import { commonMessages, productMessages } from '../../helpers/translation'
+import { useNav } from '../../hooks/data'
+import { useEnrolledProgramIds, usePublishedProgramCollection } from '../../hooks/program'
+import { Category } from '../../types/general'
+import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../../types/program'
+import ProgramCollectionPageHelmet from './ProgramCollectionPageHelmet'
 
 const StyledButton = styled(ChakraButton)`
   && {
@@ -37,7 +38,7 @@ const ProgramCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
 
   const [defaultActive] = useQueryParam('active', StringParam)
-  const [title] = useQueryParam('title', StringParam)
+  const [queryTitle] = useQueryParam('title', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
   const [noBanner] = useQueryParam('noBanner', BooleanParam)
   const [permitted] = useQueryParam('permitted', BooleanParam)
@@ -75,36 +76,16 @@ const ProgramCollectionPage: React.VFC = () => {
     ReactGA.ga('send', 'pageview')
   }, [])
 
-  let seoMeta:
-    | {
-        title?: string
-        description?: string
-      }
-    | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta']).ProgramCollectionPage
-  } catch (error) {}
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: seoMeta?.title,
-    description: seoMeta?.description,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: settings['seo.name'],
-      description: settings['open_graph.description'],
-    },
-  })
+  const programCollectionPageTitle = queryTitle || pageTitle || formatMessage(productMessages.program.title.explore)
 
   return (
     <DefaultLayout white>
+      <ProgramCollectionPageHelmet title={programCollectionPageTitle} programs={filteredPrograms} />
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
             <Icon as={AiFillAppstore} className="mr-3" />
-            <span>{title || pageTitle || formatMessage(productMessages.program.title.explore)}</span>
+            <span>{programCollectionPageTitle}</span>
           </StyledBannerTitle>
           {!noSelector && (
             <StyledButton

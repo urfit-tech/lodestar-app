@@ -124,14 +124,14 @@ const DefaultLayout: React.FC<{
                       </MenuButton>
                       {nav.subNavs?.length > 0 && (
                         <MenuList>
-                          {nav.subNavs?.map(v => (
+                          {nav.subNavs?.map((v, idx) => (
                             <>
                               {v.external ? (
-                                <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
+                                <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
                                   <StyledMenuItem _focus={{ bg: '#fff' }}>{v.label}</StyledMenuItem>
                                 </a>
                               ) : (
-                                <Link key={v.label} to={v.href}>
+                                <Link key={idx} to={v.href}>
                                   <StyledMenuItem _focus={{ bg: '#fff' }}>
                                     {v.label}
                                     {v.tag && (
@@ -170,16 +170,16 @@ const DefaultLayout: React.FC<{
                       </MenuButton>
                       {nav.subNavs.length > 0 && (
                         <MenuList>
-                          {nav.subNavs?.map(v => (
+                          {nav.subNavs?.map((v, idx) => (
                             <>
                               {v.external ? (
-                                <a key={v.label} href={v.href} target="_blank" rel="noopener noreferrer">
+                                <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
                                   <MenuItem _focus={{ bg: '#fff' }}>
                                     <StyledMenuItem>{v.label}</StyledMenuItem>
                                   </MenuItem>
                                 </a>
                               ) : (
-                                <Link key={v.label} to={v.href}>
+                                <Link key={idx} to={v.href}>
                                   <StyledMenuItem _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
                                     {v.label}
                                     {v.tag && (

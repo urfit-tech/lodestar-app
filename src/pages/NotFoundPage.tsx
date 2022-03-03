@@ -1,6 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button } from '@chakra-ui/react'
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -70,6 +71,9 @@ const NotFoundPage: React.VFC<{
 
   return (
     <DefaultLayout centeredBox>
+      <Helmet>
+        <meta name="robots" content="noindex" />
+      </Helmet>
       <StyledWrapper>
         <StyledIcon
           as={variant === 'error' ? error2Icon : variant === 'repairing' ? errorIcon : routeErrorIcon}

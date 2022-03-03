@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import hasura from '../hasura'
 import { isUUIDv4 } from '../helpers'
-import { PostLatestProps, PostLinkProps, PostPreviewProps, PostProps } from '../types/blog'
+import { Post, PostLatestProps, PostLinkProps, PostPreviewProps } from '../types/blog'
 
 export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: string[]; categories?: string }) => {
   const { loading, error, data, refetch } = useQuery<
@@ -27,6 +27,7 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
           video_url
           abstract
           published_at
+          updated_at
           post_roles(where: { name: { _eq: "author" } }) {
             id
             name
@@ -71,6 +72,7 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
             abstract: post.abstract,
             authorId: post.post_roles[0]?.member_id || '',
             publishedAt: post.published_at ? new Date(post.published_at) : null,
+            updatedAt: new Date(post.updated_at),
             categories: post.post_categories.map(postCategory => ({
               id: postCategory.category.id,
               name: postCategory.category.name,
@@ -234,6 +236,7 @@ export const usePost = (search: string) => {
         abstract
         views
         published_at
+        updated_at
         post_roles(where: { name: { _eq: "author" } }) {
           id
           member {
@@ -241,6 +244,7 @@ export const usePost = (search: string) => {
             name
             picture_url
             abstract
+            username
           }
         }
         post_categories {
@@ -325,7 +329,7 @@ export const usePost = (search: string) => {
   const dataPost = data?.post[0] || data?.post_by_pk || null
   const { prevPost, nextPost } = useNearPost(dataPost?.published_at)
 
-  const post: PostProps | null = !dataPost
+  const post: Post | null = !dataPost
     ? null
     : {
         id: dataPost.id,
@@ -337,10 +341,12 @@ export const usePost = (search: string) => {
         author: {
           id: dataPost.post_roles[0]?.member?.id || '',
           name: dataPost.post_roles[0]?.member?.name || '',
+          username: dataPost.post_roles[0]?.member?.username || '',
           avatarUrl: dataPost.post_roles[0]?.member?.picture_url || null,
           abstract: dataPost.post_roles[0]?.member?.abstract || null,
         },
-        publishedAt: dataPost.published_at,
+        publishedAt: dataPost.published_at ? new Date(dataPost.published_at) : null,
+        updatedAt: new Date(dataPost.updated_at),
         categories: dataPost.post_categories.map(postCategory => ({
           id: postCategory.category.id,
           name: postCategory.category.name,

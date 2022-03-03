@@ -12,8 +12,9 @@ import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { DeepPick } from 'ts-deep-pick/lib'
 import { StringParam, useQueryParam } from 'use-query-params'
-import Activity from '../components/activity/Activity'
+import ActivityBlock from '../components/activity/ActivityBlock'
 import CreatorBriefCard from '../components/appointment/CreatorBriefCard'
 import { AuthModalContext } from '../components/auth/AuthModal'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
@@ -28,8 +29,7 @@ import ProjectIntroCard from '../components/project/ProjectIntroCard'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { ReactComponent as SearchIcon } from '../images/search.svg'
-import { ActivityProps, ActivityTicketProps } from '../types/activity'
-import { Category } from '../types/general'
+import { Activity } from '../types/activity'
 import { MerchandiseBriefProps } from '../types/merchandise'
 import { PodcastProgramBriefProps } from '../types/podcast'
 import { PeriodType, ProgramBriefProps, ProgramPlan, ProgramRole } from '../types/program'
@@ -241,7 +241,16 @@ const SearchResultBlock: React.VFC<{
             <div className="row">
               {searchResults.activities.map(activity => (
                 <div key={activity.id} className="col-12 col-md-6 col-lg-4 mb-4">
-                  <Activity {...activity} />
+                  <ActivityBlock
+                    id={activity.id}
+                    title={activity.title}
+                    coverUrl={activity.coverUrl || undefined}
+                    isParticipantsVisible={activity.isParticipantsVisible}
+                    participantCount={activity.participantCount}
+                    totalSeats={activity.totalSeats}
+                    startedAt={activity.startedAt || undefined}
+                    endedAt={activity.endedAt || undefined}
+                  />
                 </div>
               ))}
             </div>
@@ -624,12 +633,29 @@ const useSearchProductCollection = (
       plans: ProgramPlan[]
       isEnrolled: boolean
     })[]
-    activities: (ActivityProps & {
-      participantCount: number
-      totalSeats: number
-      categories: Category[]
-      tickets: ActivityTicketProps[]
-    })[]
+    activities: DeepPick<
+      Activity,
+      | 'id'
+      | 'coverUrl'
+      | 'title'
+      | 'isParticipantsVisible'
+      | 'startedAt'
+      | 'endedAt'
+      | 'organizerId'
+      | 'supportLocales'
+      | 'categories'
+      | 'participantCount'
+      | 'totalSeats'
+      | 'tickets.[].id'
+      | 'tickets.[].title'
+      | 'tickets.[].startedAt'
+      | 'tickets.[].endedAt'
+      | 'tickets.[].price'
+      | 'tickets.[].count'
+      | 'tickets.[].currencyId'
+      | 'tickets.[].description'
+      | 'tickets.[].isPublished'
+    >[]
     podcastPrograms: PodcastProgramBriefProps[]
     creators: {
       id: string

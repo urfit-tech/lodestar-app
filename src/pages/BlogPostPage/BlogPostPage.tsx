@@ -1,27 +1,26 @@
 import { Icon } from '@chakra-ui/icons'
 import { Divider, SkeletonText } from '@chakra-ui/react'
-import BraftEditor from 'braft-editor'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
-import { render } from 'mustache'
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import { Link, Redirect, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { StyledPostMeta } from '../components/blog'
-import PostCover from '../components/blog/PostCover'
-import { RelativePostCollection } from '../components/blog/PostLinkCollection'
-import CreatorCard from '../components/common/CreatorCard'
-import { BraftContent } from '../components/common/StyledBraftEditor'
-import DefaultLayout from '../components/layout/DefaultLayout'
-import { useAddPostViews, usePost } from '../hooks/blog'
-import { ReactComponent as CalendarAltOIcon } from '../images/calendar-alt-o.svg'
-import { ReactComponent as EyeIcon } from '../images/eye.svg'
-import { ReactComponent as UserOIcon } from '../images/user-o.svg'
-import ForbiddenPage from './ForbiddenPage'
-import LoadingPage from './LoadingPage'
-import NotFoundPage from './NotFoundPage'
+import { StyledPostMeta } from '../../components/blog'
+import PostCover from '../../components/blog/PostCover'
+import { RelativePostCollection } from '../../components/blog/PostLinkCollection'
+import CreatorCard from '../../components/common/CreatorCard'
+import { BraftContent } from '../../components/common/StyledBraftEditor'
+import DefaultLayout from '../../components/layout/DefaultLayout'
+import { useAddPostViews, usePost } from '../../hooks/blog'
+import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
+import { ReactComponent as EyeIcon } from '../../images/eye.svg'
+import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
+import ForbiddenPage from '../ForbiddenPage'
+import LoadingPage from '../LoadingPage'
+import NotFoundPage from '../NotFoundPage'
+import BlogPostPageHelmet from './BlogPostPageHelmet'
 
 const messages = defineMessages({
   prevPost: { id: 'blog.common.prevPost', defaultMessage: '上一則' },
@@ -107,10 +106,6 @@ const BlogPostPage: React.VFC = () => {
     return <NotFoundPage />
   }
 
-  if (post.codeName && post.codeName !== postId) {
-    return <Redirect to={`/posts/${post.codeName}`} />
-  }
-
   try {
     const visitedPosts = JSON.parse(sessionStorage.getItem('kolable.posts.visited') || '[]') as string[]
     if (!visitedPosts.includes(post.id)) {
@@ -120,38 +115,9 @@ const BlogPostPage: React.VFC = () => {
     }
   } catch (error) {}
 
-  let seoMeta: { title?: string } | undefined
-  try {
-    seoMeta = JSON.parse(app.settings['seo.meta']).BlogPostPage
-  } catch (error) {}
-
-  const siteTitle = post.title
-    ? seoMeta?.title
-      ? `${render(seoMeta.title, { activityTitle: post.title })}`
-      : post.title
-    : app.id
-
-  const siteDescription = BraftEditor.createEditorState(post.description)
-    .toHTML()
-    .replace(/(<([^>]+)>)/gi, '')
-    .substr(0, 50)
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: siteTitle,
-    image: post.coverUrl,
-    description: siteDescription,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: siteTitle,
-      description: siteDescription,
-    },
-  })
-
   return (
     <DefaultLayout white noHeader={isScrollingDown}>
+      <BlogPostPageHelmet post={post} />
       {!loadingPost && (
         <PostCover
           title={post?.title || ''}
