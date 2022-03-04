@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { usePublishedActivityCollection } from '../../hooks/activity'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { SectionTitle, StyledLink, StyledSection } from '../../pages/AppPage'
-import Activity from '../activity/Activity'
+import ActivityBlock from '../activity/ActivityBlock'
 
 const StyledAngleRightIcon = styled(AngleRightIcon)`
   display: inline-block;
@@ -42,7 +42,16 @@ const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number
               key={activity.id}
               className={`col-12 col-lg-${(options?.colAmount && 12 / options?.colAmount) || 4} mb-5`}
             >
-              <Activity {...activity} />
+              <ActivityBlock
+                id={activity.id}
+                title={activity.title}
+                coverUrl={activity.coverUrl || undefined}
+                isParticipantsVisible={activity.isParticipantsVisible}
+                participantCount={activity.participantCount}
+                totalSeats={activity.totalSeats}
+                startedAt={activity.startedAt || undefined}
+                endedAt={activity.endedAt || undefined}
+              />
             </div>
           ))}
         </div>

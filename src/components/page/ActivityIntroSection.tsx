@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useOnceAnimation } from '../../helpers'
 import { usePublishedActivityCollection } from '../../hooks/activity'
-import Activity from '../activity/Activity'
+import ActivityBlock from '../activity/ActivityBlock'
 import { BREAK_POINT } from '../common/Responsive'
 import { StyledCarousel } from './TeacherSection'
 
@@ -149,7 +149,16 @@ const ActivityIntroSection: React.VFC<{
           >
             {activities.map(activity => (
               <div className="px-5 px-lg-2">
-                <Activity {...activity} />
+                <ActivityBlock
+                  id={activity.id}
+                  title={activity.title}
+                  coverUrl={activity.coverUrl || undefined}
+                  isParticipantsVisible={activity.isParticipantsVisible}
+                  participantCount={activity.participantCount}
+                  totalSeats={activity.totalSeats}
+                  startedAt={activity.startedAt || undefined}
+                  endedAt={activity.endedAt || undefined}
+                />
               </div>
             ))}
           </StyledCarousel>

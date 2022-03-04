@@ -298,38 +298,45 @@ const defaultRoutesMap: RoutesMap = {
 }
 const AppRouterContext = React.createContext<{ routesMap: RoutesMap }>({ routesMap: {} })
 const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
-  const routesMap: { [routeKey: string]: RouteProps } = {
+  const routesMap: RoutesMap = {
     ...defaultRoutesMap,
     ...extra,
   }
-  const routes = Object.keys(routesMap).map(routeKey => {
-    const { path, pageName } = routesMap[routeKey as keyof typeof routesMap]
-    return (
-      <Route
-        exact
-        key={routeKey}
-        path={path}
-        render={() => (
-          <React.Suspense fallback={<LoadingPage />}>
-            {typeof pageName === 'string' ? <LoadablePage pageName={pageName} /> : pageName}
-          </React.Suspense>
-        )}
-      />
-    )
-  })
   return (
     <AppRouterContext.Provider value={{ routesMap }}>
       <BrowserRouter>
         <QueryParamProvider ReactRouterRoute={Route}>
-          <Switch>
-            {routes}
-            <Route component={AppPage} />
-          </Switch>
+          <AppPage
+            renderFallback={() => {
+              return (
+                <React.Suspense fallback={<LoadingPage />}>
+                  <Switch>
+                    {Object.values(routesMap).map(routeMap => (
+                      <Route
+                        exact
+                        key={routeMap.path}
+                        path={routeMap.path}
+                        render={() =>
+                          typeof routeMap.pageName === 'string' ? (
+                            <LoadablePage pageName={routeMap.pageName} />
+                          ) : (
+                            routeMap.pageName
+                          )
+                        }
+                      />
+                    ))}
+                    <Route component={NotFoundPage} />
+                  </Switch>
+                </React.Suspense>
+              )
+            }}
+          />
           {children}
         </QueryParamProvider>
       </BrowserRouter>
     </AppRouterContext.Provider>
   )
 }
+
 export const useAppRouter = () => useContext(AppRouterContext)
 export default AppRouter

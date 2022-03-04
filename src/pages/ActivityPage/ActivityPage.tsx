@@ -1,28 +1,27 @@
 import { Button, Divider, SkeletonText } from '@chakra-ui/react'
-import BraftEditor from 'braft-editor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import { render } from 'mustache'
 import React, { useEffect } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import ActivityBanner from '../components/activity/ActivityBanner'
-import ActivitySessionItem from '../components/activity/ActivitySessionItem'
-import ActivityTicket from '../components/activity/ActivityTicket'
-import ActivityTicketPaymentButton from '../components/activity/ActivityTicketPaymentButton'
-import { AuthModalContext } from '../components/auth/AuthModal'
-import CreatorCard from '../components/common/CreatorCard'
-import { BREAK_POINT } from '../components/common/Responsive'
-import { BraftContent } from '../components/common/StyledBraftEditor'
-import DefaultLayout from '../components/layout/DefaultLayout'
-import { commonMessages, productMessages } from '../helpers/translation'
-import { useActivity } from '../hooks/activity'
-import { usePublicMember } from '../hooks/member'
+import ActivityBanner from '../../components/activity/ActivityBanner'
+import ActivitySessionItem from '../../components/activity/ActivitySessionItem'
+import ActivityTicketCard from '../../components/activity/ActivityTicketCard'
+import ActivityTicketPaymentButton from '../../components/activity/ActivityTicketPaymentButton'
+import { AuthModalContext } from '../../components/auth/AuthModal'
+import CreatorCard from '../../components/common/CreatorCard'
+import { BREAK_POINT } from '../../components/common/Responsive'
+import { BraftContent } from '../../components/common/StyledBraftEditor'
+import DefaultLayout from '../../components/layout/DefaultLayout'
+import { commonMessages, productMessages } from '../../helpers/translation'
+import { useActivity } from '../../hooks/activity'
+import { usePublicMember } from '../../hooks/member'
+import ActivityPageHelmet from './ActivityPageHelmet'
 
 const ActivityContent = styled(Container)`
   && {
@@ -50,7 +49,7 @@ const ActivityPage: React.VFC = () => {
   const history = useHistory()
   const { activityId } = useParams<{ activityId: string }>()
   const { isAuthenticated, currentMemberId } = useAuth()
-  const { settings, id: appId } = useApp()
+  const { id: appId } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:activity:${activityId}`])
   const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
 
@@ -92,38 +91,9 @@ const ActivityPage: React.VFC = () => {
     return <DefaultLayout white>{formatMessage(commonMessages.status.readingError)}</DefaultLayout>
   }
 
-  let seoMeta: { title?: string } | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta']).ActivityPage
-  } catch (error) {}
-
-  const siteTitle = activity.title
-    ? seoMeta?.title
-      ? `${render(seoMeta.title, { activityTitle: activity.title })}`
-      : activity.title
-    : appId
-
-  const siteDescription = BraftEditor.createEditorState(activity.description)
-    .toHTML()
-    .replace(/(<([^>]+)>)/gi, '')
-    .substr(0, 50)
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: siteTitle,
-    image: activity.coverUrl,
-    description: siteDescription,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: siteTitle,
-      description: siteDescription,
-    },
-  })
-
   return (
     <DefaultLayout white>
+      <ActivityPageHelmet activity={activity} />
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <ActivityBanner
         coverImage={activity.coverUrl || ''}
@@ -140,7 +110,7 @@ const ActivityPage: React.VFC = () => {
             <StyledTitle>{formatMessage(productMessages.activity.title.event)}</StyledTitle>
             <Divider className="mb-4" />
 
-            {activity.sessionIds.map(id => (
+            {activity.sessions.map(({ id }) => (
               <div key={id} className="mb-4">
                 <ActivitySessionItem activitySessionId={id} />
               </div>
@@ -153,16 +123,21 @@ const ActivityPage: React.VFC = () => {
                 activity.tickets.map(ticket => {
                   return (
                     <div key={ticket.id} className="mb-4">
-                      <ActivityTicket
-                        id={ticket.id}
+                      <ActivityTicketCard
                         title={ticket.title}
-                        description={ticket.description}
+                        description={ticket.description || undefined}
                         price={ticket.price}
                         count={ticket.count}
                         startedAt={ticket.startedAt}
                         endedAt={ticket.endedAt}
                         isPublished={ticket.isPublished}
-                        activityTicketSessions={ticket.sessions}
+                        sessions={activity.ticketSessions
+                          .filter(ticketSession => ticketSession.ticket.id === ticket.id)
+                          .map(ticketSession => ({
+                            id: ticketSession.session.id,
+                            type: ticketSession.session.type,
+                            title: ticketSession.session.title,
+                          }))}
                         participants={ticket.participants}
                         currencyId={ticket.currencyId}
                         extra={
@@ -194,7 +169,11 @@ const ActivityPage: React.VFC = () => {
                               {formatMessage(commonMessages.button.cutoff)}
                             </Button>
                           ) : isAuthenticated ? (
-                            <ActivityTicketPaymentButton ticket={ticket} />
+                            <ActivityTicketPaymentButton
+                              ticketId={ticket.id}
+                              ticketPrice={ticket.price}
+                              ticketCurrencyId={ticket.currencyId}
+                            />
                           ) : (
                             <Button
                               colorScheme="primary"

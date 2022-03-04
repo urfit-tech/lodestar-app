@@ -1,3 +1,5 @@
+import { Category } from './general'
+
 type ProgramPlanType = 'subscribeFromNow' | 'subscribeAll' | 'unknown'
 export type ProgramRoleName = 'owner' | 'instructor' | 'assistant'
 
@@ -27,6 +29,16 @@ export type Program = ProgramBriefProps & {
   isSoldOut: boolean | null
   isCountdownTimerVisible?: boolean
   isIntroductionSectionVisible?: boolean
+  categories: Category[]
+  tags: string[]
+  roles: ProgramRole[]
+  plans: (ProgramPlan & {
+    isSubscription: boolean
+    groupBuyingPeople: number
+  })[]
+  contentSections: (ProgramContentSection & {
+    contents: ProgramContent[]
+  })[]
 }
 
 export type ProgramRole = {

@@ -27,7 +27,7 @@ const StyledTitle = styled.h2`
 `
 
 const StyledContainer = styled.div`
-  margin: 0 auto 4rem;
+  margin: 0 auto 2rem;
   padding: 0 1.5rem;
   width: 100%;
   max-width: 1080px;
@@ -41,7 +41,7 @@ const ReferrerSection: React.FC<{
 }> = ({ options: { title = '', infos = [] } }) => {
   return (
     <StyledSection>
-      <StyledTitle className="mb-5">{title}</StyledTitle>
+      <StyledTitle className="mb-3">{title}</StyledTitle>
       <StyledContainer>
         <CraftCarousel
           dots
@@ -55,16 +55,25 @@ const ReferrerSection: React.FC<{
               slidesToShow: 1,
             },
           }}
+          customStyle={{ height: '420px' }}
         >
           {infos?.map(v => (
-            <CraftCard
-              customStyle={{
-                margin: '0 44px 20px 44px',
-                padding: 0,
-              }}
-            >
-              <CraftImage customStyle={{ backgroundImage: `url(${v.imgSrc})` }} />
-              <CraftTitle title={v.name} />
+            <CraftCard>
+              <CraftImage
+                shape="circle"
+                height={64}
+                width={64}
+                customStyle={{
+                  backgroundImage: `url(${v.imgSrc})`,
+                  marginBottom: '16px',
+                }}
+              />
+              <CraftTitle
+                title={v.name}
+                customStyle={{
+                  marginBottom: '16px',
+                }}
+              />
               <CraftTitle
                 title={v.title}
                 customStyle={{

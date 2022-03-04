@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
-import { ActivityTicketProps, ActivityTicketSessionProps } from '../../types/activity'
+import { ActivitySession } from '../../types/activity'
 import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 
@@ -76,14 +76,21 @@ const StyledExtraAdmin = styled.div`
   letter-spacing: 0.2px;
 `
 
-const ActivityTicket: React.VFC<
-  ActivityTicketProps & {
-    activityTicketSessions: Pick<ActivityTicketSessionProps, 'id' | 'type' | 'title'>[]
-    participants: number
-    variant?: 'admin'
-    extra?: React.ReactNode
-  }
-> = ({
+type ActivityTicketProps = {
+  title: string
+  price: number
+  currencyId: string
+  count: number
+  startedAt: Date
+  endedAt: Date
+  participants: number
+  sessions: { id: string; title: string; type: ActivitySession['type'] }[]
+  isPublished?: boolean
+  description?: string
+  variant?: 'admin'
+  extra?: React.ReactNode
+}
+const ActivityTicketCard: React.VFC<ActivityTicketProps> = ({
   title,
   description,
   price,
@@ -92,7 +99,7 @@ const ActivityTicket: React.VFC<
   startedAt,
   endedAt,
   isPublished,
-  activityTicketSessions,
+  sessions,
   participants,
   variant,
   extra,
@@ -119,7 +126,7 @@ const ActivityTicket: React.VFC<
       </StyledPrice>
       <Divider className="mb-4" />
       <StyledSubTitle>{formatMessage(productMessages.activity.title.sessions)}</StyledSubTitle>
-      {activityTicketSessions.map(session => (
+      {sessions.map(session => (
         <StyledTag key={session.id} variant="solid" className="mb-2 mr-1">
           {enabledModules.activity_online
             ? `${session.title} - ${
@@ -153,4 +160,4 @@ const ActivityTicket: React.VFC<
   )
 }
 
-export default ActivityTicket
+export default ActivityTicketCard

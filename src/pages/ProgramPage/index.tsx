@@ -3,7 +3,6 @@ import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import { render } from 'mustache'
 import queryString from 'query-string'
 import React, { useContext, useEffect, useRef } from 'react'
 import ReactGA from 'react-ga'
@@ -25,6 +24,7 @@ import ProgramContentListSection from './ProgramContentListSection'
 import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
 import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
 import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
+import ProgramPageHelmet from './ProgramPageHelmet'
 import ProgramPlanCard from './ProgramPlanCard'
 
 const StyledIntroWrapper = styled.div`
@@ -86,25 +86,6 @@ const ProgramPage: React.VFC = () => {
   const location = useLocation()
   const params = queryString.parse(location.search)
 
-  let seoMeta:
-    | {
-        title?: string
-        description?: string
-      }
-    | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta'])?.ProgramPage
-  } catch (error) {}
-
-  const siteTitle = program?.title
-    ? seoMeta?.title
-      ? `${render(seoMeta.title, { programTitle: program.title })}`
-      : program.title
-    : appId
-
-  const siteDescription = program?.abstract || settings['open_graph.description']
-  const siteImage = program?.coverUrl || settings['open_graph.image']
-
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock) {
       customerReviewBlockRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -127,19 +108,6 @@ const ProgramPage: React.VFC = () => {
     return <ForbiddenPage />
   }
 
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: program.title,
-    image: siteImage,
-    description: siteDescription,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: settings['seo.name'],
-      description: settings['open_graph.description'],
-    },
-  })
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
 
   const isEnrolledByProgramPackage = !!enrolledProgramPackages.data.length
@@ -154,6 +122,7 @@ const ProgramPage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
+      <ProgramPageHelmet program={program} />
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
 
       <div>

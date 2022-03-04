@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
-import { ActivityProps } from '../../types/activity'
 
 const StyledWrapper = styled.div`
   overflow: hidden;
@@ -35,13 +34,28 @@ const StyledMeta = styled.div`
   letter-spacing: 0.18px;
 `
 
-const Activity: React.VFC<
-  ActivityProps & {
-    participantCount: number
-    totalSeats: number
-    onClick?: () => void
-  }
-> = ({ id, title, coverUrl, isParticipantsVisible, participantCount, totalSeats, startedAt, endedAt, onClick }) => {
+type ActivityBlockProps = {
+  id: string
+  title: string
+  coverUrl?: string
+  isParticipantsVisible?: boolean
+  participantCount: number
+  totalSeats: number
+  startedAt?: Date
+  endedAt?: Date
+  onClick?: () => void
+}
+const ActivityBlock: React.VFC<ActivityBlockProps> = ({
+  id,
+  title,
+  coverUrl,
+  isParticipantsVisible,
+  participantCount,
+  totalSeats,
+  startedAt,
+  endedAt,
+  onClick,
+}) => {
   const { formatMessage } = useIntl()
   const startDate = startedAt ? moment(startedAt).format('YYYY-MM-DD(dd)') : ''
   const endDate = endedAt ? moment(endedAt).format('YYYY-MM-DD(dd)') : ''
@@ -81,4 +95,4 @@ const Activity: React.VFC<
   )
 }
 
-export default Activity
+export default ActivityBlock
