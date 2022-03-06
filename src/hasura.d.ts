@@ -8766,6 +8766,59 @@ export interface GET_PRODUCT_EDITOR_IDSVariables {
 
 
 // ====================================================
+// GraphQL query operation: GET_ADVANCE_SEARCH_PROGRAMS
+// ====================================================
+
+
+export interface GET_ADVANCE_SEARCH_PROGRAMS_program_program_review_score {
+  __typename: "program_review_score";
+  program_id: any | null;
+  score: any | null;
+}
+
+export interface GET_ADVANCE_SEARCH_PROGRAMS_program_program_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_ADVANCE_SEARCH_PROGRAMS_program_program_categories {
+  __typename: "program_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_ADVANCE_SEARCH_PROGRAMS_program_program_categories_category;
+}
+
+export interface GET_ADVANCE_SEARCH_PROGRAMS_program {
+  __typename: "program";
+  cover_url: string | null;
+  title: string;
+  /**
+   * An object relationship
+   */
+  program_review_score: GET_ADVANCE_SEARCH_PROGRAMS_program_program_review_score | null;
+  /**
+   * An array relationship
+   */
+  program_categories: GET_ADVANCE_SEARCH_PROGRAMS_program_program_categories[];
+}
+
+export interface GET_ADVANCE_SEARCH_PROGRAMS {
+  /**
+   * fetch data from the table: "program"
+   */
+  program: GET_ADVANCE_SEARCH_PROGRAMS_program[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+
+// ====================================================
 // GraphQL query operation: GET_PAGE
 // ====================================================
 
@@ -12666,6 +12719,7 @@ export enum program_update_column {
   is_sold_out = "is_sold_out",
   is_subscription = "is_subscription",
   list_price = "list_price",
+  meta_tag = "meta_tag",
   position = "position",
   published_at = "published_at",
   sale_price = "sale_price",
@@ -19538,6 +19592,7 @@ export interface program_bool_exp {
   is_sold_out?: Boolean_comparison_exp | null;
   is_subscription?: Boolean_comparison_exp | null;
   list_price?: numeric_comparison_exp | null;
+  meta_tag?: jsonb_comparison_exp | null;
   package_items?: package_item_bool_exp | null;
   position?: Int_comparison_exp | null;
   program_announcements?: program_announcement_bool_exp | null;
@@ -19551,6 +19606,7 @@ export interface program_bool_exp {
   program_package_programs?: program_package_program_bool_exp | null;
   program_plans?: program_plan_bool_exp | null;
   program_related_items?: program_related_item_bool_exp | null;
+  program_review_score?: program_review_score_bool_exp | null;
   program_roles?: program_role_bool_exp | null;
   program_tags?: program_tag_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
@@ -20145,6 +20201,7 @@ export interface program_insert_input {
   is_sold_out?: boolean | null;
   is_subscription?: boolean | null;
   list_price?: any | null;
+  meta_tag?: any | null;
   package_items?: package_item_arr_rel_insert_input | null;
   position?: number | null;
   program_announcements?: program_announcement_arr_rel_insert_input | null;
@@ -20580,6 +20637,18 @@ export interface program_related_item_on_conflict {
   constraint: program_related_item_constraint;
   update_columns: program_related_item_update_column[];
   where?: program_related_item_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "program_review_score". All fields are combined with a logical 'AND'.
+ */
+export interface program_review_score_bool_exp {
+  _and?: (program_review_score_bool_exp | null)[] | null;
+  _not?: program_review_score_bool_exp | null;
+  _or?: (program_review_score_bool_exp | null)[] | null;
+  program?: program_bool_exp | null;
+  program_id?: uuid_comparison_exp | null;
+  score?: numeric_comparison_exp | null;
 }
 
 /**
