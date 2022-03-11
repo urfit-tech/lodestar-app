@@ -5,6 +5,7 @@ import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element
 import { uniq } from 'ramda'
 import { defineMessage, useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { ArrayParam, NumberParam, StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
@@ -50,7 +51,7 @@ const StyledProgramTitle = styled.h3`
     ${MultiLineTruncationMixin}
   }
 `
-const StyledCategoryName = styled.span`
+const StyledName = styled.span`
   font-family: NotoSansCJKtc;
   font-size: 14px;
   font-weight: 500;
@@ -63,8 +64,33 @@ const StyledIcon = styled(Icon)`
 `
 
 const AdvancedSearchPage: React.FC = () => {
+  const [title] = useQueryParam('title', StringParam)
+  const [queryCategoryCollectionList] = useQueryParam('categoryCollection', ArrayParam)
+  const [queryTagNameCollectionList] = useQueryParam('tagNameCollection', ArrayParam)
+  const [score] = useQueryParam('score', NumberParam)
   const { formatMessage } = useIntl()
-  const { data } = useSearchPrograms()
+
+  const categoryCollectionLists: string[][] =
+    queryCategoryCollectionList?.map(collection => JSON.parse(collection || '')) || []
+  const tagNameCollectionLists: string[][] =
+    queryTagNameCollectionList?.map(collection => JSON.parse(collection || '')) || []
+
+  const { data } = useSearchPrograms({
+    title: title ? { _like: `%${title}%` } : undefined,
+    _and: [
+      ...categoryCollectionLists.map(categoryCollection => ({
+        program_categories: {
+          category_id: { _in: categoryCollection },
+        },
+      })),
+      ...tagNameCollectionLists.map(tagNameCollection => ({
+        program_tags: {
+          tag_name: { _in: tagNameCollection },
+        },
+      })),
+    ],
+    program_review_score: score ? { score: { _gt: 4 } } : undefined,
+  })
 
   return (
     <DefaultLayout white>
@@ -78,11 +104,17 @@ const AdvancedSearchPage: React.FC = () => {
               <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
               <StyledProgramTitle>{program.title}</StyledProgramTitle>
               <div className="d-flex">
-                <StyledCategoryName className="flex-grow-1">{program.categoryNames.join('．')}</StyledCategoryName>
-                <div className="flex-shrink-0 d-flex justify-content-center align-items-center">
-                  <span className="mr-1">{program.score}</span>
-                  <StyledIcon as={StarIcon} />
-                </div>
+                <StyledName className="flex-grow-1">{program.categoryNames.join('．')}</StyledName>
+                {program.score ? (
+                  <div className="flex-shrink-0 d-flex justify-content-center align-items-center">
+                    <span className="mr-1">{program.score}</span>
+                    <StyledIcon as={StarIcon} />
+                  </div>
+                ) : (
+                  <StyledName>
+                    {formatMessage(defineMessage({ id: 'common.text.noReview', defaultMessage: '尚未有評價' }))}
+                  </StyledName>
+                )}
               </div>
             </div>
           ))}
@@ -92,26 +124,35 @@ const AdvancedSearchPage: React.FC = () => {
   )
 }
 
-const useSearchPrograms = () => {
-  const { loading, data, error } = useQuery<hasura.GET_ADVANCE_SEARCH_PROGRAMS>(gql`
-    query GET_ADVANCE_SEARCH_PROGRAMS {
-      program(where: { program_review_score: { score: { _is_null: false } } }) {
-        cover_url
-        title
-        program_review_score {
-          program_id
-          score
-        }
-        program_categories {
-          id
-          category {
+const useSearchPrograms = (condition: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariables['condition']) => {
+  const { loading, data, error } = useQuery<
+    hasura.GET_ADVANCE_SEARCH_PROGRAMS,
+    hasura.GET_ADVANCE_SEARCH_PROGRAMSVariables
+  >(
+    gql`
+      query GET_ADVANCE_SEARCH_PROGRAMS($condition: program_bool_exp!) {
+        program(where: $condition) {
+          title
+          cover_url
+          program_categories {
             id
-            name
+            category {
+              id
+              name
+            }
+          }
+          program_review_score {
+            score
           }
         }
       }
-    }
-  `)
+    `,
+    {
+      variables: {
+        condition,
+      },
+    },
+  )
 
   return {
     isLoading: loading,

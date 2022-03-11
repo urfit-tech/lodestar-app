@@ -289,14 +289,14 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
 
   const { loading, data } = useQuery(gql`
     query GET_PRODUCT_FILTER_OPTIONS {
-      ${decamelizeType}_category(where: {category: {name: {_is_null: false}}}, distinct_on: category_id) {
+      program_category(where: { category: { name: { _is_null: false } } }, distinct_on: category_id) {
         id
         category {
           id
           name
         }
       }
-      ${decamelizeType}_tag {
+      program_tag {
         id
         tag_name
       }
@@ -313,7 +313,7 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
       }
 
       return {
-        id: subCategories.filter(cat => cat.name === categoryName)[0].id,
+        id: subCategories.filter(cat => cat.name === categoryName)[0]?.id,
         name: categoryName,
         subCategories: subCategories
           .filter(cat => cat.name !== categoryName)
@@ -341,7 +341,7 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
       }
 
       return {
-        id: subTags.filter(tag => tag.name === tagName)[0].name,
+        id: subTags.filter(tag => tag.name === tagName)[0]?.name,
         name: tagName,
         subTags: subTags
           .filter(tag => tag.name !== tagName)
