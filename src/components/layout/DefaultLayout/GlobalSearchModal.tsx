@@ -4,16 +4,32 @@ import decamelize from 'decamelize'
 import gql from 'graphql-tag'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { equals, groupBy, map, toPairs, without } from 'ramda'
-import React, { useEffect, useState } from 'react'
+import { equals, flatten, groupBy, includes, isEmpty, map, pluck, toPairs } from 'ramda'
+import React, { useEffect, useRef, useState } from 'react'
 import { defineMessage, useIntl } from 'react-intl'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as SearchIcon } from '../../../images/search.svg'
 
+type FilterType = {
+  categoryIdSList: string[][]
+  tagNameSList: string[][]
+  durationRange: [number, number] | null
+  score: number | null
+}
+
 const GlobalSearchModal: React.VFC = () => {
+  const history = useHistory()
   const { formatMessage } = useIntl()
   const [isOpen, setIsModalOpen] = useState(false)
+  const keywordRef = useRef('')
+  const [filter, setFilter] = useState<FilterType>({
+    categoryIdSList: [],
+    tagNameSList: [],
+    durationRange: null,
+    score: null,
+  })
 
   return (
     <>
@@ -22,13 +38,25 @@ const GlobalSearchModal: React.VFC = () => {
         <div className="d-flex mb-3">
           <Input
             className="flex-grow-1"
+            onChange={e => (keywordRef.current = e.target.value)}
             placeholder={formatMessage(defineMessage({ id: 'common.ui.enterKeyword', defaultMessage: '輸入關鍵字' }))}
           />
-          <Button className="flex-shrink-0" colorScheme="primary" onClick={() => {}}>
+          <Button
+            className="flex-shrink-0"
+            colorScheme="primary"
+            onClick={() => {
+              history.push('/search/advanced', {
+                state: {
+                  title: keywordRef.current,
+                  ...filter,
+                },
+              })
+            }}
+          >
             {formatMessage(commonMessages.ui.search)}
           </Button>
         </div>
-        <GlobalSearchFilter />
+        <GlobalSearchFilter onChange={value => setFilter(value)} />
       </CommonModal>
     </>
   )
@@ -76,13 +104,6 @@ const StyledRoundedButton = styled(Button)<{ active: boolean }>`
   }
 `
 
-type FilterType = {
-  categoryIds: string[]
-  tagIds: string[]
-  durationRange: [number, number] | null
-  score: number | null
-}
-
 const GlobalSearchFilter: React.VFC<{
   type?: 'program' | 'activity' | 'member' | 'merchandise' | 'podcastProgram' | 'post'
   onChange?: (filter: FilterType) => void
@@ -94,11 +115,13 @@ const GlobalSearchFilter: React.VFC<{
     filterOptionGroup: { categories, tags },
   } = useFilterOptions(type)
   const [filter, setFilter] = useState<FilterType>({
-    categoryIds: [],
-    tagIds: [],
+    categoryIdSList: [],
+    tagNameSList: [],
     durationRange: null,
     score: null,
   })
+
+  console.log({ categories, filter })
 
   useEffect(() => {
     onChange?.(filter)
@@ -115,16 +138,34 @@ const GlobalSearchFilter: React.VFC<{
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選分類' }))}
         </StyledFilterTitle>
         {categories.map(category => (
-          <StyledGroup active={filter.categoryIds.includes(category.id)} key={category.id} className="mb-2">
+          <StyledGroup
+            active={includes(category.id ? [category.id] : pluck('id', category.subCategories), filter.categoryIdSList)}
+            key={category.id}
+            className="mb-2"
+          >
             <div className="d-flex align-items-center">
               <Checkbox
-                isChecked={filter.categoryIds.includes(category.id)}
+                isChecked={includes(
+                  category.id ? [category.id] : pluck('id', category.subCategories),
+                  filter.categoryIdSList,
+                )}
                 onChange={() => {
                   setFilter(prev => ({
                     ...prev,
-                    categoryIds: prev.categoryIds.includes(category.id)
-                      ? without([category.id, ...category.subCategories.map(v => v.id)], prev.categoryIds)
-                      : [...prev.categoryIds, category.id, ...category.subCategories.map(v => v.id)],
+                    categoryIdSList: includes(
+                      category.id ? [category.id] : pluck('id', category.subCategories),
+                      filter.categoryIdSList,
+                    )
+                      ? [
+                          ...prev.categoryIdSList.filter(
+                            categoryIdCollection =>
+                              !equals(
+                                categoryIdCollection,
+                                category.id ? [category.id] : pluck('id', category.subCategories),
+                              ),
+                          ),
+                        ]
+                      : [...prev.categoryIdSList, category.id ? [category.id] : pluck('id', category.subCategories)],
                   }))
                 }}
               />
@@ -132,25 +173,53 @@ const GlobalSearchFilter: React.VFC<{
             </div>
             {category.subCategories.length > 0 && (
               <div className="mt-3 ml-4">
-                {category.subCategories.map(subCategory => (
-                  <StyledRoundedButton
-                    onClick={() =>
-                      setFilter(prev => ({
-                        ...prev,
-                        categoryIds: prev.categoryIds.includes(subCategory.id)
-                          ? prev.categoryIds.filter(id => id === subCategory.id)
-                          : [...prev.categoryIds, subCategory.id],
-                      }))
-                    }
-                    active={filter.categoryIds.includes(subCategory.id)}
-                    key={`${category.id}_${subCategory.id}`}
-                    colorScheme="primary"
-                    variant="outline"
-                    className="mr-2"
-                  >
-                    {subCategory.name}
-                  </StyledRoundedButton>
-                ))}
+                {category.subCategories.map(subCategory => {
+                  const active = flatten(filter.categoryIdSList).includes(subCategory.id)
+                  return (
+                    <StyledRoundedButton
+                      onClick={() =>
+                        setFilter(prev => {
+                          return {
+                            ...prev,
+                            categoryIdSList: active
+                              ? [
+                                  ...prev.categoryIdSList.filter(c => !c.includes(subCategory.id)),
+                                  [
+                                    ...(prev.categoryIdSList
+                                      .find(c => c.includes(subCategory.id))
+                                      ?.filter(c => !c.includes(subCategory.id)) || []),
+                                  ],
+                                ].filter(isEmpty)
+                              : [
+                                  ...prev.categoryIdSList.filter(
+                                    c => !c.every(v => pluck('id', category.subCategories).includes(v)),
+                                  ),
+                                  [
+                                    ...(prev.categoryIdSList.find(c =>
+                                      c.every(v => pluck('id', category.subCategories).includes(v)),
+                                    )
+                                      ? [
+                                          ...(prev.categoryIdSList.find(c =>
+                                            c.every(v => pluck('id', category.subCategories).includes(v)),
+                                          ) || []),
+                                          subCategory.id,
+                                        ]
+                                      : [subCategory.id]),
+                                  ],
+                                ],
+                          }
+                        })
+                      }
+                      active={active}
+                      key={`${category.id}_${subCategory.id}`}
+                      colorScheme="primary"
+                      variant="outline"
+                      className="mr-2"
+                    >
+                      {subCategory.name}
+                    </StyledRoundedButton>
+                  )
+                })}
               </div>
             )}
           </StyledGroup>
@@ -161,16 +230,24 @@ const GlobalSearchFilter: React.VFC<{
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選條件' }))}
         </StyledFilterTitle>
         {tags.map(tag => (
-          <StyledGroup active={filter.tagIds.includes(tag.id)} key={tag.id} className="mb-2">
+          <StyledGroup
+            active={includes(tag.name ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)}
+            key={tag.id}
+            className="mb-2"
+          >
             <div className="d-flex align-items-center">
               <Checkbox
-                isChecked={filter.tagIds.includes(tag.id)}
+                isChecked={includes(tag.name ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)}
                 onChange={() =>
                   setFilter(prev => ({
                     ...prev,
-                    tagIds: prev.tagIds.includes(tag.id)
-                      ? without([tag.id, ...tag.subTags.map(v => v.id)], prev.tagIds)
-                      : [...prev.tagIds, tag.id, ...tag.subTags.map(v => v.id)],
+                    tagNameSList: includes(tag.name ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)
+                      ? [
+                          ...prev.tagNameSList.filter(
+                            tagNameS => !equals(tagNameS, tag.name ? [tag.name] : pluck('name', tag.subTags)),
+                          ),
+                        ]
+                      : [...prev.tagNameSList, tag.name ? [tag.name] : pluck('name', tag.subTags)],
                   }))
                 }
               />
@@ -178,24 +255,47 @@ const GlobalSearchFilter: React.VFC<{
             </div>
             {tag.subTags.length > 0 && (
               <div className="ml-5">
-                {tag.subTags.map(subTag => (
-                  <StyledRoundedButton
-                    active={filter.tagIds.includes(subTag.id)}
-                    onClick={() =>
-                      setFilter(prev => ({
-                        ...prev,
-                        tagIds: prev.tagIds.includes(subTag.id)
-                          ? prev.tagIds.filter(id => id === subTag.id)
-                          : [...prev.tagIds, subTag.id],
-                      }))
-                    }
-                    key={subTag.id}
-                    colorScheme="primary"
-                    variant="outline"
-                  >
-                    {subTag.name}
-                  </StyledRoundedButton>
-                ))}
+                {tag.subTags.map(subTag => {
+                  const active = flatten(filter.tagNameSList).includes(subTag.name)
+
+                  return (
+                    <StyledRoundedButton
+                      active={active}
+                      onClick={() => {
+                        setFilter(prev => ({
+                          ...prev,
+                          tagNameSList: active
+                            ? [
+                                ...prev.tagNameSList.filter(c => !c.includes(subTag.name)),
+                                [
+                                  ...(prev.tagNameSList
+                                    .find(c => c.includes(subTag.name))
+                                    ?.filter(c => !c.includes(subTag.name)) || []),
+                                ],
+                              ].filter(isEmpty)
+                            : [
+                                ...prev.tagNameSList.filter(c => !c.every(v => pluck('name', tag.subTags).includes(v))),
+                                [
+                                  ...(prev.tagNameSList.find(c => c.every(v => pluck('name', tag.subTags).includes(v)))
+                                    ? [
+                                        ...(prev.tagNameSList.find(c =>
+                                          c.every(v => pluck('name', tag.subTags).includes(v)),
+                                        ) || []),
+                                        subTag.name,
+                                      ]
+                                    : [subTag.name]),
+                                ],
+                              ],
+                        }))
+                      }}
+                      key={subTag.id}
+                      colorScheme="primary"
+                      variant="outline"
+                    >
+                      {subTag.name}
+                    </StyledRoundedButton>
+                  )
+                })}
               </div>
             )}
           </StyledGroup>

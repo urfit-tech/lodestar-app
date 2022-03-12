@@ -4,8 +4,8 @@ import gql from 'graphql-tag'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { uniq } from 'ramda'
 import { defineMessage, useIntl } from 'react-intl'
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { ArrayParam, NumberParam, StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
@@ -64,31 +64,33 @@ const StyledIcon = styled(Icon)`
 `
 
 const AdvancedSearchPage: React.FC = () => {
-  const [title] = useQueryParam('title', StringParam)
-  const [queryCategoryCollectionList] = useQueryParam('categoryCollection', ArrayParam)
-  const [queryTagNameCollectionList] = useQueryParam('tagNameCollection', ArrayParam)
-  const [score] = useQueryParam('score', NumberParam)
   const { formatMessage } = useIntl()
-
-  const categoryCollectionLists: string[][] =
-    queryCategoryCollectionList?.map(collection => JSON.parse(collection || '')) || []
-  const tagNameCollectionLists: string[][] =
-    queryTagNameCollectionList?.map(collection => JSON.parse(collection || '')) || []
+  const { state: query } = useLocation<{
+    title: string
+    categoryCollectionList: string[][]
+    tagNameCollectionList: string[][]
+    durationRange: number[]
+    score: number
+  }>()
+  const { title, categoryCollectionList, tagNameCollectionList, durationRange, score } = query
 
   const { data } = useSearchPrograms({
     title: title ? { _like: `%${title}%` } : undefined,
     _and: [
-      ...categoryCollectionLists.map(categoryCollection => ({
+      ...categoryCollectionList.map(categoryCollection => ({
         program_categories: {
           category_id: { _in: categoryCollection },
         },
       })),
-      ...tagNameCollectionLists.map(tagNameCollection => ({
+      ...tagNameCollectionList.map(tagNameCollection => ({
         program_tags: {
           tag_name: { _in: tagNameCollection },
         },
       })),
     ],
+    program_duration: {
+      _and: [{ duration: { _lte: durationRange[0] * 60 } }, { duration: { _gt: durationRange[1] * 60 } }],
+    },
     program_review_score: score ? { score: { _gt: 4 } } : undefined,
   })
 

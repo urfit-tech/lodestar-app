@@ -19678,6 +19678,7 @@ export interface program_bool_exp {
   program_content_enrollments?: program_content_enrollment_bool_exp | null;
   program_content_progress_enrollments?: program_content_progress_enrollment_bool_exp | null;
   program_content_sections?: program_content_section_bool_exp | null;
+  program_duration?: program_duration_bool_exp | null;
   program_enrollments?: program_enrollment_bool_exp | null;
   program_package_programs?: program_package_program_bool_exp | null;
   program_plans?: program_plan_bool_exp | null;
@@ -20210,6 +20211,18 @@ export interface program_content_video_on_conflict {
   constraint: program_content_video_constraint;
   update_columns: program_content_video_update_column[];
   where?: program_content_video_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "program_duration". All fields are combined with a logical 'AND'.
+ */
+export interface program_duration_bool_exp {
+  _and?: (program_duration_bool_exp | null)[] | null;
+  _not?: program_duration_bool_exp | null;
+  _or?: (program_duration_bool_exp | null)[] | null;
+  duration?: numeric_comparison_exp | null;
+  program?: program_bool_exp | null;
+  program_id?: uuid_comparison_exp | null;
 }
 
 /**
