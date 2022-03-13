@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { isEmpty, uniq } from 'ramda'
 import { defineMessage, useIntl } from 'react-intl'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -129,23 +129,25 @@ const AdvancedSearchPage: React.FC = () => {
         ) : (
           <StyledLayout className="mb-4">
             {data.map(program => (
-              <div>
-                <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
-                <StyledProgramTitle>{program.title}</StyledProgramTitle>
-                <div className="d-flex">
-                  <StyledName className="flex-grow-1">{program.categoryNames.join('．')}</StyledName>
-                  {program.score ? (
-                    <div className="flex-shrink-0 d-flex justify-content-center align-items-center">
-                      <span className="mr-1">{program.score}</span>
-                      <StyledIcon as={StarIcon} />
-                    </div>
-                  ) : (
-                    <StyledName>
-                      {formatMessage(defineMessage({ id: 'common.text.noReview', defaultMessage: '尚未有評價' }))}
-                    </StyledName>
-                  )}
+              <Link to={`/programs/${program.id}`}>
+                <div>
+                  <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
+                  <StyledProgramTitle>{program.title}</StyledProgramTitle>
+                  <div className="d-flex">
+                    <StyledName className="flex-grow-1">{program.categoryNames.join('．')}</StyledName>
+                    {program.score ? (
+                      <div className="flex-shrink-0 d-flex justify-content-center align-items-center">
+                        <span className="mr-1">{program.score}</span>
+                        <StyledIcon as={StarIcon} />
+                      </div>
+                    ) : (
+                      <StyledName>
+                        {formatMessage(defineMessage({ id: 'common.text.noReview', defaultMessage: '尚未有評價' }))}
+                      </StyledName>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </StyledLayout>
         )}
@@ -162,6 +164,7 @@ const useSearchPrograms = (condition: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariable
     gql`
       query GET_ADVANCE_SEARCH_PROGRAMS($condition: program_bool_exp!) {
         program(where: $condition) {
+          id
           title
           cover_url
           program_categories {
@@ -188,6 +191,7 @@ const useSearchPrograms = (condition: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariable
     isLoading: loading,
     data:
       data?.program.map(v => ({
+        id: v.id,
         coverUrl: v.cover_url,
         title: v.title,
         score: v.program_review_score?.score || null,
