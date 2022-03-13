@@ -4,7 +4,7 @@ import decamelize from 'decamelize'
 import gql from 'graphql-tag'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { equals, flatten, groupBy, includes, isEmpty, map, pluck, toPairs } from 'ramda'
+import { complement, equals, flatten, groupBy, includes, isEmpty, map, pluck, toPairs } from 'ramda'
 import React, { useEffect, useRef, useState } from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -12,7 +12,11 @@ import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as SearchIcon } from '../../../images/search.svg'
 
-type FilterType = {
+const StyleSearchIcon = styled(Icon)`
+  cursor: pointer;
+`
+
+export type FilterType = {
   categoryIdSList: string[][]
   tagNameSList: string[][]
   durationRange: [number, number] | null
@@ -33,7 +37,7 @@ const GlobalSearchModal: React.VFC = () => {
 
   return (
     <>
-      <Icon as={SearchIcon} className="mr-2" onClick={() => setIsModalOpen(true)} />
+      <StyleSearchIcon as={SearchIcon} className="mr-2" onClick={() => setIsModalOpen(true)} />
       <CommonModal isFullWidth title="" isOpen={isOpen} onClose={() => setIsModalOpen(false)}>
         <div className="d-flex mb-3">
           <Input
@@ -46,10 +50,8 @@ const GlobalSearchModal: React.VFC = () => {
             colorScheme="primary"
             onClick={() => {
               history.push('/search/advanced', {
-                state: {
-                  title: keywordRef.current,
-                  ...filter,
-                },
+                title: keywordRef.current,
+                ...filter,
               })
             }}
           >
@@ -90,7 +92,6 @@ const StyledGroup = styled.div<{ active: boolean }>`
 
 const StyledRoundedButton = styled(Button)<{ active: boolean }>`
   && {
-    width: 105px;
     height: 36px;
     padding: 6px 20px;
     border-radius: 30px;
@@ -121,8 +122,6 @@ const GlobalSearchFilter: React.VFC<{
     score: null,
   })
 
-  console.log({ categories, filter })
-
   useEffect(() => {
     onChange?.(filter)
   }, [onChange, filter])
@@ -137,169 +136,174 @@ const GlobalSearchFilter: React.VFC<{
         <StyledFilterTitle>
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選分類' }))}
         </StyledFilterTitle>
-        {categories.map(category => (
-          <StyledGroup
-            active={includes(category.id ? [category.id] : pluck('id', category.subCategories), filter.categoryIdSList)}
-            key={category.id}
-            className="mb-2"
-          >
-            <div className="d-flex align-items-center">
-              <Checkbox
-                isChecked={includes(
-                  category.id ? [category.id] : pluck('id', category.subCategories),
-                  filter.categoryIdSList,
-                )}
-                onChange={() => {
-                  setFilter(prev => ({
-                    ...prev,
-                    categoryIdSList: includes(
-                      category.id ? [category.id] : pluck('id', category.subCategories),
-                      filter.categoryIdSList,
-                    )
-                      ? [
-                          ...prev.categoryIdSList.filter(
-                            categoryIdCollection =>
-                              !equals(
-                                categoryIdCollection,
-                                category.id ? [category.id] : pluck('id', category.subCategories),
-                              ),
-                          ),
-                        ]
-                      : [...prev.categoryIdSList, category.id ? [category.id] : pluck('id', category.subCategories)],
-                  }))
-                }}
-              />
-              <span className="ml-2">{category.name}</span>
-            </div>
-            {category.subCategories.length > 0 && (
-              <div className="mt-3 ml-4">
-                {category.subCategories.map(subCategory => {
-                  const active = flatten(filter.categoryIdSList).includes(subCategory.id)
-                  return (
-                    <StyledRoundedButton
-                      onClick={() =>
-                        setFilter(prev => {
-                          return {
-                            ...prev,
-                            categoryIdSList: active
-                              ? [
-                                  ...prev.categoryIdSList.filter(c => !c.includes(subCategory.id)),
-                                  [
-                                    ...(prev.categoryIdSList
-                                      .find(c => c.includes(subCategory.id))
-                                      ?.filter(c => !c.includes(subCategory.id)) || []),
-                                  ],
-                                ].filter(isEmpty)
-                              : [
-                                  ...prev.categoryIdSList.filter(
-                                    c => !c.every(v => pluck('id', category.subCategories).includes(v)),
-                                  ),
-                                  [
-                                    ...(prev.categoryIdSList.find(c =>
-                                      c.every(v => pluck('id', category.subCategories).includes(v)),
-                                    )
-                                      ? [
-                                          ...(prev.categoryIdSList.find(c =>
-                                            c.every(v => pluck('id', category.subCategories).includes(v)),
-                                          ) || []),
-                                          subCategory.id,
-                                        ]
-                                      : [subCategory.id]),
-                                  ],
-                                ],
-                          }
-                        })
-                      }
-                      active={active}
-                      key={`${category.id}_${subCategory.id}`}
-                      colorScheme="primary"
-                      variant="outline"
-                      className="mr-2"
-                    >
-                      {subCategory.name}
-                    </StyledRoundedButton>
-                  )
-                })}
+        {categories.map(category => {
+          const isCategoryActive = includes(
+            category.id ? [category.id] : pluck('id', category.subCategories),
+            filter.categoryIdSList,
+          )
+          return (
+            <StyledGroup active={isCategoryActive} key={category.id} className="mb-2">
+              <div className="d-flex align-items-center">
+                <Checkbox
+                  isChecked={isCategoryActive}
+                  onChange={() => {
+                    setFilter(prev => ({
+                      ...prev,
+                      categoryIdSList: isCategoryActive
+                        ? [
+                            ...prev.categoryIdSList.filter(
+                              categoryIdS =>
+                                !equals(categoryIdS, category.id ? [category.id] : pluck('id', category.subCategories)),
+                            ),
+                          ]
+                        : [...prev.categoryIdSList, category.id ? [category.id] : pluck('id', category.subCategories)],
+                    }))
+                  }}
+                />
+                <span className="ml-2">{category.name}</span>
               </div>
-            )}
-          </StyledGroup>
-        ))}
+              {category.subCategories.length > 0 && (
+                <div className="mt-3 ml-4">
+                  {category.subCategories.map(subCategory => {
+                    const isSubCategoryActive = flatten(filter.categoryIdSList).includes(subCategory.id)
+                    return (
+                      <StyledRoundedButton
+                        active={isSubCategoryActive}
+                        onClick={() =>
+                          setFilter(prevFilter => {
+                            return {
+                              ...prevFilter,
+                              categoryIdSList: isSubCategoryActive
+                                ? [
+                                    ...prevFilter.categoryIdSList.filter(
+                                      categoryIdS => !categoryIdS.includes(subCategory.id),
+                                    ),
+                                    [
+                                      ...(prevFilter.categoryIdSList
+                                        .find(categoryIdS => categoryIdS.includes(subCategory.id))
+                                        ?.filter(categoryIdS => !categoryIdS.includes(subCategory.id)) || []),
+                                    ],
+                                  ].filter(complement(isEmpty))
+                                : [
+                                    ...prevFilter.categoryIdSList.filter(categoryIdS =>
+                                      categoryIdS.every(categoryId =>
+                                        pluck('id', category.subCategories).includes(categoryId),
+                                      ),
+                                    ),
+                                    [
+                                      ...(!!prevFilter.categoryIdSList.find(categoryIdS =>
+                                        categoryIdS.every(categoryId =>
+                                          pluck('id', category.subCategories).includes(categoryId),
+                                        ),
+                                      )
+                                        ? [
+                                            ...(prevFilter.categoryIdSList.find(categoryIdS =>
+                                              categoryIdS.every(categoryId =>
+                                                pluck('id', category.subCategories).includes(categoryId),
+                                              ),
+                                            ) || []),
+                                            subCategory.id,
+                                          ]
+                                        : [subCategory.id]),
+                                    ].sort(),
+                                  ],
+                            }
+                          })
+                        }
+                        key={`${category.id}_${subCategory.id}`}
+                        colorScheme="primary"
+                        variant="outline"
+                        className="mr-2"
+                      >
+                        {subCategory.name}
+                      </StyledRoundedButton>
+                    )
+                  })}
+                </div>
+              )}
+            </StyledGroup>
+          )
+        })}
       </div>
       <div>
         <StyledFilterTitle>
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選條件' }))}
         </StyledFilterTitle>
-        {tags.map(tag => (
-          <StyledGroup
-            active={includes(tag.name ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)}
-            key={tag.id}
-            className="mb-2"
-          >
-            <div className="d-flex align-items-center">
-              <Checkbox
-                isChecked={includes(tag.name ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)}
-                onChange={() =>
-                  setFilter(prev => ({
-                    ...prev,
-                    tagNameSList: includes(tag.name ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)
-                      ? [
-                          ...prev.tagNameSList.filter(
-                            tagNameS => !equals(tagNameS, tag.name ? [tag.name] : pluck('name', tag.subTags)),
-                          ),
-                        ]
-                      : [...prev.tagNameSList, tag.name ? [tag.name] : pluck('name', tag.subTags)],
-                  }))
-                }
-              />
-              <span className="ml-2">{tag.name}</span>
-            </div>
-            {tag.subTags.length > 0 && (
-              <div className="ml-5">
-                {tag.subTags.map(subTag => {
-                  const active = flatten(filter.tagNameSList).includes(subTag.name)
-
-                  return (
-                    <StyledRoundedButton
-                      active={active}
-                      onClick={() => {
-                        setFilter(prev => ({
-                          ...prev,
-                          tagNameSList: active
-                            ? [
-                                ...prev.tagNameSList.filter(c => !c.includes(subTag.name)),
-                                [
-                                  ...(prev.tagNameSList
-                                    .find(c => c.includes(subTag.name))
-                                    ?.filter(c => !c.includes(subTag.name)) || []),
-                                ],
-                              ].filter(isEmpty)
-                            : [
-                                ...prev.tagNameSList.filter(c => !c.every(v => pluck('name', tag.subTags).includes(v))),
-                                [
-                                  ...(prev.tagNameSList.find(c => c.every(v => pluck('name', tag.subTags).includes(v)))
-                                    ? [
-                                        ...(prev.tagNameSList.find(c =>
-                                          c.every(v => pluck('name', tag.subTags).includes(v)),
-                                        ) || []),
-                                        subTag.name,
-                                      ]
-                                    : [subTag.name]),
-                                ],
-                              ],
-                        }))
-                      }}
-                      key={subTag.id}
-                      colorScheme="primary"
-                      variant="outline"
-                    >
-                      {subTag.name}
-                    </StyledRoundedButton>
-                  )
-                })}
+        {tags.map(tag => {
+          const isTagActive = includes(tag.id ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)
+          return (
+            <StyledGroup active={isTagActive} key={tag.id} className="mb-2">
+              <div className="d-flex align-items-center">
+                <Checkbox
+                  isChecked={isTagActive}
+                  onChange={() =>
+                    setFilter(prev => ({
+                      ...prev,
+                      tagNameSList: isTagActive
+                        ? [
+                            ...prev.tagNameSList.filter(
+                              tagNameS => !equals(tagNameS, tag.id ? [tag.name] : pluck('name', tag.subTags)),
+                            ),
+                          ]
+                        : [...prev.tagNameSList, tag.id ? [tag.name] : pluck('name', tag.subTags)],
+                    }))
+                  }
+                />
+                <span className="ml-2">{tag.name}</span>
               </div>
-            )}
-          </StyledGroup>
-        ))}
+              {tag.subTags.length > 0 && (
+                <div className="mt-3 ml-4">
+                  {tag.subTags.map(subTag => {
+                    const isSubTagActive = flatten(filter.tagNameSList).includes(subTag.name)
+                    return (
+                      <StyledRoundedButton
+                        active={isSubTagActive}
+                        onClick={() => {
+                          setFilter(prevFilter => ({
+                            ...prevFilter,
+                            tagNameSList: isSubTagActive
+                              ? [
+                                  ...prevFilter.tagNameSList.filter(tagNameS => !tagNameS.includes(subTag.name)),
+                                  [
+                                    ...(prevFilter.tagNameSList
+                                      .find(tagNameS => tagNameS.includes(subTag.name))
+                                      ?.filter(tagNameS => !tagNameS.includes(subTag.name)) || []),
+                                  ],
+                                ].filter(complement(isEmpty))
+                              : [
+                                  ...prevFilter.tagNameSList.filter(
+                                    tagNameS =>
+                                      !tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
+                                  ),
+                                  [
+                                    ...(!!prevFilter.tagNameSList.find(tagNameS =>
+                                      tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
+                                    )
+                                      ? [
+                                          ...(prevFilter.tagNameSList.find(tagNameS =>
+                                            tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
+                                          ) || []),
+                                          subTag.name,
+                                        ].sort()
+                                      : [subTag.name]),
+                                  ],
+                                ],
+                          }))
+                        }}
+                        key={subTag.id}
+                        colorScheme="primary"
+                        variant="outline"
+                        className="mr-2"
+                      >
+                        {subTag.name}
+                      </StyledRoundedButton>
+                    )
+                  })}
+                </div>
+              )}
+            </StyledGroup>
+          )
+        })}
       </div>
       <div>
         <StyledFilterTitle>
@@ -391,6 +395,7 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
     query GET_PRODUCT_FILTER_OPTIONS {
       program_category(where: { category: { name: { _is_null: false } } }, distinct_on: category_id) {
         id
+        category_id
         category {
           id
           name
@@ -423,8 +428,8 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
     toPairs(
       groupBy<{ id: string; name: string }>(
         category => category.name.split('/')[0],
-        data?.[`${decamelizeType}_category`].map((v: { id: string; category: { name: string } }) => ({
-          id: v.id,
+        data?.[`${decamelizeType}_category`].map((v: { id: string; category: { id: string; name: string } }) => ({
+          id: v.category.id,
           name: v.category.name,
         })) || [],
       ),
