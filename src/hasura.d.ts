@@ -8829,6 +8829,7 @@ export interface GET_ADVANCE_SEARCH_PROGRAMS_program_program_review_score {
 
 export interface GET_ADVANCE_SEARCH_PROGRAMS_program {
   __typename: "program";
+  id: any;
   title: string;
   cover_url: string | null;
   /**
