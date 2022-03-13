@@ -307,6 +307,7 @@ export interface GET_PRODUCT_FILTER_OPTIONS_program_category_category {
 export interface GET_PRODUCT_FILTER_OPTIONS_program_category {
   __typename: "program_category";
   id: any;
+  category_id: string;
   /**
    * An object relationship
    */

@@ -1,15 +1,17 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/react'
+import { Icon, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
-import { uniq } from 'ramda'
+import { isEmpty, uniq } from 'ramda'
 import { defineMessage, useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import { FilterType } from '../components/layout/DefaultLayout/GlobalSearchModal'
 import hasura from '../hasura'
 import EmptyCover from '../images/empty-cover.png'
+import { ReactComponent as EmptyBoxIcon } from '../images/icons-empty-box.svg'
 import { ReactComponent as StarIcon } from '../images/star-current-color.svg'
 
 const StyledTitle = styled.div`
@@ -24,6 +26,13 @@ const StyledTitle = styled.div`
     font-size: 24px;
     letter-spacing: 0.2px;
   }
+`
+
+const StyledContainer = styled.div`
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 70vh;
 `
 
 const StyledLayout = styled.div`
@@ -63,35 +72,39 @@ const StyledIcon = styled(Icon)`
   color: ${props => props.theme['@primary-color']};
 `
 
+const StyledText = styled.div`
+  letter-spacing: 0.2px;
+  line-height: 1.5;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-darker);
+`
+
 const AdvancedSearchPage: React.FC = () => {
   const { formatMessage } = useIntl()
-  const { state: query } = useLocation<{
-    title: string
-    categoryCollectionList: string[][]
-    tagNameCollectionList: string[][]
-    durationRange: number[]
-    score: number
-  }>()
-  const { title, categoryCollectionList, tagNameCollectionList, durationRange, score } = query
+  const { state } = useLocation<{ title: string } & FilterType>()
+  const { title, categoryIdSList, tagNameSList, durationRange, score } = state
 
-  const { data } = useSearchPrograms({
+  const { isLoading, data } = useSearchPrograms({
     title: title ? { _like: `%${title}%` } : undefined,
     _and: [
-      ...categoryCollectionList.map(categoryCollection => ({
+      ...categoryIdSList.map(categoryIdS => ({
         program_categories: {
-          category_id: { _in: categoryCollection },
+          category_id: { _in: categoryIdS },
         },
       })),
-      ...tagNameCollectionList.map(tagNameCollection => ({
+      ...tagNameSList.map(tagNameS => ({
         program_tags: {
-          tag_name: { _in: tagNameCollection },
+          tag_name: { _in: tagNameS },
         },
       })),
     ],
-    program_duration: {
-      _and: [{ duration: { _lte: durationRange[0] * 60 } }, { duration: { _gt: durationRange[1] * 60 } }],
-    },
-    program_review_score: score ? { score: { _gt: 4 } } : undefined,
+    program_duration: durationRange
+      ? {
+          _and: [{ duration: { _lte: durationRange[0] * 60 } }, { duration: { _gt: durationRange[1] * 60 } }],
+        }
+      : undefined,
+    program_review_score: score ? { score: { _gt: score } } : undefined,
   })
 
   return (
@@ -100,27 +113,42 @@ const AdvancedSearchPage: React.FC = () => {
         <StyledTitle className="my-5">
           {formatMessage(defineMessage({ id: 'common.text.searchResult', defaultMessage: '搜尋結果' }))}
         </StyledTitle>
-        <StyledLayout>
-          {data.map(program => (
-            <div>
-              <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
-              <StyledProgramTitle>{program.title}</StyledProgramTitle>
-              <div className="d-flex">
-                <StyledName className="flex-grow-1">{program.categoryNames.join('．')}</StyledName>
-                {program.score ? (
-                  <div className="flex-shrink-0 d-flex justify-content-center align-items-center">
-                    <span className="mr-1">{program.score}</span>
-                    <StyledIcon as={StarIcon} />
-                  </div>
-                ) : (
-                  <StyledName>
-                    {formatMessage(defineMessage({ id: 'common.text.noReview', defaultMessage: '尚未有評價' }))}
-                  </StyledName>
+        {isLoading ? (
+          <SkeletonText mt="1" noOfLines={4} spacing="4" />
+        ) : isEmpty(data) ? (
+          <StyledContainer>
+            <div className="d-flex flex-column align-items-center">
+              <StyledIcon as={EmptyBoxIcon} className="mb-4" />
+              <StyledText>
+                {formatMessage(
+                  defineMessage({ id: 'common.text.noMatch', defaultMessage: '很抱歉，目前還沒有對應的組合' }),
                 )}
-              </div>
+              </StyledText>
             </div>
-          ))}
-        </StyledLayout>
+          </StyledContainer>
+        ) : (
+          <StyledLayout className="mb-4">
+            {data.map(program => (
+              <div>
+                <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
+                <StyledProgramTitle>{program.title}</StyledProgramTitle>
+                <div className="d-flex">
+                  <StyledName className="flex-grow-1">{program.categoryNames.join('．')}</StyledName>
+                  {program.score ? (
+                    <div className="flex-shrink-0 d-flex justify-content-center align-items-center">
+                      <span className="mr-1">{program.score}</span>
+                      <StyledIcon as={StarIcon} />
+                    </div>
+                  ) : (
+                    <StyledName>
+                      {formatMessage(defineMessage({ id: 'common.text.noReview', defaultMessage: '尚未有評價' }))}
+                    </StyledName>
+                  )}
+                </div>
+              </div>
+            ))}
+          </StyledLayout>
+        )}
       </div>
     </DefaultLayout>
   )
