@@ -298,37 +298,30 @@ export interface INSERT_ISSUEVariables {
 // ====================================================
 
 
-export interface GET_PRODUCT_FILTER_OPTIONS_program_category_category {
+export interface GET_PRODUCT_FILTER_OPTIONS_category {
   __typename: "category";
   id: string;
   name: string;
 }
 
-export interface GET_PRODUCT_FILTER_OPTIONS_program_category {
-  __typename: "program_category";
-  id: any;
-  category_id: string;
-  /**
-   * An object relationship
-   */
-  category: GET_PRODUCT_FILTER_OPTIONS_program_category_category;
-}
-
-export interface GET_PRODUCT_FILTER_OPTIONS_program_tag {
-  __typename: "program_tag";
-  id: any;
-  tag_name: string;
+export interface GET_PRODUCT_FILTER_OPTIONS_tag {
+  __typename: "tag";
+  name: string;
 }
 
 export interface GET_PRODUCT_FILTER_OPTIONS {
   /**
-   * fetch data from the table: "program_category"
+   * fetch data from the table: "category"
    */
-  program_category: GET_PRODUCT_FILTER_OPTIONS_program_category[];
+  category: GET_PRODUCT_FILTER_OPTIONS_category[];
   /**
-   * fetch data from the table: "program_tag"
+   * fetch data from the table: "tag"
    */
-  program_tag: GET_PRODUCT_FILTER_OPTIONS_program_tag[];
+  tag: GET_PRODUCT_FILTER_OPTIONS_tag[];
+}
+
+export interface GET_PRODUCT_FILTER_OPTIONSVariables {
+  class?: string | null;
 }
 
 /* tslint:disable */

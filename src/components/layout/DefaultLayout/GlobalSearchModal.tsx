@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Button, Checkbox, Icon, Input } from '@chakra-ui/react'
-import decamelize from 'decamelize'
 import gql from 'graphql-tag'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -389,83 +388,60 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
     tags: (Tag & { subTags: Tag[] })[]
   }
 } = type => {
-  const decamelizeType = decamelize(type || 'program')
-
-  const { loading, data } = useQuery(gql`
-    query GET_PRODUCT_FILTER_OPTIONS {
-      program_category(where: { category: { name: { _is_null: false } } }, distinct_on: category_id) {
-        id
-        category_id
-        category {
+  const { loading, data } = useQuery(
+    gql`
+      query GET_PRODUCT_FILTER_OPTIONS($class: String) {
+        category(where: { class: { _eq: $class } }) {
           id
           name
         }
+        tag {
+          name
+        }
       }
-      program_tag {
-        id
-        tag_name
+    `,
+    {
+      variables: {
+        class: type,
+      },
+    },
+  )
+  const categories = map(([categoryName, subCategories]) => {
+    if (subCategories.length === 1) {
+      return {
+        ...subCategories[0],
+        subCategories: [],
       }
     }
-  `)
 
-  const categories = map(
-    ([categoryName, subCategories]) => {
-      if (subCategories.length === 1) {
-        return {
-          ...subCategories[0],
-          subCategories: [],
-        }
-      }
+    return {
+      id: subCategories.filter(cat => cat.name === categoryName)[0]?.id,
+      name: categoryName,
+      subCategories: subCategories
+        .filter(cat => cat.name !== categoryName)
+        .map(cat => ({ id: cat.id, name: cat.name.split('/')[1] })),
+    }
+  }, toPairs(groupBy<{ id: string; name: string }>(category => category.name.split('/')[0], data?.category || [])))
 
+  const tags = map(([tagName, subTags]) => {
+    if (subTags.length === 1) {
       return {
-        id: subCategories.filter(cat => cat.name === categoryName)[0]?.id,
-        name: categoryName,
-        subCategories: subCategories
-          .filter(cat => cat.name !== categoryName)
-          .map(cat => ({ id: cat.id, name: cat.name.split('/')[1] })),
+        ...subTags[0],
+        subTags: [],
       }
-    },
-    toPairs(
-      groupBy<{ id: string; name: string }>(
-        category => category.name.split('/')[0],
-        data?.[`${decamelizeType}_category`].map((v: { id: string; category: { id: string; name: string } }) => ({
-          id: v.category.id,
-          name: v.category.name,
-        })) || [],
-      ),
-    ),
-  )
+    }
 
-  const tags = map(
-    ([tagName, subTags]) => {
-      if (subTags.length === 1) {
-        return {
-          ...subTags[0],
-          subTags: [],
-        }
-      }
-
-      return {
-        id: subTags.filter(tag => tag.name === tagName)[0]?.name,
-        name: tagName,
-        subTags: subTags
-          .filter(tag => tag.name !== tagName)
-          .map(tag => ({
-            id: tag.id,
-            name: tag.name,
-          })),
-      }
-    },
-    toPairs(
-      groupBy<{ id: string; name: string }>(
-        tag => tag.name.split('/')[0],
-        data?.[`${decamelizeType}_tag`].map((v: { id: string; tag_name: string }) => ({
-          id: v.id,
-          name: v.tag_name,
-        })) || [],
-      ),
-    ),
-  )
+    return {
+      id: subTags.filter(tag => tag.name === tagName)[0]?.name,
+      name: tagName,
+      subTags: subTags
+        .filter(tag => tag.name !== tagName)
+        .map(tag => ({
+          id: tag.name,
+          name: tag.name,
+        })),
+    }
+  }, toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], data?.tag || [])))
 
   return {
     isLoading: loading,
