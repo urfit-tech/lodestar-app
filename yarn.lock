@@ -3071,6 +3071,13 @@
   dependencies:
     braft-editor "*"
 
+"@types/decamelize@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@types/decamelize/-/decamelize-3.0.3.tgz#1731fead0b603b73ca9ba6e2d576387bc46e1b99"
+  integrity sha512-/3tNtOiXzhfd29p1mzvimDrxE4Wpw2GYFtpC7WRyk+wwa3T920nlU9pW5517up2rUFhr8OXi0ZlbkVeypgGLQA==
+  dependencies:
+    decamelize "*"
+
 "@types/eslint@^7.28.2":
   version "7.29.0"
   resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.29.0.tgz#e56ddc8e542815272720bb0b4ccc2aff9c3e1c78"
@@ -6740,6 +6747,11 @@ debug@^4.0.0, debug@^4.2.0:
   integrity sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==
   dependencies:
     ms "2.1.2"
+
+decamelize@*, decamelize@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-6.0.0.tgz#8cad4d916fde5c41a264a43d0ecc56fe3d31749e"
+  integrity sha512-Fv96DCsdOgB6mdGl67MT5JaTNKRzrzill5OH5s8bjYJXVlcXyPYGyPsUkWyGV5p1TXI5esYIYMMeDJL0hEIwaA==
 
 decamelize@^1.1.2, decamelize@^1.2.0:
   version "1.2.0"
@@ -10998,7 +11010,7 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/82ce6b94b2aa0ca378865403fafb903a2b6bf65d"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/9cc8dc04cf2397a2fa18f6a09df68461726e1fd9"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
