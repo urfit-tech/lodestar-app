@@ -1,18 +1,63 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Checkbox, Icon, Input } from '@chakra-ui/react'
+import {
+  Button,
+  Checkbox,
+  Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  SkeletonText,
+} from '@chakra-ui/react'
 import gql from 'graphql-tag'
-import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { complement, equals, flatten, groupBy, includes, isEmpty, map, pluck, toPairs } from 'ramda'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as SearchIcon } from '../../../images/search.svg'
+import GlobalSearchInput from '../../common/GlobalSearchInput'
 
-const StyleSearchIcon = styled(Icon)`
+const StyledCheckbox = styled(Checkbox)`
+  && {
+    [data-checked] {
+      background: ${props => props.theme['@primary-color']};
+      border-color: ${props => props.theme['@primary-color']};
+    }
+  }
+`
+
+const StyledContent = styled(ModalContent)`
+  && {
+    max-width: 600px;
+    width: 100%;
+  }
+`
+
+const StyleSearchIcon = styled.div`
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
   cursor: pointer;
+`
+
+const StyledClearButton = styled.span`
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: ${props => props.theme['@primary-color']};
+  cursor: pointer;
+
+  &:hover: {
+    color: ${props => props.theme['@primary-color']}33;
+  }
 `
 
 export type FilterType = {
@@ -24,9 +69,10 @@ export type FilterType = {
 
 const GlobalSearchModal: React.VFC = () => {
   const history = useHistory()
+  const { enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const [isOpen, setIsModalOpen] = useState(false)
-  const keywordRef = useRef('')
+  const [keyword, setKeyword] = useState('')
   const [filter, setFilter] = useState<FilterType>({
     categoryIdSList: [],
     tagNameSList: [],
@@ -36,29 +82,66 @@ const GlobalSearchModal: React.VFC = () => {
 
   return (
     <>
-      <StyleSearchIcon as={SearchIcon} className="mr-2" onClick={() => setIsModalOpen(true)} />
-      <CommonModal isFullWidth title="" isOpen={isOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="d-flex mb-3">
-          <Input
-            className="flex-grow-1"
-            onChange={e => (keywordRef.current = e.target.value)}
-            placeholder={formatMessage(defineMessage({ id: 'common.ui.enterKeyword', defaultMessage: '輸入關鍵字' }))}
-          />
-          <Button
-            className="flex-shrink-0"
-            colorScheme="primary"
-            onClick={() => {
-              history.push('/search/advanced', {
-                title: keywordRef.current,
-                ...filter,
-              })
-            }}
-          >
-            {formatMessage(commonMessages.ui.search)}
-          </Button>
-        </div>
-        <GlobalSearchFilter onChange={value => setFilter(value)} />
-      </CommonModal>
+      <StyleSearchIcon onClick={() => setIsModalOpen(true)}>
+        <Icon as={SearchIcon} />
+      </StyleSearchIcon>
+      <Modal isOpen={isOpen} onClose={() => setIsModalOpen(false)}>
+        <ModalOverlay />
+        <StyledContent>
+          <ModalCloseButton />
+          <ModalBody className="my-4">
+            {enabledModules.search && !enabledModules.search_advanced && <GlobalSearchInput />}
+            {enabledModules.search && enabledModules.search_advanced && (
+              <div className="d-flex my-3">
+                <InputGroup>
+                  <Input
+                    className="flex-grow-1 mr-2"
+                    value={keyword}
+                    onChange={e => setKeyword(e.target.value)}
+                    placeholder={formatMessage(
+                      defineMessage({ id: 'common.ui.enterKeyword', defaultMessage: '輸入關鍵字' }),
+                    )}
+                  />
+                  <InputRightElement
+                    className="mr-3"
+                    children={
+                      <StyledClearButton
+                        onClick={() => {
+                          setKeyword('')
+                          setFilter({
+                            categoryIdSList: [],
+                            tagNameSList: [],
+                            durationRange: null,
+                            score: null,
+                          })
+                        }}
+                      >
+                        {formatMessage(defineMessage({ id: 'common.ui.clear', defaultMessage: '清除' }))}
+                      </StyledClearButton>
+                    }
+                  />
+                </InputGroup>
+
+                <Button
+                  className="flex-shrink-0"
+                  colorScheme="primary"
+                  leftIcon={<Icon as={SearchIcon} />}
+                  onClick={() => {
+                    history.push('/search/advanced', {
+                      title: keyword,
+                      ...filter,
+                    })
+                  }}
+                >
+                  {formatMessage(commonMessages.ui.search)}
+                </Button>
+              </div>
+            )}
+
+            <GlobalSearchFilter filter={filter} onFilterSet={setFilter} />
+          </ModalBody>
+        </StyledContent>
+      </Modal>
     </>
   )
 }
@@ -105,34 +188,25 @@ const StyledRoundedButton = styled(Button)<{ active: boolean }>`
 `
 
 const GlobalSearchFilter: React.VFC<{
+  filter: FilterType
+  onFilterSet: React.Dispatch<React.SetStateAction<FilterType>>
   type?: 'program' | 'activity' | 'member' | 'merchandise' | 'podcastProgram' | 'post'
-  onChange?: (filter: FilterType) => void
-}> = ({ type, onChange }) => {
+}> = ({ filter, type, onFilterSet }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const {
     isLoading,
     filterOptionGroup: { categories, tags },
   } = useFilterOptions(type)
-  const [filter, setFilter] = useState<FilterType>({
-    categoryIdSList: [],
-    tagNameSList: [],
-    durationRange: null,
-    score: null,
-  })
-
-  useEffect(() => {
-    onChange?.(filter)
-  }, [onChange, filter])
 
   if (isLoading === true) {
-    return <></>
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
   return (
     <div>
       <div>
-        <StyledFilterTitle>
+        <StyledFilterTitle className="my-3">
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選分類' }))}
         </StyledFilterTitle>
         {categories.map(category => {
@@ -143,19 +217,22 @@ const GlobalSearchFilter: React.VFC<{
           return (
             <StyledGroup active={isCategoryActive} key={category.id} className="mb-2">
               <div className="d-flex align-items-center">
-                <Checkbox
+                <StyledCheckbox
                   isChecked={isCategoryActive}
                   onChange={() => {
-                    setFilter(prev => ({
-                      ...prev,
+                    onFilterSet(prevFilter => ({
+                      ...prevFilter,
                       categoryIdSList: isCategoryActive
                         ? [
-                            ...prev.categoryIdSList.filter(
+                            ...prevFilter.categoryIdSList.filter(
                               categoryIdS =>
                                 !equals(categoryIdS, category.id ? [category.id] : pluck('id', category.subCategories)),
                             ),
                           ]
-                        : [...prev.categoryIdSList, category.id ? [category.id] : pluck('id', category.subCategories)],
+                        : [
+                            ...prevFilter.categoryIdSList,
+                            category.id ? [category.id] : pluck('id', category.subCategories),
+                          ],
                     }))
                   }}
                 />
@@ -169,7 +246,7 @@ const GlobalSearchFilter: React.VFC<{
                       <StyledRoundedButton
                         active={isSubCategoryActive}
                         onClick={() =>
-                          setFilter(prevFilter => {
+                          onFilterSet(prevFilter => {
                             return {
                               ...prevFilter,
                               categoryIdSList: isSubCategoryActive
@@ -225,26 +302,27 @@ const GlobalSearchFilter: React.VFC<{
         })}
       </div>
       <div>
-        <StyledFilterTitle>
+        <StyledFilterTitle className="my-3">
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選條件' }))}
         </StyledFilterTitle>
         {tags.map(tag => {
           const isTagActive = includes(tag.id ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)
+
           return (
             <StyledGroup active={isTagActive} key={tag.id} className="mb-2">
               <div className="d-flex align-items-center">
-                <Checkbox
+                <StyledCheckbox
                   isChecked={isTagActive}
                   onChange={() =>
-                    setFilter(prev => ({
-                      ...prev,
+                    onFilterSet(prevFilter => ({
+                      ...prevFilter,
                       tagNameSList: isTagActive
                         ? [
-                            ...prev.tagNameSList.filter(
+                            ...prevFilter.tagNameSList.filter(
                               tagNameS => !equals(tagNameS, tag.id ? [tag.name] : pluck('name', tag.subTags)),
                             ),
                           ]
-                        : [...prev.tagNameSList, tag.id ? [tag.name] : pluck('name', tag.subTags)],
+                        : [...prevFilter.tagNameSList, tag.id ? [tag.name] : pluck('name', tag.subTags)],
                     }))
                   }
                 />
@@ -258,7 +336,7 @@ const GlobalSearchFilter: React.VFC<{
                       <StyledRoundedButton
                         active={isSubTagActive}
                         onClick={() => {
-                          setFilter(prevFilter => ({
+                          onFilterSet(prevFilter => ({
                             ...prevFilter,
                             tagNameSList: isSubTagActive
                               ? [
@@ -304,56 +382,53 @@ const GlobalSearchFilter: React.VFC<{
           )
         })}
       </div>
-      <div>
-        <StyledFilterTitle>
+      <div className="mt-4">
+        <StyledFilterTitle className="my-3">
           {formatMessage(defineMessage({ id: 'common.ui.advancedCondition', defaultMessage: '進階條件' }))}
         </StyledFilterTitle>
 
         <div className="mb-2">
-          <StyledFilterSubTitle>
+          <StyledFilterSubTitle className="mb-2">
             {formatMessage(defineMessage({ id: 'common.ui.duration', defaultMessage: '時長' }))}
           </StyledFilterSubTitle>
-
-          {Array.from(Array(4).keys())
-            .map((_, index) => index * Number(settings['global_search.minute_interval']))
-            .map((minute, i, minutes) => (
-              <StyledRoundedButton
-                onClick={() => {
-                  setFilter(prev => ({
-                    ...prev,
-                    durationRange: equals(prev.durationRange, [minute, minutes[i + 1]])
-                      ? null
-                      : [minute, minutes[i + 1]],
-                  }))
-                }}
-                active={equals(filter.durationRange, [minute, minutes[i + 1]])}
-                className="mr-2"
-                colorScheme="primary"
-                variant="outline"
-              >
-                {i === 0 ? (
-                  <span>&lt; {minutes[i + 1]}</span>
-                ) : i === minutes.length - 1 ? (
-                  <span>{minute} &gt;</span>
-                ) : (
-                  <span>
-                    {minute} ~ {minutes[i + 1]}
-                  </span>
-                )}
-              </StyledRoundedButton>
-            ))}
+          {[0, ...settings['global_search.minute_interval'].split(',').map(Number)].map((minute, i, minutes) => (
+            <StyledRoundedButton
+              onClick={() => {
+                onFilterSet(prevFilter => ({
+                  ...prevFilter,
+                  durationRange: equals(prevFilter.durationRange, [minute, minutes[i + 1]])
+                    ? null
+                    : [minute, minutes[i + 1]],
+                }))
+              }}
+              active={equals(filter.durationRange, [minute, minutes[i + 1]])}
+              className="mr-2"
+              colorScheme="primary"
+              variant="outline"
+            >
+              {i === 0 ? (
+                <span>&lt; {minutes[i + 1]}</span>
+              ) : i === minutes.length - 1 ? (
+                <span>{minute} &gt;</span>
+              ) : (
+                <span>
+                  {minute} ~ {minutes[i + 1]}
+                </span>
+              )}
+            </StyledRoundedButton>
+          ))}
         </div>
         <div className="mb-2">
-          <StyledFilterSubTitle>
+          <StyledFilterSubTitle className="mb-2">
             {formatMessage(defineMessage({ id: 'common.ui.score', defaultMessage: '評分' }))}
           </StyledFilterSubTitle>
           <div>
             {[4.8, 4.5, 4.0].map(score => (
               <StyledRoundedButton
                 onClick={() =>
-                  setFilter(prev => ({
-                    ...prev,
-                    score: prev.score === score ? null : score,
+                  onFilterSet(prevFilter => ({
+                    ...prevFilter,
+                    score: prevFilter.score === score ? null : score,
                   }))
                 }
                 active={filter.score === score}
@@ -395,8 +470,8 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
           id
           name
         }
-        tag {
-          name
+        app_tag {
+          name: tag_name
         }
       }
     `,
@@ -425,8 +500,10 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
 
   const tags = map(([tagName, subTags]) => {
     if (subTags.length === 1) {
+      const [{ name }] = subTags
       return {
-        ...subTags[0],
+        id: name,
+        name: name,
         subTags: [],
       }
     }
@@ -441,7 +518,7 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
           name: tag.name,
         })),
     }
-  }, toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], data?.tag || [])))
+  }, toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], data?.app_tag || [])))
 
   return {
     isLoading: loading,
