@@ -116,7 +116,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   if (loadingAppPage) {
     return <LoadingPage />
   }
-
+  console.log({ appPage })
   return appPage ? (
     <DefaultLayout {...appPage.options}>
       <PageHelmet />
@@ -131,7 +131,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
               {appPage.appPageSections.map(section => {
                 const Section = sectionConverter[section.type]
                 if (!sectionConverter[section.type]) {
-                  return <></>
+                  return null
                 }
                 return <Section key={section.id} options={section.options} />
               })}

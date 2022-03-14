@@ -83,28 +83,30 @@ const StyledText = styled.div`
 const AdvancedSearchPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { state } = useLocation<{ title: string } & FilterType>()
-  const { title, categoryIdSList, tagNameSList, durationRange, score } = state
 
   const { isLoading, data } = useSearchPrograms({
-    title: title ? { _like: `%${title}%` } : undefined,
+    title: state?.title ? { _like: `%${state.title}%` } : undefined,
     _and: [
-      ...categoryIdSList.map(categoryIdS => ({
+      ...(state?.categoryIdSList.map(categoryIdS => ({
         program_categories: {
           category_id: { _in: categoryIdS },
         },
-      })),
-      ...tagNameSList.map(tagNameS => ({
+      })) || []),
+      ...(state?.tagNameSList?.map(tagNameS => ({
         program_tags: {
           tag_name: { _in: tagNameS },
         },
-      })),
+      })) || []),
     ],
-    program_duration: durationRange
+    program_duration: state?.durationRange
       ? {
-          _and: [{ duration: { _lte: durationRange[0] * 60 } }, { duration: { _gt: durationRange[1] * 60 } }],
+          _and: [
+            { duration: { _lte: state.durationRange[0] * 60 } },
+            { duration: { _gt: state.durationRange[1] * 60 } },
+          ],
         }
       : undefined,
-    program_review_score: score ? { score: { _gt: score } } : undefined,
+    program_review_score: state?.score ? { score: { _gt: state.score } } : undefined,
   })
 
   return (
