@@ -10,7 +10,6 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalOverlay,
   SkeletonText,
 } from '@chakra-ui/react'
 import gql from 'graphql-tag'
@@ -22,7 +21,12 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as SearchIcon } from '../../../images/search.svg'
-import GlobalSearchInput from '../../common/GlobalSearchInput'
+
+const StyledModalBody = styled(ModalBody)`
+  && {
+    padding: 0 2rem;
+  }
+`
 
 const StyledCheckbox = styled(Checkbox)`
   && {
@@ -86,12 +90,10 @@ const GlobalSearchModal: React.VFC = () => {
         <Icon as={SearchIcon} />
       </StyleSearchIcon>
       <Modal isOpen={isOpen} onClose={() => setIsModalOpen(false)}>
-        <ModalOverlay />
         <StyledContent>
           <ModalCloseButton />
-          <ModalBody className="my-4">
-            {enabledModules.search && !enabledModules.search_advanced && <GlobalSearchInput />}
-            {enabledModules.search && enabledModules.search_advanced && (
+          <StyledModalBody className="my-4">
+            {enabledModules.search && (
               <div className="d-flex my-3">
                 <InputGroup>
                   <Input
@@ -127,10 +129,14 @@ const GlobalSearchModal: React.VFC = () => {
                   colorScheme="primary"
                   leftIcon={<Icon as={SearchIcon} />}
                   onClick={() => {
-                    history.push('/search/advanced', {
-                      title: keyword,
-                      ...filter,
-                    })
+                    if (enabledModules.search_advanced) {
+                      history.push('/search/advanced', {
+                        title: keyword,
+                        ...filter,
+                      })
+                      return
+                    }
+                    history.push(`/search?q=${keyword}`)
                   }}
                 >
                   {formatMessage(commonMessages.ui.search)}
@@ -138,8 +144,8 @@ const GlobalSearchModal: React.VFC = () => {
               </div>
             )}
 
-            <GlobalSearchFilter filter={filter} onFilterSet={setFilter} />
-          </ModalBody>
+            {enabledModules.search_advanced && <GlobalSearchFilter filter={filter} onFilterSet={setFilter} />}
+          </StyledModalBody>
         </StyledContent>
       </Modal>
     </>
@@ -149,9 +155,9 @@ const GlobalSearchModal: React.VFC = () => {
 const StyledFilterTitle = styled.h3`
   font-size: 16px;
   font-weight: bold;
-  margin: 4px 0;
   letter-spacing: 0.2px;
   color: var(--gray-darker);
+  margin: 32px 0 12px 0;
 `
 
 const StyledFilterSubTitle = styled.h4`
@@ -191,7 +197,7 @@ const GlobalSearchFilter: React.VFC<{
   filter: FilterType
   onFilterSet: React.Dispatch<React.SetStateAction<FilterType>>
   type?: 'program' | 'activity' | 'member' | 'merchandise' | 'podcastProgram' | 'post'
-}> = ({ filter, type, onFilterSet }) => {
+}> = ({ filter, type = 'program', onFilterSet }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const {
@@ -206,7 +212,7 @@ const GlobalSearchFilter: React.VFC<{
   return (
     <div>
       <div>
-        <StyledFilterTitle className="my-3">
+        <StyledFilterTitle>
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選分類' }))}
         </StyledFilterTitle>
         {categories.map(category => {
@@ -302,7 +308,7 @@ const GlobalSearchFilter: React.VFC<{
         })}
       </div>
       <div>
-        <StyledFilterTitle className="my-3">
+        <StyledFilterTitle>
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選條件' }))}
         </StyledFilterTitle>
         {tags.map(tag => {
@@ -383,7 +389,7 @@ const GlobalSearchFilter: React.VFC<{
         })}
       </div>
       <div className="mt-4">
-        <StyledFilterTitle className="my-3">
+        <StyledFilterTitle>
           {formatMessage(defineMessage({ id: 'common.ui.advancedCondition', defaultMessage: '進階條件' }))}
         </StyledFilterTitle>
 
@@ -466,11 +472,11 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
   const { loading, data } = useQuery(
     gql`
       query GET_PRODUCT_FILTER_OPTIONS($class: String) {
-        category(where: { class: { _eq: $class } }) {
+        category(where: { class: { _eq: $class }, program_categories: { program_id: { _is_null: false } } }) {
           id
           name
         }
-        app_tag {
+        app_tag(where: { tag: { program_tags: { program_id: { _is_null: false } } } }) {
           name: tag_name
         }
       }

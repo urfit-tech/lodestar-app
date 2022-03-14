@@ -15,7 +15,6 @@ import { useNav } from '../../../hooks/data'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
 import CartDropdown from '../../checkout/CartDropdown'
 import Footer from '../../common/Footer'
-import GlobalSearchInput from '../../common/GlobalSearchInput'
 import MemberProfileButton from '../../common/MemberProfileButton'
 import Responsive from '../../common/Responsive'
 import NotificationDropdown from '../../notification/NotificationDropdown'
@@ -24,7 +23,6 @@ import {
   EmptyBlock,
   LayoutContentWrapper,
   LogoBlock,
-  SearchBlock,
   StyledLayout,
   StyledLayoutContent,
   StyledLayoutHeader,
@@ -97,14 +95,6 @@ const DefaultLayout: React.FC<{
                 <Link to="/">{settings['logo'] ? <StyledLogo src={settings['logo']} alt="logo" /> : name}</Link>
               )}
             </LogoBlock>
-
-            {enabledModules.search && !enabledModules.search_advanced && (
-              <Responsive.Desktop>
-                <SearchBlock>
-                  <GlobalSearchInput />
-                </SearchBlock>
-              </Responsive.Desktop>
-            )}
           </div>
           <div className="d-flex align-items-center">
             <Responsive.Desktop>
@@ -211,7 +201,7 @@ const DefaultLayout: React.FC<{
                   )))}
             </Responsive.Desktop>
 
-            {enabledModules.search && enabledModules.search_advanced && <GlobalSearchModal />}
+            {(enabledModules.search || enabledModules.search_advanced) && <GlobalSearchModal />}
             {!noCart && !settings['feature.cart.disable'] && (renderCartButton ? renderCartButton() : <CartDropdown />)}
             {currentMemberId && !settings['feature.notify.disable'] && <NotificationDropdown />}
             {currentMemberId && currentMember ? (
