@@ -125,30 +125,24 @@ const DefaultLayout: React.FC<{
                       </MenuButton>
                       {nav.subNavs?.length > 0 && (
                         <MenuList>
-                          {nav.subNavs?.map((v, idx) => (
-                            <>
-                              {v.external ? (
-                                <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
-                                  <StyledMenuItem _focus={{ bg: '#fff' }}>{v.label}</StyledMenuItem>
-                                </a>
-                              ) : (
-                                <Link key={idx} to={v.href}>
-                                  <StyledMenuItem _focus={{ bg: '#fff' }}>
-                                    {v.label}
-                                    {v.tag && (
-                                      <StyledMenuTag
-                                        borderRadius="full"
-                                        color="#fff"
-                                        bg={theme?.colors?.primary?.[500]}
-                                      >
-                                        {v.tag}
-                                      </StyledMenuTag>
-                                    )}
-                                  </StyledMenuItem>
-                                </Link>
-                              )}
-                            </>
-                          ))}
+                          {nav.subNavs?.map((v, idx) =>
+                            v.external ? (
+                              <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
+                                <StyledMenuItem _focus={{ bg: '#fff' }}>{v.label}</StyledMenuItem>
+                              </a>
+                            ) : (
+                              <Link key={idx} to={v.href}>
+                                <StyledMenuItem _focus={{ bg: '#fff' }}>
+                                  {v.label}
+                                  {v.tag && (
+                                    <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                                      {v.tag}
+                                    </StyledMenuTag>
+                                  )}
+                                </StyledMenuItem>
+                              </Link>
+                            ),
+                          )}
                         </MenuList>
                       )}
                     </Menu>
@@ -171,32 +165,26 @@ const DefaultLayout: React.FC<{
                       </MenuButton>
                       {nav.subNavs.length > 0 && (
                         <MenuList>
-                          {nav.subNavs?.map((v, idx) => (
-                            <>
-                              {v.external ? (
-                                <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
-                                  <MenuItem _focus={{ bg: '#fff' }}>
-                                    <StyledMenuItem>{v.label}</StyledMenuItem>
-                                  </MenuItem>
-                                </a>
-                              ) : (
-                                <Link key={idx} to={v.href}>
-                                  <StyledMenuItem _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
-                                    {v.label}
-                                    {v.tag && (
-                                      <StyledMenuTag
-                                        borderRadius="full"
-                                        color="#fff"
-                                        bg={theme?.colors?.primary?.[500]}
-                                      >
-                                        {v.tag}
-                                      </StyledMenuTag>
-                                    )}
-                                  </StyledMenuItem>
-                                </Link>
-                              )}
-                            </>
-                          ))}
+                          {nav.subNavs?.map((v, idx) =>
+                            v.external ? (
+                              <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
+                                <MenuItem _focus={{ bg: '#fff' }}>
+                                  <StyledMenuItem>{v.label}</StyledMenuItem>
+                                </MenuItem>
+                              </a>
+                            ) : (
+                              <Link key={idx} to={v.href}>
+                                <StyledMenuItem _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
+                                  {v.label}
+                                  {v.tag && (
+                                    <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                                      {v.tag}
+                                    </StyledMenuTag>
+                                  )}
+                                </StyledMenuItem>
+                              </Link>
+                            ),
+                          )}
                         </MenuList>
                       )}
                     </Menu>
