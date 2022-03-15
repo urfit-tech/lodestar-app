@@ -10,6 +10,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalOverlay,
   SkeletonText,
 } from '@chakra-ui/react'
 import gql from 'graphql-tag'
@@ -64,6 +65,12 @@ const StyledClearButton = styled.span`
   }
 `
 
+const StyledModalOverlay = styled(ModalOverlay)`
+  && {
+    background: rgba(256, 256, 256, 0.48);
+  }
+`
+
 export type FilterType = {
   categoryIdSList: string[][]
   tagNameSList: string[][]
@@ -90,6 +97,7 @@ const GlobalSearchModal: React.VFC = () => {
         <Icon as={SearchIcon} />
       </StyleSearchIcon>
       <Modal isOpen={isOpen} onClose={() => setIsModalOpen(false)}>
+        <StyledModalOverlay />
         <StyledContent>
           <ModalCloseButton />
           <StyledModalBody className="my-4">
