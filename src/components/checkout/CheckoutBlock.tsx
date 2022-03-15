@@ -10,7 +10,8 @@ import InvoiceInput, { validateInvoice } from 'lodestar-app-element/src/componen
 import PaymentSelector from 'lodestar-app-element/src/components/selectors/PaymentSelector'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { ContactInfo, PaymentProps } from 'lodestar-app-element/src/types/checkout'
+import { validateContactInfo } from 'lodestar-app-element/src/helpers'
+import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
 import { prop, sum } from 'ramda'
 import React, { useContext, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -88,7 +89,6 @@ const CheckoutBlock: React.VFC<{
     shipping: ShippingProps
     invoice: InvoiceProps
     payment: PaymentProps
-    contactInfo: ContactInfo
   } = {
     shipping: {
       name: '',
@@ -108,11 +108,6 @@ const CheckoutBlock: React.VFC<{
       gateway: settings['payment.perpetual.default_gateway'] || 'spgateway',
       method: settings['payment.perpetual.default_gateway_method'] || 'credit',
     } as PaymentProps,
-    contactInfo: {
-      name: member?.name || '',
-      email: member?.email || '',
-      phone: member?.phone || '',
-    },
   }
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
@@ -148,10 +143,6 @@ const CheckoutBlock: React.VFC<{
   const paymentMethodRef = useRef<HTMLDivElement | null>(null)
   const groupBuyingRef = useRef<HTMLDivElement | null>(null)
 
-  const [contactInfo, setContactInfo] = useState<ContactInfo & { withError: boolean }>({
-    ...cachedPaymentInfo.contactInfo,
-    withError: false,
-  })
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfo.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfo.invoice)
   const [payment, setPayment] = useState<PaymentProps | null>(null)
@@ -211,11 +202,12 @@ const CheckoutBlock: React.VFC<{
     !isValidating && setIsValidating(true)
 
     if (settings['feature.contact_info.enabled'] === '1' && totalPrice === 0) {
-      setInvoice({ name: contactInfo.name, phone: contactInfo.phone, email: contactInfo.email })
-      if (contactInfo.withError) {
+      if (validateContactInfo(invoice).length !== 0) {
         contactInfoRef.current?.scrollIntoView({ behavior: 'smooth' })
         return
       }
+      console.log(validateContactInfo(invoice))
+      return
     }
 
     let isValidShipping = false
@@ -313,12 +305,7 @@ const CheckoutBlock: React.VFC<{
           shipping: hasPhysicalProduct ? shipping : member.shipping,
           payment,
         },
-        memberPhones:
-          settings['feature.contact_info.enabled'] === '1' && totalPrice === 0
-            ? [{ member_id: member.id, phone: contactInfo.phone }]
-            : invoice.phone
-            ? [{ member_id: member.id, phone: invoice.phone }]
-            : [],
+        memberPhones: invoice.phone ? [{ member_id: member.id, phone: invoice.phone }] : [],
       },
     }).catch(() => {})
 
@@ -375,7 +362,7 @@ const CheckoutBlock: React.VFC<{
       {!orderPlacing && !orderChecking && totalPrice === 0 && settings['feature.contact_info.enabled'] === '1' && (
         <Box ref={contactInfoRef} mb="3">
           <AdminCard>
-            <ContactInfoInput value={contactInfo} onChange={v => setContactInfo(v)} isValidating={isValidating} />
+            <ContactInfoInput value={invoice} onChange={v => setInvoice(v)} />
           </AdminCard>
         </Box>
       )}
