@@ -116,7 +116,6 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   if (loadingAppPage) {
     return <LoadingPage />
   }
-  console.log({ appPage })
   return appPage ? (
     <DefaultLayout {...appPage.options}>
       <PageHelmet />

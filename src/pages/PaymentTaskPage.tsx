@@ -43,7 +43,7 @@ const PaymentTaskPage: React.VFC = () => {
   const taskResult = task?.returnvalue
   useEffect(() => {
     if (taskResult) {
-      tracking.addPaymentInfo()
+      tracking.addPaymentInfo({ gateway: taskResult.gateway, method: taskResult.method })
       if (taskResult.payForm.url) {
         window.location.assign(taskResult.payForm.url)
       } else if (taskResult.payForm.html) {
