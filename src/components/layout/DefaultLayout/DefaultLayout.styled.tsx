@@ -2,8 +2,8 @@ import { Button, MenuItem, Tag } from '@chakra-ui/react'
 import { Layout } from 'antd'
 import { extname } from 'path'
 import styled, { css } from 'styled-components'
-import { BREAK_POINT } from '../../components/common/Responsive'
-import { desktopViewMixin } from '../../helpers'
+import { desktopViewMixin } from '../../../helpers'
+import { BREAK_POINT } from '../../common/Responsive'
 
 export const StyledLayout = styled(Layout)<{ variant?: 'white' }>`
   ${props => (props.variant === 'white' ? 'background: white;' : '')}

@@ -2,7 +2,7 @@ import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
 import { Select } from '@chakra-ui/react'
 import { Card } from 'antd'
 import { flatten, sum } from 'ramda'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineCalendar, AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
@@ -225,6 +225,7 @@ const SortBySectionItem: React.VFC<{
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
 }> = ({ programContent, progress, programPackageId, onSetIsCollapse, onClick }) => {
+  const currentRef = useRef<HTMLInputElement>(null)
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { programId, programContentId } = useParams<{
@@ -240,8 +241,13 @@ const SortBySectionItem: React.VFC<{
     }
   }, [isActive, onSetIsCollapse])
 
+  useEffect(() => {
+    isActive && currentRef.current?.scrollIntoView()
+  }, [isActive])
+
   return (
     <StyledItem
+      ref={currentRef}
       className={`${progressStatus} ${isActive ? 'active' : ''}`}
       onClick={() => {
         onClick?.()

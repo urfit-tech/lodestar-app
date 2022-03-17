@@ -148,7 +148,7 @@ const ActivityIntroSection: React.VFC<{
             }}
           >
             {activities.map(activity => (
-              <div className="px-5 px-lg-2">
+              <div className="px-5 px-lg-2" key={activity.id}>
                 <ActivityBlock
                   id={activity.id}
                   title={activity.title}

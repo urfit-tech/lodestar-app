@@ -23,6 +23,7 @@ const ProgramCollectionPageHelmet: React.VFC<{ title: string; programs: Pick<Pro
         },
       ]}
       openGraph={[
+        { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: title || app.settings['title'] },

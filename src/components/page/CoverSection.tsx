@@ -47,8 +47,9 @@ const CoverSection: React.VFC<{
           },
         }}
       >
-        {options.coverInfos.map(v => (
+        {options.coverInfos.map((v, idx) => (
           <Slide
+            key={idx}
             variant="normal"
             srcDesktop={v.srcDesktop}
             srcMobile={v.srcMobile}

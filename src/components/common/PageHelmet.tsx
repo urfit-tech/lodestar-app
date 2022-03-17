@@ -14,6 +14,7 @@ const PageHelmet: React.FC<
 > = props => {
   const app = useApp()
   const openGraph = props.openGraph || [
+    { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
     { property: 'og:type', content: 'website' },
     { property: 'og:url', content: window.location.href },
     { property: 'og:title', content: app.settings['open_graph.title'] || app.settings['title'] },
