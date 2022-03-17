@@ -1765,13 +1765,13 @@
   resolved "https://registry.yarnpkg.com/@craftjs/core/-/core-0.1.0-beta.20.tgz#7d9140fdb8f962cb4ff701024f7a3cf43f6bdfa6"
   integrity sha512-AdX597cnoY8ktPKnh8tE6FRe+uz82DAsy9GyruRUQc7/mClvoO45zjCVFT2MngwW8PaH9xAVeEko2si8ScGeDw==
   dependencies:
-    "@craftjs/utils" "0.1.0-beta.20"
+    "@craftjs/utils" "^0.1.0-beta.20"
     "@types/react" "^17.0.5"
     debounce "^1.2.0"
     lodash "^4.17.20"
     tiny-invariant "^1.0.6"
 
-"@craftjs/utils@0.1.0-beta.20":
+"@craftjs/utils@^0.1.0-beta.20":
   version "0.1.0-beta.20"
   resolved "https://registry.yarnpkg.com/@craftjs/utils/-/utils-0.1.0-beta.20.tgz#2ba535b043e45368dc60bcf06614dab5ba2d0899"
   integrity sha512-KevLljnpEvHxpB2nxRZyQG2i4GDivIkY58depi+ynQP2ALonNuxEGVO2QsuDJ+p1z4eOtv0Xi/D3o6Qr84eAzQ==
@@ -10791,7 +10791,7 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/63ebed571c229f93364bdf9d1e03b804f47a3e19"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/ad537a925ed5760d0dc5434fdb9045a1e2e9beb7"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
