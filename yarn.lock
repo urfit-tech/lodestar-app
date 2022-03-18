@@ -14299,6 +14299,11 @@ react-star-rating-component@^1.4.1:
     classnames "^2.2.5"
     prop-types "^15.6.1"
 
+react-style-editor@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/react-style-editor/-/react-style-editor-0.4.0.tgz#b81d8751143283b809eb91f71a126e80a40a3a01"
+  integrity sha512-ywMzuVUjupaEILqQvgVGutSoWb21M8alt5F5IVpoVm9iNjmgMRXnFjklVBTOYxP1WC9iIlh54beJQKJ3SNStuw==
+
 react-style-singleton@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/react-style-singleton/-/react-style-singleton-2.1.1.tgz#ce7f90b67618be2b6b94902a30aaea152ce52e66"

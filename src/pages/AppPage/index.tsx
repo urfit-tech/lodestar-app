@@ -1,10 +1,11 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Editor, Frame } from '@craftjs/core'
+import { Editor, Frame, useEditor } from '@craftjs/core'
 import gql from 'graphql-tag'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { stringify as stringifyStyle } from 'react-style-editor'
 import styled from 'styled-components'
 import MessengerChat from '../../components/common/MessengerChat'
 import PageHelmet from '../../components/common/PageHelmet'
@@ -109,6 +110,17 @@ const sectionConverter = {
   homeHaohaoming: HaohaomingSection,
 }
 
+const PageStyle: React.VFC = () => {
+  const { rootStyle } = useEditor(state => {
+    return { rootStyle: state.nodes['ROOT']?.data?.custom?.style || [] }
+  })
+  return (
+    <div>
+      <style>{stringifyStyle(rootStyle)}</style>
+    </div>
+  )
+}
+
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { loadingAppPage, errorAppPage, appPage } = usePage(location.pathname)
@@ -116,11 +128,13 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   if (loadingAppPage) {
     return <LoadingPage />
   }
+
   return appPage ? (
     <DefaultLayout {...appPage.options}>
       <PageHelmet />
       {appPage.craftData ? (
         <Editor enabled={false} resolver={CraftElement}>
+          <PageStyle />
           <CraftBlock craftData={appPage.craftData} />
         </Editor>
       ) : (
