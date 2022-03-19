@@ -18,7 +18,7 @@ import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useProgram } from '../../hooks/program'
+import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import ForbiddenPage from '../ForbiddenPage'
 import { CustomizeProgramBanner, PerpetualProgramBanner } from './ProgramBanner'
@@ -87,7 +87,9 @@ const ProgramPage: React.VFC = () => {
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const params = queryString.parse(location.search)
-  console.log({ settings }, settings['layout.program_page'])
+  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const isEnrolled = enrolledProgramIds.includes(programId)
+
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock) {
       customerReviewBlockRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -110,6 +112,8 @@ const ProgramPage: React.VFC = () => {
     return <ForbiddenPage />
   }
 
+  console.log(program.plans)
+
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
 
   const isEnrolledByProgramPackage = !!enrolledProgramPackages.data.length
@@ -129,7 +133,7 @@ const ProgramPage: React.VFC = () => {
 
       <div>
         {settings['layout.program_page'] ? (
-          <CustomizeProgramBanner program={program} />
+          <CustomizeProgramBanner program={program} isEnrolled={isEnrolled} />
         ) : (
           <PerpetualProgramBanner
             program={program}
@@ -161,17 +165,23 @@ const ProgramPage: React.VFC = () => {
                   <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
                 </div>
               </div>
-              <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                {settings['layout.program_page'] ? (
-                  <ProgramCategoryCard
-                    tags={program.tags.map(tag => ({
-                      id: tag,
-                      name: tag,
-                    }))}
-                  />
-                ) : (
+
+              {settings['layout.program_page'] ? (
+                <StyledIntroWrapper className="col-12 col-lg-4">
+                  {!!program.tags.length && (
+                    <ProgramCategoryCard
+                      tags={program.tags.map(tag => ({
+                        id: tag,
+                        name: tag,
+                      }))}
+                    />
+                  )}
+                </StyledIntroWrapper>
+              ) : (
+                <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
                   <div>
                     <Responsive.Desktop>
+                      s
                       <ProgramInfoCard instructorId={instructorId} program={program} />
                     </Responsive.Desktop>
 
@@ -189,8 +199,8 @@ const ProgramPage: React.VFC = () => {
                       </div>
                     )}
                   </div>
-                )}
-              </StyledIntroWrapper>
+                </StyledIntroWrapper>
+              )}
             </div>
 
             <div className="row">
@@ -215,7 +225,7 @@ const ProgramPage: React.VFC = () => {
         </ProgramIntroBlock>
       </div>
 
-      {!isEnrolledByProgramPackage && (
+      {!isEnrolledByProgramPackage && !settings['layout.program_page'] && (
         <Responsive.Default>
           <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
             <StyledButtonWrapper>
