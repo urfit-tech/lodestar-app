@@ -18,7 +18,7 @@ import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import { productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
-import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
+import { ProgramContent, ProgramContentSection } from '../../types/program'
 
 const StyledUnPurchased = styled.div`
   color: ${props => props.theme['@primary-color']};
@@ -42,13 +42,10 @@ const StyledContentBlock = styled.div`
 `
 
 const ProgramCustomContentBlock: React.VFC<{
-  programId: string
-  programRoles: ProgramRole[]
   programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]
   programContentId: string
-  issueEnabled?: boolean
   children?: ReactElement
-}> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled, children }) => {
+}> = ({ programContentSections, programContentId, children }) => {
   const { formatMessage } = useIntl()
   const { loading: loadingApp } = useApp()
   const { authToken } = useAuth()
