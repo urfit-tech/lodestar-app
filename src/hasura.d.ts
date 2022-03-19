@@ -292,7 +292,7 @@ export interface GET_PRODUCT_FILTER_OPTIONS_category {
 
 export interface GET_PRODUCT_FILTER_OPTIONS_app_tag {
   __typename: "app_tag";
-  tag_name: string | null;
+  name: string | null;
 }
 
 export interface GET_PRODUCT_FILTER_OPTIONS {
@@ -314,43 +314,6 @@ export interface GET_PRODUCT_FILTER_OPTIONSVariables {
 /* eslint-disable */
 // @generated
 // This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_PRODUCT_FILTER_OPTIONS
-// ====================================================
-
-
-export interface GET_PRODUCT_FILTER_OPTIONS_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface GET_PRODUCT_FILTER_OPTIONS_tag {
-  __typename: "tag";
-  name: string;
-}
-
-export interface GET_PRODUCT_FILTER_OPTIONS {
-  /**
-   * fetch data from the table: "category"
-   */
-  category: GET_PRODUCT_FILTER_OPTIONS_category[];
-  /**
-   * fetch data from the table: "tag"
-   */
-  tag: GET_PRODUCT_FILTER_OPTIONS_tag[];
-}
-
-export interface GET_PRODUCT_FILTER_OPTIONSVariables {
-  class?: string | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
 
 // ====================================================
 // GraphQL query operation: GET_MERCHANDISE_TYPE_COLLECTION
@@ -7281,6 +7244,16 @@ export interface GET_PROGRAM_program_by_pk_program_plans {
   group_buying_people: any | null;
 }
 
+export interface GET_PROGRAM_program_by_pk_program_review_score {
+  __typename: "program_review_score";
+  score: any | null;
+}
+
+export interface GET_PROGRAM_program_by_pk_program_duration {
+  __typename: "program_duration";
+  duration: any | null;
+}
+
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_program_content_type {
   __typename: "program_content_type";
   id: any | null;
@@ -7398,6 +7371,14 @@ export interface GET_PROGRAM_program_by_pk {
    * An array relationship
    */
   program_plans: GET_PROGRAM_program_by_pk_program_plans[];
+  /**
+   * An object relationship
+   */
+  program_review_score: GET_PROGRAM_program_by_pk_program_review_score | null;
+  /**
+   * An object relationship
+   */
+  program_duration: GET_PROGRAM_program_by_pk_program_duration | null;
   /**
    * An array relationship
    */
@@ -8570,63 +8551,6 @@ export interface GET_ADVANCE_SEARCH_PROGRAMSVariables {
 /* eslint-disable */
 // @generated
 // This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_ADVANCE_SEARCH_PROGRAMS
-// ====================================================
-
-
-export interface GET_ADVANCE_SEARCH_PROGRAMS_program_program_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface GET_ADVANCE_SEARCH_PROGRAMS_program_program_categories {
-  __typename: "program_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: GET_ADVANCE_SEARCH_PROGRAMS_program_program_categories_category;
-}
-
-export interface GET_ADVANCE_SEARCH_PROGRAMS_program_program_review_score {
-  __typename: "program_review_score";
-  score: any | null;
-}
-
-export interface GET_ADVANCE_SEARCH_PROGRAMS_program {
-  __typename: "program";
-  id: any;
-  title: string;
-  cover_url: string | null;
-  /**
-   * An array relationship
-   */
-  program_categories: GET_ADVANCE_SEARCH_PROGRAMS_program_program_categories[];
-  /**
-   * An object relationship
-   */
-  program_review_score: GET_ADVANCE_SEARCH_PROGRAMS_program_program_review_score | null;
-}
-
-export interface GET_ADVANCE_SEARCH_PROGRAMS {
-  /**
-   * fetch data from the table: "program"
-   */
-  program: GET_ADVANCE_SEARCH_PROGRAMS_program[];
-}
-
-export interface GET_ADVANCE_SEARCH_PROGRAMSVariables {
-  condition: program_bool_exp;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
 
 // ====================================================
 // GraphQL query operation: GET_PAGE

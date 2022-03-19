@@ -297,6 +297,12 @@ export const useProgram = (programId: string) => {
             is_countdown_timer_visible
             group_buying_people
           }
+          program_review_score {
+            score
+          }
+          program_duration {
+            duration
+          }
           program_content_sections(
             where: { program_contents: { published_at: { _is_null: false } } }
             order_by: { position: asc }
@@ -344,7 +350,7 @@ export const useProgram = (programId: string) => {
     `,
     { variables: { programId } },
   )
-  const program: Program | null = useMemo(
+  const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(
     () =>
       loading || error || !data || !data.program_by_pk
         ? null
@@ -398,6 +404,8 @@ export const useProgram = (programId: string) => {
               isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
               groupBuyingPeople: programPlan.group_buying_people || 1,
             })),
+            duration: data.program_by_pk.program_duration?.duration,
+            score: data.program_by_pk.program_review_score?.score,
             contentSections: data.program_by_pk.program_content_sections.map(programContentSection => ({
               id: programContentSection.id,
               title: programContentSection.title,
