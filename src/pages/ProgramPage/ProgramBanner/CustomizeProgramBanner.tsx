@@ -1,15 +1,11 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button } from '@chakra-ui/react'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import Responsive, { BREAK_POINT } from '../../../components/common/Responsive'
-import { ReactComponent as PlayIcon } from '../../../images/play-fill-icon.svg'
+import { BREAK_POINT } from '../../../components/common/Responsive'
 import { ReactComponent as StarIcon } from '../../../images/star-current-color.svg'
-import { Program } from '../../../types/program'
+import { Program, ProgramRole } from '../../../types/program'
 
 const StyledTitle = styled.h1`
   margin: 0;
@@ -22,21 +18,12 @@ const StyledTitle = styled.h1`
     font-size: 40px;
   }
 `
-const StyledVideoWrapper = styled.div<{ coverUrl: { mobileUrl?: string; desktopUrl?: string } }>`
+const StyledVideoWrapper = styled.div<{ backgroundImage?: string }>`
   position: relative;
   padding-top: 56.25%;
-  ${props =>
-    props.coverUrl.mobileUrl
-      ? `background-image: url(${props.coverUrl.mobileUrl});`
-      : `background-image: url(${props.coverUrl.desktopUrl});`}
+  ${props => props.backgroundImage && `background-image: url(${props.backgroundImage});`}
   background-size: cover;
   background-position: center;
-  @media (min-width: ${BREAK_POINT}px) {
-    ${props =>
-      props.coverUrl.desktopUrl
-        ? `background-image: url(${props.coverUrl.desktopUrl});`
-        : `background-image: url(${props.coverUrl.mobileUrl});`}
-  }
 `
 const StyledPlayer = styled.div`
   position: absolute;
@@ -89,7 +76,7 @@ const Divider = styled.div`
 `
 
 const StyledIcon = styled(Icon)`
-  font-size: 16px;
+  font-size: 12px;
   color: ${props => props.theme['primary-color']};
 `
 
@@ -100,31 +87,21 @@ const StyledText = styled.span`
   color: var(--gray-darker);
 `
 
-const StyledButton = styled(Button)`
-  && {
-    padding-right: 56px;
-    padding-left: 56px;
-  }
-`
-
 const CustomizeProgramBanner: React.VFC<{
   program: Program & {
     duration: number | null
     score: number | null
+    tags: string[]
+    roles: ProgramRole[]
   }
-  isEnrolled: boolean
-}> = ({ program, isEnrolled }) => {
-  const { settings } = useApp()
+}> = ({ program }) => {
   const { formatMessage } = useIntl()
+  const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
+
   return (
     <StyledWrapper id="program-banner" className="row">
       <div className="col-12 col-md-6">
-        <StyledVideoWrapper
-          coverUrl={{
-            desktopUrl: program.coverUrl || undefined,
-            mobileUrl: program.coverMobileUrl || undefined,
-          }}
-        >
+        <StyledVideoWrapper backgroundImage={program.coverUrl || ''}>
           {program.coverVideoUrl && (
             <StyledPlayer>
               {program.coverVideoUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
@@ -168,13 +145,6 @@ const CustomizeProgramBanner: React.VFC<{
               </div>
             )}
           </StyleProgramInfo>
-          <Responsive.Desktop>
-            <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
-              <StyledButton className="mt-3" colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
-                {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
-              </StyledButton>
-            </Link>
-          </Responsive.Desktop>
         </StyledTitleBlock>
       </div>
     </StyledWrapper>
