@@ -108,11 +108,8 @@ const ProgramContentPage: React.VFC = () => {
             {settings['layout.program_content'] ? (
               <div className="no-gutters">
                 <ProgramCustomContentBlock
-                  programId={program.id}
-                  programRoles={program.roles}
                   programContentSections={program.contentSections}
                   programContentId={programContentId}
-                  issueEnabled={program.isIssuesOpen}
                 >
                   <>
                     <ProgramContentMenu isScrollToTop program={program} />
