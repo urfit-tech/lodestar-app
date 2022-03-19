@@ -63,10 +63,12 @@ const ProgramContentPage: React.VFC = () => {
               <Icon component={AiOutlineProfile} className="mr-2" />
               {formatMessage(commonMessages.button.intro)}
             </Button>
-            <Button size="sm" colorScheme="primary" variant="ghost" onClick={() => setMenuVisible(!menuVisible)}>
-              <Icon component={AiOutlineUnorderedList} className="mr-2" />
-              {formatMessage(commonMessages.button.list)}
-            </Button>
+            {!settings['layout.program_content'] && (
+              <Button size="sm" colorScheme="primary" variant="ghost" onClick={() => setMenuVisible(!menuVisible)}>
+                <Icon component={AiOutlineUnorderedList} className="mr-2" />
+                {formatMessage(commonMessages.button.list)}
+              </Button>
+            )}
           </div>
         }
         onBack={() =>
