@@ -1,4 +1,4 @@
-import { Button, SkeletonText } from '@chakra-ui/react'
+import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -9,7 +9,7 @@ import { groupBy, map, toPairs } from 'ramda'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
@@ -20,6 +20,7 @@ import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
+import { ReactComponent as PlayIcon } from '../../images/play-fill-icon.svg'
 import ForbiddenPage from '../ForbiddenPage'
 import { CustomizeProgramBanner, PerpetualProgramBanner } from './ProgramBanner'
 import ProgramContentListSection from './ProgramContentListSection'
@@ -225,18 +226,28 @@ const ProgramPage: React.VFC = () => {
         </ProgramIntroBlock>
       </div>
 
-      {!isEnrolledByProgramPackage && !settings['layout.program_page'] && (
+      {!isEnrolledByProgramPackage && (
         <Responsive.Default>
           <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-            <StyledButtonWrapper>
-              <Button
-                variant="primary"
-                isFullWidth
-                onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                {formatMessage(commonMessages.button.viewProject)}
-              </Button>
-            </StyledButtonWrapper>
+            {settings['layout.program_page'] ? (
+              <StyledButtonWrapper>
+                <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
+                  <Button isFullWidth colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
+                    {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
+                  </Button>
+                </Link>
+              </StyledButtonWrapper>
+            ) : (
+              <StyledButtonWrapper>
+                <Button
+                  variant="primary"
+                  isFullWidth
+                  onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  {formatMessage(commonMessages.button.viewProject)}
+                </Button>
+              </StyledButtonWrapper>
+            )}
           </FixedBottomBlock>
         </Responsive.Default>
       )}

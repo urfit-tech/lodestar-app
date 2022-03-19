@@ -91,6 +91,13 @@ const StyledText = styled.span`
   color: var(--gray-darker);
 `
 
+const StyledButton = styled(Button)`
+  && {
+    padding-right: 56px;
+    padding-left: 56px;
+  }
+`
+
 const CustomizeProgramBanner: React.VFC<{
   program: Program & {
     duration: number | null
@@ -150,9 +157,9 @@ const CustomizeProgramBanner: React.VFC<{
           </StyleProgramInfo>
           <Responsive.Desktop>
             <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
-              <Button className="mt-3" colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
+              <StyledButton className="mt-3" colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
                 {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
-              </Button>
+              </StyledButton>
             </Link>
           </Responsive.Desktop>
         </StyledTitleBlock>
