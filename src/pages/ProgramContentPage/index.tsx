@@ -21,14 +21,6 @@ import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
 
-const StyledLink = styled(Link)`
-  && {
-    &:hover {
-      color: white;
-    }
-  }
-`
-
 const ProgramContentPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -78,12 +70,10 @@ const ProgramContentPage: React.VFC = () => {
               <Icon component={AiOutlineProfile} className="mr-2" />
               {formatMessage(commonMessages.button.intro)}
             </Button>
-            {!settings['layout.program_content'] && (
-              <Button size="sm" colorScheme="primary" variant="ghost" onClick={() => setMenuVisible(!menuVisible)}>
-                <Icon component={AiOutlineUnorderedList} className="mr-2" />
-                {formatMessage(commonMessages.button.list)}
-              </Button>
-            )}
+            <Button size="sm" colorScheme="primary" variant="ghost" onClick={() => setMenuVisible(!menuVisible)}>
+              <Icon component={AiOutlineUnorderedList} className="mr-2" />
+              {formatMessage(commonMessages.button.list)}
+            </Button>
           </div>
         }
         onBack={() => {
@@ -116,17 +106,23 @@ const ProgramContentPage: React.VFC = () => {
             {settings['layout.program_content'] ? (
               <div className="no-gutters">
                 <ProgramCustomContentBlock
+                  programId={program.id}
+                  programRoles={program.roles}
                   programContentSections={program.contentSections}
                   programContentId={programContentId}
-                  editors={program.editors}
+                  issueEnabled={program.isIssuesOpen}
                 >
                   <>
                     <ProgramContentMenu isScrollToTop program={program} />
 
-                    <Button isFullWidth className="mt-3" colorScheme="primary">
-                      <StyledLink to={`/programs/${programId}?moveToBlock=customer-review`}>
-                        {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
-                      </StyledLink>
+                    <Button
+                      isFullWidth
+                      className="mt-3"
+                      colorScheme="primary"
+                      as={Link}
+                      to={`/programs/${programId}?moveToBlock=customer-review`}
+                    >
+                      {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
                     </Button>
                   </>
                 </ProgramCustomContentBlock>
@@ -141,7 +137,6 @@ const ProgramContentPage: React.VFC = () => {
                       programContentSections={program.contentSections}
                       programContentId={programContentId}
                       issueEnabled={program.isIssuesOpen}
-                      editors={program.editors}
                     />
                   </StyledLayoutContent>
                 </div>
