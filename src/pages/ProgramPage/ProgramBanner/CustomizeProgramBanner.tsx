@@ -1,11 +1,15 @@
 import { Icon } from '@chakra-ui/icons'
+import { Button } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { BREAK_POINT } from '../../../components/common/Responsive'
+import Responsive, { BREAK_POINT } from '../../../components/common/Responsive'
+import { ReactComponent as PlayIcon } from '../../../images/play-fill-icon.svg'
 import { ReactComponent as StarIcon } from '../../../images/star-current-color.svg'
-import { Program, ProgramRole } from '../../../types/program'
+import { Program } from '../../../types/program'
 
 const StyledTitle = styled.h1`
   margin: 0;
@@ -76,7 +80,7 @@ const Divider = styled.div`
 `
 
 const StyledIcon = styled(Icon)`
-  font-size: 12px;
+  font-size: 16px;
   color: ${props => props.theme['primary-color']};
 `
 
@@ -91,12 +95,11 @@ const CustomizeProgramBanner: React.VFC<{
   program: Program & {
     duration: number | null
     score: number | null
-    tags: string[]
-    roles: ProgramRole[]
   }
-}> = ({ program }) => {
+  isEnrolled: boolean
+}> = ({ program, isEnrolled }) => {
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
-  const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
 
   return (
     <StyledWrapper id="program-banner" className="row">
@@ -145,6 +148,13 @@ const CustomizeProgramBanner: React.VFC<{
               </div>
             )}
           </StyleProgramInfo>
+          <Responsive.Desktop>
+            <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
+              <Button className="mt-3" colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
+                {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
+              </Button>
+            </Link>
+          </Responsive.Desktop>
         </StyledTitleBlock>
       </div>
     </StyledWrapper>
