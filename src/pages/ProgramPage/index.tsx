@@ -300,18 +300,9 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
   const { formatMessage } = useIntl()
   const [isOpen, setIsOpen] = useState(false)
   const history = useHistory()
-  const groupTags = map(([tagName, subTags]) => {
-    if (subTags.length === 1) {
-      const [{ name }] = subTags
-      return {
-        id: name,
-        name: name,
-        subTags: [],
-      }
-    }
-
-    return {
-      id: subTags.filter(tag => tag.name === tagName)[0]?.name,
+  const groupTags = map(
+    ([tagName, subTags]) => ({
+      id: subTags.find(tag => tag.name === tagName)?.name,
       name: tagName,
       subTags: subTags
         .filter(tag => tag.name !== tagName)
@@ -319,8 +310,9 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
           id: tag.name,
           name: tag.name,
         })),
-    }
-  }, toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], tags || [])))
+    }),
+    toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], tags || [])),
+  )
 
   return (
     <StyledProgramTagCard>
