@@ -155,5 +155,8 @@
   },
   "devDependencies": {
     "@oclif/core": "^1.0.11"
+  },
+  "resolutions": {
+    "@craftjs/utils": "0.1.0-beta.20"
   }
 }

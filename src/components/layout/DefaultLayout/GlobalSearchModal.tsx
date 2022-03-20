@@ -403,7 +403,7 @@ const GlobalSearchFilter: React.VFC<{
 
         <div className="mb-2">
           <StyledFilterSubTitle className="mb-2">
-            {formatMessage(defineMessage({ id: 'common.ui.duration', defaultMessage: '時長' }))}
+            {formatMessage(defineMessage({ id: 'common.ui.duration', defaultMessage: '分鐘' }))}
           </StyledFilterSubTitle>
           {[0, ...settings['global_search.minute_interval'].split(',').map(Number)].map((minute, i, minutes) => (
             <StyledRoundedButton
