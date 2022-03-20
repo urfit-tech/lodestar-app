@@ -1348,8 +1348,8 @@ export interface INSERT_REVIEW_REACTION {
 }
 
 export interface INSERT_REVIEW_REACTIONVariables {
-  reviewId?: any | null;
-  memberId?: string | null;
+  reviewId: any;
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -1377,8 +1377,8 @@ export interface DELETE_REVIEW_REACTION {
 }
 
 export interface DELETE_REVIEW_REACTIONVariables {
-  reviewId?: any | null;
-  memberId?: string | null;
+  reviewId: any;
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -9326,59 +9326,22 @@ export interface GET_LAST_EXERCISEVariables {
 // GraphQL query operation: GET_BEST_REVIEWS
 // ====================================================
 
-export interface GET_BEST_REVIEWS_review_review_replies_member {
-  __typename: "member_public";
-  id: string | null;
-  role: string | null;
-}
-
-export interface GET_BEST_REVIEWS_review_review_replies {
-  __typename: "review_reply";
-  id: any;
+export interface GET_BEST_REVIEWS_review_public {
+  __typename: "review_public";
+  id: any | null;
+  member_id: string | null;
+  score: any | null;
+  title: string | null;
   content: string | null;
-  created_at: any;
-  updated_at: any;
-  /**
-   * An object relationship
-   */
-  member: GET_BEST_REVIEWS_review_review_replies_member | null;
-}
-
-export interface GET_BEST_REVIEWS_review_review_reactions_aggregate_aggregate {
-  __typename: "review_reaction_aggregate_fields";
-  count: number | null;
-}
-
-export interface GET_BEST_REVIEWS_review_review_reactions_aggregate {
-  __typename: "review_reaction_aggregate";
-  aggregate: GET_BEST_REVIEWS_review_review_reactions_aggregate_aggregate | null;
-}
-
-export interface GET_BEST_REVIEWS_review {
-  __typename: "review";
-  id: any;
-  member_id: string;
-  score: any;
-  title: string;
-  updated_at: any;
-  created_at: any;
-  content: string | null;
-  private_content: string | null;
-  /**
-   * An array relationship
-   */
-  review_replies: GET_BEST_REVIEWS_review_review_replies[];
-  /**
-   * An aggregated array relationship
-   */
-  review_reactions_aggregate: GET_BEST_REVIEWS_review_review_reactions_aggregate;
+  updated_at: any | null;
+  created_at: any | null;
 }
 
 export interface GET_BEST_REVIEWS {
   /**
-   * fetch data from the table: "review"
+   * fetch data from the table: "review_public"
    */
-  review: GET_BEST_REVIEWS_review[];
+  review_public: GET_BEST_REVIEWS_review_public[];
 }
 
 export interface GET_BEST_REVIEWSVariables {

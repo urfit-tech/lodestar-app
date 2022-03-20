@@ -5,7 +5,7 @@ import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -15,6 +15,7 @@ import { commonMessages, reviewMessages } from '../../helpers/translation'
 import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 import { ReviewProps } from '../../types/review'
+import { AuthModalContext } from '../auth/AuthModal'
 import MemberAvatar from '../common/MemberAvatar'
 import StarRating from '../common/StarRating'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -139,16 +140,7 @@ const ReviewItem: React.VFC<
           )}
         </span>
 
-        {currentMemberId && (
-          <LikeButton
-            disabled={currentMemberId === memberId}
-            isLiked={isLiked || false}
-            likedCount={likedCount}
-            reviewId={id}
-            memberId={currentMemberId}
-            onRefetch={onRefetch}
-          />
-        )}
+        <LikeButton isLiked={isLiked || false} likedCount={likedCount} reviewId={id} onRefetch={onRefetch} />
       </div>
       <ReviewContentBlock>
         <StarRating score={score} max={5} size="16px" />
@@ -259,15 +251,15 @@ const StyledIcon = styled(Icon)`
 
 const LikeButton: React.VFC<{
   reviewId: string
-  memberId: string
   isLiked: boolean
   likedCount: number
-  disabled: boolean
   onRefetch?: () => void
-}> = ({ isLiked, likedCount, reviewId, memberId, disabled, onRefetch }) => {
+}> = ({ isLiked, likedCount, reviewId, onRefetch }) => {
+  const { currentMemberId } = useAuth()
+  const { setVisible } = useContext(AuthModalContext)
   const [insertReviewReaction] = useMutation<hasura.INSERT_REVIEW_REACTION, hasura.INSERT_REVIEW_REACTIONVariables>(
     gql`
-      mutation INSERT_REVIEW_REACTION($reviewId: uuid, $memberId: String) {
+      mutation INSERT_REVIEW_REACTION($reviewId: uuid!, $memberId: String!) {
         insert_review_reaction(objects: { member_id: $memberId, review_id: $reviewId }) {
           affected_rows
         }
@@ -276,7 +268,7 @@ const LikeButton: React.VFC<{
   )
   const [deleteReviewReaction] = useMutation<hasura.DELETE_REVIEW_REACTION, hasura.DELETE_REVIEW_REACTIONVariables>(
     gql`
-      mutation DELETE_REVIEW_REACTION($reviewId: uuid, $memberId: String) {
+      mutation DELETE_REVIEW_REACTION($reviewId: uuid!, $memberId: String!) {
         delete_review_reaction(where: { member_id: { _eq: $memberId }, review_id: { _eq: $reviewId } }) {
           affected_rows
         }
@@ -285,18 +277,19 @@ const LikeButton: React.VFC<{
   )
 
   const handleLikeStatus = async () => {
+    if (currentMemberId === null) return
     if (isLiked) {
       await deleteReviewReaction({
         variables: {
           reviewId,
-          memberId,
+          memberId: currentMemberId,
         },
       })
     } else {
       await insertReviewReaction({
         variables: {
           reviewId,
-          memberId,
+          memberId: currentMemberId,
         },
       })
     }
@@ -307,12 +300,11 @@ const LikeButton: React.VFC<{
   return (
     <div>
       <StyledIconButton
-        onClick={handleLikeStatus}
+        onClick={() => (currentMemberId ? handleLikeStatus() : setVisible?.(true))}
         variant="ghost"
         isActive={isLiked}
         icon={<StyledIcon as={isLiked ? HeartFillIcon : HeartIcon} />}
         className="mr-2"
-        disabled={disabled}
       />
       {isLiked && <StyledLikedCount isActive={isLiked}>{likedCount}</StyledLikedCount>}
     </div>

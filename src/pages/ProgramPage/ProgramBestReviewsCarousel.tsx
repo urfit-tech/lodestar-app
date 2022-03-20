@@ -66,9 +66,9 @@ const useBestReviews: (pathname: string) => {
   loading: boolean
   data: {
     id: string
-    memberId: string
+    memberId: string | null
     score: number
-    title: string
+    title: string | null
     content: string | null
     updatedAt: Date
     createdAt: Date
@@ -77,7 +77,7 @@ const useBestReviews: (pathname: string) => {
   const { loading, data } = useQuery<hasura.GET_BEST_REVIEWS, hasura.GET_BEST_REVIEWSVariables>(
     gql`
       query GET_BEST_REVIEWS($pathname: String!) {
-        review(
+        review_public(
           where: { path: { _eq: $pathname } }
           order_by: { review_reactions_aggregate: { count: desc } }
           limit: 4
@@ -98,7 +98,7 @@ const useBestReviews: (pathname: string) => {
   return {
     loading,
     data:
-      data?.review.map(v => ({
+      data?.review_public.map(v => ({
         id: v.id,
         memberId: v.member_id,
         score: v.score,
