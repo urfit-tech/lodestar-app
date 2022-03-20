@@ -23,6 +23,7 @@ import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import { ReactComponent as PlayIcon } from '../../images/play-fill-icon.svg'
 import ForbiddenPage from '../ForbiddenPage'
 import { CustomizeProgramBanner, PerpetualProgramBanner } from './ProgramBanner'
+import ProgramBestReviewsCarousel from './ProgramBestReviewsCarousel'
 import ProgramContentListSection from './ProgramContentListSection'
 import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
 import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
@@ -158,6 +159,23 @@ const ProgramPage: React.VFC = () => {
                   </div>
                 )}
 
+                {settings['layout.program_page'] && (
+                  <div className="mb-5">
+                    <ProgramBestReviewsCarousel pathname={pathname} />
+                    <div className="text-center mt-3">
+                      <Button
+                        variant="outline"
+                        colorScheme="primary"
+                        onClick={() => {
+                          customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' })
+                        }}
+                      >
+                        {formatMessage(defineMessage({ id: 'review.ui.more', defaultMessage: '更多評論' }))}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="mb-5">
                   <BraftContent>{program.description}</BraftContent>
                 </div>
@@ -214,6 +232,7 @@ const ProgramPage: React.VFC = () => {
                 </div>
               </div>
             )}
+
             <div id="customer-review" ref={customerReviewBlockRef}>
               {enabledModules.customer_review && (
                 <div className="row">

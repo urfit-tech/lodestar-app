@@ -201,4 +201,6 @@ const useHasProgramContentPermission: (id: string) => boolean = id => {
   return !!data?.program_content_enrollment?.length
 }
 
+export { useHasProgramContentPermission }
+
 export default ProgramContentBlock

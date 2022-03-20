@@ -1,9 +1,7 @@
-import { useQuery } from '@apollo/react-hooks'
 import { LockIcon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
-import gql from 'graphql-tag'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -15,10 +13,10 @@ import { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
-import hasura from '../../hasura'
 import { productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { ProgramContent, ProgramContentSection } from '../../types/program'
+import { useHasProgramContentPermission } from './ProgramContentBlock'
 
 const StyledUnPurchased = styled.div`
   color: ${props => props.theme['@primary-color']};
@@ -160,27 +158,6 @@ const ProgramCustomContentBlock: React.VFC<{
       {children}
     </StyledProgramContentBlock>
   )
-}
-
-const useHasProgramContentPermission: (id: string) => boolean = id => {
-  const { currentMemberId } = useAuth()
-  const { data } = useQuery<hasura.GET_PROGRAM_CONTENT_PERMISSION, hasura.GET_PROGRAM_CONTENT_PERMISSIONVariables>(
-    gql`
-      query GET_PROGRAM_CONTENT_PERMISSION($id: uuid!, $currentMemberId: String!) {
-        program_content_enrollment(where: { program_content_id: { _eq: $id }, member_id: { _eq: $currentMemberId } }) {
-          program_content_id
-        }
-      }
-    `,
-    {
-      variables: {
-        id,
-        currentMemberId: currentMemberId || '',
-      },
-    },
-  )
-
-  return !!data?.program_content_enrollment?.length
 }
 
 export default ProgramCustomContentBlock

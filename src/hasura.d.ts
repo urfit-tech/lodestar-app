@@ -1152,6 +1152,22 @@ export interface GET_REVIEW_ADMIN_review_aggregate {
   aggregate: GET_REVIEW_ADMIN_review_aggregate_aggregate | null;
 }
 
+export interface GET_REVIEW_ADMIN_review_review_reactions {
+  __typename: "review_reaction";
+  id: any;
+  member_id: string;
+}
+
+export interface GET_REVIEW_ADMIN_review_review_reactions_aggregate_aggregate {
+  __typename: "review_reaction_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_REVIEW_ADMIN_review_review_reactions_aggregate {
+  __typename: "review_reaction_aggregate";
+  aggregate: GET_REVIEW_ADMIN_review_review_reactions_aggregate_aggregate | null;
+}
+
 export interface GET_REVIEW_ADMIN_review_review_replies_member {
   __typename: "member_public";
   id: string | null;
@@ -1183,6 +1199,14 @@ export interface GET_REVIEW_ADMIN_review {
   /**
    * An array relationship
    */
+  review_reactions: GET_REVIEW_ADMIN_review_review_reactions[];
+  /**
+   * An aggregated array relationship
+   */
+  review_reactions_aggregate: GET_REVIEW_ADMIN_review_review_reactions_aggregate;
+  /**
+   * An array relationship
+   */
   review_replies: GET_REVIEW_ADMIN_review_review_replies[];
 }
 
@@ -1199,6 +1223,7 @@ export interface GET_REVIEW_ADMIN {
 
 export interface GET_REVIEW_ADMINVariables {
   condition?: review_bool_exp | null;
+  currentMemberId: string;
   limit: number;
 }
 
@@ -1304,6 +1329,64 @@ export interface INSERT_REVIEW_REPLYVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: INSERT_REVIEW_REACTION
+// ====================================================
+
+export interface INSERT_REVIEW_REACTION_insert_review_reaction {
+  __typename: "review_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_REVIEW_REACTION {
+  /**
+   * insert data into the table: "review_reaction"
+   */
+  insert_review_reaction: INSERT_REVIEW_REACTION_insert_review_reaction | null;
+}
+
+export interface INSERT_REVIEW_REACTIONVariables {
+  reviewId?: any | null;
+  memberId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_REVIEW_REACTION
+// ====================================================
+
+export interface DELETE_REVIEW_REACTION_delete_review_reaction {
+  __typename: "review_reaction_mutation_response";
+  /**
+   * number of affected rows by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_REVIEW_REACTION {
+  /**
+   * delete data from the table: "review_reaction"
+   */
+  delete_review_reaction: DELETE_REVIEW_REACTION_delete_review_reaction | null;
+}
+
+export interface DELETE_REVIEW_REACTIONVariables {
+  reviewId?: any | null;
+  memberId?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_REVIEW_MEMBER
 // ====================================================
 
@@ -1315,6 +1398,22 @@ export interface GET_REVIEW_MEMBER_review_public_aggregate_aggregate {
 export interface GET_REVIEW_MEMBER_review_public_aggregate {
   __typename: "review_public_aggregate";
   aggregate: GET_REVIEW_MEMBER_review_public_aggregate_aggregate | null;
+}
+
+export interface GET_REVIEW_MEMBER_review_public_review_reactions {
+  __typename: "review_reaction";
+  id: any;
+  member_id: string;
+}
+
+export interface GET_REVIEW_MEMBER_review_public_review_reactions_aggregate_aggregate {
+  __typename: "review_reaction_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_REVIEW_MEMBER_review_public_review_reactions_aggregate {
+  __typename: "review_reaction_aggregate";
+  aggregate: GET_REVIEW_MEMBER_review_public_review_reactions_aggregate_aggregate | null;
 }
 
 export interface GET_REVIEW_MEMBER_review_public_review_replies_member {
@@ -1344,6 +1443,14 @@ export interface GET_REVIEW_MEMBER_review_public {
   content: string | null;
   created_at: any | null;
   updated_at: any | null;
+  /**
+   * An array relationship
+   */
+  review_reactions: GET_REVIEW_MEMBER_review_public_review_reactions[];
+  /**
+   * An aggregated array relationship
+   */
+  review_reactions_aggregate: GET_REVIEW_MEMBER_review_public_review_reactions_aggregate;
   /**
    * An array relationship
    */
@@ -1468,6 +1575,16 @@ export interface GET_REVIEW_PUBLIC_review_public_aggregate {
   aggregate: GET_REVIEW_PUBLIC_review_public_aggregate_aggregate | null;
 }
 
+export interface GET_REVIEW_PUBLIC_review_public_review_reactions_aggregate_aggregate {
+  __typename: "review_reaction_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_REVIEW_PUBLIC_review_public_review_reactions_aggregate {
+  __typename: "review_reaction_aggregate";
+  aggregate: GET_REVIEW_PUBLIC_review_public_review_reactions_aggregate_aggregate | null;
+}
+
 export interface GET_REVIEW_PUBLIC_review_public_review_replies {
   __typename: "review_reply";
   id: any;
@@ -1486,6 +1603,10 @@ export interface GET_REVIEW_PUBLIC_review_public {
   content: string | null;
   created_at: any | null;
   updated_at: any | null;
+  /**
+   * An aggregated array relationship
+   */
+  review_reactions_aggregate: GET_REVIEW_PUBLIC_review_public_review_reactions_aggregate;
   /**
    * An array relationship
    */
@@ -9202,6 +9323,74 @@ export interface GET_LAST_EXERCISEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_BEST_REVIEWS
+// ====================================================
+
+export interface GET_BEST_REVIEWS_review_review_replies_member {
+  __typename: "member_public";
+  id: string | null;
+  role: string | null;
+}
+
+export interface GET_BEST_REVIEWS_review_review_replies {
+  __typename: "review_reply";
+  id: any;
+  content: string | null;
+  created_at: any;
+  updated_at: any;
+  /**
+   * An object relationship
+   */
+  member: GET_BEST_REVIEWS_review_review_replies_member | null;
+}
+
+export interface GET_BEST_REVIEWS_review_review_reactions_aggregate_aggregate {
+  __typename: "review_reaction_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_BEST_REVIEWS_review_review_reactions_aggregate {
+  __typename: "review_reaction_aggregate";
+  aggregate: GET_BEST_REVIEWS_review_review_reactions_aggregate_aggregate | null;
+}
+
+export interface GET_BEST_REVIEWS_review {
+  __typename: "review";
+  id: any;
+  member_id: string;
+  score: any;
+  title: string;
+  updated_at: any;
+  created_at: any;
+  content: string | null;
+  private_content: string | null;
+  /**
+   * An array relationship
+   */
+  review_replies: GET_BEST_REVIEWS_review_review_replies[];
+  /**
+   * An aggregated array relationship
+   */
+  review_reactions_aggregate: GET_BEST_REVIEWS_review_review_reactions_aggregate;
+}
+
+export interface GET_BEST_REVIEWS {
+  /**
+   * fetch data from the table: "review"
+   */
+  review: GET_BEST_REVIEWS_review[];
+}
+
+export interface GET_BEST_REVIEWSVariables {
+  pathname: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: SEARCH_PRODUCT_COLLECTION
 // ====================================================
 
@@ -12587,6 +12776,24 @@ export enum property_update_column {
  */
 export enum review_constraint {
   review_pkey = "review_pkey",
+}
+
+/**
+ * unique or primary key constraints on table "review_reaction"
+ */
+export enum review_reaction_constraint {
+  review_reaction_pkey = "review_reaction_pkey",
+  review_reaction_review_id_member_id_key = "review_reaction_review_id_member_id_key",
+}
+
+/**
+ * update columns of table "review_reaction"
+ */
+export enum review_reaction_update_column {
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
+  review_id = "review_id",
 }
 
 /**
@@ -20960,6 +21167,7 @@ export interface review_bool_exp {
   member_id?: String_comparison_exp | null;
   path?: String_comparison_exp | null;
   private_content?: String_comparison_exp | null;
+  review_reactions?: review_reaction_bool_exp | null;
   review_replies?: review_reply_bool_exp | null;
   score?: numeric_comparison_exp | null;
   title?: String_comparison_exp | null;
@@ -20978,6 +21186,7 @@ export interface review_insert_input {
   member_id?: string | null;
   path?: string | null;
   private_content?: string | null;
+  review_reactions?: review_reaction_arr_rel_insert_input | null;
   review_replies?: review_reply_arr_rel_insert_input | null;
   score?: any | null;
   title?: string | null;
@@ -21016,11 +21225,56 @@ export interface review_public_bool_exp {
   name?: String_comparison_exp | null;
   path?: String_comparison_exp | null;
   picture_url?: String_comparison_exp | null;
+  review_reactions?: review_reaction_bool_exp | null;
   review_replies?: review_reply_bool_exp | null;
   score?: numeric_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
   username?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "review_reaction"
+ */
+export interface review_reaction_arr_rel_insert_input {
+  data: review_reaction_insert_input[];
+  on_conflict?: review_reaction_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "review_reaction". All fields are combined with a logical 'AND'.
+ */
+export interface review_reaction_bool_exp {
+  _and?: (review_reaction_bool_exp | null)[] | null;
+  _not?: review_reaction_bool_exp | null;
+  _or?: (review_reaction_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  review?: review_bool_exp | null;
+  review_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "review_reaction"
+ */
+export interface review_reaction_insert_input {
+  created_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  review?: review_obj_rel_insert_input | null;
+  review_id?: any | null;
+}
+
+/**
+ * on conflict condition type for table "review_reaction"
+ */
+export interface review_reaction_on_conflict {
+  constraint: review_reaction_constraint;
+  update_columns: review_reaction_update_column[];
+  where?: review_reaction_bool_exp | null;
 }
 
 /**

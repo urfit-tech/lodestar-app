@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../../hasura'
@@ -16,7 +17,8 @@ const ReviewAdminItemCollection: React.VFC<{
 }> = ({ targetId, path, appId }) => {
   const { formatMessage } = useIntl()
   const [loading, setLoading] = useState(false)
-  const { loadingReviews, reviews, refetchReviews, loadMoreReviews } = useReviewCollection(path, appId)
+  const { currentMemberId } = useAuth()
+  const { loadingReviews, reviews, refetchReviews, loadMoreReviews } = useReviewCollection(path, appId, currentMemberId)
 
   if (loadingReviews) {
     return (
@@ -33,6 +35,8 @@ const ReviewAdminItemCollection: React.VFC<{
         {reviews.map(v => (
           <div key={v.id} className="review-item">
             <ReviewItem
+              isLiked={v.isLiked}
+              likedCount={v.reactionCount}
               isAdmin
               id={v.id}
               memberId={v.memberId}
@@ -68,7 +72,7 @@ const ReviewAdminItemCollection: React.VFC<{
   )
 }
 
-const useReviewCollection = (path: string, appId: string) => {
+const useReviewCollection = (path: string, appId: string, currentMemberId: string | null) => {
   const condition: hasura.GET_REVIEW_ADMINVariables['condition'] = {
     path: { _eq: path },
     app_id: { _eq: appId },
@@ -78,7 +82,7 @@ const useReviewCollection = (path: string, appId: string) => {
     hasura.GET_REVIEW_ADMINVariables
   >(
     gql`
-      query GET_REVIEW_ADMIN($condition: review_bool_exp, $limit: Int!) {
+      query GET_REVIEW_ADMIN($condition: review_bool_exp, $currentMemberId: String!, $limit: Int!) {
         review_aggregate(where: $condition) {
           aggregate {
             count
@@ -93,6 +97,15 @@ const useReviewCollection = (path: string, appId: string) => {
           created_at
           content
           private_content
+          review_reactions(where: { member_id: { _eq: $currentMemberId } }) {
+            id
+            member_id
+          }
+          review_reactions_aggregate {
+            aggregate {
+              count
+            }
+          }
           review_replies(order_by: { created_at: desc }) {
             id
             content
@@ -110,11 +123,15 @@ const useReviewCollection = (path: string, appId: string) => {
       variables: {
         condition,
         limit: 5,
+        currentMemberId: currentMemberId || '',
       },
     },
   )
 
-  const reviews: ReviewProps[] =
+  const reviews: (ReviewProps & {
+    isLiked: boolean
+    reactionCount: number
+  })[] =
     data?.review.map(v => ({
       id: v.id,
       memberId: v.member_id,
@@ -124,6 +141,8 @@ const useReviewCollection = (path: string, appId: string) => {
       createdAt: new Date(v.created_at),
       updatedAt: new Date(v.updated_at),
       privateContent: v.private_content,
+      isLiked: v.review_reactions?.[0]?.member_id === currentMemberId,
+      reactionCount: v.review_reactions_aggregate.aggregate?.count || 0,
       reviewReplies: v?.review_replies.map(v => ({
         id: v.id,
         reviewReplyMemberId: v.member?.id,

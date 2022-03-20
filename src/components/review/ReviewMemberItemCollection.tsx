@@ -50,6 +50,8 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
         {memberReviews.map(v => (
           <div key={v.id} className="review-item">
             <ReviewItem
+              isLiked={v.isLiked}
+              likedCount={v.reactionCount}
               id={v.id}
               memberId={v.memberId}
               score={v.score}
@@ -66,6 +68,7 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
                   : null
               }
               targetId={targetId}
+              onRefetch={onRefetch}
             />
             <StyledDivider className="review-divider" />
           </div>
@@ -119,6 +122,15 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
           content
           created_at
           updated_at
+          review_reactions(where: { member_id: { _eq: $currentMemberId } }) {
+            id
+            member_id
+          }
+          review_reactions_aggregate {
+            aggregate {
+              count
+            }
+          }
           review_replies(order_by: { created_at: desc }) {
             id
             content
@@ -147,7 +159,7 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
     },
   )
 
-  const memberReviews: ReviewProps[] =
+  const memberReviews: (ReviewProps & { isLiked: boolean; reactionCount: number })[] =
     data?.review_public.map(v => ({
       id: v.id,
       memberId: v.member_id,
@@ -156,6 +168,8 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
       content: v.content,
       createdAt: new Date(v.created_at),
       updatedAt: new Date(v.updated_at),
+      isLiked: v.review_reactions?.[0]?.member_id === currentMemberId,
+      reactionCount: v.review_reactions_aggregate.aggregate?.count || 0,
       reviewReplies: v?.review_replies.map(v => ({
         id: v.id,
         reviewReplyMemberId: v.member?.id,
