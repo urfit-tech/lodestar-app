@@ -41,6 +41,14 @@ const StyledContentBlock = styled.div`
   }
 `
 
+const StyledProgramContentBlock = styled.div`
+  padding: 1.5rem;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    padding: 2rem 16rem;
+  }
+`
+
 const ProgramCustomContentBlock: React.VFC<{
   programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]
   programContentId: string
@@ -97,7 +105,7 @@ const ProgramCustomContentBlock: React.VFC<{
   }, 5000)
 
   return (
-    <div id="program_customize_content_block" className="p-4">
+    <StyledProgramContentBlock id="program_customize_content_block">
       {((programContent.contentType === 'video' && !hasProgramContentPermission) ||
         (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
         <StyledUnPurchased className="p-2 text-center">
@@ -150,7 +158,7 @@ const ProgramCustomContentBlock: React.VFC<{
       )}
 
       {children}
-    </div>
+    </StyledProgramContentBlock>
   )
 }
 
