@@ -113,8 +113,6 @@ const ProgramPage: React.VFC = () => {
     return <ForbiddenPage />
   }
 
-  console.log(program.plans)
-
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
 
   const isEnrolledByProgramPackage = !!enrolledProgramPackages.data.length
@@ -147,12 +145,14 @@ const ProgramPage: React.VFC = () => {
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-8">
-                <Responsive.Default>
-                  <StyledProgramInfoCard>
-                    <ProgramContentCountBlock program={program} />
-                  </StyledProgramInfoCard>
-                </Responsive.Default>
-                {program.abstract && (
+                {!settings['layout.program_page'] && (
+                  <Responsive.Default>
+                    <StyledProgramInfoCard>
+                      <ProgramContentCountBlock program={program} />
+                    </StyledProgramInfoCard>
+                  </Responsive.Default>
+                )}
+                {!settings['layout.program_page'] && program.abstract && (
                   <div className="mb-5">
                     <ProgramAbstract>{program.abstract}</ProgramAbstract>
                   </div>
@@ -162,15 +162,17 @@ const ProgramPage: React.VFC = () => {
                   <BraftContent>{program.description}</BraftContent>
                 </div>
 
-                <div className="mb-5">
-                  <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
-                </div>
+                {!settings['layout.program_page'] && (
+                  <div className="mb-5">
+                    <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
+                  </div>
+                )}
               </div>
 
               {settings['layout.program_page'] ? (
-                <StyledIntroWrapper className="col-12 col-lg-4">
+                <StyledIntroWrapper className="col-12 col-lg-4 mb-3">
                   {!!program.tags.length && (
-                    <ProgramCategoryCard
+                    <ProgramTagCard
                       tags={program.tags.map(tag => ({
                         id: tag,
                         name: tag,
@@ -182,7 +184,6 @@ const ProgramPage: React.VFC = () => {
                 <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
                   <div>
                     <Responsive.Desktop>
-                      s
                       <ProgramInfoCard instructorId={instructorId} program={program} />
                     </Responsive.Desktop>
 
@@ -204,13 +205,15 @@ const ProgramPage: React.VFC = () => {
               )}
             </div>
 
-            <div className="row">
-              <div className="col-12 col-lg-8">
-                <div className="mb-5">
-                  <ProgramInstructorCollectionBlock program={program} />
+            {!settings['layout.program_page'] && (
+              <div className="row">
+                <div className="col-12 col-lg-8">
+                  <div className="mb-5">
+                    <ProgramInstructorCollectionBlock program={program} />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             <div id="customer-review" ref={customerReviewBlockRef}>
               {enabledModules.customer_review && (
                 <div className="row">
@@ -255,7 +258,7 @@ const ProgramPage: React.VFC = () => {
   )
 }
 
-const StyledProgramCategoryCard = styled.div`
+const StyledProgramTagCard = styled.div`
   border-radius: 4px;
   padding: 24px;
   background-color: #fff;
@@ -274,24 +277,26 @@ const StyleSubCategoryBlock = styled.div`
   gap: 8px;
 `
 
-const StyleSubCategoryTag = styled.span`
-  padding: 6px 20px;
-  border-radius: 30px;
-  border: solid 1px #d3d3d3;
-  background-color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.71;
-  letter-spacing: 0.4px;
-  color: var(--gray-darker);
-  cursor: pointer;
-
-  &:hover {
-    border: solid 1px ${props => props.theme['primary-color']};
+const StyleSubCategoryTag = styled(Button)`
+  && {
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
   }
 `
 
-const ProgramCategoryCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ tags }) => {
+const StyledViewAllButton = styled(Button)`
+  && {
+    font-size: 14px;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+`
+
+const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ tags }) => {
   const { formatMessage } = useIntl()
   const [isOpen, setIsOpen] = useState(false)
   const history = useHistory()
@@ -318,13 +323,15 @@ const ProgramCategoryCard: React.VFC<{ tags: { id: string; name: string }[] }> =
   }, toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], tags || [])))
 
   return (
-    <StyledProgramCategoryCard>
+    <StyledProgramTagCard>
       {groupTags.map(tag => (
         <div className="mb-3">
           <StyleCategoryTitle className="mb-2">{tag.name}</StyleCategoryTitle>
           <StyleSubCategoryBlock className="mb-3">
-            {tag.subTags.slice(0, 6).map(subTag => (
+            {tag.subTags.slice(0, 4).map(subTag => (
               <StyleSubCategoryTag
+                variant="outline"
+                colorScheme="primary"
                 onClick={() =>
                   history.push('/search/advanced', {
                     tagNameSList: [[subTag.name]],
@@ -335,7 +342,8 @@ const ProgramCategoryCard: React.VFC<{ tags: { id: string; name: string }[] }> =
               </StyleSubCategoryTag>
             ))}
           </StyleSubCategoryBlock>
-          {tag.subTags.length > 6 && (
+
+          {tag.subTags.length > 4 && (
             <div className="mb-3">
               <CommonModal title="" isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 {groupTags.map(tag => (
@@ -344,6 +352,8 @@ const ProgramCategoryCard: React.VFC<{ tags: { id: string; name: string }[] }> =
                     <StyleSubCategoryBlock>
                       {tag.subTags.map(subTag => (
                         <StyleSubCategoryTag
+                          variant="outline"
+                          colorScheme="primary"
                           onClick={() =>
                             history.push('/search/advanced', {
                               tagNameSList: [[subTag.name]],
@@ -357,14 +367,14 @@ const ProgramCategoryCard: React.VFC<{ tags: { id: string; name: string }[] }> =
                   </div>
                 ))}
               </CommonModal>
-              <Button className="d-block" variant="link" onClick={() => setIsOpen(true)}>
+              <StyledViewAllButton className="d-block" variant="link" onClick={() => setIsOpen(true)}>
                 {formatMessage(defineMessage({ id: 'common.ui.viewAll', defaultMessage: '查看全部' }))}
-              </Button>
+              </StyledViewAllButton>
             </div>
           )}
         </div>
       ))}
-    </StyledProgramCategoryCard>
+    </StyledProgramTagCard>
   )
 }
 
