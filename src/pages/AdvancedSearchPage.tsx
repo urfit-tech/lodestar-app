@@ -87,7 +87,7 @@ const AdvancedSearchPage: React.FC = () => {
   const { isLoading, data } = useSearchPrograms({
     title: state?.title ? { _like: `%${state.title}%` } : undefined,
     _and: [
-      ...(state?.categoryIdSList.map(categoryIdS => ({
+      ...(state?.categoryIdSList?.map(categoryIdS => ({
         program_categories: {
           category_id: { _in: categoryIdS },
         },
