@@ -55,7 +55,7 @@ export const usePublishedProgramCollection = (options?: {
           is_subscription
           is_sold_out
           is_private
-
+          is_enrolled_count_visible
           list_price
           sale_price
           sold_at
@@ -146,7 +146,7 @@ export const usePublishedProgramCollection = (options?: {
             listPrice: program.list_price,
             salePrice: program.sale_price,
             soldAt: program.sold_at && new Date(program.sold_at),
-
+            isEnrolledCountVisible: program.is_enrolled_count_visible,
             categories: program.program_categories.map(programCategory => ({
               id: programCategory.category.id,
               name: programCategory.category.name,
@@ -254,6 +254,7 @@ export const useProgram = (programId: string) => {
           is_private
           is_countdown_timer_visible
           is_introduction_section_visible
+          is_enrolled_count_visible
           program_categories(order_by: { position: asc }) {
             id
             category {
@@ -364,6 +365,7 @@ export const useProgram = (programId: string) => {
             description: data.program_by_pk.description,
             coverVideoUrl: data.program_by_pk.cover_video_url,
             isIssuesOpen: data.program_by_pk.is_issues_open,
+            isEnrolledCountVisible: data.program_by_pk.is_enrolled_count_visible,
             isPrivate: data.program_by_pk.is_private,
             isCountdownTimerVisible: data.program_by_pk.is_countdown_timer_visible,
             isIntroductionSectionVisible: data.program_by_pk.is_introduction_section_visible,
@@ -745,5 +747,36 @@ export const useMutateExercise = () => {
 
   return {
     insertExercise,
+  }
+}
+
+export const useProgramEnrollmentAggregate = (programId: string, options?: { skip?: boolean }) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_PROGRAM_ENROLLMENT_AGGREGATE,
+    hasura.GET_PROGRAM_ENROLLMENT_AGGREGATEVariables
+  >(
+    gql`
+      query GET_PROGRAM_ENROLLMENT_AGGREGATE($programId: uuid!) {
+        program_plan_enrollment_aggregate(where: { program_plan: { program_id: { _eq: $programId } } }) {
+          aggregate {
+            count
+          }
+        }
+      }
+    `,
+    {
+      skip: options?.skip ?? false,
+      variables: {
+        programId,
+      },
+    },
+  )
+  const enrolledCount = data?.program_plan_enrollment_aggregate?.aggregate?.count || 0
+
+  return {
+    loading,
+    error,
+    data: enrolledCount,
+    refetch,
   }
 }

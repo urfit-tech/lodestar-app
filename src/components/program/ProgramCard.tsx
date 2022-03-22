@@ -1,13 +1,16 @@
+import { Icon } from '@chakra-ui/react'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React from 'react'
+import { AiOutlineClockCircle, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { durationFormatter } from '../../helpers'
 import { productMessages, reviewMessages } from '../../helpers/translation'
+import { useProgramEnrollmentAggregate } from '../../hooks/program'
 import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import EmptyCover from '../../images/empty-cover.png'
 import { Category } from '../../types/general'
@@ -57,6 +60,11 @@ const StyledMetaBlock = styled.div`
   font-size: 14px;
   line-height: 1;
 `
+const StyledExtraBlock = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`
 
 const ProgramCard: React.VFC<{
   program: ProgramBriefProps & {
@@ -105,6 +113,11 @@ const ProgramCard: React.VFC<{
   const periodAmount = program.plans.length > 1 ? program.plans[0]?.periodAmount : null
   const periodType = program.plans.length > 1 ? program.plans[0]?.periodType : null
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
+  const {
+    data: enrolledCount,
+    loading,
+    error,
+  } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
 
   return (
     <>
@@ -168,9 +181,20 @@ const ProgramCard: React.VFC<{
                   </div>
                 )}
 
-                {program.plans.length === 1 && !noTotalDuration && !!program.totalDuration && (
-                  <div>{durationFormatter(program.totalDuration)}</div>
-                )}
+                <StyledExtraBlock>
+                  {program.plans.length === 1 && !noTotalDuration && !!program.totalDuration && (
+                    <div className="d-flex align-items-center">
+                      <Icon mr="1" as={AiOutlineClockCircle} />
+                      {durationFormatter(program.totalDuration)}
+                    </div>
+                  )}
+                  {program.isEnrolledCountVisible && (
+                    <div className="d-flex align-items-center">
+                      <Icon mr="1" as={AiOutlineUser} />
+                      {enrolledCount}
+                    </div>
+                  )}
+                </StyledExtraBlock>
               </StyledMetaBlock>
             )}
           </StyledContentBlock>
