@@ -194,7 +194,9 @@ const useSearchPrograms = (condition: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariable
         title: v.title,
         score: v.program_review_score?.score || null,
         categoryNames: uniq(
-          v.program_categories.filter(v => v.category.name.includes('/')).map(v => v.category.name.split('/')[1]),
+          v.program_categories.map(w =>
+            w.category.name.includes('/') ? w.category.name.split('/')[1] : w.category.name,
+          ),
         ),
       })) || [],
     error,
