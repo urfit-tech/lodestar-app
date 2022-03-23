@@ -1,10 +1,12 @@
 import { useQuery } from '@apollo/react-hooks'
-import { SkeletonText } from '@chakra-ui/react'
-import { Button, message, Table, Tooltip } from 'antd'
+import { Button, SkeletonText } from '@chakra-ui/react'
+import { message, Table, Tooltip } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { ColumnProps } from 'antd/lib/table'
 import axios from 'axios'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { prop, sum } from 'ramda'
@@ -22,6 +24,7 @@ import AdminCard from '../common/AdminCard'
 import PriceLabel from '../common/PriceLabel'
 import ProductTypeLabel from '../common/ProductTypeLabel'
 import ShippingMethodLabel from '../common/ShippingMethodLabel'
+import OrderRequestRefundModal from './OrderRequestRefundModal'
 import OrderStatusTag from './OrderStatusTag'
 
 const StyledContainer = styled.div`
@@ -90,6 +93,8 @@ const OrderCollectionAdminCard: React.VFC<
     memberId: string
   }
 > = ({ memberId, ...props }) => {
+  const theme = useAppTheme()
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { authToken } = useAuth()
@@ -185,6 +190,11 @@ const OrderCollectionAdminCard: React.VFC<
         <div className="col-3 d-flex align-items-end">
           {record.status !== 'SUCCESS' && record.status !== 'REFUND' && record.status !== 'EXPIRED' && (
             <Button
+              variant="outline"
+              _hover={{
+                color: theme.colors.primary[500],
+                borderColor: theme.colors.primary[500],
+              }}
               onClick={() =>
                 axios
                   .post(
@@ -205,6 +215,14 @@ const OrderCollectionAdminCard: React.VFC<
             >
               {formatMessage(commonMessages.ui.repay)}
             </Button>
+          )}
+          {settings['order.refund.enabled'] === '1' && record.status === 'SUCCESS' && (
+            <OrderRequestRefundModal
+              orderId={record.id}
+              orderProducts={record.orderProducts}
+              orderDiscounts={record.orderDiscounts}
+              totalPrice={record.totalPrice}
+            />
           )}
         </div>
         <div className="col-9">
