@@ -165,7 +165,7 @@ const useSearchPrograms = (condition: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariable
           id
           title
           cover_url
-          program_categories(order_by: { category: { position: asc } }) {
+          program_categories(order_by: { position: asc }) {
             id
             category {
               id
