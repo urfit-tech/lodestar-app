@@ -382,6 +382,7 @@ const useSearchProductCollection = (
           list_price
           sale_price
           sold_at
+          is_enrolled_count_visible
           program_content_sections {
             id
             program_contents {
@@ -678,6 +679,7 @@ const useSearchProductCollection = (
         salePrice: program.sale_price,
         soldAt: program.sold_at && new Date(program.sold_at),
         isPrivate: false,
+        isEnrolledCountVisible: program.is_enrolled_count_visible,
         totalDuration: sum(
           program.program_content_sections.map(section =>
             sum(section.program_contents.map(content => content.duration)),
