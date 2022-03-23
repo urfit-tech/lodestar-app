@@ -750,7 +750,7 @@ export const useMutateExercise = () => {
   }
 }
 
-export const useProgramEnrollmentAggregate = (programId: string, options?: QueryHookOptions) => {
+export const useProgramEnrollmentAggregate = (programId: string, options?: Pick<QueryHookOptions, 'skip'>) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_PROGRAM_ENROLLMENT_AGGREGATE,
     hasura.GET_PROGRAM_ENROLLMENT_AGGREGATEVariables
