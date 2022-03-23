@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { QueryHookOptions, useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniq } from 'ramda'
@@ -750,7 +750,7 @@ export const useMutateExercise = () => {
   }
 }
 
-export const useProgramEnrollmentAggregate = (programId: string, options?: { skip?: boolean }) => {
+export const useProgramEnrollmentAggregate = (programId: string, options?: QueryHookOptions) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_PROGRAM_ENROLLMENT_AGGREGATE,
     hasura.GET_PROGRAM_ENROLLMENT_AGGREGATEVariables
@@ -765,7 +765,7 @@ export const useProgramEnrollmentAggregate = (programId: string, options?: { ski
       }
     `,
     {
-      skip: options?.skip ?? false,
+      skip: options?.skip,
       variables: {
         programId,
       },
