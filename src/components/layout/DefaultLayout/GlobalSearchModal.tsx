@@ -275,27 +275,28 @@ const GlobalSearchFilter: React.VFC<{
                                     ],
                                   ].filter(complement(isEmpty))
                                 : [
-                                    ...prevFilter.categoryIdSList.filter(categoryIdS =>
-                                      categoryIdS.every(categoryId =>
-                                        pluck('id', category.subCategories).includes(categoryId),
-                                      ),
+                                    ...prevFilter.categoryIdSList.filter(
+                                      categoryIdS =>
+                                        !categoryIdS.every(categoryId =>
+                                          includes(categoryId, pluck('id', category.subCategories)),
+                                        ),
                                     ),
                                     [
                                       ...(!!prevFilter.categoryIdSList.find(categoryIdS =>
                                         categoryIdS.every(categoryId =>
-                                          pluck('id', category.subCategories).includes(categoryId),
+                                          includes(categoryId, pluck('id', category.subCategories)),
                                         ),
                                       )
                                         ? [
                                             ...(prevFilter.categoryIdSList.find(categoryIdS =>
                                               categoryIdS.every(categoryId =>
-                                                pluck('id', category.subCategories).includes(categoryId),
+                                                includes(categoryId, pluck('id', category.subCategories)),
                                               ),
                                             ) || []),
                                             subCategory.id,
-                                          ]
+                                          ].sort()
                                         : [subCategory.id]),
-                                    ].sort(),
+                                    ],
                                   ],
                             }
                           })
@@ -303,7 +304,7 @@ const GlobalSearchFilter: React.VFC<{
                         key={`${category.id}_${subCategory.id}`}
                         colorScheme="primary"
                         variant="outline"
-                        className="mr-2"
+                        className="mr-2 mb-2"
                       >
                         {subCategory.name}
                       </StyledRoundedButton>
@@ -384,7 +385,7 @@ const GlobalSearchFilter: React.VFC<{
                         key={subTag.id}
                         colorScheme="primary"
                         variant="outline"
-                        className="mr-2"
+                        className="mr-2 mb-2"
                       >
                         {subTag.name}
                       </StyledRoundedButton>
@@ -480,11 +481,18 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
   const { loading, data } = useQuery(
     gql`
       query GET_PRODUCT_FILTER_OPTIONS($class: String) {
-        category(where: { class: { _eq: $class }, program_categories: { program_id: { _is_null: false } } }) {
+        category(
+          where: {
+            class: { _eq: $class }
+            program_categories: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } }
+          }
+        ) {
           id
           name
         }
-        app_tag(where: { tag: { program_tags: { program_id: { _is_null: false } } } }) {
+        app_tag(
+          where: { tag: { program_tags: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } } } }
+        ) {
           name: tag_name
         }
       }
@@ -529,7 +537,7 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
         .filter(tag => tag.name !== tagName)
         .map(tag => ({
           id: tag.name,
-          name: tag.name,
+          name: tag.name.split('/')[1],
         })),
     }
   }, toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], data?.app_tag || [])))
