@@ -146,6 +146,7 @@ const CheckoutBlock: React.VFC<{
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfo.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfo.invoice)
   const [payment, setPayment] = useState<PaymentProps | null>(null)
+  const [errorContactFields, setErrorContactFields] = useState<string[]>([])
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
   const [groupBuying, setGroupBuying] = useState<{
@@ -202,12 +203,12 @@ const CheckoutBlock: React.VFC<{
     !isValidating && setIsValidating(true)
 
     if (settings['feature.contact_info.enabled'] === '1' && totalPrice === 0) {
-      if (validateContactInfo(invoice).length !== 0) {
+      const errorFields = validateContactInfo(invoice)
+      if (errorFields.length !== 0) {
+        setErrorContactFields(errorFields)
         contactInfoRef.current?.scrollIntoView({ behavior: 'smooth' })
         return
       }
-      console.log(validateContactInfo(invoice))
-      return
     }
 
     let isValidShipping = false
@@ -362,7 +363,7 @@ const CheckoutBlock: React.VFC<{
       {!orderPlacing && !orderChecking && totalPrice === 0 && settings['feature.contact_info.enabled'] === '1' && (
         <Box ref={contactInfoRef} mb="3">
           <AdminCard>
-            <ContactInfoInput value={invoice} onChange={v => setInvoice(v)} />
+            <ContactInfoInput value={invoice} onChange={v => setInvoice(v)} errorContactFields={errorContactFields} />
           </AdminCard>
         </Box>
       )}
