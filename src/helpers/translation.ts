@@ -1659,4 +1659,8 @@ export const codeMessages = defineMessages({
     id: 'code.E_CW_SERVICE',
     defaultMessage: 'CW 導入付款頁失敗',
   },
+  E_REFUND: {
+    id: 'code.E_REFUND',
+    defaultMessage: '退款失敗',
+  },
 })

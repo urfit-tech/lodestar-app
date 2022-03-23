@@ -17,11 +17,16 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react'
+import axios from 'axios'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
-import { useState } from 'react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { sum } from 'ramda'
+import { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import { commonMessages } from '../../helpers/translation'
+import { handleError } from '../../helpers'
+import { codeMessages, commonMessages } from '../../helpers/translation'
 import { OrderDiscountProps } from '../../types/checkout'
 import { ProductType } from '../../types/product'
 import PriceLabel from '../common/PriceLabel'
@@ -40,7 +45,7 @@ const messages = defineMessages({
 type RefundOrderList = {
   orderId: string
   orderProducts: {
-    orderProductId: string
+    id: string
     refundPrice: number
     refundable: boolean
     refundDesc: string
@@ -64,13 +69,99 @@ const OrderRequestRefundModal: React.VFC<{
   }[]
   orderDiscounts: OrderDiscountProps[]
   totalPrice: number
-}> = ({ orderId, orderProducts, orderDiscounts, totalPrice }) => {
+  onRefetch?: () => void
+}> = ({ orderId, orderProducts, orderDiscounts, totalPrice, onRefetch }) => {
   const theme = useAppTheme()
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const toast = useToast()
+  const { authToken } = useAuth()
   const [refundIds, setRefundIds] = useState<string[]>([])
+  const [refundableChecking, setRefundableChecking] = useState(false)
+  const [refundableProducts, setRefundableProducts] = useState<RefundOrderList['orderProducts']>([])
+  const [refunding, setRefunding] = useState(false)
 
-  const handleRequestRefund = () => {}
+  useEffect(() => {
+    if (!isOpen) {
+      return
+    }
+    setRefundableChecking(true)
+    axios
+      .get<{
+        code: string
+        message: string
+        result: {
+          orderId: string
+          orderProducts: {
+            id: string
+            refundPrice: number
+            refundable: boolean
+            message?: string
+          }[]
+        }
+      }>(`${process.env.REACT_APP_API_BASE_ROOT}/order/detail/${orderId}`, {
+        headers: { authorization: `Bearer ${authToken}` },
+      })
+      .then(({ data: { code, message, result } }) => {
+        if (code === 'SUCCESS') {
+          setRefundableProducts(
+            result.orderProducts
+              .filter(v => v.refundable)
+              .map(v => ({
+                id: v.id,
+                refundPrice: v.refundPrice,
+                refundable: v.refundable,
+                refundDesc: v.message || '',
+              })),
+          )
+        } else {
+          throw new Error(code)
+        }
+      })
+      .catch(handleError)
+      .finally(() => setRefundableChecking(false))
+  }, [authToken, orderId, isOpen])
+
+  const handleRequestRefund = () => {
+    if (!refundIds.length) {
+      return
+    }
+    setRefunding(true)
+    axios
+      .post<{
+        code: string
+        message: string
+        result: string
+      }>(
+        `${process.env.REACT_APP_API_BASE_ROOT}/payment/refund`,
+        {
+          orderId,
+          refundOrderProducts: refundableProducts.filter(product => refundIds.includes(product.id)),
+        },
+        {
+          headers: { authorization: `Bearer ${authToken}` },
+        },
+      )
+      .then(({ data: { code } }) => {
+        if (code === 'SUCCESS') {
+          onRefetch?.()
+          onClose()
+        } else {
+          throw new Error(code)
+        }
+      })
+      .catch((error: Error) => {
+        const code = error.message as keyof typeof codeMessages
+        toast({
+          title: formatMessage(codeMessages[code]),
+          status: 'error',
+          duration: 3000,
+          isClosable: false,
+          position: 'top',
+        })
+      })
+      .finally(() => setRefunding(false))
+  }
 
   return (
     <>
@@ -102,44 +193,43 @@ const OrderRequestRefundModal: React.VFC<{
                 </Tr>
               </Thead>
               <Tbody>
-                {orderProducts.map(orderProduct => (
-                  <Tr
-                    id={orderProduct.id}
-                    key={orderProduct.id}
-                    // TODO: get product refund info then distinguish
-                    // color={orderProduct.refundable ? '#cdcdcd' : ''}
-                  >
-                    <Td>
-                      <Checkbox
-                        // TODO: get product refund info then distinguish
-                        // disabled={orderProduct.refundable}
-                        size="lg"
-                        colorScheme="primary"
-                        isChecked={refundIds.includes(orderProduct.id)}
-                        onChange={e => {
-                          e.target.checked
-                            ? setRefundIds([orderProduct.id, ...refundIds])
-                            : setRefundIds(refundIds.filter(w => w !== orderProduct.id))
-                        }}
-                      />
-                    </Td>
+                {orderProducts.map(orderProduct => {
+                  const isRefundable = !!refundableProducts.find(product => product.id === orderProduct.id)
+                  const refundPrice =
+                    refundableProducts.find(product => product.id === orderProduct.id)?.refundPrice || 0
+                  return (
+                    <Tr id={orderProduct.id} key={orderProduct.id} color={!isRefundable ? '#cdcdcd' : ''}>
+                      <Td>
+                        <Checkbox
+                          isDisabled={!isRefundable}
+                          size="lg"
+                          colorScheme="primary"
+                          isChecked={refundIds.includes(orderProduct.id)}
+                          onChange={e => {
+                            e.target.checked
+                              ? setRefundIds([orderProduct.id, ...refundIds])
+                              : setRefundIds(refundIds.filter(w => w !== orderProduct.id))
+                          }}
+                        />
+                      </Td>
 
-                    <Td>
-                      {orderProduct.product.type ? (
-                        <span>
-                          <ProductTypeLabel productType={orderProduct.product.type} />
-                        </span>
-                      ) : (
-                        <span>{formatMessage(commonMessages.unknown.type)}</span>
-                      )}
-                    </Td>
-                    <Td>{orderProduct.name}</Td>
-                    <Td isNumeric color={theme.colors.primary[500]}>
-                      {/* {orderProduct.refundPrice} */}
-                    </Td>
-                    <Td isNumeric>{orderProduct.price}</Td>
-                  </Tr>
-                ))}
+                      <Td>
+                        {orderProduct.product.type ? (
+                          <span>
+                            <ProductTypeLabel productType={orderProduct.product.type} />
+                          </span>
+                        ) : (
+                          <span>{formatMessage(commonMessages.unknown.type)}</span>
+                        )}
+                      </Td>
+                      <Td>{orderProduct.name}</Td>
+                      <Td isNumeric color={theme.colors.primary[500]}>
+                        {refundPrice}
+                      </Td>
+                      <Td isNumeric>{orderProduct.price}</Td>
+                    </Tr>
+                  )
+                })}
               </Tbody>
             </Table>
 
@@ -162,14 +252,18 @@ const OrderRequestRefundModal: React.VFC<{
             <Box p="24px" bg="#f7f8f8" w="100%" textAlign="center" color={theme.colors.primary[500]} fontWeight="bold">
               {formatMessage(messages.totalRefundPrice)}
               <PriceLabel
-                // TODO: get the total refund price then calculate
-                listPrice={0}
+                listPrice={sum(
+                  refundableProducts
+                    .filter(product => refundIds.includes(product.id))
+                    ?.map(product => product.refundPrice) || [],
+                )}
               />
             </Box>
           </ModalBody>
 
           <ModalFooter>
             <Button
+              isLoading={refundableChecking || refunding}
               disabled={refundIds.length === 0}
               colorScheme="primary"
               w="100%"
