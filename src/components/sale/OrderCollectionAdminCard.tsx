@@ -98,7 +98,7 @@ const OrderCollectionAdminCard: React.VFC<
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { authToken } = useAuth()
-  const { loading, error, orderLogs } = useOrderLogCollection(memberId)
+  const { loading, error, orderLogs, refetch } = useOrderLogCollection(memberId)
   if (loading || error) {
     return (
       <AdminCard>
@@ -222,6 +222,7 @@ const OrderCollectionAdminCard: React.VFC<
               orderProducts={record.orderProducts}
               orderDiscounts={record.orderDiscounts}
               totalPrice={record.totalPrice}
+              onRefetch={refetch}
             />
           )}
         </div>
@@ -265,7 +266,7 @@ const OrderCollectionAdminCard: React.VFC<
 }
 
 const useOrderLogCollection = (memberId: string) => {
-  const { loading, error, data } = useQuery<hasura.GET_MEMBER_ORDERS, hasura.GET_MEMBER_ORDERSVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_MEMBER_ORDERS, hasura.GET_MEMBER_ORDERSVariables>(
     gql`
       query GET_MEMBER_ORDERS($memberId: String!) {
         order_log(
@@ -345,6 +346,7 @@ const useOrderLogCollection = (memberId: string) => {
     loading,
     error,
     orderLogs,
+    refetch,
   }
 }
 
