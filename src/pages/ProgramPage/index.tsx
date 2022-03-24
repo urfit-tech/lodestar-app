@@ -1,13 +1,15 @@
-import { Button, SkeletonText } from '@chakra-ui/react'
+import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
+import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import queryString from 'query-string'
-import React, { useContext, useEffect, useRef } from 'react'
+import { groupBy, map, toPairs } from 'ramda'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
-import { useIntl } from 'react-intl'
-import { useLocation, useParams } from 'react-router-dom'
+import { defineMessage, useIntl } from 'react-intl'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
@@ -16,10 +18,12 @@ import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useProgram } from '../../hooks/program'
+import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
+import { ReactComponent as PlayIcon } from '../../images/play-fill-icon.svg'
 import ForbiddenPage from '../ForbiddenPage'
-import { PerpetualProgramBanner } from './ProgramBanner'
+import { CustomizeProgramBanner, PerpetualProgramBanner } from './ProgramBanner'
+import ProgramBestReviewsCarousel from './ProgramBestReviewsCarousel'
 import ProgramContentListSection from './ProgramContentListSection'
 import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
 import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
@@ -85,6 +89,8 @@ const ProgramPage: React.VFC = () => {
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const params = queryString.parse(location.search)
+  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const isEnrolled = enrolledProgramIds.includes(programId)
 
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock) {
@@ -126,23 +132,47 @@ const ProgramPage: React.VFC = () => {
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
 
       <div>
-        <PerpetualProgramBanner
-          program={program}
-          isEnrolledByProgramPackage={isEnrolledByProgramPackage}
-          isDelivered={isDelivered}
-        />
+        {settings['layout.program_page'] ? (
+          <CustomizeProgramBanner program={program} isEnrolled={isEnrolled} />
+        ) : (
+          <PerpetualProgramBanner
+            program={program}
+            isEnrolledByProgramPackage={isEnrolledByProgramPackage}
+            isDelivered={isDelivered}
+          />
+        )}
+
         <ProgramIntroBlock>
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-8">
-                <Responsive.Default>
-                  <StyledProgramInfoCard>
-                    <ProgramContentCountBlock program={program} />
-                  </StyledProgramInfoCard>
-                </Responsive.Default>
-                {program.abstract && (
+                {!settings['layout.program_page'] && (
+                  <Responsive.Default>
+                    <StyledProgramInfoCard>
+                      <ProgramContentCountBlock program={program} />
+                    </StyledProgramInfoCard>
+                  </Responsive.Default>
+                )}
+                {!settings['layout.program_page'] && program.abstract && (
                   <div className="mb-5">
                     <ProgramAbstract>{program.abstract}</ProgramAbstract>
+                  </div>
+                )}
+
+                {settings['layout.program_page'] && (
+                  <div className="mb-5">
+                    <ProgramBestReviewsCarousel pathname={pathname} />
+                    <div className="text-center mt-3">
+                      <Button
+                        variant="outline"
+                        colorScheme="primary"
+                        onClick={() => {
+                          customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' })
+                        }}
+                      >
+                        {formatMessage(defineMessage({ id: 'review.ui.more', defaultMessage: '更多評論' }))}
+                      </Button>
+                    </div>
                   </div>
                 )}
 
@@ -150,38 +180,59 @@ const ProgramPage: React.VFC = () => {
                   <BraftContent>{program.description}</BraftContent>
                 </div>
 
-                <div className="mb-5">
-                  <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
-                </div>
-              </div>
-              <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                <Responsive.Desktop>
-                  <ProgramInfoCard instructorId={instructorId} program={program} />
-                </Responsive.Desktop>
-
-                {!isEnrolledByProgramPackage && (
+                {!settings['layout.program_page'] && (
                   <div className="mb-5">
-                    <div id="subscription">
-                      {program.plans
-                        .filter(programPlan => programPlan.publishedAt)
-                        .map(programPlan => (
-                          <div key={programPlan.id} className="mb-3">
-                            <ProgramPlanCard programId={program.id} programPlan={programPlan} />
-                          </div>
-                        ))}
-                    </div>
+                    <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
                   </div>
                 )}
-              </StyledIntroWrapper>
+              </div>
+
+              {settings['layout.program_page'] ? (
+                <StyledIntroWrapper className="col-12 col-lg-4 mb-3">
+                  {!!program.tags.length && (
+                    <ProgramTagCard
+                      tags={program.tags.map(tag => ({
+                        id: tag,
+                        name: tag,
+                      }))}
+                    />
+                  )}
+                </StyledIntroWrapper>
+              ) : (
+                <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
+                  <div>
+                    <Responsive.Desktop>
+                      <ProgramInfoCard instructorId={instructorId} program={program} />
+                    </Responsive.Desktop>
+
+                    {!isEnrolledByProgramPackage && (
+                      <div className="mb-5">
+                        <div id="subscription">
+                          {program.plans
+                            .filter(programPlan => programPlan.publishedAt)
+                            .map(programPlan => (
+                              <div key={programPlan.id} className="mb-3">
+                                <ProgramPlanCard programId={program.id} programPlan={programPlan} />
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </StyledIntroWrapper>
+              )}
             </div>
 
-            <div className="row">
-              <div className="col-12 col-lg-8">
-                <div className="mb-5">
-                  <ProgramInstructorCollectionBlock program={program} />
+            {!settings['layout.program_page'] && (
+              <div className="row">
+                <div className="col-12 col-lg-8">
+                  <div className="mb-5">
+                    <ProgramInstructorCollectionBlock program={program} />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
             <div id="customer-review" ref={customerReviewBlockRef}>
               {enabledModules.customer_review && (
                 <div className="row">
@@ -200,19 +251,141 @@ const ProgramPage: React.VFC = () => {
       {!isEnrolledByProgramPackage && (
         <Responsive.Default>
           <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-            <StyledButtonWrapper>
-              <Button
-                variant="primary"
-                isFullWidth
-                onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                {formatMessage(commonMessages.button.viewProject)}
-              </Button>
-            </StyledButtonWrapper>
+            {settings['layout.program_page'] ? (
+              <StyledButtonWrapper>
+                <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
+                  <Button isFullWidth colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
+                    {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
+                  </Button>
+                </Link>
+              </StyledButtonWrapper>
+            ) : (
+              <StyledButtonWrapper>
+                <Button
+                  variant="primary"
+                  isFullWidth
+                  onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  {formatMessage(commonMessages.button.viewProject)}
+                </Button>
+              </StyledButtonWrapper>
+            )}
           </FixedBottomBlock>
         </Responsive.Default>
       )}
     </DefaultLayout>
+  )
+}
+
+const StyledProgramTagCard = styled.div`
+  border-radius: 4px;
+  padding: 24px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
+`
+
+const StyleCategoryTitle = styled.h3`
+  font-size: 18px;
+  font-weight: bold;
+  color: #4a4a4a;
+`
+
+const StyleSubCategoryBlock = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`
+
+const StyleSubCategoryTag = styled(Button)`
+  && {
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+`
+
+const StyledViewAllButton = styled(Button)`
+  && {
+    font-size: 14px;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+`
+
+const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ tags }) => {
+  const { formatMessage } = useIntl()
+  const [isOpen, setIsOpen] = useState(false)
+  const history = useHistory()
+  const groupTags = map(
+    ([tagName, subTags]) => ({
+      id: subTags.find(tag => tag.name === tagName)?.name,
+      name: tagName,
+      subTags: subTags
+        .filter(tag => tag.name !== tagName)
+        .map(tag => ({
+          id: tag.name,
+          name: tag.name,
+        })),
+    }),
+    toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], tags || [])),
+  )
+
+  return (
+    <StyledProgramTagCard>
+      {groupTags.map(tag => (
+        <div className="mb-3">
+          <StyleCategoryTitle className="mb-2">{tag.name}</StyleCategoryTitle>
+          <StyleSubCategoryBlock className="mb-3">
+            {tag.subTags.slice(0, 4).map(subTag => (
+              <StyleSubCategoryTag
+                variant="outline"
+                colorScheme="primary"
+                onClick={() =>
+                  history.push('/search/advanced', {
+                    tagNameSList: [[subTag.name]],
+                  })
+                }
+              >
+                {subTag.name}
+              </StyleSubCategoryTag>
+            ))}
+          </StyleSubCategoryBlock>
+
+          {tag.subTags.length > 4 && (
+            <div className="mb-3">
+              <CommonModal title="" isOpen={isOpen} onClose={() => setIsOpen(false)}>
+                {groupTags.map(tag => (
+                  <div className="mb-3">
+                    <StyleCategoryTitle className="mb-2">{tag.name}</StyleCategoryTitle>
+                    <StyleSubCategoryBlock>
+                      {tag.subTags.map(subTag => (
+                        <StyleSubCategoryTag
+                          variant="outline"
+                          colorScheme="primary"
+                          onClick={() =>
+                            history.push('/search/advanced', {
+                              tagNameSList: [[subTag.name]],
+                            })
+                          }
+                        >
+                          {subTag.name}
+                        </StyleSubCategoryTag>
+                      ))}
+                    </StyleSubCategoryBlock>
+                  </div>
+                ))}
+              </CommonModal>
+              <StyledViewAllButton className="d-block" variant="link" onClick={() => setIsOpen(true)}>
+                {formatMessage(defineMessage({ id: 'common.ui.viewAll', defaultMessage: '查看全部' }))}
+              </StyledViewAllButton>
+            </div>
+          )}
+        </div>
+      ))}
+    </StyledProgramTagCard>
   )
 }
 

@@ -5,8 +5,8 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
-import { useIntl } from 'react-intl'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { defineMessage, useIntl } from 'react-intl'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import { StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../../components/program/ProgramContentMenu'
@@ -16,6 +16,7 @@ import { useProgram } from '../../hooks/program'
 import { ProgramContentNoAuthBlock } from '../ProgramContentCollectionPage'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
+import ProgramCustomContentBlock from './ProgramCustomContentBlock'
 
 const ProgramContentPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -24,7 +25,7 @@ const ProgramContentPage: React.VFC = () => {
     programId: string
     programContentId: string
   }>()
-  const { enabledModules } = useApp()
+  const { enabledModules, settings } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
@@ -62,10 +63,12 @@ const ProgramContentPage: React.VFC = () => {
               <Icon component={AiOutlineProfile} className="mr-2" />
               {formatMessage(commonMessages.button.intro)}
             </Button>
-            <Button size="sm" colorScheme="primary" variant="ghost" onClick={() => setMenuVisible(!menuVisible)}>
-              <Icon component={AiOutlineUnorderedList} className="mr-2" />
-              {formatMessage(commonMessages.button.list)}
-            </Button>
+            {!settings['layout.program_content'] && (
+              <Button size="sm" colorScheme="primary" variant="ghost" onClick={() => setMenuVisible(!menuVisible)}>
+                <Icon component={AiOutlineUnorderedList} className="mr-2" />
+                {formatMessage(commonMessages.button.list)}
+              </Button>
+            )}
           </div>
         }
         onBack={() =>
@@ -76,27 +79,50 @@ const ProgramContentPage: React.VFC = () => {
       <StyledLayoutContent>
         {program && currentMemberId ? (
           <ProgressProvider programId={program.id} memberId={currentMemberId}>
-            <div className="row no-gutters">
-              <div className={menuVisible ? 'd-lg-block col-lg-9 d-none' : 'col-12'}>
-                <StyledLayoutContent>
-                  <ProgramContentBlock
-                    programId={program.id}
-                    programRoles={program.roles}
-                    programContentSections={program.contentSections}
-                    programContentId={programContentId}
-                    issueEnabled={program.isIssuesOpen}
-                  />
-                </StyledLayoutContent>
+            {settings['layout.program_content'] ? (
+              <div className="no-gutters">
+                <ProgramCustomContentBlock
+                  programContentSections={program.contentSections}
+                  programContentId={programContentId}
+                >
+                  <>
+                    <ProgramContentMenu program={program} />
+
+                    <Button
+                      isFullWidth
+                      className="mt-3"
+                      colorScheme="primary"
+                      as={Link}
+                      to={`/programs/${programId}?moveToBlock=customer-review`}
+                    >
+                      {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
+                    </Button>
+                  </>
+                </ProgramCustomContentBlock>
               </div>
-              <div className={menuVisible ? 'col-12 col-lg-3' : 'd-none'}>
-                <StyledSideBar>
-                  <ProgramContentMenu
-                    program={program}
-                    onSelect={() => window.innerWidth < BREAK_POINT && setMenuVisible(false)}
-                  />
-                </StyledSideBar>
+            ) : (
+              <div className="row no-gutters">
+                <div className={menuVisible ? 'd-lg-block col-lg-9 d-none' : 'col-12'}>
+                  <StyledLayoutContent>
+                    <ProgramContentBlock
+                      programId={program.id}
+                      programRoles={program.roles}
+                      programContentSections={program.contentSections}
+                      programContentId={programContentId}
+                      issueEnabled={program.isIssuesOpen}
+                    />
+                  </StyledLayoutContent>
+                </div>
+                <div className={menuVisible ? 'col-12 col-lg-3' : 'd-none'}>
+                  <StyledSideBar>
+                    <ProgramContentMenu
+                      program={program}
+                      onSelect={() => window.innerWidth < BREAK_POINT && setMenuVisible(false)}
+                    />
+                  </StyledSideBar>
+                </div>
               </div>
-            </div>
+            )}
           </ProgressProvider>
         ) : (
           <div className="container py-5">

@@ -87,7 +87,7 @@ const AdvancedSearchPage: React.FC = () => {
   const { isLoading, data } = useSearchPrograms({
     title: state?.title ? { _like: `%${state.title}%` } : undefined,
     _and: [
-      ...(state?.categoryIdSList.map(categoryIdS => ({
+      ...(state?.categoryIdSList?.map(categoryIdS => ({
         program_categories: {
           category_id: { _in: categoryIdS },
         },
@@ -134,18 +134,14 @@ const AdvancedSearchPage: React.FC = () => {
               <Link to={`/programs/${program.id}`}>
                 <div>
                   <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
-                  <StyledProgramTitle>{program.title}</StyledProgramTitle>
+                  <StyledProgramTitle className="mb-2">{program.title}</StyledProgramTitle>
                   <div className="d-flex">
-                    <StyledName className="flex-grow-1">{program.categoryNames.join('．')}</StyledName>
-                    {program.score ? (
+                    <StyledName className="flex-grow-1">{program.categoryNames.slice(0, 3).join('．')}</StyledName>
+                    {!!program.score && (
                       <div className="flex-shrink-0 d-flex justify-content-center align-items-center">
                         <span className="mr-1">{program.score}</span>
                         <StyledIcon as={StarIcon} />
                       </div>
-                    ) : (
-                      <StyledName>
-                        {formatMessage(defineMessage({ id: 'common.text.noReview', defaultMessage: '尚未有評價' }))}
-                      </StyledName>
                     )}
                   </div>
                 </div>
@@ -169,7 +165,7 @@ const useSearchPrograms = (condition: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariable
           id
           title
           cover_url
-          program_categories {
+          program_categories(order_by: { position: asc }) {
             id
             category {
               id
@@ -197,7 +193,11 @@ const useSearchPrograms = (condition: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariable
         coverUrl: v.cover_url,
         title: v.title,
         score: v.program_review_score?.score || null,
-        categoryNames: uniq(v.program_categories.map(v => v.category.name.split('/')[0])),
+        categoryNames: uniq(
+          v.program_categories.map(w =>
+            w.category.name.includes('/') ? w.category.name.split('/')[1] : w.category.name,
+          ),
+        ),
       })) || [],
     error,
   }

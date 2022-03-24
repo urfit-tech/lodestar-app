@@ -20,6 +20,7 @@ export type ProgramBriefProps = {
   publishedAt: Date | null
   isPrivate: boolean
   totalDuration?: number
+  isEnrolledCountVisible: boolean
 }
 
 export type Program = ProgramBriefProps & {

@@ -1,28 +1,22 @@
-import { useQuery } from '@apollo/react-hooks'
 import { LockIcon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
-import gql from 'graphql-tag'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect } from 'react'
+import React, { ReactElement, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
-import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
-import hasura from '../../hasura'
 import { productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
-import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
-import { StyledContentBlock } from './index.styled'
-import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
-import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
-import ProgramContentTabs from './ProgramContentTabs'
+import { ProgramContent, ProgramContentSection } from '../../types/program'
+import { useHasProgramContentPermission } from './ProgramContentBlock'
 
 const StyledUnPurchased = styled.div`
   color: ${props => props.theme['@primary-color']};
@@ -36,21 +30,34 @@ const StyledTitle = styled.h3`
   font-size: 20px;
 `
 
-const ProgramContentBlock: React.VFC<{
-  programId: string
-  programRoles: ProgramRole[]
+const StyledContentBlock = styled.div`
+  padding: 24px;
+  background-color: #fff;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    padding: 40px;
+  }
+`
+
+const StyledProgramContentBlock = styled.div`
+  padding: 1.5rem;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    padding: 2rem 16rem;
+  }
+`
+
+const ProgramCustomContentBlock: React.VFC<{
   programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]
   programContentId: string
-  issueEnabled?: boolean
-}> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
+  children?: ReactElement
+}> = ({ programContentSections, programContentId, children }) => {
   const { formatMessage } = useIntl()
-  const { loading: loadingApp, enabledModules } = useApp()
+  const { loading: loadingApp } = useApp()
   const { authToken } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const hasProgramContentPermission = useHasProgramContentPermission(programContentId)
-
-  const instructor = programRoles.filter(role => role.name === 'instructor')[0]
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
@@ -96,7 +103,7 @@ const ProgramContentBlock: React.VFC<{
   }, 5000)
 
   return (
-    <div id="program_content_block" className="pt-4 p-sm-4">
+    <StyledProgramContentBlock id="program_customize_content_block">
       {((programContent.contentType === 'video' && !hasProgramContentPermission) ||
         (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
         <StyledUnPurchased className="p-2 text-center">
@@ -139,7 +146,7 @@ const ProgramContentBlock: React.VFC<{
 
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise']) && (
         <StyledContentBlock className="mb-3">
-          <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
+          <StyledTitle className="mb-4 text-left">{programContent.title}</StyledTitle>
 
           {programContent.programContentBody &&
             !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
@@ -148,59 +155,9 @@ const ProgramContentBlock: React.VFC<{
         </StyledContentBlock>
       )}
 
-      {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
-        <div className="mb-4">
-          <PracticeDescriptionBlock
-            programContentId={programContentId}
-            isCoverRequired={!!programContent.metadata?.isCoverRequired}
-            title={programContent.title}
-            description={programContent.programContentBody?.description || ''}
-            duration={programContent.duration || 0}
-            score={programContent.metadata?.difficulty || 0}
-            attachments={programContent.attachments || []}
-          />
-        </div>
-      )}
-
-      {enabledModules.exercise && programContent.programContentBody?.type === 'exercise' && (
-        <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
-      )}
-
-      <ProgramContentTabs
-        programId={programId}
-        programRoles={programRoles}
-        programContent={programContent}
-        issueEnabled={issueEnabled}
-      />
-
-      {programContent.programContentBody?.type !== 'practice' && instructor && (
-        <ProgramContentCreatorBlock memberId={instructor.memberId} />
-      )}
-    </div>
+      {children}
+    </StyledProgramContentBlock>
   )
 }
 
-const useHasProgramContentPermission: (id: string) => boolean = id => {
-  const { currentMemberId } = useAuth()
-  const { data } = useQuery<hasura.GET_PROGRAM_CONTENT_PERMISSION, hasura.GET_PROGRAM_CONTENT_PERMISSIONVariables>(
-    gql`
-      query GET_PROGRAM_CONTENT_PERMISSION($id: uuid!, $currentMemberId: String!) {
-        program_content_enrollment(where: { program_content_id: { _eq: $id }, member_id: { _eq: $currentMemberId } }) {
-          program_content_id
-        }
-      }
-    `,
-    {
-      variables: {
-        id,
-        currentMemberId: currentMemberId || '',
-      },
-    },
-  )
-
-  return !!data?.program_content_enrollment?.length
-}
-
-export { useHasProgramContentPermission }
-
-export default ProgramContentBlock
+export default ProgramCustomContentBlock
