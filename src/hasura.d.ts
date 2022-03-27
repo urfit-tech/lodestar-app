@@ -9358,6 +9358,16 @@ export interface GET_LAST_EXERCISEVariables {
 // GraphQL query operation: GET_BEST_REVIEWS
 // ====================================================
 
+export interface GET_BEST_REVIEWS_review_public_review_reactions_aggregate_aggregate {
+  __typename: "review_reaction_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_BEST_REVIEWS_review_public_review_reactions_aggregate {
+  __typename: "review_reaction_aggregate";
+  aggregate: GET_BEST_REVIEWS_review_public_review_reactions_aggregate_aggregate | null;
+}
+
 export interface GET_BEST_REVIEWS_review_public {
   __typename: "review_public";
   id: any | null;
@@ -9367,6 +9377,10 @@ export interface GET_BEST_REVIEWS_review_public {
   content: string | null;
   updated_at: any | null;
   created_at: any | null;
+  /**
+   * An aggregated array relationship
+   */
+  review_reactions_aggregate: GET_BEST_REVIEWS_review_public_review_reactions_aggregate;
 }
 
 export interface GET_BEST_REVIEWS {
@@ -13022,6 +13036,8 @@ export enum voucher_plan_update_column {
   id = "id",
   is_transferable = "is_transferable",
   product_quantity_limit = "product_quantity_limit",
+  sale_amount = "sale_amount",
+  sale_price = "sale_price",
   started_at = "started_at",
   title = "title",
   updated_at = "updated_at",
@@ -13032,6 +13048,7 @@ export enum voucher_plan_update_column {
  */
 export enum voucher_update_column {
   created_at = "created_at",
+  deleted_at = "deleted_at",
   id = "id",
   member_id = "member_id",
   voucher_code_id = "voucher_code_id",
@@ -21740,6 +21757,7 @@ export interface voucher_bool_exp {
   _not?: voucher_bool_exp | null;
   _or?: (voucher_bool_exp | null)[] | null;
   created_at?: timestamptz_comparison_exp | null;
+  deleted_at?: timestamp_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -21807,6 +21825,7 @@ export interface voucher_code_on_conflict {
  */
 export interface voucher_insert_input {
   created_at?: any | null;
+  deleted_at?: any | null;
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
@@ -21846,6 +21865,8 @@ export interface voucher_plan_bool_exp {
   id?: uuid_comparison_exp | null;
   is_transferable?: Boolean_comparison_exp | null;
   product_quantity_limit?: Int_comparison_exp | null;
+  sale_amount?: Int_comparison_exp | null;
+  sale_price?: numeric_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -21865,6 +21886,8 @@ export interface voucher_plan_insert_input {
   id?: any | null;
   is_transferable?: boolean | null;
   product_quantity_limit?: number | null;
+  sale_amount?: number | null;
+  sale_price?: any | null;
   started_at?: any | null;
   title?: string | null;
   updated_at?: any | null;

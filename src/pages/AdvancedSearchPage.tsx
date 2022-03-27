@@ -41,7 +41,7 @@ const StyledLayout = styled.div`
   grid-gap: 1rem;
 
   @media (min-width: ${BREAK_POINT}px) {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 `
 

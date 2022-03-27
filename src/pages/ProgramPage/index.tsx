@@ -161,18 +161,10 @@ const ProgramPage: React.VFC = () => {
 
                 {settings['layout.program_page'] && (
                   <div className="mb-5">
-                    <ProgramBestReviewsCarousel pathname={pathname} />
-                    <div className="text-center mt-3">
-                      <Button
-                        variant="outline"
-                        colorScheme="primary"
-                        onClick={() => {
-                          customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' })
-                        }}
-                      >
-                        {formatMessage(defineMessage({ id: 'review.ui.more', defaultMessage: '更多評論' }))}
-                      </Button>
-                    </div>
+                    <ProgramBestReviewsCarousel
+                      pathname={pathname}
+                      onReviewBlockScroll={() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                    />
                   </div>
                 )}
 

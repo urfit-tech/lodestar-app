@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { SkeletonText } from '@chakra-ui/react'
+import { Button, SkeletonText } from '@chakra-ui/react'
 import { Carousel } from 'antd'
 import gql from 'graphql-tag'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
@@ -24,12 +24,19 @@ const StyledImage = styled.img`
   height: 40px !important;
 `
 
-const ProgramBestReviewsCarousel: React.FC<{ pathname: string }> = ({ pathname }) => {
+const ProgramBestReviewsCarousel: React.FC<{ pathname: string; onReviewBlockScroll: () => void }> = ({
+  pathname,
+  onReviewBlockScroll,
+}) => {
   const { formatMessage } = useIntl()
   const { loading, data: reviews } = useBestReviews(pathname)
 
   if (loading) {
     return <SkeletonText />
+  }
+
+  if (reviews.length === 0) {
+    return <></>
   }
 
   return (
@@ -40,7 +47,6 @@ const ProgramBestReviewsCarousel: React.FC<{ pathname: string }> = ({ pathname }
       <StyledDivider className="mt-1" />
 
       <Carousel
-        autoplay
         arrows
         pauseOnHover
         dots={false}
@@ -58,6 +64,12 @@ const ProgramBestReviewsCarousel: React.FC<{ pathname: string }> = ({ pathname }
           />
         ))}
       </Carousel>
+
+      <div className="text-center mt-3">
+        <Button variant="outline" colorScheme="primary" onClick={onReviewBlockScroll}>
+          {formatMessage(defineMessage({ id: 'review.ui.more', defaultMessage: '更多評論' }))}
+        </Button>
+      </div>
     </div>
   )
 }
@@ -89,6 +101,11 @@ const useBestReviews: (pathname: string) => {
           content
           updated_at
           created_at
+          review_reactions_aggregate {
+            aggregate {
+              count
+            }
+          }
         }
       }
     `,
@@ -98,15 +115,17 @@ const useBestReviews: (pathname: string) => {
   return {
     loading,
     data:
-      data?.review_public.map(v => ({
-        id: v.id,
-        memberId: v.member_id,
-        score: v.score,
-        title: v.title,
-        content: v.content,
-        updatedAt: new Date(v.updated_at),
-        createdAt: new Date(v.created_at),
-      })) || [],
+      data?.review_public
+        .filter(v => v.review_reactions_aggregate.aggregate?.count)
+        .map(v => ({
+          id: v.id,
+          memberId: v.member_id,
+          score: v.score,
+          title: v.title,
+          content: v.content,
+          updatedAt: new Date(v.updated_at),
+          createdAt: new Date(v.created_at),
+        })) || [],
   }
 }
 
