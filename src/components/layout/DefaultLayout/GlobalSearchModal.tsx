@@ -483,15 +483,22 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
       query GET_PRODUCT_FILTER_OPTIONS($class: String) {
         category(
           where: {
+            filterable: { _eq: true }
             class: { _eq: $class }
             program_categories: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } }
           }
+          order_by: { position: asc }
         ) {
           id
           name
         }
         app_tag(
-          where: { tag: { program_tags: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } } } }
+          where: {
+            tag: {
+              filterable: { _eq: true }
+              program_tags: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } }
+            }
+          }
         ) {
           name: tag_name
         }
