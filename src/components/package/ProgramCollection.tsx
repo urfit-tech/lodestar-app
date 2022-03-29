@@ -46,7 +46,7 @@ const ProgramCollection: React.VFC<{
 
   return (
     <div className="container p-4">
-      <div className="d-flex align-items-center justify-content-start flex-wrap mb-5">
+      {/* <div className="d-flex align-items-center justify-content-start flex-wrap mb-5">
         <StyledCategoryButton
           type="link"
           shape="round"
@@ -69,7 +69,7 @@ const ProgramCollection: React.VFC<{
             {category.name}
           </StyledCategoryButton>
         ))}
-      </div>
+      </div> */}
 
       {!noDisplayTypeButton && (
         <StyledSwitchButton className="mb-3">

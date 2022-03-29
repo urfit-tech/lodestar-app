@@ -65,3 +65,56 @@
 .fb_customer_chat_bubble_pop_in {
   bottom: 100px !important;
 }
+
+// Header
+.ant-layout-header {
+  background: #019D96;
+}
+header .d-flex.align-items-center a img[alt="logo"] {
+  max-height: 50px;
+  margin-top: -6px;
+}
+header .chakra-input {
+  background: #FFFFFF;
+  border: none;
+  outline: none;
+}
+header .d-flex.align-items-center > button {
+  position: relative;
+  color: #FFFFFF !important;
+  background: #019D96 !important;
+  z-index: 1;
+}
+header .ant-badge > button,
+header .d-flex.align-items-center > div {
+  color: #FFFFFF !important;
+}
+// 「免費體驗」按鈕
+header .d-flex.align-items-center > button:first-child {
+  margin-right: 1rem;
+  margin-left: 1rem;
+  color: #373737 !important;
+}
+header .d-flex.align-items-center > button:first-child::before {
+  content: '';
+  margin-right: 5px;
+  margin-top: -2px;
+  width: 18px;
+  height: 16px;
+  background: url(./images/icon-headphone.png) center center no-repeat;
+  background-size: cover;
+}
+header .d-flex.align-items-center > button:first-child::after {
+  content: '';
+  position: absolute;
+  height: 42px;
+  width: 100%;
+  border-radius: 46px;
+  color: #373737 !important;
+  background: #FBEF50;
+  z-index: -1;
+}
+// 漢堡選單
+header .ant-btn.ant-btn-link.ant-btn-icon-only {
+  color: #FFFFFF;
+}

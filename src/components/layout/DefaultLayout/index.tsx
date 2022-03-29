@@ -196,7 +196,8 @@ const DefaultLayout: React.FC<{
                         }
                         onClick={() => history.push(`/members/${currentMemberId}`)}
                       >
-                        {formatMessage(commonMessages.button.myPage)}
+                        {/* {formatMessage(commonMessages.button.myPage)} */}
+                        我的課程
                       </MenuButton>
                     </Menu>
                   )))}

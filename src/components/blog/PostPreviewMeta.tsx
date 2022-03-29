@@ -21,10 +21,10 @@ const PostPreviewMeta: React.VFC<{
         <Icon as={UserOIcon} className="mr-1" />
         <span className="mr-2">{member?.name || ''}</span>
       </div>
-      <div className="mb-1">
+      {/* <div className="mb-1">
         <Icon as={CalendarAltOIcon} className="mr-1" />
         <span>{publishedAt ? moment(publishedAt).format('YYYY-MM-DD') : ''}</span>
-      </div>
+      </div> */}
     </StyledPostMeta>
   )
 }
