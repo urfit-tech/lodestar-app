@@ -47,8 +47,8 @@ const FeaturingPostItem: React.VFC<
         <StyledPostMeta>
           <Icon as={UserOIcon} className="mr-1" />
           <span className="mr-2">{member?.name || ''}</span>
-          <Icon as={CalendarAltOIcon} className="mr-1" />
-          <span>{publishedAt ? moment(publishedAt).format('YYYY-MM-DD') : ''}</span>
+          {/* <Icon as={CalendarAltOIcon} className="mr-1" />
+          <span>{publishedAt ? moment(publishedAt).format('YYYY-MM-DD') : ''}</span> */}
         </StyledPostMeta>
       </StyledBody>
     </StyledWrapper>
