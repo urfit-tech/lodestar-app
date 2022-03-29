@@ -103,7 +103,7 @@ const ReviewCollectionBlock: React.VFC<{
       <StyledTitle>{title || formatMessage(reviewMessages.title.programReview)}</StyledTitle>
       <StyledDivider mt={1} />
 
-      <div className="d-flex align-items-center mt-3">
+      <div className="d-flex align-items-center my-3">
         <StyledAvgScore className="mr-1">
           {isMoreThanReviewLowerBound || isProductAdmin ? (averageScore === 0 ? 0 : averageScore?.toFixed(1)) : 0}
         </StyledAvgScore>

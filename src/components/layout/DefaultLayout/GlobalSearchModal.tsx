@@ -528,34 +528,19 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
       },
     },
   )
-  const categories = map(([categoryName, subCategories]) => {
-    if (subCategories.length === 1) {
-      return {
-        ...subCategories[0],
-        subCategories: [],
-      }
-    }
-
-    return {
+  const categories = map(
+    ([categoryName, subCategories]) => ({
       id: subCategories.filter(cat => cat.name === categoryName)[0]?.id,
       name: categoryName,
       subCategories: subCategories
         .filter(cat => cat.name !== categoryName)
         .map(cat => ({ id: cat.id, name: cat.name.split('/')[1] })),
-    }
-  }, toPairs(groupBy<{ id: string; name: string }>(category => category.name.split('/')[0], data?.category || [])))
+    }),
+    toPairs(groupBy<{ id: string; name: string }>(category => category.name.split('/')[0], data?.category || [])),
+  )
 
-  const tags = map(([tagName, subTags]) => {
-    if (subTags.length === 1) {
-      const [{ name }] = subTags
-      return {
-        id: name,
-        name: name,
-        subTags: [],
-      }
-    }
-
-    return {
+  const tags = map(
+    ([tagName, subTags]) => ({
       id: subTags.filter(tag => tag.name === tagName)[0]?.name,
       name: tagName,
       subTags: subTags
@@ -564,8 +549,9 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
           id: tag.name,
           name: tag.name.split('/')[1],
         })),
-    }
-  }, toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], data?.app_tag || [])))
+    }),
+    toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], data?.app_tag || [])),
+  )
 
   return {
     isLoading: loading,

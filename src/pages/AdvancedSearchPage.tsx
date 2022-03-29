@@ -61,7 +61,6 @@ const StyledProgramTitle = styled.h3`
   }
 `
 const StyledName = styled.span`
-  font-family: NotoSansCJKtc;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.4px;

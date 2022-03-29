@@ -160,6 +160,21 @@ const ProgramPage: React.VFC = () => {
                 )}
 
                 {settings['layout.program_page'] && (
+                  <Responsive.Default>
+                    <StyledIntroWrapper className="col-12 col-lg-4 mb-5 p-0">
+                      {!!program.tags.length && (
+                        <ProgramTagCard
+                          tags={program.tags.map(tag => ({
+                            id: tag,
+                            name: tag,
+                          }))}
+                        />
+                      )}
+                    </StyledIntroWrapper>
+                  </Responsive.Default>
+                )}
+
+                {settings['layout.program_page'] && (
                   <div className="mb-5">
                     <ProgramBestReviewsCarousel
                       pathname={pathname}
@@ -180,16 +195,18 @@ const ProgramPage: React.VFC = () => {
               </div>
 
               {settings['layout.program_page'] ? (
-                <StyledIntroWrapper className="col-12 col-lg-4 mb-3">
-                  {!!program.tags.length && (
-                    <ProgramTagCard
-                      tags={program.tags.map(tag => ({
-                        id: tag,
-                        name: tag,
-                      }))}
-                    />
-                  )}
-                </StyledIntroWrapper>
+                <Responsive.Desktop>
+                  <StyledIntroWrapper className="col-12 col-lg-4 mb-3">
+                    {!!program.tags.length && (
+                      <ProgramTagCard
+                        tags={program.tags.map(tag => ({
+                          id: tag,
+                          name: tag,
+                        }))}
+                      />
+                    )}
+                  </StyledIntroWrapper>
+                </Responsive.Desktop>
               ) : (
                 <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
                   <div>
