@@ -134,8 +134,8 @@ const BlogPostPage: React.VFC = () => {
             <StyledPostMeta className="pb-3">
               <Icon as={UserOIcon} className="mr-1" />
               <span className="mr-2">{post?.author.name}</span>
-              <Icon as={CalendarAltOIcon} className="mr-1" />
-              <span className="mr-2">{post?.publishedAt ? moment(post.publishedAt).format('YYYY-MM-DD') : ''}</span>
+              {/* <Icon as={CalendarAltOIcon} className="mr-1" /> */}
+              {/* <span className="mr-2">{post?.publishedAt ? moment(post.publishedAt).format('YYYY-MM-DD') : ''}</span> */}
               <Icon as={EyeIcon} className="mr-1" />
               <span>{post?.views}</span>
             </StyledPostMeta>

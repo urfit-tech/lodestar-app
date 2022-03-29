@@ -21,11 +21,12 @@ const PodcastAlbumInstructorCollectionBlock: React.VFC<{
   const { formatMessage } = useIntl()
 
   return (
-    <div>
-      <StyledTitle>{customTitle || formatMessage(productMessages.program.title.instructorIntro)}</StyledTitle>
-      <Divider className="mb-3" />
-      <CreatorCollection key={podcastAlbum.id} creatorId={podcastAlbum.author.id} />
-    </div>
+    // <div>
+    //   <StyledTitle>{customTitle || formatMessage(productMessages.program.title.instructorIntro)}</StyledTitle>
+    //   <Divider className="mb-3" />
+    //   <CreatorCollection key={podcastAlbum.id} creatorId={podcastAlbum.author.id} />
+    // </div>
+    <span></span>
   )
 }
 

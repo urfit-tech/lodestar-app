@@ -58,15 +58,15 @@ const ProgramContentCountBlock: React.VFC<{
         <span>{Math.floor(totalDuration / 60)}</span>
         <span>{formatMessage(commonMessages.unit.min)}</span>
       </div>
-      <div className="d-flex flex-column justify-content-center">
+      {/* <div className="d-flex flex-column justify-content-center">
         <span>
           {program.contentSections.filter(programContentSection => programContentSection.contents.length).length}
         </span>
         <span>{formatMessage(commonMessages.unit.chapter)}</span>
-      </div>
+      </div> */}
       <div className="d-flex flex-column justify-content-center">
         <span>{numProgramContents}</span>
-        <span>{formatMessage(commonMessages.unit.content)}</span>
+        <span>{formatMessage(commonMessages.unit.chapter)}</span>
       </div>
     </StyledCountBlock>
   )
