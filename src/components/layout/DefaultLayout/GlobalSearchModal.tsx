@@ -20,6 +20,7 @@ import React, { useState } from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { notEmpty } from '../../../helpers'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as SearchIcon } from '../../../images/search.svg'
 
@@ -217,6 +218,20 @@ const GlobalSearchFilter: React.VFC<{
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
+  const tagsFilter: string[] = (() => {
+    let tagsFilterSetting = []
+    try {
+      tagsFilterSetting = JSON.parse(settings['global_search.tags_filter'])
+    } catch {
+      return []
+    }
+    if (Array.isArray(tagsFilterSetting)) {
+      return tagsFilterSetting.filter(tag => typeof tag === 'string')
+    } else {
+      return []
+    }
+  })()
+
   return (
     <div>
       <div>
@@ -320,7 +335,10 @@ const GlobalSearchFilter: React.VFC<{
         <StyledFilterTitle>
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選條件' }))}
         </StyledFilterTitle>
-        {tags.map(tag => {
+        {(tagsFilter.length > 0
+          ? tagsFilter.map(tagName => tags.find(tag => tag.name.split('/')[0] === tagName)).filter(notEmpty)
+          : tags
+        ).map(tag => {
           const isTagActive = includes(tag.id ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)
 
           return (
