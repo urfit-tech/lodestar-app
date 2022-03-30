@@ -16,6 +16,8 @@ import ProgramPackageBanner from '../components/package/ProgramPackageBanner'
 import ProgramPackagePlanCard from '../components/package/ProgramPackagePlanCard'
 import { ProgramDisplayedCard } from '../components/program/ProgramDisplayedCard'
 import { ProgramDisplayedListItem } from '../components/program/ProgramDisplayedListItem'
+import ClassCouponBlock from '../components/ClassCouponBlock'
+import Responsive from '../components/common/Responsive'
 import { desktopViewMixin } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { useEnrolledProgramIds } from '../hooks/program'
@@ -106,6 +108,9 @@ const ProgramPackagePage: React.VFC = () => {
           {programPackageIntroduction.programPackagePlans.length > 0 ? (
             <>
               <div className="col-12 col-lg-8 pt-5">
+                <Responsive.Default>
+                  <ClassCouponBlock />
+                </Responsive.Default>
                 <StyledTitle className="mb-4">{formatMessage(messages.introduction)}</StyledTitle>
                 <div className="mb-5">
                   <BraftContent>{programPackageIntroduction.description}</BraftContent>
@@ -133,6 +138,9 @@ const ProgramPackagePage: React.VFC = () => {
                 />
               </div>
               <div ref={planBlockRef} className="col-12 col-lg-4 pt-5">
+                <Responsive.Desktop>
+                  <ClassCouponBlock />
+                </Responsive.Desktop>
                 {programPackageIntroduction.programPackagePlans.map(programPackagePlan => (
                   <div key={programPackagePlan.id} className="mb-4">
                     <ProgramPackagePlanCard

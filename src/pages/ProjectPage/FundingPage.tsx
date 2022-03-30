@@ -14,6 +14,8 @@ import FundingIntroductionPane from '../../components/project/FundingIntroductio
 import FundingPlansPane from '../../components/project/FundingPlansPane'
 import FundingSummaryBlock from '../../components/project/FundingSummaryBlock'
 import FundingUpdatesPane from '../../components/project/FundingUpdatesPane'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
+import Responsive from '../../components/common/Responsive'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProjectProps } from '../../types/project'
@@ -153,6 +155,12 @@ const FundingPage: React.VFC<ProjectProps> = ({
           </div>
         </div>
       </StyledCover>
+
+      <Responsive.Default>
+        <div className="col-12">
+          <ClassCouponBlock />
+        </div>
+      </Responsive.Default>
 
       <div ref={tabRef}>
         <StyledTabs
