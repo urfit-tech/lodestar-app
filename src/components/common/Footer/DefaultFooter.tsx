@@ -52,11 +52,11 @@ const DefaultFooter: React.VFC = () => {
     <StyledFooter>
       <StyledContainer className="container d-flex align-items-center justify-content-center flex-wrap">
         <div className="order-1 d-flex align-items-center">
-          <StyledLinkBlock className="d-flex align-items-center justify-content-center flex-wrap">
+          {/* <StyledLinkBlock className="d-flex align-items-center justify-content-center flex-wrap">
             <NavLinks />
             <div className="blank" />
             <SocialLinks />
-          </StyledLinkBlock>
+          </StyledLinkBlock> */}
           {enabledModules.locale && (
             <div>
               <Divider type="vertical" className="mx-3" />
