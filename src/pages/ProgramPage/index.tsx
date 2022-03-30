@@ -336,7 +336,7 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
         .filter(tag => tag.name !== tagName)
         .map(tag => ({
           id: tag.name,
-          name: tag.name,
+          name: tag.name.split('/')[1],
         })),
     }),
     toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], tags || [])),
@@ -354,7 +354,7 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
                 colorScheme="primary"
                 onClick={() =>
                   history.push('/search/advanced', {
-                    tagNameSList: [[subTag.name]],
+                    tagNameSList: [[subTag.id]],
                   })
                 }
               >
@@ -376,7 +376,7 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
                           colorScheme="primary"
                           onClick={() =>
                             history.push('/search/advanced', {
-                              tagNameSList: [[subTag.name]],
+                              tagNameSList: [[subTag.id]],
                             })
                           }
                         >

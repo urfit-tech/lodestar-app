@@ -48,7 +48,6 @@ const ProgramBestReviewsCarousel: React.FC<{ pathname: string; onReviewBlockScro
 
       <Carousel
         arrows
-        pauseOnHover
         dots={false}
         prevArrow={<StyledImage src={`https://static.kolable.com/images/xuemi/angle-thin-left.svg`} />}
         nextArrow={<StyledImage src={`https://static.kolable.com/images/xuemi/angle-thin-right.svg`} />}
