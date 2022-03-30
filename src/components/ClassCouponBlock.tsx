@@ -4,11 +4,9 @@ import styled from 'styled-components'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 
 const BlockContainer = styled.section`
-  display: flex;
   width: 100%;
   padding: 24px;
   margin-bottom: 2.5rem;
-  justify-content: center;
   flex-wrap: wrap;
   background: #9babad;
   border-radius: 4px;
@@ -20,9 +18,10 @@ const BlockText = styled.p`
   font-size: 17px;
 `
 const Button = styled.button`
+  display: block;
   height: 42px;
-  padding: 0 1rem;
-  margin-top: 10px;
+  width: 96px;
+  margin: 10px auto 0 auto;
   background: #019D96;
   color: #FFFFFF;
   border-radius: 42px;
