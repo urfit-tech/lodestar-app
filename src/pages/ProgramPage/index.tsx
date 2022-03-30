@@ -14,6 +14,7 @@ import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -147,6 +148,7 @@ const ProgramPage: React.VFC = () => {
               <div className="col-12 col-lg-8">
                 {!settings['layout.program_page'] && (
                   <Responsive.Default>
+                    <ClassCouponBlock />
                     <StyledProgramInfoCard>
                       <ProgramContentCountBlock program={program} />
                     </StyledProgramInfoCard>
@@ -210,6 +212,7 @@ const ProgramPage: React.VFC = () => {
                 <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
                   <div>
                     <Responsive.Desktop>
+                      <ClassCouponBlock />
                       <ProgramInfoCard instructorId={instructorId} program={program} />
                     </Responsive.Desktop>
 

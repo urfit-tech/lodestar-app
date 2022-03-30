@@ -9,6 +9,7 @@ import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+<<<<<<< HEAD:src/pages/ProgramPackagePage/ProgramPackagePage.tsx
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ProgramCollection from '../../components/package/ProgramCollection'
@@ -22,6 +23,22 @@ import { useEnrolledProgramIds } from '../../hooks/program'
 import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
 import NotFoundPage from '../NotFoundPage'
 import ProgramPackagePageHelmet from './ProgramPackagePageHelmet'
+=======
+import { BraftContent } from '../components/common/StyledBraftEditor'
+import DefaultLayout from '../components/layout/DefaultLayout'
+import ProgramCollection from '../components/package/ProgramCollection'
+import ProgramPackageBanner from '../components/package/ProgramPackageBanner'
+import ProgramPackagePlanCard from '../components/package/ProgramPackagePlanCard'
+import { ProgramDisplayedCard } from '../components/program/ProgramDisplayedCard'
+import { ProgramDisplayedListItem } from '../components/program/ProgramDisplayedListItem'
+import ClassCouponBlock from '../components/ClassCouponBlock'
+import Responsive from '../components/common/Responsive'
+import { desktopViewMixin } from '../helpers'
+import { commonMessages } from '../helpers/translation'
+import { useEnrolledProgramIds } from '../hooks/program'
+import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../hooks/programPackage'
+import NotFoundPage from './NotFoundPage'
+>>>>>>> 766246d3... [dev] 商品頁加上$100區塊:src/pages/ProgramPackagePage.tsx
 
 const StyledTitle = styled.h2`
   ${CommonLargeTitleMixin}
@@ -108,6 +125,9 @@ const ProgramPackagePage: React.VFC = () => {
           {programPackageIntroduction.plans.length > 0 ? (
             <>
               <div className="col-12 col-lg-8 pt-5">
+                <Responsive.Default>
+                  <ClassCouponBlock />
+                </Responsive.Default>
                 <StyledTitle className="mb-4">{formatMessage(messages.introduction)}</StyledTitle>
                 <div className="mb-5">
                   <BraftContent>{programPackageIntroduction.description}</BraftContent>
@@ -143,7 +163,14 @@ const ProgramPackagePage: React.VFC = () => {
                 />
               </div>
               <div ref={planBlockRef} className="col-12 col-lg-4 pt-5">
+<<<<<<< HEAD:src/pages/ProgramPackagePage/ProgramPackagePage.tsx
                 {programPackageIntroduction.plans.map(programPackagePlan => (
+=======
+                <Responsive.Desktop>
+                  <ClassCouponBlock />
+                </Responsive.Desktop>
+                {programPackageIntroduction.programPackagePlans.map(programPackagePlan => (
+>>>>>>> 766246d3... [dev] 商品頁加上$100區塊:src/pages/ProgramPackagePage.tsx
                   <div key={programPackagePlan.id} className="mb-4">
                     <ProgramPackagePlanCard
                       programPackageId={programPackageId}
