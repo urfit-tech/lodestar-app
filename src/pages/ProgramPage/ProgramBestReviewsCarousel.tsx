@@ -4,6 +4,7 @@ import { Carousel } from 'antd'
 import gql from 'graphql-tag'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import moment from 'moment'
+import { useState } from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import MemberAvatar from '../../components/common/MemberAvatar'
@@ -19,9 +20,26 @@ const StyledTitle = styled.h2`
   color: var(--gray-darker);
 `
 
-const StyledImage = styled.img`
-  width: 40px !important;
-  height: 40px !important;
+const StyledPrevArrow = styled.img`
+  &&& {
+    width: 40px !important;
+    height: 100% !important;
+    margin: 0 20px;
+    display: block;
+    z-index: 100;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+  }
+`
+
+const StyledNextArrow = styled.img`
+  &&& {
+    width: 40px !important;
+    height: 100% !important;
+    margin: 0 20px;
+    display: block;
+    z-index: 100;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 1) 100%, rgba(255, 255, 255, 0) 0%);
+  }
 `
 
 const ProgramBestReviewsCarousel: React.FC<{ pathname: string; onReviewBlockScroll: () => void }> = ({
@@ -30,6 +48,7 @@ const ProgramBestReviewsCarousel: React.FC<{ pathname: string; onReviewBlockScro
 }) => {
   const { formatMessage } = useIntl()
   const { loading, data: reviews } = useBestReviews(pathname)
+  const [isArrowShow, setIsArrowShow] = useState(true)
 
   if (loading) {
     return <SkeletonText />
@@ -46,23 +65,25 @@ const ProgramBestReviewsCarousel: React.FC<{ pathname: string; onReviewBlockScro
       </StyledTitle>
       <StyledDivider className="mt-1" />
 
-      <Carousel
-        arrows
-        dots={false}
-        prevArrow={<StyledImage src={`https://static.kolable.com/images/xuemi/angle-thin-left.svg`} />}
-        nextArrow={<StyledImage src={`https://static.kolable.com/images/xuemi/angle-thin-right.svg`} />}
-      >
-        {reviews.map(review => (
-          <ReviewCarouselItem
-            memberId={review.memberId}
-            score={review.score}
-            title={review.title}
-            content={review.content}
-            createdAt={review.createdAt}
-            updatedAt={review.updatedAt}
-          />
-        ))}
-      </Carousel>
+      <div onMouseEnter={() => setIsArrowShow(true)} onMouseLeave={() => setIsArrowShow(false)}>
+        <Carousel
+          arrows={isArrowShow}
+          dots={false}
+          prevArrow={<StyledPrevArrow src={`https://static.kolable.com/images/xuemi/angle-thin-left.svg`} />}
+          nextArrow={<StyledNextArrow src={`https://static.kolable.com/images/xuemi/angle-thin-right.svg`} />}
+        >
+          {reviews.map(review => (
+            <ReviewCarouselItem
+              memberId={review.memberId}
+              score={review.score}
+              title={review.title}
+              content={review.content}
+              createdAt={review.createdAt}
+              updatedAt={review.updatedAt}
+            />
+          ))}
+        </Carousel>
+      </div>
 
       <div className="text-center mt-3">
         <Button variant="outline" colorScheme="primary" onClick={onReviewBlockScroll}>
