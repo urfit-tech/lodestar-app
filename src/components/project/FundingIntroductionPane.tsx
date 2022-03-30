@@ -7,6 +7,7 @@ import { ProjectPlanProps } from '../../types/project'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 import { BraftContent } from '../common/StyledBraftEditor'
 import ProjectPlanCollection from './ProjectPlanCollection'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
 
 const TabPaneContent = styled.div<{ collapsed?: boolean }>`
   position: relative;
@@ -64,6 +65,9 @@ const FundingIntroductionPane: React.VFC<{
         </TabPaneContent>
 
         <div className="col-12 col-lg-4 mb-5">
+          <Responsive.Desktop>
+            <ClassCouponBlock />
+          </Responsive.Desktop>
           <ProjectPlanCollection projectPlans={projectPlans} />
         </div>
       </div>
