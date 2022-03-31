@@ -160,19 +160,26 @@ const ProgramPage: React.VFC = () => {
                 )}
 
                 {settings['layout.program_page'] && (
+                  <Responsive.Default>
+                    <StyledIntroWrapper className="col-12 col-lg-4 mb-5 p-0">
+                      {!!program.tags.length && (
+                        <ProgramTagCard
+                          tags={program.tags.map(tag => ({
+                            id: tag,
+                            name: tag,
+                          }))}
+                        />
+                      )}
+                    </StyledIntroWrapper>
+                  </Responsive.Default>
+                )}
+
+                {settings['layout.program_page'] && (
                   <div className="mb-5">
-                    <ProgramBestReviewsCarousel pathname={pathname} />
-                    <div className="text-center mt-3">
-                      <Button
-                        variant="outline"
-                        colorScheme="primary"
-                        onClick={() => {
-                          customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' })
-                        }}
-                      >
-                        {formatMessage(defineMessage({ id: 'review.ui.more', defaultMessage: '更多評論' }))}
-                      </Button>
-                    </div>
+                    <ProgramBestReviewsCarousel
+                      pathname={pathname}
+                      onReviewBlockScroll={() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                    />
                   </div>
                 )}
 
@@ -188,16 +195,18 @@ const ProgramPage: React.VFC = () => {
               </div>
 
               {settings['layout.program_page'] ? (
-                <StyledIntroWrapper className="col-12 col-lg-4 mb-3">
-                  {!!program.tags.length && (
-                    <ProgramTagCard
-                      tags={program.tags.map(tag => ({
-                        id: tag,
-                        name: tag,
-                      }))}
-                    />
-                  )}
-                </StyledIntroWrapper>
+                <Responsive.Desktop>
+                  <StyledIntroWrapper className="col-12 col-lg-4 mb-3">
+                    {!!program.tags.length && (
+                      <ProgramTagCard
+                        tags={program.tags.map(tag => ({
+                          id: tag,
+                          name: tag,
+                        }))}
+                      />
+                    )}
+                  </StyledIntroWrapper>
+                </Responsive.Desktop>
               ) : (
                 <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
                   <div>
@@ -327,7 +336,7 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
         .filter(tag => tag.name !== tagName)
         .map(tag => ({
           id: tag.name,
-          name: tag.name,
+          name: tag.name.split('/')[1],
         })),
     }),
     toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], tags || [])),
@@ -345,7 +354,7 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
                 colorScheme="primary"
                 onClick={() =>
                   history.push('/search/advanced', {
-                    tagNameSList: [[subTag.name]],
+                    tagNameSList: [[subTag.id]],
                   })
                 }
               >
@@ -367,7 +376,7 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
                           colorScheme="primary"
                           onClick={() =>
                             history.push('/search/advanced', {
-                              tagNameSList: [[subTag.name]],
+                              tagNameSList: [[subTag.id]],
                             })
                           }
                         >

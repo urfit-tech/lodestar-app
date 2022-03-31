@@ -20,6 +20,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import axios from 'axios'
+import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
@@ -30,7 +31,6 @@ import { codeMessages, commonMessages } from '../../helpers/translation'
 import { OrderDiscountProps } from '../../types/checkout'
 import { ProductType } from '../../types/product'
 import PriceLabel from '../common/PriceLabel'
-import ProductTypeLabel from '../common/ProductTypeLabel'
 
 const messages = defineMessages({
   requestRefund: { id: 'order.OrderRequestRefundModal.requestRefund', defaultMessage: '申請退款' },

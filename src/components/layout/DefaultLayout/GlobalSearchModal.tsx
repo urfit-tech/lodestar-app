@@ -20,6 +20,7 @@ import React, { useState } from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { notEmpty } from '../../../helpers'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as SearchIcon } from '../../../images/search.svg'
 
@@ -217,6 +218,20 @@ const GlobalSearchFilter: React.VFC<{
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
+  const tagsFilter: string[] = (() => {
+    let tagsFilterSetting = []
+    try {
+      tagsFilterSetting = JSON.parse(settings['global_search.tags_filter'])
+    } catch {
+      return []
+    }
+    if (Array.isArray(tagsFilterSetting)) {
+      return tagsFilterSetting.filter(tag => typeof tag === 'string')
+    } else {
+      return []
+    }
+  })()
+
   return (
     <div>
       <div>
@@ -320,7 +335,10 @@ const GlobalSearchFilter: React.VFC<{
         <StyledFilterTitle>
           {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選條件' }))}
         </StyledFilterTitle>
-        {tags.map(tag => {
+        {(tagsFilter.length > 0
+          ? tagsFilter.map(tagName => tags.find(tag => tag.name.split('/')[0] === tagName)).filter(notEmpty)
+          : tags
+        ).map(tag => {
           const isTagActive = includes(tag.id ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)
 
           return (
@@ -404,7 +422,7 @@ const GlobalSearchFilter: React.VFC<{
 
         <div className="mb-2">
           <StyledFilterSubTitle className="mb-2">
-            {formatMessage(defineMessage({ id: 'common.ui.duration', defaultMessage: '分鐘' }))}
+            {formatMessage(defineMessage({ id: 'common.ui.duration', defaultMessage: '時長（分鐘）' }))}
           </StyledFilterSubTitle>
           {[0, ...settings['global_search.minute_interval'].split(',').map(Number)].map((minute, i, minutes) => (
             <StyledRoundedButton
@@ -483,15 +501,22 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
       query GET_PRODUCT_FILTER_OPTIONS($class: String) {
         category(
           where: {
+            filterable: { _eq: true }
             class: { _eq: $class }
             program_categories: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } }
           }
+          order_by: { position: asc }
         ) {
           id
           name
         }
         app_tag(
-          where: { tag: { program_tags: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } } } }
+          where: {
+            tag: {
+              filterable: { _eq: true }
+              program_tags: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } }
+            }
+          }
         ) {
           name: tag_name
         }
@@ -503,34 +528,19 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
       },
     },
   )
-  const categories = map(([categoryName, subCategories]) => {
-    if (subCategories.length === 1) {
-      return {
-        ...subCategories[0],
-        subCategories: [],
-      }
-    }
-
-    return {
+  const categories = map(
+    ([categoryName, subCategories]) => ({
       id: subCategories.filter(cat => cat.name === categoryName)[0]?.id,
       name: categoryName,
       subCategories: subCategories
         .filter(cat => cat.name !== categoryName)
         .map(cat => ({ id: cat.id, name: cat.name.split('/')[1] })),
-    }
-  }, toPairs(groupBy<{ id: string; name: string }>(category => category.name.split('/')[0], data?.category || [])))
+    }),
+    toPairs(groupBy<{ id: string; name: string }>(category => category.name.split('/')[0], data?.category || [])),
+  )
 
-  const tags = map(([tagName, subTags]) => {
-    if (subTags.length === 1) {
-      const [{ name }] = subTags
-      return {
-        id: name,
-        name: name,
-        subTags: [],
-      }
-    }
-
-    return {
+  const tags = map(
+    ([tagName, subTags]) => ({
       id: subTags.filter(tag => tag.name === tagName)[0]?.name,
       name: tagName,
       subTags: subTags
@@ -539,8 +549,9 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
           id: tag.name,
           name: tag.name.split('/')[1],
         })),
-    }
-  }, toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], data?.app_tag || [])))
+    }),
+    toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], data?.app_tag || [])),
+  )
 
   return {
     isLoading: loading,
