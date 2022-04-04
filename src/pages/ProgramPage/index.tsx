@@ -81,7 +81,7 @@ const ProgramPage: React.VFC = () => {
   const { pathname } = useLocation()
   const { currentMemberId } = useAuth()
   const { id: appId, settings, enabledModules } = useApp()
-  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`])
+  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
   const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
