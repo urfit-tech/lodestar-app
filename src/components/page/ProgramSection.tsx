@@ -24,7 +24,10 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
     isPrivate: false,
     categoryId: options?.categoryId,
   })
-  const { resourceCollection } = useResourceCollection(programs.map(program => `${appId}:program:${program.id}`))
+  const { resourceCollection } = useResourceCollection(
+    programs.map(program => `${appId}:program:${program.id}`),
+    true,
+  )
 
   if (loadingPrograms)
     return (
