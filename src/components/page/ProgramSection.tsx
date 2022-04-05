@@ -25,7 +25,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
     categoryId: options?.categoryId,
   })
   const { resourceCollection } = useResourceCollection(
-    programs.map(program => `${appId}:program:${program.id}`),
+    programs.slice(0, options?.colAmount || 3).map(program => `${appId}:program:${program.id}`),
     true,
   )
 
