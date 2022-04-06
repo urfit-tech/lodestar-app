@@ -35,6 +35,9 @@ const StyledContainer = styled.div`
     .ant-table-row {
       white-space: nowrap;
     }
+    .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
+      background: #EEE !important;
+    }
   }
 `
 const StyledDate = styled.span`

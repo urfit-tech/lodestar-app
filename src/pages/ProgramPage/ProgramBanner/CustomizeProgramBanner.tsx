@@ -25,7 +25,6 @@ const StyledTitle = styled.h1`
 const StyledVideoWrapper = styled.div<{ backgroundImage?: string }>`
   position: relative;
   padding-top: 56.25%;
-  ${props => props.backgroundImage && `background-image: url(${props.backgroundImage});`}
   background-size: cover;
   background-position: center;
 `

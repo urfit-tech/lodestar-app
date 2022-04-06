@@ -90,7 +90,7 @@ export const CWLearningNavLinks: React.VFC = () => {
     {
       groupName: '社群',
       links: [
-        { name: 'Facebook', url: 'https://www.facebook.com/cwlearning.com.tw', icon: 'facebook' },
+        { name: 'Facebook', url: 'https://www.facebook.com/cwlearning.com.tw', icon: FacebookIcon },
       ]
     },
   ]
@@ -110,8 +110,8 @@ export const CWLearningNavLinks: React.VFC = () => {
                         <NavLinksList>
                           <a href={link.url} target={link.url.includes('https') ? '_blank' : '_self'}>
                             {
-                              link.icon && link.icon === 'facebook' &&
-                              <Icon as={FacebookIcon} />
+                              link.icon &&
+                              <Icon as={link.icon} />
                             }
                             {link.name}
                           </a>
