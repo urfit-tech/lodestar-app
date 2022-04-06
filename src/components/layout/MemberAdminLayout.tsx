@@ -39,7 +39,7 @@ const MemberAdminLayout: React.FC<{
     <DefaultLayout noFooter>
       <div className="d-flex">
         <Responsive.Desktop>
-          <StyledContent className="pl-5 py-5" footerHeight={0}>
+          <StyledContent className="py-5" footerHeight={0}>
             <MemberAdminMenu renderAdminMenu={renderMemberAdminMenu} defaultSelectedKeys={defaultSelectedKeys} />
           </StyledContent>
         </Responsive.Desktop>

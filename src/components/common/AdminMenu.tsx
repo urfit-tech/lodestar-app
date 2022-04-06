@@ -28,10 +28,26 @@ import { useAppRouter } from './AppRouter'
 const StyledMenu = styled(Menu)`
   && {
     border-right: none;
+    padding-right: 5px;
   }
 
   & .ant-menu-item-selected.managementSystem {
     background: none !important;
+  }
+
+  & .ant-menu-item {
+    padding-left: 3rem !important;
+    border-radius: 0 100px 100px 0;
+    &:active {
+      background: #DDD !important;
+    }
+  }
+
+  & .ant-menu-item-selected {
+    background: #DDD !important;
+    &::after {
+      display: none;
+    }
   }
 `
 export type RenderMemberAdminMenuProps = {
@@ -101,24 +117,24 @@ export const MemberAdminMenu: React.VFC<
         </Menu.Item>
       ),
     },
-    {
-      key: 'member_program_issues_admin',
-      item: (
-        <Menu.Item key="member_program_issues_admin">
-          <Icon as={BookIcon} className="mr-2" />
-          {formatMessage(commonMessages.content.courseProblem)}
-        </Menu.Item>
-      ),
-    },
-    {
-      key: 'member_practices_admin',
-      item: enabledModules.practice && (
-        <Menu.Item key="member_practices_admin">
-          <Icon as={BookIcon} className="mr-2" />
-          {formatMessage(commonMessages.content.practiceManagement)}
-        </Menu.Item>
-      ),
-    },
+    // {
+    //   key: 'member_program_issues_admin',
+    //   item: (
+    //     <Menu.Item key="member_program_issues_admin">
+    //       <Icon as={BookIcon} className="mr-2" />
+    //       {formatMessage(commonMessages.content.courseProblem)}
+    //     </Menu.Item>
+    //   ),
+    // },
+    // {
+    //   key: 'member_practices_admin',
+    //   item: enabledModules.practice && (
+    //     <Menu.Item key="member_practices_admin">
+    //       <Icon as={BookIcon} className="mr-2" />
+    //       {formatMessage(commonMessages.content.practiceManagement)}
+    //     </Menu.Item>
+    //   ),
+    // },
     {
       key: 'member_orders_admin',
       item: (
@@ -155,15 +171,15 @@ export const MemberAdminMenu: React.VFC<
         </Menu.Item>
       ),
     },
-    {
-      key: 'member_group_buying_admin',
-      item: enabledModules.group_buying && (
-        <Menu.Item key="member_group_buying_admin">
-          <Icon as={GroupBuyIcon} className="mr-2" />
-          {formatMessage(commonMessages.ui.groupBuying)}
-        </Menu.Item>
-      ),
-    },
+    // {
+    //   key: 'member_group_buying_admin',
+    //   item: enabledModules.group_buying && (
+    //     <Menu.Item key="member_group_buying_admin">
+    //       <Icon as={GroupBuyIcon} className="mr-2" />
+    //       {formatMessage(commonMessages.ui.groupBuying)}
+    //     </Menu.Item>
+    //   ),
+    // },
     {
       key: 'member_coupons_admin',
       item: (
