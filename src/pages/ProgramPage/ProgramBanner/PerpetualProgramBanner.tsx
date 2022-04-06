@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import BlurredBanner from '../../../components/common/BlurredBanner'
 import FullSizeBanner from './FullSizeBanner'
 import { BREAK_POINT } from '../../../components/common/Responsive'
 import { commonMessages } from '../../../helpers/translation'
@@ -77,8 +76,7 @@ const PerpetualProgramBanner: React.VFC<{
   const { formatMessage } = useIntl()
 
   return (
-    // <BlurredBanner coverUrl={program.coverUrl || undefined}>
-    <BlurredBanner>
+    <div>
       <FullSizeBanner coverUrl={program.coverUrl} />
       <StyledTitleBlock noVideo={!program.coverVideoUrl}>
         <StyledTags className="text-center">
@@ -131,7 +129,7 @@ const PerpetualProgramBanner: React.VFC<{
           </div>
         </StyledVideoBlock>
       )}
-    </BlurredBanner>
+    </div>
   )
 }
 

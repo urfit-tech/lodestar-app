@@ -32,7 +32,7 @@ const BlurredCover = styled.div<{ coverUrl?: { mobileUrl?: string; desktopUrl?: 
 `
 const ContentWrapper = styled.div`
   position: relative;
-  background: white;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
   height: 100%;
 `
 
