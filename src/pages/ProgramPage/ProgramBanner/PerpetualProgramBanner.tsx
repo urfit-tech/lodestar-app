@@ -5,6 +5,7 @@ import ReactPlayer from 'react-player'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import BlurredBanner from '../../../components/common/BlurredBanner'
+import FullSizeBanner from './FullSizeBanner'
 import { BREAK_POINT } from '../../../components/common/Responsive'
 import VideoPlayer from '../../../components/common/VideoPlayer'
 import { commonMessages } from '../../../helpers/translation'
@@ -17,7 +18,7 @@ const StyledTags = styled.div`
 `
 const StyledTitle = styled.h1`
   margin: 0;
-  color: white;
+  font-weight: 500;
   font-size: 28px;
   line-height: 1.23;
   letter-spacing: 0.23px;
@@ -77,9 +78,9 @@ const PerpetualProgramBanner: React.VFC<{
   const { formatMessage } = useIntl()
 
   return (
-    <BlurredBanner
-      coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
-    >
+    // <BlurredBanner coverUrl={program.coverUrl || undefined}>
+    <BlurredBanner>
+      <FullSizeBanner coverUrl={program.coverUrl} />
       <StyledTitleBlock noVideo={!program.coverVideoUrl}>
         <StyledTags className="text-center">
           {program.tags?.map(programTag => (
