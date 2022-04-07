@@ -6,3 +6,8 @@ export type Category = {
 
 export type ProductRoleName = 'owner' | 'instructor' | 'assistant' | 'app-owner'
 export type StatusType = 'loading' | 'error' | 'success' | 'idle'
+export type ApiResponse<T = null> = {
+  code: string
+  message: string
+  result: T
+}

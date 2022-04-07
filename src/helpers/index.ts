@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl'
 import { css, FlattenSimpleInterpolation } from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import { BREAK_POINT } from '../components/common/Responsive'
+import { ApiResponse } from '../types/general'
 import { helperMessages } from './translation'
 
 export const TPDirect = (window as any)['TPDirect']
@@ -392,3 +393,20 @@ export const decodeHtmlEntities = (data: string) => {
     return match
   })
 }
+
+export const getRedeemLink = async (
+  type: 'Voucher',
+  target: string,
+  authToken: string | null,
+  config?: AxiosRequestConfig,
+) =>
+  await axios.request<ApiResponse<{ link: string }>>({
+    ...config,
+    method: 'POST',
+    url: `${process.env.REACT_APP_API_BASE_ROOT}/discount/get-redeem-link`,
+    data: {
+      type,
+      target,
+    },
+    headers: { authorization: `Bearer ${authToken}` },
+  })

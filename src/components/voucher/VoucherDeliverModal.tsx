@@ -5,21 +5,24 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  InputGroup,
+  InputRightElement,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { Input } from '../../components/common/CommonForm'
 import CommonModal from '../../components/common/CommonModal'
 import types from '../../hasura'
-import { handleError } from '../../helpers'
-import { commonMessages } from '../../helpers/translation'
+import { getRedeemLink, handleError } from '../../helpers'
+import { codeMessages, commonMessages } from '../../helpers/translation'
 import { useMemberValidation } from '../../hooks/common'
+import voucherMessages from './translation'
 
 const StyledTitle = styled.h3`
   ${MultiLineTruncationMixin}
@@ -42,10 +45,12 @@ const VoucherDeliverModal: React.VFC<{
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [email, setEmail] = useState('')
-  const { currentMemberId } = useAuth()
+  const [redeemLinkChecking, setRedeemLinkChecking] = useState(false)
+
+  const [redeemLink, setRedeemLink] = useState('')
+  const { currentMemberId, authToken } = useAuth()
   const { memberId, validateStatus } = useMemberValidation(email)
   const memberStatus = memberId === currentMemberId ? 'error' : validateStatus
-
   const toast = useToast()
   const [updateVoucherMember] = useMutation<types.UPDATE_VOUCHER_MEMBER, types.UPDATE_VOUCHER_MEMBERVariables>(gql`
     mutation UPDATE_VOUCHER_MEMBER($voucherId: uuid!, $memberId: String!) {
@@ -54,6 +59,23 @@ const VoucherDeliverModal: React.VFC<{
       }
     }
   `)
+
+  useEffect(() => {
+    if (!voucherId || !isOpen) {
+      return
+    }
+    setRedeemLinkChecking(true)
+    getRedeemLink('Voucher', voucherId, authToken)
+      .then(({ data: { code, message, result } }) => {
+        if (code === 'SUCCESS') {
+          setRedeemLink(result.link)
+        } else {
+          throw new Error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+        }
+      })
+      .catch(handleError)
+      .finally(() => setRedeemLinkChecking(false))
+  }, [authToken, voucherId, isOpen])
 
   const handleSubmit = () => {
     if (memberId) {
@@ -103,6 +125,32 @@ const VoucherDeliverModal: React.VFC<{
         closeOnOverlayClick={false}
       >
         <StyledTitle className="mb-4">{title}</StyledTitle>
+        <FormControl mb="5">
+          <FormLabel>{formatMessage(voucherMessages.VoucherDeliverModal.giftLink)}</FormLabel>
+          <InputGroup>
+            <Input type="link" value={redeemLink} isReadOnly />
+            <InputRightElement width="4.5rem">
+              <Button
+                variant="outline"
+                isDisabled={!redeemLink}
+                isLoading={redeemLinkChecking}
+                style={{ borderTopRightRadius: '0.375rem', borderBottomRightRadius: '0.375rem' }}
+                onClick={() => {
+                  navigator.clipboard.writeText(redeemLink).then(() =>
+                    toast({
+                      title: 'copied',
+                      status: 'success',
+                      duration: 1500,
+                      position: 'top',
+                    }),
+                  )
+                }}
+              >
+                {formatMessage(voucherMessages.VoucherDeliverModal.copyLink)}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+        </FormControl>
         <FormControl isInvalid={memberId === currentMemberId || validateStatus === 'error'}>
           <FormLabel>{formatMessage(commonMessages.label.targetPartner)}</FormLabel>
           <Input
