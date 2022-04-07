@@ -14,7 +14,7 @@ import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect, useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { Input } from '../../components/common/CommonForm'
 import CommonModal from '../../components/common/CommonModal'
@@ -33,25 +33,22 @@ const StyledTitle = styled.h3`
   color: var(--gray-darker);
 `
 
-const messages = defineMessages({
-  transfer: { id: 'common.text.transfer', defaultMessage: '轉贈' },
-})
-
 const VoucherDeliverModal: React.VFC<{
   title: string
   voucherId: string
   onRefetch?: (() => void) | null
 }> = ({ title, voucherId, onRefetch }) => {
+  const toast = useToast()
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { currentMemberId, authToken } = useAuth()
   const [email, setEmail] = useState('')
   const [redeemLinkChecking, setRedeemLinkChecking] = useState(false)
-
   const [redeemLink, setRedeemLink] = useState('')
-  const { currentMemberId, authToken } = useAuth()
+
   const { memberId, validateStatus } = useMemberValidation(email)
   const memberStatus = memberId === currentMemberId ? 'error' : validateStatus
-  const toast = useToast()
+
   const [updateVoucherMember] = useMutation<types.UPDATE_VOUCHER_MEMBER, types.UPDATE_VOUCHER_MEMBERVariables>(gql`
     mutation UPDATE_VOUCHER_MEMBER($voucherId: uuid!, $memberId: String!) {
       update_voucher_by_pk(pk_columns: { id: $voucherId }, _set: { member_id: $memberId }) {
@@ -75,7 +72,7 @@ const VoucherDeliverModal: React.VFC<{
       })
       .catch(handleError)
       .finally(() => setRedeemLinkChecking(false))
-  }, [authToken, voucherId, isOpen])
+  }, [authToken, voucherId, isOpen, formatMessage])
 
   const handleSubmit = () => {
     if (memberId) {
@@ -102,7 +99,7 @@ const VoucherDeliverModal: React.VFC<{
   return (
     <>
       <Button className="mr-2" variant="outline" onClick={onOpen}>
-        {formatMessage(messages.transfer)}
+        {formatMessage(voucherMessages.VoucherDeliverModal.transfer)}
       </Button>
       <CommonModal
         isOpen={isOpen}
