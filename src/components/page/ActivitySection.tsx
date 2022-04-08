@@ -17,7 +17,10 @@ const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number
   const { enabledModules, settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
 
-  const { resourceCollection } = useResourceCollection(activities.map(activity => `${appId}:activity:${activity.id}`))
+  const { resourceCollection } = useResourceCollection(
+    activities.slice(0, options?.colAmount || 3).map(activity => `${appId}:activity:${activity.id}`),
+    true,
+  )
 
   if (loadingActivities)
     return (

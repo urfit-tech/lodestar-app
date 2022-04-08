@@ -153,6 +153,7 @@ const ProgramCollection: React.FC<{
 
   const { resourceCollection } = useResourceCollection(
     appId ? programs.map(program => `${appId}:program:${program.id}`) : [],
+    true,
   )
 
   return (

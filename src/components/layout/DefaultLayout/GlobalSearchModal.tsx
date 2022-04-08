@@ -364,7 +364,7 @@ const GlobalSearchFilter: React.VFC<{
               {tag.subTags.length > 0 && (
                 <div className="mt-3 ml-4">
                   {tag.subTags.map(subTag => {
-                    const isSubTagActive = flatten(filter.tagNameSList).includes(subTag.name)
+                    const isSubTagActive = flatten(filter.tagNameSList).includes(`${tag.name}/${subTag.name}`)
                     return (
                       <StyledRoundedButton
                         active={isSubTagActive}
@@ -373,11 +373,13 @@ const GlobalSearchFilter: React.VFC<{
                             ...prevFilter,
                             tagNameSList: isSubTagActive
                               ? [
-                                  ...prevFilter.tagNameSList.filter(tagNameS => !tagNameS.includes(subTag.name)),
+                                  ...prevFilter.tagNameSList.filter(
+                                    tagNameS => !tagNameS.includes(`${tag.name}/${subTag.name}`),
+                                  ),
                                   [
                                     ...(prevFilter.tagNameSList
-                                      .find(tagNameS => tagNameS.includes(subTag.name))
-                                      ?.filter(tagNameS => !tagNameS.includes(subTag.name)) || []),
+                                      .find(tagNameS => tagNameS.includes(`${tag.name}/${subTag.name}`))
+                                      ?.filter(tagNameS => !tagNameS.includes(`${tag.name}/${subTag.name}`)) || []),
                                   ],
                                 ].filter(complement(isEmpty))
                               : [
@@ -393,9 +395,9 @@ const GlobalSearchFilter: React.VFC<{
                                           ...(prevFilter.tagNameSList.find(tagNameS =>
                                             tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
                                           ) || []),
-                                          subTag.name,
+                                          `${tag.name}/${subTag.name}`,
                                         ].sort()
-                                      : [subTag.name]),
+                                      : [`${tag.name}/${subTag.name}`]),
                                   ],
                                 ],
                           }))

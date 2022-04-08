@@ -1663,4 +1663,8 @@ export const codeMessages = defineMessages({
     id: 'code.E_REFUND',
     defaultMessage: '退款失敗',
   },
+  E_REDEEM: {
+    id: 'code.E_REDEEM',
+    defaultMessage: '接收失敗',
+  },
 })

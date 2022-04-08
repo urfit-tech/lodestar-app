@@ -21,6 +21,7 @@ export type ProgramBriefProps = {
   isPrivate: boolean
   totalDuration?: number
   isEnrolledCountVisible?: boolean
+  editors?: string[]
 }
 
 export type Program = ProgramBriefProps & {

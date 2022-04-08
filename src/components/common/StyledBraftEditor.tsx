@@ -1,6 +1,7 @@
 import BraftEditor from 'braft-editor'
 import React from 'react'
 import styled, { css } from 'styled-components'
+import { isHTMLString } from '../../helpers'
 import QuotationLeft from '../../images/quotation-left.png'
 import QuotationRight from '../../images/quotation-right.png'
 
@@ -180,7 +181,10 @@ export const BraftContent: React.FC = ({ children }) => {
     <StyledBraftContent
       className="braft-output-content"
       dangerouslySetInnerHTML={{
-        __html: BraftEditor.createEditorState(children).toHTML(),
+        __html:
+          typeof children === 'string' && isHTMLString(children)
+            ? children
+            : BraftEditor.createEditorState(children).toHTML(),
       }}
     />
   )
