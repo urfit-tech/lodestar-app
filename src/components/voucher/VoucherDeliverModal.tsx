@@ -10,6 +10,7 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
+import { Divider } from 'antd'
 import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -31,6 +32,16 @@ const StyledTitle = styled.h3`
   line-height: 1.5;
   letter-spacing: 0.2px;
   color: var(--gray-darker);
+`
+const StyledDivider = styled(Divider)`
+  && {
+    padding: 0.5rem;
+
+    .ant-divider-inner-text {
+      color: #9b9b9b;
+      font-size: 12px;
+    }
+  }
 `
 
 const VoucherDeliverModal: React.VFC<{
@@ -148,6 +159,7 @@ const VoucherDeliverModal: React.VFC<{
             </InputRightElement>
           </InputGroup>
         </FormControl>
+        <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
         <FormControl isInvalid={memberId === currentMemberId || validateStatus === 'error'}>
           <FormLabel>{formatMessage(commonMessages.label.targetPartner)}</FormLabel>
           <Input
