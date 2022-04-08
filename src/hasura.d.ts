@@ -1675,7 +1675,7 @@ export interface GET_MEMBER_ORDERS_order_log_order_products_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
 }
@@ -2077,7 +2077,7 @@ export interface GET_CART_PRODUCT_COLLECTION_cart_product_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
   /**
@@ -2112,7 +2112,7 @@ export interface GET_CART_PRODUCT_COLLECTION_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
   /**
@@ -3855,7 +3855,7 @@ export interface GET_ORDER_PRODUCT_order_product_by_pk_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
   target: string;
@@ -4313,7 +4313,7 @@ export interface GET_PRODUCT_SKU_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
   target: string;
@@ -7291,6 +7291,11 @@ export interface GET_LATEST_PROGRAM_IDSVariables {
 // GraphQL query operation: GET_PROGRAM
 // ====================================================
 
+export interface GET_PROGRAM_program_by_pk_editors {
+  __typename: "program_editor";
+  member_id: string | null;
+}
+
 export interface GET_PROGRAM_program_by_pk_program_categories_category {
   __typename: "category";
   id: string;
@@ -7478,6 +7483,10 @@ export interface GET_PROGRAM_program_by_pk {
   is_countdown_timer_visible: boolean;
   is_introduction_section_visible: boolean;
   is_enrolled_count_visible: boolean;
+  /**
+   * An array relationship
+   */
+  editors: GET_PROGRAM_program_by_pk_editors[];
   /**
    * An array relationship
    */
@@ -19929,7 +19938,10 @@ export interface program_content_progress_enrollment_bool_exp {
   last_progress?: numeric_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  program?: program_bool_exp | null;
+  program_content?: program_content_bool_exp | null;
   program_content_id?: uuid_comparison_exp | null;
+  program_content_section?: program_content_section_bool_exp | null;
   program_content_section_id?: uuid_comparison_exp | null;
   program_id?: uuid_comparison_exp | null;
   progress?: numeric_comparison_exp | null;

@@ -84,6 +84,7 @@ const ProgramContentPage: React.VFC = () => {
                 <ProgramCustomContentBlock
                   programContentSections={program.contentSections}
                   programContentId={programContentId}
+                  editors={program.editors}
                 >
                   <>
                     <ProgramContentMenu program={program} />
@@ -110,6 +111,7 @@ const ProgramContentPage: React.VFC = () => {
                       programContentSections={program.contentSections}
                       programContentId={programContentId}
                       issueEnabled={program.isIssuesOpen}
+                      editors={program.editors}
                     />
                   </StyledLayoutContent>
                 </div>

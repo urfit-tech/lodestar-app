@@ -42,6 +42,7 @@ const ProgramContentBlock: React.VFC<{
   programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]
   programContentId: string
   issueEnabled?: boolean
+  editors?: string[]
 }> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
   const { formatMessage } = useIntl()
   const { loading: loadingApp, enabledModules } = useApp()

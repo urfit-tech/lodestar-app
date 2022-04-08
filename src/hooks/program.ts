@@ -247,7 +247,6 @@ export const useProgram = (programId: string) => {
           list_price
           sale_price
           sold_at
-
           description
           cover_video_url
           is_issues_open
@@ -255,6 +254,9 @@ export const useProgram = (programId: string) => {
           is_countdown_timer_visible
           is_introduction_section_visible
           is_enrolled_count_visible
+          editors {
+            member_id
+          }
           program_categories(order_by: { position: asc }) {
             id
             category {
@@ -370,6 +372,7 @@ export const useProgram = (programId: string) => {
             isCountdownTimerVisible: data.program_by_pk.is_countdown_timer_visible,
             isIntroductionSectionVisible: data.program_by_pk.is_introduction_section_visible,
             tags: data.program_by_pk.program_tags.map(programTag => programTag.tag.name),
+            editors: data.program_by_pk.editors.map(v => v?.member_id || ''),
             categories: data.program_by_pk.program_categories.map(programCategory => ({
               id: programCategory.category.id,
               name: programCategory.category.name,
