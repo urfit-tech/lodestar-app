@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon, SkeletonText } from '@chakra-ui/react'
+import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { isEmpty, uniq } from 'ramda'
 import { defineMessage, useIntl } from 'react-intl'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useHistory, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -79,7 +79,18 @@ const StyledText = styled.div`
   color: var(--gray-darker);
 `
 
+const StyledButton = styled(Button)`
+  && {
+    width: 160px;
+    height: 44px;
+    padding: 10px 56px;
+    border-radius: 4px;
+    border: solid 1px #979797;
+  }
+`
+
 const AdvancedSearchPage: React.FC = () => {
+  const history = useHistory()
   const { formatMessage } = useIntl()
   const { state } = useLocation<{ title: string } & FilterType>()
 
@@ -125,6 +136,9 @@ const AdvancedSearchPage: React.FC = () => {
                   defineMessage({ id: 'common.text.noMatch', defaultMessage: '很抱歉，目前還沒有對應的組合' }),
                 )}
               </StyledText>
+              <StyledButton className="mt-4" variant="outline" onClick={() => history.push('/')}>
+                {formatMessage(defineMessage({ id: 'common.text.backToHome', defaultMessage: '到首頁' }))}
+              </StyledButton>
             </div>
           </StyledContainer>
         ) : (

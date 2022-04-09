@@ -7,6 +7,7 @@ import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { defineMessage, useIntl } from 'react-intl'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
+import styled from 'styled-components'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import { StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../../components/program/ProgramContentMenu'
@@ -17,6 +18,14 @@ import { ProgramContentNoAuthBlock } from '../ProgramContentCollectionPage'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
+
+const StyledLink = styled(Link)`
+  && {
+    &:hover {
+      color: white;
+    }
+  }
+`
 
 const ProgramContentPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -89,14 +98,10 @@ const ProgramContentPage: React.VFC = () => {
                   <>
                     <ProgramContentMenu program={program} />
 
-                    <Button
-                      isFullWidth
-                      className="mt-3"
-                      colorScheme="primary"
-                      as={Link}
-                      to={`/programs/${programId}?moveToBlock=customer-review`}
-                    >
-                      {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
+                    <Button isFullWidth className="mt-3" colorScheme="primary">
+                      <StyledLink to={`/programs/${programId}?moveToBlock=customer-review`}>
+                        {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
+                      </StyledLink>
                     </Button>
                   </>
                 </ProgramCustomContentBlock>
