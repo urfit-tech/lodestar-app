@@ -149,7 +149,10 @@ const ActivityCollection: React.FC<{
 }> = ({ activities }) => {
   const { id: appId } = useApp()
   const tracking = useTracking()
-  const { resourceCollection } = useResourceCollection(activities.map(activity => `${appId}:activity:${activity.id}`))
+  const { resourceCollection } = useResourceCollection(
+    activities.map(activity => `${appId}:activity:${activity.id}`),
+    true,
+  )
 
   return (
     <div className="row">
