@@ -50,7 +50,7 @@ const ActivityPage: React.VFC = () => {
   const { activityId } = useParams<{ activityId: string }>()
   const { isAuthenticated, currentMemberId } = useAuth()
   const { id: appId } = useApp()
-  const { resourceCollection } = useResourceCollection([`${appId}:activity:${activityId}`])
+  const { resourceCollection } = useResourceCollection([`${appId}:activity:${activityId}`], true)
   const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
 
   useEffect(() => {
