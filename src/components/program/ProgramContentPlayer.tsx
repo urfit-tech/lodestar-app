@@ -10,6 +10,7 @@ import { ProgressContext } from '../../contexts/ProgressContext'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
+import AzureMediaPlayer from '../common/AzureMediaPlayer'
 import VideoPlayer from '../common/VideoPlayer'
 
 const StyledReactPlayerWrapper = styled.div`
@@ -108,6 +109,7 @@ const ProgramContentPlayer: React.VFC<
   const { formatMessage } = useIntl()
   const streamRef = useRef<StreamPlayerApi>()
   const playerRef = useRef<ReactPlayer | null>(null)
+  const ampRef = useRef<HTMLVideoElement>(null)
   const lastEndedTime = useRef<number>(0)
   const { currentMember } = useAuth()
   const { programContent } = useProgramContent(programContentId)
@@ -128,8 +130,9 @@ const ProgramContentPlayer: React.VFC<
       ? currentProgramContentProgress?.lastProgress || 0
       : 0
 
+  const initialPlaybackRate = Number(localStorage.getItem('kolable.player.playbackRate')) || 1
+  const initialVolume: number = Number(localStorage.getItem('kolable.player.volume')) || 1
   const getCurrentProgress = (player: StreamPlayerApi) => Number(player.currentTime) / Number((player as any).duration)
-
   return (
     <>
       {programContent?.videos?.map(video => (
@@ -140,7 +143,93 @@ const ProgramContentPlayer: React.VFC<
               onSetIsCoverShowing={setIsCoverShowing}
             />
           )}
-          {video.data?.source ? (
+          {video.data?.source === 'azure' ? (
+            <StyledReactPlayerWrapper>
+              <AzureMediaPlayer
+                id={video.id}
+                url={video.data.url}
+                ref={ampRef}
+                initialSpeed={initialPlaybackRate}
+                onLoadStart={event => {
+                  ;(event.target as any)?.player.volume(initialVolume)
+                  ;(event.target as any)?.player.playbackRate(initialPlaybackRate)
+                }}
+                onDurationChange={event => {
+                  const duration = (event.target as any)?.player.duration()
+                  const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
+                  ;(event.target as any)?.player.currentTime(duration * progress)
+                  lastEndedTime.current = duration * progress
+                }}
+                onRateChange={event => {
+                  localStorage.setItem('kolable.player.playbackRate', (event.target as any)?.player.playbackRate())
+                }}
+                onVolumeChange={event => {
+                  localStorage.setItem('kolable.player.volume', (event.target as any)?.player.volume())
+                }}
+                onTimeUpdate={event => {
+                  const duration = (event.target as any)?.player.duration() || 0
+                  const playbackRate = (event.target as any)?.player.playbackRate() || 1
+                  const currentTime = (event.target as any)?.player.currentTime() || 0
+                  onVideoEvent?.({
+                    type: 'progress',
+                    progress: currentTime / duration,
+                    videoState: {
+                      playbackRate: playbackRate || 1,
+                      startedAt: lastEndedTime.current || 0,
+                      endedAt: currentTime,
+                    },
+                  })
+                }}
+                onPause={event => {
+                  const duration = (event.target as any)?.player.duration() || 0
+                  const playbackRate = (event.target as any)?.player.playbackRate() || 1
+                  const currentTime = (event.target as any)?.player.currentTime() || 0
+                  onVideoEvent?.({
+                    type: 'pause',
+                    progress: currentTime / duration,
+                    videoState: {
+                      playbackRate: playbackRate || 1,
+                      startedAt: lastEndedTime.current || 0,
+                      endedAt: currentTime || 0,
+                    },
+                  })
+                  lastEndedTime.current = currentTime
+                }}
+                onSeeked={event => {
+                  const duration = (event.target as any)?.player.duration() || 0
+                  const playbackRate = (event.target as any)?.player.playbackRate() || 1
+                  const currentTime = (event.target as any)?.player.currentTime() || 0
+                  onVideoEvent?.({
+                    type: 'seeked',
+                    progress: currentTime / duration,
+                    videoState: {
+                      playbackRate: 0,
+                      startedAt: lastEndedTime.current || 0,
+                      endedAt: currentTime,
+                    },
+                  })
+                  lastEndedTime.current = currentTime
+                }}
+                onEnded={event => {
+                  const duration = (event.target as any)?.player.duration() || 0
+                  const playbackRate = (event.target as any)?.player.playbackRate() || 1
+                  const currentTime = (event.target as any)?.player.currentTime() || 0
+                  const endedAt = currentTime || duration || 0
+                  onVideoEvent?.({
+                    type: 'ended',
+                    progress: currentTime / duration,
+                    videoState: {
+                      playbackRate: playbackRate || 1,
+                      startedAt: lastEndedTime.current || 0,
+                      endedAt,
+                    },
+                  })
+                  lastEndedTime.current = endedAt
+                  setIsCoverShowing(true)
+                }}
+              />
+            </StyledReactPlayerWrapper>
+          ) : video.data?.source ? (
             <StyledReactPlayerWrapper>
               <ReactPlayer
                 ref={playerRef}
@@ -243,8 +332,6 @@ const ProgramContentPlayer: React.VFC<
                   // FIXME: can not get youtube volume and playbackRate
                   const video = player.getInternalPlayer()
                   if (player) {
-                    const initialPlaybackRate = Number(localStorage.getItem('kolable.player.playbackRate')) || 1
-                    const initialVolume = Number(localStorage.getItem('kolable.player.volume')) || 1
                     video.volume = initialVolume
                     video.playbackRate = initialPlaybackRate
                   }
