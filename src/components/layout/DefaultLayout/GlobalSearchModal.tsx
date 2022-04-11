@@ -333,7 +333,7 @@ const GlobalSearchFilter: React.VFC<{
       </div>
       <div>
         <StyledFilterTitle>
-          {formatMessage(defineMessage({ id: 'common.ui.filterCategory', defaultMessage: '篩選條件' }))}
+          {formatMessage(defineMessage({ id: 'common.ui.filterTag', defaultMessage: '篩選條件' }))}
         </StyledFilterTitle>
         {(tagsFilter.length > 0
           ? tagsFilter.map(tagName => tags.find(tag => tag.name.split('/')[0] === tagName)).filter(notEmpty)

@@ -15,7 +15,7 @@ import { StyledBanner, StyledBannerTitle, StyledCollection } from '../../compone
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ProgramCard from '../../components/program/ProgramCard'
 import ProgramCollectionBanner from '../../components/program/ProgramCollectionBanner'
-import LanguageContext from '../../contexts/LanguageContext'
+import LocaleContext from '../../contexts/LocaleContext'
 import { notEmpty } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
@@ -46,7 +46,7 @@ const ProgramCollectionPage: React.VFC = () => {
   const { currentMemberId } = useAuth()
   const { settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { pageTitle } = useNav()
-  const { currentLanguage } = useContext(LanguageContext)
+  const { currentLocale } = useContext(LocaleContext)
   const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const { loadingPrograms, errorPrograms, programs } = usePublishedProgramCollection({
@@ -63,7 +63,7 @@ const ProgramCollectionPage: React.VFC = () => {
   const filteredPrograms = programs.filter(
     program =>
       (!selectedCategoryId || program.categories?.some(category => category.id === selectedCategoryId)) &&
-      (!program.supportLocales || program.supportLocales.find(locale => locale === currentLanguage)),
+      (!program.supportLocales || program.supportLocales.find(locale => locale === currentLocale)),
   )
 
   useEffect(() => {

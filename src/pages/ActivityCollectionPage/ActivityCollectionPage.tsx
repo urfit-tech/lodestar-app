@@ -15,7 +15,7 @@ import ActivityBlock from '../../components/activity/ActivityBlock'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../../components/layout'
 import DefaultLayout from '../../components/layout/DefaultLayout'
-import LanguageContext from '../../contexts/LanguageContext'
+import LocaleContext from '../../contexts/LocaleContext'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { usePublishedActivityCollection } from '../../hooks/activity'
 import { useNav } from '../../hooks/data'
@@ -59,10 +59,9 @@ const ActivityCollectionPage = () => {
   const location = useLocation()
   const { settings, currencyId: appCurrencyId, id: appId } = useApp()
   const { loading, navs } = useNav()
-  const { currentLanguage } = useContext(LanguageContext)
+  const { currentLocale } = useContext(LocaleContext)
   const pageTitle = navs.find(
-    nav =>
-      nav.locale === currentLanguage && nav.href === `${location.pathname}${active ? `?categories=${active}` : ''}`,
+    nav => nav.locale === currentLocale && nav.href === `${location.pathname}${active ? `?categories=${active}` : ''}`,
   )?.label
   const { formatMessage } = useIntl()
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection({
@@ -87,7 +86,7 @@ const ActivityCollectionPage = () => {
 
   const filteredActivities = activities
     .filter(activity => classification === null || activity.categories.some(category => category.id === classification))
-    .filter(activity => !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLanguage))
+    .filter(activity => !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLocale))
 
   return (
     <DefaultLayout white>

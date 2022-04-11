@@ -3,7 +3,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import LanguageContext from '../../../contexts/LanguageContext'
+import LocaleContext from '../../../contexts/LocaleContext'
 import { ReactComponent as FacebookIcon } from '../../../images/facebook-icon.svg'
 import { ReactComponent as GroupIcon } from '../../../images/group-icon.svg'
 import { ReactComponent as InstagramIcon } from '../../../images/instagram-icon.svg'
@@ -74,11 +74,11 @@ const StyledSocialAnchor = styled.a`
 
 export const NavLinks: React.VFC = () => {
   const { navs } = useApp()
-  const { currentLanguage } = useContext(LanguageContext)
+  const { currentLocale } = useContext(LocaleContext)
   return (
     <>
       {navs
-        .filter(nav => nav.block === 'footer' && nav.locale === currentLanguage)
+        .filter(nav => nav.block === 'footer' && nav.locale === currentLocale)
         .map(nav =>
           nav.external ? (
             <StyledNavAnchor key={nav.label} href={nav.href} target="_blank" rel="noopener noreferrer">

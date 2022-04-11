@@ -3,7 +3,7 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
-import LanguageContext from '../contexts/LanguageContext'
+import LocaleContext from '../contexts/LocaleContext'
 import { productMessages } from '../helpers/translation'
 
 export const useInterval = (callback: Function, delay: number | null, immediately?: boolean) => {
@@ -99,7 +99,7 @@ export const useSwarmify = () => {
 }
 
 export const useCurrency = (currencyId?: string) => {
-  const { locale } = useContext(LanguageContext)
+  const { currentLocale } = useContext(LocaleContext)
   const { currencies, settings } = useApp()
 
   const formatCurrency = (value: number) => {
@@ -111,7 +111,7 @@ export const useCurrency = (currencyId?: string) => {
     }
 
     return (
-      value.toLocaleString(locale || navigator.language, {
+      value.toLocaleString(currentLocale || navigator.language, {
         style: 'currency',
         currency: currentCurrencyId,
         maximumFractionDigits: currency?.['minorUnits'] || 0,
