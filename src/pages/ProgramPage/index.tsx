@@ -5,7 +5,6 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import queryString from 'query-string'
-import { groupBy, map, toPairs } from 'ramda'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
@@ -287,22 +286,12 @@ const ProgramPage: React.VFC = () => {
 }
 
 const StyledProgramTagCard = styled.div`
+  position: sticky;
+  top: 0;
   border-radius: 4px;
   padding: 24px;
   background-color: #fff;
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
-`
-
-const StyleCategoryTitle = styled.h3`
-  font-size: 18px;
-  font-weight: bold;
-  color: #4a4a4a;
-`
-
-const StyleSubCategoryBlock = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
 `
 
 const StyleSubCategoryTag = styled(Button)`
@@ -328,72 +317,52 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
   const { formatMessage } = useIntl()
   const [isOpen, setIsOpen] = useState(false)
   const history = useHistory()
-  const groupTags = map(
-    ([tagName, subTags]) => ({
-      id: subTags.find(tag => tag.name === tagName)?.name,
-      name: tagName,
-      subTags: subTags
-        .filter(tag => tag.name !== tagName)
-        .map(tag => ({
-          id: tag.name,
-          name: tag.name.split('/')[1],
-        })),
-    }),
-    toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], tags || [])),
-  )
+
+  const resultTags = tags.map(tag => ({
+    id: tag.id,
+    name: tag.name.includes('/') ? tag.name.split('/')[1] : tag.name,
+  }))
 
   return (
     <StyledProgramTagCard>
-      {groupTags.map(tag => (
+      {resultTags.slice(0, 8).map(tag => (
+        <StyleSubCategoryTag
+          className="mb-3 mr-3"
+          variant="outline"
+          colorScheme="primary"
+          onClick={() =>
+            history.push('/search/advanced', {
+              tagNameSList: [[tag.id]],
+            })
+          }
+        >
+          {tag.name}
+        </StyleSubCategoryTag>
+      ))}
+
+      {resultTags.length > 8 && (
         <div className="mb-3">
-          <StyleCategoryTitle className="mb-2">{tag.name}</StyleCategoryTitle>
-          <StyleSubCategoryBlock className="mb-3">
-            {tag.subTags.slice(0, 4).map(subTag => (
+          <CommonModal title="" isOpen={isOpen} onClose={() => setIsOpen(false)}>
+            {resultTags.map(tag => (
               <StyleSubCategoryTag
+                className="mb-3 mr-3"
                 variant="outline"
                 colorScheme="primary"
                 onClick={() =>
                   history.push('/search/advanced', {
-                    tagNameSList: [[subTag.id]],
+                    tagNameSList: [[tag.id]],
                   })
                 }
               >
-                {subTag.name}
+                {tag.name}
               </StyleSubCategoryTag>
             ))}
-          </StyleSubCategoryBlock>
-
-          {tag.subTags.length > 4 && (
-            <div className="mb-3">
-              <CommonModal title="" isOpen={isOpen} onClose={() => setIsOpen(false)}>
-                {groupTags.map(tag => (
-                  <div className="mb-3">
-                    <StyleCategoryTitle className="mb-2">{tag.name}</StyleCategoryTitle>
-                    <StyleSubCategoryBlock>
-                      {tag.subTags.map(subTag => (
-                        <StyleSubCategoryTag
-                          variant="outline"
-                          colorScheme="primary"
-                          onClick={() =>
-                            history.push('/search/advanced', {
-                              tagNameSList: [[subTag.id]],
-                            })
-                          }
-                        >
-                          {subTag.name}
-                        </StyleSubCategoryTag>
-                      ))}
-                    </StyleSubCategoryBlock>
-                  </div>
-                ))}
-              </CommonModal>
-              <StyledViewAllButton className="d-block" variant="link" onClick={() => setIsOpen(true)}>
-                {formatMessage(defineMessage({ id: 'common.ui.viewAll', defaultMessage: '查看全部' }))}
-              </StyledViewAllButton>
-            </div>
-          )}
+          </CommonModal>
+          <StyledViewAllButton className="d-block" variant="link" onClick={() => setIsOpen(true)}>
+            {formatMessage(defineMessage({ id: 'common.ui.viewAll', defaultMessage: '查看全部' }))}
+          </StyledViewAllButton>
         </div>
-      ))}
+      )}
     </StyledProgramTagCard>
   )
 }
