@@ -31,7 +31,7 @@ const messages = defineMessages({
 const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
-  const [withTracking] = useQueryParam('tracking', BooleanParam)
+  const [withTracking, setWithTracking] = useQueryParam('tracking', BooleanParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
   const { loading: isOrderLoading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
@@ -122,6 +122,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
               quantity: Number(order.order_products[idx].options?.quantity) || 1,
             }))}
             discounts={order.order_discounts.map(v => ({ name: v.name, price: v.price }))}
+            onTracked={() => setWithTracking(undefined)}
           />
         )}
         <div
