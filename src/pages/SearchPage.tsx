@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/icons'
+// import { Icon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
 import { Tabs } from 'antd'
 import gql from 'graphql-tag'
@@ -28,7 +28,7 @@ import ProgramCard from '../components/program/ProgramCard'
 import ProjectIntroCard from '../components/project/ProjectIntroCard'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
-import { ReactComponent as SearchIcon } from '../images/search.svg'
+// import { ReactComponent as SearchIcon } from '../images/search.svg'
 import { Activity } from '../types/activity'
 import { MerchandiseBriefProps } from '../types/merchandise'
 import { PodcastProgramBriefProps } from '../types/podcast'
@@ -83,7 +83,7 @@ const SearchPage: React.VFC = () => {
           <StyledTitle>
             {title && (
               <>
-                <Icon as={SearchIcon} className="mr-2" />
+                {/* <Icon as={SearchIcon} className="mr-2" /> */}
                 <span>{title}</span>
               </>
             )}

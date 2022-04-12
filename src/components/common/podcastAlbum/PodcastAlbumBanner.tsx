@@ -75,9 +75,9 @@ const PodcastAlbumBanner: React.VFC<{
           </Responsive.Desktop>
           <div>
             <StyledTitle className="text-center mb-2">{podcastAlbum.title}</StyledTitle>
-            <StyledSectionCount className="mb-4">{`${formatMessage(podcastAlbumMessages.text.sectionCount, {
+            {/* <StyledSectionCount className="mb-4">{`${formatMessage(podcastAlbumMessages.text.sectionCount, {
               sectionCount: podcastAlbum.podcastPrograms.length,
-            })}`}</StyledSectionCount>
+            })}`}</StyledSectionCount> */}
             <StyledCategories>
               {podcastAlbum.categories.map(category => (
                 <StyledLink key={category.id} className="mr-2" to={`/podcast-albums?active=${category.id}`}>
