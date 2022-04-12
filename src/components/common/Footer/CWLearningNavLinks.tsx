@@ -24,6 +24,7 @@ const LinksGroupTitle = styled.p`
 const LinkGroup = styled.ol`
   display: flex;
   max-height: 160px;
+  font-weight: 400;
   flex-direction: column;
   flex-wrap: wrap;
 `

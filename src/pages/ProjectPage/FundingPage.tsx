@@ -174,9 +174,11 @@ const FundingPage: React.VFC<ProjectProps> = ({
                   {formatMessage(commonMessages.button.cutoff)}
                 </Button>
               ) : (
-                <Button type="primary" size="large" block onClick={() => handleTabsChange('plans')}>
-                  {formatMessage(commonMessages.button.pledge)}
-                </Button>
+                <Responsive.Default>
+                  <Button type="primary" size="large" block onClick={() => handleTabsChange('plans')}>
+                    {formatMessage(commonMessages.button.pledge)}
+                  </Button>
+                </Responsive.Default>
               )}
             </StyledSupportButtonWrapper>
           }

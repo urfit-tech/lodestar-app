@@ -155,7 +155,7 @@ const BlogPostPage: React.VFC = () => {
                 </Link>
               ))}
             </div>
-            <Divider className="mb-3" />
+            {/* <Divider className="mb-3" />
             <div className="py-3">
               {post?.author && (
                 <CreatorCard
@@ -172,7 +172,7 @@ const BlogPostPage: React.VFC = () => {
                 />
               )}
             </div>
-            <Divider className="mb-5" />
+            <Divider className="mb-5" /> */}
             <div className="row mb-5">
               <div className="col-6 col-lg-4">
                 {post?.prevPost && (
