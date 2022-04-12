@@ -147,6 +147,11 @@ const ProgramPage: React.VFC = () => {
             <div className="row">
               <div className="col-12 col-lg-8">
                 {!settings['layout.program_page'] && (
+                  <div className="mb-5">
+                  <ProgramInstructorCollectionBlock program={program} />
+                  </div>
+                )}
+                {!settings['layout.program_page'] && (
                   <Responsive.Default>
                     <ClassCouponBlock />
                     <StyledProgramInfoCard>
@@ -213,7 +218,10 @@ const ProgramPage: React.VFC = () => {
                   <div>
                     <Responsive.Desktop>
                       <ClassCouponBlock />
-                      <ProgramInfoCard instructorId={instructorId} program={program} />
+                      {/* <ProgramInfoCard instructorId={instructorId} program={program} /> */}
+                      <StyledProgramInfoCard>
+                        <ProgramContentCountBlock program={program} />
+                      </StyledProgramInfoCard>
                     </Responsive.Desktop>
 
                     {!isEnrolledByProgramPackage && (
@@ -234,7 +242,7 @@ const ProgramPage: React.VFC = () => {
               )}
             </div>
 
-            {!settings['layout.program_page'] && (
+            {/* {!settings['layout.program_page'] && (
               <div className="row">
                 <div className="col-12 col-lg-8">
                   <div className="mb-5">
@@ -242,7 +250,7 @@ const ProgramPage: React.VFC = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
             <div id="customer-review" ref={customerReviewBlockRef}>
               {enabledModules.customer_review && (
