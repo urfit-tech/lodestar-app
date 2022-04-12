@@ -3,7 +3,7 @@ import { Select } from '@chakra-ui/react'
 import { Card } from 'antd'
 import { flatten, sum } from 'ramda'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { AiOutlineCalendar, AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
+import { AiOutlineVideoCamera, AiOutlinePlaySquare } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -285,7 +285,8 @@ const SortBySectionItem: React.VFC<{
           ) : programContent.contentType === 'exercise' ? (
             <ExerciseQuestionCount contentBodyId={programContent.contentBodyId} />
           ) : (
-            <StyledIcon as={AiOutlineFileText} />
+            // <StyledIcon as={AiOutlineFileText} />
+            <StyledIcon as={AiOutlinePlaySquare} />
           )}
         </div>
         {programContent.materials && programContent?.materials.length !== 0 && (
@@ -365,7 +366,8 @@ const SortByDateItem: React.VFC<{
       </StyledIconWrapper>
 
       <div>
-        <StyledIcon as={AiOutlineCalendar} className="mr-2" />
+        {/* <StyledIcon as={AiOutlineCalendar} className="mr-2" /> */}
+        <StyledIcon as={AiOutlinePlaySquare} className="mr-2" />
         {programContent.publishedAt && dateFormatter(programContent.publishedAt)}
       </div>
       {programContent.materials && programContent?.materials.length !== 0 && (

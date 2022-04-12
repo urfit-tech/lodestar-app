@@ -167,12 +167,12 @@ const ProgramContentBlock: React.VFC<{
         <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
       )}
 
-      <ProgramContentTabs
+      {/* <ProgramContentTabs
         programId={programId}
         programRoles={programRoles}
         programContent={programContent}
         issueEnabled={issueEnabled}
-      />
+      /> */}
 
       {programContent.programContentBody?.type !== 'practice' && instructor && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />

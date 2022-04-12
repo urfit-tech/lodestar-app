@@ -128,12 +128,8 @@ const ProgramPackagePage: React.VFC = () => {
                 <Responsive.Default>
                   <ClassCouponBlock />
                 </Responsive.Default>
-                <StyledTitle className="mb-4">{formatMessage(messages.introduction)}</StyledTitle>
-                <div className="mb-5">
-                  <BraftContent>{programPackageIntroduction.description}</BraftContent>
-                </div>
 
-                <StyledTitle className="mb-4">{formatMessage(messages.includedItems)}</StyledTitle>
+                <StyledTitle className="mb-4">套裝內課程</StyledTitle>
                 <ProgramCollection
                   programs={programPackageIntroduction.programs}
                   renderItem={({ displayType, program }) => {
@@ -161,6 +157,10 @@ const ProgramPackagePage: React.VFC = () => {
                     ) : null
                   }}
                 />
+                <StyledTitle className="mb-4">{formatMessage(messages.introduction)}</StyledTitle>
+                <div className="mb-5">
+                  <BraftContent>{programPackageIntroduction.description}</BraftContent>
+                </div>
               </div>
               <div ref={planBlockRef} className="col-12 col-lg-4 pt-5">
 <<<<<<< HEAD:src/pages/ProgramPackagePage/ProgramPackagePage.tsx
