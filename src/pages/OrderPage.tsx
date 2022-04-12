@@ -11,7 +11,7 @@ import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import React, { useEffect } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import { defineMessages, useIntl } from 'react-intl'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import { BooleanParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -31,7 +31,9 @@ const messages = defineMessages({
 const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
-  const [withTracking, setWithTracking] = useQueryParam('tracking', BooleanParam)
+  const location = useLocation()
+  const history = useHistory()
+  const [withTracking] = useQueryParam('tracking', BooleanParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
   const { loading: isOrderLoading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
@@ -122,7 +124,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
               quantity: Number(order.order_products[idx].options?.quantity) || 1,
             }))}
             discounts={order.order_discounts.map(v => ({ name: v.name, price: v.price }))}
-            onTracked={() => setWithTracking(undefined)}
+            onTracked={() => history.replace(location.pathname)}
           />
         )}
         <div
