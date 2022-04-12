@@ -42,12 +42,13 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   )
   const order = data?.order_log_by_pk
 
-  const { resourceCollection: productResourceCollection } = useResourceCollection(
-    order?.order_products.map(v => {
-      const { type, target } = getResourceByProductId(v.product_id)
-      return `${appId}:${type}:${target}`
-    }) || [],
-  )
+  const { resourceCollection: productResourceCollection, loading: productResourceCollectionLoading } =
+    useResourceCollection(
+      order?.order_products.map(v => {
+        const { type, target } = getResourceByProductId(v.product_id)
+        return `${appId}:${type}:${target}`
+      }) || [],
+    )
 
   useEffect(() => {
     if (order && order.status === 'SUCCESS' && withTracking) {
@@ -74,7 +75,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
     }
   }, [order, settings, withTracking])
 
-  if (isAppLoading || isOrderLoading || isAuthenticating) {
+  if (isAppLoading || isOrderLoading || isAuthenticating || productResourceCollectionLoading) {
     return <LoadingPage />
   }
   if (!order) {
