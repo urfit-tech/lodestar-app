@@ -375,6 +375,8 @@ const useSearchProductCollection = (
         ) {
           id
           cover_url
+          cover_mobile_url
+          cover_thumbnail_url
           title
           abstract
           published_at
@@ -671,6 +673,8 @@ const useSearchProductCollection = (
       data?.program.map(program => ({
         id: program.id,
         coverUrl: program.cover_url,
+        coverMobileUrl: program.cover_mobile_url,
+        coverThumbnailUrl: program.cover_thumbnail_url,
         title: program.title,
         abstract: program.abstract,
         publishedAt: new Date(program.published_at),

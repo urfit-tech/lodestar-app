@@ -49,7 +49,7 @@ const ActivityBanner: React.FC<{
 }> = ({ coverImage, activityCategories, activityTitle, children }) => {
   const { formatMessage } = useIntl()
   return (
-    <BlurredBanner coverUrl={coverImage}>
+    <BlurredBanner coverUrl={{ desktopUrl: coverImage || undefined }}>
       <StyledTitleBlock withChildren={!!children} className="text-center">
         <div className="mb-4">
           {activityCategories.map(activityCategory => (

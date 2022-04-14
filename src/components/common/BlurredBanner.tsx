@@ -18,14 +18,17 @@ const BackgroundWrapper = styled.div`
   left: 0;
   transform: scale(1.1);
 `
-const BlurredCover = styled.div<{ coverUrl?: string | null }>`
+const BlurredCover = styled.div<{ coverUrl?: { mobileUrl?: string; desktopUrl?: string } }>`
   width: 100%;
   height: 100%;
-  background-image: url(${props => props.coverUrl || ''});
+  background-image: url(${props => props.coverUrl?.mobileUrl || props.coverUrl?.desktopUrl});
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   filter: blur(6px);
+  @media (min-width: ${BREAK_POINT}px) {
+    background-image: url(${props => props.coverUrl?.desktopUrl || props.coverUrl?.mobileUrl});
+  }
 `
 const ContentWrapper = styled.div`
   position: relative;
@@ -34,7 +37,7 @@ const ContentWrapper = styled.div`
 `
 
 const BlurredBanner: React.FC<{
-  coverUrl?: string | null
+  coverUrl?: { mobileUrl?: string; desktopUrl?: string }
   width?: { desktop: string; mobile: string }
 }> = ({ coverUrl, width, children }) => {
   return (

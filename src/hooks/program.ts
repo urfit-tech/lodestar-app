@@ -48,6 +48,8 @@ export const usePublishedProgramCollection = (options?: {
         ) {
           id
           cover_url
+          cover_mobile_url
+          cover_thumbnail_url
           title
           abstract
           support_locales
@@ -135,6 +137,8 @@ export const usePublishedProgramCollection = (options?: {
           .map(program => ({
             id: program.id,
             coverUrl: program.cover_url,
+            coverMobileUrl: program.cover_mobile_url,
+            coverThumbnailUrl: program.cover_thumbnail_url,
             title: program.title,
             abstract: program.abstract,
             supportLocales: program.support_locales,
@@ -239,6 +243,8 @@ export const useProgram = (programId: string) => {
         program_by_pk(id: $programId) {
           id
           cover_url
+          cover_mobile_url
+          cover_thumbnail_url
           title
           abstract
           published_at
@@ -360,6 +366,8 @@ export const useProgram = (programId: string) => {
         : {
             id: data.program_by_pk.id,
             coverUrl: data.program_by_pk.cover_url,
+            coverMobileUrl: data.program_by_pk.cover_mobile_url,
+            coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url,
             title: data.program_by_pk.title,
             abstract: data.program_by_pk.abstract,
             publishedAt: new Date(data.program_by_pk.published_at),

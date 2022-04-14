@@ -111,7 +111,7 @@ const ProgramPackageBanner: React.VFC<ProgramPackageBannerProps> = ({
 }) => {
   const { formatMessage } = useIntl()
   return (
-    <BlurredBanner coverUrl={coverUrl}>
+    <BlurredBanner coverUrl={{ desktopUrl: coverUrl || undefined }}>
       {isEnrolled && (
         <StyledEntrolledLink>
           <Link to={`/program-packages/${programPackageId}`}>
