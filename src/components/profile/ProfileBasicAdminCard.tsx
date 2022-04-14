@@ -3,15 +3,17 @@ import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React from 'react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { v4 as uuid } from 'uuid'
+import { uploadFile } from '../../helpers'
 import { commonMessages, profileMessages } from '../../helpers/translation'
 import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
-import { AvatarImage } from '../common/Image'
+import ImageUploader from '../common/ImageUploader'
 import MigrationInput from '../common/MigrationInput'
-import SingleUploader from '../common/SingleUploader'
 import { StyledForm } from '../layout'
 
 const StyledFormItem = styled(Form.Item)`
@@ -30,32 +32,42 @@ type ProfileBasicAdminCardProps = CardProps &
   FormComponentProps & {
     memberId: string
   }
+
 const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { id: appId } = useApp()
-  const { member } = useMember(memberId)
+  const { authToken } = useAuth()
+  const { member, refetchMember } = useMember(memberId)
   const updateMember = useUpdateMember()
   const { formatMessage } = useIntl()
+  const [avatarImageFile, setAvatarImageFile] = useState<File | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = () => {
-    form.validateFields((error, values) => {
+    setLoading(true)
+    const avatarId = uuid()
+    form.validateFields(async (error, values) => {
       if (!error && member) {
-        updateMember({
+        if (avatarImageFile) {
+          await uploadFile(`avatars/${appId}/${memberId}/${avatarId}`, avatarImageFile, authToken)
+        }
+        await updateMember({
           variables: {
             memberId,
             email: member.email.trim().toLowerCase(),
             username: member.username,
             name: values.name,
-            pictureUrl: values.picture
-              ? `https://${process.env.REACT_APP_S3_BUCKET}/avatars/${appId}/${memberId}`
+            pictureUrl: avatarImageFile
+              ? `https://${process.env.REACT_APP_S3_BUCKET}/avatars/${appId}/${memberId}/${avatarId}`
               : member.pictureUrl,
             description: values.description,
           },
         })
           .then(() => {
             message.success(formatMessage(commonMessages.event.successfullySaved))
-            window.location.reload()
+            refetchMember?.()
           })
           .catch(err => message.error(err.message))
+          .finally(() => setLoading(false))
       }
     })
   }
@@ -74,18 +86,14 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
         wrapperCol={{ span: 24, md: { span: 8 } }}
       >
         <StyledFormItem label={formatMessage(profileMessages.form.label.avatar)}>
-          <div className="mr-3">
-            <AvatarImage src={(member && member.pictureUrl) || ''} size={128} />
-          </div>
-          {form.getFieldDecorator('picture')(
-            <SingleUploader
-              accept="image/*"
-              listType="picture-card"
-              showUploadList={false}
-              path={`avatars/${appId}/${memberId}`}
-              onSuccess={handleSubmit}
-              isPublic={true}
-            />,
+          {member && (
+            <ImageUploader
+              imgUrl={member.pictureUrl}
+              file={avatarImageFile}
+              customStyle={{ shape: 'circle', width: '128px', ratio: 1 }}
+              customButtonStyle={{ width: '80%' }}
+              onChange={file => setAvatarImageFile(file)}
+            />
           )}
         </StyledFormItem>
         <Form.Item label={formatMessage(profileMessages.form.label.name)}>
@@ -108,7 +116,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
           <Button variant="outline" className="mr-2" onClick={() => form.resetFields()}>
             {formatMessage(commonMessages.ui.cancel)}
           </Button>
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" isLoading={loading} _hover={{}}>
             {formatMessage(commonMessages.button.save)}
           </Button>
         </Form.Item>
