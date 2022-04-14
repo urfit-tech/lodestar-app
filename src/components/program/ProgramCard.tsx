@@ -141,7 +141,11 @@ const ProgramCard: React.VFC<{
           {renderCover ? (
             renderCover(program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover)
           ) : (
-            <CustomRatioImage width="100%" ratio={9 / 16} src={program.coverUrl ? program.coverUrl : EmptyCover} />
+            <CustomRatioImage
+              width="100%"
+              ratio={9 / 16}
+              src={program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover}
+            />
           )}
 
           <StyledContentBlock>
