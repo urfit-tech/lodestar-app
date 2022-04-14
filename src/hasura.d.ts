@@ -5684,6 +5684,9 @@ export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPEC_order_log {
   id: string;
   created_at: any;
   updated_at: any | null;
+  /**
+   * merchandise shipping advice
+   */
   delivered_at: any | null;
   deliver_message: string | null;
   shipping: any | null;
@@ -7240,6 +7243,8 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program {
   __typename: "program";
   id: any;
   cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
   title: string;
   abstract: string | null;
   support_locales: any | null;
@@ -7495,6 +7500,8 @@ export interface GET_PROGRAM_program_by_pk {
   __typename: "program";
   id: any;
   cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
   title: string;
   abstract: string | null;
   published_at: any | null;
@@ -9517,6 +9524,8 @@ export interface SEARCH_PRODUCT_COLLECTION_program {
   __typename: "program";
   id: any;
   cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
   title: string;
   abstract: string | null;
   published_at: any | null;
@@ -12682,6 +12691,8 @@ export enum program_tempo_delivery_update_column {
 export enum program_update_column {
   abstract = "abstract",
   app_id = "app_id",
+  cover_mobile_url = "cover_mobile_url",
+  cover_thumbnail_url = "cover_thumbnail_url",
   cover_url = "cover_url",
   cover_video_url = "cover_video_url",
   created_at = "created_at",
@@ -19675,6 +19686,8 @@ export interface program_bool_exp {
   abstract?: String_comparison_exp | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
+  cover_mobile_url?: String_comparison_exp | null;
+  cover_thumbnail_url?: String_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
   cover_video_url?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -20301,6 +20314,8 @@ export interface program_insert_input {
   abstract?: string | null;
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
+  cover_mobile_url?: string | null;
+  cover_thumbnail_url?: string | null;
   cover_url?: string | null;
   cover_video_url?: string | null;
   created_at?: any | null;

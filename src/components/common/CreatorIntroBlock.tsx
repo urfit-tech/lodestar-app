@@ -78,7 +78,7 @@ const CreatorIntroBlock: React.VFC<{
   tags?: string[] | null
 }> = ({ title, subTitle, description, avatarUrl, tags }) => {
   return (
-    <BlurredBanner coverUrl={avatarUrl}>
+    <BlurredBanner coverUrl={{ desktopUrl: avatarUrl || undefined }}>
       <Wrapper>
         <div className="container">
           <StyledCard>

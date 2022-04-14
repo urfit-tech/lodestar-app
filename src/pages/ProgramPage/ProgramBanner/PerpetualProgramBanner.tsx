@@ -76,7 +76,9 @@ const PerpetualProgramBanner: React.VFC<{
   const { formatMessage } = useIntl()
 
   return (
-    <BlurredBanner coverUrl={program.coverUrl || undefined}>
+    <BlurredBanner
+      coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
+    >
       <StyledTitleBlock noVideo={!program.coverVideoUrl}>
         <StyledTags className="text-center">
           {program.tags?.map(programTag => (
