@@ -21,9 +21,9 @@ const StyledButton = styled(Button)<{ customButtonStyle?: { width?: string } }>`
   }
 `
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ width?: string }>`
   position: relative;
-  width: 224px;
+  width: ${props => (props?.width ? props.width : '224px')};
 `
 const StyledMask = styled.div<{ width?: string; shape?: 'rounded' | 'circle' }>`
   position: absolute;
@@ -66,7 +66,7 @@ const ImageUploader: React.VFC<{
   }, [file])
 
   return (
-    <StyledWrapper>
+    <StyledWrapper width={customStyle?.width ? customStyle.width : '224px'}>
       <CustomRatioImage
         width={customStyle?.width ? customStyle.width : '224px'}
         ratio={customStyle?.ratio ? customStyle.ratio : 9 / 16}

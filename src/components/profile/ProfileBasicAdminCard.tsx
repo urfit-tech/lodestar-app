@@ -28,6 +28,13 @@ const StyledFormItem = styled(Form.Item)`
   }
 `
 
+const StyledUploadWarning = styled.div`
+  color: var(--gray-dark);
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  height: 100%;
+`
+
 type ProfileBasicAdminCardProps = CardProps &
   FormComponentProps & {
     memberId: string
@@ -65,6 +72,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
           .then(() => {
             message.success(formatMessage(commonMessages.event.successfullySaved))
             refetchMember?.()
+            setAvatarImageFile(null)
           })
           .catch(err => message.error(err.message))
           .finally(() => setLoading(false))
@@ -87,13 +95,16 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
       >
         <StyledFormItem label={formatMessage(profileMessages.form.label.avatar)}>
           {member && (
-            <ImageUploader
-              imgUrl={member.pictureUrl}
-              file={avatarImageFile}
-              customStyle={{ shape: 'circle', width: '128px', ratio: 1 }}
-              customButtonStyle={{ width: '80%' }}
-              onChange={file => setAvatarImageFile(file)}
-            />
+            <>
+              <ImageUploader
+                imgUrl={member.pictureUrl}
+                file={avatarImageFile}
+                customStyle={{ shape: 'circle', width: '128px', ratio: 1 }}
+                customButtonStyle={{ width: '80%' }}
+                onChange={file => setAvatarImageFile(file)}
+              />
+              {avatarImageFile && <StyledUploadWarning className="ml-2">* 尚未上傳</StyledUploadWarning>}
+            </>
           )}
         </StyledFormItem>
         <Form.Item label={formatMessage(profileMessages.form.label.name)}>
@@ -113,7 +124,14 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
           })(<Textarea rows={5} />)}
         </Form.Item>
         <Form.Item wrapperCol={{ md: { offset: 4 } }}>
-          <Button variant="outline" className="mr-2" onClick={() => form.resetFields()}>
+          <Button
+            variant="outline"
+            className="mr-2"
+            onClick={() => {
+              setAvatarImageFile(null)
+              form.resetFields()
+            }}
+          >
             {formatMessage(commonMessages.ui.cancel)}
           </Button>
           <Button variant="primary" type="submit" isLoading={loading} _hover={{}}>
