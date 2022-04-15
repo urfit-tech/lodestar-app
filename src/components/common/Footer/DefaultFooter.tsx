@@ -2,9 +2,10 @@ import { Button, Divider, Dropdown, Icon, Menu } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { NavLinks, SocialLinks, StyledFooter } from '.'
+import { StyledFooter } from '.'
 import LocaleContext, { SUPPORTED_LOCALES } from '../../../contexts/LocaleContext'
 import { BREAK_POINT } from '../Responsive'
+import CWLearningNavLinks from './CWLearningNavLinks'
 
 const StyledLinkBlock = styled.div`
   padding-top: 1.25rem;
@@ -87,10 +88,22 @@ const DefaultFooter: React.VFC = () => {
             </div>
           )}
         </div>
+        <CWLearningNavLinks />
         <div className="blank" />
-        <StyledCopyright className="py-3 copyright">
-          Copyright © {new Date().getFullYear()} {name} Inc. All rights reserved
-        </StyledCopyright>
+        <div className="cwCopyrightBlock">
+          <StyledCopyright className="copyright">
+            客服專線：
+            <a href="tel:0226620332">(02) 2662-0332</a> /<a href="mailto:bill@cw.com.tw"> bill@cw.com.tw</a>
+          </StyledCopyright>
+          <StyledCopyright className="copyright">
+            課程團購洽詢：
+            <a href="tel:0226620332">(02) 2662-0332</a> /<a href="mailto:bill@cw.com.tw"> bill@cw.com.tw</a>
+          </StyledCopyright>
+          <StyledCopyright className="copyright">
+            {/* Copyright © {new Date().getFullYear()} {name} Inc. All rights reserved */}
+            Copyright © {new Date().getFullYear()} 天下學習 版權所有
+          </StyledCopyright>
+        </div>
       </StyledContainer>
     </StyledFooter>
   )

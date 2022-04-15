@@ -1675,7 +1675,7 @@ export interface GET_MEMBER_ORDERS_order_log_order_products_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
 }
@@ -2077,7 +2077,7 @@ export interface GET_CART_PRODUCT_COLLECTION_cart_product_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
   /**
@@ -2112,7 +2112,7 @@ export interface GET_CART_PRODUCT_COLLECTION_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
   /**
@@ -2198,6 +2198,33 @@ export interface UPDATE_CART_PRODUCTS {
 export interface UPDATE_CART_PRODUCTSVariables {
   memberId: string;
   cartProductObjects: cart_product_insert_input[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_APP_LANGUAGE
+// ====================================================
+
+export interface GET_APP_LANGUAGE_app_language {
+  __typename: "app_language";
+  id: any;
+  language: string;
+  data: any;
+}
+
+export interface GET_APP_LANGUAGE {
+  /**
+   * fetch data from the table: "app_language"
+   */
+  app_language: GET_APP_LANGUAGE_app_language[];
+}
+
+export interface GET_APP_LANGUAGEVariables {
+  appId: string;
 }
 
 /* tslint:disable */
@@ -3855,7 +3882,7 @@ export interface GET_ORDER_PRODUCT_order_product_by_pk_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
   target: string;
@@ -4313,7 +4340,7 @@ export interface GET_PRODUCT_SKU_product {
    */
   id: string;
   /**
-   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan
+   * ProgramPlan / ProgramContent / ProgramPackagePlan / ActivityTicket / Card / Merchandise / MerchandiseSpec / ProjectPlan / PodcastProgram / PodcastPlan / AppointmentServicePlan / VoucherPlan
    */
   type: string;
   target: string;
@@ -5657,6 +5684,9 @@ export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPEC_order_log {
   id: string;
   created_at: any;
   updated_at: any | null;
+  /**
+   * merchandise shipping advice
+   */
   delivered_at: any | null;
   deliver_message: string | null;
   shipping: any | null;
@@ -7213,6 +7243,8 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program {
   __typename: "program";
   id: any;
   cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
   title: string;
   abstract: string | null;
   support_locales: any | null;
@@ -7220,6 +7252,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program {
   is_subscription: boolean;
   is_sold_out: boolean | null;
   is_private: boolean;
+  is_enrolled_count_visible: boolean;
   list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
@@ -7289,6 +7322,11 @@ export interface GET_LATEST_PROGRAM_IDSVariables {
 // ====================================================
 // GraphQL query operation: GET_PROGRAM
 // ====================================================
+
+export interface GET_PROGRAM_program_by_pk_editors {
+  __typename: "program_editor";
+  member_id: string | null;
+}
 
 export interface GET_PROGRAM_program_by_pk_program_categories_category {
   __typename: "category";
@@ -7462,6 +7500,8 @@ export interface GET_PROGRAM_program_by_pk {
   __typename: "program";
   id: any;
   cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
   title: string;
   abstract: string | null;
   published_at: any | null;
@@ -7476,6 +7516,11 @@ export interface GET_PROGRAM_program_by_pk {
   is_private: boolean;
   is_countdown_timer_visible: boolean;
   is_introduction_section_visible: boolean;
+  is_enrolled_count_visible: boolean;
+  /**
+   * An array relationship
+   */
+  editors: GET_PROGRAM_program_by_pk_editors[];
   /**
    * An array relationship
    */
@@ -7813,6 +7858,36 @@ export interface INSERT_EXERCISE {
 
 export interface INSERT_EXERCISEVariables {
   data: exercise_insert_input;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PROGRAM_ENROLLMENT_AGGREGATE
+// ====================================================
+
+export interface GET_PROGRAM_ENROLLMENT_AGGREGATE_program_plan_enrollment_aggregate_aggregate {
+  __typename: "program_plan_enrollment_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_PROGRAM_ENROLLMENT_AGGREGATE_program_plan_enrollment_aggregate {
+  __typename: "program_plan_enrollment_aggregate";
+  aggregate: GET_PROGRAM_ENROLLMENT_AGGREGATE_program_plan_enrollment_aggregate_aggregate | null;
+}
+
+export interface GET_PROGRAM_ENROLLMENT_AGGREGATE {
+  /**
+   * fetch aggregated fields from the table: "program_plan_enrollment"
+   */
+  program_plan_enrollment_aggregate: GET_PROGRAM_ENROLLMENT_AGGREGATE_program_plan_enrollment_aggregate;
+}
+
+export interface GET_PROGRAM_ENROLLMENT_AGGREGATEVariables {
+  programId: any;
 }
 
 /* tslint:disable */
@@ -9435,6 +9510,8 @@ export interface SEARCH_PRODUCT_COLLECTION_program {
   __typename: "program";
   id: any;
   cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
   title: string;
   abstract: string | null;
   published_at: any | null;
@@ -9442,6 +9519,7 @@ export interface SEARCH_PRODUCT_COLLECTION_program {
   list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
+  is_enrolled_count_visible: boolean;
   /**
    * An array relationship
    */
@@ -10432,6 +10510,8 @@ export enum attachment_update_column {
   created_at = "created_at",
   data = "data",
   duration = "duration",
+  family = "family",
+  file_id = "file_id",
   filename = "filename",
   id = "id",
   is_deleted = "is_deleted",
@@ -10554,6 +10634,7 @@ export enum category_update_column {
   app_id = "app_id",
   class = "class",
   created_at = "created_at",
+  filterable = "filterable",
   id = "id",
   name = "name",
   position = "position",
@@ -10830,6 +10911,38 @@ export enum exercise_update_column {
   member_id = "member_id",
   program_content_id = "program_content_id",
   updated_at = "updated_at",
+}
+
+/**
+ * unique or primary key constraints on table "file"
+ */
+export enum file_constraint {
+  file_pkey = "file_pkey",
+}
+
+/**
+ * update columns of table "file"
+ */
+export enum file_update_column {
+  acl = "acl",
+  checksum = "checksum",
+  created_at = "created_at",
+  created_by = "created_by",
+  excerpt = "excerpt",
+  id = "id",
+  metadata = "metadata",
+  mime_type = "mime_type",
+  name = "name",
+  purge_at = "purge_at",
+  size = "size",
+  starred_at = "starred_at",
+  status = "status",
+  thumbnail = "thumbnail",
+  updated_at = "updated_at",
+  updated_by = "updated_by",
+  uri = "uri",
+  viewed_at = "viewed_at",
+  viewed_count = "viewed_count",
 }
 
 /**
@@ -12564,6 +12677,8 @@ export enum program_tempo_delivery_update_column {
 export enum program_update_column {
   abstract = "abstract",
   app_id = "app_id",
+  cover_mobile_url = "cover_mobile_url",
+  cover_thumbnail_url = "cover_thumbnail_url",
   cover_url = "cover_url",
   cover_video_url = "cover_video_url",
   created_at = "created_at",
@@ -12572,6 +12687,7 @@ export enum program_update_column {
   in_advance = "in_advance",
   is_countdown_timer_visible = "is_countdown_timer_visible",
   is_deleted = "is_deleted",
+  is_enrolled_count_visible = "is_enrolled_count_visible",
   is_introduction_section_visible = "is_introduction_section_visible",
   is_issues_open = "is_issues_open",
   is_private = "is_private",
@@ -12922,6 +13038,7 @@ export enum tag_constraint {
  */
 export enum tag_update_column {
   created_at = "created_at",
+  filterable = "filterable",
   name = "name",
   type = "type",
   updated_at = "updated_at",
@@ -12988,6 +13105,8 @@ export enum voucher_plan_update_column {
   id = "id",
   is_transferable = "is_transferable",
   product_quantity_limit = "product_quantity_limit",
+  sale_amount = "sale_amount",
+  sale_price = "sale_price",
   started_at = "started_at",
   title = "title",
   updated_at = "updated_at",
@@ -12998,6 +13117,7 @@ export enum voucher_plan_update_column {
  */
 export enum voucher_update_column {
   created_at = "created_at",
+  deleted_at = "deleted_at",
   id = "id",
   member_id = "member_id",
   voucher_code_id = "voucher_code_id",
@@ -14225,6 +14345,9 @@ export interface attachment_bool_exp {
   created_at?: timestamptz_comparison_exp | null;
   data?: jsonb_comparison_exp | null;
   duration?: numeric_comparison_exp | null;
+  family?: String_comparison_exp | null;
+  file?: file_bool_exp | null;
+  file_id?: uuid_comparison_exp | null;
   filename?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_deleted?: Boolean_comparison_exp | null;
@@ -14249,6 +14372,9 @@ export interface attachment_insert_input {
   created_at?: any | null;
   data?: any | null;
   duration?: any | null;
+  family?: string | null;
+  file?: file_obj_rel_insert_input | null;
+  file_id?: any | null;
   filename?: string | null;
   id?: any | null;
   is_deleted?: boolean | null;
@@ -14558,6 +14684,7 @@ export interface category_bool_exp {
   class?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   creator_categories?: creator_category_bool_exp | null;
+  filterable?: Boolean_comparison_exp | null;
   id?: String_comparison_exp | null;
   member_categories?: member_category_bool_exp | null;
   member_tasks?: member_task_bool_exp | null;
@@ -14581,6 +14708,7 @@ export interface category_insert_input {
   class?: string | null;
   created_at?: any | null;
   creator_categories?: creator_category_arr_rel_insert_input | null;
+  filterable?: boolean | null;
   id?: string | null;
   member_categories?: member_category_arr_rel_insert_input | null;
   member_tasks?: member_task_arr_rel_insert_input | null;
@@ -15370,6 +15498,76 @@ export interface exercise_on_conflict {
   constraint: exercise_constraint;
   update_columns: exercise_update_column[];
   where?: exercise_bool_exp | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "file". All fields are combined with a logical 'AND'.
+ */
+export interface file_bool_exp {
+  _and?: (file_bool_exp | null)[] | null;
+  _not?: file_bool_exp | null;
+  _or?: (file_bool_exp | null)[] | null;
+  acl?: String_comparison_exp | null;
+  checksum?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  created_by?: String_comparison_exp | null;
+  excerpt?: String_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  metadata?: jsonb_comparison_exp | null;
+  mime_type?: String_comparison_exp | null;
+  name?: String_comparison_exp | null;
+  purge_at?: timestamptz_comparison_exp | null;
+  size?: numeric_comparison_exp | null;
+  starred_at?: timestamptz_comparison_exp | null;
+  status?: String_comparison_exp | null;
+  thumbnail?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+  updated_by?: String_comparison_exp | null;
+  uri?: String_comparison_exp | null;
+  viewed_at?: timestamptz_comparison_exp | null;
+  viewed_count?: Int_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "file"
+ */
+export interface file_insert_input {
+  acl?: string | null;
+  checksum?: string | null;
+  created_at?: any | null;
+  created_by?: string | null;
+  excerpt?: string | null;
+  id?: any | null;
+  metadata?: any | null;
+  mime_type?: string | null;
+  name?: string | null;
+  purge_at?: any | null;
+  size?: any | null;
+  starred_at?: any | null;
+  status?: string | null;
+  thumbnail?: string | null;
+  updated_at?: any | null;
+  updated_by?: string | null;
+  uri?: string | null;
+  viewed_at?: any | null;
+  viewed_count?: number | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "file"
+ */
+export interface file_obj_rel_insert_input {
+  data: file_insert_input;
+  on_conflict?: file_on_conflict | null;
+}
+
+/**
+ * on conflict condition type for table "file"
+ */
+export interface file_on_conflict {
+  constraint: file_constraint;
+  update_columns: file_update_column[];
+  where?: file_bool_exp | null;
 }
 
 /**
@@ -19474,6 +19672,8 @@ export interface program_bool_exp {
   abstract?: String_comparison_exp | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
+  cover_mobile_url?: String_comparison_exp | null;
+  cover_thumbnail_url?: String_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
   cover_video_url?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -19483,6 +19683,7 @@ export interface program_bool_exp {
   in_advance?: Boolean_comparison_exp | null;
   is_countdown_timer_visible?: Boolean_comparison_exp | null;
   is_deleted?: Boolean_comparison_exp | null;
+  is_enrolled_count_visible?: Boolean_comparison_exp | null;
   is_introduction_section_visible?: Boolean_comparison_exp | null;
   is_issues_open?: Boolean_comparison_exp | null;
   is_private?: Boolean_comparison_exp | null;
@@ -19873,7 +20074,10 @@ export interface program_content_progress_enrollment_bool_exp {
   last_progress?: numeric_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  program?: program_bool_exp | null;
+  program_content?: program_content_bool_exp | null;
   program_content_id?: uuid_comparison_exp | null;
+  program_content_section?: program_content_section_bool_exp | null;
   program_content_section_id?: uuid_comparison_exp | null;
   program_id?: uuid_comparison_exp | null;
   progress?: numeric_comparison_exp | null;
@@ -20096,6 +20300,8 @@ export interface program_insert_input {
   abstract?: string | null;
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
+  cover_mobile_url?: string | null;
+  cover_thumbnail_url?: string | null;
   cover_url?: string | null;
   cover_video_url?: string | null;
   created_at?: any | null;
@@ -20105,6 +20311,7 @@ export interface program_insert_input {
   in_advance?: boolean | null;
   is_countdown_timer_visible?: boolean | null;
   is_deleted?: boolean | null;
+  is_enrolled_count_visible?: boolean | null;
   is_introduction_section_visible?: boolean | null;
   is_issues_open?: boolean | null;
   is_private?: boolean | null;
@@ -21598,6 +21805,7 @@ export interface tag_bool_exp {
   _or?: (tag_bool_exp | null)[] | null;
   activity_tags?: activity_tag_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  filterable?: Boolean_comparison_exp | null;
   member_specialities?: member_speciality_bool_exp | null;
   member_tags?: member_tag_bool_exp | null;
   merchandise_tags?: merchandise_tag_bool_exp | null;
@@ -21615,6 +21823,7 @@ export interface tag_bool_exp {
 export interface tag_insert_input {
   activity_tags?: activity_tag_arr_rel_insert_input | null;
   created_at?: any | null;
+  filterable?: boolean | null;
   member_specialities?: member_speciality_arr_rel_insert_input | null;
   member_tags?: member_tag_arr_rel_insert_input | null;
   merchandise_tags?: merchandise_tag_arr_rel_insert_input | null;
@@ -21704,6 +21913,7 @@ export interface voucher_bool_exp {
   _not?: voucher_bool_exp | null;
   _or?: (voucher_bool_exp | null)[] | null;
   created_at?: timestamptz_comparison_exp | null;
+  deleted_at?: timestamp_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -21771,6 +21981,7 @@ export interface voucher_code_on_conflict {
  */
 export interface voucher_insert_input {
   created_at?: any | null;
+  deleted_at?: any | null;
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
@@ -21810,6 +22021,8 @@ export interface voucher_plan_bool_exp {
   id?: uuid_comparison_exp | null;
   is_transferable?: Boolean_comparison_exp | null;
   product_quantity_limit?: Int_comparison_exp | null;
+  sale_amount?: Int_comparison_exp | null;
+  sale_price?: numeric_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -21829,6 +22042,8 @@ export interface voucher_plan_insert_input {
   id?: any | null;
   is_transferable?: boolean | null;
   product_quantity_limit?: number | null;
+  sale_amount?: number | null;
+  sale_price?: any | null;
   started_at?: any | null;
   title?: string | null;
   updated_at?: any | null;
