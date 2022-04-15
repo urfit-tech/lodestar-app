@@ -64,7 +64,10 @@ const PodcastAlbumBanner: React.VFC<{
   const { formatMessage } = useIntl()
 
   return (
-    <BlurredBanner coverUrl={podcastAlbum.coverUrl || EmptyCover} width={{ desktop: '240px', mobile: '360px' }}>
+    <BlurredBanner
+      coverUrl={{ desktopUrl: podcastAlbum.coverUrl || EmptyCover }}
+      width={{ desktop: '240px', mobile: '360px' }}
+    >
       <StyledTitleBlockWrapper>
         <StyledTitleBlock className="container d-lg-flex">
           <Responsive.Desktop>

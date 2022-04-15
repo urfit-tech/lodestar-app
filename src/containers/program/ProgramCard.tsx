@@ -82,7 +82,7 @@ const ProgramCard: React.VFC<{
           <CustomRatioImage
             width="100%"
             ratio={9 / 16}
-            src={program && program.coverUrl ? program.coverUrl : EmptyCover}
+            src={(program && (program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl)) || EmptyCover}
             shape="rounded"
           />
           <StyledMeta>
