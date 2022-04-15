@@ -44,27 +44,29 @@ export const LocaleProvider: React.FC = ({ children }) => {
   const appLocaleMessages = data?.app_language.find(v => v.language === currentLocale)?.data || {}
 
   useEffect(() => {
-    let currentLocale = defaultLocaleContextValue.currentLocale
-    if (enabledModules.locale) {
-      const browserLocale = settings['language'] || navigator.language
-      const cachedLocale = localStorage.getItem('kolable.app.language')?.toLowerCase()
-      if (cachedLocale && SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === cachedLocale)) {
-        currentLocale = cachedLocale
-      } else if (browserLocale && SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === browserLocale)) {
-        currentLocale = browserLocale
-      }
+    let currentLocale = defaultLocaleContextValue.currentLocale || settings['language']
+    const cachedLocale = localStorage.getItem('kolable.app.language')?.toLowerCase()
+    if (
+      cachedLocale &&
+      SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === cachedLocale.toLowerCase())
+    ) {
+      currentLocale = cachedLocale
+    } else if (
+      enabledModules.locale &&
+      navigator.language &&
+      SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === navigator.language.toLowerCase())
+    ) {
+      currentLocale = navigator.language
     }
     setCurrentLocale(currentLocale)
   }, [enabledModules, settings])
 
   moment.locale(currentLocale)
   let localeMessages: { [key: string]: string } = defaultLocaleMessages
-  if (enabledModules.locale) {
-    try {
-      localeMessages = require(`../translations/locales/${currentLocale}.json`)
-    } catch (error) {
-      console.warn('cannot load the locale:', currentLocale, error)
-    }
+  try {
+    localeMessages = require(`../translations/locales/${currentLocale}.json`)
+  } catch (error) {
+    console.warn('cannot load the locale:', currentLocale, error)
   }
   localeMessages = { ...localeMessages, ...appLocaleMessages }
 
