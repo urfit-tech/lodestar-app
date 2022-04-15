@@ -1,17 +1,11 @@
 import { Button, Divider } from '@chakra-ui/react'
-import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { notEmpty } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ProgramPackagePlanProps } from '../../types/programPackage'
-import { AuthModalContext } from '../auth/AuthModal'
+import PaymentButton from '../common/PaymentButton'
 import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 
@@ -62,12 +56,7 @@ const ProgramPackagePlanCard: React.VFC<
   isEnrolled,
 }) => {
   const { formatMessage } = useIntl()
-  const { isAuthenticated } = useAuth()
-  const { id: appId } = useApp()
-  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const isOnSale = soldAt ? Date.now() < soldAt.getTime() : false
-  const tracking = useTracking()
-  const { resourceCollection } = useResourceCollection([`${appId}:program_package_plan:${id}`])
 
   return (
     <StyledCard>
@@ -115,25 +104,11 @@ const ProgramPackagePlanCard: React.VFC<
             </Button>
           </Link>
         ) : (
-          <CheckoutProductModal
-            defaultProductId={`ProgramPackagePlan_${id}`}
-            renderTrigger={({ isLoading, onOpen }) => (
-              <Button
-                variant="primary"
-                isFullWidth
-                isDisabled={isLoading}
-                onClick={() => {
-                  isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true)
-                  const resource = resourceCollection.filter(notEmpty)[0]
-                  resource && tracking.addToCart(resource, { direct: true })
-                  resource && tracking.checkout([resource])
-                }}
-              >
-                {isSubscription
-                  ? formatMessage(commonMessages.button.subscribeNow)
-                  : formatMessage(commonMessages.ui.purchase)}
-              </Button>
-            )}
+          <PaymentButton
+            type="ProgramPackagePlan"
+            target={id}
+            price={isOnSale && salePrice ? salePrice : listPrice}
+            isSubscription={isSubscription}
           />
         )}
       </div>
