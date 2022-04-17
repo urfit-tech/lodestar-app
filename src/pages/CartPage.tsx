@@ -50,13 +50,11 @@ const CartPage: React.VFC = () => {
       </DefaultLayout>
     )
   }
+  const filteredResourceCollection = resourceCollection.filter(notEmpty)
   return (
     <DefaultLayout>
-      {!checkoutAlready && (
-        <Tracking.Checkout
-          resources={resourceCollection.filter(notEmpty)}
-          onCheckout={() => setCheckoutAlready(true)}
-        />
+      {!checkoutAlready && filteredResourceCollection.length > 0 && (
+        <Tracking.Checkout resources={filteredResourceCollection} onCheckout={() => setCheckoutAlready(true)} />
       )}
       {/* group cart products by product owner */}
       {shopIds.length > 1 && typeof shopId === 'undefined' && (

@@ -2,9 +2,7 @@ import { useApolloClient, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { getResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import { uniqBy } from 'ramda'
 import React, { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
@@ -204,17 +202,6 @@ export const CartProvider: React.FC = ({ children }) => {
           const cachedCartProducts = getLocalCartProducts()
           const newCartProduct = cachedCartProducts.filter(cartProduct => !productIds.includes(cartProduct.productId))
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProduct))
-
-          const resourceCollection = await getResourceCollection(
-            apolloClient,
-            productIds.map(productId => {
-              const { type, target } = getResourceByProductId(productId)
-              return `${appId}:${type}:${target}`
-            }),
-          )
-
-          resourceCollection.forEach(resource => resource && tracking.removeFromCart(resource))
-
           syncCartProducts()
         },
         clearCart: async () => {
