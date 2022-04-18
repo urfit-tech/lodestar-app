@@ -1,4 +1,5 @@
-import { Box, Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
+import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
+import { defineMessage } from '@formatjs/intl'
 import { Form, message, Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
 import CheckoutGroupBuyingForm, {
@@ -51,6 +52,10 @@ const StyledInputWrapper = styled.div`
   }
 `
 
+const StyledApprovementBox = styled.div`
+  padding-left: 46px;
+`
+
 const CheckoutBlock: React.VFC<{
   member: MemberProps | null
   shopId: string
@@ -73,6 +78,7 @@ const CheckoutBlock: React.VFC<{
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
+  const [isApproved, setIsApproved] = useState(false)
   const updateMemberMetadata = useUpdateMemberMetadata()
   const toast = useToast()
 
@@ -445,6 +451,7 @@ const CheckoutBlock: React.VFC<{
           </div>
         </AdminCard>
       )}
+
       {cartProducts.length > 0 && totalPrice > 0 && enabledModules.referrer && (
         <AdminCard className="mb-3">
           <div className="mb-3">
@@ -479,6 +486,19 @@ const CheckoutBlock: React.VFC<{
           </div>
         </AdminCard>
       )}
+      {settings['checkout.approvement'] === 'true' && (
+        <AdminCard className="mb-3">
+          <Checkbox
+            className="mr-2"
+            size="lg"
+            colorScheme="primary"
+            isChecked={isApproved}
+            onChange={() => setIsApproved(prev => !prev)}
+          />
+          <span>{formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}</span>
+          <StyledApprovementBox dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }} />
+        </AdminCard>
+      )}
       {renderTerms && (
         <div className="mb-3">
           <AdminCard>{renderTerms()}</AdminCard>
@@ -486,6 +506,7 @@ const CheckoutBlock: React.VFC<{
       )}
       <div className="mb-3">
         <CheckoutCard
+          isDisabled={isApproved === false}
           check={check}
           cartProducts={cartProducts}
           discountId={discountId}
