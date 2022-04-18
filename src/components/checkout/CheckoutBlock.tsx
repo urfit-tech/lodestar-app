@@ -496,7 +496,10 @@ const CheckoutBlock: React.VFC<{
             onChange={() => setIsApproved(prev => !prev)}
           />
           <span>{formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}</span>
-          <StyledApprovementBox dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }} />
+          <StyledApprovementBox
+            className="mt-2"
+            dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }}
+          />
         </AdminCard>
       )}
       {renderTerms && (
