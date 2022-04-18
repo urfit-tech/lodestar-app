@@ -92,7 +92,7 @@ const PaymentButton: React.VFC<{
         <CoinCheckoutModal productId={type + '_' + target} currencyId={currencyId} amount={price} />
       ) : (
         <div className="d-flex flex-column">
-          {!settings['feature.cart.disable'] && (
+          {Boolean(Number(settings['feature.cart.disable'])) && (
             <StyleButton
               className="mr-2"
               variant="outline"
