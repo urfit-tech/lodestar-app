@@ -10991,6 +10991,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     react-router-dom "5.2.0"
     react-scripts "4.0.3"
     react-slick "0.28.1"
+    react-style-editor "^0.4.0"
     styled-components "5.1.1"
     ts-deep-pick "0.2.2"
     typescript "4.4.3"
@@ -14479,6 +14480,11 @@ react-star-rating-component@^1.4.1:
   dependencies:
     classnames "^2.2.5"
     prop-types "^15.6.1"
+
+react-style-editor@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/react-style-editor/-/react-style-editor-0.4.0.tgz#b81d8751143283b809eb91f71a126e80a40a3a01"
+  integrity sha512-ywMzuVUjupaEILqQvgVGutSoWb21M8alt5F5IVpoVm9iNjmgMRXnFjklVBTOYxP1WC9iIlh54beJQKJ3SNStuw==
 
 react-style-singleton@^2.1.0:
   version "2.1.1"
