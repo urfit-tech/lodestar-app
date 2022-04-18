@@ -9401,6 +9401,16 @@ export interface GET_LAST_EXERCISEVariables {
 // GraphQL query operation: GET_BEST_REVIEWS
 // ====================================================
 
+export interface GET_BEST_REVIEWS_review_public_review_reactions_aggregate_aggregate {
+  __typename: "review_reaction_aggregate_fields";
+  count: number | null;
+}
+
+export interface GET_BEST_REVIEWS_review_public_review_reactions_aggregate {
+  __typename: "review_reaction_aggregate";
+  aggregate: GET_BEST_REVIEWS_review_public_review_reactions_aggregate_aggregate | null;
+}
+
 export interface GET_BEST_REVIEWS_review_public {
   __typename: "review_public";
   id: any | null;
@@ -9410,6 +9420,10 @@ export interface GET_BEST_REVIEWS_review_public {
   content: string | null;
   updated_at: any | null;
   created_at: any | null;
+  /**
+   * An aggregated array relationship
+   */
+  review_reactions_aggregate: GET_BEST_REVIEWS_review_public_review_reactions_aggregate;
 }
 
 export interface GET_BEST_REVIEWS {
@@ -10762,7 +10776,6 @@ export enum contract_update_column {
  * unique or primary key constraints on table "coupon_code"
  */
 export enum coupon_code_constraint {
-  coupon_code_code_key = "coupon_code_code_key",
   coupon_plan_code_app_id_code_key = "coupon_plan_code_app_id_code_key",
   coupon_plan_code_pkey = "coupon_plan_code_pkey",
 }
@@ -12695,6 +12708,7 @@ export enum program_update_column {
   is_subscription = "is_subscription",
   list_price = "list_price",
   meta_tag = "meta_tag",
+  metadata = "metadata",
   position = "position",
   published_at = "published_at",
   sale_price = "sale_price",
@@ -19691,6 +19705,7 @@ export interface program_bool_exp {
   is_subscription?: Boolean_comparison_exp | null;
   list_price?: numeric_comparison_exp | null;
   meta_tag?: jsonb_comparison_exp | null;
+  metadata?: jsonb_comparison_exp | null;
   package_items?: package_item_bool_exp | null;
   position?: Int_comparison_exp | null;
   program_announcements?: program_announcement_bool_exp | null;
@@ -20319,6 +20334,7 @@ export interface program_insert_input {
   is_subscription?: boolean | null;
   list_price?: any | null;
   meta_tag?: any | null;
+  metadata?: any | null;
   package_items?: package_item_arr_rel_insert_input | null;
   position?: number | null;
   program_announcements?: program_announcement_arr_rel_insert_input | null;
