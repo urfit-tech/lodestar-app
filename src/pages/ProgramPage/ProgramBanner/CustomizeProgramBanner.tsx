@@ -116,7 +116,6 @@ const CustomizeProgramBanner: React.VFC<{
 }> = ({ program, isEnrolled }) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
-  console.log(program.coverMobileUrl)
   return (
     <StyledWrapper id="program-banner" className="row">
       <div className="col-12 col-md-6">
