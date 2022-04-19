@@ -2,7 +2,6 @@ import { useApolloClient, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { uniqBy } from 'ramda'
 import React, { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
@@ -26,7 +25,6 @@ const CartContext = React.createContext<{
 })
 
 export const CartProvider: React.FC = ({ children }) => {
-  const tracking = useTracking()
   const { id: appId, settings } = useApp()
   const apolloClient = useApolloClient()
   const { currentMemberId } = useAuth()
