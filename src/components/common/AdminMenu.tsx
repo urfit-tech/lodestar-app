@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon, SettingsIcon } from '@chakra-ui/icons'
+import { Icon } from '@chakra-ui/icons'
 import { Menu } from 'antd'
 import { ClickParam, MenuProps } from 'antd/lib/menu'
 import gql from 'graphql-tag'
@@ -13,12 +13,10 @@ import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { useSocialCardCollection } from '../../hooks/member'
-import { ReactComponent as BookIcon } from '../../images/book.svg'
 import { ReactComponent as ClipboardListIcon } from '../../images/clipboard-list.svg'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
-import { ReactComponent as GroupBuyIcon } from '../../images/group-buy.svg'
 import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
@@ -39,12 +37,12 @@ const StyledMenu = styled(Menu)`
     padding-left: 3rem !important;
     border-radius: 0 100px 100px 0;
     &:active {
-      background: #DDD !important;
+      background: transparent !important;
     }
   }
 
   & .ant-menu-item-selected {
-    background: #DDD !important;
+    background: #ddd !important;
     &::after {
       display: none;
     }
@@ -92,17 +90,17 @@ export const MemberAdminMenu: React.VFC<
   const { socialCards } = useSocialCardCollection()
 
   const defaultMenuItems = [
-    {
-      key: 'management_system',
-      item: (currentUserRole === 'app-owner' ||
-        currentUserRole === 'content-creator' ||
-        permissions.BACKSTAGE_ENTER) && (
-        <Menu.Item key="management_system" className="managementSystem">
-          <SettingsIcon className="mr-2" />
-          {formatMessage(commonMessages.content.managementSystem)}
-        </Menu.Item>
-      ),
-    },
+    // {
+    //   key: 'management_system',
+    //   item: (currentUserRole === 'app-owner' ||
+    //     currentUserRole === 'content-creator' ||
+    //     permissions.BACKSTAGE_ENTER) && (
+    //     <Menu.Item key="management_system" className="managementSystem">
+    //       <SettingsIcon className="mr-2" />
+    //       {formatMessage(commonMessages.content.managementSystem)}
+    //     </Menu.Item>
+    //   ),
+    // },
     {
       key: 'member_profile_admin',
       item: settings['custom.member_profile_admin.link'] ? (
@@ -210,7 +208,8 @@ export const MemberAdminMenu: React.VFC<
     {
       key: 'customer_support_link',
       item: (
-        <Menu.Item key="_blank" data-href={settings['customer_support_link']}>
+        // <Menu.Item key="_blank" data-href={settings['customer_support_link']}>
+        <Menu.Item key="_blank" data-href="mailto:bill@cw.com.tw">
           <Icon as={CommentsIcon} className="mr-2" />
           {formatMessage(commonMessages.content.contact)}
         </Menu.Item>
