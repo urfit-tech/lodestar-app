@@ -346,7 +346,7 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
           <CommonModal title="" isOpen={isOpen} onClose={() => setIsOpen(false)}>
             {resultTags.map(tag => (
               <StyleSubCategoryTag
-                className="mb-3 mr-3"
+                className="mb-2 mr-2"
                 variant="outline"
                 colorScheme="primary"
                 onClick={() =>
