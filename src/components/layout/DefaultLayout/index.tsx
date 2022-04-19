@@ -10,11 +10,11 @@ import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
 import NotificationContext from '../../../contexts/NotificationContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
-import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
 import CartDropdown from '../../checkout/CartDropdown'
 import Footer from '../../common/Footer'
+import GlobalSearchInput from '../../common/GlobalSearchInput'
 import MemberProfileButton from '../../common/MemberProfileButton'
 import Responsive from '../../common/Responsive'
 import NotificationDropdown from '../../notification/NotificationDropdown'
@@ -95,6 +95,9 @@ const DefaultLayout: React.FC<{
                 <Link to="/">{settings['logo'] ? <StyledLogo src={settings['logo']} alt="logo" /> : name}</Link>
               )}
             </LogoBlock>
+            <Responsive.Desktop>
+              <GlobalSearchInput />
+            </Responsive.Desktop>
           </div>
           <div className="d-flex align-items-center">
             <Responsive.Desktop>
@@ -202,7 +205,11 @@ const DefaultLayout: React.FC<{
                   )))}
             </Responsive.Desktop>
 
-            {(enabledModules.search || enabledModules.search_advanced) && <GlobalSearchModal />}
+            {(enabledModules.search || enabledModules.search_advanced) && (
+              <Responsive.Default>
+                <GlobalSearchModal />
+              </Responsive.Default>
+            )}
             {!noCart && !settings['feature.cart.disable'] && (renderCartButton ? renderCartButton() : <CartDropdown />)}
             {currentMemberId && !settings['feature.notify.disable'] && <NotificationDropdown />}
             {currentMemberId && currentMember ? (
