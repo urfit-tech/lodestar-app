@@ -11,11 +11,11 @@ import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
-import ClassCouponBlock from '../../components/ClassCouponBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -27,7 +27,7 @@ import { CustomizeProgramBanner, PerpetualProgramBanner } from './ProgramBanner'
 import ProgramBestReviewsCarousel from './ProgramBestReviewsCarousel'
 import ProgramContentListSection from './ProgramContentListSection'
 import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
-import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
+import { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
 import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
 import ProgramPageHelmet from './ProgramPageHelmet'
 import ProgramPlanCard from './ProgramPlanCard'
@@ -149,7 +149,7 @@ const ProgramPage: React.VFC = () => {
               <div className="col-12 col-lg-8">
                 {!settings['layout.program_page'] && (
                   <div className="mb-5">
-                  <ProgramInstructorCollectionBlock program={program} />
+                    <ProgramInstructorCollectionBlock program={program} />
                   </div>
                 )}
                 {!settings['layout.program_page'] && (
@@ -168,7 +168,10 @@ const ProgramPage: React.VFC = () => {
 
                 {settings['layout.program_page'] && (
                   <div className="mb-5">
-                    <ProgramBestReviewsCarousel pathname={pathname} />
+                    <ProgramBestReviewsCarousel
+                      pathname={pathname}
+                      onReviewBlockScroll={() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                    />
                     <div className="text-center mt-3">
                       <Button
                         variant="outline"
