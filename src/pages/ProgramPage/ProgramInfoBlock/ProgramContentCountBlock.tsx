@@ -2,7 +2,6 @@ import { sum } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { BREAK_POINT } from '../../../components/common/Responsive'
 import { commonMessages } from '../../../helpers/translation'
 import { Program, ProgramContent, ProgramContentSection } from '../../../types/program'
 
@@ -28,11 +27,10 @@ const StyledCountBlock = styled.div`
     font-size: 14px;
     letter-spacing: 0.4px;
   }
-
-  @media (min-width: ${BREAK_POINT}px) {
-    margin-bottom: 2rem;
-  }
 `
+// @media (min-width: ${BREAK_POINT}px) {
+//   margin-bottom: 2rem;
+// }
 
 const ProgramContentCountBlock: React.VFC<{
   program: Program & {

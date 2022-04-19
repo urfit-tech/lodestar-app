@@ -139,6 +139,15 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
           </Button>
         </Form.Item>
       </StyledForm>
+      <p>
+        若需修改密碼、會員資料，請至
+        <a href="https://member.cwg.tw/" target="_blank">
+          <u>
+            <b>天下雜誌會員中心</b>
+          </u>
+        </a>
+        ，登入後進行修改。
+      </p>
     </AdminCard>
   )
 }
