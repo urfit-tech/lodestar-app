@@ -1,6 +1,8 @@
 import { Button, Icon } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext } from 'react'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -38,9 +40,11 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
   ticketCurrencyId,
 }) => {
   const { formatMessage } = useIntl()
-  const { settings } = useApp()
+  const { settings, id: appId } = useApp()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
   const history = useHistory()
+  const tracking = useTracking()
+  const { resourceCollection } = useResourceCollection([`${appId}:activity_ticket:${ticketId}`])
 
   const handleAddCart = () => {
     return addCartProduct?.('ActivityTicket', ticketId, {
@@ -69,14 +73,24 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
               colorScheme="primary"
               isFullWidth
               isMultiline
-              onClick={handleAddCart}
+              onClick={() => {
+                resourceCollection[0] && tracking.addToCart(resourceCollection[0], { direct: false })
+                handleAddCart()
+              }}
             >
               <Icon as={AiOutlineShoppingCart} />
               <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
             </StyleButton>
           )}
 
-          <Button colorScheme="primary" isFullWidth onClick={() => handleAddCart()?.then(() => history.push('/cart'))}>
+          <Button
+            colorScheme="primary"
+            isFullWidth
+            onClick={() => {
+              resourceCollection[0] && tracking.addToCart(resourceCollection[0], { direct: true })
+              handleAddCart()?.then(() => history.push('/cart'))
+            }}
+          >
             {ticketPrice === 0 ? formatMessage(commonMessages.button.join) : formatMessage(commonMessages.ui.purchase)}
           </Button>
         </div>

@@ -35,13 +35,15 @@ const CartPage: React.VFC = () => {
       layoutContent?.scrollTo(0, 0)
     }
   }, [shopId])
-
-  const { resourceCollection } = useResourceCollection(
-    cartProducts.map(cartProduct => {
-      const { type, target } = getResourceByProductId(cartProduct.productId)
-      return `${appId}:${type}:${target}`
-    }),
-  )
+  const cartProductWithUrns = cartProducts.map(cartProduct => {
+    const { type, target } = getResourceByProductId(cartProduct.productId)
+    return { urn: `${appId}:${type}:${target}`, ...cartProduct }
+  })
+  const { resourceCollection } = useResourceCollection(cartProductWithUrns.map(p => p.urn))
+  const filteredResourceCollection = resourceCollection.filter(notEmpty).map(resource => ({
+    ...resource,
+    options: { quantity: cartProductWithUrns.find(p => p.urn === resource.urn)?.options?.quantity },
+  }))
 
   if (isAuthenticating || loadingMember) {
     return (
@@ -50,13 +52,11 @@ const CartPage: React.VFC = () => {
       </DefaultLayout>
     )
   }
+
   return (
     <DefaultLayout>
-      {!checkoutAlready && (
-        <Tracking.Checkout
-          resources={resourceCollection.filter(notEmpty)}
-          onCheckout={() => setCheckoutAlready(true)}
-        />
+      {!checkoutAlready && filteredResourceCollection.length > 0 && (
+        <Tracking.Checkout resources={filteredResourceCollection} onCheckout={() => setCheckoutAlready(true)} />
       )}
       {/* group cart products by product owner */}
       {shopIds.length > 1 && typeof shopId === 'undefined' && (
