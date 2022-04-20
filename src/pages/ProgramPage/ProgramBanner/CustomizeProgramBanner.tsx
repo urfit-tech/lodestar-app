@@ -7,6 +7,7 @@ import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Responsive, { BREAK_POINT } from '../../../components/common/Responsive'
+import VideoPlayer from '../../../components/common/VideoPlayer'
 import { ReactComponent as PlayIcon } from '../../../images/play-fill-icon.svg'
 import { ReactComponent as StarIcon } from '../../../images/star-current-color.svg'
 import { Program } from '../../../types/program'
@@ -121,6 +122,10 @@ const CustomizeProgramBanner: React.VFC<{
                   controls
                   autoPlay
                   style={{ width: '100%', height: '100%' }}
+                />
+              ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
+                <VideoPlayer
+                  source={{ type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' }}
                 />
               ) : (
                 <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />

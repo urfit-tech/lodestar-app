@@ -14,7 +14,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { validateContactInfo } from 'lodestar-app-element/src/helpers'
 import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
 import { prop, sum } from 'ramda'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -78,7 +78,11 @@ const CheckoutBlock: React.VFC<{
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
-  const [isApproved, setIsApproved] = useState(false)
+  const [isApproved, setIsApproved] = useState(settings['checkout.approvement'] !== 'true')
+  useEffect(() => {
+    setIsApproved(settings['checkout.approvement'] !== 'true')
+  }, [settings])
+
   const updateMemberMetadata = useUpdateMemberMetadata()
   const toast = useToast()
 

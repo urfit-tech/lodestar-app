@@ -355,6 +355,7 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
           <StyleSubCategoryBlock className="mb-3">
             {tag.subTags.slice(0, 4).map(subTag => (
               <StyleSubCategoryTag
+                className="mb-2 mr-2"
                 variant="outline"
                 colorScheme="primary"
                 onClick={() =>

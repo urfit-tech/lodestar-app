@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import MemberAvatar from '../../../components/common/MemberAvatar'
 import { BREAK_POINT } from '../../../components/common/Responsive'
+import VideoPlayer from '../../../components/common/VideoPlayer'
 import { productMessages } from '../../../helpers/translation'
 import { Program, ProgramRole } from '../../../types/program'
 
@@ -104,6 +105,10 @@ const SubscriptionProgramBanner: React.VFC<{
                   controls
                   autoPlay
                   style={{ width: '100%', height: '100%' }}
+                />
+              ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
+                <VideoPlayer
+                  source={{ type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' }}
                 />
               ) : (
                 <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />
