@@ -42,6 +42,7 @@ const ProgramPackageContentPage: React.VFC = () => {
                 <Link
                   className="col-12 col-md-6 col-lg-4"
                   target="_blank"
+                  rel="noopener noreferrer"
                   to={`/programs/${program.id}/contents?back=program-package_${programPackageId}`}
                 >
                   <ProgramDisplayedCard key={program.id} program={program} memberId={memberId} />
@@ -50,6 +51,7 @@ const ProgramPackageContentPage: React.VFC = () => {
                 <Link
                   className="col-12"
                   target="_blank"
+                  rel="noopener noreferrer"
                   to={`/programs/${program.id}/contents?back=program-package_${programPackageId}`}
                 >
                   <ProgramDisplayedListItem key={program.id} program={program} memberId={memberId} />

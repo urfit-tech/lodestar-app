@@ -118,13 +118,21 @@ const ProgramPackagePage: React.VFC = () => {
                     const isEnrolled = enrolledProgramIds.includes(program.id)
                     return displayType === 'grid' ? (
                       <div className="col-12 col-md-6 col-lg-6 mb-4">
-                        <Link to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`} target="_blank">
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`}
+                        >
                           <ProgramDisplayedCard key={program.id} program={program} />
                         </Link>
                       </div>
                     ) : displayType === 'list' ? (
                       <div className="col-12">
-                        <Link to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`} target="_blank">
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`}
+                        >
                           <ProgramDisplayedListItem key={program.id} program={program} />
                         </Link>
                       </div>
