@@ -20,7 +20,7 @@ const MemberAvatar: React.VFC<MemberAvatarProps> = ({ memberId, shape, size, ren
   const { member } = usePublicMember(memberId)
 
   if (!member) {
-    return null
+    return <AvatarImage shape={shape} size={size} />
   }
 
   return (
