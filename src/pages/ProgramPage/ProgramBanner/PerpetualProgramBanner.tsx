@@ -78,7 +78,10 @@ const PerpetualProgramBanner: React.VFC<{
 
   return (
     <div>
-      <FullSizeBanner coverUrl={program.coverUrl} />
+      <FullSizeBanner
+        coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
+      />
+
       <StyledTitleBlock noVideo={!program.coverVideoUrl}>
         <StyledTags className="text-center">
           {program.tags?.map(programTag => (
