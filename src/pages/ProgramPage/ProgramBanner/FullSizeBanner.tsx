@@ -4,11 +4,12 @@ import styled from 'styled-components'
 
 const FullSizeContainer = styled.div<{ coverUrl?: { mobileUrl?: string; desktopUrl?: string } }>`
   width: 100vw;
-  height: 41.68vw;
+  height: 104vw;
   background-image: url(${props => props.coverUrl?.mobileUrl || props.coverUrl?.desktopUrl});
   background-size: cover;
   background-position: center;
   @media (min-width: ${BREAK_POINT}px) {
+    height: 41.68vw;
     background-image: url(${props => props.coverUrl?.desktopUrl || props.coverUrl?.mobileUrl});
   }
 `
