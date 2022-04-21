@@ -96,7 +96,7 @@ const ProgramContentPage: React.VFC = () => {
                   editors={program.editors}
                 >
                   <>
-                    <ProgramContentMenu program={program} />
+                    <ProgramContentMenu isScrollToTop program={program} />
 
                     <Button isFullWidth className="mt-3" colorScheme="primary">
                       <StyledLink to={`/programs/${programId}?moveToBlock=customer-review`}>

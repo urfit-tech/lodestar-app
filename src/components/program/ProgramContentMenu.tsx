@@ -110,13 +110,14 @@ const messages = defineMessages({
 })
 
 const ProgramContentMenu: React.VFC<{
+  isScrollToTop?: boolean
   program: Program & {
     contentSections: (ProgramContentSection & {
       contents: ProgramContent[]
     })[]
   }
   onSelect?: (programContentId: string) => void
-}> = ({ program, onSelect }) => {
+}> = ({ program, onSelect, isScrollToTop }) => {
   const { formatMessage } = useIntl()
   const [sortBy, setSortBy] = useState('section')
   const { search } = useLocation()
@@ -136,7 +137,12 @@ const ProgramContentMenu: React.VFC<{
       </StyledHead>
 
       {sortBy === 'section' && (
-        <ProgramContentSectionMenu program={program} programPackageId={programPackageId} onSelect={onSelect} />
+        <ProgramContentSectionMenu
+          isScrollToTop={isScrollToTop}
+          program={program}
+          programPackageId={programPackageId}
+          onSelect={onSelect}
+        />
       )}
       {sortBy === 'date' && (
         <ProgramContentDateMenu program={program} programPackageId={programPackageId} onSelect={onSelect} />
@@ -146,6 +152,7 @@ const ProgramContentMenu: React.VFC<{
 }
 
 const ProgramContentSectionMenu: React.VFC<{
+  isScrollToTop?: boolean
   program: Program & {
     contentSections: (ProgramContentSection & {
       contents: ProgramContent[]
@@ -153,7 +160,7 @@ const ProgramContentSectionMenu: React.VFC<{
   }
   programPackageId: string | null
   onSelect?: (programContentId: string) => void
-}> = ({ program, programPackageId, onSelect }) => {
+}> = ({ program, programPackageId, onSelect, isScrollToTop }) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
 
   if (!program.contentSections || program.contentSections.length === 0) {
@@ -165,6 +172,7 @@ const ProgramContentSectionMenu: React.VFC<{
       {program.contentSections.map((v, i) => (
         <ContentSection
           key={v.id}
+          isScrollToTop={isScrollToTop}
           defaultCollapse={programContentId ? v.contents.some(w => w.id === programContentId) : i === 0}
           programContentSection={v}
           programPackageId={programPackageId}
@@ -176,13 +184,14 @@ const ProgramContentSectionMenu: React.VFC<{
 }
 
 const ContentSection: React.VFC<{
+  isScrollToTop?: boolean
   programContentSection: ProgramContentSection & {
     contents: ProgramContent[]
   }
   programPackageId: string | null
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
-}> = ({ programContentSection, programPackageId, defaultCollapse, onSelect }) => {
+}> = ({ programContentSection, programPackageId, defaultCollapse, onSelect, isScrollToTop }) => {
   const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
 
@@ -205,6 +214,7 @@ const ContentSection: React.VFC<{
       <StyledContentSectionBody active={isCollapse}>
         {programContentSection.contents?.map(programContent => (
           <SortBySectionItem
+            isScrollToTop={isScrollToTop}
             key={programContent.id}
             programContent={programContent}
             progress={contentProgress.find(progress => progress.programContentId === programContent.id)?.progress || 0}
@@ -219,12 +229,13 @@ const ContentSection: React.VFC<{
 }
 
 const SortBySectionItem: React.VFC<{
+  isScrollToTop?: boolean
   programContent: ProgramContent
   progress: number
   programPackageId: string | null
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
-}> = ({ programContent, progress, programPackageId, onSetIsCollapse, onClick }) => {
+}> = ({ isScrollToTop, programContent, progress, programPackageId, onSetIsCollapse, onClick }) => {
   const currentRef = useRef<HTMLInputElement>(null)
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -242,8 +253,8 @@ const SortBySectionItem: React.VFC<{
   }, [isActive, onSetIsCollapse])
 
   useEffect(() => {
-    isActive && currentRef.current?.scrollIntoView()
-  }, [isActive])
+    isActive && !isScrollToTop && currentRef.current?.scrollIntoView()
+  }, [isActive, isScrollToTop])
 
   return (
     <StyledItem
