@@ -3,7 +3,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { NavLinks, SocialLinks, StyledFooter } from '.'
-import LanguageContext from '../../../contexts/LanguageContext'
+import LocaleContext, { SUPPORTED_LOCALES } from '../../../contexts/LocaleContext'
 import { BREAK_POINT } from '../Responsive'
 
 const StyledLinkBlock = styled.div`
@@ -37,7 +37,7 @@ const StyledCopyright = styled.div`
 `
 
 const DefaultFooter: React.VFC = () => {
-  const { currentLanguage, setCurrentLanguage } = useContext(LanguageContext)
+  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
   const { enabledModules, name, settings } = useApp()
 
   const languageOptions: string[] = (() => {
@@ -57,45 +57,30 @@ const DefaultFooter: React.VFC = () => {
             <div className="blank" />
             <SocialLinks />
           </StyledLinkBlock>
-          {enabledModules.locale && languageOptions.length > 0 && (
+          {enabledModules.locale && (
             <div>
               <Divider type="vertical" className="mx-3" />
               <Dropdown
                 trigger={['click']}
                 overlay={
                   <Menu>
-                    <Menu.Item key="zh">
-                      <StyledButton
-                        type="link"
-                        size="small"
-                        onClick={() => setCurrentLanguage && setCurrentLanguage('zh')}
-                      >
-                        繁體中文
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="en">
-                      <StyledButton
-                        type="link"
-                        size="small"
-                        onClick={() => setCurrentLanguage && setCurrentLanguage('en')}
-                      >
-                        English
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="vi">
-                      <StyledButton
-                        type="link"
-                        size="small"
-                        onClick={() => setCurrentLanguage && setCurrentLanguage('vi')}
-                      >
-                        Tiếng việt
-                      </StyledButton>
-                    </Menu.Item>
+                    {SUPPORTED_LOCALES.map(supportedLocale => (
+                      <Menu.Item key={supportedLocale.locale}>
+                        <StyledButton
+                          type="link"
+                          size="small"
+                          onClick={() => setCurrentLocale?.(supportedLocale.locale)}
+                        >
+                          {supportedLocale.label}
+                        </StyledButton>
+                      </Menu.Item>
+                    ))}
                   </Menu>
                 }
               >
                 <StyledButton type="link" size="small">
-                  {currentLanguage === 'en' ? 'EN' : currentLanguage === 'vi' ? 'Tiếng việt' : '繁中'}
+                  {SUPPORTED_LOCALES.find(supportedLocale => currentLocale === supportedLocale.locale)?.label ||
+                    'Unknown'}
                   <Icon type="down" />
                 </StyledButton>
               </Dropdown>

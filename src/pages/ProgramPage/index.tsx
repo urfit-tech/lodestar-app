@@ -287,7 +287,8 @@ const ProgramPage: React.VFC = () => {
 
 const StyledProgramTagCard = styled.div`
   position: sticky;
-  top: 0;
+  top: 20px;
+  margin-top: 20px;
   border-radius: 4px;
   padding: 24px;
   background-color: #fff;
@@ -327,7 +328,7 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
     <StyledProgramTagCard>
       {resultTags.slice(0, 8).map(tag => (
         <StyleSubCategoryTag
-          className="mb-3 mr-3"
+          className="mb-2 mr-2"
           variant="outline"
           colorScheme="primary"
           onClick={() =>
@@ -341,11 +342,11 @@ const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ t
       ))}
 
       {resultTags.length > 8 && (
-        <div className="mb-3">
+        <div className="mt-2 mb-3">
           <CommonModal title="" isOpen={isOpen} onClose={() => setIsOpen(false)}>
             {resultTags.map(tag => (
               <StyleSubCategoryTag
-                className="mb-3 mr-3"
+                className="mb-2 mr-2"
                 variant="outline"
                 colorScheme="primary"
                 onClick={() =>

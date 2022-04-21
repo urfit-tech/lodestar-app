@@ -1,70 +1,91 @@
 import { Skeleton } from '@chakra-ui/skeleton'
-import { Stream, StreamProps } from '@cloudflare/stream-react'
-import axios from 'axios'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext, useEffect, useState } from 'react'
-import LanguageContext from '../../contexts/LanguageContext'
+import '@samueleastdev/videojs-dash-hls-bitrate-switcher/dist/videojs-dash-hls-bitrate-switcher.css'
+import '@samueleastdev/videojs-dash-hls-bitrate-switcher/dist/videojs-dash-hls-bitrate-switcher.min.js'
+import React, { useContext, useRef } from 'react'
+import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
+import 'video.js/dist/video-js.min.css'
+import 'videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js'
+import LocaleContext from '../../contexts/LocaleContext'
 
-const VideoPlayer: React.VFC<{ videoId: string; animated?: boolean } & Partial<StreamProps>> = ({
-  videoId,
-  animated,
-  ...streamProps
-}) => {
-  const { currentLanguage } = useContext(LanguageContext)
-  const { authToken, isAuthenticating } = useAuth()
-  const [initialized, setInitialized] = useState(false)
-  const [streamOptions, setStreamOptions] = useState<{
-    data: {
-      token: string
-      poster: string
-    } | null
-    error: Error | null
-  }>()
-  useEffect(() => {
-    if (!initialized && videoId) {
-      setInitialized(true)
-      axios
-        .post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/videos/${videoId}/token`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          },
-        )
-        .then(({ data }) => {
-          if (data.code === 'SUCCESS') {
-            setStreamOptions({
-              data: {
-                token: data.result.token,
-                poster: data.result.cloudflareOptions.thumbnail,
-              },
-              error: null,
-            })
-          } else {
-            setStreamOptions({
-              data: null,
-              error: new Error(data.error),
+type VideoJsPlayerProps = {
+  loading?: boolean
+  error?: string | null
+  source?: { src: string; type: string }
+  poster?: string
+  onReady?: (player: VideoJsPlayer) => void
+  onDurationChange?: (player: VideoJsPlayer, event: Event) => void
+  onVolumeChange?: (player: VideoJsPlayer, event: Event) => void
+  onRateChange?: (player: VideoJsPlayer, event: Event) => void
+  onEnded?: (player: VideoJsPlayer, event: Event) => void
+  onTimeUpdate?: (player: VideoJsPlayer, event: Event) => void
+  onPause?: (player: VideoJsPlayer, event: Event) => void
+  onPlay?: (player: VideoJsPlayer, event: Event) => void
+  onPlaying?: (player: VideoJsPlayer, event: Event) => void
+  onSeeking?: (player: VideoJsPlayer, event: Event) => void
+  onSeeked?: (player: VideoJsPlayer, event: Event) => void
+  onLoadStart?: (player: VideoJsPlayer, event: Event) => void
+  onLoadedMetadata?: (player: VideoJsPlayer, event: Event) => void
+  onLoadedData?: (player: VideoJsPlayer, event: Event) => void
+  onFullscreenChange?: (player: VideoJsPlayer, event: Event) => void
+  onWaiting?: (player: VideoJsPlayer, event: Event) => void
+  onCanPlaythrough?: (player: VideoJsPlayer, event: Event) => void
+  onError?: (player: VideoJsPlayer, event: Event) => void
+}
+const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
+  const playerRef = useRef<VideoJsPlayer>()
+  const { currentLocale } = useContext(LocaleContext)
+
+  if (props.loading) return <Skeleton width="100%" height="400px" />
+  if (props.error) return <div>{props.error}</div>
+
+  const videoOptions: VideoJsPlayerOptions = {
+    language: currentLocale,
+    playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
+    poster: props.poster,
+    autoplay: true,
+    responsive: true,
+    fluid: true,
+    plugins: {
+      dashHlsBitrateSwitcher: {
+        showInfo: false,
+      },
+    },
+    sources: props.source ? [props.source] : [],
+  }
+  return (
+    <div>
+      <video
+        width="100%"
+        className="video-js vjs-big-play-centered"
+        ref={ref => {
+          if (playerRef.current) {
+            // TODO: do something for rerender
+          } else if (ref && props.source) {
+            playerRef.current = videojs(ref, videoOptions, function () {
+              props.onDurationChange && this.on('durationchange', props.onDurationChange.bind(null, this))
+              props.onVolumeChange && this.on('volumechange', props.onVolumeChange.bind(null, this))
+              props.onRateChange && this.on('ratechange', props.onRateChange.bind(null, this))
+              props.onEnded && this.on('ended', props.onEnded.bind(null, this))
+              props.onTimeUpdate && this.on('timeupdate', props.onTimeUpdate.bind(null, this))
+              props.onPause && this.on('pause', props.onPause.bind(null, this))
+              props.onPlay && this.on('play', props.onPlay.bind(null, this))
+              props.onPlaying && this.on('playing', props.onPlaying.bind(null, this))
+              props.onSeeking && this.on('seeking', props.onSeeking.bind(null, this))
+              props.onSeeked && this.on('seeked', props.onSeeked.bind(null, this))
+              props.onLoadStart && this.on('loadstart', props.onLoadStart.bind(null, this))
+              props.onLoadedMetadata && this.on('loadedmetadata', props.onLoadedMetadata.bind(null, this))
+              props.onLoadedData && this.on('loadeddata', props.onLoadedData.bind(null, this))
+              props.onFullscreenChange && this.on('fullscreenchange', props.onFullscreenChange.bind(null, this))
+              props.onWaiting && this.on('waiting', props.onWaiting.bind(null, this))
+              props.onCanPlaythrough && this.on('canplaythrough', props.onCanPlaythrough.bind(null, this))
+              props.onError && this.on('error', props.onError.bind(null, this))
             })
           }
-        })
-    }
-  }, [initialized, videoId, authToken])
-  return isAuthenticating ? (
-    <div className="text-center">Authenticating...</div>
-  ) : streamOptions?.data ? (
-    <Stream
-      controls
-      defaultTextTrack={currentLanguage}
-      poster={animated ? streamOptions.data.poster.replace('jpg', 'gif') : streamOptions.data.poster}
-      {...streamProps}
-      src={streamOptions.data.token}
-    />
-  ) : streamOptions?.error ? (
-    <div>Cannot play the video.</div>
-  ) : (
-    <Skeleton width="100%" height="400px" />
+        }}
+        autoPlay
+        controls
+      />
+    </div>
   )
 }
 

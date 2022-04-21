@@ -13,6 +13,7 @@ import PriceLabel from '../common/PriceLabel'
 
 const CheckoutCard: React.VFC<
   CardProps & {
+    isDisabled: boolean
     discountId: string | null
     check: CheckProps
     cartProducts: CartProductProps[]
@@ -20,7 +21,7 @@ const CheckoutCard: React.VFC<
     shipping: ShippingProps | null
     onCheckout?: () => void
   }
-> = ({ discountId, check, cartProducts, invoice, shipping, loading, onCheckout, ...cardProps }) => {
+> = ({ isDisabled, discountId, check, cartProducts, invoice, shipping, loading, onCheckout, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
   const { currencyId: appCurrencyId } = useApp()
@@ -90,7 +91,7 @@ const CheckoutCard: React.VFC<
           <Button
             colorScheme="primary"
             isFullWidth
-            isDisabled={check.orderProducts.length === 0}
+            isDisabled={check.orderProducts.length === 0 || isDisabled}
             isLoading={loading}
             onClick={() => onCheckout?.()}
           >

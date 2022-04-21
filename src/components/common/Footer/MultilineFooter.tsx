@@ -4,7 +4,7 @@ import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { NavLinks, SocialLinks, StyledFooter } from '.'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
-import LanguageContext from '../../../contexts/LanguageContext'
+import LocaleContext from '../../../contexts/LocaleContext'
 
 const StyledLinkBlock = styled.div`
   padding-top: 1.25rem;
@@ -22,7 +22,7 @@ const StyledCopyright = styled.div`
 
 const MultilineFooter: React.VFC = () => {
   const { name, enabledModules } = useApp()
-  const { currentLanguage, setCurrentLanguage } = useContext(LanguageContext)
+  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
   const { renderCopyright } = useCustomRenderer()
 
   return (
@@ -40,17 +40,17 @@ const MultilineFooter: React.VFC = () => {
                 overlay={
                   <Menu>
                     <Menu.Item key="zh">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLanguage?.('zh')}>
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('zh')}>
                         繁體中文
                       </StyledButton>
                     </Menu.Item>
                     <Menu.Item key="en">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLanguage?.('en')}>
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('en')}>
                         English
                       </StyledButton>
                     </Menu.Item>
                     <Menu.Item key="vi">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLanguage?.('vi')}>
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('vi')}>
                         Tiếng việt
                       </StyledButton>
                     </Menu.Item>
@@ -58,7 +58,7 @@ const MultilineFooter: React.VFC = () => {
                 }
               >
                 <StyledButton type="link" size="small">
-                  {currentLanguage === 'en' ? 'EN' : currentLanguage === 'vi' ? 'Tiếng việt' : '繁中'}
+                  {currentLocale === 'en' ? 'EN' : currentLocale === 'vi' ? 'Tiếng việt' : '繁中'}
                   <Icon type="down" />
                 </StyledButton>
               </Dropdown>

@@ -15,7 +15,7 @@ import PodcastProgramCard from '../components/podcast/PodcastProgramCard'
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
 import PodcastProgramTimeline from '../containers/podcast/PodcastProgramTimeline'
 import PopularPodcastCollection from '../containers/podcast/PopularPodcastCollection'
-import LanguageContext from '../contexts/LanguageContext'
+import LocaleContext from '../contexts/LocaleContext'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { usePodcastProgramCollection } from '../hooks/podcast'
@@ -25,7 +25,7 @@ const PodcastProgramCollectionPage: React.VFC = () => {
   const { currentMemberId, isAuthenticated } = useAuth()
   const { settings } = useApp()
   const { pageTitle } = useNav()
-  const { currentLanguage } = useContext(LanguageContext)
+  const { currentLocale } = useContext(LocaleContext)
   const { podcastPrograms } = usePodcastProgramCollection()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
 
@@ -127,7 +127,7 @@ const PodcastProgramCollectionPage: React.VFC = () => {
                     .filter(
                       podcastProgram =>
                         !podcastProgram.supportLocales ||
-                        podcastProgram.supportLocales.find(locale => locale === currentLanguage),
+                        podcastProgram.supportLocales.find(locale => locale === currentLocale),
                     )}
                   renderItem={({ podcastProgram, isEnrolled, isSubscribed }) => (
                     <CheckoutPodcastPlanModal

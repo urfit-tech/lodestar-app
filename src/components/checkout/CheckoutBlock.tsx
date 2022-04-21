@@ -1,4 +1,5 @@
-import { Box, Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
+import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
+import { defineMessage } from '@formatjs/intl'
 import { Form, message, Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
 import CheckoutGroupBuyingForm, {
@@ -13,7 +14,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { validateContactInfo } from 'lodestar-app-element/src/helpers'
 import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
 import { prop, sum } from 'ramda'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -51,6 +52,20 @@ const StyledInputWrapper = styled.div`
   }
 `
 
+const StyledApprovementBox = styled.div`
+  padding-left: 46px;
+`
+
+const StyledLabel = styled.span`
+  font-weight: bold;
+`
+
+const StyledCheckbox = styled(Checkbox)`
+  .chakra-checkbox__control {
+    border: 1px solid #cdcece;
+  }
+`
+
 const CheckoutBlock: React.VFC<{
   member: MemberProps | null
   shopId: string
@@ -73,6 +88,11 @@ const CheckoutBlock: React.VFC<{
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
+  const [isApproved, setIsApproved] = useState(settings['checkout.approvement'] !== 'true')
+  useEffect(() => {
+    setIsApproved(settings['checkout.approvement'] !== 'true')
+  }, [settings])
+
   const updateMemberMetadata = useUpdateMemberMetadata()
   const toast = useToast()
 
@@ -445,6 +465,7 @@ const CheckoutBlock: React.VFC<{
           </div>
         </AdminCard>
       )}
+
       {cartProducts.length > 0 && totalPrice > 0 && enabledModules.referrer && (
         <AdminCard className="mb-3">
           <div className="mb-3">
@@ -479,6 +500,24 @@ const CheckoutBlock: React.VFC<{
           </div>
         </AdminCard>
       )}
+      {settings['checkout.approvement'] === 'true' && (
+        <AdminCard className="mb-3">
+          <StyledCheckbox
+            className="mr-2"
+            size="lg"
+            colorScheme="primary"
+            isChecked={isApproved}
+            onChange={() => setIsApproved(prev => !prev)}
+          />
+          <StyledLabel>
+            {formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}
+          </StyledLabel>
+          <StyledApprovementBox
+            className="mt-2"
+            dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }}
+          />
+        </AdminCard>
+      )}
       {renderTerms && (
         <div className="mb-3">
           <AdminCard>{renderTerms()}</AdminCard>
@@ -486,6 +525,7 @@ const CheckoutBlock: React.VFC<{
       )}
       <div className="mb-3">
         <CheckoutCard
+          isDisabled={isApproved === false}
           check={check}
           cartProducts={cartProducts}
           discountId={discountId}

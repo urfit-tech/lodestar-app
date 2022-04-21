@@ -3,7 +3,10 @@ import { Button, Divider, Icon, SkeletonText } from '@chakra-ui/react'
 import { List } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import gql from 'graphql-tag'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import React, { Fragment, useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { AiOutlineClose } from 'react-icons/ai'
@@ -32,9 +35,18 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
 }) => {
   const tracking = useTracking()
   const { formatMessage } = useIntl()
+  const { id: appId } = useApp()
   const { removeCartProducts } = useContext(CartContext)
   const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
   const { memberShop } = useMemberShop(shopId)
+  const { resourceCollection } = useResourceCollection(
+    cartProducts.map(
+      cartProduct =>
+        `${appId}:${getResourceByProductId(cartProduct.productId).type}:${
+          getResourceByProductId(cartProduct.productId).target
+        }`,
+    ),
+  )
 
   useEffect(() => {
     refetch && refetch()
@@ -97,6 +109,10 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                       ReactGA.plugin.execute('ec', 'setAction', 'remove')
                       ReactGA.ga('send', 'event', 'UX', 'click', 'remove from cart')
                       removeCartProducts && removeCartProducts([cartProduct.productId])
+                      const resource = resourceCollection.find(
+                        resource => resource?.id === cartProduct.productId.split('_')[1],
+                      )
+                      resource && tracking.removeFromCart(resource, { quantity: cartProduct.options?.quantity })
                     }}
                   />
                 </div>

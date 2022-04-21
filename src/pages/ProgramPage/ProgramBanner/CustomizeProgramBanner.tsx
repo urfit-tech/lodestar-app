@@ -7,6 +7,7 @@ import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Responsive, { BREAK_POINT } from '../../../components/common/Responsive'
+import VideoPlayer from '../../../components/common/VideoPlayer'
 import { ReactComponent as PlayIcon } from '../../../images/play-fill-icon.svg'
 import { ReactComponent as StarIcon } from '../../../images/star-current-color.svg'
 import { Program } from '../../../types/program'
@@ -22,12 +23,21 @@ const StyledTitle = styled.h1`
     font-size: 40px;
   }
 `
-const StyledVideoWrapper = styled.div<{ backgroundImage?: string }>`
+const StyledVideoWrapper = styled.div<{ coverUrl: { mobileUrl?: string; desktopUrl?: string } }>`
   position: relative;
   padding-top: 56.25%;
-  ${props => props.backgroundImage && `background-image: url(${props.backgroundImage});`}
+  ${props =>
+    props.coverUrl.mobileUrl
+      ? `background-image: url(${props.coverUrl.mobileUrl});`
+      : `background-image: url(${props.coverUrl.desktopUrl});`}
   background-size: cover;
   background-position: center;
+  @media (min-width: ${BREAK_POINT}px) {
+    ${props =>
+      props.coverUrl.desktopUrl
+        ? `background-image: url(${props.coverUrl.desktopUrl});`
+        : `background-image: url(${props.coverUrl.mobileUrl});`}
+  }
 `
 const StyledPlayer = styled.div`
   position: absolute;
@@ -107,11 +117,15 @@ const CustomizeProgramBanner: React.VFC<{
 }> = ({ program, isEnrolled }) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
-
   return (
     <StyledWrapper id="program-banner" className="row">
       <div className="col-12 col-md-6">
-        <StyledVideoWrapper backgroundImage={program.coverUrl || ''}>
+        <StyledVideoWrapper
+          coverUrl={{
+            desktopUrl: program.coverUrl || undefined,
+            mobileUrl: program.coverMobileUrl || undefined,
+          }}
+        >
           {program.coverVideoUrl && (
             <StyledPlayer>
               {program.coverVideoUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
@@ -121,6 +135,10 @@ const CustomizeProgramBanner: React.VFC<{
                   controls
                   autoPlay
                   style={{ width: '100%', height: '100%' }}
+                />
+              ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
+                <VideoPlayer
+                  source={{ type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' }}
                 />
               ) : (
                 <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />

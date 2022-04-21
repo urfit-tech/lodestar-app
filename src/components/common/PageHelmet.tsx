@@ -10,6 +10,7 @@ const PageHelmet: React.FC<
     keywords: string[]
     jsonLd: WithContext<Thing>[]
     openGraph: { property: string; content: string }[]
+    onLoaded: () => void
   }>
 > = props => {
   const app = useApp()
@@ -22,7 +23,7 @@ const PageHelmet: React.FC<
     { property: 'og:image', content: app.settings['open_graph.image'] || app.settings['logo'] },
   ]
   return (
-    <Helmet>
+    <Helmet onChangeClientState={() => props.onLoaded?.()}>
       <title>{xss(props.title || app.settings['title'])}</title>
       <meta key="description" name="description" content={xss(props.description || app.settings['description'])} />
       <meta key="keywords" name="keywords" content={xss(props.keywords?.join() || app.settings['keywords'])} />

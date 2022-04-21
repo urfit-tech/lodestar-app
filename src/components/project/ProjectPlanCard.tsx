@@ -1,20 +1,12 @@
-import { Button } from '@chakra-ui/react'
-import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext } from 'react'
-import ReactPixel from 'react-facebook-pixel'
-import ReactGA from 'react-ga'
+import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
-import CartContext from '../../contexts/CartContext'
 import { commonMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { PeriodType } from '../../types/program'
 import { ProjectPlanProps } from '../../types/project'
-import { AuthModalContext } from '../auth/AuthModal'
+import PaymentButton from '../common/PaymentButton'
 import PriceLabel from '../common/PriceLabel'
 import ShortenPeriodTypeLabel from '../common/ShortenPeriodTypeLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
@@ -28,12 +20,6 @@ const messages = defineMessages({
   },
 })
 
-const StyledButton = styled(Button)`
-  && {
-    margin-top: 20px;
-    width: 100%;
-  }
-`
 const StyledWrapper = styled.div`
   background: white;
   overflow: hidden;
@@ -149,120 +135,16 @@ const ProjectPlanCard: React.VFC<ProjectPlanProps> = ({
           ) : isLimited && !buyableQuantity ? (
             <span>{formatMessage(commonMessages.button.soldOut)}</span>
           ) : isEnrolled === false ? (
-            isSubscription ? (
-              <SubscriptionPlanBlock
-                projectPlanId={id}
-                projectTitle={projectTitle}
-                title={title}
-                isPhysical={isPhysical}
-                listPrice={listPrice}
-                salePrice={isOnSale ? salePrice : null}
-              />
-            ) : (
-              <PerpetualPlanBlock
-                projectPlanId={id}
-                projectTitle={projectTitle}
-                title={title}
-                isPhysical={isPhysical}
-                listPrice={listPrice}
-                salePrice={isOnSale ? salePrice : null}
-              />
-            )
+            <PaymentButton
+              type="ProjectPlan"
+              target={id}
+              price={isOnSale && salePrice ? salePrice : listPrice}
+              isSubscription={isSubscription}
+            />
           ) : null}
         </div>
       </div>
     </StyledWrapper>
-  )
-}
-
-const PerpetualPlanBlock: React.VFC<{
-  projectPlanId: string
-  projectTitle: string
-  title: string
-  listPrice: number
-  salePrice: number | null
-  isPhysical: boolean
-}> = ({ projectPlanId, projectTitle, title, listPrice, salePrice, isPhysical }) => {
-  const { formatMessage } = useIntl()
-  const history = useHistory()
-  const { settings } = useApp()
-  const { addCartProduct, isProductInCart } = useContext(CartContext)
-
-  const sessionStorageKey = `lodestar.sharing_code.ProjectPlan_${projectPlanId}`
-  const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
-  sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
-
-  const handleClick = async () => {
-    if (settings['tracking.fb_pixel_id']) {
-      ReactPixel.track('AddToCart', {
-        content_name: `${projectTitle} - ${title}`,
-        value: salePrice ?? listPrice,
-        currency: 'TWD',
-      })
-    }
-
-    if (settings['tracking.ga_id']) {
-      ReactGA.plugin.execute('ec', 'addProduct', {
-        id: projectPlanId,
-        name: `${projectTitle} - ${title}`,
-        category: 'ProjectPlan',
-        price: `${salePrice ?? listPrice}`,
-        quantity: '1',
-        currency: 'TWD',
-      })
-      ReactGA.plugin.execute('ec', 'setAction', 'add')
-      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-    }
-
-    addCartProduct?.('ProjectPlan', projectPlanId, {
-      quantity: 1,
-      sharingCode,
-      from: window.location.pathname,
-    })
-      .then(() => history.push(`/cart?type=funding`))
-      .catch(() => {})
-  }
-
-  return isProductInCart?.('ProjectPlan', projectPlanId) ? (
-    <StyledButton colorScheme="primary" size="lg" onClick={() => history.push(`/cart`)}>
-      <span>{formatMessage(commonMessages.button.cart)}</span>
-    </StyledButton>
-  ) : (
-    <StyledButton colorScheme="primary" size="lg" onClick={handleClick}>
-      <span>{formatMessage(commonMessages.button.join)}</span>
-    </StyledButton>
-  )
-}
-
-const SubscriptionPlanBlock: React.VFC<{
-  projectPlanId: string
-  projectTitle: string
-  title: string
-  listPrice: number
-  salePrice: number | null
-  isPhysical: boolean
-}> = ({ projectPlanId, projectTitle, title, listPrice, salePrice, isPhysical }) => {
-  const { formatMessage } = useIntl()
-  const { isAuthenticated } = useAuth()
-  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-
-  if (!isAuthenticated) {
-    return (
-      <StyledButton colorScheme="primary" size="lg" onClick={() => setAuthModalVisible?.(true)}>
-        <span>{formatMessage(commonMessages.button.join)}</span>
-      </StyledButton>
-    )
-  }
-
-  return (
-    <CheckoutProductModal
-      defaultProductId={`ProjectPlan_${projectPlanId}`}
-      renderTrigger={({ isLoading, onOpen }) => (
-        <StyledButton colorScheme="primary" size="lg" isDisabled={isLoading} onClick={onOpen}>
-          <span>{formatMessage(commonMessages.button.join)}</span>
-        </StyledButton>
-      )}
-    />
   )
 }
 

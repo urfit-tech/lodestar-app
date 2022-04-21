@@ -229,7 +229,9 @@ export const notEmpty = <T>(value: T | null | undefined): value is T => {
 export const camelCaseToDash = (str: string) => {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
 }
-
+export const camelCaseToSnake = (str: string) => {
+  return str.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
+}
 export const getUserRoleLevel = (userRole?: string) => {
   switch (userRole) {
     case 'anonymous':
