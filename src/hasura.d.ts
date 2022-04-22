@@ -7869,21 +7869,18 @@ export interface INSERT_EXERCISEVariables {
 // GraphQL query operation: GET_PROGRAM_ENROLLMENT_AGGREGATE
 // ====================================================
 
-export interface GET_PROGRAM_ENROLLMENT_AGGREGATE_program_plan_enrollment_aggregate_aggregate {
-  __typename: "program_plan_enrollment_aggregate_fields";
-  count: number | null;
-}
-
-export interface GET_PROGRAM_ENROLLMENT_AGGREGATE_program_plan_enrollment_aggregate {
-  __typename: "program_plan_enrollment_aggregate";
-  aggregate: GET_PROGRAM_ENROLLMENT_AGGREGATE_program_plan_enrollment_aggregate_aggregate | null;
+export interface GET_PROGRAM_ENROLLMENT_AGGREGATE_program_statistics {
+  __typename: "program_statistics";
+  program_id: any | null;
+  program_plan_enrolled_count: any | null;
+  program_package_plan_enrolled_count: any | null;
 }
 
 export interface GET_PROGRAM_ENROLLMENT_AGGREGATE {
   /**
-   * fetch aggregated fields from the table: "program_plan_enrollment"
+   * fetch data from the table: "program_statistics"
    */
-  program_plan_enrollment_aggregate: GET_PROGRAM_ENROLLMENT_AGGREGATE_program_plan_enrollment_aggregate;
+  program_statistics: GET_PROGRAM_ENROLLMENT_AGGREGATE_program_statistics[];
 }
 
 export interface GET_PROGRAM_ENROLLMENT_AGGREGATEVariables {
