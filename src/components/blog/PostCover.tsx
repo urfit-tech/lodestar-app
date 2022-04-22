@@ -1,6 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, Icon as AntdIcon } from 'antd'
-import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -27,13 +26,11 @@ const StyledPlayer = styled.div`
 `
 
 const StyledPictureCover = styled.div<{ pictureUrl: string }>`
-  height: 104vw;
+  height: 670px;
+  max-height: 67vw;
   background-image: url(${props => props.pictureUrl});
   background-size: cover;
   background-position: center;
-  @media (min-width: ${BREAK_POINT}px) {
-    height: 58vw;
-  }
 `
 const StyledVideoCover = styled.div<{ height?: number | null }>`
   background: black;
