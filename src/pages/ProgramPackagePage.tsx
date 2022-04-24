@@ -49,7 +49,7 @@ const ProgramPackagePage: React.VFC = () => {
   const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const { programPackageId } = useParams<{ programPackageId: string }>()
-  const { resourceCollection } = useResourceCollection([`${appId}:program_package:${programPackageId}`])
+  const { resourceCollection } = useResourceCollection([`${appId}:program_package:${programPackageId}`], true)
   const { currentMemberId } = useAuth()
   const { loadingProgramPackage, errorProgramPackage, programPackageIntroduction } =
     useProgramPackageIntroduction(programPackageId)
