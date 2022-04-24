@@ -434,9 +434,9 @@ const ProgramContentPlayerWrapper = (props: {
       setSource({ type: 'video/vnd.youtube.yt', src: props.data?.url })
     }
     if (props.data?.source === 'azure') {
-      setSource({ type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' })
+      // setSource({ type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' })
       // TODO: change into cloudflare, because azure is too slow...
-      // setSource({ type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' })
+      setSource({ type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' })
     }
     if (props.options?.cloudflare) {
       setLoading(true)
@@ -453,8 +453,8 @@ const ProgramContentPlayerWrapper = (props: {
         .then(({ data }) => {
           if (data.code === 'SUCCESS') {
             setSource({
-              type: 'application/dash+xml',
-              src: `https://videodelivery.net/${data.result.token}/manifest/video.mpd`,
+              type: 'application/x-mpegURL',
+              src: `https://videodelivery.net/${data.result.token}/manifest/video.m3u8`,
             })
             setPoster(`https://videodelivery.net/${data.result.token}/thumbnails/thumbnail.jpg`)
           } else {
