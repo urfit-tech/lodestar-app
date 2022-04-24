@@ -11,6 +11,7 @@ import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import CoinCheckoutModal from '../../../components/checkout/CoinCheckoutModal'
 import CartContext from '../../../contexts/CartContext'
+import { notEmpty } from '../../../helpers'
 import { commonMessages } from '../../../helpers/translation'
 import { ProgramPlan } from '../../../types/program'
 
@@ -91,8 +92,12 @@ const ProgramPlanPaymentButton: React.VFC<{
               colorScheme="primary"
               isFullWidth
               onClick={() => {
-                resourceCollection[0] && tracking.addToCart(resourceCollection[0], { direct: true })
-                handleAddCart()?.then(() => history.push('/cart'))
+                const resource = resourceCollection.filter(notEmpty)[0]
+                resource && tracking.addToCart(resource, { direct: true })
+                handleAddCart()?.then(() => {
+                  Number(settings['feature.cart.disable']) && resource && tracking.checkout([resource])
+                  history.push('/cart?direct=true')
+                })
               }}
             >
               {programPlan.listPrice === 0
