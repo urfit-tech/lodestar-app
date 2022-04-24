@@ -19,7 +19,7 @@ import { checkoutMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
 
 const CartPage: React.VFC = () => {
-  const location = useLocation()
+  const location = useLocation<{ productUrn?: string }>()
   const { formatMessage } = useIntl()
   const [checkoutAlready, setCheckoutAlready] = useState(false)
   const [shopId] = useQueryParam('shopId', StringParam)
@@ -47,6 +47,8 @@ const CartPage: React.VFC = () => {
     options: { quantity: cartProductWithUrns.find(p => p.urn === resource.urn)?.options?.quantity },
   }))
 
+  const filteredResourceUrns = filteredResourceCollection.map(resource => resource.urn)
+
   if (isAuthenticating || loadingMember) {
     return (
       <DefaultLayout>
@@ -58,6 +60,7 @@ const CartPage: React.VFC = () => {
   return (
     <DefaultLayout>
       {!checkoutAlready &&
+        (location.state?.productUrn ? filteredResourceUrns.includes(location.state.productUrn) : true) &&
         filteredResourceCollection.length > 0 &&
         (!Number(settings['feature.cart.disable']) || !location.search.match('direct')) && (
           <Tracking.Checkout resources={filteredResourceCollection} onCheckout={() => setCheckoutAlready(true)} />
