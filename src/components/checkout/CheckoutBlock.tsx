@@ -37,6 +37,10 @@ import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
 
+const StyledCheckbox = styled(Checkbox)`
+  border-color: #c7c7c7;
+`
+
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
 `
@@ -492,7 +496,7 @@ const CheckoutBlock: React.VFC<{
       )}
       {settings['checkout.approvement'] === 'true' && (
         <AdminCard className="mb-3">
-          <Checkbox
+          <StyledCheckbox
             className="mr-2"
             size="lg"
             colorScheme="primary"
