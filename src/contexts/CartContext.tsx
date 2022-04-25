@@ -63,7 +63,7 @@ export const CartProvider: React.FC = ({ children }) => {
           variables: {
             appId,
             memberId: currentMemberId || '',
-            productIds: isInit ? undefined : cachedCartProducts.map(cartProduct => cartProduct.productId),
+            productIds: isInit ? [] : cachedCartProducts.map(cartProduct => cartProduct.productId),
             localProductIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
             merchandiseSpecIds: cachedCartProducts
               .filter(cartProduct => cartProduct.productId.startsWith('MerchandiseSpec_'))
