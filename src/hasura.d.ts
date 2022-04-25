@@ -5521,9 +5521,7 @@ export interface GET_MERCHANDISE_COLLECTION {
 }
 
 export interface GET_MERCHANDISE_COLLECTIONVariables {
-  search?: string | null;
-  isPhysical?: boolean | null;
-  ownerId?: string | null;
+  condition: merchandise_bool_exp;
 }
 
 /* tslint:disable */
