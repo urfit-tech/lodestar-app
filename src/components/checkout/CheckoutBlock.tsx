@@ -37,6 +37,10 @@ import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
 
+const StyledCheckbox = styled(Checkbox)`
+  border-color: #c7c7c7;
+`
+
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
 `
