@@ -2468,7 +2468,7 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION {
 }
 
 export interface GET_PUBLISHED_ACTIVITY_COLLECTIONVariables {
-  organizerId?: string | null;
+  condition: activity_bool_exp;
 }
 
 /* tslint:disable */

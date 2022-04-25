@@ -11,11 +11,8 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
     hasura.GET_PUBLISHED_ACTIVITY_COLLECTIONVariables
   >(
     gql`
-      query GET_PUBLISHED_ACTIVITY_COLLECTION($organizerId: String) {
-        activity(
-          where: { organizer_id: { _eq: $organizerId }, published_at: { _is_null: false } }
-          order_by: [{ position: asc }, { published_at: desc }]
-        ) {
+      query GET_PUBLISHED_ACTIVITY_COLLECTION($condition: activity_bool_exp!) {
+        activity(where: $condition, order_by: [{ position: asc }, { published_at: desc }]) {
           id
           cover_url
           title
@@ -59,7 +56,14 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
         }
       }
     `,
-    { variables: { organizerId: options?.organizerId } },
+    {
+      variables: {
+        condition: {
+          organizer_id: { _eq: options?.organizerId },
+          published_at: { _is_null: false },
+        },
+      },
+    },
   )
 
   const activities: DeepPick<
