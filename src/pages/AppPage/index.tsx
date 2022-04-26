@@ -116,33 +116,37 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   if (loadingAppPage) {
     return <LoadingPage />
   }
-  return appPage ? (
-    <DefaultLayout {...appPage.options}>
+  return (
+    <>
       <PageHelmet />
-      {appPage.craftData ? (
-        <Editor enabled={false} resolver={CraftElement}>
-          <CraftBlock craftData={appPage.craftData} />
-        </Editor>
+      {appPage ? (
+        <DefaultLayout {...appPage.options}>
+          {appPage.craftData ? (
+            <Editor enabled={false} resolver={CraftElement}>
+              <CraftBlock craftData={appPage.craftData} />
+            </Editor>
+          ) : (
+            <Editor enabled={false} resolver={CraftElement}>
+              <Frame>
+                <>
+                  {appPage.appPageSections.map(section => {
+                    const Section = sectionConverter[section.type]
+                    if (!sectionConverter[section.type]) {
+                      return null
+                    }
+                    return <Section key={section.id} options={section.options} />
+                  })}
+                </>
+              </Frame>
+            </Editor>
+          )}
+        </DefaultLayout>
+      ) : renderFallback ? (
+        renderFallback(location.pathname)
       ) : (
-        <Editor enabled={false} resolver={CraftElement}>
-          <Frame>
-            <>
-              {appPage.appPageSections.map(section => {
-                const Section = sectionConverter[section.type]
-                if (!sectionConverter[section.type]) {
-                  return null
-                }
-                return <Section key={section.id} options={section.options} />
-              })}
-            </>
-          </Frame>
-        </Editor>
+        <NotFoundPage />
       )}
-    </DefaultLayout>
-  ) : renderFallback ? (
-    renderFallback(location.pathname)
-  ) : (
-    <NotFoundPage />
+    </>
   )
 }
 
