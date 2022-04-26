@@ -226,7 +226,7 @@ export interface GET_MANAGEMENT_DOMAINVariables {
 export interface UPDATE_ISSUE_STATUS_update_issue {
   __typename: "issue_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -255,7 +255,7 @@ export interface UPDATE_ISSUE_STATUSVariables {
 export interface INSERT_ISSUE_insert_issue {
   __typename: "issue_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -418,7 +418,7 @@ export interface GET_ORDER_CONTACTVariables {
 export interface INSERT_ORDER_CONTACT_insert_order_contact {
   __typename: "order_contact_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -448,7 +448,7 @@ export interface INSERT_ORDER_CONTACTVariables {
 export interface UPDATE_ORDER_CONTACT_READ_AT_update_order_contact {
   __typename: "order_contact_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -535,7 +535,7 @@ export interface GET_MERCHANDISE_SPECVariables {
 export interface READ_ALL_NOTIFICATIONS_update_notification {
   __typename: "notification_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -563,7 +563,7 @@ export interface READ_ALL_NOTIFICATIONSVariables {
 export interface READ_NOTIFICATION_update_notification {
   __typename: "notification_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -765,7 +765,7 @@ export interface GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_catego
 
 export interface GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_podcast_programs_aggregate_aggregate {
   __typename: "podcast_album_podcast_program_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_podcast_programs_aggregate {
@@ -783,7 +783,7 @@ export interface GET_PODCAST_ALBUM_COLLECTION_podcast_album {
    */
   podcast_album_categories: GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_categories[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   podcast_album_podcast_programs_aggregate: GET_PODCAST_ALBUM_COLLECTION_podcast_album_podcast_album_podcast_programs_aggregate;
 }
@@ -807,7 +807,7 @@ export interface GET_PODCAST_ALBUM_COLLECTION {
 export interface DELETE_ATTACHMENTS_update_attachment {
   __typename: "attachment_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -835,7 +835,7 @@ export interface DELETE_ATTACHMENTSVariables {
 export interface INSERT_SUGGESTION_insert_issue {
   __typename: "issue_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -1144,7 +1144,7 @@ export interface GET_PRIVATE_TEACH_PROJECT_PLAN_ENROLLMENTVariables {
 
 export interface GET_REVIEW_ADMIN_review_aggregate_aggregate {
   __typename: "review_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_REVIEW_ADMIN_review_aggregate {
@@ -1160,7 +1160,7 @@ export interface GET_REVIEW_ADMIN_review_review_reactions {
 
 export interface GET_REVIEW_ADMIN_review_review_reactions_aggregate_aggregate {
   __typename: "review_reaction_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_REVIEW_ADMIN_review_review_reactions_aggregate {
@@ -1201,7 +1201,7 @@ export interface GET_REVIEW_ADMIN_review {
    */
   review_reactions: GET_REVIEW_ADMIN_review_review_reactions[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   review_reactions_aggregate: GET_REVIEW_ADMIN_review_review_reactions_aggregate;
   /**
@@ -1305,7 +1305,7 @@ export interface GET_CURRENT_MEMBER_REVIEWVariables {
 export interface INSERT_REVIEW_REPLY_insert_review_reply {
   __typename: "review_reply_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -1335,7 +1335,7 @@ export interface INSERT_REVIEW_REPLYVariables {
 export interface INSERT_REVIEW_REACTION_insert_review_reaction {
   __typename: "review_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -1364,7 +1364,7 @@ export interface INSERT_REVIEW_REACTIONVariables {
 export interface DELETE_REVIEW_REACTION_delete_review_reaction {
   __typename: "review_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -1392,7 +1392,7 @@ export interface DELETE_REVIEW_REACTIONVariables {
 
 export interface GET_REVIEW_MEMBER_review_public_aggregate_aggregate {
   __typename: "review_public_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_REVIEW_MEMBER_review_public_aggregate {
@@ -1408,7 +1408,7 @@ export interface GET_REVIEW_MEMBER_review_public_review_reactions {
 
 export interface GET_REVIEW_MEMBER_review_public_review_reactions_aggregate_aggregate {
   __typename: "review_reaction_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_REVIEW_MEMBER_review_public_review_reactions_aggregate {
@@ -1448,7 +1448,7 @@ export interface GET_REVIEW_MEMBER_review_public {
    */
   review_reactions: GET_REVIEW_MEMBER_review_public_review_reactions[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   review_reactions_aggregate: GET_REVIEW_MEMBER_review_public_review_reactions_aggregate;
   /**
@@ -1498,7 +1498,7 @@ export interface GET_REVIEW_MEMBERVariables {
 export interface INSERT_REVIEW_insert_review {
   __typename: "review_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -1532,7 +1532,7 @@ export interface INSERT_REVIEWVariables {
 export interface UPDATE_REVIEW_update_review {
   __typename: "review_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -1567,7 +1567,7 @@ export interface UPDATE_REVIEWVariables {
 
 export interface GET_REVIEW_PUBLIC_review_public_aggregate_aggregate {
   __typename: "review_public_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_REVIEW_PUBLIC_review_public_aggregate {
@@ -1577,7 +1577,7 @@ export interface GET_REVIEW_PUBLIC_review_public_aggregate {
 
 export interface GET_REVIEW_PUBLIC_review_public_review_reactions_aggregate_aggregate {
   __typename: "review_reaction_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_REVIEW_PUBLIC_review_public_review_reactions_aggregate {
@@ -1604,7 +1604,7 @@ export interface GET_REVIEW_PUBLIC_review_public {
   created_at: any | null;
   updated_at: any | null;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   review_reactions_aggregate: GET_REVIEW_PUBLIC_review_public_review_reactions_aggregate;
   /**
@@ -1885,7 +1885,7 @@ export interface GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDSVariables {
 
 export interface GET_PROJECT_ENROLLMENT_COUNT_project_plan_enrollment_aggregate_aggregate {
   __typename: "project_plan_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PROJECT_ENROLLMENT_COUNT_project_plan_enrollment_aggregate {
@@ -1961,7 +1961,7 @@ export interface GET_ENROLLED_PROJECT_PLANSVariables {
 
 export interface GET_PROJECT_PLAN_ENROLLMENT_COUNT_project_plan_enrollment_aggregate_aggregate {
   __typename: "project_plan_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PROJECT_PLAN_ENROLLMENT_COUNT_project_plan_enrollment_aggregate {
@@ -2171,7 +2171,7 @@ export interface GET_CART_PRODUCT_COLLECTIONVariables {
 export interface UPDATE_CART_PRODUCTS_delete_cart_product {
   __typename: "cart_product_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -2179,7 +2179,7 @@ export interface UPDATE_CART_PRODUCTS_delete_cart_product {
 export interface UPDATE_CART_PRODUCTS_insert_cart_product {
   __typename: "cart_product_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -2250,7 +2250,7 @@ export interface GET_NOTIFICATIONS_notification {
 
 export interface GET_NOTIFICATIONS_notification_aggregate_aggregate {
   __typename: "notification_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_NOTIFICATIONS_notification_aggregate {
@@ -2285,7 +2285,7 @@ export interface GET_NOTIFICATIONSVariables {
 export interface INSERT_PROGRAM_CONTENT_PROGRESS_insert_program_content_progress {
   __typename: "program_content_progress_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -2382,7 +2382,7 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_categories 
 
 export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_enrollments_aggregate_aggregate {
   __typename: "activity_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_enrollments_aggregate {
@@ -2413,6 +2413,9 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_sessions_ag
 
 export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_tickets_aggregate_aggregate_sum {
   __typename: "activity_ticket_sum_fields";
+  /**
+   * unlimited as 99999999
+   */
   count: number | null;
 }
 
@@ -2444,15 +2447,15 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION_activity {
    */
   activity_categories: GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_categories[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   activity_enrollments_aggregate: GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_enrollments_aggregate;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   activity_sessions_aggregate: GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_sessions_aggregate;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   activity_tickets_aggregate: GET_PUBLISHED_ACTIVITY_COLLECTION_activity_activity_tickets_aggregate;
 }
@@ -2465,7 +2468,7 @@ export interface GET_PUBLISHED_ACTIVITY_COLLECTION {
 }
 
 export interface GET_PUBLISHED_ACTIVITY_COLLECTIONVariables {
-  organizerId?: string | null;
+  condition: activity_bool_exp;
 }
 
 /* tslint:disable */
@@ -2577,7 +2580,7 @@ export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_t
 
 export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate_aggregate {
   __typename: "activity_ticket_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate {
@@ -2610,7 +2613,7 @@ export interface GET_ACTIVITY_activity_by_pk_activity_tickets {
    */
   activity_session_tickets: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   activity_ticket_enrollments_aggregate: GET_ACTIVITY_activity_by_pk_activity_tickets_activity_ticket_enrollments_aggregate;
   /**
@@ -2702,7 +2705,7 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollment
 
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate_aggregate {
   __typename: "activity_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate {
@@ -2739,7 +2742,7 @@ export interface GET_ACTIVITY_SESSION_activity_session_by_pk {
    */
   activity_enrollments: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   activity_enrollments_aggregate: GET_ACTIVITY_SESSION_activity_session_by_pk_activity_enrollments_aggregate;
   /**
@@ -2897,7 +2900,7 @@ export interface GET_ACTIVITY_ATTENDANCEVariables {
 export interface ATTEND_ACTIVITY_SESSION_insert_activity_attendance {
   __typename: "activity_attendance_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -2926,7 +2929,7 @@ export interface ATTEND_ACTIVITY_SESSIONVariables {
 export interface LEAVE_ACTIVITY_SESSION_delete_activity_attendance {
   __typename: "activity_attendance_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -3092,7 +3095,7 @@ export interface GET_ENROLLED_APPOINTMENT_PLANVariables {
 export interface UPDATE_APPOINTMENT_ISSUE_update_order_product {
   __typename: "order_product_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -3121,7 +3124,7 @@ export interface UPDATE_APPOINTMENT_ISSUEVariables {
 export interface CANCEL_APPOINTMENT_update_order_product {
   __typename: "order_product_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -3224,7 +3227,7 @@ export interface GET_POST_PREVIEW_COLLECTIONVariables {
 
 export interface GET_POPULAR_POST_COLLECTION_post_aggregate_aggregate {
   __typename: "post_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_POPULAR_POST_COLLECTION_post_aggregate {
@@ -3267,7 +3270,7 @@ export interface GET_POPULAR_POST_COLLECTIONVariables {
 
 export interface GET_RELATIVE_POST_COLLECTION_post_aggregate_aggregate {
   __typename: "post_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_RELATIVE_POST_COLLECTION_post_aggregate {
@@ -3727,7 +3730,7 @@ export interface GET_NEXT_POSTVariables {
 export interface ADD_POST_VIEWS_update_post {
   __typename: "post_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -3999,7 +4002,7 @@ export interface GET_CART_PROJECT_PLAN_COLLECTIONVariables {
 
 export interface GET_PHYSICAL_PRODUCTS_project_plan_aggregate_aggregate {
   __typename: "project_plan_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PHYSICAL_PRODUCTS_project_plan_aggregate {
@@ -4009,7 +4012,7 @@ export interface GET_PHYSICAL_PRODUCTS_project_plan_aggregate {
 
 export interface GET_PHYSICAL_PRODUCTS_merchandise_spec_aggregate_aggregate {
   __typename: "merchandise_spec_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PHYSICAL_PRODUCTS_merchandise_spec_aggregate {
@@ -4542,7 +4545,7 @@ export interface INSERT_ATTACHMENT_insert_attachment_returning {
 export interface INSERT_ATTACHMENT_insert_attachment {
   __typename: "attachment_mutation_response";
   /**
-   * data of the affected rows by the mutation
+   * data from the rows affected by the mutation
    */
   returning: INSERT_ATTACHMENT_insert_attachment_returning[];
 }
@@ -4663,7 +4666,7 @@ export interface GET_ISSUE_THREAD_issue_issue_reactions {
 
 export interface GET_ISSUE_THREAD_issue_issue_replies_aggregate_aggregate {
   __typename: "issue_reply_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_ISSUE_THREAD_issue_issue_replies_aggregate {
@@ -4684,7 +4687,7 @@ export interface GET_ISSUE_THREAD_issue {
    */
   issue_reactions: GET_ISSUE_THREAD_issue_issue_reactions[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   issue_replies_aggregate: GET_ISSUE_THREAD_issue_issue_replies_aggregate;
 }
@@ -4713,7 +4716,7 @@ export interface GET_ISSUE_THREADVariables {
 export interface UPDATE_ISSUE_update_issue {
   __typename: "issue_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -4744,7 +4747,7 @@ export interface UPDATE_ISSUEVariables {
 export interface DELETE_ISSUE_delete_issue_reply_reaction {
   __typename: "issue_reply_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -4752,7 +4755,7 @@ export interface DELETE_ISSUE_delete_issue_reply_reaction {
 export interface DELETE_ISSUE_delete_issue_reply {
   __typename: "issue_reply_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -4760,7 +4763,7 @@ export interface DELETE_ISSUE_delete_issue_reply {
 export interface DELETE_ISSUE_delete_issue_reaction {
   __typename: "issue_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -4768,7 +4771,7 @@ export interface DELETE_ISSUE_delete_issue_reaction {
 export interface DELETE_ISSUE_delete_issue {
   __typename: "issue_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -4808,7 +4811,7 @@ export interface DELETE_ISSUEVariables {
 export interface INSERT_ISSUE_REACTION_insert_issue_reaction {
   __typename: "issue_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -4837,7 +4840,7 @@ export interface INSERT_ISSUE_REACTIONVariables {
 export interface DELETE_ISSUE_REACTION_delete_issue_reaction {
   __typename: "issue_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -4912,7 +4915,7 @@ export interface GET_ISSUE_REPLIESVariables {
 export interface INSERT_ISSUE_REPLY_REACTION_insert_issue_reply_reaction {
   __typename: "issue_reply_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -4941,7 +4944,7 @@ export interface INSERT_ISSUE_REPLY_REACTIONVariables {
 export interface DELETE_ISSUE_REPLY_REACTION_delete_issue_reply_reaction {
   __typename: "issue_reply_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -4970,7 +4973,7 @@ export interface DELETE_ISSUE_REPLY_REACTIONVariables {
 export interface INSERT_ISSUE_REPLY_insert_issue_reply {
   __typename: "issue_reply_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -5000,7 +5003,7 @@ export interface INSERT_ISSUE_REPLYVariables {
 export interface UPDATE_ISSUE_REPLY_update_issue_reply {
   __typename: "issue_reply_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -5029,7 +5032,7 @@ export interface UPDATE_ISSUE_REPLYVariables {
 export interface DELETE_ISSUE_REPLY_delete_issue_reply_reaction {
   __typename: "issue_reply_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -5037,7 +5040,7 @@ export interface DELETE_ISSUE_REPLY_delete_issue_reply_reaction {
 export interface DELETE_ISSUE_REPLY_delete_issue_reply {
   __typename: "issue_reply_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -5166,7 +5169,7 @@ export interface GET_PUBLIC_MEMBERVariables {
 export interface UPDATE_MEMBER_update_member {
   __typename: "member_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -5199,7 +5202,7 @@ export interface UPDATE_MEMBERVariables {
 export interface UPDATE_MEMBER_METADATA_update_member {
   __typename: "member_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -5207,7 +5210,7 @@ export interface UPDATE_MEMBER_METADATA_update_member {
 export interface UPDATE_MEMBER_METADATA_insert_member_phone {
   __typename: "member_phone_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -5273,7 +5276,7 @@ export interface GET_CREATOR_COLLECTIONVariables {
 export interface UPDATE_YOUTUBE_CHANNEL_ID_COLLECTION_update_member {
   __typename: "member_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -5518,9 +5521,7 @@ export interface GET_MERCHANDISE_COLLECTION {
 }
 
 export interface GET_MERCHANDISE_COLLECTIONVariables {
-  search?: string | null;
-  isPhysical?: boolean | null;
-  ownerId?: string | null;
+  condition: merchandise_bool_exp;
 }
 
 /* tslint:disable */
@@ -6215,14 +6216,14 @@ export interface GET_PLAYLIST_COLLECTION_playlist {
    */
   playlist_podcast_programs: GET_PLAYLIST_COLLECTION_playlist_playlist_podcast_programs[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   playlist_podcast_programs_aggregate: GET_PLAYLIST_COLLECTION_playlist_playlist_podcast_programs_aggregate;
 }
 
 export interface GET_PLAYLIST_COLLECTION_podcast_program_enrollment_aggregate_aggregate {
   __typename: "podcast_program_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PLAYLIST_COLLECTION_podcast_program_enrollment_aggregate {
@@ -6257,7 +6258,7 @@ export interface GET_PLAYLIST_COLLECTIONVariables {
 export interface CREATE_PLAYLIST_insert_playlist {
   __typename: "playlist_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -6287,7 +6288,7 @@ export interface CREATE_PLAYLISTVariables {
 export interface UPDATE_PLAYLIST_update_playlist {
   __typename: "playlist_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -6316,7 +6317,7 @@ export interface UPDATE_PLAYLISTVariables {
 export interface UPDATE_PLAYLIST_POSITION_insert_playlist {
   __typename: "playlist_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -6344,7 +6345,7 @@ export interface UPDATE_PLAYLIST_POSITIONVariables {
 export interface DELETE_PLAYLIST_delete_playlist_podcast_program {
   __typename: "playlist_podcast_program_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -6352,7 +6353,7 @@ export interface DELETE_PLAYLIST_delete_playlist_podcast_program {
 export interface DELETE_PLAYLIST_delete_playlist {
   __typename: "playlist_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -6443,7 +6444,7 @@ export interface GET_PLAYLIST_PODCAST_PROGRAMSVariables {
 export interface DELETE_PODCAST_PROGRAMS_delete_playlist_podcast_program {
   __typename: "playlist_podcast_program_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -6472,7 +6473,7 @@ export interface DELETE_PODCAST_PROGRAMSVariables {
 export interface INSERT_PODCAST_PROGRAMS_insert_playlist_podcast_program {
   __typename: "playlist_podcast_program_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -6500,7 +6501,7 @@ export interface INSERT_PODCAST_PROGRAMSVariables {
 export interface UPDATE_PODCAST_PROGRAM_POSITIONS_delete_playlist_podcast_program {
   __typename: "playlist_podcast_program_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -6508,7 +6509,7 @@ export interface UPDATE_PODCAST_PROGRAM_POSITIONS_delete_playlist_podcast_progra
 export interface UPDATE_PODCAST_PROGRAM_POSITIONS_insert_playlist_podcast_program {
   __typename: "playlist_podcast_program_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -6739,7 +6740,7 @@ export interface GET_PRACTICE_practice_practice_reactions {
 
 export interface GET_PRACTICE_practice_practice_reactions_aggregate_aggregate {
   __typename: "practice_reaction_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PRACTICE_practice_practice_reactions_aggregate {
@@ -6795,7 +6796,7 @@ export interface GET_PRACTICE_practice_practice_attachments {
 
 export interface GET_PRACTICE_practice_practice_suggests_aggregate_aggregate {
   __typename: "practice_issue_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PRACTICE_practice_practice_suggests_aggregate {
@@ -6811,7 +6812,7 @@ export interface GET_PRACTICE_practice_practice_suggests_suggest_suggest_reactio
 
 export interface GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies_aggregate_aggregate {
   __typename: "issue_reply_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies_aggregate {
@@ -6847,7 +6848,7 @@ export interface GET_PRACTICE_practice_practice_suggests_suggest {
    */
   suggest_reactions: GET_PRACTICE_practice_practice_suggests_suggest_suggest_reactions[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   suggest_replies_aggregate: GET_PRACTICE_practice_practice_suggests_suggest_suggest_replies_aggregate;
   /**
@@ -6878,7 +6879,7 @@ export interface GET_PRACTICE_practice {
    */
   practice_reactions: GET_PRACTICE_practice_practice_reactions[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   practice_reactions_aggregate: GET_PRACTICE_practice_practice_reactions_aggregate;
   /**
@@ -6890,7 +6891,7 @@ export interface GET_PRACTICE_practice {
    */
   practice_attachments: GET_PRACTICE_practice_practice_attachments[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   practice_suggests_aggregate: GET_PRACTICE_practice_practice_suggests_aggregate;
   /**
@@ -6928,7 +6929,7 @@ export interface GET_PRACTICE_COLLECTION_practice_practice_reactions {
 
 export interface GET_PRACTICE_COLLECTION_practice_practice_reactions_aggregate_aggregate {
   __typename: "practice_reaction_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PRACTICE_COLLECTION_practice_practice_reactions_aggregate {
@@ -6945,7 +6946,7 @@ export interface GET_PRACTICE_COLLECTION_practice_program_content {
 
 export interface GET_PRACTICE_COLLECTION_practice_practice_issues_aggregate_aggregate {
   __typename: "practice_issue_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PRACTICE_COLLECTION_practice_practice_issues_aggregate {
@@ -6966,7 +6967,7 @@ export interface GET_PRACTICE_COLLECTION_practice {
    */
   practice_reactions: GET_PRACTICE_COLLECTION_practice_practice_reactions[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   practice_reactions_aggregate: GET_PRACTICE_COLLECTION_practice_practice_reactions_aggregate;
   /**
@@ -6974,7 +6975,7 @@ export interface GET_PRACTICE_COLLECTION_practice {
    */
   program_content: GET_PRACTICE_COLLECTION_practice_program_content;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   practice_issues_aggregate: GET_PRACTICE_COLLECTION_practice_practice_issues_aggregate;
 }
@@ -7009,7 +7010,7 @@ export interface INSERT_PRACTICE_insert_practice_returning {
 export interface INSERT_PRACTICE_insert_practice {
   __typename: "practice_mutation_response";
   /**
-   * data of the affected rows by the mutation
+   * data from the rows affected by the mutation
    */
   returning: INSERT_PRACTICE_insert_practice_returning[];
 }
@@ -7041,7 +7042,7 @@ export interface INSERT_PRACTICEVariables {
 export interface UPDATE_PRACTICE_update_practice {
   __typename: "practice_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -7072,7 +7073,7 @@ export interface UPDATE_PRACTICEVariables {
 export interface DELETE_PRACTICE_update_practice {
   __typename: "practice_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -7100,7 +7101,7 @@ export interface DELETE_PRACTICEVariables {
 export interface INSERT_PRACTICE_REACTION_insert_practice_reaction {
   __typename: "practice_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -7129,7 +7130,7 @@ export interface INSERT_PRACTICE_REACTIONVariables {
 export interface DELETE_PRACTICE_REACTION_delete_practice_reaction {
   __typename: "practice_reaction_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -7217,6 +7218,9 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_plans {
 
 export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_content_sections_program_contents_aggregate_aggregate_sum {
   __typename: "program_content_sum_fields";
+  /**
+   * sec
+   */
   duration: any | null;
 }
 
@@ -7234,7 +7238,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION_program_program_content_sectio
   __typename: "program_content_section";
   id: any;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   program_contents_aggregate: GET_PUBLISHED_PROGRAM_COLLECTION_program_program_content_sections_program_contents_aggregate;
 }
@@ -7282,9 +7286,7 @@ export interface GET_PUBLISHED_PROGRAM_COLLECTION {
 }
 
 export interface GET_PUBLISHED_PROGRAM_COLLECTIONVariables {
-  instructorId?: string | null;
-  isPrivate?: boolean | null;
-  categoryId?: string | null;
+  condition: program_bool_exp;
   limit?: number | null;
 }
 
@@ -7473,7 +7475,7 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_aggregate_aggregate {
   __typename: "program_content_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PROGRAM_program_by_pk_program_content_sections_program_contents_aggregate {
@@ -7491,7 +7493,7 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections {
    */
   program_contents: GET_PROGRAM_program_by_pk_program_content_sections_program_contents[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   program_contents_aggregate: GET_PROGRAM_program_by_pk_program_content_sections_program_contents_aggregate;
 }
@@ -7761,7 +7763,7 @@ export interface GET_ENROLLED_PROGRAM_PLANSVariables {
 
 export interface GET_PROGRAM_PLAN_ENROLLMENT_program_plan_enrollment_aggregate_aggregate {
   __typename: "program_plan_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PROGRAM_PLAN_ENROLLMENT_program_plan_enrollment_aggregate {
@@ -7933,7 +7935,7 @@ export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_
 
 export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_package_plans_program_package_plan_enrollments_aggregate_aggregate {
   __typename: "program_package_plan_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_package_plans_program_package_plan_enrollments_aggregate {
@@ -7958,7 +7960,7 @@ export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_
   sold_at: any | null;
   discount_down_price: any | null;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   program_package_plan_enrollments_aggregate: GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_package_plans_program_package_plan_enrollments_aggregate;
 }
@@ -8026,7 +8028,7 @@ export interface GET_ENROLLED_PROGRAM_PACKAGE_PLAN_IDSVariables {
 
 export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate_aggregate {
   __typename: "program_package_plan_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate {
@@ -8039,7 +8041,7 @@ export interface GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_p
   id: any;
   is_tempo_delivery: boolean;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   program_package_plan_enrollments_aggregate: GET_ENROLLED_PROGRAM_PACKAGES_program_package_program_package_plans_program_package_plan_enrollments_aggregate;
 }
@@ -8312,7 +8314,7 @@ export interface GET_PROJECT_project_by_pk_project_plans_project_plan_inventory_
 
 export interface GET_PROJECT_project_by_pk_project_plans_project_plan_enrollments_aggregate_aggregate {
   __typename: "project_plan_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PROJECT_project_by_pk_project_plans_project_plan_enrollments_aggregate {
@@ -8345,7 +8347,7 @@ export interface GET_PROJECT_project_by_pk_project_plans {
    */
   project_plan_inventory_status: GET_PROJECT_project_by_pk_project_plans_project_plan_inventory_status | null;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   project_plan_enrollments_aggregate: GET_PROJECT_project_by_pk_project_plans_project_plan_enrollments_aggregate;
 }
@@ -8427,7 +8429,7 @@ export interface GET_PROJECT_INTRO_COLLECTION_project_project_sales {
 
 export interface GET_PROJECT_INTRO_COLLECTION_project_project_plans_project_plan_enrollments_aggregate_aggregate {
   __typename: "project_plan_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PROJECT_INTRO_COLLECTION_project_project_plans_project_plan_enrollments_aggregate {
@@ -8456,7 +8458,7 @@ export interface GET_PROJECT_INTRO_COLLECTION_project_project_plans {
   is_physical: boolean;
   is_limited: boolean;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   project_plan_enrollments_aggregate: GET_PROJECT_INTRO_COLLECTION_project_project_plans_project_plan_enrollments_aggregate;
 }
@@ -8544,7 +8546,7 @@ export interface GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate_avg {
 export interface GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate {
   __typename: "review_public_aggregate_fields";
   avg: GET_REVIEW_AGGREGATE_review_public_aggregate_aggregate_avg | null;
-  count: number | null;
+  count: number;
 }
 
 export interface GET_REVIEW_AGGREGATE_review_public_aggregate {
@@ -8575,7 +8577,7 @@ export interface GET_REVIEW_AGGREGATEVariables {
 export interface UPDATE_REVIEW_REPLY_update_review_reply {
   __typename: "review_reply_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -8607,7 +8609,7 @@ export interface UPDATE_REVIEW_REPLYVariables {
 export interface DELETE_REVIEW_REPLY_delete_review_reply {
   __typename: "review_reply_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -8792,7 +8794,7 @@ export interface GET_PAGEVariables {
 export interface AGREE_MEMBER_CONTRACT_update_member_contract {
   __typename: "member_contract_mutation_response";
   /**
-   * number of affected rows by the mutation
+   * number of rows affected by the mutation
    */
   affected_rows: number;
 }
@@ -9095,7 +9097,7 @@ export interface GET_ORDER_LOG_WITH_POINTS_COLLECTION_order_log {
    */
   order_discounts: GET_ORDER_LOG_WITH_POINTS_COLLECTION_order_log_order_discounts[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   order_discounts_aggregate: GET_ORDER_LOG_WITH_POINTS_COLLECTION_order_log_order_discounts_aggregate;
 }
@@ -9128,7 +9130,7 @@ export interface GET_MEMBER_PROGRAM_ISSUES_issue_issue_reactions {
 
 export interface GET_MEMBER_PROGRAM_ISSUES_issue_issue_replies_aggregate_aggregate {
   __typename: "issue_reply_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_MEMBER_PROGRAM_ISSUES_issue_issue_replies_aggregate {
@@ -9150,7 +9152,7 @@ export interface GET_MEMBER_PROGRAM_ISSUES_issue {
    */
   issue_reactions: GET_MEMBER_PROGRAM_ISSUES_issue_issue_reactions[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   issue_replies_aggregate: GET_MEMBER_PROGRAM_ISSUES_issue_issue_replies_aggregate;
 }
@@ -9242,11 +9244,11 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk {
   payment_model: any | null;
   custom_id: string | null;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   order_discounts_aggregate: GET_ORDERS_PRODUCT_order_log_by_pk_order_discounts_aggregate;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   order_products_aggregate: GET_ORDERS_PRODUCT_order_log_by_pk_order_products_aggregate;
   /**
@@ -9302,7 +9304,7 @@ export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories {
 
 export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_podcast_programs_aggregate_aggregate {
   __typename: "podcast_album_podcast_program_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_PODCAST_ALBUMS_podcast_album_podcast_album_podcast_programs_aggregate {
@@ -9320,7 +9322,7 @@ export interface GET_PODCAST_ALBUMS_podcast_album {
    */
   podcast_album_categories: GET_PODCAST_ALBUMS_podcast_album_podcast_album_categories[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   podcast_album_podcast_programs_aggregate: GET_PODCAST_ALBUMS_podcast_album_podcast_album_podcast_programs_aggregate;
 }
@@ -9400,7 +9402,7 @@ export interface GET_LAST_EXERCISEVariables {
 
 export interface GET_BEST_REVIEWS_review_public_review_reactions_aggregate_aggregate {
   __typename: "review_reaction_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface GET_BEST_REVIEWS_review_public_review_reactions_aggregate {
@@ -9418,7 +9420,7 @@ export interface GET_BEST_REVIEWS_review_public {
   updated_at: any | null;
   created_at: any | null;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   review_reactions_aggregate: GET_BEST_REVIEWS_review_public_review_reactions_aggregate;
 }
@@ -9566,7 +9568,7 @@ export interface SEARCH_PRODUCT_COLLECTION_activity_activity_categories {
 
 export interface SEARCH_PRODUCT_COLLECTION_activity_activity_enrollments_aggregate_aggregate {
   __typename: "activity_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface SEARCH_PRODUCT_COLLECTION_activity_activity_enrollments_aggregate {
@@ -9613,6 +9615,9 @@ export interface SEARCH_PRODUCT_COLLECTION_activity_activity_tickets_aggregate_n
 
 export interface SEARCH_PRODUCT_COLLECTION_activity_activity_tickets_aggregate_aggregate_sum {
   __typename: "activity_ticket_sum_fields";
+  /**
+   * unlimited as 99999999
+   */
   count: number | null;
 }
 
@@ -9641,15 +9646,15 @@ export interface SEARCH_PRODUCT_COLLECTION_activity {
    */
   activity_categories: SEARCH_PRODUCT_COLLECTION_activity_activity_categories[];
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   activity_enrollments_aggregate: SEARCH_PRODUCT_COLLECTION_activity_activity_enrollments_aggregate;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   activity_sessions_aggregate: SEARCH_PRODUCT_COLLECTION_activity_activity_sessions_aggregate;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   activity_tickets_aggregate: SEARCH_PRODUCT_COLLECTION_activity_activity_tickets_aggregate;
 }
@@ -9820,7 +9825,7 @@ export interface SEARCH_PRODUCT_COLLECTION_project_project_sales {
 
 export interface SEARCH_PRODUCT_COLLECTION_project_project_plans_project_plan_enrollments_aggregate_aggregate {
   __typename: "project_plan_enrollment_aggregate_fields";
-  count: number | null;
+  count: number;
 }
 
 export interface SEARCH_PRODUCT_COLLECTION_project_project_plans_project_plan_enrollments_aggregate {
@@ -9849,7 +9854,7 @@ export interface SEARCH_PRODUCT_COLLECTION_project_project_plans {
   is_physical: boolean;
   is_limited: boolean;
   /**
-   * An aggregated array relationship
+   * An aggregate relationship
    */
   project_plan_enrollments_aggregate: SEARCH_PRODUCT_COLLECTION_project_project_plans_project_plan_enrollments_aggregate;
 }
@@ -10773,7 +10778,6 @@ export enum contract_update_column {
  * unique or primary key constraints on table "coupon_code"
  */
 export enum coupon_code_constraint {
-  coupon_code_code_key = "coupon_code_code_key",
   coupon_plan_code_app_id_code_key = "coupon_plan_code_app_id_code_key",
   coupon_plan_code_pkey = "coupon_plan_code_pkey",
 }
@@ -12706,6 +12710,7 @@ export enum program_update_column {
   is_subscription = "is_subscription",
   list_price = "list_price",
   meta_tag = "meta_tag",
+  metadata = "metadata",
   position = "position",
   published_at = "published_at",
   sale_price = "sale_price",
@@ -13192,7 +13197,7 @@ export enum xuemi_trigger_update_column {
 }
 
 /**
- * expression to compare columns of type Boolean. All fields are combined with logical 'AND'.
+ * Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'.
  */
 export interface Boolean_comparison_exp {
   _eq?: boolean | null;
@@ -13207,7 +13212,7 @@ export interface Boolean_comparison_exp {
 }
 
 /**
- * expression to compare columns of type Int. All fields are combined with logical 'AND'.
+ * Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
  */
 export interface Int_comparison_exp {
   _eq?: number | null;
@@ -13222,7 +13227,7 @@ export interface Int_comparison_exp {
 }
 
 /**
- * expression to compare columns of type String. All fields are combined with logical 'AND'.
+ * Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
  */
 export interface String_comparison_exp {
   _eq?: string | null;
@@ -13230,6 +13235,7 @@ export interface String_comparison_exp {
   _gte?: string | null;
   _ilike?: string | null;
   _in?: string[] | null;
+  _iregex?: string | null;
   _is_null?: boolean | null;
   _like?: string | null;
   _lt?: string | null;
@@ -13237,8 +13243,11 @@ export interface String_comparison_exp {
   _neq?: string | null;
   _nilike?: string | null;
   _nin?: string[] | null;
+  _niregex?: string | null;
   _nlike?: string | null;
+  _nregex?: string | null;
   _nsimilar?: string | null;
+  _regex?: string | null;
   _similar?: string | null;
 }
 
@@ -13262,9 +13271,9 @@ export interface activity_attendance_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "activity_attendance". All fields are combined with a logical 'AND'.
  */
 export interface activity_attendance_bool_exp {
-  _and?: (activity_attendance_bool_exp | null)[] | null;
+  _and?: activity_attendance_bool_exp[] | null;
   _not?: activity_attendance_bool_exp | null;
-  _or?: (activity_attendance_bool_exp | null)[] | null;
+  _or?: activity_attendance_bool_exp[] | null;
   activity_session?: activity_session_bool_exp | null;
   activity_session_id?: uuid_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -13286,7 +13295,7 @@ export interface activity_attendance_insert_input {
 }
 
 /**
- * on conflict condition type for table "activity_attendance"
+ * on_conflict condition type for table "activity_attendance"
  */
 export interface activity_attendance_on_conflict {
   constraint: activity_attendance_constraint;
@@ -13298,9 +13307,9 @@ export interface activity_attendance_on_conflict {
  * Boolean expression to filter rows from the table "activity". All fields are combined with a logical 'AND'.
  */
 export interface activity_bool_exp {
-  _and?: (activity_bool_exp | null)[] | null;
+  _and?: activity_bool_exp[] | null;
   _not?: activity_bool_exp | null;
-  _or?: (activity_bool_exp | null)[] | null;
+  _or?: activity_bool_exp[] | null;
   activity_categories?: activity_category_bool_exp | null;
   activity_enrollments?: activity_enrollment_bool_exp | null;
   activity_sessions?: activity_session_bool_exp | null;
@@ -13335,9 +13344,9 @@ export interface activity_category_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "activity_category". All fields are combined with a logical 'AND'.
  */
 export interface activity_category_bool_exp {
-  _and?: (activity_category_bool_exp | null)[] | null;
+  _and?: activity_category_bool_exp[] | null;
   _not?: activity_category_bool_exp | null;
-  _or?: (activity_category_bool_exp | null)[] | null;
+  _or?: activity_category_bool_exp[] | null;
   activity?: activity_bool_exp | null;
   activity_id?: uuid_comparison_exp | null;
   category?: category_bool_exp | null;
@@ -13359,7 +13368,7 @@ export interface activity_category_insert_input {
 }
 
 /**
- * on conflict condition type for table "activity_category"
+ * on_conflict condition type for table "activity_category"
  */
 export interface activity_category_on_conflict {
   constraint: activity_category_constraint;
@@ -13368,12 +13377,19 @@ export interface activity_category_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "activity_enrollment"
+ */
+export interface activity_enrollment_arr_rel_insert_input {
+  data: activity_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "activity_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface activity_enrollment_bool_exp {
-  _and?: (activity_enrollment_bool_exp | null)[] | null;
+  _and?: activity_enrollment_bool_exp[] | null;
   _not?: activity_enrollment_bool_exp | null;
-  _or?: (activity_enrollment_bool_exp | null)[] | null;
+  _or?: activity_enrollment_bool_exp[] | null;
   activity?: activity_bool_exp | null;
   activity_id?: uuid_comparison_exp | null;
   activity_session_id?: uuid_comparison_exp | null;
@@ -13388,10 +13404,28 @@ export interface activity_enrollment_bool_exp {
 }
 
 /**
+ * input type for inserting data into table "activity_enrollment"
+ */
+export interface activity_enrollment_insert_input {
+  activity?: activity_obj_rel_insert_input | null;
+  activity_id?: any | null;
+  activity_session_id?: any | null;
+  activity_ticket?: activity_ticket_obj_rel_insert_input | null;
+  activity_ticket_id?: any | null;
+  attended?: boolean | null;
+  member_email?: string | null;
+  member_id?: string | null;
+  member_name?: string | null;
+  member_phone?: string | null;
+  order_log_id?: string | null;
+}
+
+/**
  * input type for inserting data into table "activity"
  */
 export interface activity_insert_input {
   activity_categories?: activity_category_arr_rel_insert_input | null;
+  activity_enrollments?: activity_enrollment_arr_rel_insert_input | null;
   activity_sessions?: activity_session_arr_rel_insert_input | null;
   activity_tags?: activity_tag_arr_rel_insert_input | null;
   activity_tickets?: activity_ticket_arr_rel_insert_input | null;
@@ -13402,10 +13436,12 @@ export interface activity_insert_input {
   description?: string | null;
   id?: any | null;
   is_participants_visible?: boolean | null;
+  organizer?: member_public_obj_rel_insert_input | null;
   organizer_id?: string | null;
   package_items?: package_item_arr_rel_insert_input | null;
   position?: number | null;
   published_at?: any | null;
+  session_ticket_enrollment_count?: activity_session_ticket_enrollment_count_arr_rel_insert_input | null;
   support_locales?: any | null;
   title?: string | null;
 }
@@ -13419,7 +13455,7 @@ export interface activity_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "activity"
+ * on_conflict condition type for table "activity"
  */
 export interface activity_on_conflict {
   constraint: activity_constraint;
@@ -13439,9 +13475,9 @@ export interface activity_session_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "activity_session". All fields are combined with a logical 'AND'.
  */
 export interface activity_session_bool_exp {
-  _and?: (activity_session_bool_exp | null)[] | null;
+  _and?: activity_session_bool_exp[] | null;
   _not?: activity_session_bool_exp | null;
-  _or?: (activity_session_bool_exp | null)[] | null;
+  _or?: activity_session_bool_exp[] | null;
   activity?: activity_bool_exp | null;
   activity_attendances?: activity_attendance_bool_exp | null;
   activity_enrollments?: activity_enrollment_bool_exp | null;
@@ -13465,6 +13501,7 @@ export interface activity_session_bool_exp {
 export interface activity_session_insert_input {
   activity?: activity_obj_rel_insert_input | null;
   activity_attendances?: activity_attendance_arr_rel_insert_input | null;
+  activity_enrollments?: activity_enrollment_arr_rel_insert_input | null;
   activity_id?: any | null;
   activity_session_tickets?: activity_session_ticket_arr_rel_insert_input | null;
   deleted_at?: any | null;
@@ -13475,6 +13512,7 @@ export interface activity_session_insert_input {
   online_link?: string | null;
   started_at?: any | null;
   threshold?: any | null;
+  ticket_enrollment_count?: activity_session_ticket_enrollment_count_obj_rel_insert_input | null;
   title?: string | null;
 }
 
@@ -13487,7 +13525,7 @@ export interface activity_session_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "activity_session"
+ * on_conflict condition type for table "activity_session"
  */
 export interface activity_session_on_conflict {
   constraint: activity_session_constraint;
@@ -13507,9 +13545,9 @@ export interface activity_session_ticket_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "activity_session_ticket". All fields are combined with a logical 'AND'.
  */
 export interface activity_session_ticket_bool_exp {
-  _and?: (activity_session_ticket_bool_exp | null)[] | null;
+  _and?: activity_session_ticket_bool_exp[] | null;
   _not?: activity_session_ticket_bool_exp | null;
-  _or?: (activity_session_ticket_bool_exp | null)[] | null;
+  _or?: activity_session_ticket_bool_exp[] | null;
   activity_session?: activity_session_bool_exp | null;
   activity_session_id?: uuid_comparison_exp | null;
   activity_session_type?: String_comparison_exp | null;
@@ -13519,17 +13557,42 @@ export interface activity_session_ticket_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "activity_session_ticket_enrollment_count"
+ */
+export interface activity_session_ticket_enrollment_count_arr_rel_insert_input {
+  data: activity_session_ticket_enrollment_count_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "activity_session_ticket_enrollment_count". All fields are combined with a logical 'AND'.
  */
 export interface activity_session_ticket_enrollment_count_bool_exp {
-  _and?: (activity_session_ticket_enrollment_count_bool_exp | null)[] | null;
+  _and?: activity_session_ticket_enrollment_count_bool_exp[] | null;
   _not?: activity_session_ticket_enrollment_count_bool_exp | null;
-  _or?: (activity_session_ticket_enrollment_count_bool_exp | null)[] | null;
+  _or?: activity_session_ticket_enrollment_count_bool_exp[] | null;
   activity?: activity_bool_exp | null;
   activity_id?: uuid_comparison_exp | null;
   activity_offline_session_ticket_count?: numeric_comparison_exp | null;
   activity_online_session_ticket_count?: numeric_comparison_exp | null;
   activity_session_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "activity_session_ticket_enrollment_count"
+ */
+export interface activity_session_ticket_enrollment_count_insert_input {
+  activity?: activity_obj_rel_insert_input | null;
+  activity_id?: any | null;
+  activity_offline_session_ticket_count?: any | null;
+  activity_online_session_ticket_count?: any | null;
+  activity_session_id?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "activity_session_ticket_enrollment_count"
+ */
+export interface activity_session_ticket_enrollment_count_obj_rel_insert_input {
+  data: activity_session_ticket_enrollment_count_insert_input;
 }
 
 /**
@@ -13545,7 +13608,7 @@ export interface activity_session_ticket_insert_input {
 }
 
 /**
- * on conflict condition type for table "activity_session_ticket"
+ * on_conflict condition type for table "activity_session_ticket"
  */
 export interface activity_session_ticket_on_conflict {
   constraint: activity_session_ticket_constraint;
@@ -13565,9 +13628,9 @@ export interface activity_tag_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "activity_tag". All fields are combined with a logical 'AND'.
  */
 export interface activity_tag_bool_exp {
-  _and?: (activity_tag_bool_exp | null)[] | null;
+  _and?: activity_tag_bool_exp[] | null;
   _not?: activity_tag_bool_exp | null;
-  _or?: (activity_tag_bool_exp | null)[] | null;
+  _or?: activity_tag_bool_exp[] | null;
   activity?: activity_bool_exp | null;
   activity_id?: uuid_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -13589,7 +13652,7 @@ export interface activity_tag_insert_input {
 }
 
 /**
- * on conflict condition type for table "activity_tag"
+ * on_conflict condition type for table "activity_tag"
  */
 export interface activity_tag_on_conflict {
   constraint: activity_tag_constraint;
@@ -13609,9 +13672,9 @@ export interface activity_ticket_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "activity_ticket". All fields are combined with a logical 'AND'.
  */
 export interface activity_ticket_bool_exp {
-  _and?: (activity_ticket_bool_exp | null)[] | null;
+  _and?: activity_ticket_bool_exp[] | null;
   _not?: activity_ticket_bool_exp | null;
-  _or?: (activity_ticket_bool_exp | null)[] | null;
+  _or?: activity_ticket_bool_exp[] | null;
   activity?: activity_bool_exp | null;
   activity_enrollments?: activity_enrollment_bool_exp | null;
   activity_id?: uuid_comparison_exp | null;
@@ -13631,12 +13694,19 @@ export interface activity_ticket_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "activity_ticket_enrollment"
+ */
+export interface activity_ticket_enrollment_arr_rel_insert_input {
+  data: activity_ticket_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "activity_ticket_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface activity_ticket_enrollment_bool_exp {
-  _and?: (activity_ticket_enrollment_bool_exp | null)[] | null;
+  _and?: activity_ticket_enrollment_bool_exp[] | null;
   _not?: activity_ticket_enrollment_bool_exp | null;
-  _or?: (activity_ticket_enrollment_bool_exp | null)[] | null;
+  _or?: activity_ticket_enrollment_bool_exp[] | null;
   activity_ticket?: activity_ticket_bool_exp | null;
   activity_ticket_id?: uuid_comparison_exp | null;
   member_id?: String_comparison_exp | null;
@@ -13646,12 +13716,26 @@ export interface activity_ticket_enrollment_bool_exp {
 }
 
 /**
+ * input type for inserting data into table "activity_ticket_enrollment"
+ */
+export interface activity_ticket_enrollment_insert_input {
+  activity_ticket?: activity_ticket_obj_rel_insert_input | null;
+  activity_ticket_id?: any | null;
+  member_id?: string | null;
+  order_log?: order_log_obj_rel_insert_input | null;
+  order_log_id?: string | null;
+  order_product_id?: any | null;
+}
+
+/**
  * input type for inserting data into table "activity_ticket"
  */
 export interface activity_ticket_insert_input {
   activity?: activity_obj_rel_insert_input | null;
+  activity_enrollments?: activity_enrollment_arr_rel_insert_input | null;
   activity_id?: any | null;
   activity_session_tickets?: activity_session_ticket_arr_rel_insert_input | null;
+  activity_ticket_enrollments?: activity_ticket_enrollment_arr_rel_insert_input | null;
   count?: number | null;
   currency?: currency_obj_rel_insert_input | null;
   currency_id?: string | null;
@@ -13674,7 +13758,7 @@ export interface activity_ticket_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "activity_ticket"
+ * on_conflict condition type for table "activity_ticket"
  */
 export interface activity_ticket_on_conflict {
   constraint: activity_ticket_constraint;
@@ -13694,9 +13778,9 @@ export interface app_admin_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "app_admin". All fields are combined with a logical 'AND'.
  */
 export interface app_admin_bool_exp {
-  _and?: (app_admin_bool_exp | null)[] | null;
+  _and?: app_admin_bool_exp[] | null;
   _not?: app_admin_bool_exp | null;
-  _or?: (app_admin_bool_exp | null)[] | null;
+  _or?: app_admin_bool_exp[] | null;
   api_host?: String_comparison_exp | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
@@ -13716,7 +13800,7 @@ export interface app_admin_insert_input {
 }
 
 /**
- * on conflict condition type for table "app_admin"
+ * on_conflict condition type for table "app_admin"
  */
 export interface app_admin_on_conflict {
   constraint: app_admin_constraint;
@@ -13728,9 +13812,9 @@ export interface app_admin_on_conflict {
  * Boolean expression to filter rows from the table "app". All fields are combined with a logical 'AND'.
  */
 export interface app_bool_exp {
-  _and?: (app_bool_exp | null)[] | null;
+  _and?: app_bool_exp[] | null;
   _not?: app_bool_exp | null;
-  _or?: (app_bool_exp | null)[] | null;
+  _or?: app_bool_exp[] | null;
   activities?: activity_bool_exp | null;
   app_admins?: app_admin_bool_exp | null;
   app_hosts?: app_host_bool_exp | null;
@@ -13777,9 +13861,9 @@ export interface app_host_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "app_host". All fields are combined with a logical 'AND'.
  */
 export interface app_host_bool_exp {
-  _and?: (app_host_bool_exp | null)[] | null;
+  _and?: app_host_bool_exp[] | null;
   _not?: app_host_bool_exp | null;
-  _or?: (app_host_bool_exp | null)[] | null;
+  _or?: app_host_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   host?: String_comparison_exp | null;
@@ -13797,7 +13881,7 @@ export interface app_host_insert_input {
 }
 
 /**
- * on conflict condition type for table "app_host"
+ * on_conflict condition type for table "app_host"
  */
 export interface app_host_on_conflict {
   constraint: app_host_constraint;
@@ -13855,9 +13939,9 @@ export interface app_module_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "app_module". All fields are combined with a logical 'AND'.
  */
 export interface app_module_bool_exp {
-  _and?: (app_module_bool_exp | null)[] | null;
+  _and?: app_module_bool_exp[] | null;
   _not?: app_module_bool_exp | null;
-  _or?: (app_module_bool_exp | null)[] | null;
+  _or?: app_module_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -13879,7 +13963,7 @@ export interface app_module_insert_input {
 }
 
 /**
- * on conflict condition type for table "app_module"
+ * on_conflict condition type for table "app_module"
  */
 export interface app_module_on_conflict {
   constraint: app_module_constraint;
@@ -13899,9 +13983,9 @@ export interface app_nav_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "app_nav". All fields are combined with a logical 'AND'.
  */
 export interface app_nav_bool_exp {
-  _and?: (app_nav_bool_exp | null)[] | null;
+  _and?: app_nav_bool_exp[] | null;
   _not?: app_nav_bool_exp | null;
-  _or?: (app_nav_bool_exp | null)[] | null;
+  _or?: app_nav_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   block?: String_comparison_exp | null;
@@ -13939,7 +14023,7 @@ export interface app_nav_insert_input {
 }
 
 /**
- * on conflict condition type for table "app_nav"
+ * on_conflict condition type for table "app_nav"
  */
 export interface app_nav_on_conflict {
   constraint: app_nav_constraint;
@@ -13956,7 +14040,7 @@ export interface app_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "app"
+ * on_conflict condition type for table "app"
  */
 export interface app_on_conflict {
   constraint: app_constraint;
@@ -13976,9 +14060,9 @@ export interface app_page_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "app_page". All fields are combined with a logical 'AND'.
  */
 export interface app_page_bool_exp {
-  _and?: (app_page_bool_exp | null)[] | null;
+  _and?: app_page_bool_exp[] | null;
   _not?: app_page_bool_exp | null;
-  _or?: (app_page_bool_exp | null)[] | null;
+  _or?: app_page_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   app_page_sections?: app_page_section_bool_exp | null;
   craft_data?: jsonb_comparison_exp | null;
@@ -14002,6 +14086,7 @@ export interface app_page_insert_input {
   app_page_sections?: app_page_section_arr_rel_insert_input | null;
   craft_data?: any | null;
   created_at?: any | null;
+  editor?: member_public_obj_rel_insert_input | null;
   editor_id?: string | null;
   id?: any | null;
   is_deleted?: boolean | null;
@@ -14021,7 +14106,7 @@ export interface app_page_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "app_page"
+ * on_conflict condition type for table "app_page"
  */
 export interface app_page_on_conflict {
   constraint: app_page_constraint;
@@ -14041,9 +14126,9 @@ export interface app_page_section_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "app_page_section". All fields are combined with a logical 'AND'.
  */
 export interface app_page_section_bool_exp {
-  _and?: (app_page_section_bool_exp | null)[] | null;
+  _and?: app_page_section_bool_exp[] | null;
   _not?: app_page_section_bool_exp | null;
-  _or?: (app_page_section_bool_exp | null)[] | null;
+  _or?: app_page_section_bool_exp[] | null;
   app_page?: app_page_bool_exp | null;
   app_page_id?: uuid_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -14065,7 +14150,7 @@ export interface app_page_section_insert_input {
 }
 
 /**
- * on conflict condition type for table "app_page_section"
+ * on_conflict condition type for table "app_page_section"
  */
 export interface app_page_section_on_conflict {
   constraint: app_page_section_constraint;
@@ -14085,9 +14170,9 @@ export interface app_secret_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "app_secret". All fields are combined with a logical 'AND'.
  */
 export interface app_secret_bool_exp {
-  _and?: (app_secret_bool_exp | null)[] | null;
+  _and?: app_secret_bool_exp[] | null;
   _not?: app_secret_bool_exp | null;
-  _or?: (app_secret_bool_exp | null)[] | null;
+  _or?: app_secret_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -14109,7 +14194,7 @@ export interface app_secret_insert_input {
 }
 
 /**
- * on conflict condition type for table "app_secret"
+ * on_conflict condition type for table "app_secret"
  */
 export interface app_secret_on_conflict {
   constraint: app_secret_constraint;
@@ -14129,9 +14214,9 @@ export interface app_setting_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "app_setting". All fields are combined with a logical 'AND'.
  */
 export interface app_setting_bool_exp {
-  _and?: (app_setting_bool_exp | null)[] | null;
+  _and?: app_setting_bool_exp[] | null;
   _not?: app_setting_bool_exp | null;
-  _or?: (app_setting_bool_exp | null)[] | null;
+  _or?: app_setting_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -14155,7 +14240,7 @@ export interface app_setting_insert_input {
 }
 
 /**
- * on conflict condition type for table "app_setting"
+ * on_conflict condition type for table "app_setting"
  */
 export interface app_setting_on_conflict {
   constraint: app_setting_constraint;
@@ -14164,12 +14249,19 @@ export interface app_setting_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "appointment_enrollment"
+ */
+export interface appointment_enrollment_arr_rel_insert_input {
+  data: appointment_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "appointment_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface appointment_enrollment_bool_exp {
-  _and?: (appointment_enrollment_bool_exp | null)[] | null;
+  _and?: appointment_enrollment_bool_exp[] | null;
   _not?: appointment_enrollment_bool_exp | null;
-  _or?: (appointment_enrollment_bool_exp | null)[] | null;
+  _or?: appointment_enrollment_bool_exp[] | null;
   appointment_plan?: appointment_plan_bool_exp | null;
   appointment_plan_id?: uuid_comparison_exp | null;
   canceled_at?: String_comparison_exp | null;
@@ -14191,12 +14283,43 @@ export interface appointment_enrollment_bool_exp {
 }
 
 /**
+ * input type for inserting data into table "appointment_enrollment"
+ */
+export interface appointment_enrollment_insert_input {
+  appointment_plan?: appointment_plan_obj_rel_insert_input | null;
+  appointment_plan_id?: any | null;
+  canceled_at?: string | null;
+  created_at?: any | null;
+  ended_at?: any | null;
+  id?: any | null;
+  issue?: string | null;
+  join_url?: string | null;
+  member?: member_public_obj_rel_insert_input | null;
+  member_email?: string | null;
+  member_id?: string | null;
+  member_name?: string | null;
+  member_phone?: string | null;
+  order_product?: order_product_obj_rel_insert_input | null;
+  order_product_id?: any | null;
+  result?: string | null;
+  start_url?: string | null;
+  started_at?: any | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "appointment_period"
+ */
+export interface appointment_period_arr_rel_insert_input {
+  data: appointment_period_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "appointment_period". All fields are combined with a logical 'AND'.
  */
 export interface appointment_period_bool_exp {
-  _and?: (appointment_period_bool_exp | null)[] | null;
+  _and?: appointment_period_bool_exp[] | null;
   _not?: appointment_period_bool_exp | null;
-  _or?: (appointment_period_bool_exp | null)[] | null;
+  _or?: appointment_period_bool_exp[] | null;
   appointment_plan?: appointment_plan_bool_exp | null;
   appointment_plan_id?: uuid_comparison_exp | null;
   appointment_schedule?: appointment_schedule_bool_exp | null;
@@ -14205,6 +14328,20 @@ export interface appointment_period_bool_exp {
   booked?: Boolean_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "appointment_period"
+ */
+export interface appointment_period_insert_input {
+  appointment_plan?: appointment_plan_obj_rel_insert_input | null;
+  appointment_plan_id?: any | null;
+  appointment_schedule?: appointment_schedule_obj_rel_insert_input | null;
+  appointment_schedule_id?: any | null;
+  available?: boolean | null;
+  booked?: boolean | null;
+  ended_at?: any | null;
+  started_at?: any | null;
 }
 
 /**
@@ -14219,9 +14356,9 @@ export interface appointment_plan_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "appointment_plan". All fields are combined with a logical 'AND'.
  */
 export interface appointment_plan_bool_exp {
-  _and?: (appointment_plan_bool_exp | null)[] | null;
+  _and?: appointment_plan_bool_exp[] | null;
   _not?: appointment_plan_bool_exp | null;
-  _or?: (appointment_plan_bool_exp | null)[] | null;
+  _or?: appointment_plan_bool_exp[] | null;
   appointment_enrollments?: appointment_enrollment_bool_exp | null;
   appointment_periods?: appointment_period_bool_exp | null;
   appointment_schedules?: appointment_schedule_bool_exp | null;
@@ -14248,8 +14385,11 @@ export interface appointment_plan_bool_exp {
  * input type for inserting data into table "appointment_plan"
  */
 export interface appointment_plan_insert_input {
+  appointment_enrollments?: appointment_enrollment_arr_rel_insert_input | null;
+  appointment_periods?: appointment_period_arr_rel_insert_input | null;
   appointment_schedules?: appointment_schedule_arr_rel_insert_input | null;
   created_at?: any | null;
+  creator?: member_public_obj_rel_insert_input | null;
   creator_id?: string | null;
   currency?: currency_obj_rel_insert_input | null;
   currency_id?: string | null;
@@ -14276,7 +14416,7 @@ export interface appointment_plan_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "appointment_plan"
+ * on_conflict condition type for table "appointment_plan"
  */
 export interface appointment_plan_on_conflict {
   constraint: appointment_plan_constraint;
@@ -14296,9 +14436,9 @@ export interface appointment_schedule_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "appointment_schedule". All fields are combined with a logical 'AND'.
  */
 export interface appointment_schedule_bool_exp {
-  _and?: (appointment_schedule_bool_exp | null)[] | null;
+  _and?: appointment_schedule_bool_exp[] | null;
   _not?: appointment_schedule_bool_exp | null;
-  _or?: (appointment_schedule_bool_exp | null)[] | null;
+  _or?: appointment_schedule_bool_exp[] | null;
   appointment_plan?: appointment_plan_bool_exp | null;
   appointment_plan_id?: uuid_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -14326,7 +14466,15 @@ export interface appointment_schedule_insert_input {
 }
 
 /**
- * on conflict condition type for table "appointment_schedule"
+ * input type for inserting object relation for remote table "appointment_schedule"
+ */
+export interface appointment_schedule_obj_rel_insert_input {
+  data: appointment_schedule_insert_input;
+  on_conflict?: appointment_schedule_on_conflict | null;
+}
+
+/**
+ * on_conflict condition type for table "appointment_schedule"
  */
 export interface appointment_schedule_on_conflict {
   constraint: appointment_schedule_constraint;
@@ -14346,9 +14494,9 @@ export interface attachment_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "attachment". All fields are combined with a logical 'AND'.
  */
 export interface attachment_bool_exp {
-  _and?: (attachment_bool_exp | null)[] | null;
+  _and?: attachment_bool_exp[] | null;
   _not?: attachment_bool_exp | null;
-  _or?: (attachment_bool_exp | null)[] | null;
+  _or?: attachment_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   author?: member_bool_exp | null;
   author_id?: String_comparison_exp | null;
@@ -14408,7 +14556,7 @@ export interface attachment_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "attachment"
+ * on_conflict condition type for table "attachment"
  */
 export interface attachment_on_conflict {
   constraint: attachment_constraint;
@@ -14428,9 +14576,9 @@ export interface attend_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "attend". All fields are combined with a logical 'AND'.
  */
 export interface attend_bool_exp {
-  _and?: (attend_bool_exp | null)[] | null;
+  _and?: attend_bool_exp[] | null;
   _not?: attend_bool_exp | null;
-  _or?: (attend_bool_exp | null)[] | null;
+  _or?: attend_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -14454,7 +14602,7 @@ export interface attend_insert_input {
 }
 
 /**
- * on conflict condition type for table "attend"
+ * on_conflict condition type for table "attend"
  */
 export interface attend_on_conflict {
   constraint: attend_constraint;
@@ -14463,7 +14611,7 @@ export interface attend_on_conflict {
 }
 
 /**
- * expression to compare columns of type bigint. All fields are combined with logical 'AND'.
+ * Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'.
  */
 export interface bigint_comparison_exp {
   _eq?: any | null;
@@ -14489,9 +14637,9 @@ export interface card_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "card". All fields are combined with a logical 'AND'.
  */
 export interface card_bool_exp {
-  _and?: (card_bool_exp | null)[] | null;
+  _and?: card_bool_exp[] | null;
   _not?: card_bool_exp | null;
-  _or?: (card_bool_exp | null)[] | null;
+  _or?: card_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   card_discounts?: card_discount_bool_exp | null;
@@ -14516,9 +14664,9 @@ export interface card_discount_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "card_discount". All fields are combined with a logical 'AND'.
  */
 export interface card_discount_bool_exp {
-  _and?: (card_discount_bool_exp | null)[] | null;
+  _and?: card_discount_bool_exp[] | null;
   _not?: card_discount_bool_exp | null;
-  _or?: (card_discount_bool_exp | null)[] | null;
+  _or?: card_discount_bool_exp[] | null;
   amount?: numeric_comparison_exp | null;
   card?: card_bool_exp | null;
   card_id?: uuid_comparison_exp | null;
@@ -14542,7 +14690,7 @@ export interface card_discount_insert_input {
 }
 
 /**
- * on conflict condition type for table "card_discount"
+ * on_conflict condition type for table "card_discount"
  */
 export interface card_discount_on_conflict {
   constraint: card_discount_constraint;
@@ -14551,17 +14699,35 @@ export interface card_discount_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "card_enrollment"
+ */
+export interface card_enrollment_arr_rel_insert_input {
+  data: card_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "card_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface card_enrollment_bool_exp {
-  _and?: (card_enrollment_bool_exp | null)[] | null;
+  _and?: card_enrollment_bool_exp[] | null;
   _not?: card_enrollment_bool_exp | null;
-  _or?: (card_enrollment_bool_exp | null)[] | null;
+  _or?: card_enrollment_bool_exp[] | null;
   card?: card_bool_exp | null;
   card_id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "card_enrollment"
+ */
+export interface card_enrollment_insert_input {
+  card?: card_obj_rel_insert_input | null;
+  card_id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  updated_at?: any | null;
 }
 
 /**
@@ -14571,6 +14737,8 @@ export interface card_insert_input {
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
   card_discounts?: card_discount_arr_rel_insert_input | null;
+  card_enrollments?: card_enrollment_arr_rel_insert_input | null;
+  creator?: member_public_obj_rel_insert_input | null;
   creator_id?: string | null;
   description?: string | null;
   id?: any | null;
@@ -14587,7 +14755,7 @@ export interface card_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "card"
+ * on_conflict condition type for table "card"
  */
 export interface card_on_conflict {
   constraint: card_constraint;
@@ -14607,9 +14775,9 @@ export interface cart_item_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "cart_item". All fields are combined with a logical 'AND'.
  */
 export interface cart_item_bool_exp {
-  _and?: (cart_item_bool_exp | null)[] | null;
+  _and?: cart_item_bool_exp[] | null;
   _not?: cart_item_bool_exp | null;
-  _or?: (cart_item_bool_exp | null)[] | null;
+  _or?: cart_item_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   class?: String_comparison_exp | null;
@@ -14631,7 +14799,7 @@ export interface cart_item_insert_input {
 }
 
 /**
- * on conflict condition type for table "cart_item"
+ * on_conflict condition type for table "cart_item"
  */
 export interface cart_item_on_conflict {
   constraint: cart_item_constraint;
@@ -14651,9 +14819,9 @@ export interface cart_product_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "cart_product". All fields are combined with a logical 'AND'.
  */
 export interface cart_product_bool_exp {
-  _and?: (cart_product_bool_exp | null)[] | null;
+  _and?: cart_product_bool_exp[] | null;
   _not?: cart_product_bool_exp | null;
-  _or?: (cart_product_bool_exp | null)[] | null;
+  _or?: cart_product_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -14675,7 +14843,7 @@ export interface cart_product_insert_input {
 }
 
 /**
- * on conflict condition type for table "cart_product"
+ * on_conflict condition type for table "cart_product"
  */
 export interface cart_product_on_conflict {
   constraint: cart_product_constraint;
@@ -14687,9 +14855,9 @@ export interface cart_product_on_conflict {
  * Boolean expression to filter rows from the table "category". All fields are combined with a logical 'AND'.
  */
 export interface category_bool_exp {
-  _and?: (category_bool_exp | null)[] | null;
+  _and?: category_bool_exp[] | null;
   _not?: category_bool_exp | null;
-  _or?: (category_bool_exp | null)[] | null;
+  _or?: category_bool_exp[] | null;
   activity_categories?: activity_category_bool_exp | null;
   app_id?: String_comparison_exp | null;
   class?: String_comparison_exp | null;
@@ -14743,7 +14911,7 @@ export interface category_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "category"
+ * on_conflict condition type for table "category"
  */
 export interface category_on_conflict {
   constraint: category_constraint;
@@ -14763,9 +14931,9 @@ export interface coin_log_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "coin_log". All fields are combined with a logical 'AND'.
  */
 export interface coin_log_bool_exp {
-  _and?: (coin_log_bool_exp | null)[] | null;
+  _and?: coin_log_bool_exp[] | null;
   _not?: coin_log_bool_exp | null;
-  _or?: (coin_log_bool_exp | null)[] | null;
+  _or?: coin_log_bool_exp[] | null;
   amount?: numeric_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
@@ -14795,7 +14963,15 @@ export interface coin_log_insert_input {
 }
 
 /**
- * on conflict condition type for table "coin_log"
+ * input type for inserting object relation for remote table "coin_log"
+ */
+export interface coin_log_obj_rel_insert_input {
+  data: coin_log_insert_input;
+  on_conflict?: coin_log_on_conflict | null;
+}
+
+/**
+ * on_conflict condition type for table "coin_log"
  */
 export interface coin_log_on_conflict {
   constraint: coin_log_constraint;
@@ -14804,18 +14980,37 @@ export interface coin_log_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "coin_status"
+ */
+export interface coin_status_arr_rel_insert_input {
+  data: coin_status_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "coin_status". All fields are combined with a logical 'AND'.
  */
 export interface coin_status_bool_exp {
-  _and?: (coin_status_bool_exp | null)[] | null;
+  _and?: coin_status_bool_exp[] | null;
   _not?: coin_status_bool_exp | null;
-  _or?: (coin_status_bool_exp | null)[] | null;
+  _or?: coin_status_bool_exp[] | null;
   amount?: numeric_comparison_exp | null;
   coin_id?: uuid_comparison_exp | null;
   coin_log?: coin_log_bool_exp | null;
   member_id?: String_comparison_exp | null;
   remaining?: numeric_comparison_exp | null;
   used_coins?: numeric_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "coin_status"
+ */
+export interface coin_status_insert_input {
+  amount?: any | null;
+  coin_id?: any | null;
+  coin_log?: coin_log_obj_rel_insert_input | null;
+  member_id?: string | null;
+  remaining?: any | null;
+  used_coins?: any | null;
 }
 
 /**
@@ -14830,9 +15025,9 @@ export interface comment_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "comment". All fields are combined with a logical 'AND'.
  */
 export interface comment_bool_exp {
-  _and?: (comment_bool_exp | null)[] | null;
+  _and?: comment_bool_exp[] | null;
   _not?: comment_bool_exp | null;
-  _or?: (comment_bool_exp | null)[] | null;
+  _or?: comment_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   comment_reactions?: comment_reaction_bool_exp | null;
@@ -14870,7 +15065,7 @@ export interface comment_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "comment"
+ * on_conflict condition type for table "comment"
  */
 export interface comment_on_conflict {
   constraint: comment_constraint;
@@ -14890,9 +15085,9 @@ export interface comment_reaction_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "comment_reaction". All fields are combined with a logical 'AND'.
  */
 export interface comment_reaction_bool_exp {
-  _and?: (comment_reaction_bool_exp | null)[] | null;
+  _and?: comment_reaction_bool_exp[] | null;
   _not?: comment_reaction_bool_exp | null;
-  _or?: (comment_reaction_bool_exp | null)[] | null;
+  _or?: comment_reaction_bool_exp[] | null;
   comment?: comment_bool_exp | null;
   comment_id?: uuid_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -14914,7 +15109,7 @@ export interface comment_reaction_insert_input {
 }
 
 /**
- * on conflict condition type for table "comment_reaction"
+ * on_conflict condition type for table "comment_reaction"
  */
 export interface comment_reaction_on_conflict {
   constraint: comment_reaction_constraint;
@@ -14934,9 +15129,9 @@ export interface comment_reply_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "comment_reply". All fields are combined with a logical 'AND'.
  */
 export interface comment_reply_bool_exp {
-  _and?: (comment_reply_bool_exp | null)[] | null;
+  _and?: comment_reply_bool_exp[] | null;
   _not?: comment_reply_bool_exp | null;
-  _or?: (comment_reply_bool_exp | null)[] | null;
+  _or?: comment_reply_bool_exp[] | null;
   comment?: comment_bool_exp | null;
   comment_id?: uuid_comparison_exp | null;
   comment_reply_reactions?: comment_reply_reaction_bool_exp | null;
@@ -14970,7 +15165,7 @@ export interface comment_reply_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "comment_reply"
+ * on_conflict condition type for table "comment_reply"
  */
 export interface comment_reply_on_conflict {
   constraint: comment_reply_constraint;
@@ -14990,9 +15185,9 @@ export interface comment_reply_reaction_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "comment_reply_reaction". All fields are combined with a logical 'AND'.
  */
 export interface comment_reply_reaction_bool_exp {
-  _and?: (comment_reply_reaction_bool_exp | null)[] | null;
+  _and?: comment_reply_reaction_bool_exp[] | null;
   _not?: comment_reply_reaction_bool_exp | null;
-  _or?: (comment_reply_reaction_bool_exp | null)[] | null;
+  _or?: comment_reply_reaction_bool_exp[] | null;
   comment_reply?: comment_reply_bool_exp | null;
   comment_reply_id?: uuid_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -15014,7 +15209,7 @@ export interface comment_reply_reaction_insert_input {
 }
 
 /**
- * on conflict condition type for table "comment_reply_reaction"
+ * on_conflict condition type for table "comment_reply_reaction"
  */
 export interface comment_reply_reaction_on_conflict {
   constraint: comment_reply_reaction_constraint;
@@ -15026,9 +15221,9 @@ export interface comment_reply_reaction_on_conflict {
  * Boolean expression to filter rows from the table "contract". All fields are combined with a logical 'AND'.
  */
 export interface contract_bool_exp {
-  _and?: (contract_bool_exp | null)[] | null;
+  _and?: contract_bool_exp[] | null;
   _not?: contract_bool_exp | null;
-  _or?: (contract_bool_exp | null)[] | null;
+  _or?: contract_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   deliverables?: String_comparison_exp | null;
@@ -15070,7 +15265,7 @@ export interface contract_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "contract"
+ * on_conflict condition type for table "contract"
  */
 export interface contract_on_conflict {
   constraint: contract_constraint;
@@ -15090,9 +15285,9 @@ export interface coupon_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "coupon". All fields are combined with a logical 'AND'.
  */
 export interface coupon_bool_exp {
-  _and?: (coupon_bool_exp | null)[] | null;
+  _and?: coupon_bool_exp[] | null;
   _not?: coupon_bool_exp | null;
-  _or?: (coupon_bool_exp | null)[] | null;
+  _or?: coupon_bool_exp[] | null;
   coupon_code?: coupon_code_bool_exp | null;
   coupon_code_id?: uuid_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -15115,9 +15310,9 @@ export interface coupon_code_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "coupon_code". All fields are combined with a logical 'AND'.
  */
 export interface coupon_code_bool_exp {
-  _and?: (coupon_code_bool_exp | null)[] | null;
+  _and?: coupon_code_bool_exp[] | null;
   _not?: coupon_code_bool_exp | null;
-  _or?: (coupon_code_bool_exp | null)[] | null;
+  _or?: coupon_code_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   code?: String_comparison_exp | null;
   count?: Int_comparison_exp | null;
@@ -15155,7 +15350,7 @@ export interface coupon_code_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "coupon_code"
+ * on_conflict condition type for table "coupon_code"
  */
 export interface coupon_code_on_conflict {
   constraint: coupon_code_constraint;
@@ -15174,6 +15369,7 @@ export interface coupon_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   order_logs?: order_log_arr_rel_insert_input | null;
+  status?: coupon_status_obj_rel_insert_input | null;
 }
 
 /**
@@ -15185,7 +15381,7 @@ export interface coupon_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "coupon"
+ * on_conflict condition type for table "coupon"
  */
 export interface coupon_on_conflict {
   constraint: coupon_constraint;
@@ -15197,9 +15393,9 @@ export interface coupon_on_conflict {
  * Boolean expression to filter rows from the table "coupon_plan". All fields are combined with a logical 'AND'.
  */
 export interface coupon_plan_bool_exp {
-  _and?: (coupon_plan_bool_exp | null)[] | null;
+  _and?: coupon_plan_bool_exp[] | null;
   _not?: coupon_plan_bool_exp | null;
-  _or?: (coupon_plan_bool_exp | null)[] | null;
+  _or?: coupon_plan_bool_exp[] | null;
   amount?: numeric_comparison_exp | null;
   constraint?: numeric_comparison_exp | null;
   coupon_codes?: coupon_code_bool_exp | null;
@@ -15243,7 +15439,7 @@ export interface coupon_plan_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "coupon_plan"
+ * on_conflict condition type for table "coupon_plan"
  */
 export interface coupon_plan_on_conflict {
   constraint: coupon_plan_constraint;
@@ -15263,9 +15459,9 @@ export interface coupon_plan_product_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "coupon_plan_product". All fields are combined with a logical 'AND'.
  */
 export interface coupon_plan_product_bool_exp {
-  _and?: (coupon_plan_product_bool_exp | null)[] | null;
+  _and?: coupon_plan_product_bool_exp[] | null;
   _not?: coupon_plan_product_bool_exp | null;
-  _or?: (coupon_plan_product_bool_exp | null)[] | null;
+  _or?: coupon_plan_product_bool_exp[] | null;
   coupon_plan?: coupon_plan_bool_exp | null;
   coupon_plan_id?: uuid_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -15285,7 +15481,7 @@ export interface coupon_plan_product_insert_input {
 }
 
 /**
- * on conflict condition type for table "coupon_plan_product"
+ * on_conflict condition type for table "coupon_plan_product"
  */
 export interface coupon_plan_product_on_conflict {
   constraint: coupon_plan_product_constraint;
@@ -15297,9 +15493,9 @@ export interface coupon_plan_product_on_conflict {
  * Boolean expression to filter rows from the table "coupon_status". All fields are combined with a logical 'AND'.
  */
 export interface coupon_status_bool_exp {
-  _and?: (coupon_status_bool_exp | null)[] | null;
+  _and?: coupon_status_bool_exp[] | null;
   _not?: coupon_status_bool_exp | null;
-  _or?: (coupon_status_bool_exp | null)[] | null;
+  _or?: coupon_status_bool_exp[] | null;
   coupon?: coupon_bool_exp | null;
   coupon_id?: uuid_comparison_exp | null;
   outdated?: Boolean_comparison_exp | null;
@@ -15307,12 +15503,29 @@ export interface coupon_status_bool_exp {
 }
 
 /**
+ * input type for inserting data into table "coupon_status"
+ */
+export interface coupon_status_insert_input {
+  coupon?: coupon_obj_rel_insert_input | null;
+  coupon_id?: any | null;
+  outdated?: boolean | null;
+  used?: boolean | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "coupon_status"
+ */
+export interface coupon_status_obj_rel_insert_input {
+  data: coupon_status_insert_input;
+}
+
+/**
  * Boolean expression to filter rows from the table "creator". All fields are combined with a logical 'AND'.
  */
 export interface creator_bool_exp {
-  _and?: (creator_bool_exp | null)[] | null;
+  _and?: creator_bool_exp[] | null;
   _not?: creator_bool_exp | null;
-  _or?: (creator_bool_exp | null)[] | null;
+  _or?: creator_bool_exp[] | null;
   block_id?: String_comparison_exp | null;
   creator_categories?: creator_category_bool_exp | null;
   id?: String_comparison_exp | null;
@@ -15336,9 +15549,9 @@ export interface creator_category_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "creator_category". All fields are combined with a logical 'AND'.
  */
 export interface creator_category_bool_exp {
-  _and?: (creator_category_bool_exp | null)[] | null;
+  _and?: creator_category_bool_exp[] | null;
   _not?: creator_category_bool_exp | null;
-  _or?: (creator_category_bool_exp | null)[] | null;
+  _or?: creator_category_bool_exp[] | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   creator?: creator_bool_exp | null;
@@ -15354,6 +15567,7 @@ export interface creator_category_bool_exp {
 export interface creator_category_insert_input {
   category?: category_obj_rel_insert_input | null;
   category_id?: string | null;
+  creator?: creator_obj_rel_insert_input | null;
   creator_id?: string | null;
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
@@ -15361,7 +15575,7 @@ export interface creator_category_insert_input {
 }
 
 /**
- * on conflict condition type for table "creator_category"
+ * on_conflict condition type for table "creator_category"
  */
 export interface creator_category_on_conflict {
   constraint: creator_category_constraint;
@@ -15381,9 +15595,9 @@ export interface creator_display_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "creator_display". All fields are combined with a logical 'AND'.
  */
 export interface creator_display_bool_exp {
-  _and?: (creator_display_bool_exp | null)[] | null;
+  _and?: creator_display_bool_exp[] | null;
   _not?: creator_display_bool_exp | null;
-  _or?: (creator_display_bool_exp | null)[] | null;
+  _or?: creator_display_bool_exp[] | null;
   block_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -15407,7 +15621,7 @@ export interface creator_display_insert_input {
 }
 
 /**
- * on conflict condition type for table "creator_display"
+ * on_conflict condition type for table "creator_display"
  */
 export interface creator_display_on_conflict {
   constraint: creator_display_constraint;
@@ -15416,12 +15630,34 @@ export interface creator_display_on_conflict {
 }
 
 /**
+ * input type for inserting data into table "creator"
+ */
+export interface creator_insert_input {
+  block_id?: string | null;
+  creator_categories?: creator_category_arr_rel_insert_input | null;
+  id?: string | null;
+  member?: member_public_obj_rel_insert_input | null;
+  member_specialities?: member_speciality_arr_rel_insert_input | null;
+  name?: string | null;
+  picture_url?: string | null;
+  position?: number | null;
+  published_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "creator"
+ */
+export interface creator_obj_rel_insert_input {
+  data: creator_insert_input;
+}
+
+/**
  * Boolean expression to filter rows from the table "currency". All fields are combined with a logical 'AND'.
  */
 export interface currency_bool_exp {
-  _and?: (currency_bool_exp | null)[] | null;
+  _and?: currency_bool_exp[] | null;
   _not?: currency_bool_exp | null;
-  _or?: (currency_bool_exp | null)[] | null;
+  _or?: currency_bool_exp[] | null;
   appointment_plans?: appointment_plan_bool_exp | null;
   id?: String_comparison_exp | null;
   label?: String_comparison_exp | null;
@@ -15455,7 +15691,7 @@ export interface currency_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "currency"
+ * on_conflict condition type for table "currency"
  */
 export interface currency_on_conflict {
   constraint: currency_constraint;
@@ -15475,9 +15711,9 @@ export interface exercise_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "exercise". All fields are combined with a logical 'AND'.
  */
 export interface exercise_bool_exp {
-  _and?: (exercise_bool_exp | null)[] | null;
+  _and?: exercise_bool_exp[] | null;
   _not?: exercise_bool_exp | null;
-  _or?: (exercise_bool_exp | null)[] | null;
+  _or?: exercise_bool_exp[] | null;
   answer?: jsonb_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -15503,7 +15739,7 @@ export interface exercise_insert_input {
 }
 
 /**
- * on conflict condition type for table "exercise"
+ * on_conflict condition type for table "exercise"
  */
 export interface exercise_on_conflict {
   constraint: exercise_constraint;
@@ -15515,9 +15751,9 @@ export interface exercise_on_conflict {
  * Boolean expression to filter rows from the table "file". All fields are combined with a logical 'AND'.
  */
 export interface file_bool_exp {
-  _and?: (file_bool_exp | null)[] | null;
+  _and?: file_bool_exp[] | null;
   _not?: file_bool_exp | null;
-  _or?: (file_bool_exp | null)[] | null;
+  _or?: file_bool_exp[] | null;
   acl?: String_comparison_exp | null;
   checksum?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -15573,7 +15809,7 @@ export interface file_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "file"
+ * on_conflict condition type for table "file"
  */
 export interface file_on_conflict {
   constraint: file_constraint;
@@ -15593,9 +15829,9 @@ export interface issue_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "issue". All fields are combined with a logical 'AND'.
  */
 export interface issue_bool_exp {
-  _and?: (issue_bool_exp | null)[] | null;
+  _and?: issue_bool_exp[] | null;
   _not?: issue_bool_exp | null;
-  _or?: (issue_bool_exp | null)[] | null;
+  _or?: issue_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -15615,9 +15851,9 @@ export interface issue_bool_exp {
  * Boolean expression to filter rows from the table "issue_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface issue_enrollment_bool_exp {
-  _and?: (issue_enrollment_bool_exp | null)[] | null;
+  _and?: issue_enrollment_bool_exp[] | null;
   _not?: issue_enrollment_bool_exp | null;
-  _or?: (issue_enrollment_bool_exp | null)[] | null;
+  _or?: issue_enrollment_bool_exp[] | null;
   issue?: issue_bool_exp | null;
   issue_id?: uuid_comparison_exp | null;
   program?: program_bool_exp | null;
@@ -15625,6 +15861,26 @@ export interface issue_enrollment_bool_exp {
   program_content_section_id?: uuid_comparison_exp | null;
   program_id?: uuid_comparison_exp | null;
   program_roles?: program_role_bool_exp | null;
+}
+
+/**
+ * input type for inserting data into table "issue_enrollment"
+ */
+export interface issue_enrollment_insert_input {
+  issue?: issue_obj_rel_insert_input | null;
+  issue_id?: any | null;
+  program?: program_obj_rel_insert_input | null;
+  program_content_id?: any | null;
+  program_content_section_id?: any | null;
+  program_id?: any | null;
+  program_roles?: program_role_arr_rel_insert_input | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "issue_enrollment"
+ */
+export interface issue_enrollment_obj_rel_insert_input {
+  data: issue_enrollment_insert_input;
 }
 
 /**
@@ -15636,6 +15892,7 @@ export interface issue_insert_input {
   created_at?: any | null;
   description?: string | null;
   id?: any | null;
+  issue_enrollment?: issue_enrollment_obj_rel_insert_input | null;
   issue_reactions?: issue_reaction_arr_rel_insert_input | null;
   issue_replies?: issue_reply_arr_rel_insert_input | null;
   member?: member_obj_rel_insert_input | null;
@@ -15654,7 +15911,7 @@ export interface issue_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "issue"
+ * on_conflict condition type for table "issue"
  */
 export interface issue_on_conflict {
   constraint: issue_constraint;
@@ -15674,9 +15931,9 @@ export interface issue_reaction_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "issue_reaction". All fields are combined with a logical 'AND'.
  */
 export interface issue_reaction_bool_exp {
-  _and?: (issue_reaction_bool_exp | null)[] | null;
+  _and?: issue_reaction_bool_exp[] | null;
   _not?: issue_reaction_bool_exp | null;
-  _or?: (issue_reaction_bool_exp | null)[] | null;
+  _or?: issue_reaction_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   issue?: issue_bool_exp | null;
@@ -15696,10 +15953,11 @@ export interface issue_reaction_insert_input {
   issue_id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  public_member?: member_public_obj_rel_insert_input | null;
 }
 
 /**
- * on conflict condition type for table "issue_reaction"
+ * on_conflict condition type for table "issue_reaction"
  */
 export interface issue_reaction_on_conflict {
   constraint: issue_reaction_constraint;
@@ -15719,9 +15977,9 @@ export interface issue_reply_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "issue_reply". All fields are combined with a logical 'AND'.
  */
 export interface issue_reply_bool_exp {
-  _and?: (issue_reply_bool_exp | null)[] | null;
+  _and?: issue_reply_bool_exp[] | null;
   _not?: issue_reply_bool_exp | null;
-  _or?: (issue_reply_bool_exp | null)[] | null;
+  _or?: issue_reply_bool_exp[] | null;
   content?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -15755,7 +16013,7 @@ export interface issue_reply_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "issue_reply"
+ * on_conflict condition type for table "issue_reply"
  */
 export interface issue_reply_on_conflict {
   constraint: issue_reply_constraint;
@@ -15775,9 +16033,9 @@ export interface issue_reply_reaction_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "issue_reply_reaction". All fields are combined with a logical 'AND'.
  */
 export interface issue_reply_reaction_bool_exp {
-  _and?: (issue_reply_reaction_bool_exp | null)[] | null;
+  _and?: issue_reply_reaction_bool_exp[] | null;
   _not?: issue_reply_reaction_bool_exp | null;
-  _or?: (issue_reply_reaction_bool_exp | null)[] | null;
+  _or?: issue_reply_reaction_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   issue_reply?: issue_reply_bool_exp | null;
@@ -15797,10 +16055,11 @@ export interface issue_reply_reaction_insert_input {
   issue_reply_id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  public_member?: member_public_obj_rel_insert_input | null;
 }
 
 /**
- * on conflict condition type for table "issue_reply_reaction"
+ * on_conflict condition type for table "issue_reply_reaction"
  */
 export interface issue_reply_reaction_on_conflict {
   constraint: issue_reply_reaction_constraint;
@@ -15808,10 +16067,15 @@ export interface issue_reply_reaction_on_conflict {
   where?: issue_reply_reaction_bool_exp | null;
 }
 
+export interface jsonb_cast_exp {
+  String?: String_comparison_exp | null;
+}
+
 /**
- * expression to compare columns of type jsonb. All fields are combined with logical 'AND'.
+ * Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'.
  */
 export interface jsonb_comparison_exp {
+  _cast?: jsonb_cast_exp | null;
   _contained_in?: any | null;
   _contains?: any | null;
   _eq?: any | null;
@@ -15840,9 +16104,9 @@ export interface media_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "media". All fields are combined with a logical 'AND'.
  */
 export interface media_bool_exp {
-  _and?: (media_bool_exp | null)[] | null;
+  _and?: media_bool_exp[] | null;
   _not?: media_bool_exp | null;
-  _or?: (media_bool_exp | null)[] | null;
+  _or?: media_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -15870,7 +16134,7 @@ export interface media_insert_input {
 }
 
 /**
- * on conflict condition type for table "media"
+ * on_conflict condition type for table "media"
  */
 export interface media_on_conflict {
   constraint: media_constraint;
@@ -15890,9 +16154,9 @@ export interface member_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member". All fields are combined with a logical 'AND'.
  */
 export interface member_bool_exp {
-  _and?: (member_bool_exp | null)[] | null;
+  _and?: member_bool_exp[] | null;
   _not?: member_bool_exp | null;
-  _or?: (member_bool_exp | null)[] | null;
+  _or?: member_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   activities?: activity_bool_exp | null;
   app?: app_bool_exp | null;
@@ -15996,9 +16260,9 @@ export interface member_card_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_card". All fields are combined with a logical 'AND'.
  */
 export interface member_card_bool_exp {
-  _and?: (member_card_bool_exp | null)[] | null;
+  _and?: member_card_bool_exp[] | null;
   _not?: member_card_bool_exp | null;
-  _or?: (member_card_bool_exp | null)[] | null;
+  _or?: member_card_bool_exp[] | null;
   card_holder?: jsonb_comparison_exp | null;
   card_identifier?: String_comparison_exp | null;
   card_info?: jsonb_comparison_exp | null;
@@ -16024,7 +16288,7 @@ export interface member_card_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_card"
+ * on_conflict condition type for table "member_card"
  */
 export interface member_card_on_conflict {
   constraint: member_card_constraint;
@@ -16044,9 +16308,9 @@ export interface member_category_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_category". All fields are combined with a logical 'AND'.
  */
 export interface member_category_bool_exp {
-  _and?: (member_category_bool_exp | null)[] | null;
+  _and?: member_category_bool_exp[] | null;
   _not?: member_category_bool_exp | null;
-  _or?: (member_category_bool_exp | null)[] | null;
+  _or?: member_category_bool_exp[] | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -16068,7 +16332,7 @@ export interface member_category_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_category"
+ * on_conflict condition type for table "member_category"
  */
 export interface member_category_on_conflict {
   constraint: member_category_constraint;
@@ -16088,9 +16352,9 @@ export interface member_contract_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_contract". All fields are combined with a logical 'AND'.
  */
 export interface member_contract_bool_exp {
-  _and?: (member_contract_bool_exp | null)[] | null;
+  _and?: member_contract_bool_exp[] | null;
   _not?: member_contract_bool_exp | null;
-  _or?: (member_contract_bool_exp | null)[] | null;
+  _or?: member_contract_bool_exp[] | null;
   agreed_at?: timestamptz_comparison_exp | null;
   agreed_ip?: String_comparison_exp | null;
   agreed_options?: jsonb_comparison_exp | null;
@@ -16136,7 +16400,7 @@ export interface member_contract_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_contract"
+ * on_conflict condition type for table "member_contract"
  */
 export interface member_contract_on_conflict {
   constraint: member_contract_constraint;
@@ -16161,6 +16425,7 @@ export interface member_insert_input {
   attachments?: attachment_arr_rel_insert_input | null;
   attends?: attend_arr_rel_insert_input | null;
   coin_logs?: coin_log_arr_rel_insert_input | null;
+  coin_statuses?: coin_status_arr_rel_insert_input | null;
   comment_reactions?: comment_reaction_arr_rel_insert_input | null;
   comment_replies?: comment_reply_arr_rel_insert_input | null;
   comment_reply_reactions?: comment_reply_reaction_arr_rel_insert_input | null;
@@ -16195,6 +16460,7 @@ export interface member_insert_input {
   member_oauths?: member_oauth_arr_rel_insert_input | null;
   member_permission_extras?: member_permission_extra_arr_rel_insert_input | null;
   member_permission_groups?: member_permission_group_arr_rel_insert_input | null;
+  member_permissions?: member_permission_arr_rel_insert_input | null;
   member_phones?: member_phone_arr_rel_insert_input | null;
   member_properties?: member_property_arr_rel_insert_input | null;
   member_shops?: member_shop_arr_rel_insert_input | null;
@@ -16219,7 +16485,9 @@ export interface member_insert_input {
   podcast_programs?: podcast_program_arr_rel_insert_input | null;
   podcasts?: podcast_arr_rel_insert_input | null;
   point_logs?: point_log_arr_rel_insert_input | null;
+  point_status?: point_status_obj_rel_insert_input | null;
   practices?: practice_arr_rel_insert_input | null;
+  program_content_enrollments?: program_content_enrollment_arr_rel_insert_input | null;
   program_content_progresses?: program_content_progress_arr_rel_insert_input | null;
   program_roles?: program_role_arr_rel_insert_input | null;
   program_tempo_deliveries?: program_tempo_delivery_arr_rel_insert_input | null;
@@ -16254,9 +16522,9 @@ export interface member_note_attachment_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_note_attachment". All fields are combined with a logical 'AND'.
  */
 export interface member_note_attachment_bool_exp {
-  _and?: (member_note_attachment_bool_exp | null)[] | null;
+  _and?: member_note_attachment_bool_exp[] | null;
   _not?: member_note_attachment_bool_exp | null;
-  _or?: (member_note_attachment_bool_exp | null)[] | null;
+  _or?: member_note_attachment_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   attachment?: attachment_bool_exp | null;
   attachment_id?: uuid_comparison_exp | null;
@@ -16287,9 +16555,9 @@ export interface member_note_attachment_insert_input {
  * Boolean expression to filter rows from the table "member_note". All fields are combined with a logical 'AND'.
  */
 export interface member_note_bool_exp {
-  _and?: (member_note_bool_exp | null)[] | null;
+  _and?: member_note_bool_exp[] | null;
   _not?: member_note_bool_exp | null;
-  _or?: (member_note_bool_exp | null)[] | null;
+  _or?: member_note_bool_exp[] | null;
   author?: member_bool_exp | null;
   author_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -16345,7 +16613,7 @@ export interface member_note_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_note"
+ * on_conflict condition type for table "member_note"
  */
 export interface member_note_on_conflict {
   constraint: member_note_constraint;
@@ -16365,9 +16633,9 @@ export interface member_oauth_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_oauth". All fields are combined with a logical 'AND'.
  */
 export interface member_oauth_bool_exp {
-  _and?: (member_oauth_bool_exp | null)[] | null;
+  _and?: member_oauth_bool_exp[] | null;
   _not?: member_oauth_bool_exp | null;
-  _or?: (member_oauth_bool_exp | null)[] | null;
+  _or?: member_oauth_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -16389,7 +16657,7 @@ export interface member_oauth_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_oauth"
+ * on_conflict condition type for table "member_oauth"
  */
 export interface member_oauth_on_conflict {
   constraint: member_oauth_constraint;
@@ -16406,7 +16674,7 @@ export interface member_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "member"
+ * on_conflict condition type for table "member"
  */
 export interface member_on_conflict {
   constraint: member_constraint;
@@ -16415,12 +16683,19 @@ export interface member_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "member_permission"
+ */
+export interface member_permission_arr_rel_insert_input {
+  data: member_permission_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "member_permission". All fields are combined with a logical 'AND'.
  */
 export interface member_permission_bool_exp {
-  _and?: (member_permission_bool_exp | null)[] | null;
+  _and?: member_permission_bool_exp[] | null;
   _not?: member_permission_bool_exp | null;
-  _or?: (member_permission_bool_exp | null)[] | null;
+  _or?: member_permission_bool_exp[] | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   permission_id?: String_comparison_exp | null;
@@ -16438,9 +16713,9 @@ export interface member_permission_extra_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_permission_extra". All fields are combined with a logical 'AND'.
  */
 export interface member_permission_extra_bool_exp {
-  _and?: (member_permission_extra_bool_exp | null)[] | null;
+  _and?: member_permission_extra_bool_exp[] | null;
   _not?: member_permission_extra_bool_exp | null;
-  _or?: (member_permission_extra_bool_exp | null)[] | null;
+  _or?: member_permission_extra_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -16464,7 +16739,7 @@ export interface member_permission_extra_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_permission_extra"
+ * on_conflict condition type for table "member_permission_extra"
  */
 export interface member_permission_extra_on_conflict {
   constraint: member_permission_extra_constraint;
@@ -16484,9 +16759,9 @@ export interface member_permission_group_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_permission_group". All fields are combined with a logical 'AND'.
  */
 export interface member_permission_group_bool_exp {
-  _and?: (member_permission_group_bool_exp | null)[] | null;
+  _and?: member_permission_group_bool_exp[] | null;
   _not?: member_permission_group_bool_exp | null;
-  _or?: (member_permission_group_bool_exp | null)[] | null;
+  _or?: member_permission_group_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -16510,12 +16785,21 @@ export interface member_permission_group_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_permission_group"
+ * on_conflict condition type for table "member_permission_group"
  */
 export interface member_permission_group_on_conflict {
   constraint: member_permission_group_constraint;
   update_columns: member_permission_group_update_column[];
   where?: member_permission_group_bool_exp | null;
+}
+
+/**
+ * input type for inserting data into table "member_permission"
+ */
+export interface member_permission_insert_input {
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  permission_id?: string | null;
 }
 
 /**
@@ -16530,9 +16814,9 @@ export interface member_phone_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_phone". All fields are combined with a logical 'AND'.
  */
 export interface member_phone_bool_exp {
-  _and?: (member_phone_bool_exp | null)[] | null;
+  _and?: member_phone_bool_exp[] | null;
   _not?: member_phone_bool_exp | null;
-  _or?: (member_phone_bool_exp | null)[] | null;
+  _or?: member_phone_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_primary?: Boolean_comparison_exp | null;
@@ -16558,7 +16842,7 @@ export interface member_phone_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_phone"
+ * on_conflict condition type for table "member_phone"
  */
 export interface member_phone_on_conflict {
   constraint: member_phone_constraint;
@@ -16578,9 +16862,9 @@ export interface member_property_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_property". All fields are combined with a logical 'AND'.
  */
 export interface member_property_bool_exp {
-  _and?: (member_property_bool_exp | null)[] | null;
+  _and?: member_property_bool_exp[] | null;
   _not?: member_property_bool_exp | null;
-  _or?: (member_property_bool_exp | null)[] | null;
+  _or?: member_property_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -16606,7 +16890,7 @@ export interface member_property_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_property"
+ * on_conflict condition type for table "member_property"
  */
 export interface member_property_on_conflict {
   constraint: member_property_constraint;
@@ -16618,9 +16902,9 @@ export interface member_property_on_conflict {
  * Boolean expression to filter rows from the table "member_public". All fields are combined with a logical 'AND'.
  */
 export interface member_public_bool_exp {
-  _and?: (member_public_bool_exp | null)[] | null;
+  _and?: member_public_bool_exp[] | null;
   _not?: member_public_bool_exp | null;
-  _or?: (member_public_bool_exp | null)[] | null;
+  _or?: member_public_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -16640,6 +16924,35 @@ export interface member_public_bool_exp {
 }
 
 /**
+ * input type for inserting data into table "member_public"
+ */
+export interface member_public_insert_input {
+  abstract?: string | null;
+  app_id?: string | null;
+  created_at?: any | null;
+  description?: string | null;
+  email?: string | null;
+  id?: string | null;
+  member_specialities?: member_speciality_arr_rel_insert_input | null;
+  metadata?: any | null;
+  name?: string | null;
+  picture_url?: string | null;
+  role?: string | null;
+  roles?: any | null;
+  tag_names?: any | null;
+  title?: string | null;
+  username?: string | null;
+  zoom_user_id?: string | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "member_public"
+ */
+export interface member_public_obj_rel_insert_input {
+  data: member_public_insert_input;
+}
+
+/**
  * input type for inserting array relation for remote table "member_shop"
  */
 export interface member_shop_arr_rel_insert_input {
@@ -16651,9 +16964,9 @@ export interface member_shop_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_shop". All fields are combined with a logical 'AND'.
  */
 export interface member_shop_bool_exp {
-  _and?: (member_shop_bool_exp | null)[] | null;
+  _and?: member_shop_bool_exp[] | null;
   _not?: member_shop_bool_exp | null;
-  _or?: (member_shop_bool_exp | null)[] | null;
+  _or?: member_shop_bool_exp[] | null;
   cover_url?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -16673,6 +16986,7 @@ export interface member_shop_insert_input {
   cover_url?: string | null;
   created_at?: any | null;
   id?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   merchandises?: merchandise_arr_rel_insert_input | null;
   published_at?: any | null;
@@ -16690,7 +17004,7 @@ export interface member_shop_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_shop"
+ * on_conflict condition type for table "member_shop"
  */
 export interface member_shop_on_conflict {
   constraint: member_shop_constraint;
@@ -16710,9 +17024,9 @@ export interface member_social_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_social". All fields are combined with a logical 'AND'.
  */
 export interface member_social_bool_exp {
-  _and?: (member_social_bool_exp | null)[] | null;
+  _and?: member_social_bool_exp[] | null;
   _not?: member_social_bool_exp | null;
-  _or?: (member_social_bool_exp | null)[] | null;
+  _or?: member_social_bool_exp[] | null;
   channel_id?: String_comparison_exp | null;
   channel_url?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
@@ -16750,7 +17064,7 @@ export interface member_social_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_social"
+ * on_conflict condition type for table "member_social"
  */
 export interface member_social_on_conflict {
   constraint: member_social_constraint;
@@ -16770,9 +17084,9 @@ export interface member_speciality_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_speciality". All fields are combined with a logical 'AND'.
  */
 export interface member_speciality_bool_exp {
-  _and?: (member_speciality_bool_exp | null)[] | null;
+  _and?: member_speciality_bool_exp[] | null;
   _not?: member_speciality_bool_exp | null;
-  _or?: (member_speciality_bool_exp | null)[] | null;
+  _or?: member_speciality_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -16796,7 +17110,7 @@ export interface member_speciality_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_speciality"
+ * on_conflict condition type for table "member_speciality"
  */
 export interface member_speciality_on_conflict {
   constraint: member_speciality_constraint;
@@ -16816,9 +17130,9 @@ export interface member_tag_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_tag". All fields are combined with a logical 'AND'.
  */
 export interface member_tag_bool_exp {
-  _and?: (member_tag_bool_exp | null)[] | null;
+  _and?: member_tag_bool_exp[] | null;
   _not?: member_tag_bool_exp | null;
-  _or?: (member_tag_bool_exp | null)[] | null;
+  _or?: member_tag_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -16842,7 +17156,7 @@ export interface member_tag_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_tag"
+ * on_conflict condition type for table "member_tag"
  */
 export interface member_tag_on_conflict {
   constraint: member_tag_constraint;
@@ -16862,9 +17176,9 @@ export interface member_task_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "member_task". All fields are combined with a logical 'AND'.
  */
 export interface member_task_bool_exp {
-  _and?: (member_task_bool_exp | null)[] | null;
+  _and?: member_task_bool_exp[] | null;
   _not?: member_task_bool_exp | null;
-  _or?: (member_task_bool_exp | null)[] | null;
+  _or?: member_task_bool_exp[] | null;
   author?: member_bool_exp | null;
   author_id?: String_comparison_exp | null;
   category?: category_bool_exp | null;
@@ -16906,7 +17220,7 @@ export interface member_task_insert_input {
 }
 
 /**
- * on conflict condition type for table "member_task"
+ * on_conflict condition type for table "member_task"
  */
 export interface member_task_on_conflict {
   constraint: member_task_constraint;
@@ -16926,9 +17240,9 @@ export interface merchandise_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "merchandise". All fields are combined with a logical 'AND'.
  */
 export interface merchandise_bool_exp {
-  _and?: (merchandise_bool_exp | null)[] | null;
+  _and?: merchandise_bool_exp[] | null;
   _not?: merchandise_bool_exp | null;
-  _or?: (merchandise_bool_exp | null)[] | null;
+  _or?: merchandise_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
@@ -16976,9 +17290,9 @@ export interface merchandise_category_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "merchandise_category". All fields are combined with a logical 'AND'.
  */
 export interface merchandise_category_bool_exp {
-  _and?: (merchandise_category_bool_exp | null)[] | null;
+  _and?: merchandise_category_bool_exp[] | null;
   _not?: merchandise_category_bool_exp | null;
-  _or?: (merchandise_category_bool_exp | null)[] | null;
+  _or?: merchandise_category_bool_exp[] | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17000,7 +17314,7 @@ export interface merchandise_category_insert_input {
 }
 
 /**
- * on conflict condition type for table "merchandise_category"
+ * on_conflict condition type for table "merchandise_category"
  */
 export interface merchandise_category_on_conflict {
   constraint: merchandise_category_constraint;
@@ -17020,9 +17334,9 @@ export interface merchandise_file_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "merchandise_file". All fields are combined with a logical 'AND'.
  */
 export interface merchandise_file_bool_exp {
-  _and?: (merchandise_file_bool_exp | null)[] | null;
+  _and?: merchandise_file_bool_exp[] | null;
   _not?: merchandise_file_bool_exp | null;
-  _or?: (merchandise_file_bool_exp | null)[] | null;
+  _or?: merchandise_file_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   data?: jsonb_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17044,7 +17358,7 @@ export interface merchandise_file_insert_input {
 }
 
 /**
- * on conflict condition type for table "merchandise_file"
+ * on_conflict condition type for table "merchandise_file"
  */
 export interface merchandise_file_on_conflict {
   constraint: merchandise_file_constraint;
@@ -17064,9 +17378,9 @@ export interface merchandise_img_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "merchandise_img". All fields are combined with a logical 'AND'.
  */
 export interface merchandise_img_bool_exp {
-  _and?: (merchandise_img_bool_exp | null)[] | null;
+  _and?: merchandise_img_bool_exp[] | null;
   _not?: merchandise_img_bool_exp | null;
-  _or?: (merchandise_img_bool_exp | null)[] | null;
+  _or?: merchandise_img_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   merchandise?: merchandise_bool_exp | null;
   merchandise_id?: uuid_comparison_exp | null;
@@ -17088,7 +17402,7 @@ export interface merchandise_img_insert_input {
 }
 
 /**
- * on conflict condition type for table "merchandise_img"
+ * on_conflict condition type for table "merchandise_img"
  */
 export interface merchandise_img_on_conflict {
   constraint: merchandise_img_constraint;
@@ -17114,12 +17428,14 @@ export interface merchandise_insert_input {
   is_physical?: boolean | null;
   link?: string | null;
   list_price?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   member_shop?: member_shop_obj_rel_insert_input | null;
   member_shop_id?: any | null;
   merchandise_categories?: merchandise_category_arr_rel_insert_input | null;
   merchandise_files?: merchandise_file_arr_rel_insert_input | null;
   merchandise_imgs?: merchandise_img_arr_rel_insert_input | null;
+  merchandise_inventory_status?: merchandise_inventory_status_obj_rel_insert_input | null;
   merchandise_specs?: merchandise_spec_arr_rel_insert_input | null;
   merchandise_tags?: merchandise_tag_arr_rel_insert_input | null;
   meta?: string | null;
@@ -17137,15 +17453,34 @@ export interface merchandise_insert_input {
  * Boolean expression to filter rows from the table "merchandise_inventory_status". All fields are combined with a logical 'AND'.
  */
 export interface merchandise_inventory_status_bool_exp {
-  _and?: (merchandise_inventory_status_bool_exp | null)[] | null;
+  _and?: merchandise_inventory_status_bool_exp[] | null;
   _not?: merchandise_inventory_status_bool_exp | null;
-  _or?: (merchandise_inventory_status_bool_exp | null)[] | null;
+  _or?: merchandise_inventory_status_bool_exp[] | null;
   buyable_quantity?: bigint_comparison_exp | null;
   delivered_quantity?: bigint_comparison_exp | null;
   merchandise?: merchandise_bool_exp | null;
   merchandise_id?: uuid_comparison_exp | null;
   total_quantity?: bigint_comparison_exp | null;
   undelivered_quantity?: bigint_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "merchandise_inventory_status"
+ */
+export interface merchandise_inventory_status_insert_input {
+  buyable_quantity?: any | null;
+  delivered_quantity?: any | null;
+  merchandise?: merchandise_obj_rel_insert_input | null;
+  merchandise_id?: any | null;
+  total_quantity?: any | null;
+  undelivered_quantity?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "merchandise_inventory_status"
+ */
+export interface merchandise_inventory_status_obj_rel_insert_input {
+  data: merchandise_inventory_status_insert_input;
 }
 
 /**
@@ -17157,7 +17492,7 @@ export interface merchandise_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "merchandise"
+ * on_conflict condition type for table "merchandise"
  */
 export interface merchandise_on_conflict {
   constraint: merchandise_constraint;
@@ -17177,9 +17512,9 @@ export interface merchandise_spec_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "merchandise_spec". All fields are combined with a logical 'AND'.
  */
 export interface merchandise_spec_bool_exp {
-  _and?: (merchandise_spec_bool_exp | null)[] | null;
+  _and?: merchandise_spec_bool_exp[] | null;
   _not?: merchandise_spec_bool_exp | null;
-  _or?: (merchandise_spec_bool_exp | null)[] | null;
+  _or?: merchandise_spec_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_deleted?: Boolean_comparison_exp | null;
@@ -17206,9 +17541,9 @@ export interface merchandise_spec_file_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "merchandise_spec_file". All fields are combined with a logical 'AND'.
  */
 export interface merchandise_spec_file_bool_exp {
-  _and?: (merchandise_spec_file_bool_exp | null)[] | null;
+  _and?: merchandise_spec_file_bool_exp[] | null;
   _not?: merchandise_spec_file_bool_exp | null;
-  _or?: (merchandise_spec_file_bool_exp | null)[] | null;
+  _or?: merchandise_spec_file_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   data?: jsonb_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17230,7 +17565,7 @@ export interface merchandise_spec_file_insert_input {
 }
 
 /**
- * on conflict condition type for table "merchandise_spec_file"
+ * on_conflict condition type for table "merchandise_spec_file"
  */
 export interface merchandise_spec_file_on_conflict {
   constraint: merchandise_spec_file_constraint;
@@ -17249,6 +17584,7 @@ export interface merchandise_spec_insert_input {
   merchandise?: merchandise_obj_rel_insert_input | null;
   merchandise_id?: any | null;
   merchandise_spec_files?: merchandise_spec_file_arr_rel_insert_input | null;
+  merchandise_spec_inventory_status?: merchandise_spec_inventory_status_obj_rel_insert_input | null;
   quota?: number | null;
   sale_price?: any | null;
   title?: string | null;
@@ -17259,9 +17595,9 @@ export interface merchandise_spec_insert_input {
  * Boolean expression to filter rows from the table "merchandise_spec_inventory_status". All fields are combined with a logical 'AND'.
  */
 export interface merchandise_spec_inventory_status_bool_exp {
-  _and?: (merchandise_spec_inventory_status_bool_exp | null)[] | null;
+  _and?: merchandise_spec_inventory_status_bool_exp[] | null;
   _not?: merchandise_spec_inventory_status_bool_exp | null;
-  _or?: (merchandise_spec_inventory_status_bool_exp | null)[] | null;
+  _or?: merchandise_spec_inventory_status_bool_exp[] | null;
   buyable_quantity?: bigint_comparison_exp | null;
   delivered_quantity?: bigint_comparison_exp | null;
   merchandise_spec?: merchandise_spec_bool_exp | null;
@@ -17269,6 +17605,26 @@ export interface merchandise_spec_inventory_status_bool_exp {
   total_quantity?: bigint_comparison_exp | null;
   undelivered_quantity?: bigint_comparison_exp | null;
   unpaid_quantity?: bigint_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "merchandise_spec_inventory_status"
+ */
+export interface merchandise_spec_inventory_status_insert_input {
+  buyable_quantity?: any | null;
+  delivered_quantity?: any | null;
+  merchandise_spec?: merchandise_spec_obj_rel_insert_input | null;
+  merchandise_spec_id?: any | null;
+  total_quantity?: any | null;
+  undelivered_quantity?: any | null;
+  unpaid_quantity?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "merchandise_spec_inventory_status"
+ */
+export interface merchandise_spec_inventory_status_obj_rel_insert_input {
+  data: merchandise_spec_inventory_status_insert_input;
 }
 
 /**
@@ -17280,7 +17636,7 @@ export interface merchandise_spec_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "merchandise_spec"
+ * on_conflict condition type for table "merchandise_spec"
  */
 export interface merchandise_spec_on_conflict {
   constraint: merchandise_spec_constraint;
@@ -17300,9 +17656,9 @@ export interface merchandise_tag_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "merchandise_tag". All fields are combined with a logical 'AND'.
  */
 export interface merchandise_tag_bool_exp {
-  _and?: (merchandise_tag_bool_exp | null)[] | null;
+  _and?: merchandise_tag_bool_exp[] | null;
   _not?: merchandise_tag_bool_exp | null;
-  _or?: (merchandise_tag_bool_exp | null)[] | null;
+  _or?: merchandise_tag_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   merchandise?: merchandise_bool_exp | null;
   merchandise_id?: uuid_comparison_exp | null;
@@ -17324,7 +17680,7 @@ export interface merchandise_tag_insert_input {
 }
 
 /**
- * on conflict condition type for table "merchandise_tag"
+ * on_conflict condition type for table "merchandise_tag"
  */
 export interface merchandise_tag_on_conflict {
   constraint: merchandise_tag_constraint;
@@ -17336,9 +17692,9 @@ export interface merchandise_tag_on_conflict {
  * Boolean expression to filter rows from the table "module". All fields are combined with a logical 'AND'.
  */
 export interface module_bool_exp {
-  _and?: (module_bool_exp | null)[] | null;
+  _and?: module_bool_exp[] | null;
   _not?: module_bool_exp | null;
-  _or?: (module_bool_exp | null)[] | null;
+  _or?: module_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   app_modules?: app_module_bool_exp | null;
   category_name?: String_comparison_exp | null;
@@ -17368,7 +17724,7 @@ export interface module_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "module"
+ * on_conflict condition type for table "module"
  */
 export interface module_on_conflict {
   constraint: module_constraint;
@@ -17388,9 +17744,9 @@ export interface notification_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "notification". All fields are combined with a logical 'AND'.
  */
 export interface notification_bool_exp {
-  _and?: (notification_bool_exp | null)[] | null;
+  _and?: notification_bool_exp[] | null;
   _not?: notification_bool_exp | null;
-  _or?: (notification_bool_exp | null)[] | null;
+  _or?: notification_bool_exp[] | null;
   avatar?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
@@ -17426,7 +17782,7 @@ export interface notification_insert_input {
 }
 
 /**
- * on conflict condition type for table "notification"
+ * on_conflict condition type for table "notification"
  */
 export interface notification_on_conflict {
   constraint: notification_constraint;
@@ -17435,7 +17791,7 @@ export interface notification_on_conflict {
 }
 
 /**
- * expression to compare columns of type numeric. All fields are combined with logical 'AND'.
+ * Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'.
  */
 export interface numeric_comparison_exp {
   _eq?: any | null;
@@ -17461,9 +17817,9 @@ export interface order_contact_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "order_contact". All fields are combined with a logical 'AND'.
  */
 export interface order_contact_bool_exp {
-  _and?: (order_contact_bool_exp | null)[] | null;
+  _and?: order_contact_bool_exp[] | null;
   _not?: order_contact_bool_exp | null;
-  _or?: (order_contact_bool_exp | null)[] | null;
+  _or?: order_contact_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_public_bool_exp | null;
@@ -17481,6 +17837,7 @@ export interface order_contact_bool_exp {
 export interface order_contact_insert_input {
   created_at?: any | null;
   id?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   message?: string | null;
   order_id?: string | null;
@@ -17490,7 +17847,7 @@ export interface order_contact_insert_input {
 }
 
 /**
- * on conflict condition type for table "order_contact"
+ * on_conflict condition type for table "order_contact"
  */
 export interface order_contact_on_conflict {
   constraint: order_contact_constraint;
@@ -17510,9 +17867,9 @@ export interface order_discount_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "order_discount". All fields are combined with a logical 'AND'.
  */
 export interface order_discount_bool_exp {
-  _and?: (order_discount_bool_exp | null)[] | null;
+  _and?: order_discount_bool_exp[] | null;
   _not?: order_discount_bool_exp | null;
-  _or?: (order_discount_bool_exp | null)[] | null;
+  _or?: order_discount_bool_exp[] | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   name?: String_comparison_exp | null;
@@ -17540,7 +17897,7 @@ export interface order_discount_insert_input {
 }
 
 /**
- * on conflict condition type for table "order_discount"
+ * on_conflict condition type for table "order_discount"
  */
 export interface order_discount_on_conflict {
   constraint: order_discount_constraint;
@@ -17560,9 +17917,9 @@ export interface order_executor_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "order_executor". All fields are combined with a logical 'AND'.
  */
 export interface order_executor_bool_exp {
-  _and?: (order_executor_bool_exp | null)[] | null;
+  _and?: order_executor_bool_exp[] | null;
   _not?: order_executor_bool_exp | null;
-  _or?: (order_executor_bool_exp | null)[] | null;
+  _or?: order_executor_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -17582,10 +17939,19 @@ export interface order_executor_insert_input {
   order_id?: string | null;
   order_log?: order_log_obj_rel_insert_input | null;
   ratio?: any | null;
+  sharing?: order_executor_sharing_obj_rel_insert_input | null;
 }
 
 /**
- * on conflict condition type for table "order_executor"
+ * input type for inserting object relation for remote table "order_executor"
+ */
+export interface order_executor_obj_rel_insert_input {
+  data: order_executor_insert_input;
+  on_conflict?: order_executor_on_conflict | null;
+}
+
+/**
+ * on_conflict condition type for table "order_executor"
  */
 export interface order_executor_on_conflict {
   constraint: order_executor_constraint;
@@ -17597,9 +17963,9 @@ export interface order_executor_on_conflict {
  * Boolean expression to filter rows from the table "order_executor_sharing". All fields are combined with a logical 'AND'.
  */
 export interface order_executor_sharing_bool_exp {
-  _and?: (order_executor_sharing_bool_exp | null)[] | null;
+  _and?: order_executor_sharing_bool_exp[] | null;
   _not?: order_executor_sharing_bool_exp | null;
-  _or?: (order_executor_sharing_bool_exp | null)[] | null;
+  _or?: order_executor_sharing_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   executor?: member_bool_exp | null;
   executor_id?: String_comparison_exp | null;
@@ -17609,6 +17975,28 @@ export interface order_executor_sharing_bool_exp {
   order_log?: order_log_bool_exp | null;
   ratio?: numeric_comparison_exp | null;
   total_price?: numeric_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "order_executor_sharing"
+ */
+export interface order_executor_sharing_insert_input {
+  created_at?: any | null;
+  executor?: member_obj_rel_insert_input | null;
+  executor_id?: string | null;
+  order_executor?: order_executor_obj_rel_insert_input | null;
+  order_executor_id?: any | null;
+  order_id?: string | null;
+  order_log?: order_log_obj_rel_insert_input | null;
+  ratio?: any | null;
+  total_price?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "order_executor_sharing"
+ */
+export interface order_executor_sharing_obj_rel_insert_input {
+  data: order_executor_sharing_insert_input;
 }
 
 /**
@@ -17623,9 +18011,9 @@ export interface order_log_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "order_log". All fields are combined with a logical 'AND'.
  */
 export interface order_log_bool_exp {
-  _and?: (order_log_bool_exp | null)[] | null;
+  _and?: order_log_bool_exp[] | null;
   _not?: order_log_bool_exp | null;
-  _or?: (order_log_bool_exp | null)[] | null;
+  _or?: order_log_bool_exp[] | null;
   auto_renewed_at?: timestamptz_comparison_exp | null;
   coupon?: coupon_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -17711,7 +18099,7 @@ export interface order_log_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "order_log"
+ * on_conflict condition type for table "order_log"
  */
 export interface order_log_on_conflict {
   constraint: order_log_constraint;
@@ -17723,14 +18111,32 @@ export interface order_log_on_conflict {
  * Boolean expression to filter rows from the table "order_payment_status". All fields are combined with a logical 'AND'.
  */
 export interface order_payment_status_bool_exp {
-  _and?: (order_payment_status_bool_exp | null)[] | null;
+  _and?: order_payment_status_bool_exp[] | null;
   _not?: order_payment_status_bool_exp | null;
-  _or?: (order_payment_status_bool_exp | null)[] | null;
+  _or?: order_payment_status_bool_exp[] | null;
   last_paid_at?: timestamptz_comparison_exp | null;
   member_id?: String_comparison_exp | null;
   order_id?: String_comparison_exp | null;
   order_log?: order_log_bool_exp | null;
   status?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "order_payment_status"
+ */
+export interface order_payment_status_insert_input {
+  last_paid_at?: any | null;
+  member_id?: string | null;
+  order_id?: string | null;
+  order_log?: order_log_obj_rel_insert_input | null;
+  status?: string | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "order_payment_status"
+ */
+export interface order_payment_status_obj_rel_insert_input {
+  data: order_payment_status_insert_input;
 }
 
 /**
@@ -17745,9 +18151,9 @@ export interface order_product_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "order_product". All fields are combined with a logical 'AND'.
  */
 export interface order_product_bool_exp {
-  _and?: (order_product_bool_exp | null)[] | null;
+  _and?: order_product_bool_exp[] | null;
   _not?: order_product_bool_exp | null;
-  _or?: (order_product_bool_exp | null)[] | null;
+  _or?: order_product_bool_exp[] | null;
   accumulated_errors?: Int_comparison_exp | null;
   activity_attendances?: activity_attendance_bool_exp | null;
   auto_renewed?: Boolean_comparison_exp | null;
@@ -17783,9 +18189,9 @@ export interface order_product_file_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "order_product_file". All fields are combined with a logical 'AND'.
  */
 export interface order_product_file_bool_exp {
-  _and?: (order_product_file_bool_exp | null)[] | null;
+  _and?: order_product_file_bool_exp[] | null;
   _not?: order_product_file_bool_exp | null;
-  _or?: (order_product_file_bool_exp | null)[] | null;
+  _or?: order_product_file_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   data?: jsonb_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17807,7 +18213,7 @@ export interface order_product_file_insert_input {
 }
 
 /**
- * on conflict condition type for table "order_product_file"
+ * on_conflict condition type for table "order_product_file"
  */
 export interface order_product_file_on_conflict {
   constraint: order_product_file_constraint;
@@ -17851,7 +18257,7 @@ export interface order_product_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "order_product"
+ * on_conflict condition type for table "order_product"
  */
 export interface order_product_on_conflict {
   constraint: order_product_constraint;
@@ -17871,9 +18277,9 @@ export interface package_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "package". All fields are combined with a logical 'AND'.
  */
 export interface package_bool_exp {
-  _and?: (package_bool_exp | null)[] | null;
+  _and?: package_bool_exp[] | null;
   _not?: package_bool_exp | null;
-  _or?: (package_bool_exp | null)[] | null;
+  _or?: package_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   elements?: jsonb_comparison_exp | null;
@@ -17906,9 +18312,9 @@ export interface package_item_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "package_item". All fields are combined with a logical 'AND'.
  */
 export interface package_item_bool_exp {
-  _and?: (package_item_bool_exp | null)[] | null;
+  _and?: package_item_bool_exp[] | null;
   _not?: package_item_bool_exp | null;
-  _or?: (package_item_bool_exp | null)[] | null;
+  _or?: package_item_bool_exp[] | null;
   activity?: activity_bool_exp | null;
   activity_id?: uuid_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17931,9 +18337,9 @@ export interface package_item_group_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "package_item_group". All fields are combined with a logical 'AND'.
  */
 export interface package_item_group_bool_exp {
-  _and?: (package_item_group_bool_exp | null)[] | null;
+  _and?: package_item_group_bool_exp[] | null;
   _not?: package_item_group_bool_exp | null;
-  _or?: (package_item_group_bool_exp | null)[] | null;
+  _or?: package_item_group_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   package_items?: package_item_bool_exp | null;
   package_section?: package_section_bool_exp | null;
@@ -17967,7 +18373,7 @@ export interface package_item_group_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "package_item_group"
+ * on_conflict condition type for table "package_item_group"
  */
 export interface package_item_group_on_conflict {
   constraint: package_item_group_constraint;
@@ -17990,7 +18396,7 @@ export interface package_item_insert_input {
 }
 
 /**
- * on conflict condition type for table "package_item"
+ * on_conflict condition type for table "package_item"
  */
 export interface package_item_on_conflict {
   constraint: package_item_constraint;
@@ -18007,7 +18413,7 @@ export interface package_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "package"
+ * on_conflict condition type for table "package"
  */
 export interface package_on_conflict {
   constraint: package_constraint;
@@ -18027,9 +18433,9 @@ export interface package_section_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "package_section". All fields are combined with a logical 'AND'.
  */
 export interface package_section_bool_exp {
-  _and?: (package_section_bool_exp | null)[] | null;
+  _and?: package_section_bool_exp[] | null;
   _not?: package_section_bool_exp | null;
-  _or?: (package_section_bool_exp | null)[] | null;
+  _or?: package_section_bool_exp[] | null;
   block?: Boolean_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -18065,7 +18471,7 @@ export interface package_section_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "package_section"
+ * on_conflict condition type for table "package_section"
  */
 export interface package_section_on_conflict {
   constraint: package_section_constraint;
@@ -18085,9 +18491,9 @@ export interface payment_log_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "payment_log". All fields are combined with a logical 'AND'.
  */
 export interface payment_log_bool_exp {
-  _and?: (payment_log_bool_exp | null)[] | null;
+  _and?: payment_log_bool_exp[] | null;
   _not?: payment_log_bool_exp | null;
-  _or?: (payment_log_bool_exp | null)[] | null;
+  _or?: payment_log_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   custom_no?: String_comparison_exp | null;
   gateway?: String_comparison_exp | null;
@@ -18118,6 +18524,7 @@ export interface payment_log_insert_input {
   options?: any | null;
   order_id?: string | null;
   order_log?: order_log_obj_rel_insert_input | null;
+  order_payment_status?: order_payment_status_obj_rel_insert_input | null;
   paid_at?: any | null;
   payment_due_at?: any | null;
   price?: any | null;
@@ -18126,7 +18533,7 @@ export interface payment_log_insert_input {
 }
 
 /**
- * on conflict condition type for table "payment_log"
+ * on_conflict condition type for table "payment_log"
  */
 export interface payment_log_on_conflict {
   constraint: payment_log_constraint;
@@ -18138,9 +18545,9 @@ export interface payment_log_on_conflict {
  * Boolean expression to filter rows from the table "permission". All fields are combined with a logical 'AND'.
  */
 export interface permission_bool_exp {
-  _and?: (permission_bool_exp | null)[] | null;
+  _and?: permission_bool_exp[] | null;
   _not?: permission_bool_exp | null;
-  _or?: (permission_bool_exp | null)[] | null;
+  _or?: permission_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   group?: String_comparison_exp | null;
@@ -18154,9 +18561,9 @@ export interface permission_bool_exp {
  * Boolean expression to filter rows from the table "permission_group". All fields are combined with a logical 'AND'.
  */
 export interface permission_group_bool_exp {
-  _and?: (permission_group_bool_exp | null)[] | null;
+  _and?: permission_group_bool_exp[] | null;
   _not?: permission_group_bool_exp | null;
-  _or?: (permission_group_bool_exp | null)[] | null;
+  _or?: permission_group_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -18186,7 +18593,7 @@ export interface permission_group_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "permission_group"
+ * on_conflict condition type for table "permission_group"
  */
 export interface permission_group_on_conflict {
   constraint: permission_group_constraint;
@@ -18206,9 +18613,9 @@ export interface permission_group_permission_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "permission_group_permission". All fields are combined with a logical 'AND'.
  */
 export interface permission_group_permission_bool_exp {
-  _and?: (permission_group_permission_bool_exp | null)[] | null;
+  _and?: permission_group_permission_bool_exp[] | null;
   _not?: permission_group_permission_bool_exp | null;
-  _or?: (permission_group_permission_bool_exp | null)[] | null;
+  _or?: permission_group_permission_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   permission?: permission_bool_exp | null;
@@ -18232,7 +18639,7 @@ export interface permission_group_permission_insert_input {
 }
 
 /**
- * on conflict condition type for table "permission_group_permission"
+ * on_conflict condition type for table "permission_group_permission"
  */
 export interface permission_group_permission_on_conflict {
   constraint: permission_group_permission_constraint;
@@ -18262,7 +18669,7 @@ export interface permission_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "permission"
+ * on_conflict condition type for table "permission"
  */
 export interface permission_on_conflict {
   constraint: permission_constraint;
@@ -18282,9 +18689,9 @@ export interface playlist_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "playlist". All fields are combined with a logical 'AND'.
  */
 export interface playlist_bool_exp {
-  _and?: (playlist_bool_exp | null)[] | null;
+  _and?: playlist_bool_exp[] | null;
   _not?: playlist_bool_exp | null;
-  _or?: (playlist_bool_exp | null)[] | null;
+  _or?: playlist_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -18318,7 +18725,7 @@ export interface playlist_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "playlist"
+ * on_conflict condition type for table "playlist"
  */
 export interface playlist_on_conflict {
   constraint: playlist_constraint;
@@ -18338,9 +18745,9 @@ export interface playlist_podcast_program_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "playlist_podcast_program". All fields are combined with a logical 'AND'.
  */
 export interface playlist_podcast_program_bool_exp {
-  _and?: (playlist_podcast_program_bool_exp | null)[] | null;
+  _and?: playlist_podcast_program_bool_exp[] | null;
   _not?: playlist_podcast_program_bool_exp | null;
-  _or?: (playlist_podcast_program_bool_exp | null)[] | null;
+  _or?: playlist_podcast_program_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   playlist?: playlist_bool_exp | null;
@@ -18366,7 +18773,7 @@ export interface playlist_podcast_program_insert_input {
 }
 
 /**
- * on conflict condition type for table "playlist_podcast_program"
+ * on_conflict condition type for table "playlist_podcast_program"
  */
 export interface playlist_podcast_program_on_conflict {
   constraint: playlist_podcast_program_constraint;
@@ -18378,9 +18785,9 @@ export interface playlist_podcast_program_on_conflict {
  * Boolean expression to filter rows from the table "podcast_album". All fields are combined with a logical 'AND'.
  */
 export interface podcast_album_bool_exp {
-  _and?: (podcast_album_bool_exp | null)[] | null;
+  _and?: podcast_album_bool_exp[] | null;
   _not?: podcast_album_bool_exp | null;
-  _or?: (podcast_album_bool_exp | null)[] | null;
+  _or?: podcast_album_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   app_id?: String_comparison_exp | null;
   author?: member_public_bool_exp | null;
@@ -18403,9 +18810,9 @@ export interface podcast_album_bool_exp {
  * Boolean expression to filter rows from the table "podcast_album_category". All fields are combined with a logical 'AND'.
  */
 export interface podcast_album_category_bool_exp {
-  _and?: (podcast_album_category_bool_exp | null)[] | null;
+  _and?: podcast_album_category_bool_exp[] | null;
   _not?: podcast_album_category_bool_exp | null;
-  _or?: (podcast_album_category_bool_exp | null)[] | null;
+  _or?: podcast_album_category_bool_exp[] | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -18418,9 +18825,9 @@ export interface podcast_album_category_bool_exp {
  * Boolean expression to filter rows from the table "podcast_album_podcast_program". All fields are combined with a logical 'AND'.
  */
 export interface podcast_album_podcast_program_bool_exp {
-  _and?: (podcast_album_podcast_program_bool_exp | null)[] | null;
+  _and?: podcast_album_podcast_program_bool_exp[] | null;
   _not?: podcast_album_podcast_program_bool_exp | null;
-  _or?: (podcast_album_podcast_program_bool_exp | null)[] | null;
+  _or?: podcast_album_podcast_program_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   podcast_album?: podcast_album_bool_exp | null;
   podcast_album_id?: uuid_comparison_exp | null;
@@ -18441,9 +18848,9 @@ export interface podcast_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "podcast". All fields are combined with a logical 'AND'.
  */
 export interface podcast_bool_exp {
-  _and?: (podcast_bool_exp | null)[] | null;
+  _and?: podcast_bool_exp[] | null;
   _not?: podcast_bool_exp | null;
-  _or?: (podcast_bool_exp | null)[] | null;
+  _or?: podcast_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -18475,7 +18882,7 @@ export interface podcast_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "podcast"
+ * on_conflict condition type for table "podcast"
  */
 export interface podcast_on_conflict {
   constraint: podcast_constraint;
@@ -18495,9 +18902,9 @@ export interface podcast_plan_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "podcast_plan". All fields are combined with a logical 'AND'.
  */
 export interface podcast_plan_bool_exp {
-  _and?: (podcast_plan_bool_exp | null)[] | null;
+  _and?: podcast_plan_bool_exp[] | null;
   _not?: podcast_plan_bool_exp | null;
-  _or?: (podcast_plan_bool_exp | null)[] | null;
+  _or?: podcast_plan_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   creator?: member_public_bool_exp | null;
   creator_id?: String_comparison_exp | null;
@@ -18518,15 +18925,31 @@ export interface podcast_plan_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "podcast_plan_enrollment"
+ */
+export interface podcast_plan_enrollment_arr_rel_insert_input {
+  data: podcast_plan_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "podcast_plan_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface podcast_plan_enrollment_bool_exp {
-  _and?: (podcast_plan_enrollment_bool_exp | null)[] | null;
+  _and?: podcast_plan_enrollment_bool_exp[] | null;
   _not?: podcast_plan_enrollment_bool_exp | null;
-  _or?: (podcast_plan_enrollment_bool_exp | null)[] | null;
+  _or?: podcast_plan_enrollment_bool_exp[] | null;
   member_id?: String_comparison_exp | null;
   podcast_plan?: podcast_plan_bool_exp | null;
   podcast_plan_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "podcast_plan_enrollment"
+ */
+export interface podcast_plan_enrollment_insert_input {
+  member_id?: string | null;
+  podcast_plan?: podcast_plan_obj_rel_insert_input | null;
+  podcast_plan_id?: any | null;
 }
 
 /**
@@ -18534,6 +18957,7 @@ export interface podcast_plan_enrollment_bool_exp {
  */
 export interface podcast_plan_insert_input {
   created_at?: any | null;
+  creator?: member_public_obj_rel_insert_input | null;
   creator_id?: string | null;
   id?: any | null;
   is_subscription?: boolean | null;
@@ -18542,6 +18966,7 @@ export interface podcast_plan_insert_input {
   period_type?: string | null;
   podcast?: podcast_obj_rel_insert_input | null;
   podcast_id?: any | null;
+  podcast_plan_enrollments?: podcast_plan_enrollment_arr_rel_insert_input | null;
   position?: number | null;
   published_at?: any | null;
   sale_price?: any | null;
@@ -18551,7 +18976,15 @@ export interface podcast_plan_insert_input {
 }
 
 /**
- * on conflict condition type for table "podcast_plan"
+ * input type for inserting object relation for remote table "podcast_plan"
+ */
+export interface podcast_plan_obj_rel_insert_input {
+  data: podcast_plan_insert_input;
+  on_conflict?: podcast_plan_on_conflict | null;
+}
+
+/**
+ * on_conflict condition type for table "podcast_plan"
  */
 export interface podcast_plan_on_conflict {
   constraint: podcast_plan_constraint;
@@ -18579,9 +19012,9 @@ export interface podcast_program_audio_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "podcast_program_audio". All fields are combined with a logical 'AND'.
  */
 export interface podcast_program_audio_bool_exp {
-  _and?: (podcast_program_audio_bool_exp | null)[] | null;
+  _and?: podcast_program_audio_bool_exp[] | null;
   _not?: podcast_program_audio_bool_exp | null;
-  _or?: (podcast_program_audio_bool_exp | null)[] | null;
+  _or?: podcast_program_audio_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   data?: jsonb_comparison_exp | null;
   deleted_at?: timestamptz_comparison_exp | null;
@@ -18607,7 +19040,7 @@ export interface podcast_program_audio_insert_input {
 }
 
 /**
- * on conflict condition type for table "podcast_program_audio"
+ * on_conflict condition type for table "podcast_program_audio"
  */
 export interface podcast_program_audio_on_conflict {
   constraint: podcast_program_audio_constraint;
@@ -18627,9 +19060,9 @@ export interface podcast_program_body_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "podcast_program_body". All fields are combined with a logical 'AND'.
  */
 export interface podcast_program_body_bool_exp {
-  _and?: (podcast_program_body_bool_exp | null)[] | null;
+  _and?: podcast_program_body_bool_exp[] | null;
   _not?: podcast_program_body_bool_exp | null;
-  _or?: (podcast_program_body_bool_exp | null)[] | null;
+  _or?: podcast_program_body_bool_exp[] | null;
   data?: jsonb_comparison_exp | null;
   deleted_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
@@ -18661,7 +19094,7 @@ export interface podcast_program_body_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "podcast_program_body"
+ * on_conflict condition type for table "podcast_program_body"
  */
 export interface podcast_program_body_on_conflict {
   constraint: podcast_program_body_constraint;
@@ -18673,9 +19106,9 @@ export interface podcast_program_body_on_conflict {
  * Boolean expression to filter rows from the table "podcast_program". All fields are combined with a logical 'AND'.
  */
 export interface podcast_program_bool_exp {
-  _and?: (podcast_program_bool_exp | null)[] | null;
+  _and?: podcast_program_bool_exp[] | null;
   _not?: podcast_program_bool_exp | null;
-  _or?: (podcast_program_bool_exp | null)[] | null;
+  _or?: podcast_program_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   content_type?: String_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
@@ -18716,9 +19149,9 @@ export interface podcast_program_category_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "podcast_program_category". All fields are combined with a logical 'AND'.
  */
 export interface podcast_program_category_bool_exp {
-  _and?: (podcast_program_category_bool_exp | null)[] | null;
+  _and?: podcast_program_category_bool_exp[] | null;
   _not?: podcast_program_category_bool_exp | null;
-  _or?: (podcast_program_category_bool_exp | null)[] | null;
+  _or?: podcast_program_category_bool_exp[] | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -18740,7 +19173,7 @@ export interface podcast_program_category_insert_input {
 }
 
 /**
- * on conflict condition type for table "podcast_program_category"
+ * on_conflict condition type for table "podcast_program_category"
  */
 export interface podcast_program_category_on_conflict {
   constraint: podcast_program_category_constraint;
@@ -18749,15 +19182,31 @@ export interface podcast_program_category_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "podcast_program_enrollment"
+ */
+export interface podcast_program_enrollment_arr_rel_insert_input {
+  data: podcast_program_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "podcast_program_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface podcast_program_enrollment_bool_exp {
-  _and?: (podcast_program_enrollment_bool_exp | null)[] | null;
+  _and?: podcast_program_enrollment_bool_exp[] | null;
   _not?: podcast_program_enrollment_bool_exp | null;
-  _or?: (podcast_program_enrollment_bool_exp | null)[] | null;
+  _or?: podcast_program_enrollment_bool_exp[] | null;
   member_id?: String_comparison_exp | null;
   podcast_program?: podcast_program_bool_exp | null;
   podcast_program_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "podcast_program_enrollment"
+ */
+export interface podcast_program_enrollment_insert_input {
+  member_id?: string | null;
+  podcast_program?: podcast_program_obj_rel_insert_input | null;
+  podcast_program_id?: any | null;
 }
 
 /**
@@ -18767,6 +19216,7 @@ export interface podcast_program_insert_input {
   abstract?: string | null;
   content_type?: string | null;
   cover_url?: string | null;
+  creator?: member_public_obj_rel_insert_input | null;
   creator_id?: string | null;
   duration?: any | null;
   duration_second?: any | null;
@@ -18780,6 +19230,7 @@ export interface podcast_program_insert_input {
   podcast_program_bodies?: podcast_program_body_arr_rel_insert_input | null;
   podcast_program_body?: podcast_program_body_obj_rel_insert_input | null;
   podcast_program_categories?: podcast_program_category_arr_rel_insert_input | null;
+  podcast_program_enrollments?: podcast_program_enrollment_arr_rel_insert_input | null;
   podcast_program_roles?: podcast_program_role_arr_rel_insert_input | null;
   podcast_program_tags?: podcast_program_tag_arr_rel_insert_input | null;
   published_at?: any | null;
@@ -18799,7 +19250,7 @@ export interface podcast_program_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "podcast_program"
+ * on_conflict condition type for table "podcast_program"
  */
 export interface podcast_program_on_conflict {
   constraint: podcast_program_constraint;
@@ -18811,9 +19262,9 @@ export interface podcast_program_on_conflict {
  * Boolean expression to filter rows from the table "podcast_program_progress". All fields are combined with a logical 'AND'.
  */
 export interface podcast_program_progress_bool_exp {
-  _and?: (podcast_program_progress_bool_exp | null)[] | null;
+  _and?: podcast_program_progress_bool_exp[] | null;
   _not?: podcast_program_progress_bool_exp | null;
-  _or?: (podcast_program_progress_bool_exp | null)[] | null;
+  _or?: podcast_program_progress_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   last_progress?: numeric_comparison_exp | null;
@@ -18839,9 +19290,9 @@ export interface podcast_program_role_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "podcast_program_role". All fields are combined with a logical 'AND'.
  */
 export interface podcast_program_role_bool_exp {
-  _and?: (podcast_program_role_bool_exp | null)[] | null;
+  _and?: podcast_program_role_bool_exp[] | null;
   _not?: podcast_program_role_bool_exp | null;
-  _or?: (podcast_program_role_bool_exp | null)[] | null;
+  _or?: podcast_program_role_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   member?: member_public_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -18855,6 +19306,7 @@ export interface podcast_program_role_bool_exp {
  */
 export interface podcast_program_role_insert_input {
   id?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   name?: string | null;
   podcast_program?: podcast_program_obj_rel_insert_input | null;
@@ -18862,7 +19314,7 @@ export interface podcast_program_role_insert_input {
 }
 
 /**
- * on conflict condition type for table "podcast_program_role"
+ * on_conflict condition type for table "podcast_program_role"
  */
 export interface podcast_program_role_on_conflict {
   constraint: podcast_program_role_constraint;
@@ -18882,9 +19334,9 @@ export interface podcast_program_tag_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "podcast_program_tag". All fields are combined with a logical 'AND'.
  */
 export interface podcast_program_tag_bool_exp {
-  _and?: (podcast_program_tag_bool_exp | null)[] | null;
+  _and?: podcast_program_tag_bool_exp[] | null;
   _not?: podcast_program_tag_bool_exp | null;
-  _or?: (podcast_program_tag_bool_exp | null)[] | null;
+  _or?: podcast_program_tag_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   podcast_program?: podcast_program_bool_exp | null;
   podcast_program_id?: uuid_comparison_exp | null;
@@ -18906,7 +19358,7 @@ export interface podcast_program_tag_insert_input {
 }
 
 /**
- * on conflict condition type for table "podcast_program_tag"
+ * on_conflict condition type for table "podcast_program_tag"
  */
 export interface podcast_program_tag_on_conflict {
   constraint: podcast_program_tag_constraint;
@@ -18926,9 +19378,9 @@ export interface point_log_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "point_log". All fields are combined with a logical 'AND'.
  */
 export interface point_log_bool_exp {
-  _and?: (point_log_bool_exp | null)[] | null;
+  _and?: point_log_bool_exp[] | null;
   _not?: point_log_bool_exp | null;
-  _or?: (point_log_bool_exp | null)[] | null;
+  _or?: point_log_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
@@ -18956,7 +19408,7 @@ export interface point_log_insert_input {
 }
 
 /**
- * on conflict condition type for table "point_log"
+ * on_conflict condition type for table "point_log"
  */
 export interface point_log_on_conflict {
   constraint: point_log_constraint;
@@ -18968,12 +19420,28 @@ export interface point_log_on_conflict {
  * Boolean expression to filter rows from the table "point_status". All fields are combined with a logical 'AND'.
  */
 export interface point_status_bool_exp {
-  _and?: (point_status_bool_exp | null)[] | null;
+  _and?: point_status_bool_exp[] | null;
   _not?: point_status_bool_exp | null;
-  _or?: (point_status_bool_exp | null)[] | null;
+  _or?: point_status_bool_exp[] | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   points?: numeric_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "point_status"
+ */
+export interface point_status_insert_input {
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  points?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "point_status"
+ */
+export interface point_status_obj_rel_insert_input {
+  data: point_status_insert_input;
 }
 
 /**
@@ -18988,9 +19456,9 @@ export interface post_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "post". All fields are combined with a logical 'AND'.
  */
 export interface post_bool_exp {
-  _and?: (post_bool_exp | null)[] | null;
+  _and?: post_bool_exp[] | null;
   _not?: post_bool_exp | null;
-  _or?: (post_bool_exp | null)[] | null;
+  _or?: post_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
@@ -19026,9 +19494,9 @@ export interface post_category_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "post_category". All fields are combined with a logical 'AND'.
  */
 export interface post_category_bool_exp {
-  _and?: (post_category_bool_exp | null)[] | null;
+  _and?: post_category_bool_exp[] | null;
   _not?: post_category_bool_exp | null;
-  _or?: (post_category_bool_exp | null)[] | null;
+  _or?: post_category_bool_exp[] | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -19050,7 +19518,7 @@ export interface post_category_insert_input {
 }
 
 /**
- * on conflict condition type for table "post_category"
+ * on_conflict condition type for table "post_category"
  */
 export interface post_category_on_conflict {
   constraint: post_category_constraint;
@@ -19097,9 +19565,9 @@ export interface post_merchandise_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "post_merchandise". All fields are combined with a logical 'AND'.
  */
 export interface post_merchandise_bool_exp {
-  _and?: (post_merchandise_bool_exp | null)[] | null;
+  _and?: post_merchandise_bool_exp[] | null;
   _not?: post_merchandise_bool_exp | null;
-  _or?: (post_merchandise_bool_exp | null)[] | null;
+  _or?: post_merchandise_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   merchandise?: merchandise_bool_exp | null;
   merchandise_id?: uuid_comparison_exp | null;
@@ -19121,7 +19589,7 @@ export interface post_merchandise_insert_input {
 }
 
 /**
- * on conflict condition type for table "post_merchandise"
+ * on_conflict condition type for table "post_merchandise"
  */
 export interface post_merchandise_on_conflict {
   constraint: post_merchandise_constraint;
@@ -19138,7 +19606,7 @@ export interface post_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "post"
+ * on_conflict condition type for table "post"
  */
 export interface post_on_conflict {
   constraint: post_constraint;
@@ -19158,9 +19626,9 @@ export interface post_role_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "post_role". All fields are combined with a logical 'AND'.
  */
 export interface post_role_bool_exp {
-  _and?: (post_role_bool_exp | null)[] | null;
+  _and?: post_role_bool_exp[] | null;
   _not?: post_role_bool_exp | null;
-  _or?: (post_role_bool_exp | null)[] | null;
+  _or?: post_role_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   member?: member_public_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -19175,6 +19643,7 @@ export interface post_role_bool_exp {
  */
 export interface post_role_insert_input {
   id?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   name?: string | null;
   position?: number | null;
@@ -19183,7 +19652,7 @@ export interface post_role_insert_input {
 }
 
 /**
- * on conflict condition type for table "post_role"
+ * on_conflict condition type for table "post_role"
  */
 export interface post_role_on_conflict {
   constraint: post_role_constraint;
@@ -19203,9 +19672,9 @@ export interface post_tag_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "post_tag". All fields are combined with a logical 'AND'.
  */
 export interface post_tag_bool_exp {
-  _and?: (post_tag_bool_exp | null)[] | null;
+  _and?: post_tag_bool_exp[] | null;
   _not?: post_tag_bool_exp | null;
-  _or?: (post_tag_bool_exp | null)[] | null;
+  _or?: post_tag_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   position?: Int_comparison_exp | null;
   post?: post_bool_exp | null;
@@ -19227,7 +19696,7 @@ export interface post_tag_insert_input {
 }
 
 /**
- * on conflict condition type for table "post_tag"
+ * on_conflict condition type for table "post_tag"
  */
 export interface post_tag_on_conflict {
   constraint: post_tag_constraint;
@@ -19254,9 +19723,9 @@ export interface practice_attachment_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "practice_attachment". All fields are combined with a logical 'AND'.
  */
 export interface practice_attachment_bool_exp {
-  _and?: (practice_attachment_bool_exp | null)[] | null;
+  _and?: practice_attachment_bool_exp[] | null;
   _not?: practice_attachment_bool_exp | null;
-  _or?: (practice_attachment_bool_exp | null)[] | null;
+  _or?: practice_attachment_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   attachment?: attachment_bool_exp | null;
   attachment_id?: uuid_comparison_exp | null;
@@ -19287,9 +19756,9 @@ export interface practice_attachment_insert_input {
  * Boolean expression to filter rows from the table "practice". All fields are combined with a logical 'AND'.
  */
 export interface practice_bool_exp {
-  _and?: (practice_bool_exp | null)[] | null;
+  _and?: practice_bool_exp[] | null;
   _not?: practice_bool_exp | null;
-  _or?: (practice_bool_exp | null)[] | null;
+  _or?: practice_bool_exp[] | null;
   cover_url?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
@@ -19319,6 +19788,7 @@ export interface practice_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   practice_attachments?: practice_attachment_arr_rel_insert_input | null;
+  practice_issues?: practice_issue_arr_rel_insert_input | null;
   practice_reactions?: practice_reaction_arr_rel_insert_input | null;
   program_content?: program_content_obj_rel_insert_input | null;
   program_content_id?: any | null;
@@ -19328,16 +19798,33 @@ export interface practice_insert_input {
 }
 
 /**
+ * input type for inserting array relation for remote table "practice_issue"
+ */
+export interface practice_issue_arr_rel_insert_input {
+  data: practice_issue_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "practice_issue". All fields are combined with a logical 'AND'.
  */
 export interface practice_issue_bool_exp {
-  _and?: (practice_issue_bool_exp | null)[] | null;
+  _and?: practice_issue_bool_exp[] | null;
   _not?: practice_issue_bool_exp | null;
-  _or?: (practice_issue_bool_exp | null)[] | null;
+  _or?: practice_issue_bool_exp[] | null;
   issue?: issue_bool_exp | null;
   issue_id?: uuid_comparison_exp | null;
   practice?: practice_bool_exp | null;
   practice_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "practice_issue"
+ */
+export interface practice_issue_insert_input {
+  issue?: issue_obj_rel_insert_input | null;
+  issue_id?: any | null;
+  practice?: practice_obj_rel_insert_input | null;
+  practice_id?: any | null;
 }
 
 /**
@@ -19349,7 +19836,7 @@ export interface practice_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "practice"
+ * on_conflict condition type for table "practice"
  */
 export interface practice_on_conflict {
   constraint: practice_constraint;
@@ -19369,9 +19856,9 @@ export interface practice_reaction_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "practice_reaction". All fields are combined with a logical 'AND'.
  */
 export interface practice_reaction_bool_exp {
-  _and?: (practice_reaction_bool_exp | null)[] | null;
+  _and?: practice_reaction_bool_exp[] | null;
   _not?: practice_reaction_bool_exp | null;
-  _or?: (practice_reaction_bool_exp | null)[] | null;
+  _or?: practice_reaction_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -19393,7 +19880,7 @@ export interface practice_reaction_insert_input {
 }
 
 /**
- * on conflict condition type for table "practice_reaction"
+ * on_conflict condition type for table "practice_reaction"
  */
 export interface practice_reaction_on_conflict {
   constraint: practice_reaction_constraint;
@@ -19405,9 +19892,9 @@ export interface practice_reaction_on_conflict {
  * Boolean expression to filter rows from the table "product". All fields are combined with a logical 'AND'.
  */
 export interface product_bool_exp {
-  _and?: (product_bool_exp | null)[] | null;
+  _and?: product_bool_exp[] | null;
   _not?: product_bool_exp | null;
-  _or?: (product_bool_exp | null)[] | null;
+  _or?: product_bool_exp[] | null;
   card_discounts?: card_discount_bool_exp | null;
   cart_products?: cart_product_bool_exp | null;
   coin_back?: numeric_comparison_exp | null;
@@ -19429,17 +19916,35 @@ export interface product_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "product_enrollment"
+ */
+export interface product_enrollment_arr_rel_insert_input {
+  data: product_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "product_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface product_enrollment_bool_exp {
-  _and?: (product_enrollment_bool_exp | null)[] | null;
+  _and?: product_enrollment_bool_exp[] | null;
   _not?: product_enrollment_bool_exp | null;
-  _or?: (product_enrollment_bool_exp | null)[] | null;
+  _or?: product_enrollment_bool_exp[] | null;
   is_physical?: Boolean_comparison_exp | null;
   member?: member_public_bool_exp | null;
   member_id?: String_comparison_exp | null;
   product?: product_bool_exp | null;
   product_id?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "product_enrollment"
+ */
+export interface product_enrollment_insert_input {
+  is_physical?: boolean | null;
+  member?: member_public_obj_rel_insert_input | null;
+  member_id?: string | null;
+  product?: product_obj_rel_insert_input | null;
+  product_id?: string | null;
 }
 
 /**
@@ -19455,7 +19960,10 @@ export interface product_insert_input {
   created_at?: any | null;
   id?: string | null;
   order_products?: order_product_arr_rel_insert_input | null;
+  product_enrollments?: product_enrollment_arr_rel_insert_input | null;
   product_inventories?: product_inventory_arr_rel_insert_input | null;
+  product_inventory_status?: product_inventory_status_obj_rel_insert_input | null;
+  product_owner?: product_owner_obj_rel_insert_input | null;
   sku?: string | null;
   target?: string | null;
   type?: string | null;
@@ -19475,9 +19983,9 @@ export interface product_inventory_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "product_inventory". All fields are combined with a logical 'AND'.
  */
 export interface product_inventory_bool_exp {
-  _and?: (product_inventory_bool_exp | null)[] | null;
+  _and?: product_inventory_bool_exp[] | null;
   _not?: product_inventory_bool_exp | null;
-  _or?: (product_inventory_bool_exp | null)[] | null;
+  _or?: product_inventory_bool_exp[] | null;
   comment?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -19503,7 +20011,7 @@ export interface product_inventory_insert_input {
 }
 
 /**
- * on conflict condition type for table "product_inventory"
+ * on_conflict condition type for table "product_inventory"
  */
 export interface product_inventory_on_conflict {
   constraint: product_inventory_constraint;
@@ -19515,15 +20023,34 @@ export interface product_inventory_on_conflict {
  * Boolean expression to filter rows from the table "product_inventory_status". All fields are combined with a logical 'AND'.
  */
 export interface product_inventory_status_bool_exp {
-  _and?: (product_inventory_status_bool_exp | null)[] | null;
+  _and?: product_inventory_status_bool_exp[] | null;
   _not?: product_inventory_status_bool_exp | null;
-  _or?: (product_inventory_status_bool_exp | null)[] | null;
+  _or?: product_inventory_status_bool_exp[] | null;
   buyable_quantity?: bigint_comparison_exp | null;
   delivered_quantity?: bigint_comparison_exp | null;
   product?: product_bool_exp | null;
   product_id?: String_comparison_exp | null;
   total_quantity?: bigint_comparison_exp | null;
   undelivered_quantity?: bigint_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "product_inventory_status"
+ */
+export interface product_inventory_status_insert_input {
+  buyable_quantity?: any | null;
+  delivered_quantity?: any | null;
+  product?: product_obj_rel_insert_input | null;
+  product_id?: string | null;
+  total_quantity?: any | null;
+  undelivered_quantity?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "product_inventory_status"
+ */
+export interface product_inventory_status_obj_rel_insert_input {
+  data: product_inventory_status_insert_input;
 }
 
 /**
@@ -19535,7 +20062,7 @@ export interface product_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "product"
+ * on_conflict condition type for table "product"
  */
 export interface product_on_conflict {
   constraint: product_constraint;
@@ -19547,15 +20074,34 @@ export interface product_on_conflict {
  * Boolean expression to filter rows from the table "product_owner". All fields are combined with a logical 'AND'.
  */
 export interface product_owner_bool_exp {
-  _and?: (product_owner_bool_exp | null)[] | null;
+  _and?: product_owner_bool_exp[] | null;
   _not?: product_owner_bool_exp | null;
-  _or?: (product_owner_bool_exp | null)[] | null;
+  _or?: product_owner_bool_exp[] | null;
   member?: member_public_bool_exp | null;
   member_id?: String_comparison_exp | null;
   product?: product_bool_exp | null;
   product_id?: String_comparison_exp | null;
   target?: String_comparison_exp | null;
   type?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "product_owner"
+ */
+export interface product_owner_insert_input {
+  member?: member_public_obj_rel_insert_input | null;
+  member_id?: string | null;
+  product?: product_obj_rel_insert_input | null;
+  product_id?: string | null;
+  target?: string | null;
+  type?: string | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "product_owner"
+ */
+export interface product_owner_obj_rel_insert_input {
+  data: product_owner_insert_input;
 }
 
 /**
@@ -19570,9 +20116,9 @@ export interface program_announcement_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_announcement". All fields are combined with a logical 'AND'.
  */
 export interface program_announcement_bool_exp {
-  _and?: (program_announcement_bool_exp | null)[] | null;
+  _and?: program_announcement_bool_exp[] | null;
   _not?: program_announcement_bool_exp | null;
-  _or?: (program_announcement_bool_exp | null)[] | null;
+  _or?: program_announcement_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -19596,7 +20142,7 @@ export interface program_announcement_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_announcement"
+ * on_conflict condition type for table "program_announcement"
  */
 export interface program_announcement_on_conflict {
   constraint: program_announcement_constraint;
@@ -19616,9 +20162,9 @@ export interface program_approval_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_approval". All fields are combined with a logical 'AND'.
  */
 export interface program_approval_bool_exp {
-  _and?: (program_approval_bool_exp | null)[] | null;
+  _and?: program_approval_bool_exp[] | null;
   _not?: program_approval_bool_exp | null;
-  _or?: (program_approval_bool_exp | null)[] | null;
+  _or?: program_approval_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   feedback?: String_comparison_exp | null;
@@ -19644,7 +20190,7 @@ export interface program_approval_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_approval"
+ * on_conflict condition type for table "program_approval"
  */
 export interface program_approval_on_conflict {
   constraint: program_approval_constraint;
@@ -19656,13 +20202,30 @@ export interface program_approval_on_conflict {
  * Boolean expression to filter rows from the table "program_approval_status". All fields are combined with a logical 'AND'.
  */
 export interface program_approval_status_bool_exp {
-  _and?: (program_approval_status_bool_exp | null)[] | null;
+  _and?: program_approval_status_bool_exp[] | null;
   _not?: program_approval_status_bool_exp | null;
-  _or?: (program_approval_status_bool_exp | null)[] | null;
+  _or?: program_approval_status_bool_exp[] | null;
   program?: program_bool_exp | null;
   program_id?: uuid_comparison_exp | null;
   status?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_approval_status"
+ */
+export interface program_approval_status_insert_input {
+  program?: program_obj_rel_insert_input | null;
+  program_id?: any | null;
+  status?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "program_approval_status"
+ */
+export interface program_approval_status_obj_rel_insert_input {
+  data: program_approval_status_insert_input;
 }
 
 /**
@@ -19677,9 +20240,9 @@ export interface program_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program". All fields are combined with a logical 'AND'.
  */
 export interface program_bool_exp {
-  _and?: (program_bool_exp | null)[] | null;
+  _and?: program_bool_exp[] | null;
   _not?: program_bool_exp | null;
-  _or?: (program_bool_exp | null)[] | null;
+  _or?: program_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
@@ -19702,6 +20265,7 @@ export interface program_bool_exp {
   is_subscription?: Boolean_comparison_exp | null;
   list_price?: numeric_comparison_exp | null;
   meta_tag?: jsonb_comparison_exp | null;
+  metadata?: jsonb_comparison_exp | null;
   package_items?: package_item_bool_exp | null;
   position?: Int_comparison_exp | null;
   program_announcements?: program_announcement_bool_exp | null;
@@ -19739,9 +20303,9 @@ export interface program_category_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_category". All fields are combined with a logical 'AND'.
  */
 export interface program_category_bool_exp {
-  _and?: (program_category_bool_exp | null)[] | null;
+  _and?: program_category_bool_exp[] | null;
   _not?: program_category_bool_exp | null;
-  _or?: (program_category_bool_exp | null)[] | null;
+  _or?: program_category_bool_exp[] | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -19763,7 +20327,7 @@ export interface program_category_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_category"
+ * on_conflict condition type for table "program_category"
  */
 export interface program_category_on_conflict {
   constraint: program_category_constraint;
@@ -19790,9 +20354,9 @@ export interface program_content_attachment_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_content_attachment". All fields are combined with a logical 'AND'.
  */
 export interface program_content_attachment_bool_exp {
-  _and?: (program_content_attachment_bool_exp | null)[] | null;
+  _and?: program_content_attachment_bool_exp[] | null;
   _not?: program_content_attachment_bool_exp | null;
-  _or?: (program_content_attachment_bool_exp | null)[] | null;
+  _or?: program_content_attachment_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   attachment?: attachment_bool_exp | null;
   attachment_id?: uuid_comparison_exp | null;
@@ -19823,9 +20387,9 @@ export interface program_content_attachment_insert_input {
  * Boolean expression to filter rows from the table "program_content_body". All fields are combined with a logical 'AND'.
  */
 export interface program_content_body_bool_exp {
-  _and?: (program_content_body_bool_exp | null)[] | null;
+  _and?: program_content_body_bool_exp[] | null;
   _not?: program_content_body_bool_exp | null;
-  _or?: (program_content_body_bool_exp | null)[] | null;
+  _or?: program_content_body_bool_exp[] | null;
   data?: jsonb_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -19853,7 +20417,7 @@ export interface program_content_body_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_content_body"
+ * on_conflict condition type for table "program_content_body"
  */
 export interface program_content_body_on_conflict {
   constraint: program_content_body_constraint;
@@ -19865,9 +20429,9 @@ export interface program_content_body_on_conflict {
  * Boolean expression to filter rows from the table "program_content". All fields are combined with a logical 'AND'.
  */
 export interface program_content_bool_exp {
-  _and?: (program_content_bool_exp | null)[] | null;
+  _and?: program_content_bool_exp[] | null;
   _not?: program_content_bool_exp | null;
-  _or?: (program_content_bool_exp | null)[] | null;
+  _or?: program_content_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   content_body_id?: uuid_comparison_exp | null;
   content_section_id?: uuid_comparison_exp | null;
@@ -19899,18 +20463,37 @@ export interface program_content_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "program_content_enrollment"
+ */
+export interface program_content_enrollment_arr_rel_insert_input {
+  data: program_content_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "program_content_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface program_content_enrollment_bool_exp {
-  _and?: (program_content_enrollment_bool_exp | null)[] | null;
+  _and?: program_content_enrollment_bool_exp[] | null;
   _not?: program_content_enrollment_bool_exp | null;
-  _or?: (program_content_enrollment_bool_exp | null)[] | null;
+  _or?: program_content_enrollment_bool_exp[] | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   program?: program_bool_exp | null;
   program_content?: program_content_bool_exp | null;
   program_content_id?: uuid_comparison_exp | null;
   program_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_content_enrollment"
+ */
+export interface program_content_enrollment_insert_input {
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  program?: program_obj_rel_insert_input | null;
+  program_content?: program_content_obj_rel_insert_input | null;
+  program_content_id?: any | null;
+  program_id?: any | null;
 }
 
 /**
@@ -19923,6 +20506,7 @@ export interface program_content_insert_input {
   content_type?: string | null;
   created_at?: any | null;
   duration?: any | null;
+  enrollments?: program_content_enrollment_arr_rel_insert_input | null;
   exercises?: exercise_arr_rel_insert_input | null;
   id?: any | null;
   is_notify_update?: boolean | null;
@@ -19937,8 +20521,10 @@ export interface program_content_insert_input {
   program_content_plans?: program_content_plan_arr_rel_insert_input | null;
   program_content_progress?: program_content_progress_arr_rel_insert_input | null;
   program_content_section?: program_content_section_obj_rel_insert_input | null;
+  program_content_type?: program_content_type_obj_rel_insert_input | null;
   program_content_videos?: program_content_video_arr_rel_insert_input | null;
   published_at?: any | null;
+  sale_free?: program_content_sale_free_obj_rel_insert_input | null;
   sale_price?: any | null;
   sold_at?: any | null;
   title?: string | null;
@@ -19956,9 +20542,9 @@ export interface program_content_material_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_content_material". All fields are combined with a logical 'AND'.
  */
 export interface program_content_material_bool_exp {
-  _and?: (program_content_material_bool_exp | null)[] | null;
+  _and?: program_content_material_bool_exp[] | null;
   _not?: program_content_material_bool_exp | null;
-  _or?: (program_content_material_bool_exp | null)[] | null;
+  _or?: program_content_material_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   data?: jsonb_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -19980,7 +20566,7 @@ export interface program_content_material_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_content_material"
+ * on_conflict condition type for table "program_content_material"
  */
 export interface program_content_material_on_conflict {
   constraint: program_content_material_constraint;
@@ -19997,7 +20583,7 @@ export interface program_content_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_content"
+ * on_conflict condition type for table "program_content"
  */
 export interface program_content_on_conflict {
   constraint: program_content_constraint;
@@ -20017,9 +20603,9 @@ export interface program_content_plan_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_content_plan". All fields are combined with a logical 'AND'.
  */
 export interface program_content_plan_bool_exp {
-  _and?: (program_content_plan_bool_exp | null)[] | null;
+  _and?: program_content_plan_bool_exp[] | null;
   _not?: program_content_plan_bool_exp | null;
-  _or?: (program_content_plan_bool_exp | null)[] | null;
+  _or?: program_content_plan_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   program_content?: program_content_bool_exp | null;
   program_content_id?: uuid_comparison_exp | null;
@@ -20039,7 +20625,7 @@ export interface program_content_plan_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_content_plan"
+ * on_conflict condition type for table "program_content_plan"
  */
 export interface program_content_plan_on_conflict {
   constraint: program_content_plan_constraint;
@@ -20059,9 +20645,9 @@ export interface program_content_progress_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_content_progress". All fields are combined with a logical 'AND'.
  */
 export interface program_content_progress_bool_exp {
-  _and?: (program_content_progress_bool_exp | null)[] | null;
+  _and?: program_content_progress_bool_exp[] | null;
   _not?: program_content_progress_bool_exp | null;
-  _or?: (program_content_progress_bool_exp | null)[] | null;
+  _or?: program_content_progress_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   last_progress?: numeric_comparison_exp | null;
@@ -20074,12 +20660,19 @@ export interface program_content_progress_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "program_content_progress_enrollment"
+ */
+export interface program_content_progress_enrollment_arr_rel_insert_input {
+  data: program_content_progress_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "program_content_progress_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface program_content_progress_enrollment_bool_exp {
-  _and?: (program_content_progress_enrollment_bool_exp | null)[] | null;
+  _and?: program_content_progress_enrollment_bool_exp[] | null;
   _not?: program_content_progress_enrollment_bool_exp | null;
-  _or?: (program_content_progress_enrollment_bool_exp | null)[] | null;
+  _or?: program_content_progress_enrollment_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   last_progress?: numeric_comparison_exp | null;
@@ -20093,6 +20686,25 @@ export interface program_content_progress_enrollment_bool_exp {
   program_id?: uuid_comparison_exp | null;
   progress?: numeric_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_content_progress_enrollment"
+ */
+export interface program_content_progress_enrollment_insert_input {
+  created_at?: any | null;
+  id?: any | null;
+  last_progress?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  program?: program_obj_rel_insert_input | null;
+  program_content?: program_content_obj_rel_insert_input | null;
+  program_content_id?: any | null;
+  program_content_section?: program_content_section_obj_rel_insert_input | null;
+  program_content_section_id?: any | null;
+  program_id?: any | null;
+  progress?: any | null;
+  updated_at?: any | null;
 }
 
 /**
@@ -20111,7 +20723,7 @@ export interface program_content_progress_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_content_progress"
+ * on_conflict condition type for table "program_content_progress"
  */
 export interface program_content_progress_on_conflict {
   constraint: program_content_progress_constraint;
@@ -20123,9 +20735,9 @@ export interface program_content_progress_on_conflict {
  * Boolean expression to filter rows from the table "program_content_sale_free". All fields are combined with a logical 'AND'.
  */
 export interface program_content_sale_free_bool_exp {
-  _and?: (program_content_sale_free_bool_exp | null)[] | null;
+  _and?: program_content_sale_free_bool_exp[] | null;
   _not?: program_content_sale_free_bool_exp | null;
-  _or?: (program_content_sale_free_bool_exp | null)[] | null;
+  _or?: program_content_sale_free_bool_exp[] | null;
   is_sale_free_by_program?: Boolean_comparison_exp | null;
   is_sale_free_by_program_content?: Boolean_comparison_exp | null;
   is_sale_free_by_program_plan?: Boolean_comparison_exp | null;
@@ -20135,6 +20747,28 @@ export interface program_content_sale_free_bool_exp {
   program_id?: uuid_comparison_exp | null;
   program_plan?: program_plan_bool_exp | null;
   program_plan_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_content_sale_free"
+ */
+export interface program_content_sale_free_insert_input {
+  is_sale_free_by_program?: boolean | null;
+  is_sale_free_by_program_content?: boolean | null;
+  is_sale_free_by_program_plan?: boolean | null;
+  program?: program_obj_rel_insert_input | null;
+  program_content?: program_content_obj_rel_insert_input | null;
+  program_content_id?: any | null;
+  program_id?: any | null;
+  program_plan?: program_plan_obj_rel_insert_input | null;
+  program_plan_id?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "program_content_sale_free"
+ */
+export interface program_content_sale_free_obj_rel_insert_input {
+  data: program_content_sale_free_insert_input;
 }
 
 /**
@@ -20149,9 +20783,9 @@ export interface program_content_section_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_content_section". All fields are combined with a logical 'AND'.
  */
 export interface program_content_section_bool_exp {
-  _and?: (program_content_section_bool_exp | null)[] | null;
+  _and?: program_content_section_bool_exp[] | null;
   _not?: program_content_section_bool_exp | null;
-  _or?: (program_content_section_bool_exp | null)[] | null;
+  _or?: program_content_section_bool_exp[] | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   position?: Int_comparison_exp | null;
@@ -20183,7 +20817,7 @@ export interface program_content_section_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_content_section"
+ * on_conflict condition type for table "program_content_section"
  */
 export interface program_content_section_on_conflict {
   constraint: program_content_section_constraint;
@@ -20195,12 +20829,28 @@ export interface program_content_section_on_conflict {
  * Boolean expression to filter rows from the table "program_content_type". All fields are combined with a logical 'AND'.
  */
 export interface program_content_type_bool_exp {
-  _and?: (program_content_type_bool_exp | null)[] | null;
+  _and?: program_content_type_bool_exp[] | null;
   _not?: program_content_type_bool_exp | null;
-  _or?: (program_content_type_bool_exp | null)[] | null;
+  _or?: program_content_type_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   program_content?: program_content_bool_exp | null;
   type?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_content_type"
+ */
+export interface program_content_type_insert_input {
+  id?: any | null;
+  program_content?: program_content_obj_rel_insert_input | null;
+  type?: string | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "program_content_type"
+ */
+export interface program_content_type_obj_rel_insert_input {
+  data: program_content_type_insert_input;
 }
 
 /**
@@ -20215,9 +20865,9 @@ export interface program_content_video_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_content_video". All fields are combined with a logical 'AND'.
  */
 export interface program_content_video_bool_exp {
-  _and?: (program_content_video_bool_exp | null)[] | null;
+  _and?: program_content_video_bool_exp[] | null;
   _not?: program_content_video_bool_exp | null;
-  _or?: (program_content_video_bool_exp | null)[] | null;
+  _or?: program_content_video_bool_exp[] | null;
   attachment?: attachment_bool_exp | null;
   attachment_id?: uuid_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -20241,7 +20891,7 @@ export interface program_content_video_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_content_video"
+ * on_conflict condition type for table "program_content_video"
  */
 export interface program_content_video_on_conflict {
   constraint: program_content_video_constraint;
@@ -20253,12 +20903,28 @@ export interface program_content_video_on_conflict {
  * Boolean expression to filter rows from the table "program_duration". All fields are combined with a logical 'AND'.
  */
 export interface program_duration_bool_exp {
-  _and?: (program_duration_bool_exp | null)[] | null;
+  _and?: program_duration_bool_exp[] | null;
   _not?: program_duration_bool_exp | null;
-  _or?: (program_duration_bool_exp | null)[] | null;
+  _or?: program_duration_bool_exp[] | null;
   duration?: numeric_comparison_exp | null;
   program?: program_bool_exp | null;
   program_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_duration"
+ */
+export interface program_duration_insert_input {
+  duration?: any | null;
+  program?: program_obj_rel_insert_input | null;
+  program_id?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "program_duration"
+ */
+export interface program_duration_obj_rel_insert_input {
+  data: program_duration_insert_input;
 }
 
 /**
@@ -20272,9 +20938,9 @@ export interface program_editor_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_editor". All fields are combined with a logical 'AND'.
  */
 export interface program_editor_bool_exp {
-  _and?: (program_editor_bool_exp | null)[] | null;
+  _and?: program_editor_bool_exp[] | null;
   _not?: program_editor_bool_exp | null;
-  _or?: (program_editor_bool_exp | null)[] | null;
+  _or?: program_editor_bool_exp[] | null;
   member_id?: String_comparison_exp | null;
   program_id?: uuid_comparison_exp | null;
 }
@@ -20288,12 +20954,19 @@ export interface program_editor_insert_input {
 }
 
 /**
+ * input type for inserting array relation for remote table "program_enrollment"
+ */
+export interface program_enrollment_arr_rel_insert_input {
+  data: program_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "program_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface program_enrollment_bool_exp {
-  _and?: (program_enrollment_bool_exp | null)[] | null;
+  _and?: program_enrollment_bool_exp[] | null;
   _not?: program_enrollment_bool_exp | null;
-  _or?: (program_enrollment_bool_exp | null)[] | null;
+  _or?: program_enrollment_bool_exp[] | null;
   member?: member_bool_exp | null;
   member_email?: String_comparison_exp | null;
   member_id?: String_comparison_exp | null;
@@ -20302,6 +20975,20 @@ export interface program_enrollment_bool_exp {
   program?: program_bool_exp | null;
   program_id?: uuid_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_enrollment"
+ */
+export interface program_enrollment_insert_input {
+  member?: member_obj_rel_insert_input | null;
+  member_email?: string | null;
+  member_id?: string | null;
+  member_name?: string | null;
+  member_picture_url?: string | null;
+  program?: program_obj_rel_insert_input | null;
+  program_id?: any | null;
+  updated_at?: any | null;
 }
 
 /**
@@ -20330,15 +21017,22 @@ export interface program_insert_input {
   is_subscription?: boolean | null;
   list_price?: any | null;
   meta_tag?: any | null;
+  metadata?: any | null;
   package_items?: package_item_arr_rel_insert_input | null;
   position?: number | null;
   program_announcements?: program_announcement_arr_rel_insert_input | null;
+  program_approval_status?: program_approval_status_obj_rel_insert_input | null;
   program_approvals?: program_approval_arr_rel_insert_input | null;
   program_categories?: program_category_arr_rel_insert_input | null;
+  program_content_enrollments?: program_content_enrollment_arr_rel_insert_input | null;
+  program_content_progress_enrollments?: program_content_progress_enrollment_arr_rel_insert_input | null;
   program_content_sections?: program_content_section_arr_rel_insert_input | null;
+  program_duration?: program_duration_obj_rel_insert_input | null;
+  program_enrollments?: program_enrollment_arr_rel_insert_input | null;
   program_package_programs?: program_package_program_arr_rel_insert_input | null;
   program_plans?: program_plan_arr_rel_insert_input | null;
   program_related_items?: program_related_item_arr_rel_insert_input | null;
+  program_review_score?: program_review_score_obj_rel_insert_input | null;
   program_roles?: program_role_arr_rel_insert_input | null;
   program_tags?: program_tag_arr_rel_insert_input | null;
   published_at?: any | null;
@@ -20358,7 +21052,7 @@ export interface program_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "program"
+ * on_conflict condition type for table "program"
  */
 export interface program_on_conflict {
   constraint: program_constraint;
@@ -20378,9 +21072,9 @@ export interface program_package_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_package". All fields are combined with a logical 'AND'.
  */
 export interface program_package_bool_exp {
-  _and?: (program_package_bool_exp | null)[] | null;
+  _and?: program_package_bool_exp[] | null;
   _not?: program_package_bool_exp | null;
-  _or?: (program_package_bool_exp | null)[] | null;
+  _or?: program_package_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
@@ -20409,9 +21103,9 @@ export interface program_package_category_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_package_category". All fields are combined with a logical 'AND'.
  */
 export interface program_package_category_bool_exp {
-  _and?: (program_package_category_bool_exp | null)[] | null;
+  _and?: program_package_category_bool_exp[] | null;
   _not?: program_package_category_bool_exp | null;
-  _or?: (program_package_category_bool_exp | null)[] | null;
+  _or?: program_package_category_bool_exp[] | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -20433,7 +21127,7 @@ export interface program_package_category_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_package_category"
+ * on_conflict condition type for table "program_package_category"
  */
 export interface program_package_category_on_conflict {
   constraint: program_package_category_constraint;
@@ -20449,6 +21143,7 @@ export interface program_package_insert_input {
   app_id?: string | null;
   cover_url?: string | null;
   created_at?: any | null;
+  creator?: member_public_obj_rel_insert_input | null;
   creator_id?: string | null;
   description?: string | null;
   id?: any | null;
@@ -20469,7 +21164,7 @@ export interface program_package_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_package"
+ * on_conflict condition type for table "program_package"
  */
 export interface program_package_on_conflict {
   constraint: program_package_constraint;
@@ -20489,9 +21184,9 @@ export interface program_package_plan_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_package_plan". All fields are combined with a logical 'AND'.
  */
 export interface program_package_plan_bool_exp {
-  _and?: (program_package_plan_bool_exp | null)[] | null;
+  _and?: program_package_plan_bool_exp[] | null;
   _not?: program_package_plan_bool_exp | null;
-  _or?: (program_package_plan_bool_exp | null)[] | null;
+  _or?: program_package_plan_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   discount_down_price?: numeric_comparison_exp | null;
@@ -20513,16 +21208,33 @@ export interface program_package_plan_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "program_package_plan_enrollment"
+ */
+export interface program_package_plan_enrollment_arr_rel_insert_input {
+  data: program_package_plan_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "program_package_plan_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface program_package_plan_enrollment_bool_exp {
-  _and?: (program_package_plan_enrollment_bool_exp | null)[] | null;
+  _and?: program_package_plan_enrollment_bool_exp[] | null;
   _not?: program_package_plan_enrollment_bool_exp | null;
-  _or?: (program_package_plan_enrollment_bool_exp | null)[] | null;
+  _or?: program_package_plan_enrollment_bool_exp[] | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   program_package_plan?: program_package_plan_bool_exp | null;
   program_package_plan_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_package_plan_enrollment"
+ */
+export interface program_package_plan_enrollment_insert_input {
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  program_package_plan?: program_package_plan_obj_rel_insert_input | null;
+  program_package_plan_id?: any | null;
 }
 
 /**
@@ -20542,6 +21254,7 @@ export interface program_package_plan_insert_input {
   position?: any | null;
   program_package?: program_package_obj_rel_insert_input | null;
   program_package_id?: any | null;
+  program_package_plan_enrollments?: program_package_plan_enrollment_arr_rel_insert_input | null;
   published_at?: any | null;
   sale_price?: any | null;
   sold_at?: any | null;
@@ -20549,7 +21262,15 @@ export interface program_package_plan_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_package_plan"
+ * input type for inserting object relation for remote table "program_package_plan"
+ */
+export interface program_package_plan_obj_rel_insert_input {
+  data: program_package_plan_insert_input;
+  on_conflict?: program_package_plan_on_conflict | null;
+}
+
+/**
+ * on_conflict condition type for table "program_package_plan"
  */
 export interface program_package_plan_on_conflict {
   constraint: program_package_plan_constraint;
@@ -20569,9 +21290,9 @@ export interface program_package_program_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_package_program". All fields are combined with a logical 'AND'.
  */
 export interface program_package_program_bool_exp {
-  _and?: (program_package_program_bool_exp | null)[] | null;
+  _and?: program_package_program_bool_exp[] | null;
   _not?: program_package_program_bool_exp | null;
-  _or?: (program_package_program_bool_exp | null)[] | null;
+  _or?: program_package_program_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   position?: Int_comparison_exp | null;
   program?: program_bool_exp | null;
@@ -20603,7 +21324,7 @@ export interface program_package_program_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_package_program"
+ * on_conflict condition type for table "program_package_program"
  */
 export interface program_package_program_on_conflict {
   constraint: program_package_program_constraint;
@@ -20623,9 +21344,9 @@ export interface program_plan_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_plan". All fields are combined with a logical 'AND'.
  */
 export interface program_plan_bool_exp {
-  _and?: (program_plan_bool_exp | null)[] | null;
+  _and?: program_plan_bool_exp[] | null;
   _not?: program_plan_bool_exp | null;
-  _or?: (program_plan_bool_exp | null)[] | null;
+  _or?: program_plan_bool_exp[] | null;
   auto_renewed?: Boolean_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   currency?: currency_bool_exp | null;
@@ -20658,12 +21379,19 @@ export interface program_plan_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "program_plan_enrollment"
+ */
+export interface program_plan_enrollment_arr_rel_insert_input {
+  data: program_plan_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "program_plan_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface program_plan_enrollment_bool_exp {
-  _and?: (program_plan_enrollment_bool_exp | null)[] | null;
+  _and?: program_plan_enrollment_bool_exp[] | null;
   _not?: program_plan_enrollment_bool_exp | null;
-  _or?: (program_plan_enrollment_bool_exp | null)[] | null;
+  _or?: program_plan_enrollment_bool_exp[] | null;
   ended_at?: timestamptz_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -20672,6 +21400,20 @@ export interface program_plan_enrollment_bool_exp {
   program_plan_id?: uuid_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_plan_enrollment"
+ */
+export interface program_plan_enrollment_insert_input {
+  ended_at?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  options?: any | null;
+  program_plan?: program_plan_obj_rel_insert_input | null;
+  program_plan_id?: any | null;
+  started_at?: any | null;
+  updated_at?: any | null;
 }
 
 /**
@@ -20698,6 +21440,7 @@ export interface program_plan_insert_input {
   program?: program_obj_rel_insert_input | null;
   program_content_permissions?: program_content_plan_arr_rel_insert_input | null;
   program_id?: any | null;
+  program_plan_enrollments?: program_plan_enrollment_arr_rel_insert_input | null;
   published_at?: any | null;
   remind_period_amount?: number | null;
   remind_period_type?: string | null;
@@ -20717,7 +21460,7 @@ export interface program_plan_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_plan"
+ * on_conflict condition type for table "program_plan"
  */
 export interface program_plan_on_conflict {
   constraint: program_plan_constraint;
@@ -20737,9 +21480,9 @@ export interface program_related_item_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_related_item". All fields are combined with a logical 'AND'.
  */
 export interface program_related_item_bool_exp {
-  _and?: (program_related_item_bool_exp | null)[] | null;
+  _and?: program_related_item_bool_exp[] | null;
   _not?: program_related_item_bool_exp | null;
-  _or?: (program_related_item_bool_exp | null)[] | null;
+  _or?: program_related_item_bool_exp[] | null;
   class?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   program?: program_bool_exp | null;
@@ -20761,7 +21504,7 @@ export interface program_related_item_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_related_item"
+ * on_conflict condition type for table "program_related_item"
  */
 export interface program_related_item_on_conflict {
   constraint: program_related_item_constraint;
@@ -20773,12 +21516,28 @@ export interface program_related_item_on_conflict {
  * Boolean expression to filter rows from the table "program_review_score". All fields are combined with a logical 'AND'.
  */
 export interface program_review_score_bool_exp {
-  _and?: (program_review_score_bool_exp | null)[] | null;
+  _and?: program_review_score_bool_exp[] | null;
   _not?: program_review_score_bool_exp | null;
-  _or?: (program_review_score_bool_exp | null)[] | null;
+  _or?: program_review_score_bool_exp[] | null;
   program?: program_bool_exp | null;
   program_id?: uuid_comparison_exp | null;
   score?: numeric_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_review_score"
+ */
+export interface program_review_score_insert_input {
+  program?: program_obj_rel_insert_input | null;
+  program_id?: any | null;
+  score?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "program_review_score"
+ */
+export interface program_review_score_obj_rel_insert_input {
+  data: program_review_score_insert_input;
 }
 
 /**
@@ -20793,9 +21552,9 @@ export interface program_role_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_role". All fields are combined with a logical 'AND'.
  */
 export interface program_role_bool_exp {
-  _and?: (program_role_bool_exp | null)[] | null;
+  _and?: program_role_bool_exp[] | null;
   _not?: program_role_bool_exp | null;
-  _or?: (program_role_bool_exp | null)[] | null;
+  _or?: program_role_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_public_bool_exp | null;
@@ -20811,6 +21570,7 @@ export interface program_role_bool_exp {
 export interface program_role_insert_input {
   created_at?: any | null;
   id?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   name?: string | null;
   program?: program_obj_rel_insert_input | null;
@@ -20818,7 +21578,7 @@ export interface program_role_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_role"
+ * on_conflict condition type for table "program_role"
  */
 export interface program_role_on_conflict {
   constraint: program_role_constraint;
@@ -20838,9 +21598,9 @@ export interface program_tag_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_tag". All fields are combined with a logical 'AND'.
  */
 export interface program_tag_bool_exp {
-  _and?: (program_tag_bool_exp | null)[] | null;
+  _and?: program_tag_bool_exp[] | null;
   _not?: program_tag_bool_exp | null;
-  _or?: (program_tag_bool_exp | null)[] | null;
+  _or?: program_tag_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   position?: Int_comparison_exp | null;
   program?: program_bool_exp | null;
@@ -20862,7 +21622,7 @@ export interface program_tag_insert_input {
 }
 
 /**
- * on conflict condition type for table "program_tag"
+ * on_conflict condition type for table "program_tag"
  */
 export interface program_tag_on_conflict {
   constraint: program_tag_constraint;
@@ -20882,9 +21642,9 @@ export interface program_tempo_delivery_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "program_tempo_delivery". All fields are combined with a logical 'AND'.
  */
 export interface program_tempo_delivery_bool_exp {
-  _and?: (program_tempo_delivery_bool_exp | null)[] | null;
+  _and?: program_tempo_delivery_bool_exp[] | null;
   _not?: program_tempo_delivery_bool_exp | null;
-  _or?: (program_tempo_delivery_bool_exp | null)[] | null;
+  _or?: program_tempo_delivery_bool_exp[] | null;
   delivered_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_public_bool_exp | null;
@@ -20899,13 +21659,14 @@ export interface program_tempo_delivery_bool_exp {
 export interface program_tempo_delivery_insert_input {
   delivered_at?: any | null;
   id?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   program_package_program?: program_package_program_obj_rel_insert_input | null;
   program_package_program_id?: any | null;
 }
 
 /**
- * on conflict condition type for table "program_tempo_delivery"
+ * on_conflict condition type for table "program_tempo_delivery"
  */
 export interface program_tempo_delivery_on_conflict {
   constraint: program_tempo_delivery_constraint;
@@ -20917,9 +21678,9 @@ export interface program_tempo_delivery_on_conflict {
  * Boolean expression to filter rows from the table "project". All fields are combined with a logical 'AND'.
  */
 export interface project_bool_exp {
-  _and?: (project_bool_exp | null)[] | null;
+  _and?: project_bool_exp[] | null;
   _not?: project_bool_exp | null;
-  _or?: (project_bool_exp | null)[] | null;
+  _or?: project_bool_exp[] | null;
   abstract?: String_comparison_exp | null;
   app_id?: String_comparison_exp | null;
   comments?: jsonb_comparison_exp | null;
@@ -20963,9 +21724,9 @@ export interface project_category_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "project_category". All fields are combined with a logical 'AND'.
  */
 export interface project_category_bool_exp {
-  _and?: (project_category_bool_exp | null)[] | null;
+  _and?: project_category_bool_exp[] | null;
   _not?: project_category_bool_exp | null;
-  _or?: (project_category_bool_exp | null)[] | null;
+  _or?: project_category_bool_exp[] | null;
   category?: category_bool_exp | null;
   category_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -20987,7 +21748,7 @@ export interface project_category_insert_input {
 }
 
 /**
- * on conflict condition type for table "project_category"
+ * on_conflict condition type for table "project_category"
  */
 export interface project_category_on_conflict {
   constraint: project_category_constraint;
@@ -21006,6 +21767,7 @@ export interface project_insert_input {
   cover_type?: string | null;
   cover_url?: string | null;
   created_at?: any | null;
+  creator?: member_public_obj_rel_insert_input | null;
   creator_id?: string | null;
   description?: string | null;
   expired_at?: any | null;
@@ -21018,6 +21780,7 @@ export interface project_insert_input {
   preview_url?: string | null;
   project_categories?: project_category_arr_rel_insert_input | null;
   project_plans?: project_plan_arr_rel_insert_input | null;
+  project_sales?: project_sales_obj_rel_insert_input | null;
   project_sections?: project_section_arr_rel_insert_input | null;
   published_at?: any | null;
   target_amount?: any | null;
@@ -21037,7 +21800,7 @@ export interface project_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "project"
+ * on_conflict condition type for table "project"
  */
 export interface project_on_conflict {
   constraint: project_constraint;
@@ -21057,9 +21820,9 @@ export interface project_plan_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "project_plan". All fields are combined with a logical 'AND'.
  */
 export interface project_plan_bool_exp {
-  _and?: (project_plan_bool_exp | null)[] | null;
+  _and?: project_plan_bool_exp[] | null;
   _not?: project_plan_bool_exp | null;
-  _or?: (project_plan_bool_exp | null)[] | null;
+  _or?: project_plan_bool_exp[] | null;
   auto_renewed?: Boolean_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -21089,18 +21852,37 @@ export interface project_plan_bool_exp {
 }
 
 /**
+ * input type for inserting array relation for remote table "project_plan_enrollment"
+ */
+export interface project_plan_enrollment_arr_rel_insert_input {
+  data: project_plan_enrollment_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "project_plan_enrollment". All fields are combined with a logical 'AND'.
  */
 export interface project_plan_enrollment_bool_exp {
-  _and?: (project_plan_enrollment_bool_exp | null)[] | null;
+  _and?: project_plan_enrollment_bool_exp[] | null;
   _not?: project_plan_enrollment_bool_exp | null;
-  _or?: (project_plan_enrollment_bool_exp | null)[] | null;
+  _or?: project_plan_enrollment_bool_exp[] | null;
   ended_at?: timestamptz_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   project_plan?: project_plan_bool_exp | null;
   project_plan_id?: uuid_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "project_plan_enrollment"
+ */
+export interface project_plan_enrollment_insert_input {
+  ended_at?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  project_plan?: project_plan_obj_rel_insert_input | null;
+  project_plan_id?: any | null;
+  started_at?: any | null;
 }
 
 /**
@@ -21126,6 +21908,8 @@ export interface project_plan_insert_input {
   position?: number | null;
   project?: project_obj_rel_insert_input | null;
   project_id?: any | null;
+  project_plan_enrollments?: project_plan_enrollment_arr_rel_insert_input | null;
+  project_plan_inventory_status?: project_plan_inventory_status_obj_rel_insert_input | null;
   project_plan_products?: project_plan_product_arr_rel_insert_input | null;
   published_at?: any | null;
   sale_price?: any | null;
@@ -21137,15 +21921,34 @@ export interface project_plan_insert_input {
  * Boolean expression to filter rows from the table "project_plan_inventory_status". All fields are combined with a logical 'AND'.
  */
 export interface project_plan_inventory_status_bool_exp {
-  _and?: (project_plan_inventory_status_bool_exp | null)[] | null;
+  _and?: project_plan_inventory_status_bool_exp[] | null;
   _not?: project_plan_inventory_status_bool_exp | null;
-  _or?: (project_plan_inventory_status_bool_exp | null)[] | null;
+  _or?: project_plan_inventory_status_bool_exp[] | null;
   buyable_quantity?: bigint_comparison_exp | null;
   delivered_quantity?: bigint_comparison_exp | null;
   project_plan?: project_plan_bool_exp | null;
   project_plan_id?: uuid_comparison_exp | null;
   total_quantity?: bigint_comparison_exp | null;
   undelivered_quantity?: bigint_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "project_plan_inventory_status"
+ */
+export interface project_plan_inventory_status_insert_input {
+  buyable_quantity?: any | null;
+  delivered_quantity?: any | null;
+  project_plan?: project_plan_obj_rel_insert_input | null;
+  project_plan_id?: any | null;
+  total_quantity?: any | null;
+  undelivered_quantity?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "project_plan_inventory_status"
+ */
+export interface project_plan_inventory_status_obj_rel_insert_input {
+  data: project_plan_inventory_status_insert_input;
 }
 
 /**
@@ -21157,7 +21960,7 @@ export interface project_plan_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "project_plan"
+ * on_conflict condition type for table "project_plan"
  */
 export interface project_plan_on_conflict {
   constraint: project_plan_constraint;
@@ -21177,9 +21980,9 @@ export interface project_plan_product_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "project_plan_product". All fields are combined with a logical 'AND'.
  */
 export interface project_plan_product_bool_exp {
-  _and?: (project_plan_product_bool_exp | null)[] | null;
+  _and?: project_plan_product_bool_exp[] | null;
   _not?: project_plan_product_bool_exp | null;
-  _or?: (project_plan_product_bool_exp | null)[] | null;
+  _or?: project_plan_product_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
   product?: product_bool_exp | null;
@@ -21201,7 +22004,7 @@ export interface project_plan_product_insert_input {
 }
 
 /**
- * on conflict condition type for table "project_plan_product"
+ * on_conflict condition type for table "project_plan_product"
  */
 export interface project_plan_product_on_conflict {
   constraint: project_plan_product_constraint;
@@ -21213,12 +22016,28 @@ export interface project_plan_product_on_conflict {
  * Boolean expression to filter rows from the table "project_sales". All fields are combined with a logical 'AND'.
  */
 export interface project_sales_bool_exp {
-  _and?: (project_sales_bool_exp | null)[] | null;
+  _and?: project_sales_bool_exp[] | null;
   _not?: project_sales_bool_exp | null;
-  _or?: (project_sales_bool_exp | null)[] | null;
+  _or?: project_sales_bool_exp[] | null;
   project?: project_bool_exp | null;
   project_id?: uuid_comparison_exp | null;
   total_sales?: numeric_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "project_sales"
+ */
+export interface project_sales_insert_input {
+  project?: project_obj_rel_insert_input | null;
+  project_id?: any | null;
+  total_sales?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "project_sales"
+ */
+export interface project_sales_obj_rel_insert_input {
+  data: project_sales_insert_input;
 }
 
 /**
@@ -21233,9 +22052,9 @@ export interface project_section_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "project_section". All fields are combined with a logical 'AND'.
  */
 export interface project_section_bool_exp {
-  _and?: (project_section_bool_exp | null)[] | null;
+  _and?: project_section_bool_exp[] | null;
   _not?: project_section_bool_exp | null;
-  _or?: (project_section_bool_exp | null)[] | null;
+  _or?: project_section_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
   position?: Int_comparison_exp | null;
@@ -21257,7 +22076,7 @@ export interface project_section_insert_input {
 }
 
 /**
- * on conflict condition type for table "project_section"
+ * on_conflict condition type for table "project_section"
  */
 export interface project_section_on_conflict {
   constraint: project_section_constraint;
@@ -21277,9 +22096,9 @@ export interface property_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "property". All fields are combined with a logical 'AND'.
  */
 export interface property_bool_exp {
-  _and?: (property_bool_exp | null)[] | null;
+  _and?: property_bool_exp[] | null;
   _not?: property_bool_exp | null;
-  _or?: (property_bool_exp | null)[] | null;
+  _or?: property_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -21317,7 +22136,7 @@ export interface property_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "property"
+ * on_conflict condition type for table "property"
  */
 export interface property_on_conflict {
   constraint: property_constraint;
@@ -21337,9 +22156,9 @@ export interface review_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "review". All fields are combined with a logical 'AND'.
  */
 export interface review_bool_exp {
-  _and?: (review_bool_exp | null)[] | null;
+  _and?: review_bool_exp[] | null;
   _not?: review_bool_exp | null;
-  _or?: (review_bool_exp | null)[] | null;
+  _or?: review_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   content?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -21383,7 +22202,7 @@ export interface review_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "review"
+ * on_conflict condition type for table "review"
  */
 export interface review_on_conflict {
   constraint: review_constraint;
@@ -21395,9 +22214,9 @@ export interface review_on_conflict {
  * Boolean expression to filter rows from the table "review_public". All fields are combined with a logical 'AND'.
  */
 export interface review_public_bool_exp {
-  _and?: (review_public_bool_exp | null)[] | null;
+  _and?: review_public_bool_exp[] | null;
   _not?: review_public_bool_exp | null;
-  _or?: (review_public_bool_exp | null)[] | null;
+  _or?: review_public_bool_exp[] | null;
   app_id?: String_comparison_exp | null;
   content?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -21426,9 +22245,9 @@ export interface review_reaction_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "review_reaction". All fields are combined with a logical 'AND'.
  */
 export interface review_reaction_bool_exp {
-  _and?: (review_reaction_bool_exp | null)[] | null;
+  _and?: review_reaction_bool_exp[] | null;
   _not?: review_reaction_bool_exp | null;
-  _or?: (review_reaction_bool_exp | null)[] | null;
+  _or?: review_reaction_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
@@ -21450,7 +22269,7 @@ export interface review_reaction_insert_input {
 }
 
 /**
- * on conflict condition type for table "review_reaction"
+ * on_conflict condition type for table "review_reaction"
  */
 export interface review_reaction_on_conflict {
   constraint: review_reaction_constraint;
@@ -21470,9 +22289,9 @@ export interface review_reply_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "review_reply". All fields are combined with a logical 'AND'.
  */
 export interface review_reply_bool_exp {
-  _and?: (review_reply_bool_exp | null)[] | null;
+  _and?: review_reply_bool_exp[] | null;
   _not?: review_reply_bool_exp | null;
-  _or?: (review_reply_bool_exp | null)[] | null;
+  _or?: review_reply_bool_exp[] | null;
   content?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -21490,6 +22309,7 @@ export interface review_reply_insert_input {
   content?: string | null;
   created_at?: any | null;
   id?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   review?: review_obj_rel_insert_input | null;
   review_id?: any | null;
@@ -21497,7 +22317,7 @@ export interface review_reply_insert_input {
 }
 
 /**
- * on conflict condition type for table "review_reply"
+ * on_conflict condition type for table "review_reply"
  */
 export interface review_reply_on_conflict {
   constraint: review_reply_constraint;
@@ -21509,9 +22329,9 @@ export interface review_reply_on_conflict {
  * Boolean expression to filter rows from the table "role". All fields are combined with a logical 'AND'.
  */
 export interface role_bool_exp {
-  _and?: (role_bool_exp | null)[] | null;
+  _and?: role_bool_exp[] | null;
   _not?: role_bool_exp | null;
-  _or?: (role_bool_exp | null)[] | null;
+  _or?: role_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: String_comparison_exp | null;
   name?: String_comparison_exp | null;
@@ -21539,7 +22359,7 @@ export interface role_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "role"
+ * on_conflict condition type for table "role"
  */
 export interface role_on_conflict {
   constraint: role_constraint;
@@ -21559,9 +22379,9 @@ export interface role_permission_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "role_permission". All fields are combined with a logical 'AND'.
  */
 export interface role_permission_bool_exp {
-  _and?: (role_permission_bool_exp | null)[] | null;
+  _and?: role_permission_bool_exp[] | null;
   _not?: role_permission_bool_exp | null;
-  _or?: (role_permission_bool_exp | null)[] | null;
+  _or?: role_permission_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   permission?: permission_bool_exp | null;
@@ -21585,7 +22405,7 @@ export interface role_permission_insert_input {
 }
 
 /**
- * on conflict condition type for table "role_permission"
+ * on_conflict condition type for table "role_permission"
  */
 export interface role_permission_on_conflict {
   constraint: role_permission_constraint;
@@ -21605,9 +22425,9 @@ export interface setting_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "setting". All fields are combined with a logical 'AND'.
  */
 export interface setting_bool_exp {
-  _and?: (setting_bool_exp | null)[] | null;
+  _and?: setting_bool_exp[] | null;
   _not?: setting_bool_exp | null;
-  _or?: (setting_bool_exp | null)[] | null;
+  _or?: setting_bool_exp[] | null;
   app_secrets?: app_secret_bool_exp | null;
   app_settings?: app_setting_bool_exp | null;
   is_protected?: Boolean_comparison_exp | null;
@@ -21645,7 +22465,7 @@ export interface setting_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "setting"
+ * on_conflict condition type for table "setting"
  */
 export interface setting_on_conflict {
   constraint: setting_constraint;
@@ -21665,9 +22485,9 @@ export interface sharing_code_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "sharing_code". All fields are combined with a logical 'AND'.
  */
 export interface sharing_code_bool_exp {
-  _and?: (sharing_code_bool_exp | null)[] | null;
+  _and?: sharing_code_bool_exp[] | null;
   _not?: sharing_code_bool_exp | null;
-  _or?: (sharing_code_bool_exp | null)[] | null;
+  _or?: sharing_code_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   code?: String_comparison_exp | null;
@@ -21693,7 +22513,7 @@ export interface sharing_code_insert_input {
 }
 
 /**
- * on conflict condition type for table "sharing_code"
+ * on_conflict condition type for table "sharing_code"
  */
 export interface sharing_code_on_conflict {
   constraint: sharing_code_constraint;
@@ -21713,9 +22533,9 @@ export interface social_card_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "social_card". All fields are combined with a logical 'AND'.
  */
 export interface social_card_bool_exp {
-  _and?: (social_card_bool_exp | null)[] | null;
+  _and?: social_card_bool_exp[] | null;
   _not?: social_card_bool_exp | null;
-  _or?: (social_card_bool_exp | null)[] | null;
+  _or?: social_card_bool_exp[] | null;
   badge_url?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -21749,7 +22569,7 @@ export interface social_card_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "social_card"
+ * on_conflict condition type for table "social_card"
  */
 export interface social_card_on_conflict {
   constraint: social_card_constraint;
@@ -21769,9 +22589,9 @@ export interface social_card_subscriber_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "social_card_subscriber". All fields are combined with a logical 'AND'.
  */
 export interface social_card_subscriber_bool_exp {
-  _and?: (social_card_subscriber_bool_exp | null)[] | null;
+  _and?: social_card_subscriber_bool_exp[] | null;
   _not?: social_card_subscriber_bool_exp | null;
-  _or?: (social_card_subscriber_bool_exp | null)[] | null;
+  _or?: social_card_subscriber_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -21799,7 +22619,7 @@ export interface social_card_subscriber_insert_input {
 }
 
 /**
- * on conflict condition type for table "social_card_subscriber"
+ * on_conflict condition type for table "social_card_subscriber"
  */
 export interface social_card_subscriber_on_conflict {
   constraint: social_card_subscriber_constraint;
@@ -21811,9 +22631,9 @@ export interface social_card_subscriber_on_conflict {
  * Boolean expression to filter rows from the table "tag". All fields are combined with a logical 'AND'.
  */
 export interface tag_bool_exp {
-  _and?: (tag_bool_exp | null)[] | null;
+  _and?: tag_bool_exp[] | null;
   _not?: tag_bool_exp | null;
-  _or?: (tag_bool_exp | null)[] | null;
+  _or?: tag_bool_exp[] | null;
   activity_tags?: activity_tag_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   filterable?: Boolean_comparison_exp | null;
@@ -21855,7 +22675,7 @@ export interface tag_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "tag"
+ * on_conflict condition type for table "tag"
  */
 export interface tag_on_conflict {
   constraint: tag_constraint;
@@ -21864,7 +22684,7 @@ export interface tag_on_conflict {
 }
 
 /**
- * expression to compare columns of type timestamp. All fields are combined with logical 'AND'.
+ * Boolean expression to compare columns of type "timestamp". All fields are combined with logical 'AND'.
  */
 export interface timestamp_comparison_exp {
   _eq?: any | null;
@@ -21879,7 +22699,7 @@ export interface timestamp_comparison_exp {
 }
 
 /**
- * expression to compare columns of type timestamptz. All fields are combined with logical 'AND'.
+ * Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'.
  */
 export interface timestamptz_comparison_exp {
   _eq?: any | null;
@@ -21894,7 +22714,7 @@ export interface timestamptz_comparison_exp {
 }
 
 /**
- * expression to compare columns of type uuid. All fields are combined with logical 'AND'.
+ * Boolean expression to compare columns of type "uuid". All fields are combined with logical 'AND'.
  */
 export interface uuid_comparison_exp {
   _eq?: any | null;
@@ -21920,9 +22740,9 @@ export interface voucher_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "voucher". All fields are combined with a logical 'AND'.
  */
 export interface voucher_bool_exp {
-  _and?: (voucher_bool_exp | null)[] | null;
+  _and?: voucher_bool_exp[] | null;
   _not?: voucher_bool_exp | null;
-  _or?: (voucher_bool_exp | null)[] | null;
+  _or?: voucher_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   deleted_at?: timestamp_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -21945,9 +22765,9 @@ export interface voucher_code_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "voucher_code". All fields are combined with a logical 'AND'.
  */
 export interface voucher_code_bool_exp {
-  _and?: (voucher_code_bool_exp | null)[] | null;
+  _and?: voucher_code_bool_exp[] | null;
   _not?: voucher_code_bool_exp | null;
-  _or?: (voucher_code_bool_exp | null)[] | null;
+  _or?: voucher_code_bool_exp[] | null;
   code?: String_comparison_exp | null;
   count?: Int_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -21979,7 +22799,7 @@ export interface voucher_code_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "voucher_code"
+ * on_conflict condition type for table "voucher_code"
  */
 export interface voucher_code_on_conflict {
   constraint: voucher_code_constraint;
@@ -21996,12 +22816,21 @@ export interface voucher_insert_input {
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  status?: voucher_status_obj_rel_insert_input | null;
   voucher_code?: voucher_code_obj_rel_insert_input | null;
   voucher_code_id?: any | null;
 }
 
 /**
- * on conflict condition type for table "voucher"
+ * input type for inserting object relation for remote table "voucher"
+ */
+export interface voucher_obj_rel_insert_input {
+  data: voucher_insert_input;
+  on_conflict?: voucher_on_conflict | null;
+}
+
+/**
+ * on_conflict condition type for table "voucher"
  */
 export interface voucher_on_conflict {
   constraint: voucher_constraint;
@@ -22021,9 +22850,9 @@ export interface voucher_plan_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "voucher_plan". All fields are combined with a logical 'AND'.
  */
 export interface voucher_plan_bool_exp {
-  _and?: (voucher_plan_bool_exp | null)[] | null;
+  _and?: voucher_plan_bool_exp[] | null;
   _not?: voucher_plan_bool_exp | null;
-  _or?: (voucher_plan_bool_exp | null)[] | null;
+  _or?: voucher_plan_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
@@ -22071,7 +22900,7 @@ export interface voucher_plan_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "voucher_plan"
+ * on_conflict condition type for table "voucher_plan"
  */
 export interface voucher_plan_on_conflict {
   constraint: voucher_plan_constraint;
@@ -22091,9 +22920,9 @@ export interface voucher_plan_product_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "voucher_plan_product". All fields are combined with a logical 'AND'.
  */
 export interface voucher_plan_product_bool_exp {
-  _and?: (voucher_plan_product_bool_exp | null)[] | null;
+  _and?: voucher_plan_product_bool_exp[] | null;
   _not?: voucher_plan_product_bool_exp | null;
-  _or?: (voucher_plan_product_bool_exp | null)[] | null;
+  _or?: voucher_plan_product_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   product?: product_bool_exp | null;
   product_id?: String_comparison_exp | null;
@@ -22113,7 +22942,7 @@ export interface voucher_plan_product_insert_input {
 }
 
 /**
- * on conflict condition type for table "voucher_plan_product"
+ * on_conflict condition type for table "voucher_plan_product"
  */
 export interface voucher_plan_product_on_conflict {
   constraint: voucher_plan_product_constraint;
@@ -22125,13 +22954,30 @@ export interface voucher_plan_product_on_conflict {
  * Boolean expression to filter rows from the table "voucher_status". All fields are combined with a logical 'AND'.
  */
 export interface voucher_status_bool_exp {
-  _and?: (voucher_status_bool_exp | null)[] | null;
+  _and?: voucher_status_bool_exp[] | null;
   _not?: voucher_status_bool_exp | null;
-  _or?: (voucher_status_bool_exp | null)[] | null;
+  _or?: voucher_status_bool_exp[] | null;
   outdated?: Boolean_comparison_exp | null;
   used?: Boolean_comparison_exp | null;
   voucher?: voucher_bool_exp | null;
   voucher_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "voucher_status"
+ */
+export interface voucher_status_insert_input {
+  outdated?: boolean | null;
+  used?: boolean | null;
+  voucher?: voucher_obj_rel_insert_input | null;
+  voucher_id?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "voucher_status"
+ */
+export interface voucher_status_obj_rel_insert_input {
+  data: voucher_status_insert_input;
 }
 
 /**
@@ -22146,9 +22992,9 @@ export interface xuemi_assign_rule_arr_rel_insert_input {
  * Boolean expression to filter rows from the table "xuemi.assign_rule". All fields are combined with a logical 'AND'.
  */
 export interface xuemi_assign_rule_bool_exp {
-  _and?: (xuemi_assign_rule_bool_exp | null)[] | null;
+  _and?: xuemi_assign_rule_bool_exp[] | null;
   _not?: xuemi_assign_rule_bool_exp | null;
-  _or?: (xuemi_assign_rule_bool_exp | null)[] | null;
+  _or?: xuemi_assign_rule_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
   limit?: Int_comparison_exp | null;
   manager_status?: xuemi_manager_status_bool_exp | null;
@@ -22174,6 +23020,7 @@ export interface xuemi_assign_rule_bool_exp {
 export interface xuemi_assign_rule_insert_input {
   id?: any | null;
   limit?: number | null;
+  manager_status?: xuemi_manager_status_arr_rel_insert_input | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   member_selector?: xuemi_member_selector_obj_rel_insert_input | null;
@@ -22184,13 +23031,14 @@ export interface xuemi_assign_rule_insert_input {
   status?: xuemi_assign_rule_status_obj_rel_insert_input | null;
   target_member?: member_obj_rel_insert_input | null;
   target_member_id?: string | null;
+  target_member_status?: xuemi_manager_status_arr_rel_insert_input | null;
   total_limit?: number | null;
   trigger?: xuemi_trigger_obj_rel_insert_input | null;
   trigger_id?: any | null;
 }
 
 /**
- * on conflict condition type for table "xuemi.assign_rule"
+ * on_conflict condition type for table "xuemi.assign_rule"
  */
 export interface xuemi_assign_rule_on_conflict {
   constraint: xuemi_assign_rule_constraint;
@@ -22202,9 +23050,9 @@ export interface xuemi_assign_rule_on_conflict {
  * Boolean expression to filter rows from the table "xuemi.assign_rule_status". All fields are combined with a logical 'AND'.
  */
 export interface xuemi_assign_rule_status_bool_exp {
-  _and?: (xuemi_assign_rule_status_bool_exp | null)[] | null;
+  _and?: xuemi_assign_rule_status_bool_exp[] | null;
   _not?: xuemi_assign_rule_status_bool_exp | null;
-  _or?: (xuemi_assign_rule_status_bool_exp | null)[] | null;
+  _or?: xuemi_assign_rule_status_bool_exp[] | null;
   assign_rule_id?: uuid_comparison_exp | null;
   matched?: Boolean_comparison_exp | null;
   remaining?: bigint_comparison_exp | null;
@@ -22229,12 +23077,19 @@ export interface xuemi_assign_rule_status_obj_rel_insert_input {
 }
 
 /**
+ * input type for inserting array relation for remote table "xuemi.manager_status"
+ */
+export interface xuemi_manager_status_arr_rel_insert_input {
+  data: xuemi_manager_status_insert_input[];
+}
+
+/**
  * Boolean expression to filter rows from the table "xuemi.manager_status". All fields are combined with a logical 'AND'.
  */
 export interface xuemi_manager_status_bool_exp {
-  _and?: (xuemi_manager_status_bool_exp | null)[] | null;
+  _and?: xuemi_manager_status_bool_exp[] | null;
   _not?: xuemi_manager_status_bool_exp | null;
-  _or?: (xuemi_manager_status_bool_exp | null)[] | null;
+  _or?: xuemi_manager_status_bool_exp[] | null;
   assigned?: bigint_comparison_exp | null;
   category_name?: String_comparison_exp | null;
   limit?: Int_comparison_exp | null;
@@ -22243,12 +23098,23 @@ export interface xuemi_manager_status_bool_exp {
 }
 
 /**
+ * input type for inserting data into table "xuemi.manager_status"
+ */
+export interface xuemi_manager_status_insert_input {
+  assigned?: any | null;
+  category_name?: string | null;
+  limit?: number | null;
+  manager_id?: string | null;
+  remaining?: number | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "xuemi.member_selector". All fields are combined with a logical 'AND'.
  */
 export interface xuemi_member_selector_bool_exp {
-  _and?: (xuemi_member_selector_bool_exp | null)[] | null;
+  _and?: xuemi_member_selector_bool_exp[] | null;
   _not?: xuemi_member_selector_bool_exp | null;
-  _or?: (xuemi_member_selector_bool_exp | null)[] | null;
+  _or?: xuemi_member_selector_bool_exp[] | null;
   assign_rules?: xuemi_assign_rule_bool_exp | null;
   condition?: jsonb_comparison_exp | null;
   description?: String_comparison_exp | null;
@@ -22276,7 +23142,7 @@ export interface xuemi_member_selector_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "xuemi.member_selector"
+ * on_conflict condition type for table "xuemi.member_selector"
  */
 export interface xuemi_member_selector_on_conflict {
   constraint: xuemi_member_selector_constraint;
@@ -22288,9 +23154,9 @@ export interface xuemi_member_selector_on_conflict {
  * Boolean expression to filter rows from the table "xuemi.trigger". All fields are combined with a logical 'AND'.
  */
 export interface xuemi_trigger_bool_exp {
-  _and?: (xuemi_trigger_bool_exp | null)[] | null;
+  _and?: xuemi_trigger_bool_exp[] | null;
   _not?: xuemi_trigger_bool_exp | null;
-  _or?: (xuemi_trigger_bool_exp | null)[] | null;
+  _or?: xuemi_trigger_bool_exp[] | null;
   assign_rules?: xuemi_assign_rule_bool_exp | null;
   condition?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
@@ -22320,7 +23186,7 @@ export interface xuemi_trigger_obj_rel_insert_input {
 }
 
 /**
- * on conflict condition type for table "xuemi.trigger"
+ * on_conflict condition type for table "xuemi.trigger"
  */
 export interface xuemi_trigger_on_conflict {
   constraint: xuemi_trigger_constraint;
