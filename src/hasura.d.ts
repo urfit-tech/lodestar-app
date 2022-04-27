@@ -1693,6 +1693,7 @@ export interface GET_MEMBER_ORDERS_order_log_order_products {
   product: GET_MEMBER_ORDERS_order_log_order_products_product;
   options: any | null;
   currency_id: string;
+  delivered_at: any | null;
 }
 
 export interface GET_MEMBER_ORDERS_order_log_order_discounts {
