@@ -28,7 +28,7 @@ const messages = defineMessages({
 })
 
 const StyledTitle = styled.div`
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   color: var(--gray-darker);
   font-size: 28px;
   font-weight: bold;
@@ -140,6 +140,7 @@ const BlogPostPage: React.VFC = () => {
               <span>{post?.views}</span>
             </StyledPostMeta>
             <StyledTitle>{post?.title}</StyledTitle>
+            <StyledPostMeta className="pb-3">{post.source}</StyledPostMeta>
             <div className="mb-5">
               {loadingPost ? (
                 <SkeletonText mt="1" noOfLines={4} spacing="4" />

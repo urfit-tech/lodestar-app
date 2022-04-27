@@ -230,6 +230,7 @@ export const usePost = (search: string) => {
         id
         code_name
         title
+        source
         description
         cover_url
         video_url
@@ -335,6 +336,7 @@ export const usePost = (search: string) => {
         id: dataPost.id,
         codeName: dataPost.code_name,
         title: dataPost.title,
+        source: dataPost.source,
         coverUrl: dataPost.cover_url,
         videoUrl: dataPost.video_url,
         abstract: dataPost.abstract,
