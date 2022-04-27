@@ -9,6 +9,8 @@ import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import ClassCouponBlock from '../components/ClassCouponBlock'
+import Responsive from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ProgramCollection from '../components/package/ProgramCollection'
@@ -16,8 +18,6 @@ import ProgramPackageBanner from '../components/package/ProgramPackageBanner'
 import ProgramPackagePlanCard from '../components/package/ProgramPackagePlanCard'
 import { ProgramDisplayedCard } from '../components/program/ProgramDisplayedCard'
 import { ProgramDisplayedListItem } from '../components/program/ProgramDisplayedListItem'
-import ClassCouponBlock from '../components/ClassCouponBlock'
-import Responsive from '../components/common/Responsive'
 import { desktopViewMixin } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { useEnrolledProgramIds } from '../hooks/program'
@@ -51,7 +51,7 @@ const ProgramPackagePage: React.VFC = () => {
   const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const { programPackageId } = useParams<{ programPackageId: string }>()
-  const { resourceCollection } = useResourceCollection([`${appId}:program_package:${programPackageId}`])
+  const { resourceCollection } = useResourceCollection([`${appId}:program_package:${programPackageId}`], true)
   const { currentMemberId } = useAuth()
   const { loadingProgramPackage, errorProgramPackage, programPackageIntroduction } =
     useProgramPackageIntroduction(programPackageId)

@@ -16,16 +16,8 @@ export const useMerchandiseCollection = (options?: {
     hasura.GET_MERCHANDISE_COLLECTIONVariables
   >(
     gql`
-      query GET_MERCHANDISE_COLLECTION($search: String, $isPhysical: Boolean, $ownerId: String) {
-        merchandise(
-          where: {
-            published_at: { _is_null: false }
-            member_shop: { published_at: { _is_null: false }, member_id: { _eq: $ownerId } }
-            title: { _like: $search }
-            is_physical: { _eq: $isPhysical }
-          }
-          order_by: { position: asc, published_at: desc, updated_at: desc }
-        ) {
+      query GET_MERCHANDISE_COLLECTION($condition: merchandise_bool_exp!) {
+        merchandise(where: $condition, order_by: { position: asc, published_at: desc, updated_at: desc }) {
           id
           title
           sold_at
@@ -56,9 +48,12 @@ export const useMerchandiseCollection = (options?: {
     `,
     {
       variables: {
-        search: options?.search ? `%${options?.search}%` : undefined,
-        isPhysical: options?.isPhysical,
-        ownerId: options?.ownerId,
+        condition: {
+          published_at: { _is_null: false },
+          member_shop: { published_at: { _is_null: false }, member_id: { _eq: options?.ownerId } },
+          title: { _like: options?.search ? `%${options.search}%` : undefined },
+          is_physical: { _eq: options?.isPhysical },
+        },
       },
     },
   )

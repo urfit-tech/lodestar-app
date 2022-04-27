@@ -29,23 +29,8 @@ export const usePublishedProgramCollection = (options?: {
     hasura.GET_PUBLISHED_PROGRAM_COLLECTIONVariables
   >(
     gql`
-      query GET_PUBLISHED_PROGRAM_COLLECTION(
-        $instructorId: String
-        $isPrivate: Boolean
-        $categoryId: String
-        $limit: Int
-      ) {
-        program(
-          where: {
-            published_at: { _lte: "now()" }
-            program_roles: { name: { _eq: "instructor" }, member_id: { _eq: $instructorId } }
-            is_private: { _eq: $isPrivate }
-            is_deleted: { _eq: false }
-            _or: [{ _not: { program_categories: {} } }, { program_categories: { category_id: { _eq: $categoryId } } }]
-          }
-          order_by: [{ position: asc }, { published_at: desc }]
-          limit: $limit
-        ) {
+      query GET_PUBLISHED_PROGRAM_COLLECTION($condition: program_bool_exp!, $limit: Int) {
+        program(where: $condition, order_by: [{ position: asc }, { published_at: desc }], limit: $limit) {
           id
           cover_url
           cover_mobile_url
@@ -113,9 +98,19 @@ export const usePublishedProgramCollection = (options?: {
     `,
     {
       variables: {
-        instructorId: options?.instructorId,
-        isPrivate: options?.isPrivate,
-        categoryId: options?.categoryId,
+        condition: {
+          published_at: { _lte: 'now()' },
+          is_deleted: { _eq: false },
+          program_roles: {
+            name: { _eq: 'instructor' },
+            member_id: { _eq: options?.instructorId },
+          },
+          is_private: { _eq: options?.isPrivate },
+          _or: [
+            { _not: { program_categories: {} } },
+            { program_categories: { category_id: { _eq: options?.categoryId } } },
+          ],
+        },
         limit: options?.limit,
       },
     },
@@ -768,10 +763,10 @@ export const useProgramEnrollmentAggregate = (programId: string, options?: Pick<
   >(
     gql`
       query GET_PROGRAM_ENROLLMENT_AGGREGATE($programId: uuid!) {
-        program_plan_enrollment_aggregate(where: { program_plan: { program_id: { _eq: $programId } } }) {
-          aggregate {
-            count
-          }
+        program_statistics(where: { program_id: { _eq: $programId } }) {
+          program_id
+          program_plan_enrolled_count
+          program_package_plan_enrolled_count
         }
       }
     `,
@@ -782,7 +777,10 @@ export const useProgramEnrollmentAggregate = (programId: string, options?: Pick<
       },
     },
   )
-  const enrolledCount = data?.program_plan_enrollment_aggregate?.aggregate?.count || 0
+  const enrolledCount =
+    sum(
+      data?.program_statistics.map(v => v.program_plan_enrolled_count + v.program_package_plan_enrolled_count) || [],
+    ) || 0
 
   return {
     loading,

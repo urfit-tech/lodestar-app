@@ -86,7 +86,7 @@ const ProgramContentPage: React.VFC = () => {
                   programContentId={programContentId}
                 >
                   <>
-                    <ProgramContentMenu program={program} />
+                    <ProgramContentMenu isScrollToTop program={program} />
 
                     <Button
                       isFullWidth

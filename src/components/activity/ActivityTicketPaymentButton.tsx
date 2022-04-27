@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import CartContext from '../../contexts/CartContext'
+import { notEmpty } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import CoinCheckoutModal from '../checkout/CoinCheckoutModal'
 
@@ -87,8 +88,12 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
             colorScheme="primary"
             isFullWidth
             onClick={() => {
-              resourceCollection[0] && tracking.addToCart(resourceCollection[0], { direct: true })
-              handleAddCart()?.then(() => history.push('/cart'))
+              const resource = resourceCollection.filter(notEmpty)[0]
+              resource && tracking.addToCart(resource, { direct: true })
+              handleAddCart()?.then(() => {
+                Number(settings['feature.cart.disable']) && resource && tracking.checkout([resource])
+                history.push('/cart?direct=true', { productUrn: resource.urn })
+              })
             }}
           >
             {ticketPrice === 0 ? formatMessage(commonMessages.button.join) : formatMessage(commonMessages.ui.purchase)}

@@ -154,7 +154,6 @@ const ProgramCustomContentBlock: React.VFC<{
             )}
         </StyledContentBlock>
       )}
-
       {children}
     </StyledProgramContentBlock>
   )

@@ -97,12 +97,14 @@ export const downloadFile = async (fileName: string, config: AxiosRequestConfig)
     method: 'GET',
     responseType: 'blob',
   }).then((response: any) => {
-    const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', fileName)
+    link.href = window.URL.createObjectURL(response.data)
+    link.download = fileName
+    link.target = '_blank'
     document.body.appendChild(link)
     link.click()
+    window.URL.revokeObjectURL(link.href)
+    document.body.removeChild(link)
   })
 
 export const commaFormatter = (value?: number | string | null) =>

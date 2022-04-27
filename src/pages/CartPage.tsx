@@ -9,6 +9,7 @@ import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import { groupBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useLocation } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import CartProductTableCard from '../components/checkout/CartProductTableCard'
 import CheckoutBlock from '../components/checkout/CheckoutBlock'
@@ -18,11 +19,12 @@ import { checkoutMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
 
 const CartPage: React.VFC = () => {
+  const location = useLocation<{ productUrn?: string }>()
   const { formatMessage } = useIntl()
   const [checkoutAlready, setCheckoutAlready] = useState(false)
   const [shopId] = useQueryParam('shopId', StringParam)
   const { cartProducts } = useContext(CartContext)
-  const { id: appId } = useApp()
+  const { id: appId, settings } = useApp()
   const { isAuthenticating, currentMemberId } = useAuth()
   const { loadingMember, member } = useMember(currentMemberId || '')
   const cartProductGroups = groupBy(cartProduct => cartProduct.shopId || '', cartProducts)
@@ -45,6 +47,8 @@ const CartPage: React.VFC = () => {
     options: { quantity: cartProductWithUrns.find(p => p.urn === resource.urn)?.options?.quantity },
   }))
 
+  const filteredResourceUrns = filteredResourceCollection.map(resource => resource.urn)
+
   if (isAuthenticating || loadingMember) {
     return (
       <DefaultLayout>
@@ -55,9 +59,12 @@ const CartPage: React.VFC = () => {
 
   return (
     <DefaultLayout>
-      {!checkoutAlready && filteredResourceCollection.length > 0 && (
-        <Tracking.Checkout resources={filteredResourceCollection} onCheckout={() => setCheckoutAlready(true)} />
-      )}
+      {!checkoutAlready &&
+        (location.state?.productUrn ? filteredResourceUrns.includes(location.state.productUrn) : true) &&
+        filteredResourceCollection.length > 0 &&
+        (!Number(settings['feature.cart.disable']) || !location.search.match('direct')) && (
+          <Tracking.Checkout resources={filteredResourceCollection} onCheckout={() => setCheckoutAlready(true)} />
+        )}
       {/* group cart products by product owner */}
       {shopIds.length > 1 && typeof shopId === 'undefined' && (
         <div className="container py-5">

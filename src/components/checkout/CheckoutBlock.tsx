@@ -60,6 +60,16 @@ const StyledApprovementBox = styled.div`
   padding-left: 46px;
 `
 
+const StyledLabel = styled.span`
+  font-weight: bold;
+`
+
+const StyledCheckbox = styled(Checkbox)`
+  .chakra-checkbox__control {
+    border: 1px solid #cdcece;
+  }
+`
+
 const CheckoutBlock: React.VFC<{
   member: MemberProps | null
   shopId: string
@@ -503,7 +513,9 @@ const CheckoutBlock: React.VFC<{
             isChecked={isApproved}
             onChange={() => setIsApproved(prev => !prev)}
           />
-          <span>{formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}</span>
+          <StyledLabel>
+            {formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}
+          </StyledLabel>
           <StyledApprovementBox
             className="mt-2"
             dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }}

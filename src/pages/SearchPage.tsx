@@ -623,7 +623,8 @@ const useSearchProductCollection = (
     {
       variables: {
         memberId: memberId || '',
-        title: filter?.title && filter.title.length > 1 ? `%${filter.title.replace(/_/g, '\\_')}%` : '',
+        title:
+          filter?.title && filter.title.length > 1 ? `%${filter.title.replace(/_/g, '\\_').split('').join('%')}%` : '',
         tag: filter?.tag || '',
       },
     },

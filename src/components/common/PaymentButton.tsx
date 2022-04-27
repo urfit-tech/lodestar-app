@@ -112,8 +112,12 @@ const PaymentButton: React.VFC<{
             colorScheme="primary"
             isFullWidth
             onClick={() => {
-              resourceCollection[0] && tracking.addToCart(resourceCollection[0], { direct: true })
-              handleAddCart()?.then(() => history.push('/cart'))
+              const resource = resourceCollection.filter(notEmpty)[0]
+              resource && tracking.addToCart(resource, { direct: true })
+              handleAddCart()?.then(() => {
+                Number(settings['feature.cart.disable']) && resource && tracking.checkout([resource])
+                history.push('/cart?direct=true', { productUrn: resource.urn })
+              })
             }}
           >
             {price === 0 ? formatMessage(commonMessages.button.join) : formatMessage(commonMessages.ui.purchase)}
