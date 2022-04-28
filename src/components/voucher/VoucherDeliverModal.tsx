@@ -137,12 +137,20 @@ const VoucherDeliverModal: React.VFC<{
           <FormLabel>{formatMessage(voucherMessages.VoucherDeliverModal.giftLink)}</FormLabel>
           <InputGroup>
             <Input type="link" value={redeemLink} isReadOnly />
-            <InputRightElement width="4.5rem">
+            <InputRightElement
+              width="4.5rem"
+              style={{
+                backgroundColor: '#fff',
+              }}
+            >
               <Button
                 variant="outline"
                 isDisabled={!redeemLink}
                 isLoading={redeemLinkChecking}
-                style={{ borderTopRightRadius: '0.375rem', borderBottomRightRadius: '0.375rem' }}
+                style={{
+                  borderTopRightRadius: '0.375rem',
+                  borderBottomRightRadius: '0.375rem',
+                }}
                 onClick={() => {
                   navigator.clipboard.writeText(redeemLink).then(() =>
                     toast({
