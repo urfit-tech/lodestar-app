@@ -14,6 +14,8 @@ const programFieldsFragment = gql`
   fragment programFields on program {
     id
     cover_url
+    cover_mobile_url
+    cover_thumbnail_url
     title
     abstract
     support_locales
@@ -157,6 +159,8 @@ const useLatestPrograms: () => {
       data?.latestUpdatedProgram.map(program => ({
         id: program.id,
         coverUrl: program.cover_url,
+        coverMobileUrl: program.cover_mobile_url,
+        coverThumbnailUrl: program.cover_thumbnail_url,
         title: program.title,
         abstract: program.abstract,
         supportLocales: program.support_locales,
@@ -256,6 +260,8 @@ const useAffordablePrograms: () => {
       data?.affordableProgram.map(program => ({
         id: program.id,
         coverUrl: program.cover_url,
+        coverMobileUrl: program.cover_mobile_url,
+        coverThumbnailUrl: program.cover_thumbnail_url,
         title: program.title,
         abstract: null,
         supportLocales: program.support_locales,
@@ -336,6 +342,8 @@ const useHottestTagPrograms: () => {
       data?.hottestTagProgram.map(program => ({
         id: program.id,
         coverUrl: program.cover_url,
+        coverMobileUrl: program.cover_mobile_url,
+        coverThumbnailUrl: program.cover_thumbnail_url,
         title: program.title,
         abstract: program.abstract,
         supportLocales: program.support_locales,
@@ -421,6 +429,8 @@ const useUnitCategoryPrograms: () => {
       data?.unitCategoryProgram.map(program => ({
         id: program.id,
         coverUrl: program.cover_url,
+        coverMobileUrl: program.cover_mobile_url,
+        coverThumbnailUrl: program.cover_thumbnail_url,
         title: program.title,
         abstract: program.abstract,
         supportLocales: program.support_locales,
@@ -483,7 +493,7 @@ const useSystematicCategoryPrograms: () => {
   const { loading, data } = useQuery<hasura.GET_SYSTEMATIC_CATEGORY_PROGRAMS>(
     gql`
       ${programFieldsFragment}
-      query GET_SYSTEMATIC_CATEGORY_PROGRAMS($currentTime: timestamptz!) {
+      query GET_SYSTEMATIC_CATEGORY_PROGRAMS {
         systematicCategoryProgram: program(
           where: {
             is_deleted: { _eq: false }
@@ -506,6 +516,8 @@ const useSystematicCategoryPrograms: () => {
       data?.systematicCategoryProgram.map(program => ({
         id: program.id,
         coverUrl: program.cover_url,
+        coverMobileUrl: program.cover_mobile_url,
+        coverThumbnailUrl: program.cover_thumbnail_url,
         title: program.title,
         abstract: program.abstract,
         supportLocales: program.support_locales,
