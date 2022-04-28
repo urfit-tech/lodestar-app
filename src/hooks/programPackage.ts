@@ -201,9 +201,9 @@ export const useEnrolledProgramPackage = (
     {
       variables: {
         memberId,
-        programPackageId: options?.programPackageId || {},
-        programPackagePlanId: options?.programPackagePlanId || {},
-        programId: options?.programId || {},
+        programPackageId: options?.programPackageId,
+        programPackagePlanId: options?.programPackagePlanId,
+        programId: options?.programId,
       },
     },
   )
