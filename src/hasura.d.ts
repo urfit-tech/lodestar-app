@@ -4,6 +4,43 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_SIGNUP_PROPERTY
+// ====================================================
+
+export interface GET_SIGNUP_PROPERTY_signup_property_property {
+  __typename: "property";
+  id: any;
+  name: string;
+}
+
+export interface GET_SIGNUP_PROPERTY_signup_property {
+  __typename: "signup_property";
+  id: any;
+  is_required: boolean;
+  options: any | null;
+  /**
+   * input, checkbox, radio, select, textarea
+   */
+  type: string;
+  /**
+   * An object relationship
+   */
+  property: GET_SIGNUP_PROPERTY_signup_property_property;
+}
+
+export interface GET_SIGNUP_PROPERTY {
+  /**
+   * fetch data from the table: "signup_property"
+   */
+  signup_property: GET_SIGNUP_PROPERTY_signup_property[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PRODUCT_INVENTORY
 // ====================================================
 
