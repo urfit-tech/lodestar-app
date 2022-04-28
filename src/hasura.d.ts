@@ -1693,6 +1693,7 @@ export interface GET_MEMBER_ORDERS_order_log_order_products {
   product: GET_MEMBER_ORDERS_order_log_order_products_product;
   options: any | null;
   currency_id: string;
+  delivered_at: any | null;
 }
 
 export interface GET_MEMBER_ORDERS_order_log_order_discounts {
@@ -3455,6 +3456,7 @@ export interface GET_POST_post {
   id: any;
   code_name: string | null;
   title: string;
+  source: string | null;
   description: string | null;
   cover_url: string | null;
   video_url: string | null;
@@ -3623,6 +3625,7 @@ export interface GET_POST_post_by_pk {
   id: any;
   code_name: string | null;
   title: string;
+  source: string | null;
   description: string | null;
   cover_url: string | null;
   video_url: string | null;
@@ -10087,6 +10090,7 @@ export interface PostParts {
   id: any;
   code_name: string | null;
   title: string;
+  source: string | null;
   description: string | null;
   cover_url: string | null;
   video_url: string | null;

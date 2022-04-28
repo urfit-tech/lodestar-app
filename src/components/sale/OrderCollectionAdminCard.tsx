@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
+import { LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText } from '@chakra-ui/react'
 import { message, Table, Tooltip } from 'antd'
 import { CardProps } from 'antd/lib/card'
@@ -85,6 +86,7 @@ type OrderRow = {
     }
     quantity: number
     currencyId: string
+    deliveredAt: Date | null
   }[]
   orderDiscounts: OrderDiscountProps[]
   key: string
@@ -162,25 +164,28 @@ const OrderCollectionAdminCard: React.VFC<
               )}
             </OrderProductCell>
             <OrderProductCell className="pr-4" grow>
-              {orderProduct.name}
-              {orderProduct.endedAt && orderProduct.product.type !== 'AppointmentPlan' && (
-                <span className="ml-2">
-                  ({moment(orderProduct.endedAt).format('YYYY-MM-DD HH:mm')}{' '}
-                  {formatMessage(commonMessages.term.expiredAt)})
-                </span>
-              )}
-              {orderProduct.startedAt && orderProduct.endedAt && orderProduct.product.type === 'AppointmentPlan' && (
-                <span>
-                  (
-                  {dateRangeFormatter({
-                    startedAt: orderProduct.startedAt,
-                    endedAt: orderProduct.endedAt,
-                    dateFormat: 'YYYY-MM-DD',
-                  })}
-                  )
-                </span>
-              )}
-              {orderProduct.quantity && <span>{` X${orderProduct.quantity} `}</span>}
+              <div className="d-flex align-items-center">
+                {!orderProduct.deliveredAt && <LockIcon className="mr-1" />}
+                {orderProduct.name}
+                {orderProduct.endedAt && orderProduct.product.type !== 'AppointmentPlan' && (
+                  <span className="ml-2">
+                    ({moment(orderProduct.endedAt).format('YYYY-MM-DD HH:mm')}{' '}
+                    {formatMessage(commonMessages.term.expiredAt)})
+                  </span>
+                )}
+                {orderProduct.startedAt && orderProduct.endedAt && orderProduct.product.type === 'AppointmentPlan' && (
+                  <span>
+                    (
+                    {dateRangeFormatter({
+                      startedAt: orderProduct.startedAt,
+                      endedAt: orderProduct.endedAt,
+                      dateFormat: 'YYYY-MM-DD',
+                    })}
+                    )
+                  </span>
+                )}
+                {orderProduct.quantity && <span>{` X${orderProduct.quantity} `}</span>}
+              </div>
             </OrderProductCell>
             <OrderProductCell className="text-right">
               <PriceLabel currencyId={orderProduct.currencyId} listPrice={orderProduct.price} />
@@ -292,6 +297,7 @@ const useOrderLogCollection = (memberId: string) => {
             }
             options
             currency_id
+            delivered_at
           }
           order_discounts {
             id
@@ -333,6 +339,7 @@ const useOrderLogCollection = (memberId: string) => {
           },
           quantity: orderProduct.options?.quantity,
           currencyId: orderProduct.currency_id,
+          deliveredAt: orderProduct.delivered_at,
         })),
       orderDiscounts: orderLog.order_discounts.map(orderDiscount => ({
         id: orderDiscount.id,
