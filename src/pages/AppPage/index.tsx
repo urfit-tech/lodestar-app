@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import MessengerChat from '../../components/common/MessengerChat'
 import PageHelmet from '../../components/common/PageHelmet'
@@ -111,10 +111,15 @@ const sectionConverter = {
 
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
+  const { settings } = useApp()
   const { loadingAppPage, errorAppPage, appPage } = usePage(location.pathname)
 
   if (loadingAppPage) {
     return <LoadingPage />
+  }
+
+  if (location.pathname !== '/repairing' && settings['repairing'] === '1') {
+    return <Redirect to="/repairing" />
   }
   return (
     <>
