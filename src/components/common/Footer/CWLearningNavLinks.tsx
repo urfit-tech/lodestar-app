@@ -1,6 +1,8 @@
+import { Icon } from '@chakra-ui/icons'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import styled from 'styled-components'
-import { Icon } from '@chakra-ui/icons'
 import { ReactComponent as FacebookIcon } from '../../../images/facebook-icon.svg'
 
 const NavLinksContainer = styled.section`
@@ -36,21 +38,42 @@ const NavLinksList = styled.li`
     corsor: pointer;
     transition: 0.2s;
     &:hover {
-      color: #019D96;
+      color: #019d96;
       svg {
-        background: #019D96;
+        background: #019d96;
       }
     }
     svg {
       margin: -2px 5px 0 0;
       background: #9b9b9b;
-      color: #FFFFFF;
+      color: #ffffff;
       transition: 0.2s;
     }
   }
 `
 
 export const CWLearningNavLinks: React.VFC = () => {
+  const { isAuthenticated } = useAuth()
+  const { settings } = useApp()
+
+  const getOauthLink = () => {
+    let oauthLink = ''
+
+    if (settings['auth.parenting.client_id'] && settings['auth.email.disabled']) {
+      const state = btoa(JSON.stringify({ provider: 'parenting', redirect: window.location.pathname }))
+      const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/parenting`)
+      oauthLink = `https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id=${settings['auth.parenting.client_id']}&redirect_uri=${redirectUri}&state=${state}&scope=`
+    } else if (settings['auth.cw.client_id'] && settings['auth.email.disabled']) {
+      const state = btoa(JSON.stringify({ provider: 'cw', redirect: window.location.pathname }))
+      const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/cw`)
+      const endpoint = settings[`auth.cw.endpoint`] || 'https://dev-account.cwg.tw'
+      oauthLink = `${endpoint}/oauth/v1.0/authorize?response_type=code&client_id=${settings['auth.cw.client_id']}&redirect_uri=${redirectUri}&state=${state}&scope=social`
+    }
+    return oauthLink
+  }
+
+  const oauthLink = getOauthLink()
+
   const linksConfig = [
     {
       groupName: '課程',
@@ -60,7 +83,7 @@ export const CWLearningNavLinks: React.VFC = () => {
         { name: '套裝優惠', url: '/packages', icon: null },
         { name: '空中講堂', url: '/podcast-albums', icon: null },
         { name: '大師文選', url: '/blog', icon: null },
-      ]
+      ],
     },
     {
       groupName: '學習',
@@ -73,58 +96,49 @@ export const CWLearningNavLinks: React.VFC = () => {
         { name: '溝通表達', url: '/programs?active=8891dacc-a441-4e5b-945e-4c2322405552', icon: null },
         { name: '身心健康', url: '/programs?active=c16b9b29-45d0-4842-9977-467f9605edfb', icon: null },
         { name: '親職教育', url: '/programs?active=33185173-f877-451d-b013-4a04ea145c8c', icon: null },
-      ]
+      ],
     },
     {
       groupName: '服務',
       links: [
         { name: '關於天下學習', url: '/about', icon: null },
-        { name: '兌換課程', url: '/settings/voucher', icon: null },
+        { name: '兌換課程', url: isAuthenticated ? '/settings/voucher' : oauthLink, icon: null },
         { name: '企業方案', url: 'https://www.leadercampus.com.tw/', icon: null },
         { name: '使用者條款', url: '/terms', icon: null },
         { name: '隱私權政策', url: 'https://member.cwg.tw/privacy-policy', icon: null },
         { name: '會員服務條款', url: '/rules', icon: null },
         { name: '課程FAQ', url: '/faq', icon: null },
         { name: '加入我們', url: 'https://careers.cwg.tw/', icon: null },
-      ]
+      ],
     },
     {
       groupName: '社群',
-      links: [
-        { name: 'Facebook', url: 'https://www.facebook.com/cwlearning.com.tw', icon: FacebookIcon },
-      ]
+      links: [{ name: 'Facebook', url: 'https://www.facebook.com/cwlearning.com.tw', icon: FacebookIcon }],
     },
   ]
 
   return (
     <div className="col-12">
       <NavLinksContainer>
-        {
-          linksConfig.map(item => {
-            return (
-              <NavGroup>
-                <LinksGroupTitle>{item.groupName}</LinksGroupTitle>
-                <LinkGroup>
-                  {
-                    item.links.map(link => {
-                      return (
-                        <NavLinksList>
-                          <a href={link.url} target={link.url.includes('https') ? '_blank' : '_self'}>
-                            {
-                              link.icon &&
-                              <Icon as={link.icon} />
-                            }
-                            {link.name}
-                          </a>
-                        </NavLinksList>
-                      )
-                    })
-                  }
-                </LinkGroup>
-              </NavGroup>
-            )
-          })
-        }
+        {linksConfig.map(item => {
+          return (
+            <NavGroup>
+              <LinksGroupTitle>{item.groupName}</LinksGroupTitle>
+              <LinkGroup>
+                {item.links.map(link => {
+                  return (
+                    <NavLinksList>
+                      <a href={link.url} target={link.url.includes('https') ? '_blank' : '_self'}>
+                        {link.icon && <Icon as={link.icon} />}
+                        {link.name}
+                      </a>
+                    </NavLinksList>
+                  )
+                })}
+              </LinkGroup>
+            </NavGroup>
+          )
+        })}
       </NavLinksContainer>
     </div>
   )
