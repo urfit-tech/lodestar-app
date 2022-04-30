@@ -41,8 +41,8 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     GET_PRODUCT_SIMPLE,
     {
       variables: {
-        targetId: targetId || {},
-        startedAt: startedAt || {},
+        targetId: targetId,
+        startedAt: startedAt,
       },
     },
   )
