@@ -257,7 +257,7 @@ const ProgramContentPlayer: React.VFC<
                     player.volume(initialVolume)
                     player.playbackRate(initialPlaybackRate)
                   }}
-                  onDurationChange={player => {
+                  onLoadedMetadata={player => {
                     const duration = player.duration()
                     const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
                     player.currentTime(duration * progress)
