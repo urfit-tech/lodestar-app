@@ -105,7 +105,7 @@ const PracticeDescriptionBlock: React.VFC<{
     const file = attachments[fileIndex]
     const fileKey = `attachments/${file.id}`
     try {
-      const fileLink = await getFileDownloadableLink(fileKey, authToken)
+      const fileLink = file.data?.url || (await getFileDownloadableLink(fileKey, authToken))
       const fileRequest = new Request(fileLink)
       const response = await fetch(fileRequest)
       if (response.url) {
