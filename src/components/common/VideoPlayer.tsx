@@ -1,10 +1,9 @@
 import { Skeleton } from '@chakra-ui/skeleton'
-import '@samueleastdev/videojs-dash-hls-bitrate-switcher/dist/videojs-dash-hls-bitrate-switcher.css'
-import '@samueleastdev/videojs-dash-hls-bitrate-switcher/dist/videojs-dash-hls-bitrate-switcher.min.js'
 import React, { useContext, useRef } from 'react'
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
 import 'video.js/dist/video-js.min.css'
-import 'videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js'
+import 'videojs-contrib-quality-levels'
+import 'videojs-hls-quality-selector'
 import LocaleContext from '../../contexts/LocaleContext'
 
 type VideoJsPlayerProps = {
@@ -39,6 +38,9 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   if (props.error) return <div>{props.error}</div>
 
   const videoOptions: VideoJsPlayerOptions = {
+    html5: {
+      nativeTextTracks: false,
+    },
     language: currentLocale,
     playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
     poster: props.poster,
@@ -46,11 +48,36 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
     responsive: true,
     fluid: true,
     plugins: {
-      dashHlsBitrateSwitcher: {
-        showInfo: false,
+      hlsQualitySelector: {
+        displayCurrentQuality: true,
       },
     },
     sources: props.source ? [props.source] : [],
+    textTrackSettings: {
+      persistTextTrackSettings: true,
+    },
+    userActions: {
+      hotkeys: function (event) {
+        event.preventDefault()
+        // `this` is the player in this context
+        const player = this as VideoJsPlayer
+
+        switch (event.which) {
+          // whitespace
+          case 32:
+            player.paused() ? player.play() : player.pause()
+            break
+          // left arrow
+          case 37:
+            player.currentTime(player.currentTime() - 10)
+            break
+          // right arrow
+          case 39:
+            player.currentTime(player.currentTime() + 10)
+            break
+        }
+      },
+    },
   }
   return (
     <div>
