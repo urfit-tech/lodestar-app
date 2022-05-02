@@ -5,7 +5,8 @@ import { useIntl } from 'react-intl'
 import { useMediaQuery } from 'react-responsive'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { BREAK_POINT } from '../../components/common/Responsive'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
+import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import FundingCommentsPane from '../../components/project/FundingCommentsPane'
 import FundingContentsPane from '../../components/project/FundingContentsPane'
@@ -154,6 +155,12 @@ const FundingPage: React.VFC<ProjectProps> = ({
         </div>
       </StyledCover>
 
+      <Responsive.Default>
+        <div className="col-12">
+          <ClassCouponBlock />
+        </div>
+      </Responsive.Default>
+
       <div ref={tabRef}>
         <StyledTabs
           activeKey={activeKey || 'introduction'}
@@ -166,9 +173,11 @@ const FundingPage: React.VFC<ProjectProps> = ({
                   {formatMessage(commonMessages.button.cutoff)}
                 </Button>
               ) : (
-                <Button type="primary" size="large" block onClick={() => handleTabsChange('plans')}>
-                  {formatMessage(commonMessages.button.pledge)}
-                </Button>
+                <Responsive.Default>
+                  <Button type="primary" size="large" block onClick={() => handleTabsChange('plans')}>
+                    {formatMessage(commonMessages.button.pledge)}
+                  </Button>
+                </Responsive.Default>
               )}
             </StyledSupportButtonWrapper>
           }

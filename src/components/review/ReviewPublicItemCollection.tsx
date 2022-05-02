@@ -16,6 +16,7 @@ const ReviewPublicItemCollection: React.VFC<{
 }> = ({ path, appId, targetId }) => {
   const { formatMessage } = useIntl()
   const [loading, setLoading] = useState(false)
+
   const { loadingReviews, publicReviews, loadMoreReviews } = useReviewPublicCollection(path, appId)
 
   if (loadingReviews) {
@@ -33,6 +34,7 @@ const ReviewPublicItemCollection: React.VFC<{
         {publicReviews.map(v => (
           <div key={v.id} className="review-item">
             <ReviewItem
+              likedCount={v.reactionCount}
               id={v.id}
               memberId={v.memberId}
               score={v.score}
@@ -89,6 +91,11 @@ const useReviewPublicCollection = (path: string, appId: string) => {
           content
           created_at
           updated_at
+          review_reactions_aggregate {
+            aggregate {
+              count
+            }
+          }
           review_replies(order_by: { created_at: desc }) {
             id
             member_id
@@ -106,7 +113,9 @@ const useReviewPublicCollection = (path: string, appId: string) => {
       },
     },
   )
-  const publicReviews: ReviewProps[] =
+  const publicReviews: (ReviewProps & {
+    reactionCount: number
+  })[] =
     data?.review_public.map(v => ({
       id: v.id,
       memberId: v.member_id,
@@ -115,6 +124,7 @@ const useReviewPublicCollection = (path: string, appId: string) => {
       content: v.content,
       createdAt: new Date(v.created_at),
       updatedAt: new Date(v.updated_at),
+      reactionCount: v.review_reactions_aggregate.aggregate?.count || 0,
       reviewReplies: v?.review_replies.map(v => ({
         id: v.id,
         reviewReplyMemberId: v.member_id,

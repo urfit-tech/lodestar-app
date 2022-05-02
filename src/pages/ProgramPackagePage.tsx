@@ -9,6 +9,8 @@ import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import ClassCouponBlock from '../components/ClassCouponBlock'
+import Responsive from '../components/common/Responsive'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import ProgramCollection from '../components/package/ProgramCollection'
@@ -49,7 +51,7 @@ const ProgramPackagePage: React.VFC = () => {
   const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const { programPackageId } = useParams<{ programPackageId: string }>()
-  const { resourceCollection } = useResourceCollection([`${appId}:program_package:${programPackageId}`])
+  const { resourceCollection } = useResourceCollection([`${appId}:program_package:${programPackageId}`], true)
   const { currentMemberId } = useAuth()
   const { loadingProgramPackage, errorProgramPackage, programPackageIntroduction } =
     useProgramPackageIntroduction(programPackageId)
@@ -106,33 +108,47 @@ const ProgramPackagePage: React.VFC = () => {
           {programPackageIntroduction.programPackagePlans.length > 0 ? (
             <>
               <div className="col-12 col-lg-8 pt-5">
-                <StyledTitle className="mb-4">{formatMessage(messages.introduction)}</StyledTitle>
-                <div className="mb-5">
-                  <BraftContent>{programPackageIntroduction.description}</BraftContent>
-                </div>
+                <Responsive.Default>
+                  <ClassCouponBlock />
+                </Responsive.Default>
 
-                <StyledTitle className="mb-4">{formatMessage(messages.includedItems)}</StyledTitle>
+                <StyledTitle className="mb-4">套裝內課程</StyledTitle>
                 <ProgramCollection
                   programs={programPackageIntroduction.includedPrograms}
                   renderItem={({ displayType, program }) => {
                     const isEnrolled = enrolledProgramIds.includes(program.id)
                     return displayType === 'grid' ? (
                       <div className="col-12 col-md-6 col-lg-6 mb-4">
-                        <Link to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`}>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`}
+                        >
                           <ProgramDisplayedCard key={program.id} program={program} />
                         </Link>
                       </div>
                     ) : displayType === 'list' ? (
                       <div className="col-12">
-                        <Link to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`}>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`}
+                        >
                           <ProgramDisplayedListItem key={program.id} program={program} />
                         </Link>
                       </div>
                     ) : null
                   }}
                 />
+                <StyledTitle className="mb-4">{formatMessage(messages.introduction)}</StyledTitle>
+                <div className="mb-5">
+                  <BraftContent>{programPackageIntroduction.description}</BraftContent>
+                </div>
               </div>
               <div ref={planBlockRef} className="col-12 col-lg-4 pt-5">
+                <Responsive.Desktop>
+                  <ClassCouponBlock />
+                </Responsive.Desktop>
                 {programPackageIntroduction.programPackagePlans.map(programPackagePlan => (
                   <div key={programPackagePlan.id} className="mb-4">
                     <ProgramPackagePlanCard

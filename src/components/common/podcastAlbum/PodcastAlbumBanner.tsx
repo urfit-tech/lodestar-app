@@ -2,7 +2,6 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { podcastAlbumMessages } from '../../../helpers/translation'
 import EmptyCover from '../../../images/empty-cover.png'
 import { PodcastAlbum } from '../../../types/podcastAlbum'
 import BlurredBanner from '../../common/BlurredBanner'
@@ -64,7 +63,10 @@ const PodcastAlbumBanner: React.VFC<{
   const { formatMessage } = useIntl()
 
   return (
-    <BlurredBanner coverUrl={podcastAlbum.coverUrl || EmptyCover} width={{ desktop: '240px', mobile: '360px' }}>
+    <BlurredBanner
+      coverUrl={{ desktopUrl: podcastAlbum.coverUrl || EmptyCover }}
+      width={{ desktop: '240px', mobile: '360px' }}
+    >
       <StyledTitleBlockWrapper>
         <StyledTitleBlock className="container d-lg-flex">
           <Responsive.Desktop>
@@ -72,9 +74,9 @@ const PodcastAlbumBanner: React.VFC<{
           </Responsive.Desktop>
           <div>
             <StyledTitle className="text-center mb-2">{podcastAlbum.title}</StyledTitle>
-            <StyledSectionCount className="mb-4">{`${formatMessage(podcastAlbumMessages.text.sectionCount, {
+            {/* <StyledSectionCount className="mb-4">{`${formatMessage(podcastAlbumMessages.text.sectionCount, {
               sectionCount: podcastAlbum.podcastPrograms.length,
-            })}`}</StyledSectionCount>
+            })}`}</StyledSectionCount> */}
             <StyledCategories>
               {podcastAlbum.categories.map(category => (
                 <StyledLink key={category.id} className="mr-2" to={`/podcast-albums?active=${category.id}`}>

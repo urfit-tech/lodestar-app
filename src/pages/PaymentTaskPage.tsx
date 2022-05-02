@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { StyledContainer } from '../components/layout/DefaultLayout.styled'
+import { StyledContainer } from '../components/layout/DefaultLayout/DefaultLayout.styled'
 import { commonMessages } from '../helpers/translation'
 import { useTask } from '../hooks/task'
 import { ReactComponent as ErrorIcon } from '../images/error.svg'
@@ -43,7 +43,7 @@ const PaymentTaskPage: React.VFC = () => {
   const taskResult = task?.returnvalue
   useEffect(() => {
     if (taskResult) {
-      tracking.addPaymentInfo()
+      tracking.addPaymentInfo({ gateway: taskResult.gateway, method: taskResult.method })
       if (taskResult.payForm.url) {
         window.location.assign(taskResult.payForm.url)
       } else if (taskResult.payForm.html) {

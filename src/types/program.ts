@@ -15,11 +15,15 @@ export type CurrencyProps = {
 export type ProgramBriefProps = {
   id: string
   coverUrl: string | null
+  coverMobileUrl: string | null
+  coverThumbnailUrl: string | null
   title: string
   abstract: string | null
   publishedAt: Date | null
   isPrivate: boolean
   totalDuration?: number
+  isEnrolledCountVisible?: boolean
+  editors?: string[]
 }
 
 export type Program = ProgramBriefProps & {

@@ -181,8 +181,8 @@ const TeacherSection: React.FC<{
             },
           }}
         >
-          {teachers.map(teacher => (
-            <div>
+          {teachers.map((teacher, idx) => (
+            <div key={idx}>
               <div className="frame mx-auto">
                 <img src={teacher.avatarSrc} alt={teacher.name} />
               </div>

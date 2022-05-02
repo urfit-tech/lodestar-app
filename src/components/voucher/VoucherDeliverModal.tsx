@@ -5,21 +5,25 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  InputGroup,
+  InputRightElement,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
+import { Divider } from 'antd'
 import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { Input } from '../../components/common/CommonForm'
 import CommonModal from '../../components/common/CommonModal'
 import types from '../../hasura'
-import { handleError } from '../../helpers'
-import { commonMessages } from '../../helpers/translation'
+import { getRedeemLink, handleError } from '../../helpers'
+import { codeMessages, commonMessages } from '../../helpers/translation'
 import { useMemberValidation } from '../../hooks/common'
+import voucherMessages from './translation'
 
 const StyledTitle = styled.h3`
   ${MultiLineTruncationMixin}
@@ -29,24 +33,33 @@ const StyledTitle = styled.h3`
   letter-spacing: 0.2px;
   color: var(--gray-darker);
 `
+const StyledDivider = styled(Divider)`
+  && {
+    padding: 0.5rem;
 
-const messages = defineMessages({
-  transfer: { id: 'common.text.transfer', defaultMessage: '轉贈' },
-})
+    .ant-divider-inner-text {
+      color: #9b9b9b;
+      font-size: 12px;
+    }
+  }
+`
 
 const VoucherDeliverModal: React.VFC<{
   title: string
   voucherId: string
   onRefetch?: (() => void) | null
 }> = ({ title, voucherId, onRefetch }) => {
+  const toast = useToast()
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { currentMemberId, authToken } = useAuth()
   const [email, setEmail] = useState('')
-  const { currentMemberId } = useAuth()
+  const [redeemLinkChecking, setRedeemLinkChecking] = useState(false)
+  const [redeemLink, setRedeemLink] = useState('')
+
   const { memberId, validateStatus } = useMemberValidation(email)
   const memberStatus = memberId === currentMemberId ? 'error' : validateStatus
 
-  const toast = useToast()
   const [updateVoucherMember] = useMutation<types.UPDATE_VOUCHER_MEMBER, types.UPDATE_VOUCHER_MEMBERVariables>(gql`
     mutation UPDATE_VOUCHER_MEMBER($voucherId: uuid!, $memberId: String!) {
       update_voucher_by_pk(pk_columns: { id: $voucherId }, _set: { member_id: $memberId }) {
@@ -54,6 +67,23 @@ const VoucherDeliverModal: React.VFC<{
       }
     }
   `)
+
+  useEffect(() => {
+    if (!voucherId || !isOpen) {
+      return
+    }
+    setRedeemLinkChecking(true)
+    getRedeemLink('Voucher', voucherId, authToken)
+      .then(({ data: { code, message, result } }) => {
+        if (code === 'SUCCESS') {
+          setRedeemLink(result.link)
+        } else {
+          throw new Error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+        }
+      })
+      .catch(handleError)
+      .finally(() => setRedeemLinkChecking(false))
+  }, [authToken, voucherId, isOpen, formatMessage])
 
   const handleSubmit = () => {
     if (memberId) {
@@ -80,7 +110,7 @@ const VoucherDeliverModal: React.VFC<{
   return (
     <>
       <Button className="mr-2" variant="outline" onClick={onOpen}>
-        {formatMessage(messages.transfer)}
+        {formatMessage(voucherMessages.VoucherDeliverModal.transfer)}
       </Button>
       <CommonModal
         isOpen={isOpen}
@@ -103,6 +133,41 @@ const VoucherDeliverModal: React.VFC<{
         closeOnOverlayClick={false}
       >
         <StyledTitle className="mb-4">{title}</StyledTitle>
+        <FormControl mb="5">
+          <FormLabel>{formatMessage(voucherMessages.VoucherDeliverModal.giftLink)}</FormLabel>
+          <InputGroup>
+            <Input type="link" value={redeemLink} isReadOnly />
+            <InputRightElement
+              width="4.5rem"
+              style={{
+                backgroundColor: '#fff',
+              }}
+            >
+              <Button
+                variant="outline"
+                isDisabled={!redeemLink}
+                isLoading={redeemLinkChecking}
+                style={{
+                  borderTopRightRadius: '0.375rem',
+                  borderBottomRightRadius: '0.375rem',
+                }}
+                onClick={() => {
+                  navigator.clipboard.writeText(redeemLink).then(() =>
+                    toast({
+                      title: 'copied',
+                      status: 'success',
+                      duration: 1500,
+                      position: 'top',
+                    }),
+                  )
+                }}
+              >
+                {formatMessage(voucherMessages.VoucherDeliverModal.copyLink)}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+        </FormControl>
+        <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
         <FormControl isInvalid={memberId === currentMemberId || validateStatus === 'error'}>
           <FormLabel>{formatMessage(commonMessages.label.targetPartner)}</FormLabel>
           <Input

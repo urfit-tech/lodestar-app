@@ -26,7 +26,8 @@ const StyledPlayer = styled.div`
 `
 
 const StyledPictureCover = styled.div<{ pictureUrl: string }>`
-  height: 26rem;
+  height: 670px;
+  max-height: 67vw;
   background-image: url(${props => props.pictureUrl});
   background-size: cover;
   background-position: center;

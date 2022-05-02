@@ -1,17 +1,20 @@
-import { Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
+import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
+import { defineMessage } from '@formatjs/intl'
 import { Form, message, Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
 import CheckoutGroupBuyingForm, {
   StyledBlockTitle,
   StyledListItem,
 } from 'lodestar-app-element/src/components/forms/CheckoutGroupBuyingForm'
+import ContactInfoInput from 'lodestar-app-element/src/components/inputs/ContactInfoInput'
 import InvoiceInput, { validateInvoice } from 'lodestar-app-element/src/components/inputs/InvoiceInput'
 import PaymentSelector from 'lodestar-app-element/src/components/selectors/PaymentSelector'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { validateContactInfo } from 'lodestar-app-element/src/helpers'
 import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
 import { prop, sum } from 'ramda'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -49,6 +52,20 @@ const StyledInputWrapper = styled.div`
   }
 `
 
+const StyledApprovementBox = styled.div`
+  padding-left: 46px;
+`
+
+const StyledLabel = styled.span`
+  font-weight: bold;
+`
+
+const StyledCheckbox = styled(Checkbox)`
+  .chakra-checkbox__control {
+    border: 1px solid #cdcece;
+  }
+`
+
 const CheckoutBlock: React.VFC<{
   member: MemberProps | null
   shopId: string
@@ -71,6 +88,11 @@ const CheckoutBlock: React.VFC<{
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
+  const [isApproved, setIsApproved] = useState(settings['checkout.approvement'] !== 'true')
+  useEffect(() => {
+    setIsApproved(settings['checkout.approvement'] !== 'true')
+  }, [settings])
+
   const updateMemberMetadata = useUpdateMemberMetadata()
   const toast = useToast()
 
@@ -83,7 +105,7 @@ const CheckoutBlock: React.VFC<{
   } = useProductInventory(cartProducts)
 
   // payment information
-  const cachedPaymentInfor: {
+  const cachedPaymentInfo: {
     shipping: ShippingProps
     invoice: InvoiceProps
     payment: PaymentProps
@@ -112,27 +134,28 @@ const CheckoutBlock: React.VFC<{
     const cachedInvoice = localStorage.getItem('kolable.cart.invoice')
     const cachedPayment = localStorage.getItem('kolable.cart.payment.perpetual')
 
-    cachedPaymentInfor.shipping = cachedShipping
+    cachedPaymentInfo.shipping = cachedShipping
       ? (JSON.parse(cachedShipping) as ShippingProps)
       : {
-          ...cachedPaymentInfor.shipping,
+          ...cachedPaymentInfo.shipping,
           ...member?.shipping,
         }
 
-    cachedPaymentInfor.invoice = cachedInvoice
+    cachedPaymentInfo.invoice = cachedInvoice
       ? (JSON.parse(cachedInvoice).value as InvoiceProps)
       : {
-          ...cachedPaymentInfor.invoice,
+          ...cachedPaymentInfo.invoice,
           ...member?.invoice,
         }
-    cachedPaymentInfor.payment = cachedPayment
+    cachedPaymentInfo.payment = cachedPayment
       ? (JSON.parse(cachedPayment) as PaymentProps)
       : {
-          ...cachedPaymentInfor.payment,
+          ...cachedPaymentInfo.payment,
           ...member?.payment,
         }
   } catch {}
 
+  const contactInfoRef = useRef<HTMLDivElement | null>(null)
   const cartRef = useRef<HTMLDivElement | null>(null)
   const shippingRef = useRef<HTMLDivElement | null>(null)
   const invoiceRef = useRef<HTMLDivElement | null>(null)
@@ -140,9 +163,10 @@ const CheckoutBlock: React.VFC<{
   const paymentMethodRef = useRef<HTMLDivElement | null>(null)
   const groupBuyingRef = useRef<HTMLDivElement | null>(null)
 
-  const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfor.shipping)
-  const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfor.invoice)
+  const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfo.shipping)
+  const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfo.invoice)
   const [payment, setPayment] = useState<PaymentProps | null>(null)
+  const [errorContactFields, setErrorContactFields] = useState<string[]>([])
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
   const [groupBuying, setGroupBuying] = useState<{
@@ -197,6 +221,16 @@ const CheckoutBlock: React.VFC<{
     }
 
     !isValidating && setIsValidating(true)
+
+    if (settings['feature.contact_info.enabled'] === '1' && totalPrice === 0) {
+      const errorFields = validateContactInfo(invoice)
+      if (errorFields.length !== 0) {
+        setErrorContactFields(errorFields)
+        contactInfoRef.current?.scrollIntoView({ behavior: 'smooth' })
+        return
+      }
+    }
+
     let isValidShipping = false
     let isValidInvoice = false
     if (isFieldsValidate) {
@@ -313,7 +347,6 @@ const CheckoutBlock: React.VFC<{
         <Icon as={AiOutlineShoppingCart} />
         <span className="ml-2">{formatMessage(checkoutMessages.title.cart)}</span>
       </Typography.Title>
-
       <div ref={cartRef}>
         <CartProductTableCard className="mb-3" shopId={shopId} cartProducts={cartProducts} />
       </div>
@@ -346,6 +379,15 @@ const CheckoutBlock: React.VFC<{
           </div>
         </AdminCard>
       )}
+
+      {!orderPlacing && !orderChecking && totalPrice === 0 && settings['feature.contact_info.enabled'] === '1' && (
+        <Box ref={contactInfoRef} mb="3">
+          <AdminCard>
+            <ContactInfoInput value={invoice} onChange={v => setInvoice(v)} errorContactFields={errorContactFields} />
+          </AdminCard>
+        </Box>
+      )}
+
       {hasPhysicalProduct && (
         <div ref={shippingRef} className="mb-3">
           <AdminCard>
@@ -358,7 +400,6 @@ const CheckoutBlock: React.VFC<{
           </AdminCard>
         </div>
       )}
-
       {totalPrice > 0 && (
         <>
           <div className="mb-3">
@@ -394,7 +435,6 @@ const CheckoutBlock: React.VFC<{
           <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
         </AdminCard>
       )}
-
       {cartProducts.length > 0 && totalPrice === 0 && enabledModules.referrer && (
         <AdminCard className="mb-3">
           <div className="row" ref={referrerRef}>
@@ -460,15 +500,32 @@ const CheckoutBlock: React.VFC<{
           </div>
         </AdminCard>
       )}
-
+      {settings['checkout.approvement'] === 'true' && (
+        <AdminCard className="mb-3">
+          <StyledCheckbox
+            className="mr-2"
+            size="lg"
+            colorScheme="primary"
+            isChecked={isApproved}
+            onChange={() => setIsApproved(prev => !prev)}
+          />
+          <StyledLabel>
+            {formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}
+          </StyledLabel>
+          <StyledApprovementBox
+            className="mt-2"
+            dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }}
+          />
+        </AdminCard>
+      )}
       {renderTerms && (
         <div className="mb-3">
           <AdminCard>{renderTerms()}</AdminCard>
         </div>
       )}
-
       <div className="mb-3">
         <CheckoutCard
+          isDisabled={isApproved === false}
           check={check}
           cartProducts={cartProducts}
           discountId={discountId}

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { QueryHookOptions, useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniq } from 'ramda'
@@ -29,25 +29,12 @@ export const usePublishedProgramCollection = (options?: {
     hasura.GET_PUBLISHED_PROGRAM_COLLECTIONVariables
   >(
     gql`
-      query GET_PUBLISHED_PROGRAM_COLLECTION(
-        $instructorId: String
-        $isPrivate: Boolean
-        $categoryId: String
-        $limit: Int
-      ) {
-        program(
-          where: {
-            published_at: { _lte: "now()" }
-            program_roles: { name: { _eq: "instructor" }, member_id: { _eq: $instructorId } }
-            is_private: { _eq: $isPrivate }
-            is_deleted: { _eq: false }
-            _or: [{ _not: { program_categories: {} } }, { program_categories: { category_id: { _eq: $categoryId } } }]
-          }
-          order_by: [{ position: asc }, { published_at: desc }]
-          limit: $limit
-        ) {
+      query GET_PUBLISHED_PROGRAM_COLLECTION($condition: program_bool_exp!, $limit: Int) {
+        program(where: $condition, order_by: [{ position: asc }, { published_at: desc }], limit: $limit) {
           id
           cover_url
+          cover_mobile_url
+          cover_thumbnail_url
           title
           abstract
           support_locales
@@ -55,7 +42,7 @@ export const usePublishedProgramCollection = (options?: {
           is_subscription
           is_sold_out
           is_private
-
+          is_enrolled_count_visible
           list_price
           sale_price
           sold_at
@@ -111,9 +98,19 @@ export const usePublishedProgramCollection = (options?: {
     `,
     {
       variables: {
-        instructorId: options?.instructorId,
-        isPrivate: options?.isPrivate,
-        categoryId: options?.categoryId,
+        condition: {
+          published_at: { _lte: 'now()' },
+          is_deleted: { _eq: false },
+          program_roles: {
+            name: { _eq: 'instructor' },
+            member_id: { _eq: options?.instructorId },
+          },
+          is_private: { _eq: options?.isPrivate },
+          _or: [
+            { _not: { program_categories: {} } },
+            { program_categories: { category_id: { _eq: options?.categoryId } } },
+          ],
+        },
         limit: options?.limit,
       },
     },
@@ -135,6 +132,8 @@ export const usePublishedProgramCollection = (options?: {
           .map(program => ({
             id: program.id,
             coverUrl: program.cover_url,
+            coverMobileUrl: program.cover_mobile_url,
+            coverThumbnailUrl: program.cover_thumbnail_url,
             title: program.title,
             abstract: program.abstract,
             supportLocales: program.support_locales,
@@ -146,7 +145,7 @@ export const usePublishedProgramCollection = (options?: {
             listPrice: program.list_price,
             salePrice: program.sale_price,
             soldAt: program.sold_at && new Date(program.sold_at),
-
+            isEnrolledCountVisible: program.is_enrolled_count_visible,
             categories: program.program_categories.map(programCategory => ({
               id: programCategory.category.id,
               name: programCategory.category.name,
@@ -239,6 +238,8 @@ export const useProgram = (programId: string) => {
         program_by_pk(id: $programId) {
           id
           cover_url
+          cover_mobile_url
+          cover_thumbnail_url
           title
           abstract
           published_at
@@ -247,13 +248,16 @@ export const useProgram = (programId: string) => {
           list_price
           sale_price
           sold_at
-
           description
           cover_video_url
           is_issues_open
           is_private
           is_countdown_timer_visible
           is_introduction_section_visible
+          is_enrolled_count_visible
+          editors {
+            member_id
+          }
           program_categories(order_by: { position: asc }) {
             id
             category {
@@ -296,6 +300,12 @@ export const useProgram = (programId: string) => {
             auto_renewed
             is_countdown_timer_visible
             group_buying_people
+          }
+          program_review_score {
+            score
+          }
+          program_duration {
+            duration
           }
           program_content_sections(
             where: { program_contents: { published_at: { _is_null: false } } }
@@ -344,13 +354,15 @@ export const useProgram = (programId: string) => {
     `,
     { variables: { programId } },
   )
-  const program: Program | null = useMemo(
+  const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(
     () =>
       loading || error || !data || !data.program_by_pk
         ? null
         : {
             id: data.program_by_pk.id,
             coverUrl: data.program_by_pk.cover_url,
+            coverMobileUrl: data.program_by_pk.cover_mobile_url,
+            coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url,
             title: data.program_by_pk.title,
             abstract: data.program_by_pk.abstract,
             publishedAt: new Date(data.program_by_pk.published_at),
@@ -358,10 +370,12 @@ export const useProgram = (programId: string) => {
             description: data.program_by_pk.description,
             coverVideoUrl: data.program_by_pk.cover_video_url,
             isIssuesOpen: data.program_by_pk.is_issues_open,
+            isEnrolledCountVisible: data.program_by_pk.is_enrolled_count_visible,
             isPrivate: data.program_by_pk.is_private,
             isCountdownTimerVisible: data.program_by_pk.is_countdown_timer_visible,
             isIntroductionSectionVisible: data.program_by_pk.is_introduction_section_visible,
             tags: data.program_by_pk.program_tags.map(programTag => programTag.tag.name),
+            editors: data.program_by_pk.editors.map(v => v?.member_id || ''),
             categories: data.program_by_pk.program_categories.map(programCategory => ({
               id: programCategory.category.id,
               name: programCategory.category.name,
@@ -398,6 +412,8 @@ export const useProgram = (programId: string) => {
               isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
               groupBuyingPeople: programPlan.group_buying_people || 1,
             })),
+            duration: data.program_by_pk.program_duration?.duration,
+            score: data.program_by_pk.program_review_score?.score,
             contentSections: data.program_by_pk.program_content_sections.map(programContentSection => ({
               id: programContentSection.id,
               title: programContentSection.title,
@@ -737,5 +753,39 @@ export const useMutateExercise = () => {
 
   return {
     insertExercise,
+  }
+}
+
+export const useProgramEnrollmentAggregate = (programId: string, options?: Pick<QueryHookOptions, 'skip'>) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_PROGRAM_ENROLLMENT_AGGREGATE,
+    hasura.GET_PROGRAM_ENROLLMENT_AGGREGATEVariables
+  >(
+    gql`
+      query GET_PROGRAM_ENROLLMENT_AGGREGATE($programId: uuid!) {
+        program_statistics(where: { program_id: { _eq: $programId } }) {
+          program_id
+          program_plan_enrolled_count
+          program_package_plan_enrolled_count
+        }
+      }
+    `,
+    {
+      skip: options?.skip,
+      variables: {
+        programId,
+      },
+    },
+  )
+  const enrolledCount =
+    sum(
+      data?.program_statistics.map(v => v.program_plan_enrolled_count + v.program_package_plan_enrolled_count) || [],
+    ) || 0
+
+  return {
+    loading,
+    error,
+    data: enrolledCount,
+    refetch,
   }
 }

@@ -8,12 +8,13 @@ import { notEmpty } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import { defineMessages, useIntl } from 'react-intl'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import { BooleanParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
+import PageHelmet from '../components/common/PageHelmet'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
@@ -31,6 +32,8 @@ const messages = defineMessages({
 const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
+  const location = useLocation()
+  const history = useHistory()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
@@ -40,12 +43,14 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   )
   const order = data?.order_log_by_pk
 
-  const { resourceCollection: productResourceCollection } = useResourceCollection(
-    order?.order_products.map(v => {
-      const { type, target } = getResourceByProductId(v.product_id)
-      return `${appId}:${type}:${target}`
-    }) || [],
-  )
+  const { resourceCollection: productResourceCollection, loading: productResourceCollectionLoading } =
+    useResourceCollection(
+      order?.order_products.map(v => {
+        const { type, target } = getResourceByProductId(v.product_id)
+        return `${appId}:${type}:${target}`
+      }) || [],
+    )
+  const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
 
   useEffect(() => {
     if (order && order.status === 'SUCCESS' && withTracking) {
@@ -72,7 +77,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
     }
   }, [order, settings, withTracking])
 
-  if (isAppLoading || isOrderLoading || isAuthenticating) {
+  if (isAppLoading || isOrderLoading || isAuthenticating || productResourceCollectionLoading) {
     return <LoadingPage />
   }
   if (!order) {
@@ -114,7 +119,8 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   return (
     render?.({ order }) || (
       <DefaultLayout noFooter>
-        {order.status === 'SUCCESS' && withTracking && (
+        <PageHelmet onLoaded={() => setMetaLoaded(true)} />
+        {order.status === 'SUCCESS' && withTracking && metaLoaded && (
           <Tracking.Purchase
             orderId={order.id}
             products={productResourceCollection.filter(notEmpty).map((resource, idx) => ({
@@ -122,6 +128,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
               quantity: Number(order.order_products[idx].options?.quantity) || 1,
             }))}
             discounts={order.order_discounts.map(v => ({ name: v.name, price: v.price }))}
+            onTracked={() => history.replace(location.pathname)}
           />
         )}
         <div

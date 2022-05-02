@@ -10,7 +10,7 @@ import GlobalPodcastPlayer from './components/podcast/GlobalPodcastPlayer'
 import ErrorBoundary from './containers/common/ErrorBoundary'
 import { CartProvider } from './contexts/CartContext'
 import { CustomRendererProps, CustomRendererProvider } from './contexts/CustomRendererContext'
-import { LanguageProvider } from './contexts/LanguageContext'
+import { LocaleProvider } from './contexts/LocaleContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { PodcastPlayerProvider } from './contexts/PodcastPlayerContext'
 import './styles.scss'
@@ -24,7 +24,7 @@ const Application: React.FC<{
     <StyleSheetManager disableCSSOMInjection>
       <ErrorBoundary>
         <LodestarAppProvider appId={appId}>
-          <LanguageProvider>
+          <LocaleProvider>
             <CartProvider>
               <NotificationProvider>
                 <PodcastPlayerProvider>
@@ -38,7 +38,7 @@ const Application: React.FC<{
                 </PodcastPlayerProvider>
               </NotificationProvider>
             </CartProvider>
-          </LanguageProvider>
+          </LocaleProvider>
         </LodestarAppProvider>
       </ErrorBoundary>
     </StyleSheetManager>

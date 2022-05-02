@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Icon } from '@chakra-ui/icons'
+// import { Icon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
 import { Tabs } from 'antd'
 import gql from 'graphql-tag'
@@ -28,7 +28,7 @@ import ProgramCard from '../components/program/ProgramCard'
 import ProjectIntroCard from '../components/project/ProjectIntroCard'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
-import { ReactComponent as SearchIcon } from '../images/search.svg'
+// import { ReactComponent as SearchIcon } from '../images/search.svg'
 import { Activity } from '../types/activity'
 import { MerchandiseBriefProps } from '../types/merchandise'
 import { PodcastProgramBriefProps } from '../types/podcast'
@@ -83,7 +83,7 @@ const SearchPage: React.VFC = () => {
           <StyledTitle>
             {title && (
               <>
-                <Icon as={SearchIcon} className="mr-2" />
+                {/* <Icon as={SearchIcon} className="mr-2" /> */}
                 <span>{title}</span>
               </>
             )}
@@ -375,6 +375,8 @@ const useSearchProductCollection = (
         ) {
           id
           cover_url
+          cover_mobile_url
+          cover_thumbnail_url
           title
           abstract
           published_at
@@ -382,6 +384,7 @@ const useSearchProductCollection = (
           list_price
           sale_price
           sold_at
+          is_enrolled_count_visible
           program_content_sections {
             id
             program_contents {
@@ -620,7 +623,8 @@ const useSearchProductCollection = (
     {
       variables: {
         memberId: memberId || '',
-        title: filter?.title && filter.title.length > 1 ? `%${filter.title.replace(/_/g, '\\_')}%` : '',
+        title:
+          filter?.title && filter.title.length > 1 ? `%${filter.title.replace(/_/g, '\\_').split('').join('%')}%` : '',
         tag: filter?.tag || '',
       },
     },
@@ -670,6 +674,8 @@ const useSearchProductCollection = (
       data?.program.map(program => ({
         id: program.id,
         coverUrl: program.cover_url,
+        coverMobileUrl: program.cover_mobile_url,
+        coverThumbnailUrl: program.cover_thumbnail_url,
         title: program.title,
         abstract: program.abstract,
         publishedAt: new Date(program.published_at),
@@ -678,6 +684,7 @@ const useSearchProductCollection = (
         salePrice: program.sale_price,
         soldAt: program.sold_at && new Date(program.sold_at),
         isPrivate: false,
+        isEnrolledCountVisible: program.is_enrolled_count_visible,
         totalDuration: sum(
           program.program_content_sections.map(section =>
             sum(section.program_contents.map(content => content.duration)),

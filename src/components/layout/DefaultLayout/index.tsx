@@ -6,25 +6,23 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import AuthButton from '../../containers/common/AuthButton'
-import { useCustomRenderer } from '../../contexts/CustomRendererContext'
-import NotificationContext from '../../contexts/NotificationContext'
-import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
-import { commonMessages } from '../../helpers/translation'
-import { useNav } from '../../hooks/data'
-import AuthModal, { AuthModalContext } from '../auth/AuthModal'
-import CartDropdown from '../checkout/CartDropdown'
-import Footer from '../common/Footer'
-import GlobalSearchInput from '../common/GlobalSearchInput'
-import MemberProfileButton from '../common/MemberProfileButton'
-import Responsive from '../common/Responsive'
-import NotificationDropdown from '../notification/NotificationDropdown'
+import AuthButton from '../../../containers/common/AuthButton'
+import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
+import NotificationContext from '../../../contexts/NotificationContext'
+import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
+import { useNav } from '../../../hooks/data'
+import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
+import CartDropdown from '../../checkout/CartDropdown'
+import Footer from '../../common/Footer'
+import GlobalSearchInput from '../../common/GlobalSearchInput'
+import MemberProfileButton from '../../common/MemberProfileButton'
+import Responsive from '../../common/Responsive'
+import NotificationDropdown from '../../notification/NotificationDropdown'
 import {
   CenteredBox,
   EmptyBlock,
   LayoutContentWrapper,
   LogoBlock,
-  SearchBlock,
   StyledLayout,
   StyledLayoutContent,
   StyledLayoutHeader,
@@ -35,6 +33,7 @@ import {
   StyledNavButton,
   StyledNavTag,
 } from './DefaultLayout.styled'
+import GlobalSearchModal from './GlobalSearchModal'
 
 const StyledLayoutWrapper = styled(StyledLayout)`
   && {
@@ -96,14 +95,9 @@ const DefaultLayout: React.FC<{
                 <Link to="/">{settings['logo'] ? <StyledLogo src={settings['logo']} alt="logo" /> : name}</Link>
               )}
             </LogoBlock>
-
-            {enabledModules.search && (
-              <Responsive.Desktop>
-                <SearchBlock>
-                  <GlobalSearchInput />
-                </SearchBlock>
-              </Responsive.Desktop>
-            )}
+            <Responsive.Desktop>
+              <GlobalSearchInput />
+            </Responsive.Desktop>
           </div>
           <div className="d-flex align-items-center">
             <Responsive.Desktop>
@@ -124,30 +118,24 @@ const DefaultLayout: React.FC<{
                       </MenuButton>
                       {nav.subNavs?.length > 0 && (
                         <MenuList>
-                          {nav.subNavs?.map((v, idx) => (
-                            <>
-                              {v.external ? (
-                                <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
-                                  <StyledMenuItem _focus={{ bg: '#fff' }}>{v.label}</StyledMenuItem>
-                                </a>
-                              ) : (
-                                <Link key={idx} to={v.href}>
-                                  <StyledMenuItem _focus={{ bg: '#fff' }}>
-                                    {v.label}
-                                    {v.tag && (
-                                      <StyledMenuTag
-                                        borderRadius="full"
-                                        color="#fff"
-                                        bg={theme?.colors?.primary?.[500]}
-                                      >
-                                        {v.tag}
-                                      </StyledMenuTag>
-                                    )}
-                                  </StyledMenuItem>
-                                </Link>
-                              )}
-                            </>
-                          ))}
+                          {nav.subNavs?.map((v, idx) =>
+                            v.external ? (
+                              <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
+                                <StyledMenuItem _focus={{ bg: '#fff' }}>{v.label}</StyledMenuItem>
+                              </a>
+                            ) : (
+                              <Link key={idx} to={v.href}>
+                                <StyledMenuItem _focus={{ bg: '#fff' }}>
+                                  {v.label}
+                                  {v.tag && (
+                                    <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                                      {v.tag}
+                                    </StyledMenuTag>
+                                  )}
+                                </StyledMenuItem>
+                              </Link>
+                            ),
+                          )}
                         </MenuList>
                       )}
                     </Menu>
@@ -170,32 +158,26 @@ const DefaultLayout: React.FC<{
                       </MenuButton>
                       {nav.subNavs.length > 0 && (
                         <MenuList>
-                          {nav.subNavs?.map((v, idx) => (
-                            <>
-                              {v.external ? (
-                                <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
-                                  <MenuItem _focus={{ bg: '#fff' }}>
-                                    <StyledMenuItem>{v.label}</StyledMenuItem>
-                                  </MenuItem>
-                                </a>
-                              ) : (
-                                <Link key={idx} to={v.href}>
-                                  <StyledMenuItem _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
-                                    {v.label}
-                                    {v.tag && (
-                                      <StyledMenuTag
-                                        borderRadius="full"
-                                        color="#fff"
-                                        bg={theme?.colors?.primary?.[500]}
-                                      >
-                                        {v.tag}
-                                      </StyledMenuTag>
-                                    )}
-                                  </StyledMenuItem>
-                                </Link>
-                              )}
-                            </>
-                          ))}
+                          {nav.subNavs?.map((v, idx) =>
+                            v.external ? (
+                              <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
+                                <MenuItem _focus={{ bg: '#fff' }}>
+                                  <StyledMenuItem>{v.label}</StyledMenuItem>
+                                </MenuItem>
+                              </a>
+                            ) : (
+                              <Link key={idx} to={v.href}>
+                                <StyledMenuItem _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
+                                  {v.label}
+                                  {v.tag && (
+                                    <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                                      {v.tag}
+                                    </StyledMenuTag>
+                                  )}
+                                </StyledMenuItem>
+                              </Link>
+                            ),
+                          )}
                         </MenuList>
                       )}
                     </Menu>
@@ -216,12 +198,18 @@ const DefaultLayout: React.FC<{
                         }
                         onClick={() => history.push(`/members/${currentMemberId}`)}
                       >
-                        {formatMessage(commonMessages.button.myPage)}
+                        {/* {formatMessage(commonMessages.button.myPage)} */}
+                        我的課程
                       </MenuButton>
                     </Menu>
                   )))}
             </Responsive.Desktop>
 
+            {(enabledModules.search || enabledModules.search_advanced) && (
+              <Responsive.Default>
+                <GlobalSearchModal />
+              </Responsive.Default>
+            )}
             {!noCart && !settings['feature.cart.disable'] && (renderCartButton ? renderCartButton() : <CartDropdown />)}
             {currentMemberId && !settings['feature.notify.disable'] && <NotificationDropdown />}
             {currentMemberId && currentMember ? (

@@ -6,7 +6,7 @@ import { ProductType } from 'lodestar-app-element/src/types/product'
 import { sum } from 'ramda'
 import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
-import LanguageContext from '../contexts/LanguageContext'
+import LocaleContext from '../contexts/LocaleContext'
 import { GET_NOTIFICATIONS, NotificationProps } from '../contexts/NotificationContext'
 import hasura from '../hasura'
 import { handleError, uploadFile } from '../helpers/index'
@@ -156,12 +156,12 @@ export const useEnrolledProductIds = (memberId: string) => {
 export const useNav = () => {
   const location = useLocation()
   const { loading, navs } = useApp()
-  const { currentLanguage } = useContext(LanguageContext)
+  const { currentLocale } = useContext(LocaleContext)
 
   return {
     loading,
-    navs: navs.filter(nav => nav.locale === currentLanguage),
-    pageTitle: navs.find(nav => nav.locale === currentLanguage && nav.href === location.pathname + location.search)
+    navs: navs.filter(nav => nav.locale === currentLocale),
+    pageTitle: navs.find(nav => nav.locale === currentLocale && nav.href === location.pathname + location.search)
       ?.label,
   }
 }

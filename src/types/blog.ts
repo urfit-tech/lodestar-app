@@ -29,6 +29,7 @@ export type Post = Omit<PostPreviewProps, 'authorId'> & {
     withAppointment?: boolean
   }
   views: number
+  source: string | null
   merchandises: MerchandiseProps[]
   description: string | null
   prevPost: {

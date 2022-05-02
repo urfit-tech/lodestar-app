@@ -2,6 +2,7 @@ import { Button } from 'antd'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
 import { commonMessages } from '../../helpers/translation'
 import { ProjectPlanProps } from '../../types/project'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
@@ -64,6 +65,9 @@ const FundingIntroductionPane: React.VFC<{
         </TabPaneContent>
 
         <div className="col-12 col-lg-4 mb-5">
+          <Responsive.Desktop>
+            <ClassCouponBlock />
+          </Responsive.Desktop>
           <ProjectPlanCollection projectPlans={projectPlans} />
         </div>
       </div>

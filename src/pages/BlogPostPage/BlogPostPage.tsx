@@ -1,20 +1,16 @@
 import { Icon } from '@chakra-ui/icons'
-import { Divider, SkeletonText } from '@chakra-ui/react'
+import { SkeletonText } from '@chakra-ui/react'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StyledPostMeta } from '../../components/blog'
 import PostCover from '../../components/blog/PostCover'
-import { RelativePostCollection } from '../../components/blog/PostLinkCollection'
-import CreatorCard from '../../components/common/CreatorCard'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { useAddPostViews, usePost } from '../../hooks/blog'
-import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as EyeIcon } from '../../images/eye.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import ForbiddenPage from '../ForbiddenPage'
@@ -28,7 +24,7 @@ const messages = defineMessages({
 })
 
 const StyledTitle = styled.div`
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   color: var(--gray-darker);
   font-size: 28px;
   font-weight: bold;
@@ -117,29 +113,33 @@ const BlogPostPage: React.VFC = () => {
 
   return (
     <DefaultLayout white noHeader={isScrollingDown}>
-      <BlogPostPageHelmet post={post} />
-      {!loadingPost && (
-        <PostCover
-          title={post?.title || ''}
-          coverUrl={post?.videoUrl || post?.coverUrl || null}
-          type={post?.videoUrl ? 'video' : 'picture'}
-          merchandises={post?.merchandises || []}
-          isScrollingDown={isScrollingDown}
-        />
-      )}
+      <div className="container container-post-page">
+        <BlogPostPageHelmet post={post} />
+        {!loadingPost && (
+          <PostCover
+            title={post?.title || ''}
+            coverUrl={post?.videoUrl || post?.coverUrl || null}
+            type={post?.videoUrl ? 'video' : 'picture'}
+            merchandises={post?.merchandises || []}
+            isScrollingDown={isScrollingDown}
+          />
+        )}
+      </div>
 
-      <div className="container py-5">
+      <div className="container py-5 container-post-page">
         <div className="row">
-          <div className="col-12 col-lg-9">
+          {/* <div className="col-12 col-lg-9"> */}
+          <div className="col-12">
             <StyledPostMeta className="pb-3">
               <Icon as={UserOIcon} className="mr-1" />
               <span className="mr-2">{post?.author.name}</span>
-              <Icon as={CalendarAltOIcon} className="mr-1" />
-              <span className="mr-2">{post?.publishedAt ? moment(post.publishedAt).format('YYYY-MM-DD') : ''}</span>
+              {/* <Icon as={CalendarAltOIcon} className="mr-1" /> */}
+              {/* <span className="mr-2">{post?.publishedAt ? moment(post.publishedAt).format('YYYY-MM-DD') : ''}</span> */}
               <Icon as={EyeIcon} className="mr-1" />
               <span>{post?.views}</span>
             </StyledPostMeta>
             <StyledTitle>{post?.title}</StyledTitle>
+            <StyledPostMeta className="pb-3">{post.source}</StyledPostMeta>
             <div className="mb-5">
               {loadingPost ? (
                 <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -154,7 +154,7 @@ const BlogPostPage: React.VFC = () => {
                 </Link>
               ))}
             </div>
-            <Divider className="mb-3" />
+            {/* <Divider className="mb-3" />
             <div className="py-3">
               {post?.author && (
                 <CreatorCard
@@ -171,7 +171,7 @@ const BlogPostPage: React.VFC = () => {
                 />
               )}
             </div>
-            <Divider className="mb-5" />
+            <Divider className="mb-5" /> */}
             <div className="row mb-5">
               <div className="col-6 col-lg-4">
                 {post?.prevPost && (
@@ -191,9 +191,9 @@ const BlogPostPage: React.VFC = () => {
               </div>
             </div>
           </div>
-          <div className="col-12 col-lg-3 pl-4">
+          {/* <div className="col-12 col-lg-3 pl-4">
             <RelativePostCollection postId={postId} tags={post?.tags} />
-          </div>
+          </div> */}
         </div>
       </div>
     </DefaultLayout>

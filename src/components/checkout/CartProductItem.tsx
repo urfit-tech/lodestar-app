@@ -1,11 +1,14 @@
 import { Icon } from '@chakra-ui/icons'
 import { Spinner } from '@chakra-ui/react'
 import { Typography } from 'antd'
+import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import React, { useContext, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
-import ProductTypeLabel from '../../components/common/ProductTypeLabel'
 import CartContext from '../../contexts/CartContext'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -48,10 +51,14 @@ const CartProductItem: React.VFC<{
   buyableQuantity: number | null
 }> = ({ id, quantity, buyableQuantity }) => {
   const { formatMessage } = useIntl()
-  const { enabledModules } = useApp()
+  const { enabledModules, id: appId } = useApp()
   const { updatePluralCartProductQuantity } = useContext(CartContext)
   const { target } = useSimpleProduct({ id })
   const [pluralProductQuantity, setPluralProductQuantity] = useState(quantity || 1)
+  const tracking = useTracking()
+  const { resourceCollection } = useResourceCollection([
+    `${appId}:${getResourceByProductId(id).type}:${getResourceByProductId(id).target}`,
+  ])
 
   useEffect(() => {
     updatePluralCartProductQuantity?.(id, pluralProductQuantity)
@@ -64,6 +71,18 @@ const CartProductItem: React.VFC<{
 
   const [productType] = id.split('_') as [ProductType]
   const { title, coverUrl, isOnSale, listPrice, salePrice, isLimited, isPhysical } = target
+
+  const trackCartItem = (currentQuantity: number, nextQuantity: number) => {
+    if (currentQuantity < nextQuantity) {
+      resourceCollection[0] &&
+        tracking.addToCart(resourceCollection[0], { direct: true, quantity: nextQuantity - currentQuantity })
+    }
+
+    if (currentQuantity > nextQuantity) {
+      resourceCollection[0] &&
+        tracking.removeFromCart(resourceCollection[0], { quantity: currentQuantity - nextQuantity })
+    }
+  }
 
   return (
     <div className="flex-grow-1 d-flex align-items-center justify-content-start">
@@ -98,7 +117,10 @@ const CartProductItem: React.VFC<{
                 value={pluralProductQuantity}
                 min={1}
                 max={buyableQuantity}
-                onChange={value => setPluralProductQuantity(value || 1)}
+                onChange={value => {
+                  value !== undefined && trackCartItem(pluralProductQuantity, value)
+                  setPluralProductQuantity(value || 1)
+                }}
               />
             </div>
           )}
@@ -108,7 +130,10 @@ const CartProductItem: React.VFC<{
             <QuantityInput
               value={pluralProductQuantity}
               min={1}
-              onChange={value => setPluralProductQuantity(value || 1)}
+              onChange={value => {
+                value !== undefined && trackCartItem(pluralProductQuantity, value)
+                setPluralProductQuantity(value || 1)
+              }}
             />
           </div>
         )}

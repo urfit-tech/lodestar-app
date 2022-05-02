@@ -190,7 +190,7 @@ export const commonMessages = {
     backstage: { id: 'common.button.backstage', defaultMessage: '個人管理後台' },
     home: { id: 'common.button.home', defaultMessage: '首頁' },
     backToHome: { id: 'common.button.backToHome', defaultMessage: '回首頁' },
-    myPage: { id: 'common.member.myPage', defaultMessage: '我的主頁' },
+    myPage: { id: 'common.member.myPage', defaultMessage: '我的課程' },
     reply: { id: 'common.button.reply', defaultMessage: '回覆' },
     leaveQuestion: { id: 'common.button.leaveQuestion', defaultMessage: '留下你的問題...' },
     allCategory: { id: 'common.button.all', defaultMessage: '全部分類' },
@@ -284,7 +284,7 @@ export const commonMessages = {
     socialCard: { id: 'common.socialCard', defaultMessage: '社群證' },
     memberCard: { id: 'common.memberCard', defaultMessage: '會員卡' },
     contact: { id: 'common.contact', defaultMessage: '聯絡客服' },
-    myPage: { id: 'common.member.myPage', defaultMessage: '我的主頁' },
+    myPage: { id: 'common.member.myPage', defaultMessage: '我的課程' },
     logout: { id: 'common.list.item.logout', defaultMessage: '登出' },
     addCourse: { id: 'common.member.course', defaultMessage: '開設課程' },
     appointments: { id: 'common.member.appointments', defaultMessage: '大師預約' },
@@ -462,7 +462,7 @@ export const voucherMessages = {
   messages: {
     addVoucher: { id: 'common.message.success.addVoucher', defaultMessage: '成功加入兌換券' },
     addVoucherError: { id: 'common.message.error.voucher.add.unable', defaultMessage: '無法加入兌換券' },
-    exchangeVoucher: { id: 'common.message.success.exchangeVoucher', defaultMessage: '兌換成功，請到「我的主頁」查看' },
+    exchangeVoucher: { id: 'common.message.success.exchangeVoucher', defaultMessage: '兌換成功，請到「我的課程」查看' },
     useVoucherError: { id: 'common.message.error.voucher.use.unable', defaultMessage: '無法使用兌換券' },
     addVoucherPlan: { id: 'common.message.success', defaultMessage: '已建立兌換方案' },
     addVoucherPlanError: { id: 'common.message.error.voucher.add.fail', defaultMessage: '建立兌換方案失敗' },
@@ -1658,5 +1658,13 @@ export const codeMessages = defineMessages({
   E_CW_SERVICE: {
     id: 'code.E_CW_SERVICE',
     defaultMessage: 'CW 導入付款頁失敗',
+  },
+  E_REFUND: {
+    id: 'code.E_REFUND',
+    defaultMessage: '退款失敗',
+  },
+  E_REDEEM: {
+    id: 'code.E_REDEEM',
+    defaultMessage: '接收失敗',
   },
 })

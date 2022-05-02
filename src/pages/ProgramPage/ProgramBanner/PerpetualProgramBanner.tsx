@@ -4,10 +4,11 @@ import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import BlurredBanner from '../../../components/common/BlurredBanner'
 import { BREAK_POINT } from '../../../components/common/Responsive'
+import VideoPlayer from '../../../components/common/VideoPlayer'
 import { commonMessages } from '../../../helpers/translation'
 import { Program } from '../../../types/program'
+import FullSizeBanner from './FullSizeBanner'
 
 const StyledTags = styled.div`
   margin-bottom: 1rem;
@@ -16,7 +17,7 @@ const StyledTags = styled.div`
 `
 const StyledTitle = styled.h1`
   margin: 0;
-  color: white;
+  font-weight: 500;
   font-size: 28px;
   line-height: 1.23;
   letter-spacing: 0.23px;
@@ -76,7 +77,11 @@ const PerpetualProgramBanner: React.VFC<{
   const { formatMessage } = useIntl()
 
   return (
-    <BlurredBanner coverUrl={program.coverUrl || undefined}>
+    <div>
+      <FullSizeBanner
+        coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
+      />
+
       <StyledTitleBlock noVideo={!program.coverVideoUrl}>
         <StyledTags className="text-center">
           {program.tags?.map(programTag => (
@@ -120,6 +125,10 @@ const PerpetualProgramBanner: React.VFC<{
                     autoPlay
                     style={{ width: '100%', height: '100%' }}
                   />
+                ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
+                  <VideoPlayer
+                    source={{ type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' }}
+                  />
                 ) : (
                   <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />
                 )}
@@ -128,7 +137,7 @@ const PerpetualProgramBanner: React.VFC<{
           </div>
         </StyledVideoBlock>
       )}
-    </BlurredBanner>
+    </div>
   )
 }
 

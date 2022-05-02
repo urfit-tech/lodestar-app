@@ -22,7 +22,6 @@ import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/
 import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
-import ProgramContentTabs from './ProgramContentTabs'
 
 const StyledUnPurchased = styled.div`
   color: ${props => props.theme['@primary-color']};
@@ -42,6 +41,7 @@ const ProgramContentBlock: React.VFC<{
   programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]
   programContentId: string
   issueEnabled?: boolean
+  editors?: string[]
 }> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
   const { formatMessage } = useIntl()
   const { loading: loadingApp, enabledModules } = useApp()
@@ -166,12 +166,12 @@ const ProgramContentBlock: React.VFC<{
         <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
       )}
 
-      <ProgramContentTabs
+      {/* <ProgramContentTabs
         programId={programId}
         programRoles={programRoles}
         programContent={programContent}
         issueEnabled={issueEnabled}
-      />
+      /> */}
 
       {programContent.programContentBody?.type !== 'practice' && instructor && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />
@@ -200,5 +200,7 @@ const useHasProgramContentPermission: (id: string) => boolean = id => {
 
   return !!data?.program_content_enrollment?.length
 }
+
+export { useHasProgramContentPermission }
 
 export default ProgramContentBlock

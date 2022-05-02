@@ -31,6 +31,7 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
         },
       ]}
       openGraph={[
+        { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
         { property: 'og:type', content: 'article' },
         { property: 'article:published_time', content: post.publishedAt?.toISOString() || '' },
         { property: 'article:modified_time', content: post.updatedAt.toISOString() },

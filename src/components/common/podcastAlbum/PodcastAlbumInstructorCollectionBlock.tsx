@@ -1,8 +1,7 @@
-import { Divider, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
+import { SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { productMessages } from '../../../helpers/translation'
 import { usePublicMember } from '../../../hooks/member'
 import { PodcastAlbum } from '../../../types/podcastAlbum'
 import CreatorCard from '../CreatorCard'
@@ -21,11 +20,12 @@ const PodcastAlbumInstructorCollectionBlock: React.VFC<{
   const { formatMessage } = useIntl()
 
   return (
-    <div>
-      <StyledTitle>{customTitle || formatMessage(productMessages.program.title.instructorIntro)}</StyledTitle>
-      <Divider className="mb-3" />
-      <CreatorCollection key={podcastAlbum.id} creatorId={podcastAlbum.author.id} />
-    </div>
+    // <div>
+    //   <StyledTitle>{customTitle || formatMessage(productMessages.program.title.instructorIntro)}</StyledTitle>
+    //   <Divider className="mb-3" />
+    //   <CreatorCollection key={podcastAlbum.id} creatorId={podcastAlbum.author.id} />
+    // </div>
+    <span></span>
   )
 }
 

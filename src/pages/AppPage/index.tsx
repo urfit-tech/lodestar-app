@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import MessengerChat from '../../components/common/MessengerChat'
 import PageHelmet from '../../components/common/PageHelmet'
@@ -111,39 +111,47 @@ const sectionConverter = {
 
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
+  const { settings } = useApp()
   const { loadingAppPage, errorAppPage, appPage } = usePage(location.pathname)
 
   if (loadingAppPage) {
     return <LoadingPage />
   }
 
-  return appPage ? (
-    <DefaultLayout {...appPage.options}>
+  if (location.pathname !== '/repairing' && settings['repairing'] === '1') {
+    return <Redirect to="/repairing" />
+  }
+  return (
+    <>
       <PageHelmet />
-      {appPage.craftData ? (
-        <Editor enabled={false} resolver={CraftElement}>
-          <CraftBlock craftData={appPage.craftData} />
-        </Editor>
+      {appPage ? (
+        <DefaultLayout {...appPage.options}>
+          {appPage.craftData ? (
+            <Editor enabled={false} resolver={CraftElement}>
+              <CraftBlock craftData={appPage.craftData} />
+            </Editor>
+          ) : (
+            <Editor enabled={false} resolver={CraftElement}>
+              <Frame>
+                <>
+                  {appPage.appPageSections.map(section => {
+                    const Section = sectionConverter[section.type]
+                    if (!sectionConverter[section.type]) {
+                      return null
+                    }
+                    return <Section key={section.id} options={section.options} />
+                  })}
+                </>
+              </Frame>
+            </Editor>
+          )}
+        </DefaultLayout>
+      ) : renderFallback ? (
+        renderFallback(location.pathname)
       ) : (
-        <Editor enabled={false} resolver={CraftElement}>
-          <Frame>
-            <>
-              {appPage.appPageSections.map(section => {
-                const Section = sectionConverter[section.type]
-                if (!sectionConverter[section.type]) {
-                  return <></>
-                }
-                return <Section key={section.id} options={section.options} />
-              })}
-            </>
-          </Frame>
-        </Editor>
+        <NotFoundPage />
       )}
-    </DefaultLayout>
-  ) : renderFallback ? (
-    renderFallback(location.pathname)
-  ) : (
-    <NotFoundPage />
+    </>
   )
 }
 

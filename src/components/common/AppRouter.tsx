@@ -111,6 +111,14 @@ const defaultRoutesMap: RoutesMap = {
     path: '/search',
     pageName: 'SearchPage',
   },
+  search_advanced: {
+    path: '/search/advanced',
+    pageName: 'AdvancedSearchPage',
+  },
+  redeem: {
+    path: '/redeem',
+    pageName: 'RedeemPage',
+  },
 
   // system - checkout
   order: {

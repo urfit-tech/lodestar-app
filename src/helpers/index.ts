@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl'
 import { css, FlattenSimpleInterpolation } from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import { BREAK_POINT } from '../components/common/Responsive'
+import { ApiResponse } from '../types/general'
 import { helperMessages } from './translation'
 
 export const TPDirect = (window as any)['TPDirect']
@@ -96,12 +97,14 @@ export const downloadFile = async (fileName: string, config: AxiosRequestConfig)
     method: 'GET',
     responseType: 'blob',
   }).then((response: any) => {
-    const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', fileName)
+    link.href = window.URL.createObjectURL(response.data)
+    link.download = fileName
+    link.target = '_blank'
     document.body.appendChild(link)
     link.click()
+    window.URL.revokeObjectURL(link.href)
+    document.body.removeChild(link)
   })
 
 export const commaFormatter = (value?: number | string | null) =>
@@ -228,7 +231,9 @@ export const notEmpty = <T>(value: T | null | undefined): value is T => {
 export const camelCaseToDash = (str: string) => {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
 }
-
+export const camelCaseToSnake = (str: string) => {
+  return str.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
+}
 export const getUserRoleLevel = (userRole?: string) => {
   switch (userRole) {
     case 'anonymous':
@@ -392,3 +397,20 @@ export const decodeHtmlEntities = (data: string) => {
     return match
   })
 }
+
+export const getRedeemLink = async (
+  type: 'Voucher',
+  target: string,
+  authToken: string | null,
+  config?: AxiosRequestConfig,
+) =>
+  await axios.request<ApiResponse<{ link: string }>>({
+    ...config,
+    method: 'POST',
+    url: `${process.env.REACT_APP_API_BASE_ROOT}/discount/get-redeem-link`,
+    data: {
+      type,
+      target,
+    },
+    headers: { authorization: `Bearer ${authToken}` },
+  })
