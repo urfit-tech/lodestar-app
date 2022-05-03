@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl'
 const authMessages = {
   '*': defineMessages({
     login: { id: 'auth.*.login', defaultMessage: '登入' },
+    isRequiredWarning: { id: 'auth.*.isRequiredWarning', defaultMessage: '請填入{name}' },
   }),
   RegisterSection: defineMessages({
     signupInfo: {

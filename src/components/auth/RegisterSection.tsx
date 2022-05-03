@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Button, Icon, Input } from '@chakra-ui/react'
-import { Checkbox, Form, message, Select, Skeleton } from 'antd'
+import { Checkbox, Col, Form, message, Row, Select, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import Axios from 'axios'
 import gql from 'graphql-tag'
@@ -25,9 +25,18 @@ const StyledParagraph = styled.p`
   color: var(--gray-dark);
   font-size: 14px;
 `
+
+const StyledCheckboxGroup = styled(Checkbox.Group)`
+  && .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: ${props => props.theme['@primary-color']};
+    border-color: ${props => props.theme['@primary-color']};
+  }
+`
+
 type RegisterSectionProps = FormComponentProps & {
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
 }
+
 const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateChange }) => {
   const { settings, enabledModules } = useApp()
   const { formatMessage } = useIntl()
@@ -44,11 +53,10 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
 
   useEffect(() => {
     setAuthState(
-      enabledModules.sms_verification
-        ? 'sms_verification'
-        : settings['feature.signup_info.enable'] === '1'
-        ? 'signup_info'
-        : 'register',
+      // enabledModules.sms_verification
+      //   ? 'sms_verification'
+      //   :
+      settings['feature.signup_info.enable'] === '1' ? 'signup_info' : 'register',
     )
   }, [enabledModules.sms_verification, settings])
 
@@ -99,15 +107,6 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
   }
 
   const handleRegister = () => {
-    console.log(
-      signupInfos
-        ?.filter(v => v.id !== 'name')
-        ?.map(v => ({
-          member_id: 'id',
-          property_id: v.id,
-          value: v?.value.toString() || '',
-        })),
-    )
     register &&
       form.validateFields((error, values) => {
         if (error) {
@@ -156,6 +155,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
           .catch((error: Error) => {
             const code = error.message as keyof typeof codeMessages
             message.error(formatMessage(codeMessages[code]))
+            console.log(code)
           })
           .catch(handleError)
           .finally(() => setLoading(false))
@@ -263,8 +263,9 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                   value: values[id] || '',
                 })),
               )
+              console.log(values)
+              // setAuthState('register')
             })
-            setAuthState('register')
           }}
         >
           <Form.Item key="name" label={formatMessage(authMessages.RegisterSection.name)}>
@@ -287,7 +288,9 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                       rules: [
                         {
                           required: signProperty.isRequired,
-                          message: signProperty.ruleMessage,
+                          message:
+                            signProperty.ruleMessage ||
+                            formatMessage(authMessages['*'].isRequiredWarning, { name: signProperty.name }),
                         },
                       ],
                     })(<Input placeholder={signProperty.placeHolder} />)}
@@ -301,15 +304,21 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                       rules: [
                         {
                           required: signProperty.isRequired,
-                          message: signProperty.ruleMessage,
+                          message:
+                            signProperty.ruleMessage ||
+                            formatMessage(authMessages['*'].isRequiredWarning, { name: signProperty.name }),
                         },
                       ],
                     })(
-                      <Checkbox.Group>
-                        {signProperty.selectOptions?.map(selectOption => (
-                          <Checkbox value={selectOption}>{selectOption}</Checkbox>
-                        ))}
-                      </Checkbox.Group>,
+                      <StyledCheckboxGroup className="StyledCheckboxGroup">
+                        <Row>
+                          {signProperty.selectOptions?.map(selectOption => (
+                            <Col className="mb-2" span={Math.floor(24 / (signProperty?.rowAmount || 1))}>
+                              <Checkbox value={selectOption}>{selectOption}</Checkbox>
+                            </Col>
+                          ))}
+                        </Row>
+                      </StyledCheckboxGroup>,
                     )}
                   </Form.Item>
                 )
@@ -320,7 +329,9 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                       rules: [
                         {
                           required: signProperty.isRequired,
-                          message: signProperty.ruleMessage,
+                          message:
+                            signProperty.ruleMessage ||
+                            formatMessage(authMessages['*'].isRequiredWarning, { name: signProperty.name }),
                         },
                       ],
                     })(
@@ -494,6 +505,7 @@ const useSignupProperty = () => {
     placeHolder?: string
     selectOptions?: string[]
     ruleMessage?: string
+    rowAmount?: number
   }[] =
     data?.signup_property.map(v => ({
       id: v.id,
@@ -504,6 +516,7 @@ const useSignupProperty = () => {
       placeHolder: v.options?.placeholder || '',
       selectOptions: v.options?.options || [],
       ruleMessage: v.options?.ruleMessage || '',
+      rowAmount: v.options?.rowAmount || 1,
     })) || []
 
   return {
