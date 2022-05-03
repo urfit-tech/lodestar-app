@@ -53,10 +53,11 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
 
   useEffect(() => {
     setAuthState(
-      // enabledModules.sms_verification
-      //   ? 'sms_verification'
-      //   :
-      settings['feature.signup_info.enable'] === '1' ? 'signup_info' : 'register',
+      enabledModules.sms_verification
+        ? 'sms_verification'
+        : settings['feature.signup_info.enable'] === '1'
+        ? 'signup_info'
+        : 'register',
     )
   }, [enabledModules.sms_verification, settings])
 
@@ -155,7 +156,6 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
           .catch((error: Error) => {
             const code = error.message as keyof typeof codeMessages
             message.error(formatMessage(codeMessages[code]))
-            console.log(code)
           })
           .catch(handleError)
           .finally(() => setLoading(false))
@@ -263,8 +263,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                   value: values[id] || '',
                 })),
               )
-              console.log(values)
-              // setAuthState('register')
+              setAuthState('register')
             })
           }}
         >
