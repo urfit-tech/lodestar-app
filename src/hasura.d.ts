@@ -8575,6 +8575,35 @@ export interface GET_PROJECT_INTRO_COLLECTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PRODUCT_REVIEW
+// ====================================================
+
+export interface GET_PRODUCT_REVIEW_review_public {
+  __typename: "review_public";
+  id: any | null;
+  member_id: string | null;
+  name: string | null;
+  username: string | null;
+  score: any | null;
+}
+
+export interface GET_PRODUCT_REVIEW {
+  /**
+   * fetch data from the table: "review_public"
+   */
+  review_public: GET_PRODUCT_REVIEW_review_public[];
+}
+
+export interface GET_PRODUCT_REVIEWVariables {
+  path?: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_REVIEW_AGGREGATE
 // ====================================================
 
