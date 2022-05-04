@@ -2595,6 +2595,10 @@ export interface GET_ACTIVITY_activity_by_pk_activity_categories {
 export interface GET_ACTIVITY_activity_by_pk_activity_sessions {
   __typename: "activity_session";
   id: any;
+  online_link: string | null;
+  location: string | null;
+  started_at: any;
+  ended_at: any;
 }
 
 export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session {

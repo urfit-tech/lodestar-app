@@ -2,7 +2,7 @@ export type ReviewProps = {
   isAdmin?: boolean
   id: string
   memberId: string | null
-  memberName: string | null
+  memberName?: string | null
   score: number | 0
   title: string | null
   content: string | null

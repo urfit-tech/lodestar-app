@@ -15,10 +15,8 @@ import { notEmpty } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
 import { useProjectIntroCollection } from '../../hooks/project'
+import { FundraisingIcon, PreOrderIcon, PromotionIcon } from '../../images'
 import { Category } from '../../types/general'
-import { ReactComponent as FundraisingIcon } from '../images/fundraising.svg'
-import { ReactComponent as PreOrderIcon } from '../images/pre-order.svg'
-import { ReactComponent as PromotionIcon } from '../images/promotion.svg'
 import ProjectCollectionPageHelmet from './ProjectCollectionPageHelmet'
 
 const messages = defineMessages({

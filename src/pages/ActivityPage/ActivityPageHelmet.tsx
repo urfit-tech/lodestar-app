@@ -1,5 +1,5 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-// import { DeepPick } from 'ts-deep-pick/lib'
+import { DeepPick } from 'ts-deep-pick/lib'
 import PageHelmet from '../../components/common/PageHelmet'
 import { getBraftContent, notEmpty } from '../../helpers'
 import { usePublicMember } from '../../hooks/member'
@@ -13,8 +13,26 @@ const schemaTypeMap = {
 
 // FIXME: it should change to another structured data
 // https://developers.google.com/search/docs/advanced/structured-data/event
-//type ActivityPageHelmetProps = DeepPick<Activity, 'id' | 'title' | 'description' | 'coverUrl' | 'tags' | 'tickets'>
-const ActivityPageHelmet: React.VFC<{ activity: Activity }> = ({ activity }) => {
+type ActivityPageHelmetProps = DeepPick<
+  Activity,
+  | 'id'
+  | 'title'
+  | 'description'
+  | 'coverUrl'
+  | 'tags'
+  | 'tickets.[].startedAt'
+  | 'tickets.[].endedAt'
+  | 'tickets.[].price'
+  | 'organizerId'
+  | 'sessions.[].location'
+  | 'sessions.[].onlineLink'
+  | 'sessions.[].startedAt'
+  | 'sessions.[].endedAt'
+  | 'ticketSessions.[].session.id'
+  | 'ticketSessions.[].session.title'
+  | 'ticketSessions.[].session.type'
+>
+const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ activity }) => {
   const app = useApp()
 
   const { member } = usePublicMember(activity.organizerId)
@@ -58,6 +76,8 @@ const ActivityPageHelmet: React.VFC<{ activity: Activity }> = ({ activity }) => 
     return [...acc, onlineLocation, offlineLocation].filter(notEmpty)
   }, [])
 
+  const activityStartedAt = new Date(Math.min(...activity.sessions.map(session => session.startedAt.getTime())))
+  const activityEndedAt = new Date(Math.max(...activity.sessions.map(session => session.endedAt.getTime())))
   return (
     <PageHelmet
       title={activity.title}
@@ -68,8 +88,8 @@ const ActivityPageHelmet: React.VFC<{ activity: Activity }> = ({ activity }) => 
           '@context': 'https://schema.org',
           '@type': 'Event' as any,
           name: activity.title || app.settings['title'],
-          startDate: activity.startedAt?.toISOString(),
-          endDate: activity.endedAt?.toISOString(),
+          startDate: activityStartedAt?.toISOString(),
+          endDate: activityEndedAt?.toISOString(),
           eventAttendanceMode: `https://schema.org/${schemaTypeMap[activityType]}`,
           eventStatus: 'https://schema.org/EventScheduled', // TODO: confirm by publishedAt and availableSeats
           location: activityLocation.length === 1 ? activityLocation[0] : (activityLocation as any),

@@ -21,6 +21,7 @@ import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
 import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
 import NotFoundPage from '../NotFoundPage'
+import ProgramPackagePageHelmet from './ProgramPackagePageHelmet'
 
 const StyledTitle = styled.h2`
   ${CommonLargeTitleMixin}
@@ -95,6 +96,7 @@ const ProgramPackagePage: React.VFC = () => {
   return (
     <DefaultLayout white footerBottomSpace="4rem">
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {programPackageIntroduction && <ProgramPackagePageHelmet programPackage={programPackageIntroduction} />}
       <ProgramPackageBanner
         title={programPackageIntroduction.title}
         coverUrl={programPackageIntroduction.coverUrl}
