@@ -19,6 +19,7 @@ import { Category } from '../../types/general'
 import { ReactComponent as FundraisingIcon } from '../images/fundraising.svg'
 import { ReactComponent as PreOrderIcon } from '../images/pre-order.svg'
 import { ReactComponent as PromotionIcon } from '../images/promotion.svg'
+import ProjectCollectionPageHelmet from './ProjectCollectionPageHelmet'
 
 const messages = defineMessages({
   exploreProjects: { id: 'project.label.exploreProjects', defaultMessage: '探索專案' },
@@ -116,6 +117,7 @@ const ProjectCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      {projects && <ProjectCollectionPageHelmet projects={projects} />}
       <StyledCoverSection>
         <div className="container">
           <StyledBannerTitle>

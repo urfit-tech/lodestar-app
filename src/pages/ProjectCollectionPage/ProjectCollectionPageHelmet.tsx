@@ -1,9 +1,9 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import PageHelmet from '../../components/common/PageHelmet'
 import { useNav } from '../../hooks/data'
-import { ProjectProps } from '../../types/project'
+import { ProjectIntroProps } from '../../types/project'
 
-const ProjectCollectionPageHelmet: React.VFC<{ projects: ProjectProps[] }> = ({ projects }) => {
+const ProjectCollectionPageHelmet: React.VFC<{ projects: ProjectIntroProps[] }> = ({ projects }) => {
   const { settings } = useApp()
   const { pageTitle } = useNav()
 
@@ -27,8 +27,13 @@ const ProjectCollectionPageHelmet: React.VFC<{ projects: ProjectProps[] }> = ({ 
           itemListElement: projects.map((project, index) => ({
             '@type': 'ListItem',
             position: index + 1,
-            url: window.location.origin + `/projects/${project.id}`,
-            image: project.coverUrl || seoMeta?.image || settings['open_graph.image'],
+            item: {
+              '@type': 'Thing',
+              name: project.title,
+              url: window.location.origin + `/projects/${project.id}`,
+              image: project.coverUrl || seoMeta?.image || settings['open_graph.image'],
+              description: project.description || '',
+            },
           })),
         },
       ]}
