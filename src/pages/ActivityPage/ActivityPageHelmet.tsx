@@ -37,7 +37,7 @@ const ActivityPageHelmet: React.VFC<{ activity: Activity }> = ({ activity }) => 
           }
         }
     )[]
-  >((accu, curr) => {
+  >((acc, curr) => {
     const onlineLocation = curr.onlineLink
       ? {
           '@type': 'VirtualLocation',
@@ -55,7 +55,7 @@ const ActivityPageHelmet: React.VFC<{ activity: Activity }> = ({ activity }) => 
         }
       : null
 
-    return [...accu, onlineLocation, offlineLocation].filter(notEmpty)
+    return [...acc, onlineLocation, offlineLocation].filter(notEmpty)
   }, [])
 
   return (
@@ -71,7 +71,7 @@ const ActivityPageHelmet: React.VFC<{ activity: Activity }> = ({ activity }) => 
           startDate: activity.startedAt?.toISOString(),
           endDate: activity.endedAt?.toISOString(),
           eventAttendanceMode: `https://schema.org/${schemaTypeMap[activityType]}`,
-          eventStatus: 'https://schema.org/EventScheduled',
+          eventStatus: 'https://schema.org/EventScheduled', // TODO: confirm by publishedAt and availableSeats
           location: activityLocation.length === 1 ? activityLocation[0] : (activityLocation as any),
           image: [activity.coverUrl || app.settings['open_graph.image']],
           description: getBraftContent(activity.description || app.settings['description']),
