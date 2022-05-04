@@ -12,6 +12,7 @@ import LoadingPage from '../LoadingPage'
 import FundingPage from './FundingPage'
 import ModularPage from './ModularPage'
 import OnSalePage from './OnSalePage'
+import ProjectPageHelmet from './ProjectPageHelmet'
 
 const renderProjectPage = (project: ProjectProps) => {
   if (project.template) {
@@ -73,6 +74,7 @@ const ProjectPage: React.VFC = () => {
   return (
     <>
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {project && <ProjectPageHelmet project={project} />}
       {renderProjectPage(project)}
     </>
   )

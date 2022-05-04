@@ -414,3 +414,8 @@ export const getRedeemLink = async (
     },
     headers: { authorization: `Bearer ${authToken}` },
   })
+
+export const getInfinityDate = () => {
+  const MAX_TIMESTAMP = 8640000000000000
+  return new Date(MAX_TIMESTAMP)
+}
