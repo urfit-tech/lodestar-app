@@ -155,7 +155,11 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
           })
           .catch((error: Error) => {
             const code = error.message as keyof typeof codeMessages
-            message.error(formatMessage(codeMessages[code]))
+            if (process.env.NODE_ENV === 'development') {
+              message.error(formatMessage(codeMessages[code]))
+            } else {
+              message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
+            }
           })
           .catch(handleError)
           .finally(() => setLoading(false))
@@ -255,16 +259,23 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
           layout="vertical"
           onSubmit={e => {
             e.preventDefault()
-            form.validateFields((error, values) => {
-              if (error) return
-              setSignupInfos(
-                Object.keys(values).map(id => ({
-                  id: id,
-                  value: values[id] || '',
-                })),
-              )
-              setAuthState('register')
-            })
+            form.validateFieldsAndScroll(
+              {
+                scroll: {
+                  offsetTop: 35,
+                },
+              },
+              (error, values) => {
+                if (error) return
+                setSignupInfos(
+                  Object.keys(values).map(id => ({
+                    id: id,
+                    value: values[id] || '',
+                  })),
+                )
+                setAuthState('register')
+              },
+            )
           }}
         >
           <Form.Item key="name" label={formatMessage(authMessages.RegisterSection.name)}>
