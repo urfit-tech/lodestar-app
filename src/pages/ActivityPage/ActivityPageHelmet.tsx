@@ -37,9 +37,9 @@ const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ 
 
   const { member } = usePublicMember(activity.organizerId)
 
-  const activityType: 'online' | 'offline' | 'mixed' = activity.sessions.every(session => session.location !== null)
+  const activityType: 'online' | 'offline' | 'mixed' = activity.sessions.some(session => session.location !== null)
     ? 'offline'
-    : activity.sessions.every(session => session.onlineLink !== null)
+    : activity.sessions.some(session => session.onlineLink !== null)
     ? 'online'
     : 'mixed'
 
