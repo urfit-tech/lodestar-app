@@ -1,9 +1,8 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import { useReviewAggregate } from 'lodestar-app-element/src/hooks/review'
 import moment from 'moment'
 import PageHelmet from '../../components/common/PageHelmet'
-import { useProductReviews } from '../../hooks/review'
+import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { Program } from '../../types/program'
 
 const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
