@@ -50,12 +50,22 @@ const NavLinksList = styled.li`
       transition: 0.2s;
     }
   }
+  @media screen and (max-width: 500px) {
+    margin: 15px 0 0 0;
+  }
 `
+
+interface footerLink {
+  name: string
+  url: string
+  icon?: any
+}
 
 export const CWLearningNavLinks: React.VFC = () => {
   const { isAuthenticated } = useAuth()
-  const { settings } = useApp()
+  const { settings, navs } = useApp()
 
+  /** 取得登入/註冊連結 */
   const getOauthLink = () => {
     let oauthLink = ''
 
@@ -72,43 +82,46 @@ export const CWLearningNavLinks: React.VFC = () => {
     return oauthLink
   }
 
+  /** 取得線上課程連結 */
+  const getProgramsLinks = () => {
+    const programsNavs = navs
+      .filter(nav => nav.label === '線上課程')[0]
+      ?.subNavs.filter(subNav => subNav.label !== '江振誠')
+    const links = programsNavs.map(nav => {
+      return { name: nav.label, url: nav.href }
+    })
+    return links
+  }
+
+  /** 登入/註冊連結 */
   const oauthLink = getOauthLink()
 
-  const linksConfig = [
+  const linksConfig: { groupName: string; links: footerLink[] }[] = [
     {
       groupName: '課程',
       links: [
-        { name: '線上課程', url: '/programs', icon: null },
-        { name: '實體課程', url: '/activities', icon: null },
-        { name: '套裝優惠', url: '/packages', icon: null },
-        { name: '空中講堂', url: '/podcast-albums', icon: null },
-        { name: '大師文選', url: '/blog', icon: null },
+        { name: '線上課程', url: '/programs' },
+        { name: '實體課程', url: '/activities' },
+        { name: '套裝優惠', url: '/packages' },
+        { name: '空中講堂', url: '/podcast-albums' },
+        { name: '大師文選', url: '/blog' },
       ],
     },
     {
       groupName: '學習',
-      links: [
-        { name: '所有課程', url: '/programs', icon: null },
-        { name: '管理領導', url: '/programs?active=5a7c757b-e007-498e-8c04-cca7edd0ff91', icon: null },
-        { name: '創業開店', url: '/programs?active=5de14e33-201f-42c9-90ab-64577d56d029', icon: null },
-        { name: '數位行銷', url: '/programs?active=75e9ece1-6cae-4df2-8961-0f000b7a6f4f', icon: null },
-        { name: '職場心靈', url: '/programs?active=0bd24b77-29c9-4ca5-b0aa-35dd3da10570', icon: null },
-        { name: '溝通表達', url: '/programs?active=8891dacc-a441-4e5b-945e-4c2322405552', icon: null },
-        { name: '身心健康', url: '/programs?active=c16b9b29-45d0-4842-9977-467f9605edfb', icon: null },
-        { name: '親職教育', url: '/programs?active=33185173-f877-451d-b013-4a04ea145c8c', icon: null },
-      ],
+      links: getProgramsLinks(),
     },
     {
       groupName: '服務',
       links: [
-        { name: '關於天下學習', url: '/about', icon: null },
-        { name: '兌換課程', url: isAuthenticated ? '/settings/voucher' : oauthLink, icon: null },
-        { name: '企業方案', url: 'https://www.leadercampus.com.tw/', icon: null },
-        { name: '使用者條款', url: '/terms', icon: null },
-        { name: '隱私權政策', url: 'https://member.cwg.tw/privacy-policy', icon: null },
-        { name: '會員服務條款', url: '/rules', icon: null },
-        { name: '課程FAQ', url: '/faq', icon: null },
-        { name: '加入我們', url: 'https://careers.cwg.tw/', icon: null },
+        { name: '關於天下學習', url: '/about' },
+        { name: '兌換課程', url: isAuthenticated ? '/settings/voucher' : oauthLink },
+        { name: '企業方案', url: 'https://www.leadercampus.com.tw/' },
+        { name: '使用者條款', url: '/terms' },
+        { name: '隱私權政策', url: 'https://member.cwg.tw/privacy-policy' },
+        { name: '會員服務條款', url: '/rules' },
+        { name: '課程FAQ', url: '/faq' },
+        { name: '加入我們', url: 'https://careers.cwg.tw/' },
       ],
     },
     {
