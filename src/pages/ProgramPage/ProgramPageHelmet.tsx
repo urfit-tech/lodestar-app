@@ -1,6 +1,9 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useReviewAggregate } from 'lodestar-app-element/src/hooks/review'
 import moment from 'moment'
 import PageHelmet from '../../components/common/PageHelmet'
+import { useProductReviews } from '../../hooks/review'
 import { Program } from '../../types/program'
 
 const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
@@ -8,6 +11,10 @@ const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
   const programPlans = program.plans.map(plan =>
     plan.salePrice !== null && moment() <= moment(plan.endedAt) ? plan.salePrice : plan.listPrice,
   )
+
+  const { resourceCollection } = useResourceCollection([`${app.id}:program:${program.id}`])
+  const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
+  const { productReviews } = useProductReviews(`/programs/${program.id}`)
 
   return (
     <PageHelmet
@@ -21,37 +28,46 @@ const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
           name: program.title || app.settings['title'],
           image: program.coverUrl || app.settings['open_graph.image'],
           description: program.abstract || app.settings['description'],
-          // TODO: add program SKU
-          // sku: program.sku,
+          sku: resourceCollection[0]?.sku,
           mpn: program.id,
           brand: {
             '@type': 'Brand',
             name: app.settings['title'],
           },
-          // TODO: add review and rating
-          // review: {
-          //   '@type': 'Review',
-          //   reviewRating: {
-          //     '@type': 'Rating',
-          //     ratingValue: '4',
-          //     bestRating: '5',
-          //   },
-          //   author: {
-          //     '@type': 'Person',
-          //     name: 'Fred Benson',
-          //   },
-          // },
-          // aggregateRating: {
-          //   '@type': 'AggregateRating',
-          //   ratingValue: '4.4',
-          //   reviewCount: '89',
-          // },
+          review: productReviews.map(review => ({
+            '@type': 'Review',
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: review?.score || 0,
+              bestRating: '5',
+            },
+            author: {
+              '@type': 'Person',
+              name: review?.memberName || review?.memberId || '',
+            },
+          })),
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: averageScore,
+            reviewCount: reviewCount,
+          },
           offers: {
             '@type': 'AggregateOffer',
             offerCount: programPlans.length,
             lowPrice: Math.min(...programPlans),
             highPrice: Math.max(...programPlans),
             priceCurrency: app.settings['currency_id'] || process.env.SYS_CURRENCY,
+          },
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Course',
+          name: program.title,
+          description: program.abstract?.slice(0, 60),
+          provider: {
+            '@type': 'Organization',
+            name: app.settings['name'],
+            sameAs: `https://${window.location.host}`,
           },
         },
       ]}
