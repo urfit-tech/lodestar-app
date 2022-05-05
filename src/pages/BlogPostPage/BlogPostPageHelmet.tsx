@@ -1,5 +1,6 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import PageHelmet from '../../components/common/PageHelmet'
+import { getInfinityDate, notEmpty } from '../../helpers'
 import { Post } from '../../types/blog'
 
 const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
@@ -35,10 +36,14 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
         { property: 'og:type', content: 'article' },
         { property: 'article:published_time', content: post.publishedAt?.toISOString() || '' },
         { property: 'article:modified_time', content: post.updatedAt.toISOString() },
-        // TODO: add article expiration time
-        // { property: 'article:expiration_time', content: '' },
-        // TODO: add main section
-        // { property: 'article:section', content: '' },
+        { property: 'article:expiration_time', content: getInfinityDate().toISOString() },
+        {
+          property: 'article:section',
+          content: post.categories
+            .map(category => category?.name)
+            .filter(notEmpty)
+            .join('|'),
+        },
         { property: 'profile:first_name', content: firstName },
         { property: 'profile:last_name', content: lastName },
         { property: 'profile:username', content: post.author.username },

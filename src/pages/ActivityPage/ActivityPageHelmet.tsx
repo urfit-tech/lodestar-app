@@ -1,15 +1,83 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { DeepPick } from 'ts-deep-pick/lib'
 import PageHelmet from '../../components/common/PageHelmet'
-import { getBraftContent } from '../../helpers'
+import { getBraftContent, notEmpty } from '../../helpers'
+import { usePublicMember } from '../../hooks/member'
 import { Activity } from '../../types/activity'
+
+const schemaTypeMap = {
+  online: 'OnlineEventAttendanceMode' as const,
+  offline: 'OfflineEventAttendanceMode' as const,
+  mixed: 'MixedEventAttendanceMode' as const,
+}
 
 // FIXME: it should change to another structured data
 // https://developers.google.com/search/docs/advanced/structured-data/event
-type ActivityPageHelmetProps = DeepPick<Activity, 'id' | 'title' | 'description' | 'coverUrl' | 'tags' | 'tickets'>
+type ActivityPageHelmetProps = DeepPick<
+  Activity,
+  | 'id'
+  | 'title'
+  | 'description'
+  | 'coverUrl'
+  | 'tags'
+  | 'tickets.[].startedAt'
+  | 'tickets.[].endedAt'
+  | 'tickets.[].price'
+  | 'organizerId'
+  | 'sessions.[].location'
+  | 'sessions.[].onlineLink'
+  | 'sessions.[].startedAt'
+  | 'sessions.[].endedAt'
+  | 'ticketSessions.[].session.id'
+  | 'ticketSessions.[].session.title'
+  | 'ticketSessions.[].session.type'
+>
 const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ activity }) => {
   const app = useApp()
 
+  const { member } = usePublicMember(activity.organizerId)
+
+  const activityType: 'online' | 'offline' | 'mixed' = activity.sessions.some(session => session.location !== null)
+    ? 'offline'
+    : activity.sessions.some(session => session.onlineLink !== null)
+    ? 'online'
+    : 'mixed'
+
+  const activityLocation = activity.sessions.reduce<
+    (
+      | { '@type': string; url: string }
+      | {
+          '@type': string
+          name: string
+          address: {
+            '@type': string
+            name: string
+          }
+        }
+    )[]
+  >((acc, curr) => {
+    const onlineLocation = curr.onlineLink
+      ? {
+          '@type': 'VirtualLocation',
+          url: curr.onlineLink,
+        }
+      : null
+    const offlineLocation = curr.location
+      ? {
+          '@type': 'Place',
+          name: curr.location,
+          address: {
+            '@type': 'PostalAddress',
+            name: curr.location,
+          },
+        }
+      : null
+
+    return [...acc, onlineLocation, offlineLocation].filter(notEmpty)
+  }, [])
+
+  const activityStartedAt = new Date(Math.min(...activity.sessions.map(session => session.startedAt.getTime())))
+  const activityEndedAt = new Date(Math.max(...activity.sessions.map(session => session.endedAt.getTime())))
   return (
     <PageHelmet
       title={activity.title}
@@ -18,41 +86,30 @@ const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ 
       jsonLd={[
         {
           '@context': 'https://schema.org',
-          '@type': 'Product',
+          '@type': 'Event' as any,
           name: activity.title || app.settings['title'],
-          image: activity.coverUrl || app.settings['open_graph.image'],
+          startDate: activityStartedAt?.toISOString(),
+          endDate: activityEndedAt?.toISOString(),
+          eventAttendanceMode: `https://schema.org/${schemaTypeMap[activityType]}`,
+          eventStatus: 'https://schema.org/EventScheduled', // TODO: confirm by publishedAt and availableSeats
+          location: activityLocation.length === 1 ? activityLocation[0] : (activityLocation as any),
+          image: [activity.coverUrl || app.settings['open_graph.image']],
           description: getBraftContent(activity.description || app.settings['description']),
-          // TODO: add activity SKU
-          // sku: activity.sku,
-          mpn: activity.id,
-          brand: {
-            '@type': 'Brand',
-            name: app.settings['title'],
-          },
-          // TODO: add review and rating
-          // review: {
-          //   '@type': 'Review',
-          //   reviewRating: {
-          //     '@type': 'Rating',
-          //     ratingValue: '4',
-          //     bestRating: '5',
-          //   },
-          //   author: {
-          //     '@type': 'Person',
-          //     name: 'Fred Benson',
-          //   },
-          // },
-          // aggregateRating: {
-          //   '@type': 'AggregateRating',
-          //   ratingValue: '4.4',
-          //   reviewCount: '89',
-          // },
           offers: {
             '@type': 'AggregateOffer',
             offerCount: activity.tickets.length,
             lowPrice: Math.min(...activity.tickets.map(activityTicket => activityTicket.price)),
             highPrice: Math.max(...activity.tickets.map(activityTicket => activityTicket.price)),
             priceCurrency: app.settings['currency_id'] || process.env.SYS_CURRENCY,
+          },
+          performer: {
+            '@type': 'Person',
+            name: member?.name || '',
+          } as any,
+          organizer: {
+            '@type': 'Organization',
+            name: app.settings['name'] || document.title,
+            url: `https://${window.location.host}`,
           },
         },
       ]}

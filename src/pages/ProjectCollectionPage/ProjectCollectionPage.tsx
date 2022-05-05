@@ -8,17 +8,16 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import { StyledBannerTitle } from '../components/layout'
-import DefaultLayout from '../components/layout/DefaultLayout'
-import ProjectIntroCard from '../components/project/ProjectIntroCard'
-import { notEmpty } from '../helpers'
-import { commonMessages } from '../helpers/translation'
-import { useNav } from '../hooks/data'
-import { useProjectIntroCollection } from '../hooks/project'
-import { ReactComponent as FundraisingIcon } from '../images/fundraising.svg'
-import { ReactComponent as PreOrderIcon } from '../images/pre-order.svg'
-import { ReactComponent as PromotionIcon } from '../images/promotion.svg'
-import { Category } from '../types/general'
+import { StyledBannerTitle } from '../../components/layout'
+import DefaultLayout from '../../components/layout/DefaultLayout'
+import ProjectIntroCard from '../../components/project/ProjectIntroCard'
+import { notEmpty } from '../../helpers'
+import { commonMessages } from '../../helpers/translation'
+import { useNav } from '../../hooks/data'
+import { useProjectIntroCollection } from '../../hooks/project'
+import { FundraisingIcon, PreOrderIcon, PromotionIcon } from '../../images'
+import { Category } from '../../types/general'
+import ProjectCollectionPageHelmet from './ProjectCollectionPageHelmet'
 
 const messages = defineMessages({
   exploreProjects: { id: 'project.label.exploreProjects', defaultMessage: '探索專案' },
@@ -116,6 +115,7 @@ const ProjectCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      {projects && <ProjectCollectionPageHelmet projects={projects} />}
       <StyledCoverSection>
         <div className="container">
           <StyledBannerTitle>

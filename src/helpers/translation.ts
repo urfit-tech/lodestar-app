@@ -2,9 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const authMessages = {
   title: defineMessages({
-    signUp: { id: 'auth.title.signUp', defaultMessage: '立即註冊' },
     login: { id: 'auth.title.login', defaultMessage: '登入' },
-    smsVerification: { id: 'auth.title.smsVerification', defaultMessage: '驗證手機號碼' },
   }),
   ui: defineMessages({
     facebookLogin: { id: 'auth.ui.facebookLogin', defaultMessage: 'Facebook 登入/註冊' },
@@ -16,11 +14,6 @@ export const authMessages = {
     noMember: { id: 'auth.content.noMember', defaultMessage: '還不是會員嗎？' },
     isMember: { id: 'auth.content.isMember', defaultMessage: '已經是會員了嗎?' },
     loginFb: { id: 'auth.content.loginFb', defaultMessage: 'Facebook 登入/註冊' },
-    registration: {
-      id: 'auth.content.registration',
-      defaultMessage: '註冊表示您已閱讀並同意各項',
-    },
-    term: { id: 'auth.content.term', defaultMessage: '條款' },
   }),
   message: defineMessages({
     fbError: { id: 'auth.message.error.fb', defaultMessage: `無法從 Facebook 登入/註冊` },
