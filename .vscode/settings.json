@@ -1,9 +1,5 @@
 {
   "cSpell.words": [
-    "ICHEF",
-    "Infor",
-    "WEBVTT",
-    "YOTTA",
     "acsi",
     "antd",
     "anticon",
@@ -13,6 +9,7 @@
     "callout",
     "chakra",
     "codegen",
+    "commonhealth",
     "definst",
     "ecommerce",
     "fingerprintjs",
@@ -21,8 +18,10 @@
     "hardcopy",
     "hasura",
     "hotjar",
+    "ICHEF",
     "ilike",
     "imgs",
+    "Infor",
     "inlinesvg",
     "inmemory",
     "instflag",
@@ -33,12 +32,14 @@
     "openid",
     "optin",
     "pageview",
+    "paypal",
     "photoshop",
     "playsinline",
     "qrcode",
     "refetch",
     "roadmap",
     "roadmaps",
+    "signup",
     "sixdigital",
     "smartvideo",
     "sortablejs",
@@ -58,11 +59,11 @@
     "vacc",
     "virtualness",
     "webatm",
+    "WEBVTT",
     "xstate",
     "xuemi",
-    "youtube",
-    "commonhealth",
-    "paypal"
+    "YOTTA",
+    "youtube"
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
 }

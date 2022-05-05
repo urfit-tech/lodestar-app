@@ -1,6 +1,48 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { useMemo } from 'react'
 import hasura from '../hasura'
+import { ReviewProps } from '../types/review'
+
+export const useProductReviews = (path: string) => {
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PRODUCT_REVIEW, hasura.GET_PRODUCT_REVIEWVariables>(
+    gql`
+      query GET_PRODUCT_REVIEW($path: String) {
+        review_public(where: { path: { _eq: $path } }) {
+          id
+          member_id
+          name
+          username
+          score
+        }
+      }
+    `,
+    {
+      variables: {
+        path,
+      },
+    },
+  )
+
+  const reviews: (Pick<ReviewProps, 'id' | 'memberId' | 'memberName' | 'score'> | null)[] = useMemo(
+    () =>
+      loading || error || !data || !data.review_public
+        ? []
+        : data.review_public.map(review => ({
+            id: review.id,
+            memberId: review.member_id,
+            memberName: review.name || review.username,
+            score: review.score,
+          })),
+    [data, error, loading],
+  )
+  return {
+    loadingProductReviews: loading,
+    errorProductReviews: error,
+    productReviews: reviews,
+    refetchProductReviews: refetch,
+  }
+}
 
 export const useReviewAggregate = (path: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_REVIEW_AGGREGATE, hasura.GET_REVIEW_AGGREGATEVariables>(

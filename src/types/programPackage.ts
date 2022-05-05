@@ -29,3 +29,8 @@ export type ProgramPackageProgram = {
   coverUrl?: string | null
   categories: Category[]
 }
+
+export type ProgramPackage = ProgramPackageProps & {
+  programs: ProgramPackageProgram[]
+  plans: ProgramPackagePlanProps[]
+}

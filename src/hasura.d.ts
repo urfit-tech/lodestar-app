@@ -4,6 +4,43 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_SIGNUP_PROPERTY
+// ====================================================
+
+export interface GET_SIGNUP_PROPERTY_signup_property_property {
+  __typename: "property";
+  id: any;
+  name: string;
+}
+
+export interface GET_SIGNUP_PROPERTY_signup_property {
+  __typename: "signup_property";
+  id: any;
+  is_required: boolean;
+  options: any | null;
+  /**
+   * input, checkbox, radio, select, textarea
+   */
+  type: string;
+  /**
+   * An object relationship
+   */
+  property: GET_SIGNUP_PROPERTY_signup_property_property;
+}
+
+export interface GET_SIGNUP_PROPERTY {
+  /**
+   * fetch data from the table: "signup_property"
+   */
+  signup_property: GET_SIGNUP_PROPERTY_signup_property[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PRODUCT_INVENTORY
 // ====================================================
 
@@ -2558,6 +2595,10 @@ export interface GET_ACTIVITY_activity_by_pk_activity_categories {
 export interface GET_ACTIVITY_activity_by_pk_activity_sessions {
   __typename: "activity_session";
   id: any;
+  online_link: string | null;
+  location: string | null;
+  started_at: any;
+  ended_at: any;
 }
 
 export interface GET_ACTIVITY_activity_by_pk_activity_tickets_activity_session_tickets_activity_session {
@@ -8530,6 +8571,35 @@ export interface GET_PROJECT_INTRO_COLLECTION {
 
 export interface GET_PROJECT_INTRO_COLLECTIONVariables {
   condition: project_bool_exp;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PRODUCT_REVIEW
+// ====================================================
+
+export interface GET_PRODUCT_REVIEW_review_public {
+  __typename: "review_public";
+  id: any | null;
+  member_id: string | null;
+  name: string | null;
+  username: string | null;
+  score: any | null;
+}
+
+export interface GET_PRODUCT_REVIEW {
+  /**
+   * fetch data from the table: "review_public"
+   */
+  review_public: GET_PRODUCT_REVIEW_review_public[];
+}
+
+export interface GET_PRODUCT_REVIEWVariables {
+  path?: string | null;
 }
 
 /* tslint:disable */

@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { sum, uniqBy } from 'ramda'
 import hasura from '../hasura'
 import { PeriodType } from '../types/program'
-import { ProgramPackagePlanProps, ProgramPackageProgram, ProgramPackageProps } from '../types/programPackage'
+import { ProgramPackage, ProgramPackageProgram, ProgramPackageProps } from '../types/programPackage'
 
 export const useProgramPackageIntroduction = (programPackageId: string) => {
   const { loading, error, data, refetch } = useQuery<
@@ -59,25 +59,22 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
     { variables: { programPackageId } },
   )
 
-  const programPackageIntroduction: ProgramPackageProps & {
-    programPackagePlans: ProgramPackagePlanProps[]
-    includedPrograms: ProgramPackageProgram[]
-  } =
+  const programPackageIntroduction: ProgramPackage =
     loading || error || !data || !data.program_package_by_pk
       ? {
           id: '',
           title: '',
           coverUrl: '',
           description: null,
-          programPackagePlans: [],
-          includedPrograms: [],
+          plans: [],
+          programs: [],
         }
       : {
           id: programPackageId,
           title: data.program_package_by_pk.title,
           coverUrl: data.program_package_by_pk.cover_url,
           description: data.program_package_by_pk.description,
-          programPackagePlans: data.program_package_by_pk.program_package_plans.map(programPackagePlan => ({
+          plans: data.program_package_by_pk.program_package_plans.map(programPackagePlan => ({
             id: programPackagePlan.id,
             title: programPackagePlan.title,
             description: programPackagePlan.description,
@@ -91,7 +88,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
             discountDownPrice: programPackagePlan.discount_down_price,
             enrollmentCount: programPackagePlan.program_package_plan_enrollments_aggregate.aggregate?.count || 0,
           })),
-          includedPrograms: data.program_package_by_pk.program_package_programs.map(packageProgram => ({
+          programs: data.program_package_by_pk.program_package_programs.map(packageProgram => ({
             id: packageProgram.program.id,
             title: packageProgram.program.title,
             coverUrl: packageProgram.program.cover_url,

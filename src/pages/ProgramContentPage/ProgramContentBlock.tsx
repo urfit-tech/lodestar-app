@@ -74,7 +74,7 @@ const ProgramContentBlock: React.VFC<{
     insertProgress(programContentId, {
       progress: 1,
       lastProgress: 1,
-    })
+    }).then(() => refetchProgress())
   }, [
     initialProgress,
     insertProgress,

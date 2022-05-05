@@ -9,20 +9,21 @@ import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import ClassCouponBlock from '../components/ClassCouponBlock'
-import Responsive from '../components/common/Responsive'
-import { BraftContent } from '../components/common/StyledBraftEditor'
-import DefaultLayout from '../components/layout/DefaultLayout'
-import ProgramCollection from '../components/package/ProgramCollection'
-import ProgramPackageBanner from '../components/package/ProgramPackageBanner'
-import ProgramPackagePlanCard from '../components/package/ProgramPackagePlanCard'
-import { ProgramDisplayedCard } from '../components/program/ProgramDisplayedCard'
-import { ProgramDisplayedListItem } from '../components/program/ProgramDisplayedListItem'
-import { desktopViewMixin } from '../helpers'
-import { commonMessages } from '../helpers/translation'
-import { useEnrolledProgramIds } from '../hooks/program'
-import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../hooks/programPackage'
-import NotFoundPage from './NotFoundPage'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
+import Responsive from '../../components/common/Responsive'
+import { BraftContent } from '../../components/common/StyledBraftEditor'
+import DefaultLayout from '../../components/layout/DefaultLayout'
+import ProgramCollection from '../../components/package/ProgramCollection'
+import ProgramPackageBanner from '../../components/package/ProgramPackageBanner'
+import ProgramPackagePlanCard from '../../components/package/ProgramPackagePlanCard'
+import { ProgramDisplayedCard } from '../../components/program/ProgramDisplayedCard'
+import { ProgramDisplayedListItem } from '../../components/program/ProgramDisplayedListItem'
+import { desktopViewMixin } from '../../helpers'
+import { commonMessages } from '../../helpers/translation'
+import { useEnrolledProgramIds } from '../../hooks/program'
+import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
+import NotFoundPage from '../NotFoundPage'
+import ProgramPackagePageHelmet from './ProgramPackagePageHelmet'
 
 const StyledTitle = styled.h2`
   ${CommonLargeTitleMixin}
@@ -64,7 +65,7 @@ const ProgramPackagePage: React.VFC = () => {
 
   useEffect(() => {
     if (programPackageIntroduction) {
-      programPackageIntroduction.programPackagePlans.forEach((programPackagePlan, index) => {
+      programPackageIntroduction.plans.forEach((programPackagePlan, index) => {
         ReactGA.plugin.execute('ec', 'addProduct', {
           id: programPackagePlan.id,
           name: programPackagePlan.title,
@@ -97,6 +98,7 @@ const ProgramPackagePage: React.VFC = () => {
   return (
     <DefaultLayout white footerBottomSpace="4rem">
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {programPackageIntroduction && <ProgramPackagePageHelmet programPackage={programPackageIntroduction} />}
       <ProgramPackageBanner
         title={programPackageIntroduction.title}
         coverUrl={programPackageIntroduction.coverUrl}
@@ -105,7 +107,7 @@ const ProgramPackagePage: React.VFC = () => {
 
       <div className="container">
         <div className="row">
-          {programPackageIntroduction.programPackagePlans.length > 0 ? (
+          {programPackageIntroduction.plans.length > 0 ? (
             <>
               <div className="col-12 col-lg-8 pt-5">
                 <Responsive.Default>
@@ -114,7 +116,7 @@ const ProgramPackagePage: React.VFC = () => {
 
                 <StyledTitle className="mb-4">套裝內課程</StyledTitle>
                 <ProgramCollection
-                  programs={programPackageIntroduction.includedPrograms}
+                  programs={programPackageIntroduction.programs}
                   renderItem={({ displayType, program }) => {
                     const isEnrolled = enrolledProgramIds.includes(program.id)
                     return displayType === 'grid' ? (
@@ -149,7 +151,7 @@ const ProgramPackagePage: React.VFC = () => {
                 <Responsive.Desktop>
                   <ClassCouponBlock />
                 </Responsive.Desktop>
-                {programPackageIntroduction.programPackagePlans.map(programPackagePlan => (
+                {programPackageIntroduction.plans.map(programPackagePlan => (
                   <div key={programPackagePlan.id} className="mb-4">
                     <ProgramPackagePlanCard
                       programPackageId={programPackageId}
@@ -170,7 +172,7 @@ const ProgramPackagePage: React.VFC = () => {
 
               <StyledTitle className="mb-4">{formatMessage(messages.includedItems)}</StyledTitle>
               <ProgramCollection
-                programs={programPackageIntroduction.includedPrograms}
+                programs={programPackageIntroduction.programs}
                 renderItem={({ displayType, program }) =>
                   displayType === 'grid' ? (
                     <div className="col-12 col-md-6 col-lg-4">

@@ -64,7 +64,7 @@ const ProgramPlanPaymentButton: React.VFC<{
         </Button>
       ) : (
         <div className="d-flex flex-column">
-          {!settings['feature.cart.disable'] && programPlan.currency.id !== 'LSC' && (
+          {!Number(settings['feature.cart.disable']) && programPlan.currency.id !== 'LSC' && (
             <StyleButton
               className="mr-2"
               variant="outline"
