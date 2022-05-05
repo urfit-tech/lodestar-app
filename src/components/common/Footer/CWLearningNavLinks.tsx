@@ -82,53 +82,70 @@ export const CWLearningNavLinks: React.VFC = () => {
     return oauthLink
   }
 
-  /** 取得線上課程連結 */
-  const getProgramsLinks = () => {
-    const programsNavs = navs
-      .filter(nav => nav.label === '線上課程')[0]
-      ?.subNavs.filter(subNav => subNav.label !== '江振誠')
-    const links = programsNavs.map(nav => {
-      return { name: nav.label, url: nav.href }
-    })
-    return links
-  }
-
   /** 登入/註冊連結 */
   const oauthLink = getOauthLink()
 
-  const linksConfig: { groupName: string; links: footerLink[] }[] = [
-    {
-      groupName: '課程',
-      links: [
-        { name: '線上課程', url: '/programs' },
-        { name: '實體課程', url: '/activities' },
-        { name: '套裝優惠', url: '/packages' },
-        { name: '空中講堂', url: '/podcast-albums' },
-        { name: '大師文選', url: '/blog' },
-      ],
-    },
-    {
-      groupName: '學習',
-      links: getProgramsLinks(),
-    },
-    {
-      groupName: '服務',
-      links: [
-        { name: '關於天下學習', url: '/about' },
-        { name: '兌換課程', url: isAuthenticated ? '/settings/voucher' : oauthLink },
-        { name: '企業方案', url: 'https://www.leadercampus.com.tw/' },
-        { name: '使用者條款', url: '/terms' },
-        { name: '隱私權政策', url: 'https://member.cwg.tw/privacy-policy' },
-        { name: '會員服務條款', url: '/rules' },
-        { name: '課程FAQ', url: '/faq' },
-        { name: '加入我們', url: 'https://careers.cwg.tw/' },
-      ],
-    },
-    {
-      groupName: '社群',
-      links: [{ name: 'Facebook', url: 'https://www.facebook.com/cwlearning.com.tw', icon: FacebookIcon }],
-    },
-  ]
+  /** 取得連結設定 */
+  const getLinksConfig = () => {
+    const footerNavs = navs.filter(nav => nav.block === 'footer')
+    const linksconfig = footerNavs.map(footerNav => {
+      const config = {
+        groupName: footerNav.label,
+        links: footerNav.subNavs.map(subNav => {
+          const linkConfig: footerLink = { name: subNav.label, url: subNav.href }
+
+          if (subNav.href.includes('facebook')) {
+            linkConfig.icon = FacebookIcon
+          }
+          if (subNav.label === '江振誠') {
+            return
+          }
+          if (subNav.label === '兌換課程') {
+            linkConfig.url = isAuthenticated ? subNav.href : oauthLink
+          }
+          return linkConfig
+        }),
+      }
+      return config
+    })
+    return linksconfig
+  }
+
+  const linksConfig = getLinksConfig()
+
+  // const linksConfig: { groupName: string; links: footerLink[] }[] = [
+  //   {
+  //     groupName: '課程',
+  //     links: [
+  //       { name: '線上課程', url: '/programs' },
+  //       { name: '實體課程', url: '/activities' },
+  //       { name: '套裝優惠', url: '/packages' },
+  //       { name: '空中講堂', url: '/podcast-albums' },
+  //       { name: '大師文選', url: '/blog' },
+  //     ],
+  //   },
+  //   {
+  //     groupName: '學習',
+  //     links: getProgramsLinks(),
+  //   },
+  //   {
+  //     groupName: '服務',
+  //     links: [
+  //       { name: '關於天下學習', url: '/about' },
+  //       { name: '兌換課程', url: isAuthenticated ? '/settings/voucher' : oauthLink },
+  //       { name: '企業方案', url: 'https://www.leadercampus.com.tw/' },
+  //       { name: '使用者條款', url: '/terms' },
+  //       { name: '隱私權政策', url: 'https://member.cwg.tw/privacy-policy' },
+  //       { name: '會員服務條款', url: '/rules' },
+  //       { name: '課程FAQ', url: '/faq' },
+  //       { name: '加入我們', url: 'https://careers.cwg.tw/' },
+  //     ],
+  //   },
+  //   {
+  //     groupName: '社群',
+  //     links: [{ name: 'Facebook', url: 'https://www.facebook.com/cwlearning.com.tw', icon: FacebookIcon }],
+  //   },
+  // ]
 
   return (
     <div className="col-12">
@@ -140,12 +157,18 @@ export const CWLearningNavLinks: React.VFC = () => {
               <LinkGroup>
                 {item.links.map(link => {
                   return (
-                    <NavLinksList>
-                      <a href={link.url} target={link.url.includes('https') ? '_blank' : '_self'}>
-                        {link.icon && <Icon as={link.icon} />}
-                        {link.name}
-                      </a>
-                    </NavLinksList>
+                    <>
+                      {link ? (
+                        <NavLinksList>
+                          <a href={link.url} target={link.url.includes('https') ? '_blank' : '_self'}>
+                            {link.icon && <Icon as={link.icon} />}
+                            {link.name}
+                          </a>
+                        </NavLinksList>
+                      ) : (
+                        <></>
+                      )}
+                    </>
                   )
                 })}
               </LinkGroup>
