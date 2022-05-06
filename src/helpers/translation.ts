@@ -108,6 +108,7 @@ export const commonMessages = {
     courseDelete: { id: 'product.program.title.course.delete', defaultMessage: '刪除課程' },
     notification: { id: 'product.program.title.notification', defaultMessage: '你的通知' },
     purchasedItemAvailable: { id: 'common.message.success.purchasedItemAvailable', defaultMessage: '購買的項目已開通' },
+    systemBusy: { id: 'common.message.success.systemBusy', defaultMessage: '系統忙碌中' },
     purchasedItemPreparing: { id: 'common.message.success.purchasedItemPreparing', defaultMessage: '購買的項目準備中' },
     paymentFail: { id: 'common.fail', defaultMessage: '付款失敗' },
     creditCardConfirm: { id: 'common.confirm.credit', defaultMessage: '請確認您的信用卡資料正確後，再付款一次。' },
@@ -297,6 +298,18 @@ export const commonMessages = {
     creatorCollection: { id: 'users.title.creator.collection', defaultMessage: '大師列表' },
     description: { id: 'product.program.description', defaultMessage: '方案：' },
     noAuthority: { id: 'common.noAuthority', defaultMessage: '你沒有此頁面的讀取權限' },
+    busy: {
+      id: 'common.content.busy',
+      defaultMessage: '您已付款成功！',
+    },
+    busyProcessing: {
+      id: 'common.content.busyProcessing',
+      defaultMessage: '由於目前系統忙碌中，訂單狀態與權益開通正在處理中',
+    },
+    busyCheck: { id: 'common.content.busyCheck', defaultMessage: '請於 3 ~ 5 分鐘後至訂單記錄頁進行查詢' },
+    busyContact: { id: 'commonMessages.content.busyContact', defaultMessage: '若還是未開通訂單，請聯繫平台客服' },
+    busySyncJob: { id: 'commonMessages.content.busySyncJob', defaultMessage: '同步訂單發生錯誤，請聯繫平台客服' },
+    busyError: { id: 'commonMessages.conetnt.busyError', defaultMessage: '錯誤代碼：{errorCode}，請聯繫平台客服' },
     prepare: {
       id: 'common.prepare',
       defaultMessage: '訂單查驗需要數秒的時間，將於一分鐘內會更新您的訂單資訊',
