@@ -35,7 +35,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   const location = useLocation()
   const history = useHistory()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
-  const [withCode] = useQueryParam('code', StringParam)
+  const [errorCode] = useQueryParam('code', StringParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
   const { loading: isOrderLoading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
@@ -138,7 +138,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
         >
           <AdminCard style={{ paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
             <div className="d-flex flex-column align-items-center justify-content-center px-sm-5">
-              {withCode ? (
+              {errorCode ? (
                 <>
                   <Icon
                     className="mb-5"
@@ -148,7 +148,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                     style={{ fontSize: '4rem' }}
                   />
                   <Typography.Title level={4}>{formatMessage(commonMessages.title.systemBusy)}</Typography.Title>
-                  {withCode === 'E_SYNC_PAYMENT' ? (
+                  {errorCode === 'E_SYNC_PAYMENT' ? (
                     <>
                       <Typography.Text>{formatMessage(commonMessages.content.busy)}</Typography.Text>
                       <Typography.Text>{formatMessage(commonMessages.content.busyProcessing)}</Typography.Text>
@@ -157,7 +157,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                         {formatMessage(commonMessages.content.busyContact)}
                       </Typography.Text>
                     </>
-                  ) : withCode === 'E_ADD_SYNC_JOB' ? (
+                  ) : errorCode === 'E_ADD_SYNC_JOB' ? (
                     <>
                       <Typography.Text>{formatMessage(commonMessages.content.busy)}</Typography.Text>
                       <Typography.Text>{formatMessage(commonMessages.content.busySyncJob)}</Typography.Text>
@@ -165,7 +165,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                   ) : (
                     <>
                       <Typography.Text>
-                        {formatMessage(commonMessages.content.busyError, { errorCode: withCode })}
+                        {formatMessage(commonMessages.content.busyError, { errorCode })}
                       </Typography.Text>
                     </>
                   )}
