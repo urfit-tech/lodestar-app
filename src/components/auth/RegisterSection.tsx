@@ -286,7 +286,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                   message: formatMessage(authMessages.RegisterSection.enterName),
                 },
               ],
-            })(<Input placeholder="" />)}
+            })(<Input placeholder={formatMessage(authMessages.RegisterSection.nameFieldWarning)} />)}
           </Form.Item>
 
           {signProperties.map(signProperty => {
