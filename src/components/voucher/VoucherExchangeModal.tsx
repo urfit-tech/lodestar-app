@@ -27,17 +27,19 @@ const VoucherExchangeModal: React.VFC<{
   productQuantityLimit: number
   description: string | null
   productIds: string[]
-  disabledProductIds: string[]
   onExchange?: (
     setVisible: React.Dispatch<React.SetStateAction<boolean>>,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     selectedProductIds: string[],
   ) => void
-}> = ({ productQuantityLimit, description, productIds, disabledProductIds, onExchange }) => {
+}> = ({ productQuantityLimit, description, productIds, onExchange }) => {
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
+
+  // select disabledProductIds
+  const disabledProductIds: any = []
 
   return (
     <>
