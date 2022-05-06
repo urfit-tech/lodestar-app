@@ -8,9 +8,7 @@ import { useIntl } from 'react-intl'
 import { VoucherProps } from '../../components/voucher/Voucher'
 import VoucherCollectionBlockComponent from '../../components/voucher/VoucherCollectionBlock'
 import hasura from '../../hasura'
-import { handleError } from '../../helpers'
-import { codeMessages, voucherMessages } from '../../helpers/translation'
-import { useEnrolledProductIds } from '../../hooks/data'
+import { voucherMessages } from '../../helpers/translation'
 
 const VoucherCollectionBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -21,9 +19,6 @@ const VoucherCollectionBlock: React.VFC = () => {
   >(GET_VOUCHER_COLLECTION, {
     variables: { memberId: currentMemberId || '' },
   })
-  const { loadingProductIds, errorProductIds, enrolledProductIds, refetchProgramIds } = useEnrolledProductIds(
-    currentMemberId || '',
-  )
 
   const voucherCollection: (VoucherProps & {
     productIds: string[]
@@ -43,41 +38,6 @@ const VoucherCollectionBlock: React.VFC = () => {
       description: decodeURI(voucher.voucher_code.voucher_plan.description || ''),
       isTransferable: voucher.voucher_code.voucher_plan.is_transferable,
     })) || []
-
-  const handleInsert = (setLoading: React.Dispatch<React.SetStateAction<boolean>>, code: string) => {
-    if (!currentMemberId) {
-      return
-    }
-
-    setLoading(true)
-
-    axios
-      .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
-        {
-          code,
-          type: 'Voucher',
-        },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-      .then(({ data: { code, message: errorMessage } }) => {
-        if (code === 'SUCCESS') {
-          message.success(formatMessage(voucherMessages.messages.addVoucher))
-          refetch()
-          refetchProgramIds()
-        } else {
-          if (/^GraphQL error: Uniqueness violation/.test(errorMessage)) {
-            message.error(formatMessage(voucherMessages.messages.duplicateVoucherCode))
-          } else {
-            message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-          }
-        }
-      })
-      .catch(handleError)
-      .finally(() => setLoading(false))
-  }
 
   const handleExchange = (
     setVisible: React.Dispatch<React.SetStateAction<boolean>>,
@@ -110,11 +70,9 @@ const VoucherCollectionBlock: React.VFC = () => {
   return (
     <VoucherCollectionBlockComponent
       memberId={currentMemberId}
-      loading={loading || loadingProductIds}
-      error={error || errorProductIds}
+      loading={loading}
+      error={error}
       voucherCollection={voucherCollection}
-      disabledProductIds={enrolledProductIds}
-      onInsert={handleInsert}
       onExchange={handleExchange}
       onRefetch={refetch}
     />

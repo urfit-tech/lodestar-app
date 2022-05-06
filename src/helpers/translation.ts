@@ -1660,4 +1660,16 @@ export const codeMessages = defineMessages({
     id: 'code.E_REDEEM',
     defaultMessage: '接收失敗',
   },
+  E_CHECK_PRODUCT_VALID: {
+    id: 'code.E_CHECK_PRODUCT_VALID',
+    defaultMessage: 'product is invalid',
+  },
+  E_PRODUCT_SESSION_OUTDATE: {
+    id: 'code.E_PRODUCT_SESSION_OUTDATE',
+    defaultMessage: 'session is outdated',
+  },
+  E_NO_PRODUCT: {
+    id: 'code.E_NO_PRODUCT',
+    defaultMessage: 'product does not exist',
+  },
 })

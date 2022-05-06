@@ -6,6 +6,10 @@ const authMessages = {
     isRequiredWarning: { id: 'auth.*.isRequiredWarning', defaultMessage: '請填入{name}' },
   }),
   RegisterSection: defineMessages({
+    nameFieldWarning: {
+      id: 'auth.RegisterSection.nameFieldWarning',
+      defaultMessage: 'please enter your name.',
+    },
     emailIsAlreadyRegistered: {
       id: 'auth.RegisterSection.emailIsAlreadyRegistered',
       defaultMessage: '此信箱已註冊',
