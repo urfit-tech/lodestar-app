@@ -158,7 +158,7 @@ const MemberProfileButton: React.VFC<{
   name: string
   username: string
   email: string
-  pictureUrl: string
+  pictureUrl: string | null
 }> = member => {
   const { formatMessage } = useIntl()
   const history = useHistory()
