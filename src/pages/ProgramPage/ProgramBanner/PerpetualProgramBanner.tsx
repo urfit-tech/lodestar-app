@@ -125,7 +125,10 @@ const PerpetualProgramBanner: React.VFC<{
                   />
                 ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
                   <VideoPlayer
-                    source={{ type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' }}
+                    sources={[
+                      { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
+                      { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
+                    ]}
                   />
                 ) : (
                   <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />
