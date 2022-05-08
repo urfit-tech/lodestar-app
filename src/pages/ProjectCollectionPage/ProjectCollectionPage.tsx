@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, Icon as AntdIcon } from 'antd'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
@@ -125,6 +126,7 @@ const ProjectCollectionPage: React.VFC = () => {
   return (
     <DefaultLayout white>
       {projects && <ProjectCollectionPageHelmet projects={projects} />}
+      <Tracking.Impression resources={resourceCollection} />
       <StyledCoverSection>
         <div className="container">
           <StyledBannerTitle>
