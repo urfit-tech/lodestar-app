@@ -10,7 +10,7 @@ export type CustomRendererProps = {
     name: string
     username: string
     email: string
-    pictureUrl: string
+    pictureUrl: string | null
   }) => React.ReactNode
   renderFooter?: (props: { DefaultFooter: React.VFC }) => React.ReactElement
   renderAuthButton?: (setAuthModalVisible?: React.Dispatch<React.SetStateAction<boolean>>) => React.ReactNode

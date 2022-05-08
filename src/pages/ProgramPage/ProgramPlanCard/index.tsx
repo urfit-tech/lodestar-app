@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import { AuthModalContext } from '../../../components/auth/AuthModal'
 import AdminCard from '../../../components/common/AdminCard'
 import CountDownTimeBlock from '../../../components/common/CountDownTimeBlock'
+import PaymentButton from '../../../components/common/PaymentButton'
 import PriceLabel from '../../../components/common/PriceLabel'
 import { BraftContent } from '../../../components/common/StyledBraftEditor'
 import { commonMessages, productMessages } from '../../../helpers/translation'
@@ -60,7 +61,7 @@ const ProgramPlanCard: React.VFC<{
 
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
 
-  const { salePrice, listPrice, discountDownPrice, periodType, periodAmount, currency } = programPlan
+  const { salePrice, listPrice, discountDownPrice, periodType, periodAmount, currency, isSubscription } = programPlan
   const currencyId = currency.id || 'TWD'
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
@@ -168,7 +169,15 @@ const ProgramPlanCard: React.VFC<{
           )}
         />
       ) : (
-        <ProgramPlanPaymentButton programPlan={programPlan} />
+        <>
+          <PaymentButton
+            type="ProgramPlan"
+            target={programPlan.id}
+            price={isOnSale && salePrice ? salePrice : listPrice}
+            currencyId={currency.id}
+            isSubscription={isSubscription}
+          ></PaymentButton>
+        </>
       )}
     </StyledAdminCard>
   )

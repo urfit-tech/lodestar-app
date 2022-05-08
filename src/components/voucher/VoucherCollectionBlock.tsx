@@ -16,8 +16,6 @@ const VoucherCollectionBlock: React.VFC<{
   voucherCollection: (VoucherProps & {
     productIds: string[]
   })[]
-  disabledProductIds: string[]
-  onInsert: (setLoading: React.Dispatch<React.SetStateAction<boolean>>, code: string) => void
   onExchange: (
     setVisible: React.Dispatch<React.SetStateAction<boolean>>,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
@@ -25,7 +23,7 @@ const VoucherCollectionBlock: React.VFC<{
     voucherId: string,
   ) => void
   onRefetch?: () => void
-}> = ({ memberId, loading, error, voucherCollection, disabledProductIds, onExchange, onInsert, onRefetch }) => {
+}> = ({ memberId, loading, error, voucherCollection, onExchange, onRefetch }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   if (!memberId || loading) {
@@ -46,7 +44,6 @@ const VoucherCollectionBlock: React.VFC<{
         <VoucherExchangeModal
           productQuantityLimit={voucher.productQuantityLimit}
           productIds={voucher.productIds}
-          disabledProductIds={disabledProductIds}
           onExchange={(setVisible, setLoading, selectedProductIds) =>
             onExchange(setVisible, setLoading, selectedProductIds, voucher.id)
           }
@@ -59,7 +56,7 @@ const VoucherCollectionBlock: React.VFC<{
   return (
     <>
       <div className="mb-5">
-        <VoucherInsertBlock onInsert={onInsert} />
+        <VoucherInsertBlock onRefetchVoucherCollection={onRefetch} />
       </div>
 
       <VoucherCollectionTabs vouchers={vouchers} />

@@ -61,8 +61,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin,
   return (
     renderAuthModal?.(visible) || (
       <Modal
+        className="m-sm-5 p-sm-0 pt-4"
         centered
-        width={window.innerWidth > BREAK_POINT ? window.innerWidth / 3 : window.innerWidth}
+        width={window.innerWidth > BREAK_POINT ? window.innerWidth / 2.5 : window.innerWidth}
         footer={null}
         onCancel={() => setVisible && setVisible(false)}
         visible={visible}

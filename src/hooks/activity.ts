@@ -223,6 +223,10 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
           }
           activity_sessions(order_by: { started_at: asc }) {
             id
+            online_link
+            location
+            started_at
+            ended_at
           }
           activity_tickets(where: { is_published: { _eq: true } }, order_by: { started_at: asc }) {
             id
@@ -277,6 +281,10 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
     | 'tickets'
     | 'categories'
     | 'sessions.[].id'
+    | 'sessions.[].location'
+    | 'sessions.[].onlineLink'
+    | 'sessions.[].startedAt'
+    | 'sessions.[].endedAt'
     | 'ticketSessions.[].ticket.id'
     | 'ticketSessions.[].session.id'
     | 'ticketSessions.[].session.title'
@@ -319,6 +327,10 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
         })),
         sessions: data.activity_by_pk.activity_sessions.map(v => ({
           id: v.id,
+          location: v.location,
+          onlineLink: v.online_link,
+          startedAt: new Date(v.started_at),
+          endedAt: new Date(v.ended_at),
         })),
         ticketSessions: data.activity_by_pk.activity_tickets.flatMap(v =>
           v.activity_session_tickets.map(w => ({

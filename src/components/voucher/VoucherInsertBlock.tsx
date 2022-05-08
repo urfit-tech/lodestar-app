@@ -1,10 +1,13 @@
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, message } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
+import axios from 'axios'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { commonMessages, voucherMessages } from '../../helpers/translation'
+import { handleError } from '../../helpers'
+import { codeMessages, commonMessages, voucherMessages } from '../../helpers/translation'
 import AdminCard from '../common/AdminCard'
 import { BREAK_POINT } from '../common/Responsive'
 
@@ -42,11 +45,45 @@ const StyledFormItem = styled(Form.Item)`
 
 type VoucherInsertBlockProps = CardProps &
   FormComponentProps & {
-    onInsert?: (setLoading: React.Dispatch<React.SetStateAction<boolean>>, code: string) => void
+    onRefetchVoucherCollection?: () => void
   }
-const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onInsert, ...cardProps }) => {
-  const [loading, setLoading] = useState(false)
+const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onRefetchVoucherCollection, ...cardProps }) => {
   const { formatMessage } = useIntl()
+  const { authToken, currentMemberId } = useAuth()
+  const [loading, setLoading] = useState(false)
+
+  const handleInsert = (setLoading: React.Dispatch<React.SetStateAction<boolean>>, code: string) => {
+    if (!currentMemberId) {
+      return
+    }
+
+    setLoading(true)
+    axios
+      .post(
+        `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
+        {
+          code,
+          type: 'Voucher',
+        },
+        {
+          headers: { authorization: `Bearer ${authToken}` },
+        },
+      )
+      .then(({ data: { code, message: errorMessage } }) => {
+        if (code === 'SUCCESS') {
+          message.success(formatMessage(voucherMessages.messages.addVoucher))
+          onRefetchVoucherCollection?.()
+        } else {
+          if (/^GraphQL error: Uniqueness violation/.test(errorMessage)) {
+            message.error(formatMessage(voucherMessages.messages.duplicateVoucherCode))
+          } else {
+            message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+          }
+        }
+      })
+      .catch(handleError)
+      .finally(() => setLoading(false))
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -56,10 +93,8 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onInsert
         return
       }
 
-      if (onInsert) {
-        onInsert(setLoading, values.code)
-        form.resetFields()
-      }
+      handleInsert(setLoading, values.code)
+      form.resetFields()
     })
   }
 

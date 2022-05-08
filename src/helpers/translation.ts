@@ -2,9 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const authMessages = {
   title: defineMessages({
-    signUp: { id: 'auth.title.signUp', defaultMessage: '立即註冊' },
     login: { id: 'auth.title.login', defaultMessage: '登入' },
-    smsVerification: { id: 'auth.title.smsVerification', defaultMessage: '驗證手機號碼' },
   }),
   ui: defineMessages({
     facebookLogin: { id: 'auth.ui.facebookLogin', defaultMessage: 'Facebook 登入/註冊' },
@@ -16,11 +14,6 @@ export const authMessages = {
     noMember: { id: 'auth.content.noMember', defaultMessage: '還不是會員嗎？' },
     isMember: { id: 'auth.content.isMember', defaultMessage: '已經是會員了嗎?' },
     loginFb: { id: 'auth.content.loginFb', defaultMessage: 'Facebook 登入/註冊' },
-    registration: {
-      id: 'auth.content.registration',
-      defaultMessage: '註冊表示您已閱讀並同意各項',
-    },
-    term: { id: 'auth.content.term', defaultMessage: '條款' },
   }),
   message: defineMessages({
     fbError: { id: 'auth.message.error.fb', defaultMessage: `無法從 Facebook 登入/註冊` },
@@ -115,6 +108,7 @@ export const commonMessages = {
     courseDelete: { id: 'product.program.title.course.delete', defaultMessage: '刪除課程' },
     notification: { id: 'product.program.title.notification', defaultMessage: '你的通知' },
     purchasedItemAvailable: { id: 'common.message.success.purchasedItemAvailable', defaultMessage: '購買的項目已開通' },
+    systemBusy: { id: 'common.message.success.systemBusy', defaultMessage: '系統忙碌中' },
     purchasedItemPreparing: { id: 'common.message.success.purchasedItemPreparing', defaultMessage: '購買的項目準備中' },
     paymentFail: { id: 'common.fail', defaultMessage: '付款失敗' },
     creditCardConfirm: { id: 'common.confirm.credit', defaultMessage: '請確認您的信用卡資料正確後，再付款一次。' },
@@ -304,6 +298,18 @@ export const commonMessages = {
     creatorCollection: { id: 'users.title.creator.collection', defaultMessage: '大師列表' },
     description: { id: 'product.program.description', defaultMessage: '方案：' },
     noAuthority: { id: 'common.noAuthority', defaultMessage: '你沒有此頁面的讀取權限' },
+    busy: {
+      id: 'common.content.busy',
+      defaultMessage: '您已付款成功！',
+    },
+    busyProcessing: {
+      id: 'common.content.busyProcessing',
+      defaultMessage: '由於目前系統忙碌中，訂單狀態與權益開通正在處理中',
+    },
+    busyCheck: { id: 'common.content.busyCheck', defaultMessage: '請於 3 ~ 5 分鐘後至訂單記錄頁進行查詢' },
+    busyContact: { id: 'commonMessages.content.busyContact', defaultMessage: '若還是未開通訂單，請聯繫平台客服' },
+    busySyncJob: { id: 'commonMessages.content.busySyncJob', defaultMessage: '同步訂單發生錯誤，請聯繫平台客服' },
+    busyError: { id: 'commonMessages.conetnt.busyError', defaultMessage: '錯誤代碼：{errorCode}，請聯繫平台客服' },
     prepare: {
       id: 'common.prepare',
       defaultMessage: '訂單查驗需要數秒的時間，將於一分鐘內會更新您的訂單資訊',
@@ -1666,5 +1672,17 @@ export const codeMessages = defineMessages({
   E_REDEEM: {
     id: 'code.E_REDEEM',
     defaultMessage: '接收失敗',
+  },
+  E_CHECK_PRODUCT_VALID: {
+    id: 'code.E_CHECK_PRODUCT_VALID',
+    defaultMessage: 'product is invalid',
+  },
+  E_PRODUCT_SESSION_OUTDATE: {
+    id: 'code.E_PRODUCT_SESSION_OUTDATE',
+    defaultMessage: 'session is outdated',
+  },
+  E_NO_PRODUCT: {
+    id: 'code.E_NO_PRODUCT',
+    defaultMessage: 'product does not exist',
   },
 })
