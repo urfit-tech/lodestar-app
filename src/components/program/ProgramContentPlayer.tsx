@@ -138,12 +138,12 @@ const ProgramContentPlayer: React.VFC<
         <ProgramContentPlayerWrapper key={video.id} videoId={video.id} options={video.options} data={video.data}>
           {programContentVideo => (
             <>
-              {programContentVideo.source?.type === 'video/vnd.youtube.yt' ? (
+              {programContentVideo.sources.find(source => source.type === 'video/vnd.youtube.yt') ? (
                 <StyledReactPlayerWrapper>
                   <ReactPlayer
                     ref={playerRef}
                     playing={true}
-                    url={programContentVideo.source.src}
+                    url={programContentVideo.sources.find(source => source.type === 'video/vnd.youtube.yt')?.src}
                     controls
                     progressInterval={5000}
                     config={{
@@ -251,7 +251,7 @@ const ProgramContentPlayer: React.VFC<
                 <VideoPlayer
                   loading={programContentVideo.loading}
                   error={programContentVideo.error}
-                  source={programContentVideo.source}
+                  sources={programContentVideo.sources}
                   poster={programContentVideo.poster}
                   onLoadStart={player => {
                     player.volume(initialVolume)
@@ -421,22 +421,25 @@ const ProgramContentPlayerWrapper = (props: {
     poster?: string
     loading: boolean
     error: string | null
-    source?: { src: string; type: string }
+    sources: { src: string; type: string }[]
   }) => React.ReactElement
 }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [poster, setPoster] = useState<string>()
-  const [source, setSource] = useState<{ src: string; type: string }>()
+  const [sources, setSources] = useState<{ src: string; type: string }[]>([])
   const { authToken } = useAuth()
   useEffect(() => {
     if (props.data?.source === 'youtube') {
-      setSource({ type: 'video/vnd.youtube.yt', src: props.data?.url })
+      setSources([{ type: 'video/vnd.youtube.yt', src: props.data?.url }])
     }
     if (props.data?.source === 'azure') {
       // setSource({ type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' })
       // TODO: change into cloudflare, because azure is too slow...
-      setSource({ type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' })
+      setSources([
+        { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
+        { type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' },
+      ])
     }
     if (props.options?.cloudflare) {
       setLoading(true)
@@ -452,11 +455,17 @@ const ProgramContentPlayerWrapper = (props: {
         )
         .then(({ data }) => {
           if (data.code === 'SUCCESS') {
-            setSource({
-              type: 'application/x-mpegURL',
-              src: `https://videodelivery.net/${data.result.token}/manifest/video.m3u8`,
-            })
-            setPoster(`https://videodelivery.net/${data.result.token}/thumbnails/thumbnail.jpg`)
+            setSources([
+              {
+                type: 'application/dash+xml',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
+              },
+              {
+                type: 'application/x-mpegURL',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`,
+              },
+            ])
+            setPoster(`https://cloudflarestream.com/${data.result.token}/thumbnails/thumbnail.jpg`)
           } else {
             setError(data.error)
           }
@@ -465,6 +474,6 @@ const ProgramContentPlayerWrapper = (props: {
         .finally(() => setLoading(false))
     }
   }, [authToken, props.data, props.options, props.videoId])
-  return props.children({ loading, error, source, poster })
+  return props.children({ loading, error, sources, poster })
 }
 export default ProgramContentPlayer

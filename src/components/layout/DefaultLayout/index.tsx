@@ -12,6 +12,7 @@ import NotificationContext from '../../../contexts/NotificationContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
+import DefaultAvatar from '../../../images/avatar.svg'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
 import CartDropdown from '../../checkout/CartDropdown'
 import Footer from '../../common/Footer'
@@ -210,7 +211,7 @@ const DefaultLayout: React.FC<{
                 name={currentMember.name}
                 username={currentMember.username}
                 email={currentMember.email}
-                pictureUrl={currentMember.pictureUrl}
+                pictureUrl={currentMember.pictureUrl || DefaultAvatar}
               />
             ) : (
               <AuthButton />
