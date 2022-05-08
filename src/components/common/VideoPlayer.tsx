@@ -41,7 +41,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
     html5: {
       vhs: {
         overrideNative: !videojs.browser.IS_SAFARI,
-        bandwidth: 3 * 1024 * 1024,
+        limitRenditionByPlayerDimensions: false,
         useBandwidthFromLocalStorage: true,
         useNetworkInformationApi: true,
       },
