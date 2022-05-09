@@ -164,6 +164,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                     </>
                   ) : (
                     <>
+                      <Typography.Text>{formatMessage(commonMessages.content.busyOther)}</Typography.Text>
                       <Typography.Text>
                         {formatMessage(commonMessages.content.busyError, { errorCode })}
                       </Typography.Text>
