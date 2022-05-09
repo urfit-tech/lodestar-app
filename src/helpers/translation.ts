@@ -309,7 +309,8 @@ export const commonMessages = {
     busyCheck: { id: 'common.content.busyCheck', defaultMessage: '請於 3 ~ 5 分鐘後至訂單記錄頁進行查詢' },
     busyContact: { id: 'commonMessages.content.busyContact', defaultMessage: '若還是未開通訂單，請聯繫平台客服' },
     busySyncJob: { id: 'commonMessages.content.busySyncJob', defaultMessage: '同步訂單發生錯誤，請聯繫平台客服' },
-    busyError: { id: 'commonMessages.conetnt.busyError', defaultMessage: '錯誤代碼：{errorCode}，請聯繫平台客服' },
+    busyOther: {id: 'commonMessages.content.busyOther', defaultMessage: '訂單出現異狀，請聯繫平台客服'},
+    busyError: { id: 'commonMessages.conetnt.busyError', defaultMessage: '錯誤代碼：{errorCode}' },
     prepare: {
       id: 'common.prepare',
       defaultMessage: '訂單查驗需要數秒的時間，將於一分鐘內會更新您的訂單資訊',
