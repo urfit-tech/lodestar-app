@@ -2,6 +2,7 @@ import { Divider, Icon, Tag, Typography } from 'antd'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import ProgramContentTrialModal from '../../components/program/ProgramContentTrialModal'
 import { durationFormatter } from '../../helpers'
@@ -21,7 +22,7 @@ const ProgramSectionTitle = styled.h3`
   font-size: 20px;
   font-weight: bold;
 `
-const ProgramContentItem = styled.div`
+const ProgramContentItem = styled.div<{ isEnrolled: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,7 +32,7 @@ const ProgramContentItem = styled.div`
   border-radius: 4px;
   background-color: #f7f8f8;
   font-size: 14px;
-  cursor: pointer;
+  ${props => props.isEnrolled && `cursor: pointer;`}
 
   .ant-typography-secondary {
     font-size: 12px;
@@ -66,6 +67,7 @@ const ProgramContentListSection: React.VFC<{
   }
 }> = ({ memberId, program }) => {
   const { formatMessage } = useIntl()
+  const history = useHistory()
   const theme = useAppTheme()
   const { enrolledProgramIds } = useEnrolledProgramIds(memberId)
 
@@ -90,7 +92,16 @@ const ProgramContentListSection: React.VFC<{
               <ProgramSectionTitle className="mb-3">{programContentSection.title}</ProgramSectionTitle>
 
               {programContentSection.contents.map(programContent => (
-                <ProgramContentItem key={programContent.id}>
+                <ProgramContentItem
+                  key={programContent.id}
+                  isEnrolled={isEnrolled}
+                  onClick={() => {
+                    if (!isEnrolled) {
+                      return
+                    }
+                    history.push(`/programs/${program.id}/contents/${programContent.id}`)
+                  }}
+                >
                   <Typography.Text>
                     {programContent.contentType === 'video' ? (
                       <Icon type="video-camera" className="mr-2" />
