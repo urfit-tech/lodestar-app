@@ -73,7 +73,7 @@ const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLi
 
   return (
     <a
-      href={'https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=token&scope={{SCOPE}}&access_type=online&redirect_uri={{REDIRECT_URI}}&state={{STATE}}'
+      href={'https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=token&scope={{SCOPE}}&access_type=online&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&suppress_webview_warning=true'
         .replace('{{CLIENT_ID}}', `${settings['auth.google_client_id']}`)
         .replace('{{REDIRECT_URI}}', `${window.location.origin}/oauth2`)
         .replace('{{SCOPE}}', 'openid profile email')
