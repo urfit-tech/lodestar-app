@@ -1809,6 +1809,31 @@ export interface UPDATE_VOUCHER_MEMBERVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_VALID_ACTIVITY_TICKET
+// ====================================================
+
+export interface GET_VALID_ACTIVITY_TICKET_activity_ticket {
+  __typename: "activity_ticket";
+  id: any;
+}
+
+export interface GET_VALID_ACTIVITY_TICKET {
+  /**
+   * fetch data from the table: "activity_ticket"
+   */
+  activity_ticket: GET_VALID_ACTIVITY_TICKET_activity_ticket[];
+}
+
+export interface GET_VALID_ACTIVITY_TICKETVariables {
+  ids?: any[] | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PODCAST_PROGRAM_INSTRUCTOR_COLLECTION
 // ====================================================
 

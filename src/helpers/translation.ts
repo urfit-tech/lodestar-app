@@ -143,7 +143,6 @@ export const commonMessages = {
   button: defineMessages({
     reset: { id: 'common.button.reset', defaultMessage: '重置' },
     inquire: { id: 'common.button.inquire', defaultMessage: '查詢' },
-    exchange: { id: 'common.button.exchange', defaultMessage: '兌換' },
     register: { id: 'common.button.register', defaultMessage: '立即報名' },
     print: { id: 'common.button.print', defaultMessage: '列印' },
     download: { id: 'common.button.download', defaultMessage: '下載名單' },
@@ -205,7 +204,6 @@ export const commonMessages = {
     edit: { id: 'common.button.edit', defaultMessage: '編輯' },
     previousPage: { id: 'common.button.page.previous', defaultMessage: '返回上頁' },
     loginRegister: { id: 'common.button.loginRegister', defaultMessage: '登入 / 註冊' },
-    useNow: { id: 'common.button.useNow', defaultMessage: '立即使用' },
     resendEmail: { id: 'users.form.message.email.resended', defaultMessage: '再寄一次' },
     socialConnect: { id: 'common.button.socialConnect', defaultMessage: '綁定' },
     delete: { id: 'common.button.delete', defaultMessage: '刪除' },
@@ -309,7 +307,7 @@ export const commonMessages = {
     busyCheck: { id: 'common.content.busyCheck', defaultMessage: '請於 3 ~ 5 分鐘後至訂單記錄頁進行查詢' },
     busyContact: { id: 'commonMessages.content.busyContact', defaultMessage: '若還是未開通訂單，請聯繫平台客服' },
     busySyncJob: { id: 'commonMessages.content.busySyncJob', defaultMessage: '同步訂單發生錯誤，請聯繫平台客服' },
-    busyOther: {id: 'commonMessages.content.busyOther', defaultMessage: '訂單出現異狀，請聯繫平台客服'},
+    busyOther: { id: 'commonMessages.content.busyOther', defaultMessage: '訂單出現異狀，請聯繫平台客服' },
     busyError: { id: 'commonMessages.conetnt.busyError', defaultMessage: '錯誤代碼：{errorCode}' },
     prepare: {
       id: 'common.prepare',
@@ -443,7 +441,6 @@ export const voucherMessages = {
     fromNow: { id: 'voucher.fromNow', defaultMessage: '即日起' },
     noUsePeriod: { id: 'voucher.noUsePeriod', defaultMessage: '無使用期限' },
     redeemable: { id: 'voucher.redeemable', defaultMessage: '可兌換' },
-    notice: { id: 'voucher.notice', defaultMessage: '兌換券為一次使用後失效，請一次兌換完畢' },
     amount: { id: 'voucher.amount', defaultMessage: '數量' },
     editProject: { id: 'voucher.modal.project.edit', defaultMessage: '編輯方案' },
   }),
