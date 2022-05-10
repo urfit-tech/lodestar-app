@@ -35,6 +35,13 @@ const StyledUploadWarning = styled.div`
   height: 100%;
 `
 
+const StyledLink = styled.a`
+  transition: 0.2s;
+  &:hover {
+    color: #019d96;
+  }
+`
+
 type ProfileBasicAdminCardProps = CardProps &
   FormComponentProps & {
     memberId: string
@@ -153,13 +160,13 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
         </Form.Item>
       </StyledForm>
       <p>
-        若需修改密碼、會員資料，請至
-        <a href="https://member.cwg.tw/" target="_blank">
+        <span>若需修改密碼、會員資料，請至</span>
+        <StyledLink href="https://www.cw.com.tw/member" target="_blank">
           <u>
             <b>天下雜誌會員中心</b>
           </u>
-        </a>
-        ，登入後進行修改。
+        </StyledLink>
+        <span>，登入後進行修改。</span>
       </p>
     </AdminCard>
   )
