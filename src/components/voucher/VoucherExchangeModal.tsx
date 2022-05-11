@@ -30,32 +30,33 @@ const VoucherExchangeModal: React.VFC<{
   productQuantityLimit: number
   description: string | null
   productIds: string[]
+  disabledProductIds: string[]
   onExchange?: (
     setVisible: React.Dispatch<React.SetStateAction<boolean>>,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     selectedProductIds: string[],
   ) => void
-}> = ({ productQuantityLimit, description, productIds, onExchange }) => {
+}> = ({ productQuantityLimit, description, productIds, disabledProductIds, onExchange }) => {
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
 
-  // select disabledProductIds
-  const disabledProductIds: any = []
-
   // check the validity of product which type is ActivityTicket
+  // session ended_at and ticket buy
   const {
     loading: loadingValidityCheck,
     error,
     data: validActivityTicketIds,
   } = useQuery<hasura.GET_VALID_ACTIVITY_TICKET>(GET_VALID_ACTIVITY_TICKET, {
-    variables: { ids: productIds.map(v => v.split('_')[1]) },
+    variables: {
+      activityTicketIds: productIds.filter(v => v.split('_')[0] === 'ActivityTicket').map(v => v.split('_')[1]),
+    },
   })
 
   const validProductIds: string[] = productIds.filter(v =>
     v.split('_')[0] === 'ActivityTicket'
-      ? validActivityTicketIds?.activity_ticket.find(w => w.id === v.split('_')[1])
+      ? validActivityTicketIds?.activity_ticket_enrollment_count.find(w => w.activity_ticket_id === v.split('_')[1])
       : v,
   )
 
@@ -153,11 +154,16 @@ const VoucherExchangeModal: React.VFC<{
 }
 
 const GET_VALID_ACTIVITY_TICKET = gql`
-  query GET_VALID_ACTIVITY_TICKET($ids: [uuid!]) {
-    activity_ticket(
-      where: { id: { _in: $ids }, activity_session_tickets: { activity_session: { ended_at: { _gt: "now()" } } } }
+  query GET_VALID_ACTIVITY_TICKET($activityTicketIds: [uuid!]) {
+    activity_ticket_enrollment_count(
+      where: {
+        buyable_quantity: { _gt: "0" }
+        activity_ticket_id: { _in: $activityTicketIds }
+        activity_ticket: { activity_session_tickets: { activity_session: { ended_at: { _gt: "now()" } } } }
+      }
     ) {
-      id
+      buyable_quantity
+      activity_ticket_id
     }
   }
 `

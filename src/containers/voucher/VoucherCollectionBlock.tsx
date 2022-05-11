@@ -9,6 +9,7 @@ import { VoucherProps } from '../../components/voucher/Voucher'
 import VoucherCollectionBlockComponent from '../../components/voucher/VoucherCollectionBlock'
 import hasura from '../../hasura'
 import { voucherMessages } from '../../helpers/translation'
+import { useEnrolledProductIds } from '../../hooks/data'
 
 const VoucherCollectionBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -19,6 +20,13 @@ const VoucherCollectionBlock: React.VFC = () => {
   >(GET_VOUCHER_COLLECTION, {
     variables: { memberId: currentMemberId || '' },
   })
+
+  const {
+    loading: loadingEnrolledProductIds,
+    error: errorEnrolledProductIds,
+    enrolledProductIds,
+    refetch: refetchEnrolledProductIds,
+  } = useEnrolledProductIds(currentMemberId || '')
 
   const voucherCollection: (VoucherProps & {
     productIds: string[]
@@ -70,11 +78,13 @@ const VoucherCollectionBlock: React.VFC = () => {
   return (
     <VoucherCollectionBlockComponent
       memberId={currentMemberId}
-      loading={loading}
-      error={error}
+      loading={loading || loadingEnrolledProductIds}
+      error={error || errorEnrolledProductIds}
       voucherCollection={voucherCollection}
+      disabledProductIds={enrolledProductIds}
       onExchange={handleExchange}
       onRefetch={refetch}
+      onRefetchEnrolledProgramIds={refetchEnrolledProductIds}
     />
   )
 }

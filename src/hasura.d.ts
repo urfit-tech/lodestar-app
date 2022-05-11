@@ -1812,20 +1812,22 @@ export interface UPDATE_VOUCHER_MEMBERVariables {
 // GraphQL query operation: GET_VALID_ACTIVITY_TICKET
 // ====================================================
 
-export interface GET_VALID_ACTIVITY_TICKET_activity_ticket {
-  __typename: "activity_ticket";
-  id: any;
+export interface GET_VALID_ACTIVITY_TICKET_activity_ticket_enrollment_count {
+  __typename: "activity_ticket_enrollment_count";
+  count: number | null;
+  buyable_quantity: any | null;
+  activity_ticket_id: any | null;
 }
 
 export interface GET_VALID_ACTIVITY_TICKET {
   /**
-   * fetch data from the table: "activity_ticket"
+   * fetch data from the table: "activity_ticket_enrollment_count"
    */
-  activity_ticket: GET_VALID_ACTIVITY_TICKET_activity_ticket[];
+  activity_ticket_enrollment_count: GET_VALID_ACTIVITY_TICKET_activity_ticket_enrollment_count[];
 }
 
 export interface GET_VALID_ACTIVITY_TICKETVariables {
-  ids?: any[] | null;
+  activityTicketIds?: any[] | null;
 }
 
 /* tslint:disable */
