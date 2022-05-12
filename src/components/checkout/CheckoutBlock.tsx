@@ -237,7 +237,11 @@ const CheckoutBlock: React.VFC<{
       ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
     } else {
       isValidShipping = !hasPhysicalProduct || validateShipping(shipping)
-      isValidInvoice = settings['feature.invoice.disable'] ? true : validateInvoice(invoice).length === 0
+      isValidInvoice = Number(settings['feature.invoice.disable'])
+        ? true
+        : Number(settings['feature.invoice_member_info_input.disable'])
+        ? validateInvoice(invoice).filter(v => !['name', 'phone', 'email'].includes(v)).length === 0
+        : validateInvoice(invoice).length === 0
     }
 
     refetchCartProductsWithInventory()

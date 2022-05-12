@@ -1,5 +1,9 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, Icon as AntdIcon } from 'antd'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -58,6 +62,8 @@ const StyledTitle = styled.h2`
 
 const ProjectCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
+  const { id: appId } = useApp()
+  const tracking = useTracking()
   const [defaultActive] = useQueryParam('active', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
   const [title] = useQueryParam('title', StringParam)
@@ -68,6 +74,10 @@ const ProjectCollectionPage: React.VFC = () => {
 
   const categories: Category[] = sortBy(prop('position'))(
     uniqBy(category => category.id, flatten(projects.map(project => project.categories).filter(notEmpty))),
+  )
+  const { resourceCollection } = useResourceCollection(
+    appId ? projects.map(project => `${appId}:project:${project.id}`) : [],
+    true,
   )
 
   useEffect(() => {
@@ -116,6 +126,7 @@ const ProjectCollectionPage: React.VFC = () => {
   return (
     <DefaultLayout white>
       {projects && <ProjectCollectionPageHelmet projects={projects} />}
+      <Tracking.Impression resources={resourceCollection} />
       <StyledCoverSection>
         <div className="container">
           <StyledBannerTitle>
@@ -157,9 +168,17 @@ const ProjectCollectionPage: React.VFC = () => {
                   project =>
                     !selectedCategoryId || project.categories.some(category => category.id === selectedCategoryId),
                 )
-                .map(project => (
+                .map((project, idx) => (
                   <div key={project.id} className="col-12 col-lg-4 mb-5">
-                    <Link to={`/projects/${project.id}`}>
+                    <Link
+                      to={`/projects/${project.id}`}
+                      onClick={() => {
+                        const resource = resourceCollection
+                          .filter(notEmpty)
+                          .find(resource => resource.id === project.id)
+                        resource && tracking.click(resource, { position: idx + 1 })
+                      }}
+                    >
                       <ProjectIntroCard {...project} />
                     </Link>
                   </div>
@@ -191,9 +210,17 @@ const ProjectCollectionPage: React.VFC = () => {
                           (!selectedCategoryId ||
                             project.categories.some(category => category.id === selectedCategoryId)),
                       )
-                      .map(project => (
+                      .map((project, idx) => (
                         <div key={project.id} className="col-12 col-lg-4 mb-5">
-                          <Link to={`/projects/${project.id}`}>
+                          <Link
+                            to={`/projects/${project.id}`}
+                            onClick={() => {
+                              const resource = resourceCollection
+                                .filter(notEmpty)
+                                .find(resource => resource.id === project.id)
+                              resource && tracking.click(resource, { position: idx + 1 })
+                            }}
+                          >
                             <ProjectIntroCard {...project} />
                           </Link>
                         </div>
