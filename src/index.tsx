@@ -12,8 +12,8 @@ const renderAuthModal = (visible: boolean) =>
     (() => {
       const state = btoa(JSON.stringify({ provider: 'cw', redirect: window.location.pathname }))
       const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/cw`)
-      const oauthRoot = process.env.REACT_APP_COMMONHEALTH_OAUTH_BASE_ROOT || 'https://dev-account.cwg.tw'
-      const oauthClientId = process.env.REACT_APP_COMMONHEALTH_OAUTH_CLIENT_ID || '89'
+      const oauthRoot = process.env.REACT_APP_CW_OAUTH_BASE_ROOT || 'https://dev-account.cwg.tw'
+      const oauthClientId = process.env.REACT_APP_CW_OAUTH_CLIENT_ID || '89'
       const oauthLink = `${oauthRoot}/oauth/v1.0/authorize?response_type=code&client_id=${oauthClientId}&redirect_uri=${redirectUri}&state=${state}&scope=social`
       window.location.assign(oauthLink)
       return <></>
