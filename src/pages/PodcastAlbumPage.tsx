@@ -1,5 +1,7 @@
 import { SkeletonText } from '@chakra-ui/react'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { render } from 'mustache'
 import React, { useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
@@ -48,6 +50,7 @@ const PodcastAlbumPage: React.VFC = () => {
   const { id: appId, settings } = useApp()
   const { visible } = useContext(PodcastPlayerContext)
   const { loading, podcastAlbum } = usePodcastAlbum(id)
+  const { resourceCollection } = useResourceCollection([`${appId}:podcast_album:${id}`])
 
   let seoMeta:
     | {
@@ -111,6 +114,7 @@ const PodcastAlbumPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <PodcastAlbumBanner podcastAlbum={podcastAlbum} />
 
       <StyledPodcastAlbumIntroBlock>
