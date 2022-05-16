@@ -12,7 +12,7 @@ type ProgramSelectorProps = {
 
 export const EnrolledProgramSelector: React.VFC<ProgramSelectorProps> = ({ value, memberId, onChange }) => {
   const { formatMessage } = useIntl()
-  const { enrolledProgramIds, loadingProgramIds } = useEnrolledProgramIds(memberId)
+  const { enrolledProgramIds, loading: loadingProgramIds } = useEnrolledProgramIds(memberId)
 
   if (loadingProgramIds) {
     return <Spinner />

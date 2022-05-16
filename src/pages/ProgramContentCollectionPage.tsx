@@ -1,5 +1,5 @@
 import { Icon, LockIcon } from '@chakra-ui/icons'
-import { Button, Spinner } from '@chakra-ui/react'
+import { Box, Button, Spinner } from '@chakra-ui/react'
 import { Layout, PageHeader } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -7,7 +7,7 @@ import React from 'react'
 import { AiOutlineProfile } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
-import { useHistory, useParams } from 'react-router-dom'
+import { Redirect, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
@@ -15,7 +15,7 @@ import { StyledLayoutContent } from '../components/layout/DefaultLayout/DefaultL
 import ProgramContentMenu from '../components/program/ProgramContentMenu'
 import { ProgressProvider } from '../contexts/ProgressContext'
 import { commonMessages, programMessages } from '../helpers/translation'
-import { useProgram } from '../hooks/program'
+import { useEnrolledProgramIds, useProgram } from '../hooks/program'
 
 const StyledPCPageHeader = styled(PageHeader)`
   && {
@@ -62,8 +62,18 @@ const ProgramContentCollectionPage: React.VFC = () => {
   const { loadingProgram, program } = useProgram(programId)
   const { isAuthenticating, isAuthenticated } = useAuth()
 
-  if (isAuthenticating || loadingProgram) {
-    return <></>
+  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+
+  if (loadingProgram || loadingEnrolledProgramIds || isAuthenticating) {
+    return (
+      <Box className="d-flex justify-content-center align-items-center" h="100vh">
+        <Spinner />
+      </Box>
+    )
+  }
+
+  if (!enrolledProgramIds.includes(programId)) {
+    return <Redirect to={`/programs/${programId}`} />
   }
 
   return (

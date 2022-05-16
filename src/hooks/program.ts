@@ -603,20 +603,19 @@ export const useEnrolledProgramIds = (memberId: string) => {
     },
   )
 
-  const enrolledProgramIds =
-    loading || error || !data
-      ? []
-      : uniq([
-          ...data.program_enrollment.map(enrollment => enrollment.program_id),
-          ...data.program_plan_enrollment.map(enrollment => enrollment.program_plan?.program_id || ''),
-          ...data.program_content_enrollment.map(enrollment => enrollment.program_id),
-        ])
+  const enrolledProgramIds = data
+    ? uniq([
+        ...data.program_enrollment.map(enrollment => enrollment.program_id),
+        ...data.program_plan_enrollment.map(enrollment => enrollment.program_plan?.program_id || ''),
+        ...data.program_content_enrollment.map(enrollment => enrollment.program_id),
+      ])
+    : []
 
   return {
-    enrolledProgramIds: loading || error ? [] : enrolledProgramIds,
-    errorProgramIds: error,
-    loadingProgramIds: loading,
-    refetchProgramIds: refetch,
+    enrolledProgramIds,
+    error,
+    loading,
+    refetch,
   }
 }
 
