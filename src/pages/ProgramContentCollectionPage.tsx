@@ -9,7 +9,7 @@ import { BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 import { Redirect, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
+import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
 import { StyledLayoutContent } from '../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../components/program/ProgramContentMenu'
@@ -58,6 +58,7 @@ const ProgramContentCollectionPage: React.VFC = () => {
   const { enabledModules } = useApp()
   const { programId } = useParams<{ programId: string }>()
   const [productId] = useQueryParam('back', StringParam)
+  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
   const { currentMemberId } = useAuth()
   const { loadingProgram, program } = useProgram(programId)
   const { isAuthenticating, isAuthenticated } = useAuth()
@@ -72,7 +73,7 @@ const ProgramContentCollectionPage: React.VFC = () => {
     )
   }
 
-  if (!enrolledProgramIds.includes(programId)) {
+  if (!enrolledProgramIds.includes(programId) || visitIntro) {
     return <Redirect to={`/programs/${programId}`} />
   }
 
