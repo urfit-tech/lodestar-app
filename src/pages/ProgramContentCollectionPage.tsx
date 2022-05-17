@@ -7,15 +7,15 @@ import React from 'react'
 import { AiOutlineProfile } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
-import { Redirect, useHistory, useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
+import { StringParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
 import { StyledLayoutContent } from '../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../components/program/ProgramContentMenu'
 import { ProgressProvider } from '../contexts/ProgressContext'
 import { commonMessages, programMessages } from '../helpers/translation'
-import { useEnrolledProgramIds, useProgram } from '../hooks/program'
+import { useProgram } from '../hooks/program'
 
 const StyledPCPageHeader = styled(PageHeader)`
   && {
@@ -58,23 +58,16 @@ const ProgramContentCollectionPage: React.VFC = () => {
   const { enabledModules } = useApp()
   const { programId } = useParams<{ programId: string }>()
   const [productId] = useQueryParam('back', StringParam)
-  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
   const { currentMemberId } = useAuth()
   const { loadingProgram, program } = useProgram(programId)
   const { isAuthenticating, isAuthenticated } = useAuth()
 
-  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
-
-  if (loadingProgram || loadingEnrolledProgramIds || isAuthenticating) {
+  if (loadingProgram || isAuthenticating) {
     return (
       <Box className="d-flex justify-content-center align-items-center" h="100vh">
         <Spinner />
       </Box>
     )
-  }
-
-  if (!enrolledProgramIds.includes(programId) || visitIntro) {
-    return <Redirect to={`/programs/${programId}`} />
   }
 
   return (

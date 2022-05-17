@@ -2,7 +2,6 @@ import { Icon } from '@chakra-ui/react'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React from 'react'
 import { AiOutlineClockCircle, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -74,7 +73,6 @@ const ProgramCard: React.VFC<{
   }
   variant?: 'brief'
   programType?: string | null
-  isEnrolled?: boolean
   noInstructor?: boolean
   noPrice?: boolean
   noTotalDuration?: boolean
@@ -87,7 +85,6 @@ const ProgramCard: React.VFC<{
   program,
   variant,
   programType,
-  isEnrolled,
   noInstructor,
   noPrice,
   noTotalDuration,
@@ -96,11 +93,10 @@ const ProgramCard: React.VFC<{
   renderCover,
   renderCustomDescription,
 }) => {
-  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { productEditorIds } = useProductEditorIds(program.id)
-  const { enabledModules, settings, id: appId } = useApp()
+  const { enabledModules, settings } = useApp()
 
   const instructorId = program.roles.length > 0 && program.roles[0].memberId
   const listPrice = program.plans[0]?.listPrice || 0
@@ -113,11 +109,7 @@ const ProgramCard: React.VFC<{
   const periodAmount = program.plans.length > 1 ? program.plans[0]?.periodAmount : null
   const periodType = program.plans.length > 1 ? program.plans[0]?.periodType : null
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
-  const {
-    data: enrolledCount,
-    loading,
-    error,
-  } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
+  const { data: enrolledCount } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
 
   return (
     <>
@@ -129,14 +121,7 @@ const ProgramCard: React.VFC<{
         </InstructorPlaceHolder>
       )}
 
-      <Link
-        to={
-          isEnrolled
-            ? `/programs/${program.id}/contents`
-            : `/programs/${program.id}` + (programType ? `?type=${programType}` : '')
-        }
-        onClick={onClick}
-      >
+      <Link to={`/programs/${program.id}` + (programType ? `?type=${programType}` : '')} onClick={onClick}>
         <StyledWrapper>
           {renderCover ? (
             renderCover(program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover)
