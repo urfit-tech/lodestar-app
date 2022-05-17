@@ -57,7 +57,7 @@ const ProgramContentPage: React.VFC = () => {
                 colorScheme="primary"
                 variant="ghost"
                 size="sm"
-                onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
+                onClick={() => window.open(`/programs/${programId}?visitIntro=1moveToBlock=customer-review`)}
               >
                 <Icon component={BsStar} className="mr-2" />
                 {formatMessage(commonMessages.button.review)}
@@ -67,7 +67,7 @@ const ProgramContentPage: React.VFC = () => {
               size="sm"
               colorScheme="primary"
               variant="ghost"
-              onClick={() => window.open(`/programs/${programId}`)}
+              onClick={() => window.open(`/programs/${programId}?visitIntro=1`)}
             >
               <Icon component={AiOutlineProfile} className="mr-2" />
               {formatMessage(commonMessages.button.intro)}

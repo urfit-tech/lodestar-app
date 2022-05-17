@@ -80,7 +80,7 @@ const ProgramContentCollectionPage: React.VFC = () => {
             {enabledModules.customer_review && (
               <StyledButton
                 variant="outline"
-                onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
+                onClick={() => window.open(`/programs/${programId}?visitIntro=1&moveToBlock=customer-review`)}
                 leftIcon={<Icon as={BsStar} />}
               >
                 {formatMessage(commonMessages.button.review)}
@@ -88,7 +88,7 @@ const ProgramContentCollectionPage: React.VFC = () => {
             )}
             <StyledButton
               variant="outline"
-              onClick={() => history.push(`/programs/${programId}`)}
+              onClick={() => history.push(`/programs/${programId}?visitIntro=1`)}
               leftIcon={<Icon as={AiOutlineProfile} />}
             >
               {formatMessage(commonMessages.button.intro)}
