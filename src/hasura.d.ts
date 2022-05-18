@@ -260,6 +260,7 @@ export interface GET_PRODUCT_FILTER_OPTIONS_category {
 export interface GET_PRODUCT_FILTER_OPTIONS_app_tag {
   __typename: "app_tag";
   name: string | null;
+  position: number | null;
 }
 
 export interface GET_PRODUCT_FILTER_OPTIONS {
