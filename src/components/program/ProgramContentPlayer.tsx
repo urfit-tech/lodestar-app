@@ -2,7 +2,7 @@ import { CircularProgress, Icon } from '@chakra-ui/react'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
@@ -11,6 +11,7 @@ import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
 import VideoPlayer from '../common/VideoPlayer'
+import programMessages from './translation'
 
 const StyledReactPlayerWrapper = styled.div`
   && > div {
@@ -79,15 +80,6 @@ const StyledCancelButton = styled.span`
   user-select: none;
   cursor: pointer;
 `
-
-const messages = defineMessages({
-  next: { id: 'program.text.next', defaultMessage: '接下來' },
-  switchPlayer: { id: 'program.ui.switchPlayer', defaultMessage: '切換為舊版' },
-  switchToStablePlayer: {
-    id: 'program.text.switchToStablePlayer',
-    defaultMessage: '系統更新了播放器版本，若還不習慣可切換為舊版模式',
-  },
-})
 
 type VideoEvent = {
   type: 'pause' | 'seeked' | 'progress' | 'ended'
@@ -300,7 +292,6 @@ const ProgramContentPlayer: React.VFC<
                   }}
                   onSeeked={player => {
                     const duration = player.duration() || 0
-                    const playbackRate = player.playbackRate() || 1
                     const currentTime = player.currentTime() || 0
                     onVideoEvent?.({
                       type: 'seeked',
@@ -372,7 +363,9 @@ const ProgramContentPlayerCover: React.VFC<{
   return (
     <StyledCover className="d-flex align-items-center justify-content-center">
       <StyledCoverWrapper>
-        <StyledCoverSubtitle className="mb-2">{formatMessage(messages.next)}</StyledCoverSubtitle>
+        <StyledCoverSubtitle className="mb-2">
+          {formatMessage(programMessages.ProgramContentPlayer.next)}
+        </StyledCoverSubtitle>
         <StyledCoverTitle className="mb-4">{nextProgramContent.title}</StyledCoverTitle>
         <CountDownPlayButton
           onPlayNext={() => {

@@ -1,8 +1,8 @@
 import { Select, Spinner } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { productMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
+import programMessages from './translation'
 
 type ProgramSelectorProps = {
   value: string
@@ -26,7 +26,7 @@ export const EnrolledProgramSelector: React.VFC<ProgramSelectorProps> = ({ value
       value={value}
       onChange={e => onChange?.(e.target.value)}
     >
-      <option key="all">{formatMessage(productMessages.program.select.option.allPrograms)}</option>
+      <option key="all">{formatMessage(programMessages.ProgramSelector.allPrograms)}</option>
       {enrolledProgramIds
         .filter(enrolledProgramId => !!enrolledProgramId)
         .map(programId => (

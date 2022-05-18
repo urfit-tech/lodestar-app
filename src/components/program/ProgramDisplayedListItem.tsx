@@ -7,12 +7,12 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useProgramContentProgress } from '../../contexts/ProgressContext'
-import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramPackageProgram } from '../../types/programPackage'
 import ProgressBar from '../common/ProgressBar'
 import { BREAK_POINT } from '../common/Responsive'
+import programMessages from './translation'
 
 const StyledProgramDisplayItem = styled.div`
   border-bottom: 1px solid var(--gray-light);
@@ -106,7 +106,7 @@ export const ProgramDisplayedListItem: React.VFC<{
               <StyledExpiredTime className="mt-1 d-flex align-items-center">
                 <Icon as={CalendarOIcon} className="mr-1" />
                 <span className="mr-1">{moment(program.expiredAt).format('YYYY-MM-DD')}</span>
-                <span>{formatMessage(commonMessages.term.expiredAt)}</span>
+                <span>{formatMessage(programMessages.ProgramDisplayedListItem.expiredAt)}</span>
               </StyledExpiredTime>
             )}
           </div>

@@ -1,7 +1,7 @@
 import { LockIcon } from '@chakra-ui/icons'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { programMessages } from '../../helpers/translation'
+import programMessages from './translation'
 
 const StyledNoAuthBlock = styled.div`
   color: ${props => props.theme['@primary-color']};
@@ -19,7 +19,7 @@ const ProgramContentNoAuthBlock: React.VFC = () => {
   return (
     <StyledNoAuthBlock className="p-2 text-center">
       <LockIcon className="mr-2" />
-      <StyledText>{formatMessage(programMessages.text.noAuth)}</StyledText>
+      <StyledText>{formatMessage(programMessages.ProgramContentNoAuthBlock.noAuth)}</StyledText>
     </StyledNoAuthBlock>
   )
 }
