@@ -74,8 +74,8 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
             publishedAt: post.published_at ? new Date(post.published_at) : null,
             updatedAt: new Date(post.updated_at),
             categories: post.post_categories.map(postCategory => ({
-              id: postCategory.category.id,
-              name: postCategory.category.name,
+              id: postCategory.category?.id,
+              name: postCategory.category?.name,
             })),
             tags: post.post_tags.map(tag => tag.tag_name),
           }))
