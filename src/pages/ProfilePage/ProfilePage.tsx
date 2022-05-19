@@ -40,6 +40,7 @@ const StyledProductItem = styled.div<{ coverUrl: string }>`
     padding-top: 56.25%;
     background-image: url(${props => props.coverUrl});
     background-position: center;
+    background-size: cover;
   }
 
   .intro {
