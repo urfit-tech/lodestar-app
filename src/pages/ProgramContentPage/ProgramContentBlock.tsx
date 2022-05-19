@@ -22,6 +22,7 @@ import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/
 import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
+import ProgramContentTabs from './ProgramContentTabs'
 
 const StyledUnPurchased = styled.div`
   color: ${props => props.theme['@primary-color']};
