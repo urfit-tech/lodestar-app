@@ -44,7 +44,7 @@ const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ account
           btoa(
             JSON.stringify({
               provider: 'facebook',
-              redirect: back || window.location.pathname,
+              redirect: back || window.location.pathname + window.location.search,
               accountLinkToken: accountLinkToken,
             }),
           ),
@@ -73,7 +73,7 @@ const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLi
 
   return (
     <a
-      href={'https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=token&scope={{SCOPE}}&access_type=online&redirect_uri={{REDIRECT_URI}}&state={{STATE}}'
+      href={'https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=token&scope={{SCOPE}}&access_type=online&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&suppress_webview_warning=true'
         .replace('{{CLIENT_ID}}', `${settings['auth.google_client_id']}`)
         .replace('{{REDIRECT_URI}}', `${window.location.origin}/oauth2`)
         .replace('{{SCOPE}}', 'openid profile email')
@@ -82,7 +82,7 @@ const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLi
           btoa(
             JSON.stringify({
               provider: 'google',
-              redirect: back || window.location.pathname,
+              redirect: back || window.location.pathname + window.location.search,
               accountLinkToken: accountLinkToken,
             }),
           ),
@@ -124,7 +124,7 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
           btoa(
             JSON.stringify({
               provider: 'line',
-              redirect: back || window.location.pathname,
+              redirect: back || window.location.pathname + window.location.search,
               accountLinkToken: accountLinkToken,
             }),
           ),
@@ -165,7 +165,7 @@ const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accoun
           btoa(
             JSON.stringify({
               provider: 'parenting',
-              redirect: back || window.location.pathname,
+              redirect: back || window.location.pathname + window.location.search,
               accountLinkToken: accountLinkToken,
             }),
           ),

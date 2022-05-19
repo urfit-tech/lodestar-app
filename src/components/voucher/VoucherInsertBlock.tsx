@@ -46,8 +46,14 @@ const StyledFormItem = styled(Form.Item)`
 type VoucherInsertBlockProps = CardProps &
   FormComponentProps & {
     onRefetchVoucherCollection?: () => void
+    onRefetchEnrolledProgramIds?: () => void
   }
-const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onRefetchVoucherCollection, ...cardProps }) => {
+const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
+  form,
+  onRefetchVoucherCollection,
+  onRefetchEnrolledProgramIds,
+  ...cardProps
+}) => {
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId } = useAuth()
   const [loading, setLoading] = useState(false)
@@ -73,6 +79,7 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onRefetc
         if (code === 'SUCCESS') {
           message.success(formatMessage(voucherMessages.messages.addVoucher))
           onRefetchVoucherCollection?.()
+          onRefetchEnrolledProgramIds?.()
         } else {
           if (/^GraphQL error: Uniqueness violation/.test(errorMessage)) {
             message.error(formatMessage(voucherMessages.messages.duplicateVoucherCode))
