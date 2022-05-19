@@ -264,6 +264,7 @@ export const commonMessages = {
     }),
   },
   content: defineMessages({
+    memberProfile: { id: 'common.memberProfile', defaultMessage: '個人檔案' },
     personalSettings: { id: 'common.personalSettings', defaultMessage: '個人設定' },
     courseProblem: { id: 'common.courseProblem', defaultMessage: '課程問題' },
     practiceManagement: { id: 'common.practiceManagement', defaultMessage: '作業管理' },
@@ -428,6 +429,7 @@ export const commonMessages = {
     },
     selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
     delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
+    noOrderLog: { id: 'common.text.noOrderLog', default: '尚無消費紀錄' },
   }),
 }
 
@@ -1012,7 +1014,9 @@ export const profileMessages = {
         id: 'common.form.message.name',
         defaultMessage: '請輸入名稱',
       },
-      intro: { id: 'common.introduction', defaultMessage: '簡介' },
+      title: { id: 'common.title', defaultMessage: '稱謂' },
+      abstract: { id: 'common.abstract', defaultMessage: '摘要（100 字內）' },
+      intro: { id: 'common.introduction', defaultMessage: '描述' },
       currentPassword: {
         id: 'settings.profile.form.message.currentPassword',
         defaultMessage: '請輸入目前密碼',

@@ -1814,7 +1814,6 @@ export interface UPDATE_VOUCHER_MEMBERVariables {
 
 export interface GET_VALID_ACTIVITY_TICKET_activity_ticket_enrollment_count {
   __typename: "activity_ticket_enrollment_count";
-  count: number | null;
   buyable_quantity: any | null;
   activity_ticket_id: any | null;
 }
@@ -5158,6 +5157,8 @@ export interface GET_MEMBER_member_by_pk {
   email: string;
   picture_url: string | null;
   metadata: any;
+  title: string | null;
+  abstract: string | null;
   description: string | null;
   created_at: any | null;
   logined_at: any | null;
@@ -5255,6 +5256,8 @@ export interface UPDATE_MEMBER {
 export interface UPDATE_MEMBERVariables {
   memberId: string;
   name?: string | null;
+  title?: string | null;
+  abstract?: string | null;
   description?: string | null;
   username?: string | null;
   email?: string | null;
@@ -9444,6 +9447,109 @@ export interface GET_PODCAST_ALBUMSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_MEMBER_BY_USERNAME
+// ====================================================
+
+export interface GET_MEMBER_BY_USERNAME_member_public {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  title: string | null;
+  abstract: string | null;
+  description: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_MEMBER_BY_USERNAME {
+  /**
+   * fetch data from the table: "member_public"
+   */
+  member_public: GET_MEMBER_BY_USERNAME_member_public[];
+}
+
+export interface GET_MEMBER_BY_USERNAMEVariables {
+  username: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PROFILE
+// ====================================================
+
+export interface GET_PROFILE_program {
+  __typename: "program";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  updated_at: any | null;
+}
+
+export interface GET_PROFILE_post {
+  __typename: "post";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  updated_at: any | null;
+}
+
+export interface GET_PROFILE_activity {
+  __typename: "activity";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  updated_at: any | null;
+}
+
+export interface GET_PROFILE_merchandise_merchandise_imgs {
+  __typename: "merchandise_img";
+  id: any;
+  url: string;
+}
+
+export interface GET_PROFILE_merchandise {
+  __typename: "merchandise";
+  id: any;
+  title: string;
+  updated_at: any;
+  /**
+   * An array relationship
+   */
+  merchandise_imgs: GET_PROFILE_merchandise_merchandise_imgs[];
+}
+
+export interface GET_PROFILE {
+  /**
+   * fetch data from the table: "program"
+   */
+  program: GET_PROFILE_program[];
+  /**
+   * fetch data from the table: "post"
+   */
+  post: GET_PROFILE_post[];
+  /**
+   * fetch data from the table: "activity"
+   */
+  activity: GET_PROFILE_activity[];
+  /**
+   * fetch data from the table: "merchandise"
+   */
+  merchandise: GET_PROFILE_merchandise[];
+}
+
+export interface GET_PROFILEVariables {
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PROGRAM_CONTENT_PERMISSION
 // ====================================================
 
@@ -10369,6 +10475,7 @@ export enum activity_ticket_update_column {
 export enum activity_update_column {
   app_id = "app_id",
   cover_url = "cover_url",
+  created_at = "created_at",
   deleted_at = "deleted_at",
   description = "description",
   id = "id",
@@ -10378,6 +10485,7 @@ export enum activity_update_column {
   published_at = "published_at",
   support_locales = "support_locales",
   title = "title",
+  updated_at = "updated_at",
 }
 
 /**
@@ -10419,24 +10527,6 @@ export enum app_host_update_column {
   app_id = "app_id",
   host = "host",
   priority = "priority",
-}
-
-/**
- * unique or primary key constraints on table "app_module"
- */
-export enum app_module_constraint {
-  app_module_app_id_module_id_key = "app_module_app_id_module_id_key",
-  app_module_pkey = "app_module_pkey",
-}
-
-/**
- * update columns of table "app_module"
- */
-export enum app_module_update_column {
-  app_id = "app_id",
-  created_at = "created_at",
-  id = "id",
-  module_id = "module_id",
 }
 
 /**
@@ -10548,13 +10638,16 @@ export enum app_setting_update_column {
  * update columns of table "app"
  */
 export enum app_update_column {
+  app_plan_id = "app_plan_id",
   created_at = "created_at",
   description = "description",
+  ended_at = "ended_at",
   id = "id",
   name = "name",
   point_discount_ratio = "point_discount_ratio",
   point_exchange_rate = "point_exchange_rate",
   point_validity_period = "point_validity_period",
+  started_at = "started_at",
   symbol = "symbol",
   title = "title",
   updated_at = "updated_at",
@@ -11435,6 +11528,7 @@ export enum member_tag_update_column {
   created_at = "created_at",
   id = "id",
   member_id = "member_id",
+  position = "position",
   tag_name = "tag_name",
   updated_at = "updated_at",
 }
@@ -13419,6 +13513,7 @@ export interface activity_bool_exp {
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   deleted_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -13431,6 +13526,7 @@ export interface activity_bool_exp {
   session_ticket_enrollment_count?: activity_session_ticket_enrollment_count_bool_exp | null;
   support_locales?: jsonb_comparison_exp | null;
   title?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
 }
 
 /**
@@ -13533,6 +13629,7 @@ export interface activity_insert_input {
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
   cover_url?: string | null;
+  created_at?: any | null;
   deleted_at?: any | null;
   description?: string | null;
   id?: any | null;
@@ -13545,6 +13642,7 @@ export interface activity_insert_input {
   session_ticket_enrollment_count?: activity_session_ticket_enrollment_count_arr_rel_insert_input | null;
   support_locales?: any | null;
   title?: string | null;
+  updated_at?: any | null;
 }
 
 /**
@@ -13921,6 +14019,7 @@ export interface app_bool_exp {
   app_hosts?: app_host_bool_exp | null;
   app_modules?: app_module_bool_exp | null;
   app_navs?: app_nav_bool_exp | null;
+  app_plan_id?: String_comparison_exp | null;
   app_secrets?: app_secret_bool_exp | null;
   app_settings?: app_setting_bool_exp | null;
   cards?: card_bool_exp | null;
@@ -13928,6 +14027,7 @@ export interface app_bool_exp {
   comments?: comment_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
+  ended_at?: timestamptz_comparison_exp | null;
   id?: String_comparison_exp | null;
   issues?: issue_bool_exp | null;
   members?: member_bool_exp | null;
@@ -13943,6 +14043,7 @@ export interface app_bool_exp {
   programs?: program_bool_exp | null;
   properties?: property_bool_exp | null;
   sharing_codes?: sharing_code_bool_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
   symbol?: String_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -13999,6 +14100,7 @@ export interface app_insert_input {
   app_hosts?: app_host_arr_rel_insert_input | null;
   app_modules?: app_module_arr_rel_insert_input | null;
   app_navs?: app_nav_arr_rel_insert_input | null;
+  app_plan_id?: string | null;
   app_secrets?: app_secret_arr_rel_insert_input | null;
   app_settings?: app_setting_arr_rel_insert_input | null;
   cards?: card_arr_rel_insert_input | null;
@@ -14006,6 +14108,7 @@ export interface app_insert_input {
   comments?: comment_arr_rel_insert_input | null;
   created_at?: any | null;
   description?: string | null;
+  ended_at?: any | null;
   id?: string | null;
   issues?: issue_arr_rel_insert_input | null;
   members?: member_arr_rel_insert_input | null;
@@ -14021,6 +14124,7 @@ export interface app_insert_input {
   programs?: program_arr_rel_insert_input | null;
   properties?: property_arr_rel_insert_input | null;
   sharing_codes?: sharing_code_arr_rel_insert_input | null;
+  started_at?: any | null;
   symbol?: string | null;
   title?: string | null;
   updated_at?: any | null;
@@ -14033,7 +14137,6 @@ export interface app_insert_input {
  */
 export interface app_module_arr_rel_insert_input {
   data: app_module_insert_input[];
-  on_conflict?: app_module_on_conflict | null;
 }
 
 /**
@@ -14043,11 +14146,8 @@ export interface app_module_bool_exp {
   _and?: app_module_bool_exp[] | null;
   _not?: app_module_bool_exp | null;
   _or?: app_module_bool_exp[] | null;
-  app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
-  created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
-  module?: module_bool_exp | null;
   module_id?: String_comparison_exp | null;
 }
 
@@ -14055,21 +14155,9 @@ export interface app_module_bool_exp {
  * input type for inserting data into table "app_module"
  */
 export interface app_module_insert_input {
-  app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
-  created_at?: any | null;
   id?: any | null;
-  module?: module_obj_rel_insert_input | null;
   module_id?: string | null;
-}
-
-/**
- * on_conflict condition type for table "app_module"
- */
-export interface app_module_on_conflict {
-  constraint: app_module_constraint;
-  update_columns: app_module_update_column[];
-  where?: app_module_bool_exp | null;
 }
 
 /**
@@ -16332,6 +16420,7 @@ export interface member_bool_exp {
   podcasts?: podcast_bool_exp | null;
   point_logs?: point_log_bool_exp | null;
   point_status?: point_status_bool_exp | null;
+  post_roles?: post_role_bool_exp | null;
   practices?: practice_bool_exp | null;
   program_content_enrollments?: program_content_enrollment_bool_exp | null;
   program_content_progresses?: program_content_progress_bool_exp | null;
@@ -16587,6 +16676,7 @@ export interface member_insert_input {
   podcasts?: podcast_arr_rel_insert_input | null;
   point_logs?: point_log_arr_rel_insert_input | null;
   point_status?: point_status_obj_rel_insert_input | null;
+  post_roles?: post_role_arr_rel_insert_input | null;
   practices?: practice_arr_rel_insert_input | null;
   program_content_enrollments?: program_content_enrollment_arr_rel_insert_input | null;
   program_content_progresses?: program_content_progress_arr_rel_insert_input | null;
@@ -17238,6 +17328,7 @@ export interface member_tag_bool_exp {
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  position?: Int_comparison_exp | null;
   tag?: tag_bool_exp | null;
   tag_name?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -17251,6 +17342,7 @@ export interface member_tag_insert_input {
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  position?: number | null;
   tag?: tag_obj_rel_insert_input | null;
   tag_name?: string | null;
   updated_at?: any | null;

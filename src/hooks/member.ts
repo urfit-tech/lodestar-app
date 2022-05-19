@@ -19,6 +19,8 @@ export const useMember = (memberId: string) => {
           email
           picture_url
           metadata
+          title
+          abstract
           description
           created_at
           logined_at
@@ -48,6 +50,8 @@ export const useMember = (memberId: string) => {
           shipping: data.member_by_pk.metadata.shipping || null,
           invoice: data.member_by_pk.metadata.invoice || null,
           payment: data.member_by_pk.metadata.payment || null,
+          title: data.member_by_pk.title,
+          abstract: data.member_by_pk.abstract,
           description: data.member_by_pk.description,
           createdAt: data.member_by_pk.created_at,
           loginedAt: data.member_by_pk.logined_at,
@@ -120,6 +124,8 @@ export const useUpdateMember = () => {
       mutation UPDATE_MEMBER(
         $memberId: String!
         $name: String
+        $title: String
+        $abstract: String
         $description: String
         $username: String
         $email: String
@@ -127,7 +133,15 @@ export const useUpdateMember = () => {
       ) {
         update_member(
           where: { id: { _eq: $memberId } }
-          _set: { name: $name, description: $description, username: $username, email: $email, picture_url: $pictureUrl }
+          _set: {
+            name: $name
+            title: $title
+            abstract: $abstract
+            description: $description
+            username: $username
+            email: $email
+            picture_url: $pictureUrl
+          }
         ) {
           affected_rows
         }

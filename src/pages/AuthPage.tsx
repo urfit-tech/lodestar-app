@@ -1,6 +1,7 @@
 import { Container } from '@chakra-ui/react'
+import Cookies from 'js-cookie'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
@@ -20,18 +21,23 @@ const AuthPage: React.VFC = () => {
   const [accountLinkToken] = useQueryParam('accountLinkToken', StringParam)
   const [noGeneralLogin] = useQueryParam('noGeneralLogin', BooleanParam)
 
-  if (!accountLinkToken) return <Redirect to="/" />
-  if (currentMember) {
-    window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
-  }
-  return (
+  useEffect(() => {
+    if (currentMember) {
+      const redirectUrl = Cookies.get('redirect')
+      window.location.assign(redirectUrl || '/')
+    }
+  }, [currentMember])
+
+  return currentMember && accountLinkToken ? (
+    <Redirect to={`/line-binding?accountLinkToken=${accountLinkToken}`} />
+  ) : (
     <DefaultLayout centeredBox noFooter noGeneralLogin={noGeneralLogin || false}>
       <StyledContainer centerContent maxW="md">
         {authState === 'login' ? (
           <LoginSection
             onAuthStateChange={setAuthState}
             noGeneralLogin={noGeneralLogin || false}
-            accountLinkToken={accountLinkToken}
+            accountLinkToken={accountLinkToken || undefined}
           />
         ) : authState === 'register' ? (
           <RegisterSection onAuthStateChange={setAuthState} />

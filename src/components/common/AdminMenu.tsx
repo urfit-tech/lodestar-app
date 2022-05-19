@@ -48,8 +48,9 @@ export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
   const { managementDomain } = useManagementDomain(appId)
 
   const handleClick = ({ key, item }: ClickParam) => {
-    if (key.startsWith('_blank')) {
-      window.open(item.props['data-href'])
+    if (item.props['data-href']) {
+      if (key.startsWith('_blank')) window.open(item.props['data-href'])
+      else history.push(item.props['data-href'])
     } else if (key.startsWith('management_system')) {
       window.open(`//${managementDomain?.domain[0]}/admin`)
     } else {

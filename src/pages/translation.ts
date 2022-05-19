@@ -18,6 +18,18 @@ const pageMessages = {
     foo: { id: 'page.ProgramPage.foo', defaultMessage: 'Foo Message' },
     bar: { id: 'page.ProgramPage.bar', defaultMessage: 'Bar Message' },
   }),
+  // JoinPage
+  JoinPage: defineMessages({
+    title: { id: 'page.JoinPage.title', defaultMessage: 'Join KOLABLE!' },
+  }),
+  // ProfilePage
+  ProfilePage: defineMessages({
+    editProfile: { id: 'page.ProfilePage.editProfile', defaultMessage: 'Edit Profile' },
+    addActivity: { id: 'page.ProfilePage.addActivity', defaultMessage: 'New Activity' },
+    addProgram: { id: 'page.ProfilePage.addProgram', defaultMessage: 'New Program' },
+    addPost: { id: 'page.ProfilePage.addPost', defaultMessage: 'New Post' },
+    addMerchandise: { id: 'page.ProfilePage.addMerchandise', defaultMessage: 'New Merchandise' },
+  }),
 }
 
 export default pageMessages

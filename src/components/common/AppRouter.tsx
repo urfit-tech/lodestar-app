@@ -59,6 +59,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/oauth2/:provider',
     pageName: 'OAuth2Page',
   },
+  join: {
+    path: '/join',
+    pageName: 'JoinPage',
+  },
   terms: {
     path: '/terms',
     pageName: 'TermsPage',
@@ -118,6 +122,10 @@ const defaultRoutesMap: RoutesMap = {
   redeem: {
     path: '/redeem',
     pageName: 'RedeemPage',
+  },
+  profile: {
+    path: '/@:username',
+    pageName: 'ProfilePage',
   },
 
   // system - checkout
