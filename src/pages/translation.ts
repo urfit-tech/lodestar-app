@@ -25,6 +25,7 @@ const pageMessages = {
   // ProfilePage
   ProfilePage: defineMessages({
     editProfile: { id: 'page.ProfilePage.editProfile', defaultMessage: 'Edit Profile' },
+    customizePage: { id: 'page.ProfilePage.customizePage', defaultMessage: 'Customize Page' },
     addActivity: { id: 'page.ProfilePage.addActivity', defaultMessage: 'New Activity' },
     addProgram: { id: 'page.ProfilePage.addProgram', defaultMessage: 'New Program' },
     addPost: { id: 'page.ProfilePage.addPost', defaultMessage: 'New Post' },

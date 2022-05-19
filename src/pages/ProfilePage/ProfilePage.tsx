@@ -99,9 +99,14 @@ const ProfilePage: React.VFC = () => {
         {member?.title && <h3 className="mb-2">{member.title}</h3>}
         <p className="container text-center mb-3">{member?.abstract}</p>
         {username === currentMember?.username && (
-          <Link to="/settings/profile">
-            <Button>{formatMessage(pageMessages.ProfilePage.editProfile)}</Button>
-          </Link>
+          <div className="d-flex">
+            <Link to="/settings/profile">
+              <Button className="mr-3">{formatMessage(pageMessages.ProfilePage.editProfile)}</Button>
+            </Link>
+            <a href={`/admin/craft-page?action=create&pageName=@${username}&path=/@${username}`}>
+              <Button>{formatMessage(pageMessages.ProfilePage.customizePage)}</Button>
+            </a>
+          </div>
         )}
       </StyledAboutSection>
       <StyledProductSection>
