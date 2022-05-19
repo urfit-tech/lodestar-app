@@ -153,9 +153,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                       <Typography.Text>{formatMessage(commonMessages.content.busy)}</Typography.Text>
                       <Typography.Text>{formatMessage(commonMessages.content.busyProcessing)}</Typography.Text>
                       <Typography.Text>{formatMessage(commonMessages.content.busyCheck)}</Typography.Text>
-                      <Typography.Text>
-                        {formatMessage(commonMessages.content.busyContact)}
-                      </Typography.Text>
+                      <Typography.Text>{formatMessage(commonMessages.content.busyContact)}</Typography.Text>
                     </>
                   ) : errorCode === 'E_ADD_SYNC_JOB' ? (
                     <>

@@ -13,6 +13,15 @@ export type RouteProps = {
 type RoutesMap = { [routeKey: string]: RouteProps }
 
 const defaultRoutesMap: RoutesMap = {
+  // custom
+  home: {
+    path: '/',
+    pageName: 'HomePage',
+  },
+  about: {
+    path: '/about',
+    pageName: 'AboutPage',
+  },
   // system
   error: {
     path: '/error',
@@ -23,10 +32,6 @@ const defaultRoutesMap: RoutesMap = {
     pageName: <NotFoundPage variant="repairing" />,
   },
   // all users
-  home: {
-    path: '/',
-    pageName: 'HomePage',
-  },
   auth: {
     path: '/auth',
     pageName: 'AuthPage',
@@ -66,10 +71,6 @@ const defaultRoutesMap: RoutesMap = {
   terms: {
     path: '/terms',
     pageName: 'TermsPage',
-  },
-  about: {
-    path: '/about',
-    pageName: 'AboutPage',
   },
   creator_collection: {
     path: '/creators',

@@ -415,7 +415,7 @@ const useSearchProductCollection = (
             is_participants_visible
             published_at
           }
-          program_roles(where: { name: { _eq: "instructor" } }, limit: 1) {
+          program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc }, limit: 1) {
             id
             member {
               id
