@@ -146,10 +146,10 @@ export const useEnrolledProductIds = (memberId: string) => {
       : data.product_enrollment.map(productEnrollment => productEnrollment.product_id || '').filter(v => v)
 
   return {
-    loadingProductIds: loading,
-    errorProductIds: error,
+    loading,
+    error,
     enrolledProductIds,
-    refetchProgramIds: refetch,
+    refetch,
   }
 }
 

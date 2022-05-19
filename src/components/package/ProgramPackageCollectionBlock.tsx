@@ -166,11 +166,14 @@ const useProgramPackages = (programPackagePlanIds: string[]) => {
     coverUrl: string | undefined
     title: string
   }[] =
-    data?.program_package_plan.map(v => ({
-      id: v.program_package.id,
-      coverUrl: v.program_package.cover_url || undefined,
-      title: v.program_package.title,
-    })) || []
+    data?.program_package_plan
+      .map(v => ({
+        id: v.program_package?.id,
+        coverUrl: v.program_package?.cover_url || undefined,
+        title: v.program_package?.title,
+      }))
+      // TODO: if product is unpublished, optimize the user experience
+      .filter(w => !!w.id) || []
 
   return {
     loadingProgramPackages: loading,
