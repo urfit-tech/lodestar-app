@@ -80,76 +80,6 @@ export interface GET_PRODUCT_INVENTORYVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_APPOINTMENT_PLAN
-// ====================================================
-
-export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_currency {
-  __typename: "currency";
-  id: string;
-  label: string;
-  unit: string;
-  name: string;
-}
-
-export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_appointment_periods {
-  __typename: "appointment_period";
-  started_at: any | null;
-  ended_at: any | null;
-  booked: boolean | null;
-}
-
-export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_creator {
-  __typename: "member_public";
-  id: string | null;
-  abstract: string | null;
-  picture_url: string | null;
-  name: string | null;
-  username: string | null;
-}
-
-export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk {
-  __typename: "appointment_plan";
-  id: any;
-  title: string;
-  description: string | null;
-  /**
-   * minutes
-   */
-  duration: any;
-  price: any;
-  support_locales: any | null;
-  /**
-   * An object relationship
-   */
-  currency: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_currency;
-  /**
-   * An array relationship
-   */
-  appointment_periods: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_appointment_periods[];
-  /**
-   * An object relationship
-   */
-  creator: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_creator | null;
-}
-
-export interface GET_APPOINTMENT_PLAN {
-  /**
-   * fetch data from the table: "appointment_plan" using primary key columns
-   */
-  appointment_plan_by_pk: GET_APPOINTMENT_PLAN_appointment_plan_by_pk | null;
-}
-
-export interface GET_APPOINTMENT_PLANVariables {
-  appointmentPlanId: any;
-  startedAt: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_PROGRAM_PACKAGE_PROGRAM_COLLECTION
 // ====================================================
 
@@ -3076,6 +3006,76 @@ export interface GET_APPOINTMENT_PLAN_COLLECTION {
 export interface GET_APPOINTMENT_PLAN_COLLECTIONVariables {
   memberId: string;
   startedAt?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_APPOINTMENT_PLAN
+// ====================================================
+
+export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_currency {
+  __typename: "currency";
+  id: string;
+  label: string;
+  unit: string;
+  name: string;
+}
+
+export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_appointment_periods {
+  __typename: "appointment_period";
+  started_at: any | null;
+  ended_at: any | null;
+  booked: boolean | null;
+}
+
+export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_creator {
+  __typename: "member_public";
+  id: string | null;
+  abstract: string | null;
+  picture_url: string | null;
+  name: string | null;
+  username: string | null;
+}
+
+export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk {
+  __typename: "appointment_plan";
+  id: any;
+  title: string;
+  description: string | null;
+  /**
+   * minutes
+   */
+  duration: any;
+  price: any;
+  support_locales: any | null;
+  /**
+   * An object relationship
+   */
+  currency: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_currency;
+  /**
+   * An array relationship
+   */
+  appointment_periods: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_appointment_periods[];
+  /**
+   * An object relationship
+   */
+  creator: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_creator | null;
+}
+
+export interface GET_APPOINTMENT_PLAN {
+  /**
+   * fetch data from the table: "appointment_plan" using primary key columns
+   */
+  appointment_plan_by_pk: GET_APPOINTMENT_PLAN_appointment_plan_by_pk | null;
+}
+
+export interface GET_APPOINTMENT_PLANVariables {
+  appointmentPlanId: any;
+  startedAt: any;
 }
 
 /* tslint:disable */
@@ -10388,6 +10388,13 @@ export interface GET_PROFILE_merchandise {
   merchandise_imgs: GET_PROFILE_merchandise_merchandise_imgs[];
 }
 
+export interface GET_PROFILE_appointment_plan {
+  __typename: "appointment_plan";
+  id: any;
+  title: string;
+  updated_at: any;
+}
+
 export interface GET_PROFILE {
   /**
    * fetch data from the table: "program"
@@ -10405,6 +10412,10 @@ export interface GET_PROFILE {
    * fetch data from the table: "merchandise"
    */
   merchandise: GET_PROFILE_merchandise[];
+  /**
+   * fetch data from the table: "appointment_plan"
+   */
+  appointment_plan: GET_PROFILE_appointment_plan[];
 }
 
 export interface GET_PROFILEVariables {

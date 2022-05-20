@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button } from '@chakra-ui/react'
+import { Button, Tag } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import moment from 'moment'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router'
@@ -26,12 +27,13 @@ const StyledHeading = styled.h1`
 `
 const StyledProductSection = styled.section`
   padding: 32px 8px;
-  max-width: 992px;
+  max-width: 728px;
   margin: auto;
 `
 const StyledProductItem = styled.div<{ coverUrl: string }>`
   background: white;
-  border-radius: 8px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   margin-bottom: 16px;
@@ -44,21 +46,23 @@ const StyledProductItem = styled.div<{ coverUrl: string }>`
   }
 
   .intro {
-    padding: 8px;
+    padding: 32px;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
+    min-height: 200px;
+    h3 {
+      font-size: 18px;
+      font-weight: bold;
+    }
   }
 
   @media (min-width: ${BREAK_POINT}px) {
     flex-direction: row;
     .cover {
-      padding-top: 22.5%;
-      width: 40%;
-    }
-    .intro {
-      padding: 0 16px;
-      flex-direction: column;
-      justify-content: space-around;
+      padding-top: 202.5px;
+      /* padding-top: 20%; */
+      width: 360px;
     }
   }
 `
@@ -102,28 +106,49 @@ const ProfilePage: React.VFC = () => {
         {username === currentMember?.username && (
           <div className="d-flex">
             <Link to="/settings/profile">
-              <Button className="mr-3">{formatMessage(pageMessages.ProfilePage.editProfile)}</Button>
+              <Button variant="outline" colorScheme="primary" className="mr-3">
+                {formatMessage(pageMessages.ProfilePage.editProfile)}
+              </Button>
             </Link>
-            <a href={`/admin/craft-page?action=create&pageName=@${username}&path=/@${username}`}>
-              <Button>{formatMessage(pageMessages.ProfilePage.customizePage)}</Button>
+            <a
+              target="_blank"
+              href={`/admin/craft-page?action=create&pageName=@${username}&path=/@${username}`}
+              rel="noreferrer"
+            >
+              <Button variant="outline" colorScheme="primary">
+                {formatMessage(pageMessages.ProfilePage.customizePage)}
+              </Button>
             </a>
           </div>
         )}
       </StyledAboutSection>
       <StyledProductSection>
         {username === currentMember?.username && (
-          <div className="d-flex justify-content-center mb-3">
+          <div className="d-flex justify-content-center mb-3 flex-wrap">
             <a href="/admin/activities" target="_blank">
-              <Button className="mr-3">{formatMessage(pageMessages.ProfilePage.addActivity)}</Button>
+              <Button className="mr-2 mb-3" colorScheme="primary">
+                {formatMessage(pageMessages.ProfilePage.addActivity)}
+              </Button>
             </a>
             <a href="/admin/programs" target="_blank">
-              <Button className="mr-3">{formatMessage(pageMessages.ProfilePage.addProgram)}</Button>
+              <Button className="mr-2 mb-3" colorScheme="primary">
+                {formatMessage(pageMessages.ProfilePage.addProgram)}
+              </Button>
             </a>
             <a href="/admin/blog" target="_blank">
-              <Button className="mr-3">{formatMessage(pageMessages.ProfilePage.addPost)}</Button>
+              <Button className="mr-2 mb-3" colorScheme="primary">
+                {formatMessage(pageMessages.ProfilePage.addPost)}
+              </Button>
             </a>
             <a href="/admin/member-shops" target="_blank">
-              <Button className="mr-3">{formatMessage(pageMessages.ProfilePage.addMerchandise)}</Button>
+              <Button className="mr-2 mb-3" colorScheme="primary">
+                {formatMessage(pageMessages.ProfilePage.addMerchandise)}
+              </Button>
+            </a>
+            <a href="/admin/appointment-plans" target="_blank">
+              <Button className="mr-2 mb-3" colorScheme="primary">
+                {formatMessage(pageMessages.ProfilePage.addAppointment)}
+              </Button>
             </a>
           </div>
         )}
@@ -132,8 +157,15 @@ const ProfilePage: React.VFC = () => {
             <StyledProductItem coverUrl={memberProduct.coverUrl}>
               <div className="cover" />
               <div className="intro">
-                <h3>{memberProduct.title}</h3>
-                <p>{memberProduct.updatedAt}</p>
+                <div>
+                  <h3 className="mb-3">{memberProduct.title}</h3>
+                  <Tag colorScheme="primary">{formatMessage(pageMessages.ProfilePage[memberProduct.type])}</Tag>
+                </div>
+                <p>
+                  {`${formatMessage(pageMessages.ProfilePage.updatedAt)}: ${moment(memberProduct.updatedAt).format(
+                    'YYYY-MM-DD HH:mm',
+                  )}`}
+                </p>
               </div>
             </StyledProductItem>
           </Link>
@@ -145,7 +177,13 @@ const ProfilePage: React.VFC = () => {
 
 const useMemberProducts = (
   memberId: string,
-): { title: string; coverUrl: string; targetUrl: string; updatedAt: Date }[] => {
+): {
+  type: 'activity' | 'merchandise' | 'program' | 'post' | 'appointment'
+  title: string
+  coverUrl: string
+  targetUrl: string
+  updatedAt: Date
+}[] => {
   const { data } = useQuery<hasura.GET_PROFILE, hasura.GET_PROFILEVariables>(
     gql`
       query GET_PROFILE($memberId: String!) {
@@ -176,33 +214,49 @@ const useMemberProducts = (
             url
           }
         }
+        appointment_plan(where: { creator_id: { _eq: $memberId } }) {
+          id
+          title
+          updated_at
+        }
       }
     `,
     { variables: { memberId } },
   )
   return [
     ...(data?.activity.map(v => ({
+      type: 'activity' as const,
       title: v.title,
       coverUrl: v.cover_url || 'https://via.placeholder.com/600x400?text=Activity',
       targetUrl: `/activities/${v.id}`,
       updatedAt: v.updated_at,
     })) || []),
     ...(data?.merchandise.map(v => ({
+      type: 'merchandise' as const,
       title: v.title,
       coverUrl: v.merchandise_imgs[0]?.url || 'https://via.placeholder.com/600x400?text=Merchandise',
       targetUrl: `/merchandises/${v.id}`,
       updatedAt: v.updated_at,
     })) || []),
     ...(data?.post.map(v => ({
+      type: 'post' as const,
       title: v.title,
       coverUrl: v.cover_url || 'https://via.placeholder.com/600x400?text=Post',
       targetUrl: `/posts/${v.id}`,
       updatedAt: v.updated_at,
     })) || []),
     ...(data?.program.map(v => ({
+      type: 'program' as const,
       title: v.title,
       coverUrl: v.cover_url || 'https://via.placeholder.com/600x400?text=Program',
       targetUrl: `/programs/${v.id}`,
+      updatedAt: v.updated_at,
+    })) || []),
+    ...(data?.appointment_plan.map(v => ({
+      type: 'appointment' as const,
+      title: v.title,
+      coverUrl: 'https://via.placeholder.com/600x400?text=Appointment',
+      targetUrl: `/appointment_plans/${v.id}`,
       updatedAt: v.updated_at,
     })) || []),
   ].sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1))
