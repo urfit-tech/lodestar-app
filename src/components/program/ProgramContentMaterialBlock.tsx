@@ -7,10 +7,10 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { byteToSize, downloadFile, getFileDownloadableLink, getFileExtension, getFileName } from '../../helpers'
-import { programMessages } from '../../helpers/translation'
 import { useProgramContentMaterial } from '../../hooks/program'
 import { ReactComponent as DownloadIcon } from '../../images/download.svg'
 import { BREAK_POINT } from '../common/Responsive'
+import programMessages from './translation'
 
 const StyledMaterial = styled.div`
   cursor: pointer;
@@ -65,7 +65,7 @@ const ProgramContentMaterialBlock: React.VFC<{
       {loadingProgramContentMaterials ? (
         <Spin />
       ) : errorProgramContentMaterials || !programContentMaterials ? (
-        formatMessage(programMessages.status.loadingMaterialError)
+        formatMessage(programMessages.ProgramContentMaterialBlock.loadingMaterialError)
       ) : (
         programContentMaterials.map(material => (
           <StyledMaterial

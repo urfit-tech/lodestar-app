@@ -156,9 +156,9 @@ const defaultRoutesMap: RoutesMap = {
     path: '/notifications',
     pageName: 'NotificationPage',
   },
-  program_content_collection: {
+  program_content_cutscene: {
     path: '/programs/:programId/contents',
-    pageName: 'ProgramContentCollectionPage',
+    pageName: 'ProgramContentCutscenePage',
   },
   program_content: {
     path: '/programs/:programId/contents/:programContentId',
