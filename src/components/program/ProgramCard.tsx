@@ -2,14 +2,12 @@ import { Icon } from '@chakra-ui/react'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React from 'react'
 import { AiOutlineClockCircle, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { durationFormatter } from '../../helpers'
-import { productMessages, reviewMessages } from '../../helpers/translation'
 import { useProgramEnrollmentAggregate } from '../../hooks/program'
 import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import EmptyCover from '../../images/empty-cover.png'
@@ -19,6 +17,7 @@ import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
 import PriceLabel from '../common/PriceLabel'
 import StarRating from '../common/StarRating'
+import programMessages from './translation'
 
 const InstructorPlaceHolder = styled.div`
   height: 2rem;
@@ -74,7 +73,6 @@ const ProgramCard: React.VFC<{
   }
   variant?: 'brief'
   programType?: string | null
-  isEnrolled?: boolean
   noInstructor?: boolean
   noPrice?: boolean
   noTotalDuration?: boolean
@@ -87,7 +85,6 @@ const ProgramCard: React.VFC<{
   program,
   variant,
   programType,
-  isEnrolled,
   noInstructor,
   noPrice,
   noTotalDuration,
@@ -96,11 +93,10 @@ const ProgramCard: React.VFC<{
   renderCover,
   renderCustomDescription,
 }) => {
-  const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { productEditorIds } = useProductEditorIds(program.id)
-  const { enabledModules, settings, id: appId } = useApp()
+  const { enabledModules, settings } = useApp()
 
   const instructorId = program.roles.length > 0 && program.roles[0].memberId
   const listPrice = program.plans[0]?.listPrice || 0
@@ -113,11 +109,7 @@ const ProgramCard: React.VFC<{
   const periodAmount = program.plans.length > 1 ? program.plans[0]?.periodAmount : null
   const periodType = program.plans.length > 1 ? program.plans[0]?.periodType : null
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
-  const {
-    data: enrolledCount,
-    loading,
-    error,
-  } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
+  const { data: enrolledCount } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
 
   return (
     <>
@@ -129,14 +121,7 @@ const ProgramCard: React.VFC<{
         </InstructorPlaceHolder>
       )}
 
-      <Link
-        to={
-          isEnrolled
-            ? `/programs/${program.id}/contents`
-            : `/programs/${program.id}` + (programType ? `?type=${programType}` : '')
-        }
-        onClick={onClick}
-      >
+      <Link to={`/programs/${program.id}` + (programType ? `?type=${programType}` : '')} onClick={onClick}>
         <StyledWrapper>
           {renderCover ? (
             renderCover(program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover)
@@ -157,10 +142,12 @@ const ProgramCard: React.VFC<{
               reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
                 <StyledReviewRating className="d-flex mb-2">
                   <StarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} max={5} size="20px" />
-                  <span>({formatMessage(reviewMessages.text.reviewCount, { count: reviewCount })})</span>
+                  <span>({formatMessage(programMessages.ProgramCard.reviewCount, { count: reviewCount })})</span>
                 </StyledReviewRating>
               ) : (
-                <StyledReviewRating className="mb-2">{formatMessage(reviewMessages.text.noReviews)}</StyledReviewRating>
+                <StyledReviewRating className="mb-2">
+                  {formatMessage(programMessages.ProgramCard.noReviews)}
+                </StyledReviewRating>
               )
             ) : null}
 
@@ -172,7 +159,7 @@ const ProgramCard: React.VFC<{
                 {!noPrice && (
                   <div>
                     {program.plans.length === 0 ? (
-                      <span>{formatMessage(productMessages.program.content.notForSale)}</span>
+                      <span>{formatMessage(programMessages.ProgramCard.notForSale)}</span>
                     ) : (
                       <PriceLabel
                         variant="inline"
