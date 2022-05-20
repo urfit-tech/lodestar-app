@@ -55,6 +55,10 @@ const StyledProductItem = styled.div<{ coverUrl: string }>`
       font-size: 18px;
       font-weight: bold;
     }
+    p {
+      font-size: 14px;
+      color: var(--gray-dark);
+    }
   }
 
   @media (min-width: ${BREAK_POINT}px) {
