@@ -53,8 +53,11 @@ const ProgramContentMaterialBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { authToken } = useAuth()
-  const { loadingProgramContentMaterials, programContentMaterials, errorProgramContentMaterials } =
-    useProgramContentMaterial(programContentId)
+  const {
+    loading: loadingProgramContentMaterials,
+    error: errorProgramContentMaterials,
+    data: programContentMaterials,
+  } = useProgramContentMaterial(programContentId)
   const [isDownloading, setIsDownloading] = useState<{ [key: string]: boolean }>({})
   const [downloadProgress, setDownloadProgress] = useState<{ [key: string]: number }>({})
 
@@ -67,60 +70,64 @@ const ProgramContentMaterialBlock: React.VFC<{
       ) : errorProgramContentMaterials || !programContentMaterials ? (
         formatMessage(programMessages.status.loadingMaterialError)
       ) : (
-        programContentMaterials.map(material => (
-          <StyledMaterial
-            key={material.id}
-            className="mb-3"
-            onClick={async () => {
-              setIsDownloading(prev => ({ ...prev, [material.id]: true }))
-              const fileKey = `materials/${appId}/${programContentId}_${material.data.name}`
-              const materialLink = await getFileDownloadableLink(fileKey, authToken)
-              const materialRequest = new Request(materialLink)
-              try {
-                const response = await fetch(materialRequest)
-                response.url &&
-                  downloadFile(material.data.name, {
-                    url: response.url,
-                    onDownloadProgress: ({ loaded, total }) => {
-                      setDownloadProgress(prev => ({
-                        ...prev,
-                        [material.id]: Math.floor((loaded / total) * 100),
-                      }))
-                    },
-                  }).then(() => {
-                    setIsDownloading(prev => ({ ...prev, [material.id]: false }))
-                  })
-              } catch (error) {
-                process.env.NODE_ENV === 'development' && console.error(error)
-              }
-            }}
-          >
-            <div className="d-flex align-items-center justify-content-between">
-              <AttachmentIcon className="flex-shrink-0 mr-2" />
+        programContentMaterials
+          .filter(material => material.data.name)
+          .map(material => (
+            <StyledMaterial
+              key={material.id}
+              className="mb-3"
+              onClick={async () => {
+                setIsDownloading(prev => ({ ...prev, [material.id]: true }))
+                const fileKey = `materials/${appId}/${programContentId}_${material.data.name}`
+                const materialLink = await getFileDownloadableLink(fileKey, authToken)
+                const materialRequest = new Request(materialLink)
+                try {
+                  const response = await fetch(materialRequest)
+                  response.url &&
+                    downloadFile(material.data.name, {
+                      url: response.url,
+                      onDownloadProgress: ({ loaded, total }) => {
+                        setDownloadProgress(prev => ({
+                          ...prev,
+                          [material.id]: Math.floor((loaded / total) * 100),
+                        }))
+                      },
+                    }).then(() => {
+                      setIsDownloading(prev => ({ ...prev, [material.id]: false }))
+                    })
+                } catch (error) {
+                  process.env.NODE_ENV === 'development' && console.error(error)
+                }
+              }}
+            >
+              <div className="d-flex align-items-center justify-content-between">
+                <AttachmentIcon className="flex-shrink-0 mr-2" />
 
-              <StyledFileName className="flex-grow-1">
-                <StyledDataName>
-                  {getFileName(material.data.name).length >= charLimit
-                    ? `${getFileName(material.data.name).substring(0, charLimit)}..`
-                    : getFileName(material.data.name).substring(0, charLimit)}
-                </StyledDataName>
-                <StyledFileExtension className="mr-2">{`.${getFileExtension(material.data.name)}`}</StyledFileExtension>
-                <StyledDataSize>{`(${byteToSize(material.data.size)})`}</StyledDataSize>
-              </StyledFileName>
+                <StyledFileName className="flex-grow-1">
+                  <StyledDataName>
+                    {getFileName(material.data.name).length >= charLimit
+                      ? `${getFileName(material.data.name).substring(0, charLimit)}..`
+                      : getFileName(material.data.name).substring(0, charLimit)}
+                  </StyledDataName>
+                  <StyledFileExtension className="mr-2">{`.${getFileExtension(
+                    material.data.name,
+                  )}`}</StyledFileExtension>
+                  <StyledDataSize>{`(${byteToSize(material.data.size ?? 0)})`}</StyledDataSize>
+                </StyledFileName>
 
-              <IconButton
-                aria-label="download"
-                variant="download"
-                icon={<DownloadIcon />}
-                isLoading={!!isDownloading[material.id]}
-                className="flex-shrink-0"
-              />
-            </div>
-            {isDownloading[material.id] && (
-              <Progress value={downloadProgress[material.id] || 0} size="xs" colorScheme="green" />
-            )}
-          </StyledMaterial>
-        ))
+                <IconButton
+                  aria-label="download"
+                  variant="download"
+                  icon={<DownloadIcon />}
+                  isLoading={!!isDownloading[material.id]}
+                  className="flex-shrink-0"
+                />
+              </div>
+              {isDownloading[material.id] && (
+                <Progress value={downloadProgress[material.id] || 0} size="xs" colorScheme="green" />
+              )}
+            </StyledMaterial>
+          ))
       )}
     </>
   )
