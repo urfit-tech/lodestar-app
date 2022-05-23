@@ -64,7 +64,7 @@ const ProgramContentCutscenePage: React.VFC = () => {
   const [productId] = useQueryParam('back', StringParam)
   const { loadingProgram, program, errorProgram } = useProgram(programId)
 
-  if (loadingProgram || isAuthenticating) {
+  if (loadingProgram || isAuthenticating || !program) {
     return (
       <Box className="d-flex justify-content-center align-items-center" h="100vh">
         <Spinner />
