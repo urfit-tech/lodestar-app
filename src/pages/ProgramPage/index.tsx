@@ -8,13 +8,14 @@ import queryString from 'query-string'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
+import { Link, Redirect, useHistory, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { BooleanParam, useQueryParam } from 'use-query-params'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
-import ClassCouponBlock from '../../components/ClassCouponBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -26,7 +27,7 @@ import { CustomizeProgramBanner, PerpetualProgramBanner } from './ProgramBanner'
 import ProgramBestReviewsCarousel from './ProgramBestReviewsCarousel'
 import ProgramContentListSection from './ProgramContentListSection'
 import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
-import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
+import { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
 import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
 import ProgramPageHelmet from './ProgramPageHelmet'
 import ProgramPlanCard from './ProgramPlanCard'
@@ -88,8 +89,9 @@ const ProgramPage: React.VFC = () => {
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
+  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
   const params = queryString.parse(location.search)
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(programId)
 
   useEffect(() => {
@@ -102,7 +104,7 @@ const ProgramPage: React.VFC = () => {
     ReactGA.ga('send', 'pageview')
   }, [])
 
-  if (loadingProgram || enrolledProgramPackages.loading) {
+  if (loadingProgram || enrolledProgramPackages.loading || loadingEnrolledProgramIds) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -112,6 +114,10 @@ const ProgramPage: React.VFC = () => {
 
   if (!program) {
     return <ForbiddenPage />
+  }
+
+  if (!visitIntro && isEnrolled) {
+    return <Redirect to={`/programs/${programId}/contents`} />
   }
 
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
@@ -148,7 +154,7 @@ const ProgramPage: React.VFC = () => {
               <div className="col-12 col-lg-8">
                 {!settings['layout.program_page'] && (
                   <div className="mb-5">
-                  <ProgramInstructorCollectionBlock program={program} />
+                    <ProgramInstructorCollectionBlock program={program} />
                   </div>
                 )}
                 {!settings['layout.program_page'] && (
@@ -275,6 +281,14 @@ const ProgramPage: React.VFC = () => {
                 <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
                   <Button isFullWidth colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
                     {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
+                  </Button>
+                </Link>
+              </StyledButtonWrapper>
+            ) : isEnrolled ? (
+              <StyledButtonWrapper>
+                <Link to={`${program.id}/contents`}>
+                  <Button variant="primary" isFullWidth>
+                    {formatMessage(commonMessages.button.enter)}
                   </Button>
                 </Link>
               </StyledButtonWrapper>

@@ -1,7 +1,6 @@
 import { Button as ChakraButton, Icon, SkeletonText } from '@chakra-ui/react'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { flatten, prop, sortBy, uniqBy } from 'ramda'
@@ -19,7 +18,7 @@ import LocaleContext from '../../contexts/LocaleContext'
 import { notEmpty } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
-import { useEnrolledProgramIds, usePublishedProgramCollection } from '../../hooks/program'
+import { usePublishedProgramCollection } from '../../hooks/program'
 import { Category } from '../../types/general'
 import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../../types/program'
 import ProgramCollectionPageHelmet from './ProgramCollectionPageHelmet'
@@ -34,7 +33,6 @@ const StyledButton = styled(ChakraButton)`
 `
 
 const ProgramCollectionPage: React.VFC = () => {
-  const tracking = useTracking()
   const { formatMessage } = useIntl()
 
   const [defaultActive] = useQueryParam('active', StringParam)
@@ -43,11 +41,9 @@ const ProgramCollectionPage: React.VFC = () => {
   const [noBanner] = useQueryParam('noBanner', BooleanParam)
   const [permitted] = useQueryParam('permitted', BooleanParam)
 
-  const { currentMemberId } = useAuth()
-  const { settings, currencyId: appCurrencyId, id: appId } = useApp()
+  const { settings } = useApp()
   const { pageTitle } = useNav()
   const { currentLocale } = useContext(LocaleContext)
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const { loadingPrograms, errorPrograms, programs } = usePublishedProgramCollection({
     isPrivate: permitted ? undefined : false,
@@ -128,7 +124,7 @@ const ProgramCollectionPage: React.VFC = () => {
           ) : !!errorPrograms ? (
             <div>{formatMessage(commonMessages.status.readingFail)}</div>
           ) : (
-            <ProgramCollection programs={filteredPrograms} enrolledProgramIds={enrolledProgramIds} />
+            <ProgramCollection programs={filteredPrograms} />
           )}
         </div>
       </StyledCollection>
@@ -143,8 +139,7 @@ const ProgramCollection: React.FC<{
     roles: ProgramRole[]
     plans: ProgramPlan[]
   })[]
-  enrolledProgramIds: string[]
-}> = ({ programs, enrolledProgramIds }) => {
+}> = ({ programs }) => {
   const { id: appId } = useApp()
   const tracking = useTracking()
   const [type] = useQueryParam('type', StringParam)
@@ -164,7 +159,6 @@ const ProgramCollection: React.FC<{
           <ProgramCard
             program={program}
             programType={type}
-            isEnrolled={enrolledProgramIds.includes(program.id)}
             noPrice={!!noPrice}
             withMeta={!noMeta}
             onClick={() => {

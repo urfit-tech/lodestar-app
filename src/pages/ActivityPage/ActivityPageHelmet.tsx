@@ -76,8 +76,15 @@ const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ 
     return [...acc, onlineLocation, offlineLocation].filter(notEmpty)
   }, [])
 
-  const activityStartedAt = new Date(Math.min(...activity.sessions.map(session => session.startedAt.getTime())))
-  const activityEndedAt = new Date(Math.max(...activity.sessions.map(session => session.endedAt.getTime())))
+  const activityStartedAt =
+    activity.sessions.length > 0
+      ? new Date(Math.min(...activity.sessions.map(session => session.startedAt.getTime())))
+      : null
+  const activityEndedAt =
+    activity.sessions.length > 0
+      ? new Date(Math.max(...activity.sessions.map(session => session.endedAt.getTime())))
+      : null
+
   return (
     <PageHelmet
       title={activity.title}

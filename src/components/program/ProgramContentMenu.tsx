@@ -3,17 +3,17 @@ import { Select } from '@chakra-ui/react'
 import { Card } from 'antd'
 import { flatten, sum } from 'ramda'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { AiOutlineVideoCamera, AiOutlinePlaySquare } from 'react-icons/ai'
-import { defineMessages, useIntl } from 'react-intl'
+import { AiOutlineVideoCamera } from 'react-icons/ai'
+import { useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
-import { productMessages } from '../../helpers/translation'
 import { useProgramContentBody } from '../../hooks/program'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
 import { Program, ProgramContent, ProgramContentSection } from '../../types/program'
+import programMessages from './translation'
 
 const StyledIcon = styled(Icon)`
   font-size: 16px;
@@ -104,10 +104,6 @@ const StyledItem = styled.div`
     color: white;
   }
 `
-const messages = defineMessages({
-  materialAmount: { id: 'program.content.materialAmount', defaultMessage: '{amount}個檔案' },
-  totalQuestion: { id: 'program.content.totalAmount', defaultMessage: '共 {count} 題' },
-})
 
 const ProgramContentMenu: React.VFC<{
   isScrollToTop?: boolean
@@ -127,11 +123,11 @@ const ProgramContentMenu: React.VFC<{
   return (
     <StyledProgramContentMenu>
       <StyledHead className="d-flex justify-content-between align-items-center">
-        <span>{formatMessage(productMessages.program.content.programList)}</span>
+        <span>{formatMessage(programMessages.ProgramContentMenu.programList)}</span>
         <StyledSelectBlock>
           <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value)}>
-            <option value="section">{formatMessage(productMessages.program.select.option.unit)}</option>
-            <option value="date">{formatMessage(productMessages.program.select.option.time)}</option>
+            <option value="section">{formatMessage(programMessages.ProgramContentMenu.unit)}</option>
+            <option value="date">{formatMessage(programMessages.ProgramContentMenu.time)}</option>
           </Select>
         </StyledSelectBlock>
       </StyledHead>
@@ -292,7 +288,9 @@ const SortBySectionItem: React.VFC<{
         {programContent.materials && programContent?.materials.length !== 0 && (
           <div>
             <StyledIcon as={AttachmentIcon} className="mr-2" />
-            {formatMessage(messages.materialAmount, { amount: programContent?.materials.length })}
+            {formatMessage(programMessages.ProgramContentMenu.materialAmount, {
+              amount: programContent?.materials.length,
+            })}
           </div>
         )}
       </div>
@@ -373,7 +371,9 @@ const SortByDateItem: React.VFC<{
       {programContent.materials && programContent?.materials.length !== 0 && (
         <div className="mt-2">
           <StyledIcon as={AttachmentIcon} className="mr-2" />
-          {formatMessage(messages.materialAmount, { amount: programContent?.materials.length })}
+          {formatMessage(programMessages.ProgramContentMenu.materialAmount, {
+            amount: programContent?.materials.length,
+          })}
         </div>
       )}
     </StyledItem>
@@ -392,7 +392,7 @@ const ExerciseQuestionCount: React.VFC<{ contentBodyId: string }> = ({ contentBo
   return (
     <>
       <StyledIcon as={QuizIcon} className="mr-2" />
-      <span>{formatMessage(messages.totalQuestion, { count })}</span>
+      <span>{formatMessage(programMessages.ProgramContentMenu.totalQuestion, { count })}</span>
     </>
   )
 }

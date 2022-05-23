@@ -14,6 +14,7 @@ import DefaultFooter from './DefaultFooter'
 import MultilineFooter from './MultilineFooter'
 
 export const StyledFooter = styled.footer`
+  height: 64px;
   background: white;
   border-top: 1px solid #ececec;
   color: #9b9b9b;

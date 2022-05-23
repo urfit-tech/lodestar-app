@@ -80,76 +80,6 @@ export interface GET_PRODUCT_INVENTORYVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_APPOINTMENT_PLAN
-// ====================================================
-
-export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_currency {
-  __typename: "currency";
-  id: string;
-  label: string;
-  unit: string;
-  name: string;
-}
-
-export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_appointment_periods {
-  __typename: "appointment_period";
-  started_at: any | null;
-  ended_at: any | null;
-  booked: boolean | null;
-}
-
-export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_creator {
-  __typename: "member_public";
-  id: string | null;
-  abstract: string | null;
-  picture_url: string | null;
-  name: string | null;
-  username: string | null;
-}
-
-export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk {
-  __typename: "appointment_plan";
-  id: any;
-  title: string;
-  description: string | null;
-  /**
-   * minutes
-   */
-  duration: any;
-  price: any;
-  support_locales: any | null;
-  /**
-   * An object relationship
-   */
-  currency: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_currency;
-  /**
-   * An array relationship
-   */
-  appointment_periods: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_appointment_periods[];
-  /**
-   * An object relationship
-   */
-  creator: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_creator | null;
-}
-
-export interface GET_APPOINTMENT_PLAN {
-  /**
-   * fetch data from the table: "appointment_plan" using primary key columns
-   */
-  appointment_plan_by_pk: GET_APPOINTMENT_PLAN_appointment_plan_by_pk | null;
-}
-
-export interface GET_APPOINTMENT_PLANVariables {
-  appointmentPlanId: any;
-  startedAt: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_PROGRAM_PACKAGE_PROGRAM_COLLECTION
 // ====================================================
 
@@ -1814,7 +1744,6 @@ export interface UPDATE_VOUCHER_MEMBERVariables {
 
 export interface GET_VALID_ACTIVITY_TICKET_activity_ticket_enrollment_count {
   __typename: "activity_ticket_enrollment_count";
-  count: number | null;
   buyable_quantity: any | null;
   activity_ticket_id: any | null;
 }
@@ -3077,6 +3006,76 @@ export interface GET_APPOINTMENT_PLAN_COLLECTION {
 export interface GET_APPOINTMENT_PLAN_COLLECTIONVariables {
   memberId: string;
   startedAt?: any | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_APPOINTMENT_PLAN
+// ====================================================
+
+export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_currency {
+  __typename: "currency";
+  id: string;
+  label: string;
+  unit: string;
+  name: string;
+}
+
+export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_appointment_periods {
+  __typename: "appointment_period";
+  started_at: any | null;
+  ended_at: any | null;
+  booked: boolean | null;
+}
+
+export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk_creator {
+  __typename: "member_public";
+  id: string | null;
+  abstract: string | null;
+  picture_url: string | null;
+  name: string | null;
+  username: string | null;
+}
+
+export interface GET_APPOINTMENT_PLAN_appointment_plan_by_pk {
+  __typename: "appointment_plan";
+  id: any;
+  title: string;
+  description: string | null;
+  /**
+   * minutes
+   */
+  duration: any;
+  price: any;
+  support_locales: any | null;
+  /**
+   * An object relationship
+   */
+  currency: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_currency;
+  /**
+   * An array relationship
+   */
+  appointment_periods: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_appointment_periods[];
+  /**
+   * An object relationship
+   */
+  creator: GET_APPOINTMENT_PLAN_appointment_plan_by_pk_creator | null;
+}
+
+export interface GET_APPOINTMENT_PLAN {
+  /**
+   * fetch data from the table: "appointment_plan" using primary key columns
+   */
+  appointment_plan_by_pk: GET_APPOINTMENT_PLAN_appointment_plan_by_pk | null;
+}
+
+export interface GET_APPOINTMENT_PLANVariables {
+  appointmentPlanId: any;
+  startedAt: any;
 }
 
 /* tslint:disable */
@@ -5158,6 +5157,8 @@ export interface GET_MEMBER_member_by_pk {
   email: string;
   picture_url: string | null;
   metadata: any;
+  title: string | null;
+  abstract: string | null;
   description: string | null;
   created_at: any | null;
   logined_at: any | null;
@@ -5255,6 +5256,8 @@ export interface UPDATE_MEMBER {
 export interface UPDATE_MEMBERVariables {
   memberId: string;
   name?: string | null;
+  title?: string | null;
+  abstract?: string | null;
   description?: string | null;
   username?: string | null;
   email?: string | null;
@@ -8997,6 +9000,873 @@ export interface GET_GROUP_BUYING_ORDERVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_LAST_WATCHED_PROGRAM_CONTENTS
+// ====================================================
+
+export interface GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_section_program_program_roles_member {
+  __typename: "member_public";
+  name: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_section_program_program_roles {
+  __typename: "program_role";
+  /**
+   * An object relationship
+   */
+  member: GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_section_program_program_roles_member | null;
+}
+
+export interface GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_section_program {
+  __typename: "program";
+  id: any;
+  cover_url: string | null;
+  /**
+   * An array relationship
+   */
+  program_roles: GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_section_program_program_roles[];
+}
+
+export interface GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_section {
+  __typename: "program_content_section";
+  id: any;
+  /**
+   * An object relationship
+   */
+  program: GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_section_program;
+}
+
+export interface GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_type {
+  __typename: "program_content_type";
+  id: any | null;
+  type: string | null;
+}
+
+export interface GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content {
+  __typename: "program_content";
+  id: any;
+  title: string;
+  /**
+   * sec
+   */
+  duration: any | null;
+  /**
+   * An object relationship
+   */
+  program_content_section: GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_section;
+  /**
+   * An object relationship
+   */
+  program_content_type: GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content_program_content_type | null;
+}
+
+export interface GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress {
+  __typename: "program_content_progress";
+  id: any;
+  progress: any;
+  /**
+   * An object relationship
+   */
+  program_content: GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress_program_content;
+}
+
+export interface GET_LAST_WATCHED_PROGRAM_CONTENTS {
+  /**
+   * An array relationship
+   */
+  program_content_progress: GET_LAST_WATCHED_PROGRAM_CONTENTS_program_content_progress[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_LAST_PROGRAMS
+// ====================================================
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_plans_currency {
+  __typename: "currency";
+  id: string;
+  label: string;
+  unit: string;
+  name: string;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_plans_program_plan_enrollments_aggregate_aggregate {
+  __typename: "program_plan_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_plans_program_plan_enrollments_aggregate {
+  __typename: "program_plan_enrollment_aggregate";
+  aggregate: GET_LAST_PROGRAMS_latestUpdatedProgram_program_plans_program_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_plans {
+  __typename: "program_plan";
+  id: any;
+  /**
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
+   */
+  type: number;
+  title: string;
+  description: string | null;
+  gains: any | null;
+  /**
+   * An object relationship
+   */
+  currency: GET_LAST_PROGRAMS_latestUpdatedProgram_program_plans_currency;
+  list_price: any;
+  sale_price: any | null;
+  sold_at: any | null;
+  discount_down_price: any;
+  period_amount: any | null;
+  period_type: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  is_participants_visible: boolean;
+  published_at: any | null;
+  /**
+   * An aggregate relationship
+   */
+  program_plan_enrollments_aggregate: GET_LAST_PROGRAMS_latestUpdatedProgram_program_plans_program_plan_enrollments_aggregate;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_enrollments_aggregate_aggregate {
+  __typename: "program_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_enrollments_aggregate {
+  __typename: "program_enrollment_aggregate";
+  aggregate: GET_LAST_PROGRAMS_latestUpdatedProgram_program_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections_program_contents {
+  __typename: "program_content";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections_program_contents_aggregate_aggregate_sum {
+  __typename: "program_content_sum_fields";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections_program_contents_aggregate_aggregate {
+  __typename: "program_content_aggregate_fields";
+  sum: GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections_program_contents_aggregate_aggregate_sum | null;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections_program_contents_aggregate {
+  __typename: "program_content_aggregate";
+  aggregate: GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections_program_contents_aggregate_aggregate | null;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections {
+  __typename: "program_content_section";
+  /**
+   * An array relationship
+   */
+  program_contents: GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections_program_contents[];
+  /**
+   * An aggregate relationship
+   */
+  program_contents_aggregate: GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections_program_contents_aggregate;
+}
+
+export interface GET_LAST_PROGRAMS_latestUpdatedProgram {
+  __typename: "program";
+  id: any;
+  cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
+  title: string;
+  abstract: string | null;
+  support_locales: any | null;
+  published_at: any | null;
+  is_subscription: boolean;
+  is_sold_out: boolean | null;
+  is_private: boolean;
+  list_price: any | null;
+  sale_price: any | null;
+  sold_at: any | null;
+  /**
+   * An array relationship
+   */
+  program_roles: GET_LAST_PROGRAMS_latestUpdatedProgram_program_roles[];
+  /**
+   * An array relationship
+   */
+  program_plans: GET_LAST_PROGRAMS_latestUpdatedProgram_program_plans[];
+  /**
+   * An aggregate relationship
+   */
+  program_enrollments_aggregate: GET_LAST_PROGRAMS_latestUpdatedProgram_program_enrollments_aggregate;
+  /**
+   * An array relationship
+   */
+  program_content_sections: GET_LAST_PROGRAMS_latestUpdatedProgram_program_content_sections[];
+}
+
+export interface GET_LAST_PROGRAMS {
+  /**
+   * fetch data from the table: "program"
+   */
+  latestUpdatedProgram: GET_LAST_PROGRAMS_latestUpdatedProgram[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_AFFORDABLE_PROGRAMS
+// ====================================================
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_plans_currency {
+  __typename: "currency";
+  id: string;
+  label: string;
+  unit: string;
+  name: string;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_plans_program_plan_enrollments_aggregate_aggregate {
+  __typename: "program_plan_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_plans_program_plan_enrollments_aggregate {
+  __typename: "program_plan_enrollment_aggregate";
+  aggregate: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_plans_program_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_plans {
+  __typename: "program_plan";
+  id: any;
+  /**
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
+   */
+  type: number;
+  title: string;
+  description: string | null;
+  gains: any | null;
+  /**
+   * An object relationship
+   */
+  currency: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_plans_currency;
+  list_price: any;
+  sale_price: any | null;
+  sold_at: any | null;
+  discount_down_price: any;
+  period_amount: any | null;
+  period_type: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  is_participants_visible: boolean;
+  published_at: any | null;
+  /**
+   * An aggregate relationship
+   */
+  program_plan_enrollments_aggregate: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_plans_program_plan_enrollments_aggregate;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_enrollments_aggregate_aggregate {
+  __typename: "program_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_enrollments_aggregate {
+  __typename: "program_enrollment_aggregate";
+  aggregate: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections_program_contents {
+  __typename: "program_content";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections_program_contents_aggregate_aggregate_sum {
+  __typename: "program_content_sum_fields";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections_program_contents_aggregate_aggregate {
+  __typename: "program_content_aggregate_fields";
+  sum: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections_program_contents_aggregate_aggregate_sum | null;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections_program_contents_aggregate {
+  __typename: "program_content_aggregate";
+  aggregate: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections_program_contents_aggregate_aggregate | null;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections {
+  __typename: "program_content_section";
+  /**
+   * An array relationship
+   */
+  program_contents: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections_program_contents[];
+  /**
+   * An aggregate relationship
+   */
+  program_contents_aggregate: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections_program_contents_aggregate;
+}
+
+export interface GET_AFFORDABLE_PROGRAMS_affordableProgram {
+  __typename: "program";
+  id: any;
+  cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
+  title: string;
+  abstract: string | null;
+  support_locales: any | null;
+  published_at: any | null;
+  is_subscription: boolean;
+  is_sold_out: boolean | null;
+  is_private: boolean;
+  list_price: any | null;
+  sale_price: any | null;
+  sold_at: any | null;
+  /**
+   * An array relationship
+   */
+  program_roles: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_roles[];
+  /**
+   * An array relationship
+   */
+  program_plans: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_plans[];
+  /**
+   * An aggregate relationship
+   */
+  program_enrollments_aggregate: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_enrollments_aggregate;
+  /**
+   * An array relationship
+   */
+  program_content_sections: GET_AFFORDABLE_PROGRAMS_affordableProgram_program_content_sections[];
+}
+
+export interface GET_AFFORDABLE_PROGRAMS {
+  /**
+   * fetch data from the table: "program"
+   */
+  affordableProgram: GET_AFFORDABLE_PROGRAMS_affordableProgram[];
+}
+
+export interface GET_AFFORDABLE_PROGRAMSVariables {
+  currentTime: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_HOTTEST_TAG_PROGRAMS
+// ====================================================
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_plans_currency {
+  __typename: "currency";
+  id: string;
+  label: string;
+  unit: string;
+  name: string;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_plans_program_plan_enrollments_aggregate_aggregate {
+  __typename: "program_plan_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_plans_program_plan_enrollments_aggregate {
+  __typename: "program_plan_enrollment_aggregate";
+  aggregate: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_plans_program_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_plans {
+  __typename: "program_plan";
+  id: any;
+  /**
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
+   */
+  type: number;
+  title: string;
+  description: string | null;
+  gains: any | null;
+  /**
+   * An object relationship
+   */
+  currency: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_plans_currency;
+  list_price: any;
+  sale_price: any | null;
+  sold_at: any | null;
+  discount_down_price: any;
+  period_amount: any | null;
+  period_type: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  is_participants_visible: boolean;
+  published_at: any | null;
+  /**
+   * An aggregate relationship
+   */
+  program_plan_enrollments_aggregate: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_plans_program_plan_enrollments_aggregate;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_enrollments_aggregate_aggregate {
+  __typename: "program_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_enrollments_aggregate {
+  __typename: "program_enrollment_aggregate";
+  aggregate: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections_program_contents {
+  __typename: "program_content";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections_program_contents_aggregate_aggregate_sum {
+  __typename: "program_content_sum_fields";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections_program_contents_aggregate_aggregate {
+  __typename: "program_content_aggregate_fields";
+  sum: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections_program_contents_aggregate_aggregate_sum | null;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections_program_contents_aggregate {
+  __typename: "program_content_aggregate";
+  aggregate: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections_program_contents_aggregate_aggregate | null;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections {
+  __typename: "program_content_section";
+  /**
+   * An array relationship
+   */
+  program_contents: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections_program_contents[];
+  /**
+   * An aggregate relationship
+   */
+  program_contents_aggregate: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections_program_contents_aggregate;
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram {
+  __typename: "program";
+  id: any;
+  cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
+  title: string;
+  abstract: string | null;
+  support_locales: any | null;
+  published_at: any | null;
+  is_subscription: boolean;
+  is_sold_out: boolean | null;
+  is_private: boolean;
+  list_price: any | null;
+  sale_price: any | null;
+  sold_at: any | null;
+  /**
+   * An array relationship
+   */
+  program_roles: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_roles[];
+  /**
+   * An array relationship
+   */
+  program_plans: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_plans[];
+  /**
+   * An aggregate relationship
+   */
+  program_enrollments_aggregate: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_enrollments_aggregate;
+  /**
+   * An array relationship
+   */
+  program_content_sections: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram_program_content_sections[];
+}
+
+export interface GET_HOTTEST_TAG_PROGRAMS {
+  /**
+   * fetch data from the table: "program"
+   */
+  hottestTagProgram: GET_HOTTEST_TAG_PROGRAMS_hottestTagProgram[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_UNIT_CATEGORY_PROGRAMS
+// ====================================================
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_plans_currency {
+  __typename: "currency";
+  id: string;
+  label: string;
+  unit: string;
+  name: string;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_plans_program_plan_enrollments_aggregate_aggregate {
+  __typename: "program_plan_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_plans_program_plan_enrollments_aggregate {
+  __typename: "program_plan_enrollment_aggregate";
+  aggregate: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_plans_program_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_plans {
+  __typename: "program_plan";
+  id: any;
+  /**
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
+   */
+  type: number;
+  title: string;
+  description: string | null;
+  gains: any | null;
+  /**
+   * An object relationship
+   */
+  currency: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_plans_currency;
+  list_price: any;
+  sale_price: any | null;
+  sold_at: any | null;
+  discount_down_price: any;
+  period_amount: any | null;
+  period_type: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  is_participants_visible: boolean;
+  published_at: any | null;
+  /**
+   * An aggregate relationship
+   */
+  program_plan_enrollments_aggregate: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_plans_program_plan_enrollments_aggregate;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_enrollments_aggregate_aggregate {
+  __typename: "program_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_enrollments_aggregate {
+  __typename: "program_enrollment_aggregate";
+  aggregate: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections_program_contents {
+  __typename: "program_content";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections_program_contents_aggregate_aggregate_sum {
+  __typename: "program_content_sum_fields";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections_program_contents_aggregate_aggregate {
+  __typename: "program_content_aggregate_fields";
+  sum: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections_program_contents_aggregate_aggregate_sum | null;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections_program_contents_aggregate {
+  __typename: "program_content_aggregate";
+  aggregate: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections_program_contents_aggregate_aggregate | null;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections {
+  __typename: "program_content_section";
+  /**
+   * An array relationship
+   */
+  program_contents: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections_program_contents[];
+  /**
+   * An aggregate relationship
+   */
+  program_contents_aggregate: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections_program_contents_aggregate;
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram {
+  __typename: "program";
+  id: any;
+  cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
+  title: string;
+  abstract: string | null;
+  support_locales: any | null;
+  published_at: any | null;
+  is_subscription: boolean;
+  is_sold_out: boolean | null;
+  is_private: boolean;
+  list_price: any | null;
+  sale_price: any | null;
+  sold_at: any | null;
+  /**
+   * An array relationship
+   */
+  program_roles: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_roles[];
+  /**
+   * An array relationship
+   */
+  program_plans: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_plans[];
+  /**
+   * An aggregate relationship
+   */
+  program_enrollments_aggregate: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_enrollments_aggregate;
+  /**
+   * An array relationship
+   */
+  program_content_sections: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram_program_content_sections[];
+}
+
+export interface GET_UNIT_CATEGORY_PROGRAMS {
+  /**
+   * fetch data from the table: "program"
+   */
+  unitCategoryProgram: GET_UNIT_CATEGORY_PROGRAMS_unitCategoryProgram[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_SYSTEMATIC_CATEGORY_PROGRAMS
+// ====================================================
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_plans_currency {
+  __typename: "currency";
+  id: string;
+  label: string;
+  unit: string;
+  name: string;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_plans_program_plan_enrollments_aggregate_aggregate {
+  __typename: "program_plan_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_plans_program_plan_enrollments_aggregate {
+  __typename: "program_plan_enrollment_aggregate";
+  aggregate: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_plans_program_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_plans {
+  __typename: "program_plan";
+  id: any;
+  /**
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
+   */
+  type: number;
+  title: string;
+  description: string | null;
+  gains: any | null;
+  /**
+   * An object relationship
+   */
+  currency: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_plans_currency;
+  list_price: any;
+  sale_price: any | null;
+  sold_at: any | null;
+  discount_down_price: any;
+  period_amount: any | null;
+  period_type: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  is_participants_visible: boolean;
+  published_at: any | null;
+  /**
+   * An aggregate relationship
+   */
+  program_plan_enrollments_aggregate: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_plans_program_plan_enrollments_aggregate;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_enrollments_aggregate_aggregate {
+  __typename: "program_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_enrollments_aggregate {
+  __typename: "program_enrollment_aggregate";
+  aggregate: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections_program_contents {
+  __typename: "program_content";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections_program_contents_aggregate_aggregate_sum {
+  __typename: "program_content_sum_fields";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections_program_contents_aggregate_aggregate {
+  __typename: "program_content_aggregate_fields";
+  sum: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections_program_contents_aggregate_aggregate_sum | null;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections_program_contents_aggregate {
+  __typename: "program_content_aggregate";
+  aggregate: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections_program_contents_aggregate_aggregate | null;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections {
+  __typename: "program_content_section";
+  /**
+   * An array relationship
+   */
+  program_contents: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections_program_contents[];
+  /**
+   * An aggregate relationship
+   */
+  program_contents_aggregate: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections_program_contents_aggregate;
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram {
+  __typename: "program";
+  id: any;
+  cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
+  title: string;
+  abstract: string | null;
+  support_locales: any | null;
+  published_at: any | null;
+  is_subscription: boolean;
+  is_sold_out: boolean | null;
+  is_private: boolean;
+  list_price: any | null;
+  sale_price: any | null;
+  sold_at: any | null;
+  /**
+   * An array relationship
+   */
+  program_roles: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_roles[];
+  /**
+   * An array relationship
+   */
+  program_plans: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_plans[];
+  /**
+   * An aggregate relationship
+   */
+  program_enrollments_aggregate: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_enrollments_aggregate;
+  /**
+   * An array relationship
+   */
+  program_content_sections: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram_program_content_sections[];
+}
+
+export interface GET_SYSTEMATIC_CATEGORY_PROGRAMS {
+  /**
+   * fetch data from the table: "program"
+   */
+  systematicCategoryProgram: GET_SYSTEMATIC_CATEGORY_PROGRAMS_systematicCategoryProgram[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_COIN_LOG_COLLECTION
 // ====================================================
 
@@ -9436,6 +10306,120 @@ export interface GET_PODCAST_ALBUMS {
 
 export interface GET_PODCAST_ALBUMSVariables {
   condition?: podcast_album_bool_exp | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_BY_USERNAME
+// ====================================================
+
+export interface GET_MEMBER_BY_USERNAME_member_public {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  title: string | null;
+  abstract: string | null;
+  description: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_MEMBER_BY_USERNAME {
+  /**
+   * fetch data from the table: "member_public"
+   */
+  member_public: GET_MEMBER_BY_USERNAME_member_public[];
+}
+
+export interface GET_MEMBER_BY_USERNAMEVariables {
+  username: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PROFILE
+// ====================================================
+
+export interface GET_PROFILE_program {
+  __typename: "program";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  updated_at: any | null;
+}
+
+export interface GET_PROFILE_post {
+  __typename: "post";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  updated_at: any | null;
+}
+
+export interface GET_PROFILE_activity {
+  __typename: "activity";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  updated_at: any | null;
+}
+
+export interface GET_PROFILE_merchandise_merchandise_imgs {
+  __typename: "merchandise_img";
+  id: any;
+  url: string;
+}
+
+export interface GET_PROFILE_merchandise {
+  __typename: "merchandise";
+  id: any;
+  title: string;
+  updated_at: any;
+  /**
+   * An array relationship
+   */
+  merchandise_imgs: GET_PROFILE_merchandise_merchandise_imgs[];
+}
+
+export interface GET_PROFILE_appointment_plan {
+  __typename: "appointment_plan";
+  id: any;
+  title: string;
+  updated_at: any;
+}
+
+export interface GET_PROFILE {
+  /**
+   * fetch data from the table: "program"
+   */
+  program: GET_PROFILE_program[];
+  /**
+   * fetch data from the table: "post"
+   */
+  post: GET_PROFILE_post[];
+  /**
+   * fetch data from the table: "activity"
+   */
+  activity: GET_PROFILE_activity[];
+  /**
+   * fetch data from the table: "merchandise"
+   */
+  merchandise: GET_PROFILE_merchandise[];
+  /**
+   * fetch data from the table: "appointment_plan"
+   */
+  appointment_plan: GET_PROFILE_appointment_plan[];
+}
+
+export interface GET_PROFILEVariables {
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -10235,6 +11219,155 @@ export interface instructorField {
 // @generated
 // This file was automatically generated and should not be edited.
 
+// ====================================================
+// GraphQL fragment: programFields
+// ====================================================
+
+export interface programFields_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface programFields_program_plans_currency {
+  __typename: "currency";
+  id: string;
+  label: string;
+  unit: string;
+  name: string;
+}
+
+export interface programFields_program_plans_program_plan_enrollments_aggregate_aggregate {
+  __typename: "program_plan_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface programFields_program_plans_program_plan_enrollments_aggregate {
+  __typename: "program_plan_enrollment_aggregate";
+  aggregate: programFields_program_plans_program_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface programFields_program_plans {
+  __typename: "program_plan";
+  id: any;
+  /**
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
+   */
+  type: number;
+  title: string;
+  description: string | null;
+  gains: any | null;
+  /**
+   * An object relationship
+   */
+  currency: programFields_program_plans_currency;
+  list_price: any;
+  sale_price: any | null;
+  sold_at: any | null;
+  discount_down_price: any;
+  period_amount: any | null;
+  period_type: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  is_participants_visible: boolean;
+  published_at: any | null;
+  /**
+   * An aggregate relationship
+   */
+  program_plan_enrollments_aggregate: programFields_program_plans_program_plan_enrollments_aggregate;
+}
+
+export interface programFields_program_enrollments_aggregate_aggregate {
+  __typename: "program_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface programFields_program_enrollments_aggregate {
+  __typename: "program_enrollment_aggregate";
+  aggregate: programFields_program_enrollments_aggregate_aggregate | null;
+}
+
+export interface programFields_program_content_sections_program_contents {
+  __typename: "program_content";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface programFields_program_content_sections_program_contents_aggregate_aggregate_sum {
+  __typename: "program_content_sum_fields";
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface programFields_program_content_sections_program_contents_aggregate_aggregate {
+  __typename: "program_content_aggregate_fields";
+  sum: programFields_program_content_sections_program_contents_aggregate_aggregate_sum | null;
+}
+
+export interface programFields_program_content_sections_program_contents_aggregate {
+  __typename: "program_content_aggregate";
+  aggregate: programFields_program_content_sections_program_contents_aggregate_aggregate | null;
+}
+
+export interface programFields_program_content_sections {
+  __typename: "program_content_section";
+  /**
+   * An array relationship
+   */
+  program_contents: programFields_program_content_sections_program_contents[];
+  /**
+   * An aggregate relationship
+   */
+  program_contents_aggregate: programFields_program_content_sections_program_contents_aggregate;
+}
+
+export interface programFields {
+  __typename: "program";
+  id: any;
+  cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
+  title: string;
+  abstract: string | null;
+  support_locales: any | null;
+  published_at: any | null;
+  is_subscription: boolean;
+  is_sold_out: boolean | null;
+  is_private: boolean;
+  list_price: any | null;
+  sale_price: any | null;
+  sold_at: any | null;
+  /**
+   * An array relationship
+   */
+  program_roles: programFields_program_roles[];
+  /**
+   * An array relationship
+   */
+  program_plans: programFields_program_plans[];
+  /**
+   * An aggregate relationship
+   */
+  program_enrollments_aggregate: programFields_program_enrollments_aggregate;
+  /**
+   * An array relationship
+   */
+  program_content_sections: programFields_program_content_sections[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
@@ -10369,6 +11502,7 @@ export enum activity_ticket_update_column {
 export enum activity_update_column {
   app_id = "app_id",
   cover_url = "cover_url",
+  created_at = "created_at",
   deleted_at = "deleted_at",
   description = "description",
   id = "id",
@@ -10378,6 +11512,7 @@ export enum activity_update_column {
   published_at = "published_at",
   support_locales = "support_locales",
   title = "title",
+  updated_at = "updated_at",
 }
 
 /**
@@ -10419,24 +11554,6 @@ export enum app_host_update_column {
   app_id = "app_id",
   host = "host",
   priority = "priority",
-}
-
-/**
- * unique or primary key constraints on table "app_module"
- */
-export enum app_module_constraint {
-  app_module_app_id_module_id_key = "app_module_app_id_module_id_key",
-  app_module_pkey = "app_module_pkey",
-}
-
-/**
- * update columns of table "app_module"
- */
-export enum app_module_update_column {
-  app_id = "app_id",
-  created_at = "created_at",
-  id = "id",
-  module_id = "module_id",
 }
 
 /**
@@ -10548,13 +11665,16 @@ export enum app_setting_update_column {
  * update columns of table "app"
  */
 export enum app_update_column {
+  app_plan_id = "app_plan_id",
   created_at = "created_at",
   description = "description",
+  ended_at = "ended_at",
   id = "id",
   name = "name",
   point_discount_ratio = "point_discount_ratio",
   point_exchange_rate = "point_exchange_rate",
   point_validity_period = "point_validity_period",
+  started_at = "started_at",
   symbol = "symbol",
   title = "title",
   updated_at = "updated_at",
@@ -11435,6 +12555,7 @@ export enum member_tag_update_column {
   created_at = "created_at",
   id = "id",
   member_id = "member_id",
+  position = "position",
   tag_name = "tag_name",
   updated_at = "updated_at",
 }
@@ -13419,6 +14540,7 @@ export interface activity_bool_exp {
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   deleted_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -13431,6 +14553,7 @@ export interface activity_bool_exp {
   session_ticket_enrollment_count?: activity_session_ticket_enrollment_count_bool_exp | null;
   support_locales?: jsonb_comparison_exp | null;
   title?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
 }
 
 /**
@@ -13533,6 +14656,7 @@ export interface activity_insert_input {
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
   cover_url?: string | null;
+  created_at?: any | null;
   deleted_at?: any | null;
   description?: string | null;
   id?: any | null;
@@ -13545,6 +14669,7 @@ export interface activity_insert_input {
   session_ticket_enrollment_count?: activity_session_ticket_enrollment_count_arr_rel_insert_input | null;
   support_locales?: any | null;
   title?: string | null;
+  updated_at?: any | null;
 }
 
 /**
@@ -13921,6 +15046,7 @@ export interface app_bool_exp {
   app_hosts?: app_host_bool_exp | null;
   app_modules?: app_module_bool_exp | null;
   app_navs?: app_nav_bool_exp | null;
+  app_plan_id?: String_comparison_exp | null;
   app_secrets?: app_secret_bool_exp | null;
   app_settings?: app_setting_bool_exp | null;
   cards?: card_bool_exp | null;
@@ -13928,6 +15054,7 @@ export interface app_bool_exp {
   comments?: comment_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
+  ended_at?: timestamptz_comparison_exp | null;
   id?: String_comparison_exp | null;
   issues?: issue_bool_exp | null;
   members?: member_bool_exp | null;
@@ -13943,6 +15070,7 @@ export interface app_bool_exp {
   programs?: program_bool_exp | null;
   properties?: property_bool_exp | null;
   sharing_codes?: sharing_code_bool_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
   symbol?: String_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -13999,6 +15127,7 @@ export interface app_insert_input {
   app_hosts?: app_host_arr_rel_insert_input | null;
   app_modules?: app_module_arr_rel_insert_input | null;
   app_navs?: app_nav_arr_rel_insert_input | null;
+  app_plan_id?: string | null;
   app_secrets?: app_secret_arr_rel_insert_input | null;
   app_settings?: app_setting_arr_rel_insert_input | null;
   cards?: card_arr_rel_insert_input | null;
@@ -14006,6 +15135,7 @@ export interface app_insert_input {
   comments?: comment_arr_rel_insert_input | null;
   created_at?: any | null;
   description?: string | null;
+  ended_at?: any | null;
   id?: string | null;
   issues?: issue_arr_rel_insert_input | null;
   members?: member_arr_rel_insert_input | null;
@@ -14021,6 +15151,7 @@ export interface app_insert_input {
   programs?: program_arr_rel_insert_input | null;
   properties?: property_arr_rel_insert_input | null;
   sharing_codes?: sharing_code_arr_rel_insert_input | null;
+  started_at?: any | null;
   symbol?: string | null;
   title?: string | null;
   updated_at?: any | null;
@@ -14033,7 +15164,6 @@ export interface app_insert_input {
  */
 export interface app_module_arr_rel_insert_input {
   data: app_module_insert_input[];
-  on_conflict?: app_module_on_conflict | null;
 }
 
 /**
@@ -14043,11 +15173,8 @@ export interface app_module_bool_exp {
   _and?: app_module_bool_exp[] | null;
   _not?: app_module_bool_exp | null;
   _or?: app_module_bool_exp[] | null;
-  app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
-  created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
-  module?: module_bool_exp | null;
   module_id?: String_comparison_exp | null;
 }
 
@@ -14055,21 +15182,9 @@ export interface app_module_bool_exp {
  * input type for inserting data into table "app_module"
  */
 export interface app_module_insert_input {
-  app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
-  created_at?: any | null;
   id?: any | null;
-  module?: module_obj_rel_insert_input | null;
   module_id?: string | null;
-}
-
-/**
- * on_conflict condition type for table "app_module"
- */
-export interface app_module_on_conflict {
-  constraint: app_module_constraint;
-  update_columns: app_module_update_column[];
-  where?: app_module_bool_exp | null;
 }
 
 /**
@@ -16332,6 +17447,7 @@ export interface member_bool_exp {
   podcasts?: podcast_bool_exp | null;
   point_logs?: point_log_bool_exp | null;
   point_status?: point_status_bool_exp | null;
+  post_roles?: post_role_bool_exp | null;
   practices?: practice_bool_exp | null;
   program_content_enrollments?: program_content_enrollment_bool_exp | null;
   program_content_progresses?: program_content_progress_bool_exp | null;
@@ -16587,6 +17703,7 @@ export interface member_insert_input {
   podcasts?: podcast_arr_rel_insert_input | null;
   point_logs?: point_log_arr_rel_insert_input | null;
   point_status?: point_status_obj_rel_insert_input | null;
+  post_roles?: post_role_arr_rel_insert_input | null;
   practices?: practice_arr_rel_insert_input | null;
   program_content_enrollments?: program_content_enrollment_arr_rel_insert_input | null;
   program_content_progresses?: program_content_progress_arr_rel_insert_input | null;
@@ -17238,6 +18355,7 @@ export interface member_tag_bool_exp {
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  position?: Int_comparison_exp | null;
   tag?: tag_bool_exp | null;
   tag_name?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -17251,6 +18369,7 @@ export interface member_tag_insert_input {
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  position?: number | null;
   tag?: tag_obj_rel_insert_input | null;
   tag_name?: string | null;
   updated_at?: any | null;

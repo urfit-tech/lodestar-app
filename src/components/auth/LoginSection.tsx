@@ -79,22 +79,22 @@ const LoginSection: React.VFC<{
       {renderTitle ? renderTitle() : <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>}
 
       {!!settings['auth.parenting.client_id'] && (
-        <div className="mb-3">
+        <div className="mb-3" style={{ width: '100%' }}>
           <ParentingLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
       {!!settings['auth.facebook_app_id'] && (
-        <div className="mb-3">
+        <div className="mb-3" style={{ width: '100%' }}>
           <FacebookLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
       {!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
-        <div className="mb-3">
+        <div className="mb-3" style={{ width: '100%' }}>
           <LineLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
       {!!settings['auth.google_client_id'] && (
-        <div className="mb-3">
+        <div className="mb-3" style={{ width: '100%' }}>
           <GoogleLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}

@@ -264,6 +264,7 @@ export const commonMessages = {
     }),
   },
   content: defineMessages({
+    memberProfile: { id: 'common.memberProfile', defaultMessage: '個人檔案' },
     personalSettings: { id: 'common.personalSettings', defaultMessage: '個人設定' },
     courseProblem: { id: 'common.courseProblem', defaultMessage: '課程問題' },
     practiceManagement: { id: 'common.practiceManagement', defaultMessage: '作業管理' },
@@ -428,6 +429,7 @@ export const commonMessages = {
     },
     selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
     delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
+    noOrderLog: { id: 'common.text.noOrderLog', default: '尚無消費紀錄' },
   }),
 }
 
@@ -679,18 +681,11 @@ export const programMessages = {
   text: defineMessages({
     uploadPractice: { id: 'program.text.uploadPractice', defaultMessage: '快上傳成果吧！' },
     groupBuying: { id: 'program.text.groupBuying', defaultMessage: '{count} 人同行' },
-    noAuth: { id: 'program.text.noAuth', defaultMessage: '沒有此頁瀏覽權限' },
   }),
   tab: defineMessages({
     downloadMaterials: {
       id: 'program.tab.downloadMaterials',
       defaultMessage: '下載教材',
-    },
-  }),
-  status: defineMessages({
-    loadingMaterialError: {
-      id: 'program.status.loadingMaterialError',
-      defaultMessage: '無法取得教材',
     },
   }),
 }
@@ -839,18 +834,9 @@ export const productMessages = {
       basicSettings: { id: 'product.program.title.basicSettings', defaultMessage: '基本設定' },
       course: { id: 'product.program.title.course', defaultMessage: '課程' },
     }),
-    select: {
-      option: defineMessages({
-        unit: { id: 'product.program.select.option.unit', defaultMessage: '單元排序' },
-        time: { id: 'product.program.select.option.time', defaultMessage: '時間排序' },
-        allPrograms: { id: 'product.program.select.option.all', defaultMessage: '全部課程' },
-      }),
-    },
     content: defineMessages({
       subscribe: { id: 'product.program.content.subscribe', defaultMessage: '訂閱' },
-      notForSale: { id: 'product.program.content.sale.not', defaultMessage: '暫不販售' },
       onlineCourse: { id: 'product.program.content.course.online', defaultMessage: '線上課程' },
-      programList: { id: 'product.program.head', defaultMessage: '課程列表' },
       expired: { id: 'product.program.form.message.content.expired', defaultMessage: '已過期' },
       discountDownFree: { id: 'product.program.price.free.discountDown', defaultMessage: '首期免費 $ 0' },
       free: { id: 'product.program.price.free', defaultMessage: '免費 $ 0' },
@@ -1012,7 +998,9 @@ export const profileMessages = {
         id: 'common.form.message.name',
         defaultMessage: '請輸入名稱',
       },
-      intro: { id: 'common.introduction', defaultMessage: '簡介' },
+      title: { id: 'common.title', defaultMessage: '稱謂' },
+      abstract: { id: 'common.abstract', defaultMessage: '摘要（100 字內）' },
+      intro: { id: 'common.introduction', defaultMessage: '描述' },
       currentPassword: {
         id: 'settings.profile.form.message.currentPassword',
         defaultMessage: '請輸入目前密碼',
@@ -1454,8 +1442,6 @@ export const reviewMessages = {
       id: 'review.text.reviewModalDescription',
       defaultMessage: '歡迎給予鼓勵、分享心得或是提出建議！為維護評價公正性，累計三則以上評價才會公開呦！',
     },
-    noReviews: { id: 'review.text.noReviews', defaultMessage: '目前無評價' },
-    reviewCount: { id: 'review.text.reviewCount', defaultMessage: '{count} 則' },
   }),
   button: defineMessages({
     reply: { id: 'review.button.review', defaultMessage: '回覆' },

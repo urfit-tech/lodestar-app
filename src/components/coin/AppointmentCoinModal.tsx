@@ -1,8 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
 import { Button, Divider, SkeletonText } from '@chakra-ui/react'
 import { Form, Input } from 'antd'
 import Modal, { ModalProps } from 'antd/lib/modal'
-import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { validationRegExp } from 'lodestar-app-element/src/helpers'
 import moment from 'moment'
@@ -11,12 +9,12 @@ import React, { useRef, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import hasura from '../../hasura'
 import { dateRangeFormatter, handleError } from '../../helpers'
 import { checkoutMessages } from '../../helpers/translation'
+import { useAppointmentPlan } from '../../hooks/appointment'
 import { useCheck } from '../../hooks/checkout'
 import DefaultAvatar from '../../images/avatar.svg'
-import { AppointmentPeriodProps, AppointmentPlanProps } from '../../types/appointment'
+import { AppointmentPeriodProps } from '../../types/appointment'
 import AppointmentPeriodCollection from '../appointment/AppointmentPeriodCollection'
 import DiscountSelectionCard from '../checkout/DiscountSelectionCard'
 import { CustomRatioImage } from '../common/Image'
@@ -200,93 +198,6 @@ const AppointmentCoinModal: React.VFC<
       </Modal>
     </>
   )
-}
-
-const useAppointmentPlan = (appointmentPlanId: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GET_APPOINTMENT_PLAN, hasura.GET_APPOINTMENT_PLANVariables>(
-    gql`
-      query GET_APPOINTMENT_PLAN($appointmentPlanId: uuid!, $startedAt: timestamptz!) {
-        appointment_plan_by_pk(id: $appointmentPlanId) {
-          id
-          title
-          description
-          duration
-          price
-          support_locales
-          currency {
-            id
-            label
-            unit
-            name
-          }
-          appointment_periods(
-            where: { available: { _eq: true }, started_at: { _gt: $startedAt } }
-            order_by: { started_at: asc }
-          ) {
-            started_at
-            ended_at
-            booked
-          }
-          creator {
-            id
-            abstract
-            picture_url
-            name
-            username
-          }
-        }
-      }
-    `,
-    { variables: { appointmentPlanId, startedAt: moment().endOf('minute').toDate() } },
-  )
-
-  const appointmentPlan:
-    | (AppointmentPlanProps & {
-        periods: AppointmentPeriodProps[]
-        creator: {
-          id: string
-          avatarUrl: string | null
-          name: string
-          abstract: string | null
-        }
-      })
-    | null =
-    loading || error || !data || !data.appointment_plan_by_pk
-      ? null
-      : {
-          id: data.appointment_plan_by_pk.id,
-          title: data.appointment_plan_by_pk.title,
-          description: data.appointment_plan_by_pk.description,
-          duration: data.appointment_plan_by_pk.duration,
-          price: data.appointment_plan_by_pk.price,
-          phone: null,
-          supportLocales: data.appointment_plan_by_pk.support_locales,
-          currency: {
-            id: data.appointment_plan_by_pk.currency.id,
-            label: data.appointment_plan_by_pk.currency.label,
-            unit: data.appointment_plan_by_pk.currency.unit,
-            name: data.appointment_plan_by_pk.currency.name,
-          },
-          periods: data.appointment_plan_by_pk.appointment_periods.map(period => ({
-            id: `${period.started_at}`,
-            startedAt: new Date(period.started_at),
-            endedAt: new Date(period.ended_at),
-            booked: !!period.booked,
-          })),
-          creator: {
-            id: data.appointment_plan_by_pk.creator?.id || '',
-            avatarUrl: data.appointment_plan_by_pk.creator?.picture_url || null,
-            name: data.appointment_plan_by_pk.creator?.name || data.appointment_plan_by_pk.creator?.username || '',
-            abstract: data.appointment_plan_by_pk.creator?.abstract || null,
-          },
-        }
-
-  return {
-    loadingAppointmentPlan: loading,
-    errorAppointmentPlan: error,
-    appointmentPlan,
-    refetchAppointmentPlan: refetch,
-  }
 }
 
 export default AppointmentCoinModal
