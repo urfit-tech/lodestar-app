@@ -3,6 +3,8 @@ import { defineMessages } from 'react-intl'
 const pageMessages = {
   '*': defineMessages({
     cancel: { id: 'page.*.cancel', defaultMessage: '取消' },
+    review: { id: 'page.*.review', defaultMessage: '評價' },
+    intro: { id: 'page.*.intro', defaultMessage: '簡介' },
   }),
   // ProgramContentPage
   ProgramContentPage: defineMessages({
