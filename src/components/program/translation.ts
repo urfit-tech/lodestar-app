@@ -15,6 +15,10 @@ const programMessages = {
       id: 'program.ProgramContentMaterialBlock.loadingMaterialError',
       defaultMessage: '無法取得教材',
     },
+    attachment: {
+      id: 'program.ProgramContentMaterialBlock.attachment',
+      defaultMessage: '附件',
+    },
   }),
   ProgramContentMenu: defineMessages({
     materialAmount: { id: 'program.ProgramContentMenu.materialAmount', defaultMessage: '{amount}個檔案' },

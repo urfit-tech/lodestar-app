@@ -71,15 +71,27 @@ const ProgramContentMaterialBlock: React.VFC<{
         formatMessage(programMessages.ProgramContentMaterialBlock.loadingMaterialError)
       ) : (
         programContentMaterials
-          .filter(material => material.data.name)
+          .map(material => ({
+            ...material,
+            data: {
+              ...material.data,
+              name: material.data?.name || formatMessage(programMessages.ProgramContentMaterialBlock.attachment),
+            },
+          }))
           .map(material => (
             <StyledMaterial
               key={material.id}
               className="mb-3"
               onClick={async () => {
+                if (material.data.url) {
+                  window.open(material.data.url)
+                  return
+                }
                 setIsDownloading(prev => ({ ...prev, [material.id]: true }))
-                const fileKey = `materials/${appId}/${programContentId}_${material.data.name}`
-                const materialLink = await getFileDownloadableLink(fileKey, authToken)
+                const materialLink = await getFileDownloadableLink(
+                  `materials/${appId}/${programContentId}_${material.data.name}`,
+                  authToken,
+                )
                 const materialRequest = new Request(materialLink)
                 try {
                   const response = await fetch(materialRequest)
@@ -112,7 +124,7 @@ const ProgramContentMaterialBlock: React.VFC<{
                   <StyledFileExtension className="mr-2">{`.${getFileExtension(
                     material.data.name,
                   )}`}</StyledFileExtension>
-                  <StyledDataSize>{`(${byteToSize(material.data.size ?? 0)})`}</StyledDataSize>
+                  {material.data.size && <StyledDataSize>{`(${byteToSize(material.data.size ?? 0)})`}</StyledDataSize>}
                 </StyledFileName>
 
                 <IconButton
