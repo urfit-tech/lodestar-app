@@ -594,6 +594,8 @@
   "order.OrderRequestRefundModal.totalRefundPrice": "Tổng số tiền hoàn lại",
   "order.OrderRequestRefundModal.type": "Loại",
   "page.*.cancel": "取消",
+  "page.*.intro": "簡介",
+  "page.*.review": "評價",
   "page.JoinPage.title": "Join KOLABLE!",
   "page.ProfilePage.activity": "Activity",
   "page.ProfilePage.addActivity": "New Activity",

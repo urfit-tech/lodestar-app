@@ -594,6 +594,8 @@
   "order.OrderRequestRefundModal.totalRefundPrice": "Total Refund",
   "order.OrderRequestRefundModal.type": "Type",
   "page.*.cancel": "Cancel",
+  "page.*.intro": "簡介",
+  "page.*.review": "評價",
   "page.JoinPage.title": "Join KOLABLE!",
   "page.ProfilePage.activity": "Activity",
   "page.ProfilePage.addActivity": "New Activity",
