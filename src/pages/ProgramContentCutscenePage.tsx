@@ -62,7 +62,7 @@ const ProgramContentCutscenePage: React.VFC = () => {
   const { currentMemberId } = useAuth()
   const { programId } = useParams<{ programId: string }>()
   const [productId] = useQueryParam('back', StringParam)
-  const { loadingProgram, program } = useProgram(programId)
+  const { loadingProgram, program, errorProgram } = useProgram(programId)
 
   if (loadingProgram || isAuthenticating) {
     return (
@@ -73,7 +73,7 @@ const ProgramContentCutscenePage: React.VFC = () => {
   }
   if (!isAuthenticated) return <ProgramContentNoAuthBlock />
 
-  if (!program) return <>fetch program data error</>
+  if (errorProgram) return <>fetch program data error</>
 
   let lastProgramContent: { [key: string]: string } = {}
 
