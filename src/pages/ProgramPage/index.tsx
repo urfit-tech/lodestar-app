@@ -275,7 +275,7 @@ const ProgramPage: React.VFC = () => {
               </StyledButtonWrapper>
             ) : isEnrolled ? (
               <StyledButtonWrapper>
-                <Link to={`programs/${program.id}/contents`}>
+                <Link to={`${program.id}/contents`}>
                   <Button variant="primary" isFullWidth>
                     {formatMessage(commonMessages.button.enter)}
                   </Button>
