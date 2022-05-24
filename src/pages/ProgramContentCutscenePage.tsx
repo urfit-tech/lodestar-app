@@ -115,7 +115,11 @@ const ProgramContentCutscenePage: React.VFC = () => {
               if (page === 'creator') {
                 history.push(`/creators/${targetId}`)
               } else if (page === 'programs') {
-                history.push(`/programs/${targetId}?visitIntro=1`)
+                if (targetId) {
+                  history.push(`/programs/${targetId}?visitIntro=1`)
+                } else {
+                  history.push(`/programs`)
+                }
               } else if (page === 'programPackages') {
                 history.push(`/program-packages/${targetId}`)
               } else if (page === 'members') {
