@@ -10,7 +10,7 @@ import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
 import { Link, Redirect, useHistory, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { BooleanParam, useQueryParam } from 'use-query-params'
+import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -92,6 +92,7 @@ const ProgramPage: React.VFC = () => {
   const params = queryString.parse(location.search)
   const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(programId)
+  const [previousPage] = useQueryParam('previousPage', StringParam)
 
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock) {
@@ -116,7 +117,7 @@ const ProgramPage: React.VFC = () => {
   }
 
   if (!visitIntro && isEnrolled) {
-    return <Redirect to={`/programs/${programId}/contents`} />
+    return <Redirect to={`/programs/${programId}/contents?previousPage=${previousPage}`} />
   }
 
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''

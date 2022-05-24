@@ -62,6 +62,7 @@ const ProgramContentCutscenePage: React.VFC = () => {
   const { currentMemberId } = useAuth()
   const { programId } = useParams<{ programId: string }>()
   const [productId] = useQueryParam('back', StringParam)
+  const [previousPage] = useQueryParam('previousPage', StringParam)
   const { loadingProgram, program, errorProgram } = useProgram(programId)
 
   if (loadingProgram || isAuthenticating || !program) {
@@ -109,7 +110,20 @@ const ProgramContentCutscenePage: React.VFC = () => {
             </div>
           }
           onBack={() => {
-            if (productId) {
+            if (previousPage) {
+              const [page, targetId] = previousPage.split('_')
+              if (page === 'creator') {
+                history.push(`/creators/${targetId}`)
+              } else if (page === 'programs') {
+                history.push(`/programs/${targetId}?visitIntro=1`)
+              } else if (page === 'programPackages') {
+                history.push(`/program-packages/${targetId}`)
+              } else if (page === 'members') {
+                history.push(`/members/${targetId}`)
+              } else {
+                history.push('/')
+              }
+            } else if (productId) {
               const [productType, id] = productId.split('_')
               if (productType === 'program-package') {
                 history.push(`/program-packages/${id}/contents`)
@@ -120,7 +134,6 @@ const ProgramContentCutscenePage: React.VFC = () => {
             } else {
               history.push(`/members/${currentMemberId}`)
             }
-            history.push(`/`)
           }}
         />
         <StyledLayoutContent>
@@ -134,11 +147,15 @@ const ProgramContentCutscenePage: React.VFC = () => {
     Object.keys(lastProgramContent).includes(programId) &&
     flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(lastProgramContent[programId])
   ) {
-    return <Redirect to={`/programs/${programId}/contents/${lastProgramContent[programId]}?back=${productId}`} />
+    return (
+      <Redirect
+        to={`/programs/${programId}/contents/${lastProgramContent[programId]}?back=${productId}&previousPage=${previousPage}`}
+      />
+    )
   } else {
     return (
       <Redirect
-        to={`/programs/${programId}/contents/${program?.contentSections[0].contents[0].id}?back=${productId}`}
+        to={`/programs/${programId}/contents/${program?.contentSections[0].contents[0].id}?back=${productId}&previousPage=${previousPage}`}
       />
     )
   }

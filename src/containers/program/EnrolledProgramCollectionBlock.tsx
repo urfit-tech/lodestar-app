@@ -125,7 +125,13 @@ const EnrolledProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
         <div className="row">
           {(isExpired ? expiredProgramIds : programIds).map(programId => (
             <div key={programId} className="col-12 mb-4 col-md-6 col-lg-4">
-              <ProgramCard memberId={memberId} programId={programId} withProgress={!isExpired} isExpired={isExpired} />
+              <ProgramCard
+                memberId={memberId}
+                programId={programId}
+                withProgress={!isExpired}
+                isExpired={isExpired}
+                previousPage={`members_${memberId}`}
+              />
             </div>
           ))}
         </div>

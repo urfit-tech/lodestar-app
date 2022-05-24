@@ -117,13 +117,21 @@ const ProgramPackagePage: React.VFC = () => {
                   renderItem={({ displayType, program }) => {
                     return displayType === 'grid' ? (
                       <div className="col-12 col-md-6 col-lg-6 mb-4">
-                        <Link target="_blank" rel="noopener noreferrer" to={`/programs/${program.id}`}>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          to={`/programs/${program.id}?previousPage=programPackages_${programPackageId}`}
+                        >
                           <ProgramDisplayedCard key={program.id} program={program} />
                         </Link>
                       </div>
                     ) : displayType === 'list' ? (
                       <div className="col-12">
-                        <Link target="_blank" rel="noopener noreferrer" to={`/programs/${program.id}`}>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          to={`/programs/${program.id}?previousPage=programPackages_${programPackageId}`}
+                        >
                           <ProgramDisplayedListItem key={program.id} program={program} />
                         </Link>
                       </div>

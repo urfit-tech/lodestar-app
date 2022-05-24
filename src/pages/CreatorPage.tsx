@@ -150,6 +150,7 @@ const CreatorTabs: React.VFC<{
                 <div className="col-lg-4 col-12">
                   <OverviewBlock
                     programs={programs}
+                    previousPage={`creator_${creatorId}`}
                     podcastPrograms={podcastPrograms}
                     onChangeTab={key => setActiveKey(key)}
                     onSubscribe={() =>
@@ -320,6 +321,7 @@ const CreatorTabs: React.VFC<{
                 <div className="col-lg-4 col-12">
                   <OverviewBlock
                     programs={programs}
+                    previousPage={`creator_${creatorId}`}
                     podcastPrograms={podcastPrograms}
                     onChangeTab={key => setActiveKey(key)}
                     onSubscribe={() => (isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible?.(true))}

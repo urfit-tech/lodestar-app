@@ -41,6 +41,7 @@ const ProgramContentPage: React.VFC = () => {
   const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [productId] = useQueryParam('back', StringParam)
+  const [previousPage] = useQueryParam('previousPage', StringParam)
 
   if (isAuthenticating || loadingProgram) {
     return <></>
@@ -51,7 +52,7 @@ const ProgramContentPage: React.VFC = () => {
     JSON.parse(localStorage.getItem(`${appId}.program.info`) || '')
   }
   localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
-
+  console.log(previousPage)
   return (
     <Layout>
       <StyledPageHeader
@@ -87,7 +88,20 @@ const ProgramContentPage: React.VFC = () => {
           </div>
         }
         onBack={() => {
-          if (productId) {
+          if (previousPage) {
+            const [page, targetId] = previousPage.split('_')
+            if (page === 'creator') {
+              history.push(`/creators/${targetId}`)
+            } else if (page === 'programs') {
+              history.push(`/programs/${targetId}?visitIntro=1`)
+            } else if (page === 'programPackages') {
+              history.push(`/program-packages/${targetId}`)
+            } else if (page === 'members') {
+              history.push(`/members/${targetId}`)
+            } else {
+              history.push('/')
+            }
+          } else if (productId) {
             const [productType, id] = productId.split('_')
             if (productType === 'program-package') {
               history.push(`/program-packages/${id}/contents`)
@@ -98,7 +112,6 @@ const ProgramContentPage: React.VFC = () => {
           } else {
             history.push(`/members/${currentMemberId}`)
           }
-          history.push(`/`)
         }}
       />
 

@@ -78,6 +78,7 @@ const ProgramCard: React.VFC<{
   noTotalDuration?: boolean
   withMeta?: boolean
   withProgress?: boolean
+  previousPage?: string
   onClick?: () => void
   renderCover?: (cover: string) => React.ReactElement
   renderCustomDescription?: () => React.ReactElement
@@ -89,6 +90,7 @@ const ProgramCard: React.VFC<{
   noPrice,
   noTotalDuration,
   withMeta,
+  previousPage,
   onClick,
   renderCover,
   renderCustomDescription,
@@ -121,7 +123,18 @@ const ProgramCard: React.VFC<{
         </InstructorPlaceHolder>
       )}
 
-      <Link to={`/programs/${program.id}` + (programType ? `?type=${programType}` : '')} onClick={onClick}>
+      <Link
+        to={
+          programType && previousPage
+            ? `/programs/${program.id}?type=${programType}&previousPage=${previousPage}`
+            : programType
+            ? `/programs/${program.id}?type=${programType}`
+            : previousPage
+            ? `/programs/${program.id}?previousPage=${previousPage}`
+            : `/programs/${program.id}`
+        }
+        onClick={onClick}
+      >
         <StyledWrapper>
           {renderCover ? (
             renderCover(program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover)
