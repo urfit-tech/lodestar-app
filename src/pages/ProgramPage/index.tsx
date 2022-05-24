@@ -246,7 +246,7 @@ const ProgramPage: React.VFC = () => {
               )}
             </div>
 
-            {/* {!settings['layout.program_page'] && (
+            {/* {!Number(settings['layout.program_page']) && (
               <div className="row">
                 <div className="col-12 col-lg-8">
                   <div className="mb-5">
