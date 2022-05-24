@@ -69,7 +69,9 @@ const ProgramCard: React.VFC<{
 
       <Link
         to={
-          isExpired ? `/programs/${programId}` : `/programs/${programId}` + (programType ? `?type=${programType}` : '')
+          isExpired
+            ? `/programs/${programId}?visitIntro=1`
+            : `/programs/${programId}` + (programType ? `?type=${programType}` : '')
         }
       >
         <StyledWrapper>

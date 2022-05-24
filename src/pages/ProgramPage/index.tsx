@@ -138,7 +138,7 @@ const ProgramPage: React.VFC = () => {
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
 
       <div>
-        {settings['layout.program_page'] ? (
+        {Number(settings['layout.program_page']) ? (
           <CustomizeProgramBanner program={program} isEnrolled={isEnrolled} />
         ) : (
           <PerpetualProgramBanner
@@ -157,7 +157,7 @@ const ProgramPage: React.VFC = () => {
                     <ProgramInstructorCollectionBlock program={program} />
                   </div>
                 )}
-                {!settings['layout.program_page'] && (
+                {!Number(settings['layout.program_page']) && (
                   <Responsive.Default>
                     <ClassCouponBlock />
                     <StyledProgramInfoCard>
@@ -165,13 +165,13 @@ const ProgramPage: React.VFC = () => {
                     </StyledProgramInfoCard>
                   </Responsive.Default>
                 )}
-                {!settings['layout.program_page'] && program.abstract && (
+                {!Number(settings['layout.program_page']) && program.abstract && (
                   <div className="mb-5">
                     <ProgramAbstract>{program.abstract}</ProgramAbstract>
                   </div>
                 )}
 
-                {settings['layout.program_page'] && (
+                {Number(settings['layout.program_page']) && (
                   <Responsive.Default>
                     <StyledIntroWrapper className="col-12 col-lg-4 mb-5 p-0">
                       {!!program.tags.length && (
@@ -186,7 +186,7 @@ const ProgramPage: React.VFC = () => {
                   </Responsive.Default>
                 )}
 
-                {settings['layout.program_page'] && (
+                {Number(settings['layout.program_page']) && (
                   <div className="mb-5">
                     <ProgramBestReviewsCarousel
                       pathname={pathname}
@@ -199,14 +199,14 @@ const ProgramPage: React.VFC = () => {
                   <BraftContent>{program.description}</BraftContent>
                 </div>
 
-                {!settings['layout.program_page'] && (
+                {!Number(settings['layout.program_page']) && (
                   <div className="mb-5">
                     <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
                   </div>
                 )}
               </div>
 
-              {settings['layout.program_page'] ? (
+              {Number(settings['layout.program_page']) ? (
                 <Responsive.Desktop>
                   <StyledIntroWrapper className="col-12 col-lg-4 mb-3">
                     {!!program.tags.length && (
@@ -248,7 +248,7 @@ const ProgramPage: React.VFC = () => {
               )}
             </div>
 
-            {/* {!settings['layout.program_page'] && (
+            {!Number(settings['layout.program_page']) && (
               <div className="row">
                 <div className="col-12 col-lg-8">
                   <div className="mb-5">
@@ -276,7 +276,7 @@ const ProgramPage: React.VFC = () => {
       {!isEnrolledByProgramPackage && (
         <Responsive.Default>
           <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-            {settings['layout.program_page'] ? (
+            {Number(settings['layout.program_page']) ? (
               <StyledButtonWrapper>
                 <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
                   <Button isFullWidth colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
