@@ -120,6 +120,7 @@ const ProgramContentCutscenePage: React.VFC = () => {
             } else {
               history.push(`/members/${currentMemberId}`)
             }
+            history.push(`/`)
           }}
         />
         <StyledLayoutContent>
@@ -133,9 +134,13 @@ const ProgramContentCutscenePage: React.VFC = () => {
     Object.keys(lastProgramContent).includes(programId) &&
     flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(lastProgramContent[programId])
   ) {
-    return <Redirect to={`/programs/${programId}/contents/${lastProgramContent[programId]}`} />
+    return <Redirect to={`/programs/${programId}/contents/${lastProgramContent[programId]}?back=${productId}`} />
   } else {
-    return <Redirect to={`/programs/${programId}/contents/${program?.contentSections[0].contents[0].id}`} />
+    return (
+      <Redirect
+        to={`/programs/${programId}/contents/${program?.contentSections[0].contents[0].id}?back=${productId}`}
+      />
+    )
   }
 }
 

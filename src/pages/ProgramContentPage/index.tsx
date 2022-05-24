@@ -8,6 +8,7 @@ import { BsStar } from 'react-icons/bs'
 import { defineMessage, useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import { StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../../components/program/ProgramContentMenu'
@@ -39,6 +40,7 @@ const ProgramContentPage: React.VFC = () => {
   const { currentMemberId, isAuthenticating } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
+  const [productId] = useQueryParam('back', StringParam)
 
   if (isAuthenticating || loadingProgram) {
     return <></>
@@ -84,7 +86,20 @@ const ProgramContentPage: React.VFC = () => {
             )}
           </div>
         }
-        onBack={() => history.go(-2)}
+        onBack={() => {
+          if (productId) {
+            const [productType, id] = productId.split('_')
+            if (productType === 'program-package') {
+              history.push(`/program-packages/${id}/contents`)
+            }
+            if (productType === 'project') {
+              history.push(`/projects/${id}`)
+            }
+          } else {
+            history.push(`/members/${currentMemberId}`)
+          }
+          history.push(`/`)
+        }}
       />
 
       <StyledLayoutContent>
