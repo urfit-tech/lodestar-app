@@ -116,7 +116,7 @@ export const useProductEditorIds = (targetId: string) => {
     gql`
       query GET_PRODUCT_EDITOR_IDS($targetId: uuid!) {
         program(where: { id: { _eq: $targetId } }) {
-          program_roles(where: { name: { _eq: "instructor" } }) {
+          program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc }) {
             id
             member_id
             name

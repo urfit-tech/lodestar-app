@@ -1,4 +1,5 @@
 import React from 'react'
+import { Redirect } from 'react-router'
 
 type errorState = {
   hasError: boolean
@@ -16,7 +17,7 @@ class ErrorBoundary extends React.Component<{}, errorState> {
   }
   render() {
     if (this.state.hasError) {
-      return <div>Something went wrong. Please try again.</div>
+      return <Redirect to="/error" />
     }
 
     return this.props.children

@@ -92,6 +92,7 @@
     "framer-motion": "2.9.4",
     "graphql-tag": "^2.12.5",
     "husky": "4.3.8",
+    "js-cookie": "^3.0.1",
     "jsonwebtoken": "8.5.1",
     "less": "^3.13.1",
     "less-loader": "^7.1.0",
@@ -159,7 +160,8 @@
     ]
   },
   "devDependencies": {
-    "@oclif/core": "^1.0.11"
+    "@oclif/core": "^1.0.11",
+    "@types/js-cookie": "^3.0.2"
   },
   "resolutions": {
     "@craftjs/utils": "0.1.0-beta.20",

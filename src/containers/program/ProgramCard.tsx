@@ -8,7 +8,7 @@ import { CustomRatioImage } from '../../components/common/Image'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import ProgressBar from '../../components/common/ProgressBar'
 import { useProgramContentProgress } from '../../contexts/ProgressContext'
-import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
+import { useProgram } from '../../hooks/program'
 import EmptyCover from '../../images/empty-cover.png'
 
 const StyledWrapper = styled.div`
@@ -48,13 +48,11 @@ const ProgramCard: React.VFC<{
   isExpired?: boolean
 }> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress, isExpired }) => {
   const { program } = useProgram(programId)
-  const { enrolledProgramIds } = useEnrolledProgramIds(memberId)
   const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
 
   const viewRate = programContentProgress?.length
     ? sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length
     : 0
-  const isEnrolled = enrolledProgramIds.includes(programId)
 
   return (
     <Box opacity={isExpired ? '50%' : '100%'}>
@@ -72,9 +70,7 @@ const ProgramCard: React.VFC<{
       <Link
         to={
           isExpired
-            ? `/programs/${programId}`
-            : isEnrolled
-            ? `/programs/${programId}/contents`
+            ? `/programs/${programId}?visitIntro=1`
             : `/programs/${programId}` + (programType ? `?type=${programType}` : '')
         }
       >

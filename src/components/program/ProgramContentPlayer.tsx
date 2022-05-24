@@ -2,7 +2,7 @@ import { CircularProgress, Icon } from '@chakra-ui/react'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
@@ -11,6 +11,7 @@ import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
 import VideoPlayer from '../common/VideoPlayer'
+import programMessages from './translation'
 
 const StyledReactPlayerWrapper = styled.div`
   && > div {
@@ -80,15 +81,6 @@ const StyledCancelButton = styled.span`
   cursor: pointer;
 `
 
-const messages = defineMessages({
-  next: { id: 'program.text.next', defaultMessage: '接下來' },
-  switchPlayer: { id: 'program.ui.switchPlayer', defaultMessage: '切換為舊版' },
-  switchToStablePlayer: {
-    id: 'program.text.switchToStablePlayer',
-    defaultMessage: '系統更新了播放器版本，若還不習慣可切換為舊版模式',
-  },
-})
-
 type VideoEvent = {
   type: 'pause' | 'seeked' | 'progress' | 'ended'
   progress: number
@@ -138,12 +130,12 @@ const ProgramContentPlayer: React.VFC<
         <ProgramContentPlayerWrapper key={video.id} videoId={video.id} options={video.options} data={video.data}>
           {programContentVideo => (
             <>
-              {programContentVideo.source?.type === 'video/vnd.youtube.yt' ? (
+              {programContentVideo.sources.find(source => source.type === 'video/vnd.youtube.yt') ? (
                 <StyledReactPlayerWrapper>
                   <ReactPlayer
                     ref={playerRef}
                     playing={true}
-                    url={programContentVideo.source.src}
+                    url={programContentVideo.sources.find(source => source.type === 'video/vnd.youtube.yt')?.src}
                     controls
                     progressInterval={5000}
                     config={{
@@ -251,7 +243,7 @@ const ProgramContentPlayer: React.VFC<
                 <VideoPlayer
                   loading={programContentVideo.loading}
                   error={programContentVideo.error}
-                  source={programContentVideo.source}
+                  sources={programContentVideo.sources}
                   poster={programContentVideo.poster}
                   onLoadStart={player => {
                     player.volume(initialVolume)
@@ -300,7 +292,6 @@ const ProgramContentPlayer: React.VFC<
                   }}
                   onSeeked={player => {
                     const duration = player.duration() || 0
-                    const playbackRate = player.playbackRate() || 1
                     const currentTime = player.currentTime() || 0
                     onVideoEvent?.({
                       type: 'seeked',
@@ -372,7 +363,9 @@ const ProgramContentPlayerCover: React.VFC<{
   return (
     <StyledCover className="d-flex align-items-center justify-content-center">
       <StyledCoverWrapper>
-        <StyledCoverSubtitle className="mb-2">{formatMessage(messages.next)}</StyledCoverSubtitle>
+        <StyledCoverSubtitle className="mb-2">
+          {formatMessage(programMessages.ProgramContentPlayer.next)}
+        </StyledCoverSubtitle>
         <StyledCoverTitle className="mb-4">{nextProgramContent.title}</StyledCoverTitle>
         <CountDownPlayButton
           onPlayNext={() => {
@@ -421,22 +414,25 @@ const ProgramContentPlayerWrapper = (props: {
     poster?: string
     loading: boolean
     error: string | null
-    source?: { src: string; type: string }
+    sources: { src: string; type: string }[]
   }) => React.ReactElement
 }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [poster, setPoster] = useState<string>()
-  const [source, setSource] = useState<{ src: string; type: string }>()
+  const [sources, setSources] = useState<{ src: string; type: string }[]>([])
   const { authToken } = useAuth()
   useEffect(() => {
     if (props.data?.source === 'youtube') {
-      setSource({ type: 'video/vnd.youtube.yt', src: props.data?.url })
+      setSources([{ type: 'video/vnd.youtube.yt', src: props.data?.url }])
     }
     if (props.data?.source === 'azure') {
       // setSource({ type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' })
       // TODO: change into cloudflare, because azure is too slow...
-      setSource({ type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' })
+      setSources([
+        { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
+        { type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' },
+      ])
     }
     if (props.options?.cloudflare) {
       setLoading(true)
@@ -452,11 +448,17 @@ const ProgramContentPlayerWrapper = (props: {
         )
         .then(({ data }) => {
           if (data.code === 'SUCCESS') {
-            setSource({
-              type: 'application/x-mpegURL',
-              src: `https://videodelivery.net/${data.result.token}/manifest/video.m3u8`,
-            })
-            setPoster(`https://videodelivery.net/${data.result.token}/thumbnails/thumbnail.jpg`)
+            setSources([
+              {
+                type: 'application/dash+xml',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
+              },
+              {
+                type: 'application/x-mpegURL',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`,
+              },
+            ])
+            setPoster(`https://cloudflarestream.com/${data.result.token}/thumbnails/thumbnail.jpg`)
           } else {
             setError(data.error)
           }
@@ -465,6 +467,6 @@ const ProgramContentPlayerWrapper = (props: {
         .finally(() => setLoading(false))
     }
   }, [authToken, props.data, props.options, props.videoId])
-  return props.children({ loading, error, source, poster })
+  return props.children({ loading, error, sources, poster })
 }
 export default ProgramContentPlayer

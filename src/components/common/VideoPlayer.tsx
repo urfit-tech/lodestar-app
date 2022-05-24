@@ -9,7 +9,7 @@ import LocaleContext from '../../contexts/LocaleContext'
 type VideoJsPlayerProps = {
   loading?: boolean
   error?: string | null
-  source?: { src: string; type: string }
+  sources: { src: string; type: string }[]
   poster?: string
   onReady?: (player: VideoJsPlayer) => void
   onDurationChange?: (player: VideoJsPlayer, event: Event) => void
@@ -39,7 +39,15 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
 
   const videoOptions: VideoJsPlayerOptions = {
     html5: {
+      vhs: {
+        overrideNative: !videojs.browser.IS_SAFARI,
+        limitRenditionByPlayerDimensions: false,
+        useBandwidthFromLocalStorage: true,
+        useNetworkInformationApi: true,
+      },
       nativeTextTracks: false,
+      nativeAudioTracks: false,
+      nativeVideoTracks: false,
     },
     language: currentLocale,
     playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
@@ -52,7 +60,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
         displayCurrentQuality: true,
       },
     },
-    sources: props.source ? [props.source] : [],
+    sources: props.sources,
     textTrackSettings: {
       persistTextTrackSettings: true,
     },
@@ -85,9 +93,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
         width="100%"
         className="video-js vjs-big-play-centered"
         ref={ref => {
-          if (playerRef.current) {
-            // TODO: do something for rerender
-          } else if (ref && props.source) {
+          if (ref && !playerRef.current && Number(videoOptions.sources?.length) > 0) {
             playerRef.current = videojs(ref, videoOptions, function () {
               props.onDurationChange && this.on('durationchange', props.onDurationChange.bind(null, this))
               props.onVolumeChange && this.on('volumechange', props.onVolumeChange.bind(null, this))

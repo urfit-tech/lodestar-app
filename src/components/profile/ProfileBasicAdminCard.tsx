@@ -73,6 +73,8 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
             pictureUrl: avatarImageFile
               ? `https://${process.env.REACT_APP_S3_BUCKET}/avatars/${appId}/${memberId}/${avatarId}`
               : member.pictureUrl,
+            title: values.title,
+            abstract: values.abstract,
             description: values.description,
           },
         })
@@ -124,6 +126,17 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
               },
             ],
           })(<MigrationInput />)}
+        </Form.Item>
+        <Form.Item label={formatMessage(profileMessages.form.message.title)}>
+          {form.getFieldDecorator('title', {
+            initialValue: member && member.title,
+          })(<MigrationInput />)}
+        </Form.Item>
+        <Form.Item label={formatMessage(profileMessages.form.message.abstract)}>
+          {form.getFieldDecorator('abstract', {
+            initialValue: member && member.abstract,
+            rules: [{ max: 100 }],
+          })(<Textarea rows={2} />)}
         </Form.Item>
         <Form.Item label={formatMessage(profileMessages.form.message.intro)}>
           {form.getFieldDecorator('description', {

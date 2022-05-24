@@ -20,7 +20,6 @@ import { ProgramDisplayedCard } from '../../components/program/ProgramDisplayedC
 import { ProgramDisplayedListItem } from '../../components/program/ProgramDisplayedListItem'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useEnrolledProgramIds } from '../../hooks/program'
 import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
 import NotFoundPage from '../NotFoundPage'
 import ProgramPackagePageHelmet from './ProgramPackagePageHelmet'
@@ -59,7 +58,6 @@ const ProgramPackagePage: React.VFC = () => {
   const { loadingProgramPackageIds, enrolledProgramPackagePlanIds } = useEnrolledProgramPackagePlanIds(
     currentMemberId || '',
   )
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const planBlockRef = createRef<HTMLDivElement>()
 
@@ -118,24 +116,15 @@ const ProgramPackagePage: React.VFC = () => {
                 <ProgramCollection
                   programs={programPackageIntroduction.programs}
                   renderItem={({ displayType, program }) => {
-                    const isEnrolled = enrolledProgramIds.includes(program.id)
                     return displayType === 'grid' ? (
                       <div className="col-12 col-md-6 col-lg-6 mb-4">
-                        <Link
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`}
-                        >
+                        <Link target="_blank" rel="noopener noreferrer" to={`/programs/${program.id}`}>
                           <ProgramDisplayedCard key={program.id} program={program} />
                         </Link>
                       </div>
                     ) : displayType === 'list' ? (
                       <div className="col-12">
-                        <Link
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          to={`/programs/${program.id}${isEnrolled ? '/contents' : ''}`}
-                        >
+                        <Link target="_blank" rel="noopener noreferrer" to={`/programs/${program.id}`}>
                           <ProgramDisplayedListItem key={program.id} program={program} />
                         </Link>
                       </div>

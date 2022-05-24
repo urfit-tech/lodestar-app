@@ -64,6 +64,7 @@ const ProgramPlanCard: React.VFC<{
   const currencyId = currency.id || 'TWD'
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
+
   return (
     <StyledAdminCard key={programPlan.id}>
       <header>

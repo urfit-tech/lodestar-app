@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { Editor, Frame } from '@craftjs/core'
 import gql from 'graphql-tag'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Link, Redirect, useLocation } from 'react-router-dom'
@@ -124,6 +125,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   return (
     <>
       <PageHelmet />
+      <Tracking.View />
       {appPage ? (
         <DefaultLayout {...appPage.options}>
           {appPage.craftData ? (

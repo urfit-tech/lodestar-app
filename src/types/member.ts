@@ -27,6 +27,8 @@ export type MemberProps = {
   shipping: ShippingProps | null
   invoice: InvoiceProps | null
   payment: PaymentProps | null
+  title: string | null
+  abstract: string | null
   description: string | null
   createdAt: Date
   loginedAt: Date

@@ -27,7 +27,6 @@ const messages = defineMessages({
   unlimited: { id: 'payment.label.unlimited', defaultMessage: '無限期' },
   viewMore: { id: 'payment.ui.viewMore', defaultMessage: '顯示更多' },
   noCoinLog: { id: 'payment.text.noCoinLog', defaultMessage: '尚無代幣紀錄' },
-  noOrderLog: { id: 'payment.text.noOrderLog', default: '尚無消費紀錄' },
 })
 
 const StyledCardText = styled.span`

@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import moment from 'moment'
 import hasura from '../hasura'
 import {
   AppointmentEnrollmentProps,
@@ -82,6 +83,92 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
   }
 }
 
+export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) => {
+  const { loading, error, data, refetch } = useQuery<hasura.GET_APPOINTMENT_PLAN, hasura.GET_APPOINTMENT_PLANVariables>(
+    gql`
+      query GET_APPOINTMENT_PLAN($appointmentPlanId: uuid!, $startedAt: timestamptz!) {
+        appointment_plan_by_pk(id: $appointmentPlanId) {
+          id
+          title
+          description
+          duration
+          price
+          support_locales
+          currency {
+            id
+            label
+            unit
+            name
+          }
+          appointment_periods(
+            where: { available: { _eq: true }, started_at: { _gt: $startedAt } }
+            order_by: { started_at: asc }
+          ) {
+            started_at
+            ended_at
+            booked
+          }
+          creator {
+            id
+            abstract
+            picture_url
+            name
+            username
+          }
+        }
+      }
+    `,
+    { variables: { appointmentPlanId, startedAt: startedAt || moment().endOf('minute').toDate() } },
+  )
+
+  const appointmentPlan:
+    | (AppointmentPlanProps & {
+        periods: AppointmentPeriodProps[]
+        creator: {
+          id: string
+          avatarUrl: string | null
+          name: string
+          abstract: string | null
+        }
+      })
+    | null =
+    loading || error || !data || !data.appointment_plan_by_pk
+      ? null
+      : {
+          id: data.appointment_plan_by_pk.id,
+          title: data.appointment_plan_by_pk.title,
+          description: data.appointment_plan_by_pk.description,
+          duration: data.appointment_plan_by_pk.duration,
+          price: data.appointment_plan_by_pk.price,
+          phone: null,
+          supportLocales: data.appointment_plan_by_pk.support_locales,
+          currency: {
+            id: data.appointment_plan_by_pk.currency.id,
+            label: data.appointment_plan_by_pk.currency.label,
+            unit: data.appointment_plan_by_pk.currency.unit,
+            name: data.appointment_plan_by_pk.currency.name,
+          },
+          periods: data.appointment_plan_by_pk.appointment_periods.map(period => ({
+            id: `${period.started_at}`,
+            startedAt: new Date(period.started_at),
+            endedAt: new Date(period.ended_at),
+            booked: !!period.booked,
+          })),
+          creator: {
+            id: data.appointment_plan_by_pk.creator?.id || '',
+            avatarUrl: data.appointment_plan_by_pk.creator?.picture_url || null,
+            name: data.appointment_plan_by_pk.creator?.name || data.appointment_plan_by_pk.creator?.username || '',
+            abstract: data.appointment_plan_by_pk.creator?.abstract || null,
+          },
+        }
+
+  return {
+    loadingAppointmentPlan: loading,
+    errorAppointmentPlan: error,
+    appointmentPlan,
+    refetchAppointmentPlan: refetch,
+  }
+}
 export const useEnrolledAppointmentCollection = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_ENROLLED_APPOINTMENT_PLAN,

@@ -6,17 +6,28 @@ import React, { useState } from 'react'
 import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { defineMessage, useIntl } from 'react-intl'
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
+import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import { StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../../components/program/ProgramContentMenu'
+import ProgramContentNoAuthBlock from '../../components/program/ProgramContentNoAuthBlock'
 import { ProgressProvider } from '../../contexts/ProgressContext'
+import { hasJsonStructure } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
-import { ProgramContentNoAuthBlock } from '../ProgramContentCollectionPage'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
+
+const StyledLink = styled(Link)`
+  && {
+    &:hover {
+      color: white;
+    }
+  }
+`
 
 const ProgramContentPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -25,17 +36,21 @@ const ProgramContentPage: React.VFC = () => {
     programId: string
     programContentId: string
   }>()
-  const { enabledModules, settings } = useApp()
+  const { enabledModules, settings, id: appId } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
-  const { search } = useLocation()
-  const query = new URLSearchParams(search)
-  const programPackageId = query.get('back')
+  const [productId] = useQueryParam('back', StringParam)
 
   if (isAuthenticating || loadingProgram) {
     return <></>
   }
+
+  let oldProgramInfo = {}
+  if (hasJsonStructure(localStorage.getItem(`${appId}.program.info`) || '')) {
+    JSON.parse(localStorage.getItem(`${appId}.program.info`) || '')
+  }
+  localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
 
   return (
     <Layout>
@@ -48,7 +63,7 @@ const ProgramContentPage: React.VFC = () => {
                 colorScheme="primary"
                 variant="ghost"
                 size="sm"
-                onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
+                onClick={() => window.open(`/programs/${programId}?visitIntro=1&moveToBlock=customer-review`)}
               >
                 <Icon component={BsStar} className="mr-2" />
                 {formatMessage(commonMessages.button.review)}
@@ -58,7 +73,7 @@ const ProgramContentPage: React.VFC = () => {
               size="sm"
               colorScheme="primary"
               variant="ghost"
-              onClick={() => window.open(`/programs/${programId}`)}
+              onClick={() => window.open(`/programs/${programId}?visitIntro=1`)}
             >
               <Icon component={AiOutlineProfile} className="mr-2" />
               {formatMessage(commonMessages.button.intro)}
@@ -71,9 +86,20 @@ const ProgramContentPage: React.VFC = () => {
             )}
           </div>
         }
-        onBack={() =>
-          history.push(`/programs/${programId}/contents${programPackageId !== null ? `?back=${programPackageId}` : ''}`)
-        }
+        onBack={() => {
+          if (productId) {
+            const [productType, id] = productId.split('_')
+            if (productType === 'program-package') {
+              history.push(`/program-packages/${id}/contents`)
+            }
+            if (productType === 'project') {
+              history.push(`/projects/${id}`)
+            }
+          } else {
+            history.push(`/members/${currentMemberId}`)
+          }
+          history.push(`/`)
+        }}
       />
 
       <StyledLayoutContent>
@@ -84,18 +110,15 @@ const ProgramContentPage: React.VFC = () => {
                 <ProgramCustomContentBlock
                   programContentSections={program.contentSections}
                   programContentId={programContentId}
+                  editors={program.editors}
                 >
                   <>
                     <ProgramContentMenu isScrollToTop program={program} />
 
-                    <Button
-                      isFullWidth
-                      className="mt-3"
-                      colorScheme="primary"
-                      as={Link}
-                      to={`/programs/${programId}?moveToBlock=customer-review`}
-                    >
-                      {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
+                    <Button isFullWidth className="mt-3" colorScheme="primary">
+                      <StyledLink to={`/programs/${programId}?moveToBlock=customer-review`}>
+                        {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
+                      </StyledLink>
                     </Button>
                   </>
                 </ProgramCustomContentBlock>
@@ -110,6 +133,7 @@ const ProgramContentPage: React.VFC = () => {
                       programContentSections={program.contentSections}
                       programContentId={programContentId}
                       issueEnabled={program.isIssuesOpen}
+                      editors={program.editors}
                     />
                   </StyledLayoutContent>
                 </div>

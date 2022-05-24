@@ -229,7 +229,7 @@ const DefaultLayout: React.FC<{
 
         <StyledLayoutContent id="layout-content" className={`${noHeader ? 'full-height' : ''}`}>
           <LayoutContentWrapper
-            footerHeight={noFooter ? 0 : settings['footer.type'] === 'multiline' ? 108 : 53}
+            footerHeight={noFooter ? 0 : settings['footer.type'] === 'multiline' ? 108 : 65}
             centeredBox={centeredBox}
           >
             {centeredBox ? <CenteredBox>{children}</CenteredBox> : children}
