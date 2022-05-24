@@ -50,11 +50,12 @@ const StyledProgramContentBlock = styled.div`
 const ProgramCustomContentBlock: React.VFC<{
   programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]
   programContentId: string
+  editors?: string[]
   children?: ReactElement
-}> = ({ programContentSections, programContentId, children }) => {
+}> = ({ programContentSections, programContentId, editors, children }) => {
   const { formatMessage } = useIntl()
   const { loading: loadingApp } = useApp()
-  const { authToken } = useAuth()
+  const { authToken, permissions, currentMemberId } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const hasProgramContentPermission = useHasProgramContentPermission(programContentId)
@@ -104,7 +105,12 @@ const ProgramCustomContentBlock: React.VFC<{
 
   return (
     <StyledProgramContentBlock id="program_customize_content_block">
-      {((programContent.contentType === 'video' && !hasProgramContentPermission) ||
+      {((programContent.contentType === 'video' &&
+        (permissions.PROGRAM_ADMIN
+          ? false
+          : currentMemberId && permissions.PROGRAM_NORMAL
+          ? !editors?.includes(currentMemberId)
+          : !hasProgramContentPermission)) ||
         (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
         <StyledUnPurchased className="p-2 text-center">
           <LockIcon className="mr-2" />
@@ -112,37 +118,40 @@ const ProgramCustomContentBlock: React.VFC<{
         </StyledUnPurchased>
       )}
 
-      {programContent.contentType === 'video' && hasProgramContentPermission && (
-        <ProgramContentPlayer
-          key={programContent.id}
-          programContentId={programContentId}
-          nextProgramContent={nextProgramContent}
-          onVideoEvent={e => {
-            if (e.type === 'progress') {
-              insertProgramProgress(e.progress)
-            } else {
-              axios
-                .post(
-                  `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
-                  {
-                    programContentId,
-                    data: e.videoState,
-                  },
-                  { headers: { authorization: `Bearer ${authToken}` } },
-                )
-                .then(({ data: { code, result } }) => {
-                  if (code === 'SUCCESS') {
-                    return
-                  }
-                })
-                .catch(() => {})
-              if (e.type === 'ended') {
-                insertProgramProgress(1)?.then(() => refetchProgress())
+      {programContent.contentType === 'video' &&
+        (hasProgramContentPermission ||
+          permissions.PROGRAM_ADMIN ||
+          (permissions.PROGRAM_NORMAL && currentMemberId && editors?.includes(currentMemberId))) && (
+          <ProgramContentPlayer
+            key={programContent.id}
+            programContentId={programContentId}
+            nextProgramContent={nextProgramContent}
+            onVideoEvent={e => {
+              if (e.type === 'progress') {
+                insertProgramProgress(e.progress)
+              } else {
+                axios
+                  .post(
+                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+                    {
+                      programContentId,
+                      data: e.videoState,
+                    },
+                    { headers: { authorization: `Bearer ${authToken}` } },
+                  )
+                  .then(({ data: { code, result } }) => {
+                    if (code === 'SUCCESS') {
+                      return
+                    }
+                  })
+                  .catch(() => {})
+                if (e.type === 'ended') {
+                  insertProgramProgress(1)?.then(() => refetchProgress())
+                }
               }
-            }
-          }}
-        />
-      )}
+            }}
+          />
+        )}
 
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise']) && (
         <StyledContentBlock className="mb-3">

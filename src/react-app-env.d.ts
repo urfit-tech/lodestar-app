@@ -6,6 +6,7 @@ declare module 'react-messenger-customer-chat'
 declare module 'react-style-editor'
 declare module '@bobthered/tailwindcss-palette-generator'
 declare module 'react-style-editor'
+declare module 'js-cookie'
 declare module 'console' {
   export = typeof import('console')
 }
