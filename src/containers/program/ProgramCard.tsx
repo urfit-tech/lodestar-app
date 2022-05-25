@@ -73,11 +73,11 @@ const ProgramCard: React.VFC<{
           isExpired
             ? `/programs/${programId}?visitIntro=1`
             : programType && previousPage
-            ? `/programs/${programId}?type=${programType}&previousPage=${previousPage}`
+            ? `/programs/${programId}?type=${programType}&back=${previousPage}`
             : programType
             ? `/programs/${programId}?type=${programType}`
             : previousPage
-            ? `/programs/${programId}?previousPage=${previousPage}`
+            ? `/programs/${programId}?back=${previousPage}`
             : `/programs/${programId}`
         }
       >

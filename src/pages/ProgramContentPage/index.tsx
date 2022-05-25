@@ -40,8 +40,7 @@ const ProgramContentPage: React.VFC = () => {
   const { currentMemberId, isAuthenticating } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
-  const [productId] = useQueryParam('back', StringParam)
-  const [previousPage] = useQueryParam('previousPage', StringParam)
+  const [previousPage] = useQueryParam('back', StringParam)
 
   if (isAuthenticating || loadingProgram) {
     return <></>
@@ -52,7 +51,7 @@ const ProgramContentPage: React.VFC = () => {
     JSON.parse(localStorage.getItem(`${appId}.program.info`) || '')
   }
   localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
-  console.log(previousPage)
+
   return (
     <Layout>
       <StyledPageHeader
@@ -90,7 +89,7 @@ const ProgramContentPage: React.VFC = () => {
         onBack={() => {
           if (previousPage) {
             const [page, targetId] = previousPage.split('_')
-            if (page === 'creator') {
+            if (page === 'creators') {
               history.push(`/creators/${targetId}`)
             } else if (page === 'programs') {
               if (targetId) {
@@ -98,23 +97,15 @@ const ProgramContentPage: React.VFC = () => {
               } else {
                 history.push(`/programs`)
               }
-            } else if (page === 'programPackages') {
+            } else if (page === 'program-packages') {
               history.push(`/program-packages/${targetId}`)
             } else if (page === 'members') {
               history.push(`/members/${targetId}`)
+            } else if (page === 'projects') {
+              history.push(`/projects/${targetId}`)
             } else {
               history.push('/')
             }
-          } else if (productId) {
-            const [productType, id] = productId.split('_')
-            if (productType === 'program-package') {
-              history.push(`/program-packages/${id}/contents`)
-            }
-            if (productType === 'project') {
-              history.push(`/projects/${id}`)
-            }
-          } else {
-            history.push(`/members/${currentMemberId}`)
           }
         }}
       />

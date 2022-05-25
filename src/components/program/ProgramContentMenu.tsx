@@ -240,7 +240,7 @@ const SortBySectionItem: React.VFC<{
     programId: string
     programContentId?: string
   }>()
-  const [previousPage] = useQueryParam('previousPage', StringParam)
+  const [previousPage] = useQueryParam('back', StringParam)
 
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
 
@@ -262,15 +262,7 @@ const SortBySectionItem: React.VFC<{
       onClick={() => {
         onClick?.()
         history.push(
-          `/programs/${programId}/contents/${programContent.id}${
-            programPackageId && previousPage
-              ? `?back=${programPackageId}&previousPage=${previousPage}`
-              : programPackageId
-              ? `?back=${programPackageId}`
-              : previousPage
-              ? `?previousPage=${previousPage}`
-              : ''
-          }`,
+          `/programs/${programId}/contents/${programContent.id}${previousPage ? `?back=${previousPage}` : ''}`,
         )
       }}
     >
@@ -354,6 +346,7 @@ const SortByDateItem: React.VFC<{
     programContentId?: string
   }>()
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
+  const [previousPage] = useQueryParam('back', StringParam)
 
   return (
     <StyledItem
@@ -361,9 +354,7 @@ const SortByDateItem: React.VFC<{
       onClick={() => {
         onClick?.()
         history.push(
-          `/programs/${programId}/contents/${programContent.id}${
-            programPackageId !== null ? `?back=${programPackageId}` : ''
-          }`,
+          `/programs/${programId}/contents/${programContent.id}${previousPage ? `?back=${previousPage}` : ''}`,
         )
       }}
     >

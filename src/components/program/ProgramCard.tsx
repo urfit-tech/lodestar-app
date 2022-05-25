@@ -126,11 +126,11 @@ const ProgramCard: React.VFC<{
       <Link
         to={
           programType && previousPage
-            ? `/programs/${program.id}?type=${programType}&previousPage=${previousPage}`
+            ? `/programs/${program.id}?type=${programType}&back=${previousPage}`
             : programType
             ? `/programs/${program.id}?type=${programType}`
             : previousPage
-            ? `/programs/${program.id}?previousPage=${previousPage}`
+            ? `/programs/${program.id}?back=${previousPage}`
             : `/programs/${program.id}`
         }
         onClick={onClick}

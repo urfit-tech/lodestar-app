@@ -59,10 +59,8 @@ const ProgramContentCutscenePage: React.VFC = () => {
   const { enabledModules } = useApp()
   const { id: appId } = useApp()
   const { isAuthenticating, isAuthenticated } = useAuth()
-  const { currentMemberId } = useAuth()
   const { programId } = useParams<{ programId: string }>()
-  const [productId] = useQueryParam('back', StringParam)
-  const [previousPage] = useQueryParam('previousPage', StringParam)
+  const [previousPage] = useQueryParam('back', StringParam)
   const { loadingProgram, program, errorProgram } = useProgram(programId)
 
   if (loadingProgram || isAuthenticating || !program) {
@@ -112,7 +110,7 @@ const ProgramContentCutscenePage: React.VFC = () => {
           onBack={() => {
             if (previousPage) {
               const [page, targetId] = previousPage.split('_')
-              if (page === 'creator') {
+              if (page === 'creators') {
                 history.push(`/creators/${targetId}`)
               } else if (page === 'programs') {
                 if (targetId) {
@@ -120,24 +118,15 @@ const ProgramContentCutscenePage: React.VFC = () => {
                 } else {
                   history.push(`/programs`)
                 }
-              } else if (page === 'programPackages') {
+              } else if (page === 'program-packages') {
                 history.push(`/program-packages/${targetId}`)
               } else if (page === 'members') {
                 history.push(`/members/${targetId}`)
+              } else if (page === 'projects') {
+                history.push(`/projects/${targetId}`)
               } else {
                 history.push('/')
               }
-            } else if (productId) {
-              const [productType, id] = productId.split('_')
-              if (productType === 'program-package') {
-                history.push(`/program-packages/${id}/contents`)
-              } else if (productType === 'project') {
-                history.push(`/projects/${id}`)
-              } else {
-                history.push('/')
-              }
-            } else {
-              history.push(`/members/${currentMemberId}`)
             }
           }}
         />
@@ -152,15 +141,11 @@ const ProgramContentCutscenePage: React.VFC = () => {
     Object.keys(lastProgramContent).includes(programId) &&
     flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(lastProgramContent[programId])
   ) {
-    return (
-      <Redirect
-        to={`/programs/${programId}/contents/${lastProgramContent[programId]}?back=${productId}&previousPage=${previousPage}`}
-      />
-    )
+    return <Redirect to={`/programs/${programId}/contents/${lastProgramContent[programId]}?back=${previousPage}`} />
   } else {
     return (
       <Redirect
-        to={`/programs/${programId}/contents/${program?.contentSections[0].contents[0].id}?back=${productId}&previousPage=${previousPage}`}
+        to={`/programs/${programId}/contents/${program?.contentSections[0].contents[0].id}?back=${previousPage}`}
       />
     )
   }

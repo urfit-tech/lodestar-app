@@ -43,7 +43,7 @@ const ProgramPackageContentPage: React.VFC = () => {
                   className="col-12 col-md-6 col-lg-4"
                   target="_blank"
                   rel="noopener noreferrer"
-                  to={`/programs/${program.id}/contents?back=program-package_${programPackageId}`}
+                  to={`/programs/${program.id}/contents?back=program-packages_${programPackageId}`}
                 >
                   <ProgramDisplayedCard key={program.id} program={program} memberId={memberId} />
                 </Link>
@@ -52,7 +52,7 @@ const ProgramPackageContentPage: React.VFC = () => {
                   className="col-12"
                   target="_blank"
                   rel="noopener noreferrer"
-                  to={`/programs/${program.id}/contents?back=program-package_${programPackageId}`}
+                  to={`/programs/${program.id}/contents?back=program-packages_${programPackageId}`}
                 >
                   <ProgramDisplayedListItem key={program.id} program={program} memberId={memberId} />
                 </Link>

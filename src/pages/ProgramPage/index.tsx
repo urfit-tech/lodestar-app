@@ -92,7 +92,7 @@ const ProgramPage: React.VFC = () => {
   const params = queryString.parse(location.search)
   const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(programId)
-  const [previousPage] = useQueryParam('previousPage', StringParam)
+  const [previousPage] = useQueryParam('back', StringParam)
 
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock) {
@@ -117,7 +117,7 @@ const ProgramPage: React.VFC = () => {
   }
 
   if (!visitIntro && isEnrolled) {
-    return <Redirect to={`/programs/${programId}/contents?previousPage=${previousPage}`} />
+    return <Redirect to={`/programs/${programId}/contents?back=${previousPage}`} />
   }
 
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''

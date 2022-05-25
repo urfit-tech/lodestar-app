@@ -120,7 +120,7 @@ const ProgramPackagePage: React.VFC = () => {
                         <Link
                           target="_blank"
                           rel="noopener noreferrer"
-                          to={`/programs/${program.id}?previousPage=programPackages_${programPackageId}`}
+                          to={`/programs/${program.id}?back=program-packages_${programPackageId}`}
                         >
                           <ProgramDisplayedCard key={program.id} program={program} />
                         </Link>
@@ -130,7 +130,7 @@ const ProgramPackagePage: React.VFC = () => {
                         <Link
                           target="_blank"
                           rel="noopener noreferrer"
-                          to={`/programs/${program.id}?previousPage=programPackages_${programPackageId}`}
+                          to={`/programs/${program.id}?back=program-packages_${programPackageId}`}
                         >
                           <ProgramDisplayedListItem key={program.id} program={program} />
                         </Link>

@@ -61,7 +61,7 @@ const OverviewBlock: React.VFC<{
       <StyledSideBarBlock>
         <h4 className="mb-4">{formatMessage(commonMessages.title.addCourse)}</h4>
         {programs.slice(0, 3).map(program => (
-          <Link key={program.id} to={`/programs/${program.id}?previousPage=${previousPage}`}>
+          <Link key={program.id} to={`/programs/${program.id}?back=${previousPage}`}>
             <div className="d-flex align-items-center mb-3">
               <StyledImage
                 className="flex-shrink-0"
