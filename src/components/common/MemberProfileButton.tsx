@@ -179,7 +179,18 @@ const MemberProfileButton: React.VFC<{
         <BorderedItem className="justify-content-between">
           {renderMemberProfile?.(member) || (
             <>
-              <div>{member.name}</div>
+              {settings['feature.profile'] ? (
+                <Link to={`/@${member.username}`}>
+                  <span className="mr-1">{member.name}</span>
+                  <small>@{member.username}</small>
+                </Link>
+              ) : (
+                <div>
+                  <span className="mr-1">{member.name}</span>
+                  <small>@{member.username}</small>
+                </div>
+              )}
+
               <Responsive.Default>
                 <MemberAvatar memberId={member.id} size={36} />
               </Responsive.Default>
