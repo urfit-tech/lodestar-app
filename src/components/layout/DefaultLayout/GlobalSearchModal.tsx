@@ -340,7 +340,7 @@ const GlobalSearchFilter: React.VFC<{
           ? tagsFilter.map(tagName => tags.find(tag => tag.name.split('/')[0] === tagName)).filter(notEmpty)
           : tags
         ).map(tag => {
-          const isTagActive = includes(tag.id ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)
+          const isTagActive = includes(tag.id ? [tag.name] : pluck('id', tag.subTags), filter.tagNameSList)
 
           return (
             <StyledGroup active={isTagActive} key={tag.id} className="mb-2">
@@ -353,10 +353,10 @@ const GlobalSearchFilter: React.VFC<{
                       tagNameSList: isTagActive
                         ? [
                             ...prevFilter.tagNameSList.filter(
-                              tagNameS => !equals(tagNameS, tag.id ? [tag.name] : pluck('name', tag.subTags)),
+                              tagNameS => !equals(tagNameS, tag.id ? [tag.name] : pluck('id', tag.subTags)),
                             ),
                           ]
-                        : [...prevFilter.tagNameSList, tag.id ? [tag.name] : pluck('name', tag.subTags)],
+                        : [...prevFilter.tagNameSList, tag.id ? [tag.name] : pluck('id', tag.subTags)],
                     }))
                   }
                 />
@@ -385,16 +385,15 @@ const GlobalSearchFilter: React.VFC<{
                                 ].filter(complement(isEmpty))
                               : [
                                   ...prevFilter.tagNameSList.filter(
-                                    tagNameS =>
-                                      !tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
+                                    tagNameS => !tagNameS.every(tagName => pluck('id', tag.subTags).includes(tagName)),
                                   ),
                                   [
                                     ...(!!prevFilter.tagNameSList.find(tagNameS =>
-                                      tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
+                                      tagNameS.every(tagName => pluck('id', tag.subTags).includes(tagName)),
                                     )
                                       ? [
                                           ...(prevFilter.tagNameSList.find(tagNameS =>
-                                            tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
+                                            tagNameS.every(tagName => pluck('id', tag.subTags).includes(tagName)),
                                           ) || []),
                                           `${tag.name}/${subTag.name}`,
                                         ].sort()
