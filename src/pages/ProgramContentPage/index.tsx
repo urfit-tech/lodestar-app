@@ -7,7 +7,6 @@ import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { defineMessage, useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
-import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import { StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
@@ -21,14 +20,6 @@ import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
 
-const StyledLink = styled(Link)`
-  && {
-    &:hover {
-      color: white;
-    }
-  }
-`
-
 const ProgramContentPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -40,7 +31,7 @@ const ProgramContentPage: React.VFC = () => {
   const { currentMemberId, isAuthenticating } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
-  const [productId] = useQueryParam('back', StringParam)
+  const [previousPage] = useQueryParam('back', StringParam)
 
   if (isAuthenticating || loadingProgram) {
     return <></>
@@ -87,18 +78,26 @@ const ProgramContentPage: React.VFC = () => {
           </div>
         }
         onBack={() => {
-          if (productId) {
-            const [productType, id] = productId.split('_')
-            if (productType === 'program-package') {
-              history.push(`/program-packages/${id}/contents`)
+          if (previousPage) {
+            const [page, targetId] = previousPage.split('_')
+            if (page === 'creators') {
+              history.push(`/creators/${targetId}`)
+            } else if (page === 'programs') {
+              if (targetId) {
+                history.push(`/programs/${targetId}?visitIntro=1`)
+              } else {
+                history.push(`/programs`)
+              }
+            } else if (page === 'program-packages') {
+              history.push(`/program-packages/${targetId}`)
+            } else if (page === 'members') {
+              history.push(`/members/${targetId}`)
+            } else if (page === 'projects') {
+              history.push(`/projects/${targetId}`)
+            } else {
+              history.push('/')
             }
-            if (productType === 'project') {
-              history.push(`/projects/${id}`)
-            }
-          } else {
-            history.push(`/members/${currentMemberId}`)
           }
-          history.push(`/`)
         }}
       />
 
@@ -110,15 +109,18 @@ const ProgramContentPage: React.VFC = () => {
                 <ProgramCustomContentBlock
                   programContentSections={program.contentSections}
                   programContentId={programContentId}
-                  editors={program.editors}
                 >
                   <>
                     <ProgramContentMenu isScrollToTop program={program} />
 
-                    <Button isFullWidth className="mt-3" colorScheme="primary">
-                      <StyledLink to={`/programs/${programId}?moveToBlock=customer-review`}>
-                        {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
-                      </StyledLink>
+                    <Button
+                      isFullWidth
+                      className="mt-3"
+                      colorScheme="primary"
+                      as={Link}
+                      to={`/programs/${programId}?moveToBlock=customer-review`}
+                    >
+                      {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
                     </Button>
                   </>
                 </ProgramCustomContentBlock>
@@ -133,7 +135,6 @@ const ProgramContentPage: React.VFC = () => {
                       programContentSections={program.contentSections}
                       programContentId={programContentId}
                       issueEnabled={program.isIssuesOpen}
-                      editors={program.editors}
                     />
                   </StyledLayoutContent>
                 </div>

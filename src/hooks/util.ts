@@ -98,7 +98,7 @@ export const useSwarmify = () => {
   }
 }
 
-export const useCurrency = (currencyId?: string) => {
+export const useCurrency = (currencyId?: string, coinUnit?: string) => {
   const { currentLocale } = useContext(LocaleContext)
   const { currencies, settings } = useApp()
 
@@ -107,7 +107,7 @@ export const useCurrency = (currencyId?: string) => {
     const currency = currencies[currentCurrencyId]
 
     if (currentCurrencyId === 'LSC') {
-      return value + ' ' + settings['coin.unit']
+      return value + ' ' + settings['coin.unit'] || coinUnit || 'Coins'
     }
 
     return (

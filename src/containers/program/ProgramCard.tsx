@@ -46,7 +46,8 @@ const ProgramCard: React.VFC<{
   noPrice?: boolean
   withProgress?: boolean
   isExpired?: boolean
-}> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress, isExpired }) => {
+  previousPage?: string
+}> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress, isExpired, previousPage }) => {
   const { program } = useProgram(programId)
   const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
 
@@ -71,7 +72,13 @@ const ProgramCard: React.VFC<{
         to={
           isExpired
             ? `/programs/${programId}?visitIntro=1`
-            : `/programs/${programId}` + (programType ? `?type=${programType}` : '')
+            : programType && previousPage
+            ? `/programs/${programId}?type=${programType}&back=${previousPage}`
+            : programType
+            ? `/programs/${programId}?type=${programType}`
+            : previousPage
+            ? `/programs/${programId}?back=${previousPage}`
+            : `/programs/${programId}`
         }
       >
         <StyledWrapper>

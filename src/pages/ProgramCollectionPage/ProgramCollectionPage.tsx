@@ -165,6 +165,7 @@ const ProgramCollection: React.FC<{
               const resource = resourceCollection[idx]
               resource && tracking.click(resource, { position: idx + 1 })
             }}
+            previousPage={`programs`}
           />
         </div>
       ))}
