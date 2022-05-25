@@ -513,14 +513,7 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
           id
           name
         }
-        app_tag(
-          where: {
-            tag: {
-              filterable: { _eq: true }
-              program_tags: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } }
-            }
-          }
-        ) {
+        search_tag(where: { tag: { filterable: { _eq: true } } }, order_by: { position: asc }) {
           name: tag_name
           position
         }
@@ -560,7 +553,7 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
             })),
         ),
       }),
-      toPairs(groupBy(tag => tag.name?.split('/')[0] ?? '', data?.app_tag || [])),
+      toPairs(groupBy(tag => tag.name?.split('/')[0] ?? '', data?.search_tag || [])),
     ),
   )
 
