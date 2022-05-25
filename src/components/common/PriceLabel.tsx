@@ -11,12 +11,17 @@ const messages = defineMessages({
   firstPeriod: { id: 'common.label.firstPeriod', defaultMessage: '首期' },
   fromSecondPeriod: { id: 'common.label.fromSecondPeriod', defaultMessage: '第二期開始' },
   originalPrice: { id: 'common.label.originalPrice', defaultMessage: '原價' },
+  voucherPlanPriceLabel: {
+    id: 'product.label.voucherPlanPriceLabel',
+    defaultMessage: '1 份 {saleAmount} 張 ',
+  },
 })
 
-const FullDetailPrice = styled.div`
+const FullDetailPrice = styled.div<{ isSaleAmount?: boolean }>`
   > div:first-child {
-    color: var(--gray-darker);
-    font-size: 28px;
+    color: ${props => (props.isSaleAmount ? props.theme['@primary-color'] : 'var(--gray-darker)')};
+    font-size: ${props => (props.isSaleAmount ? '16px' : '28px')};
+    letter-spacing: ${props => (props.isSaleAmount ? '0.2px' : undefined)};
     font-weight: bold;
   }
   > div:nth-child(2) {
@@ -35,9 +40,13 @@ const ListPrice = styled.div`
 const InlinePrice = styled.div`
   color: ${props => props.theme['@primary-color']};
 
-  & > span:first-child:not(:last-child) {
+  & > div {
+    display: inline;
+  }
+
+  & > div:first-child:not(:last-child) {
     margin-right: 0.5rem;
-    color: ${props => 'var(--gray-dark);'};
+    color: var(--black-45);
     text-decoration: line-through;
   }
 `
@@ -49,6 +58,8 @@ type PriceLabelOptions = {
   periodAmount?: number | null
   periodType?: PeriodType
   currencyId?: 'LSC' | string
+  coinUnit?: string
+  saleAmount?: number | null
 }
 const PriceLabel: React.VFC<
   PriceLabelOptions & {
@@ -57,16 +68,16 @@ const PriceLabel: React.VFC<
     noFreeText?: boolean
   }
 > = ({ variant, render, noFreeText, ...options }) => {
-  const { listPrice, salePrice, downPrice, periodAmount, periodType } = options
+  const { listPrice, salePrice, saleAmount, downPrice, currencyId, coinUnit, periodAmount, periodType } = options
   const { formatMessage } = useIntl()
-  const { formatCurrency } = useCurrency(options.currencyId)
+  const { formatCurrency } = useCurrency(currencyId, coinUnit)
+
+  const displayPrice = salePrice || listPrice
+  const firstPeriodPrice = displayPrice - (downPrice || 0)
 
   if (render) {
     return render({ ...options, formatCurrency })
   }
-
-  const displayPrice = salePrice || listPrice
-  const firstPeriodPrice = displayPrice - (downPrice || 0)
 
   const periodElem = !!periodType && (
     <>
@@ -77,56 +88,79 @@ const PriceLabel: React.VFC<
 
   if (variant === 'full-detail') {
     return (
-      <FullDetailPrice>
+      <FullDetailPrice className="price" isSaleAmount={!!saleAmount}>
         {!!downPrice && (
-          <div>
-            {formatMessage(messages.firstPeriod)}
-            {firstPeriodPrice === 0 && !noFreeText && formatMessage(messages.free)}
-            {formatCurrency(firstPeriodPrice)}
+          <div className="downPrice">
+            <span className="downPrice__firstPeriod">{formatMessage(messages.firstPeriod)}</span>
+            {firstPeriodPrice === 0 && !noFreeText && (
+              <span className="downPrice__free">{formatMessage(messages.free)}</span>
+            )}
+            <span className="downPrice__firstPeriodPriceAmount">{formatCurrency(firstPeriodPrice)}</span>
           </div>
         )}
 
         {typeof salePrice === 'number' && (
-          <SalePrice>
-            {!!downPrice && formatMessage(messages.fromSecondPeriod)}
-            {salePrice === 0 && !noFreeText && formatMessage(messages.free)}
-            {formatCurrency(salePrice)}
-            <span style={{ fontSize: '16px' }}>{periodElem}</span>
+          <SalePrice className="salePrice">
+            {!!downPrice && (
+              <span className="salePrice__fromSecondPeriod">{formatMessage(messages.fromSecondPeriod)}</span>
+            )}
+            {salePrice === 0 && !noFreeText && (
+              <span className="salePrice__freeText">{formatMessage(messages.free)}</span>
+            )}
+            {saleAmount ? (
+              <>
+                <span className="salePrice__saleAmount">
+                  {formatMessage(messages.voucherPlanPriceLabel, { saleAmount: saleAmount })}
+                </span>
+                <span className="salePrice__amount">{formatCurrency(salePrice)}</span>
+              </>
+            ) : (
+              <span className="salePrice__amount">{formatCurrency(salePrice)}</span>
+            )}
+            <span className="salePrice__periodUnit" style={{ fontSize: '16px' }}>
+              {periodElem}
+            </span>
           </SalePrice>
         )}
 
-        <ListPrice>
-          {typeof salePrice === 'number'
-            ? formatMessage(messages.originalPrice)
-            : !!downPrice
-            ? formatMessage(messages.fromSecondPeriod)
-            : ''}
-          {listPrice === 0 && !noFreeText && formatMessage(messages.free)}
-          {formatCurrency(listPrice)}
-          <span style={{ fontSize: '16px' }}>{periodElem}</span>
-        </ListPrice>
+          <ListPrice className="listPrice">
+            {typeof salePrice === 'number' ? (
+              <span className="listPrice__originalPriceText">{formatMessage(messages.originalPrice)}</span>
+            ) : !!downPrice ? (
+              <span className="listPrice__fromSecondPeriodText">{formatMessage(messages.fromSecondPeriod)}</span>
+            ) : (
+              ''
+            )}
+            {listPrice === 0 && !noFreeText && (
+              <span className="listPrice__freeText">{formatMessage(messages.free)}</span>
+            )}
+            <span className="listPrice__amount">{formatCurrency(listPrice)}</span>
+            <span className="listPrice__periodUnit" style={{ fontSize: '16px' }}>
+              {periodElem}
+            </span>
+          </ListPrice>
       </FullDetailPrice>
     )
   }
 
   if (variant === 'inline') {
     return (
-      <InlinePrice>
-        <span>
-          {formatCurrency(listPrice)}
-          {periodElem}
-        </span>
+      <InlinePrice className="price">
+        <ListPrice className="listPrice">
+          <span className="listPrice__amount">{formatCurrency(listPrice)}</span>
+          <span className="listPrice__periodUnit">{periodElem}</span>
+        </ListPrice>
         {typeof salePrice === 'number' && (
-          <span>
-            {formatCurrency(salePrice)}
-            {periodElem}
-          </span>
+          <SalePrice className="salePrice">
+            <span className="salePrice__amount">{formatCurrency(salePrice)}</span>
+            <span className="salePrice__periodUnit">{periodElem}</span>
+          </SalePrice>
         )}
       </InlinePrice>
     )
   }
 
-  return <>{formatCurrency(listPrice)}</>
+  return <span className="price listPrice__amount">{formatCurrency(listPrice)}</span>
 }
 
 export default PriceLabel
