@@ -157,21 +157,21 @@ const ProgramPage: React.VFC = () => {
                     <ProgramInstructorCollectionBlock program={program} />
                   </div>
                 )}
-                {!Number(settings['layout.program_page']) && (
+                {!Number(settings['layout.program_page']) ? (
                   <Responsive.Default>
                     <ClassCouponBlock />
                     <StyledProgramInfoCard>
                       <ProgramContentCountBlock program={program} />
                     </StyledProgramInfoCard>
                   </Responsive.Default>
-                )}
-                {!Number(settings['layout.program_page']) && program.abstract && (
+                ) : null}
+                {!Number(settings['layout.program_page']) && program.abstract ? (
                   <div className="mb-5">
                     <ProgramAbstract>{program.abstract}</ProgramAbstract>
                   </div>
-                )}
+                ) : null}
 
-                {Number(settings['layout.program_page']) && (
+                {Number(settings['layout.program_page']) ? (
                   <Responsive.Default>
                     <StyledIntroWrapper className="col-12 col-lg-4 mb-5 p-0">
                       {!!program.tags.length && (
@@ -184,26 +184,26 @@ const ProgramPage: React.VFC = () => {
                       )}
                     </StyledIntroWrapper>
                   </Responsive.Default>
-                )}
+                ) : null}
 
-                {Number(settings['layout.program_page']) && (
+                {Number(settings['layout.program_page']) ? (
                   <div className="mb-5">
                     <ProgramBestReviewsCarousel
                       pathname={pathname}
                       onReviewBlockScroll={() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
                     />
                   </div>
-                )}
+                ) : null}
 
                 <div className="mb-5">
                   <BraftContent>{program.description}</BraftContent>
                 </div>
 
-                {!Number(settings['layout.program_page']) && (
+                {!Number(settings['layout.program_page']) ? (
                   <div className="mb-5">
                     <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
                   </div>
-                )}
+                ) : null}
               </div>
 
               {Number(settings['layout.program_page']) ? (
@@ -248,7 +248,8 @@ const ProgramPage: React.VFC = () => {
               )}
             </div>
 
-            {/* {!Number(settings['layout.program_page']) && (
+            {/* 
+            {!Number(settings['layout.program_page']) ? (
               <div className="row">
                 <div className="col-12 col-lg-8">
                   <div className="mb-5">
@@ -256,7 +257,9 @@ const ProgramPage: React.VFC = () => {
                   </div>
                 </div>
               </div>
-            )} */}
+            )} 
+            ) : null}
+            */}
 
             <div id="customer-review" ref={customerReviewBlockRef}>
               {enabledModules.customer_review && (
