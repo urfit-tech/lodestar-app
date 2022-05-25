@@ -131,9 +131,10 @@ const ProgramContentCutscenePage: React.VFC = () => {
               const [productType, id] = productId.split('_')
               if (productType === 'program-package') {
                 history.push(`/program-packages/${id}/contents`)
-              }
-              if (productType === 'project') {
+              } else if (productType === 'project') {
                 history.push(`/projects/${id}`)
+              } else {
+                history.push('/')
               }
             } else {
               history.push(`/members/${currentMemberId}`)

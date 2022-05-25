@@ -7,6 +7,7 @@ import { AiOutlineCalendar, AiOutlineFileText, AiOutlineVideoCamera } from 'reac
 import { useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { useProgramContentBody } from '../../hooks/program'
@@ -239,6 +240,8 @@ const SortBySectionItem: React.VFC<{
     programId: string
     programContentId?: string
   }>()
+  const [previousPage] = useQueryParam('previousPage', StringParam)
+
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
 
   const isActive = programContent.id === programContentId
@@ -259,7 +262,15 @@ const SortBySectionItem: React.VFC<{
       onClick={() => {
         onClick?.()
         history.push(
-          `/programs/${programId}/contents/${programContent.id}${programPackageId ? `?back=${programPackageId}` : ''}`,
+          `/programs/${programId}/contents/${programContent.id}${
+            programPackageId && previousPage
+              ? `?back=${programPackageId}&previousPage=${previousPage}`
+              : programPackageId
+              ? `?back=${programPackageId}`
+              : previousPage
+              ? `?previousPage=${previousPage}`
+              : ''
+          }`,
         )
       }}
     >
