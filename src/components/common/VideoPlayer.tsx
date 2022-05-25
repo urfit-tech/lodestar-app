@@ -88,26 +88,23 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
     },
   }
 
+  const setCaption = (player: VideoJsPlayer) => {
+    const textTracks = player?.textTracks() ?? []
+    for (let i = 0; i < textTracks.length; i++) {
+      let track = textTracks[i]
+      if (track.kind === 'captions' || track.kind === 'subtitles') {
+        track.mode = 'showing'
+        break
+      }
+    }
+  }
+
   const handleOnLoadedData = () => {
     if (!playerRef.current) {
       return
     }
 
-    const setCaption = () => {
-      const textTracks = playerRef.current?.textTracks() ?? []
-      let isCaptionSet = false
-      for (let i = 0; i < textTracks.length; i++) {
-        if (isCaptionSet) {
-          break
-        }
-        let track = textTracks[i]
-        if (track.kind === 'captions' || track.kind === 'subtitles') {
-          track.mode = 'showing'
-          isCaptionSet = true
-        }
-      }
-    }
-    setCaption()
+    setCaption(playerRef.current)
   }
 
   return (
