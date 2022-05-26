@@ -6,15 +6,17 @@ import React, { useState } from 'react'
 import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { defineMessage, useIntl } from 'react-intl'
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import { StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../../components/program/ProgramContentMenu'
+import ProgramContentNoAuthBlock from '../../components/program/ProgramContentNoAuthBlock'
 import { ProgressProvider } from '../../contexts/ProgressContext'
+import { hasJsonStructure } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
-import { ProgramContentNoAuthBlock } from '../ProgramContentCollectionPage'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
@@ -34,17 +36,21 @@ const ProgramContentPage: React.VFC = () => {
     programId: string
     programContentId: string
   }>()
-  const { enabledModules, settings } = useApp()
+  const { enabledModules, settings, id: appId } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
-  const { search } = useLocation()
-  const query = new URLSearchParams(search)
-  const programPackageId = query.get('back')
+  const [previousPage] = useQueryParam('back', StringParam)
 
   if (isAuthenticating || loadingProgram) {
     return <></>
   }
+
+  let oldProgramInfo = {}
+  if (hasJsonStructure(localStorage.getItem(`${appId}.program.info`) || '')) {
+    JSON.parse(localStorage.getItem(`${appId}.program.info`) || '')
+  }
+  localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
 
   return (
     <Layout>
@@ -57,7 +63,7 @@ const ProgramContentPage: React.VFC = () => {
                 colorScheme="primary"
                 variant="ghost"
                 size="sm"
-                onClick={() => window.open(`/programs/${programId}?moveToBlock=customer-review`)}
+                onClick={() => window.open(`/programs/${programId}?visitIntro=1&moveToBlock=customer-review`)}
               >
                 <Icon component={BsStar} className="mr-2" />
                 {formatMessage(commonMessages.button.review)}
@@ -67,7 +73,7 @@ const ProgramContentPage: React.VFC = () => {
               size="sm"
               colorScheme="primary"
               variant="ghost"
-              onClick={() => window.open(`/programs/${programId}`)}
+              onClick={() => window.open(`/programs/${programId}?visitIntro=1`)}
             >
               <Icon component={AiOutlineProfile} className="mr-2" />
               {formatMessage(commonMessages.button.intro)}
@@ -80,9 +86,28 @@ const ProgramContentPage: React.VFC = () => {
             )}
           </div>
         }
-        onBack={() =>
-          history.push(`/programs/${programId}/contents${programPackageId !== null ? `?back=${programPackageId}` : ''}`)
-        }
+        onBack={() => {
+          if (previousPage) {
+            const [page, targetId] = previousPage.split('_')
+            if (page === 'creators') {
+              history.push(`/creators/${targetId}`)
+            } else if (page === 'programs') {
+              if (targetId) {
+                history.push(`/programs/${targetId}?visitIntro=1`)
+              } else {
+                history.push(`/programs`)
+              }
+            } else if (page === 'program-packages') {
+              history.push(`/program-packages/${targetId}`)
+            } else if (page === 'members') {
+              history.push(`/members/${targetId}`)
+            } else if (page === 'projects') {
+              history.push(`/projects/${targetId}`)
+            } else {
+              history.push('/')
+            }
+          }
+        }}
       />
 
       <StyledLayoutContent>

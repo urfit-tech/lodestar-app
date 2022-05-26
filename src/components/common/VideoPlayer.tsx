@@ -87,6 +87,26 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
       },
     },
   }
+
+  const setCaption = (player: VideoJsPlayer) => {
+    const textTracks = player?.textTracks() ?? []
+    for (let i = 0; i < textTracks.length; i++) {
+      let track = textTracks[i]
+      if (track.kind === 'captions' || track.kind === 'subtitles') {
+        track.mode = 'showing'
+        break
+      }
+    }
+  }
+
+  const handleOnLoadedData = () => {
+    if (!playerRef.current) {
+      return
+    }
+
+    setCaption(playerRef.current)
+  }
+
   return (
     <div>
       <video
@@ -115,6 +135,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
             })
           }
         }}
+        onLoadedData={handleOnLoadedData}
         autoPlay
         controls
       />

@@ -8,7 +8,6 @@ import styled from 'styled-components'
 import { PodcastProgramProps } from '../../containers/podcast/PodcastProgramTimeline'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledPodcastPlansCreators, useEnrolledPodcastProgramIds } from '../../hooks/podcast'
-import { useEnrolledProgramIds } from '../../hooks/program'
 import { ReactComponent as ArrowRightIcon } from '../../images/angle-right.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramBriefProps } from '../../types/program'
@@ -47,13 +46,13 @@ const StyledLink = styled.div`
 
 const OverviewBlock: React.VFC<{
   programs: ProgramBriefProps[]
+  previousPage: string
   podcastPrograms: PodcastProgramProps[]
   onChangeTab?: (key: string) => void
   onSubscribe?: () => void
-}> = ({ programs, podcastPrograms, onChangeTab, onSubscribe }) => {
+}> = ({ programs, previousPage, podcastPrograms, onChangeTab, onSubscribe }) => {
   const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
   const { enrolledPodcastProgramIds } = useEnrolledPodcastProgramIds(currentMemberId || '')
   const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(currentMemberId || '')
 
@@ -62,10 +61,7 @@ const OverviewBlock: React.VFC<{
       <StyledSideBarBlock>
         <h4 className="mb-4">{formatMessage(commonMessages.title.addCourse)}</h4>
         {programs.slice(0, 3).map(program => (
-          <Link
-            key={program.id}
-            to={`/programs/${program.id}${enrolledProgramIds.includes(program.id) ? '/contents' : ''}`}
-          >
+          <Link key={program.id} to={`/programs/${program.id}?back=${previousPage}`}>
             <div className="d-flex align-items-center mb-3">
               <StyledImage
                 className="flex-shrink-0"

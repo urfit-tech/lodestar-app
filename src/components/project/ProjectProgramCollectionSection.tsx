@@ -74,7 +74,7 @@ const ProjectProgramCollectionSection: React.VFC<{
       <ProgramCollection
         programs={programs}
         renderItem={({ program }) => (
-          <Link className="col-12" to={`/programs/${program.id}/contents?back=project_${projectId}`}>
+          <Link className="col-12" to={`/programs/${program.id}/contents?back=projects_${projectId}`}>
             <ProgramDisplayedListItem key={program.id} program={program} memberId={currentMemberId} />
           </Link>
         )}

@@ -1,4 +1,4 @@
-import { Button, Icon, SkeletonText } from '@chakra-ui/react'
+import { Box, Button, Icon, Spinner } from '@chakra-ui/react'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -8,8 +8,9 @@ import queryString from 'query-string'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
+import { Link, Redirect, useHistory, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -87,9 +88,11 @@ const ProgramPage: React.VFC = () => {
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
+  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
   const params = queryString.parse(location.search)
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(programId)
+  const [previousPage] = useQueryParam('back', StringParam)
 
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock) {
@@ -101,16 +104,22 @@ const ProgramPage: React.VFC = () => {
     ReactGA.ga('send', 'pageview')
   }, [])
 
-  if (loadingProgram || enrolledProgramPackages.loading) {
+  if (loadingProgram || enrolledProgramPackages.loading || loadingEnrolledProgramIds) {
     return (
       <DefaultLayout>
-        <SkeletonText mt="1" noOfLines={4} spacing="4" />
+        <Box className="d-flex justify-content-center align-items-center" h="100vh">
+          <Spinner />
+        </Box>
       </DefaultLayout>
     )
   }
 
   if (!program) {
     return <ForbiddenPage />
+  }
+
+  if (!visitIntro && isEnrolled) {
+    return <Redirect to={`/programs/${programId}/contents?back=${previousPage}`} />
   }
 
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
@@ -131,7 +140,7 @@ const ProgramPage: React.VFC = () => {
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
 
       <div>
-        {settings['layout.program_page'] ? (
+        {Number(settings['layout.program_page']) ? (
           <CustomizeProgramBanner program={program} isEnrolled={isEnrolled} />
         ) : (
           <PerpetualProgramBanner
@@ -145,20 +154,20 @@ const ProgramPage: React.VFC = () => {
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-8">
-                {!settings['layout.program_page'] && (
+                {!Number(settings['layout.program_page']) ? (
                   <Responsive.Default>
                     <StyledProgramInfoCard>
                       <ProgramContentCountBlock program={program} />
                     </StyledProgramInfoCard>
                   </Responsive.Default>
-                )}
-                {!settings['layout.program_page'] && program.abstract && (
+                ) : null}
+                {!Number(settings['layout.program_page']) && program.abstract ? (
                   <div className="mb-5">
                     <ProgramAbstract>{program.abstract}</ProgramAbstract>
                   </div>
-                )}
+                ) : null}
 
-                {settings['layout.program_page'] && (
+                {Number(settings['layout.program_page']) ? (
                   <Responsive.Default>
                     <StyledIntroWrapper className="col-12 col-lg-4 mb-5 p-0">
                       {!!program.tags.length && (
@@ -171,29 +180,29 @@ const ProgramPage: React.VFC = () => {
                       )}
                     </StyledIntroWrapper>
                   </Responsive.Default>
-                )}
+                ) : null}
 
-                {settings['layout.program_page'] && (
+                {Number(settings['layout.program_page']) ? (
                   <div className="mb-5">
                     <ProgramBestReviewsCarousel
                       pathname={pathname}
                       onReviewBlockScroll={() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
                     />
                   </div>
-                )}
+                ) : null}
 
                 <div className="mb-5">
                   <BraftContent>{program.description}</BraftContent>
                 </div>
 
-                {!settings['layout.program_page'] && (
+                {!Number(settings['layout.program_page']) ? (
                   <div className="mb-5">
                     <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
                   </div>
-                )}
+                ) : null}
               </div>
 
-              {settings['layout.program_page'] ? (
+              {Number(settings['layout.program_page']) ? (
                 <Responsive.Desktop>
                   <StyledIntroWrapper className="col-12 col-lg-4 mb-3">
                     {!!program.tags.length && (
@@ -231,7 +240,7 @@ const ProgramPage: React.VFC = () => {
               )}
             </div>
 
-            {!settings['layout.program_page'] && (
+            {!Number(settings['layout.program_page']) ? (
               <div className="row">
                 <div className="col-12 col-lg-8">
                   <div className="mb-5">
@@ -239,7 +248,7 @@ const ProgramPage: React.VFC = () => {
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
 
             <div id="customer-review" ref={customerReviewBlockRef}>
               {enabledModules.customer_review && (
@@ -259,11 +268,19 @@ const ProgramPage: React.VFC = () => {
       {!isEnrolledByProgramPackage && (
         <Responsive.Default>
           <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-            {settings['layout.program_page'] ? (
+            {Number(settings['layout.program_page']) ? (
               <StyledButtonWrapper>
                 <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
                   <Button isFullWidth colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
                     {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
+                  </Button>
+                </Link>
+              </StyledButtonWrapper>
+            ) : isEnrolled ? (
+              <StyledButtonWrapper>
+                <Link to={`${program.id}/contents`}>
+                  <Button variant="primary" isFullWidth>
+                    {formatMessage(commonMessages.button.enter)}
                   </Button>
                 </Link>
               </StyledButtonWrapper>

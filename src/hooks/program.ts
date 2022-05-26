@@ -603,20 +603,19 @@ export const useEnrolledProgramIds = (memberId: string) => {
     },
   )
 
-  const enrolledProgramIds =
-    loading || error || !data
-      ? []
-      : uniq([
-          ...data.program_enrollment.map(enrollment => enrollment.program_id),
-          ...data.program_plan_enrollment.map(enrollment => enrollment.program_plan?.program_id || ''),
-          ...data.program_content_enrollment.map(enrollment => enrollment.program_id),
-        ])
+  const enrolledProgramIds = data
+    ? uniq([
+        ...data.program_enrollment.map(enrollment => enrollment.program_id),
+        ...data.program_plan_enrollment.map(enrollment => enrollment.program_plan?.program_id || ''),
+        ...data.program_content_enrollment.map(enrollment => enrollment.program_id),
+      ])
+    : []
 
   return {
-    enrolledProgramIds: loading || error ? [] : enrolledProgramIds,
-    errorProgramIds: error,
-    loadingProgramIds: loading,
-    refetchProgramIds: refetch,
+    enrolledProgramIds,
+    error,
+    loading,
+    refetch,
   }
 }
 
@@ -690,19 +689,17 @@ export const useProgramContentMaterial = (programContentId: string) => {
     { variables: { programContentId }, fetchPolicy: 'no-cache' },
   )
 
-  const programContentMaterials = data?.program_content_material.map(
-    (contentMaterial: { id: any; data: any; created_at: Date }) => {
-      return {
-        id: contentMaterial.id,
-        data: contentMaterial.data,
-        createdAt: new Date(contentMaterial.created_at),
-      }
-    },
-  )
+  const programContentMaterials = data?.program_content_material.map(material => {
+    return {
+      id: material.id,
+      data: material.data,
+      createdAt: new Date(material.created_at),
+    }
+  })
   return {
-    loadingProgramContentMaterials: loading,
-    errorProgramContentMaterials: error,
-    programContentMaterials,
+    loading,
+    error,
+    data: programContentMaterials,
     refetch,
   }
 }

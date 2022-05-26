@@ -23,6 +23,7 @@
     "@menu-item-height": "48px",
     "@modal-mask-bg": "fade(@white, 65%)",
     "@primary-color": "#000",
+    "@menu-item-active-bg": "fade(@primary-color, 10%)",
     "@btn-primary-bg": "#000",
     "@processing-color": "rgba(24, 144, 255, 0.1)",
     "@tag-font-size": "12px",

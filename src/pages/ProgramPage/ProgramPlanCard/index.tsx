@@ -16,7 +16,6 @@ import { BraftContent } from '../../../components/common/StyledBraftEditor'
 import { commonMessages, productMessages } from '../../../helpers/translation'
 import { useEnrolledPlanIds, useProgram } from '../../../hooks/program'
 import { ProgramPlan } from '../../../types/program'
-import ProgramPlanPaymentButton from './ProgramPlanPaymentButton'
 
 const StyledAdminCard = styled(AdminCard)`
   color: ${props => props.theme['@label-color']};
@@ -65,6 +64,7 @@ const ProgramPlanCard: React.VFC<{
   const currencyId = currency.id || 'TWD'
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
+
   return (
     <StyledAdminCard key={programPlan.id}>
       <header>
@@ -97,7 +97,7 @@ const ProgramPlanCard: React.VFC<{
           variant="outline"
           colorScheme="primary"
           isFullWidth
-          onClick={() => history.push(`/programs/${programId}/contents`)}
+          onClick={() => history.push(`/programs/${programId}/contents?back=program_${programId}`)}
         >
           {formatMessage(commonMessages.button.enter)}
         </Button>

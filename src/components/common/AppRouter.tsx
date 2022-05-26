@@ -64,6 +64,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/oauth2/:provider',
     pageName: 'OAuth2Page',
   },
+  join: {
+    path: '/join',
+    pageName: 'JoinPage',
+  },
   terms: {
     path: '/terms',
     pageName: 'TermsPage',
@@ -120,6 +124,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/redeem',
     pageName: 'RedeemPage',
   },
+  profile: {
+    path: '/@:username',
+    pageName: 'ProfilePage',
+  },
 
   // system - checkout
   order: {
@@ -148,9 +156,9 @@ const defaultRoutesMap: RoutesMap = {
     path: '/notifications',
     pageName: 'NotificationPage',
   },
-  program_content_collection: {
+  program_content_cutscene: {
     path: '/programs/:programId/contents',
-    pageName: 'ProgramContentCollectionPage',
+    pageName: 'ProgramContentCutscenePage',
   },
   program_content: {
     path: '/programs/:programId/contents/:programContentId',
