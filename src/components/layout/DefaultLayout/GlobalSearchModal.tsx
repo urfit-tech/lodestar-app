@@ -15,11 +15,12 @@ import {
 } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { complement, equals, flatten, groupBy, includes, isEmpty, map, pluck, toPairs } from 'ramda'
+import { complement, equals, flatten, groupBy, includes, isEmpty, map, pluck, prop, sortBy, toPairs } from 'ramda'
 import React, { useState } from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import hasura from '../../../hasura'
 import { notEmpty } from '../../../helpers'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as SearchIcon } from '../../../images/search.svg'
@@ -339,7 +340,7 @@ const GlobalSearchFilter: React.VFC<{
           ? tagsFilter.map(tagName => tags.find(tag => tag.name.split('/')[0] === tagName)).filter(notEmpty)
           : tags
         ).map(tag => {
-          const isTagActive = includes(tag.id ? [tag.name] : pluck('name', tag.subTags), filter.tagNameSList)
+          const isTagActive = includes(tag.id ? [tag.name] : pluck('id', tag.subTags), filter.tagNameSList)
 
           return (
             <StyledGroup active={isTagActive} key={tag.id} className="mb-2">
@@ -352,10 +353,10 @@ const GlobalSearchFilter: React.VFC<{
                       tagNameSList: isTagActive
                         ? [
                             ...prevFilter.tagNameSList.filter(
-                              tagNameS => !equals(tagNameS, tag.id ? [tag.name] : pluck('name', tag.subTags)),
+                              tagNameS => !equals(tagNameS, tag.id ? [tag.name] : pluck('id', tag.subTags)),
                             ),
                           ]
-                        : [...prevFilter.tagNameSList, tag.id ? [tag.name] : pluck('name', tag.subTags)],
+                        : [...prevFilter.tagNameSList, tag.id ? [tag.name] : pluck('id', tag.subTags)],
                     }))
                   }
                 />
@@ -384,16 +385,15 @@ const GlobalSearchFilter: React.VFC<{
                                 ].filter(complement(isEmpty))
                               : [
                                   ...prevFilter.tagNameSList.filter(
-                                    tagNameS =>
-                                      !tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
+                                    tagNameS => !tagNameS.every(tagName => pluck('id', tag.subTags).includes(tagName)),
                                   ),
                                   [
                                     ...(!!prevFilter.tagNameSList.find(tagNameS =>
-                                      tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
+                                      tagNameS.every(tagName => pluck('id', tag.subTags).includes(tagName)),
                                     )
                                       ? [
                                           ...(prevFilter.tagNameSList.find(tagNameS =>
-                                            tagNameS.every(tagName => pluck('name', tag.subTags).includes(tagName)),
+                                            tagNameS.every(tagName => pluck('id', tag.subTags).includes(tagName)),
                                           ) || []),
                                           `${tag.name}/${subTag.name}`,
                                         ].sort()
@@ -498,7 +498,7 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
     tags: (Tag & { subTags: Tag[] })[]
   }
 } = type => {
-  const { loading, data } = useQuery(
+  const { loading, data } = useQuery<hasura.GET_PRODUCT_FILTER_OPTIONS, hasura.GET_PRODUCT_FILTER_OPTIONSVariables>(
     gql`
       query GET_PRODUCT_FILTER_OPTIONS($class: String) {
         category(
@@ -512,15 +512,9 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
           id
           name
         }
-        app_tag(
-          where: {
-            tag: {
-              filterable: { _eq: true }
-              program_tags: { program_id: { _is_null: false }, program: { is_deleted: { _eq: false } } }
-            }
-          }
-        ) {
+        search_tag(where: { tag: { filterable: { _eq: true } } }, order_by: { position: asc }) {
           name: tag_name
+          position
         }
       }
     `,
@@ -541,18 +535,25 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
     toPairs(groupBy<{ id: string; name: string }>(category => category.name.split('/')[0], data?.category || [])),
   )
 
-  const tags = map(
-    ([tagName, subTags]) => ({
-      id: subTags.filter(tag => tag.name === tagName)[0]?.name,
-      name: tagName,
-      subTags: subTags
-        .filter(tag => tag.name !== tagName)
-        .map(tag => ({
-          id: tag.name,
-          name: tag.name.split('/')[1],
-        })),
-    }),
-    toPairs(groupBy<{ id: string; name: string }>(tag => tag.name.split('/')[0], data?.app_tag || [])),
+  const sortByPosition = sortBy(prop('position'))
+  const tags = sortByPosition(
+    map(
+      ([tagName, subTags]) => ({
+        id: subTags.filter(tag => tag.name === tagName)[0]?.name ?? '',
+        name: tagName,
+        position: subTags.filter(tag => tag.name === tagName)[0]?.position,
+        subTags: sortByPosition(
+          subTags
+            .filter(tag => tag.name !== tagName)
+            .map(tag => ({
+              id: tag.name ?? '',
+              name: tag.name?.split('/')[1] ?? '',
+              position: tag.position,
+            })),
+        ),
+      }),
+      toPairs(groupBy(tag => tag.name?.split('/')[0] ?? '', data?.search_tag || [])),
+    ),
   )
 
   return {

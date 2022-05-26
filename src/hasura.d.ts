@@ -257,9 +257,10 @@ export interface GET_PRODUCT_FILTER_OPTIONS_category {
   name: string;
 }
 
-export interface GET_PRODUCT_FILTER_OPTIONS_app_tag {
-  __typename: "app_tag";
-  name: string | null;
+export interface GET_PRODUCT_FILTER_OPTIONS_search_tag {
+  __typename: "search_tag";
+  name: string;
+  position: number;
 }
 
 export interface GET_PRODUCT_FILTER_OPTIONS {
@@ -268,9 +269,9 @@ export interface GET_PRODUCT_FILTER_OPTIONS {
    */
   category: GET_PRODUCT_FILTER_OPTIONS_category[];
   /**
-   * fetch data from the table: "app_tag"
+   * fetch data from the table: "search_tag"
    */
-  app_tag: GET_PRODUCT_FILTER_OPTIONS_app_tag[];
+  search_tag: GET_PRODUCT_FILTER_OPTIONS_search_tag[];
 }
 
 export interface GET_PRODUCT_FILTER_OPTIONSVariables {
@@ -14185,6 +14186,26 @@ export enum role_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "search_tag"
+ */
+export enum search_tag_constraint {
+  search_tag_pkey = "search_tag_pkey",
+  search_tag_tag_name_app_id_key = "search_tag_tag_name_app_id_key",
+}
+
+/**
+ * update columns of table "search_tag"
+ */
+export enum search_tag_update_column {
+  app_id = "app_id",
+  created_at = "created_at",
+  id = "id",
+  position = "position",
+  tag_name = "tag_name",
+  updated_at = "updated_at",
+}
+
+/**
  * unique or primary key constraints on table "setting"
  */
 export enum setting_constraint {
@@ -23634,6 +23655,52 @@ export interface role_permission_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "search_tag"
+ */
+export interface search_tag_arr_rel_insert_input {
+  data: search_tag_insert_input[];
+  on_conflict?: search_tag_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "search_tag". All fields are combined with a logical 'AND'.
+ */
+export interface search_tag_bool_exp {
+  _and?: search_tag_bool_exp[] | null;
+  _not?: search_tag_bool_exp | null;
+  _or?: search_tag_bool_exp[] | null;
+  app_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+  tag?: tag_bool_exp | null;
+  tag_name?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "search_tag"
+ */
+export interface search_tag_insert_input {
+  app_id?: string | null;
+  created_at?: any | null;
+  id?: any | null;
+  position?: number | null;
+  tag?: tag_obj_rel_insert_input | null;
+  tag_name?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on_conflict condition type for table "search_tag"
+ */
+export interface search_tag_on_conflict {
+  constraint: search_tag_constraint;
+  update_columns: search_tag_update_column[];
+  where?: search_tag_bool_exp | null;
+}
+
+/**
  * input type for inserting array relation for remote table "setting"
  */
 export interface setting_arr_rel_insert_input {
@@ -23864,6 +23931,7 @@ export interface tag_bool_exp {
   podcast_program_tags?: podcast_program_tag_bool_exp | null;
   post_tags?: post_tag_bool_exp | null;
   program_tags?: program_tag_bool_exp | null;
+  search_tags?: search_tag_bool_exp | null;
   type?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
@@ -23882,6 +23950,7 @@ export interface tag_insert_input {
   podcast_program_tags?: podcast_program_tag_arr_rel_insert_input | null;
   post_tags?: post_tag_arr_rel_insert_input | null;
   program_tags?: program_tag_arr_rel_insert_input | null;
+  search_tags?: search_tag_arr_rel_insert_input | null;
   type?: string | null;
   updated_at?: any | null;
 }
