@@ -54,7 +54,6 @@ const StyledAdminCard = styled(AdminCard)`
 `
 const StyledTitle = styled.span`
   ${MultiLineTruncationMixin}
-  height: 3.25rem;
   line-height: 1.3;
   letter-spacing: 0.77px;
   font-size: 20px;
@@ -74,6 +73,12 @@ const StyledText = styled.span<{ outdated?: boolean }>`
   line-height: 1.57;
   letter-spacing: 0.4px;
 `
+const StyledCode = styled.div<{ outdated?: boolean }>`
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: ${props => (props.outdated ? 'var(--gray)' : props.theme['@primary-color'])};
+`
 
 const CouponAdminCard: React.VFC<{
   coupon: CouponProps
@@ -85,19 +90,22 @@ const CouponAdminCard: React.VFC<{
   return (
     <StyledAdminCard
       title={
-        <div className="d-flex align-items-start justify-content-between py-4">
-          <StyledTitle>{coupon.couponCode.couponPlan.title}</StyledTitle>
-          <StyledPriceLabel className="ml-4" outdated={outdated}>
-            {coupon.couponCode.couponPlan.type === 'cash' ? (
-              <PriceLabel listPrice={coupon.couponCode.couponPlan.amount} />
-            ) : coupon.couponCode.couponPlan.type === 'percent' ? (
-              coupon.couponCode.couponPlan.amount % 10 === 0 ? (
-                `${10 - coupon.couponCode.couponPlan.amount / 10} ${formatMessage(commonMessages.unit.off)}`
-              ) : (
-                `${100 - coupon.couponCode.couponPlan.amount} ${formatMessage(commonMessages.unit.off)}`
-              )
-            ) : null}
-          </StyledPriceLabel>
+        <div className="py-4">
+          <div className="d-flex align-items-start justify-content-between">
+            <StyledTitle>{coupon.couponCode.couponPlan.title}</StyledTitle>
+            <StyledPriceLabel className="ml-4" outdated={outdated}>
+              {coupon.couponCode.couponPlan.type === 'cash' ? (
+                <PriceLabel listPrice={coupon.couponCode.couponPlan.amount} />
+              ) : coupon.couponCode.couponPlan.type === 'percent' ? (
+                coupon.couponCode.couponPlan.amount % 10 === 0 ? (
+                  `${10 - coupon.couponCode.couponPlan.amount / 10} ${formatMessage(commonMessages.unit.off)}`
+                ) : (
+                  `${100 - coupon.couponCode.couponPlan.amount} ${formatMessage(commonMessages.unit.off)}`
+                )
+              ) : null}
+            </StyledPriceLabel>
+          </div>
+          <StyledCode outdated={outdated}>{coupon.couponCode.code}</StyledCode>
         </div>
       }
     >
