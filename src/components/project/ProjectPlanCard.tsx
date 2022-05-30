@@ -7,7 +7,7 @@ import EmptyCover from '../../images/empty-cover.png'
 import { PeriodType } from '../../types/program'
 import { ProjectPlanProps } from '../../types/project'
 import PaymentButton from '../common/PaymentButton'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ShortenPeriodTypeLabel from '../common/ShortenPeriodTypeLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 

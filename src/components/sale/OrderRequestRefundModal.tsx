@@ -30,7 +30,7 @@ import { handleError } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import { OrderDiscountProps } from '../../types/checkout'
 import { ProductType } from '../../types/product'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const messages = defineMessages({
   requestRefund: { id: 'order.OrderRequestRefundModal.requestRefund', defaultMessage: '申請退款' },

@@ -13,7 +13,7 @@ import { useCoinStatus } from '../../hooks/data'
 import { useCurrency } from '../../hooks/util'
 import { AuthModalContext } from '../auth/AuthModal'
 import CommonModal from '../common/CommonModal'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const StyledTitle = styled.h3`
   ${MultiLineTruncationMixin}

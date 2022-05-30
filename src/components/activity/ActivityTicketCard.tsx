@@ -9,7 +9,7 @@ import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { ActivitySession } from '../../types/activity'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 
 const StyledWrapper = styled.div`

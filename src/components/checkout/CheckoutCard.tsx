@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl'
 import { checkoutMessages } from '../../helpers/translation'
 import { CartProductProps, CheckProps, InvoiceProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const CheckoutCard: React.VFC<
   CardProps & {
