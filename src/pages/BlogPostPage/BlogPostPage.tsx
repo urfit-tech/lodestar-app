@@ -1,29 +1,28 @@
 import { Icon } from '@chakra-ui/icons'
-import { Divider, IconButton, SkeletonText } from '@chakra-ui/react'
+import { Divider, SkeletonText } from '@chakra-ui/react'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { StyledPostMeta } from '../../components/blog'
 import PostCover from '../../components/blog/PostCover'
 import { RelativePostCollection } from '../../components/blog/PostLinkCollection'
 import CreatorCard from '../../components/common/CreatorCard'
+import LikedCountButton from '../../components/common/LikedCountButton'
+import SocialSharePopover from '../../components/common/SocialSharePopover'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { useAddPostViews, usePost } from '../../hooks/blog'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as EyeIcon } from '../../images/eye.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
-import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
-import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 import ForbiddenPage from '../ForbiddenPage'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 import BlogPostPageHelmet from './BlogPostPageHelmet'
-import SocialSharePopover from '../../components/common/SocialSharePopover'
 
 const messages = defineMessages({
   prevPost: { id: 'blog.common.prevPost', defaultMessage: '上一則' },
@@ -54,27 +53,6 @@ const StyledSubTitle = styled.div`
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.2px;
-`
-
-const StyledIconButton = styled(IconButton)<{ isActive?: boolean }>`
-  &&& {
-    color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-dark)')};
-    border-radius: 50%;
-    background: white;
-  }
-`
-
-const StyledLikedCount = styled.span<{ isActive?: boolean }>`
-  color: var(--gray-dark);
-  font-size: 12px;
-  font-weight: 500;
-
-  ${props =>
-    props.isActive &&
-    css`
-      color: ${props.theme['@primary-color']};
-      text-shadow: 0 0 3px ${props.theme['@primary-color']}33;
-    `}
 `
 
 const BlogPostPage: React.VFC = () => {
@@ -183,14 +161,9 @@ const BlogPostPage: React.VFC = () => {
                   </Link>
                 ))}
               </div>
-              <div className="col-6 col-lg-3 offset-lg-5">
+              <div className="col-6 col-lg-4 offset-lg-4  d-flex align-items-center justify-content-end">
                 <SocialSharePopover url={window.location.href} />
-                <StyledIconButton
-                  variant="ghost"
-                  isActive={isLiked}
-                  icon={<Icon as={isLiked ? HeartFillIcon : HeartIcon} />}
-                />
-                <StyledLikedCount isActive={isLiked}>{likeCounts}</StyledLikedCount>
+                <LikedCountButton onClick={() => {}} count={likeCounts} isLiked={isLiked} />
               </div>
             </div>
             <Divider className="mb-3" />
