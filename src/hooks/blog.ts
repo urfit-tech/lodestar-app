@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import hasura from '../hasura'
 import { isUUIDv4 } from '../helpers'
 import { Post, PostLatestProps, PostLinkProps, PostPreviewProps } from '../types/blog'
@@ -238,6 +239,14 @@ export const usePost = (search: string) => {
         views
         published_at
         updated_at
+        post_reaction {
+          member_id
+        }
+        post_reaction_aggregate {
+          aggregate {
+            count
+          }
+        }
         post_roles(where: { name: { _eq: "author" } }) {
           id
           member {
@@ -377,7 +386,6 @@ export const usePost = (search: string) => {
           isPhysical: v.merchandise.is_physical,
           isCustomized: v.merchandise.is_customized,
           isCountdownTimerVisible: v.merchandise.is_countdown_timer_visible,
-
           images: v.merchandise.merchandise_imgs.map(image => ({
             id: image.id,
             url: image.url,
@@ -407,6 +415,7 @@ export const usePost = (search: string) => {
         description: dataPost.description,
         prevPost,
         nextPost,
+        reactedMemberIdsCount: dataPost.post_reaction_aggregate.aggregate?.count || 0,
       }
 
   return {
@@ -531,3 +540,61 @@ export const useLatestPost = (filter?: { limit?: number }) => {
     refetchPosts: refetch,
   }
 }
+
+export const useMutatePostReaction = (postId?: string) => {
+  const { currentMemberId } = useAuth()
+  const [insertPostReactionHandler] = useMutation<hasura.INSERT_POST_REACTION, hasura.INSERT_POST_REACTIONVariables>(
+    INSERT_POST_REACTION,
+  )
+  const [deletePostReactionHandler] = useMutation<hasura.DELETE_POST_REACTION, hasura.DELETE_POST_REACTIONVariables>(
+    DELETE_POST_REACTION,
+  )
+
+  const handleChangePostLikeLocalStorage = (action: 'insert' | 'delete') => {
+    const postLikedData: { postId: string }[] = JSON.parse(localStorage.getItem('kolabe.post_reaction') || '[]')
+    if (postId) {
+      if (action === 'insert') {
+        postLikedData.push({ postId: postId })
+        localStorage.setItem('kolabe.post_reaction', JSON.stringify(postLikedData))
+      } else {
+        const newPostLikedData = postLikedData.filter(v => v.postId !== postId)
+        localStorage.setItem('kolabe.post_reaction', JSON.stringify(newPostLikedData))
+      }
+    }
+  }
+
+  const insertPostReaction = () => {
+    handleChangePostLikeLocalStorage('insert')
+    return insertPostReactionHandler({
+      variables: { postId, memberId: currentMemberId || '' },
+    })
+  }
+
+  const deletePostReaction = () => {
+    handleChangePostLikeLocalStorage('delete')
+    return deletePostReactionHandler({
+      variables: { postId, memberId: currentMemberId || '' },
+    })
+  }
+
+  return {
+    insertPostReaction,
+    deletePostReaction,
+  }
+}
+
+const INSERT_POST_REACTION = gql`
+  mutation INSERT_POST_REACTION($memberId: String!, $postId: uuid!) {
+    insert_post_reaction(objects: { member_id: $memberId, post_id: $postId }) {
+      affected_rows
+    }
+  }
+`
+
+const DELETE_POST_REACTION = gql`
+  mutation DELETE_POST_REACTION($memberId: String!, $postId: uuid!) {
+    delete_post_reaction(where: { member_id: { _eq: $memberId }, post_id: { _eq: $postId } }) {
+      affected_rows
+    }
+  }
+`

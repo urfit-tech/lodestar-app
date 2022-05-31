@@ -42,6 +42,7 @@ export type Post = Omit<PostPreviewProps, 'authorId'> & {
     codeName: string | null
     title: string
   } | null
+  reactedMemberIdsCount: number
 }
 
 export type PostLatestProps = PostLinkProps & {

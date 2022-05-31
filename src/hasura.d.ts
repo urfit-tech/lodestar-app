@@ -3390,6 +3390,21 @@ export interface GET_POST_post_post_roles_member {
   username: string | null;
 }
 
+export interface GET_POST_post_reaction {
+  __typename: "post_reaction";
+  member_id: string;
+}
+
+export interface GET_POST_post_post_reaction_aggregate_aggregate {
+  __typename: "post_reaction_aggregate_fields";
+  count: number;
+}
+
+export interface GET_POST_post_post_reaction_aggregate {
+  __typename: "post_reaction_aggregate";
+  aggregate: GET_POST_post_post_reaction_aggregate_aggregate | null;
+}
+
 export interface GET_POST_post_post_roles {
   __typename: "post_role";
   id: any;
@@ -3532,6 +3547,14 @@ export interface GET_POST_post {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+  /**
+   * An array relationship
+   */
+  post_reaction: GET_POST_post_reaction[];
+   /**
+   * An aggregate relationship
+   */
+  post_reaction_aggregate: GET_POST_post_post_reaction_aggregate;
   /**
    * An array relationship
    */
@@ -3701,6 +3724,14 @@ export interface GET_POST_post_by_pk {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+    /**
+   * An array relationship
+   */
+  post_reaction: GET_POST_post_reaction[];
+     /**
+   * An aggregate relationship
+   */
+  post_reaction_aggregate: GET_POST_post_post_reaction_aggregate;
   /**
    * An array relationship
    */
@@ -3848,6 +3879,66 @@ export interface GET_LATEST_POST {
 export interface GET_LATEST_POSTVariables {
   limit?: number | null;
 }
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_POST_REACTION
+// ====================================================
+
+export interface INSERT_POST_REACTION_insert_post_reaction {
+  __typename: "post_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_POST_REACTION {
+  /**
+   * insert data into the table: "post_reaction"
+   */
+  insert_post_reaction: INSERT_POST_REACTION_insert_post_reaction | null;
+}
+
+export interface INSERT_POST_REACTIONVariables {
+  memberId: string;
+  postId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_POST_REACTION
+// ====================================================
+
+export interface DELETE_POST_REACTION_delete_post_reaction {
+  __typename: "post_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_POST_REACTION {
+  /**
+   * delete data from the table: "post_reaction"
+   */
+  delete_post_reaction: DELETE_POST_REACTION_delete_post_reaction | null;
+}
+
+export interface DELETE_POST_REACTIONVariables {
+  memberId: string;
+  postId: any;
+}
+
+
 
 /* tslint:disable */
 /* eslint-disable */

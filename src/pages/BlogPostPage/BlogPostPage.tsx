@@ -11,11 +11,11 @@ import { StyledPostMeta } from '../../components/blog'
 import PostCover from '../../components/blog/PostCover'
 import { RelativePostCollection } from '../../components/blog/PostLinkCollection'
 import CreatorCard from '../../components/common/CreatorCard'
-import LikedCountButton from '../../components/common/LikedCountButton'
+import LikesCountButton from '../../components/common/LikedCountButton'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
-import { useAddPostViews, usePost } from '../../hooks/blog'
+import { useAddPostViews, useMutatePostReaction, usePost } from '../../hooks/blog'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as EyeIcon } from '../../images/eye.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
@@ -57,12 +57,33 @@ const StyledSubTitle = styled.div`
 
 const BlogPostPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { postId } = useParams<{ postId: string }>()
+  const { searchId } = useParams<{ searchId: string }>()
   const app = useApp()
-  const { loadingPost, post } = usePost(postId)
+  const { loadingPost, post, refetchPosts } = usePost(searchId)
+  const postId = post?.id
   const addPostView = useAddPostViews()
+  const { insertPostReaction, deletePostReaction } = useMutatePostReaction(postId)
 
   const [isScrollingDown, setIsScrollingDown] = useState(false)
+  const [isLiked, setIsLiked] = useState(false)
+  const [likesCount, setLikesCount] = useState(0)
+
+  const handleGetPostLikes = () => {
+    const postLikesData: { postId: string }[] = JSON.parse(localStorage.getItem('kolabe.post_reaction') || '[]')
+    const isThisPostLikes: boolean = postLikesData.some(v => v.postId === postId)
+    setIsLiked(isThisPostLikes)
+  }
+
+  useEffect(() => {
+    if (post) {
+      setLikesCount(post.reactedMemberIdsCount)
+    }
+  }, [post])
+
+  useEffect(() => {
+    document.getElementById('layout-content')?.scrollTo({ top: 0 })
+    handleGetPostLikes()
+  }, [postId])
 
   const handleScroll = useCallback(
     throttle(() => {
@@ -83,13 +104,6 @@ const BlogPostPage: React.VFC = () => {
     }, 100),
     [post],
   )
-
-  const isLiked = true
-  const likeCounts = 88
-
-  useEffect(() => {
-    document.getElementById('layout-content')?.scrollTo({ top: 0 })
-  }, [postId])
 
   useEffect(() => {
     const layoutContentElem = document.querySelector('#layout-content')
@@ -120,6 +134,18 @@ const BlogPostPage: React.VFC = () => {
     }
   } catch (error) {}
 
+  const handleLikeStatus = async () => {
+    if (isLiked) {
+      setIsLiked(false)
+      setLikesCount(likesCount - 1)
+      await deletePostReaction()
+    } else {
+      setIsLiked(true)
+      setLikesCount(likesCount + 1)
+      await insertPostReaction()
+    }
+    await refetchPosts()
+  }
   return (
     <DefaultLayout white noHeader={isScrollingDown}>
       <BlogPostPageHelmet post={post} />
@@ -163,7 +189,7 @@ const BlogPostPage: React.VFC = () => {
               </div>
               <div className="col-6 col-lg-4 offset-lg-4  d-flex align-items-center justify-content-end">
                 <SocialSharePopover url={window.location.href} />
-                <LikedCountButton onClick={() => {}} count={likeCounts} isLiked={isLiked} />
+                <LikesCountButton onClick={handleLikeStatus} count={likesCount} isLiked={isLiked} />
               </div>
             </div>
             <Divider className="mb-3" />
@@ -204,7 +230,7 @@ const BlogPostPage: React.VFC = () => {
             </div>
           </div>
           <div className="col-12 col-lg-3 pl-4">
-            <RelativePostCollection postId={postId} tags={post?.tags} />
+            {postId && <RelativePostCollection postId={postId} tags={post?.tags} />}
           </div>
         </div>
       </div>
