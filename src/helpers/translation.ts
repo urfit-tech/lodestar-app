@@ -1563,7 +1563,7 @@ export const codeMessages = defineMessages({
   },
   E_EXCHANGE_CODE: {
     id: 'code.E_EXCHANGE_CODE',
-    defaultMessage: '無法加入該折價券',
+    defaultMessage: 'Unable to exchange this discount',
   },
   E_OUTDATED_CODE: {
     id: 'code.E_OUTDATED_CODE',
@@ -1668,5 +1668,9 @@ export const codeMessages = defineMessages({
   E_NO_PRODUCT: {
     id: 'code.E_NO_PRODUCT',
     defaultMessage: 'product does not exist',
+  },
+  E_DUPLICATED_EXCHANGE: {
+    id: 'code.E_DUPLICATED_EXCHANGE',
+    defaultMessage: 'Discount already exchange',
   },
 })

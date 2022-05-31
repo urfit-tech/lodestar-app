@@ -168,6 +168,7 @@
   "code.E_CW_SERVICE": "CW 导入付款页失败",
   "code.E_CW_SETUP": "CW 环境设定失败",
   "code.E_DELIVER_PRODUCTS": "E_DELIVER_PRODUCTS",
+  "code.E_DUPLICATED_EXCHANGE": "discount already exchange",
   "code.E_EMAIL_EXISTS": "电子信箱已存在",
   "code.E_EXCHANGE_CODE": "无法加入该折价券",
   "code.E_GET_MEMBER": "无法取得使用者",
