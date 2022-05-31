@@ -1,7 +1,9 @@
 import { Icon } from '@chakra-ui/icons'
 import { Divider, SkeletonText } from '@chakra-ui/react'
 import { throttle } from 'lodash'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -15,6 +17,8 @@ import LikesCountButton from '../../components/common/LikedCountButton'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
+import MessageSuggestItem from '../../components/practice/MessageSuggestItem'
+import SuggestionCreationModal from '../../components/practice/SuggestionCreationModal'
 import { useAddPostViews, useMutatePostReaction, usePost } from '../../hooks/blog'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as EyeIcon } from '../../images/eye.svg'
@@ -27,6 +31,7 @@ import BlogPostPageHelmet from './BlogPostPageHelmet'
 const messages = defineMessages({
   prevPost: { id: 'blog.common.prevPost', defaultMessage: '上一則' },
   nextPost: { id: 'blog.common.nextPost', defaultMessage: '下一則' },
+  blogSuggestion: { id: 'blog.label.blogSuggestion', defaultMessage: '回應' },
 })
 
 const StyledTitle = styled.div`
@@ -55,7 +60,12 @@ const StyledSubTitle = styled.div`
   letter-spacing: 0.2px;
 `
 
+const StyledPostTitle = styled.h3`
+  ${CommonTitleMixin}
+`
+
 const BlogPostPage: React.VFC = () => {
+  const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
   const { searchId } = useParams<{ searchId: string }>()
   const app = useApp()
@@ -228,6 +238,30 @@ const BlogPostPage: React.VFC = () => {
                 )}
               </div>
             </div>
+            {currentMemberId && (
+              <div className="mb-4">
+                <StyledPostTitle className="mb-3">{formatMessage(messages.blogSuggestion)}</StyledPostTitle>
+                <SuggestionCreationModal threadId={`/posts/${postId}`} onRefetch={() => refetchPosts()} />
+                {post?.suggests.map(v => (
+                  <div key={v.id}>
+                    <MessageSuggestItem
+                      key={v.id}
+                      suggestId={v.id}
+                      memberId={v.memberId}
+                      description={v.description}
+                      suggestReplyCount={v.suggestReplyCount}
+                      programRoles={
+                        // post?.programRoles ||
+                        []
+                      }
+                      reactedMemberIds={v.reactedMemberIds}
+                      createdAt={v.createdAt}
+                      onRefetch={() => refetchPosts()}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           <div className="col-12 col-lg-3 pl-4">
             {postId && <RelativePostCollection postId={postId} tags={post?.tags} />}

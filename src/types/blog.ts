@@ -1,5 +1,6 @@
 import { Category } from './general'
 import { MerchandiseProps } from './merchandise'
+import { SuggestProps } from './practice'
 
 export type PostLinkProps = {
   id: string
@@ -43,6 +44,7 @@ export type Post = Omit<PostPreviewProps, 'authorId'> & {
     title: string
   } | null
   reactedMemberIdsCount: number
+  suggests: SuggestProps[]
 }
 
 export type PostLatestProps = PostLinkProps & {

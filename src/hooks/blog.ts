@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import hasura from '../hasura'
-import { isUUIDv4 } from '../helpers'
+import { isUUIDv4, notEmpty } from '../helpers'
 import { Post, PostLatestProps, PostLinkProps, PostPreviewProps } from '../types/blog'
 
 export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: string[]; categories?: string }) => {
@@ -225,6 +225,7 @@ export const useRelativePostCollection = (id: string, tags?: string[]) => {
 }
 
 export const usePost = (search: string) => {
+  const { currentMemberId } = useAuth()
   const { loading, error, data, refetch } = useQuery<hasura.GET_POST, hasura.GET_POSTVariables>(
     gql`
       fragment PostParts on post {
@@ -239,6 +240,41 @@ export const usePost = (search: string) => {
         views
         published_at
         updated_at
+        post_suggests_aggregate: post_issue_aggregate {
+          aggregate {
+            count
+          }
+        }
+        ${
+          currentMemberId
+            ? `post_suggests: post_issue(order_by: { issue: { created_at: desc } }) {
+          suggest: issue {
+            id
+            description
+            created_at
+            member_id
+            suggest_reactions: issue_reactions {
+              id
+              member_id
+            }
+            suggest_replies_aggregate: issue_replies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            suggest_replies: issue_replies(order_by: [{ created_at: asc }]) {
+              id
+              content
+              created_at
+              member_id
+              suggest_reply_reactions: issue_reply_reactions {
+                member_id
+              }
+            }
+          }
+        }`
+            : ''
+        }
         post_reaction {
           member_id
         }
@@ -416,6 +452,27 @@ export const usePost = (search: string) => {
         prevPost,
         nextPost,
         reactedMemberIdsCount: dataPost.post_reaction_aggregate.aggregate?.count || 0,
+        suggests: currentMemberId
+          ? dataPost.post_suggests
+              .map(w => w.suggest)
+              .filter(notEmpty)
+              .map(v => ({
+                id: v.id,
+                description: v.description,
+                memberId: v.member_id,
+                createdAt: new Date(v.created_at),
+                reactedMemberIds: v.suggest_reactions.map(w => w.member_id) || [],
+                suggestReplies:
+                  v.suggest_replies.map(y => ({
+                    id: y.id,
+                    memberId: y.member_id,
+                    content: y.content,
+                    createdAt: y.created_at,
+                    reactedMemberIds: y.suggest_reply_reactions.map(w => w.member_id),
+                  })) || [],
+                suggestReplyCount: v.suggest_replies_aggregate.aggregate?.count || 0,
+              }))
+          : [],
       }
 
   return {
