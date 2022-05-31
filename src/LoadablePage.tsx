@@ -1,4 +1,5 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext, useEffect } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -8,6 +9,8 @@ import NotificationContext from './contexts/NotificationContext'
 const LoadablePage: React.VFC<{ pageName: string }> = ({ pageName }) => {
   const tracking = useTracking()
   const { settings } = useApp()
+  const { currentMemberId } = useAuth()
+
   const { refetchNotifications } = useContext(NotificationContext)
 
   useEffect(() => {
@@ -16,8 +19,8 @@ const LoadablePage: React.VFC<{ pageName: string }> = ({ pageName }) => {
   }, [settings, tracking])
 
   useEffect(() => {
-    refetchNotifications && refetchNotifications()
-  }, [pageName, refetchNotifications])
+    currentMemberId && refetchNotifications && refetchNotifications()
+  }, [currentMemberId, pageName, refetchNotifications])
 
   const PageComponent = React.lazy(() => import(`./pages/${pageName}`))
   return <PageComponent />
