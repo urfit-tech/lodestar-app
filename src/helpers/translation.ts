@@ -379,6 +379,7 @@ export const commonMessages = {
     instructor: { id: 'common.role.instructor', defaultMessage: '講師' },
     assistant: { id: 'common.role.assistant', defaultMessage: '助教' },
     appOwner: { id: 'common.role.appOwner', defaultMessage: '管理員' },
+    author: { id: 'common.role.author', defaultMessage: '作者' },
   }),
   unit: defineMessages({
     min: { id: 'common.unit.min', defaultMessage: '分' },

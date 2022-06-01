@@ -1,5 +1,6 @@
 import { Category } from './general'
 import { MerchandiseProps } from './merchandise'
+import { SuggestProps } from './practice'
 
 export type PostLinkProps = {
   id: string
@@ -16,6 +17,14 @@ export type PostPreviewProps = PostLinkProps & {
   updatedAt: Date
   categories: Category[]
   tags: string[]
+}
+
+export type PostRoleName = 'author' | 'creator'
+
+export type PostRole = {
+  id: string
+  name: PostRoleName
+  memberId: string
 }
 
 export type Post = Omit<PostPreviewProps, 'authorId'> & {
@@ -42,6 +51,9 @@ export type Post = Omit<PostPreviewProps, 'authorId'> & {
     codeName: string | null
     title: string
   } | null
+  reactedMemberIdsCount: number
+  suggests: SuggestProps[]
+  postRoles?: Pick<PostRole, 'id' | 'memberId' | 'name'>[]
 }
 
 export type PostLatestProps = PostLinkProps & {
