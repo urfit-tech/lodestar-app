@@ -76,19 +76,12 @@ const BlogPostPage: React.VFC = () => {
 
   const [isScrollingDown, setIsScrollingDown] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
-  const [likesCount, setLikesCount] = useState(0)
 
   const handleGetPostLikes = () => {
     const postLikesData: { postId: string }[] = JSON.parse(localStorage.getItem('kolabe.post_reaction') || '[]')
     const isThisPostLikes: boolean = postLikesData.some(v => v.postId === postId)
     setIsLiked(isThisPostLikes)
   }
-
-  useEffect(() => {
-    if (post) {
-      setLikesCount(post.reactedMemberIdsCount)
-    }
-  }, [post])
 
   useEffect(() => {
     document.getElementById('layout-content')?.scrollTo({ top: 0 })
@@ -146,13 +139,11 @@ const BlogPostPage: React.VFC = () => {
 
   const handleLikeStatus = async () => {
     if (isLiked) {
-      setIsLiked(false)
-      setLikesCount(likesCount - 1)
       await deletePostReaction()
+      setIsLiked(false)
     } else {
-      setIsLiked(true)
-      setLikesCount(likesCount + 1)
       await insertPostReaction()
+      setIsLiked(true)
     }
     await refetchPosts()
   }
@@ -199,7 +190,7 @@ const BlogPostPage: React.VFC = () => {
               </div>
               <div className="col-6 col-lg-4 offset-lg-4  d-flex align-items-center justify-content-end">
                 <SocialSharePopover url={window.location.href} />
-                <LikesCountButton onClick={handleLikeStatus} count={likesCount} isLiked={isLiked} />
+                <LikesCountButton onClick={handleLikeStatus} count={post.reactedMemberIdsCount} isLiked={isLiked} />
               </div>
             </div>
             <Divider className="mb-3" />
