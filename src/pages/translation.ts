@@ -40,13 +40,6 @@ const pageMessages = {
     addMerchandise: { id: 'page.ProfilePage.addMerchandise', defaultMessage: 'New Merchandise' },
     addAppointment: { id: 'page.ProfilePage.addAppointment', defaultMessage: 'New Appointment' },
   }),
-  // PaymentTaskPage
-  PaymentTaskPage: defineMessages({
-    restrict: {id: 'page.PaymentTaskPage.restrict', defaultMessage: '訂單已被限制，請重新下單'},
-    upperLimit: {id: 'page.PaymentTaskPage.upperLimit', defaultMessage: '付款次數已達十次上限'},
-    includeCoin: {id: 'page.PaymentTaskPage.includeCoin', defaultMessage: '無法建立含有代幣的交易'},
-    noPrice: {id: 'page.PaymentTaskPage.noPrice', defaultMessage: '零元訂單無法建立交易'},
-  })
 }
 
 export default pageMessages

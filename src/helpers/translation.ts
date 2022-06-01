@@ -1673,4 +1673,20 @@ export const codeMessages = defineMessages({
     id: 'code.E_DUPLICATED_EXCHANGE',
     defaultMessage: 'Discount already exchange',
   },
+  E_ORDER_STATUS: {
+    id: 'code.E_ORDER_STATUS',
+    defaultMessage: '訂單已被限制，請重新下單',
+  },
+  E_PAYMENT_LIMIT: {
+    id: 'code.E_PAYMENT_LIMIT',
+    defaultMessage: '付款次數已達十次上限',
+  },
+  E_COIN_INCLUDED: {
+    id: 'code.E_COIN_INCLUDED',
+    defaultMessage: '無法建立含有代幣的交易',
+  },
+  E_NO_PRICE: {
+    id: 'code.E_NO_PRICE',
+    defaultMessage: '零元訂單無法建立交易',
+  },
 })

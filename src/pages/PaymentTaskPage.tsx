@@ -7,8 +7,7 @@ import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { StyledContainer } from '../components/layout/DefaultLayout/DefaultLayout.styled'
-import { commonMessages } from '../helpers/translation'
-import pageMessages from './translation'
+import { codeMessages, commonMessages } from '../helpers/translation'
 import { useTask } from '../hooks/task'
 import { ReactComponent as ErrorIcon } from '../images/error.svg'
 
@@ -58,20 +57,9 @@ const PaymentTaskPage: React.VFC = () => {
   }, [history, task?.failedReason, taskResult, tracking])
 
   if (errorMessage) {
-    const errorCode = errorMessage.startsWith('E_ORDER_STATUS')
-      ? 'restrict'
-      : errorMessage.startsWith('E_PAYMENT_LIMIT')
-      ? 'upperLimit'
-      : errorMessage.startsWith('E_COIN_INCLUDED')
-      ? 'includeCoin'
-      : errorMessage.startsWith('E_NO_PRICE')
-      ? 'noPrice'
-      : ''
+    const errorCode = errorMessage.split(':')[0]
     const errorMessageContent =
-      errorCode in pageMessages.PaymentTaskPage
-        ? // @ts-ignore
-          formatMessage(pageMessages.PaymentTaskPage[errorCode])
-        : errorMessage
+      errorCode in codeMessages ? formatMessage(codeMessages[errorCode as keyof typeof codeMessages]) : errorMessage
     return (
       <DefaultLayout noFooter noHeader centeredBox>
         <StyledWrapper className="d-flex flex-column justify-content-between align-items-center">
