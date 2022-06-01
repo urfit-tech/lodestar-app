@@ -19,6 +19,14 @@ export type PostPreviewProps = PostLinkProps & {
   tags: string[]
 }
 
+export type PostRoleName = 'author' | 'creator'
+
+export type PostRole = {
+  id: string
+  name: PostRoleName
+  memberId: string
+}
+
 export type Post = Omit<PostPreviewProps, 'authorId'> & {
   author: {
     id: string
@@ -45,6 +53,7 @@ export type Post = Omit<PostPreviewProps, 'authorId'> & {
   } | null
   reactedMemberIdsCount: number
   suggests: SuggestProps[]
+  postRoles?: Pick<PostRole, 'id' | 'memberId' | 'name'>[]
 }
 
 export type PostLatestProps = PostLinkProps & {

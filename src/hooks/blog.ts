@@ -4,7 +4,7 @@ import { max, min } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import hasura from '../hasura'
 import { isUUIDv4, notEmpty } from '../helpers'
-import { Post, PostLatestProps, PostLinkProps, PostPreviewProps } from '../types/blog'
+import { Post, PostLatestProps, PostLinkProps, PostPreviewProps, PostRoleName } from '../types/blog'
 
 export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: string[]; categories?: string }) => {
   const { loading, error, data, refetch } = useQuery<
@@ -285,6 +285,8 @@ export const usePost = (search: string) => {
         }
         post_roles(where: { name: { _eq: "author" } }) {
           id
+          name
+          member_id
           member {
             id
             name
@@ -473,6 +475,11 @@ export const usePost = (search: string) => {
                 suggestReplyCount: v.suggest_replies_aggregate.aggregate?.count || 0,
               }))
           : [],
+        postRoles: dataPost.post_roles.map(role => ({
+          id: role.id,
+          name: role.name as PostRoleName,
+          memberId: role.member_id,
+        })),
       }
 
   return {

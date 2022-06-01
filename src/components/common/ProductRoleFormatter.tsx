@@ -15,6 +15,8 @@ const ProductRoleFormatter: React.VFC<{ value: ProductRoleName }> = ({ value }) 
       return <>{formatMessage(commonMessages.role.assistant)}</>
     case 'app-owner':
       return <>{formatMessage(commonMessages.role.appOwner)}</>
+    case 'author':
+      return <>{formatMessage(commonMessages.role.author)}</>
     default:
       return <>{formatMessage(commonMessages.unknown.character)}</>
   }

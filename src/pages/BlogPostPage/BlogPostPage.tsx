@@ -241,10 +241,7 @@ const BlogPostPage: React.VFC = () => {
                       memberId={v.memberId}
                       description={v.description}
                       suggestReplyCount={v.suggestReplyCount}
-                      programRoles={
-                        // post?.programRoles ||
-                        []
-                      }
+                      programRoles={post?.postRoles || []}
                       reactedMemberIds={v.reactedMemberIds}
                       createdAt={v.createdAt}
                       onRefetch={() => refetchPosts()}

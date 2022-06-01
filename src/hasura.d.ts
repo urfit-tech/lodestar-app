@@ -3418,6 +3418,8 @@ export interface GET_POST_post_post_reaction_aggregate {
 export interface GET_POST_post_post_roles {
   __typename: "post_role";
   id: any;
+  name: string;
+  member_id: string;
   /**
    * An object relationship
    */
@@ -3650,6 +3652,8 @@ export interface GET_POST_post_by_pk_post_roles_member {
 export interface GET_POST_post_by_pk_post_roles {
   __typename: "post_role";
   id: any;
+  name: string;
+  member_id: string;
   /**
    * An object relationship
    */

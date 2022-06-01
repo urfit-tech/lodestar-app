@@ -40,6 +40,7 @@ const SocialSharePopover: React.VFC<{ url: string }> = ({ url }) => {
           await window.navigator.share(shareData)
         } catch (e) {
           console.error(e)
+          setVisible(newVisible)
         }
       } else {
         setVisible(newVisible)
