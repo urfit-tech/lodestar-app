@@ -168,6 +168,7 @@
   "code.E_CW_SERVICE": "Trang thanh toán nhập CW không thành công",
   "code.E_CW_SETUP": "Thiết lập môi trường CW không thành công",
   "code.E_DELIVER_PRODUCTS": "E_DELIVER_PRODUCTS",
+  "code.E_DUPLICATED_EXCHANGE": "discount already exchange",
   "code.E_EMAIL_EXISTS": "Email đã tồn tại",
   "code.E_EXCHANGE_CODE": "Không thể thêm phiếu giảm giá này",
   "code.E_GET_MEMBER": "Không thể tải người dùng",

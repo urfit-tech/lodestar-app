@@ -95,23 +95,21 @@ const CouponSelectionModal: React.VFC<{
               const price =
                 sum(filteredOrderProducts.map(orderProduct => orderProduct.price)) -
                 sum(filteredOrderDiscounts.map(orderDiscount => orderDiscount.price))
-
-              return coupon.couponCode.couponPlan.constraint <= price ? (
+              const isDisabled = coupon.couponCode.couponPlan.constraint > price
+              return (
                 <CouponCard
                   key={coupon.id}
                   coupon={coupon}
                   onClick={() => {
+                    if (isDisabled) {
+                      return
+                    }
                     onSelect && onSelect(coupon)
                     setSelectedCoupon(coupon)
                     setVisible(false)
                   }}
-                  style={{ cursor: 'pointer', marginBottom: '12px' }}
-                />
-              ) : (
-                <CouponCard
-                  key={coupon.id}
-                  coupon={coupon}
-                  style={{ userSelect: 'none', cursor: 'not-allowed', marginBottom: '12px', color: '#9b9b9b' }}
+                  isDisabled={isDisabled}
+                  style={{ marginBottom: '12px' }}
                 />
               )
             })
