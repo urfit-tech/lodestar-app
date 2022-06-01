@@ -10,7 +10,7 @@ import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import { AppointmentPeriodProps, AppointmentPlanProps } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 import AppointmentPeriodCollection from './AppointmentPeriodCollection'
 

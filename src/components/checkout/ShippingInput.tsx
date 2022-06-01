@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { checkoutMessages } from '../../helpers/translation'
 import { ShippingOptionProps, ShippingProps } from '../../types/checkout'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 export const csvShippingMethods = ['seven-eleven', 'family-mart', 'ok-mart', 'hi-life']
 

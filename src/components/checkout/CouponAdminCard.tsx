@@ -8,7 +8,7 @@ import { dateFormatter } from '../../helpers'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { CouponProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import CouponDescriptionModal from './CouponDescriptionModal'
 
 const StyledAdminCard = styled(AdminCard)`

@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { dateFormatter } from '../../helpers'
 import { checkoutMessages } from '../../helpers/translation'
 import { CouponProps } from '../../types/checkout'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const CouponCard: React.VFC<
   CardProps & {

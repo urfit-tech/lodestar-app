@@ -17,7 +17,7 @@ import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 import { ProductType } from '../../types/product'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import QuantityInput from '../common/QuantityInput'
 
 const messages = defineMessages({

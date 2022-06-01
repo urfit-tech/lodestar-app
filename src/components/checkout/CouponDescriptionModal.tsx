@@ -7,7 +7,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { ReactComponent as CheckIcon } from '../../images/check.svg'
 import { CouponProps } from '../../types/checkout'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductItem from '../common/ProductItem'
 import { BraftContent } from '../common/StyledBraftEditor'
 

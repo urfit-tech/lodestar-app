@@ -14,7 +14,7 @@ import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
 import EmptyCover from '../../images/empty-cover.png'
 import { PeriodType } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const StyledBody = styled.div`
   padding: 2rem;
