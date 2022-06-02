@@ -1,5 +1,6 @@
 import { Button, Divider, Skeleton, useDisclosure } from '@chakra-ui/react'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import React, { useContext } from 'react'
@@ -13,7 +14,6 @@ import { useCoinStatus } from '../../hooks/data'
 import { useCurrency } from '../../hooks/util'
 import { AuthModalContext } from '../auth/AuthModal'
 import CommonModal from '../common/CommonModal'
-import PriceLabel from '../common/PriceLabel'
 
 const StyledTitle = styled.h3`
   ${MultiLineTruncationMixin}

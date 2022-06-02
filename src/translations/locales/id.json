@@ -168,6 +168,7 @@
   "code.E_CW_SERVICE": "Halaman pembayaran impor CW gagal",
   "code.E_CW_SETUP": "Pengaturan lingkungan CW gagal",
   "code.E_DELIVER_PRODUCTS": "E_DELIVER_PRODUCTS",
+  "code.E_DUPLICATED_EXCHANGE": "discount already exchange",
   "code.E_EMAIL_EXISTS": "Email sudah ada",
   "code.E_EXCHANGE_CODE": "Tidak dapat menambahkan kupon ini",
   "code.E_GET_MEMBER": "Tidak bisa mendapatkan pengguna",

@@ -1,6 +1,7 @@
 import { Spinner } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import { CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import moment from 'moment'
 import React from 'react'
@@ -12,7 +13,6 @@ import { useSimpleProduct } from '../../hooks/common'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProductType } from '../../types/product'
 import { CustomRatioImage } from './Image'
-import PriceLabel from './PriceLabel'
 
 const StyledCoverImage = styled.img`
   width: 64px;

@@ -1,3 +1,4 @@
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -7,7 +8,6 @@ import EmptyCover from '../../images/empty-cover.png'
 import { PeriodType } from '../../types/program'
 import { ProjectPlanProps } from '../../types/project'
 import PaymentButton from '../common/PaymentButton'
-import PriceLabel from '../common/PriceLabel'
 import ShortenPeriodTypeLabel from '../common/ShortenPeriodTypeLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 

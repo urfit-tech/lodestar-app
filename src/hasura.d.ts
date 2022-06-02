@@ -257,9 +257,10 @@ export interface GET_PRODUCT_FILTER_OPTIONS_category {
   name: string;
 }
 
-export interface GET_PRODUCT_FILTER_OPTIONS_app_tag {
-  __typename: "app_tag";
-  name: string | null;
+export interface GET_PRODUCT_FILTER_OPTIONS_search_tag {
+  __typename: "search_tag";
+  name: string;
+  position: number;
 }
 
 export interface GET_PRODUCT_FILTER_OPTIONS {
@@ -268,9 +269,9 @@ export interface GET_PRODUCT_FILTER_OPTIONS {
    */
   category: GET_PRODUCT_FILTER_OPTIONS_category[];
   /**
-   * fetch data from the table: "app_tag"
+   * fetch data from the table: "search_tag"
    */
-  app_tag: GET_PRODUCT_FILTER_OPTIONS_app_tag[];
+  search_tag: GET_PRODUCT_FILTER_OPTIONS_search_tag[];
 }
 
 export interface GET_PRODUCT_FILTER_OPTIONSVariables {
@@ -3389,9 +3390,36 @@ export interface GET_POST_post_post_roles_member {
   username: string | null;
 }
 
+export interface GET_POST_post_post_suggests_aggregate_aggregate {
+  __typename: "post_issue_aggregate_fields";
+  count: number;
+}
+
+export interface GET_POST_post_post_suggests_aggregate {
+  __typename: "post_issue_aggregate";
+  aggregate: GET_POST_post_post_suggests_aggregate_aggregate | null;
+}
+
+export interface GET_POST_post_reaction {
+  __typename: "post_reaction";
+  member_id: string;
+}
+
+export interface GET_POST_post_post_reaction_aggregate_aggregate {
+  __typename: "post_reaction_aggregate_fields";
+  count: number;
+}
+
+export interface GET_POST_post_post_reaction_aggregate {
+  __typename: "post_reaction_aggregate";
+  aggregate: GET_POST_post_post_reaction_aggregate_aggregate | null;
+}
+
 export interface GET_POST_post_post_roles {
   __typename: "post_role";
   id: any;
+  name: string;
+  member_id: string;
   /**
    * An object relationship
    */
@@ -3518,6 +3546,53 @@ export interface GET_POST_post_post_merchandises {
   merchandise: GET_POST_post_post_merchandises_merchandise;
 }
 
+export interface GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions {
+  __typename: "issue_reply_reaction";
+  member_id: string;
+}
+
+export interface GET_POST_post_post_suggests_suggest_suggest_replies {
+  __typename: "issue_reply";
+  id: any;
+  content: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reply_reactions: GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions[];
+}
+
+
+export interface GET_POST_post_post_suggests_suggest {
+  __typename: "issue";
+  id: any;
+  description: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reactions: GET_POST_post_post_suggests_suggest_suggest_reactions[];
+  /**
+   * An aggregate relationship
+   */
+  suggest_replies_aggregate: GET_POST_post_post_suggests_suggest_suggest_replies_aggregate;
+  /**
+   * An array relationship
+   */
+  suggest_replies: GET_POST_post_post_suggests_suggest_suggest_replies[];
+}
+
+export interface GET_POST_post_post_suggests {
+  __typename: "post_issue";
+  /**
+   * An object relationship
+   */
+  suggest: GET_POST_post_post_suggests_suggest | null;
+}
+
+
 export interface GET_POST_post {
   __typename: "post";
   id: any;
@@ -3534,6 +3609,14 @@ export interface GET_POST_post {
   /**
    * An array relationship
    */
+  post_reaction: GET_POST_post_reaction[];
+   /**
+   * An aggregate relationship
+   */
+  post_reaction_aggregate: GET_POST_post_post_reaction_aggregate;
+  /**
+   * An array relationship
+   */
   post_roles: GET_POST_post_post_roles[];
   /**
    * An array relationship
@@ -3547,6 +3630,14 @@ export interface GET_POST_post {
    * An array relationship
    */
   post_merchandises: GET_POST_post_post_merchandises[];
+   /**
+   * An aggregate relationship
+   */
+  post_suggests_aggregate: GET_POST_post_post_suggests_aggregate;
+  /**
+   * An array relationship
+   */
+  post_suggests: GET_POST_post_post_suggests[];
 }
 
 export interface GET_POST_post_by_pk_post_roles_member {
@@ -3561,6 +3652,8 @@ export interface GET_POST_post_by_pk_post_roles_member {
 export interface GET_POST_post_by_pk_post_roles {
   __typename: "post_role";
   id: any;
+  name: string;
+  member_id: string;
   /**
    * An object relationship
    */
@@ -3700,6 +3793,14 @@ export interface GET_POST_post_by_pk {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+    /**
+   * An array relationship
+   */
+  post_reaction: GET_POST_post_reaction[];
+     /**
+   * An aggregate relationship
+   */
+  post_reaction_aggregate: GET_POST_post_post_reaction_aggregate;
   /**
    * An array relationship
    */
@@ -3716,6 +3817,14 @@ export interface GET_POST_post_by_pk {
    * An array relationship
    */
   post_merchandises: GET_POST_post_by_pk_post_merchandises[];
+     /**
+   * An aggregate relationship
+   */
+  post_suggests_aggregate: GET_POST_post_post_suggests_aggregate;
+  /**
+   * An array relationship
+   */
+  post_suggests: GET_POST_post_post_suggests[];
 }
 
 export interface GET_POST {
@@ -3847,6 +3956,66 @@ export interface GET_LATEST_POST {
 export interface GET_LATEST_POSTVariables {
   limit?: number | null;
 }
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_POST_REACTION
+// ====================================================
+
+export interface INSERT_POST_REACTION_insert_post_reaction {
+  __typename: "post_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_POST_REACTION {
+  /**
+   * insert data into the table: "post_reaction"
+   */
+  insert_post_reaction: INSERT_POST_REACTION_insert_post_reaction | null;
+}
+
+export interface INSERT_POST_REACTIONVariables {
+  memberId: string;
+  postId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_POST_REACTION
+// ====================================================
+
+export interface DELETE_POST_REACTION_delete_post_reaction {
+  __typename: "post_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_POST_REACTION {
+  /**
+   * delete data from the table: "post_reaction"
+   */
+  delete_post_reaction: DELETE_POST_REACTION_delete_post_reaction | null;
+}
+
+export interface DELETE_POST_REACTIONVariables {
+  memberId: string;
+  postId: any;
+}
+
+
 
 /* tslint:disable */
 /* eslint-disable */
@@ -14185,6 +14354,26 @@ export enum role_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "search_tag"
+ */
+export enum search_tag_constraint {
+  search_tag_pkey = "search_tag_pkey",
+  search_tag_tag_name_app_id_key = "search_tag_tag_name_app_id_key",
+}
+
+/**
+ * update columns of table "search_tag"
+ */
+export enum search_tag_update_column {
+  app_id = "app_id",
+  created_at = "created_at",
+  id = "id",
+  position = "position",
+  tag_name = "tag_name",
+  updated_at = "updated_at",
+}
+
+/**
  * unique or primary key constraints on table "setting"
  */
 export enum setting_constraint {
@@ -23634,6 +23823,52 @@ export interface role_permission_on_conflict {
 }
 
 /**
+ * input type for inserting array relation for remote table "search_tag"
+ */
+export interface search_tag_arr_rel_insert_input {
+  data: search_tag_insert_input[];
+  on_conflict?: search_tag_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "search_tag". All fields are combined with a logical 'AND'.
+ */
+export interface search_tag_bool_exp {
+  _and?: search_tag_bool_exp[] | null;
+  _not?: search_tag_bool_exp | null;
+  _or?: search_tag_bool_exp[] | null;
+  app_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+  tag?: tag_bool_exp | null;
+  tag_name?: String_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "search_tag"
+ */
+export interface search_tag_insert_input {
+  app_id?: string | null;
+  created_at?: any | null;
+  id?: any | null;
+  position?: number | null;
+  tag?: tag_obj_rel_insert_input | null;
+  tag_name?: string | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on_conflict condition type for table "search_tag"
+ */
+export interface search_tag_on_conflict {
+  constraint: search_tag_constraint;
+  update_columns: search_tag_update_column[];
+  where?: search_tag_bool_exp | null;
+}
+
+/**
  * input type for inserting array relation for remote table "setting"
  */
 export interface setting_arr_rel_insert_input {
@@ -23864,6 +24099,7 @@ export interface tag_bool_exp {
   podcast_program_tags?: podcast_program_tag_bool_exp | null;
   post_tags?: post_tag_bool_exp | null;
   program_tags?: program_tag_bool_exp | null;
+  search_tags?: search_tag_bool_exp | null;
   type?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
@@ -23882,6 +24118,7 @@ export interface tag_insert_input {
   podcast_program_tags?: podcast_program_tag_arr_rel_insert_input | null;
   post_tags?: post_tag_arr_rel_insert_input | null;
   program_tags?: program_tag_arr_rel_insert_input | null;
+  search_tags?: search_tag_arr_rel_insert_input | null;
   type?: string | null;
   updated_at?: any | null;
 }

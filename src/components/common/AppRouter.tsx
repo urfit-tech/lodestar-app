@@ -236,7 +236,7 @@ const defaultRoutesMap: RoutesMap = {
     pageName: 'BlogPostCollectionPage',
   },
   blog_post: {
-    path: '/posts/:postId',
+    path: '/posts/:searchId',
     pageName: 'BlogPostPage',
   },
 

@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/react'
 import { CardProps } from 'antd/lib/card'
 import { camelCase } from 'lodash'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { prop, sum } from 'ramda'
@@ -9,7 +10,6 @@ import { useIntl } from 'react-intl'
 import { checkoutMessages } from '../../helpers/translation'
 import { CartProductProps, CheckProps, InvoiceProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
-import PriceLabel from '../common/PriceLabel'
 
 const CheckoutCard: React.VFC<
   CardProps & {

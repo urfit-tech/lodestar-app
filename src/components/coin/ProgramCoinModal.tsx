@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/react'
 import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import React, { useState } from 'react'
@@ -14,7 +15,6 @@ import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
 import EmptyCover from '../../images/empty-cover.png'
 import { PeriodType } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from '../common/PriceLabel'
 
 const StyledBody = styled.div`
   padding: 2rem;
