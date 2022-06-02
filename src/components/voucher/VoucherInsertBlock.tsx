@@ -75,17 +75,13 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
           headers: { authorization: `Bearer ${authToken}` },
         },
       )
-      .then(({ data: { code, message: errorMessage } }) => {
+      .then(({ data: { code } }) => {
         if (code === 'SUCCESS') {
           message.success(formatMessage(voucherMessages.messages.addVoucher))
           onRefetchVoucherCollection?.()
           onRefetchEnrolledProgramIds?.()
         } else {
-          if (/^GraphQL error: Uniqueness violation/.test(errorMessage)) {
-            message.error(formatMessage(voucherMessages.messages.duplicateVoucherCode))
-          } else {
-            message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-          }
+          message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
         }
       })
       .catch(handleError)

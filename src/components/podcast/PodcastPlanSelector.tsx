@@ -1,7 +1,7 @@
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import PeriodTypeLabel from '../common/PeriodTypeLabel'
-import PriceLabel from '../common/PriceLabel'
 
 const StyledPodcastPlanLabel = styled.div<{ active?: boolean }>`
   && {

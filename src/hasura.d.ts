@@ -3390,9 +3390,36 @@ export interface GET_POST_post_post_roles_member {
   username: string | null;
 }
 
+export interface GET_POST_post_post_suggests_aggregate_aggregate {
+  __typename: "post_issue_aggregate_fields";
+  count: number;
+}
+
+export interface GET_POST_post_post_suggests_aggregate {
+  __typename: "post_issue_aggregate";
+  aggregate: GET_POST_post_post_suggests_aggregate_aggregate | null;
+}
+
+export interface GET_POST_post_reaction {
+  __typename: "post_reaction";
+  member_id: string;
+}
+
+export interface GET_POST_post_post_reaction_aggregate_aggregate {
+  __typename: "post_reaction_aggregate_fields";
+  count: number;
+}
+
+export interface GET_POST_post_post_reaction_aggregate {
+  __typename: "post_reaction_aggregate";
+  aggregate: GET_POST_post_post_reaction_aggregate_aggregate | null;
+}
+
 export interface GET_POST_post_post_roles {
   __typename: "post_role";
   id: any;
+  name: string;
+  member_id: string;
   /**
    * An object relationship
    */
@@ -3519,6 +3546,53 @@ export interface GET_POST_post_post_merchandises {
   merchandise: GET_POST_post_post_merchandises_merchandise;
 }
 
+export interface GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions {
+  __typename: "issue_reply_reaction";
+  member_id: string;
+}
+
+export interface GET_POST_post_post_suggests_suggest_suggest_replies {
+  __typename: "issue_reply";
+  id: any;
+  content: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reply_reactions: GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions[];
+}
+
+
+export interface GET_POST_post_post_suggests_suggest {
+  __typename: "issue";
+  id: any;
+  description: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reactions: GET_POST_post_post_suggests_suggest_suggest_reactions[];
+  /**
+   * An aggregate relationship
+   */
+  suggest_replies_aggregate: GET_POST_post_post_suggests_suggest_suggest_replies_aggregate;
+  /**
+   * An array relationship
+   */
+  suggest_replies: GET_POST_post_post_suggests_suggest_suggest_replies[];
+}
+
+export interface GET_POST_post_post_suggests {
+  __typename: "post_issue";
+  /**
+   * An object relationship
+   */
+  suggest: GET_POST_post_post_suggests_suggest | null;
+}
+
+
 export interface GET_POST_post {
   __typename: "post";
   id: any;
@@ -3535,6 +3609,14 @@ export interface GET_POST_post {
   /**
    * An array relationship
    */
+  post_reaction: GET_POST_post_reaction[];
+   /**
+   * An aggregate relationship
+   */
+  post_reaction_aggregate: GET_POST_post_post_reaction_aggregate;
+  /**
+   * An array relationship
+   */
   post_roles: GET_POST_post_post_roles[];
   /**
    * An array relationship
@@ -3548,6 +3630,14 @@ export interface GET_POST_post {
    * An array relationship
    */
   post_merchandises: GET_POST_post_post_merchandises[];
+   /**
+   * An aggregate relationship
+   */
+  post_suggests_aggregate: GET_POST_post_post_suggests_aggregate;
+  /**
+   * An array relationship
+   */
+  post_suggests: GET_POST_post_post_suggests[];
 }
 
 export interface GET_POST_post_by_pk_post_roles_member {
@@ -3562,6 +3652,8 @@ export interface GET_POST_post_by_pk_post_roles_member {
 export interface GET_POST_post_by_pk_post_roles {
   __typename: "post_role";
   id: any;
+  name: string;
+  member_id: string;
   /**
    * An object relationship
    */
@@ -3701,6 +3793,14 @@ export interface GET_POST_post_by_pk {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+    /**
+   * An array relationship
+   */
+  post_reaction: GET_POST_post_reaction[];
+     /**
+   * An aggregate relationship
+   */
+  post_reaction_aggregate: GET_POST_post_post_reaction_aggregate;
   /**
    * An array relationship
    */
@@ -3717,6 +3817,14 @@ export interface GET_POST_post_by_pk {
    * An array relationship
    */
   post_merchandises: GET_POST_post_by_pk_post_merchandises[];
+     /**
+   * An aggregate relationship
+   */
+  post_suggests_aggregate: GET_POST_post_post_suggests_aggregate;
+  /**
+   * An array relationship
+   */
+  post_suggests: GET_POST_post_post_suggests[];
 }
 
 export interface GET_POST {
@@ -3848,6 +3956,66 @@ export interface GET_LATEST_POST {
 export interface GET_LATEST_POSTVariables {
   limit?: number | null;
 }
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_POST_REACTION
+// ====================================================
+
+export interface INSERT_POST_REACTION_insert_post_reaction {
+  __typename: "post_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_POST_REACTION {
+  /**
+   * insert data into the table: "post_reaction"
+   */
+  insert_post_reaction: INSERT_POST_REACTION_insert_post_reaction | null;
+}
+
+export interface INSERT_POST_REACTIONVariables {
+  memberId: string;
+  postId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_POST_REACTION
+// ====================================================
+
+export interface DELETE_POST_REACTION_delete_post_reaction {
+  __typename: "post_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_POST_REACTION {
+  /**
+   * delete data from the table: "post_reaction"
+   */
+  delete_post_reaction: DELETE_POST_REACTION_delete_post_reaction | null;
+}
+
+export interface DELETE_POST_REACTIONVariables {
+  memberId: string;
+  postId: any;
+}
+
+
 
 /* tslint:disable */
 /* eslint-disable */

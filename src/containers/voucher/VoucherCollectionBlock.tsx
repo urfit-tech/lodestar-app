@@ -45,6 +45,10 @@ const VoucherCollectionBlock: React.VFC = () => {
       productIds: voucher.voucher_code.voucher_plan.voucher_plan_products.map(product => product.product_id),
       description: decodeURI(voucher.voucher_code.voucher_plan.description || ''),
       isTransferable: voucher.voucher_code.voucher_plan.is_transferable,
+      voucherCode: {
+        id: voucher.voucher_code.id,
+        code: voucher.voucher_code.code,
+      },
     })) || []
 
   const handleExchange = (

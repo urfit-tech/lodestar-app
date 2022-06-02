@@ -6,6 +6,7 @@ import { CardProps } from 'antd/lib/card'
 import { ColumnProps } from 'antd/lib/table'
 import axios from 'axios'
 import gql from 'graphql-tag'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
@@ -23,7 +24,6 @@ import { OrderDiscountProps } from '../../types/checkout'
 import { ShippingMethodType } from '../../types/merchandise'
 import { ProductType } from '../../types/product'
 import AdminCard from '../common/AdminCard'
-import PriceLabel from '../common/PriceLabel'
 import ShippingMethodLabel from '../common/ShippingMethodLabel'
 import OrderRequestRefundModal from './OrderRequestRefundModal'
 import OrderStatusTag from './OrderStatusTag'
@@ -37,7 +37,7 @@ const StyledContainer = styled.div`
       white-space: nowrap;
     }
     .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
-      background: #EEE !important;
+      background: #eee !important;
     }
   }
 `

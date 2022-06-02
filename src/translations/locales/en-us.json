@@ -168,6 +168,7 @@
   "code.E_CW_SERVICE": "CW import payment page failed",
   "code.E_CW_SETUP": "CW environment setup failed",
   "code.E_DELIVER_PRODUCTS": "E_DELIVER_PRODUCTS",
+  "code.E_DUPLICATED_EXCHANGE": "Discount already exchange",
   "code.E_EMAIL_EXISTS": "Email already exists",
   "code.E_EXCHANGE_CODE": "Cannot add this coupon",
   "code.E_GET_MEMBER": "Unable to get user",

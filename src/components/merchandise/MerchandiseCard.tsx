@@ -1,9 +1,9 @@
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import styled from 'styled-components'
 import EmptyCover from '../../images/empty-cover.png'
 import { MerchandiseBriefProps } from '../../types/merchandise'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from '../common/PriceLabel'
 
 const StyledTitle = styled.h3`
   color: var(--gray-darker);

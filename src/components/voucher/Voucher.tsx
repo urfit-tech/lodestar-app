@@ -83,6 +83,12 @@ const StyledTitle = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
 `
+const StyledCode = styled.div<{ available?: boolean }>`
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: ${props => (props.available ? props.theme['@primary-color'] : 'var(--gray)')};
+`
 
 export type VoucherProps = {
   id: string
@@ -95,6 +101,10 @@ export type VoucherProps = {
   extra?: React.ReactNode
   action?: React.ReactNode
   isTransferable?: boolean
+  voucherCode: {
+    id: string
+    code: string
+  }
 }
 const Voucher: React.VFC<VoucherProps> = ({
   title,
@@ -104,6 +114,7 @@ const Voucher: React.VFC<VoucherProps> = ({
   available,
   extra,
   action,
+  voucherCode,
 }) => {
   const { formatMessage } = useIntl()
   return (
@@ -115,6 +126,7 @@ const Voucher: React.VFC<VoucherProps> = ({
 
         <StyledContent className="flex-grow-1">
           <StyledTitle className="mb-1">{title}</StyledTitle>
+          <StyledCode available={available}>{voucherCode.code}</StyledCode>
           <div>
             {startedAt ? moment(startedAt).format('YYYY/MM/DD') : formatMessage(voucherMessages.content.fromNow)}
             {' ~ '}

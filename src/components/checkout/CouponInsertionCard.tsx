@@ -10,6 +10,7 @@ import { handleError } from '../../helpers'
 import { checkoutMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import AdminCard from '../common/AdminCard'
 import { BREAK_POINT } from '../common/Responsive'
+import messages from './translation'
 
 const StyledInput = styled(Input)`
   && {
@@ -68,7 +69,7 @@ const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInse
           )
           .then(({ data: { code } }) => {
             if (code === 'SUCCESS') {
-              message.success(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+              message.success(formatMessage(messages.CouponInsertionCard.addSuccess))
               onInsert && onInsert()
             } else {
               message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))

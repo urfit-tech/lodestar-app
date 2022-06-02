@@ -11,17 +11,17 @@ export type PracticePreviewProps = {
   isCoverRequired: boolean
 }
 
-export type PracticeSuggestProps = {
+export type SuggestProps = {
   id: string
   description: string
   memberId: string
   createdAt: Date
   reactedMemberIds: string[]
   suggestReplyCount: number
-  suggestReplies: PracticeSuggestReplyProps[]
+  suggestReplies: SuggestReplyProps[]
 }
 
-export type PracticeSuggestReplyProps = {
+export type SuggestReplyProps = {
   id: string
   memberId: string
   content: EditorState
@@ -37,7 +37,7 @@ export type PracticeProps = PracticePreviewProps & {
   programRoles?: Pick<ProgramRole, 'id' | 'memberId' | 'name'>[]
   programTitle: string
   description: string | null
-  suggests: PracticeSuggestProps[]
+  suggests: SuggestProps[]
   attachments: {
     id: string
     data: any

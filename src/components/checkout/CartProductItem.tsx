@@ -1,6 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Spinner } from '@chakra-ui/react'
 import { Typography } from 'antd'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
@@ -17,7 +18,6 @@ import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 import { ProductType } from '../../types/product'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from '../common/PriceLabel'
 import QuantityInput from '../common/QuantityInput'
 
 const messages = defineMessages({

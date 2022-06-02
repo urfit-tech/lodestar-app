@@ -1,8 +1,8 @@
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import styled from 'styled-components'
 import EmptyCover from '../../images/empty-cover.png'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from '../common/PriceLabel'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledWrapper = styled.div`

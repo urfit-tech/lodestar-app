@@ -1,4 +1,5 @@
 import { Button, Divider } from '@chakra-ui/react'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -6,7 +7,6 @@ import styled from 'styled-components'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ProgramPackagePlanProps } from '../../types/programPackage'
 import PaymentButton from '../common/PaymentButton'
-import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 
 const StyledCard = styled.div`

@@ -1,6 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Divider, Tag } from '@chakra-ui/react'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -9,7 +10,6 @@ import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { ActivitySession } from '../../types/activity'
-import PriceLabel from '../common/PriceLabel'
 import { BraftContent } from '../common/StyledBraftEditor'
 
 const StyledWrapper = styled.div`
