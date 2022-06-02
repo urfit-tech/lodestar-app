@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages, productMessages, projectMessages } from '../../helpers/translation'
 import { ProjectIntroProps } from '../../types/project'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const StyledWrapper = styled.div`
   position: relative;

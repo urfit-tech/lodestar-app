@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { durationFullFormatter } from '../../helpers'
 import EmptyCover from '../../images/empty-cover.png'
 import { AvatarImage, CustomRatioImage } from '../common/Image'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 
 const StyledWrapper = styled.div`

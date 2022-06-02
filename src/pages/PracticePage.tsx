@@ -1,23 +1,13 @@
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import {
-  Box,
-  Button,
-  Icon,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  SkeletonText,
-  Spinner,
-} from '@chakra-ui/react'
+import { Box, Button, Icon, Menu, MenuButton, MenuItem, MenuList, SkeletonText, Spinner } from '@chakra-ui/react'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
+import LikedCountButton from '../components/common/LikedCountButton'
 import MemberAvatar, { MemberName } from '../components/common/MemberAvatar'
 import { BraftContent } from '../components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -29,8 +19,6 @@ import { commonMessages, practiceMessages } from '../helpers/translation'
 import { useMutatePractice, usePractice } from '../hooks/practice'
 import { ReactComponent as CalendarOIcon } from '../images/calendar-alt-o.svg'
 import { ReactComponent as MoreIcon } from '../images/ellipsis.svg'
-import { ReactComponent as HeartIcon } from '../images/icon-heart-o.svg'
-import { ReactComponent as HeartFillIcon } from '../images/icon-heart.svg'
 
 const StyledContainer = styled.div`
   max-width: 720px;
@@ -62,29 +50,7 @@ const StyledDate = styled.span`
   letter-spacing: 0.4px;
   color: var(--gray-dark);
 `
-const StyledIconButton = styled(IconButton)<{ isActive?: boolean }>`
-  &&& {
-    border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-dark)')};
-    color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-dark)')};
-    border-radius: 50%;
-    background: white;
-  }
-`
-const StyledIcon = styled(Icon)`
-  margin-top: 2px;
-`
-const StyledLikedCount = styled.span<{ isActive?: boolean }>`
-  color: var(--gray-dark);
-  font-size: 12px;
-  font-weight: 500;
 
-  ${props =>
-    props.isActive &&
-    css`
-      color: ${props.theme['@primary-color']};
-      text-shadow: 0 0 3px ${props.theme['@primary-color']}33;
-    `}
-`
 const StyledDivider = styled.div`
   border-bottom: 1px solid var(--gray-light);
 `
@@ -236,15 +202,7 @@ const PracticePage: React.VFC = () => {
           ) : (
             <div />
           )}
-          <div onClick={handleLikeStatus}>
-            <StyledIconButton
-              variant="ghost"
-              isActive={isLiked}
-              icon={<StyledIcon as={isLiked ? HeartFillIcon : HeartIcon} />}
-              className="mr-2"
-            />
-            <StyledLikedCount isActive={isLiked}>{practice.reactedMemberIdsCount}</StyledLikedCount>
-          </div>
+          <LikedCountButton onClick={handleLikeStatus} count={practice.reactedMemberIdsCount} isLiked={isLiked} />
         </div>
 
         <StyledDivider className="my-5" />

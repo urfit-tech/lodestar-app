@@ -18,7 +18,7 @@ import { AppointmentPeriodProps } from '../../types/appointment'
 import AppointmentPeriodCollection from '../appointment/AppointmentPeriodCollection'
 import DiscountSelectionCard from '../checkout/DiscountSelectionCard'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from '../common/PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const messages = defineMessages({
   periodDurationAtMost: { id: 'appointment.text.periodDurationAtMost', defaultMessage: '諮詢一次 {duration} 分鐘為限' },

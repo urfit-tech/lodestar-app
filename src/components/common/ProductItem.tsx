@@ -12,7 +12,7 @@ import { useSimpleProduct } from '../../hooks/common'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProductType } from '../../types/product'
 import { CustomRatioImage } from './Image'
-import PriceLabel from './PriceLabel'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const StyledCoverImage = styled.img`
   width: 64px;

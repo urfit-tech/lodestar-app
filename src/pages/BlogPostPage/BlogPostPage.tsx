@@ -1,7 +1,9 @@
 import { Icon } from '@chakra-ui/icons'
 import { Divider, SkeletonText } from '@chakra-ui/react'
 import { throttle } from 'lodash'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -11,9 +13,13 @@ import { StyledPostMeta } from '../../components/blog'
 import PostCover from '../../components/blog/PostCover'
 import { RelativePostCollection } from '../../components/blog/PostLinkCollection'
 import CreatorCard from '../../components/common/CreatorCard'
+import LikesCountButton from '../../components/common/LikedCountButton'
+import SocialSharePopover from '../../components/common/SocialSharePopover'
 import { BraftContent } from '../../components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
-import { useAddPostViews, usePost } from '../../hooks/blog'
+import MessageSuggestItem from '../../components/practice/MessageSuggestItem'
+import SuggestionCreationModal from '../../components/practice/SuggestionCreationModal'
+import { useAddPostViews, useMutatePostReaction, usePost } from '../../hooks/blog'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as EyeIcon } from '../../images/eye.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
@@ -25,6 +31,7 @@ import BlogPostPageHelmet from './BlogPostPageHelmet'
 const messages = defineMessages({
   prevPost: { id: 'blog.common.prevPost', defaultMessage: '上一則' },
   nextPost: { id: 'blog.common.nextPost', defaultMessage: '下一則' },
+  blogSuggestion: { id: 'blog.label.blogSuggestion', defaultMessage: '回應' },
 })
 
 const StyledTitle = styled.div`
@@ -53,14 +60,33 @@ const StyledSubTitle = styled.div`
   letter-spacing: 0.2px;
 `
 
+const StyledPostTitle = styled.h3`
+  ${CommonTitleMixin}
+`
+
 const BlogPostPage: React.VFC = () => {
+  const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
-  const { postId } = useParams<{ postId: string }>()
+  const { searchId } = useParams<{ searchId: string }>()
   const app = useApp()
-  const { loadingPost, post } = usePost(postId)
+  const { loadingPost, post, refetchPosts } = usePost(searchId)
+  const postId = post?.id
   const addPostView = useAddPostViews()
+  const { insertPostReaction, deletePostReaction } = useMutatePostReaction(postId)
 
   const [isScrollingDown, setIsScrollingDown] = useState(false)
+  const [isLiked, setIsLiked] = useState(false)
+
+  const handleGetPostLikes = () => {
+    const postLikesData: { postId: string }[] = JSON.parse(localStorage.getItem('kolabe.post_reaction') || '[]')
+    const isThisPostLikes: boolean = postLikesData.some(v => v.postId === postId)
+    setIsLiked(isThisPostLikes)
+  }
+
+  useEffect(() => {
+    document.getElementById('layout-content')?.scrollTo({ top: 0 })
+    handleGetPostLikes()
+  }, [postId])
 
   const handleScroll = useCallback(
     throttle(() => {
@@ -81,10 +107,6 @@ const BlogPostPage: React.VFC = () => {
     }, 100),
     [post],
   )
-
-  useEffect(() => {
-    document.getElementById('layout-content')?.scrollTo({ top: 0 })
-  }, [postId])
 
   useEffect(() => {
     const layoutContentElem = document.querySelector('#layout-content')
@@ -115,6 +137,16 @@ const BlogPostPage: React.VFC = () => {
     }
   } catch (error) {}
 
+  const handleLikeStatus = async () => {
+    if (isLiked) {
+      await deletePostReaction()
+      setIsLiked(false)
+    } else {
+      await insertPostReaction()
+      setIsLiked(true)
+    }
+    await refetchPosts()
+  }
   return (
     <DefaultLayout white noHeader={isScrollingDown}>
       <BlogPostPageHelmet post={post} />
@@ -148,12 +180,18 @@ const BlogPostPage: React.VFC = () => {
                 <BraftContent>{post?.description}</BraftContent>
               )}
             </div>
-            <div className="mb-5">
-              {post?.tags.map(tag => (
-                <Link key={tag} to={`/posts/?tags=${tag}`} className="mr-2">
-                  <StyledTag>#{tag}</StyledTag>
-                </Link>
-              ))}
+            <div className="row mb-5">
+              <div className="col-6 col-lg-4">
+                {post?.tags.map(tag => (
+                  <Link key={tag} to={`/posts/?tags=${tag}`} className="mr-2">
+                    <StyledTag>#{tag}</StyledTag>
+                  </Link>
+                ))}
+              </div>
+              <div className="col-6 col-lg-4 offset-lg-4  d-flex align-items-center justify-content-end">
+                <SocialSharePopover url={window.location.href} />
+                <LikesCountButton onClick={handleLikeStatus} count={post.reactedMemberIdsCount} isLiked={isLiked} />
+              </div>
             </div>
             <Divider className="mb-3" />
             <div className="py-3">
@@ -191,9 +229,30 @@ const BlogPostPage: React.VFC = () => {
                 )}
               </div>
             </div>
+            {currentMemberId && (
+              <div className="mb-4">
+                <StyledPostTitle className="mb-3">{formatMessage(messages.blogSuggestion)}</StyledPostTitle>
+                <SuggestionCreationModal threadId={`/posts/${postId}`} onRefetch={() => refetchPosts()} />
+                {post?.suggests.map(v => (
+                  <div key={v.id}>
+                    <MessageSuggestItem
+                      key={v.id}
+                      suggestId={v.id}
+                      memberId={v.memberId}
+                      description={v.description}
+                      suggestReplyCount={v.suggestReplyCount}
+                      programRoles={post?.postRoles || []}
+                      reactedMemberIds={v.reactedMemberIds}
+                      createdAt={v.createdAt}
+                      onRefetch={() => refetchPosts()}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           <div className="col-12 col-lg-3 pl-4">
-            <RelativePostCollection postId={postId} tags={post?.tags} />
+            {postId && <RelativePostCollection postId={postId} tags={post?.tags} />}
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Divider, Progress, Spinner } from '@chakra-ui/react'
-import { Button } from 'antd'
+import { ChevronDownIcon } from '@chakra-ui/icons'
+import { Button, Divider, Menu, MenuButton, MenuItem, MenuList, Progress, Spinner } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -14,6 +14,7 @@ import { CustomRatioImage } from '../common/Image'
 
 const messages = defineMessages({
   download: { id: 'merchandise.ui.download', defaultMessage: '下載' },
+  downloadAll: { id: 'merchandise.ui.downloadAll', defaultMessage: '全部下載' },
   isDownloading: { id: 'merchandise.ui.isDownloading', defaultMessage: '下載中' },
 })
 
@@ -59,6 +60,44 @@ const MerchandiseSpecItem: React.VFC<{
     })),
   ]
 
+  const handleDownload = async (index: number, type: 'single' | 'all') => {
+    const fileKey =
+      files[index].from === 'merchandise'
+        ? `merchandise_files/${appId}/${merchandiseSpec.merchandise.id}_${files[index].name}`
+        : `merchandise_files/${appId}/${orderProductId}_${files[index].name}`
+    const fileLink = await getFileDownloadableLink(fileKey, authToken)
+    const fileRequest = new Request(fileLink)
+    try {
+      const response = await fetch(fileRequest)
+      setDownloadProgress(0)
+      if (response.url) {
+        await downloadFile(files[index].name, {
+          url: response.url,
+          onDownloadProgress: ({ loaded, total }) => {
+            setDownloadProgress(Math.floor((loaded / total) * 100))
+          },
+        })
+        if (type === 'single' || index === files.length - 1) {
+          setIsDownloading(false)
+          setDownloadProgress(0)
+        }
+      }
+    } catch (error) {
+      process.env.NODE_ENV === 'development' && console.error(error)
+    }
+  }
+  const handleMenuItemClick = (index?: number) => {
+    setIsDownloading(true)
+    if (index !== undefined) {
+      handleDownload(index, 'single')
+    } else {
+      const length = files.length
+      for (let i = 0; i < length; i++) {
+        handleDownload(i, 'all')
+      }
+    }
+  }
+
   return (
     <div>
       <Divider className="mb-4" />
@@ -84,39 +123,38 @@ const MerchandiseSpecItem: React.VFC<{
               {downloadProgress}%
             </div>
           ) : (
-            <Button
-              loading={isDownloading}
-              onClick={async () => {
-                setIsDownloading(true)
-                let counter = 0
-                for (let file of files) {
-                  const fileKey =
-                    file.from === 'merchandise'
-                      ? `merchandise_files/${appId}/${merchandiseSpec.merchandise.id}_${file.name}`
-                      : `merchandise_files/${appId}/${orderProductId}_${file.name}`
-                  const fileLink = await getFileDownloadableLink(fileKey, authToken)
-                  const fileRequest = new Request(fileLink)
-                  try {
-                    const response = await fetch(fileRequest)
-                    setDownloadProgress(0)
-                    if (response.url) {
-                      await downloadFile(file.name, {
-                        url: response.url,
-                        onDownloadProgress: ({ loaded, total }) => {
-                          setDownloadProgress(Math.floor((loaded / total) * 100))
-                        },
-                      })
-                      counter += 1
-                      counter === files.length && setIsDownloading(false)
-                    }
-                  } catch (error) {
-                    process.env.NODE_ENV === 'development' && console.error(error)
-                  }
-                }
-              }}
-            >
-              {isDownloading ? formatMessage(messages.isDownloading) : formatMessage(messages.download)}
-            </Button>
+            <div>
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rightIcon={isDownloading ? <Spinner size="sm" /> : <ChevronDownIcon />}
+                  variant="outline"
+                >
+                  {formatMessage(messages.download)}
+                </MenuButton>
+                <MenuList>
+                  {files.length > 1 && (
+                    <MenuItem
+                      onClick={() => {
+                        handleMenuItemClick()
+                      }}
+                    >
+                      <b> {formatMessage(messages.downloadAll)}</b>
+                    </MenuItem>
+                  )}
+                  {files.map((file, index) => (
+                    <MenuItem
+                      key={file.name}
+                      onClick={() => {
+                        handleMenuItemClick(index)
+                      }}
+                    >
+                      {file.name}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+            </div>
           ))}
       </div>
     </div>

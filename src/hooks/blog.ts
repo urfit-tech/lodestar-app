@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import hasura from '../hasura'
-import { isUUIDv4 } from '../helpers'
-import { Post, PostLatestProps, PostLinkProps, PostPreviewProps } from '../types/blog'
+import { isUUIDv4, notEmpty } from '../helpers'
+import { Post, PostLatestProps, PostLinkProps, PostPreviewProps, PostRoleName } from '../types/blog'
 
 export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: string[]; categories?: string }) => {
   const { loading, error, data, refetch } = useQuery<
@@ -224,6 +225,7 @@ export const useRelativePostCollection = (id: string, tags?: string[]) => {
 }
 
 export const usePost = (search: string) => {
+  const { currentMemberId } = useAuth()
   const { loading, error, data, refetch } = useQuery<hasura.GET_POST, hasura.GET_POSTVariables>(
     gql`
       fragment PostParts on post {
@@ -238,8 +240,53 @@ export const usePost = (search: string) => {
         views
         published_at
         updated_at
+        post_suggests_aggregate: post_issue_aggregate {
+          aggregate {
+            count
+          }
+        }
+        ${
+          currentMemberId
+            ? `post_suggests: post_issue(order_by: { issue: { created_at: desc } }) {
+          suggest: issue {
+            id
+            description
+            created_at
+            member_id
+            suggest_reactions: issue_reactions {
+              id
+              member_id
+            }
+            suggest_replies_aggregate: issue_replies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            suggest_replies: issue_replies(order_by: [{ created_at: asc }]) {
+              id
+              content
+              created_at
+              member_id
+              suggest_reply_reactions: issue_reply_reactions {
+                member_id
+              }
+            }
+          }
+        }`
+            : ''
+        }
+        post_reaction {
+          member_id
+        }
+        post_reaction_aggregate {
+          aggregate {
+            count
+          }
+        }
         post_roles(where: { name: { _eq: "author" } }) {
           id
+          name
+          member_id
           member {
             id
             name
@@ -377,7 +424,6 @@ export const usePost = (search: string) => {
           isPhysical: v.merchandise.is_physical,
           isCustomized: v.merchandise.is_customized,
           isCountdownTimerVisible: v.merchandise.is_countdown_timer_visible,
-
           images: v.merchandise.merchandise_imgs.map(image => ({
             id: image.id,
             url: image.url,
@@ -407,6 +453,33 @@ export const usePost = (search: string) => {
         description: dataPost.description,
         prevPost,
         nextPost,
+        reactedMemberIdsCount: dataPost.post_reaction_aggregate.aggregate?.count || 0,
+        suggests: currentMemberId
+          ? dataPost.post_suggests
+              .map(w => w.suggest)
+              .filter(notEmpty)
+              .map(v => ({
+                id: v.id,
+                description: v.description,
+                memberId: v.member_id,
+                createdAt: new Date(v.created_at),
+                reactedMemberIds: v.suggest_reactions.map(w => w.member_id) || [],
+                suggestReplies:
+                  v.suggest_replies.map(y => ({
+                    id: y.id,
+                    memberId: y.member_id,
+                    content: y.content,
+                    createdAt: y.created_at,
+                    reactedMemberIds: y.suggest_reply_reactions.map(w => w.member_id),
+                  })) || [],
+                suggestReplyCount: v.suggest_replies_aggregate.aggregate?.count || 0,
+              }))
+          : [],
+        postRoles: dataPost.post_roles.map(role => ({
+          id: role.id,
+          name: role.name as PostRoleName,
+          memberId: role.member_id,
+        })),
       }
 
   return {
@@ -531,3 +604,61 @@ export const useLatestPost = (filter?: { limit?: number }) => {
     refetchPosts: refetch,
   }
 }
+
+export const useMutatePostReaction = (postId?: string) => {
+  const { currentMemberId } = useAuth()
+  const [insertPostReactionHandler] = useMutation<hasura.INSERT_POST_REACTION, hasura.INSERT_POST_REACTIONVariables>(
+    INSERT_POST_REACTION,
+  )
+  const [deletePostReactionHandler] = useMutation<hasura.DELETE_POST_REACTION, hasura.DELETE_POST_REACTIONVariables>(
+    DELETE_POST_REACTION,
+  )
+
+  const handleChangePostLikeLocalStorage = (action: 'insert' | 'delete') => {
+    const postLikedData: { postId: string }[] = JSON.parse(localStorage.getItem('kolabe.post_reaction') || '[]')
+    if (postId) {
+      if (action === 'insert') {
+        postLikedData.push({ postId: postId })
+        localStorage.setItem('kolabe.post_reaction', JSON.stringify(postLikedData))
+      } else {
+        const newPostLikedData = postLikedData.filter(v => v.postId !== postId)
+        localStorage.setItem('kolabe.post_reaction', JSON.stringify(newPostLikedData))
+      }
+    }
+  }
+
+  const insertPostReaction = () => {
+    handleChangePostLikeLocalStorage('insert')
+    return insertPostReactionHandler({
+      variables: { postId, memberId: currentMemberId || '' },
+    })
+  }
+
+  const deletePostReaction = () => {
+    handleChangePostLikeLocalStorage('delete')
+    return deletePostReactionHandler({
+      variables: { postId, memberId: currentMemberId || '' },
+    })
+  }
+
+  return {
+    insertPostReaction,
+    deletePostReaction,
+  }
+}
+
+const INSERT_POST_REACTION = gql`
+  mutation INSERT_POST_REACTION($memberId: String!, $postId: uuid!) {
+    insert_post_reaction(objects: { member_id: $memberId, post_id: $postId }) {
+      affected_rows
+    }
+  }
+`
+
+const DELETE_POST_REACTION = gql`
+  mutation DELETE_POST_REACTION($memberId: String!, $postId: uuid!) {
+    delete_post_reaction(where: { member_id: { _eq: $memberId }, post_id: { _eq: $postId } }) {
+      affected_rows
+    }
+  }
+`

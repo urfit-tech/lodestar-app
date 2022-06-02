@@ -379,6 +379,7 @@ export const commonMessages = {
     instructor: { id: 'common.role.instructor', defaultMessage: '講師' },
     assistant: { id: 'common.role.assistant', defaultMessage: '助教' },
     appOwner: { id: 'common.role.appOwner', defaultMessage: '管理員' },
+    author: { id: 'common.role.author', defaultMessage: '作者' },
   }),
   unit: defineMessages({
     min: { id: 'common.unit.min', defaultMessage: '分' },
@@ -1559,15 +1560,15 @@ export const codeMessages = defineMessages({
   },
   E_NO_CODE: {
     id: 'code.E_NO_CODE',
-    defaultMessage: '折價券序號有誤',
+    defaultMessage: '無此序號',
   },
   E_EXCHANGE_CODE: {
     id: 'code.E_EXCHANGE_CODE',
-    defaultMessage: '無法加入該折價券',
+    defaultMessage: 'Unable to exchange this discount',
   },
   E_OUTDATED_CODE: {
     id: 'code.E_OUTDATED_CODE',
-    defaultMessage: '折價券已過期',
+    defaultMessage: '此序號已過期',
   },
   E_VALIDATE_CREDIT_CARD: {
     id: 'code.E_VALIDATE_CREDIT_CARD',
@@ -1668,5 +1669,25 @@ export const codeMessages = defineMessages({
   E_NO_PRODUCT: {
     id: 'code.E_NO_PRODUCT',
     defaultMessage: 'product does not exist',
+  },
+  E_DUPLICATED_EXCHANGE: {
+    id: 'code.E_DUPLICATED_EXCHANGE',
+    defaultMessage: 'Discount already exchange',
+  },
+  E_ORDER_STATUS: {
+    id: 'code.E_ORDER_STATUS',
+    defaultMessage: '訂單已被限制，請重新下單',
+  },
+  E_PAYMENT_LIMIT: {
+    id: 'code.E_PAYMENT_LIMIT',
+    defaultMessage: '付款次數已達十次上限',
+  },
+  E_COIN_INCLUDED: {
+    id: 'code.E_COIN_INCLUDED',
+    defaultMessage: '無法建立含有代幣的交易',
+  },
+  E_NO_PRICE: {
+    id: 'code.E_NO_PRICE',
+    defaultMessage: '零元訂單無法建立交易',
   },
 })
