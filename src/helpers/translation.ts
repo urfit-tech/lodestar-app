@@ -216,6 +216,7 @@ export const commonMessages = {
   link: defineMessages({
     more: { id: 'common.profile', defaultMessage: '查看簡介' },
     fillIn: { id: 'common.button.fillIn', defaultMessage: '前往填寫' },
+    copied: { id: 'common.link.copied', defaultMessage: '已複製連結' },
   }),
   label: defineMessages({
     title: { id: 'common.label.title', defaultMessage: '標題' },
