@@ -12,6 +12,7 @@ import { useCouponCollection } from '../../hooks/data'
 import { CouponProps, OrderDiscountProps, OrderProductProps } from '../../types/checkout'
 import CommonModal from '../common/CommonModal'
 import CouponCard from './CouponCard'
+import messages from './translation'
 
 const StyledInputWrapper = styled.div`
   && {
@@ -54,7 +55,7 @@ const CouponSelectionModal: React.VFC<{
         if (data.code === 'SUCCESS') {
           refetchCoupons()
           setCode('')
-          message.success(formatMessage(codeMessages[data.code as keyof typeof codeMessages]))
+          message.success(formatMessage(messages.CouponSelectionModal.addSuccess))
         } else {
           message.error(formatMessage(codeMessages[data.code as keyof typeof codeMessages]))
         }

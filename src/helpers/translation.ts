@@ -1560,7 +1560,7 @@ export const codeMessages = defineMessages({
   },
   E_NO_CODE: {
     id: 'code.E_NO_CODE',
-    defaultMessage: '折價券序號有誤',
+    defaultMessage: '無此序號',
   },
   E_EXCHANGE_CODE: {
     id: 'code.E_EXCHANGE_CODE',
@@ -1568,7 +1568,7 @@ export const codeMessages = defineMessages({
   },
   E_OUTDATED_CODE: {
     id: 'code.E_OUTDATED_CODE',
-    defaultMessage: '折價券已過期',
+    defaultMessage: '此序號已過期',
   },
   E_VALIDATE_CREDIT_CARD: {
     id: 'code.E_VALIDATE_CREDIT_CARD',
