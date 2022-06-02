@@ -42,6 +42,7 @@ const SuggestionCreationModal: React.VFC<SuggestionCreationModalProps> = ({ thre
           threadId,
           title: '',
           description: suggest?.toRAW(),
+          isPublic: threadId.indexOf('/posts/') !== -1,
         },
       })
         .then(() => {
@@ -112,9 +113,17 @@ const INSERT_SUGGESTION = gql`
     $threadId: String!
     $title: String
     $description: String
+    $isPublic: Boolean
   ) {
     insert_issue(
-      objects: { app_id: $appId, member_id: $memberId, thread_id: $threadId, title: $title, description: $description }
+      objects: {
+        app_id: $appId
+        member_id: $memberId
+        thread_id: $threadId
+        title: $title
+        description: $description
+        is_public: $isPublic
+      }
     ) {
       affected_rows
     }

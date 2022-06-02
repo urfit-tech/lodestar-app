@@ -65,8 +65,8 @@ const StyledPostTitle = styled.h3`
 `
 
 const BlogPostPage: React.VFC = () => {
-  const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
+  const { currentMemberId } = useAuth()
   const { searchId } = useParams<{ searchId: string }>()
   const app = useApp()
   const { loadingPost, post, refetchPosts } = usePost(searchId)
@@ -229,27 +229,27 @@ const BlogPostPage: React.VFC = () => {
                 )}
               </div>
             </div>
-            {currentMemberId && (
-              <div className="mb-4">
-                <StyledPostTitle className="mb-3">{formatMessage(messages.blogSuggestion)}</StyledPostTitle>
+            <div className="mb-4">
+              <StyledPostTitle className="mb-3">{formatMessage(messages.blogSuggestion)}</StyledPostTitle>
+              {currentMemberId && (
                 <SuggestionCreationModal threadId={`/posts/${postId}`} onRefetch={() => refetchPosts()} />
-                {post?.suggests.map(v => (
-                  <div key={v.id}>
-                    <MessageSuggestItem
-                      key={v.id}
-                      suggestId={v.id}
-                      memberId={v.memberId}
-                      description={v.description}
-                      suggestReplyCount={v.suggestReplyCount}
-                      programRoles={post?.postRoles || []}
-                      reactedMemberIds={v.reactedMemberIds}
-                      createdAt={v.createdAt}
-                      onRefetch={() => refetchPosts()}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+              )}
+              {post?.suggests.map(v => (
+                <div key={v.id}>
+                  <MessageSuggestItem
+                    key={v.id}
+                    suggestId={v.id}
+                    memberId={v.memberId}
+                    description={v.description}
+                    suggestReplyCount={v.suggestReplyCount}
+                    programRoles={post?.postRoles || []}
+                    reactedMemberIds={v.reactedMemberIds}
+                    createdAt={v.createdAt}
+                    onRefetch={() => refetchPosts()}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
           <div className="col-12 col-lg-3 pl-4">
             {postId && <RelativePostCollection postId={postId} tags={post?.tags} />}
