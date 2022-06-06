@@ -88,7 +88,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
     {
       key: 'program',
       name: formatMessage(commonMessages.tab.course),
-      isVisible: currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_PROGRAM_INFO,
+      isVisible: currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_PROGRAM_INFO || false,
       content: (
         <>
           <EnrolledProgramCollectionBlock memberId={memberId} />
@@ -107,7 +107,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       key: 'project-plan',
       name: formatMessage(commonMessages.tab.project),
       isVisible:
-        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_PROJECT_INFO) &&
+        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_PROJECT_INFO || false) &&
         enrolledProjectPlanIds.length > 0,
       content: <ProjectPlanCollectionBlock memberId={memberId} />,
     },
@@ -115,7 +115,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       key: 'activity-ticket',
       name: formatMessage(commonMessages.tab.activity),
       isVisible:
-        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_ACTIVITY_INFO) &&
+        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_ACTIVITY_INFO || false) &&
         enrolledActivityTickets.length > 0,
       content: <ActivityTicketCollectionBlock memberId={memberId} />,
     },
@@ -123,7 +123,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       key: 'podcast',
       name: formatMessage(commonMessages.tab.podcast),
       isVisible:
-        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_PODCAST_INFO) &&
+        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_PODCAST_INFO || false) &&
         enrolledPodcastPrograms.length > 0,
       content: <PodcastProgramCollectionBlock memberId={memberId} />,
     },
@@ -131,7 +131,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       key: 'appointment',
       name: formatMessage(commonMessages.tab.appointment),
       isVisible:
-        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_APPOINTMENT_INFO) &&
+        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_APPOINTMENT_INFO || false) &&
         enrolledAppointments.length > 0,
       content: <AppointmentPlanCollectionBlock memberId={memberId} />,
     },
@@ -139,7 +139,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       key: 'merchandise-order',
       name: formatMessage(messages.merchandiseOrderLog),
       isVisible:
-        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_MERCHANDISE_INFO) && orderLogs.length > 0,
+        (currentMemberId === memberId || permissions.CHECK_MEMBER_PAGE_MERCHANDISE_INFO || false) && orderLogs.length > 0,
       content: <MerchandiseOrderCollectionBlock memberId={memberId} />,
     },
   ].filter(v => v.isVisible)
