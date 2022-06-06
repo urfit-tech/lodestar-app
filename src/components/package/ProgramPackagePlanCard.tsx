@@ -7,7 +7,7 @@ import { commonMessages, productMessages } from '../../helpers/translation'
 import { ProgramPackagePlanProps } from '../../types/programPackage'
 import PaymentButton from '../common/PaymentButton'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const StyledCard = styled.div`
   padding: 1.5rem;

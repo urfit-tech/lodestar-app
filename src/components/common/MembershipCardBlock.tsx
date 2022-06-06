@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import MembershipCard from './MembershipCard'
-import { BraftContent } from './StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const StyledCardContainer = styled.div`
   min-width: 100px;

@@ -12,7 +12,7 @@ import PodcastAlbumContentListBlock from '../components/common/podcastAlbum/Podc
 import PodcastAlbumInstructorCollectionBlock from '../components/common/podcastAlbum/PodcastAlbumInstructorCollectionBlock'
 import PodcastAlbumSubscriptionPlanCard from '../components/common/podcastAlbum/PodcastAlbumSubscriptionPlanCard'
 import Responsive, { BREAK_POINT } from '../components/common/Responsive'
-import { BraftContent } from '../components/common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import PodcastPlayerContext from '../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../helpers'

@@ -16,7 +16,7 @@ import ActivityTicketPaymentButton from '../../components/activity/ActivityTicke
 import { AuthModalContext } from '../../components/auth/AuthModal'
 import CreatorCard from '../../components/common/CreatorCard'
 import { BREAK_POINT } from '../../components/common/Responsive'
-import { BraftContent } from '../../components/common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useActivity } from '../../hooks/activity'

@@ -8,7 +8,7 @@ import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.s
 import { ReactComponent as ErrorCircleIcon } from '../../images/error-circle.svg'
 import { ReactComponent as TickIcon } from '../../images/tick.svg'
 import { ExerciseProps } from '../../types/program'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   prevQuestion: { id: 'program.ui.prevQuestion', defaultMessage: '上一題' },

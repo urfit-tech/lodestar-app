@@ -17,7 +17,7 @@ import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { AppointmentEnrollmentProps } from '../../types/appointment'
 import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
-import StyledBraftEditor, { BraftContent } from '../common/StyledBraftEditor'
+import StyledBraftEditor, { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   appointmentIssue: { id: 'appointment.button.appointmentIssue', defaultMessage: '提問單' },

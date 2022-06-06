@@ -15,7 +15,7 @@ import { RelativePostCollection } from '../../components/blog/PostLinkCollection
 import CreatorCard from '../../components/common/CreatorCard'
 import LikesCountButton from '../../components/common/LikedCountButton'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
-import { BraftContent } from '../../components/common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MessageSuggestItem from '../../components/practice/MessageSuggestItem'
 import SuggestionCreationModal from '../../components/practice/SuggestionCreationModal'

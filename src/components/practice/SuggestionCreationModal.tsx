@@ -12,7 +12,7 @@ import { createUploadFn, handleError } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import CommonModal from '../common/CommonModal'
 import MessageButton from '../common/MessageButton'
-import StyledBraftEditor from '../common/StyledBraftEditor'
+import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   fillSuggest: { id: 'practice.label.fillSuggest', defaultMessage: '填寫建議' },

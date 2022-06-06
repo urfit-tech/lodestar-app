@@ -33,7 +33,7 @@ import { ProgramRole, ProgramRoleName } from '../../types/program'
 import { ReviewReplyItemProps } from '../../types/review'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const ReviewReplyContent = styled.div`
   padding: 16px;

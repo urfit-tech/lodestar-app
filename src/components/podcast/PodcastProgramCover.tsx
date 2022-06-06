@@ -10,7 +10,7 @@ import { desktopViewMixin } from '../../helpers'
 import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { PodcastAlbumPreview } from '../../types/podcastAlbum'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 const StyledWrapper = styled.div<{ coverUrl?: string }>`
   padding: 4rem 1.5rem;
   background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${props => props.coverUrl || ''});

@@ -16,7 +16,7 @@ import { ProductRoleName } from '../../types/general'
 import { ProgramRole } from '../../types/program'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { StyledEditor } from './IssueReplyCreationBlock'
 
 const IssueReplyContentBlock = styled.div`

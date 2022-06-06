@@ -10,7 +10,7 @@ import { activityMessages, commonMessages, productMessages } from '../../helpers
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { ActivitySession } from '../../types/activity'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const StyledWrapper = styled.div`
   padding: 1.5rem;
