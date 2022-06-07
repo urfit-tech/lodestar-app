@@ -2,13 +2,12 @@ import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
-import NotificationContext from '../../../contexts/NotificationContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
@@ -72,15 +71,9 @@ const DefaultLayout: React.FC<{
   const { currentMemberId, isAuthenticated, currentMember } = useAuth()
   const { name, settings, enabledModules } = useApp()
   const { navs } = useNav()
-  const { refetchNotifications } = useContext(NotificationContext)
   const { visible: playerVisible } = useContext(PodcastPlayerContext)
   const { renderCartButton, renderMyPageNavItem } = useCustomRenderer()
-
   const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    refetchNotifications && refetchNotifications()
-  }, [refetchNotifications])
 
   return (
     <AuthModalContext.Provider value={{ visible, setVisible }}>
