@@ -4,7 +4,7 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
@@ -64,7 +64,6 @@ const DefaultLayout: React.FC<{
   renderAuthModalTitle,
   children,
 }) => {
-  const history = useHistory()
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
   const { renderFooter } = useCustomRenderer()
@@ -97,16 +96,17 @@ const DefaultLayout: React.FC<{
                 .map(nav =>
                   nav.external ? (
                     <Menu key={nav.id}>
-                      <MenuButton
-                        as={
-                          settings['style.header.menu_button.animation.enable'] === '1'
-                            ? StyledNavAnimationButton
-                            : StyledNavButton
-                        }
-                        onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
-                      >
-                        {nav.label}
-                      </MenuButton>
+                      <Link to={nav.href} target="_blank" rel="noopener noreferrer">
+                        <MenuButton
+                          as={
+                            settings['style.header.menu_button.animation.enable'] === '1'
+                              ? StyledNavAnimationButton
+                              : StyledNavButton
+                          }
+                        >
+                          {nav.label}
+                        </MenuButton>
+                      </Link>
                       {nav.subNavs?.length > 0 && (
                         <MenuList>
                           {nav.subNavs?.map((v, idx) =>
@@ -132,21 +132,22 @@ const DefaultLayout: React.FC<{
                     </Menu>
                   ) : (
                     <Menu key={nav.id}>
-                      <MenuButton
-                        as={
-                          settings['style.header.menu_button.animation.enable'] === '1'
-                            ? StyledNavAnimationButton
-                            : StyledNavButton
-                        }
-                        onClick={() => nav.href && history.push(nav.href)}
-                      >
-                        {nav.label}
-                        {nav.tag && (
-                          <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                            {nav.tag}
-                          </StyledNavTag>
-                        )}
-                      </MenuButton>
+                      <Link to={nav.href}>
+                        <MenuButton
+                          as={
+                            settings['style.header.menu_button.animation.enable'] === '1'
+                              ? StyledNavAnimationButton
+                              : StyledNavButton
+                          }
+                        >
+                          {nav.label}
+                          {nav.tag && (
+                            <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                              {nav.tag}
+                            </StyledNavTag>
+                          )}
+                        </MenuButton>
+                      </Link>
                       {nav.subNavs.length > 0 && (
                         <MenuList>
                           {nav.subNavs?.map((v, idx) =>
@@ -181,16 +182,17 @@ const DefaultLayout: React.FC<{
                 }) ||
                   (!(settings['nav.my_page.disable'] === '1') && (
                     <Menu>
-                      <MenuButton
-                        as={
-                          settings['style.header.menu_button.animation.enable'] === '1'
-                            ? StyledNavAnimationButton
-                            : StyledNavButton
-                        }
-                        onClick={() => history.push(`/members/${currentMemberId}`)}
-                      >
-                        {formatMessage(commonMessages.button.myPage)}
-                      </MenuButton>
+                      <Link to={`/members/${currentMemberId}`}>
+                        <MenuButton
+                          as={
+                            settings['style.header.menu_button.animation.enable'] === '1'
+                              ? StyledNavAnimationButton
+                              : StyledNavButton
+                          }
+                        >
+                          {formatMessage(commonMessages.button.myPage)}
+                        </MenuButton>
+                      </Link>
                     </Menu>
                   )))}
             </Responsive.Desktop>
