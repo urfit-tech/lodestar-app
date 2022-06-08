@@ -1,10 +1,10 @@
-import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Menu, MenuButton, MenuList } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
@@ -64,6 +64,7 @@ const DefaultLayout: React.FC<{
   renderAuthModalTitle,
   children,
 }) => {
+  const history = useHistory()
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
   const { renderFooter } = useCustomRenderer()
@@ -96,35 +97,38 @@ const DefaultLayout: React.FC<{
                 .map(nav =>
                   nav.external ? (
                     <Menu key={nav.id}>
-                      <Link to={nav.href} target="_blank" rel="noopener noreferrer">
-                        <MenuButton
-                          as={
-                            settings['style.header.menu_button.animation.enable'] === '1'
-                              ? StyledNavAnimationButton
-                              : StyledNavButton
-                          }
-                        >
-                          {nav.label}
-                        </MenuButton>
-                      </Link>
+                      <MenuButton
+                        as={
+                          settings['style.header.menu_button.animation.enable'] === '1'
+                            ? StyledNavAnimationButton
+                            : StyledNavButton
+                        }
+                        onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
+                      >
+                        <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
+                      </MenuButton>
                       {nav.subNavs?.length > 0 && (
                         <MenuList>
                           {nav.subNavs?.map((v, idx) =>
                             v.external ? (
-                              <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
-                                <StyledMenuItem _focus={{ bg: '#fff' }}>{v.label}</StyledMenuItem>
-                              </a>
-                            ) : (
-                              <Link key={idx} to={v.href}>
-                                <StyledMenuItem _focus={{ bg: '#fff' }}>
+                              <StyledMenuItem
+                                key={idx}
+                                _focus={{ bg: '#fff' }}
+                                onClick={() => v.href && window.open(v.href, '_blank', 'noopener=yes,noreferrer=yes')}
+                              >
+                                <Link to={v.href} target="_blank" rel="noopener noreferrer">
                                   {v.label}
-                                  {v.tag && (
-                                    <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                                      {v.tag}
-                                    </StyledMenuTag>
-                                  )}
-                                </StyledMenuItem>
-                              </Link>
+                                </Link>
+                              </StyledMenuItem>
+                            ) : (
+                              <StyledMenuItem key={idx} _focus={{ bg: '#fff' }}>
+                                <Link to={v.href}>{v.label}</Link>
+                                {v.tag && (
+                                  <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                                    {v.tag}
+                                  </StyledMenuTag>
+                                )}
+                              </StyledMenuItem>
                             ),
                           )}
                         </MenuList>
@@ -132,42 +136,43 @@ const DefaultLayout: React.FC<{
                     </Menu>
                   ) : (
                     <Menu key={nav.id}>
-                      <Link to={nav.href}>
-                        <MenuButton
-                          as={
-                            settings['style.header.menu_button.animation.enable'] === '1'
-                              ? StyledNavAnimationButton
-                              : StyledNavButton
-                          }
-                        >
-                          {nav.label}
-                          {nav.tag && (
-                            <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                              {nav.tag}
-                            </StyledNavTag>
-                          )}
-                        </MenuButton>
-                      </Link>
+                      <MenuButton
+                        as={
+                          settings['style.header.menu_button.animation.enable'] === '1'
+                            ? StyledNavAnimationButton
+                            : StyledNavButton
+                        }
+                        onClick={() => nav.href && history.push(nav.href)}
+                      >
+                        <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
+                        {nav.tag && (
+                          <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                            {nav.tag}
+                          </StyledNavTag>
+                        )}
+                      </MenuButton>
                       {nav.subNavs.length > 0 && (
                         <MenuList>
                           {nav.subNavs?.map((v, idx) =>
                             v.external ? (
-                              <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
-                                <MenuItem _focus={{ bg: '#fff' }}>
-                                  <StyledMenuItem>{v.label}</StyledMenuItem>
-                                </MenuItem>
-                              </a>
-                            ) : (
-                              <Link key={idx} to={v.href}>
-                                <StyledMenuItem _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
+                              <StyledMenuItem
+                                key={idx}
+                                _focus={{ bg: '#fff' }}
+                                onClick={() => v.href && window.open(v.href, '_blank', 'noopener=yes,noreferrer=yes')}
+                              >
+                                <Link to={v.href} target="_blank" rel="noopener noreferrer">
                                   {v.label}
-                                  {v.tag && (
-                                    <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                                      {v.tag}
-                                    </StyledMenuTag>
-                                  )}
-                                </StyledMenuItem>
-                              </Link>
+                                </Link>
+                              </StyledMenuItem>
+                            ) : (
+                              <StyledMenuItem key={idx} _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
+                                <Link to={v.href}>{v.label}</Link>
+                                {v.tag && (
+                                  <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                                    {v.tag}
+                                  </StyledMenuTag>
+                                )}
+                              </StyledMenuItem>
                             ),
                           )}
                         </MenuList>
@@ -182,17 +187,16 @@ const DefaultLayout: React.FC<{
                 }) ||
                   (!(settings['nav.my_page.disable'] === '1') && (
                     <Menu>
-                      <Link to={`/members/${currentMemberId}`}>
-                        <MenuButton
-                          as={
-                            settings['style.header.menu_button.animation.enable'] === '1'
-                              ? StyledNavAnimationButton
-                              : StyledNavButton
-                          }
-                        >
-                          {formatMessage(commonMessages.button.myPage)}
-                        </MenuButton>
-                      </Link>
+                      <MenuButton
+                        as={
+                          settings['style.header.menu_button.animation.enable'] === '1'
+                            ? StyledNavAnimationButton
+                            : StyledNavButton
+                        }
+                        onClick={() => history.push(`/members/${currentMemberId}`)}
+                      >
+                        <Link to={`/members/${currentMemberId}`}> {formatMessage(commonMessages.button.myPage)}</Link>
+                      </MenuButton>
                     </Menu>
                   )))}
             </Responsive.Desktop>

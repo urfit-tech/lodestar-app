@@ -4,7 +4,7 @@ import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive from '../components/common/Responsive'
@@ -48,6 +48,7 @@ const StyledCategoryList = styled.ul`
 `
 
 const MerchandiseCollectionPage: React.VFC = () => {
+  const history = useHistory()
   const { formatMessage } = useIntl()
   const [tag] = useQueryParam('tag', StringParam)
   const [keyword, setKeyword] = useQueryParam('keyword', StringParam)
@@ -221,10 +222,14 @@ const MerchandiseCollectionPage: React.VFC = () => {
                     !categoryId || merchandise.categories?.map(category => category.id).includes(categoryId),
                 )
                 .map(merchandise => (
-                  <div key={merchandise.id} className="col-lg-4 col-12 mb-5">
-                    <Link to={`/merchandises/${merchandise.id}`}>
-                      <MerchandiseCard {...merchandise} />
-                    </Link>
+                  <div
+                    key={merchandise.id}
+                    className="col-lg-4 col-12 mb-5 cursor-pointer"
+                    onClick={() => {
+                      history.push(`/merchandises/${merchandise.id}`)
+                    }}
+                  >
+                    <MerchandiseCard {...merchandise} />
                   </div>
                 ))}
             </div>
