@@ -4,7 +4,7 @@ import moment from 'moment'
 import React from 'react'
 import { AiOutlineCalendar, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
@@ -14,6 +14,7 @@ const StyledWrapper = styled.div`
   background: white;
   border-radius: 4px;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
+  cursor: pointer;
 `
 const StyledCover = styled.div<{ src: string }>`
   padding-top: ${900 / 16}%;
@@ -56,41 +57,47 @@ const ActivityBlock: React.VFC<ActivityBlockProps> = ({
   endedAt,
   onClick,
 }) => {
+  const history = useHistory()
   const { formatMessage } = useIntl()
   const startDate = startedAt ? moment(startedAt).format('YYYY-MM-DD(dd)') : ''
   const endDate = endedAt ? moment(endedAt).format('YYYY-MM-DD(dd)') : ''
 
   return (
-    <StyledWrapper>
-      <Link to={`/activities/${id}`} onClick={onClick}>
-        <StyledCover src={coverUrl || EmptyCover} />
+    <StyledWrapper
+      onClick={() => {
+        onClick && onClick()
+        history.push(`/activities/${id}`)
+      }}
+    >
+      <StyledCover src={coverUrl || EmptyCover} />
 
-        <StyledDescription>
-          <StyledTitle className="mb-4">{title}</StyledTitle>
+      <StyledDescription>
+        <StyledTitle className="mb-4">
+          <Link to={`/activities/${id}`}>{title}</Link>
+        </StyledTitle>
 
-          <StyledMeta className="mb-2">
-            {isParticipantsVisible && (
-              <>
-                <Icon as={AiOutlineUser} />
-                <span className="ml-2">
-                  {formatMessage(productMessages.activity.content.remaining)}
-                  {participantCount && totalSeats ? totalSeats - participantCount : totalSeats}
-                </span>
-              </>
-            )}
-          </StyledMeta>
-
-          <StyledMeta>
-            <Icon as={AiOutlineCalendar} />
-            {startDate && endDate ? (
+        <StyledMeta className="mb-2">
+          {isParticipantsVisible && (
+            <>
+              <Icon as={AiOutlineUser} />
               <span className="ml-2">
-                {startDate}
-                {startDate !== endDate ? ` ~ ${endDate}` : ''}
+                {formatMessage(productMessages.activity.content.remaining)}
+                {participantCount && totalSeats ? totalSeats - participantCount : totalSeats}
               </span>
-            ) : null}
-          </StyledMeta>
-        </StyledDescription>
-      </Link>
+            </>
+          )}
+        </StyledMeta>
+
+        <StyledMeta>
+          <Icon as={AiOutlineCalendar} />
+          {startDate && endDate ? (
+            <span className="ml-2">
+              {startDate}
+              {startDate !== endDate ? ` ~ ${endDate}` : ''}
+            </span>
+          ) : null}
+        </StyledMeta>
+      </StyledDescription>
     </StyledWrapper>
   )
 }

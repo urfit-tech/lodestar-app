@@ -1,4 +1,5 @@
 import { Button, Divider } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -7,7 +8,6 @@ import styled from 'styled-components'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ProgramPackagePlanProps } from '../../types/programPackage'
 import PaymentButton from '../common/PaymentButton'
-import { BraftContent } from '../common/StyledBraftEditor'
 
 const StyledCard = styled.div`
   padding: 1.5rem;

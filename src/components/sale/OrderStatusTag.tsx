@@ -33,6 +33,18 @@ const OrderStatusTag: React.FC<{
     case 'DELETED':
       statusTag = <Tag color="#72a7c1">{formatMessage(saleMessages.status.deleted)}</Tag>
       break
+    case 'PAYING':
+      statusTag = <Tag color="#ffbe1e">{formatMessage(saleMessages.status.paying)}</Tag>
+      break
+    case 'REFUNDING':
+      statusTag = <Tag color="#cdcdcd">{formatMessage(saleMessages.status.refunding)}</Tag>
+      break
+    case 'PARTIAL_EXPIRED':
+      statusTag = <Tag color="#cdcdcd">{formatMessage(saleMessages.status.partialExpired)}</Tag>
+      break
+    case 'UNKNOWN':
+      statusTag = <Tag color="#cdcdcd">{formatMessage(saleMessages.status.unknown)}</Tag>
+      break
   }
 
   return renderOrderStatusTag?.({ status, defaultStatusTag: statusTag }) || statusTag

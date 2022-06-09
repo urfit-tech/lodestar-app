@@ -821,6 +821,7 @@ export interface INSERT_SUGGESTIONVariables {
   threadId: string;
   title?: string | null;
   description?: string | null;
+  isPublic?: boolean ;
 }
 
 /* tslint:disable */

@@ -13,7 +13,7 @@ import { createUploadFn } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import MessageButton from '../common/MessageButton'
 import MigrationInput from '../common/MigrationInput'
-import StyledBraftEditor from '../common/StyledBraftEditor'
+import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 type IssueCreationModalProps = ModalProps &
   FormComponentProps & {

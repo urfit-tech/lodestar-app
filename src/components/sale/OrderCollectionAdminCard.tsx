@@ -196,7 +196,7 @@ const OrderCollectionAdminCard: React.VFC<
 
       <div className="row">
         <div className="col-3 d-flex align-items-end">
-          {record.status !== 'SUCCESS' && record.status !== 'REFUND' && record.status !== 'EXPIRED' && (
+          {['UNPAID', 'PARTIAL_PAID', 'FAILED'].includes(record.status) && (
             <Button
               variant="outline"
               _hover={{

@@ -109,15 +109,17 @@ const MessageSuggestItem: React.VFC<{
                       />
                     </div>
                   ))}
-                  <div className="mt-5">
-                    <MessageReplyCreationForm
-                      onSubmit={content =>
-                        insertIssueReply(content)
-                          .then(() => refetchIssueReplies().then(() => onRefetch?.()))
-                          .catch(() => {})
-                      }
-                    />
-                  </div>
+                  {currentMemberId && (
+                    <div className="mt-5">
+                      <MessageReplyCreationForm
+                        onSubmit={content =>
+                          insertIssueReply(content)
+                            .then(() => refetchIssueReplies().then(() => onRefetch?.()))
+                            .catch(() => {})
+                        }
+                      />
+                    </div>
+                  )}
                 </>
               )}
             </>

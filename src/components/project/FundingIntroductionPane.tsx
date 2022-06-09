@@ -6,7 +6,7 @@ import ClassCouponBlock from '../../components/ClassCouponBlock'
 import { commonMessages } from '../../helpers/translation'
 import { ProjectPlanProps } from '../../types/project'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import ProjectPlanCollection from './ProjectPlanCollection'
 
 const TabPaneContent = styled.div<{ collapsed?: boolean }>`

@@ -5,6 +5,7 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import moment from 'moment'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CustomRatioImage } from '../../components/common/Image'
 import { projectMessages } from '../../helpers/translation'
@@ -85,15 +86,17 @@ const ProjectIntroCard: React.VFC<ProjectIntroProps> = ({
   isCountdownTimerVisible,
   totalSales,
   enrollmentCount,
+  id,
 }) => {
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
-
   return (
     <StyledCard>
       <CustomRatioImage ratio={0.56} width="100%" src={previewUrl || coverUrl || EmptyCover} />
       <StyledCardBody>
-        <StyledCardTitle>{title}</StyledCardTitle>
+        <StyledCardTitle>
+          <Link to={`/projects/${id}`}> {title}</Link>
+        </StyledCardTitle>
         <StyledCardAbstract>{abstract}</StyledCardAbstract>
         <StyledCardMeta className="d-flex align-items-end justify-content-between">
           <div>

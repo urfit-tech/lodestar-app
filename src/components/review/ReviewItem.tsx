@@ -18,7 +18,7 @@ import { ReviewProps } from '../../types/review'
 import { AuthModalContext } from '../auth/AuthModal'
 import MemberAvatar from '../common/MemberAvatar'
 import StarRating from '../common/StarRating'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import ReviewReplyItem from './ReviewReplyItem'
 
 const ReviewContentBlock = styled.div`

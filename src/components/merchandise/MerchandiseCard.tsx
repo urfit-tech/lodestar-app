@@ -1,5 +1,6 @@
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import EmptyCover from '../../images/empty-cover.png'
 import { MerchandiseBriefProps } from '../../types/merchandise'
@@ -13,7 +14,7 @@ const StyledTitle = styled.h3`
   letter-spacing: 0.2px;
 `
 
-const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({ title, minPrice, maxPrice, images }) => {
+const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({ id, title, minPrice, maxPrice, images }) => {
   return (
     <>
       <CustomRatioImage
@@ -24,7 +25,9 @@ const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({ title, minPrice, ma
         className="mb-2"
       />
       <div className="text-center">
-        <StyledTitle>{title}</StyledTitle>
+        <StyledTitle>
+          <Link to={`/merchandises/${id}`}> {title}</Link>
+        </StyledTitle>
         <div>
           <PriceLabel listPrice={minPrice} />
           {` ~ `}

@@ -18,7 +18,7 @@ import { ReactComponent as IconEmail } from '../../images/email-o.svg'
 import { OrderContact } from '../../types/merchandise'
 import CommonModal from '../common/CommonModal'
 import { AvatarImage } from '../common/Image'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   contactMessage: { id: 'merchandise.ui.contactMessage', defaultMessage: '聯絡訊息' },
