@@ -3,7 +3,7 @@ import BraftEditor from 'braft-editor'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useProgramContent } from '../../hooks/program'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import ProgramContentPlayer from './ProgramContentPlayer'
 
 const StyledModal = styled(Modal)`

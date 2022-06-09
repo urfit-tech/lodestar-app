@@ -11,7 +11,8 @@ import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import { AppointmentPeriodProps, AppointmentPlanProps } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
-import { BraftContent } from '../common/StyledBraftEditor'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import AppointmentPeriodCollection from './AppointmentPeriodCollection'
 
 const StyledTab = styled.div`

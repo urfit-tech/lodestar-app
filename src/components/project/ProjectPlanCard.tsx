@@ -9,7 +9,7 @@ import { PeriodType } from '../../types/program'
 import { ProjectPlanProps } from '../../types/project'
 import PaymentButton from '../common/PaymentButton'
 import ShortenPeriodTypeLabel from '../common/ShortenPeriodTypeLabel'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   limited: { id: 'product.project.text.limited', defaultMessage: '限量' },

@@ -13,7 +13,7 @@ import { usePractice } from '../../hooks/practice'
 import { ProgramContentAttachmentProps } from '../../types/program'
 import { BREAK_POINT } from '../common/Responsive'
 import StarRating from '../common/StarRating'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import PracticeUploadModal from './PracticeUploadModal'
 
 const messages = defineMessages({

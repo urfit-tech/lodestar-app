@@ -18,7 +18,7 @@ import { CustomRatioImage } from '../common/Image'
 import QuantityInput from '../common/QuantityInput'
 import { BREAK_POINT } from '../common/Responsive'
 import ShippingMethodLabel from '../common/ShippingMethodLabel'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import MerchandisePaymentButton from './MerchandisePaymentButton'
 
 const messages = defineMessages({

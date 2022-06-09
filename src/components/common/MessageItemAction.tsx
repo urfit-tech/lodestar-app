@@ -27,8 +27,9 @@ const MessageItemAction: React.VFC<{
     await onReact?.(reacted)
   }
 
-  const otherReactedMemberIds = reactedMemberIds.filter(id => id !== currentMemberId).length
-
+  const otherReactedMemberIds = currentMemberId
+    ? reactedMemberIds.filter(id => id !== currentMemberId).length
+    : reactedMemberIds.length
   return (
     <div className="d-flex align-items-center justify-content-between">
       <div>
@@ -41,7 +42,7 @@ const MessageItemAction: React.VFC<{
           reacted={reacted}
         >
           <Icon type="heart" theme={reacted ? 'filled' : 'outlined'} className="mr-1" />
-          <span>{reacted ? otherReactedMemberIds + 1 : otherReactedMemberIds}</span>
+          <span>{reacted && currentMemberId ? otherReactedMemberIds + 1 : otherReactedMemberIds}</span>
         </StyledAction>
         {onRepliesVisible && (
           <StyledAction onClick={() => onRepliesVisible(prev => !prev)}>

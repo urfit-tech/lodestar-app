@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { AiFillAppstore } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import { StyledBannerTitle } from '../../components/layout'
@@ -61,6 +61,7 @@ const StyledTitle = styled.h2`
 `
 
 const ProjectCollectionPage: React.VFC = () => {
+  const history = useHistory()
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const tracking = useTracking()
@@ -211,18 +212,18 @@ const ProjectCollectionPage: React.VFC = () => {
                             project.categories.some(category => category.id === selectedCategoryId)),
                       )
                       .map((project, idx) => (
-                        <div key={project.id} className="col-12 col-lg-4 mb-5">
-                          <Link
-                            to={`/projects/${project.id}`}
-                            onClick={() => {
-                              const resource = resourceCollection
-                                .filter(notEmpty)
-                                .find(resource => resource.id === project.id)
-                              resource && tracking.click(resource, { position: idx + 1 })
-                            }}
-                          >
-                            <ProjectIntroCard {...project} />
-                          </Link>
+                        <div
+                          key={project.id}
+                          className="col-12 col-lg-4 mb-5 cursor-pointer"
+                          onClick={() => {
+                            const resource = resourceCollection
+                              .filter(notEmpty)
+                              .find(resource => resource.id === project.id)
+                            resource && tracking.click(resource, { position: idx + 1 })
+                            project.id && history.push(`/projects/${project.id}`)
+                          }}
+                        >
+                          <ProjectIntroCard {...project} />
                         </div>
                       ))}
                   </div>
