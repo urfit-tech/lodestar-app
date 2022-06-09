@@ -83,7 +83,7 @@ const SocialSharePopover: React.VFC<{ url: string }> = ({ url }) => {
       visible={visible}
       onVisibleChange={handleVisibleOnChange}
     >
-      <StyledIconButton variant="ghost" icon={<Icon as={BsShareFill} color="#4c5b8f" />} className="mr-2" />
+      <StyledIconButton variant="ghost" icon={<Icon as={BsShareFill} color="#9b9b9b" />} className="mr-2" />
     </Popover>
   )
 }
