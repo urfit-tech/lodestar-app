@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
@@ -74,6 +75,7 @@ const PerpetualProgramBanner: React.VFC<{
   isDelivered?: boolean
 }> = ({ program, isEnrolledByProgramPackage, isDelivered }) => {
   const history = useHistory()
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
 
   return (
@@ -120,7 +122,7 @@ const PerpetualProgramBanner: React.VFC<{
                     className="smartvideo"
                     src={program.coverVideoUrl}
                     controls
-                    autoPlay
+                    autoPlay={Boolean(Number(settings['feature.program_banner_video_autoPlay.enabled']))}
                     style={{ width: '100%', height: '100%' }}
                   />
                 ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (

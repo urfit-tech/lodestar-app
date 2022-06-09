@@ -225,7 +225,6 @@ export const useRelativePostCollection = (id: string, tags?: string[]) => {
 }
 
 export const usePost = (search: string) => {
-  const { currentMemberId } = useAuth()
   const { loading, error, data, refetch } = useQuery<hasura.GET_POST, hasura.GET_POSTVariables>(
     gql`
       fragment PostParts on post {
@@ -245,9 +244,7 @@ export const usePost = (search: string) => {
             count
           }
         }
-        ${
-          currentMemberId
-            ? `post_suggests: post_issue(order_by: { issue: { created_at: desc } }) {
+        post_suggests: post_issue(order_by: { issue: { created_at: desc } }) {
           suggest: issue {
             id
             description
@@ -272,8 +269,6 @@ export const usePost = (search: string) => {
               }
             }
           }
-        }`
-            : ''
         }
         post_reaction {
           member_id
@@ -454,27 +449,25 @@ export const usePost = (search: string) => {
         prevPost,
         nextPost,
         reactedMemberIdsCount: dataPost.post_reaction_aggregate.aggregate?.count || 0,
-        suggests: currentMemberId
-          ? dataPost.post_suggests
-              .map(w => w.suggest)
-              .filter(notEmpty)
-              .map(v => ({
-                id: v.id,
-                description: v.description,
-                memberId: v.member_id,
-                createdAt: new Date(v.created_at),
-                reactedMemberIds: v.suggest_reactions.map(w => w.member_id) || [],
-                suggestReplies:
-                  v.suggest_replies.map(y => ({
-                    id: y.id,
-                    memberId: y.member_id,
-                    content: y.content,
-                    createdAt: y.created_at,
-                    reactedMemberIds: y.suggest_reply_reactions.map(w => w.member_id),
-                  })) || [],
-                suggestReplyCount: v.suggest_replies_aggregate.aggregate?.count || 0,
-              }))
-          : [],
+        suggests: dataPost.post_suggests
+          .map(w => w.suggest)
+          .filter(notEmpty)
+          .map(v => ({
+            id: v.id,
+            description: v.description,
+            memberId: v.member_id,
+            createdAt: new Date(v.created_at),
+            reactedMemberIds: v.suggest_reactions.map(w => w.member_id) || [],
+            suggestReplies:
+              v.suggest_replies.map(y => ({
+                id: y.id,
+                memberId: y.member_id,
+                content: y.content,
+                createdAt: y.created_at,
+                reactedMemberIds: y.suggest_reply_reactions.map(w => w.member_id),
+              })) || [],
+            suggestReplyCount: v.suggest_replies_aggregate.aggregate?.count || 0,
+          })),
         postRoles: dataPost.post_roles.map(role => ({
           id: role.id,
           name: role.name as PostRoleName,

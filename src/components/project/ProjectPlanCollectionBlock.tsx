@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const StyledWrapper = styled.div`
   padding: 2rem;

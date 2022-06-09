@@ -216,6 +216,7 @@ export const commonMessages = {
   link: defineMessages({
     more: { id: 'common.profile', defaultMessage: '查看簡介' },
     fillIn: { id: 'common.button.fillIn', defaultMessage: '前往填寫' },
+    copied: { id: 'common.link.copied', defaultMessage: '已複製連結' },
   }),
   label: defineMessages({
     title: { id: 'common.label.title', defaultMessage: '標題' },
@@ -1327,6 +1328,10 @@ export const saleMessages = {
     refunded: { id: 'sale.status.refunded', defaultMessage: '已退款' },
     deleted: { id: 'sale.status.deleted', defaultMessage: '已刪除' },
     preparing: { id: 'sale.status.preparing', defaultMessage: '準備中' },
+    paying: { id: 'sale.status.paying', defaultMessage: '付款中' },
+    refunding: { id: 'sale.status.paying', defaultMessage: '退款中' },
+    partialExpired: { id: 'sale.status.partialExpired', defaultMessage: '部分過期' },
+    unknown: { id: 'sale.status.unknown', defaultMessage: '未知' },
   }),
 }
 
@@ -1680,11 +1685,11 @@ export const codeMessages = defineMessages({
   },
   E_PAYMENT_LIMIT: {
     id: 'code.E_PAYMENT_LIMIT',
-    defaultMessage: '付款次數已達十次上限',
+    defaultMessage: '付款次數已達十次上限，請建立新訂單',
   },
   E_COIN_INCLUDED: {
     id: 'code.E_COIN_INCLUDED',
-    defaultMessage: '無法建立含有代幣的交易',
+    defaultMessage: '無法建立含有代幣的交易，請移除該項目',
   },
   E_NO_PRICE: {
     id: 'code.E_NO_PRICE',

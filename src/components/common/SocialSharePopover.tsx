@@ -1,14 +1,16 @@
 import { Icon } from '@chakra-ui/icons'
-import { IconButton } from '@chakra-ui/react'
+import { IconButton, useToast } from '@chakra-ui/react'
 import { Popover } from 'antd'
 import { useState } from 'react'
 import { AiOutlineLink } from 'react-icons/ai'
 import { BsShareFill } from 'react-icons/bs'
+import { useIntl } from 'react-intl'
 import { FacebookIcon, FacebookShareButton, LineIcon, LineShareButton } from 'react-share'
 import styled from 'styled-components'
+import { commonMessages } from '../../helpers/translation'
 
 const StyledIconButton = styled(IconButton)`
-  border: 1px solid var(--gray-light);
+  border: 1px solid var(--gray);
   border-radius: 50% !important;
   background: white;
 `
@@ -22,6 +24,8 @@ const StyledPopperContent = styled.div`
 `
 
 const SocialSharePopover: React.VFC<{ url: string }> = ({ url }) => {
+  const toast = useToast()
+  const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
   const size = 37
   const round = true
@@ -31,7 +35,7 @@ const SocialSharePopover: React.VFC<{ url: string }> = ({ url }) => {
     url,
   }
   const handleVisibleOnChange = async (newVisible: boolean) => {
-    if (window.navigator.userAgent) {
+    if (window.navigator) {
       const isMobile: boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         window.navigator.userAgent,
       )
@@ -40,7 +44,6 @@ const SocialSharePopover: React.VFC<{ url: string }> = ({ url }) => {
           await window.navigator.share(shareData)
         } catch (e) {
           console.error(e)
-          setVisible(newVisible)
         }
       } else {
         setVisible(newVisible)
@@ -49,7 +52,15 @@ const SocialSharePopover: React.VFC<{ url: string }> = ({ url }) => {
   }
   const handleCopyLink = () => {
     if (window.navigator.clipboard) {
-      window.navigator.clipboard.writeText(url)
+      window.navigator.clipboard.writeText(url).then(() => {
+        toast({
+          title: formatMessage(commonMessages.link.copied),
+          status: 'success',
+          duration: 1500,
+          position: 'top',
+        })
+        setVisible(false)
+      })
     }
   }
   const ShareButtons = (
@@ -72,7 +83,7 @@ const SocialSharePopover: React.VFC<{ url: string }> = ({ url }) => {
       visible={visible}
       onVisibleChange={handleVisibleOnChange}
     >
-      <StyledIconButton variant="ghost" icon={<Icon as={BsShareFill} color="#4c5b8f" />} className="mr-2" />
+      <StyledIconButton variant="ghost" icon={<Icon as={BsShareFill} color="#9b9b9b" />} className="mr-2" />
     </Popover>
   )
 }

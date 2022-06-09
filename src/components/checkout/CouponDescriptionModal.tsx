@@ -9,7 +9,7 @@ import { ReactComponent as CheckIcon } from '../../images/check.svg'
 import { CouponProps } from '../../types/checkout'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductItem from '../common/ProductItem'
-import { BraftContent } from '../common/StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   couponPlanCode: { id: 'promotion.label.couponPlanCode', defaultMessage: '折扣代碼' },

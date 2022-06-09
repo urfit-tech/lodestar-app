@@ -15,7 +15,7 @@ import { ProgramRoleName } from '../../types/program'
 import MemberAvatar from './MemberAvatar'
 import { StyledEditor } from './MessageReplyCreationForm'
 import ProductRoleFormatter from './ProductRoleFormatter'
-import { BraftContent } from './StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const MessageReplyContentBlock = styled.div`
   padding: 1rem;

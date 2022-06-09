@@ -12,7 +12,7 @@ import { createUploadFn, handleError } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import CommonModal from '../common/CommonModal'
 import MessageButton from '../common/MessageButton'
-import StyledBraftEditor from '../common/StyledBraftEditor'
+import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   fillSuggest: { id: 'practice.label.fillSuggest', defaultMessage: '填寫建議' },
@@ -42,6 +42,7 @@ const SuggestionCreationModal: React.VFC<SuggestionCreationModalProps> = ({ thre
           threadId,
           title: '',
           description: suggest?.toRAW(),
+          isPublic: threadId.indexOf('/posts/') !== -1,
         },
       })
         .then(() => {
@@ -112,9 +113,17 @@ const INSERT_SUGGESTION = gql`
     $threadId: String!
     $title: String
     $description: String
+    $isPublic: Boolean
   ) {
     insert_issue(
-      objects: { app_id: $appId, member_id: $memberId, thread_id: $threadId, title: $title, description: $description }
+      objects: {
+        app_id: $appId
+        member_id: $memberId
+        thread_id: $threadId
+        title: $title
+        description: $description
+        is_public: $isPublic
+      }
     ) {
       affected_rows
     }

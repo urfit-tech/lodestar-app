@@ -9,7 +9,7 @@ import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 import MemberAvatar from './MemberAvatar'
 import MessageReplyCreationForm from './MessageReplyCreationForm'
 import MessageReplyItem from './MessageReplyItem'
-import { BraftContent } from './StyledBraftEditor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const StyledMessageItem = styled.div`
   position: relative;
