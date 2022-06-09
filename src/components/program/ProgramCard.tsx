@@ -1,11 +1,12 @@
 import { Icon } from '@chakra-ui/react'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { AiOutlineClockCircle, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { durationFormatter } from '../../helpers'
 import { useProgramEnrollmentAggregate } from '../../hooks/program'
@@ -15,7 +16,6 @@ import { Category } from '../../types/general'
 import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import StarRating from '../common/StarRating'
 import programMessages from './translation'
 
@@ -99,6 +99,7 @@ const ProgramCard: React.VFC<{
   const { currentMemberId, currentUserRole } = useAuth()
   const { productEditorIds } = useProductEditorIds(program.id)
   const { enabledModules, settings } = useApp()
+  const history = useHistory()
 
   const instructorId = program.roles.length > 0 && program.roles[0].memberId
   const listPrice = program.plans[0]?.listPrice || 0
@@ -112,7 +113,14 @@ const ProgramCard: React.VFC<{
   const periodType = program.plans.length > 1 ? program.plans[0]?.periodType : null
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
   const { data: enrolledCount } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
-
+  const programLink =
+    programType && previousPage
+      ? `/programs/${program.id}?type=${programType}&back=${previousPage}`
+      : programType
+      ? `/programs/${program.id}?type=${programType}`
+      : previousPage
+      ? `/programs/${program.id}?back=${previousPage}`
+      : `/programs/${program.id}`
   return (
     <>
       {!noInstructor && instructorId && (
@@ -123,87 +131,83 @@ const ProgramCard: React.VFC<{
         </InstructorPlaceHolder>
       )}
 
-      <Link
-        to={
-          programType && previousPage
-            ? `/programs/${program.id}?type=${programType}&back=${previousPage}`
-            : programType
-            ? `/programs/${program.id}?type=${programType}`
-            : previousPage
-            ? `/programs/${program.id}?back=${previousPage}`
-            : `/programs/${program.id}`
-        }
-        onClick={onClick}
+      <StyledWrapper
+        onClick={() => {
+          onClick && onClick()
+          history.push(programLink)
+        }}
       >
-        <StyledWrapper>
-          {renderCover ? (
-            renderCover(program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover)
-          ) : (
-            <CustomRatioImage
-              width="100%"
-              ratio={9 / 16}
-              src={program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover}
-            />
-          )}
+        {renderCover ? (
+          renderCover(program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover)
+        ) : (
+          <CustomRatioImage
+            width="100%"
+            ratio={9 / 16}
+            src={program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover}
+          />
+        )}
 
-          <StyledContentBlock>
-            <StyledTitle variant={variant}>{program.title}</StyledTitle>
+        <StyledContentBlock>
+          <StyledTitle variant={variant}>
+            <Link to={programLink} onClick={onClick}>
+              {program.title}
+            </Link>
+          </StyledTitle>
 
-            {enabledModules.customer_review ? (
-              currentUserRole === 'app-owner' ||
-              (currentMemberId && productEditorIds.includes(currentMemberId)) ||
-              reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
-                <StyledReviewRating className="d-flex mb-2">
-                  <StarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} max={5} size="20px" />
-                  <span>({formatMessage(programMessages.ProgramCard.reviewCount, { count: reviewCount })})</span>
-                </StyledReviewRating>
-              ) : (
-                <StyledReviewRating className="mb-2">
-                  {formatMessage(programMessages.ProgramCard.noReviews)}
-                </StyledReviewRating>
-              )
-            ) : null}
+          {enabledModules.customer_review ? (
+            currentUserRole === 'app-owner' ||
+            (currentMemberId && productEditorIds.includes(currentMemberId)) ||
+            reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
+              <StyledReviewRating className="d-flex mb-2">
+                <StarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} max={5} size="20px" />
+                <span>({formatMessage(programMessages.ProgramCard.reviewCount, { count: reviewCount })})</span>
+              </StyledReviewRating>
+            ) : (
+              <StyledReviewRating className="mb-2">
+                {formatMessage(programMessages.ProgramCard.noReviews)}
+              </StyledReviewRating>
+            )
+          ) : null}
 
-            {renderCustomDescription && renderCustomDescription()}
-            <StyledDescription variant={variant}>{program.abstract}</StyledDescription>
+          {renderCustomDescription && renderCustomDescription()}
+          <StyledDescription variant={variant}>{program.abstract}</StyledDescription>
 
-            {withMeta && (
-              <StyledMetaBlock className="d-flex flex-row-reverse justify-content-between align-items-center">
-                {!noPrice && (
-                  <div>
-                    {program.plans.length === 0 ? (
-                      <span>{formatMessage(programMessages.ProgramCard.notForSale)}</span>
-                    ) : (
-                      <PriceLabel
-                        variant="inline"
-                        listPrice={listPrice}
-                        salePrice={salePrice}
-                        periodAmount={periodAmount}
-                        periodType={periodType || undefined}
-                      />
-                    )}
+          {withMeta && (
+            <StyledMetaBlock className="d-flex flex-row-reverse justify-content-between align-items-center">
+              {!noPrice && (
+                <div>
+                  {program.plans.length === 0 ? (
+                    <span>{formatMessage(programMessages.ProgramCard.notForSale)}</span>
+                  ) : (
+                    <PriceLabel
+                      variant="inline"
+                      listPrice={listPrice}
+                      salePrice={salePrice}
+                      periodAmount={periodAmount}
+                      periodType={periodType || undefined}
+                    />
+                  )}
+                </div>
+              )}
+
+              <StyledExtraBlock>
+                {program.plans.length === 1 && !noTotalDuration && !!program.totalDuration && (
+                  <div className="d-flex align-items-center">
+                    <Icon mr="1" as={AiOutlineClockCircle} />
+                    {durationFormatter(program.totalDuration)}
                   </div>
                 )}
-
-                <StyledExtraBlock>
-                  {program.plans.length === 1 && !noTotalDuration && !!program.totalDuration && (
-                    <div className="d-flex align-items-center">
-                      <Icon mr="1" as={AiOutlineClockCircle} />
-                      {durationFormatter(program.totalDuration)}
-                    </div>
-                  )}
-                  {program.isEnrolledCountVisible && (
-                    <div className="d-flex align-items-center">
-                      <Icon mr="1" as={AiOutlineUser} />
-                      {enrolledCount}
-                    </div>
-                  )}
-                </StyledExtraBlock>
-              </StyledMetaBlock>
-            )}
-          </StyledContentBlock>
-        </StyledWrapper>
-      </Link>
+                {program.isEnrolledCountVisible && (
+                  <div className="d-flex align-items-center">
+                    <Icon mr="1" as={AiOutlineUser} />
+                    {enrolledCount}
+                  </div>
+                )}
+              </StyledExtraBlock>
+            </StyledMetaBlock>
+          )}
+        </StyledContentBlock>
+      </StyledWrapper>
     </>
   )
 }

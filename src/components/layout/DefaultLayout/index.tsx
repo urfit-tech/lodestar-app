@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Menu, MenuButton, MenuList } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -105,26 +105,30 @@ const DefaultLayout: React.FC<{
                         }
                         onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
                       >
-                        {nav.label}
+                        <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
                       </MenuButton>
                       {nav.subNavs?.length > 0 && (
                         <MenuList>
                           {nav.subNavs?.map((v, idx) =>
                             v.external ? (
-                              <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
-                                <StyledMenuItem _focus={{ bg: '#fff' }}>{v.label}</StyledMenuItem>
-                              </a>
-                            ) : (
-                              <Link key={idx} to={v.href}>
-                                <StyledMenuItem _focus={{ bg: '#fff' }}>
+                              <StyledMenuItem
+                                key={idx}
+                                _focus={{ bg: '#fff' }}
+                                onClick={() => v.href && window.open(v.href, '_blank', 'noopener=yes,noreferrer=yes')}
+                              >
+                                <Link to={v.href} target="_blank" rel="noopener noreferrer">
                                   {v.label}
-                                  {v.tag && (
-                                    <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                                      {v.tag}
-                                    </StyledMenuTag>
-                                  )}
-                                </StyledMenuItem>
-                              </Link>
+                                </Link>
+                              </StyledMenuItem>
+                            ) : (
+                              <StyledMenuItem key={idx} _focus={{ bg: '#fff' }}>
+                                <Link to={v.href}>{v.label}</Link>
+                                {v.tag && (
+                                  <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                                    {v.tag}
+                                  </StyledMenuTag>
+                                )}
+                              </StyledMenuItem>
                             ),
                           )}
                         </MenuList>
@@ -140,7 +144,7 @@ const DefaultLayout: React.FC<{
                         }
                         onClick={() => nav.href && history.push(nav.href)}
                       >
-                        {nav.label}
+                        <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
                         {nav.tag && (
                           <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
                             {nav.tag}
@@ -151,22 +155,24 @@ const DefaultLayout: React.FC<{
                         <MenuList>
                           {nav.subNavs?.map((v, idx) =>
                             v.external ? (
-                              <a key={idx} href={v.href} target="_blank" rel="noopener noreferrer">
-                                <MenuItem _focus={{ bg: '#fff' }}>
-                                  <StyledMenuItem>{v.label}</StyledMenuItem>
-                                </MenuItem>
-                              </a>
-                            ) : (
-                              <Link key={idx} to={v.href}>
-                                <StyledMenuItem _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
+                              <StyledMenuItem
+                                key={idx}
+                                _focus={{ bg: '#fff' }}
+                                onClick={() => v.href && window.open(v.href, '_blank', 'noopener=yes,noreferrer=yes')}
+                              >
+                                <Link to={v.href} target="_blank" rel="noopener noreferrer">
                                   {v.label}
-                                  {v.tag && (
-                                    <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                                      {v.tag}
-                                    </StyledMenuTag>
-                                  )}
-                                </StyledMenuItem>
-                              </Link>
+                                </Link>
+                              </StyledMenuItem>
+                            ) : (
+                              <StyledMenuItem key={idx} _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
+                                <Link to={v.href}>{v.label}</Link>
+                                {v.tag && (
+                                  <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                                    {v.tag}
+                                  </StyledMenuTag>
+                                )}
+                              </StyledMenuItem>
                             ),
                           )}
                         </MenuList>
@@ -189,7 +195,7 @@ const DefaultLayout: React.FC<{
                         }
                         onClick={() => history.push(`/members/${currentMemberId}`)}
                       >
-                        {formatMessage(commonMessages.button.myPage)}
+                        <Link to={`/members/${currentMemberId}`}> {formatMessage(commonMessages.button.myPage)}</Link>
                       </MenuButton>
                     </Menu>
                   )))}

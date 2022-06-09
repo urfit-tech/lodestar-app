@@ -1,7 +1,7 @@
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { StyledPostTitle } from '../components/blog'
@@ -51,6 +51,7 @@ const StyledAbstract = styled.div`
 `
 
 const BlogPostCollectionPage: React.VFC = () => {
+  const history = useHistory()
   const [categories] = useQueryParam('categories', StringParam)
   const [tags] = useQueryParam('tags', StringParam)
   const app = useApp()
@@ -85,24 +86,30 @@ const BlogPostCollectionPage: React.VFC = () => {
         <div className="row">
           <div className="col-12 col-lg-9">
             {posts.map(post => (
-              <Link key={post.id} to={`/posts/${post.codeName || post.id}`}>
-                <div className="row no-gutters align-items-center mb-4">
-                  <div className="col-6 col-lg-4">
-                    <PostPreviewCover
-                      variant="list-item"
-                      coverUrl={post.coverUrl}
-                      withVideo={typeof post.videoUrl === 'string'}
-                    />
-                  </div>
-                  <div className="col-6 col-lg-8 pl-3 pl-lg-4">
-                    <StyledPostTitle className="list-item">{post.title}</StyledPostTitle>
-                    <div className="mb-lg-4">
-                      <PostPreviewMeta authorId={post.authorId} publishedAt={post.publishedAt} />
-                    </div>
-                    <StyledAbstract>{post.abstract}</StyledAbstract>
-                  </div>
+              <div
+                key={post.id}
+                className="row no-gutters align-items-center mb-4 cursor-pointer"
+                onClick={() => {
+                  history.push(`/posts/${post.codeName || post.id}`)
+                }}
+              >
+                <div className="col-6 col-lg-4">
+                  <PostPreviewCover
+                    variant="list-item"
+                    coverUrl={post.coverUrl}
+                    withVideo={typeof post.videoUrl === 'string'}
+                  />
                 </div>
-              </Link>
+                <div className="col-6 col-lg-8 pl-3 pl-lg-4">
+                  <StyledPostTitle className="list-item">
+                    <Link to={`/posts/${post.codeName || post.id}`}>{post.title} </Link>
+                  </StyledPostTitle>
+                  <div className="mb-lg-4">
+                    <PostPreviewMeta authorId={post.authorId} publishedAt={post.publishedAt} />
+                  </div>
+                  <StyledAbstract>{post.abstract}</StyledAbstract>
+                </div>
+              </div>
             ))}
           </div>
           {!categories && (
