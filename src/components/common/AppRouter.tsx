@@ -307,6 +307,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/settings/social-cards',
     pageName: 'member/SocialCardCollectionPage',
   },
+  member_certificates_admin: {
+    path: '/settings/certificates',
+    pageName: 'member/CertificateCollectionAdminPage',
+  },
   // deprecated
   funding: {
     path: '/funding/:projectId',
