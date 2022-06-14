@@ -57,7 +57,7 @@ const ClassCouponBlock: React.VFC = () => {
       {
         !currentMemberId ?
         <BlockContainer>
-          <BlockText>立即註冊，領線上課程$100購課金、看百堂免費課</BlockText>
+          <BlockText>立即註冊，領線上課程$200購課金、看百堂免費課</BlockText>
           <Button onClick={() => handleClick()}>立即註冊</Button>
         </BlockContainer> :
         <></>
