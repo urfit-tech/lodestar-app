@@ -25,6 +25,7 @@ const InstructorPlaceHolder = styled.div`
 `
 const StyledWrapper = styled.div<{ variant?: ProgramCardVariant }>`
   overflow: hidden;
+  cursor: pointer;
   ${props =>
     (props.variant === 'primary' || !props.variant) &&
     css`
