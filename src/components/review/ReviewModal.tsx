@@ -162,7 +162,7 @@ const ReviewModal: React.VFC<{
           onRefetchReviewMemberItem?.()
           onRefetchReviewAggregate?.()
           onRefetchCurrentMemberReview?.()
-          window.location.replace(`/programs/${programId}?moveToBlock=customer-review`)
+          window.location.replace(`/programs/${programId}?moveToBlock=customer-review&visitIntro=1`)
         })
         .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
         .finally(() => {
@@ -192,7 +192,7 @@ const ReviewModal: React.VFC<{
           reset()
           onRefetchReviewMemberItem?.()
           onRefetchReviewAggregate?.()
-          window.location.replace(`/programs/${programId}?moveToBlock=customer-review`)
+          window.location.replace(`/programs/${programId}?moveToBlock=customer-review&visitIntro=1`)
         })
         .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
         .finally(() => {
