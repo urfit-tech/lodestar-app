@@ -245,7 +245,11 @@ const defaultRoutesMap: RoutesMap = {
     path: '/practices/:practiceId',
     pageName: 'PracticePage',
   },
-
+  // certificate
+  certificate: {
+    path: '/certificates/:certificateId',
+    pageName: 'CertificatePage',
+  },
   // general member admin
   member_settings: {
     path: '/settings',

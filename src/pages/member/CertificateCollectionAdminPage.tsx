@@ -6,14 +6,14 @@ import CertificateCard from '../../components/common/CertificateCard'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { commonMessages } from '../../helpers/translation'
-import { useCertificates } from '../../hooks/certificate'
+import { useCertificateColleaction } from '../../hooks/certificate'
 import { ReactComponent as MemberCertificateIcon } from '../../images/certificate.svg'
 import ForbiddenPage from '../ForbiddenPage'
 
 const CertificatesCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const app = useApp()
-  const { certificates } = useCertificates()
+  const { certificates } = useCertificateColleaction()
 
   if (app.loading) {
     return (

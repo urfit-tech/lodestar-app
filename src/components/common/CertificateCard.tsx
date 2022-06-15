@@ -42,7 +42,7 @@ const StyledAbstract = styled.div`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 `
-const StyledCode = styled.div`
+export const StyledCode = styled.div`
   color: var(--gray-darker);
   font-size: 14px;
   font-weight: 500;
@@ -50,7 +50,7 @@ const StyledCode = styled.div`
   letter-spacing: 0.4px;
   white-space: nowrap;
 `
-const StyledDate = styled.div`
+export const StyledDate = styled.div`
   color: var(--gray-dark);
   font-size: 14px;
   font-weight: 500;
