@@ -121,7 +121,11 @@ const DefaultLayout: React.FC<{
                                 </Link>
                               </StyledMenuItem>
                             ) : (
-                              <StyledMenuItem key={idx} _focus={{ bg: '#fff' }}>
+                              <StyledMenuItem
+                                key={idx}
+                                _focus={{ bg: '#fff' }}
+                                onClick={() => v.href && history.push(v.href)}
+                              >
                                 <Link to={v.href}>{v.label}</Link>
                                 {v.tag && (
                                   <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
@@ -165,7 +169,11 @@ const DefaultLayout: React.FC<{
                                 </Link>
                               </StyledMenuItem>
                             ) : (
-                              <StyledMenuItem key={idx} _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}>
+                              <StyledMenuItem
+                                key={idx}
+                                _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}
+                                onClick={() => v.href && history.push(v.href)}
+                              >
                                 <Link to={v.href}>{v.label}</Link>
                                 {v.tag && (
                                   <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
