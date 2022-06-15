@@ -1,4 +1,6 @@
 import { Button } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -11,8 +13,6 @@ import { AuthModalContext } from '../../../components/auth/AuthModal'
 import AdminCard from '../../../components/common/AdminCard'
 import CountDownTimeBlock from '../../../components/common/CountDownTimeBlock'
 import PaymentButton from '../../../components/common/PaymentButton'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { commonMessages, productMessages } from '../../../helpers/translation'
 import { useEnrolledPlanIds, useProgram } from '../../../hooks/program'
 import { ProgramPlan } from '../../../types/program'
@@ -97,7 +97,7 @@ const ProgramPlanCard: React.VFC<{
           variant="outline"
           colorScheme="primary"
           isFullWidth
-          onClick={() => history.push(`/programs/${programId}/contents?back=program_${programId}`)}
+          onClick={() => history.push(`/programs/${programId}/contents?back=programs_${programId}`)}
         >
           {formatMessage(commonMessages.button.enter)}
         </Button>
