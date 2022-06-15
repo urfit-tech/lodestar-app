@@ -7,11 +7,12 @@ import React from 'react'
 import { AiOutlineClockCircle, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { durationFormatter } from '../../helpers'
 import { useProgramEnrollmentAggregate } from '../../hooks/program'
 import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import EmptyCover from '../../images/empty-cover.png'
+import { ReactComponent as StarIcon } from '../../images/star-current-color.svg'
 import { Category } from '../../types/general'
 import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
@@ -22,23 +23,37 @@ import programMessages from './translation'
 const InstructorPlaceHolder = styled.div`
   height: 2rem;
 `
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ variant?: ProgramCardVariant }>`
   overflow: hidden;
-  border-radius: 4px;
-  background-color: white;
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
+  ${props =>
+    (props.variant === 'primary' || !props.variant) &&
+    css`
+      border-radius: 4px;
+      background-color: white;
+      box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
+    `}
 `
-const StyledContentBlock = styled.div`
-  padding: 1.25rem;
+const StyledContentBlock = styled.div<{ variant?: ProgramCardVariant }>`
+  padding-top: 1rem;
+  padding-bottom: 1.25rem;
+  ${props =>
+    (props.variant === 'primary' || !props.variant) &&
+    css`
+      padding: 1.25rem;
+    `}
 `
-const StyledTitle = styled.div<{ variant?: 'brief' }>`
+const StyledTitle = styled.div<{ variant?: ProgramCardVariant }>`
   ${MultiLineTruncationMixin}
-  margin-bottom: ${props => (props.variant === 'brief' ? '0.5rem' : '1.25rem')};
-  height: 3em;
   color: var(--gray-darker);
-  font-size: ${props => (props.variant === 'brief' ? '16px' : '18px')};
+  font-size: 18px;
   font-weight: bold;
   letter-spacing: 0.8px;
+  ${props =>
+    (props.variant === 'primary' || !props.variant) &&
+    css`
+      margin-bottom: 1.25rem;
+      height: 3em;
+    `}
 `
 const StyledReviewRating = styled.div`
   color: var(--gray-dark);
@@ -46,10 +61,10 @@ const StyledReviewRating = styled.div`
   letter-spacing: 0.4px;
   text-align: justify;
 `
-const StyledDescription = styled.div<{ variant?: 'brief' }>`
+const StyledDescription = styled.div`
   ${MultiLineTruncationMixin}
   margin-bottom: 12px;
-  height: ${props => (props.variant === 'brief' ? '' : '3em')};
+  height: 3em;
   color: var(--gray-dark);
   font-size: 14px;
   letter-spacing: 0.4px;
@@ -64,36 +79,74 @@ const StyledExtraBlock = styled.div`
   align-items: center;
   gap: 10px;
 `
+const StyledCategoryName = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: var(--gray-dark);
+`
+const StyledIcon = styled(Icon)`
+  color: ${props => props.theme['@primary-color']};
+`
 
-const ProgramCard: React.VFC<{
+type ProgramCardVariant = 'primary' | 'secondary'
+type ProgramCardProps = {
   program: ProgramBriefProps & {
     categories?: Category[]
     roles: ProgramRole[]
     plans: ProgramPlan[]
   }
-  variant?: 'brief'
-  programType?: string | null
+  variant?: ProgramCardVariant
   noInstructor?: boolean
   noPrice?: boolean
   noTotalDuration?: boolean
   withMeta?: boolean
   withProgress?: boolean
+  programType?: string | null
   previousPage?: string
   onClick?: () => void
   renderCover?: (cover: string) => React.ReactElement
   renderCustomDescription?: () => React.ReactElement
-}> = ({
+}
+type SharedProps = {
+  programLink: string
+}
+
+const ProgramCard: React.VFC<ProgramCardProps> = programCardProps => {
+  const { program, variant, programType, previousPage } = programCardProps
+  const { settings } = useApp()
+  const mergedVariant = variant || settings['feature.program_card.variant']
+
+  const programLink =
+    programType && previousPage
+      ? `/programs/${program.id}?type=${programType}&back=${previousPage}`
+      : programType
+      ? `/programs/${program.id}?type=${programType}`
+      : previousPage
+      ? `/programs/${program.id}?back=${previousPage}`
+      : `/programs/${program.id}`
+
+  switch (mergedVariant) {
+    case 'primary':
+      return <PrimaryCard {...programCardProps} programLink={programLink} />
+    case 'secondary':
+      return <SecondaryCard {...programCardProps} programLink={programLink} />
+    default:
+      return <PrimaryCard {...programCardProps} programLink={programLink} />
+  }
+}
+
+const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
   program,
-  variant,
-  programType,
+  variant = 'primary',
   noInstructor,
   noPrice,
   noTotalDuration,
   withMeta,
-  previousPage,
   onClick,
   renderCover,
   renderCustomDescription,
+  programLink,
 }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
@@ -113,14 +166,7 @@ const ProgramCard: React.VFC<{
   const periodType = program.plans.length > 1 ? program.plans[0]?.periodType : null
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
   const { data: enrolledCount } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
-  const programLink =
-    programType && previousPage
-      ? `/programs/${program.id}?type=${programType}&back=${previousPage}`
-      : programType
-      ? `/programs/${program.id}?type=${programType}`
-      : previousPage
-      ? `/programs/${program.id}?back=${previousPage}`
-      : `/programs/${program.id}`
+
   return (
     <>
       {!noInstructor && instructorId && (
@@ -147,7 +193,7 @@ const ProgramCard: React.VFC<{
           />
         )}
 
-        <StyledContentBlock>
+        <StyledContentBlock variant={variant}>
           <StyledTitle variant={variant}>
             <Link to={programLink} onClick={onClick}>
               {program.title}
@@ -170,7 +216,7 @@ const ProgramCard: React.VFC<{
           ) : null}
 
           {renderCustomDescription && renderCustomDescription()}
-          <StyledDescription variant={variant}>{program.abstract}</StyledDescription>
+          <StyledDescription>{program.abstract}</StyledDescription>
 
           {withMeta && (
             <StyledMetaBlock className="d-flex flex-row-reverse justify-content-between align-items-center">
@@ -209,6 +255,60 @@ const ProgramCard: React.VFC<{
         </StyledContentBlock>
       </StyledWrapper>
     </>
+  )
+}
+const SecondaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
+  program,
+  variant = 'secondary',
+  onClick,
+  renderCover,
+  programLink,
+}) => {
+  const { enabledModules } = useApp()
+  const history = useHistory()
+  const { averageScore } = useReviewAggregate(`/programs/${program.id}`)
+
+  return (
+    <StyledWrapper
+      variant={variant}
+      onClick={() => {
+        onClick && onClick()
+        history.push(programLink)
+      }}
+    >
+      {renderCover ? (
+        renderCover(program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover)
+      ) : (
+        <CustomRatioImage
+          width="100%"
+          ratio={9 / 16}
+          src={program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover}
+        />
+      )}
+
+      <StyledContentBlock variant={variant}>
+        <StyledTitle variant={variant}>
+          <Link to={programLink} onClick={onClick}>
+            {program.title}
+          </Link>
+        </StyledTitle>
+
+        <div className="d-flex mt-1">
+          <StyledCategoryName className="flex-grow-1">
+            {program.categories
+              ?.map(c => (c.name.includes('/') ? c.name.split('/')[1] : c.name))
+              .slice(0, 3)
+              .join('・')}
+          </StyledCategoryName>
+          {enabledModules.customer_review && Boolean(averageScore) && (
+            <div className="flex-shrink-0 d-flex justify-content-center align-items-center">
+              <span className="mr-1">{averageScore}</span>
+              <StyledIcon as={StarIcon} />
+            </div>
+          )}
+        </div>
+      </StyledContentBlock>
+    </StyledWrapper>
   )
 }
 
