@@ -12,4 +12,5 @@ export type CertificateProps = {
   hours: number
   created_at: string
   distributed_at: string
+  template: string
 }

@@ -17,6 +17,7 @@ export const useCertificateColleaction = () => {
         hours: 24,
         created_at: '2021-11-30T16:59:59+00:00',
         distributed_at: '2021-03-21T15:00:00+00:00',
+        template: `<div style='border:1px solid #cccccc;padding:24px;height:667px;width:100%'>證書編號：{{certificat_id}}<br/>{{name}}<br/>{{category}}<br/>{{hours}}<br/>{{created_at}}</div>`,
       },
     ],
   }
@@ -44,6 +45,7 @@ export const useCertificate = (certificateId: string) => {
         hours: 24,
         created_at: '2021-11-30T16:59:59+00:00',
         distributed_at: '2021-03-21T15:00:00+00:00',
+        template: `<div style='border:1px solid #cccccc;padding:24px;height:667px;width:100%'>證書編號：{{certificat_id}}<br/>{{name}}<br/>{{category}}<br/>{{hours}}<br/>{{created_at}}</div>`,
       },
     ],
   }

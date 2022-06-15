@@ -1,10 +1,20 @@
 import { Button } from '@chakra-ui/react'
 import moment from 'moment'
+import { render } from 'mustache'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StyledCode, StyledDate } from '../../components/common/CertificateCard'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
+import { certificateMessages } from '../../helpers/translation'
 import { CertificateProps } from '../../types/certificate'
+
+type TemplateVariablesProps = {
+  certificat_id: string
+  name: string
+  category: string
+  hours: string
+  created_at: string
+}
 
 const StyledContainer = styled.div`
   margin: 40px;
@@ -20,6 +30,7 @@ const StyledContentBlockHead = styled.div`
   margin-bottom: 1.125rem;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
 `
 const StyledTitle = styled.h1`
@@ -50,8 +61,30 @@ const StyledContentBlockFooter = styled.div`
   padding: 1.25rem 1.25rem 1.25rem 2rem;
 `
 
+const StyledButton = styled(Button)`
+  width: 105px;
+  height: 44px;
+  border-radius: 4px;
+  background-color: #10bad9 !important;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: #fff;
+  &:hover {
+    opacity: 0.6;
+  }
+`
+
 const CertificateContentBlock: React.VFC<{ certificate: CertificateProps }> = ({ certificate }) => {
   const { formatMessage } = useIntl()
+
+  const templateVariables: TemplateVariablesProps = {
+    certificat_id: certificate.certificate_id,
+    name: certificate.member.name,
+    category: certificate.category,
+    hours: `${certificate.hours}小時`,
+    created_at: moment(certificate.created_at).format('YYYY年MM月DD日'),
+  }
 
   return (
     <StyledContainer>
@@ -65,7 +98,7 @@ const CertificateContentBlock: React.VFC<{ certificate: CertificateProps }> = ({
               },
             )}
           </StyledCode>
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center flex-wrap">
             <StyledDate className="mr-3">
               {formatMessage(
                 {
@@ -91,10 +124,14 @@ const CertificateContentBlock: React.VFC<{ certificate: CertificateProps }> = ({
         <StyledAbstract>{certificate.abstract}</StyledAbstract>
       </StyledContentBlock>
       {/* TEMPLATE */}
-      <div style={{ height: 667, width: '100%', background: 'grey' }}></div>
+      <div dangerouslySetInnerHTML={{ __html: render(certificate.template, templateVariables) }}></div>
+      {/* TEMPLATE */}
       <StyledContentBlockFooter>
-        <StyledAbstract>恭喜你達成所有成就！快分享給身邊的朋友吧！</StyledAbstract>
-        <SocialSharePopover url="google.com" children={<Button>分享社群</Button>} />
+        <StyledAbstract className="mr-3">{formatMessage(certificateMessages.text.congratulations)}</StyledAbstract>
+        <SocialSharePopover
+          url={window.location.href}
+          children={<StyledButton>{formatMessage(certificateMessages.text.share)}</StyledButton>}
+        />
       </StyledContentBlockFooter>
     </StyledContainer>
   )

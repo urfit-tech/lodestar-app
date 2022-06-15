@@ -1697,3 +1697,16 @@ export const codeMessages = defineMessages({
     defaultMessage: '零元訂單無法建立交易',
   },
 })
+
+export const certificateMessages = {
+  text: defineMessages({
+    congratulations: {
+      id: 'certificate.text.congratulations',
+      defaultMessage: '恭喜你達成所有成就！快分享給身邊的朋友吧！',
+    },
+    share: {
+      id: 'certificate.text.share',
+      defaultMessage: '分享社群',
+    },
+  }),
+}
