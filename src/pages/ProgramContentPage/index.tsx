@@ -20,6 +20,14 @@ import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
 
+const StyledLink = styled(Link)`
+  && {
+    &:hover {
+      color: white;
+    }
+  }
+`
+
 const ProgramContentPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -113,15 +121,11 @@ const ProgramContentPage: React.VFC = () => {
                   <>
                     <ProgramContentMenu isScrollToTop program={program} />
 
-                    <Button
-                      isFullWidth
-                      className="mt-3"
-                      colorScheme="primary"
-                      as={Link}
-                      to={`/programs/${programId}?moveToBlock=customer-review`}
-                    >
-                      {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
-                    </Button>
+                    <StyledLink to={`/programs/${programId}?moveToBlock=customer-review&visitIntro=1`}>
+                      <Button isFullWidth className="mt-3" colorScheme="primary">
+                        {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
+                      </Button>
+                    </StyledLink>
                   </>
                 </ProgramCustomContentBlock>
               </div>

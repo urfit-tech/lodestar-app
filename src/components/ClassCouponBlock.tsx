@@ -10,6 +10,8 @@ const BlockContainer = styled.section`
   flex-wrap: wrap;
   background: #9babad;
   border-radius: 4px;
+  display: none; // 活動隱欌
+  pointer-events: none; // 活動隱藏
 `
 const BlockText = styled.p`
   color: #ffffff;

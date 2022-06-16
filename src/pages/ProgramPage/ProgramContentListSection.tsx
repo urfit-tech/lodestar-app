@@ -99,7 +99,7 @@ const ProgramContentListSection: React.VFC<{
                     if (!isEnrolled) {
                       return
                     }
-                    history.push(`/programs/${program.id}/contents/${programContent.id}`)
+                    history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
                   }}
                 >
                   <Typography.Text>

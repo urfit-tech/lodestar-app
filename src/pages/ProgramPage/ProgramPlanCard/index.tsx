@@ -97,7 +97,7 @@ const ProgramPlanCard: React.VFC<{
           variant="outline"
           colorScheme="primary"
           isFullWidth
-          onClick={() => history.push(`/programs/${programId}/contents?back=program_${programId}`)}
+          onClick={() => history.push(`/programs/${programId}/contents?back=programs_${programId}`)}
         >
           {formatMessage(commonMessages.button.enter)}
         </Button>
