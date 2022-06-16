@@ -1,7 +1,7 @@
-import React from 'react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import styled from 'styled-components'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import React from 'react'
+import styled from 'styled-components'
 
 const BlockContainer = styled.section`
   width: 100%;
@@ -10,9 +10,11 @@ const BlockContainer = styled.section`
   flex-wrap: wrap;
   background: #9babad;
   border-radius: 4px;
+  display: none; // 活動隱欌
+  pointer-events: none; // 活動隱藏
 `
 const BlockText = styled.p`
-  color: #FFFFFF;
+  color: #ffffff;
   text-align: center;
   font-weight: 500;
   font-size: 17px;
@@ -22,8 +24,8 @@ const Button = styled.button`
   height: 42px;
   width: 96px;
   margin: 10px auto 0 auto;
-  background: #019D96;
-  color: #FFFFFF;
+  background: #019d96;
+  color: #ffffff;
   border-radius: 42px;
   font-weight: 500;
   outline: none;
@@ -54,14 +56,14 @@ const ClassCouponBlock: React.VFC = () => {
 
   return (
     <>
-      {
-        !currentMemberId ?
+      {!currentMemberId ? (
         <BlockContainer>
           <BlockText>立即註冊，領線上課程$200購課金、看百堂免費課</BlockText>
           <Button onClick={() => handleClick()}>立即註冊</Button>
-        </BlockContainer> :
+        </BlockContainer>
+      ) : (
         <></>
-      }
+      )}
     </>
   )
 }
