@@ -123,11 +123,11 @@ const ProgramContentPage: React.VFC = () => {
                   <>
                     <ProgramContentMenu isScrollToTop program={program} />
 
-                    <Button isFullWidth className="mt-3" colorScheme="primary">
-                      <StyledLink to={`/programs/${programId}?moveToBlock=customer-review`}>
+                    <StyledLink to={`/programs/${programId}?moveToBlock=customer-review&visitIntro=1`}>
+                      <Button isFullWidth className="mt-3" colorScheme="primary">
                         {formatMessage(defineMessage({ id: 'program.ui.leaveReview', defaultMessage: '留下評價' }))}
-                      </StyledLink>
-                    </Button>
+                      </Button>
+                    </StyledLink>
                   </>
                 </ProgramCustomContentBlock>
               </div>

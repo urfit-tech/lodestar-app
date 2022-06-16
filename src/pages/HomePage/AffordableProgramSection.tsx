@@ -40,7 +40,6 @@ const AffordableProgramSection: React.FC<{
           {programs.map(program => (
             <StyledColumn key={program.id} className="col-6 mb-4">
               <ProgramCard
-                variant="brief"
                 program={program}
                 renderCustomDescription={() => (
                   <StyledDescription>
