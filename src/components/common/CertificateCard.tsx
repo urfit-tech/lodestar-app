@@ -2,7 +2,7 @@ import moment from 'moment-timezone'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { CertificateProps } from '../../types/certificate'
+import { Certificate } from '../../types/certificate'
 
 const StyledContainer = styled.div`
   margin-bottom: 1.25rem;
@@ -60,7 +60,7 @@ export const StyledDate = styled.div`
 `
 
 const CertificateCard: React.VFC<{
-  certificate: CertificateProps
+  certificate: Certificate
 }> = ({ certificate }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()

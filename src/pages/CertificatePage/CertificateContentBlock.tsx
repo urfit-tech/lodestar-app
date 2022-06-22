@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { StyledCode, StyledDate } from '../../components/common/CertificateCard'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
 import { certificateMessages } from '../../helpers/translation'
-import { CertificateProps } from '../../types/certificate'
+import { Certificate } from '../../types/certificate'
 
 type TemplateVariablesProps = {
   certificat_id: string
@@ -75,7 +75,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const CertificateContentBlock: React.VFC<{ certificate: CertificateProps }> = ({ certificate }) => {
+const CertificateContentBlock: React.VFC<{ certificate: Certificate }> = ({ certificate }) => {
   const { formatMessage } = useIntl()
 
   const templateVariables: TemplateVariablesProps = {

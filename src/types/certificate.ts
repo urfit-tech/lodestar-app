@@ -1,4 +1,4 @@
-export type CertificateProps = {
+export type Certificate = {
   id: string
   title: string
   abstract: string

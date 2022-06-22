@@ -113,7 +113,7 @@ export const MemberAdminMenu: React.VFC<
     },
     {
       key: 'member_certificates_admin',
-      item: enabledModules.member_certificate && (
+      item: enabledModules.certificate && (
         <Menu.Item key="member_certificates_admin">
           <Icon as={MemberCertificateIcon} className="mr-2" />
           {formatMessage(commonMessages.content.certificate)}

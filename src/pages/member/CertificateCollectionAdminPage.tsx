@@ -23,7 +23,7 @@ const CertificatesCollectionAdminPage: React.VFC = () => {
     )
   }
 
-  if (!app.loading && !app.enabledModules.member_certificate) {
+  if (!app.loading && !app.enabledModules.certificate) {
     return <ForbiddenPage />
   }
 

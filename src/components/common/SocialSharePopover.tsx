@@ -23,7 +23,7 @@ const StyledPopperContent = styled.div`
   gap: 10px;
 `
 
-const SocialSharePopover: React.VFC<{ url: string; children?: React.ReactNode }> = ({ url, children }) => {
+const SocialSharePopover: React.FC<{ url: string }> = ({ url, children }) => {
   const toast = useToast()
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
