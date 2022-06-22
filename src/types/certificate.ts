@@ -3,14 +3,14 @@ export type Certificate = {
   title: string
   abstract: string
   code: string
-  expired_at: string
-  certificate_id: string
+  expiredAt: string
+  certificateId: string
   member: {
     name: string
   }
   category: string
   hours: number
-  created_at: string
-  distributed_at: string
+  createdAt: string
+  distributedAt: string
   template: string
 }

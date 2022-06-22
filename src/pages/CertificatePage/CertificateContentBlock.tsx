@@ -9,11 +9,11 @@ import { certificateMessages } from '../../helpers/translation'
 import { Certificate } from '../../types/certificate'
 
 type TemplateVariablesProps = {
-  certificat_id: string
+  certificatId: string
   name: string
   category: string
   hours: string
-  created_at: string
+  createdAt: string
 }
 
 const StyledContainer = styled.div`
@@ -79,11 +79,11 @@ const CertificateContentBlock: React.VFC<{ certificate: Certificate }> = ({ cert
   const { formatMessage } = useIntl()
 
   const templateVariables: TemplateVariablesProps = {
-    certificat_id: certificate.certificate_id,
+    certificatId: certificate.certificateId,
     name: certificate.member.name,
     category: certificate.category,
     hours: `${certificate.hours}小時`,
-    created_at: moment(certificate.created_at).format('YYYY年MM月DD日'),
+    createdAt: moment(certificate.createdAt).format('YYYY年MM月DD日'),
   }
 
   return (
@@ -106,7 +106,7 @@ const CertificateContentBlock: React.VFC<{ certificate: Certificate }> = ({ cert
                   defaultMessage: '發放日期：{certificateDistributedTime}',
                 },
                 {
-                  certificateDistributedTime: moment(certificate.distributed_at).format('YYYY/MM/DD hh:mm'),
+                  certificateDistributedTime: moment(certificate.distributedAt).format('YYYY/MM/DD hh:mm'),
                 },
               )}
             </StyledDate>
@@ -114,7 +114,7 @@ const CertificateContentBlock: React.VFC<{ certificate: Certificate }> = ({ cert
               {formatMessage(
                 { id: 'common.certificateExpiredTime', defaultMessage: '證書效期：{certificateExpiredTime} 止' },
                 {
-                  certificateExpiredTime: moment(certificate.expired_at).format('YYYY/MM/DD hh:mm'),
+                  certificateExpiredTime: moment(certificate.expiredAt).format('YYYY/MM/DD hh:mm'),
                 },
               )}
             </StyledDate>

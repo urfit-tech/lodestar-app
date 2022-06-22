@@ -85,7 +85,7 @@ const CertificateCard: React.VFC<{
           {formatMessage(
             { id: 'common.certificateExpiredTime', defaultMessage: '證書效期：{certificateExpiredTime} 止' },
             {
-              certificateExpiredTime: moment(certificate.expired_at).format('YYYY/MM/DD hh:mm'),
+              certificateExpiredTime: moment(certificate.expiredAt).format('YYYY/MM/DD hh:mm'),
             },
           )}
         </StyledDate>
