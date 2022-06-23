@@ -2,6 +2,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import moment from 'moment'
 import PageHelmet from '../../components/common/PageHelmet'
+import { getBraftContent } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { Program } from '../../types/program'
 
@@ -26,7 +27,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
           '@type': 'Product',
           name: program.title || app.settings['title'],
           image: program.coverUrl || app.settings['open_graph.image'],
-          description: program.abstract || app.settings['description'],
+          description: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
           sku: resourceCollection[0]?.sku,
           mpn: program.id,
           brand: {
@@ -62,7 +63,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
           '@context': 'https://schema.org',
           '@type': 'Course',
           name: program.title,
-          description: program.abstract?.slice(0, 60),
+          description: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
           provider: {
             '@type': 'Organization',
             name: app.settings['name'],
@@ -75,7 +76,10 @@ const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: program.title || app.settings['open_graph.title'] },
-        { property: 'og:description', content: program.abstract || app.settings['description'] },
+        {
+          property: 'og:description',
+          content: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
+        },
         { property: 'og:image', content: program.coverUrl || app.settings['open_graph.image'] },
       ]}
     />

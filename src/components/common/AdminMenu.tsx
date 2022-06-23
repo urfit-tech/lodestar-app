@@ -13,6 +13,7 @@ import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { useSocialCardCollection } from '../../hooks/member'
+import { ReactComponent as MemberCertificateIcon } from '../../images/certificate.svg'
 import { ReactComponent as ClipboardListIcon } from '../../images/clipboard-list.svg'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
@@ -124,6 +125,15 @@ export const MemberAdminMenu: React.VFC<
     //     </Menu.Item>
     //   ),
     // },
+    {
+      key: 'member_certificates_admin',
+      item: enabledModules.certificate && (
+        <Menu.Item key="member_certificates_admin">
+          <Icon as={MemberCertificateIcon} className="mr-2" />
+          {formatMessage(commonMessages.content.certificate)}
+        </Menu.Item>
+      ),
+    },
     // {
     //   key: 'member_practices_admin',
     //   item: enabledModules.practice && (
