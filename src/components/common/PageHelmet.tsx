@@ -2,6 +2,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { Helmet } from 'react-helmet'
 import { Thing, WithContext } from 'schema-dts'
 import xss from 'xss'
+import { getBraftContent } from '../../helpers'
 
 const PageHelmet: React.FC<
   Partial<{
@@ -25,7 +26,11 @@ const PageHelmet: React.FC<
   return (
     <Helmet onChangeClientState={() => props.onLoaded?.()}>
       <title>{xss(props.title || app.settings['title'])}</title>
-      <meta key="description" name="description" content={xss(props.description || app.settings['description'])} />
+      <meta
+        key="description"
+        name="description"
+        content={xss(getBraftContent(props.description || '{}').slice(0, 150) || app.settings['description'])}
+      />
       <meta key="keywords" name="keywords" content={xss(props.keywords?.join() || app.settings['keywords'])} />
       {props.jsonLd && <script type="application/ld+json">{xss(JSON.stringify(props.jsonLd))}</script>}
       {openGraph.map(({ property, content }, index) => (

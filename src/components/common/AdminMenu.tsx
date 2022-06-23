@@ -14,6 +14,7 @@ import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { useSocialCardCollection } from '../../hooks/member'
 import { ReactComponent as BookIcon } from '../../images/book.svg'
+import { ReactComponent as MemberCertificateIcon } from '../../images/certificate.svg'
 import { ReactComponent as ClipboardListIcon } from '../../images/clipboard-list.svg'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
@@ -107,6 +108,15 @@ export const MemberAdminMenu: React.VFC<
         <Menu.Item key="member_program_issues_admin">
           <Icon as={BookIcon} className="mr-2" />
           {formatMessage(commonMessages.content.courseProblem)}
+        </Menu.Item>
+      ),
+    },
+    {
+      key: 'member_certificates_admin',
+      item: enabledModules.certificate && (
+        <Menu.Item key="member_certificates_admin">
+          <Icon as={MemberCertificateIcon} className="mr-2" />
+          {formatMessage(commonMessages.content.certificate)}
         </Menu.Item>
       ),
     },

@@ -277,6 +277,7 @@ export const commonMessages = {
     voucher: { id: 'voucher', defaultMessage: '兌換券' },
     socialCard: { id: 'common.socialCard', defaultMessage: '社群證' },
     memberCard: { id: 'common.memberCard', defaultMessage: '會員卡' },
+    certificate: { id: 'common.certificate', defaultMessage: '我的證書' },
     contact: { id: 'common.contact', defaultMessage: '聯絡客服' },
     myPage: { id: 'common.member.myPage', defaultMessage: '我的主頁' },
     logout: { id: 'common.list.item.logout', defaultMessage: '登出' },
@@ -1696,3 +1697,16 @@ export const codeMessages = defineMessages({
     defaultMessage: '零元訂單無法建立交易',
   },
 })
+
+export const certificateMessages = {
+  text: defineMessages({
+    congratulations: {
+      id: 'certificate.text.congratulations',
+      defaultMessage: '恭喜你達成所有成就！快分享給身邊的朋友吧！',
+    },
+    share: {
+      id: 'certificate.text.share',
+      defaultMessage: '分享社群',
+    },
+  }),
+}
