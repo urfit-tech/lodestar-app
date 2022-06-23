@@ -2,6 +2,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import moment from 'moment'
 import PageHelmet from '../../components/common/PageHelmet'
+import { getBraftContent } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { ProgramPackage } from '../../types/programPackage'
 
@@ -26,7 +27,7 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
           '@type': 'Product',
           name: programPackage.title || app.settings['title'],
           image: programPackage.coverUrl || app.settings['open_graph.image'],
-          description: programPackage.description || app.settings['description'],
+          description: getBraftContent(programPackage.description || app.settings['description'] || '{}'),
           sku: resourceCollection[0]?.sku,
           mpn: programPackage.id,
           brand: {
@@ -64,7 +65,10 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: programPackage.title || app.settings['open_graph.title'] },
-        { property: 'og:description', content: programPackage.description || app.settings['description'] },
+        {
+          property: 'og:description',
+          content: getBraftContent(programPackage.description || app.settings['description'] || '{}').slice(0, 150),
+        },
         { property: 'og:image', content: programPackage.coverUrl || app.settings['open_graph.image'] },
       ]}
     />

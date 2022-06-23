@@ -131,7 +131,7 @@ export const dateRangeFormatter: (props: {
 }
 
 export const durationFormatter = (value?: number | null) => {
-  return typeof value === 'number' && `約 ${(value / 60).toFixed(0)} 分鐘`
+  return typeof value === 'number' && `約 ${Math.ceil(value / 60)} 分鐘`
 }
 
 export const durationFullFormatter = (seconds: number) => {

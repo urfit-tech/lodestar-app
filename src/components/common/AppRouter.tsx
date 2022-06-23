@@ -245,7 +245,11 @@ const defaultRoutesMap: RoutesMap = {
     path: '/practices/:practiceId',
     pageName: 'PracticePage',
   },
-
+  // certificate
+  certificate: {
+    path: '/certificates/:certificateId',
+    pageName: 'CertificatePage',
+  },
   // general member admin
   member_settings: {
     path: '/settings',
@@ -306,6 +310,10 @@ const defaultRoutesMap: RoutesMap = {
   member_social_cards: {
     path: '/settings/social-cards',
     pageName: 'member/SocialCardCollectionPage',
+  },
+  member_certificates_admin: {
+    path: '/settings/certificates',
+    pageName: 'member/CertificateCollectionAdminPage',
   },
   // deprecated
   funding: {
