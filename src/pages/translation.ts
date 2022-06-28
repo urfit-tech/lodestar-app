@@ -56,6 +56,11 @@ const pageMessages = {
       defaultMessage: '分享社群',
     },
   }),
+  // MerchandisePage
+  MerchandisePage: defineMessages({
+    overview: { id: 'page.merchandise.tab.overview', defaultMessage: 'Overview' },
+    qa: { id: 'page.merchandise.tab.qa', defaultMessage: 'Q&A' },
+  }),
 }
 
 export default pageMessages

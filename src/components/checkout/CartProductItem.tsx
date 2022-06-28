@@ -1,6 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Spinner } from '@chakra-ui/react'
 import { Typography } from 'antd'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
@@ -17,7 +18,6 @@ import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 import { ProductType } from '../../types/product'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import QuantityInput from '../common/QuantityInput'
 
 const messages = defineMessages({
@@ -70,7 +70,7 @@ const CartProductItem: React.VFC<{
   }
 
   const [productType] = id.split('_') as [ProductType]
-  const { title, coverUrl, isOnSale, listPrice, salePrice, isLimited, isPhysical } = target
+  const { title, coverUrl, isOnSale, listPrice, salePrice, isLimited, isPhysical, currencyId } = target
 
   const trackCartItem = (currentQuantity: number, nextQuantity: number) => {
     if (currentQuantity < nextQuantity) {
@@ -153,6 +153,7 @@ const CartProductItem: React.VFC<{
               {
                 <PriceLabel
                   variant="inline"
+                  currencyId={currencyId}
                   listPrice={(listPrice || 0) * pluralProductQuantity}
                   salePrice={isOnSale ? (salePrice || 0) * pluralProductQuantity : undefined}
                 />

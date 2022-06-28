@@ -3580,6 +3580,7 @@ export interface GET_POST_post_post_merchandises_merchandise {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -3856,6 +3857,7 @@ export interface GET_POST_post_by_pk_post_merchandises_merchandise {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -4767,6 +4769,7 @@ export interface GET_PRODUCT_SIMPLE_merchandise_spec_by_pk_merchandise {
   sold_at: any | null;
   is_physical: boolean;
   is_customized: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -6001,6 +6004,7 @@ export interface GET_MERCHANDISE_COLLECTION_merchandise {
   title: string;
   sold_at: any | null;
   is_physical: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -6107,6 +6111,7 @@ export interface GET_MERCHANDISE_merchandise_by_pk {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -11328,6 +11333,7 @@ export interface SEARCH_PRODUCT_COLLECTION_merchandise {
   id: any;
   title: string;
   sold_at: any | null;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -11685,6 +11691,7 @@ export interface PostParts_post_merchandises_merchandise {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
