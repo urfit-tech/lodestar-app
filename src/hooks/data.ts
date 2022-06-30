@@ -276,8 +276,12 @@ export const useExpiredOwnedProducts = (memberId: string, productType: ProductTy
         order_product(
           where: {
             product: { type: { _eq: $productType } }
-            order_log: { status: { _eq: "SUCCESS" }, member_id: { _eq: $memberId } }
-            ended_at: { _is_null: false, _lt: "now()" }
+            order_log: { member_id: { _eq: $memberId } }
+            _and: [
+              { delivered_at: { _lt: "now()" } }
+              { ended_at: { _is_null: false, _lt: "now()" } }
+              { _or: [{ started_at: { _is_null: true } }, { started_at: { _lt: "now()" } }] }
+            ]
           }
         ) {
           id

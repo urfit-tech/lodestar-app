@@ -1702,7 +1702,7 @@ export const certificateMessages = {
   text: defineMessages({
     congratulations: {
       id: 'certificate.text.congratulations',
-      defaultMessage: '恭喜你達成所有成就！快分享給身邊的朋友吧！',
+      defaultMessage: '已取得證書，快分享給身邊的朋友吧！',
     },
     share: {
       id: 'certificate.text.share',
