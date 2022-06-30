@@ -821,7 +821,7 @@ export interface INSERT_SUGGESTIONVariables {
   threadId: string;
   title?: string | null;
   description?: string | null;
-  isPublic?: boolean ;
+  isPublic?: boolean | null;
 }
 
 /* tslint:disable */
@@ -3382,15 +3382,6 @@ export interface GET_RELATIVE_POST_COLLECTIONVariables {
 // GraphQL query operation: GET_POST
 // ====================================================
 
-export interface GET_POST_post_post_roles_member {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-  picture_url: string | null;
-  abstract: string | null;
-  username: string | null;
-}
-
 export interface GET_POST_post_post_suggests_aggregate_aggregate {
   __typename: "post_issue_aggregate_fields";
   count: number;
@@ -3401,7 +3392,68 @@ export interface GET_POST_post_post_suggests_aggregate {
   aggregate: GET_POST_post_post_suggests_aggregate_aggregate | null;
 }
 
-export interface GET_POST_post_reaction {
+export interface GET_POST_post_post_suggests_suggest_suggest_reactions {
+  __typename: "issue_reaction";
+  id: any;
+  member_id: string;
+}
+
+export interface GET_POST_post_post_suggests_suggest_suggest_replies_aggregate_aggregate {
+  __typename: "issue_reply_aggregate_fields";
+  count: number;
+}
+
+export interface GET_POST_post_post_suggests_suggest_suggest_replies_aggregate {
+  __typename: "issue_reply_aggregate";
+  aggregate: GET_POST_post_post_suggests_suggest_suggest_replies_aggregate_aggregate | null;
+}
+
+export interface GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions {
+  __typename: "issue_reply_reaction";
+  member_id: string;
+}
+
+export interface GET_POST_post_post_suggests_suggest_suggest_replies {
+  __typename: "issue_reply";
+  id: any;
+  content: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reply_reactions: GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions[];
+}
+
+export interface GET_POST_post_post_suggests_suggest {
+  __typename: "issue";
+  id: any;
+  description: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reactions: GET_POST_post_post_suggests_suggest_suggest_reactions[];
+  /**
+   * An aggregate relationship
+   */
+  suggest_replies_aggregate: GET_POST_post_post_suggests_suggest_suggest_replies_aggregate;
+  /**
+   * An array relationship
+   */
+  suggest_replies: GET_POST_post_post_suggests_suggest_suggest_replies[];
+}
+
+export interface GET_POST_post_post_suggests {
+  __typename: "post_issue";
+  /**
+   * An object relationship
+   */
+  suggest: GET_POST_post_post_suggests_suggest | null;
+}
+
+export interface GET_POST_post_post_reaction {
   __typename: "post_reaction";
   member_id: string;
 }
@@ -3416,9 +3468,21 @@ export interface GET_POST_post_post_reaction_aggregate {
   aggregate: GET_POST_post_post_reaction_aggregate_aggregate | null;
 }
 
+export interface GET_POST_post_post_roles_member {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  picture_url: string | null;
+  abstract: string | null;
+  username: string | null;
+}
+
 export interface GET_POST_post_post_roles {
   __typename: "post_role";
   id: any;
+  /**
+   * creator | author
+   */
   name: string;
   member_id: string;
   /**
@@ -3547,53 +3611,6 @@ export interface GET_POST_post_post_merchandises {
   merchandise: GET_POST_post_post_merchandises_merchandise;
 }
 
-export interface GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions {
-  __typename: "issue_reply_reaction";
-  member_id: string;
-}
-
-export interface GET_POST_post_post_suggests_suggest_suggest_replies {
-  __typename: "issue_reply";
-  id: any;
-  content: string;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  suggest_reply_reactions: GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions[];
-}
-
-
-export interface GET_POST_post_post_suggests_suggest {
-  __typename: "issue";
-  id: any;
-  description: string;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  suggest_reactions: GET_POST_post_post_suggests_suggest_suggest_reactions[];
-  /**
-   * An aggregate relationship
-   */
-  suggest_replies_aggregate: GET_POST_post_post_suggests_suggest_suggest_replies_aggregate;
-  /**
-   * An array relationship
-   */
-  suggest_replies: GET_POST_post_post_suggests_suggest_suggest_replies[];
-}
-
-export interface GET_POST_post_post_suggests {
-  __typename: "post_issue";
-  /**
-   * An object relationship
-   */
-  suggest: GET_POST_post_post_suggests_suggest | null;
-}
-
-
 export interface GET_POST_post {
   __typename: "post";
   id: any;
@@ -3608,10 +3625,18 @@ export interface GET_POST_post {
   published_at: any | null;
   updated_at: any | null;
   /**
+   * An aggregate relationship
+   */
+  post_suggests_aggregate: GET_POST_post_post_suggests_aggregate;
+  /**
    * An array relationship
    */
-  post_reaction: GET_POST_post_reaction[];
-   /**
+  post_suggests: GET_POST_post_post_suggests[];
+  /**
+   * An array relationship
+   */
+  post_reaction: GET_POST_post_post_reaction[];
+  /**
    * An aggregate relationship
    */
   post_reaction_aggregate: GET_POST_post_post_reaction_aggregate;
@@ -3631,14 +3656,92 @@ export interface GET_POST_post {
    * An array relationship
    */
   post_merchandises: GET_POST_post_post_merchandises[];
-   /**
-   * An aggregate relationship
-   */
-  post_suggests_aggregate: GET_POST_post_post_suggests_aggregate;
+}
+
+export interface GET_POST_post_by_pk_post_suggests_aggregate_aggregate {
+  __typename: "post_issue_aggregate_fields";
+  count: number;
+}
+
+export interface GET_POST_post_by_pk_post_suggests_aggregate {
+  __typename: "post_issue_aggregate";
+  aggregate: GET_POST_post_by_pk_post_suggests_aggregate_aggregate | null;
+}
+
+export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_reactions {
+  __typename: "issue_reaction";
+  id: any;
+  member_id: string;
+}
+
+export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_aggregate_aggregate {
+  __typename: "issue_reply_aggregate_fields";
+  count: number;
+}
+
+export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_aggregate {
+  __typename: "issue_reply_aggregate";
+  aggregate: GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_aggregate_aggregate | null;
+}
+
+export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_suggest_reply_reactions {
+  __typename: "issue_reply_reaction";
+  member_id: string;
+}
+
+export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_replies {
+  __typename: "issue_reply";
+  id: any;
+  content: string;
+  created_at: any;
+  member_id: string;
   /**
    * An array relationship
    */
-  post_suggests: GET_POST_post_post_suggests[];
+  suggest_reply_reactions: GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_suggest_reply_reactions[];
+}
+
+export interface GET_POST_post_by_pk_post_suggests_suggest {
+  __typename: "issue";
+  id: any;
+  description: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reactions: GET_POST_post_by_pk_post_suggests_suggest_suggest_reactions[];
+  /**
+   * An aggregate relationship
+   */
+  suggest_replies_aggregate: GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_aggregate;
+  /**
+   * An array relationship
+   */
+  suggest_replies: GET_POST_post_by_pk_post_suggests_suggest_suggest_replies[];
+}
+
+export interface GET_POST_post_by_pk_post_suggests {
+  __typename: "post_issue";
+  /**
+   * An object relationship
+   */
+  suggest: GET_POST_post_by_pk_post_suggests_suggest | null;
+}
+
+export interface GET_POST_post_by_pk_post_reaction {
+  __typename: "post_reaction";
+  member_id: string;
+}
+
+export interface GET_POST_post_by_pk_post_reaction_aggregate_aggregate {
+  __typename: "post_reaction_aggregate_fields";
+  count: number;
+}
+
+export interface GET_POST_post_by_pk_post_reaction_aggregate {
+  __typename: "post_reaction_aggregate";
+  aggregate: GET_POST_post_by_pk_post_reaction_aggregate_aggregate | null;
 }
 
 export interface GET_POST_post_by_pk_post_roles_member {
@@ -3653,6 +3756,9 @@ export interface GET_POST_post_by_pk_post_roles_member {
 export interface GET_POST_post_by_pk_post_roles {
   __typename: "post_role";
   id: any;
+  /**
+   * creator | author
+   */
   name: string;
   member_id: string;
   /**
@@ -3794,14 +3900,22 @@ export interface GET_POST_post_by_pk {
   views: number;
   published_at: any | null;
   updated_at: any | null;
-    /**
-   * An array relationship
-   */
-  post_reaction: GET_POST_post_reaction[];
-     /**
+  /**
    * An aggregate relationship
    */
-  post_reaction_aggregate: GET_POST_post_post_reaction_aggregate;
+  post_suggests_aggregate: GET_POST_post_by_pk_post_suggests_aggregate;
+  /**
+   * An array relationship
+   */
+  post_suggests: GET_POST_post_by_pk_post_suggests[];
+  /**
+   * An array relationship
+   */
+  post_reaction: GET_POST_post_by_pk_post_reaction[];
+  /**
+   * An aggregate relationship
+   */
+  post_reaction_aggregate: GET_POST_post_by_pk_post_reaction_aggregate;
   /**
    * An array relationship
    */
@@ -3818,14 +3932,6 @@ export interface GET_POST_post_by_pk {
    * An array relationship
    */
   post_merchandises: GET_POST_post_by_pk_post_merchandises[];
-     /**
-   * An aggregate relationship
-   */
-  post_suggests_aggregate: GET_POST_post_post_suggests_aggregate;
-  /**
-   * An array relationship
-   */
-  post_suggests: GET_POST_post_post_suggests[];
 }
 
 export interface GET_POST {
@@ -4016,8 +4122,6 @@ export interface DELETE_POST_REACTIONVariables {
   postId: any;
 }
 
-
-
 /* tslint:disable */
 /* eslint-disable */
 // @generated
@@ -4136,7 +4240,7 @@ export interface GET_ORDER_PRODUCT_order_product_by_pk_order_log {
   id: string;
   member_id: string;
   /**
-   * name | email | phone | address | postCode | buyerPhone | uniformTitle | uniformNumber
+   * name | email | phone | address | postCode | buyerPhone | uniformTitle | uniformNumber | status | invoiceNumber | invoiceTransNo
    */
   invoice: any;
 }
@@ -5936,7 +6040,7 @@ export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPEC_order_log {
   deliver_message: string | null;
   shipping: any | null;
   /**
-   * name | email | phone | address | postCode | buyerPhone | uniformTitle | uniformNumber
+   * name | email | phone | address | postCode | buyerPhone | uniformTitle | uniformNumber | status | invoiceNumber | invoiceTransNo
    */
   invoice: any;
   /**
@@ -10401,7 +10505,7 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk {
   order_discounts: GET_ORDERS_PRODUCT_order_log_by_pk_order_discounts[];
   shipping: any | null;
   /**
-   * name | email | phone | address | postCode | buyerPhone | uniformTitle | uniformNumber
+   * name | email | phone | address | postCode | buyerPhone | uniformTitle | uniformNumber | status | invoiceNumber | invoiceTransNo
    */
   invoice: any;
 }
@@ -10415,6 +10519,33 @@ export interface GET_ORDERS_PRODUCT {
 
 export interface GET_ORDERS_PRODUCTVariables {
   orderId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PAYMENT_LOG
+// ====================================================
+
+export interface GET_PAYMENT_LOG_payment_log {
+  __typename: "payment_log";
+  no: string;
+  custom_no: string | null;
+  options: any | null;
+}
+
+export interface GET_PAYMENT_LOG {
+  /**
+   * fetch data from the table: "payment_log"
+   */
+  payment_log: GET_PAYMENT_LOG_payment_log[];
+}
+
+export interface GET_PAYMENT_LOGVariables {
+  orderId?: string | null;
 }
 
 /* tslint:disable */
@@ -11198,6 +11329,92 @@ export interface SEARCH_PRODUCT_COLLECTIONVariables {
 // GraphQL fragment: PostParts
 // ====================================================
 
+export interface PostParts_post_suggests_aggregate_aggregate {
+  __typename: "post_issue_aggregate_fields";
+  count: number;
+}
+
+export interface PostParts_post_suggests_aggregate {
+  __typename: "post_issue_aggregate";
+  aggregate: PostParts_post_suggests_aggregate_aggregate | null;
+}
+
+export interface PostParts_post_suggests_suggest_suggest_reactions {
+  __typename: "issue_reaction";
+  id: any;
+  member_id: string;
+}
+
+export interface PostParts_post_suggests_suggest_suggest_replies_aggregate_aggregate {
+  __typename: "issue_reply_aggregate_fields";
+  count: number;
+}
+
+export interface PostParts_post_suggests_suggest_suggest_replies_aggregate {
+  __typename: "issue_reply_aggregate";
+  aggregate: PostParts_post_suggests_suggest_suggest_replies_aggregate_aggregate | null;
+}
+
+export interface PostParts_post_suggests_suggest_suggest_replies_suggest_reply_reactions {
+  __typename: "issue_reply_reaction";
+  member_id: string;
+}
+
+export interface PostParts_post_suggests_suggest_suggest_replies {
+  __typename: "issue_reply";
+  id: any;
+  content: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reply_reactions: PostParts_post_suggests_suggest_suggest_replies_suggest_reply_reactions[];
+}
+
+export interface PostParts_post_suggests_suggest {
+  __typename: "issue";
+  id: any;
+  description: string;
+  created_at: any;
+  member_id: string;
+  /**
+   * An array relationship
+   */
+  suggest_reactions: PostParts_post_suggests_suggest_suggest_reactions[];
+  /**
+   * An aggregate relationship
+   */
+  suggest_replies_aggregate: PostParts_post_suggests_suggest_suggest_replies_aggregate;
+  /**
+   * An array relationship
+   */
+  suggest_replies: PostParts_post_suggests_suggest_suggest_replies[];
+}
+
+export interface PostParts_post_suggests {
+  __typename: "post_issue";
+  /**
+   * An object relationship
+   */
+  suggest: PostParts_post_suggests_suggest | null;
+}
+
+export interface PostParts_post_reaction {
+  __typename: "post_reaction";
+  member_id: string;
+}
+
+export interface PostParts_post_reaction_aggregate_aggregate {
+  __typename: "post_reaction_aggregate_fields";
+  count: number;
+}
+
+export interface PostParts_post_reaction_aggregate {
+  __typename: "post_reaction_aggregate";
+  aggregate: PostParts_post_reaction_aggregate_aggregate | null;
+}
+
 export interface PostParts_post_roles_member {
   __typename: "member_public";
   id: string | null;
@@ -11210,6 +11427,11 @@ export interface PostParts_post_roles_member {
 export interface PostParts_post_roles {
   __typename: "post_role";
   id: any;
+  /**
+   * creator | author
+   */
+  name: string;
+  member_id: string;
   /**
    * An object relationship
    */
@@ -11349,6 +11571,22 @@ export interface PostParts {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+  /**
+   * An aggregate relationship
+   */
+  post_suggests_aggregate: PostParts_post_suggests_aggregate;
+  /**
+   * An array relationship
+   */
+  post_suggests: PostParts_post_suggests[];
+  /**
+   * An array relationship
+   */
+  post_reaction: PostParts_post_reaction[];
+  /**
+   * An aggregate relationship
+   */
+  post_reaction_aggregate: PostParts_post_reaction_aggregate;
   /**
    * An array relationship
    */
@@ -12226,6 +12464,7 @@ export enum coupon_plan_update_column {
   constraint = "constraint",
   created_at = "created_at",
   description = "description",
+  editor_id = "editor_id",
   ended_at = "ended_at",
   id = "id",
   scope = "scope",
@@ -12362,7 +12601,6 @@ export enum issue_constraint {
  * unique or primary key constraints on table "issue_reaction"
  */
 export enum issue_reaction_constraint {
-  issue_reaction_issue_id_member_id_key = "issue_reaction_issue_id_member_id_key",
   issue_reaction_pkey = "issue_reaction_pkey",
 }
 
@@ -12419,6 +12657,7 @@ export enum issue_update_column {
   created_at = "created_at",
   description = "description",
   id = "id",
+  is_public = "is_public",
   member_id = "member_id",
   solved_at = "solved_at",
   thread_id = "thread_id",
@@ -12910,6 +13149,7 @@ export enum merchandise_update_column {
   abstract = "abstract",
   app_id = "app_id",
   created_at = "created_at",
+  currency_id = "currency_id",
   description = "description",
   ended_at = "ended_at",
   id = "id",
@@ -13210,6 +13450,7 @@ export enum payment_log_update_column {
   created_at = "created_at",
   custom_no = "custom_no",
   gateway = "gateway",
+  invoice = "invoice",
   invoice_issued_at = "invoice_issued_at",
   method = "method",
   no = "no",
@@ -13538,6 +13779,23 @@ export enum post_merchandise_update_column {
   id = "id",
   merchandise_id = "merchandise_id",
   position = "position",
+  post_id = "post_id",
+}
+
+/**
+ * unique or primary key constraints on table "post_reaction"
+ */
+export enum post_reaction_constraint {
+  post_reaction_pkey = "post_reaction_pkey",
+}
+
+/**
+ * update columns of table "post_reaction"
+ */
+export enum post_reaction_update_column {
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
   post_id = "post_id",
 }
 
@@ -13953,6 +14211,24 @@ export enum program_package_program_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "program_package_tag"
+ */
+export enum program_package_tag_constraint {
+  program_package_tag_pkey = "program_package_tag_pkey",
+  program_package_tag_program_package_id_tag_name_key = "program_package_tag_program_package_id_tag_name_key",
+}
+
+/**
+ * update columns of table "program_package_tag"
+ */
+export enum program_package_tag_update_column {
+  id = "id",
+  position = "position",
+  program_package_id = "program_package_id",
+  tag_name = "tag_name",
+}
+
+/**
  * update columns of table "program_package"
  */
 export enum program_package_update_column {
@@ -14205,6 +14481,24 @@ export enum project_section_update_column {
   position = "position",
   project_id = "project_id",
   type = "type",
+}
+
+/**
+ * unique or primary key constraints on table "project_tag"
+ */
+export enum project_tag_constraint {
+  project_tag_pkey = "project_tag_pkey",
+  project_tag_project_id_tag_name_key = "project_tag_project_id_tag_name_key",
+}
+
+/**
+ * update columns of table "project_tag"
+ */
+export enum project_tag_update_column {
+  id = "id",
+  position = "position",
+  project_id = "project_id",
+  tag_name = "tag_name",
 }
 
 /**
@@ -14529,6 +14823,7 @@ export enum voucher_plan_update_column {
   app_id = "app_id",
   created_at = "created_at",
   description = "description",
+  editor_id = "editor_id",
   ended_at = "ended_at",
   id = "id",
   is_transferable = "is_transferable",
@@ -16808,6 +17103,7 @@ export interface coupon_plan_bool_exp {
   coupon_plan_products?: coupon_plan_product_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
+  editor_id?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   scope?: jsonb_comparison_exp | null;
@@ -16827,6 +17123,7 @@ export interface coupon_plan_insert_input {
   coupon_plan_products?: coupon_plan_product_arr_rel_insert_input | null;
   created_at?: any | null;
   description?: string | null;
+  editor_id?: string | null;
   ended_at?: any | null;
   id?: any | null;
   scope?: any | null;
@@ -17243,6 +17540,7 @@ export interface issue_bool_exp {
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
+  is_public?: Boolean_comparison_exp | null;
   issue_enrollment?: issue_enrollment_bool_exp | null;
   issue_reactions?: issue_reaction_bool_exp | null;
   issue_replies?: issue_reply_bool_exp | null;
@@ -17298,6 +17596,7 @@ export interface issue_insert_input {
   created_at?: any | null;
   description?: string | null;
   id?: any | null;
+  is_public?: boolean | null;
   issue_enrollment?: issue_enrollment_obj_rel_insert_input | null;
   issue_reactions?: issue_reaction_arr_rel_insert_input | null;
   issue_replies?: issue_reply_arr_rel_insert_input | null;
@@ -18657,6 +18956,7 @@ export interface merchandise_bool_exp {
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  currency_id?: String_comparison_exp | null;
   description?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -18828,6 +19128,7 @@ export interface merchandise_insert_input {
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
   created_at?: any | null;
+  currency_id?: string | null;
   description?: string | null;
   ended_at?: any | null;
   id?: any | null;
@@ -19907,6 +20208,7 @@ export interface payment_log_bool_exp {
   created_at?: timestamptz_comparison_exp | null;
   custom_no?: String_comparison_exp | null;
   gateway?: String_comparison_exp | null;
+  invoice?: jsonb_comparison_exp | null;
   invoice_issued_at?: timestamptz_comparison_exp | null;
   method?: String_comparison_exp | null;
   no?: String_comparison_exp | null;
@@ -19928,6 +20230,7 @@ export interface payment_log_insert_input {
   created_at?: any | null;
   custom_no?: string | null;
   gateway?: string | null;
+  invoice?: any | null;
   invoice_issued_at?: any | null;
   method?: string | null;
   no?: string | null;
@@ -20881,7 +21184,9 @@ export interface post_bool_exp {
   meta_tag?: jsonb_comparison_exp | null;
   position?: Int_comparison_exp | null;
   post_categories?: post_category_bool_exp | null;
+  post_issue?: post_issue_bool_exp | null;
   post_merchandises?: post_merchandise_bool_exp | null;
+  post_reaction?: post_reaction_bool_exp | null;
   post_roles?: post_role_bool_exp | null;
   post_tags?: post_tag_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
@@ -20952,7 +21257,9 @@ export interface post_insert_input {
   meta_tag?: any | null;
   position?: number | null;
   post_categories?: post_category_arr_rel_insert_input | null;
+  post_issue?: post_issue_arr_rel_insert_input | null;
   post_merchandises?: post_merchandise_arr_rel_insert_input | null;
+  post_reaction?: post_reaction_arr_rel_insert_input | null;
   post_roles?: post_role_arr_rel_insert_input | null;
   post_tags?: post_tag_arr_rel_insert_input | null;
   published_at?: any | null;
@@ -20961,6 +21268,36 @@ export interface post_insert_input {
   updated_at?: any | null;
   video_url?: string | null;
   views?: number | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "post_issue"
+ */
+export interface post_issue_arr_rel_insert_input {
+  data: post_issue_insert_input[];
+}
+
+/**
+ * Boolean expression to filter rows from the table "post_issue". All fields are combined with a logical 'AND'.
+ */
+export interface post_issue_bool_exp {
+  _and?: post_issue_bool_exp[] | null;
+  _not?: post_issue_bool_exp | null;
+  _or?: post_issue_bool_exp[] | null;
+  issue?: issue_bool_exp | null;
+  issue_id?: uuid_comparison_exp | null;
+  post?: post_bool_exp | null;
+  post_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "post_issue"
+ */
+export interface post_issue_insert_input {
+  issue?: issue_obj_rel_insert_input | null;
+  issue_id?: any | null;
+  post?: post_obj_rel_insert_input | null;
+  post_id?: any | null;
 }
 
 /**
@@ -21022,6 +21359,50 @@ export interface post_on_conflict {
   constraint: post_constraint;
   update_columns: post_update_column[];
   where?: post_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "post_reaction"
+ */
+export interface post_reaction_arr_rel_insert_input {
+  data: post_reaction_insert_input[];
+  on_conflict?: post_reaction_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "post_reaction". All fields are combined with a logical 'AND'.
+ */
+export interface post_reaction_bool_exp {
+  _and?: post_reaction_bool_exp[] | null;
+  _not?: post_reaction_bool_exp | null;
+  _or?: post_reaction_bool_exp[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  post?: post_bool_exp | null;
+  post_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "post_reaction"
+ */
+export interface post_reaction_insert_input {
+  created_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  post?: post_obj_rel_insert_input | null;
+  post_id?: any | null;
+}
+
+/**
+ * on_conflict condition type for table "post_reaction"
+ */
+export interface post_reaction_on_conflict {
+  constraint: post_reaction_constraint;
+  update_columns: post_reaction_update_column[];
+  where?: post_reaction_bool_exp | null;
 }
 
 /**
@@ -22497,6 +22878,7 @@ export interface program_package_bool_exp {
   program_package_categories?: program_package_category_bool_exp | null;
   program_package_plans?: program_package_plan_bool_exp | null;
   program_package_programs?: program_package_program_bool_exp | null;
+  program_package_tags?: program_package_tag_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
   title?: String_comparison_exp | null;
 }
@@ -22561,6 +22943,7 @@ export interface program_package_insert_input {
   program_package_categories?: program_package_category_arr_rel_insert_input | null;
   program_package_plans?: program_package_plan_arr_rel_insert_input | null;
   program_package_programs?: program_package_program_arr_rel_insert_input | null;
+  program_package_tags?: program_package_tag_arr_rel_insert_input | null;
   published_at?: any | null;
   title?: string | null;
 }
@@ -22740,6 +23123,50 @@ export interface program_package_program_on_conflict {
   constraint: program_package_program_constraint;
   update_columns: program_package_program_update_column[];
   where?: program_package_program_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "program_package_tag"
+ */
+export interface program_package_tag_arr_rel_insert_input {
+  data: program_package_tag_insert_input[];
+  on_conflict?: program_package_tag_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "program_package_tag". All fields are combined with a logical 'AND'.
+ */
+export interface program_package_tag_bool_exp {
+  _and?: program_package_tag_bool_exp[] | null;
+  _not?: program_package_tag_bool_exp | null;
+  _or?: program_package_tag_bool_exp[] | null;
+  id?: uuid_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+  program_package?: program_package_bool_exp | null;
+  program_package_id?: uuid_comparison_exp | null;
+  tag?: tag_bool_exp | null;
+  tag_name?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_package_tag"
+ */
+export interface program_package_tag_insert_input {
+  id?: any | null;
+  position?: number | null;
+  program_package?: program_package_obj_rel_insert_input | null;
+  program_package_id?: any | null;
+  tag?: tag_obj_rel_insert_input | null;
+  tag_name?: string | null;
+}
+
+/**
+ * on_conflict condition type for table "program_package_tag"
+ */
+export interface program_package_tag_on_conflict {
+  constraint: program_package_tag_constraint;
+  update_columns: program_package_tag_update_column[];
+  where?: program_package_tag_bool_exp | null;
 }
 
 /**
@@ -23113,6 +23540,7 @@ export interface project_bool_exp {
   project_plans?: project_plan_bool_exp | null;
   project_sales?: project_sales_bool_exp | null;
   project_sections?: project_section_bool_exp | null;
+  project_tags?: project_tag_bool_exp | null;
   published_at?: timestamptz_comparison_exp | null;
   target_amount?: numeric_comparison_exp | null;
   target_unit?: String_comparison_exp | null;
@@ -23192,6 +23620,7 @@ export interface project_insert_input {
   project_plans?: project_plan_arr_rel_insert_input | null;
   project_sales?: project_sales_obj_rel_insert_input | null;
   project_sections?: project_section_arr_rel_insert_input | null;
+  project_tags?: project_tag_arr_rel_insert_input | null;
   published_at?: any | null;
   target_amount?: any | null;
   target_unit?: string | null;
@@ -23492,6 +23921,50 @@ export interface project_section_on_conflict {
   constraint: project_section_constraint;
   update_columns: project_section_update_column[];
   where?: project_section_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "project_tag"
+ */
+export interface project_tag_arr_rel_insert_input {
+  data: project_tag_insert_input[];
+  on_conflict?: project_tag_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "project_tag". All fields are combined with a logical 'AND'.
+ */
+export interface project_tag_bool_exp {
+  _and?: project_tag_bool_exp[] | null;
+  _not?: project_tag_bool_exp | null;
+  _or?: project_tag_bool_exp[] | null;
+  id?: uuid_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+  project?: project_bool_exp | null;
+  project_id?: uuid_comparison_exp | null;
+  tag?: tag_bool_exp | null;
+  tag_name?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "project_tag"
+ */
+export interface project_tag_insert_input {
+  id?: any | null;
+  position?: number | null;
+  project?: project_obj_rel_insert_input | null;
+  project_id?: any | null;
+  tag?: tag_obj_rel_insert_input | null;
+  tag_name?: string | null;
+}
+
+/**
+ * on_conflict condition type for table "project_tag"
+ */
+export interface project_tag_on_conflict {
+  constraint: project_tag_constraint;
+  update_columns: project_tag_update_column[];
+  where?: project_tag_bool_exp | null;
 }
 
 /**
@@ -24315,6 +24788,7 @@ export interface voucher_plan_bool_exp {
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
+  editor_id?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   is_transferable?: Boolean_comparison_exp | null;
@@ -24336,6 +24810,7 @@ export interface voucher_plan_insert_input {
   app_id?: string | null;
   created_at?: any | null;
   description?: string | null;
+  editor_id?: string | null;
   ended_at?: any | null;
   id?: any | null;
   is_transferable?: boolean | null;
