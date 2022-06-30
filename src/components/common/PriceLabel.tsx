@@ -123,22 +123,22 @@ const PriceLabel: React.VFC<
           </SalePrice>
         )}
 
-          <ListPrice className="listPrice">
-            {typeof salePrice === 'number' ? (
-              <span className="listPrice__originalPriceText">{formatMessage(messages.originalPrice)}</span>
-            ) : !!downPrice ? (
-              <span className="listPrice__fromSecondPeriodText">{formatMessage(messages.fromSecondPeriod)}</span>
-            ) : (
-              ''
-            )}
-            {listPrice === 0 && !noFreeText && (
-              <span className="listPrice__freeText">{formatMessage(messages.free)}</span>
-            )}
-            <span className="listPrice__amount">{formatCurrency(listPrice)}</span>
-            <span className="listPrice__periodUnit" style={{ fontSize: '16px' }}>
-              {periodElem}
-            </span>
-          </ListPrice>
+        <ListPrice className="listPrice">
+          {typeof salePrice === 'number' ? (
+            <span className="listPrice__originalPriceText">{formatMessage(messages.originalPrice)}</span>
+          ) : !!downPrice ? (
+            <span className="listPrice__fromSecondPeriodText">{formatMessage(messages.fromSecondPeriod)}</span>
+          ) : (
+            ''
+          )}
+          {listPrice === 0 && !noFreeText && (
+            <span className="listPrice__freeText">{formatMessage(messages.free)}</span>
+          )}
+          <span className="listPrice__amount">{formatCurrency(listPrice)}</span>
+          <span className="listPrice__periodUnit" style={{ fontSize: '16px' }}>
+            {periodElem}
+          </span>
+        </ListPrice>
       </FullDetailPrice>
     )
   }

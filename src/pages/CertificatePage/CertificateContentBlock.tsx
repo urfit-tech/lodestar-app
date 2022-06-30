@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { render } from 'mustache'
 import { useIntl } from 'react-intl'
@@ -76,6 +77,7 @@ const StyledButton = styled(Button)`
 `
 
 const CertificateContentBlock: React.VFC<{ certificate: Certificate }> = ({ certificate }) => {
+  const { currentMember } = useAuth()
   const { formatMessage } = useIntl()
 
   const templateVariables: TemplateVariablesProps = {
@@ -127,7 +129,10 @@ const CertificateContentBlock: React.VFC<{ certificate: Certificate }> = ({ cert
       <div dangerouslySetInnerHTML={{ __html: render(certificate.template, templateVariables) }}></div>
       {/* TEMPLATE */}
       <StyledContentBlockFooter>
-        <StyledAbstract className="mr-3">{formatMessage(certificateMessages.text.congratulations)}</StyledAbstract>
+        <StyledAbstract className="mr-3">
+          {currentMember?.name}
+          {formatMessage(certificateMessages.text.congratulations)}
+        </StyledAbstract>
         <SocialSharePopover
           url={window.location.href}
           children={<StyledButton>{formatMessage(certificateMessages.text.share)}</StyledButton>}
