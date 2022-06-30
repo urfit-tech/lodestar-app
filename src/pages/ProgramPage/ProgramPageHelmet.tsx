@@ -19,7 +19,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
   return (
     <PageHelmet
       title={program.title}
-      description={program.abstract || app.settings['description']}
+      description={getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150)}
       keywords={program.tags}
       jsonLd={[
         {

@@ -390,12 +390,15 @@ export const decodeHtmlEntities = (data: string) => {
   }
 
   const entitiesReg = /&([^&;]{2,});?/g
-  return data.replace(/(<([^>]+)>)/gi, '').replace(entitiesReg, match => {
+
+  const innerHTMLContent = data.replace(/(<([^>]+)>)/gi, '').replace(entitiesReg, match => {
     if (entityTables.hasOwnProperty(match)) {
       return entityTables[match]
     }
     return match
   })
+
+  return innerHTMLContent.replace(/\u00a0/g, '')
 }
 
 export const getRedeemLink = async (
