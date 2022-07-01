@@ -6,6 +6,7 @@ import { CardProps } from 'antd/lib/card'
 import { ColumnProps } from 'antd/lib/table'
 import axios from 'axios'
 import gql from 'graphql-tag'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
@@ -23,7 +24,6 @@ import { OrderDiscountProps } from '../../types/checkout'
 import { ShippingMethodType } from '../../types/merchandise'
 import { ProductType } from '../../types/product'
 import AdminCard from '../common/AdminCard'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ShippingMethodLabel from '../common/ShippingMethodLabel'
 import OrderRequestRefundModal from './OrderRequestRefundModal'
 import OrderStatusTag from './OrderStatusTag'
@@ -70,6 +70,7 @@ type OrderRow = {
     fee: number
     days: number
     enabled: boolean
+    shippingMethod: ShippingMethodType
   } | null
   orderProducts: {
     id: string
@@ -84,6 +85,7 @@ type OrderRow = {
     quantity: number
     currencyId: string
     deliveredAt: Date | null
+    options: { [key: string]: any } | null
   }[]
   orderDiscounts: OrderDiscountProps[]
   key: string
@@ -185,7 +187,22 @@ const OrderCollectionAdminCard: React.VFC<
               </div>
             </OrderProductCell>
             <OrderProductCell className="text-right">
-              <PriceLabel currencyId={orderProduct.currencyId} listPrice={orderProduct.price} />
+              <PriceLabel
+                currencyId={
+                  orderProduct.product.type === 'MerchandiseSpec' &&
+                  orderProduct.options !== null &&
+                  orderProduct.options.currencyId === 'LSC'
+                    ? 'LSC'
+                    : orderProduct.currencyId
+                }
+                listPrice={
+                  orderProduct.product.type === 'MerchandiseSpec' &&
+                  orderProduct.options !== null &&
+                  orderProduct.options.currencyId === 'LSC'
+                    ? orderProduct.options.currencyPrice
+                    : orderProduct.price
+                }
+              />
             </OrderProductCell>
           </OrderProductRow>
         ))}
@@ -232,21 +249,32 @@ const OrderCollectionAdminCard: React.VFC<
           )}
         </div>
         <div className="col-9">
-          {record.shipping?.id && (
+          {record.shipping?.id || record.shipping?.shippingMethod ? (
             <div className="row text-right">
               <div className="col-9">
-                <ShippingMethodLabel shippingMethodId={record.shipping?.id} />
+                <ShippingMethodLabel shippingMethodId={record.shipping?.id || record.shipping?.shippingMethod} />
               </div>
               <div className="col-3">
-                <PriceLabel listPrice={record.shipping.fee} />
+                <PriceLabel listPrice={record.shipping?.fee ? record.shipping.fee : 0} />
               </div>
             </div>
-          )}
+          ) : null}
           {record.orderDiscounts.map(orderDiscount => (
             <div key={orderDiscount.name} className="row text-right">
               <div className="col-9">{orderDiscount.name}</div>
               <div className="col-3">
-                <PriceLabel listPrice={-orderDiscount.price} />
+                <PriceLabel
+                  currencyId={orderDiscount.type !== null && orderDiscount.type !== 'Coin' ? orderDiscount.type : 'LSC'}
+                  listPrice={
+                    record.orderProducts.length === 1 &&
+                    record.orderProducts[0].product.type === 'MerchandiseSpec' &&
+                    record.orderProducts[0].options !== null &&
+                    record.orderProducts[0].options.currencyId === 'LSC' &&
+                    orderDiscount.options !== null
+                      ? -orderDiscount.options.coins
+                      : -orderDiscount.price
+                  }
+                />
               </div>
             </div>
           ))}
@@ -337,6 +365,7 @@ const useOrderLogCollection = (memberId: string) => {
           quantity: orderProduct.options?.quantity,
           currencyId: orderProduct.currency_id,
           deliveredAt: orderProduct.delivered_at,
+          options: orderProduct.options,
         })),
       orderDiscounts: orderLog.order_discounts.map(orderDiscount => ({
         id: orderDiscount.id,
