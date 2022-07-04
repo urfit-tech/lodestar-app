@@ -1692,6 +1692,10 @@ export const codeMessages = defineMessages({
     id: 'code.E_COIN_INCLUDED',
     defaultMessage: '無法建立含有代幣的交易，請移除該項目',
   },
+  E_NOT_ENOUGH_COINS: {
+    id: 'code.E_NOT_ENOUGH_COINS',
+    defaultMessage: '代幣不足，無法建立交易',
+  },
   E_NO_PRICE: {
     id: 'code.E_NO_PRICE',
     defaultMessage: '零元訂單無法建立交易',
