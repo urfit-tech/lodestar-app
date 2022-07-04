@@ -1,55 +1,196 @@
-export const useCertificateColleaction = () => {
-  const data = {
-    certificates: [
-      {
-        id: '1',
-        title: 'UIUX類課程完課證明',
-        abstract: `我是摘要說明我是摘要說明我是摘要說明我是摘要說明我是摘要說明我是摘要說明我是摘要說明我是摘要說明
-我是摘要
-說明我是摘要說明我是摘`,
-        code: 'AS500',
-        expiredAt: '2024-03-21T16:59:59+00:00',
-        certificateId: 'GA000000001',
-        member: {
-          name: '曾聰明',
-        },
-        category: '資訊通識技術課程 (可自行填寫)',
-        hours: 24,
-        createdAt: '2021-11-30T16:59:59+00:00',
-        distributedAt: '2021-03-21T15:00:00+00:00',
-        template: `<div style='border:1px solid #cccccc;padding:24px;height:667px;width:100%'>證書編號：{{certificat_id}}<br/>{{name}}<br/>{{category}}<br/>{{hours}}<br/>{{created_at}}</div>`,
-      },
-    ],
-  }
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+import hasura from '../hasura'
+import { Certificate, MemberCertificate } from '../types/certificate'
+
+export const useMemberCertificateCollection = (memberId: string) => {
+  const { loading, data, error, refetch } = useQuery<
+    hasura.GET_MEMBER_CERTIFICATE_COLLECTION,
+    hasura.GET_MEMBER_CERTIFICATE_COLLECTIONVariables
+  >(
+    gql`
+      query GET_MEMBER_CERTIFICATE_COLLECTION($memberId: String!) {
+        member_certificate(where: { member_id: { _eq: $memberId } }) {
+          id
+          number
+          values
+          delivered_at
+          expired_at
+          member {
+            id
+            name
+          }
+          certificate {
+            id
+            title
+            description
+            code
+            qualification
+            period_type
+            period_amount
+            created_at
+            updated_at
+            certificate_template {
+              template
+            }
+          }
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+
+  const memberCertificates: MemberCertificate[] =
+    loading || error || !data || !data.member_certificate
+      ? []
+      : data.member_certificate.map(memberCertificate => ({
+          id: memberCertificate.id,
+          number: memberCertificate.number,
+          values: memberCertificate.values,
+          deliveredAt: new Date(memberCertificate.delivered_at),
+          expiredAt: memberCertificate.expired_at ? new Date(memberCertificate.expired_at) : null,
+          member: {
+            id: memberCertificate.member?.id || '',
+            name: memberCertificate.member?.name || '',
+          },
+          certificate: {
+            id: memberCertificate.certificate?.id || '',
+            title: memberCertificate.certificate?.title || '',
+            description: memberCertificate.certificate?.description || '',
+            code: memberCertificate.certificate?.code || '',
+            template: memberCertificate.certificate?.certificate_template?.template || '',
+            qualification: memberCertificate.certificate?.qualification || '',
+            periodType: memberCertificate.certificate?.period_type || '',
+            periodAmount: memberCertificate.certificate?.period_amount || '',
+            createdAt: new Date(memberCertificate.certificate?.created_at),
+          },
+        }))
+
   return {
-    certificates: data.certificates,
+    loading,
+    error,
+    data: memberCertificates,
+    refetch,
+  }
+}
+
+export const useMemberCertificate = (memberCertificateId: string) => {
+  const { loading, data, error, refetch } = useQuery<
+    hasura.GET_MEMBER_CERTIFICATE,
+    hasura.GET_MEMBER_CERTIFICATEVariables
+  >(
+    gql`
+      query GET_MEMBER_CERTIFICATE($id: uuid!) {
+        member_certificate_by_pk(id: $id) {
+          id
+          number
+          values
+          delivered_at
+          expired_at
+          member {
+            id
+            name
+          }
+          certificate {
+            id
+            title
+            description
+            code
+            qualification
+            period_type
+            period_amount
+            created_at
+            updated_at
+            certificate_template {
+              template
+            }
+          }
+        }
+      }
+    `,
+    { variables: { id: memberCertificateId } },
+  )
+  const memberCertificate: MemberCertificate | null =
+    loading || error || !data || !data.member_certificate_by_pk
+      ? null
+      : {
+          id: data.member_certificate_by_pk.id,
+          number: data.member_certificate_by_pk.number,
+          values: data.member_certificate_by_pk.values,
+          deliveredAt: new Date(data.member_certificate_by_pk.delivered_at),
+          expiredAt: data.member_certificate_by_pk.expired_at
+            ? new Date(data.member_certificate_by_pk.expired_at)
+            : null,
+          member: {
+            id: data.member_certificate_by_pk.member?.id || '',
+            name: data.member_certificate_by_pk.member?.name || '',
+          },
+          certificate: {
+            id: data.member_certificate_by_pk.id,
+            title: data.member_certificate_by_pk.certificate?.title || '',
+            description: data.member_certificate_by_pk.certificate?.description || '',
+            qualification: data.member_certificate_by_pk.certificate?.qualification || '',
+            periodType: data.member_certificate_by_pk.certificate?.period_type || '',
+            periodAmount: data.member_certificate_by_pk.certificate?.period_amount,
+            createdAt: new Date(data.member_certificate_by_pk.certificate?.created_at),
+            code: data.member_certificate_by_pk.certificate?.code || '',
+            template: data.member_certificate_by_pk.certificate?.certificate_template?.template || null,
+          },
+        }
+
+  return {
+    loading,
+    error,
+    data: memberCertificate,
+    refetch,
   }
 }
 
 export const useCertificate = (certificateId: string) => {
-  const data = {
-    certificates: [
-      {
-        id: '1',
-        title: 'UIUX類課程完課證明',
-        abstract: `我是摘要說明我是摘要說明我是摘要說明我是摘要說明我是摘要說明我是摘要說明我是摘要說明我是摘要說明
-我是摘要
-說明我是摘要說明我是摘`,
-        code: 'AS500',
-        expiredAt: '2024-03-21T16:59:59+00:00',
-        certificateId: 'GA000000001',
-        member: {
-          name: '曾聰明',
-        },
-        category: '資訊通識技術課程 (可自行填寫)',
-        hours: 24,
-        createdAt: '2021-11-30T16:59:59+00:00',
-        distributedAt: '2021-03-21T15:00:00+00:00',
-        template: `<div style='border:1px solid #cccccc;padding:24px;height:667px;width:100%'>證書編號：{{certificat_id}}<br/>{{name}}<br/>{{category}}<br/>{{hours}}<br/>{{created_at}}</div>`,
-      },
-    ],
-  }
+  const { loading, data, error, refetch } = useQuery<hasura.GET_CERTIFICATE, hasura.GET_CERTIFICATEVariables>(
+    gql`
+      query GET_CERTIFICATE($id: uuid!) {
+        certificate_by_pk(id: $id) {
+          id
+          title
+          description
+          qualification
+          period_type
+          period_amount
+          author_id
+          created_at
+          updated_at
+          published_at
+          deleted_at
+          code
+          certificate_template {
+            id
+            template
+          }
+        }
+      }
+    `,
+    { variables: { id: certificateId } },
+  )
+  const certificate: Certificate | null =
+    loading || error || !data || !data.certificate_by_pk
+      ? null
+      : {
+          id: data.certificate_by_pk.id,
+          title: data.certificate_by_pk.title,
+          description: data.certificate_by_pk.description,
+          qualification: data.certificate_by_pk.qualification,
+          periodType: data.certificate_by_pk.period_type,
+          periodAmount: data.certificate_by_pk.period_amount,
+          createdAt: new Date(data.certificate_by_pk.created_at),
+          code: data.certificate_by_pk.code,
+          template: data.certificate_by_pk.certificate_template?.template || null,
+        }
+
   return {
-    certificate: data.certificates[0],
+    loading,
+    error,
+    data: certificate,
+    refetch,
   }
 }
