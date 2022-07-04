@@ -2,20 +2,13 @@ import { Button } from '@chakra-ui/react'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { render } from 'mustache'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StyledCode, StyledDate } from '../../components/common/CertificateCard'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
 import { certificateMessages } from '../../helpers/translation'
-import { Certificate } from '../../types/certificate'
-
-type TemplateVariablesProps = {
-  certificatId: string
-  name: string
-  category: string
-  hours: string
-  createdAt: string
-}
+import { MemberCertificate } from '../../types/certificate'
 
 const StyledContainer = styled.div`
   margin: 40px;
@@ -45,7 +38,6 @@ const StyledTitle = styled.h1`
   white-space: nowrap;
   text-overflow: ellipsis;
 `
-
 const StyledAbstract = styled.div`
   overflow: hidden;
   color: var(--gray-darker);
@@ -61,7 +53,6 @@ const StyledContentBlockFooter = styled.div`
   justify-content: space-between;
   padding: 1.25rem 1.25rem 1.25rem 2rem;
 `
-
 const StyledButton = styled(Button)`
   width: 105px;
   height: 44px;
@@ -76,16 +67,15 @@ const StyledButton = styled(Button)`
   }
 `
 
-const CertificateContentBlock: React.VFC<{ certificate: Certificate }> = ({ certificate }) => {
+const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate }> = ({ memberCertificate }) => {
+  const { certificate } = memberCertificate
   const { currentMember } = useAuth()
   const { formatMessage } = useIntl()
 
-  const templateVariables: TemplateVariablesProps = {
-    certificatId: certificate.certificateId,
-    name: certificate.member.name,
-    category: certificate.category,
-    hours: `${certificate.hours}小時`,
-    createdAt: moment(certificate.createdAt).format('YYYY年MM月DD日'),
+  const transformedTemplateVariables = {
+    deliveredAt: memberCertificate.deliveredAt
+      ? moment(memberCertificate.deliveredAt).format('YYYY年MM月DD日')
+      : undefined,
   }
 
   return (
@@ -108,25 +98,30 @@ const CertificateContentBlock: React.VFC<{ certificate: Certificate }> = ({ cert
                   defaultMessage: '發放日期：{certificateDistributedTime}',
                 },
                 {
-                  certificateDistributedTime: moment(certificate.distributedAt).format('YYYY/MM/DD hh:mm'),
+                  certificateDistributedTime: moment(memberCertificate.deliveredAt).format('YYYY/MM/DD hh:mm'),
                 },
               )}
             </StyledDate>
-            <StyledDate>
-              {formatMessage(
-                { id: 'common.certificateExpiredTime', defaultMessage: '證書效期：{certificateExpiredTime} 止' },
-                {
-                  certificateExpiredTime: moment(certificate.expiredAt).format('YYYY/MM/DD hh:mm'),
-                },
-              )}
-            </StyledDate>
+            {memberCertificate.expiredAt && (
+              <StyledDate>
+                {formatMessage(
+                  { id: 'common.certificateExpiredTime', defaultMessage: '證書效期：{certificateExpiredTime} 止' },
+                  {
+                    certificateExpiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD hh:mm'),
+                  },
+                )}
+              </StyledDate>
+            )}
           </div>
         </StyledContentBlockHead>
         <StyledTitle>{certificate.title}</StyledTitle>
-        <StyledAbstract>{certificate.abstract}</StyledAbstract>
+        <StyledAbstract>{certificate.description}</StyledAbstract>
       </StyledContentBlock>
       {/* TEMPLATE */}
-      <div dangerouslySetInnerHTML={{ __html: render(certificate.template, templateVariables) }}></div>
+      <Certificate
+        template={certificate.template || ''}
+        templateVars={{ ...memberCertificate.values, ...transformedTemplateVariables }}
+      />
       {/* TEMPLATE */}
       <StyledContentBlockFooter>
         <StyledAbstract className="mr-3">
@@ -139,6 +134,51 @@ const CertificateContentBlock: React.VFC<{ certificate: Certificate }> = ({ cert
         />
       </StyledContentBlockFooter>
     </StyledContainer>
+  )
+}
+
+const StyledCertificateContainer = styled.div`
+  position: relative;
+  padding-top: 71%;
+`
+const StyledCertificateCard = styled.div<{ scale: number }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1200px;
+  overflow: hidden;
+  white-space: nowrap;
+  transform: scale(${props => props.scale});
+  transform-origin: top left;
+`
+const Certificate: React.VFC<{
+  template: string
+  templateVars?: any
+}> = ({ template, templateVars }) => {
+  const [scale, setScale] = useState(0)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const cardRef = useRef<HTMLDivElement | null>(null)
+
+  const handleResize = useCallback(() => {
+    if (containerRef.current && cardRef.current) {
+      setScale(containerRef.current.offsetWidth / cardRef.current.offsetWidth)
+    }
+  }, [containerRef, cardRef])
+
+  useEffect(() => {
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [handleResize])
+
+  return (
+    <StyledCertificateContainer ref={containerRef}>
+      <StyledCertificateCard
+        ref={cardRef}
+        scale={scale}
+        dangerouslySetInnerHTML={{ __html: render(template, templateVars) }}
+      />
+    </StyledCertificateContainer>
   )
 }
 
