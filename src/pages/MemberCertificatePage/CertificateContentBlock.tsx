@@ -72,10 +72,21 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
   const { currentMember } = useAuth()
   const { formatMessage } = useIntl()
 
-  const transformedTemplateVariables = {
-    deliveredAt: memberCertificate.deliveredAt
-      ? moment(memberCertificate.deliveredAt).format('YYYY年MM月DD日')
-      : undefined,
+  const defaultTemplateVars = {
+    name: currentMember?.name || currentMember?.username,
+    number: memberCertificate.number,
+    title: memberCertificate.certificate.title,
+    qualification: memberCertificate.certificate.qualification,
+  }
+
+  const deliveredAt = memberCertificate.deliveredAt
+    ? moment(memberCertificate.deliveredAt).format('YYYY/MM/DD')
+    : undefined
+
+  const templateVars = {
+    ...defaultTemplateVars,
+    ...memberCertificate.values,
+    deliveredAt,
   }
 
   return (
@@ -118,10 +129,7 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
         <StyledAbstract>{certificate.description}</StyledAbstract>
       </StyledContentBlock>
       {/* TEMPLATE */}
-      <Certificate
-        template={certificate.template || ''}
-        templateVars={{ ...memberCertificate.values, ...transformedTemplateVariables }}
-      />
+      <Certificate template={certificate.template || ''} templateVars={templateVars} />
       {/* TEMPLATE */}
       <StyledContentBlockFooter>
         <StyledAbstract className="mr-3">
