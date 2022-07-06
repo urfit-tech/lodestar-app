@@ -51,7 +51,7 @@ const OrderTaskPage: React.VFC = () => {
     if (authToken && task?.finishedOn && task?.returnvalue?.orderId) {
       // do not need to pay
       if (task.returnvalue.totalAmount <= 0) {
-        history.push(`/orders/${task.returnvalue.orderId}?tracking=1`)
+        window.location.assign(`/orders/${task.returnvalue.orderId}?tracking=1`)
       } else {
         axios
           .post(
