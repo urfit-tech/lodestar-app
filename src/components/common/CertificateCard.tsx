@@ -2,7 +2,7 @@ import moment from 'moment-timezone'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { Certificate } from '../../types/certificate'
+import { Certificate, MemberCertificate } from '../../types/certificate'
 
 const StyledContainer = styled.div`
   margin-bottom: 1.25rem;
@@ -61,17 +61,22 @@ export const StyledDate = styled.div`
 
 const CertificateCard: React.VFC<{
   certificate: Certificate
-}> = ({ certificate }) => {
+  memberCertificate?: MemberCertificate
+}> = ({ certificate, memberCertificate }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   return (
     <StyledContainer
       onClick={() => {
+        if (memberCertificate) {
+          history.push(`/member-certificates/${memberCertificate.id}`)
+          return
+        }
         history.push(`/certificates/${certificate.id}`)
       }}
     >
       <StyledTitle>{certificate.title}</StyledTitle>
-      <StyledAbstract>{certificate.abstract}</StyledAbstract>
+      <StyledAbstract>{certificate.description}</StyledAbstract>
       <div className="d-flex justify-content-between">
         <StyledCode>
           {formatMessage(
@@ -81,14 +86,16 @@ const CertificateCard: React.VFC<{
             },
           )}
         </StyledCode>
-        <StyledDate>
-          {formatMessage(
-            { id: 'common.certificateExpiredTime', defaultMessage: '證書效期：{certificateExpiredTime} 止' },
-            {
-              certificateExpiredTime: moment(certificate.expiredAt).format('YYYY/MM/DD hh:mm'),
-            },
-          )}
-        </StyledDate>
+        {memberCertificate?.expiredAt && (
+          <StyledDate>
+            {formatMessage(
+              { id: 'common.certificateExpiredTime', defaultMessage: '證書效期：{certificateExpiredTime} 止' },
+              {
+                certificateExpiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD hh:mm'),
+              },
+            )}
+          </StyledDate>
+        )}
       </div>
     </StyledContainer>
   )
