@@ -57,9 +57,10 @@ const pageMessages = {
     },
   }),
   // MerchandisePage
-  MerchandisePage: defineMessages({
-    overview: { id: 'page.merchandise.tab.overview', defaultMessage: 'Overview' },
-    qa: { id: 'page.merchandise.tab.qa', defaultMessage: 'Q&A' },
+  MerchandisePage: defineMessages({}),
+  MerchandisePageTabs: defineMessages({
+    overview: { id: 'page.MerchandisePageTabs.overview', defaultMessage: 'Overview' },
+    qa: { id: 'page.MerchandisePageTabs.qa', defaultMessage: 'Q&A' },
   }),
 }
 

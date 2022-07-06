@@ -43,7 +43,7 @@ const MerchandisePage: React.VFC = () => {
         <div className="my-4">{merchandise && <MerchandiseBlock merchandise={merchandise} withPaymentButton />}</div>
 
         <Tabs defaultActiveKey="overview" className="mb-5">
-          <Tabs.TabPane tab={formatMessage(pageMessages.MerchandisePage.overview)} key="overview" className="my-3">
+          <Tabs.TabPane tab={formatMessage(pageMessages.MerchandisePageTabs.overview)} key="overview" className="my-3">
             {merchandise ? <BraftContent>{merchandise.description}</BraftContent> : <Skeleton />}
           </Tabs.TabPane>
         </Tabs>
