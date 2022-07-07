@@ -1,6 +1,7 @@
 import { Button, Icon } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import { CommonLargeTextMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import React, { memo, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -8,7 +9,6 @@ import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.s
 import { ReactComponent as ErrorCircleIcon } from '../../images/error-circle.svg'
 import { ReactComponent as TickIcon } from '../../images/tick.svg'
 import { ExerciseProps } from '../../types/program'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   prevQuestion: { id: 'program.ui.prevQuestion', defaultMessage: '上一題' },
@@ -136,6 +136,9 @@ const ExerciseQuestionBlock: React.VFC<
 const StyledButton = styled(Button)<{ $isActive: boolean; $isCorrect: boolean; $isError: boolean }>`
   &&& {
     width: 100%;
+    height: unset;
+    padding-top: 8px;
+    padding-bottom: 8px;
     background: white;
     border: ${props => props.$isActive && `1px solid var(--gray-darker)`};
 

@@ -4219,6 +4219,182 @@ export interface GET_ENROLLED_CARDSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_MEMBER_CERTIFICATE_COLLECTION
+// ====================================================
+
+export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_member {
+  __typename: "member";
+  id: string;
+  name: string;
+}
+
+export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_certificate_certificate_template {
+  __typename: "certificate_template";
+  template: string;
+}
+
+export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_certificate {
+  __typename: "certificate";
+  id: any;
+  title: string;
+  description: string | null;
+  code: string | null;
+  qualification: string | null;
+  period_type: string | null;
+  period_amount: any | null;
+  created_at: any;
+  updated_at: any;
+  /**
+   * An object relationship
+   */
+  certificate_template: GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_certificate_certificate_template | null;
+}
+
+export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate {
+  __typename: "member_certificate";
+  id: any;
+  number: string;
+  values: any;
+  delivered_at: any;
+  expired_at: any | null;
+  /**
+   * An object relationship
+   */
+  member: GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_member | null;
+  /**
+   * An object relationship
+   */
+  certificate: GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_certificate | null;
+}
+
+export interface GET_MEMBER_CERTIFICATE_COLLECTION {
+  /**
+   * fetch data from the table: "member_certificate"
+   */
+  member_certificate: GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate[];
+}
+
+export interface GET_MEMBER_CERTIFICATE_COLLECTIONVariables {
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_CERTIFICATE
+// ====================================================
+
+export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_member {
+  __typename: "member";
+  id: string;
+  name: string;
+}
+
+export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_certificate_certificate_template {
+  __typename: "certificate_template";
+  template: string;
+}
+
+export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_certificate {
+  __typename: "certificate";
+  id: any;
+  title: string;
+  description: string | null;
+  code: string | null;
+  qualification: string | null;
+  period_type: string | null;
+  period_amount: any | null;
+  created_at: any;
+  updated_at: any;
+  /**
+   * An object relationship
+   */
+  certificate_template: GET_MEMBER_CERTIFICATE_member_certificate_by_pk_certificate_certificate_template | null;
+}
+
+export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk {
+  __typename: "member_certificate";
+  id: any;
+  number: string;
+  values: any;
+  delivered_at: any;
+  expired_at: any | null;
+  /**
+   * An object relationship
+   */
+  member: GET_MEMBER_CERTIFICATE_member_certificate_by_pk_member | null;
+  /**
+   * An object relationship
+   */
+  certificate: GET_MEMBER_CERTIFICATE_member_certificate_by_pk_certificate | null;
+}
+
+export interface GET_MEMBER_CERTIFICATE {
+  /**
+   * fetch data from the table: "member_certificate" using primary key columns
+   */
+  member_certificate_by_pk: GET_MEMBER_CERTIFICATE_member_certificate_by_pk | null;
+}
+
+export interface GET_MEMBER_CERTIFICATEVariables {
+  id: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_CERTIFICATE
+// ====================================================
+
+export interface GET_CERTIFICATE_certificate_by_pk_certificate_template {
+  __typename: "certificate_template";
+  id: any;
+  template: string;
+}
+
+export interface GET_CERTIFICATE_certificate_by_pk {
+  __typename: "certificate";
+  id: any;
+  title: string;
+  description: string | null;
+  qualification: string | null;
+  period_type: string | null;
+  period_amount: any | null;
+  author_id: string;
+  created_at: any;
+  updated_at: any;
+  published_at: any | null;
+  deleted_at: any | null;
+  code: string | null;
+  /**
+   * An object relationship
+   */
+  certificate_template: GET_CERTIFICATE_certificate_by_pk_certificate_template | null;
+}
+
+export interface GET_CERTIFICATE {
+  /**
+   * fetch data from the table: "certificate" using primary key columns
+   */
+  certificate_by_pk: GET_CERTIFICATE_certificate_by_pk | null;
+}
+
+export interface GET_CERTIFICATEVariables {
+  id: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ORDER_PRODUCT
 // ====================================================
 
