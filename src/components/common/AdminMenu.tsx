@@ -112,20 +112,20 @@ export const MemberAdminMenu: React.VFC<
       ),
     },
     {
-      key: 'member_certificates_admin',
-      item: enabledModules.certificate && (
-        <Menu.Item key="member_certificates_admin">
-          <Icon as={MemberCertificateIcon} className="mr-2" />
-          {formatMessage(commonMessages.content.certificate)}
-        </Menu.Item>
-      ),
-    },
-    {
       key: 'member_practices_admin',
       item: enabledModules.practice && (
         <Menu.Item key="member_practices_admin">
           <Icon as={BookIcon} className="mr-2" />
           {formatMessage(commonMessages.content.practiceManagement)}
+        </Menu.Item>
+      ),
+    },
+    {
+      key: 'member_certificates_admin',
+      item: enabledModules.certificate && (
+        <Menu.Item key="member_certificates_admin">
+          <Icon as={MemberCertificateIcon} className="mr-2" />
+          {formatMessage(commonMessages.content.certificate)}
         </Menu.Item>
       ),
     },
