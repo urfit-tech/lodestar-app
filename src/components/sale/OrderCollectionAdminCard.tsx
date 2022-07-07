@@ -189,16 +189,12 @@ const OrderCollectionAdminCard: React.VFC<
             <OrderProductCell className="text-right">
               <PriceLabel
                 currencyId={
-                  orderProduct.product.type === 'MerchandiseSpec' &&
-                  orderProduct.options !== null &&
-                  orderProduct.options.currencyId === 'LSC'
+                  orderProduct.product.type === 'MerchandiseSpec' && orderProduct.options?.currencyId === 'LSC'
                     ? 'LSC'
                     : orderProduct.currencyId
                 }
                 listPrice={
-                  orderProduct.product.type === 'MerchandiseSpec' &&
-                  orderProduct.options !== null &&
-                  orderProduct.options.currencyId === 'LSC'
+                  orderProduct.product.type === 'MerchandiseSpec' && orderProduct.options?.currencyId === 'LSC'
                     ? orderProduct.options.currencyPrice
                     : orderProduct.price
                 }
