@@ -16,9 +16,6 @@ export type MemberCertificate = {
   values: any
   expiredAt: Date | null
   deliveredAt: Date
-  member: {
-    id: string
-    name: string
-  }
+  memberId: string
   certificate: Certificate
 }

@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { render } from 'mustache'
@@ -41,9 +42,6 @@ const StyledTitle = styled.h1`
 const StyledAbstract = styled.div`
   overflow: hidden;
   color: var(--gray-darker);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.5;
   letter-spacing: 0.2px;
   white-space: pre-wrap;
 `
@@ -126,7 +124,9 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
           </div>
         </StyledContentBlockHead>
         <StyledTitle>{certificate.title}</StyledTitle>
-        <StyledAbstract>{certificate.description}</StyledAbstract>
+        <StyledAbstract>
+          {certificate.description && <BraftContent>{certificate.description}</BraftContent>}
+        </StyledAbstract>
       </StyledContentBlock>
       {/* TEMPLATE */}
       <Certificate template={certificate.template || ''} templateVars={templateVars} />

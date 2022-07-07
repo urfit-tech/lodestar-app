@@ -1,3 +1,4 @@
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import moment from 'moment-timezone'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -33,14 +34,16 @@ const StyledAbstract = styled.div`
   margin-bottom: 1.5rem;
   overflow: hidden;
   color: var(--gray-darker);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: 0.2px;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  p {
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
 `
 export const StyledCode = styled.div`
   color: var(--gray-darker);
@@ -76,7 +79,9 @@ const CertificateCard: React.VFC<{
       }}
     >
       <StyledTitle>{certificate.title}</StyledTitle>
-      <StyledAbstract>{certificate.description}</StyledAbstract>
+      <StyledAbstract>
+        {certificate.description && <BraftContent>{certificate.description}</BraftContent>}
+      </StyledAbstract>
       <div className="d-flex justify-content-between">
         <StyledCode>
           {formatMessage(

@@ -4222,12 +4222,6 @@ export interface GET_ENROLLED_CARDSVariables {
 // GraphQL query operation: GET_MEMBER_CERTIFICATE_COLLECTION
 // ====================================================
 
-export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_member {
-  __typename: "member";
-  id: string;
-  name: string;
-}
-
 export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_certificate_certificate_template {
   __typename: "certificate_template";
   template: string;
@@ -4257,10 +4251,7 @@ export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate {
   values: any;
   delivered_at: any;
   expired_at: any | null;
-  /**
-   * An object relationship
-   */
-  member: GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_member | null;
+  member_id: string;
   /**
    * An object relationship
    */
@@ -4286,12 +4277,6 @@ export interface GET_MEMBER_CERTIFICATE_COLLECTIONVariables {
 // ====================================================
 // GraphQL query operation: GET_MEMBER_CERTIFICATE
 // ====================================================
-
-export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_member {
-  __typename: "member";
-  id: string;
-  name: string;
-}
 
 export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_certificate_certificate_template {
   __typename: "certificate_template";
@@ -4322,10 +4307,7 @@ export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk {
   values: any;
   delivered_at: any;
   expired_at: any | null;
-  /**
-   * An object relationship
-   */
-  member: GET_MEMBER_CERTIFICATE_member_certificate_by_pk_member | null;
+  member_id: string;
   /**
    * An object relationship
    */

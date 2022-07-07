@@ -15,11 +15,9 @@ const CertificatesCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const app = useApp()
   const { currentMemberId } = useAuth()
-  const { data: memberCertificates, loading: memberCertificatesLoading } = useMemberCertificateCollection(
-    currentMemberId || '',
-  )
+  const memberCertificates = useMemberCertificateCollection(currentMemberId || '')
 
-  if (app.loading || memberCertificatesLoading) {
+  if (app.loading || memberCertificates.loading) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -36,7 +34,7 @@ const CertificatesCollectionAdminPage: React.VFC = () => {
       content={{ icon: MemberCertificateIcon, title: formatMessage(commonMessages.content.certificate) }}
     >
       <div className="row">
-        {memberCertificates.map(memberCertificate => (
+        {memberCertificates.data.map(memberCertificate => (
           <div className="col-12 col-xl-6" key={memberCertificate.id}>
             <CertificateCard certificate={memberCertificate.certificate} memberCertificate={memberCertificate} />
           </div>

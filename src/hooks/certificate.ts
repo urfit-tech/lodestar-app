@@ -16,10 +16,7 @@ export const useMemberCertificateCollection = (memberId: string) => {
           values
           delivered_at
           expired_at
-          member {
-            id
-            name
-          }
+          member_id
           certificate {
             id
             title
@@ -49,10 +46,7 @@ export const useMemberCertificateCollection = (memberId: string) => {
           values: memberCertificate.values,
           deliveredAt: new Date(memberCertificate.delivered_at),
           expiredAt: memberCertificate.expired_at ? new Date(memberCertificate.expired_at) : null,
-          member: {
-            id: memberCertificate.member?.id || '',
-            name: memberCertificate.member?.name || '',
-          },
+          memberId: memberCertificate.member_id,
           certificate: {
             id: memberCertificate.certificate?.id || '',
             title: memberCertificate.certificate?.title || '',
@@ -87,10 +81,7 @@ export const useMemberCertificate = (memberCertificateId: string) => {
           values
           delivered_at
           expired_at
-          member {
-            id
-            name
-          }
+          member_id
           certificate {
             id
             title
@@ -121,10 +112,7 @@ export const useMemberCertificate = (memberCertificateId: string) => {
           expiredAt: data.member_certificate_by_pk.expired_at
             ? new Date(data.member_certificate_by_pk.expired_at)
             : null,
-          member: {
-            id: data.member_certificate_by_pk.member?.id || '',
-            name: data.member_certificate_by_pk.member?.name || '',
-          },
+          memberId: data.member_certificate_by_pk.member_id,
           certificate: {
             id: data.member_certificate_by_pk.id,
             title: data.member_certificate_by_pk.certificate?.title || '',
