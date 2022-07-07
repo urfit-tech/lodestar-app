@@ -247,8 +247,8 @@ const defaultRoutesMap: RoutesMap = {
   },
   // certificate
   certificate: {
-    path: '/certificates/:certificateId',
-    pageName: 'CertificatePage',
+    path: '/member-certificates/:memberCertificateId',
+    pageName: 'MemberCertificatePage',
   },
   // general member admin
   member_settings: {

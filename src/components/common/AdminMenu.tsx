@@ -125,15 +125,6 @@ export const MemberAdminMenu: React.VFC<
     //     </Menu.Item>
     //   ),
     // },
-    {
-      key: 'member_certificates_admin',
-      item: enabledModules.certificate && (
-        <Menu.Item key="member_certificates_admin">
-          <Icon as={MemberCertificateIcon} className="mr-2" />
-          {formatMessage(commonMessages.content.certificate)}
-        </Menu.Item>
-      ),
-    },
     // {
     //   key: 'member_practices_admin',
     //   item: enabledModules.practice && (
@@ -143,6 +134,15 @@ export const MemberAdminMenu: React.VFC<
     //     </Menu.Item>
     //   ),
     // },
+    {
+      key: 'member_certificates_admin',
+      item: enabledModules.certificate && (
+        <Menu.Item key="member_certificates_admin">
+          <Icon as={MemberCertificateIcon} className="mr-2" />
+          {formatMessage(commonMessages.content.certificate)}
+        </Menu.Item>
+      ),
+    },
     {
       key: 'member_orders_admin',
       item: (
