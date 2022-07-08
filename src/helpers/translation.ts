@@ -1158,6 +1158,7 @@ export const termMessages = {
     personalData: { id: 'term.subtitle.personalData', defaultMessage: '個人資料的蒐集、處理及利用方式' },
     link: { id: 'term.subtitle.link', defaultMessage: '網站對外的相關連結' },
     policy: { id: 'term.subtitle.policy', defaultMessage: '與第三人共用個人資料之政策' },
+    personalInfo: { id: 'term.subtitle.personalInfo', defaultMessage: '更新/刪除您的個人資訊' },
     cookie: { id: 'term.subtitle.cookie', defaultMessage: 'COOKIE之使用' },
     terms: { id: 'term.subtitle.terms', defaultMessage: '同意條款' },
     confidentiality: { id: 'term.subtitle.confidentiality', defaultMessage: '註冊義務、帳號密碼及資料保密' },
@@ -1196,6 +1197,16 @@ export const termMessages = {
       id: 'term.paragraph.policy2',
       defaultMessage:
         '{name} 如舉辦任何回饋活動，你所提供給主辦單位的得獎連絡資料，也僅供此活動使用。{name} 不會將活動資料直接交付或售予第三方。如果 {name} 與第三方服務合作，亦應依法要求該第三方 {name} 的會員網站使用對應的約定及隱私權政策，{name} 將會盡全力保障所有會員個人資料的安全性。',
+    },
+    personalInfo: {
+      id: 'term.paragraph.personalInfo',
+      defaultMessage:
+        '若您已註冊並希望自「{name}」提供的系統中刪除您提供給我們的任何註冊資訊，請透過分頁底部的「聯絡我們」連結與我們聯繫。根據您的需求，我們將盡力於30天內自活動數據庫中刪除您的註冊資訊，並在可行的情況下從我們的備份媒體中刪除您的註冊資訊。',
+    },
+    personalInfo2: {
+      id: 'term.paragraph.personalInfo2',
+      defaultMessage:
+        '請注意，永久刪除您的註冊資訊，您的所有個人資料亦從資料庫中清除。這道流程完成後，您再也無法使用您的任一項服務，您的使用者帳號與所有資料均將永久移除，「{name}」將無法恢復您的帳號，或於日後擷取您的個人資料。若您於日後聯絡「{name}」支援管道，系統將無法辨認您的帳號與找回已刪除的帳號。',
     },
     cookie: {
       id: 'term.paragraph.cookie',

@@ -84,6 +84,10 @@ const TermsPage: React.VFC = () => {
             <p>{formatMessage(termMessages.paragraph.policy, { name })}</p>
             <p>{formatMessage(termMessages.paragraph.policy2, { name })}</p>
 
+            <StyledSubTitle level={3}>{formatMessage(termMessages.subtitle.personalInfo)}</StyledSubTitle>
+            <p>{formatMessage(termMessages.paragraph.personalInfo, { name })}</p>
+            <p>{formatMessage(termMessages.paragraph.personalInfo2, { name })}</p>
+
             <StyledSubTitle level={3}>{formatMessage(termMessages.subtitle.cookie)}</StyledSubTitle>
             <p>{formatMessage(termMessages.paragraph.cookie, { name })}</p>
           </StyledCard>
