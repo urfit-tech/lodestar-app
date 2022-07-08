@@ -85,18 +85,18 @@ const CertificateCard: React.VFC<{
       <div className="d-flex justify-content-between">
         <StyledCode>
           {formatMessage(
-            { id: 'common.certificateCode', defaultMessage: '證書代號：{certificateCode}' },
+            { id: 'common.CertificateCard.number', defaultMessage: '證書編號：{number}' },
             {
-              certificateCode: certificate.code,
+              number: memberCertificate?.number || certificate.code,
             },
           )}
         </StyledCode>
         {memberCertificate?.expiredAt && (
           <StyledDate>
             {formatMessage(
-              { id: 'common.certificateExpiredTime', defaultMessage: '證書效期：{certificateExpiredTime} 止' },
+              { id: 'common.CertificateCard.expiredTime', defaultMessage: '證書效期：{expiredTime} 止' },
               {
-                certificateExpiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD hh:mm'),
+                expiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD hh:mm'),
               },
             )}
           </StyledDate>

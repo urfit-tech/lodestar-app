@@ -8,8 +8,8 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StyledCode, StyledDate } from '../../components/common/CertificateCard'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
-import { certificateMessages } from '../../helpers/translation'
 import { MemberCertificate } from '../../types/certificate'
+import pageMessages from '../translation'
 
 const StyledContainer = styled.div`
   margin: 40px;
@@ -92,33 +92,21 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
       <StyledContentBlock>
         <StyledContentBlockHead>
           <StyledCode>
-            {formatMessage(
-              { id: 'common.certificateCode', defaultMessage: '證書代號：{certificateCode}' },
-              {
-                certificateCode: certificate.code,
-              },
-            )}
+            {formatMessage(pageMessages.MemberCertificatePage.number, {
+              number: memberCertificate.number || certificate.code,
+            })}
           </StyledCode>
           <div className="d-flex align-items-center flex-wrap">
             <StyledDate className="mr-3">
-              {formatMessage(
-                {
-                  id: 'common.certificateExpiredTime',
-                  defaultMessage: '發放日期：{certificateDistributedTime}',
-                },
-                {
-                  certificateDistributedTime: moment(memberCertificate.deliveredAt).format('YYYY/MM/DD hh:mm'),
-                },
-              )}
+              {formatMessage(pageMessages.MemberCertificatePage.deliveredAt, {
+                deliveredAt: moment(memberCertificate.deliveredAt).format('YYYY/MM/DD hh:mm'),
+              })}
             </StyledDate>
             {memberCertificate.expiredAt && (
               <StyledDate>
-                {formatMessage(
-                  { id: 'common.certificateExpiredTime', defaultMessage: '證書效期：{certificateExpiredTime} 止' },
-                  {
-                    certificateExpiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD hh:mm'),
-                  },
-                )}
+                {formatMessage(pageMessages.MemberCertificatePage.expiredTime, {
+                  expiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD hh:mm'),
+                })}
               </StyledDate>
             )}
           </div>
@@ -134,11 +122,11 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
       <StyledContentBlockFooter>
         <StyledAbstract className="mr-3">
           {currentMember?.name}
-          {formatMessage(certificateMessages.text.congratulations)}
+          {formatMessage(pageMessages.MemberCertificatePage.congratulations)}
         </StyledAbstract>
         <SocialSharePopover
           url={window.location.href}
-          children={<StyledButton>{formatMessage(certificateMessages.text.share)}</StyledButton>}
+          children={<StyledButton>{formatMessage(pageMessages.MemberCertificatePage.share)}</StyledButton>}
         />
       </StyledContentBlockFooter>
     </StyledContainer>
