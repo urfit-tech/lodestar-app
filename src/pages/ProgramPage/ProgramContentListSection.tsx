@@ -73,12 +73,6 @@ const ProgramContentListSection: React.VFC<{
 
   const isEnrolled = enrolledProgramIds.includes(program.id)
 
-  const trialProgramContents =
-    program.contentSections.flatMap(
-      programContentSection =>
-        programContentSection.contents.filter(programContent => programContent.listPrice === 0) || [],
-    ) || []
-
   const ProgramContentSectionBlock = () => {
     return (
       <>
