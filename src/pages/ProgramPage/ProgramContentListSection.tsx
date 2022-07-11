@@ -1,9 +1,11 @@
 import { Divider, Icon, Tag, Typography } from 'antd'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
-import React from 'react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { AuthModalContext } from '../../components/auth/AuthModal'
 import ProgramContentTrialModal from '../../components/program/ProgramContentTrialModal'
 import { durationFormatter } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
@@ -59,74 +61,83 @@ const StyledDuration = styled.span`
 `
 
 const ProgramContentListSection: React.VFC<{
-  memberId: string
   program: Program & {
     contentSections: (ProgramContentSection & {
       contents: ProgramContent[]
     })[]
   }
-}> = ({ memberId, program }) => {
+}> = ({ program }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const theme = useAppTheme()
-  const { enrolledProgramIds } = useEnrolledProgramIds(memberId)
+  const { currentMemberId, isAuthenticated } = useAuth()
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
+  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const isEnrolled = enrolledProgramIds.includes(program.id)
 
-  const ProgramContentSectionBlock = () => {
-    return (
-      <>
-        <StyledTitle>{formatMessage(productMessages.program.title.content)}</StyledTitle>
-        <Divider className="mt-1" />
+  // const ProgramContentSectionBlock = () => {
+  return (
+    <>
+      <StyledTitle>{formatMessage(productMessages.program.title.content)}</StyledTitle>
+      <Divider className="mt-1" />
 
-        {program.contentSections
-          .filter(programContentSection => programContentSection.contents.length)
-          .map(programContentSection => (
-            <ProgramSectionBlock key={programContentSection.id}>
-              <ProgramSectionTitle className="mb-3">{programContentSection.title}</ProgramSectionTitle>
+      {program.contentSections
+        .filter(programContentSection => programContentSection.contents.length)
+        .map(programContentSection => (
+          <ProgramSectionBlock key={programContentSection.id}>
+            <ProgramSectionTitle className="mb-3">{programContentSection.title}</ProgramSectionTitle>
 
-              {programContentSection.contents.map(programContent => (
-                <ProgramContentItem
-                  key={programContent.id}
-                  isEnrolled={isEnrolled}
-                  onClick={() => {
-                    if (!isEnrolled) {
-                      return
-                    }
+            {programContentSection.contents.map(programContent => (
+              <ProgramContentItem
+                key={programContent.id}
+                isEnrolled={isEnrolled}
+                onClick={() => {
+                  if (isEnrolled) {
                     history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
-                  }}
-                >
-                  <Typography.Text>
-                    {programContent.contentType === 'video' ? (
-                      <Icon type="video-camera" className="mr-2" />
-                    ) : (
-                      <Icon type="file-text" className="mr-2" />
-                    )}
-                    <span>{programContent.title}</span>
-                  </Typography.Text>
+                  }
+                  if (programContent.displayMode === 'loginToTrial' && !isAuthenticated) {
+                    setAuthModalVisible?.(true)
+                  }
+                }}
+              >
+                <Typography.Text>
+                  {programContent.contentType === 'video' ? (
+                    <Icon type="video-camera" className="mr-2" />
+                  ) : (
+                    <Icon type="file-text" className="mr-2" />
+                  )}
+                  <span>{programContent.title}</span>
+                </Typography.Text>
 
-                  <StyledDuration>
-                    {programContent.listPrice === 0 && !isEnrolled && (
-                      <ProgramContentTrialModal
-                        programContentId={programContent.id}
-                        render={({ setVisible }) => (
-                          <StyledObscure onClick={() => setVisible(true)}>
-                            <StyledTag color={theme.colors.primary[500]}>
-                              {formatMessage(productMessages.program.content.trial)}
-                            </StyledTag>
-                          </StyledObscure>
-                        )}
-                      />
-                    )}
-                    {durationFormatter(programContent.duration) || ''}
-                  </StyledDuration>
-                </ProgramContentItem>
-              ))}
-            </ProgramSectionBlock>
-          ))}
-      </>
-    )
-  }
+                <StyledDuration>
+                  {(programContent.displayMode === 'trial' ||
+                    (programContent.displayMode === 'loginToTrial' && isAuthenticated)) &&
+                  !isEnrolled ? (
+                    <ProgramContentTrialModal
+                      programContentId={programContent.id}
+                      render={({ setVisible }) => (
+                        <StyledObscure onClick={() => setVisible(true)}>
+                          <StyledTag color={theme.colors.primary[500]}>
+                            {formatMessage(productMessages.program.content.trial)}
+                          </StyledTag>
+                        </StyledObscure>
+                      )}
+                    />
+                  ) : programContent.displayMode === 'loginToTrial' && !isAuthenticated ? (
+                    <StyledTag color={theme.colors.primary[500]}>
+                      {formatMessage(productMessages.program.content.trial)}
+                    </StyledTag>
+                  ) : null}
+                  {durationFormatter(programContent.duration) || ''}
+                </StyledDuration>
+              </ProgramContentItem>
+            ))}
+          </ProgramSectionBlock>
+        ))}
+    </>
+  )
+  // }
 
   // if (program.isSubscription) {
   //   // subscription program
@@ -168,7 +179,7 @@ const ProgramContentListSection: React.VFC<{
   // }
 
   // perpetual program
-  return <ProgramContentSectionBlock />
+  // return <ProgramContentSectionBlock />
 }
 
 export default ProgramContentListSection

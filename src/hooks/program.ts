@@ -321,6 +321,7 @@ export const useProgram = (programId: string) => {
               metadata
               duration
               published_at
+              display_mode
               list_price
               sale_price
               sold_at
@@ -429,6 +430,7 @@ export const useProgram = (programId: string) => {
                     ? 'video'
                     : programContent.program_content_type?.type || '',
                 publishedAt: new Date(programContent.published_at),
+                displayMode: programContent.display_mode,
                 listPrice: programContent.list_price,
                 salePrice: programContent.sale_price,
                 soldAt: programContent.sold_at && new Date(programContent.sold_at),
@@ -468,6 +470,7 @@ export const useProgramContent = (programContentId: string) => {
           abstract
           created_at
           published_at
+          display_mode
           list_price
           sale_price
           sold_at
@@ -535,6 +538,7 @@ export const useProgramContent = (programContentId: string) => {
                 ? 'video'
                 : data.program_content_by_pk.program_content_body?.type,
             publishedAt: new Date(data.program_content_by_pk.published_at),
+            displayMode: data.program_content_by_pk.display_mode,
             listPrice: data.program_content_by_pk.list_price,
             salePrice: data.program_content_by_pk.sale_price,
             soldAt: data.program_content_by_pk.sold_at && new Date(data.program_content_by_pk.sold_at),
