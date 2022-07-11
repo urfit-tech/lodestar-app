@@ -36,7 +36,7 @@ const MerchandisePaymentButton: React.VFC<{
     )
   }
 
-  return merchandise.isCustomized ? (
+  return merchandise.isCustomized || merchandise.currencyId === 'LSC' ? (
     <>
       {merchandise.specs.map(spec =>
         spec.id === merchandiseSpec.id ? (
@@ -44,6 +44,7 @@ const MerchandisePaymentButton: React.VFC<{
             key={spec.id}
             merchandise={merchandise}
             merchandiseSpec={merchandiseSpec}
+            quantity={quantity}
           />
         ) : null,
       )}
@@ -103,16 +104,18 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
 
   return (
     <div className="d-flex">
-      <div className="flex-shrink-0">
-        <Button
-          className="d-flex align-items-center mr-2"
-          variant="outline"
-          isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
-          onClick={() => quantity && handleClick()}
-        >
-          <Icon as={CartIcon} />
-        </Button>
-      </div>
+      {merchandise.currencyId !== 'LSC' && (
+        <div className="flex-shrink-0">
+          <Button
+            className="d-flex align-items-center mr-2"
+            variant="outline"
+            isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
+            onClick={() => quantity && handleClick()}
+          >
+            <Icon as={CartIcon} />
+          </Button>
+        </div>
+      )}
 
       <div className="flex-grow-1">
         <Button
@@ -131,7 +134,8 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
 const CustomizedMerchandisePaymentBlock: React.VFC<{
   merchandise: MerchandiseProps
   merchandiseSpec: MerchandiseSpecProps
-}> = ({ merchandise, merchandiseSpec }) => {
+  quantity: number
+}> = ({ merchandise, merchandiseSpec, quantity }) => {
   const { formatMessage } = useIntl()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
@@ -158,6 +162,7 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
       )}
       defaultProductId={`MerchandiseSpec_${merchandiseSpec.id}`}
       shippingMethods={merchandise.memberShop?.shippingMethods}
+      productQuantity={quantity}
     />
   )
 }

@@ -1,18 +1,14 @@
 import { Skeleton, Tabs } from 'antd'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import React, { useEffect } from 'react'
 import ReactGA from 'react-ga'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseBlock from '../components/merchandise/MerchandiseBlock'
 import { useMerchandise } from '../hooks/merchandise'
-
-const messages = defineMessages({
-  overview: { id: 'product.merchandise.tab.overview', defaultMessage: '商品概述' },
-  qa: { id: 'product.merchandise.tab.qa', defaultMessage: '問與答' },
-})
+import pageMessages from './translation'
 
 const StyledContainer = styled.div`
   max-width: 960px;
@@ -47,7 +43,7 @@ const MerchandisePage: React.VFC = () => {
         <div className="my-4">{merchandise && <MerchandiseBlock merchandise={merchandise} withPaymentButton />}</div>
 
         <Tabs defaultActiveKey="overview" className="mb-5">
-          <Tabs.TabPane tab={formatMessage(messages.overview)} key="overview" className="my-3">
+          <Tabs.TabPane tab={formatMessage(pageMessages.MerchandisePageTabs.overview)} key="overview" className="my-3">
             {merchandise ? <BraftContent>{merchandise.description}</BraftContent> : <Skeleton />}
           </Tabs.TabPane>
         </Tabs>

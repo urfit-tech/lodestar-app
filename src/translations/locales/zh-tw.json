@@ -617,6 +617,8 @@
   "page.ProgramContentTabs.foo": "Foo Message",
   "page.ProgramPage.bar": "Bar Message",
   "page.ProgramPage.foo": "Foo Message",
+  "page.MerchandisePageTabs.overview": "商品概述",
+  "page.MerchandisePageTabs.qa": "問與答",
   "payment.label.coinHistory": "已獲紀錄",
   "payment.label.currentOwnedCoins": "目前擁有",
   "payment.label.currentOwnedPoints": "目前擁有",

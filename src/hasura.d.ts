@@ -3580,6 +3580,7 @@ export interface GET_POST_post_post_merchandises_merchandise {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -3856,6 +3857,7 @@ export interface GET_POST_post_by_pk_post_merchandises_merchandise {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -4772,6 +4774,7 @@ export interface GET_PRODUCT_SIMPLE_merchandise_spec_by_pk_merchandise {
   sold_at: any | null;
   is_physical: boolean;
   is_customized: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -6006,6 +6009,7 @@ export interface GET_MERCHANDISE_COLLECTION_merchandise {
   title: string;
   sold_at: any | null;
   is_physical: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -6112,6 +6116,7 @@ export interface GET_MERCHANDISE_merchandise_by_pk {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -11333,6 +11338,7 @@ export interface SEARCH_PRODUCT_COLLECTION_merchandise {
   id: any;
   title: string;
   sold_at: any | null;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -11690,6 +11696,7 @@ export interface PostParts_post_merchandises_merchandise {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -17266,6 +17273,7 @@ export interface coupon_plan_bool_exp {
   coupon_plan_products?: coupon_plan_product_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
+  editor?: member_bool_exp | null;
   editor_id?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17286,6 +17294,7 @@ export interface coupon_plan_insert_input {
   coupon_plan_products?: coupon_plan_product_arr_rel_insert_input | null;
   created_at?: any | null;
   description?: string | null;
+  editor?: member_obj_rel_insert_input | null;
   editor_id?: string | null;
   ended_at?: any | null;
   id?: any | null;

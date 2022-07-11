@@ -2,6 +2,8 @@ import { Button, Select } from '@chakra-ui/react'
 import { Dropdown, Icon, Menu } from 'antd'
 import { max, min } from 'lodash'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { repeat } from 'ramda'
 import React, { useContext, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -14,11 +16,9 @@ import EmptyCover from '../../images/empty-cover.png'
 import { MerchandiseProps } from '../../types/merchandise'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import QuantityInput from '../common/QuantityInput'
 import { BREAK_POINT } from '../common/Responsive'
 import ShippingMethodLabel from '../common/ShippingMethodLabel'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import MerchandisePaymentButton from './MerchandisePaymentButton'
 
 const messages = defineMessages({
@@ -174,6 +174,7 @@ const MerchandiseBlock: React.VFC<{
         <div className="mb-4">
           <PriceLabel
             variant="inline"
+            currencyId={merchandise.currencyId}
             listPrice={selectedSpec.listPrice}
             salePrice={(merchandise.soldAt?.getTime() || 0) > Date.now() ? selectedSpec.salePrice : undefined}
           />
