@@ -4224,7 +4224,9 @@ export interface GET_ENROLLED_CARDSVariables {
 
 export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_certificate_certificate_template {
   __typename: "certificate_template";
+  id: any;
   template: string;
+  background_image: string;
 }
 
 export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_certificate {
@@ -4280,7 +4282,9 @@ export interface GET_MEMBER_CERTIFICATE_COLLECTIONVariables {
 
 export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_certificate_certificate_template {
   __typename: "certificate_template";
+  id: any;
   template: string;
+  background_image: string;
 }
 
 export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_certificate {
@@ -4338,6 +4342,7 @@ export interface GET_CERTIFICATE_certificate_by_pk_certificate_template {
   __typename: "certificate_template";
   id: any;
   template: string;
+  background_image: string;
 }
 
 export interface GET_CERTIFICATE_certificate_by_pk {

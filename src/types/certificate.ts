@@ -4,6 +4,7 @@ export type Certificate = {
   description: string | null
   code: string | null
   template: string | null
+  templateImage: string | null
   qualification: string | null
   periodType: string | null
   periodAmount: string | null

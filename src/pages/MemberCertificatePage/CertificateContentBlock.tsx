@@ -75,6 +75,7 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
     number: memberCertificate.number,
     title: memberCertificate.certificate.title,
     qualification: memberCertificate.certificate.qualification,
+    backgroundImage: memberCertificate.certificate.templateImage,
   }
 
   const deliveredAt = memberCertificate.deliveredAt

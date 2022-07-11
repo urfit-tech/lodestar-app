@@ -28,7 +28,9 @@ export const useMemberCertificateCollection = (memberId: string) => {
             created_at
             updated_at
             certificate_template {
+              id
               template
+              background_image
             }
           }
         }
@@ -53,6 +55,7 @@ export const useMemberCertificateCollection = (memberId: string) => {
             description: memberCertificate.certificate?.description || '',
             code: memberCertificate.certificate?.code || '',
             template: memberCertificate.certificate?.certificate_template?.template || '',
+            templateImage: memberCertificate.certificate?.certificate_template?.background_image || '',
             qualification: memberCertificate.certificate?.qualification || '',
             periodType: memberCertificate.certificate?.period_type || '',
             periodAmount: memberCertificate.certificate?.period_amount || '',
@@ -93,7 +96,9 @@ export const useMemberCertificate = (memberCertificateId: string) => {
             created_at
             updated_at
             certificate_template {
+              id
               template
+              background_image
             }
           }
         }
@@ -123,6 +128,7 @@ export const useMemberCertificate = (memberCertificateId: string) => {
             createdAt: new Date(data.member_certificate_by_pk.certificate?.created_at),
             code: data.member_certificate_by_pk.certificate?.code || '',
             template: data.member_certificate_by_pk.certificate?.certificate_template?.template || null,
+            templateImage: data.member_certificate_by_pk.certificate?.certificate_template?.background_image || null,
           },
         }
 
@@ -154,6 +160,7 @@ export const useCertificate = (certificateId: string) => {
           certificate_template {
             id
             template
+            background_image
           }
         }
       }
@@ -173,6 +180,7 @@ export const useCertificate = (certificateId: string) => {
           createdAt: new Date(data.certificate_by_pk.created_at),
           code: data.certificate_by_pk.code,
           template: data.certificate_by_pk.certificate_template?.template || null,
+          templateImage: data.certificate_by_pk.certificate_template?.background_image || null,
         }
 
   return {
