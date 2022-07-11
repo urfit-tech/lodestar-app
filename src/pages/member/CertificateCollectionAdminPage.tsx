@@ -34,11 +34,17 @@ const CertificateCollectionAdminPage: React.VFC = () => {
       content={{ icon: MemberCertificateIcon, title: formatMessage(commonMessages.content.certificate) }}
     >
       <div className="row">
-        {memberCertificates.data.map(memberCertificate => (
-          <div className="col-12 col-xl-6" key={memberCertificate.id}>
-            <CertificateCard certificate={memberCertificate.certificate} memberCertificate={memberCertificate} />
-          </div>
-        ))}
+        {memberCertificates.data
+          .filter(memberCertificate =>
+            memberCertificate.values?.deliveredAt
+              ? Date.now() > new Date(memberCertificate.values?.deliveredAt).getTime()
+              : Date.now() > new Date(memberCertificate.deliveredAt).getTime(),
+          )
+          .map(memberCertificate => (
+            <div className="col-12 col-xl-6" key={memberCertificate.id}>
+              <CertificateCard certificate={memberCertificate.certificate} memberCertificate={memberCertificate} />
+            </div>
+          ))}
       </div>
     </MemberAdminLayout>
   )
