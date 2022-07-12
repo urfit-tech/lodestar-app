@@ -2,7 +2,7 @@ import { Button, Icon } from '@chakra-ui/react'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -139,6 +139,7 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
+  const [isPaymentButtonDisable, setIsPaymentButtonDisable] = useState(true)
 
   if (merchandise.isLimited && !merchandiseSpec.buyableQuantity) {
     return (
@@ -154,7 +155,7 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
         <Button
           colorScheme="primary"
           isFullWidth
-          isDisabled={isAuthenticated && isLoading}
+          isDisabled={(isAuthenticated && isLoading) || isPaymentButtonDisable}
           onClick={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
         >
           {formatMessage(commonMessages.ui.purchase)}
@@ -163,6 +164,7 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
       defaultProductId={`MerchandiseSpec_${merchandiseSpec.id}`}
       shippingMethods={merchandise.memberShop?.shippingMethods}
       productQuantity={quantity}
+      setIsPaymentButtonDisable={setIsPaymentButtonDisable}
     />
   )
 }
