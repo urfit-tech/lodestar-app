@@ -61,8 +61,8 @@ const PaymentTapPayBlock: React.VFC = () => {
   const handlePaymentPayAsync = async () => {
     setIsPaying(true)
     try {
-      await payPayment(memberCreditCardId)
-      history.push(`/orders/${orderId}?tracking=1`)
+      const path = await payPayment(memberCreditCardId)
+      history.push(path)
     } catch (err) {
       message.error((err as any).toString())
     }
@@ -104,10 +104,11 @@ const usePayment = (paymentNo: string) => {
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId } = useAuth()
   const { member } = useMember(currentMemberId || '')
+  const { orderId } = useOrderId(paymentNo)
 
   const payPayment = useCallback(
     (memberCreditCardId: string | null) =>
-      new Promise((resolve, reject) => {
+      new Promise<string>((resolve, reject) => {
         if (!authToken) {
           reject('no auth')
         }
@@ -128,6 +129,8 @@ const usePayment = (paymentNo: string) => {
             )
             .then(({ data: { code, result } }) => {
               if (code === 'SUCCESS') {
+                resolve(`/orders/${orderId}?tracking=1`)
+              } else if (code === 'REDIRECT') {
                 resolve(result)
               }
               const codeMessage = codeMessages[code as keyof typeof codeMessages]
@@ -155,6 +158,8 @@ const usePayment = (paymentNo: string) => {
               )
               .then(({ data: { code, result } }) => {
                 if (code === 'SUCCESS') {
+                  resolve(`/orders/${orderId}?tracking=1`)
+                } else if (code === 'REDIRECT') {
                   resolve(result)
                 }
                 const codeMessage = codeMessages[code as keyof typeof codeMessages]
@@ -164,7 +169,7 @@ const usePayment = (paymentNo: string) => {
           })
         }
       }),
-    [authToken, TPDirect.card, paymentNo, member?.phone, member?.name, member?.email, formatMessage],
+    [authToken, TPDirect.card, paymentNo, member?.phone, member?.name, member?.email, orderId, formatMessage],
   )
 
   return { payPayment }
