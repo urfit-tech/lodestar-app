@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Button, Icon, Typography } from 'antd'
-import axios from 'axios'
 import gql from 'graphql-tag'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -38,16 +37,12 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   const [withTracking] = useQueryParam('tracking', BooleanParam)
   const [errorCode] = useQueryParam('code', StringParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
-  const { currentMemberId, isAuthenticating, authToken } = useAuth()
+  const { currentMemberId, isAuthenticating } = useAuth()
   const { loading: isOrderLoading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
     GET_ORDERS_PRODUCT,
     { variables: { orderId: orderId } },
   )
-  const { data: paymentData } = useQuery<hasura.GET_PAYMENT_LOG, hasura.GET_PAYMENT_LOGVariables>(GET_PAYMENT_LOG, {
-    variables: { orderId },
-  })
   const order = data?.order_log_by_pk
-  const payments = paymentData?.payment_log
 
   const { resourceCollection: productResourceCollection, loading: productResourceCollectionLoading } =
     useResourceCollection(
@@ -57,31 +52,6 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
       }) || [],
     )
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
-
-  useEffect(() => {
-    if (authToken && payments && payments.length > 0) {
-      const requests = payments.map(payment => {
-        return axios.post<{ code: string; message: string; result: any }>(
-          `${process.env.REACT_APP_API_BASE_ROOT}/tasks/sync-payment/`,
-          { paymentNo: payment.no, customNo: payment.custom_no, paymentOptions: payment.options },
-          { headers: { authorization: `Bearer ${authToken}` } },
-        )
-      })
-      axios
-        .all(requests)
-        .then(
-          axios.spread((...responses) => {
-            const errors = responses.reduce<string[]>((accu, curr) => {
-              if (curr.data.code !== 'SUCCESS') accu.push(`${curr.data.code}: ${curr.data.message}`)
-              return accu
-            }, [])
-            if (errors.length > 0) return Promise.reject(new Error(errors.join(', ')))
-            process.env.NODE_ENV === 'development' && console.log('successfully add delayed sync job')
-          }),
-        )
-        .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
-    }
-  }, [authToken, payments])
 
   useEffect(() => {
     if (order && order.status === 'SUCCESS' && withTracking) {
@@ -311,16 +281,6 @@ const GET_ORDERS_PRODUCT = gql`
       }
       shipping
       invoice
-    }
-  }
-`
-
-const GET_PAYMENT_LOG = gql`
-  query GET_PAYMENT_LOG($orderId: String) {
-    payment_log(where: { order_id: { _eq: $orderId } }) {
-      no
-      custom_no
-      options
     }
   }
 `

@@ -1715,6 +1715,33 @@ export interface GET_MEMBER_ORDERSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PAYMENT_LOG
+// ====================================================
+
+export interface GET_PAYMENT_LOG_payment_log {
+  __typename: "payment_log";
+  no: string;
+  custom_no: string | null;
+  options: any | null;
+}
+
+export interface GET_PAYMENT_LOG {
+  /**
+   * fetch data from the table: "payment_log"
+   */
+  payment_log: GET_PAYMENT_LOG_payment_log[];
+}
+
+export interface GET_PAYMENT_LOGVariables {
+  orderIds?: string[] | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: UPDATE_VOUCHER_MEMBER
 // ====================================================
 
@@ -10695,33 +10722,6 @@ export interface GET_ORDERS_PRODUCTVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_PAYMENT_LOG
-// ====================================================
-
-export interface GET_PAYMENT_LOG_payment_log {
-  __typename: "payment_log";
-  no: string;
-  custom_no: string | null;
-  options: any | null;
-}
-
-export interface GET_PAYMENT_LOG {
-  /**
-   * fetch data from the table: "payment_log"
-   */
-  payment_log: GET_PAYMENT_LOG_payment_log[];
-}
-
-export interface GET_PAYMENT_LOGVariables {
-  orderId?: string | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_PODCAST_ALBUMS
 // ====================================================
 
@@ -14278,6 +14278,7 @@ export enum program_content_update_column {
   content_section_id = "content_section_id",
   content_type = "content_type",
   created_at = "created_at",
+  display_mode = "display_mode",
   duration = "duration",
   id = "id",
   is_notify_update = "is_notify_update",
@@ -22400,6 +22401,7 @@ export interface program_content_bool_exp {
   content_section_id?: uuid_comparison_exp | null;
   content_type?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  display_mode?: String_comparison_exp | null;
   duration?: numeric_comparison_exp | null;
   enrollments?: program_content_enrollment_bool_exp | null;
   exercises?: exercise_bool_exp | null;
@@ -22468,6 +22470,7 @@ export interface program_content_insert_input {
   content_section_id?: any | null;
   content_type?: string | null;
   created_at?: any | null;
+  display_mode?: string | null;
   duration?: any | null;
   enrollments?: program_content_enrollment_arr_rel_insert_input | null;
   exercises?: exercise_arr_rel_insert_input | null;
