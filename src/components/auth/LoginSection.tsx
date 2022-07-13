@@ -2,6 +2,7 @@ import { Button, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/r
 import { message } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai'
@@ -33,6 +34,7 @@ const LoginSection: React.VFC<{
 }> = ({ noGeneralLogin, onAuthStateChange, accountLinkToken, renderTitle }) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
+  const tracking = useTracking()
   const history = useHistory()
   const [back] = useQueryParam('back', StringParam)
   const { login } = useAuth()
@@ -58,6 +60,7 @@ const LoginSection: React.VFC<{
         accountLinkToken: accountLinkToken,
       })
         .then(() => {
+          tracking.login()
           setVisible?.(false)
           reset()
           back && history.push(back)
