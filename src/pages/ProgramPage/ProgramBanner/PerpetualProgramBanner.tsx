@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import FullSizeBanner from './FullSizeBanner'
 import { BREAK_POINT } from '../../../components/common/Responsive'
 import VideoPlayer from '../../../components/common/VideoPlayer'
+import CWLBreadcrumb from '../../../components/common/CWLBreadcrumb'
 import { commonMessages } from '../../../helpers/translation'
 import { Program } from '../../../types/program'
 
@@ -83,6 +84,8 @@ const PerpetualProgramBanner: React.VFC<{
       <FullSizeBanner
         coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
       />
+
+      <CWLBreadcrumb program={program} />
 
       <StyledTitleBlock noVideo={!program.coverVideoUrl}>
         <StyledTags className="text-center">
