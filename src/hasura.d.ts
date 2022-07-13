@@ -1715,6 +1715,33 @@ export interface GET_MEMBER_ORDERSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PAYMENT_LOG
+// ====================================================
+
+export interface GET_PAYMENT_LOG_payment_log {
+  __typename: "payment_log";
+  no: string;
+  custom_no: string | null;
+  options: any | null;
+}
+
+export interface GET_PAYMENT_LOG {
+  /**
+   * fetch data from the table: "payment_log"
+   */
+  payment_log: GET_PAYMENT_LOG_payment_log[];
+}
+
+export interface GET_PAYMENT_LOGVariables {
+  orderIds?: string[] | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: UPDATE_VOUCHER_MEMBER
 // ====================================================
 
@@ -10689,33 +10716,6 @@ export interface GET_ORDERS_PRODUCT {
 
 export interface GET_ORDERS_PRODUCTVariables {
   orderId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_PAYMENT_LOG
-// ====================================================
-
-export interface GET_PAYMENT_LOG_payment_log {
-  __typename: "payment_log";
-  no: string;
-  custom_no: string | null;
-  options: any | null;
-}
-
-export interface GET_PAYMENT_LOG {
-  /**
-   * fetch data from the table: "payment_log"
-   */
-  payment_log: GET_PAYMENT_LOG_payment_log[];
-}
-
-export interface GET_PAYMENT_LOGVariables {
-  orderId?: string | null;
 }
 
 /* tslint:disable */
