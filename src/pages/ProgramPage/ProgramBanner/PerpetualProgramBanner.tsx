@@ -7,6 +7,7 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../../../components/common/Responsive'
 import VideoPlayer from '../../../components/common/VideoPlayer'
+import CWLBreadcrumb from '../../../components/common/CWLBreadcrumb'
 import { commonMessages } from '../../../helpers/translation'
 import { Program } from '../../../types/program'
 import FullSizeBanner from './FullSizeBanner'
@@ -83,6 +84,8 @@ const PerpetualProgramBanner: React.VFC<{
       <FullSizeBanner
         coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
       />
+
+      <CWLBreadcrumb program={program} />
 
       <StyledTitleBlock noVideo={!program.coverVideoUrl}>
         <StyledTags className="text-center">
