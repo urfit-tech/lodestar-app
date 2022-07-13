@@ -1,4 +1,5 @@
 import { Box, Button, Icon, Spinner } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -12,7 +13,6 @@ import { Link, Redirect, useHistory, useLocation, useParams } from 'react-router
 import styled, { css } from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
@@ -197,7 +197,7 @@ const ProgramPage: React.VFC = () => {
 
                 {!Number(settings['layout.program_page']) ? (
                   <div className="mb-5">
-                    <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
+                    <ProgramContentListSection program={program} />
                   </div>
                 ) : null}
               </div>
