@@ -8,18 +8,18 @@ const BlockContainer = styled.div`
 `
 const Breadcrumb = styled.a`
   margin: 5px;
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
   transition: 0.2s;
-  &:last-child {
-    color: #019D96;
+  &:first-child {
+    margin-left: 0;
   }
   &:hover {
     color: #000;
   }
   @media screen and (max-width: 768px) {
     margin: 4px;
-    font-size: 12px;
+    font-size: 14px;
   }
 `
 
@@ -68,7 +68,7 @@ const CWLBreadcrumb: React.VFC<{
               <Breadcrumb href={breadcrumb.url}>{ breadcrumb.label }</Breadcrumb>
               {
                 !isLastItem &&
-                <>/</>
+                <> / </>
               }
             </>
           )
