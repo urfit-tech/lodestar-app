@@ -3,10 +3,13 @@ import styled from 'styled-components'
 import { Program } from '../../types/program'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 
-const BlockContainer = styled.div`
-  margin-top: 15px
+const BreadcrumbList = styled.ol`
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
 `
-const Breadcrumb = styled.a`
+
+const BreadcrumbItem = styled.a`
   margin: 5px;
   font-size: 16px;
   color: #333;
@@ -25,15 +28,18 @@ const Breadcrumb = styled.a`
 
 const CWLBreadcrumb: React.VFC<{
   program?: Program
-}> = ({ program }) => {
+  programPackage?: any
+}> = ({ program, programPackage }) => {
   const { navs } = useApp()
   const footerNavs = navs.filter(nav => nav.block === 'footer')
   const breadcrumbConfig: any = {
     home: {
       label: '首頁',
-      url: '/index'
+      url: '/'
     },
   }
+
+  console.log('programPackage', programPackage)
 
   // 線上課程
   if (program) {
@@ -58,23 +64,30 @@ const CWLBreadcrumb: React.VFC<{
   }
 
   return (
-    <BlockContainer className="container">
+    <>
       {
-        Object.keys(breadcrumbConfig).map((key: any, index) => {
-          const breadcrumb = breadcrumbConfig[key]
-          const isLastItem = index + 1 === Object.keys(breadcrumbConfig).length
-          return (
-            <>
-              <Breadcrumb href={breadcrumb.url}>{ breadcrumb.label }</Breadcrumb>
-              {
-                !isLastItem &&
-                <> / </>
-              }
-            </>
-          )
-        })
+        program &&
+        <div className="container" style={{marginTop: '15px'}}>
+          <BreadcrumbList>
+            {
+              Object.keys(breadcrumbConfig).map((key: any, index) => {
+                const breadcrumb = breadcrumbConfig[key]
+                const isLastItem = index + 1 === Object.keys(breadcrumbConfig).length
+                return (
+                  <li style={{marginRight: '10px'}}>
+                    <BreadcrumbItem href={breadcrumb.url}>{ breadcrumb.label }</BreadcrumbItem>
+                    {
+                      !isLastItem &&
+                      <span style={{color: '#999'}}> /</span>
+                    }
+                  </li>
+                )
+              })
+            }
+          </BreadcrumbList>
+        </div>
       }
-    </BlockContainer>
+    </>
   )
 }
 
