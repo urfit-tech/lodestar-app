@@ -11,15 +11,13 @@ import { useMemberCertificateCollection } from '../../hooks/certificate'
 import { ReactComponent as MemberCertificateIcon } from '../../images/certificate.svg'
 import ForbiddenPage from '../ForbiddenPage'
 
-const CertificatesCollectionAdminPage: React.VFC = () => {
+const CertificateCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const app = useApp()
   const { currentMemberId } = useAuth()
-  const { data: memberCertificates, loading: memberCertificatesLoading } = useMemberCertificateCollection(
-    currentMemberId || '',
-  )
+  const memberCertificates = useMemberCertificateCollection(currentMemberId || '')
 
-  if (app.loading || memberCertificatesLoading) {
+  if (app.loading || memberCertificates.loading) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -36,14 +34,20 @@ const CertificatesCollectionAdminPage: React.VFC = () => {
       content={{ icon: MemberCertificateIcon, title: formatMessage(commonMessages.content.certificate) }}
     >
       <div className="row">
-        {memberCertificates.map(memberCertificate => (
-          <div className="col-12 col-xl-6" key={memberCertificate.id}>
-            <CertificateCard certificate={memberCertificate.certificate} memberCertificate={memberCertificate} />
-          </div>
-        ))}
+        {memberCertificates.data
+          .filter(memberCertificate =>
+            memberCertificate.values?.deliveredAt
+              ? Date.now() > new Date(memberCertificate.values?.deliveredAt).getTime()
+              : Date.now() > new Date(memberCertificate.deliveredAt).getTime(),
+          )
+          .map(memberCertificate => (
+            <div className="col-12 col-xl-6" key={memberCertificate.id}>
+              <CertificateCard certificate={memberCertificate.certificate} memberCertificate={memberCertificate} />
+            </div>
+          ))}
       </div>
     </MemberAdminLayout>
   )
 }
 
-export default CertificatesCollectionAdminPage
+export default CertificateCollectionAdminPage

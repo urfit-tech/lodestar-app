@@ -8,6 +8,7 @@ export type MerchandiseBasicProps = {
   isPhysical?: boolean
   minPrice: number
   maxPrice: number
+  currencyId: string
   tags: string[]
   categories: Category[]
   images: {

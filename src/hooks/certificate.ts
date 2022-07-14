@@ -16,10 +16,7 @@ export const useMemberCertificateCollection = (memberId: string) => {
           values
           delivered_at
           expired_at
-          member {
-            id
-            name
-          }
+          member_id
           certificate {
             id
             title
@@ -31,7 +28,9 @@ export const useMemberCertificateCollection = (memberId: string) => {
             created_at
             updated_at
             certificate_template {
+              id
               template
+              background_image
             }
           }
         }
@@ -49,16 +48,14 @@ export const useMemberCertificateCollection = (memberId: string) => {
           values: memberCertificate.values,
           deliveredAt: new Date(memberCertificate.delivered_at),
           expiredAt: memberCertificate.expired_at ? new Date(memberCertificate.expired_at) : null,
-          member: {
-            id: memberCertificate.member?.id || '',
-            name: memberCertificate.member?.name || '',
-          },
+          memberId: memberCertificate.member_id,
           certificate: {
             id: memberCertificate.certificate?.id || '',
             title: memberCertificate.certificate?.title || '',
             description: memberCertificate.certificate?.description || '',
             code: memberCertificate.certificate?.code || '',
             template: memberCertificate.certificate?.certificate_template?.template || '',
+            templateImage: memberCertificate.certificate?.certificate_template?.background_image || '',
             qualification: memberCertificate.certificate?.qualification || '',
             periodType: memberCertificate.certificate?.period_type || '',
             periodAmount: memberCertificate.certificate?.period_amount || '',
@@ -87,10 +84,7 @@ export const useMemberCertificate = (memberCertificateId: string) => {
           values
           delivered_at
           expired_at
-          member {
-            id
-            name
-          }
+          member_id
           certificate {
             id
             title
@@ -102,7 +96,9 @@ export const useMemberCertificate = (memberCertificateId: string) => {
             created_at
             updated_at
             certificate_template {
+              id
               template
+              background_image
             }
           }
         }
@@ -121,10 +117,7 @@ export const useMemberCertificate = (memberCertificateId: string) => {
           expiredAt: data.member_certificate_by_pk.expired_at
             ? new Date(data.member_certificate_by_pk.expired_at)
             : null,
-          member: {
-            id: data.member_certificate_by_pk.member?.id || '',
-            name: data.member_certificate_by_pk.member?.name || '',
-          },
+          memberId: data.member_certificate_by_pk.member_id,
           certificate: {
             id: data.member_certificate_by_pk.id,
             title: data.member_certificate_by_pk.certificate?.title || '',
@@ -135,6 +128,7 @@ export const useMemberCertificate = (memberCertificateId: string) => {
             createdAt: new Date(data.member_certificate_by_pk.certificate?.created_at),
             code: data.member_certificate_by_pk.certificate?.code || '',
             template: data.member_certificate_by_pk.certificate?.certificate_template?.template || null,
+            templateImage: data.member_certificate_by_pk.certificate?.certificate_template?.background_image || null,
           },
         }
 
@@ -166,6 +160,7 @@ export const useCertificate = (certificateId: string) => {
           certificate_template {
             id
             template
+            background_image
           }
         }
       }
@@ -185,6 +180,7 @@ export const useCertificate = (certificateId: string) => {
           createdAt: new Date(data.certificate_by_pk.created_at),
           code: data.certificate_by_pk.code,
           template: data.certificate_by_pk.certificate_template?.template || null,
+          templateImage: data.certificate_by_pk.certificate_template?.background_image || null,
         }
 
   return {

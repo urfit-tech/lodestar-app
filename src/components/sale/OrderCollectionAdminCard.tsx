@@ -13,7 +13,7 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { prop, sum } from 'ramda'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -73,6 +73,7 @@ type OrderRow = {
     fee: number
     days: number
     enabled: boolean
+    shippingMethod: ShippingMethodType
   } | null
   orderProducts: {
     id: string
@@ -87,6 +88,7 @@ type OrderRow = {
     quantity: number
     currencyId: string
     deliveredAt: Date | null
+    options: { [key: string]: any } | null
   }[]
   orderDiscounts: OrderDiscountProps[]
   key: string
@@ -104,6 +106,38 @@ const OrderCollectionAdminCard: React.VFC<
   const history = useHistory()
   const { authToken } = useAuth()
   const { loading, error, orderLogs, refetch } = useOrderLogCollection(memberId)
+
+  const syncOrderIds = orderLogs.filter(orderLog => orderLog.status === 'PAYING').map(orderLog => orderLog.id)
+  const { data: paymentData } = useQuery<hasura.GET_PAYMENT_LOG, hasura.GET_PAYMENT_LOGVariables>(GET_PAYMENT_LOG, {
+    variables: { orderIds: syncOrderIds },
+  })
+  const payments = paymentData?.payment_log
+
+  useEffect(() => {
+    if (authToken && payments && payments.length > 0) {
+      const requests = payments.map(payment => {
+        return axios.post<{ code: string; message: string; result: any }>(
+          `${process.env.REACT_APP_API_BASE_ROOT}/tasks/sync-payment/`,
+          { paymentNo: payment.no, customNo: payment.custom_no, paymentOptions: payment.options },
+          { headers: { authorization: `Bearer ${authToken}` } },
+        )
+      })
+      axios
+        .all(requests)
+        .then(
+          axios.spread((...responses) => {
+            const errors = responses.reduce<string[]>((accu, curr) => {
+              if (curr.data.code !== 'SUCCESS') accu.push(`${curr.data.code}: ${curr.data.message}`)
+              return accu
+            }, [])
+            if (errors.length > 0) return Promise.reject(new Error(errors.join(', ')))
+            process.env.NODE_ENV === 'development' && console.log(`successfully add delayed sync job`)
+          }),
+        )
+        .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
+    }
+  }, [authToken, payments])
+
   if (loading || error) {
     return (
       <AdminCard>
@@ -188,7 +222,18 @@ const OrderCollectionAdminCard: React.VFC<
               </div>
             </OrderProductCell>
             <OrderProductCell className="text-right">
-              <PriceLabel currencyId={orderProduct.currencyId} listPrice={orderProduct.price} />
+              <PriceLabel
+                currencyId={
+                  orderProduct.product.type === 'MerchandiseSpec' && orderProduct.options?.currencyId === 'LSC'
+                    ? 'LSC'
+                    : orderProduct.currencyId
+                }
+                listPrice={
+                  orderProduct.product.type === 'MerchandiseSpec' && orderProduct.options?.currencyId === 'LSC'
+                    ? orderProduct.options.currencyPrice
+                    : orderProduct.price
+                }
+              />
             </OrderProductCell>
           </OrderProductRow>
         ))}
@@ -235,21 +280,32 @@ const OrderCollectionAdminCard: React.VFC<
           )}
         </div>
         <div className="col-9">
-          {record.shipping?.id && (
+          {record.shipping?.id || record.shipping?.shippingMethod ? (
             <div className="row text-right">
               <div className="col-9">
-                <ShippingMethodLabel shippingMethodId={record.shipping?.id} />
+                <ShippingMethodLabel shippingMethodId={record.shipping?.id || record.shipping?.shippingMethod} />
               </div>
               <div className="col-3">
-                <PriceLabel listPrice={record.shipping.fee} />
+                <PriceLabel listPrice={record.shipping?.fee ? record.shipping.fee : 0} />
               </div>
             </div>
-          )}
+          ) : null}
           {record.orderDiscounts.map(orderDiscount => (
             <div key={orderDiscount.name} className="row text-right">
               <div className="col-9">{orderDiscount.name}</div>
               <div className="col-3">
-                <PriceLabel listPrice={-orderDiscount.price} />
+                <PriceLabel
+                  currencyId={orderDiscount.type !== null && orderDiscount.type !== 'Coin' ? orderDiscount.type : 'LSC'}
+                  listPrice={
+                    record.orderProducts.length === 1 &&
+                    record.orderProducts[0].product.type === 'MerchandiseSpec' &&
+                    record.orderProducts[0].options !== null &&
+                    record.orderProducts[0].options.currencyId === 'LSC' &&
+                    orderDiscount.options !== null
+                      ? -orderDiscount.options.coins
+                      : -orderDiscount.price
+                  }
+                />
               </div>
             </div>
           ))}
@@ -340,6 +396,7 @@ const useOrderLogCollection = (memberId: string) => {
           quantity: orderProduct.options?.quantity,
           currencyId: orderProduct.currency_id,
           deliveredAt: orderProduct.delivered_at,
+          options: orderProduct.options,
         })),
       orderDiscounts: orderLog.order_discounts.map(orderDiscount => ({
         id: orderDiscount.id,
@@ -359,5 +416,15 @@ const useOrderLogCollection = (memberId: string) => {
     refetch,
   }
 }
+
+const GET_PAYMENT_LOG = gql`
+  query GET_PAYMENT_LOG($orderIds: [String!]) {
+    payment_log(where: { order_id: { _in: $orderIds } }) {
+      no
+      custom_no
+      options
+    }
+  }
+`
 
 export default OrderCollectionAdminCard

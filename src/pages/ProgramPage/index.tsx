@@ -1,4 +1,5 @@
-import { Button, Icon, SkeletonText } from '@chakra-ui/react'
+import { Box, Button, Icon, Spinner } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -10,10 +11,9 @@ import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
 import { Link, Redirect, useHistory, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { BooleanParam, useQueryParam } from 'use-query-params'
+import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import ClassCouponBlock from '../../components/ClassCouponBlock'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
@@ -93,6 +93,7 @@ const ProgramPage: React.VFC = () => {
   const params = queryString.parse(location.search)
   const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(programId)
+  const [previousPage] = useQueryParam('back', StringParam)
 
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock) {
@@ -107,7 +108,9 @@ const ProgramPage: React.VFC = () => {
   if (loadingProgram || enrolledProgramPackages.loading || loadingEnrolledProgramIds) {
     return (
       <DefaultLayout>
-        <SkeletonText mt="1" noOfLines={4} spacing="4" />
+        <Box className="d-flex justify-content-center align-items-center" h="100vh">
+          <Spinner />
+        </Box>
       </DefaultLayout>
     )
   }
@@ -117,7 +120,7 @@ const ProgramPage: React.VFC = () => {
   }
 
   if (!visitIntro && isEnrolled) {
-    return <Redirect to={`/programs/${programId}/contents`} />
+    return <Redirect to={`/programs/${programId}/contents?back=${previousPage}`} />
   }
 
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
@@ -201,7 +204,7 @@ const ProgramPage: React.VFC = () => {
 
                 {!Number(settings['layout.program_page']) ? (
                   <div className="mb-5">
-                    <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
+                    <ProgramContentListSection program={program} />
                   </div>
                 ) : null}
               </div>

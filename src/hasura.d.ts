@@ -1715,6 +1715,33 @@ export interface GET_MEMBER_ORDERSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PAYMENT_LOG
+// ====================================================
+
+export interface GET_PAYMENT_LOG_payment_log {
+  __typename: "payment_log";
+  no: string;
+  custom_no: string | null;
+  options: any | null;
+}
+
+export interface GET_PAYMENT_LOG {
+  /**
+   * fetch data from the table: "payment_log"
+   */
+  payment_log: GET_PAYMENT_LOG_payment_log[];
+}
+
+export interface GET_PAYMENT_LOGVariables {
+  orderIds?: string[] | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: UPDATE_VOUCHER_MEMBER
 // ====================================================
 
@@ -3580,6 +3607,7 @@ export interface GET_POST_post_post_merchandises_merchandise {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -3856,6 +3884,7 @@ export interface GET_POST_post_by_pk_post_merchandises_merchandise {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -4222,15 +4251,11 @@ export interface GET_ENROLLED_CARDSVariables {
 // GraphQL query operation: GET_MEMBER_CERTIFICATE_COLLECTION
 // ====================================================
 
-export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_member {
-  __typename: "member";
-  id: string;
-  name: string;
-}
-
 export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_certificate_certificate_template {
   __typename: "certificate_template";
+  id: any;
   template: string;
+  background_image: string;
 }
 
 export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_certificate {
@@ -4257,10 +4282,7 @@ export interface GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate {
   values: any;
   delivered_at: any;
   expired_at: any | null;
-  /**
-   * An object relationship
-   */
-  member: GET_MEMBER_CERTIFICATE_COLLECTION_member_certificate_member | null;
+  member_id: string;
   /**
    * An object relationship
    */
@@ -4287,15 +4309,11 @@ export interface GET_MEMBER_CERTIFICATE_COLLECTIONVariables {
 // GraphQL query operation: GET_MEMBER_CERTIFICATE
 // ====================================================
 
-export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_member {
-  __typename: "member";
-  id: string;
-  name: string;
-}
-
 export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_certificate_certificate_template {
   __typename: "certificate_template";
+  id: any;
   template: string;
+  background_image: string;
 }
 
 export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk_certificate {
@@ -4322,10 +4340,7 @@ export interface GET_MEMBER_CERTIFICATE_member_certificate_by_pk {
   values: any;
   delivered_at: any;
   expired_at: any | null;
-  /**
-   * An object relationship
-   */
-  member: GET_MEMBER_CERTIFICATE_member_certificate_by_pk_member | null;
+  member_id: string;
   /**
    * An object relationship
    */
@@ -4356,6 +4371,7 @@ export interface GET_CERTIFICATE_certificate_by_pk_certificate_template {
   __typename: "certificate_template";
   id: any;
   template: string;
+  background_image: string;
 }
 
 export interface GET_CERTIFICATE_certificate_by_pk {
@@ -4785,6 +4801,7 @@ export interface GET_PRODUCT_SIMPLE_merchandise_spec_by_pk_merchandise {
   sold_at: any | null;
   is_physical: boolean;
   is_customized: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -6019,6 +6036,7 @@ export interface GET_MERCHANDISE_COLLECTION_merchandise {
   title: string;
   sold_at: any | null;
   is_physical: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -6125,6 +6143,7 @@ export interface GET_MERCHANDISE_merchandise_by_pk {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -7979,6 +7998,7 @@ export interface GET_PROGRAM_program_by_pk_program_content_sections_program_cont
    */
   duration: any | null;
   published_at: any | null;
+  display_mode: string | null;
   list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
@@ -8158,6 +8178,7 @@ export interface GET_PROGRAM_CONTENT_program_content_by_pk {
   abstract: string | null;
   created_at: any;
   published_at: any | null;
+  display_mode: string | null;
   list_price: any | null;
   sale_price: any | null;
   sold_at: any | null;
@@ -10703,33 +10724,6 @@ export interface GET_ORDERS_PRODUCTVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_PAYMENT_LOG
-// ====================================================
-
-export interface GET_PAYMENT_LOG_payment_log {
-  __typename: "payment_log";
-  no: string;
-  custom_no: string | null;
-  options: any | null;
-}
-
-export interface GET_PAYMENT_LOG {
-  /**
-   * fetch data from the table: "payment_log"
-   */
-  payment_log: GET_PAYMENT_LOG_payment_log[];
-}
-
-export interface GET_PAYMENT_LOGVariables {
-  orderId?: string | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_PODCAST_ALBUMS
 // ====================================================
 
@@ -11346,6 +11340,7 @@ export interface SEARCH_PRODUCT_COLLECTION_merchandise {
   id: any;
   title: string;
   sold_at: any | null;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -11703,6 +11698,7 @@ export interface PostParts_post_merchandises_merchandise {
   is_physical: boolean;
   is_customized: boolean;
   is_countdown_timer_visible: boolean;
+  currency_id: string;
   /**
    * An array relationship
    */
@@ -14284,6 +14280,7 @@ export enum program_content_update_column {
   content_section_id = "content_section_id",
   content_type = "content_type",
   created_at = "created_at",
+  display_mode = "display_mode",
   duration = "duration",
   id = "id",
   is_notify_update = "is_notify_update",
@@ -17279,6 +17276,7 @@ export interface coupon_plan_bool_exp {
   coupon_plan_products?: coupon_plan_product_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
+  editor?: member_bool_exp | null;
   editor_id?: String_comparison_exp | null;
   ended_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17299,6 +17297,7 @@ export interface coupon_plan_insert_input {
   coupon_plan_products?: coupon_plan_product_arr_rel_insert_input | null;
   created_at?: any | null;
   description?: string | null;
+  editor?: member_obj_rel_insert_input | null;
   editor_id?: string | null;
   ended_at?: any | null;
   id?: any | null;
@@ -22404,6 +22403,7 @@ export interface program_content_bool_exp {
   content_section_id?: uuid_comparison_exp | null;
   content_type?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  display_mode?: String_comparison_exp | null;
   duration?: numeric_comparison_exp | null;
   enrollments?: program_content_enrollment_bool_exp | null;
   exercises?: exercise_bool_exp | null;
@@ -22472,6 +22472,7 @@ export interface program_content_insert_input {
   content_section_id?: any | null;
   content_type?: string | null;
   created_at?: any | null;
+  display_mode?: string | null;
   duration?: any | null;
   enrollments?: program_content_enrollment_arr_rel_insert_input | null;
   exercises?: exercise_arr_rel_insert_input | null;

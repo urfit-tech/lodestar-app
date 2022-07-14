@@ -318,6 +318,7 @@ export const usePost = (search: string) => {
             is_physical
             is_customized
             is_countdown_timer_visible
+            currency_id
             merchandise_tags(order_by: { position: asc }) {
               tag_name
             }
@@ -411,6 +412,7 @@ export const usePost = (search: string) => {
               v.merchandise?.sold_at && typeof spec.sale_price === 'number' ? spec.sale_price : spec.list_price || 0,
             ),
           ),
+          currencyId: v.merchandise.currency_id,
           abstract: v.merchandise.abstract,
           description: v.merchandise.description,
           startedAt: v.merchandise.started_at ? new Date(v.merchandise.started_at) : null,
