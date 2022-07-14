@@ -21,7 +21,6 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCollectionBlock from '../components/merchandise/MerchandiseCollectionBlock'
 import PodcastProgramCard from '../components/podcast/PodcastProgramCard'
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
-import ProgramCard from '../components/program/ProgramCard'
 import PodcastProgramTimeline from '../containers/podcast/PodcastProgramTimeline'
 import { desktopViewMixin } from '../helpers'
 import { commonMessages, usersMessages } from '../helpers/translation'
@@ -34,6 +33,7 @@ import { useEnrolledPodcastPlansCreators, usePodcastPlanIds, usePodcastProgramCo
 import { usePublishedProgramCollection } from '../hooks/program'
 import { MemberPublicProps } from '../types/member'
 import NotFoundPage from './NotFoundPage'
+import ProgramCollection from '../components/program/ProgramCollection'
 
 const StyledDescription = styled.div`
   color: var(--gray-dark);
@@ -165,19 +165,15 @@ const CreatorTabs: React.VFC<{
 
         <Tabs.TabPane tab={formatMessage(usersMessages.tab.addPrograms)} key="programs">
           <div className="container py-4">
-            <div className="row">
-              {programs.length === 0 ? (
+            {programs.length === 0 ? (
+              <div className="row">
                 <StyledDescription className="ml-3">
                   {formatMessage(commonMessages.content.noProgram)}
                 </StyledDescription>
-              ) : (
-                programs.map(program => (
-                  <div key={program.id} className="col-12 col-lg-4 mb-4">
-                    <ProgramCard program={program} />
-                  </div>
-                ))
-              )}
-            </div>
+              </div>
+            ) : (
+              <ProgramCollection programs={programs} />
+            )}
           </div>
         </Tabs.TabPane>
 

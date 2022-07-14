@@ -2,13 +2,12 @@ import { HStack, useRadioGroup } from '@chakra-ui/react'
 import { flatten, uniqBy } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, useQueryParam } from 'use-query-params'
 import { commonMessages } from '../../helpers/translation'
 import { MerchandiseBriefProps } from '../../types/merchandise'
-import MerchandiseCard from '../merchandise/MerchandiseCard'
 import RadioCard from '../RadioCard'
+import MerchandiseCollection from './MerchandiseCollection'
 
 const StyledCategoryList = styled.ul`
   list-style-type: none;
@@ -111,17 +110,11 @@ const MerchandiseCollectionBlock: React.VFC<{ merchandises: MerchandiseBriefProp
         </StyledCategoryList>
       </div>
       <div className="d-flex flex-wrap px-0 col-lg-8 col-12">
-        {filteredMerchandises
-          .filter(
+        <MerchandiseCollection
+          merchandises={filteredMerchandises.filter(
             merchandise => !categoryId || merchandise.categories?.map(category => category.id).includes(categoryId),
-          )
-          .map(merchandise => (
-            <div key={merchandise.id} className="col-lg-4 col-12 mb-5">
-              <Link to={`/merchandises/${merchandise.id}`}>
-                <MerchandiseCard {...merchandise} />
-              </Link>
-            </div>
-          ))}
+          )}
+        />
       </div>
     </div>
   )
