@@ -1,6 +1,6 @@
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import EmptyCover from '../../images/empty-cover.png'
 import { MerchandiseBriefProps } from '../../types/merchandise'
@@ -14,19 +14,21 @@ const StyledTitle = styled.h3`
   letter-spacing: 0.2px;
 `
 
-const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({
-  id,
-  title,
-  minPrice,
-  maxPrice,
-  images,
-  currencyId,
-  specs,
-  soldAt,
-}) => {
+const MerchandiseCard: React.VFC<
+  MerchandiseBriefProps & {
+    onClick?: () => void
+  }
+> = ({ id, title, minPrice, maxPrice, images, currencyId, specs, soldAt, onClick }) => {
   const isOnSale = (soldAt?.getTime() || 0) > Date.now()
+  const history = useHistory()
   return (
-    <>
+    <div
+      className="cursor-pointer"
+      onClick={() => {
+        onClick?.()
+        history.push(`/merchandises/${id}`)
+      }}
+    >
       <CustomRatioImage
         width="100%"
         ratio={1}
@@ -36,7 +38,9 @@ const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({
       />
       <div className="text-center">
         <StyledTitle>
-          <Link to={`/merchandises/${id}`}> {title}</Link>
+          <Link to={`/merchandises/${id}`} onClick={onClick}>
+            {title}
+          </Link>
         </StyledTitle>
         {specs.length === 1 && (
           <div>
@@ -56,7 +60,7 @@ const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({
           </div>
         )}
       </div>
-    </>
+    </div>
   )
 }
 
