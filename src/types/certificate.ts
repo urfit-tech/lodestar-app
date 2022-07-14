@@ -4,6 +4,7 @@ export type Certificate = {
   description: string | null
   code: string | null
   template: string | null
+  templateImage: string | null
   qualification: string | null
   periodType: string | null
   periodAmount: string | null
@@ -16,9 +17,6 @@ export type MemberCertificate = {
   values: any
   expiredAt: Date | null
   deliveredAt: Date
-  member: {
-    id: string
-    name: string
-  }
+  memberId: string
   certificate: Certificate
 }

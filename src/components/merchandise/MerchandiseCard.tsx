@@ -14,7 +14,17 @@ const StyledTitle = styled.h3`
   letter-spacing: 0.2px;
 `
 
-const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({ id, title, minPrice, maxPrice, images }) => {
+const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({
+  id,
+  title,
+  minPrice,
+  maxPrice,
+  images,
+  currencyId,
+  specs,
+  soldAt,
+}) => {
+  const isOnSale = (soldAt?.getTime() || 0) > Date.now()
   return (
     <>
       <CustomRatioImage
@@ -28,11 +38,23 @@ const MerchandiseCard: React.VFC<MerchandiseBriefProps> = ({ id, title, minPrice
         <StyledTitle>
           <Link to={`/merchandises/${id}`}> {title}</Link>
         </StyledTitle>
-        <div>
-          <PriceLabel listPrice={minPrice} />
-          {` ~ `}
-          <PriceLabel listPrice={maxPrice} />
-        </div>
+        {specs.length === 1 && (
+          <div>
+            <PriceLabel
+              variant="inline"
+              currencyId={currencyId}
+              listPrice={specs[0].listPrice}
+              salePrice={isOnSale ? specs[0].salePrice : undefined}
+            />
+          </div>
+        )}
+        {specs.length > 1 && (
+          <div>
+            <PriceLabel currencyId={currencyId} listPrice={minPrice} />
+            {` ~ `}
+            <PriceLabel currencyId={currencyId} listPrice={maxPrice} />
+          </div>
+        )}
       </div>
     </>
   )

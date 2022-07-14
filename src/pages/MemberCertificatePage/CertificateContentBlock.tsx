@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { render } from 'mustache'
@@ -7,8 +8,8 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StyledCode, StyledDate } from '../../components/common/CertificateCard'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
-import { certificateMessages } from '../../helpers/translation'
 import { MemberCertificate } from '../../types/certificate'
+import pageMessages from '../translation'
 
 const StyledContainer = styled.div`
   margin: 40px;
@@ -41,9 +42,6 @@ const StyledTitle = styled.h1`
 const StyledAbstract = styled.div`
   overflow: hidden;
   color: var(--gray-darker);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.5;
   letter-spacing: 0.2px;
   white-space: pre-wrap;
 `
@@ -77,6 +75,7 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
     number: memberCertificate.number,
     title: memberCertificate.certificate.title,
     qualification: memberCertificate.certificate.qualification,
+    backgroundImage: memberCertificate.certificate.templateImage,
   }
 
   const deliveredAt = memberCertificate.deliveredAt
@@ -94,39 +93,29 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
       <StyledContentBlock>
         <StyledContentBlockHead>
           <StyledCode>
-            {formatMessage(
-              { id: 'common.certificateCode', defaultMessage: '證書代號：{certificateCode}' },
-              {
-                certificateCode: certificate.code,
-              },
-            )}
+            {formatMessage(pageMessages.MemberCertificatePage.number, {
+              number: memberCertificate.number || certificate.code,
+            })}
           </StyledCode>
           <div className="d-flex align-items-center flex-wrap">
             <StyledDate className="mr-3">
-              {formatMessage(
-                {
-                  id: 'common.certificateExpiredTime',
-                  defaultMessage: '發放日期：{certificateDistributedTime}',
-                },
-                {
-                  certificateDistributedTime: moment(memberCertificate.deliveredAt).format('YYYY/MM/DD hh:mm'),
-                },
-              )}
+              {formatMessage(pageMessages.MemberCertificatePage.deliveredAt, {
+                deliveredAt: moment(memberCertificate.deliveredAt).format('YYYY/MM/DD hh:mm'),
+              })}
             </StyledDate>
             {memberCertificate.expiredAt && (
               <StyledDate>
-                {formatMessage(
-                  { id: 'common.certificateExpiredTime', defaultMessage: '證書效期：{certificateExpiredTime} 止' },
-                  {
-                    certificateExpiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD hh:mm'),
-                  },
-                )}
+                {formatMessage(pageMessages.MemberCertificatePage.expiredTime, {
+                  expiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD hh:mm'),
+                })}
               </StyledDate>
             )}
           </div>
         </StyledContentBlockHead>
         <StyledTitle>{certificate.title}</StyledTitle>
-        <StyledAbstract>{certificate.description}</StyledAbstract>
+        <StyledAbstract>
+          {certificate.description && <BraftContent>{certificate.description}</BraftContent>}
+        </StyledAbstract>
       </StyledContentBlock>
       {/* TEMPLATE */}
       <Certificate template={certificate.template || ''} templateVars={templateVars} />
@@ -134,11 +123,11 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
       <StyledContentBlockFooter>
         <StyledAbstract className="mr-3">
           {currentMember?.name}
-          {formatMessage(certificateMessages.text.congratulations)}
+          {formatMessage(pageMessages.MemberCertificatePage.congratulations)}
         </StyledAbstract>
         <SocialSharePopover
           url={window.location.href}
-          children={<StyledButton>{formatMessage(certificateMessages.text.share)}</StyledButton>}
+          children={<StyledButton>{formatMessage(pageMessages.MemberCertificatePage.share)}</StyledButton>}
         />
       </StyledContentBlockFooter>
     </StyledContainer>

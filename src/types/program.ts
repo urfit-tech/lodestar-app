@@ -80,6 +80,8 @@ export type ProgramContentSection = {
   materialsCount?: number
 }
 
+export type DisplayMode = 'conceal' | 'trial' | 'loginToTrial' | 'payToWatch'
+
 export type ProgramContent = {
   id: string
   title: string
@@ -88,6 +90,7 @@ export type ProgramContent = {
   duration: number | null
   contentType: string | null
   publishedAt: Date | null
+  displayMode: DisplayMode
   listPrice: number | null
   salePrice: number | null
   soldAt: Date | null

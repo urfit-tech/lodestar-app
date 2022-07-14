@@ -70,7 +70,7 @@ const CartProductItem: React.VFC<{
   }
 
   const [productType] = id.split('_') as [ProductType]
-  const { title, coverUrl, isOnSale, listPrice, salePrice, isLimited, isPhysical } = target
+  const { title, coverUrl, isOnSale, listPrice, salePrice, isLimited, isPhysical, currencyId } = target
 
   const trackCartItem = (currentQuantity: number, nextQuantity: number) => {
     if (currentQuantity < nextQuantity) {
@@ -153,6 +153,7 @@ const CartProductItem: React.VFC<{
               {
                 <PriceLabel
                   variant="inline"
+                  currencyId={currencyId}
                   listPrice={(listPrice || 0) * pluralProductQuantity}
                   salePrice={isOnSale ? (salePrice || 0) * pluralProductQuantity : undefined}
                 />

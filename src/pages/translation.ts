@@ -40,6 +40,28 @@ const pageMessages = {
     addMerchandise: { id: 'page.ProfilePage.addMerchandise', defaultMessage: 'New Merchandise' },
     addAppointment: { id: 'page.ProfilePage.addAppointment', defaultMessage: 'New Appointment' },
   }),
+  MemberCertificatePage: defineMessages({
+    number: { id: 'page.MemberCertificatePage.number', defaultMessage: '證書編號：{number}' },
+    expiredTime: { id: 'page.MemberCertificatePage.expiredTime', defaultMessage: '證書效期：{expiredTime} 止' },
+    deliveredAt: {
+      id: 'page.MemberCertificatePage.deliveredAt',
+      defaultMessage: '發放日期：{deliveredAt}',
+    },
+    congratulations: {
+      id: 'page.MemberCertificatePage.congratulations',
+      defaultMessage: '已取得證書，快分享給身邊的朋友吧！',
+    },
+    share: {
+      id: 'page.MemberCertificatePage.share',
+      defaultMessage: '分享社群',
+    },
+  }),
+  // MerchandisePage
+  MerchandisePage: defineMessages({}),
+  MerchandisePageTabs: defineMessages({
+    overview: { id: 'page.MerchandisePageTabs.overview', defaultMessage: 'Overview' },
+    qa: { id: 'page.MerchandisePageTabs.qa', defaultMessage: 'Q&A' },
+  }),
 }
 
 export default pageMessages

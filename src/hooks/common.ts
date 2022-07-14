@@ -175,6 +175,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
           new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()
             ? data.merchandise_spec_by_pk.sale_price
             : undefined,
+        currencyId: data.merchandise_spec_by_pk.merchandise.currency_id,
         coverUrl: data.merchandise_spec_by_pk.merchandise.merchandise_imgs[0]?.url,
         // quantity: options.quantity,
         isPhysical: data.merchandise_spec_by_pk.merchandise.is_physical,
@@ -320,6 +321,7 @@ const GET_PRODUCT_SIMPLE = gql`
         sold_at
         is_physical
         is_customized
+        currency_id
         merchandise_imgs(where: { type: { _eq: "cover" } }) {
           id
           url

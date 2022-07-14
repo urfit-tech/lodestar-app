@@ -1,4 +1,5 @@
 import { Box, Button, Icon, Spinner } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -11,11 +12,10 @@ import { defineMessage, useIntl } from 'react-intl'
 import { Link, Redirect, useHistory, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
-import ClassCouponBlock from '../../components/ClassCouponBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -27,8 +27,7 @@ import { CustomizeProgramBanner, PerpetualProgramBanner } from './ProgramBanner'
 import ProgramBestReviewsCarousel from './ProgramBestReviewsCarousel'
 import ProgramContentListSection from './ProgramContentListSection'
 import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
-import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
-import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
+import { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
 import ProgramPageHelmet from './ProgramPageHelmet'
 import ProgramPlanCard from './ProgramPlanCard'
 
@@ -199,7 +198,7 @@ const ProgramPage: React.VFC = () => {
 
                 {!Number(settings['layout.program_page']) ? (
                   <div className="mb-5">
-                    <ProgramContentListSection memberId={currentMemberId || ''} program={program} />
+                    <ProgramContentListSection program={program} />
                   </div>
                 ) : null}
               </div>

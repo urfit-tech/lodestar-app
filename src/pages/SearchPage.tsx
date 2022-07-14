@@ -542,6 +542,7 @@ const useSearchProductCollection = (
           id
           title
           sold_at
+          currency_id
           merchandise_tags(order_by: { position: asc }) {
             tag_name
           }
@@ -813,6 +814,7 @@ const useSearchProductCollection = (
             merchandise.sold_at && typeof spec.sale_price === 'number' ? spec.sale_price : spec.list_price || 0,
           ),
         ),
+        currencyId: merchandise.currency_id,
         tags: merchandise.merchandise_tags.map(v => v.tag_name),
         categories: merchandise.merchandise_categories.map(v => ({
           id: v.category.id,
