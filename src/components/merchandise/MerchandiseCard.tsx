@@ -15,7 +15,7 @@ const StyledTitle = styled.h3`
 `
 
 const MerchandiseCard: React.VFC<
-  MerchandiseBriefProps & {
+  Omit<MerchandiseBriefProps, 'tags' | 'categories' | 'isPhysical'> & {
     onClick?: () => void
   }
 > = ({ id, title, minPrice, maxPrice, images, currencyId, specs, soldAt, onClick }) => {

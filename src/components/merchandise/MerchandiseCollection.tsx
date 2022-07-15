@@ -19,7 +19,14 @@ const MerchandiseCollection: React.FC<{ merchandises: MerchandiseBriefProps[] }>
       {merchandises.map((merchandise, idx) => (
         <div key={merchandise.id} className="col-lg-4 col-12 mb-5">
           <MerchandiseCard
-            {...merchandise}
+            id={merchandise.id}
+            title={merchandise.title}
+            soldAt={merchandise.soldAt}
+            minPrice={merchandise.minPrice}
+            maxPrice={merchandise.maxPrice}
+            currencyId={merchandise.currencyId}
+            specs={merchandise.specs}
+            images={merchandise.images}
             onClick={() => {
               const resource = resourceCollection[idx]
               resource && tracking.click(resource, { position: idx + 1 })
