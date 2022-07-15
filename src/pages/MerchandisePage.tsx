@@ -1,5 +1,8 @@
 import { Skeleton, Tabs } from 'antd'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import React, { useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -18,6 +21,8 @@ const MerchandisePage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { merchandiseId } = useParams<{ merchandiseId: string }>()
   const { merchandise } = useMerchandise(merchandiseId)
+  const { id: appId } = useApp()
+  const { resourceCollection } = useResourceCollection([`${appId}:merchandise:${merchandiseId}`], true)
 
   useEffect(() => {
     if (merchandise) {
@@ -39,6 +44,7 @@ const MerchandisePage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <StyledContainer className="container">
         <div className="my-4">{merchandise && <MerchandiseBlock merchandise={merchandise} withPaymentButton />}</div>
 

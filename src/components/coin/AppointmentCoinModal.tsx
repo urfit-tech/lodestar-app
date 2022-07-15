@@ -14,7 +14,7 @@ import { checkoutMessages } from '../../helpers/translation'
 import { useAppointmentPlan } from '../../hooks/appointment'
 import { useCheck } from '../../hooks/checkout'
 import DefaultAvatar from '../../images/avatar.svg'
-import { AppointmentPeriodProps } from '../../types/appointment'
+import { AppointmentPeriod } from '../../types/appointment'
 import AppointmentPeriodCollection from '../appointment/AppointmentPeriodCollection'
 import DiscountSelectionCard from '../checkout/DiscountSelectionCard'
 import { CustomRatioImage } from '../common/Image'
@@ -69,7 +69,7 @@ const AppointmentCoinModal: React.VFC<
 
   const phoneInputRef = useRef<Input | null>(null)
   const [visible, setVisible] = useState(false)
-  const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriodProps | null>(null)
+  const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriod | null>(null)
   const [discountId, setDiscountId] = useState<string | null>(null)
 
   const { orderChecking, check, placeOrder, orderPlacing } = useCheck({

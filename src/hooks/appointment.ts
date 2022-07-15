@@ -3,9 +3,9 @@ import gql from 'graphql-tag'
 import moment from 'moment'
 import hasura from '../hasura'
 import {
-  AppointmentEnrollmentProps,
-  AppointmentPeriodProps,
-  AppointmentPlanProps,
+  AppointmentEnrollment,
+  AppointmentPeriod,
+  AppointmentPlan,
   ReservationType,
 } from '../types/appointment'
 
@@ -44,8 +44,8 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
     { variables: { memberId, startedAt } },
   )
 
-  const appointmentPlans: (AppointmentPlanProps & {
-    periods: AppointmentPeriodProps[]
+  const appointmentPlans: (AppointmentPlan & {
+    periods: AppointmentPeriod[]
   })[] =
     loading || error || !data
       ? []
@@ -122,8 +122,8 @@ export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) 
   )
 
   const appointmentPlan:
-    | (AppointmentPlanProps & {
-        periods: AppointmentPeriodProps[]
+    | (AppointmentPlan & {
+        periods: AppointmentPeriod[]
         creator: {
           id: string
           avatarUrl: string | null
@@ -208,7 +208,7 @@ export const useEnrolledAppointmentCollection = (memberId: string) => {
     { variables: { memberId }, fetchPolicy: 'no-cache' },
   )
 
-  const enrolledAppointments: AppointmentEnrollmentProps[] =
+  const enrolledAppointments: AppointmentEnrollment[] =
     loading || error || !data
       ? []
       : data.appointment_enrollment.map(enrollment => ({
