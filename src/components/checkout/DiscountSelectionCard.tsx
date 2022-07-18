@@ -1,4 +1,5 @@
 import { Button, Radio, RadioGroup, Stack } from '@chakra-ui/react'
+import CouponSelectionModal from 'lodestar-app-element/src/components/modals/CouponSelectionModal'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
@@ -8,7 +9,6 @@ import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { CheckProps } from '../../types/checkout'
 import { AuthModalContext } from '../auth/AuthModal'
-import CouponSelectionModal from './CouponSelectionModal'
 import MembershipCardSelectionModal from './MembershipCardSelectionModal'
 
 const StyledRadio = styled(Radio)`
