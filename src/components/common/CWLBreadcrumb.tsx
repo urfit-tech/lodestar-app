@@ -54,7 +54,8 @@ const CWLBreadcrumb: React.VFC<{
       label: '線上課程',
       url: '/programs'
     }
-    if (matchCategory) {
+    
+    if (matchCategory?.label && matchCategory?.url) {
       breadcrumbConfig.category = matchCategory
     }
     breadcrumbConfig.program = {
@@ -63,10 +64,33 @@ const CWLBreadcrumb: React.VFC<{
     }
   }
 
+  // 套裝課程
+  if (programPackage) {
+    const packages: any = footerNavs.find(nav => nav.label === '套裝課程')
+    const categoryLinks = packages?.subNavs.map((subNav: any) => {
+      return { label: subNav.label, url: subNav.href }
+    })
+    const programPackageCategory = programPackage.categories[0]
+    const matchCategory = categoryLinks.find((categoryLink: any) => categoryLink.label === programPackageCategory)
+
+    breadcrumbConfig.package = {
+      label: '套裝課程',
+      url: '/packages'
+    }
+
+    if (matchCategory?.label && matchCategory?.url) {
+      breadcrumbConfig.category = matchCategory
+    }
+    breadcrumbConfig.programPackage = {
+      label: programPackage.title,
+      url: `/program-packages/${programPackage.id}`
+    }
+  }
+
   return (
     <>
       {
-        program &&
+        (program || programPackage) &&
         <div className="container" style={{marginTop: '15px'}}>
           <BreadcrumbList>
             {

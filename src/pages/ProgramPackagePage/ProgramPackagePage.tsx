@@ -18,6 +18,7 @@ import ProgramPackageBanner from '../../components/package/ProgramPackageBanner'
 import ProgramPackagePlanCard from '../../components/package/ProgramPackagePlanCard'
 import { ProgramDisplayedCard } from '../../components/program/ProgramDisplayedCard'
 import { ProgramDisplayedListItem } from '../../components/program/ProgramDisplayedListItem'
+import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
@@ -102,6 +103,8 @@ const ProgramPackagePage: React.VFC = () => {
         coverUrl={programPackageIntroduction.coverUrl}
         programPackageId={programPackageIntroduction.id}
       />
+
+      <CWLBreadcrumb programPackage={resourceCollection[0]} />
 
       <div className="container">
         <div className="row">
