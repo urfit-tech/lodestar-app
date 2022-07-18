@@ -39,8 +39,6 @@ const CWLBreadcrumb: React.VFC<{
     },
   }
 
-  console.log('programPackage', programPackage)
-
   // 線上課程
   if (program) {
     const programs: any = footerNavs.find(nav => nav.label === '線上課程')
@@ -70,16 +68,17 @@ const CWLBreadcrumb: React.VFC<{
     const categoryLinks = packages?.subNavs.map((subNav: any) => {
       return { label: subNav.label, url: subNav.href }
     })
-    const programPackageCategory = programPackage.categories[0]
-    const matchCategory = categoryLinks.find((categoryLink: any) => categoryLink.label === programPackageCategory)
+    const matchCategory = categoryLinks.filter((link: any) => {
+      return programPackage.categories.some((category: any) => category === link.label)
+    })
 
     breadcrumbConfig.package = {
       label: '套裝課程',
       url: '/packages'
     }
 
-    if (matchCategory?.label && matchCategory?.url) {
-      breadcrumbConfig.category = matchCategory
+    if (matchCategory.length > 0) {
+      breadcrumbConfig.category = matchCategory[0]
     }
     breadcrumbConfig.programPackage = {
       label: programPackage.title,
