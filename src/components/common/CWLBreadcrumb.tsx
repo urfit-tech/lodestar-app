@@ -52,7 +52,7 @@ const CWLBreadcrumb: React.VFC<{
       label: '線上課程',
       url: '/programs',
     }
-    
+
     if (matchCategory?.label && matchCategory?.url) {
       breadcrumbConfig.category = matchCategory
     }
@@ -74,7 +74,7 @@ const CWLBreadcrumb: React.VFC<{
 
     breadcrumbConfig.package = {
       label: '套裝課程',
-      url: '/packages'
+      url: '/packages',
     }
 
     if (matchCategory.length > 0) {
@@ -82,15 +82,14 @@ const CWLBreadcrumb: React.VFC<{
     }
     breadcrumbConfig.programPackage = {
       label: programPackage.title,
-      url: `/program-packages/${programPackage.id}`
+      url: `/program-packages/${programPackage.id}`,
     }
   }
 
   return (
     <>
-      {
-        (program || programPackage) &&
-        <div className="container" style={{marginTop: '15px'}}>
+      {(program || programPackage) && (
+        <div className="container" style={{ marginTop: '15px' }}>
           <BreadcrumbList>
             {Object.keys(breadcrumbConfig).map((key: any, index) => {
               const breadcrumb = breadcrumbConfig[key]
