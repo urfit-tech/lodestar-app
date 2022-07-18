@@ -2,6 +2,9 @@ import { Button, Icon } from '@chakra-ui/react'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { notEmpty } from 'lodestar-app-element/src/helpers'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
@@ -61,8 +64,10 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
 }> = ({ merchandise, merchandiseSpec, quantity }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { getCartProduct, addCartProduct } = useContext(CartContext)
-  const { settings } = useApp()
+  const { getCartProduct, addCartProduct, isProductInCart } = useContext(CartContext)
+  const { settings, id: appId } = useApp()
+  const tracking = useTracking()
+  const { resourceCollection } = useResourceCollection([`${appId}:merchandise_spec:${merchandiseSpec.id}`])
 
   const inCartQuantity: number = getCartProduct?.(`MerchandiseSpec_${merchandiseSpec.id}`)?.options?.quantity || 0
   const remainQuantity = (merchandiseSpec.buyableQuantity || 0) - inCartQuantity
@@ -110,7 +115,11 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
             className="d-flex align-items-center mr-2"
             variant="outline"
             isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
-            onClick={() => quantity && handleClick()}
+            onClick={() => {
+              const resource = resourceCollection.filter(notEmpty)[0]
+              quantity && resource && tracking.addToCart(resource, { quantity })
+              quantity && handleClick()
+            }}
           >
             <Icon as={CartIcon} />
           </Button>
@@ -122,7 +131,14 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
           colorScheme="primary"
           isFullWidth
           isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
-          onClick={() => quantity && handleClick().then(() => history.push('/cart'))}
+          onClick={() => {
+            const resource = resourceCollection.filter(notEmpty)[0]
+            quantity &&
+              !isProductInCart?.('MerchandiseSpec', merchandiseSpec.id) &&
+              resource &&
+              tracking.addToCart(resource, { direct: true, quantity })
+            quantity && handleClick().then(() => history.push('/cart'))
+          }}
         >
           {formatMessage(commonMessages.ui.purchase)}
         </Button>
@@ -140,6 +156,10 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [isPaymentButtonDisable, setIsPaymentButtonDisable] = useState(true)
+  const { id: appId } = useApp()
+  const tracking = useTracking()
+
+  const { resourceCollection } = useResourceCollection([`${appId}:merchandise_spec:${merchandiseSpec.id}`])
 
   if (merchandise.isLimited && !merchandiseSpec.buyableQuantity) {
     return (
@@ -156,7 +176,11 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
           colorScheme="primary"
           isFullWidth
           isDisabled={(isAuthenticated && isLoading) || isPaymentButtonDisable}
-          onClick={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
+          onClick={() => {
+            isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true)
+            const resource = resourceCollection.filter(notEmpty)[0]
+            resource && tracking.addToCart(resource, { direct: true, quantity })
+          }}
         >
           {formatMessage(commonMessages.ui.purchase)}
         </Button>
