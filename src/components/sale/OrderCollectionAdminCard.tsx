@@ -98,7 +98,7 @@ const OrderCollectionAdminCard: React.VFC<
   }
 > = ({ memberId, ...props }) => {
   const theme = useAppTheme()
-  const { settings } = useApp()
+  const { settings, currencyId: appCurrencyId } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { authToken } = useAuth()
@@ -292,7 +292,13 @@ const OrderCollectionAdminCard: React.VFC<
               <div className="col-9">{orderDiscount.name}</div>
               <div className="col-3">
                 <PriceLabel
-                  currencyId={orderDiscount.type !== null && orderDiscount.type !== 'Coin' ? orderDiscount.type : 'LSC'}
+                  currencyId={
+                    orderDiscount.type === 'Coin'
+                      ? 'LSC'
+                      : orderDiscount.type === 'Coupon' || orderDiscount.type === 'Voucher'
+                      ? appCurrencyId
+                      : undefined
+                  }
                   listPrice={
                     record.orderProducts.length === 1 &&
                     record.orderProducts[0].product.type === 'MerchandiseSpec' &&
