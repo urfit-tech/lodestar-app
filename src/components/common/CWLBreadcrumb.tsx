@@ -39,8 +39,6 @@ const CWLBreadcrumb: React.VFC<{
     },
   }
 
-  console.log('programPackage', programPackage)
-
   // 線上課程
   if (program) {
     const programs: any = footerNavs.find(nav => nav.label === '線上課程')
@@ -54,7 +52,8 @@ const CWLBreadcrumb: React.VFC<{
       label: '線上課程',
       url: '/programs',
     }
-    if (matchCategory) {
+    
+    if (matchCategory?.label && matchCategory?.url) {
       breadcrumbConfig.category = matchCategory
     }
     breadcrumbConfig.program = {
@@ -63,10 +62,35 @@ const CWLBreadcrumb: React.VFC<{
     }
   }
 
+  // 套裝課程
+  if (programPackage) {
+    const packages: any = footerNavs.find(nav => nav.label === '套裝課程')
+    const categoryLinks = packages?.subNavs.map((subNav: any) => {
+      return { label: subNav.label, url: subNav.href }
+    })
+    const matchCategory = categoryLinks.filter((link: any) => {
+      return programPackage.categories.some((category: any) => category === link.label)
+    })
+
+    breadcrumbConfig.package = {
+      label: '套裝課程',
+      url: '/packages'
+    }
+
+    if (matchCategory.length > 0) {
+      breadcrumbConfig.category = matchCategory[0]
+    }
+    breadcrumbConfig.programPackage = {
+      label: programPackage.title,
+      url: `/program-packages/${programPackage.id}`
+    }
+  }
+
   return (
     <>
-      {program && (
-        <div className="container" style={{ marginTop: '15px' }}>
+      {
+        (program || programPackage) &&
+        <div className="container" style={{marginTop: '15px'}}>
           <BreadcrumbList>
             {Object.keys(breadcrumbConfig).map((key: any, index) => {
               const breadcrumb = breadcrumbConfig[key]
