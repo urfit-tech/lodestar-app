@@ -226,7 +226,8 @@ const ProgramPage: React.VFC = () => {
                         <ProgramContentCountBlock program={program} />
                       </StyledProgramInfoCard>
                     </Responsive.Desktop>
-
+                  </div>
+                  <div className={ program.plans.filter(programPlan => programPlan.publishedAt).length === 1 ? 'positionSticky' : undefined }>
                     {!isEnrolledByProgramPackage && (
                       <div className="mb-5">
                         <div id="subscription">

@@ -152,7 +152,7 @@ const ProgramPackagePage: React.VFC = () => {
                   <ClassCouponBlock />
                 </Responsive.Desktop>
                 {programPackageIntroduction.plans.map(programPackagePlan => (
-                  <div key={programPackagePlan.id} className="mb-4">
+                  <div key={programPackagePlan.id} className={ programPackageIntroduction.plans.length <= 1 ? 'mb-4 positionSticky' : 'mb-4' }>
                     <ProgramPackagePlanCard
                       programPackageId={programPackageId}
                       {...programPackagePlan}

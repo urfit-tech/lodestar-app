@@ -37,7 +37,7 @@ const ProgramCollection: React.VFC<{
   }>
   defaultDisplayType?: 'grid' | 'list'
   noDisplayTypeButton?: boolean
-}> = ({ programs, renderItem, defaultDisplayType = 'grid', noDisplayTypeButton }) => {
+}> = ({ programs, renderItem, defaultDisplayType = 'list', noDisplayTypeButton }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [displayType, setDisplayType] = useState<'grid' | 'list'>(defaultDisplayType)
   const { formatMessage } = useIntl()
