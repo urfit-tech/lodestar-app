@@ -158,7 +158,16 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
             if (process.env.NODE_ENV === 'development') {
               message.error(formatMessage(codeMessages[code]))
             } else {
-              message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
+              switch (code) {
+                case 'E_USERNAME_EXISTS':
+                  message.error(formatMessage(authMessages.RegisterSection.usernameIsAlreadyRegistered))
+                  break
+                case 'E_EMAIL_EXISTS':
+                  message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
+                  break
+                default:
+                  message.error(formatMessage(authMessages.RegisterSection.registerFailed))
+              }
             }
           })
           .catch(handleError)

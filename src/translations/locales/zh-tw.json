@@ -33,6 +33,8 @@
   "auth.*.isRequiredWarning": "請填入{name}",
   "auth.*.login": "登入",
   "auth.RegisterSection.emailIsAlreadyRegistered": "此信箱已註冊",
+  "auth.RegisterSection.usernameIsAlreadyRegistered": "此使用者名稱已註冊",
+  "auth.RegisterSection.registerFailed": "註冊失敗，請聯繫網站管理者",
   "auth.RegisterSection.enterName": "請填入姓名",
   "auth.RegisterSection.fetchError": "讀取失敗",
   "auth.RegisterSection.isMember": "已經是會員了嗎?",

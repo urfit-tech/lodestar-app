@@ -14,6 +14,10 @@ const authMessages = {
       id: 'auth.RegisterSection.emailIsAlreadyRegistered',
       defaultMessage: '此信箱已註冊',
     },
+    usernameIsAlreadyRegistered: {
+      id: 'auth.RegisterSection.usernameIsAlreadyRegistered',
+      defaultMessage: '此使用者名稱已註冊',
+    },
     signupInfo: {
       id: 'auth.RegisterSection.signupInfo',
       defaultMessage: '註冊資訊',
@@ -39,6 +43,7 @@ const authMessages = {
     signUp: { id: 'auth.RegisterSection.signUp', defaultMessage: '立即註冊' },
     smsVerification: { id: 'auth.RegisterSection.smsVerification', defaultMessage: '驗證手機號碼' },
     fetchError: { id: 'auth.RegisterSection.fetchError', defaultMessage: '讀取失敗' },
+    registerFailed: { id: 'auth.RegisterSection.registerFailed', defaultMessage: '註冊失敗，請聯繫網站管理者' },
   }),
 }
 
