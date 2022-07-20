@@ -1,11 +1,12 @@
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import ProgramCard from '../../components/program/ProgramCard'
-import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../../types/program'
-import { Category } from '../../types/general'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
+import ProgramCard from '../../components/program/ProgramCard'
+import { Category } from '../../types/general'
+import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../../types/program'
 
 const ProgramCollection: React.FC<{
   programs: (ProgramBriefProps & {
@@ -16,6 +17,7 @@ const ProgramCollection: React.FC<{
   })[]
 }> = ({ programs }) => {
   const { id: appId } = useApp()
+  const { isAuthenticating } = useAuth()
   const tracking = useTracking()
   const [type] = useQueryParam('type', StringParam)
   const [noPrice] = useQueryParam('noPrice', BooleanParam)
@@ -40,7 +42,7 @@ const ProgramCollection: React.FC<{
               const resource = resourceCollection[idx]
               resource && tracking.click(resource, { position: idx + 1 })
             }}
-            previousPage={`programs`}
+            previousPage={isAuthenticating ? `programs` : undefined}
           />
         </div>
       ))}
