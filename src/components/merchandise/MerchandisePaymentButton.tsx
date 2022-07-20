@@ -117,8 +117,10 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
             isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
             onClick={() => {
               const resource = resourceCollection.filter(notEmpty)[0]
-              quantity && resource && tracking.addToCart(resource, { quantity })
-              quantity && handleClick()
+              if (quantity) {
+                if (resource) tracking.addToCart(resource, { quantity })
+                handleClick()
+              }
             }}
           >
             <Icon as={CartIcon} />
@@ -133,11 +135,12 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
           isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
           onClick={() => {
             const resource = resourceCollection.filter(notEmpty)[0]
-            quantity &&
-              !isProductInCart?.('MerchandiseSpec', merchandiseSpec.id) &&
-              resource &&
-              tracking.addToCart(resource, { direct: true, quantity })
-            quantity && handleClick().then(() => history.push('/cart'))
+            if (quantity) {
+              if (resource && !isProductInCart?.('MerchandiseSpec', merchandiseSpec.id)) {
+                tracking.addToCart(resource, { direct: true, quantity })
+              }
+              handleClick().then(() => history.push('/cart'))
+            }
           }}
         >
           {formatMessage(commonMessages.ui.purchase)}
