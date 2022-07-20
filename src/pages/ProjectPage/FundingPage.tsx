@@ -16,6 +16,7 @@ import FundingSummaryBlock from '../../components/project/FundingSummaryBlock'
 import FundingUpdatesPane from '../../components/project/FundingUpdatesPane'
 import ClassCouponBlock from '../../components/ClassCouponBlock'
 import Responsive from '../../components/common/Responsive'
+import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProjectProps } from '../../types/project'
@@ -130,6 +131,11 @@ const FundingPage: React.VFC<ProjectProps> = ({
     },
   })
 
+  const project = {
+    id,
+    title,
+  }
+
   return (
     <DefaultLayout white noFooter>
       <StyledCover className="container mb-4">
@@ -137,6 +143,9 @@ const FundingPage: React.VFC<ProjectProps> = ({
           <div className="col-12 col-lg-8">
             <FundingCoverBlock coverType={coverType} coverUrl={coverUrl || EmptyCover} />
           </div>
+          <Responsive.Default>
+            <CWLBreadcrumb project={project} />
+          </Responsive.Default>
           <div className="col-12 col-lg-4">
             <FundingSummaryBlock
               projectId={id}
@@ -155,6 +164,10 @@ const FundingPage: React.VFC<ProjectProps> = ({
           </div>
         </div>
       </StyledCover>
+
+      <Responsive.Desktop>
+        <CWLBreadcrumb project={project} />
+      </Responsive.Desktop>
 
       <Responsive.Default>
         <div className="col-12">

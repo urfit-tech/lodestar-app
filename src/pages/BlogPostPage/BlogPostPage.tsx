@@ -16,6 +16,7 @@ import { BraftContent } from 'lodestar-app-element/src/components/common/StyledB
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MessageSuggestItem from '../../components/practice/MessageSuggestItem'
 import SuggestionCreationModal from '../../components/practice/SuggestionCreationModal'
+import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
 import { useAddPostViews, useMutatePostReaction, usePost } from '../../hooks/blog'
 import { ReactComponent as EyeIcon } from '../../images/eye.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
@@ -157,6 +158,8 @@ const BlogPostPage: React.VFC = () => {
           />
         )}
       </div>
+
+      <CWLBreadcrumb post={post} />
 
       <div className="container py-5 container-post-page">
         <div className="row">

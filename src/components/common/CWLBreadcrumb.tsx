@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Program } from '../../types/program'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { Post } from '../../types/blog'
 
 const BreadcrumbList = styled.ol`
   display: flex;
@@ -29,15 +30,18 @@ const BreadcrumbItem = styled.a`
 const CWLBreadcrumb: React.VFC<{
   program?: Program
   programPackage?: any
-}> = ({ program, programPackage }) => {
+  post?: Post
+  project?: any
+}> = ({ program, programPackage, post, project }) => {
   const { navs } = useApp()
   const footerNavs = navs.filter(nav => nav.block === 'footer')
   const breadcrumbConfig: any = {
     home: {
       label: '首頁',
-      url: '/'
+      url: '/',
     },
   }
+  let containerClassName = 'container'
 
   // 線上課程
   if (program) {
@@ -52,7 +56,7 @@ const CWLBreadcrumb: React.VFC<{
       label: '線上課程',
       url: '/programs'
     }
-    
+
     if (matchCategory?.label && matchCategory?.url) {
       breadcrumbConfig.category = matchCategory
     }
@@ -74,7 +78,7 @@ const CWLBreadcrumb: React.VFC<{
 
     breadcrumbConfig.package = {
       label: '套裝課程',
-      url: '/packages'
+      url: '/packages',
     }
 
     if (matchCategory.length > 0) {
@@ -82,33 +86,57 @@ const CWLBreadcrumb: React.VFC<{
     }
     breadcrumbConfig.programPackage = {
       label: programPackage.title,
-      url: `/program-packages/${programPackage.id}`
+      url: `/program-packages/${programPackage.id}`,
+    }
+  }
+
+  // 專欄文章
+  if (post) {
+    breadcrumbConfig.package = {
+      label: '專欄文章',
+      url: '/blog',
+    }
+    breadcrumbConfig.posts = {
+      label: post.title,
+      url: `/posts/${post.id}`,
+    }
+    containerClassName = 'container container-post-page'
+  }
+
+  // 實體課程
+  if (project) {
+    breadcrumbConfig.package = {
+      label: '實體課程',
+      url: '/projects',
+    }
+    breadcrumbConfig.posts = {
+      label: project.title,
+      url: `/projects/${project.id}`,
     }
   }
 
   return (
     <>
-      {
-        (program || programPackage) &&
-        <div className="container" style={{marginTop: '15px'}}>
+      {(program || programPackage || post || project) && (
+        <div className={containerClassName} style={{ margin: '15px auto' }}>
           <BreadcrumbList>
             {
               Object.keys(breadcrumbConfig).map((key: any, index) => {
                 const breadcrumb = breadcrumbConfig[key]
                 const isLastItem = index + 1 === Object.keys(breadcrumbConfig).length
                 return (
-                  <li style={{marginRight: '10px'}}>
+                  <li style={{ marginRight: '10px' }}>
                     <BreadcrumbItem href={breadcrumb.url}>{ breadcrumb.label }</BreadcrumbItem>
                     {
                       !isLastItem &&
-                      <span style={{color: '#999'}}> /</span>
+                      <span style={{ color: '#999' }}> /</span>
                     }
                   </li>
                 )
               })
             }
           </BreadcrumbList>
-        </div>
+        </div>)
       }
     </>
   )
