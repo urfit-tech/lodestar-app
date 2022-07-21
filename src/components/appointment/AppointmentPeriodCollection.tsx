@@ -3,7 +3,7 @@ import moment from 'moment'
 import { groupBy } from 'ramda'
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { AppointmentPeriodProps, ReservationType } from '../../types/appointment'
+import { AppointmentPeriod, ReservationType } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
 import AppointmentItem from './AppointmentItem'
 
@@ -17,11 +17,11 @@ const StyledScheduleTitle = styled.h3`
 `
 
 const AppointmentPeriodCollection: React.VFC<{
-  appointmentPeriods: AppointmentPeriodProps[]
+  appointmentPeriods: AppointmentPeriod[]
   reservationType?: ReservationType
   reservationAmount?: number
   diffPlanBookedTimes?: String[]
-  onClick?: (period: AppointmentPeriodProps) => void
+  onClick?: (period: AppointmentPeriod) => void
 }> = ({ appointmentPeriods, reservationType, reservationAmount, diffPlanBookedTimes, onClick }) => {
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isAuthenticated } = useAuth()

@@ -4,6 +4,7 @@ import { Button, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from '
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
+import StyledBraftEditor, { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -14,10 +15,9 @@ import { useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/app
 import DefaultAvatar from '../../images/avatar.svg'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
-import { AppointmentEnrollmentProps } from '../../types/appointment'
+import { AppointmentEnrollment } from '../../types/appointment'
 import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
-import StyledBraftEditor, { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   appointmentIssue: { id: 'appointment.button.appointmentIssue', defaultMessage: '提問單' },
@@ -111,7 +111,7 @@ const StyledModalMetaBlock = styled.div`
 `
 
 type AppointmentCardProps = FormComponentProps &
-  AppointmentEnrollmentProps & {
+  AppointmentEnrollment & {
     onRefetch?: () => void
   }
 const AppointmentCard: React.VFC<AppointmentCardProps> = ({
