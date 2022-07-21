@@ -14,7 +14,7 @@ import { useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/app
 import DefaultAvatar from '../../images/avatar.svg'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
-import { AppointmentEnrollmentProps } from '../../types/appointment'
+import { AppointmentEnrollment } from '../../types/appointment'
 import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
 import StyledBraftEditor, { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
@@ -111,7 +111,7 @@ const StyledModalMetaBlock = styled.div`
 `
 
 type AppointmentCardProps = FormComponentProps &
-  AppointmentEnrollmentProps & {
+  AppointmentEnrollment & {
     onRefetch?: () => void
   }
 const AppointmentCard: React.VFC<AppointmentCardProps> = ({
