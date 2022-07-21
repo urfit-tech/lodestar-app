@@ -60,6 +60,8 @@
   "checkout.coupon.full": "消費滿 {amount} 折抵",
   "checkout.coupon.label.all": "不限",
   "checkout.coupon.message.noCoupon": "請選擇折價券",
+  "checkout.coupon.message.notEnough": "不足",
+  "checkout.coupon.message.checkingCoins": "確認代幣中",
   "checkout.coupon.message.unable": "無法加入折價券",
   "checkout.coupon.off": "折",
   "checkout.coupon.proportion": "比例 {amount}%",

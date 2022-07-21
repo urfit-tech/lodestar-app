@@ -522,6 +522,8 @@ export const checkoutMessages = {
     leastOneSet: { id: 'checkout.coupon.form.message.leastOneSet', defaultMessage: '至少一組折扣碼' },
     unableAddCoupon: { id: 'checkout.coupon.message.unable', defaultMessage: '無法加入折價券' },
     noCoupon: { id: 'checkout.coupon.message.noCoupon', defaultMessage: '請選擇折價券' },
+    notEnough: { id: 'checkout.message.notEnough', defaultMessage: '不足' },
+    checkingCoins: { id: 'checkout.message.checkingCoins', defaultMessage: '確認代幣中' },
   }),
   help: defineMessages({
     notation: { id: 'checkout.coupon.form.help', defaultMessage: '折抵方式為比例時，額度範圍為 0 - 100' },
