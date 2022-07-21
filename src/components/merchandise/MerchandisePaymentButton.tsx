@@ -116,7 +116,7 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
             variant="outline"
             isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
             onClick={() => {
-              const resource = resourceCollection.filter(notEmpty)[0]
+              const resource = resourceCollection.find(notEmpty)
               if (quantity) {
                 if (resource) tracking.addToCart(resource, { quantity })
                 handleClick()
@@ -134,7 +134,7 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
           isFullWidth
           isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
           onClick={() => {
-            const resource = resourceCollection.filter(notEmpty)[0]
+            const resource = resourceCollection.find(notEmpty)
             if (quantity) {
               if (resource && !isProductInCart?.('MerchandiseSpec', merchandiseSpec.id)) {
                 tracking.addToCart(resource, { direct: true, quantity })
@@ -181,7 +181,7 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
           isDisabled={(isAuthenticated && isLoading) || isPaymentButtonDisable}
           onClick={() => {
             isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true)
-            const resource = resourceCollection.filter(notEmpty)[0]
+            const resource = resourceCollection.find(notEmpty)
             resource && tracking.addToCart(resource, { direct: true, quantity })
           }}
         >
