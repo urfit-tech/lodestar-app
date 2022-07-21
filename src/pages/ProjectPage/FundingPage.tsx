@@ -6,6 +6,7 @@ import { useMediaQuery } from 'react-responsive'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import ClassCouponBlock from '../../components/ClassCouponBlock'
+import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import FundingCommentsPane from '../../components/project/FundingCommentsPane'
@@ -129,6 +130,11 @@ const FundingPage: React.VFC<ProjectProps> = ({
     },
   })
 
+  const project = {
+    id,
+    title,
+  }
+
   return (
     <DefaultLayout white noFooter>
       <StyledCover className="container mb-4">
@@ -136,6 +142,9 @@ const FundingPage: React.VFC<ProjectProps> = ({
           <div className="col-12 col-lg-8">
             <FundingCoverBlock coverType={coverType} coverUrl={coverUrl || EmptyCover} />
           </div>
+          <Responsive.Default>
+            <CWLBreadcrumb project={project} />
+          </Responsive.Default>
           <div className="col-12 col-lg-4">
             <FundingSummaryBlock
               projectId={id}
@@ -154,6 +163,10 @@ const FundingPage: React.VFC<ProjectProps> = ({
           </div>
         </div>
       </StyledCover>
+
+      <Responsive.Desktop>
+        <CWLBreadcrumb project={project} />
+      </Responsive.Desktop>
 
       <Responsive.Default>
         <div className="col-12">

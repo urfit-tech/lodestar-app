@@ -1,6 +1,7 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import styled from 'styled-components'
+import { Post } from '../../types/blog'
 import { Program } from '../../types/program'
 
 const BreadcrumbList = styled.ol`
@@ -29,7 +30,9 @@ const BreadcrumbItem = styled.a`
 const CWLBreadcrumb: React.VFC<{
   program?: Program
   programPackage?: any
-}> = ({ program, programPackage }) => {
+  post?: Post
+  project?: any
+}> = ({ program, programPackage, post, project }) => {
   const { navs } = useApp()
   const footerNavs = navs.filter(nav => nav.block === 'footer')
   const breadcrumbConfig: any = {
@@ -38,6 +41,7 @@ const CWLBreadcrumb: React.VFC<{
       url: '/',
     },
   }
+  let containerClassName = 'container'
 
   // 線上課程
   if (program) {
@@ -86,10 +90,35 @@ const CWLBreadcrumb: React.VFC<{
     }
   }
 
+  // 專欄文章
+  if (post) {
+    breadcrumbConfig.package = {
+      label: '專欄文章',
+      url: '/blog',
+    }
+    breadcrumbConfig.posts = {
+      label: post.title,
+      url: `/posts/${post.id}`,
+    }
+    containerClassName = 'container container-post-page'
+  }
+
+  // 實體課程
+  if (project) {
+    breadcrumbConfig.package = {
+      label: '實體課程',
+      url: '/projects',
+    }
+    breadcrumbConfig.posts = {
+      label: project.title,
+      url: `/projects/${project.id}`,
+    }
+  }
+
   return (
     <>
-      {(program || programPackage) && (
-        <div className="container" style={{ marginTop: '15px' }}>
+      {(program || programPackage || post || project) && (
+        <div className={containerClassName} style={{ margin: '15px auto' }}>
           <BreadcrumbList>
             {Object.keys(breadcrumbConfig).map((key: any, index) => {
               const breadcrumb = breadcrumbConfig[key]

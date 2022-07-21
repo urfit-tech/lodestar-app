@@ -2,6 +2,7 @@ import { Icon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
 import { throttle } from 'lodash'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -10,9 +11,9 @@ import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StyledPostMeta } from '../../components/blog'
 import PostCover from '../../components/blog/PostCover'
+import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
 import LikesCountButton from '../../components/common/LikedCountButton'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MessageSuggestItem from '../../components/practice/MessageSuggestItem'
 import SuggestionCreationModal from '../../components/practice/SuggestionCreationModal'
@@ -157,6 +158,8 @@ const BlogPostPage: React.VFC = () => {
           />
         )}
       </div>
+
+      <CWLBreadcrumb post={post} />
 
       <div className="container py-5 container-post-page">
         <div className="row">

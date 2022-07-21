@@ -1,6 +1,7 @@
 import { SkeletonText } from '@chakra-ui/react'
 import { Button, Tabs } from 'antd'
 import BraftEditor from 'braft-editor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -16,12 +17,11 @@ import PostItemCollection from '../components/blog/PostItemCollection'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import CreatorIntroBlock from '../components/common/CreatorIntroBlock'
 import OverviewBlock from '../components/common/OverviewBlock'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCollectionBlock from '../components/merchandise/MerchandiseCollectionBlock'
 import PodcastProgramCard from '../components/podcast/PodcastProgramCard'
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
-import ProgramCard from '../components/program/ProgramCard'
+import ProgramCollection from '../components/program/ProgramCollection'
 import PodcastProgramTimeline from '../containers/podcast/PodcastProgramTimeline'
 import { desktopViewMixin } from '../helpers'
 import { commonMessages, usersMessages } from '../helpers/translation'
@@ -165,19 +165,15 @@ const CreatorTabs: React.VFC<{
 
         <Tabs.TabPane tab={formatMessage(usersMessages.tab.addPrograms)} key="programs">
           <div className="container py-4">
-            <div className="row">
-              {programs.length === 0 ? (
+            {programs.length === 0 ? (
+              <div className="row">
                 <StyledDescription className="ml-3">
                   {formatMessage(commonMessages.content.noProgram)}
                 </StyledDescription>
-              ) : (
-                programs.map(program => (
-                  <div key={program.id} className="col-12 col-lg-4 mb-4">
-                    <ProgramCard program={program} />
-                  </div>
-                ))
-              )}
-            </div>
+              </div>
+            ) : (
+              <ProgramCollection programs={programs} />
+            )}
           </div>
         </Tabs.TabPane>
 

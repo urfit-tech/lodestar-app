@@ -1,5 +1,6 @@
 import { Button } from '@chakra-ui/react'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -10,15 +11,14 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import ClassCouponBlock from '../../components/ClassCouponBlock'
+import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
 import Responsive from '../../components/common/Responsive'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ProgramCollection from '../../components/package/ProgramCollection'
 import ProgramPackageBanner from '../../components/package/ProgramPackageBanner'
 import ProgramPackagePlanCard from '../../components/package/ProgramPackagePlanCard'
 import { ProgramDisplayedCard } from '../../components/program/ProgramDisplayedCard'
 import { ProgramDisplayedListItem } from '../../components/program/ProgramDisplayedListItem'
-import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
@@ -152,7 +152,10 @@ const ProgramPackagePage: React.VFC = () => {
                   <ClassCouponBlock />
                 </Responsive.Desktop>
                 {programPackageIntroduction.plans.map(programPackagePlan => (
-                  <div key={programPackagePlan.id} className="mb-4">
+                  <div
+                    key={programPackagePlan.id}
+                    className={programPackageIntroduction.plans.length <= 1 ? 'mb-4 positionSticky' : 'mb-4'}
+                  >
                     <ProgramPackagePlanCard
                       programPackageId={programPackageId}
                       {...programPackagePlan}

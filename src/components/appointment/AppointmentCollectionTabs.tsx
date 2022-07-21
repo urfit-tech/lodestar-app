@@ -1,7 +1,11 @@
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import moment from 'moment'
 import momentTz from 'moment-timezone'
 import React, { useContext, useEffect, useState } from 'react'
@@ -10,7 +14,7 @@ import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
-import { AppointmentPeriodProps, AppointmentPlanProps } from '../../types/appointment'
+import { AppointmentPeriod, AppointmentPlan } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
 import AppointmentPeriodCollection from './AppointmentPeriodCollection'
 
@@ -64,22 +68,13 @@ const StyledTimeStandardBlock = styled.div`
 `
 
 const AppointmentCollectionTabs: React.VFC<{
-  appointmentPlans: (AppointmentPlanProps & { periods: AppointmentPeriodProps[] })[]
+  appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] })[]
 }> = ({ appointmentPlans }) => {
   const { formatMessage } = useIntl()
-  const { isAuthenticated } = useAuth()
-  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string | null>(appointmentPlans[0].id)
-  const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriodProps | null>(null)
   const { search } = useLocation()
   const query = new URLSearchParams(search)
   const appointmentPlanId = query.get('appointment_plan')
-
-  const diffPlanBookedTimes = [
-    ...appointmentPlans.map(appointmentPlan =>
-      appointmentPlan.periods.filter(period => period.booked).map(v => moment(v.startedAt).format('YYYY-MM-DD HH:mm')),
-    ),
-  ].flat(1)
 
   useEffect(() => {
     if (appointmentPlans) {
@@ -148,58 +143,93 @@ const AppointmentCollectionTabs: React.VFC<{
           ))}
       </div>
 
-      {appointmentPlans
-        .filter(v => (appointmentPlanId ? v.id === appointmentPlanId || v.isPrivate === false : v.isPrivate === false))
-        .filter((appointmentPlan, index) =>
-          selectedAppointmentPlanId ? selectedAppointmentPlanId === appointmentPlan.id : index === 0,
-        )
-        .map(appointmentPlan => (
-          <div key={appointmentPlan.id}>
-            {appointmentPlan.description && (
-              <div className="mb-4">
-                <BraftContent>{appointmentPlan.description}</BraftContent>
-              </div>
-            )}
-            <StyledTimeStandardBlock className="mb-4">
-              {formatMessage(productMessages.appointment.content.timezone, {
-                city: momentTz.tz.guess().split('/')[1],
-                timezone: moment().zone(momentTz.tz.guess()).format('Z'),
-              })}
-            </StyledTimeStandardBlock>
+      <AppointmentPlanCollection
+        appointmentPlans={appointmentPlans
+          .filter(v =>
+            appointmentPlanId ? v.id === appointmentPlanId || v.isPrivate === false : v.isPrivate === false,
+          )
+          .filter((appointmentPlan, index) =>
+            selectedAppointmentPlanId ? selectedAppointmentPlanId === appointmentPlan.id : index === 0,
+          )}
+      />
+    </>
+  )
+}
 
-            <CheckoutProductModal
-              defaultProductId={`AppointmentPlan_${appointmentPlan.id}`}
-              renderTrigger={({ onOpen }) => (
-                <AppointmentPeriodCollection
-                  appointmentPeriods={appointmentPlan.periods}
-                  reservationAmount={appointmentPlan.reservationAmount}
-                  reservationType={appointmentPlan.reservationType}
-                  onClick={period => {
-                    if (!isAuthenticated) {
-                      setAuthModalVisible?.(true)
-                    } else {
-                      ReactGA.plugin.execute('ec', 'addProduct', {
-                        id: appointmentPlan.id,
-                        name: appointmentPlan.title,
-                        category: 'AppointmentPlan',
-                        price: `${appointmentPlan.price}`,
-                        quantity: '1',
-                        currency: 'TWD',
-                      })
-                      ReactGA.plugin.execute('ec', 'setAction', 'add')
-                      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                      setSelectedPeriod(period)
-                      onOpen?.()
-                    }
-                  }}
-                  diffPlanBookedTimes={diffPlanBookedTimes}
-                />
-              )}
-              startedAt={selectedPeriod?.startedAt}
-              warningText={formatMessage(productMessages.appointment.warningText.news)}
-            />
-          </div>
-        ))}
+const AppointmentPlanCollection: React.FC<{
+  appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] })[]
+}> = ({ appointmentPlans }) => {
+  const { formatMessage } = useIntl()
+  const { id: appId } = useApp()
+  const { isAuthenticated } = useAuth()
+  const tracking = useTracking()
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
+  const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriod | null>(null)
+
+  const diffPlanBookedTimes = [
+    ...appointmentPlans.map(appointmentPlan =>
+      appointmentPlan.periods.filter(period => period.booked).map(v => moment(v.startedAt).format('YYYY-MM-DD HH:mm')),
+    ),
+  ].flat(1)
+
+  const { resourceCollection } = useResourceCollection(
+    appId ? appointmentPlans.map(appointmentPlan => `${appId}:appointment_plan:${appointmentPlan.id}`) : [],
+    true,
+  )
+
+  return (
+    <>
+      <Tracking.Impression resources={resourceCollection} />
+      {appointmentPlans.map((appointmentPlan, idx) => (
+        <div key={appointmentPlan.id}>
+          {appointmentPlan.description && (
+            <div className="mb-4">
+              <BraftContent>{appointmentPlan.description}</BraftContent>
+            </div>
+          )}
+          <StyledTimeStandardBlock className="mb-4">
+            {formatMessage(productMessages.appointment.content.timezone, {
+              city: momentTz.tz.guess().split('/')[1],
+              timezone: moment().zone(momentTz.tz.guess()).format('Z'),
+            })}
+          </StyledTimeStandardBlock>
+
+          <CheckoutProductModal
+            defaultProductId={`AppointmentPlan_${appointmentPlan.id}`}
+            renderTrigger={({ onOpen }) => (
+              <AppointmentPeriodCollection
+                appointmentPeriods={appointmentPlan.periods}
+                reservationAmount={appointmentPlan.reservationAmount}
+                reservationType={appointmentPlan.reservationType}
+                onClick={period => {
+                  if (!isAuthenticated) {
+                    setAuthModalVisible?.(true)
+                  } else {
+                    ReactGA.plugin.execute('ec', 'addProduct', {
+                      id: appointmentPlan.id,
+                      name: appointmentPlan.title,
+                      category: 'AppointmentPlan',
+                      price: `${appointmentPlan.price}`,
+                      quantity: '1',
+                      currency: 'TWD',
+                    })
+                    ReactGA.plugin.execute('ec', 'setAction', 'add')
+                    ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+                    setSelectedPeriod(period)
+                    onOpen?.()
+
+                    const resource = resourceCollection[idx]
+                    resource && tracking.click(resource, { position: idx + 1 })
+                  }
+                }}
+                diffPlanBookedTimes={diffPlanBookedTimes}
+              />
+            )}
+            startedAt={selectedPeriod?.startedAt}
+            warningText={formatMessage(productMessages.appointment.warningText.news)}
+          />
+        </div>
+      ))}
     </>
   )
 }
