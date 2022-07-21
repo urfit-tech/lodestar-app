@@ -85,6 +85,8 @@
   "checkout.coupon.full": "Discount when you spend over {amount}",
   "checkout.coupon.label.all": "Unlimited",
   "checkout.coupon.message.noCoupon": "Please select a coupon",
+  "checkout.coupon.message.notEnough": "not enough",
+  "checkout.coupon.message.checkingCoins": "Checking Coins",
   "checkout.coupon.message.unable": "Coupon cannot be added",
   "checkout.coupon.off": "Discount",
   "checkout.coupon.proportion": "Proportion{amount}%",

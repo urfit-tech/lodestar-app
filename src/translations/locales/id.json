@@ -85,6 +85,8 @@
   "checkout.coupon.full": "Diskon bila Anda membelanjakan lebih dari {amount}",
   "checkout.coupon.label.all": "Tidak terbatas",
   "checkout.coupon.message.noCoupon": "Silakan pilih kupon",
+  "checkout.coupon.message.notEnough": "tidak cukup",
+  "checkout.coupon.message.checkingCoins": "Memeriksa Koin",
   "checkout.coupon.message.unable": "Kupon tidak dapat ditambahkan",
   "checkout.coupon.off": "Diskon",
   "checkout.coupon.proportion": "Proporsi{jumlah}%",
