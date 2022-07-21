@@ -79,7 +79,7 @@ const PaymentButton: React.VFC<{
               isDisabled={isLoading}
               onClick={() => {
                 isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true)
-                const resource = resourceCollection.filter(notEmpty)[0]
+                const resource = resourceCollection.find(notEmpty)
                 resource && tracking.addToCart(resource, { direct: true })
                 resource && tracking.checkout([resource])
               }}
@@ -112,11 +112,11 @@ const PaymentButton: React.VFC<{
             colorScheme="primary"
             isFullWidth
             onClick={() => {
-              const resource = resourceCollection.filter(notEmpty)[0]
+              const resource = resourceCollection.find(notEmpty)
               resource && tracking.addToCart(resource, { direct: true })
               handleAddCart()?.then(() => {
                 Number(settings['feature.cart.disable']) && resource && tracking.checkout([resource])
-                history.push('/cart?direct=true', { productUrn: resource.urn })
+                history.push('/cart?direct=true', { productUrn: resource?.urn })
               })
             }}
           >

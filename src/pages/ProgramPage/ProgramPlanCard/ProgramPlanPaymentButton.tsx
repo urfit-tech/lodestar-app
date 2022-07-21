@@ -92,7 +92,7 @@ const ProgramPlanPaymentButton: React.VFC<{
               colorScheme="primary"
               isFullWidth
               onClick={() => {
-                const resource = resourceCollection.filter(notEmpty)[0]
+                const resource = resourceCollection.find(notEmpty)
                 resource && tracking.addToCart(resource, { direct: true })
                 handleAddCart()?.then(() => {
                   Number(settings['feature.cart.disable']) && resource && tracking.checkout([resource])
