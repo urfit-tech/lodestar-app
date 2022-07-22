@@ -85,6 +85,8 @@
   "checkout.coupon.full": "Giảm giá khi bạn chi tiêu trên {amount}",
   "checkout.coupon.label.all": "Không giới hạn",
   "checkout.coupon.message.noCoupon": "Vui lòng chọn một phiếu giảm giá",
+  "checkout.message.notEnoughCoins": "Không đủ xu",
+  "checkout.message.checkingCoins": "Kiểm tra xu",
   "checkout.coupon.message.unable": "Không thể thêm phiếu giảm giá",
   "checkout.coupon.off": "Giảm giá",
   "checkout.coupon.proportion": "Tỷ lệ {amount}%",
