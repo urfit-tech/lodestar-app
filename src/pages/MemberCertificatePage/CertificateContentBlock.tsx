@@ -119,7 +119,9 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
           </div>
         </StyledContentBlockHead>
         <StyledTitle>{certificate.title}</StyledTitle>
-        <StyledQualification>{`學習時數：${certificate.qualification}`}</StyledQualification>
+        <StyledQualification>{`${formatMessage(pageMessages.MemberCertificatePage.qualification)} : ${
+          certificate.qualification
+        }`}</StyledQualification>
         <StyledAbstract>
           {certificate.description && <BraftContent>{certificate.description}</BraftContent>}
         </StyledAbstract>

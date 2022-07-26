@@ -55,6 +55,10 @@ const pageMessages = {
       id: 'page.MemberCertificatePage.share',
       defaultMessage: '分享社群',
     },
+    qualification: {
+      id: 'page.MemberCertificatePage.qualification',
+      defaultMessage: '學習時數',
+    },
   }),
   // MerchandisePage
   MerchandisePage: defineMessages({}),
