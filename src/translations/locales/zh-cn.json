@@ -87,6 +87,8 @@
   "checkout.coupon.full": "消费满{amount} 折抵",
   "checkout.coupon.label.all": "不限",
   "checkout.coupon.message.noCoupon": "请选择折价券",
+  "checkout.message.notEnoughCoins": "代币不足",
+  "checkout.message.checkingCoins": "确认代币中",
   "checkout.coupon.message.unable": "无法加入折价券",
   "checkout.coupon.off": "折",
   "checkout.coupon.proportion": "比例{amount}%",
