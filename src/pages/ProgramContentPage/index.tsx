@@ -111,8 +111,8 @@ const ProgramContentPage: React.VFC = () => {
       />
 
       <StyledLayoutContent>
-        {program && currentMemberId ? (
-          <ProgressProvider programId={program.id} memberId={currentMemberId}>
+        {program ? (
+          <ProgressProvider programId={program.id} memberId={currentMemberId || ''}>
             {settings['layout.program_content'] ? (
               <div className="no-gutters">
                 <ProgramCustomContentBlock
