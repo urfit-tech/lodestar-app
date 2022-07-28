@@ -29,7 +29,7 @@ const StyledContentBlockHead = styled.div`
   justify-content: space-between;
 `
 const StyledTitle = styled.h1`
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   overflow: hidden;
   color: var(--gray-darker);
   font-size: 20px;
@@ -44,6 +44,12 @@ const StyledAbstract = styled.div`
   color: var(--gray-darker);
   letter-spacing: 0.2px;
   white-space: pre-wrap;
+`
+const StyledQualification = styled.div`
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  color: #00c7ec;
+  margin-bottom: 1rem;
 `
 const StyledContentBlockFooter = styled.div`
   display: flex;
@@ -100,19 +106,22 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
           <div className="d-flex align-items-center flex-wrap">
             <StyledDate className="mr-3">
               {formatMessage(pageMessages.MemberCertificatePage.deliveredAt, {
-                deliveredAt: moment(memberCertificate.deliveredAt).format('YYYY/MM/DD hh:mm'),
+                deliveredAt: moment(memberCertificate.deliveredAt).format('YYYY/MM/DD'),
               })}
             </StyledDate>
             {memberCertificate.expiredAt && (
               <StyledDate>
                 {formatMessage(pageMessages.MemberCertificatePage.expiredTime, {
-                  expiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD hh:mm'),
+                  expiredTime: moment(memberCertificate.expiredAt).format('YYYY/MM/DD'),
                 })}
               </StyledDate>
             )}
           </div>
         </StyledContentBlockHead>
         <StyledTitle>{certificate.title}</StyledTitle>
+        <StyledQualification>{`${formatMessage(pageMessages.MemberCertificatePage.qualification)} : ${
+          certificate.qualification
+        }`}</StyledQualification>
         <StyledAbstract>
           {certificate.description && <BraftContent>{certificate.description}</BraftContent>}
         </StyledAbstract>

@@ -13,7 +13,7 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { prop, sum } from 'ramda'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -106,38 +106,6 @@ const OrderCollectionAdminCard: React.VFC<
   const history = useHistory()
   const { authToken } = useAuth()
   const { loading, error, orderLogs, refetch } = useOrderLogCollection(memberId)
-
-  const syncOrderIds = orderLogs.filter(orderLog => orderLog.status === 'PAYING').map(orderLog => orderLog.id)
-  const { data: paymentData } = useQuery<hasura.GET_PAYMENT_LOG, hasura.GET_PAYMENT_LOGVariables>(GET_PAYMENT_LOG, {
-    variables: { orderIds: syncOrderIds },
-  })
-  const payments = paymentData?.payment_log
-
-  useEffect(() => {
-    if (authToken && payments && payments.length > 0) {
-      const requests = payments.map(payment => {
-        return axios.post<{ code: string; message: string; result: any }>(
-          `${process.env.REACT_APP_API_BASE_ROOT}/tasks/sync-payment/`,
-          { paymentNo: payment.no, customNo: payment.custom_no, paymentOptions: payment.options },
-          { headers: { authorization: `Bearer ${authToken}` } },
-        )
-      })
-      axios
-        .all(requests)
-        .then(
-          axios.spread((...responses) => {
-            const errors = responses.reduce<string[]>((accu, curr) => {
-              if (curr.data.code !== 'SUCCESS') accu.push(`${curr.data.code}: ${curr.data.message}`)
-              return accu
-            }, [])
-            if (errors.length > 0) return Promise.reject(new Error(errors.join(', ')))
-            process.env.NODE_ENV === 'development' && console.log(`successfully add delayed sync job`)
-          }),
-        )
-        .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
-    }
-  }, [authToken, payments])
-
   if (loading || error) {
     return (
       <AdminCard>
@@ -416,15 +384,5 @@ const useOrderLogCollection = (memberId: string) => {
     refetch,
   }
 }
-
-const GET_PAYMENT_LOG = gql`
-  query GET_PAYMENT_LOG($orderIds: [String!]) {
-    payment_log(where: { order_id: { _in: $orderIds } }) {
-      no
-      custom_no
-      options
-    }
-  }
-`
 
 export default OrderCollectionAdminCard
