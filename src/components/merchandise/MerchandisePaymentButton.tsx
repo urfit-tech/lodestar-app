@@ -1,4 +1,4 @@
-import { Button, Icon } from '@chakra-ui/react'
+import { Button, Icon, useToast } from '@chakra-ui/react'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -11,7 +11,7 @@ import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import CartContext from '../../contexts/CartContext'
-import { commonMessages } from '../../helpers/translation'
+import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { ReactComponent as CartIcon } from '../../images/cart.svg'
 import { MerchandiseProps, MerchandiseSpecProps } from '../../types/merchandise'
 import { AuthModalContext } from '../auth/AuthModal'
@@ -155,14 +155,16 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
   merchandiseSpec: MerchandiseSpecProps
   quantity: number
 }> = ({ merchandise, merchandiseSpec, quantity }) => {
+  const toast = useToast()
   const { formatMessage } = useIntl()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const [isPaymentButtonDisable, setIsPaymentButtonDisable] = useState(true)
   const { id: appId } = useApp()
   const tracking = useTracking()
 
   const { resourceCollection } = useResourceCollection([`${appId}:merchandise_spec:${merchandiseSpec.id}`])
+  const [isModalDisable, setIsModalDisable] = useState(false)
+  const [isOrderCheckLoading, setIsOrderCheckLoading] = useState(true)
 
   if (merchandise.isLimited && !merchandiseSpec.buyableQuantity) {
     return (
@@ -178,8 +180,19 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
         <Button
           colorScheme="primary"
           isFullWidth
-          isDisabled={(isAuthenticated && isLoading) || isPaymentButtonDisable}
+          isDisabled={(isAuthenticated && isLoading) || quantity <= 0}
           onClick={() => {
+            if (isModalDisable) {
+              toast({
+                title: isOrderCheckLoading
+                  ? `${formatMessage(checkoutMessages.message.checkingCoins)}`
+                  : `${formatMessage(checkoutMessages.message.notEnoughCoins)}`,
+                status: 'error',
+                duration: 3000,
+                position: 'top',
+              })
+              return
+            }
             isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true)
             const resource = resourceCollection.find(notEmpty)
             resource && tracking.addToCart(resource, { direct: true, quantity })
@@ -191,7 +204,8 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
       defaultProductId={`MerchandiseSpec_${merchandiseSpec.id}`}
       shippingMethods={merchandise.memberShop?.shippingMethods}
       productQuantity={quantity}
-      setIsPaymentButtonDisable={setIsPaymentButtonDisable}
+      setIsModalDisable={setIsModalDisable}
+      setIsOrderCheckLoading={setIsOrderCheckLoading}
     />
   )
 }
