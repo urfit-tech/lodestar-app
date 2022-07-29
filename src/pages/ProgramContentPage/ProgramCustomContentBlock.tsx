@@ -3,6 +3,7 @@ import { SkeletonText } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import { throttle } from 'lodash'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, includes } from 'ramda'
@@ -10,7 +11,6 @@ import React, { ReactElement, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../../components/common/Responsive'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { productMessages } from '../../helpers/translation'
@@ -58,7 +58,7 @@ const ProgramCustomContentBlock: React.VFC<{
   const { authToken, permissions, currentMemberId } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const hasProgramContentPermission = useHasProgramContentPermission(programContentId)
+  const { hasProgramContentPermission } = useHasProgramContentPermission(programContentId)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =

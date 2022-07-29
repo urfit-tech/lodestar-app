@@ -861,7 +861,7 @@ export const productMessages = {
       blockDelete: { id: 'product.program.dropdown.menu.item', defaultMessage: '刪除區塊' },
       provide: { id: 'product.program.content.provide', defaultMessage: '僅提供' },
       watch: { id: 'product.program.content.watch', defaultMessage: '觀看' },
-      unPurchased: { id: 'product.program.content.unPurchased', defaultMessage: '請升級方案即可觀看此內容' },
+      unPurchased: { id: 'product.program.content.unPurchased', defaultMessage: '購買方案解鎖內容' },
       description: { id: 'product.program.description', defaultMessage: '方案：' },
       trial: { id: 'product.program.tag.trial', defaultMessage: '試看' },
       total: {
