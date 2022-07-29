@@ -130,7 +130,7 @@ const ProgramContentMenu: React.VFC<{
   const { currentMemberId } = useAuth()
   const query = new URLSearchParams(search)
   const programPackageId = query.get('back')
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const { enrolledProgramIds, loading: enrolledProgramIdsLoading } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(program.id)
 
   return (
@@ -150,6 +150,7 @@ const ProgramContentMenu: React.VFC<{
           isScrollToTop={isScrollToTop}
           program={program}
           programPackageId={programPackageId}
+          isLoading={enrolledProgramIdsLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
         />
@@ -169,9 +170,10 @@ const ProgramContentSectionMenu: React.VFC<{
   }
   programPackageId: string | null
   isEnrolled: boolean
+  isLoading: boolean
   isScrollToTop?: boolean
   onSelect?: (programContentId: string) => void
-}> = ({ program, programPackageId, isEnrolled, isScrollToTop, onSelect }) => {
+}> = ({ program, programPackageId, isEnrolled, isLoading, isScrollToTop, onSelect }) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
 
   if (!program.contentSections || program.contentSections.length === 0) {
@@ -187,6 +189,7 @@ const ProgramContentSectionMenu: React.VFC<{
           defaultCollapse={programContentId ? v.contents.some(w => w.id === programContentId) : i === 0}
           programContentSection={v}
           programPackageId={programPackageId}
+          isLoading={isLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
         />
@@ -201,10 +204,11 @@ const ContentSection: React.VFC<{
   }
   programPackageId: string | null
   isEnrolled: boolean
+  isLoading: boolean
   isScrollToTop?: boolean
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
-}> = ({ programContentSection, programPackageId, isEnrolled, defaultCollapse, isScrollToTop, onSelect }) => {
+}> = ({ programContentSection, programPackageId, isEnrolled, isLoading, defaultCollapse, isScrollToTop, onSelect }) => {
   const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
 
@@ -234,6 +238,7 @@ const ContentSection: React.VFC<{
             programPackageId={programPackageId}
             onSetIsCollapse={setIsCollapse}
             isEnrolled={isEnrolled}
+            isLoading={isLoading}
             onClick={() => onSelect?.(programContent.id)}
           />
         ))}
@@ -247,10 +252,20 @@ const SortBySectionItem: React.VFC<{
   progress: number
   programPackageId: string | null
   isEnrolled: boolean
+  isLoading: boolean
   isScrollToTop?: boolean
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
-}> = ({ programContent, progress, programPackageId, isEnrolled, isScrollToTop, onSetIsCollapse, onClick }) => {
+}> = ({
+  programContent,
+  progress,
+  programPackageId,
+  isEnrolled,
+  isLoading,
+  isScrollToTop,
+  onSetIsCollapse,
+  onClick,
+}) => {
   const currentRef = useRef<HTMLInputElement>(null)
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -291,7 +306,7 @@ const SortBySectionItem: React.VFC<{
     >
       <StyledItemTitle className="mb-2">{programContent.title}</StyledItemTitle>
 
-      {!isLock && (
+      {(!isLock || isLoading) && (
         <StyledIconWrapper>
           <Icon as={CheckIcon} />
         </StyledIconWrapper>
@@ -299,7 +314,7 @@ const SortBySectionItem: React.VFC<{
 
       <div className="d-flex">
         <div className="mr-3 d-flex justify-content-center">
-          {isLock ? (
+          {!isLoading && isLock ? (
             <>
               <StyledIcon as={LockIcon} className="mr-2" />
               {programContent.contentType === 'video' && <span>{durationFormatter(programContent.duration)}</span>}
