@@ -307,7 +307,7 @@ export const commonMessages = {
       id: 'common.content.busyProcessing',
       defaultMessage: '由於目前系統忙碌中，訂單狀態與權益開通正在處理中',
     },
-    busyCheck: { id: 'common.content.busyCheck', defaultMessage: '請於 3 ~ 5 分鐘後至訂單記錄頁進行查詢' },
+    busyCheck: { id: 'common.content.busyCheck', defaultMessage: '請於 5 ~ 10 分鐘後至訂單記錄頁進行查詢' },
     busyContact: { id: 'commonMessages.content.busyContact', defaultMessage: '若還是未開通訂單，請聯繫平台客服' },
     busySyncJob: { id: 'commonMessages.content.busySyncJob', defaultMessage: '同步訂單發生錯誤，請聯繫平台客服' },
     busyOther: { id: 'commonMessages.content.busyOther', defaultMessage: '訂單出現異狀，請聯繫平台客服' },

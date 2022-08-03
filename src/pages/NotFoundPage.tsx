@@ -1,15 +1,18 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button } from '@chakra-ui/react'
+import { Icon as AntdIcon } from 'antd'
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useHistory } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages } from '../helpers/translation'
 import { ReactComponent as routeErrorIcon } from '../images/404.svg'
 import { ReactComponent as error2Icon } from '../images/error-2.svg'
 import { ReactComponent as errorIcon } from '../images/error.svg'
+import { messages } from './OrderPage'
 
 const StyledWrapper = styled.div`
   padding: 5rem 1rem;
@@ -26,7 +29,7 @@ const StyledTitle = styled.h3`
   letter-spacing: 1.5px;
 `
 const StyledDescription = styled.div`
-  height: 3em;
+  margin-bottom: 24px;
   font-size: 14px;
   letter-spacing: 0.4px;
 `
@@ -57,6 +60,9 @@ const NotFoundPage: React.VFC<{
 }> = ({ variant }) => {
   const { formatMessage } = useIntl()
   let history = useHistory()
+  const [errorCode] = useQueryParam('code', StringParam)
+
+  const isPaymentGatewayError: boolean = errorCode === 'E_PAYMENT_GATEWAY'
 
   const handleClick =
     variant === 'error'
@@ -75,13 +81,25 @@ const NotFoundPage: React.VFC<{
         <meta name="robots" content="noindex" />
       </Helmet>
       <StyledWrapper>
-        <StyledIcon
-          as={variant === 'error' ? error2Icon : variant === 'repairing' ? errorIcon : routeErrorIcon}
-          className="mb-4 mx-auto"
-        />
+        {isPaymentGatewayError ? (
+          <AntdIcon
+            className="mb-5"
+            type="warning"
+            theme="twoTone"
+            twoToneColor="#ffbe1e"
+            style={{ fontSize: '4rem' }}
+          />
+        ) : (
+          <StyledIcon
+            as={variant === 'error' ? error2Icon : variant === 'repairing' ? errorIcon : routeErrorIcon}
+            className="mb-4 mx-auto"
+          />
+        )}
         <StyledTitle>
           {formatMessage(
-            variant === 'error'
+            isPaymentGatewayError
+              ? commonMessages.title.systemBusy
+              : variant === 'error'
               ? commonMessages.title.error
               : variant === 'repairing'
               ? commonMessages.title.repairing
@@ -89,18 +107,34 @@ const NotFoundPage: React.VFC<{
           )}
         </StyledTitle>
         <StyledDescription>
-          {formatMessage(
-            variant === 'error'
-              ? commonMessages.content.errorDescription
-              : variant === 'repairing'
-              ? commonMessages.content.repairingDescription
-              : commonMessages.content.routeErrorDescription,
+          {isPaymentGatewayError ? (
+            <>
+              {formatMessage(commonMessages.content.busyProcessing)}
+              <br />
+              {formatMessage(commonMessages.content.busyCheck)}
+              <br />
+              {formatMessage(commonMessages.content.busyContact)}
+            </>
+          ) : (
+            formatMessage(
+              variant === 'error'
+                ? commonMessages.content.errorDescription
+                : variant === 'repairing'
+                ? commonMessages.content.repairingDescription
+                : commonMessages.content.routeErrorDescription,
+            )
           )}
         </StyledDescription>
-        {handleClick && (
-          <StyledButton onClick={handleClick} variant="outline">
-            {formatMessage(variant === 'error' ? commonMessages.button.reload : commonMessages.button.previousPage)}
-          </StyledButton>
+        {isPaymentGatewayError ? (
+          <Link to="/settings/orders" className="mt-4">
+            <Button>{formatMessage(messages.orderTracking)}</Button>
+          </Link>
+        ) : (
+          handleClick && (
+            <StyledButton onClick={handleClick} variant="outline">
+              {formatMessage(variant === 'error' ? commonMessages.button.reload : commonMessages.button.previousPage)}
+            </StyledButton>
+          )
         )}
       </StyledWrapper>
     </DefaultLayout>
