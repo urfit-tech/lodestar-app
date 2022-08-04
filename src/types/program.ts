@@ -80,7 +80,14 @@ export type ProgramContentSection = {
   materialsCount?: number
 }
 
-export type DisplayMode = 'conceal' | 'trial' | 'loginToTrial' | 'payToWatch'
+export type DisplayMode = keyof typeof DisplayModeEnum
+
+export enum DisplayModeEnum {
+  conceal = 'conceal',
+  trial = 'trial',
+  loginToTrial = 'loginToTrial',
+  payToWatch = 'payToWatch',
+}
 
 export type ProgramContent = {
   id: string
