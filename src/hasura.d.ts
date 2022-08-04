@@ -4303,7 +4303,7 @@ export interface GET_ORDER_PRODUCT_order_product_by_pk_order_log {
   /**
    * name | email | phone | address | postCode | buyerPhone | uniformTitle | uniformNumber
    */
-  invoice: any;
+  invoice_options: any;
 }
 
 export interface GET_ORDER_PRODUCT_order_product_by_pk {
@@ -6106,7 +6106,7 @@ export interface GET_ORDER_LOGS_WITH_MERCHANDISE_SPEC_order_log {
   /**
    * name | email | phone | address | postCode | buyerPhone | uniformTitle | uniformNumber
    */
-  invoice: any;
+  invoice_options: any;
   /**
    * An array relationship
    */
@@ -10579,7 +10579,7 @@ export interface GET_ORDERS_PRODUCT_order_log_by_pk {
   /**
    * name | email | phone | address | postCode | buyerPhone | uniformTitle | uniformNumber
    */
-  invoice: any;
+  invoice_options: any;
 }
 
 export interface GET_ORDERS_PRODUCT {
@@ -13262,7 +13262,7 @@ export enum order_log_update_column {
   discount_type = "discount_type",
   expired_at = "expired_at",
   id = "id",
-  invoice = "invoice",
+  invoice_options = "invoice_options",
   invoice_issued_at = "invoice_issued_at",
   is_deleted = "is_deleted",
   last_paid_at = "last_paid_at",
@@ -19646,7 +19646,7 @@ export interface order_log_bool_exp {
   discount_type?: Int_comparison_exp | null;
   expired_at?: timestamptz_comparison_exp | null;
   id?: String_comparison_exp | null;
-  invoice?: jsonb_comparison_exp | null;
+  invoice_options?: jsonb_comparison_exp | null;
   invoice_issued_at?: timestamptz_comparison_exp | null;
   is_deleted?: Boolean_comparison_exp | null;
   last_paid_at?: timestamptz_comparison_exp | null;
@@ -19686,7 +19686,7 @@ export interface order_log_insert_input {
   discount_type?: number | null;
   expired_at?: any | null;
   id?: string | null;
-  invoice?: any | null;
+  invoice_options?: any | null;
   invoice_issued_at?: any | null;
   is_deleted?: boolean | null;
   last_paid_at?: any | null;

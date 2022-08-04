@@ -149,7 +149,7 @@ export const useOrderProduct = (orderProductId: string) => {
           order_log {
             id
             member_id
-            invoice
+            invoice_options
           }
         }
       }
@@ -191,7 +191,7 @@ export const useOrderProduct = (orderProductId: string) => {
           createAt: new Date(data.order_product_by_pk.created_at),
           product: data.order_product_by_pk.product,
           memberId: data.order_product_by_pk.order_log.member_id,
-          invoice: data.order_product_by_pk.order_log.invoice,
+          invoice: data.order_product_by_pk.order_log.invoice_options,
         }
 
   return {
