@@ -307,7 +307,7 @@ export const commonMessages = {
       id: 'common.content.busyProcessing',
       defaultMessage: '由於目前系統忙碌中，訂單狀態與權益開通正在處理中',
     },
-    busyCheck: { id: 'common.content.busyCheck', defaultMessage: '請於 3 ~ 5 分鐘後至訂單記錄頁進行查詢' },
+    busyCheck: { id: 'common.content.busyCheck', defaultMessage: '請於 5 ~ 10 分鐘後至訂單記錄頁進行查詢' },
     busyContact: { id: 'commonMessages.content.busyContact', defaultMessage: '若還是未開通訂單，請聯繫平台客服' },
     busySyncJob: { id: 'commonMessages.content.busySyncJob', defaultMessage: '同步訂單發生錯誤，請聯繫平台客服' },
     busyOther: { id: 'commonMessages.content.busyOther', defaultMessage: '訂單出現異狀，請聯繫平台客服' },
@@ -861,7 +861,7 @@ export const productMessages = {
       blockDelete: { id: 'product.program.dropdown.menu.item', defaultMessage: '刪除區塊' },
       provide: { id: 'product.program.content.provide', defaultMessage: '僅提供' },
       watch: { id: 'product.program.content.watch', defaultMessage: '觀看' },
-      unPurchased: { id: 'product.program.content.unPurchased', defaultMessage: '請升級方案即可觀看此內容' },
+      unPurchased: { id: 'product.program.content.unPurchased', defaultMessage: '購買方案解鎖內容' },
       description: { id: 'product.program.description', defaultMessage: '方案：' },
       trial: { id: 'product.program.tag.trial', defaultMessage: '試看' },
       total: {

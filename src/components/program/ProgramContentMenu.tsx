@@ -1,6 +1,7 @@
 import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
 import { Select } from '@chakra-ui/react'
 import { Card } from 'antd'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, sum } from 'ramda'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineVideoCamera, AiOutlinePlaySquare } from 'react-icons/ai'
@@ -10,10 +11,11 @@ import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
-import { useProgramContentBody } from '../../hooks/program'
+import { useEnrolledProgramIds, useProgramContentBody } from '../../hooks/program'
+import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
-import { Program, ProgramContent, ProgramContentSection } from '../../types/program'
+import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 import programMessages from './translation'
 
 const StyledIcon = styled(Icon)`
@@ -91,6 +93,9 @@ const StyledItem = styled.div`
   &.active {
     background: ${props => rgba(props.theme['@primary-color'], 0.1)};
     color: ${props => props.theme['@primary-color']};
+    & ${StyledItemTitle} {
+      color: ${props => props.theme['@primary-color']};
+    }
   }
   &.unread ${StyledIconWrapper} {
     border-color: #cdcdcd;
@@ -103,6 +108,10 @@ const StyledItem = styled.div`
   &.done ${StyledIconWrapper} {
     background: ${props => props.theme['@primary-color']};
     color: white;
+  }
+  &.lock {
+    opacity: 0.4;
+    color: var(--gray-darker);
   }
 `
 
@@ -118,8 +127,11 @@ const ProgramContentMenu: React.VFC<{
   const { formatMessage } = useIntl()
   const [sortBy, setSortBy] = useState('section')
   const { search } = useLocation()
+  const { currentMemberId } = useAuth()
   const query = new URLSearchParams(search)
   const programPackageId = query.get('back')
+  const { enrolledProgramIds, loading: enrolledProgramIdsLoading } = useEnrolledProgramIds(currentMemberId || '')
+  const isEnrolled = enrolledProgramIds.includes(program.id)
 
   return (
     <StyledProgramContentMenu>
@@ -138,6 +150,8 @@ const ProgramContentMenu: React.VFC<{
           isScrollToTop={isScrollToTop}
           program={program}
           programPackageId={programPackageId}
+          isLoading={enrolledProgramIdsLoading}
+          isEnrolled={isEnrolled}
           onSelect={onSelect}
         />
       )}
@@ -149,15 +163,17 @@ const ProgramContentMenu: React.VFC<{
 }
 
 const ProgramContentSectionMenu: React.VFC<{
-  isScrollToTop?: boolean
   program: Program & {
     contentSections: (ProgramContentSection & {
       contents: ProgramContent[]
     })[]
   }
   programPackageId: string | null
+  isEnrolled: boolean
+  isLoading: boolean
+  isScrollToTop?: boolean
   onSelect?: (programContentId: string) => void
-}> = ({ program, programPackageId, onSelect, isScrollToTop }) => {
+}> = ({ program, programPackageId, isEnrolled, isLoading, isScrollToTop, onSelect }) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
 
   if (!program.contentSections || program.contentSections.length === 0) {
@@ -173,6 +189,8 @@ const ProgramContentSectionMenu: React.VFC<{
           defaultCollapse={programContentId ? v.contents.some(w => w.id === programContentId) : i === 0}
           programContentSection={v}
           programPackageId={programPackageId}
+          isLoading={isLoading}
+          isEnrolled={isEnrolled}
           onSelect={onSelect}
         />
       ))}
@@ -181,14 +199,16 @@ const ProgramContentSectionMenu: React.VFC<{
 }
 
 const ContentSection: React.VFC<{
-  isScrollToTop?: boolean
   programContentSection: ProgramContentSection & {
     contents: ProgramContent[]
   }
   programPackageId: string | null
+  isEnrolled: boolean
+  isLoading: boolean
+  isScrollToTop?: boolean
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
-}> = ({ programContentSection, programPackageId, defaultCollapse, onSelect, isScrollToTop }) => {
+}> = ({ programContentSection, programPackageId, isEnrolled, isLoading, defaultCollapse, isScrollToTop, onSelect }) => {
   const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
 
@@ -217,6 +237,8 @@ const ContentSection: React.VFC<{
             progress={contentProgress.find(progress => progress.programContentId === programContent.id)?.progress || 0}
             programPackageId={programPackageId}
             onSetIsCollapse={setIsCollapse}
+            isEnrolled={isEnrolled}
+            isLoading={isLoading}
             onClick={() => onSelect?.(programContent.id)}
           />
         ))}
@@ -226,16 +248,28 @@ const ContentSection: React.VFC<{
 }
 
 const SortBySectionItem: React.VFC<{
-  isScrollToTop?: boolean
   programContent: ProgramContent
   progress: number
   programPackageId: string | null
+  isEnrolled: boolean
+  isLoading: boolean
+  isScrollToTop?: boolean
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
-}> = ({ isScrollToTop, programContent, progress, programPackageId, onSetIsCollapse, onClick }) => {
+}> = ({
+  programContent,
+  progress,
+  programPackageId,
+  isEnrolled,
+  isLoading,
+  isScrollToTop,
+  onSetIsCollapse,
+  onClick,
+}) => {
   const currentRef = useRef<HTMLInputElement>(null)
   const { formatMessage } = useIntl()
   const history = useHistory()
+  const { currentMemberId, isAuthenticated } = useAuth()
   const { programId, programContentId } = useParams<{
     programId: string
     programContentId?: string
@@ -245,6 +279,10 @@ const SortBySectionItem: React.VFC<{
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
 
   const isActive = programContent.id === programContentId
+  const isTrial = programContent?.displayMode === DisplayModeEnum.trial
+  const isLoginTrial = programContent?.displayMode === DisplayModeEnum.loginToTrial
+  const isLock = !isEnrolled && !isTrial && !(isLoginTrial ? Boolean(currentMemberId && isAuthenticated) : false)
+
   useEffect(() => {
     if (isActive) {
       onSetIsCollapse?.(true)
@@ -258,7 +296,7 @@ const SortBySectionItem: React.VFC<{
   return (
     <StyledItem
       ref={currentRef}
-      className={`${progressStatus} ${isActive ? 'active' : ''}`}
+      className={`${progressStatus} ${isActive ? 'active' : isLock ? 'lock' : ''}`}
       onClick={() => {
         onClick?.()
         history.push(
@@ -268,13 +306,20 @@ const SortBySectionItem: React.VFC<{
     >
       <StyledItemTitle className="mb-2">{programContent.title}</StyledItemTitle>
 
-      <StyledIconWrapper>
-        <Icon as={CheckIcon} />
-      </StyledIconWrapper>
+      {(!isLock || isLoading) && (
+        <StyledIconWrapper>
+          <Icon as={CheckIcon} />
+        </StyledIconWrapper>
+      )}
 
       <div className="d-flex">
         <div className="mr-3 d-flex justify-content-center">
-          {programContent.contentType === 'video' ? (
+          {!isLoading && isLock ? (
+            <>
+              <StyledIcon as={LockIcon} className="mr-2" />
+              {programContent.contentType === 'video' && <span>{durationFormatter(programContent.duration)}</span>}
+            </>
+          ) : programContent.contentType === 'video' ? (
             <>
               <StyledIcon as={AiOutlineVideoCamera} className="mr-2" />
               <span>{durationFormatter(programContent.duration)}</span>
