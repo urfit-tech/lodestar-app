@@ -1,34 +1,31 @@
 import { useQuery } from '@apollo/react-hooks'
 import { LockIcon } from '@chakra-ui/icons'
-import { SkeletonText } from '@chakra-ui/react'
+import { Button, SkeletonText } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
+import Cookies from 'js-cookie'
 import { throttle } from 'lodash'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import { productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
-import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
+import { DisplayModeEnum, ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
+import pageMessages from '../translation'
 import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
 import ProgramContentTabs from './ProgramContentTabs'
-
-const StyledUnPurchased = styled.div`
-  color: ${props => props.theme['@primary-color']};
-  font-size: 16px;
-  font-weight: bold;
-`
 
 const StyledTitle = styled.h3`
   padding-bottom: 1.25rem;
@@ -45,11 +42,12 @@ const ProgramContentBlock: React.VFC<{
   editors?: string[]
 }> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
   const { formatMessage } = useIntl()
+  const history = useHistory()
   const { loading: loadingApp, enabledModules } = useApp()
-  const { authToken } = useAuth()
+  const { authToken, currentMemberId, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const hasProgramContentPermission = useHasProgramContentPermission(programContentId)
+  const { hasProgramContentPermission, isLoginTrial } = useHasProgramContentPermission(programContentId)
 
   const instructor = programRoles.filter(role => role.name === 'instructor')[0]
 
@@ -67,7 +65,9 @@ const ProgramContentBlock: React.VFC<{
       programContentBodyType === 'video' ||
       !insertProgress ||
       !refetchProgress ||
-      initialProgress === 1
+      initialProgress === 1 ||
+      !currentMemberId ||
+      !isAuthenticated
     ) {
       return
     }
@@ -83,6 +83,8 @@ const ProgramContentBlock: React.VFC<{
     programContentBodyType,
     programContentId,
     refetchProgress,
+    currentMemberId,
+    isAuthenticated,
   ])
 
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
@@ -100,10 +102,30 @@ const ProgramContentBlock: React.VFC<{
     <div id="program_content_block" className="pt-4 p-sm-4">
       {((programContent.contentType === 'video' && !hasProgramContentPermission) ||
         (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
-        <StyledUnPurchased className="p-2 text-center">
-          <LockIcon className="mr-2" />
-          {formatMessage(productMessages.program.content.unPurchased)}
-        </StyledUnPurchased>
+        <div className="d-flex justify-content-center">
+          {!hasProgramContentPermission && isLoginTrial ? (
+            <Button
+              colorScheme="primary"
+              className="mb-4"
+              onClick={() => {
+                Cookies.set('redirect', window.location.href)
+                history.push('/auth')
+              }}
+            >
+              <LockIcon className="mr-2 mb-1" />
+              {formatMessage(pageMessages.ProgramContentBlock.loginTrial)}
+            </Button>
+          ) : (
+            <Button
+              colorScheme="primary"
+              className="mb-4"
+              onClick={() => history.push(`/programs/${programId}?visitIntro=1`)}
+            >
+              <LockIcon className="mr-2 mb-1" />
+              {formatMessage(productMessages.program.content.unPurchased)}
+            </Button>
+          )}
+        </div>
       )}
 
       {programContent.contentType === 'video' && hasProgramContentPermission && (
@@ -181,8 +203,12 @@ const ProgramContentBlock: React.VFC<{
   )
 }
 
-const useHasProgramContentPermission: (id: string) => boolean = id => {
-  const { currentMemberId } = useAuth()
+const useHasProgramContentPermission: (id: string) => {
+  hasProgramContentPermission: boolean
+  isTrial: boolean
+  isLoginTrial: boolean
+} = id => {
+  const { currentMemberId, isAuthenticated } = useAuth()
   const { data } = useQuery<hasura.GET_PROGRAM_CONTENT_PERMISSION, hasura.GET_PROGRAM_CONTENT_PERMISSIONVariables>(
     gql`
       query GET_PROGRAM_CONTENT_PERMISSION($id: uuid!, $currentMemberId: String!) {
@@ -198,8 +224,35 @@ const useHasProgramContentPermission: (id: string) => boolean = id => {
       },
     },
   )
+  const { data: programContentData } = useQuery<
+    hasura.GET_PROGRAM_CONTENT_DISPLAY_MODE,
+    hasura.GET_PROGRAM_CONTENT_DISPLAY_MODEVariables
+  >(
+    gql`
+      query GET_PROGRAM_CONTENT_DISPLAY_MODE($id: uuid!) {
+        program_content_by_pk(id: $id) {
+          display_mode
+        }
+      }
+    `,
+    {
+      variables: {
+        id,
+      },
+    },
+  )
+  const displayMode = programContentData?.program_content_by_pk?.display_mode
+  const isTrial = displayMode === DisplayModeEnum.trial
+  const isLoginTrial = displayMode === DisplayModeEnum.loginToTrial
 
-  return !!data?.program_content_enrollment?.length
+  return {
+    hasProgramContentPermission:
+      !!data?.program_content_enrollment?.length ||
+      isTrial ||
+      (isLoginTrial ? Boolean(currentMemberId && isAuthenticated) : false),
+    isTrial,
+    isLoginTrial,
+  }
 }
 
 export { useHasProgramContentPermission }

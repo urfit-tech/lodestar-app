@@ -10,7 +10,7 @@ import ProgramContentTrialModal from '../../components/program/ProgramContentTri
 import { durationFormatter } from '../../helpers'
 import { productMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
-import { Program, ProgramContent, ProgramContentSection } from '../../types/program'
+import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 
 const StyledTitle = styled.h2`
   font-size: 24px;
@@ -95,7 +95,7 @@ const ProgramContentListSection: React.VFC<{
                   if (isEnrolled) {
                     history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
                   }
-                  if (programContent.displayMode === 'loginToTrial' && !isAuthenticated) {
+                  if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
                     setAuthModalVisible?.(true)
                   }
                 }}
@@ -110,8 +110,8 @@ const ProgramContentListSection: React.VFC<{
                 </Typography.Text>
 
                 <StyledDuration>
-                  {(programContent.displayMode === 'trial' ||
-                    (programContent.displayMode === 'loginToTrial' && isAuthenticated)) &&
+                  {(programContent.displayMode === DisplayModeEnum.trial ||
+                    (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
                   !isEnrolled ? (
                     <ProgramContentTrialModal
                       programContentId={programContent.id}
@@ -123,7 +123,7 @@ const ProgramContentListSection: React.VFC<{
                         </StyledObscure>
                       )}
                     />
-                  ) : programContent.displayMode === 'loginToTrial' && !isAuthenticated ? (
+                  ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
                     <StyledTag color={theme.colors.primary[500]}>
                       {formatMessage(productMessages.program.content.trial)}
                     </StyledTag>

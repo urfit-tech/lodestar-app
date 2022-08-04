@@ -15,6 +15,9 @@ const pageMessages = {
     foo: { id: 'page.ProgramContentTabs.foo', defaultMessage: 'Foo Message' },
     bar: { id: 'page.ProgramContentTabs.bar', defaultMessage: 'Bar Message' },
   }),
+  ProgramContentBlock: defineMessages({
+    loginTrial: { id: 'page.ProgramContentBlock.loginTrial', defaultMessage: '登入後試看' },
+  }),
   // ProgramPage
   ProgramPage: defineMessages({
     foo: { id: 'page.ProgramPage.foo', defaultMessage: 'Foo Message' },

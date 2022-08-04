@@ -21,7 +21,7 @@ import { commonMessages } from '../helpers/translation'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
-const messages = defineMessages({
+export const messages = defineMessages({
   orderSuccessHint: {
     id: 'common.text.orderSuccessHint',
     defaultMessage: '若你選擇「{method}」需於付款完成後，{waitingDays} 個工作日才會開通。',
@@ -148,17 +148,11 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
                     style={{ fontSize: '4rem' }}
                   />
                   <Typography.Title level={4}>{formatMessage(commonMessages.title.systemBusy)}</Typography.Title>
-                  {errorCode === 'E_SYNC_PAYMENT' ? (
+                  {errorCode === 'E_SYNC_PAYMENT' || errorCode === 'E_ADD_SYNC_JOB' ? (
                     <>
-                      <Typography.Text>{formatMessage(commonMessages.content.busy)}</Typography.Text>
                       <Typography.Text>{formatMessage(commonMessages.content.busyProcessing)}</Typography.Text>
                       <Typography.Text>{formatMessage(commonMessages.content.busyCheck)}</Typography.Text>
                       <Typography.Text>{formatMessage(commonMessages.content.busyContact)}</Typography.Text>
-                    </>
-                  ) : errorCode === 'E_ADD_SYNC_JOB' ? (
-                    <>
-                      <Typography.Text>{formatMessage(commonMessages.content.busy)}</Typography.Text>
-                      <Typography.Text>{formatMessage(commonMessages.content.busySyncJob)}</Typography.Text>
                     </>
                   ) : (
                     <>
