@@ -17,7 +17,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
           title
           cover_url
           description
-          program_package_programs(order_by: { position: asc, program: { position: asc, published_at: desc } }) {
+          program_package_programs(order_by: { position: asc }) {
             id
             program {
               id
