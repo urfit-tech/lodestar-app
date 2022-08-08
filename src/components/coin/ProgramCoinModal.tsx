@@ -133,7 +133,7 @@ const ProgramCoinModal: React.VFC<
             isDisabled={orderChecking || !isPaymentAvailable}
             isLoading={orderChecking || orderPlacing}
             onClick={() => {
-              isEnrolled ? window.confirm(formatMessage(commonMessages.alert.isEquity)) && handlePay() : handlePay()
+              isEnrolled ? window.confirm(formatMessage(commonMessages.alert.isEnrolled)) && handlePay() : handlePay()
             }}
           >
             {formatMessage(commonMessages.button.useCoin)}
