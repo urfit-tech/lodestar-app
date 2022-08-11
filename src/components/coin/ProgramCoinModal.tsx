@@ -130,11 +130,13 @@ const ProgramCoinModal: React.VFC<
           <Button
             colorScheme="primary"
             isFullWidth
-            isDisabled={orderChecking || !isPaymentAvailable || isEnrolled}
+            isDisabled={orderChecking || !isPaymentAvailable}
             isLoading={orderChecking || orderPlacing}
-            onClick={handlePay}
+            onClick={() => {
+              isEnrolled ? window.confirm(formatMessage(commonMessages.alert.isEnrolled)) && handlePay() : handlePay()
+            }}
           >
-            {isEnrolled ? '已使用代幣兌換' : formatMessage(commonMessages.button.useCoin)}
+            {formatMessage(commonMessages.button.useCoin)}
           </Button>
         </StyledBody>
       </Modal>
