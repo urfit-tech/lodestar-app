@@ -139,6 +139,7 @@ export const commonMessages = {
   }),
   alert: defineMessages({
     noPath: { id: 'common.alert.noPath', defaultMessage: '無此路徑' },
+    isEnrolled: { id: 'common.alert.isEnrolled', defaultMessage: '你已持有課堂課程，確定要換購嗎？' },
   }),
   button: defineMessages({
     reset: { id: 'common.button.reset', defaultMessage: '重置' },

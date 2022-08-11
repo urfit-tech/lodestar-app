@@ -265,7 +265,7 @@ export const useOrderLogsWithMerchandiseSpec = (memberId: string) => {
           delivered_at
           deliver_message
           shipping
-          invoice
+          invoice_options
 
           order_products(where: { product_id: { _like: "Merchandise%" } }) {
             id
@@ -302,7 +302,7 @@ export const useOrderLogsWithMerchandiseSpec = (memberId: string) => {
       deliveredAt: v.delivered_at && new Date(v.delivered_at),
       deliverMessage: v.deliver_message,
       shipping: v.shipping,
-      invoice: v.invoice,
+      invoice: v.invoice_options,
       orderProducts: v.order_products.map(w => ({
         id: w.id,
         merchandiseSpecId: w.product_id.split('_')[1],

@@ -274,7 +274,7 @@ const GET_ORDERS_PRODUCT = gql`
         price
       }
       shipping
-      invoice
+      invoice_options
     }
   }
 `
