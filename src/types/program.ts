@@ -132,6 +132,11 @@ export type ExerciseProps = {
   isAvailableToRetry: boolean
   passingScore: number
   questions: QuestionProps[]
+  startedAt?: Date
+  endedAt?: Date
+  timeLimitUnit?: string
+  timeLimitAmount?: number
+  isAvailableAnnounceScore?: boolean
   isAnswerer?: boolean
 }
 
@@ -141,6 +146,7 @@ export type QuestionProps = {
   description: string | null
   answerDescription: string | null
   isMultipleAnswers: boolean
+  layout?: 'column' | 'grid'
   choices: ChoiceProps[]
   gainedPoints: number
 }
