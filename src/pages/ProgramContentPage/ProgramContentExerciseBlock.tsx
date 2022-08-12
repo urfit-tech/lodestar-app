@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import moment from 'moment'
 import React from 'react'
 import { StringParam, useQueryParam } from 'use-query-params'
 import ExerciseBlock from '../../components/exercise/ExerciseBlock'
@@ -30,6 +31,11 @@ const ProgramContentExerciseBlock: React.VFC<{
 
   return (
     <ExerciseBlock
+      // TODO
+      /*  
+          below data which from programContent metadata 
+          will be replaced from exam data
+      */
       id={programContent.programContentBody.id}
       programContentId={programContent.id}
       title={programContent.title}
@@ -43,6 +49,7 @@ const ProgramContentExerciseBlock: React.VFC<{
             description: question.description || '',
             answerDescription: question.answerDescription || '',
             points: question.points || 0,
+            layout: question.layout,
             isMultipleAnswers: !!question.isMultipleAnswers,
             gainedPoints: lastExercise?.answer?.find((v: any) => v.questionId === question.id)?.gainedPoints || 0,
             choices:
@@ -59,8 +66,21 @@ const ProgramContentExerciseBlock: React.VFC<{
       }
       isAvailableToGoBack={!!programContent.metadata?.isAvailableToGoBack}
       isAvailableToRetry={!!programContent.metadata?.isAvailableToRetry}
+      isAvailableAnnounceScore={programContent.metadata?.isAvailableAnnounceScore ?? true}
       passingScore={programContent.metadata?.passingScore || 0}
       isAnswerer={currentMemberId === lastExercise?.memberId}
+      timeLimitUnit={programContent.metadata?.timeLimitUnit}
+      timeLimitAmount={programContent.metadata?.timeLimitAmount}
+      startedAt={
+        programContent.metadata?.startedAt && moment(programContent.metadata?.startedAt).isValid()
+          ? moment(programContent.metadata?.startedAt).toDate()
+          : undefined
+      }
+      endedAt={
+        programContent.metadata?.endedAt && moment(programContent.metadata?.endedAt).isValid()
+          ? moment(programContent.metadata?.endedAt).toDate()
+          : undefined
+      }
     />
   )
 }
