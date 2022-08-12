@@ -2,6 +2,7 @@ import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
 import { Select } from '@chakra-ui/react'
 import { Card } from 'antd'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import moment from 'moment'
 import { flatten, sum } from 'ramda'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineCalendar, AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
@@ -327,7 +328,7 @@ const SortBySectionItem: React.VFC<{
           ) : programContent.contentType === 'practice' ? (
             <StyledIcon as={PracticeIcon} className="mr-2" />
           ) : programContent.contentType === 'exercise' ? (
-            <ExerciseQuestionCount contentBodyId={programContent.contentBodyId} />
+            <ExerciseQuestionCount contentBodyId={programContent.contentBodyId} programContent={programContent} />
           ) : (
             <StyledIcon as={AiOutlineFileText} />
           )}
@@ -429,15 +430,31 @@ const EmptyMenu: React.VFC = () => (
   <Card style={{ textAlign: 'center', color: '#9b9b9b' }}>初次購買還沒有新的內容喔～</Card>
 )
 
-const ExerciseQuestionCount: React.VFC<{ contentBodyId: string }> = ({ contentBodyId }) => {
+const ExerciseQuestionCount: React.VFC<{ contentBodyId: string; programContent: ProgramContent }> = ({
+  contentBodyId,
+  programContent,
+}) => {
   const { formatMessage } = useIntl()
   const { data: programContentBody } = useProgramContentBody(contentBodyId)
   const count = Array.isArray(programContentBody?.data?.questions) ? programContentBody?.data?.questions?.length : 0
+
+  // TODO fetch endedAt from exam data
+  const endedAt =
+    programContent.metadata?.endedAt && moment(programContent.metadata?.endedAt).isValid()
+      ? moment(programContent.metadata?.endedAt).toDate()
+      : undefined
 
   return (
     <>
       <StyledIcon as={QuizIcon} className="mr-2" />
       <span>{formatMessage(programMessages.ProgramContentMenu.totalQuestion, { count })}</span>
+      {endedAt && (
+        <div className="d-flex align-items-center ml-3">
+          <StyledIcon as={AiOutlineCalendar} className="mr-2" />
+          {dateFormatter(endedAt, 'YYYY-MM-DD HH:mm')}
+          <span className="ml-2">{formatMessage(programMessages.ProgramContentMenu.expired)}</span>
+        </div>
+      )}
     </>
   )
 }
