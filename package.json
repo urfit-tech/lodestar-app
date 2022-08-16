@@ -91,7 +91,7 @@
     "env-cmd": "^10.1.0",
     "framer-motion": "2.9.4",
     "graphql-tag": "^2.12.5",
-    "html2canvas": "^1.4.1",
+    "html2canvas": "https://github.com/jhihruei/html2canvas.git#hotfix-cache",
     "husky": "4.3.8",
     "js-cookie": "^3.0.1",
     "jsonwebtoken": "8.5.1",
