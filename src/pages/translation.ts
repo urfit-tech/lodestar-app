@@ -62,6 +62,10 @@ const pageMessages = {
       id: 'page.MemberCertificatePage.qualification',
       defaultMessage: '學習時數',
     },
+    download: {
+      id: 'page.MemberCertificatePage.download',
+      defaultMessage: '下載證書',
+    },
   }),
   // MerchandisePage
   MerchandisePage: defineMessages({}),

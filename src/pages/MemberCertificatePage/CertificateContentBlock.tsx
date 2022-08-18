@@ -1,9 +1,10 @@
 import { Button } from '@chakra-ui/react'
+import html2canvas from 'html2canvas'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { render } from 'mustache'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { forwardRef, RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StyledCode, StyledDate } from '../../components/common/CertificateCard'
@@ -93,6 +94,27 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
     ...memberCertificate.values,
     deliveredAt,
   }
+  const certificateRef = useRef<HTMLDivElement | null>(null)
+
+  const CERTIFICATE_IMAGE_SIZE = 2400
+  const onDownLoad = () => {
+    if (!certificateRef.current) {
+      return null
+    }
+    const scale = CERTIFICATE_IMAGE_SIZE / (certificateRef as RefObject<HTMLDivElement>).current!.offsetWidth
+    html2canvas(certificateRef.current, {
+      // NOTE: Cannot get background image without allowTaint and useCORS
+      allowTaint: true,
+      useCORS: true,
+      scale,
+    }).then(canvas => {
+      const img = canvas.toDataURL('image/png', 1)
+      const link = document.createElement('a')
+      link.download = `${certificate.title}.png`
+      link.href = img
+      link.click()
+    })
+  }
 
   return (
     <StyledContainer>
@@ -127,17 +149,22 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
         </StyledAbstract>
       </StyledContentBlock>
       {/* TEMPLATE */}
-      <Certificate template={certificate.template || ''} templateVars={templateVars} />
+      <Certificate template={certificate.template || ''} templateVars={templateVars} ref={certificateRef} />
       {/* TEMPLATE */}
       <StyledContentBlockFooter>
         <StyledAbstract className="mr-3">
           {currentMember?.name}
           {formatMessage(pageMessages.MemberCertificatePage.congratulations)}
         </StyledAbstract>
-        <SocialSharePopover
-          url={window.location.href}
-          children={<StyledButton>{formatMessage(pageMessages.MemberCertificatePage.share)}</StyledButton>}
-        />
+        <div>
+          <Button variant="outline" className="mr-2" onClick={onDownLoad}>
+            {formatMessage(pageMessages.MemberCertificatePage.download)}
+          </Button>
+          <SocialSharePopover
+            url={window.location.href}
+            children={<StyledButton>{formatMessage(pageMessages.MemberCertificatePage.share)}</StyledButton>}
+          />
+        </div>
       </StyledContentBlockFooter>
     </StyledContainer>
   )
@@ -157,19 +184,19 @@ const StyledCertificateCard = styled.div<{ scale: number }>`
   transform: scale(${props => props.scale});
   transform-origin: top left;
 `
-const Certificate: React.VFC<{
+const _Certificate: React.VFC<{
   template: string
   templateVars?: any
-}> = ({ template, templateVars }) => {
+  certificateRef?: React.Ref<HTMLDivElement>
+}> = ({ template, templateVars, certificateRef }) => {
   const [scale, setScale] = useState(0)
-  const containerRef = useRef<HTMLDivElement | null>(null)
   const cardRef = useRef<HTMLDivElement | null>(null)
 
   const handleResize = useCallback(() => {
-    if (containerRef.current && cardRef.current) {
-      setScale(containerRef.current.offsetWidth / cardRef.current.offsetWidth)
+    if (certificateRef && (certificateRef as RefObject<HTMLDivElement>).current && cardRef.current) {
+      setScale((certificateRef as RefObject<HTMLDivElement>).current!.offsetWidth / cardRef.current.offsetWidth)
     }
-  }, [containerRef, cardRef])
+  }, [certificateRef, cardRef])
 
   useEffect(() => {
     handleResize()
@@ -178,7 +205,7 @@ const Certificate: React.VFC<{
   }, [handleResize])
 
   return (
-    <StyledCertificateContainer ref={containerRef}>
+    <StyledCertificateContainer ref={certificateRef}>
       <StyledCertificateCard
         ref={cardRef}
         scale={scale}
@@ -187,5 +214,15 @@ const Certificate: React.VFC<{
     </StyledCertificateContainer>
   )
 }
+
+const Certificate = forwardRef(
+  (
+    props: {
+      template: string
+      templateVars?: any
+    },
+    ref?: React.Ref<HTMLDivElement>,
+  ) => <_Certificate {...props} certificateRef={ref} />,
+)
 
 export default CertificateContentBlock
