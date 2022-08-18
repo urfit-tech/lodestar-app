@@ -53,7 +53,7 @@ const CountDownTimeBlock: React.VFC<{
       )}
       {seconds > 3600 && (
         <StyledNumberBlock>
-          <span className="text-primary">{Math.floor((seconds % 84600) / 3600)}</span>
+          <span className="text-primary">{Math.floor((seconds % 86400) / 3600)}</span>
           <span>{formatMessage(commonMessages.unit.hour)}</span>
         </StyledNumberBlock>
       )}
