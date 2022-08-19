@@ -2,7 +2,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useMutateExercise } from '../../hooks/program'
+import { useMutateExercise, useProgramContentExamId } from '../../hooks/program'
 import { ExerciseProps } from '../../types/program'
 import AdminCard from '../common/AdminCard'
 import ExerciseQuestionBlock from './ExerciseQuestionBlock'
@@ -36,6 +36,7 @@ const ExerciseBlock: React.VFC<
   isAnswerer,
 }) => {
   const { currentMemberId } = useAuth()
+  const { examId } = useProgramContentExamId(programContentId)
   const { insertExercise } = useMutateExercise()
   const [status, setStatus] = useState<'answering' | 'result' | 'review'>(isTaken ? 'result' : 'answering')
   const [questions, setQuestions] = useState(defaultQuestions)
@@ -107,6 +108,7 @@ const ExerciseBlock: React.VFC<
                   choiceIds: question.choices.filter(choice => choice.isSelected).map(choice => choice.id),
                   gainedPoints: question.gainedPoints || 0,
                 })),
+                exam_id: examId,
               },
             },
           })
