@@ -50,6 +50,7 @@ const ProgramContentExerciseBlock: React.VFC<{
             answerDescription: question.answerDescription || '',
             points: question.points || 0,
             layout: question.layout,
+            font: question.font,
             isMultipleAnswers: !!question.isMultipleAnswers,
             gainedPoints: lastExercise?.answer?.find((v: any) => v.questionId === question.id)?.gainedPoints || 0,
             choices:

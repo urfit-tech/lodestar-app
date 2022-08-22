@@ -147,6 +147,7 @@ export type QuestionProps = {
   answerDescription: string | null
   isMultipleAnswers: boolean
   layout?: 'column' | 'grid'
+  font?: string
   choices: ChoiceProps[]
   gainedPoints: number
 }

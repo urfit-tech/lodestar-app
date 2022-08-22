@@ -1,3 +1,15 @@
+@font-face {
+  font-family: 'BpmfGenSenRounded';
+  src: url('./fonts//BpmfGenSenRounded/BpmfGenSenRounded-R.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'BpmfGenSenRounded';
+  src: url('./fonts//BpmfGenSenRounded/BpmfGenSenRounded-B.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
 // ant design
 .ant-btn {
   span {
