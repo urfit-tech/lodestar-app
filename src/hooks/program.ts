@@ -791,3 +791,26 @@ export const useProgramEnrollmentAggregate = (programId: string, options?: Pick<
     refetch,
   }
 }
+
+export const useProgramContentExamId = (programContentId: string) => {
+  const { loading, error, data } = useQuery<
+    hasura.GET_PROGRAM_CONTENT_EXAM_ID,
+    hasura.GET_PROGRAM_CONTENT_EXAM_IDVariables
+  >(
+    gql`
+      query GET_PROGRAM_CONTENT_EXAM_ID($programContentId: uuid!) {
+        program_content_body(where: { program_content: { id: { _eq: $programContentId } } }) {
+          target
+        }
+      }
+    `,
+    { variables: { programContentId } },
+  )
+  const examId: string | null = data?.program_content_body[0].target
+
+  return {
+    loading,
+    error,
+    examId,
+  }
+}
