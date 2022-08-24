@@ -82,7 +82,7 @@ const ExerciseQuestionBlock: React.VFC<
     onNextStep?: () => void
     onChoiceSelect?: (questionId: string, choiceId: string) => void
   }
-> = ({ questions, showDetail, timeSpent, isAvailableToGoBack, onChoiceSelect, onFinish }) => {
+> = ({ questions, showDetail, timeSpent, isAvailableToGoBack, onChoiceSelect, onNextStep, onFinish }) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
   const activeQuestion = questions[index]
