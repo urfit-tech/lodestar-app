@@ -115,6 +115,7 @@ const ExerciseBlock: React.VFC<
             .then(() => setStatus('result'))
             .catch(() => {})
         }}
+        onNextStep={() => setStatus('result')}
       />
     )
   }

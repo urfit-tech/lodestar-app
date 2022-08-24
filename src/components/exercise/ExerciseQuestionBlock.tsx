@@ -49,9 +49,10 @@ const ExerciseQuestionBlock: React.VFC<
   ExerciseProps & {
     showDetail: boolean
     onFinish?: () => void
+    onNextStep?: () => void
     onChoiceSelect?: (questionId: string, choiceId: string) => void
   }
-> = ({ questions, showDetail, isAvailableToGoBack, onChoiceSelect, onFinish }) => {
+> = ({ questions, showDetail, isAvailableToGoBack, onChoiceSelect, onNextStep, onFinish }) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
   const activeQuestion = questions[index]
@@ -124,7 +125,11 @@ const ExerciseQuestionBlock: React.VFC<
         )}
 
         {index === questions.length - 1 && (
-          <Button variant="primary" disabled={activeQuestion.choices.every(v => !v.isSelected)} onClick={onFinish}>
+          <Button
+            variant="primary"
+            disabled={activeQuestion.choices.every(v => !v.isSelected)}
+            onClick={showDetail ? onNextStep : onFinish}
+          >
             {showDetail ? formatMessage(messages.showResult) : formatMessage(messages.submit)}
           </Button>
         )}
