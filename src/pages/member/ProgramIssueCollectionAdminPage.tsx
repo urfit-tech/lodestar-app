@@ -142,7 +142,7 @@ const GET_MEMBER_PROGRAM_ISSUES = gql`
         app_id: { _eq: $appId }
         thread_id: { _like: $threadIdLike }
         solved_at: { _is_null: $unsolved }
-        issue_enrollment: { program: { program_enrollments: { member_id: { _eq: $memberId } } } }
+        issue_enrollment: { program: { program_content_enrollments: { member_id: { _eq: $memberId } } } }
       }
       order_by: [
         { created_at: desc }
