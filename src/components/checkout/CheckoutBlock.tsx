@@ -447,7 +447,7 @@ const CheckoutBlock: React.VFC<{
             </div>
             <div className="col-12 col-lg-6">
               <Form.Item
-                validateStatus={validateStatus}
+                validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : validateStatus}
                 hasFeedback
                 help={
                   validateStatus === 'error'
@@ -482,7 +482,7 @@ const CheckoutBlock: React.VFC<{
             </div>
             <div className="col-12 col-lg-6">
               <Form.Item
-                validateStatus={validateStatus}
+                validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : validateStatus}
                 hasFeedback
                 help={
                   validateStatus === 'error'

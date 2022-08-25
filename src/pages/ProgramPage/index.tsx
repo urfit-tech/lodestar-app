@@ -94,6 +94,7 @@ const ProgramPage: React.VFC = () => {
   const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(programId)
   const [previousPage] = useQueryParam('back', StringParam)
+  const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
 
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock) {
@@ -137,8 +138,8 @@ const ProgramPage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
-      <ProgramPageHelmet program={program} />
-      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      <ProgramPageHelmet program={program} onLoaded={() => setMetaLoaded(true)} />
+      {resourceCollection[0] && metaLoaded && <Tracking.Detail resource={resourceCollection[0]} />}
 
       <div>
         {Number(settings['layout.program_page']) ? (
