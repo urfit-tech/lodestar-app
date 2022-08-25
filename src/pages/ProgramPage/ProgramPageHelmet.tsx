@@ -6,84 +6,86 @@ import { getBraftContent } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { Program } from '../../types/program'
 
-const ProgramPageHelmet: React.VFC<{ program: Program }> = ({ program }) => {
-  const app = useApp()
-  const programPlans = program.plans.map(plan =>
-    plan.salePrice !== null && moment() <= moment(plan.endedAt) ? plan.salePrice : plan.listPrice,
-  )
+const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentProps<typeof PageHelmet>, 'onLoaded'>> =
+  ({ program, onLoaded }) => {
+    const app = useApp()
+    const programPlans = program.plans.map(plan =>
+      plan.salePrice !== null && moment() <= moment(plan.endedAt) ? plan.salePrice : plan.listPrice,
+    )
 
-  const { resourceCollection } = useResourceCollection([`${app.id}:program:${program.id}`])
-  const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
-  const { productReviews } = useProductReviews(`/programs/${program.id}`)
+    const { resourceCollection } = useResourceCollection([`${app.id}:program:${program.id}`])
+    const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
+    const { productReviews } = useProductReviews(`/programs/${program.id}`)
 
-  return (
-    <PageHelmet
-      title={program.title}
-      description={getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150)}
-      keywords={program.tags}
-      jsonLd={[
-        {
-          '@context': 'https://schema.org',
-          '@type': 'Product',
-          name: program.title || app.settings['title'],
-          image: program.coverUrl || app.settings['open_graph.image'],
-          description: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
-          sku: resourceCollection[0]?.sku,
-          mpn: program.id,
-          brand: {
-            '@type': 'Brand',
-            name: app.settings['title'],
-          },
-          review: productReviews.map(review => ({
-            '@type': 'Review',
-            reviewRating: {
-              '@type': 'Rating',
-              ratingValue: review?.score || 0,
-              bestRating: '5',
+    return (
+      <PageHelmet
+        title={program.title}
+        description={getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150)}
+        keywords={program.tags}
+        onLoaded={onLoaded}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: program.title || app.settings['title'],
+            image: program.coverUrl || app.settings['open_graph.image'],
+            description: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
+            sku: resourceCollection[0]?.sku,
+            mpn: program.id,
+            brand: {
+              '@type': 'Brand',
+              name: app.settings['title'],
             },
-            author: {
-              '@type': 'Person',
-              name: review?.memberName || review?.memberId || '',
+            review: productReviews.map(review => ({
+              '@type': 'Review',
+              reviewRating: {
+                '@type': 'Rating',
+                ratingValue: review?.score || 0,
+                bestRating: '5',
+              },
+              author: {
+                '@type': 'Person',
+                name: review?.memberName || review?.memberId || '',
+              },
+            })),
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: averageScore,
+              reviewCount: reviewCount,
             },
-          })),
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: averageScore,
-            reviewCount: reviewCount,
+            offers: {
+              '@type': 'AggregateOffer',
+              offerCount: programPlans.length,
+              lowPrice: Math.min(...programPlans),
+              highPrice: Math.max(...programPlans),
+              priceCurrency: app.settings['currency_id'] || process.env.SYS_CURRENCY,
+            },
           },
-          offers: {
-            '@type': 'AggregateOffer',
-            offerCount: programPlans.length,
-            lowPrice: Math.min(...programPlans),
-            highPrice: Math.max(...programPlans),
-            priceCurrency: app.settings['currency_id'] || process.env.SYS_CURRENCY,
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Course',
+            name: program.title,
+            description: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
+            provider: {
+              '@type': 'Organization',
+              name: app.settings['name'],
+              sameAs: `https://${window.location.host}`,
+            },
           },
-        },
-        {
-          '@context': 'https://schema.org',
-          '@type': 'Course',
-          name: program.title,
-          description: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
-          provider: {
-            '@type': 'Organization',
-            name: app.settings['name'],
-            sameAs: `https://${window.location.host}`,
+        ]}
+        openGraph={[
+          { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
+          { property: 'og:type', content: 'website' },
+          { property: 'og:url', content: window.location.href },
+          { property: 'og:title', content: program.title || app.settings['open_graph.title'] },
+          {
+            property: 'og:description',
+            content: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
           },
-        },
-      ]}
-      openGraph={[
-        { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: window.location.href },
-        { property: 'og:title', content: program.title || app.settings['open_graph.title'] },
-        {
-          property: 'og:description',
-          content: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
-        },
-        { property: 'og:image', content: program.coverUrl || app.settings['open_graph.image'] },
-      ]}
-    />
-  )
-}
+          { property: 'og:image', content: program.coverUrl || app.settings['open_graph.image'] },
+        ]}
+      />
+    )
+  }
 
 export default ProgramPageHelmet
