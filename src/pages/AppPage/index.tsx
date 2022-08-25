@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import MessengerChat from '../../components/common/MessengerChat'
@@ -113,6 +113,7 @@ const sectionConverter = {
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { settings } = useApp()
+  const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPage, errorAppPage, appPage } = usePage(location.pathname)
 
   if (loadingAppPage) {
@@ -124,8 +125,8 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   }
   return (
     <>
-      <PageHelmet />
-      <Tracking.View />
+      <PageHelmet onLoaded={() => setMetaLoaded(true)} />
+      {metaLoaded && <Tracking.View />}
       {appPage ? (
         <DefaultLayout {...appPage.options}>
           {appPage.craftData ? (

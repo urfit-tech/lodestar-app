@@ -527,7 +527,7 @@ export const useSimpleProductCollection = () => {
 
 export const useMemberValidation = (email: string) => {
   const { currentMemberId } = useAuth()
-  const { id: appId } = useApp()
+  const { id: appId, settings } = useApp()
   const { loading, error, data, refetch } = useQuery(
     gql`
       query SEARCH_MEMBER($email: String!, $appId: String!) {
@@ -541,13 +541,16 @@ export const useMemberValidation = (email: string) => {
 
   const memberId: string | null = data?.member_public[0]?.id || null
 
-  const validateStatus: 'success' | 'error' | 'validating' | undefined = !email
-    ? undefined
-    : loading
-    ? 'validating'
-    : !memberId || memberId === currentMemberId
-    ? 'error'
-    : 'success'
+  const validateStatus: 'success' | 'error' | 'validating' | undefined =
+    settings['payment.referrer.type'] === 'any'
+      ? 'success'
+      : !email
+      ? undefined
+      : loading
+      ? 'validating'
+      : !memberId || memberId === currentMemberId
+      ? 'error'
+      : 'success'
 
   return {
     loadingMemberId: loading,
