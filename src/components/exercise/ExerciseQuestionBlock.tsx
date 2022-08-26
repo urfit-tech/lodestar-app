@@ -1,25 +1,40 @@
-import { Button, Icon } from '@chakra-ui/react'
+import { Button, Icon, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import { CommonLargeTextMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import React, { memo, useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
+import { durationFullFormatter } from '../../helpers'
 import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.svg'
 import { ReactComponent as ErrorCircleIcon } from '../../images/error-circle.svg'
 import { ReactComponent as TickIcon } from '../../images/tick.svg'
 import { ExerciseProps } from '../../types/program'
+import exerciseMessages from './translation'
 
-const messages = defineMessages({
-  prevQuestion: { id: 'program.ui.prevQuestion', defaultMessage: '上一題' },
-  nextQuestion: { id: 'program.ui.nextQuestion', defaultMessage: '下一題' },
-  submit: { id: 'program.ui.submit', defaultMessage: '送出' },
-  showResult: { id: 'program.ui.showResult', defaultMessage: '查看分數' },
-  correctAnswer: { id: 'program.status.correctAnswer', defaultMessage: '答案正確' },
-  errorAnswer: { id: 'program.status.errorAnswer', defaultMessage: '答案錯誤' },
-  correct: { id: 'program.status.correct', defaultMessage: '正解' },
-})
-
+const StyledTableContainer = styled.div`
+  margin-bottom: 24px;
+  padding: 10px 10px 0;
+  border-radius: 4px;
+  border: solid 1px #ececec;
+`
+const StyledTh = styled(Th)`
+  && {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+    color: var(--gray-darker);
+  }
+`
+const StyledTbody = styled(Tbody)`
+  && {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.2px;
+    color: var(--gray-darker);
+  }
+`
 const StyledQuestionCount = styled.span`
   ${CommonTextMixin}
 `
@@ -44,21 +59,75 @@ const StyledDetailTitle = styled.h4`
 const StyledDetailContent = styled.div`
   ${CommonLargeTextMixin}
 `
+const StyledQuestionsContainer = styled.div`
+  margin-bottom: 1.5rem;
+  &&.layout_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+`
+const StyledBraftContentContainer = styled.div<{ font?: string }>`
+  && {
+    font-family: ${props => (props.font === 'zhuyin' ? 'BpmfGenSenRounded' : 'inherit')};
+    font-size: ${props => (props.font === 'zhuyin' ? '32px' : '16px')};
+  }
+`
 
 const ExerciseQuestionBlock: React.VFC<
   ExerciseProps & {
     showDetail: boolean
+    timeSpent?: number
     onFinish?: () => void
     onNextStep?: () => void
     onChoiceSelect?: (questionId: string, choiceId: string) => void
   }
-> = ({ questions, showDetail, isAvailableToGoBack, onChoiceSelect, onNextStep, onFinish }) => {
+> = ({ questions, showDetail, timeSpent, isAvailableToGoBack, onChoiceSelect, onNextStep, onFinish }) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
   const activeQuestion = questions[index]
 
   if (!activeQuestion) {
     return null
+  }
+
+  const detailTable: {
+    head: {
+      columns: {
+        label: string
+        hidden?: boolean
+      }[]
+    }
+    body: {
+      rows: {
+        columns: string[]
+        hidden?: boolean
+      }[]
+    }
+  } = {
+    head: {
+      columns: [
+        { label: formatMessage(exerciseMessages['*'].item) },
+        { label: formatMessage(exerciseMessages['*'].personalPerformance) },
+        { label: formatMessage(exerciseMessages['*'].overallAverage), hidden: true },
+      ],
+    },
+    body: {
+      rows: [
+        {
+          columns: [
+            formatMessage(exerciseMessages.ExerciseQuestionBlock.spendTime),
+            `${durationFullFormatter((timeSpent || 0) / 1000 / questions.length)}`,
+            '23.64 秒',
+          ],
+          hidden: !Boolean(timeSpent),
+        },
+        {
+          columns: [formatMessage(exerciseMessages.ExerciseQuestionBlock.averageCorrectRate), '', `80%`],
+          hidden: true,
+        },
+      ],
+    },
   }
 
   return (
@@ -68,10 +137,12 @@ const ExerciseQuestionBlock: React.VFC<
       </StyledQuestionCount>
 
       <StyledQuestion className="mb-4">
-        <BraftContent>{activeQuestion.description}</BraftContent>
+        <StyledBraftContentContainer font={activeQuestion.font}>
+          <BraftContent>{activeQuestion.description}</BraftContent>
+        </StyledBraftContentContainer>
       </StyledQuestion>
 
-      <div className="mb-4">
+      <StyledQuestionsContainer className={activeQuestion.layout === 'grid' ? 'layout_grid' : ''}>
         {activeQuestion.choices.map((choice, i, choices) => (
           <ExerciseQuestionButton
             key={choice.id}
@@ -81,36 +152,79 @@ const ExerciseQuestionBlock: React.VFC<
             isSelected={!!choice.isSelected}
             onClick={() => onChoiceSelect?.(activeQuestion.id, choice.id)}
           >
-            <BraftContent>{choice.description}</BraftContent>
+            <StyledBraftContentContainer font={activeQuestion.font}>
+              <BraftContent>{choice.description}</BraftContent>
+            </StyledBraftContentContainer>
           </ExerciseQuestionButton>
         ))}
-      </div>
+      </StyledQuestionsContainer>
 
       {showDetail && (
         <StyledDetail className="mb-4">
           {activeQuestion.choices.every(choice => choice.isCorrect === choice.isSelected) ? (
             <span>
               <Icon className="mr-2" as={CheckCircleIcon} color="var(--success)" />
-              <StyledDetailTitle>{formatMessage(messages.correctAnswer)}</StyledDetailTitle>
+              <StyledDetailTitle>
+                {formatMessage(exerciseMessages.ExerciseQuestionBlock.correctAnswer)}
+              </StyledDetailTitle>
             </span>
           ) : (
             <span>
               <Icon className="mr-2" as={ErrorCircleIcon} color="var(--error)" />
-              <StyledDetailTitle>{formatMessage(messages.errorAnswer)}</StyledDetailTitle>
+              <StyledDetailTitle>{formatMessage(exerciseMessages.ExerciseQuestionBlock.errorAnswer)}</StyledDetailTitle>
             </span>
           )}
           <StyledDetailContent className="ml-4">
             {!BraftEditor.createEditorState(activeQuestion.answerDescription).isEmpty() && (
-              <BraftContent>{activeQuestion.answerDescription}</BraftContent>
+              <StyledBraftContentContainer font={activeQuestion.font}>
+                <BraftContent>{activeQuestion.answerDescription}</BraftContent>
+              </StyledBraftContentContainer>
             )}
           </StyledDetailContent>
         </StyledDetail>
       )}
-
+      {showDetail && detailTable.body.rows.some(body => !body.hidden) && (
+        <StyledTableContainer>
+          <Table>
+            <Thead>
+              <Tr>
+                {detailTable.head.columns
+                  .filter(column => !column.hidden)
+                  .map(column => (
+                    <StyledTh key={column.label}>{column.label}</StyledTh>
+                  ))}
+              </Tr>
+            </Thead>
+            <StyledTbody>
+              {detailTable.body.rows
+                .filter(row => !row.hidden)
+                .map((row, rowIndex, rows) => (
+                  <Tr key={row.columns.join('')}>
+                    {row.columns
+                      .filter((_column, columnIndex) => !detailTable.head.columns[columnIndex].hidden)
+                      .map(column => (
+                        <Td
+                          style={{
+                            ...(rowIndex + 1 === rows.length
+                              ? {
+                                  borderBottom: 'none',
+                                }
+                              : {}),
+                          }}
+                        >
+                          {column}
+                        </Td>
+                      ))}
+                  </Tr>
+                ))}
+            </StyledTbody>
+          </Table>
+        </StyledTableContainer>
+      )}
       <div className="text-center">
         {isAvailableToGoBack && 0 < index && (
           <Button onClick={() => setIndex(prev => prev - 1)} variant="outline" className="mr-2">
-            {formatMessage(messages.prevQuestion)}
+            {formatMessage(exerciseMessages.ExerciseQuestionBlock.prevQuestion)}
           </Button>
         )}
 
@@ -120,7 +234,7 @@ const ExerciseQuestionBlock: React.VFC<
             disabled={activeQuestion.choices.every(v => !v.isSelected)}
             onClick={() => setIndex(prev => prev + 1)}
           >
-            {formatMessage(messages.nextQuestion)}
+            {formatMessage(exerciseMessages.ExerciseQuestionBlock.nextQuestion)}
           </Button>
         )}
 
@@ -130,7 +244,9 @@ const ExerciseQuestionBlock: React.VFC<
             disabled={activeQuestion.choices.every(v => !v.isSelected)}
             onClick={showDetail ? onNextStep : onFinish}
           >
-            {showDetail ? formatMessage(messages.showResult) : formatMessage(messages.submit)}
+            {showDetail
+              ? formatMessage(exerciseMessages.ExerciseQuestionBlock.showResult)
+              : formatMessage(exerciseMessages.ExerciseQuestionBlock.submit)}
           </Button>
         )}
       </div>
@@ -191,7 +307,7 @@ const ExerciseQuestionButton: React.FC<{
           $isError={isCorrect && isCorrect !== isSelected}
         >
           <span>{children}</span>
-          <span className="correct">{isCorrect && formatMessage(messages.correct)}</span>
+          <span className="correct">{isCorrect && formatMessage(exerciseMessages.ExerciseQuestionBlock.correct)}</span>
         </StyledButton>
       )
     }
