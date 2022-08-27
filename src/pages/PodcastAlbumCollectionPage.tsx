@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/react-hooks'
 import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -106,7 +105,6 @@ const PodcastAlbumCollectionPage: React.VFC = () => {
   const [title] = useQueryParam('title', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
 
-  const { settings } = useApp()
   const { pageTitle } = useNav()
   const { formatMessage } = useIntl()
   const { status, podcastAlbums } = usePodcastAlbumCollection({
@@ -136,29 +134,6 @@ const PodcastAlbumCollectionPage: React.VFC = () => {
       ReactGA.ga('send', 'pageview')
     }
   }, [podcastAlbums])
-
-  let seoMeta:
-    | {
-        title?: string
-        description?: string
-      }
-    | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta']).PodcastAlbumCollectionPage
-  } catch (error) {}
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: seoMeta?.title,
-    description: seoMeta?.description,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: settings['seo.name'],
-      description: settings['open_graph.description'],
-    },
-  })
 
   return (
     <DefaultLayout white>

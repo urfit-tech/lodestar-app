@@ -1,6 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button } from 'antd'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
@@ -23,7 +22,6 @@ import { usePodcastProgramCollection } from '../hooks/podcast'
 const PodcastProgramCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId, isAuthenticated } = useAuth()
-  const { settings } = useApp()
   const { pageTitle } = useNav()
   const { currentLocale } = useContext(LocaleContext)
   const { podcastPrograms } = usePodcastProgramCollection()
@@ -33,28 +31,6 @@ const PodcastProgramCollectionPage: React.VFC = () => {
     uniqBy(category => category.id, flatten(podcastPrograms.map(podcastProgram => podcastProgram.categories))),
   )
 
-  let seoMeta:
-    | {
-        title?: string
-        description?: string
-      }
-    | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta'])?.PodcastProgramCollectionPage
-  } catch (error) {}
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: seoMeta?.title,
-    description: seoMeta?.description,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: settings['seo.name'],
-      description: settings['open_graph.description'],
-    },
-  })
 
   useEffect(() => {
     if (podcastPrograms) {

@@ -1,4 +1,3 @@
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { BREAK_POINT } from '../../components/common/Responsive'
@@ -29,29 +28,7 @@ const OnSalePage: React.VFC<ProjectProps> = ({
   comments,
   projectPlans,
 }) => {
-  const { settings } = useApp()
   const isDesktop = useMediaQuery({ minWidth: BREAK_POINT })
-  let seoMeta: { title?: string; description?: string } | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta']).ProjectPage[`${id}`]
-  } catch (error) {}
-
-  const siteTitle = seoMeta?.title || title
-  const siteDescription = seoMeta?.description || description
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: siteTitle,
-    image: coverUrl,
-    description: siteDescription,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: siteTitle,
-      description: siteDescription,
-    },
-  })
 
   return (
     <DefaultLayout white noFooter>
