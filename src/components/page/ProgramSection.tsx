@@ -19,7 +19,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
 }) => {
   const tracking = useTracking()
 
-  const { settings, currencyId: appCurrencyId, id: appId } = useApp()
+  const { id: appId } = useApp()
   const { loadingPrograms, errorPrograms, programs } = usePublishedProgramCollection({
     isPrivate: false,
     categoryId: options?.categoryId,

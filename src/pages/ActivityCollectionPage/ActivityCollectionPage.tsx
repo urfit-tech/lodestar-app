@@ -51,13 +51,12 @@ const StyledSkeleton = styled(Skeleton)`
 `
 
 const ActivityCollectionPage = () => {
-  const tracking = useTracking()
   const [active = null] = useQueryParam('categories', StringParam)
   const [classification = null, setClassification] = useQueryParam('classification', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)
   const [noTitle] = useQueryParam('noTitle', BooleanParam)
   const location = useLocation()
-  const { settings, currencyId: appCurrencyId, id: appId } = useApp()
+  const { settings } = useApp()
   const { loading, navs } = useNav()
   const { currentLocale } = useContext(LocaleContext)
   const pageTitle = navs.find(

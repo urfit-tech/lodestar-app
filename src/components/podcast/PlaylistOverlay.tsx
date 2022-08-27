@@ -1,5 +1,5 @@
 import { SkeletonText } from '@chakra-ui/react'
-import { Button, List, Menu } from 'antd'
+import { List } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
@@ -38,10 +38,6 @@ const StyledListItem = styled(List.Item)<{ variant?: 'playing' }>`
         `
       : ''}
 `
-const StyledMenu = styled(Menu)`
-  max-height: 20rem;
-  overflow: auto;
-`
 const StyledCoverBlock = styled.div`
   position: relative;
 `
@@ -76,13 +72,6 @@ const StyledInstructorName = styled.div`
   color: var(--gray-dark);
   letter-spacing: 0.4px;
   font-size: 14px;
-`
-const StyledButton = styled(Button)<{ color?: string }>`
-  color: ${props => props.color || 'var(--gray-dark)'};
-  &:hover,
-  &:hover .anticon {
-    color: ${props => props.theme['@primary-color']};
-  }
 `
 
 const PlaylistOverlay: React.VFC<{}> = () => {
