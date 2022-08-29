@@ -47,6 +47,11 @@ const StyledCategoryList = styled.ul`
   }
 `
 
+enum MerchandiseType {
+  Physical = 'isPhysical',
+  Virtual = 'virtual',
+}
+
 const MerchandiseCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const [tag] = useQueryParam('tag', StringParam)
@@ -59,8 +64,8 @@ const MerchandiseCollectionPage: React.VFC = () => {
   })
   const { pageTitle } = useNav()
 
-  const [selectedMerchandiseType, setSelectedMerchandiseType] = useState<string | null>(
-    isPhysical === undefined || isPhysical === null ? null : isPhysical ? 'isPhysical' : 'virtual',
+  const [selectedMerchandiseType, setSelectedMerchandiseType] = useState<MerchandiseType | null>(
+    isPhysical === undefined || isPhysical === null ? null : isPhysical ? MerchandiseType.Physical : MerchandiseType.Virtual,
   )
   const [categoryId, setCategoryId] = useState<string | null>()
 
@@ -71,8 +76,8 @@ const MerchandiseCollectionPage: React.VFC = () => {
   const filteredMerchandises = merchandises
     .filter(merchandise => !tag || merchandise.tags?.includes(tag))
     .filter(merchandise =>
-      selectedMerchandiseType && hasDifferentMerchandiseType
-        ? selectedMerchandiseType === 'isPhysical'
+      selectedMerchandiseType !== null && hasDifferentMerchandiseType
+        ? selectedMerchandiseType === MerchandiseType.Physical
           ? merchandise.isPhysical === true
           : merchandise.isPhysical === false
         : merchandise,
@@ -105,10 +110,10 @@ const MerchandiseCollectionPage: React.VFC = () => {
         setSelectedMerchandiseType(null)
       } else if (v === formatMessage(commonMessages.ui.physical)) {
         url.searchParams.set('isPhysical', '1')
-        setSelectedMerchandiseType('isPhysical')
+        setSelectedMerchandiseType(MerchandiseType.Physical)
       } else {
         url.searchParams.set('isPhysical', '0')
-        setSelectedMerchandiseType('virtual')
+        setSelectedMerchandiseType(MerchandiseType.Virtual)
       }
       window.history.pushState({}, '', url.toString())
     },
