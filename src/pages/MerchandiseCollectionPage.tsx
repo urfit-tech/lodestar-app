@@ -55,12 +55,13 @@ const MerchandiseCollectionPage: React.VFC = () => {
   const [isPhysical] = useQueryParam('isPhysical', BooleanParam)
   const { merchandises, merchandiseTags } = useMerchandiseCollection({
     search: keyword || '',
-    isPhysical: isPhysical !== undefined ? !!isPhysical : undefined,
     categories: categories ? categories : undefined,
   })
   const { pageTitle } = useNav()
 
-  const [selectCategory, setSelectCategory] = useState<string | null>(null)
+  const [selectCategory, setSelectCategory] = useState<string | null>(
+    isPhysical === undefined || isPhysical === null ? null : isPhysical ? 'isPhysical' : 'virtual',
+  )
   const [categoryId, setCategoryId] = useState<string | null>()
 
   const filteredMerchandises = merchandises
