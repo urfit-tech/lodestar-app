@@ -93,6 +93,8 @@ const MerchandiseCollectionPage: React.VFC = () => {
         ? formatMessage(commonMessages.ui.physical)
         : formatMessage(commonMessages.ui.virtual),
     onChange: v => {
+      setCategoryId(null)
+
       const url = new URL(window.location.href)
       if (v === formatMessage(commonMessages.ui.all)) {
         url.searchParams.delete('isPhysical')
