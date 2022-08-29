@@ -59,7 +59,7 @@ const MerchandiseCollectionPage: React.VFC = () => {
   })
   const { pageTitle } = useNav()
 
-  const [selectCategory, setSelectCategory] = useState<string | null>(
+  const [selectedMerchandiseType, setSelectedMerchandiseType] = useState<string | null>(
     isPhysical === undefined || isPhysical === null ? null : isPhysical ? 'isPhysical' : 'virtual',
   )
   const [categoryId, setCategoryId] = useState<string | null>()
@@ -71,8 +71,8 @@ const MerchandiseCollectionPage: React.VFC = () => {
   const filteredMerchandises = merchandises
     .filter(merchandise => !tag || merchandise.tags?.includes(tag))
     .filter(merchandise =>
-      selectCategory && hasDifferentMerchandiseType
-        ? selectCategory === 'isPhysical'
+      selectedMerchandiseType && hasDifferentMerchandiseType
+        ? selectedMerchandiseType === 'isPhysical'
           ? merchandise.isPhysical === true
           : merchandise.isPhysical === false
         : merchandise,
@@ -102,13 +102,13 @@ const MerchandiseCollectionPage: React.VFC = () => {
       const url = new URL(window.location.href)
       if (v === formatMessage(commonMessages.ui.all)) {
         url.searchParams.delete('isPhysical')
-        setSelectCategory(null)
+        setSelectedMerchandiseType(null)
       } else if (v === formatMessage(commonMessages.ui.physical)) {
         url.searchParams.set('isPhysical', '1')
-        setSelectCategory('isPhysical')
+        setSelectedMerchandiseType('isPhysical')
       } else {
         url.searchParams.set('isPhysical', '0')
-        setSelectCategory('virtual')
+        setSelectedMerchandiseType('virtual')
       }
       window.history.pushState({}, '', url.toString())
     },
