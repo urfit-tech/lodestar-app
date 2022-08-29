@@ -71,7 +71,7 @@ const MerchandiseCollectionPage: React.VFC = () => {
   const filteredMerchandises = merchandises
     .filter(merchandise => !tag || merchandise.tags?.includes(tag))
     .filter(merchandise =>
-      selectCategory
+      selectCategory && hasDifferentMerchandiseType
         ? selectCategory === 'isPhysical'
           ? merchandise.isPhysical === true
           : merchandise.isPhysical === false
