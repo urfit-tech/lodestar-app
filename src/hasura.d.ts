@@ -187,6 +187,111 @@ export interface GET_MANAGEMENT_DOMAINVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_EXAM_ID
+// ====================================================
+
+export interface GET_EXAM_ID_program_content_body {
+  __typename: "program_content_body";
+  target: any | null;
+}
+
+export interface GET_EXAM_ID {
+  /**
+   * fetch data from the table: "program_content_body"
+   */
+  program_content_body: GET_EXAM_ID_program_content_body[];
+}
+
+export interface GET_EXAM_IDVariables {
+  programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_EXAM
+// ====================================================
+
+export interface GET_EXAM_exam_by_pk_exam_question_group_question_group_questions_question_options {
+  __typename: "question_option";
+  id: any;
+  value: string;
+  is_answer: boolean | null;
+}
+
+export interface GET_EXAM_exam_by_pk_exam_question_group_question_group_questions {
+  __typename: "question";
+  id: any;
+  type: string;
+  subject: string;
+  layout: string;
+  font: string;
+  explanation: string | null;
+  /**
+   * An array relationship
+   */
+  question_options: GET_EXAM_exam_by_pk_exam_question_group_question_group_questions_question_options[];
+}
+
+export interface GET_EXAM_exam_by_pk_exam_question_group_question_group {
+  __typename: "question_group";
+  id: any;
+  title: string;
+  /**
+   * An array relationship
+   */
+  questions: GET_EXAM_exam_by_pk_exam_question_group_question_group_questions[];
+}
+
+export interface GET_EXAM_exam_by_pk_exam_question_group {
+  __typename: "exam_question_group";
+  id: any;
+  /**
+   * An object relationship
+   */
+  question_group: GET_EXAM_exam_by_pk_exam_question_group_question_group | null;
+}
+
+export interface GET_EXAM_exam_by_pk {
+  __typename: "exam";
+  id: any;
+  point: any;
+  passing_score: any;
+  examinable_unit: string | null;
+  examinable_amount: any | null;
+  examinable_started_at: any | null;
+  examinable_ended_at: any | null;
+  time_limit_unit: string | null;
+  time_limit_amount: any | null;
+  is_available_to_retry: boolean;
+  is_available_to_go_back: boolean;
+  is_available_announce_score: boolean;
+  /**
+   * An array relationship
+   */
+  exam_question_group: GET_EXAM_exam_by_pk_exam_question_group[];
+}
+
+export interface GET_EXAM {
+  /**
+   * fetch data from the table: "exam" using primary key columns
+   */
+  exam_by_pk: GET_EXAM_exam_by_pk | null;
+}
+
+export interface GET_EXAMVariables {
+  examId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: UPDATE_ISSUE_STATUS
 // ====================================================
 

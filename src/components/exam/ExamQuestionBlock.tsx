@@ -9,8 +9,8 @@ import { durationFullFormatter } from '../../helpers'
 import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.svg'
 import { ReactComponent as ErrorCircleIcon } from '../../images/error-circle.svg'
 import { ReactComponent as TickIcon } from '../../images/tick.svg'
-import { ExerciseProps } from '../../types/program'
-import exerciseMessages from './translation'
+import { Exam } from '../../types/program'
+import examMessages from './translation'
 
 const StyledTableContainer = styled.div`
   margin-bottom: 24px;
@@ -74,15 +74,16 @@ const StyledBraftContentContainer = styled.div<{ font?: string }>`
   }
 `
 
-const ExerciseQuestionBlock: React.VFC<
-  Pick<ExerciseProps, 'isAvailableToGoBack' | 'passingScore' | 'questions'> & {
+const ExamQuestionBlock: React.VFC<
+  Pick<Exam, 'isAvailableToGoBack' | 'passingScore'> & {
+    questions: any
     showDetail: boolean
     timeSpent?: number
     onFinish?: () => void
     onNextStep?: () => void
     onChoiceSelect?: (questionId: string, choiceId: string) => void
   }
-> = ({ questions, showDetail, timeSpent, isAvailableToGoBack, onChoiceSelect, onNextStep, onFinish }) => {
+> = ({ questions, isAvailableToGoBack, showDetail, timeSpent, onChoiceSelect, onNextStep, onFinish }) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
   const activeQuestion = questions[index]
@@ -107,23 +108,23 @@ const ExerciseQuestionBlock: React.VFC<
   } = {
     head: {
       columns: [
-        { label: formatMessage(exerciseMessages['*'].item) },
-        { label: formatMessage(exerciseMessages['*'].personalPerformance) },
-        { label: formatMessage(exerciseMessages['*'].overallAverage), hidden: true },
+        { label: formatMessage(examMessages['*'].item) },
+        { label: formatMessage(examMessages['*'].personalPerformance) },
+        { label: formatMessage(examMessages['*'].overallAverage), hidden: true },
       ],
     },
     body: {
       rows: [
         {
           columns: [
-            formatMessage(exerciseMessages.ExerciseQuestionBlock.spendTime),
+            formatMessage(examMessages.ExamQuestionBlock.spendTime),
             `${durationFullFormatter((timeSpent || 0) / 1000 / questions.length)}`,
             '23.64 秒',
           ],
           hidden: !Boolean(timeSpent),
         },
         {
-          columns: [formatMessage(exerciseMessages.ExerciseQuestionBlock.averageCorrectRate), '', `80%`],
+          columns: [formatMessage(examMessages.ExamQuestionBlock.averageCorrectRate), '', `80%`],
           hidden: true,
         },
       ],
@@ -143,11 +144,15 @@ const ExerciseQuestionBlock: React.VFC<
       </StyledQuestion>
 
       <StyledQuestionsContainer className={activeQuestion.layout === 'grid' ? 'layout_grid' : ''}>
-        {activeQuestion.choices.map((choice, i, choices) => (
-          <ExerciseQuestionButton
+        {/* 
+            // FIXME: fix type
+            */}
+        {activeQuestion.choices.map((choice: any, i: any, choices: any) => (
+          <ExamQuestionButton
             key={choice.id}
             showDetail={showDetail}
-            selectedCount={choices.filter(choice => choice.isSelected).length}
+            // FIXME: fix type
+            selectedCount={choices.filter((choice: any) => choice.isSelected).length}
             isCorrect={choice.isCorrect}
             isSelected={!!choice.isSelected}
             onClick={() => onChoiceSelect?.(activeQuestion.id, choice.id)}
@@ -155,23 +160,26 @@ const ExerciseQuestionBlock: React.VFC<
             <StyledBraftContentContainer font={activeQuestion.font}>
               <BraftContent>{choice.description}</BraftContent>
             </StyledBraftContentContainer>
-          </ExerciseQuestionButton>
+          </ExamQuestionButton>
         ))}
       </StyledQuestionsContainer>
 
       {showDetail && (
         <StyledDetail className="mb-4">
-          {activeQuestion.choices.every(choice => choice.isCorrect === choice.isSelected) ? (
+          {/* 
+            // FIXME: fix type
+            */}
+          {activeQuestion.choices.every(
+            (choice: { isCorrect: any; isSelected: any }) => choice.isCorrect === choice.isSelected,
+          ) ? (
             <span>
               <Icon className="mr-2" as={CheckCircleIcon} color="var(--success)" />
-              <StyledDetailTitle>
-                {formatMessage(exerciseMessages.ExerciseQuestionBlock.correctAnswer)}
-              </StyledDetailTitle>
+              <StyledDetailTitle>{formatMessage(examMessages.ExamQuestionBlock.correctAnswer)}</StyledDetailTitle>
             </span>
           ) : (
             <span>
               <Icon className="mr-2" as={ErrorCircleIcon} color="var(--error)" />
-              <StyledDetailTitle>{formatMessage(exerciseMessages.ExerciseQuestionBlock.errorAnswer)}</StyledDetailTitle>
+              <StyledDetailTitle>{formatMessage(examMessages.ExamQuestionBlock.errorAnswer)}</StyledDetailTitle>
             </span>
           )}
           <StyledDetailContent className="ml-4">
@@ -224,29 +232,31 @@ const ExerciseQuestionBlock: React.VFC<
       <div className="text-center">
         {isAvailableToGoBack && 0 < index && (
           <Button onClick={() => setIndex(prev => prev - 1)} variant="outline" className="mr-2">
-            {formatMessage(exerciseMessages.ExerciseQuestionBlock.prevQuestion)}
+            {formatMessage(examMessages.ExamQuestionBlock.prevQuestion)}
           </Button>
         )}
 
         {index < questions.length - 1 && (
           <Button
             variant="primary"
-            disabled={activeQuestion.choices.every(v => !v.isSelected)}
+            // FIXME: fix type
+            disabled={activeQuestion.choices.every((v: any) => !v.isSelected)}
             onClick={() => setIndex(prev => prev + 1)}
           >
-            {formatMessage(exerciseMessages.ExerciseQuestionBlock.nextQuestion)}
+            {formatMessage(examMessages.ExamQuestionBlock.nextQuestion)}
           </Button>
         )}
 
         {index === questions.length - 1 && (
           <Button
             variant="primary"
-            disabled={activeQuestion.choices.every(v => !v.isSelected)}
+            // FIXME: fix type
+            disabled={activeQuestion.choices.every((v: any) => !v.isSelected)}
             onClick={showDetail ? onNextStep : onFinish}
           >
             {showDetail
-              ? formatMessage(exerciseMessages.ExerciseQuestionBlock.showResult)
-              : formatMessage(exerciseMessages.ExerciseQuestionBlock.submit)}
+              ? formatMessage(examMessages.ExamQuestionBlock.showResult)
+              : formatMessage(examMessages.ExamQuestionBlock.submit)}
           </Button>
         )}
       </div>
@@ -287,7 +297,7 @@ const StyledButton = styled(Button)<{ $isActive: boolean; $isCorrect: boolean; $
   }
 `
 
-const ExerciseQuestionButton: React.FC<{
+const ExamQuestionButton: React.FC<{
   showDetail: boolean
   isSelected: boolean
   isCorrect: boolean
@@ -307,7 +317,7 @@ const ExerciseQuestionButton: React.FC<{
           $isError={isCorrect && isCorrect !== isSelected}
         >
           <span>{children}</span>
-          <span className="correct">{isCorrect && formatMessage(exerciseMessages.ExerciseQuestionBlock.correct)}</span>
+          <span className="correct">{isCorrect && formatMessage(examMessages.ExamQuestionBlock.correct)}</span>
         </StyledButton>
       )
     }
@@ -327,4 +337,4 @@ const ExerciseQuestionButton: React.FC<{
   (prevProps, nextProps) =>
     prevProps.isSelected === nextProps.isSelected && prevProps.selectedCount === nextProps.selectedCount,
 )
-export default ExerciseQuestionBlock
+export default ExamQuestionBlock

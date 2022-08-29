@@ -158,3 +158,45 @@ export type ChoiceProps = {
   isCorrect: boolean
   isSelected: boolean
 }
+
+// question
+type QuestionOption = {
+  id: string
+  value: string
+  isAnswer: boolean
+}
+
+export type Question = {
+  id: string
+  type: 'single'
+  subject: string
+  layout: 'grid' | 'list'
+  font: string
+  explanation: string
+  questionOptions?: QuestionOption[]
+}
+
+type QuestionGroup = {
+  id: string
+  title: string
+  amount: number
+  questions?: Question[]
+}
+
+export type ExamTimeUnit = 'day' | 'hour' | 'minute'
+
+export type Exam = {
+  id: string
+  point: number
+  passingScore: number
+  examinableUnit: ExamTimeUnit | null
+  examinableAmount: number | null
+  examinableStartedAt: Date | null
+  examinableEndedAt: Date | null
+  timeLimitUnit: ExamTimeUnit | null
+  timeLimitAmount: number | null
+  isAvailableToRetry: boolean
+  isAvailableToGoBack: boolean
+  isAvailableAnnounceScore: boolean
+  questionGroups: QuestionGroup[]
+}

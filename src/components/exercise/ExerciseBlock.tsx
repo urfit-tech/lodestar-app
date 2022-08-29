@@ -1,15 +1,14 @@
 import { Icon } from '@chakra-ui/icons'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import moment, { DurationInputArg2, Moment } from 'moment'
+import { handleError } from 'lodestar-app-element/src/helpers'
+import moment, { Moment } from 'moment'
 import { sum } from 'ramda'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useMutateExercise, useProgramContentExamId } from '../../hooks/program'
 import { ReactComponent as routeErrorIcon } from '../../images/404.svg'
-import { ExerciseProps } from '../../types/program'
 import AdminCard from '../common/AdminCard'
-import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
 import ExerciseIntroBlock from './ExerciseIntroBlock'
 import ExerciseQuestionBlock from './ExerciseQuestionBlock'
@@ -38,14 +37,38 @@ const StyledDescription = styled.div`
   color: var(--gray-darker);
 `
 
-const ExerciseBlock: React.VFC<
-  ExerciseProps & {
-    programContentId: string
-    title: string
-    nextProgramContentId?: string
-    isTaken?: boolean
-  }
-> = ({
+const ExerciseBlock: React.VFC<{
+  id: string
+  programContentId: string
+  title: string
+  nextProgramContentId?: string
+  isTaken?: boolean
+  isAnswerer?: boolean
+  isAvailableToGoBack: boolean
+  isAvailableToRetry: boolean
+  isAvailableAnnounceScore?: boolean
+  passingScore: number
+  questions: {
+    id: string
+    points: number
+    description: string | null
+    answerDescription: string | null
+    isMultipleAnswers: boolean
+    layout?: 'column' | 'grid'
+    font?: string
+    choices: {
+      id: string
+      description: string | null
+      isCorrect: boolean
+      isSelected: boolean
+    }[]
+    gainedPoints: number
+  }[]
+  startedAt?: Date // exam
+  endedAt?: Date
+  timeLimitUnit?: string
+  timeLimitAmount?: number
+}> = ({
   id,
   questions: defaultQuestions,
   passingScore,
@@ -64,9 +87,8 @@ const ExerciseBlock: React.VFC<
 }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { examId } = useProgramContentExamId(programContentId)
   const { insertExercise } = useMutateExercise()
-  const { memberExamTimeLimit, insertMemberExamTimeLimit, deleteMemberExamTimeLimit } = useMemberExamTimeLimit(id)
+  const { examId } = useProgramContentExamId(programContentId)
   const exerciseBeganAt = useRef<Moment | null>(null)
   const exerciseFinishedAt = useRef<Moment | null>(null)
   const [status, setStatus] = useState<'intro' | 'answering' | 'result' | 'review' | 'error'>(
@@ -81,17 +103,8 @@ const ExerciseBlock: React.VFC<
   let exerciseStatus
 
   const handleStart = () => {
-    if (timeLimitUnit && timeLimitAmount) {
-      insertMemberExamTimeLimit(timeLimitUnit, timeLimitAmount)
-        .then(() => memberExamTimeLimit.refetch())
-        .then(() => {
-          setStatus('answering')
-          exerciseBeganAt.current = moment()
-        })
-    } else {
-      setStatus('answering')
-      exerciseBeganAt.current = moment()
-    }
+    setStatus('answering')
+    exerciseBeganAt.current = moment()
     exerciseFinishedAt.current = null
   }
 
@@ -115,8 +128,7 @@ const ExerciseBlock: React.VFC<
       },
     })
       .then(() => setStatus('result'))
-      .then(() => deleteMemberExamTimeLimit())
-      .catch(() => {})
+      .catch(error => handleError(error))
   }
 
   if (status === 'intro') {
@@ -140,9 +152,7 @@ const ExerciseBlock: React.VFC<
   if (['answering', 'review'].includes(status)) {
     exerciseStatus = (
       <ExerciseQuestionBlock
-        id={id}
         isAvailableToGoBack={isAvailableToGoBack}
-        isAvailableToRetry={isAvailableToRetry}
         passingScore={passingScore}
         questions={questions}
         showDetail={status === 'review'}
@@ -247,81 +257,10 @@ const ExerciseBlock: React.VFC<
     <StyledAdminCard className="mb-4">
       <div className="d-flex justify-content-between">
         <StyledTitle className="mb-4">{title}</StyledTitle>
-        <div>
-          {status === 'answering' && memberExamTimeLimit.data && (
-            <CountDownTimeBlock
-              expiredAt={memberExamTimeLimit.data}
-              text={formatMessage(exerciseMessages.ExerciseBlock.countdown)}
-            />
-          )}
-        </div>
       </div>
       {exerciseStatus}
     </StyledAdminCard>
   )
-}
-
-const useMemberExamTimeLimit = (id: string) => {
-  const [timeLimit, setTimeLimit] = useState<Date | null>(null)
-  // TODO get member exam time limit from query
-  // const { loading, error, data, refetch } = useQuery<
-  //   hasura.GET_MEMBER_EXAM_TIME_LIMIT,
-  //   hasura.GET_MEMBER_EXAM_TIME_LIMITVariables
-  // >(
-  //   gql`
-  //     query GET_MEMBER_EXAM_TIME_LIMIT($id: uuid!) {
-  //          ...
-  //     }
-  //   `,
-  //   { variables: { id }, fetchPolicy: 'no-cache' },
-  // )
-
-  // TODO insert member exam time limit mutation
-  // const [insertMemberExamTimeLimit] = useMutation<
-  //   hasura.INSERT_MEMBER_EXAM_TIME_LIMIT,
-  //   hasura.INSERT_MEMBER_EXAM_TIME_LIMITVariables
-  // >(gql`
-  //   mutation INSERT_MEMBER_EXAM_TIME_LIMIT {
-  // ...
-  // `)
-
-  // TODO remove when query enabled
-  const memberExamTimeLimit = () => {
-    const timeLimitISOString = localStorage.getItem(`kolable.exam.timeLimit.${id}`)
-    if (timeLimitISOString) {
-      setTimeLimit(moment(timeLimitISOString).toDate())
-    }
-  }
-
-  // TODO removed when insert mutation enabled
-  const insertMemberExamTimeLimit = async (unit: string, amount: number) => {
-    try {
-      localStorage.setItem(
-        `kolable.exam.timeLimit.${id}`,
-        moment()
-          .add(amount, unit as DurationInputArg2)
-          .toISOString(),
-      )
-    } catch (error) {}
-  }
-
-  // TODO removed when delete mutation enabled
-  const deleteMemberExamTimeLimit = () => {
-    try {
-      localStorage.removeItem(`kolable.exam.timeLimit.${id}`)
-    } catch (error) {}
-  }
-
-  return {
-    memberExamTimeLimit: {
-      loading: false,
-      error: false,
-      data: timeLimit,
-      refetch: () => memberExamTimeLimit(),
-    },
-    insertMemberExamTimeLimit,
-    deleteMemberExamTimeLimit,
-  }
 }
 
 export default ExerciseBlock

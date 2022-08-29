@@ -127,7 +127,6 @@ const ProgramContentBlock: React.VFC<{
           )}
         </div>
       )}
-
       {programContent.contentType === 'video' && hasProgramContentPermission && (
         <ProgramContentPlayer
           key={programContent.id}
@@ -159,7 +158,6 @@ const ProgramContentBlock: React.VFC<{
           }}
         />
       )}
-
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise']) && (
         <StyledContentBlock className="mb-3">
           <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
@@ -170,7 +168,6 @@ const ProgramContentBlock: React.VFC<{
             )}
         </StyledContentBlock>
       )}
-
       {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
         <div className="mb-4">
           <PracticeDescriptionBlock
@@ -184,18 +181,18 @@ const ProgramContentBlock: React.VFC<{
           />
         </div>
       )}
-
-      {enabledModules.exercise && programContent.programContentBody?.type === 'exercise' && (
-        <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
-      )}
-
+      {/* // TODO: combine two modules in exam */}
+      {(enabledModules.exercise || enabledModules.exam) &&
+        (programContent.programContentBody?.type === 'exercise' ||
+          programContent.programContentBody?.type === 'exam') && (
+          <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
+        )}
       <ProgramContentTabs
         programId={programId}
         programRoles={programRoles}
         programContent={programContent}
         issueEnabled={issueEnabled}
       />
-
       {programContent.programContentBody?.type !== 'practice' && instructor && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />
       )}

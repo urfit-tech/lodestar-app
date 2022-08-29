@@ -4,26 +4,12 @@ import { CommonLargeTextMixin, CommonTitleMixin } from 'lodestar-app-element/src
 import moment, { DurationInputArg2 } from 'moment'
 import { sum } from 'ramda'
 import React from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import { durationFullFormatter } from '../../helpers'
-import { ExerciseProps } from '../../types/program'
-import exerciseMessages from './translation'
-
-const messages = defineMessages({
-  yourExerciseResult: { id: 'program.label.yourExerciseResult', defaultMessage: '你的測驗成果' },
-  score: { id: 'program.label.score', defaultMessage: '{score}分' },
-  passExercise: { id: 'program.text.passExercise', defaultMessage: '恭喜！通過測驗' },
-  failExercise: { id: 'program.text.failExercise', defaultMessage: '未通過測驗' },
-  answerCorrectly: { id: 'program.text.answerCorrectly', defaultMessage: '答對 {correctCount} 題，共 {total} 題' },
-  maxScore: { id: 'program.text.maxScore', defaultMessage: '此測驗滿分為 {maxScore} 分' },
-  passingScore: { id: 'program.text.passScore', defaultMessage: '及格分數 {passingScore} 分' },
-  nextCourse: { id: 'program.ui.nextCourse', defaultMessage: '繼續課程' },
-  showDetail: { id: 'program.ui.showDetail', defaultMessage: '查看解答' },
-  restartExercise: { id: 'program.ui.restartExercise', defaultMessage: '重新測驗' },
-  finishedExercise: { id: 'program.ui.finishedExercise', defaultMessage: '已完成作答' },
-})
+import { Exam } from '../../types/program'
+import examMessages from './translation'
 
 const StyledTableContainer = styled.div`
   margin-bottom: 24px;
@@ -102,8 +88,13 @@ const StyledErrorText = styled.span`
   color: var(--error);
 `
 
-const ExerciseResultBlock: React.VFC<
-  ExerciseProps & {
+const ExamResultBlock: React.VFC<
+  Pick<
+    Exam,
+    'isAvailableToRetry' | 'isAvailableAnnounceScore' | 'passingScore' | 'timeLimitAmount' | 'timeLimitUnit'
+  > & {
+    isAnswerer: boolean
+    questions: any
     timeSpent?: number
     nextProgramContentId?: string
     onReAnswer?: () => void
@@ -128,8 +119,9 @@ const ExerciseResultBlock: React.VFC<
     params: { programContentId: currentContentId },
     url,
   } = useRouteMatch<{ programContentId: string }>()
-  const totalPoints = sum(questions.map(question => question.points))
-  const score = sum(questions.map(question => question.gainedPoints || 0))
+  // FIXME: fix type
+  const totalPoints = sum(questions.map((question: any) => question.points))
+  const score = sum(questions.map((question: any) => question.gainedPoints || 0))
 
   const resultTable: {
     head: {
@@ -147,24 +139,24 @@ const ExerciseResultBlock: React.VFC<
   } = {
     head: {
       columns: [
-        { label: formatMessage(exerciseMessages['*'].item) },
-        { label: formatMessage(exerciseMessages['*'].personalPerformance) },
-        { label: formatMessage(exerciseMessages['*'].overallAverage), hidden: true },
+        { label: formatMessage(examMessages['*'].item) },
+        { label: formatMessage(examMessages['*'].personalPerformance) },
+        { label: formatMessage(examMessages['*'].overallAverage), hidden: true },
       ],
     },
     body: {
       rows: [
         {
           columns: [
-            formatMessage(exerciseMessages.ExerciseResultBlock.score),
-            `${score} / ${totalPoints} ${formatMessage(exerciseMessages['*'].score)}`,
-            `${score} / ${totalPoints} ${formatMessage(exerciseMessages['*'].score)}`,
+            formatMessage(examMessages.ExamResultBlock.score),
+            `${score} / ${totalPoints} ${formatMessage(examMessages['*'].score)}`,
+            `${score} / ${totalPoints} ${formatMessage(examMessages['*'].score)}`,
           ],
           hidden: !isAvailableAnnounceScore,
         },
         {
           columns: [
-            formatMessage(exerciseMessages.ExerciseResultBlock.averageAnswerTime),
+            formatMessage(examMessages.ExamResultBlock.averageAnswerTime),
             `${durationFullFormatter((timeSpent || 0) / 1000 / questions.length)}`,
             `${durationFullFormatter((timeSpent || 0) / 1000 / questions.length)}`,
           ],
@@ -172,7 +164,7 @@ const ExerciseResultBlock: React.VFC<
         },
         {
           columns: [
-            formatMessage(exerciseMessages.ExerciseResultBlock.totalTimeSpent),
+            formatMessage(examMessages.ExamResultBlock.totalTimeSpent),
             timeSpent &&
             timeLimitAmount &&
             timeLimitUnit &&
@@ -194,7 +186,9 @@ const ExerciseResultBlock: React.VFC<
     <div className="d-flex flex-column align-items-center ">
       {isAvailableAnnounceScore ? (
         <div className="mb-4 text-center">
-          <StyledResultTitle className="mb-2">{formatMessage(messages.yourExerciseResult)}</StyledResultTitle>
+          <StyledResultTitle className="mb-2">
+            {formatMessage(examMessages.ExamResultBlock.yourExamResult)}
+          </StyledResultTitle>
           <StyledCircularProgress
             className="mb-3"
             value={(score / totalPoints) * 100}
@@ -202,16 +196,18 @@ const ExerciseResultBlock: React.VFC<
             color={score >= passingScore ? 'var(--success)' : 'var(--warning)'}
           >
             <StyledCircularProgressLabel>
-              {formatMessage(messages.score, { score: Math.floor(score * 10) / 10 })}
+              {formatMessage(examMessages.ExamResultBlock.score, { score: Math.floor(score * 10) / 10 })}
             </StyledCircularProgressLabel>
           </StyledCircularProgress>
           {Boolean(passingScore) && (
             <>
               <StyledTitle>
-                {score >= passingScore ? formatMessage(messages.passExercise) : formatMessage(messages.failExercise)}
+                {score >= passingScore
+                  ? formatMessage(examMessages.ExamResultBlock.passExam)
+                  : formatMessage(examMessages.ExamResultBlock.failExam)}
               </StyledTitle>
               <StyledPassingScore>
-                {formatMessage(exerciseMessages.ExerciseResultBlock.passingScore, { passingScore })}
+                {formatMessage(examMessages.ExamResultBlock.passingScore, { passingScore })}
               </StyledPassingScore>
             </>
           )}
@@ -221,7 +217,9 @@ const ExerciseResultBlock: React.VFC<
           <StyledSuccessIconWrapper>
             <Icon as={CheckIcon} w={8} h={8} />
           </StyledSuccessIconWrapper>
-          <StyledTitle style={{ fontSize: '20px' }}>{formatMessage(messages.finishedExercise)}</StyledTitle>
+          <StyledTitle style={{ fontSize: '20px' }}>
+            {formatMessage(examMessages.ExamResultBlock.finishedExam)}
+          </StyledTitle>
         </div>
       )}
       {resultTable.body.rows.some(body => !body.hidden) && (
@@ -269,15 +267,15 @@ const ExerciseResultBlock: React.VFC<
             className="mb-2"
             variant="primary"
           >
-            {formatMessage(messages.nextCourse)}
+            {formatMessage(examMessages.ExamResultBlock.nextCourse)}
           </StyledButton>
         )}
         <StyledButton onClick={onReview} className="mb-2" variant="outline">
-          {formatMessage(messages.showDetail)}
+          {formatMessage(examMessages.ExamResultBlock.showDetail)}
         </StyledButton>
         {isAvailableToRetry && (
           <StyledButton onClick={onReAnswer} variant="outline" disabled={!isAnswerer}>
-            {formatMessage(messages.restartExercise)}
+            {formatMessage(examMessages.ExamResultBlock.restartExam)}
           </StyledButton>
         )}
       </div>
@@ -285,4 +283,4 @@ const ExerciseResultBlock: React.VFC<
   )
 }
 
-export default ExerciseResultBlock
+export default ExamResultBlock
