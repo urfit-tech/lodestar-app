@@ -184,7 +184,7 @@ const StyledCertificateCard = styled.div<{ scale: number }>`
   transform: scale(${props => props.scale});
   transform-origin: top left;
 `
-const _Certificate: React.VFC<{
+const CertificateImpl: React.VFC<{
   template: string
   templateVars?: any
   certificateRef?: React.Ref<HTMLDivElement>
@@ -222,7 +222,7 @@ const Certificate = forwardRef(
       templateVars?: any
     },
     ref?: React.Ref<HTMLDivElement>,
-  ) => <_Certificate {...props} certificateRef={ref} />,
+  ) => <CertificateImpl {...props} certificateRef={ref} />,
 )
 
 export default CertificateContentBlock
