@@ -549,7 +549,7 @@
   "commonMessages.content.busySyncJob": "同步訂單發生錯誤，請聯繫平台客服",
   "contract.label.agreed": "已簽署且經過與「{agreeName}」再次確認合約生效",
   "contract.label.disagreed": "尚未簽署",
-  "contract.label.duration": "服務期間",
+  "contract.label.duration": "合約期間",
   "contract.label.revoked": "已解約",
   "error.form.contactMessage": "請輸入訊息",
   "groupBuying.text.noReceivedItem": "目前未收到任何項目",
