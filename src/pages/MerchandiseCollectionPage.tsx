@@ -55,18 +55,23 @@ const MerchandiseCollectionPage: React.VFC = () => {
   const [isPhysical] = useQueryParam('isPhysical', BooleanParam)
   const { merchandises, merchandiseTags } = useMerchandiseCollection({
     search: keyword || '',
-    isPhysical: isPhysical !== undefined ? !!isPhysical : undefined,
     categories: categories ? categories : undefined,
   })
   const { pageTitle } = useNav()
 
-  const [selectCategory, setSelectCategory] = useState<string | null>(null)
+  const [selectCategory, setSelectCategory] = useState<string | null>(
+    isPhysical === undefined || isPhysical === null ? null : isPhysical ? 'isPhysical' : 'virtual',
+  )
   const [categoryId, setCategoryId] = useState<string | null>()
+
+  const hasPhysical = merchandises.some(m => m.isPhysical)
+  const hasVirtual = merchandises.some(m => !m.isPhysical)
+  const hasDifferentMerchandiseType = hasPhysical && hasVirtual
 
   const filteredMerchandises = merchandises
     .filter(merchandise => !tag || merchandise.tags?.includes(tag))
     .filter(merchandise =>
-      selectCategory
+      selectCategory && hasDifferentMerchandiseType
         ? selectCategory === 'isPhysical'
           ? merchandise.isPhysical === true
           : merchandise.isPhysical === false
@@ -92,6 +97,8 @@ const MerchandiseCollectionPage: React.VFC = () => {
         ? formatMessage(commonMessages.ui.physical)
         : formatMessage(commonMessages.ui.virtual),
     onChange: v => {
+      setCategoryId(null)
+
       const url = new URL(window.location.href)
       if (v === formatMessage(commonMessages.ui.all)) {
         url.searchParams.delete('isPhysical')
@@ -181,14 +188,15 @@ const MerchandiseCollectionPage: React.VFC = () => {
               <Responsive.Default>
                 <div className="col-lg-4 mb-4">
                   <HStack className="mb-4" {...group}>
-                    {options.map(value => {
-                      const radio = getRadioProps({ value })
-                      return (
-                        <RadioCard key={value} size="md" {...radio}>
-                          {value}
-                        </RadioCard>
-                      )
-                    })}
+                    {hasDifferentMerchandiseType &&
+                      options.map(value => {
+                        const radio = getRadioProps({ value })
+                        return (
+                          <RadioCard key={value} size="md" {...radio}>
+                            {value}
+                          </RadioCard>
+                        )
+                      })}
                   </HStack>
                   <StyledCategoryList>
                     <li className="mb-2" onClick={() => setCategoryId(null)}>
@@ -228,14 +236,15 @@ const MerchandiseCollectionPage: React.VFC = () => {
             <Responsive.Desktop>
               <div className="col-lg-4">
                 <HStack className="mb-4" {...group}>
-                  {options.map(value => {
-                    const radio = getRadioProps({ value })
-                    return (
-                      <RadioCard key={value} size="md" {...radio}>
-                        {value}
-                      </RadioCard>
-                    )
-                  })}
+                  {hasDifferentMerchandiseType &&
+                    options.map(value => {
+                      const radio = getRadioProps({ value })
+                      return (
+                        <RadioCard key={value} size="md" {...radio}>
+                          {value}
+                        </RadioCard>
+                      )
+                    })}
                 </HStack>
                 <StyledCategoryList>
                   <li className="mb-2" onClick={() => setCategoryId(null)}>
