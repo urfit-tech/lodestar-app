@@ -1,7 +1,7 @@
 import { Divider, Icon, Tag, Typography } from 'antd'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -76,6 +76,26 @@ const ProgramContentListSection: React.VFC<{
 
   const isEnrolled = enrolledProgramIds.includes(program.id)
 
+  const layoutContent = document.getElementById('layout-content')
+  useEffect(() => {
+    const autoScroll = setTimeout(() => {
+      const url = new URL(window.location.href)
+      const position = url.searchParams.get('position')
+      let scrollY = 0
+      try {
+        scrollY = parseInt(position || '0')
+      } catch {
+        scrollY = 0
+      }
+      layoutContent?.scrollTo({ top: scrollY })
+      url.searchParams.delete('position')
+      window.history.replaceState({}, '', url.toString())
+    }, 500)
+    return () => {
+      clearTimeout(autoScroll)
+    }
+  }, [])
+
   return (
     <>
       <StyledTitle>{formatMessage(productMessages.program.title.content)}</StyledTitle>
@@ -96,6 +116,9 @@ const ProgramContentListSection: React.VFC<{
                     history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
                   }
                   if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
+                    const url = new URL(window.location.href)
+                    url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
+                    window.history.pushState({}, '', url.toString())
                     setAuthModalVisible?.(true)
                   }
                 }}
