@@ -12804,10 +12804,12 @@ export enum exercise_constraint {
 export enum exercise_update_column {
   answer = "answer",
   created_at = "created_at",
+  ended_at = "ended_at",
   exam_id = "exam_id",
   id = "id",
   member_id = "member_id",
   program_content_id = "program_content_id",
+  started_at = "started_at",
   updated_at = "updated_at",
 }
 
@@ -17917,6 +17919,7 @@ export interface exercise_bool_exp {
   _or?: exercise_bool_exp[] | null;
   answer?: jsonb_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
+  ended_at?: timestamptz_comparison_exp | null;
   exam?: exam_bool_exp | null;
   exam_id?: uuid_comparison_exp | null;
   id?: uuid_comparison_exp | null;
@@ -17924,6 +17927,7 @@ export interface exercise_bool_exp {
   member_id?: String_comparison_exp | null;
   program_content?: program_content_bool_exp | null;
   program_content_id?: uuid_comparison_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
 }
 
@@ -17933,6 +17937,7 @@ export interface exercise_bool_exp {
 export interface exercise_insert_input {
   answer?: any | null;
   created_at?: any | null;
+  ended_at?: any | null;
   exam?: exam_obj_rel_insert_input | null;
   exam_id?: any | null;
   id?: any | null;
@@ -17940,6 +17945,7 @@ export interface exercise_insert_input {
   member_id?: string | null;
   program_content?: program_content_obj_rel_insert_input | null;
   program_content_id?: any | null;
+  started_at?: any | null;
   updated_at?: any | null;
 }
 
