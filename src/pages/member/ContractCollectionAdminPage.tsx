@@ -47,9 +47,9 @@ const ContractCollectionAdminPage: React.VFC = () => {
           endedAt: value.ended_at,
           agreedIp: value.agreed_ip,
           agreedAt: value.agreed_at,
-          agreedOptions: value.agreed_options,
+          agreedOptions: value.agreed_options || {},
           revokedAt: value.revoked_at,
-          options: value.options,
+          options: value.options || {},
         }
       }) || []
   return (
