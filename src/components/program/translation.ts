@@ -26,6 +26,7 @@ const programMessages = {
     programList: { id: 'program.ProgramContentMenu.head', defaultMessage: '課程列表' },
     unit: { id: 'program.ProgramContentMenu.unit', defaultMessage: '單元排序' },
     time: { id: 'program.ProgramContentMenu.time', defaultMessage: '時間排序' },
+    expired: { id: 'program.ProgramContentMenu.expired', defaultMessage: '到期' },
   }),
   ProgramContentPlayer: defineMessages({
     next: { id: 'program.ProgramContentPlayer.next', defaultMessage: '接下來' },

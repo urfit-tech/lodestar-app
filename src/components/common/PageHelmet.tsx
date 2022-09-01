@@ -1,4 +1,5 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { Thing, WithContext } from 'schema-dts'
 import xss from 'xss'
@@ -23,6 +24,12 @@ const PageHelmet: React.FC<
     { property: 'og:description', content: app.settings['open_graph.description'] || app.settings['description'] },
     { property: 'og:image', content: app.settings['open_graph.image'] || app.settings['logo'] },
   ]
+
+  useEffect(() => {
+    ;(window as any).dataLayer = (window as any).dataLayer || []
+    ;(window as any).dataLayer.push({ event: 'titleChange', title: props.title || app.settings['title'] })
+  }, [props.title])
+
   return (
     <Helmet onChangeClientState={() => props.onLoaded?.()}>
       <title>{xss(props.title || app.settings['title'])}</title>

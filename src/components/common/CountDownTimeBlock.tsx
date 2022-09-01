@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
@@ -29,11 +29,19 @@ const CountDownTimeBlock: React.VFC<{
   text?: string
   expiredAt: Date
   icon?: boolean
-}> = ({ text, expiredAt, icon }) => {
+  onTimeUp?: () => void
+}> = ({ text, expiredAt, icon, onTimeUp }) => {
   const { formatMessage } = useIntl()
+  const timeUpRef = useRef(false)
   const countDown = expiredAt.getTime() - Date.now()
   const [seconds, setSeconds] = useState(countDown / 1000)
-  useInterval(() => setSeconds((expiredAt.getTime() - Date.now()) / 1000), 1000)
+  useInterval(() => {
+    setSeconds((expiredAt.getTime() - Date.now()) / 1000)
+    if (seconds <= 0 && !timeUpRef.current) {
+      timeUpRef.current = true
+      onTimeUp?.()
+    }
+  }, 1000)
 
   if (countDown < 0) {
     return null

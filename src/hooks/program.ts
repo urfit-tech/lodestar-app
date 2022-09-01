@@ -799,7 +799,7 @@ export const useProgramContentExamId = (programContentId: string) => {
   >(
     gql`
       query GET_PROGRAM_CONTENT_EXAM_ID($programContentId: uuid!) {
-        program_content_body(where: { program_content: { id: { _eq: $programContentId } } }) {
+        program_content_body(where: { program_contents: { id: { _eq: $programContentId } } }) {
           target
         }
       }

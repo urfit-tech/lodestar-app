@@ -1344,7 +1344,7 @@ export const saleMessages = {
     deleted: { id: 'sale.status.deleted', defaultMessage: '已刪除' },
     preparing: { id: 'sale.status.preparing', defaultMessage: '準備中' },
     paying: { id: 'sale.status.paying', defaultMessage: '付款中' },
-    refunding: { id: 'sale.status.paying', defaultMessage: '退款中' },
+    refunding: { id: 'sale.status.refunding', defaultMessage: '退款中' },
     partialExpired: { id: 'sale.status.partialExpired', defaultMessage: '部分過期' },
     unknown: { id: 'sale.status.unknown', defaultMessage: '未知' },
   }),
