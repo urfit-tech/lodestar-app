@@ -6,6 +6,7 @@ import { handleError } from 'lodestar-app-element/src/helpers'
 import moment, { Moment } from 'moment'
 import { sum } from 'ramda'
 import { useEffect, useRef, useState } from 'react'
+import { AiOutlineClockCircle } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useExamExaminableTimeLimit, useExamMemberTimeLimit, useExercisePublic } from '../../hooks/exam'
@@ -28,6 +29,7 @@ const StyledAdminCard = styled(AdminCard)`
 `
 const StyledTitle = styled.h3`
   height: 27px;
+  margin-bottom: 22px;
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 0.8px;
@@ -78,6 +80,14 @@ const ExamBlock: React.VFC<{
   const [status, setStatus] = useState<'intro' | 'answering' | 'result' | 'review' | 'error'>(
     isTaken ? 'result' : 'intro',
   )
+
+  // const countDownTime = useRef(
+  //   status === 'answering' && exam?.timeLimitAmount && exam?.timeLimitUnit
+  //     ? moment().add(exam.timeLimitAmount, exam.timeLimitUnit).toDate()
+  //     : moment().toDate(),
+  // )
+  // console.log(status)
+  // console.log(countDownTime)
 
   const { insertExercise, updateExercise } = useMutateExercise()
   const {
@@ -319,11 +329,11 @@ const ExamBlock: React.VFC<{
   return (
     <StyledAdminCard className="mb-4">
       <div className="d-flex justify-content-between">
-        <StyledTitle className="mb-4">{title}</StyledTitle>
+        <StyledTitle>{title}</StyledTitle>
         <div>
           {status === 'answering' && exam.timeLimitUnit && exam.timeLimitAmount && (
             <CountDownTimeBlock
-              icon={true}
+              renderIcon={() => <Icon as={AiOutlineClockCircle} className="mr-2" />}
               expiredAt={moment().add(exam.timeLimitAmount, exam.timeLimitUnit).toDate()}
               text={formatMessage(examMessages.ExamBlock.countdown)}
             />

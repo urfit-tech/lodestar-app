@@ -91,7 +91,7 @@ const ExamIntroBlock: React.VFC<
         timeLimitUnit && timeLimitAmount ? (
           <TimeLimitContent unit={timeLimitUnit} amount={Number(timeLimitAmount)} />
         ) : (
-          <>無限時</>
+          <>{formatMessage(examMessages.ExamIntroBlock.unlimited)}</>
         ),
     },
     {

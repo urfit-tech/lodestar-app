@@ -1,10 +1,10 @@
 import { Icon } from '@chakra-ui/icons'
 import React, { useRef, useState } from 'react'
-import { AiOutlineClockCircle } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import { useInterval } from '../../hooks/util'
+import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { BREAK_POINT } from './Responsive'
 
 const StyledDiscountDown = styled.span`
@@ -26,17 +26,18 @@ const StyledNumberBlock = styled.span`
 `
 
 const CountDownTimeBlock: React.VFC<{
-  text?: string
   expiredAt: Date
-  icon?: boolean
+  text?: string
+  renderIcon?: () => React.ReactElement
   onTimeUp?: () => void
-}> = ({ text, expiredAt, icon, onTimeUp }) => {
+}> = ({ text, renderIcon, expiredAt, onTimeUp }) => {
   const { formatMessage } = useIntl()
   const timeUpRef = useRef(false)
-  const countDown = expiredAt.getTime() - Date.now()
+  const expiredAtRef = useRef(expiredAt)
+  const countDown = expiredAtRef.current.getTime() - Date.now()
   const [seconds, setSeconds] = useState(countDown / 1000)
   useInterval(() => {
-    setSeconds((expiredAt.getTime() - Date.now()) / 1000)
+    setSeconds(countDown / 1000)
     if (seconds <= 0 && !timeUpRef.current) {
       timeUpRef.current = true
       onTimeUp?.()
@@ -49,7 +50,7 @@ const CountDownTimeBlock: React.VFC<{
 
   return (
     <>
-      {icon && <Icon as={AiOutlineClockCircle} className="mr-2" />}
+      {renderIcon ? renderIcon() : <Icon as={CalendarOIcon} className="mr-2" />}
       <StyledDiscountDown className="discount-down mr-1">
         {text || formatMessage(commonMessages.defaults.countdown)}
       </StyledDiscountDown>
