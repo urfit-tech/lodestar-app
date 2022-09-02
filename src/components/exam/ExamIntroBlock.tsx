@@ -1,10 +1,9 @@
 import { Button } from '@chakra-ui/react'
 import moment from 'moment'
-import { sum } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { Exam, ExamTimeUnit } from '../../types/program'
+import { Exam, ExamTimeUnit } from '../../types/exam'
 import examMessages from './translation'
 
 const StyledLabel = styled.h4`
@@ -39,13 +38,15 @@ const ExamIntroBlock: React.VFC<
     | 'isAvailableToGoBack'
     | 'isAvailableAnnounceScore'
   > & {
-    startedAt: Date
-    endedAt: Date
+    startedAt: Date | null
+    endedAt: Date | null
     questions: any
     showDetail?: boolean
+    loading: boolean
     onStart?: () => void
   }
 > = ({
+  point,
   questions,
   passingScore,
   startedAt,
@@ -54,17 +55,21 @@ const ExamIntroBlock: React.VFC<
   timeLimitAmount,
   isAvailableAnnounceScore,
   isAvailableToRetry,
+  loading,
   onStart,
 }) => {
   const { formatMessage } = useIntl()
-  const fullScore = sum(questions.map((question: { points: any }) => question.points))
+  const fullScore = Number(questions.length * point)
   const now = moment()
 
   const introRows = [
     {
       key: 'duration',
       label: formatMessage(examMessages.ExamIntroBlock.duration),
-      value: `${moment(startedAt).format('YYYY-MM-DD HH:mm')} ~ ${moment(endedAt).format('YYYY-MM-DD HH:mm')}`,
+      value:
+        !startedAt && endedAt
+          ? `${formatMessage(examMessages.ExamIntroBlock.fromNowOn)} ~ ${moment(endedAt).format('YYYY-MM-DD HH:mm')}`
+          : `${moment(startedAt).format('YYYY-MM-DD HH:mm')} ~ ${moment(endedAt).format('YYYY-MM-DD HH:mm')}`,
       hidden: !startedAt && !endedAt,
     },
     {
@@ -130,6 +135,8 @@ const ExamIntroBlock: React.VFC<
               ? now.isBefore(startedAt)
               : Boolean(endedAt)
               ? now.isAfter(endedAt)
+              : loading
+              ? true
               : false
           }
           onClick={onStart}
@@ -157,13 +164,13 @@ const TimeLimitContent: React.VFC<{
   }
 
   switch (unit) {
-    case 'minute':
+    case 'm':
       unitText = formatMessage(examMessages.ExamIntroBlock.min)
       break
-    case 'hour':
+    case 'h':
       unitText = formatMessage(examMessages.ExamIntroBlock.hour)
       break
-    case 'day':
+    case 'd':
       unitText = formatMessage(examMessages.ExamIntroBlock.day)
       break
     default:

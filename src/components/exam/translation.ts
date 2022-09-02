@@ -34,6 +34,7 @@ const examMessages = {
     month: { id: 'exam.ExamIntroBlock.month', defaultMessage: '月' },
     year: { id: 'exam.ExamIntroBlock.year', defaultMessage: '年' },
     unknownUnit: { id: 'exam.ExamIntroBlock.unknownUnit', defaultMessage: '未知單位' },
+    fromNowOn: { id: 'exam.ExamIntroBlock.fromNowOn', defaultMessage: '即日起' },
   }),
   ExamQuestionBlock: defineMessages({
     spendTime: { id: 'exam.ExamQuestionBlock.spendTime', defaultMessage: '花費時間' },
@@ -45,6 +46,8 @@ const examMessages = {
     correctAnswer: { id: 'exam.ExamQuestionBlock.correctAnswer', defaultMessage: '答案正確' },
     errorAnswer: { id: 'exam.ExamQuestionBlock.errorAnswer', defaultMessage: '答案錯誤' },
     correct: { id: 'exam.ExamQuestionBlock.correct', defaultMessage: '正解' },
+    unanswered: { id: 'exam.ExamQuestionBlock.unanswered', defaultMessage: '未作答' },
+    spentTimeBySec: { id: 'exam.ExamResultBlock.spentTimeBySec', defaultMessage: '{spentTime}秒' },
   }),
   ExamResultBlock: defineMessages({
     yourExamResult: { id: 'exam.ExamResultBlock.yourExamResult', defaultMessage: '你的測驗成果' },

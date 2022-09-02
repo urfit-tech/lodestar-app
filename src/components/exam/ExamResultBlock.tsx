@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import { durationFullFormatter } from '../../helpers'
-import { Exam } from '../../types/program'
+import { Exam, Question } from '../../types/exam'
 import examMessages from './translation'
 
 const StyledTableContainer = styled.div`
@@ -94,7 +94,8 @@ const ExamResultBlock: React.VFC<
     'isAvailableToRetry' | 'isAvailableAnnounceScore' | 'passingScore' | 'timeLimitAmount' | 'timeLimitUnit'
   > & {
     isAnswerer: boolean
-    questions: any
+    questions: Question[]
+    point: number
     timeSpent?: number
     nextProgramContentId?: string
     onReAnswer?: () => void
@@ -102,6 +103,7 @@ const ExamResultBlock: React.VFC<
   }
 > = ({
   questions,
+  point,
   passingScore,
   isAvailableToRetry,
   isAvailableAnnounceScore,
@@ -119,9 +121,8 @@ const ExamResultBlock: React.VFC<
     params: { programContentId: currentContentId },
     url,
   } = useRouteMatch<{ programContentId: string }>()
-  // FIXME: fix type
-  const totalPoints = sum(questions.map((question: any) => question.points))
-  const score = sum(questions.map((question: any) => question.gainedPoints || 0))
+  const totalPoints = questions.length * point
+  const score = sum(questions.map(question => question.gainedPoints || 0))
 
   const resultTable: {
     head: {
@@ -141,14 +142,14 @@ const ExamResultBlock: React.VFC<
       columns: [
         { label: formatMessage(examMessages['*'].item) },
         { label: formatMessage(examMessages['*'].personalPerformance) },
-        { label: formatMessage(examMessages['*'].overallAverage), hidden: true },
+        { label: formatMessage(examMessages['*'].overallAverage) },
       ],
     },
     body: {
       rows: [
         {
           columns: [
-            formatMessage(examMessages.ExamResultBlock.score),
+            formatMessage(examMessages.ExamResultBlock.score, { score }),
             `${score} / ${totalPoints} ${formatMessage(examMessages['*'].score)}`,
             `${score} / ${totalPoints} ${formatMessage(examMessages['*'].score)}`,
           ],

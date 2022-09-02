@@ -187,111 +187,6 @@ export interface GET_MANAGEMENT_DOMAINVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_EXAM_ID
-// ====================================================
-
-export interface GET_EXAM_ID_program_content_body {
-  __typename: "program_content_body";
-  target: any | null;
-}
-
-export interface GET_EXAM_ID {
-  /**
-   * fetch data from the table: "program_content_body"
-   */
-  program_content_body: GET_EXAM_ID_program_content_body[];
-}
-
-export interface GET_EXAM_IDVariables {
-  programContentId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_EXAM
-// ====================================================
-
-export interface GET_EXAM_exam_by_pk_exam_question_group_question_group_questions_question_options {
-  __typename: "question_option";
-  id: any;
-  value: string;
-  is_answer: boolean | null;
-}
-
-export interface GET_EXAM_exam_by_pk_exam_question_group_question_group_questions {
-  __typename: "question";
-  id: any;
-  type: string;
-  subject: string;
-  layout: string;
-  font: string;
-  explanation: string | null;
-  /**
-   * An array relationship
-   */
-  question_options: GET_EXAM_exam_by_pk_exam_question_group_question_group_questions_question_options[];
-}
-
-export interface GET_EXAM_exam_by_pk_exam_question_group_question_group {
-  __typename: "question_group";
-  id: any;
-  title: string;
-  /**
-   * An array relationship
-   */
-  questions: GET_EXAM_exam_by_pk_exam_question_group_question_group_questions[];
-}
-
-export interface GET_EXAM_exam_by_pk_exam_question_group {
-  __typename: "exam_question_group";
-  id: any;
-  /**
-   * An object relationship
-   */
-  question_group: GET_EXAM_exam_by_pk_exam_question_group_question_group | null;
-}
-
-export interface GET_EXAM_exam_by_pk {
-  __typename: "exam";
-  id: any;
-  point: any;
-  passing_score: any;
-  examinable_unit: string | null;
-  examinable_amount: any | null;
-  examinable_started_at: any | null;
-  examinable_ended_at: any | null;
-  time_limit_unit: string | null;
-  time_limit_amount: any | null;
-  is_available_to_retry: boolean;
-  is_available_to_go_back: boolean;
-  is_available_announce_score: boolean;
-  /**
-   * An array relationship
-   */
-  exam_question_group: GET_EXAM_exam_by_pk_exam_question_group[];
-}
-
-export interface GET_EXAM {
-  /**
-   * fetch data from the table: "exam" using primary key columns
-   */
-  exam_by_pk: GET_EXAM_exam_by_pk | null;
-}
-
-export interface GET_EXAMVariables {
-  examId: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL mutation operation: UPDATE_ISSUE_STATUS
 // ====================================================
 
@@ -5271,6 +5166,223 @@ export interface GET_ORDER_IDVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_EXAM_ID
+// ====================================================
+
+export interface GET_EXAM_ID_program_content_body {
+  __typename: "program_content_body";
+  target: any | null;
+}
+
+export interface GET_EXAM_ID {
+  /**
+   * fetch data from the table: "program_content_body"
+   */
+  program_content_body: GET_EXAM_ID_program_content_body[];
+}
+
+export interface GET_EXAM_IDVariables {
+  programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_EXAM
+// ====================================================
+
+export interface GET_EXAM_exam_by_pk_exam_question_group_question_group_questions_question_options {
+  __typename: "question_option";
+  id: any;
+  value: string;
+  is_answer: boolean | null;
+}
+
+export interface GET_EXAM_exam_by_pk_exam_question_group_question_group_questions {
+  __typename: "question";
+  id: any;
+  type: string;
+  subject: string;
+  layout: string;
+  font: string;
+  explanation: string | null;
+  /**
+   * An array relationship
+   */
+  question_options: GET_EXAM_exam_by_pk_exam_question_group_question_group_questions_question_options[];
+}
+
+export interface GET_EXAM_exam_by_pk_exam_question_group_question_group {
+  __typename: "question_group";
+  id: any;
+  title: string;
+  /**
+   * An array relationship
+   */
+  questions: GET_EXAM_exam_by_pk_exam_question_group_question_group_questions[];
+}
+
+export interface GET_EXAM_exam_by_pk_exam_question_group {
+  __typename: "exam_question_group";
+  id: any;
+  /**
+   * An object relationship
+   */
+  question_group: GET_EXAM_exam_by_pk_exam_question_group_question_group | null;
+}
+
+export interface GET_EXAM_exam_by_pk {
+  __typename: "exam";
+  id: any;
+  point: any;
+  passing_score: any;
+  /**
+   * d, h, m
+   */
+  examinable_unit: string | null;
+  examinable_amount: any | null;
+  examinable_started_at: any | null;
+  examinable_ended_at: any | null;
+  time_limit_unit: string | null;
+  time_limit_amount: any | null;
+  is_available_to_retry: boolean;
+  is_available_to_go_back: boolean;
+  is_available_announce_score: boolean;
+  /**
+   * An array relationship
+   */
+  exam_question_group: GET_EXAM_exam_by_pk_exam_question_group[];
+}
+
+export interface GET_EXAM {
+  /**
+   * fetch data from the table: "exam" using primary key columns
+   */
+  exam_by_pk: GET_EXAM_exam_by_pk | null;
+}
+
+export interface GET_EXAMVariables {
+  examId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_EXAM_MEMBER_TIME_LIMIT
+// ====================================================
+
+export interface GET_EXAM_MEMBER_TIME_LIMIT_exam_member_time_limit {
+  __typename: "exam_member_time_limit";
+  member_id: string;
+  expired_at: any;
+}
+
+export interface GET_EXAM_MEMBER_TIME_LIMIT {
+  /**
+   * fetch data from the table: "exam_member_time_limit"
+   */
+  exam_member_time_limit: GET_EXAM_MEMBER_TIME_LIMIT_exam_member_time_limit[];
+}
+
+export interface GET_EXAM_MEMBER_TIME_LIMITVariables {
+  examId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_CONTENT_DELIVERED_AT
+// ====================================================
+
+export interface GET_CONTENT_DELIVERED_AT_program_content_enrollment {
+  __typename: "program_content_enrollment";
+  product_delivered_at: any | null;
+}
+
+export interface GET_CONTENT_DELIVERED_AT {
+  /**
+   * fetch data from the table: "program_content_enrollment"
+   */
+  program_content_enrollment: GET_CONTENT_DELIVERED_AT_program_content_enrollment[];
+}
+
+export interface GET_CONTENT_DELIVERED_ATVariables {
+  programContentId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_EXERCISE_PUBLIC
+// ====================================================
+
+export interface GET_EXERCISE_PUBLIC_exercise_public {
+  __typename: "exercise_public";
+  exercise_id: any | null;
+  program_content_id: any | null;
+  member_id: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  question_id: string | null;
+  question_points: string | null;
+  gained_points: string | null;
+  is_correct: string | null;
+  question_started_at: string | null;
+  question_ended_at: string | null;
+  duration: any | null;
+}
+
+export interface GET_EXERCISE_PUBLIC_exercise_public_aggregate_aggregate_sum {
+  __typename: "exercise_public_sum_fields";
+  duration: any | null;
+}
+
+export interface GET_EXERCISE_PUBLIC_exercise_public_aggregate_aggregate {
+  __typename: "exercise_public_aggregate_fields";
+  sum: GET_EXERCISE_PUBLIC_exercise_public_aggregate_aggregate_sum | null;
+  count: number;
+}
+
+export interface GET_EXERCISE_PUBLIC_exercise_public_aggregate {
+  __typename: "exercise_public_aggregate";
+  aggregate: GET_EXERCISE_PUBLIC_exercise_public_aggregate_aggregate | null;
+}
+
+export interface GET_EXERCISE_PUBLIC {
+  /**
+   * fetch data from the table: "exercise_public"
+   */
+  exercise_public: GET_EXERCISE_PUBLIC_exercise_public[];
+  /**
+   * fetch aggregated fields from the table: "exercise_public"
+   */
+  exercise_public_aggregate: GET_EXERCISE_PUBLIC_exercise_public_aggregate;
+}
+
+export interface GET_EXERCISE_PUBLICVariables {
+  programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_ISSUE_THREAD
 // ====================================================
 
@@ -8489,6 +8601,33 @@ export interface INSERT_EXERCISE {
 
 export interface INSERT_EXERCISEVariables {
   data: exercise_insert_input;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UPDATE_EXERCISE
+// ====================================================
+
+export interface UPDATE_EXERCISE_update_exercise_by_pk {
+  __typename: "exercise";
+  id: any;
+}
+
+export interface UPDATE_EXERCISE {
+  /**
+   * update single row of the table: "exercise"
+   */
+  update_exercise_by_pk: UPDATE_EXERCISE_update_exercise_by_pk | null;
+}
+
+export interface UPDATE_EXERCISEVariables {
+  exerciseId: any;
+  answer?: any | null;
+  endedAt?: any | null;
 }
 
 /* tslint:disable */
@@ -22935,6 +23074,7 @@ export interface program_content_enrollment_bool_exp {
   _or?: program_content_enrollment_bool_exp[] | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  product_delivered_at?: timestamptz_comparison_exp | null;
   program?: program_bool_exp | null;
   program_content?: program_content_bool_exp | null;
   program_content_id?: uuid_comparison_exp | null;
@@ -22947,6 +23087,7 @@ export interface program_content_enrollment_bool_exp {
 export interface program_content_enrollment_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  product_delivered_at?: any | null;
   program?: program_obj_rel_insert_input | null;
   program_content?: program_content_obj_rel_insert_input | null;
   program_content_id?: any | null;
@@ -23476,6 +23617,7 @@ export interface program_enrollment_bool_exp {
   member_id?: String_comparison_exp | null;
   member_name?: String_comparison_exp | null;
   member_picture_url?: String_comparison_exp | null;
+  product_delivered_at?: timestamptz_comparison_exp | null;
   program?: program_bool_exp | null;
   program_id?: uuid_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -23490,6 +23632,7 @@ export interface program_enrollment_insert_input {
   member_id?: string | null;
   member_name?: string | null;
   member_picture_url?: string | null;
+  product_delivered_at?: any | null;
   program?: program_obj_rel_insert_input | null;
   program_id?: any | null;
   updated_at?: any | null;
@@ -23729,6 +23872,7 @@ export interface program_package_plan_enrollment_bool_exp {
   _or?: program_package_plan_enrollment_bool_exp[] | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  product_delivered_at?: timestamp_comparison_exp | null;
   program_package_plan?: program_package_plan_bool_exp | null;
   program_package_plan_id?: uuid_comparison_exp | null;
 }
@@ -23739,6 +23883,7 @@ export interface program_package_plan_enrollment_bool_exp {
 export interface program_package_plan_enrollment_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  product_delivered_at?: any | null;
   program_package_plan?: program_package_plan_obj_rel_insert_input | null;
   program_package_plan_id?: any | null;
 }
@@ -23946,6 +24091,7 @@ export interface program_plan_enrollment_bool_exp {
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
+  product_delivered_at?: timestamp_comparison_exp | null;
   program_plan?: program_plan_bool_exp | null;
   program_plan_id?: uuid_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
@@ -23960,6 +24106,7 @@ export interface program_plan_enrollment_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   options?: any | null;
+  product_delivered_at?: any | null;
   program_plan?: program_plan_obj_rel_insert_input | null;
   program_plan_id?: any | null;
   started_at?: any | null;

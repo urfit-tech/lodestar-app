@@ -8,6 +8,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import ExamBlock from '../../components/exam/ExamBlock'
 import ExerciseBlock from '../../components/exercise/ExerciseBlock'
 import hasura from '../../hasura'
+import { useExam } from '../../hooks/exam'
 import {
   ProgramContent,
   ProgramContentAttachmentProps,
@@ -26,10 +27,10 @@ const ProgramContentExerciseBlock: React.VFC<{
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const { currentMemberId } = useAuth()
   const { loadingLastExercise, lastExercise } = useLastExercise(programContent.id, currentMemberId || '', exerciseId)
-
+  const { loadingExamId, errorExamId, loadingExam, errorExam, exam } = useExam(programContent.id, lastExercise)
   const contentType = programContent.contentType
 
-  if (loadingLastExercise) {
+  if (loadingLastExercise || loadingExamId || loadingExam) {
     return <Skeleton active />
   }
 
@@ -95,12 +96,14 @@ const ProgramContentExerciseBlock: React.VFC<{
     // contentType is exam
     return (
       <ExamBlock
+        errorExam={errorExam}
+        errorExamId={errorExamId}
+        exam={exam}
         programContentId={programContent.id}
         nextProgramContentId={nextProgramContentId}
         title={programContent.title}
-        isTaken={false}
+        isTaken={!!lastExercise}
         isAnswerer={currentMemberId === lastExercise?.memberId}
-        questions={[]}
       />
     )
   }

@@ -2,14 +2,14 @@ import { Button, Icon, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import { CommonLargeTextMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import moment from 'moment'
 import React, { memo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
-import { durationFullFormatter } from '../../helpers'
 import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.svg'
 import { ReactComponent as ErrorCircleIcon } from '../../images/error-circle.svg'
 import { ReactComponent as TickIcon } from '../../images/tick.svg'
-import { Exam } from '../../types/program'
+import { Exam, ExercisePublic, Question } from '../../types/exam'
 import examMessages from './translation'
 
 const StyledTableContainer = styled.div`
@@ -75,22 +75,34 @@ const StyledBraftContentContainer = styled.div<{ font?: string }>`
 `
 
 const ExamQuestionBlock: React.VFC<
-  Pick<Exam, 'isAvailableToGoBack' | 'passingScore'> & {
-    questions: any
+  Pick<Exam, 'isAvailableToGoBack'> & {
+    questions: Question[]
     showDetail: boolean
-    timeSpent?: number
+    exercisePublic: ExercisePublic[]
+    questionAmount: number
+    totalDuration: number
     onFinish?: () => void
     onNextStep?: () => void
     onChoiceSelect?: (questionId: string, choiceId: string) => void
+    onQuestionFinish?: (questionId: string, startedAt: Date, endedAt: Date) => void
   }
-> = ({ questions, isAvailableToGoBack, showDetail, timeSpent, onChoiceSelect, onNextStep, onFinish }) => {
+> = ({
+  isAvailableToGoBack,
+  questions,
+  showDetail,
+  exercisePublic,
+  questionAmount,
+  totalDuration,
+  onChoiceSelect,
+  onQuestionFinish,
+  onNextStep,
+  onFinish,
+}) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
-  const activeQuestion = questions[index]
 
-  if (!activeQuestion) {
-    return null
-  }
+  const beganAt = moment()
+  const activeQuestion = questions[index]
 
   const detailTable: {
     head: {
@@ -110,7 +122,7 @@ const ExamQuestionBlock: React.VFC<
       columns: [
         { label: formatMessage(examMessages['*'].item) },
         { label: formatMessage(examMessages['*'].personalPerformance) },
-        { label: formatMessage(examMessages['*'].overallAverage), hidden: true },
+        { label: formatMessage(examMessages['*'].overallAverage) },
       ],
     },
     body: {
@@ -118,17 +130,27 @@ const ExamQuestionBlock: React.VFC<
         {
           columns: [
             formatMessage(examMessages.ExamQuestionBlock.spendTime),
-            `${durationFullFormatter((timeSpent || 0) / 1000 / questions.length)}`,
-            '23.64 秒',
+            activeQuestion?.startedAt && activeQuestion?.endedAt
+              ? formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
+                  spentTime: `${exercisePublic.find(v => v.questionId === activeQuestion.id)?.duration}`,
+                })
+              : formatMessage(examMessages.ExamQuestionBlock.unanswered),
+            `${totalDuration / questionAmount}`,
           ],
-          hidden: !Boolean(timeSpent),
         },
         {
-          columns: [formatMessage(examMessages.ExamQuestionBlock.averageCorrectRate), '', `80%`],
-          hidden: true,
+          columns: [
+            formatMessage(examMessages.ExamQuestionBlock.averageCorrectRate),
+            '',
+            `${Math.floor((exercisePublic.map(v => v.isCorrect).length / questionAmount) * 100)}%`,
+          ],
         },
       ],
     },
+  }
+
+  if (!activeQuestion) {
+    return null
   }
 
   return (
@@ -139,26 +161,22 @@ const ExamQuestionBlock: React.VFC<
 
       <StyledQuestion className="mb-4">
         <StyledBraftContentContainer font={activeQuestion.font}>
-          <BraftContent>{activeQuestion.description}</BraftContent>
+          <BraftContent>{activeQuestion.subject}</BraftContent>
         </StyledBraftContentContainer>
       </StyledQuestion>
 
       <StyledQuestionsContainer className={activeQuestion.layout === 'grid' ? 'layout_grid' : ''}>
-        {/* 
-            // FIXME: fix type
-            */}
-        {activeQuestion.choices.map((choice: any, i: any, choices: any) => (
+        {activeQuestion.questionOptions?.map((choice, i, choices) => (
           <ExamQuestionButton
             key={choice.id}
             showDetail={showDetail}
-            // FIXME: fix type
-            selectedCount={choices.filter((choice: any) => choice.isSelected).length}
-            isCorrect={choice.isCorrect}
+            selectedCount={choices.filter(choice => choice.isSelected).length}
+            isCorrect={Boolean(choice.isAnswer)}
             isSelected={!!choice.isSelected}
             onClick={() => onChoiceSelect?.(activeQuestion.id, choice.id)}
           >
             <StyledBraftContentContainer font={activeQuestion.font}>
-              <BraftContent>{choice.description}</BraftContent>
+              <BraftContent>{choice.value}</BraftContent>
             </StyledBraftContentContainer>
           </ExamQuestionButton>
         ))}
@@ -166,12 +184,7 @@ const ExamQuestionBlock: React.VFC<
 
       {showDetail && (
         <StyledDetail className="mb-4">
-          {/* 
-            // FIXME: fix type
-            */}
-          {activeQuestion.choices.every(
-            (choice: { isCorrect: any; isSelected: any }) => choice.isCorrect === choice.isSelected,
-          ) ? (
+          {activeQuestion.questionOptions?.every(choice => choice.isAnswer === choice.isSelected) ? (
             <span>
               <Icon className="mr-2" as={CheckCircleIcon} color="var(--success)" />
               <StyledDetailTitle>{formatMessage(examMessages.ExamQuestionBlock.correctAnswer)}</StyledDetailTitle>
@@ -183,9 +196,9 @@ const ExamQuestionBlock: React.VFC<
             </span>
           )}
           <StyledDetailContent className="ml-4">
-            {!BraftEditor.createEditorState(activeQuestion.answerDescription).isEmpty() && (
+            {!BraftEditor.createEditorState(activeQuestion.explanation).isEmpty() && (
               <StyledBraftContentContainer font={activeQuestion.font}>
-                <BraftContent>{activeQuestion.answerDescription}</BraftContent>
+                <BraftContent>{activeQuestion.explanation}</BraftContent>
               </StyledBraftContentContainer>
             )}
           </StyledDetailContent>
@@ -209,7 +222,7 @@ const ExamQuestionBlock: React.VFC<
                 .map((row, rowIndex, rows) => (
                   <Tr key={row.columns.join('')}>
                     {row.columns
-                      .filter((_column, columnIndex) => !detailTable.head.columns[columnIndex].hidden)
+                      .filter((_column, columnIndex) => !detailTable.head.columns[columnIndex]?.hidden)
                       .map(column => (
                         <Td
                           style={{
@@ -239,9 +252,12 @@ const ExamQuestionBlock: React.VFC<
         {index < questions.length - 1 && (
           <Button
             variant="primary"
-            // FIXME: fix type
-            disabled={activeQuestion.choices.every((v: any) => !v.isSelected)}
-            onClick={() => setIndex(prev => prev + 1)}
+            disabled={activeQuestion.questionOptions?.every(v => !v.isSelected)}
+            onClick={() => {
+              setIndex(prev => prev + 1)
+              const finishedAt = moment()
+              !showDetail && onQuestionFinish?.(activeQuestion.id, beganAt.toDate(), finishedAt.toDate())
+            }}
           >
             {formatMessage(examMessages.ExamQuestionBlock.nextQuestion)}
           </Button>
@@ -250,9 +266,8 @@ const ExamQuestionBlock: React.VFC<
         {index === questions.length - 1 && (
           <Button
             variant="primary"
-            // FIXME: fix type
-            disabled={activeQuestion.choices.every((v: any) => !v.isSelected)}
-            onClick={showDetail ? onNextStep : onFinish}
+            disabled={activeQuestion.questionOptions?.every(v => !v.isSelected)}
+            onClick={() => (showDetail ? onNextStep?.() : onFinish?.())}
           >
             {showDetail
               ? formatMessage(examMessages.ExamQuestionBlock.showResult)
@@ -306,7 +321,6 @@ const ExamQuestionButton: React.FC<{
 }> = memo(
   ({ showDetail, isSelected, isCorrect, onClick, children }) => {
     const { formatMessage } = useIntl()
-
     if (showDetail) {
       return (
         <StyledButton

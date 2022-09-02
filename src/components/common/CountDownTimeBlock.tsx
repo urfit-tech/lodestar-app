@@ -1,10 +1,10 @@
 import { Icon } from '@chakra-ui/icons'
 import React, { useRef, useState } from 'react'
+import { AiOutlineClockCircle } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import { useInterval } from '../../hooks/util'
-import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { BREAK_POINT } from './Responsive'
 
 const StyledDiscountDown = styled.span`
@@ -49,7 +49,7 @@ const CountDownTimeBlock: React.VFC<{
 
   return (
     <>
-      {icon && <Icon as={CalendarOIcon} className="mr-2" />}
+      {icon && <Icon as={AiOutlineClockCircle} className="mr-2" />}
       <StyledDiscountDown className="discount-down mr-1">
         {text || formatMessage(commonMessages.defaults.countdown)}
       </StyledDiscountDown>

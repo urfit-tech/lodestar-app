@@ -64,7 +64,7 @@ const ExerciseBlock: React.VFC<{
     }[]
     gainedPoints: number
   }[]
-  startedAt?: Date // exam
+  startedAt?: Date
   endedAt?: Date
   timeLimitUnit?: string
   timeLimitAmount?: number

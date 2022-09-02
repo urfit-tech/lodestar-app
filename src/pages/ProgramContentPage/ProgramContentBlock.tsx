@@ -158,7 +158,7 @@ const ProgramContentBlock: React.VFC<{
           }}
         />
       )}
-      {!includes(programContent.programContentBody?.type, ['practice', 'exercise']) && (
+      {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) && (
         <StyledContentBlock className="mb-3">
           <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
 
