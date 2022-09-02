@@ -38,15 +38,7 @@ const StyledCopyright = styled.div`
 
 const DefaultFooter: React.VFC = () => {
   const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
-  const { enabledModules, name, settings } = useApp()
-
-  const languageOptions: string[] = (() => {
-    try {
-      return JSON.parse(settings['locale.languages'])
-    } catch {
-      return []
-    }
-  })()
+  const { enabledModules, name } = useApp()
 
   return (
     <StyledFooter>

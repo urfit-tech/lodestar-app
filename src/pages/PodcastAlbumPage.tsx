@@ -2,7 +2,6 @@ import { SkeletonText } from '@chakra-ui/react'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import { render } from 'mustache'
 import React, { useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { useParams } from 'react-router-dom'
@@ -52,25 +51,6 @@ const PodcastAlbumPage: React.VFC = () => {
   const { loading, podcastAlbum } = usePodcastAlbum(id)
   const { resourceCollection } = useResourceCollection([`${appId}:podcast_album:${id}`])
 
-  let seoMeta:
-    | {
-        title?: string
-        description?: string
-      }
-    | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta'])?.PodcastAlbumPage
-  } catch (error) {}
-
-  const siteTitle = podcastAlbum?.title
-    ? seoMeta?.title
-      ? `${render(seoMeta.title, { programTitle: podcastAlbum.title })}`
-      : podcastAlbum.title
-    : appId
-
-  const siteDescription = podcastAlbum?.description || settings['open_graph.description']
-  const siteImage = podcastAlbum?.coverUrl || settings['open_graph.image']
-
   useEffect(() => {
     if (podcastAlbum) {
       ReactGA.plugin.execute('ec', 'addProduct', {
@@ -97,20 +77,6 @@ const PodcastAlbumPage: React.VFC = () => {
   if (!podcastAlbum) {
     return <ForbiddenPage />
   }
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: podcastAlbum.title,
-    image: siteImage,
-    description: siteDescription,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: settings['seo.name'],
-      description: settings['open_graph.description'],
-    },
-  })
 
   return (
     <DefaultLayout white>

@@ -1,7 +1,6 @@
 import { Icon } from '@chakra-ui/react'
 import { Skeleton } from 'antd'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -46,32 +45,8 @@ const StyledCreatorBlock = styled.div`
 
 const CreatorCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { settings } = useApp()
   const { pageTitle } = useNav()
   const { loadingCreators, errorCreators, creators } = useCreatorCollection()
-
-  let seoMeta:
-    | {
-        title?: string
-        description?: string
-      }
-    | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta'])?.CreatorCollectionPage
-  } catch (error) {}
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: seoMeta?.title,
-    description: seoMeta?.description,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: settings['seo.name'],
-      description: settings['open_graph.description'],
-    },
-  })
 
   return (
     <DefaultLayout>
