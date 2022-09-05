@@ -276,11 +276,19 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               },
               (error, values) => {
                 if (error) return
+                const signPropertyTypes: { [key: string]: string } = {}
+                signProperties.forEach(p => (signPropertyTypes[p.id] = p.type))
                 setSignupInfos(
-                  Object.keys(values).map(id => ({
-                    id: id,
-                    value: values[id] || '',
-                  })),
+                  Object.keys(values).map(id => {
+                    let value = values[id] || ''
+                    if (signPropertyTypes[id] === 'input') {
+                      value = value.trim()
+                    }
+                    return {
+                      id: id,
+                      value: value,
+                    }
+                  }),
                 )
                 setAuthState('register')
               },
