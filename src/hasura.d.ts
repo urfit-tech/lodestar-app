@@ -10430,6 +10430,7 @@ export interface GET_MEMBER_CONTRACTS_member_contract {
   revoked_at: any | null;
   started_at: any | null;
   ended_at: any | null;
+  options: any | null;
   /**
    * An object relationship
    */
@@ -22830,6 +22831,7 @@ export interface program_content_enrollment_bool_exp {
   _or?: program_content_enrollment_bool_exp[] | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  product_delivered_at?: timestamptz_comparison_exp | null;
   program?: program_bool_exp | null;
   program_content?: program_content_bool_exp | null;
   program_content_id?: uuid_comparison_exp | null;
@@ -22842,6 +22844,7 @@ export interface program_content_enrollment_bool_exp {
 export interface program_content_enrollment_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  product_delivered_at?: any | null;
   program?: program_obj_rel_insert_input | null;
   program_content?: program_content_obj_rel_insert_input | null;
   program_content_id?: any | null;
@@ -23371,6 +23374,7 @@ export interface program_enrollment_bool_exp {
   member_id?: String_comparison_exp | null;
   member_name?: String_comparison_exp | null;
   member_picture_url?: String_comparison_exp | null;
+  product_delivered_at?: timestamptz_comparison_exp | null;
   program?: program_bool_exp | null;
   program_id?: uuid_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -23385,6 +23389,7 @@ export interface program_enrollment_insert_input {
   member_id?: string | null;
   member_name?: string | null;
   member_picture_url?: string | null;
+  product_delivered_at?: any | null;
   program?: program_obj_rel_insert_input | null;
   program_id?: any | null;
   updated_at?: any | null;
@@ -23624,6 +23629,7 @@ export interface program_package_plan_enrollment_bool_exp {
   _or?: program_package_plan_enrollment_bool_exp[] | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
+  product_delivered_at?: timestamp_comparison_exp | null;
   program_package_plan?: program_package_plan_bool_exp | null;
   program_package_plan_id?: uuid_comparison_exp | null;
 }
@@ -23634,6 +23640,7 @@ export interface program_package_plan_enrollment_bool_exp {
 export interface program_package_plan_enrollment_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
+  product_delivered_at?: any | null;
   program_package_plan?: program_package_plan_obj_rel_insert_input | null;
   program_package_plan_id?: any | null;
 }
@@ -23841,6 +23848,7 @@ export interface program_plan_enrollment_bool_exp {
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
   options?: jsonb_comparison_exp | null;
+  product_delivered_at?: timestamp_comparison_exp | null;
   program_plan?: program_plan_bool_exp | null;
   program_plan_id?: uuid_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
@@ -23855,6 +23863,7 @@ export interface program_plan_enrollment_insert_input {
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
   options?: any | null;
+  product_delivered_at?: any | null;
   program_plan?: program_plan_obj_rel_insert_input | null;
   program_plan_id?: any | null;
   started_at?: any | null;

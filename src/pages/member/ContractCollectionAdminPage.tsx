@@ -14,7 +14,8 @@ import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import ForbiddenPage from '../ForbiddenPage'
 
 const messages = defineMessages({
-  duration: { id: 'contract.label.duration', defaultMessage: '服務期間' },
+  duration: { id: 'contract.label.duration', defaultMessage: '合約期間' },
+  serviceDuration: { id: 'contract.label.serviceDuration', defaultMessage: '服務期間' },
   disagreed: { id: 'contract.label.disagreed', defaultMessage: '尚未簽署' },
   agreed: { id: 'contract.label.agreed', defaultMessage: '已簽署且經過與「{agreeName}」再次確認合約生效' },
   revoked: { id: 'contract.label.revoked', defaultMessage: '已解約' },
@@ -46,8 +47,9 @@ const ContractCollectionAdminPage: React.VFC = () => {
           endedAt: value.ended_at,
           agreedIp: value.agreed_ip,
           agreedAt: value.agreed_at,
-          agreedOptions: value.agreed_options,
+          agreedOptions: value.agreed_options || {},
           revokedAt: value.revoked_at,
+          options: value.options || {},
         }
       }) || []
   return (
@@ -66,8 +68,15 @@ const ContractCollectionAdminPage: React.VFC = () => {
                   </div>
                 }
               >
-                {formatMessage(messages.duration)}: {moment(item.startedAt).format('YYYY-MM-DD')} ~{' '}
-                {moment(item.endedAt).format('YYYY-MM-DD')}
+                <div>
+                  {formatMessage(messages.duration)}: {moment(item.startedAt).format('YYYY-MM-DD')} ~{' '}
+                  {moment(item.endedAt).format('YYYY-MM-DD')}
+                </div>
+                <div>
+                  {formatMessage(messages.serviceDuration)}:{' '}
+                  {moment(item.options.serviceStartedAt || item.startedAt).format('YYYY-MM-DD')} ~{' '}
+                  {moment(item.options.serviceEndedAt || item.endedAt).format('YYYY-MM-DD')}
+                </div>
                 {item.revokedAt && (
                   <div>
                     <span className="mr-1">{moment(item.revokedAt).format('YYYY-MM-DD HH:mm:ss')}</span>
@@ -99,6 +108,7 @@ const GET_MEMBER_CONTRACTS = gql`
       revoked_at
       started_at
       ended_at
+      options
       contract {
         name
       }
