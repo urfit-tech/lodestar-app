@@ -72,11 +72,6 @@ const ContractCollectionAdminPage: React.VFC = () => {
                   {formatMessage(messages.duration)}: {moment(item.startedAt).format('YYYY-MM-DD')} ~{' '}
                   {moment(item.endedAt).format('YYYY-MM-DD')}
                 </div>
-                <div>
-                  {formatMessage(messages.serviceDuration)}:{' '}
-                  {moment(item.options.serviceStartedAt || item.startedAt).format('YYYY-MM-DD')} ~{' '}
-                  {moment(item.options.serviceEndedAt || item.endedAt).format('YYYY-MM-DD')}
-                </div>
                 {item.revokedAt && (
                   <div>
                     <span className="mr-1">{moment(item.revokedAt).format('YYYY-MM-DD HH:mm:ss')}</span>
