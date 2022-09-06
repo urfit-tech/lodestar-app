@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 const exerciseMessages = {
   '*': defineMessages({
-    item: { id: 'exercise.*.start', defaultMessage: '項目' },
+    item: { id: 'exercise.*.item', defaultMessage: '項目' },
     score: { id: 'exercise.*.score', defaultMessage: '分' },
     personalPerformance: { id: 'exercise.*.personalPerformance', defaultMessage: '個人表現' },
     overallAverage: { id: 'exercise.*.overallAverage', defaultMessage: '全體平均' },

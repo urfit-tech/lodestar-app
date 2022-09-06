@@ -752,9 +752,17 @@ export const useMutateExercise = () => {
       }
     }
   `)
+  const [updateExercise] = useMutation<hasura.UPDATE_EXERCISE, hasura.UPDATE_EXERCISEVariables>(gql`
+    mutation UPDATE_EXERCISE($exerciseId: uuid!, $answer: jsonb, $endedAt: timestamptz) {
+      update_exercise_by_pk(pk_columns: { id: $exerciseId }, _set: { answer: $answer, ended_at: $endedAt }) {
+        id
+      }
+    }
+  `)
 
   return {
     insertExercise,
+    updateExercise,
   }
 }
 
