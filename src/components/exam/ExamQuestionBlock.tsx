@@ -78,7 +78,19 @@ const ExamQuestionBlock: React.VFC<
   Pick<Exam, 'isAvailableToGoBack'> & {
     questions: Question[]
     showDetail: boolean
-    exercisePublic: ExercisePublic[]
+    exercisePublic: Pick<
+      ExercisePublic,
+      | 'exerciseId'
+      | 'programContentId'
+      | 'startedAt'
+      | 'endedAt'
+      | 'questionId'
+      | 'questionPoints'
+      | 'gainedPoints'
+      | 'isCorrect'
+      | 'questionStartedAt'
+      | 'questionEndedAt'
+    >[]
     questionAmount: number
     totalDuration: number
     onFinish?: () => void
