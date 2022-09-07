@@ -90,6 +90,7 @@ const ExamQuestionBlock: React.VFC<
       | 'isCorrect'
       | 'questionStartedAt'
       | 'questionEndedAt'
+      | 'duration'
     >[]
     questionAmount: number
     totalDuration: number

@@ -242,6 +242,7 @@ export const useExercisePublic = (programContentId: string) => {
     | 'isCorrect'
     | 'questionStartedAt'
     | 'questionEndedAt'
+    | 'duration'
   >[] =
     data?.exercise_public.map(v => ({
       exerciseId: v.exercise_id.toString(),
