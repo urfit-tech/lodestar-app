@@ -208,7 +208,6 @@ export const useExercisePublic = (programContentId: string) => {
         exercise_public(where: { program_content_id: { _eq: $programContentId } }) {
           exercise_id
           program_content_id
-          member_id
           started_at
           ended_at
           question_id
@@ -231,11 +230,22 @@ export const useExercisePublic = (programContentId: string) => {
     `,
     { variables: { programContentId } },
   )
-  const exercisePublic: ExercisePublic[] =
+  const exercisePublic: Pick<
+    ExercisePublic,
+    | 'exerciseId'
+    | 'programContentId'
+    | 'startedAt'
+    | 'endedAt'
+    | 'questionId'
+    | 'questionPoints'
+    | 'gainedPoints'
+    | 'isCorrect'
+    | 'questionStartedAt'
+    | 'questionEndedAt'
+  >[] =
     data?.exercise_public.map(v => ({
       exerciseId: v.exercise_id.toString(),
       programContentId: v.program_content_id.toString(),
-      memberId: v.member_id?.toString(),
       startedAt: v.started_at ? new Date(v.started_at) : null,
       endedAt: v.ended_at ? new Date(v.ended_at) : null,
       questionId: v.question_id?.toString(),

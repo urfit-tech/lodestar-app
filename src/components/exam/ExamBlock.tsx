@@ -81,14 +81,6 @@ const ExamBlock: React.VFC<{
     isTaken ? 'result' : 'intro',
   )
 
-  // const countDownTime = useRef(
-  //   status === 'answering' && exam?.timeLimitAmount && exam?.timeLimitUnit
-  //     ? moment().add(exam.timeLimitAmount, exam.timeLimitUnit).toDate()
-  //     : moment().toDate(),
-  // )
-  // console.log(status)
-  // console.log(countDownTime)
-
   const { insertExercise, updateExercise } = useMutateExercise()
   const {
     loading: loadingExtraExpiredAt,
