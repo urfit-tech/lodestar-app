@@ -1,5 +1,4 @@
 import { Affix, Button, Tabs } from 'antd'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useMediaQuery } from 'react-responsive'
@@ -100,39 +99,11 @@ const FundingPage: React.VFC<ProjectProps> = ({
   const { formatMessage } = useIntl()
   const isDesktop = useMediaQuery({ minWidth: BREAK_POINT })
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
-  const { settings } = useApp()
   const tabRef = useRef<HTMLDivElement>(null)
 
   const handleTabsChange = (activeKey: string) => {
     tabRef.current && tabRef.current.scrollIntoView()
     setActiveKey(activeKey)
-  }
-
-  let seoMeta: { title?: string; description?: string } | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta']).ProjectPage[`${id}`]
-  } catch (error) {}
-
-  const siteTitle = seoMeta?.title || title
-  const siteDescription = seoMeta?.description || description
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: siteTitle,
-    image: coverUrl,
-    description: siteDescription,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: siteTitle,
-      description: siteDescription,
-    },
-  })
-
-  const project = {
-    id,
-    title,
   }
 
   return (
@@ -143,7 +114,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
             <FundingCoverBlock coverType={coverType} coverUrl={coverUrl || EmptyCover} />
           </div>
           <Responsive.Default>
-            <CWLBreadcrumb project={project} />
+            <CWLBreadcrumb project={{ id, title }} />
           </Responsive.Default>
           <div className="col-12 col-lg-4">
             <FundingSummaryBlock
@@ -165,7 +136,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
       </StyledCover>
 
       <Responsive.Desktop>
-        <CWLBreadcrumb project={project} />
+        <CWLBreadcrumb project={{ id, title }} />
       </Responsive.Desktop>
 
       <Responsive.Default>

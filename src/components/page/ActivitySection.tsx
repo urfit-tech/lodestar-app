@@ -15,7 +15,7 @@ const StyledAngleRightIcon = styled(AngleRightIcon)`
 `
 
 const ActivitySection: React.VFC<{ options: { title?: string; colAmount?: number } }> = ({ options }) => {
-  const { enabledModules, settings, currencyId: appCurrencyId, id: appId } = useApp()
+  const { enabledModules, id: appId } = useApp()
   const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection()
   const tracking = useTracking()
   const { resourceCollection } = useResourceCollection(

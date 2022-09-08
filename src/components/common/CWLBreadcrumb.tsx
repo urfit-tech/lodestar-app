@@ -31,7 +31,7 @@ const CWLBreadcrumb: React.VFC<{
   program?: Program
   programPackage?: any
   post?: Post
-  project?: any
+  project?: { id: string; title: string }
 }> = ({ program, programPackage, post, project }) => {
   const { navs } = useApp()
   const footerNavs = navs.filter(nav => nav.block === 'footer')

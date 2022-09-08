@@ -5,6 +5,7 @@
     "anticon",
     "appstore",
     "bobthered",
+    "Bpmf",
     "braft",
     "callout",
     "chakra",
@@ -64,7 +65,8 @@
     "xstate",
     "xuemi",
     "YOTTA",
-    "youtube"
+    "youtube",
+    "zhuyin"
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -1,11 +1,14 @@
 import { useQuery } from '@apollo/react-hooks'
+import { Skeleton } from 'antd'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React from 'react'
 import { StringParam, useQueryParam } from 'use-query-params'
+import ExamBlock from '../../components/exam/ExamBlock'
 import ExerciseBlock from '../../components/exercise/ExerciseBlock'
 import hasura from '../../hasura'
+import { useExam } from '../../hooks/exam'
 import {
   ProgramContent,
   ProgramContentAttachmentProps,
@@ -24,66 +27,86 @@ const ProgramContentExerciseBlock: React.VFC<{
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const { currentMemberId } = useAuth()
   const { loadingLastExercise, lastExercise } = useLastExercise(programContent.id, currentMemberId || '', exerciseId)
+  const { loadingExamId, errorExamId, loadingExam, errorExam, exam } = useExam(programContent.id, lastExercise)
+  const contentType = programContent.contentType
 
-  if (loadingLastExercise || !programContent.programContentBody?.data?.questions) {
-    return null
+  if (loadingLastExercise || loadingExamId || loadingExam) {
+    return <Skeleton active />
   }
 
-  return (
-    <ExerciseBlock
-      // TODO
-      /*  
-          below data which from programContent metadata 
-          will be replaced from exam data
-      */
-      id={programContent.programContentBody.id}
-      programContentId={programContent.id}
-      title={programContent.title}
-      nextProgramContentId={nextProgramContentId}
-      isTaken={!!lastExercise}
-      questions={
-        programContent.programContentBody.data.questions
-          .filter((question: any) => !!question.choices?.length)
-          .map((question: any) => ({
-            id: question.id,
-            description: question.description || '',
-            answerDescription: question.answerDescription || '',
-            points: question.points || 0,
-            layout: question.layout,
-            font: question.font,
-            isMultipleAnswers: !!question.isMultipleAnswers,
-            gainedPoints: lastExercise?.answer?.find((v: any) => v.questionId === question.id)?.gainedPoints || 0,
-            choices:
-              question.choices?.map((choice: any) => ({
-                id: choice.id,
-                description: choice.description || '',
-                isCorrect: !!choice.isCorrect,
-                isSelected: !!lastExercise?.answer?.some(
-                  (v: any) =>
-                    v.questionId === question.id && v.choiceIds.some((choiceId: string) => choiceId === choice.id),
-                ),
-              })) || [],
-          })) || []
-      }
-      isAvailableToGoBack={!!programContent.metadata?.isAvailableToGoBack}
-      isAvailableToRetry={!!programContent.metadata?.isAvailableToRetry}
-      isAvailableAnnounceScore={programContent.metadata?.isAvailableAnnounceScore ?? true}
-      passingScore={programContent.metadata?.passingScore || 0}
-      isAnswerer={currentMemberId === lastExercise?.memberId}
-      timeLimitUnit={programContent.metadata?.timeLimitUnit}
-      timeLimitAmount={programContent.metadata?.timeLimitAmount}
-      startedAt={
-        programContent.metadata?.startedAt && moment(programContent.metadata?.startedAt).isValid()
-          ? moment(programContent.metadata?.startedAt).toDate()
-          : undefined
-      }
-      endedAt={
-        programContent.metadata?.endedAt && moment(programContent.metadata?.endedAt).isValid()
-          ? moment(programContent.metadata?.endedAt).toDate()
-          : undefined
-      }
-    />
-  )
+  if (contentType === 'exercise' && !programContent.programContentBody?.data?.questions)
+    return <>exercise doesn't have any question</>
+
+  // TODO
+  /*
+    migrate exercise to exam in future
+  */
+  if (contentType === 'exercise' && programContent.programContentBody) {
+    return (
+      <ExerciseBlock
+        id={programContent.programContentBody.id}
+        programContentId={programContent.id}
+        title={programContent.title}
+        nextProgramContentId={nextProgramContentId}
+        isTaken={!!lastExercise}
+        isAnswerer={currentMemberId === lastExercise?.memberId}
+        questions={
+          programContent.programContentBody.data.questions
+            .filter((question: any) => !!question.choices?.length)
+            .map((question: any) => ({
+              id: question.id,
+              description: question.description || '',
+              answerDescription: question.answerDescription || '',
+              points: question.points || 0,
+              layout: question.layout,
+              font: question.font,
+              isMultipleAnswers: !!question.isMultipleAnswers,
+              gainedPoints: lastExercise?.answer?.find((v: any) => v.questionId === question.id)?.gainedPoints || 0,
+              choices:
+                question.choices?.map((choice: any) => ({
+                  id: choice.id,
+                  description: choice.description || '',
+                  isCorrect: !!choice.isCorrect,
+                  isSelected: !!lastExercise?.answer?.some(
+                    (v: any) =>
+                      v.questionId === question.id && v.choiceIds.some((choiceId: string) => choiceId === choice.id),
+                  ),
+                })) || [],
+            })) || []
+        }
+        isAvailableToGoBack={!!programContent.metadata?.isAvailableToGoBack}
+        isAvailableToRetry={!!programContent.metadata?.isAvailableToRetry}
+        isAvailableAnnounceScore={programContent.metadata?.isAvailableAnnounceScore ?? true}
+        passingScore={programContent.metadata?.passingScore || 0}
+        timeLimitUnit={programContent.metadata?.timeLimitUnit}
+        timeLimitAmount={programContent.metadata?.timeLimitAmount}
+        startedAt={
+          programContent.metadata?.startedAt && moment(programContent.metadata?.startedAt).isValid()
+            ? moment(programContent.metadata?.startedAt).toDate()
+            : undefined
+        }
+        endedAt={
+          programContent.metadata?.endedAt && moment(programContent.metadata?.endedAt).isValid()
+            ? moment(programContent.metadata?.endedAt).toDate()
+            : undefined
+        }
+      />
+    )
+  } else {
+    // contentType is exam
+    return (
+      <ExamBlock
+        errorExam={errorExam}
+        errorExamId={errorExamId}
+        exam={exam}
+        programContentId={programContent.id}
+        nextProgramContentId={nextProgramContentId}
+        title={programContent.title}
+        isTaken={!!lastExercise}
+        isAnswerer={currentMemberId === lastExercise?.memberId}
+      />
+    )
+  }
 }
 
 const useLastExercise = (programContentId: string, memberId: string, exerciseId?: string | null) => {

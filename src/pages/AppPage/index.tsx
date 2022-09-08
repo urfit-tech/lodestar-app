@@ -114,7 +114,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   const location = useLocation()
   const { settings } = useApp()
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
-  const { loadingAppPage, errorAppPage, appPage } = usePage(location.pathname)
+  const { loadingAppPage, appPage } = usePage(location.pathname)
 
   if (loadingAppPage) {
     return <LoadingPage />

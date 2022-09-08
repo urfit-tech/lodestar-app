@@ -1,0 +1,271 @@
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+import { flatten } from 'ramda'
+import { Exam, ExamTimeUnit, ExercisePublic, Question } from '../types/exam'
+import hasura from './../hasura'
+
+export const useExam = (
+  programContentId: string,
+  lastExercise: { id: string; answer: any; memberId: string } | null,
+) => {
+  const {
+    loading: loadingExamId,
+    error: errorExamId,
+    data: programContentBodyData,
+  } = useQuery<hasura.GET_EXAM_ID, hasura.GET_EXAM_IDVariables>(
+    gql`
+      query GET_EXAM_ID($programContentId: uuid!) {
+        program_content_body(where: { program_contents: { id: { _eq: $programContentId } }, type: { _eq: "exam" } }) {
+          target
+        }
+      }
+    `,
+    { variables: { programContentId } },
+  )
+  const examId = programContentBodyData?.program_content_body[0]?.target
+
+  const {
+    loading: loadingExam,
+    error: errorExam,
+    data,
+  } = useQuery<hasura.GET_EXAM, hasura.GET_EXAMVariables>(
+    gql`
+      query GET_EXAM($examId: uuid!) {
+        exam_by_pk(id: $examId) {
+          id
+          point
+          passing_score
+          examinable_unit
+          examinable_amount
+          examinable_started_at
+          examinable_ended_at
+          time_limit_unit
+          time_limit_amount
+          is_available_to_retry
+          is_available_to_go_back
+          is_available_announce_score
+          exam_question_group {
+            id
+            question_group {
+              id
+              title
+              questions(order_by: { position: asc }) {
+                id
+                type
+                subject
+                layout
+                font
+                explanation
+                question_options(order_by: { position: asc }) {
+                  id
+                  value
+                  is_answer
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        examId,
+      },
+    },
+  )
+  const exam: Pick<
+    Exam,
+    | 'id'
+    | 'point'
+    | 'passingScore'
+    | 'examinableUnit'
+    | 'examinableAmount'
+    | 'examinableStartedAt'
+    | 'examinableEndedAt'
+    | 'timeLimitUnit'
+    | 'timeLimitAmount'
+    | 'isAvailableToRetry'
+    | 'isAvailableToGoBack'
+    | 'isAvailableAnnounceScore'
+  > & {
+    questions: Question[]
+  } = {
+    id: data?.exam_by_pk?.id,
+    point: Number(data?.exam_by_pk?.point),
+    passingScore: Number(data?.exam_by_pk?.passing_score),
+    examinableUnit: data?.exam_by_pk?.examinable_unit?.toString() as ExamTimeUnit,
+    examinableAmount: Number(data?.exam_by_pk?.examinable_amount),
+    examinableStartedAt: data?.exam_by_pk?.examinable_started_at
+      ? new Date(data.exam_by_pk.examinable_started_at)
+      : null,
+    examinableEndedAt: data?.exam_by_pk?.examinable_ended_at ? new Date(data.exam_by_pk.examinable_ended_at) : null,
+    timeLimitUnit: data?.exam_by_pk?.time_limit_unit as ExamTimeUnit,
+    timeLimitAmount: Number(data?.exam_by_pk?.time_limit_amount),
+    isAvailableToRetry: Boolean(data?.exam_by_pk?.is_available_to_retry),
+    isAvailableToGoBack: Boolean(data?.exam_by_pk?.is_available_to_go_back),
+    isAvailableAnnounceScore: Boolean(data?.exam_by_pk?.is_available_announce_score),
+    questions: flatten(
+      data?.exam_by_pk?.exam_question_group.map(
+        v =>
+          v.question_group?.questions.map(w => ({
+            id: w.id,
+            type: w.type,
+            subject: w.subject,
+            layout: w.layout,
+            font: w.font,
+            explanation: w.explanation,
+            gainedPoints: lastExercise?.answer?.find((v: any) => v.questionId === w.id).gainedPoints || 0,
+            startedAt: lastExercise?.answer?.find((v: any) => v.questionId === w.id).startedAt || null,
+            endedAt: lastExercise?.answer?.find((v: any) => v.questionId === w.id).endedAt || null,
+            questionOptions:
+              w.question_options.map(x => ({
+                id: x.id,
+                value: x.value,
+                isAnswer: x.is_answer,
+                isSelected: !!lastExercise?.answer?.some(
+                  (y: any) => y.questionId === w.id && y.choiceIds.some((choiceId: string) => choiceId === x.id),
+                ),
+              })) || [],
+          })) || [],
+      ) || [],
+    ),
+  }
+
+  return {
+    loadingExam,
+    loadingExamId,
+    errorExamId,
+    errorExam,
+    examId,
+    exam,
+  }
+}
+
+export const useExamMemberTimeLimit = (examId: string, memberId: string) => {
+  const { loading, error, data } = useQuery<
+    hasura.GET_EXAM_MEMBER_TIME_LIMIT,
+    hasura.GET_EXAM_MEMBER_TIME_LIMITVariables
+  >(
+    gql`
+      query GET_EXAM_MEMBER_TIME_LIMIT($examId: uuid!, $memberId: String!) {
+        exam_member_time_limit(where: { exam_id: { _eq: $examId }, member_id: { _eq: $memberId } }) {
+          member_id
+          expired_at
+        }
+      }
+    `,
+    {
+      variables: {
+        examId,
+        memberId,
+      },
+    },
+  )
+
+  const extraExpiredAt = data?.exam_member_time_limit?.[0] ? new Date(data?.exam_member_time_limit[0].expired_at) : null
+
+  return {
+    loading,
+    error,
+    extraExpiredAt,
+  }
+}
+export const useExamExaminableTimeLimit = (programContentId: string, memberId: string) => {
+  const { loading, error, data } = useQuery<hasura.GET_CONTENT_DELIVERED_AT, hasura.GET_CONTENT_DELIVERED_ATVariables>(
+    gql`
+      query GET_CONTENT_DELIVERED_AT($programContentId: uuid!, $memberId: String!) {
+        program_content_enrollment(
+          where: { program_content_id: { _eq: $programContentId }, member_id: { _eq: $memberId } }
+          order_by: { product_delivered_at: desc_nulls_last }
+        ) {
+          product_delivered_at
+        }
+      }
+    `,
+    {
+      variables: {
+        programContentId,
+        memberId,
+      },
+    },
+  )
+
+  const productDeliveredAt = data?.program_content_enrollment
+    ? new Date(data?.program_content_enrollment?.[0].product_delivered_at)
+    : null
+
+  return {
+    loading,
+    error,
+    productDeliveredAt,
+  }
+}
+
+export const useExercisePublic = (programContentId: string) => {
+  const { loading, error, data } = useQuery<hasura.GET_EXERCISE_PUBLIC, hasura.GET_EXERCISE_PUBLICVariables>(
+    gql`
+      query GET_EXERCISE_PUBLIC($programContentId: uuid!) {
+        exercise_public(where: { program_content_id: { _eq: $programContentId } }) {
+          exercise_id
+          program_content_id
+          started_at
+          ended_at
+          question_id
+          question_points
+          gained_points
+          is_correct
+          question_started_at
+          question_ended_at
+          duration
+        }
+        exercise_public_aggregate(where: { program_content_id: { _eq: $programContentId } }) {
+          aggregate {
+            sum {
+              duration
+            }
+            count(columns: question_id)
+          }
+        }
+      }
+    `,
+    { variables: { programContentId } },
+  )
+  const exercisePublic: Pick<
+    ExercisePublic,
+    | 'exerciseId'
+    | 'programContentId'
+    | 'startedAt'
+    | 'endedAt'
+    | 'questionId'
+    | 'questionPoints'
+    | 'gainedPoints'
+    | 'isCorrect'
+    | 'questionStartedAt'
+    | 'questionEndedAt'
+    | 'duration'
+  >[] =
+    data?.exercise_public.map(v => ({
+      exerciseId: v.exercise_id.toString(),
+      programContentId: v.program_content_id.toString(),
+      startedAt: v.started_at ? new Date(v.started_at) : null,
+      endedAt: v.ended_at ? new Date(v.ended_at) : null,
+      questionId: v.question_id?.toString(),
+      questionPoints: Number(v.question_points),
+      gainedPoints: Number(v.gained_points),
+      isCorrect: Boolean(v.is_correct),
+      questionStartedAt: v.question_started_at ? new Date(v.question_started_at) : null,
+      questionEndedAt: v.question_ended_at ? new Date(v.question_ended_at) : null,
+      duration: Number(v.duration),
+    })) || []
+
+  const questionAmount: number = Number(data?.exercise_public_aggregate.aggregate?.count) || 0
+  const totalDuration: number = Number(data?.exercise_public_aggregate.aggregate?.sum?.duration) || 0
+
+  return {
+    loading,
+    error,
+    exercisePublic,
+    questionAmount,
+    totalDuration,
+  }
+}

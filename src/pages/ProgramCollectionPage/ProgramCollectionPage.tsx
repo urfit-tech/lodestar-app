@@ -19,7 +19,7 @@ import { usePublishedProgramCollection } from '../../hooks/program'
 import { Category } from '../../types/general'
 import ProgramCollectionPageHelmet from './ProgramCollectionPageHelmet'
 
-const StyledButton = styled(ChakraButton)`
+export const StyledButton = styled(ChakraButton)`
   && {
     height: 2.75rem;
     padding-left: 1.5rem;

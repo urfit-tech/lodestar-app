@@ -1,23 +1,12 @@
 import { Card } from 'antd'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { AvatarImage } from '../../../components/common/Image'
 import { usePublicMember } from '../../../hooks/member'
-import { useEnrolledProgramIds } from '../../../hooks/program'
 import { Category } from '../../../types/general'
 import { Program, ProgramContent, ProgramContentSection, ProgramPlan, ProgramRole } from '../../../types/program'
 import ProgramContentCountBlock from './ProgramContentCountBlock'
-
-const StyledCountDownBlock = styled.div`
-  margin-top: 15px;
-  span {
-    font-size: 14px;
-  }
-`
 
 const StyledInstructorName = styled.div`
   margin-bottom: 28px;
@@ -50,12 +39,6 @@ const ProgramInfoCard: React.FC<{
   }
 }> = ({ instructorId, program }) => {
   const { member } = usePublicMember(instructorId)
-  const isOnSale = (program.plans[0]?.soldAt?.getTime() || 0) > Date.now()
-  const { enabledModules } = useApp()
-  const { currentMemberId } = useAuth()
-  const { formatMessage } = useIntl()
-  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
-  const isEnrolled = enrolledProgramIds.includes(program.id)
 
   return (
     <StyledProgramInfoCard>

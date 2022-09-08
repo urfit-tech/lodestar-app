@@ -182,7 +182,7 @@ const MerchandiseBlock: React.VFC<{
 
         {merchandise.isCountdownTimerVisible && merchandise.soldAt && merchandise.soldAt.getTime() > Date.now() && (
           <div className="mb-3">
-            <CountDownTimeBlock expiredAt={merchandise.soldAt} icon />
+            <CountDownTimeBlock expiredAt={merchandise.soldAt} />
           </div>
         )}
 
