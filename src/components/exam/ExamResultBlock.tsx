@@ -96,6 +96,8 @@ const ExamResultBlock: React.VFC<
     isAnswerer: boolean
     questions: Question[]
     point: number
+    totalDuration: number
+    averageGainedPoints: number
     timeSpent?: number
     nextProgramContentId?: string
     onReAnswer?: () => void
@@ -112,6 +114,8 @@ const ExamResultBlock: React.VFC<
   timeLimitAmount,
   timeLimitUnit,
   timeSpent,
+  totalDuration,
+  averageGainedPoints,
   onReAnswer,
   onReview,
 }) => {
@@ -122,7 +126,7 @@ const ExamResultBlock: React.VFC<
     url,
   } = useRouteMatch<{ programContentId: string }>()
   const totalPoints = questions.length * point
-  const score = sum(questions.map(question => question.gainedPoints || 0))
+  const gainedPoints = sum(questions.map(question => question.gainedPoints || 0))
 
   const resultTable: {
     head: {
@@ -149,9 +153,13 @@ const ExamResultBlock: React.VFC<
       rows: [
         {
           columns: [
-            formatMessage(examMessages.ExamResultBlock.score, { score }),
-            `${score} / ${totalPoints} ${formatMessage(examMessages['*'].score)}`,
-            `${score} / ${totalPoints} ${formatMessage(examMessages['*'].score)}`,
+            formatMessage(examMessages.ExamResultBlock.score),
+            `${formatMessage(examMessages.ExamResultBlock.gainedPoints, {
+              gainedPoints: `${gainedPoints} / ${totalPoints}`,
+            })}`,
+            `${formatMessage(examMessages.ExamResultBlock.gainedPoints, {
+              gainedPoints: `${averageGainedPoints} / ${totalPoints}`,
+            })}`,
           ],
           hidden: !isAvailableAnnounceScore,
         },
@@ -159,7 +167,7 @@ const ExamResultBlock: React.VFC<
           columns: [
             formatMessage(examMessages.ExamResultBlock.averageAnswerTime),
             `${durationFullFormatter((timeSpent || 0) / 1000 / questions.length)}`,
-            `${durationFullFormatter((timeSpent || 0) / 1000 / questions.length)}`,
+            `${durationFullFormatter(totalDuration / questions.length)}`,
           ],
           hidden: !Boolean(timeSpent),
         },
@@ -175,7 +183,7 @@ const ExamResultBlock: React.VFC<
             ) : (
               `${durationFullFormatter((timeSpent || 0) / 1000)}`
             ),
-            `${durationFullFormatter((timeSpent || 0) / 1000)}`,
+            `${durationFullFormatter(totalDuration)}`,
           ],
           hidden: !Boolean(timeSpent),
         },
@@ -186,33 +194,73 @@ const ExamResultBlock: React.VFC<
   return (
     <div className="d-flex flex-column align-items-center ">
       {isAvailableAnnounceScore ? (
-        <div className="mb-4 text-center">
-          <StyledResultTitle className="mb-2">
-            {formatMessage(examMessages.ExamResultBlock.yourExamResult)}
-          </StyledResultTitle>
-          <StyledCircularProgress
-            className="mb-3"
-            value={(score / totalPoints) * 100}
-            size="120px"
-            color={score >= passingScore ? 'var(--success)' : 'var(--warning)'}
-          >
-            <StyledCircularProgressLabel>
-              {formatMessage(examMessages.ExamResultBlock.score, { score: Math.floor(score * 10) / 10 })}
-            </StyledCircularProgressLabel>
-          </StyledCircularProgress>
-          {Boolean(passingScore) && (
-            <>
-              <StyledTitle>
-                {score >= passingScore
-                  ? formatMessage(examMessages.ExamResultBlock.passExam)
-                  : formatMessage(examMessages.ExamResultBlock.failExam)}
-              </StyledTitle>
-              <StyledPassingScore>
-                {formatMessage(examMessages.ExamResultBlock.passingScore, { passingScore })}
-              </StyledPassingScore>
-            </>
+        <>
+          <div className="mb-4 text-center">
+            <StyledResultTitle className="mb-2">
+              {formatMessage(examMessages.ExamResultBlock.yourExamResult)}
+            </StyledResultTitle>
+            <StyledCircularProgress
+              className="mb-3"
+              value={(gainedPoints / totalPoints) * 100}
+              size="120px"
+              color={gainedPoints >= passingScore ? 'var(--success)' : 'var(--warning)'}
+            >
+              <StyledCircularProgressLabel>
+                {formatMessage(examMessages.ExamResultBlock.score, { score: Math.floor(gainedPoints * 10) / 10 })}
+              </StyledCircularProgressLabel>
+            </StyledCircularProgress>
+            {Boolean(passingScore) && (
+              <>
+                <StyledTitle>
+                  {gainedPoints >= passingScore
+                    ? formatMessage(examMessages.ExamResultBlock.passExam)
+                    : formatMessage(examMessages.ExamResultBlock.failExam)}
+                </StyledTitle>
+                <StyledPassingScore>
+                  {formatMessage(examMessages.ExamResultBlock.passingScore, { passingScore })}
+                </StyledPassingScore>
+              </>
+            )}
+          </div>
+          {resultTable.body.rows.some(body => !body.hidden) && (
+            <StyledTableContainer>
+              <Table>
+                <Thead>
+                  <Tr>
+                    {resultTable.head.columns
+                      .filter(column => !column.hidden)
+                      .map(column => (
+                        <StyledTh key={column.label}>{column.label}</StyledTh>
+                      ))}
+                  </Tr>
+                </Thead>
+                <StyledTbody>
+                  {resultTable.body.rows
+                    .filter(row => !row.hidden)
+                    .map((row, rowIndex, rows) => (
+                      <Tr key={row.columns.join('')}>
+                        {row.columns
+                          .filter((_column, columnIndex) => !resultTable.head.columns[columnIndex].hidden)
+                          .map(column => (
+                            <Td
+                              style={{
+                                ...(rowIndex + 1 === rows.length
+                                  ? {
+                                      borderBottom: 'none',
+                                    }
+                                  : {}),
+                              }}
+                            >
+                              {column}
+                            </Td>
+                          ))}
+                      </Tr>
+                    ))}
+                </StyledTbody>
+              </Table>
+            </StyledTableContainer>
           )}
-        </div>
+        </>
       ) : (
         <div className="mb-4 text-center">
           <StyledSuccessIconWrapper>
@@ -223,46 +271,8 @@ const ExamResultBlock: React.VFC<
           </StyledTitle>
         </div>
       )}
-      {resultTable.body.rows.some(body => !body.hidden) && (
-        <StyledTableContainer>
-          <Table>
-            <Thead>
-              <Tr>
-                {resultTable.head.columns
-                  .filter(column => !column.hidden)
-                  .map(column => (
-                    <StyledTh key={column.label}>{column.label}</StyledTh>
-                  ))}
-              </Tr>
-            </Thead>
-            <StyledTbody>
-              {resultTable.body.rows
-                .filter(row => !row.hidden)
-                .map((row, rowIndex, rows) => (
-                  <Tr key={row.columns.join('')}>
-                    {row.columns
-                      .filter((_column, columnIndex) => !resultTable.head.columns[columnIndex].hidden)
-                      .map(column => (
-                        <Td
-                          style={{
-                            ...(rowIndex + 1 === rows.length
-                              ? {
-                                  borderBottom: 'none',
-                                }
-                              : {}),
-                          }}
-                        >
-                          {column}
-                        </Td>
-                      ))}
-                  </Tr>
-                ))}
-            </StyledTbody>
-          </Table>
-        </StyledTableContainer>
-      )}
       <div className="d-flex flex-column">
-        {nextProgramContentId && (
+        {nextProgramContentId ? (
           <StyledButton
             onClick={() => history.push(url.replace(currentContentId, nextProgramContentId))}
             className="mb-2"
@@ -270,15 +280,17 @@ const ExamResultBlock: React.VFC<
           >
             {formatMessage(examMessages.ExamResultBlock.nextCourse)}
           </StyledButton>
-        )}
-        <StyledButton onClick={onReview} className="mb-2" variant="outline">
-          {formatMessage(examMessages.ExamResultBlock.showDetail)}
-        </StyledButton>
-        {isAvailableToRetry && (
+        ) : null}
+        {isAvailableAnnounceScore ? (
+          <StyledButton onClick={onReview} className="mb-2" variant="outline">
+            {formatMessage(examMessages.ExamResultBlock.showDetail)}
+          </StyledButton>
+        ) : null}
+        {isAvailableToRetry ? (
           <StyledButton onClick={onReAnswer} variant="outline" disabled={!isAnswerer}>
             {formatMessage(examMessages.ExamResultBlock.restartExam)}
           </StyledButton>
-        )}
+        ) : null}
       </div>
     </div>
   )

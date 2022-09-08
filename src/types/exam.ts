@@ -46,14 +46,23 @@ export type Exam = {
 export type ExercisePublic = {
   exerciseId: string
   programContentId: string
-  memberId: string | undefined
+  memberId?: string
   startedAt: Date | null
   endedAt: Date | null
-  questionId: string | undefined
+  questionId?: string
   questionPoints: number
   gainedPoints: number
   isCorrect: boolean
   questionStartedAt: Date | null
   questionEndedAt: Date | null
   duration: number
+  choiceIds: string[]
 }
+
+export type Exercise = {
+  id: string
+  answer: any
+  memberId: string
+  startedAt: Date | null
+  endedAt: Date | null
+} | null

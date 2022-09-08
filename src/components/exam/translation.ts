@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl'
 const examMessages = {
   '*': defineMessages({
     item: { id: 'exam.*.item', defaultMessage: '項目' },
-    score: { id: 'exam.*.score', defaultMessage: '分' },
     personalPerformance: { id: 'exam.*.personalPerformance', defaultMessage: '個人表現' },
     overallAverage: { id: 'exam.*.overallAverage', defaultMessage: '全體平均' },
   }),
@@ -51,7 +50,8 @@ const examMessages = {
   }),
   ExamResultBlock: defineMessages({
     yourExamResult: { id: 'exam.ExamResultBlock.yourExamResult', defaultMessage: '你的測驗成果' },
-    score: { id: 'exam.ExamResultBlock.score', defaultMessage: '{score}分' },
+    score: { id: 'exam.ExamResultBlock.score', defaultMessage: '分數' },
+    gainedPoints: { id: 'exam.ExamResultBlock.gainedPoints', defaultMessage: '{gainedPoints}分' },
     passExam: { id: 'exam.ExamResultBlock.passExam', defaultMessage: '恭喜！通過測驗' },
     failExam: { id: 'exam.ExamResultBlock.failExam', defaultMessage: '未通過測驗' },
     answerCorrectly: {

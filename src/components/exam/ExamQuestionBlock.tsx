@@ -3,6 +3,7 @@ import BraftEditor from 'braft-editor'
 import { CommonLargeTextMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import moment from 'moment'
+import { sum } from 'ramda'
 import React, { memo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -92,8 +93,8 @@ const ExamQuestionBlock: React.VFC<
       | 'questionEndedAt'
       | 'duration'
     >[]
-    questionAmount: number
-    totalDuration: number
+    specificExercise: ExercisePublic[]
+    subjectAmount: number
     onFinish?: () => void
     onNextStep?: () => void
     onChoiceSelect?: (questionId: string, choiceId: string) => void
@@ -104,8 +105,8 @@ const ExamQuestionBlock: React.VFC<
   questions,
   showDetail,
   exercisePublic,
-  questionAmount,
-  totalDuration,
+  specificExercise,
+  subjectAmount,
   onChoiceSelect,
   onQuestionFinish,
   onNextStep,
@@ -145,17 +146,36 @@ const ExamQuestionBlock: React.VFC<
             formatMessage(examMessages.ExamQuestionBlock.spendTime),
             activeQuestion?.startedAt && activeQuestion?.endedAt
               ? formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
-                  spentTime: `${exercisePublic.find(v => v.questionId === activeQuestion.id)?.duration}`,
+                  spentTime: (
+                    ((specificExercise
+                      .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
+                      ?.endedAt?.getTime() || 0) -
+                      (specificExercise
+                        .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
+                        ?.endedAt?.getTime() || 0)) /
+                    1000
+                  ).toFixed(2),
                 })
               : formatMessage(examMessages.ExamQuestionBlock.unanswered),
-            `${totalDuration / questionAmount}`,
+            formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
+              spentTime: (
+                sum(exercisePublic.filter(v => v.questionId === activeQuestion.id).map(v => v.duration) || 0) /
+                exercisePublic.filter(v => v.questionId === activeQuestion.id).length
+              )
+                .toFixed(2)
+                .toString(),
+            }),
           ],
         },
         {
           columns: [
             formatMessage(examMessages.ExamQuestionBlock.averageCorrectRate),
             '',
-            `${Math.floor((exercisePublic.map(v => v.isCorrect).length / questionAmount) * 100)}%`,
+            `${
+              (exercisePublic.filter(v => v.questionId === activeQuestion.id).filter(w => w.isCorrect).length /
+                subjectAmount) *
+              100
+            }%`,
           ],
         },
       ],
