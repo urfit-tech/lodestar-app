@@ -1,5 +1,4 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button } from 'antd'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
@@ -18,6 +17,7 @@ import LocaleContext from '../contexts/LocaleContext'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { usePodcastProgramCollection } from '../hooks/podcast'
+import { StyledButton } from './ProgramCollectionPage/ProgramCollectionPage'
 
 const PodcastProgramCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -30,7 +30,6 @@ const PodcastProgramCollectionPage: React.VFC = () => {
   const categories = sortBy(prop('position'))(
     uniqBy(category => category.id, flatten(podcastPrograms.map(podcastProgram => podcastProgram.categories))),
   )
-
 
   useEffect(() => {
     if (podcastPrograms) {
@@ -65,24 +64,24 @@ const PodcastProgramCollectionPage: React.VFC = () => {
             <span>{pageTitle || formatMessage(productMessages.podcast.title.broadcast)}</span>
           </StyledBannerTitle>
 
-          <Button
-            type={selectedCategoryId === null ? 'primary' : 'default'}
-            shape="round"
+          <StyledButton
+            colorScheme="primary"
+            variant={selectedCategoryId === null ? 'solid' : 'outline'}
             onClick={() => setSelectedCategoryId(null)}
             className="mb-2"
           >
             {formatMessage(commonMessages.button.allCategory)}
-          </Button>
+          </StyledButton>
           {categories.map(category => (
-            <Button
+            <StyledButton
               key={category.id}
-              type={selectedCategoryId === category.id ? 'primary' : 'default'}
-              shape="round"
+              colorScheme="primary"
+              variant={selectedCategoryId === null ? 'solid' : 'outline'}
               className="ml-2 mb-2"
               onClick={() => setSelectedCategoryId(category.id)}
             >
               {category.name}
-            </Button>
+            </StyledButton>
           ))}
         </div>
       </StyledBanner>

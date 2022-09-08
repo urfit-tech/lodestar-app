@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button, Icon as AntdIcon } from 'antd'
+import { Icon as AntdIcon } from 'antd'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
@@ -21,6 +21,7 @@ import { useNav } from '../../hooks/data'
 import { useProjectIntroCollection } from '../../hooks/project'
 import { FundraisingIcon, PreOrderIcon, PromotionIcon } from '../../images'
 import { Category } from '../../types/general'
+import { StyledButton } from '../ProgramCollectionPage/ProgramCollectionPage'
 import ProjectCollectionPageHelmet from './ProjectCollectionPageHelmet'
 
 const messages = defineMessages({
@@ -136,26 +137,26 @@ const ProjectCollectionPage: React.VFC = () => {
           </StyledBannerTitle>
 
           {noSelector || (
-            <Button
-              type={selectedCategoryId === null ? 'primary' : 'default'}
-              shape="round"
+            <StyledButton
+              colorScheme="primary"
+              variant={selectedCategoryId === null ? 'solid' : 'outline'}
               className="mb-2"
               onClick={() => setSelectedCategoryId(null)}
             >
               {formatMessage(commonMessages.button.allCategory)}
-            </Button>
+            </StyledButton>
           )}
           {noSelector ||
             categories.map(category => (
-              <Button
+              <StyledButton
                 key={category.id}
-                type={selectedCategoryId === category.id ? 'primary' : 'default'}
-                shape="round"
+                colorScheme="primary"
+                variant={selectedCategoryId === null ? 'solid' : 'outline'}
                 className="ml-2 mb-2"
                 onClick={() => setSelectedCategoryId(category.id)}
               >
                 {category.name}
-              </Button>
+              </StyledButton>
             ))}
         </div>
       </StyledCoverSection>
