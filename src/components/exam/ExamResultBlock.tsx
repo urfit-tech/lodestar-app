@@ -206,7 +206,9 @@ const ExamResultBlock: React.VFC<
               color={gainedPoints >= passingScore ? 'var(--success)' : 'var(--warning)'}
             >
               <StyledCircularProgressLabel>
-                {formatMessage(examMessages.ExamResultBlock.score, { score: Math.floor(gainedPoints * 10) / 10 })}
+                {formatMessage(examMessages.ExamResultBlock.gainedPoints, {
+                  gainedPoints: Math.floor(gainedPoints * 10) / 10,
+                })}
               </StyledCircularProgressLabel>
             </StyledCircularProgress>
             {Boolean(passingScore) && (

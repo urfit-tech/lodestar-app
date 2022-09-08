@@ -114,7 +114,6 @@ const ExamQuestionBlock: React.VFC<
 }) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
-
   const beganAt = moment()
   const activeQuestion = questions[index]
 

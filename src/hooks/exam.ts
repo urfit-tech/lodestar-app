@@ -115,12 +115,14 @@ export const useExam = (programContentId: string, latestExercise: ExercisePublic
             startedAt: latestExercise?.find(v => v.questionId === w.id)?.startedAt || null,
             endedAt: latestExercise?.find(v => v.questionId === w.id)?.endedAt || null,
             questionOptions:
-              w.question_options.map(x => ({
-                id: x.id,
-                value: x.value,
-                isAnswer: x.is_answer,
-                isSelected: !!latestExercise.find(v => v.questionId === w.id),
-              })) || [],
+              w.question_options.map(x => {
+                return {
+                  id: x.id,
+                  value: x.value,
+                  isAnswer: x.is_answer,
+                  isSelected: latestExercise.find(v => v.questionId === w.id)?.choiceIds.includes(x.id),
+                }
+              }) || [],
           })) || [],
       ) || [],
     ),

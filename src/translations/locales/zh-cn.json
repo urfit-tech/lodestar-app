@@ -614,7 +614,7 @@
   "exam.ExamResultBlock.passExam": "恭喜！通過測驗",
   "exam.ExamResultBlock.passScore": "及格分數 {passingScore} 分",
   "exam.ExamResultBlock.restartExam": "重新測驗",
-  "exam.ExamResultBlock.score": "{score}分",
+  "exam.ExamResultBlock.score": "分數",
   "exam.ExamResultBlock.showDetail": "查看解答",
   "exam.ExamResultBlock.spentTimeBySec": "{spentTime}秒",
   "exam.ExamResultBlock.yourExamResult": "你的測驗成果",
