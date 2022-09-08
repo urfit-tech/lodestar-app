@@ -1,8 +1,8 @@
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import styled from 'styled-components'
-import { Program } from '../../types/program'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { Post } from '../../types/blog'
+import { Program } from '../../types/program'
 
 const BreadcrumbList = styled.ol`
   display: flex;
@@ -31,7 +31,7 @@ const CWLBreadcrumb: React.VFC<{
   program?: Program
   programPackage?: any
   post?: Post
-  project?: any
+  project?: { id: string; title: string }
 }> = ({ program, programPackage, post, project }) => {
   const { navs } = useApp()
   const footerNavs = navs.filter(nav => nav.block === 'footer')
@@ -51,10 +51,10 @@ const CWLBreadcrumb: React.VFC<{
     })
     const programCategory = program.categories[0].name
     const matchCategory = categoryLinks.find((categoryLink: any) => categoryLink.label === programCategory)
-    
+
     breadcrumbConfig.programs = {
       label: '線上課程',
-      url: '/programs'
+      url: '/programs',
     }
 
     if (matchCategory?.label && matchCategory?.url) {
@@ -62,7 +62,7 @@ const CWLBreadcrumb: React.VFC<{
     }
     breadcrumbConfig.program = {
       label: program.title,
-      url: `/programs/${program.id}`
+      url: `/programs/${program.id}`,
     }
   }
 
@@ -120,24 +120,19 @@ const CWLBreadcrumb: React.VFC<{
       {(program || programPackage || post || project) && (
         <div className={containerClassName} style={{ margin: '15px auto' }}>
           <BreadcrumbList>
-            {
-              Object.keys(breadcrumbConfig).map((key: any, index) => {
-                const breadcrumb = breadcrumbConfig[key]
-                const isLastItem = index + 1 === Object.keys(breadcrumbConfig).length
-                return (
-                  <li style={{ marginRight: '10px' }}>
-                    <BreadcrumbItem href={breadcrumb.url}>{ breadcrumb.label }</BreadcrumbItem>
-                    {
-                      !isLastItem &&
-                      <span style={{ color: '#999' }}> /</span>
-                    }
-                  </li>
-                )
-              })
-            }
+            {Object.keys(breadcrumbConfig).map((key: any, index) => {
+              const breadcrumb = breadcrumbConfig[key]
+              const isLastItem = index + 1 === Object.keys(breadcrumbConfig).length
+              return (
+                <li style={{ marginRight: '10px' }}>
+                  <BreadcrumbItem href={breadcrumb.url}>{breadcrumb.label}</BreadcrumbItem>
+                  {!isLastItem && <span style={{ color: '#999' }}> /</span>}
+                </li>
+              )
+            })}
           </BreadcrumbList>
-        </div>)
-      }
+        </div>
+      )}
     </>
   )
 }

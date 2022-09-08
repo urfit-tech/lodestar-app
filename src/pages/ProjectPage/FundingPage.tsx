@@ -4,7 +4,9 @@ import { useIntl } from 'react-intl'
 import { useMediaQuery } from 'react-responsive'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { BREAK_POINT } from '../../components/common/Responsive'
+import ClassCouponBlock from '../../components/ClassCouponBlock'
+import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
+import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import FundingCommentsPane from '../../components/project/FundingCommentsPane'
 import FundingContentsPane from '../../components/project/FundingContentsPane'
@@ -13,9 +15,6 @@ import FundingIntroductionPane from '../../components/project/FundingIntroductio
 import FundingPlansPane from '../../components/project/FundingPlansPane'
 import FundingSummaryBlock from '../../components/project/FundingSummaryBlock'
 import FundingUpdatesPane from '../../components/project/FundingUpdatesPane'
-import ClassCouponBlock from '../../components/ClassCouponBlock'
-import Responsive from '../../components/common/Responsive'
-import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProjectProps } from '../../types/project'
@@ -106,7 +105,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
     tabRef.current && tabRef.current.scrollIntoView()
     setActiveKey(activeKey)
   }
-  
+
   return (
     <DefaultLayout white noFooter>
       <StyledCover className="container mb-4">
@@ -115,7 +114,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
             <FundingCoverBlock coverType={coverType} coverUrl={coverUrl || EmptyCover} />
           </div>
           <Responsive.Default>
-            <CWLBreadcrumb project={project} />
+            <CWLBreadcrumb project={{ id, title }} />
           </Responsive.Default>
           <div className="col-12 col-lg-4">
             <FundingSummaryBlock
@@ -137,7 +136,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
       </StyledCover>
 
       <Responsive.Desktop>
-        <CWLBreadcrumb project={project} />
+        <CWLBreadcrumb project={{ id, title }} />
       </Responsive.Desktop>
 
       <Responsive.Default>
