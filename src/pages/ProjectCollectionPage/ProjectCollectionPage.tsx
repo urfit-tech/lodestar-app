@@ -151,7 +151,7 @@ const ProjectCollectionPage: React.VFC = () => {
               <StyledButton
                 key={category.id}
                 colorScheme="primary"
-                variant={selectedCategoryId === null ? 'solid' : 'outline'}
+                variant={selectedCategoryId === category.id ? 'solid' : 'outline'}
                 className="ml-2 mb-2"
                 onClick={() => setSelectedCategoryId(category.id)}
               >
