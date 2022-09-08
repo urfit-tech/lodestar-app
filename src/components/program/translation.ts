@@ -1,7 +1,9 @@
 import { defineMessages } from 'react-intl'
 
 const programMessages = {
-  '*': defineMessages({}),
+  '*': defineMessages({
+    fetchError: { id: 'program.*.fetchError', defaultMessage: '讀取失敗' },
+  }),
   ProgramContentNoAuthBlock: defineMessages({
     noAuth: { id: 'program.ProgramContentNoAuthBlock.noAuth', defaultMessage: '沒有此頁瀏覽權限' },
   }),

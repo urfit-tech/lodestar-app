@@ -81,7 +81,7 @@ const ProgramPlanCard: React.VFC<{
         />
         {programPlan.isCountdownTimerVisible && programPlan.soldAt && isOnSale && (
           <StyledCountDownBlock>
-            <CountDownTimeBlock expiredAt={programPlan?.soldAt} icon />
+            <CountDownTimeBlock expiredAt={programPlan?.soldAt} />
           </StyledCountDownBlock>
         )}
       </header>

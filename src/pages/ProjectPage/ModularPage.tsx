@@ -40,29 +40,6 @@ const ModularPage: React.VFC<{
     return <NotFoundPage />
   }
 
-  let seoMeta: { title?: string; description?: string } | undefined
-  try {
-    seoMeta = JSON.parse(settings['seo.meta']).ProjectPage[`${projectId}`]
-  } catch (error) {}
-
-  const siteTitle = seoMeta?.title || project?.title
-  const siteDescription = seoMeta?.description || project?.description
-  const siteImage = project?.previewUrl || project?.coverUrl
-
-  const ldData = JSON.stringify({
-    '@context': 'http://schema.org',
-    '@type': 'Product',
-    name: siteTitle,
-    image: siteImage,
-    description: siteDescription,
-    url: window.location.href,
-    brand: {
-      '@type': 'Brand',
-      name: siteTitle,
-      description: siteDescription,
-    },
-  })
-
   return (
     <DefaultLayout white noFooter>
       {project.projectSections

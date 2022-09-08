@@ -1,21 +1,12 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useEffect } from 'react'
-import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
-import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import LoadingPage from '../LoadingPage'
 
-const StyledForm = styled.form`
-  @media (min-width: ${BREAK_POINT}px) {
-    min-width: 400px;
-  }
-`
 const JoinPage: React.VFC = () => {
-  const { formatMessage } = useIntl()
   const history = useHistory()
   const [permissionGroupId] = useQueryParam('permission_group_id', StringParam)
   const { isAuthenticating, authToken, currentMember } = useAuth()
