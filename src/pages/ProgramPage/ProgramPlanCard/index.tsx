@@ -4,6 +4,7 @@ import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useProductGiftPlan } from 'lodestar-app-element/src/hooks/giftPlan'
 import React, { useContext } from 'react'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -33,6 +34,19 @@ const StyledAdminCard = styled(AdminCard)`
     }
   }
 `
+const StyledPriceBlock = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+const GiftPlanTag = styled.p`
+  padding: 2px 6px;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  color: ${props => props.theme['@primary-color']};
+  border: 1px solid ${props => props.theme['@primary-color']};
+  border-radius: 4px;
+`
 const StyledCountDownBlock = styled.div`
   margin-top: 20px;
   span {
@@ -56,6 +70,7 @@ const ProgramPlanCard: React.VFC<{
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { program } = useProgram(programId)
+  const { productGiftPlan } = useProductGiftPlan(`ProgramPlan_${programPlan?.id}`)
   const { enabledModules } = useApp()
 
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
@@ -69,16 +84,18 @@ const ProgramPlanCard: React.VFC<{
     <StyledAdminCard key={programPlan.id}>
       <header>
         <h2 className="title">{programPlan.title}</h2>
-
-        <PriceLabel
-          variant="full-detail"
-          listPrice={listPrice}
-          salePrice={isOnSale ? salePrice : undefined}
-          downPrice={discountDownPrice}
-          periodAmount={periodAmount}
-          periodType={periodType}
-          currencyId={currencyId}
-        />
+        <StyledPriceBlock>
+          <PriceLabel
+            variant="full-detail"
+            listPrice={listPrice}
+            salePrice={isOnSale ? salePrice : undefined}
+            downPrice={discountDownPrice}
+            periodAmount={periodAmount}
+            periodType={periodType}
+            currencyId={currencyId}
+          />
+          {productGiftPlan.productGiftPlanId && <GiftPlanTag>附贈品</GiftPlanTag>}
+        </StyledPriceBlock>
         {programPlan.isCountdownTimerVisible && programPlan.soldAt && isOnSale && (
           <StyledCountDownBlock>
             <CountDownTimeBlock expiredAt={programPlan?.soldAt} />
