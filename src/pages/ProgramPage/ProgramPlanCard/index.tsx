@@ -13,6 +13,7 @@ import styled from 'styled-components'
 import { AuthModalContext } from '../../../components/auth/AuthModal'
 import AdminCard from '../../../components/common/AdminCard'
 import CountDownTimeBlock from '../../../components/common/CountDownTimeBlock'
+import GiftPlanTag from '../../../components/common/GiftPlanTag'
 import PaymentButton from '../../../components/common/PaymentButton'
 import { commonMessages, productMessages } from '../../../helpers/translation'
 import { useEnrolledPlanIds, useProgram } from '../../../hooks/program'
@@ -39,14 +40,7 @@ const StyledPriceBlock = styled.div`
   justify-content: space-between;
   align-items: center;
 `
-const GiftPlanTag = styled.p`
-  padding: 2px 6px;
-  font-size: 12px;
-  letter-spacing: 0.6px;
-  color: ${props => props.theme['@primary-color']};
-  border: 1px solid ${props => props.theme['@primary-color']};
-  border-radius: 4px;
-`
+
 const StyledCountDownBlock = styled.div`
   margin-top: 20px;
   span {
@@ -94,7 +88,7 @@ const ProgramPlanCard: React.VFC<{
             periodType={periodType}
             currencyId={currencyId}
           />
-          {productGiftPlan.productGiftPlanId && <GiftPlanTag>附贈品</GiftPlanTag>}
+          {productGiftPlan.productGiftPlanId && <GiftPlanTag />}
         </StyledPriceBlock>
         {programPlan.isCountdownTimerVisible && programPlan.soldAt && isOnSale && (
           <StyledCountDownBlock>
