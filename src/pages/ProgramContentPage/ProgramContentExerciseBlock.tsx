@@ -165,7 +165,7 @@ const useSpecificExercise = (programContentId: string, memberId: string, exercis
   )
 
   const specificExercise: ExercisePublic[] =
-    data?.exercise?.[0]?.answer.map((v: any) => ({
+    data?.exercise?.[0]?.answer?.map((v: any) => ({
       exerciseId: data.exercise?.[0].id,
       programContentId: programContentId,
       memberId: memberId,
