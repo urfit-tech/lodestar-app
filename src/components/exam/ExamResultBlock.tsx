@@ -243,8 +243,9 @@ const ExamResultBlock: React.VFC<
                       <Tr key={row.columns.join('')}>
                         {row.columns
                           .filter((_column, columnIndex) => !resultTable.head.columns[columnIndex].hidden)
-                          .map(column => (
+                          .map((column, index) => (
                             <Td
+                              key={index}
                               style={{
                                 ...(rowIndex + 1 === rows.length
                                   ? {
