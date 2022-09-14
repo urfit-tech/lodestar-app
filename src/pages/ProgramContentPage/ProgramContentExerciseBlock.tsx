@@ -40,7 +40,7 @@ const ProgramContentExerciseBlock: React.VFC<{
     exercisePublic,
     totalDuration,
     averageGainedPoints,
-    subjectAmount,
+    exerciseAmount,
     refetch: refetchExercisePublic,
   } = useExercisePublic(programContent.id)
 
@@ -128,7 +128,7 @@ const ProgramContentExerciseBlock: React.VFC<{
         specificExercise={specificExercise}
         totalDuration={totalDuration}
         averageGainedPoints={averageGainedPoints}
-        subjectAmount={subjectAmount}
+        exerciseAmount={exerciseAmount}
         onRefetchSpecificExercise={refetchSpecificExercise}
         onRefetchExercisePublic={refetchExercisePublic}
       />
@@ -141,6 +141,7 @@ const useSpecificExercise = (programContentId: string, memberId: string, exercis
     id: exerciseId ? { _eq: exerciseId } : undefined,
     program_content_id: { _eq: programContentId },
     member_id: exerciseId ? undefined : { _eq: memberId },
+    answer: { _is_null: false },
   }
 
   const { loading, error, data, refetch } = useQuery<

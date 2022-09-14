@@ -94,11 +94,11 @@ const ExamQuestionBlock: React.VFC<
       | 'duration'
     >[]
     specificExercise: ExercisePublic[]
-    subjectAmount: number
+    exerciseAmount: number
     onFinish?: () => void
     onNextStep?: () => void
     onChoiceSelect?: (questionId: string, choiceId: string) => void
-    onQuestionFinish?: (questionId: string, startedAt: Date, endedAt: Date) => void
+    onQuestionFinish?: (questionId: string, endedAt: Date) => void
   }
 > = ({
   isAvailableToGoBack,
@@ -106,7 +106,7 @@ const ExamQuestionBlock: React.VFC<
   showDetail,
   exercisePublic,
   specificExercise,
-  subjectAmount,
+  exerciseAmount,
   onChoiceSelect,
   onQuestionFinish,
   onNextStep,
@@ -114,7 +114,6 @@ const ExamQuestionBlock: React.VFC<
 }) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
-  const beganAt = moment()
   const activeQuestion = questions[index]
 
   const detailTable: {
@@ -148,10 +147,10 @@ const ExamQuestionBlock: React.VFC<
                   spentTime: (
                     ((specificExercise
                       .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
-                      ?.endedAt?.getTime() || 0) -
+                      ?.questionEndedAt?.getTime() || 0) -
                       (specificExercise
                         .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
-                        ?.endedAt?.getTime() || 0)) /
+                        ?.questionStartedAt?.getTime() || 0)) /
                     1000
                   ).toFixed(2),
                 })
@@ -172,7 +171,7 @@ const ExamQuestionBlock: React.VFC<
             '',
             `${
               (exercisePublic.filter(v => v.questionId === activeQuestion.id).filter(w => w.isCorrect).length /
-                subjectAmount) *
+                exerciseAmount) *
               100
             }%`,
           ],
@@ -255,8 +254,9 @@ const ExamQuestionBlock: React.VFC<
                   <Tr key={row.columns.join('')}>
                     {row.columns
                       .filter((_column, columnIndex) => !detailTable.head.columns[columnIndex]?.hidden)
-                      .map(column => (
+                      .map((column, index) => (
                         <Td
+                          key={`td_${index}`}
                           style={{
                             ...(rowIndex + 1 === rows.length
                               ? {
@@ -288,7 +288,7 @@ const ExamQuestionBlock: React.VFC<
             onClick={() => {
               setIndex(prev => prev + 1)
               const finishedAt = moment()
-              !showDetail && onQuestionFinish?.(activeQuestion.id, beganAt.toDate(), finishedAt.toDate())
+              !showDetail && onQuestionFinish?.(activeQuestion.id, finishedAt.toDate())
             }}
           >
             {formatMessage(examMessages.ExamQuestionBlock.nextQuestion)}
