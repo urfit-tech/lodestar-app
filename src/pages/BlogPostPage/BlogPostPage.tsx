@@ -150,19 +150,19 @@ const BlogPostPage: React.VFC = () => {
   return (
     <DefaultLayout white noHeader={isScrollingDown}>
       <BlogPostPageHelmet post={post} />
-      {!loadingPost && (
-        <PostCover
-          title={post?.title || ''}
-          coverUrl={post?.videoUrl || post?.coverUrl || null}
-          type={post?.videoUrl ? 'video' : 'picture'}
-          merchandises={post?.merchandises || []}
-          isScrollingDown={isScrollingDown}
-        />
-      )}
 
-      <div className="container py-5">
+      <div className="container py-sm-5">
         <div className="row">
           <div className="col-12 col-lg-9">
+            {!loadingPost && (
+              <PostCover
+                title={post?.title || ''}
+                coverUrl={post?.videoUrl || post?.coverUrl || null}
+                type={post?.videoUrl ? 'video' : 'picture'}
+                merchandises={post?.merchandises || []}
+                isScrollingDown={isScrollingDown}
+              />
+            )}
             <StyledPostMeta className="pb-3">
               <Icon as={UserOIcon} className="mr-1" />
               <span className="mr-2">{post?.author.name}</span>
