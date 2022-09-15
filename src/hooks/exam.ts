@@ -1,13 +1,10 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { flatten } from 'ramda'
+import { flatten, sum } from 'ramda'
 import { Exam, ExamTimeUnit, ExercisePublic, Question } from '../types/exam'
 import hasura from './../hasura'
 
-export const useExam = (
-  programContentId: string,
-  lastExercise: { id: string; answer: any; memberId: string } | null,
-) => {
+export const useExam = (programContentId: string, latestExercise: ExercisePublic[]) => {
   const {
     loading: loadingExamId,
     error: errorExamId,
@@ -114,18 +111,18 @@ export const useExam = (
             layout: w.layout,
             font: w.font,
             explanation: w.explanation,
-            gainedPoints: lastExercise?.answer?.find((v: any) => v.questionId === w.id).gainedPoints || 0,
-            startedAt: lastExercise?.answer?.find((v: any) => v.questionId === w.id).startedAt || null,
-            endedAt: lastExercise?.answer?.find((v: any) => v.questionId === w.id).endedAt || null,
+            gainedPoints: Number(latestExercise?.find(v => v.questionId === w.id)?.gainedPoints || 0),
+            startedAt: latestExercise?.find(v => v.questionId === w.id)?.startedAt || null,
+            endedAt: latestExercise?.find(v => v.questionId === w.id)?.endedAt || null,
             questionOptions:
-              w.question_options.map(x => ({
-                id: x.id,
-                value: x.value,
-                isAnswer: x.is_answer,
-                isSelected: !!lastExercise?.answer?.some(
-                  (y: any) => y.questionId === w.id && y.choiceIds.some((choiceId: string) => choiceId === x.id),
-                ),
-              })) || [],
+              w.question_options.map(x => {
+                return {
+                  id: x.id,
+                  value: x.value,
+                  isAnswer: x.is_answer,
+                  isSelected: latestExercise.find(v => v.questionId === w.id)?.choiceIds.includes(x.id),
+                }
+              }) || [],
           })) || [],
       ) || [],
     ),
@@ -202,12 +199,13 @@ export const useExamExaminableTimeLimit = (programContentId: string, memberId: s
 }
 
 export const useExercisePublic = (programContentId: string) => {
-  const { loading, error, data } = useQuery<hasura.GET_EXERCISE_PUBLIC, hasura.GET_EXERCISE_PUBLICVariables>(
+  const { loading, error, data, refetch } = useQuery<hasura.GET_EXERCISE_PUBLIC, hasura.GET_EXERCISE_PUBLICVariables>(
     gql`
       query GET_EXERCISE_PUBLIC($programContentId: uuid!) {
         exercise_public(where: { program_content_id: { _eq: $programContentId } }) {
           exercise_id
           program_content_id
+          member_id
           started_at
           ended_at
           question_id
@@ -217,55 +215,57 @@ export const useExercisePublic = (programContentId: string) => {
           question_started_at
           question_ended_at
           duration
+          choice_ids
         }
         exercise_public_aggregate(where: { program_content_id: { _eq: $programContentId } }) {
           aggregate {
             sum {
               duration
             }
-            count(columns: question_id)
+            exerciseAmount: count(columns: exercise_id, distinct: true)
           }
         }
       }
     `,
     { variables: { programContentId } },
   )
-  const exercisePublic: Pick<
-    ExercisePublic,
-    | 'exerciseId'
-    | 'programContentId'
-    | 'startedAt'
-    | 'endedAt'
-    | 'questionId'
-    | 'questionPoints'
-    | 'gainedPoints'
-    | 'isCorrect'
-    | 'questionStartedAt'
-    | 'questionEndedAt'
-    | 'duration'
-  >[] =
+
+  const exercisePublic: ExercisePublic[] =
     data?.exercise_public.map(v => ({
       exerciseId: v.exercise_id.toString(),
       programContentId: v.program_content_id.toString(),
+      memberId: v.member_id?.toString(),
       startedAt: v.started_at ? new Date(v.started_at) : null,
       endedAt: v.ended_at ? new Date(v.ended_at) : null,
       questionId: v.question_id?.toString(),
       questionPoints: Number(v.question_points),
       gainedPoints: Number(v.gained_points),
-      isCorrect: Boolean(v.is_correct),
+      isCorrect: v.is_correct?.toString() === 'true',
       questionStartedAt: v.question_started_at ? new Date(v.question_started_at) : null,
       questionEndedAt: v.question_ended_at ? new Date(v.question_ended_at) : null,
       duration: Number(v.duration),
+      choiceIds: v?.choice_ids ? v.choice_ids.split(',') : [],
     })) || []
 
-  const questionAmount: number = Number(data?.exercise_public_aggregate.aggregate?.count) || 0
   const totalDuration: number = Number(data?.exercise_public_aggregate.aggregate?.sum?.duration) || 0
+  const averageGainedPoints: number =
+    data?.exercise_public && data?.exercise_public_aggregate.aggregate?.exerciseAmount
+      ? Number(
+          (
+            sum(data.exercise_public.map(v => Number(v.gained_points)) || []) /
+            data.exercise_public_aggregate.aggregate.exerciseAmount
+          ).toFixed(2),
+        )
+      : 0
+  const exerciseAmount: number = Number(data?.exercise_public_aggregate.aggregate?.exerciseAmount)
 
   return {
     loading,
     error,
     exercisePublic,
-    questionAmount,
     totalDuration,
+    averageGainedPoints,
+    exerciseAmount,
+    refetch,
   }
 }

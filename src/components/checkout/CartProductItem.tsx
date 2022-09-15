@@ -108,7 +108,7 @@ const CartProductItem: React.VFC<{
         )}
 
         {((productType === 'ActivityTicket' && enabledModules.group_buying_ticket) ||
-          (productType === 'ProjectPlan' && isLimited === true) ||
+          (productType === 'ProjectPlan' && isLimited === true && isPhysical === true) ||
           (productType === 'MerchandiseSpec' && isPhysical === true)) &&
           !!buyableQuantity &&
           buyableQuantity > 0 && (

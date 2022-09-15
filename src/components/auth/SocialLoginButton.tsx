@@ -150,6 +150,7 @@ const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accoun
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [back] = useQueryParam('back', StringParam)
+  const [programContentId] = useQueryParam('programContentId', StringParam)
 
   if (loading) {
     return <Spinner />
@@ -167,6 +168,7 @@ const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accoun
               provider: 'parenting',
               redirect: back || window.location.pathname + window.location.search,
               accountLinkToken: accountLinkToken,
+              programContentId: programContentId,
             }),
           ),
         )}
