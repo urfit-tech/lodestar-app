@@ -9,10 +9,10 @@ import { useEffect, useRef, useState } from 'react'
 import { AiOutlineClockCircle } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useExamExaminableTimeLimit, useExamMemberTimeLimit, useExercisePublic } from '../../hooks/exam'
+import { useExamExaminableTimeLimit, useExamMemberTimeLimit } from '../../hooks/exam'
 import { useMutateExercise } from '../../hooks/program'
 import { ReactComponent as routeErrorIcon } from '../../images/404.svg'
-import { Exam, Question } from '../../types/exam'
+import { Exam, ExercisePublic, Question } from '../../types/exam'
 import AdminCard from '../common/AdminCard'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
@@ -68,7 +68,30 @@ const ExamBlock: React.VFC<{
   title: string
   isTaken: boolean
   isAnswerer: boolean
-}> = ({ errorExam, errorExamId, exam, programContentId, nextProgramContentId, title, isTaken, isAnswerer }) => {
+  exercisePublic: ExercisePublic[]
+  specificExercise: ExercisePublic[]
+  totalDuration: number
+  averageGainedPoints: number
+  exerciseAmount: number
+  onRefetchSpecificExercise?: () => void
+  onRefetchExercisePublic?: () => void
+}> = ({
+  errorExam,
+  errorExamId,
+  exam,
+  programContentId,
+  nextProgramContentId,
+  title,
+  isTaken,
+  isAnswerer,
+  exercisePublic,
+  specificExercise,
+  totalDuration,
+  averageGainedPoints,
+  exerciseAmount,
+  onRefetchSpecificExercise,
+  onRefetchExercisePublic,
+}) => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const examBeganAt = useRef<Moment | null>(null)
@@ -93,20 +116,12 @@ const ExamBlock: React.VFC<{
     productDeliveredAt,
   } = useExamExaminableTimeLimit(programContentId, currentMemberId || '')
 
-  const {
-    loading: loadingExercisePublic,
-    error: errorExercisePublic,
-    exercisePublic,
-    questionAmount,
-    totalDuration,
-  } = useExercisePublic(programContentId)
-
   useEffect(() => {
-    if (errorExamId || errorExam || errorExtraExpiredAt || errorProductDeliveredAt || errorExercisePublic) {
+    if (errorExamId || errorExam || errorExtraExpiredAt || errorProductDeliveredAt) {
       process.env.NODE_ENV === 'development' && console.log({ errorExam, errorExamId })
       setStatus('error')
     }
-  }, [errorExam, errorExamId, errorExtraExpiredAt, errorProductDeliveredAt, errorExercisePublic])
+  }, [errorExam, errorExamId, errorExtraExpiredAt, errorProductDeliveredAt])
 
   useEffect(() => {
     setStatus(isTaken ? 'result' : 'intro')
@@ -152,6 +167,7 @@ const ExamBlock: React.VFC<{
 
   const handleFinish = () => {
     const finishedAt = moment()
+
     if (examBeganAt.current && !examFinishedAt.current) {
       examFinishedAt.current = finishedAt
     }
@@ -164,17 +180,21 @@ const ExamBlock: React.VFC<{
           questionPoints: exam.point,
           choiceIds: question.questionOptions?.filter(choice => choice.isSelected).map(choice => choice.id),
           gainedPoints: question.gainedPoints,
-          startedAt: index !== questions.length - 1 ? question.startedAt : questions[index - 1]?.endedAt,
-          endedAt: index !== questions.length - 1 ? question.endedAt : finishedAt,
+          startedAt: index === 0 ? examBeganAt.current : questions[index - 1]?.endedAt,
+          endedAt: index === questions.length - 1 ? finishedAt : question.endedAt,
         })),
         endedAt: finishedAt,
       },
     })
-      .then(() => setStatus('result'))
+      .then(() => {
+        onRefetchSpecificExercise?.()
+        onRefetchExercisePublic?.()
+        setStatus('result')
+      })
       .catch(error => handleError(error))
   }
 
-  if (loadingExtraExpiredAt || loadingProductDeliveredAt || loadingExercisePublic)
+  if (loadingExtraExpiredAt || loadingProductDeliveredAt)
     return (
       <div className="d-flex justify-content-center">
         <Spinner />
@@ -207,8 +227,8 @@ const ExamBlock: React.VFC<{
         questions={questions}
         showDetail={status === 'review'}
         exercisePublic={exercisePublic}
-        questionAmount={questionAmount}
-        totalDuration={totalDuration}
+        specificExercise={specificExercise}
+        exerciseAmount={exerciseAmount}
         onChoiceSelect={(questionId, choiceId) => {
           if (status !== 'answering') {
             return
@@ -255,13 +275,12 @@ const ExamBlock: React.VFC<{
             ),
           )
         }}
-        onQuestionFinish={(questionId, startedAt, endedAt) =>
+        onQuestionFinish={(questionId, endedAt) =>
           setQuestions(
             questions.map(question =>
               question.id === questionId
                 ? {
                     ...question,
-                    startedAt,
                     endedAt,
                   }
                 : question,
@@ -286,23 +305,32 @@ const ExamBlock: React.VFC<{
         timeLimitAmount={exam.timeLimitAmount}
         questions={questions}
         point={exam.point}
+        totalDuration={totalDuration}
+        averageGainedPoints={averageGainedPoints}
         timeSpent={
-          examBeganAt.current && examFinishedAt.current ? examFinishedAt.current.diff(examBeganAt.current) : undefined
+          examBeganAt.current && examFinishedAt.current
+            ? examFinishedAt.current.diff(examBeganAt.current)
+            : specificExercise?.[0]?.startedAt && specificExercise?.[0]?.endedAt
+            ? specificExercise[0].endedAt.getTime() - specificExercise[0].startedAt.getTime()
+            : undefined
         }
         onReAnswer={() => {
           if (!isAnswerer) return
           setQuestions(
             exam.questions.map(question => ({
               ...question,
-              choice: question.questionOptions?.map(choice => ({
-                ...choice,
+              questionOptions: question.questionOptions?.map(questionOption => ({
+                ...questionOption,
                 isSelected: false,
               })),
             })),
           )
           setStatus('intro')
         }}
-        onReview={() => setStatus('review')}
+        onReview={() => {
+          onRefetchExercisePublic?.()
+          setStatus('review')
+        }}
         isAnswerer={isAnswerer}
       />
     )

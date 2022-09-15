@@ -118,6 +118,7 @@ const ProgramContentListSection: React.VFC<{
                   if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
                     const url = new URL(window.location.href)
                     url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
+                    url.searchParams.set('programContentId', programContent.id)
                     window.history.pushState({}, '', url.toString())
                     setAuthModalVisible?.(true)
                   }
