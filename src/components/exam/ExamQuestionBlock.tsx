@@ -2,6 +2,7 @@ import { Button, Icon, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import { CommonLargeTextMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import { durationFullFormatter } from 'lodestar-app-element/src/helpers'
 import moment from 'moment'
 import { sum } from 'ramda'
 import React, { memo, useState } from 'react'
@@ -94,11 +95,11 @@ const ExamQuestionBlock: React.VFC<
       | 'duration'
     >[]
     specificExercise: ExercisePublic[]
-    subjectAmount: number
-    onFinish?: () => void
+    exerciseAmount: number
+    onFinish?: (isFinal: boolean) => void
     onNextStep?: () => void
     onChoiceSelect?: (questionId: string, choiceId: string) => void
-    onQuestionFinish?: (questionId: string, startedAt: Date, endedAt: Date) => void
+    onQuestionFinish?: (questionId: string, endedAt: Date) => void
   }
 > = ({
   isAvailableToGoBack,
@@ -106,7 +107,7 @@ const ExamQuestionBlock: React.VFC<
   showDetail,
   exercisePublic,
   specificExercise,
-  subjectAmount,
+  exerciseAmount,
   onChoiceSelect,
   onQuestionFinish,
   onNextStep,
@@ -114,7 +115,6 @@ const ExamQuestionBlock: React.VFC<
 }) => {
   const { formatMessage } = useIntl()
   const [index, setIndex] = useState(0)
-  const beganAt = moment()
   const activeQuestion = questions[index]
 
   const detailTable: {
@@ -143,38 +143,32 @@ const ExamQuestionBlock: React.VFC<
         {
           columns: [
             formatMessage(examMessages.ExamQuestionBlock.spendTime),
-            activeQuestion?.startedAt && activeQuestion?.endedAt
-              ? formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
-                  spentTime: (
-                    ((specificExercise
+            specificExercise.find((v: ExercisePublic) => v.questionId === activeQuestion.id)?.choiceIds.length === 0
+              ? formatMessage(examMessages.ExamQuestionBlock.unanswered)
+              : durationFullFormatter(
+                  ((specificExercise
+                    .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
+                    ?.questionEndedAt?.getTime() || 0) -
+                    (specificExercise
                       .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
-                      ?.endedAt?.getTime() || 0) -
-                      (specificExercise
-                        .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
-                        ?.endedAt?.getTime() || 0)) /
-                    1000
-                  ).toFixed(2),
-                })
-              : formatMessage(examMessages.ExamQuestionBlock.unanswered),
-            formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
-              spentTime: (
-                sum(exercisePublic.filter(v => v.questionId === activeQuestion.id).map(v => v.duration) || 0) /
-                exercisePublic.filter(v => v.questionId === activeQuestion.id).length
-              )
-                .toFixed(2)
-                .toString(),
-            }),
+                      ?.questionStartedAt?.getTime() || 0)) /
+                    1000,
+                ),
+            durationFullFormatter(
+              sum(exercisePublic.filter(v => v.questionId === activeQuestion.id).map(v => v.duration) || 0) /
+                exercisePublic.filter(v => v.questionId === activeQuestion.id).length,
+            ),
           ],
         },
         {
           columns: [
             formatMessage(examMessages.ExamQuestionBlock.averageCorrectRate),
             '',
-            `${
+            `${(
               (exercisePublic.filter(v => v.questionId === activeQuestion.id).filter(w => w.isCorrect).length /
-                subjectAmount) *
+                exerciseAmount) *
               100
-            }%`,
+            ).toFixed(2)}%`,
           ],
         },
       ],
@@ -255,8 +249,9 @@ const ExamQuestionBlock: React.VFC<
                   <Tr key={row.columns.join('')}>
                     {row.columns
                       .filter((_column, columnIndex) => !detailTable.head.columns[columnIndex]?.hidden)
-                      .map(column => (
+                      .map((column, index) => (
                         <Td
+                          key={`td_${index}`}
                           style={{
                             ...(rowIndex + 1 === rows.length
                               ? {
@@ -284,11 +279,12 @@ const ExamQuestionBlock: React.VFC<
         {index < questions.length - 1 && (
           <Button
             variant="primary"
-            disabled={activeQuestion.questionOptions?.every(v => !v.isSelected)}
+            disabled={showDetail ? false : activeQuestion.questionOptions?.every(v => !v.isSelected)}
             onClick={() => {
-              setIndex(prev => prev + 1)
               const finishedAt = moment()
-              !showDetail && onQuestionFinish?.(activeQuestion.id, beganAt.toDate(), finishedAt.toDate())
+              !showDetail && onQuestionFinish?.(activeQuestion.id, finishedAt.toDate())
+              !showDetail && onFinish?.(false)
+              setIndex(prev => prev + 1)
             }}
           >
             {formatMessage(examMessages.ExamQuestionBlock.nextQuestion)}
@@ -298,8 +294,8 @@ const ExamQuestionBlock: React.VFC<
         {index === questions.length - 1 && (
           <Button
             variant="primary"
-            disabled={activeQuestion.questionOptions?.every(v => !v.isSelected)}
-            onClick={() => (showDetail ? onNextStep?.() : onFinish?.())}
+            disabled={showDetail ? false : activeQuestion.questionOptions?.every(v => !v.isSelected)}
+            onClick={() => (showDetail ? onNextStep?.() : onFinish?.(true))}
           >
             {showDetail
               ? formatMessage(examMessages.ExamQuestionBlock.showResult)

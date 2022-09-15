@@ -222,7 +222,7 @@ export const useExercisePublic = (programContentId: string) => {
             sum {
               duration
             }
-            subjectAmount: count(columns: member_id, distinct: true)
+            exerciseAmount: count(columns: exercise_id, distinct: true)
           }
         }
       }
@@ -249,15 +249,15 @@ export const useExercisePublic = (programContentId: string) => {
 
   const totalDuration: number = Number(data?.exercise_public_aggregate.aggregate?.sum?.duration) || 0
   const averageGainedPoints: number =
-    data?.exercise_public && data?.exercise_public_aggregate.aggregate?.subjectAmount
+    data?.exercise_public && data?.exercise_public_aggregate.aggregate?.exerciseAmount
       ? Number(
           (
             sum(data.exercise_public.map(v => Number(v.gained_points)) || []) /
-            data.exercise_public_aggregate.aggregate.subjectAmount
+            data.exercise_public_aggregate.aggregate.exerciseAmount
           ).toFixed(2),
         )
       : 0
-  const subjectAmount: number = Number(data?.exercise_public_aggregate.aggregate?.subjectAmount)
+  const exerciseAmount: number = Number(data?.exercise_public_aggregate.aggregate?.exerciseAmount)
 
   return {
     loading,
@@ -265,7 +265,7 @@ export const useExercisePublic = (programContentId: string) => {
     exercisePublic,
     totalDuration,
     averageGainedPoints,
-    subjectAmount,
+    exerciseAmount,
     refetch,
   }
 }

@@ -5355,7 +5355,7 @@ export interface GET_EXERCISE_PUBLIC_exercise_public_aggregate_aggregate_sum {
 export interface GET_EXERCISE_PUBLIC_exercise_public_aggregate_aggregate {
   __typename: "exercise_public_aggregate_fields";
   sum: GET_EXERCISE_PUBLIC_exercise_public_aggregate_aggregate_sum | null;
-  subjectAmount: number;
+  exerciseAmount: number;
 }
 
 export interface GET_EXERCISE_PUBLIC_exercise_public_aggregate {
@@ -12531,7 +12531,7 @@ export enum app_update_column {
   ended_at = "ended_at",
   id = "id",
   name = "name",
-  organiztion_id = "organiztion_id",
+  org_id = "org_id",
   point_discount_ratio = "point_discount_ratio",
   point_exchange_rate = "point_exchange_rate",
   point_validity_period = "point_validity_period",
@@ -16158,7 +16158,7 @@ export interface app_bool_exp {
   members?: member_bool_exp | null;
   merchandises?: merchandise_bool_exp | null;
   name?: String_comparison_exp | null;
-  organiztion_id?: String_comparison_exp | null;
+  org_id?: String_comparison_exp | null;
   packages?: package_bool_exp | null;
   podcasts?: podcast_bool_exp | null;
   point_discount_ratio?: numeric_comparison_exp | null;
@@ -16240,7 +16240,7 @@ export interface app_insert_input {
   members?: member_arr_rel_insert_input | null;
   merchandises?: merchandise_arr_rel_insert_input | null;
   name?: string | null;
-  organiztion_id?: string | null;
+  org_id?: string | null;
   packages?: package_arr_rel_insert_input | null;
   podcasts?: podcast_arr_rel_insert_input | null;
   point_discount_ratio?: any | null;
@@ -16273,6 +16273,7 @@ export interface app_module_bool_exp {
   _and?: app_module_bool_exp[] | null;
   _not?: app_module_bool_exp | null;
   _or?: app_module_bool_exp[] | null;
+  app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   module_id?: String_comparison_exp | null;
@@ -16282,6 +16283,7 @@ export interface app_module_bool_exp {
  * input type for inserting data into table "app_module"
  */
 export interface app_module_insert_input {
+  app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
   id?: any | null;
   module_id?: string | null;

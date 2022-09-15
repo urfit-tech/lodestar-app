@@ -29,25 +29,19 @@ const ProgramContentExerciseBlock: React.VFC<{
   const { currentMemberId } = useAuth()
 
   //specific or currentMember's exercise
-  const { loadingSpecificExercise, specificExercise, refetchSpecificExercise } = useSpecificExercise(
-    programContent.id,
-    currentMemberId || '',
-    exerciseId,
-  )
+  const { loadingSpecificExercise, specificExercise, refetchSpecificExercise, isTaken, exerciseAnswerer } =
+    useSpecificExercise(programContent.id, currentMemberId || '', exerciseId)
 
   const {
     loading: loadingExercisePublic,
     exercisePublic,
     totalDuration,
     averageGainedPoints,
-    subjectAmount,
+    exerciseAmount,
     refetch: refetchExercisePublic,
   } = useExercisePublic(programContent.id)
 
-  const { loadingExamId, errorExamId, loadingExam, errorExam, exam } = useExam(
-    programContent.id,
-    exerciseId ? specificExercise : exercisePublic.filter(v => v.memberId === currentMemberId),
-  )
+  const { loadingExamId, errorExamId, loadingExam, errorExam, exam } = useExam(programContent.id, specificExercise)
 
   const contentType = programContent.contentType
 
@@ -69,8 +63,8 @@ const ProgramContentExerciseBlock: React.VFC<{
         programContentId={programContent.id}
         title={programContent.title}
         nextProgramContentId={nextProgramContentId}
-        isTaken={specificExercise.length !== 0}
-        isAnswerer={currentMemberId === specificExercise?.[0]?.memberId}
+        isTaken={isTaken}
+        isAnswerer={currentMemberId === exerciseAnswerer}
         questions={
           programContent.programContentBody.data.questions
             .filter((question: any) => !!question.choices?.length)
@@ -122,13 +116,13 @@ const ProgramContentExerciseBlock: React.VFC<{
         programContentId={programContent.id}
         nextProgramContentId={nextProgramContentId}
         title={programContent.title}
-        isTaken={specificExercise.length !== 0}
-        isAnswerer={currentMemberId === specificExercise?.[0]?.memberId}
+        isTaken={isTaken}
+        isAnswerer={currentMemberId === exerciseAnswerer}
         exercisePublic={exercisePublic}
         specificExercise={specificExercise}
         totalDuration={totalDuration}
         averageGainedPoints={averageGainedPoints}
-        subjectAmount={subjectAmount}
+        exerciseAmount={exerciseAmount}
         onRefetchSpecificExercise={refetchSpecificExercise}
         onRefetchExercisePublic={refetchExercisePublic}
       />
@@ -141,6 +135,7 @@ const useSpecificExercise = (programContentId: string, memberId: string, exercis
     id: exerciseId ? { _eq: exerciseId } : undefined,
     program_content_id: { _eq: programContentId },
     member_id: exerciseId ? undefined : { _eq: memberId },
+    answer: { _is_null: false },
   }
 
   const { loading, error, data, refetch } = useQuery<
@@ -168,7 +163,6 @@ const useSpecificExercise = (programContentId: string, memberId: string, exercis
     data?.exercise?.[0]?.answer?.map((v: any) => ({
       exerciseId: data.exercise?.[0].id,
       programContentId: programContentId,
-      memberId: memberId,
       startedAt: data.exercise?.[0]?.started_at ? new Date(data.exercise[0].started_at) : null,
       endedAt: data.exercise?.[0]?.ended_at ? new Date(data.exercise[0].ended_at) : null,
       questionId: v?.questionId.toString(),
@@ -184,9 +178,14 @@ const useSpecificExercise = (programContentId: string, memberId: string, exercis
       choiceIds: v.choiceIds,
     })) || []
 
+  const isTaken = data?.exercise.length !== 0
+  const exerciseAnswerer = data?.exercise?.[0]?.member_id
+
   return {
     loadingSpecificExercise: loading,
     errorSpecificExercise: error,
+    isTaken,
+    exerciseAnswerer,
     specificExercise,
     refetchSpecificExercise: refetch,
   }
