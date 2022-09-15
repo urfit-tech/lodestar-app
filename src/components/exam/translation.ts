@@ -46,7 +46,7 @@ const examMessages = {
     errorAnswer: { id: 'exam.ExamQuestionBlock.errorAnswer', defaultMessage: '答案錯誤' },
     correct: { id: 'exam.ExamQuestionBlock.correct', defaultMessage: '正解' },
     unanswered: { id: 'exam.ExamQuestionBlock.unanswered', defaultMessage: '未作答' },
-    unansweredTime: { id: 'exam.ExamQuestionBlock.unansweredTime', defaultMessage: '完成作答時間不明' },
+    unansweredTime: { id: 'exam.ExamQuestionBlock.unansweredTime', defaultMessage: '作答時間不明' },
     spentTimeBySec: { id: 'exam.ExamResultBlock.spentTimeBySec', defaultMessage: '{spentTime}秒' },
   }),
   ExamResultBlock: defineMessages({

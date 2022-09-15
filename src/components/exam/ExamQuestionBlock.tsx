@@ -156,7 +156,7 @@ const ExamQuestionBlock: React.VFC<
                       ?.questionStartedAt?.getTime() || 0)) /
                     1000,
                 )
-              : formatMessage(examMessages.ExamQuestionBlock.unanswered),
+              : formatMessage(examMessages.ExamQuestionBlock.unansweredTime),
             durationFullFormatter(
               sum(exercisePublic.filter(v => v.questionId === activeQuestion.id).map(v => v.duration) || 0) /
                 exercisePublic.filter(v => v.questionId === activeQuestion.id).length,
