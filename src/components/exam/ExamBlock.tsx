@@ -185,18 +185,8 @@ const ExamBlock: React.VFC<{
           questionPoints: exam.point,
           choiceIds: choiceIds[index],
           gainedPoints: question.gainedPoints,
-          startedAt:
-            choiceIds[index]?.length === 0
-              ? finishedAt
-              : index === 0
-              ? examBeganAt.current
-              : questions[index - 1]?.endedAt,
-          endedAt:
-            choiceIds[index]?.length === 0
-              ? finishedAt
-              : index === questions.length - 1
-              ? finishedAt
-              : question.endedAt,
+          startedAt: index === 0 ? examBeganAt.current : questions[index - 1]?.endedAt,
+          endedAt: index === questions.length - 1 ? finishedAt : question.endedAt,
         })),
         endedAt: finishedAt,
       },
