@@ -16,6 +16,7 @@ import {
   ShippingOptionProps,
   ShippingProps,
 } from '../types/checkout'
+import { ProductGiftPlan as OrderProductGiftPlanProps } from '../types/gift'
 import { MemberShopProps } from '../types/merchandise'
 
 export const useCheck = ({
@@ -31,7 +32,12 @@ export const useCheck = ({
 }) => {
   const { authToken } = useAuth()
   const { id: appId } = useApp()
-  const [check, setCheck] = useState<CheckProps>({ orderProducts: [], orderDiscounts: [], shippingOption: null })
+  const [check, setCheck] = useState<CheckProps>({
+    orderProducts: [],
+    orderProductGiftPlans: [],
+    orderDiscounts: [],
+    shippingOption: null,
+  })
   const [orderChecking, setOrderChecking] = useState(false)
   const [orderPlacing, setOrderPlacing] = useState(false)
   const [checkError, setCheckError] = useState<Error | null>(null)
@@ -43,6 +49,7 @@ export const useCheck = ({
       message: string
       result: {
         orderProducts: OrderProductProps[]
+        orderProductGiftPlans: OrderProductGiftPlanProps[]
         orderDiscounts: OrderDiscountProps[]
         shippingOption: ShippingOptionProps
       }

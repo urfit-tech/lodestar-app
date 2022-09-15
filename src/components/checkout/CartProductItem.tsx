@@ -49,7 +49,8 @@ const CartProductItem: React.VFC<{
   id: string
   quantity: number
   buyableQuantity: number | null
-}> = ({ id, quantity, buyableQuantity }) => {
+  onTargetLoaded?: (isLoaded: boolean) => void
+}> = ({ id, quantity, buyableQuantity, onTargetLoaded }) => {
   const { formatMessage } = useIntl()
   const { enabledModules, id: appId } = useApp()
   const { updatePluralCartProductQuantity } = useContext(CartContext)
@@ -67,6 +68,8 @@ const CartProductItem: React.VFC<{
 
   if (!target) {
     return <Spinner size="lg" />
+  } else {
+    onTargetLoaded?.(true)
   }
 
   const [productType] = id.split('_') as [ProductType]
