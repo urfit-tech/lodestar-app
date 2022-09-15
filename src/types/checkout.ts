@@ -78,6 +78,9 @@ export type CouponProps = {
 export type ShippingProps = {
   name?: string
   phone?: string
+  zipCode?: string
+  city?: string
+  district?: string
   address?: string
   shippingMethod?: string
   specification?: string

@@ -1,14 +1,15 @@
-import { Button, Form, Input, Radio } from 'antd'
+import { Button, Form, Input, Radio, Select } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import { camelCase } from 'lodash'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { cities, districts, useTwZipCode } from 'use-tw-zipcode'
 import { checkoutMessages } from '../../helpers/translation'
 import { ShippingOptionProps, ShippingProps } from '../../types/checkout'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 export const csvShippingMethods = ['seven-eleven', 'family-mart', 'ok-mart', 'hi-life']
 
@@ -41,7 +42,9 @@ const ShippingInput: React.VFC<{
   shippingMethods?: ShippingOptionProps[]
 }> = ({ value, onChange, isValidating, shippingMethods }) => {
   const { formatMessage } = useIntl()
-  const { currencyId: appCurrencyId } = useApp()
+  const { currencyId: appCurrencyId, settings } = useApp()
+  const { city, district, zipCode, handleCityChange, handleDistrictChange } = useTwZipCode()
+  const [isCitySelectorChange, setIsCitySelectorChange] = useState(false)
 
   const nameRef = useRef<Input | null>(null)
   const phoneRef = useRef<Input | null>(null)
@@ -69,6 +72,9 @@ const ShippingInput: React.VFC<{
     const newValue: ShippingProps = {
       name: value?.name || '',
       phone: value?.phone || '',
+      zipCode: value?.zipCode || '',
+      city: value?.city || '',
+      district: value?.district || '',
       address: value?.address || '',
       shippingMethod: value?.shippingMethod || 'home-delivery',
       specification: value?.specification || '',
@@ -77,6 +83,10 @@ const ShippingInput: React.VFC<{
       ...newShippingOption,
     }
     newValue[key] = inputValue
+    if (key === 'city') {
+      newValue['district'] = districts[inputValue][0]
+      handleDistrictChange(districts[inputValue][0])
+    }
     localStorage.setItem('kolable.cart.shipping', JSON.stringify(newValue))
     onChange && onChange(newValue)
   }
@@ -211,20 +221,74 @@ const ShippingInput: React.VFC<{
         </div>
       </div>
 
-      <Form.Item
-        required
-        label={formatMessage(checkoutMessages.form.label.receiverAddress)}
-        validateStatus={isValidating && addressRef.current?.input.value === '' ? 'error' : undefined}
-      >
-        <Input
-          ref={addressRef}
-          placeholder={formatMessage(checkoutMessages.form.message.addressText)}
-          defaultValue={value?.address || ''}
-          value={value?.address}
-          onBlur={event => handleChange('address', event.target.value)}
-          onChange={event => handleChange('address', event.target.value)}
-        />
-      </Form.Item>
+      {!!Number(settings['checkout.taiwan_shipping_selector']) ? (
+        <Form.Item
+          required
+          label={formatMessage(checkoutMessages.form.label.receiverAddress)}
+          validateStatus={isValidating && addressRef.current?.input.value === '' ? 'error' : undefined}
+        >
+          <Input.Group compact>
+            <Select className="col-lg-2" disabled value={isCitySelectorChange ? zipCode : value?.zipCode}></Select>
+            <Select
+              className="col-lg-2"
+              value={value?.city || city}
+              onChange={(v: string) => {
+                handleChange('city', v)
+                handleCityChange(v)
+                setIsCitySelectorChange(true)
+              }}
+              onBlur={() => handleChange('zipCode', zipCode)}
+            >
+              {cities.map(city => {
+                return <Select.Option key={city}>{city}</Select.Option>
+              })}
+            </Select>
+            <Select
+              className="col-lg-2"
+              value={value?.district || district}
+              onChange={(w: string) => {
+                handleChange('district', w)
+                handleDistrictChange(w)
+                setIsCitySelectorChange(true)
+              }}
+              onBlur={() => handleChange('zipCode', zipCode)}
+            >
+              {isCitySelectorChange && value?.city === undefined
+                ? districts[city].map(district => {
+                    return <Select.Option key={district}>{district}</Select.Option>
+                  })
+                : districts[value?.city || ''].map(district => {
+                    return <Select.Option key={district}>{district}</Select.Option>
+                  })}
+            </Select>
+            <div className="col-lg-6">
+              <Input
+                ref={addressRef}
+                placeholder={formatMessage(checkoutMessages.form.message.addressText)}
+                defaultValue={value?.address || ''}
+                value={value?.address}
+                onBlur={event => handleChange('address', event.target.value)}
+                onChange={event => handleChange('address', event.target.value)}
+              />
+            </div>
+          </Input.Group>
+        </Form.Item>
+      ) : (
+        <Form.Item
+          required
+          label={formatMessage(checkoutMessages.form.label.receiverAddress)}
+          validateStatus={isValidating && addressRef.current?.input.value === '' ? 'error' : undefined}
+        >
+          <Input
+            ref={addressRef}
+            placeholder={formatMessage(checkoutMessages.form.message.addressText)}
+            defaultValue={value?.address || ''}
+            value={value?.address}
+            onBlur={event => handleChange('address', event.target.value)}
+            onChange={event => handleChange('address', event.target.value)}
+          />
+        </Form.Item>
+      )}
 
       <Form.Item label={formatMessage(checkoutMessages.shipping.specification)}>
         <Input.TextArea
