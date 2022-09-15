@@ -151,6 +151,7 @@ const ExamBlock: React.VFC<{
           program_content_id: programContentId,
           exam_id: exam.id,
           started_at: beganAt,
+          answer: [],
         },
       },
     })
@@ -165,12 +166,16 @@ const ExamBlock: React.VFC<{
     examFinishedAt.current = null
   }
 
-  const handleFinish = () => {
+  const handleFinish = (isFinal: boolean) => {
     const finishedAt = moment()
 
     if (examBeganAt.current && !examFinishedAt.current) {
       examFinishedAt.current = finishedAt
     }
+
+    const choiceIds = questions.map(question =>
+      question.questionOptions?.filter(choice => choice.isSelected).map(choice => choice.id),
+    )
 
     updateExercise({
       variables: {
@@ -178,10 +183,11 @@ const ExamBlock: React.VFC<{
         answer: questions.map((question, index) => ({
           questionId: question.id,
           questionPoints: exam.point,
-          choiceIds: question.questionOptions?.filter(choice => choice.isSelected).map(choice => choice.id),
+          choiceIds: choiceIds,
           gainedPoints: question.gainedPoints,
-          startedAt: index === 0 ? examBeganAt.current : questions[index - 1]?.endedAt,
-          endedAt: index === questions.length - 1 ? finishedAt : question.endedAt,
+          startedAt:
+            choiceIds.length === 0 ? finishedAt : index === 0 ? examBeganAt.current : questions[index - 1]?.endedAt,
+          endedAt: choiceIds.length === 0 ? finishedAt : index === questions.length - 1 ? finishedAt : question.endedAt,
         })),
         endedAt: finishedAt,
       },
@@ -189,7 +195,7 @@ const ExamBlock: React.VFC<{
       .then(() => {
         onRefetchSpecificExercise?.()
         onRefetchExercisePublic?.()
-        setStatus('result')
+        isFinal && setStatus('result')
       })
       .catch(error => handleError(error))
   }
@@ -311,7 +317,7 @@ const ExamBlock: React.VFC<{
           examBeganAt.current && examFinishedAt.current
             ? examFinishedAt.current.diff(examBeganAt.current)
             : specificExercise?.[0]?.startedAt && specificExercise?.[0]?.endedAt
-            ? specificExercise[0].endedAt.getTime() - specificExercise[0].startedAt.getTime()
+            ? (specificExercise[0].endedAt.getTime() - specificExercise[0].startedAt.getTime()) / 1000
             : undefined
         }
         onReAnswer={() => {
