@@ -183,11 +183,20 @@ const ExamBlock: React.VFC<{
         answer: questions.map((question, index) => ({
           questionId: question.id,
           questionPoints: exam.point,
-          choiceIds: choiceIds,
+          choiceIds: choiceIds[index],
           gainedPoints: question.gainedPoints,
           startedAt:
-            choiceIds.length === 0 ? finishedAt : index === 0 ? examBeganAt.current : questions[index - 1]?.endedAt,
-          endedAt: choiceIds.length === 0 ? finishedAt : index === questions.length - 1 ? finishedAt : question.endedAt,
+            choiceIds[index]?.length === 0
+              ? finishedAt
+              : index === 0
+              ? examBeganAt.current
+              : questions[index - 1]?.endedAt,
+          endedAt:
+            choiceIds[index]?.length === 0
+              ? finishedAt
+              : index === questions.length - 1
+              ? finishedAt
+              : question.endedAt,
         })),
         endedAt: finishedAt,
       },
@@ -315,7 +324,7 @@ const ExamBlock: React.VFC<{
         averageGainedPoints={averageGainedPoints}
         timeSpent={
           examBeganAt.current && examFinishedAt.current
-            ? examFinishedAt.current.diff(examBeganAt.current)
+            ? examFinishedAt.current.diff(examBeganAt.current) / 1000
             : specificExercise?.[0]?.startedAt && specificExercise?.[0]?.endedAt
             ? (specificExercise[0].endedAt.getTime() - specificExercise[0].startedAt.getTime()) / 1000
             : undefined
