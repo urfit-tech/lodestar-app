@@ -154,28 +154,10 @@ const ExamQuestionBlock: React.VFC<
                       ?.questionStartedAt?.getTime() || 0)) /
                     1000,
                 ),
-            // formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
-            //     spentTime:
-            //       ((specificExercise
-            //         .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
-            //         ?.questionEndedAt?.getTime() || 0) -
-            //         (specificExercise
-            //           .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
-            //           ?.questionStartedAt?.getTime() || 0)) /
-            //       1000,
-            //   })
             durationFullFormatter(
               sum(exercisePublic.filter(v => v.questionId === activeQuestion.id).map(v => v.duration) || 0) /
                 exercisePublic.filter(v => v.questionId === activeQuestion.id).length,
             ),
-            // formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
-            //   spentTime: (
-            //     sum(exercisePublic.filter(v => v.questionId === activeQuestion.id).map(v => v.duration) || 0) /
-            //     exercisePublic.filter(v => v.questionId === activeQuestion.id).length
-            //   )
-            //     .toFixed(2)
-            //     .toString(),
-            // }),
           ],
         },
         {
