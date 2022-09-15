@@ -142,8 +142,9 @@ const ExamQuestionBlock: React.VFC<
         {
           columns: [
             formatMessage(examMessages.ExamQuestionBlock.spendTime),
-            activeQuestion?.startedAt && activeQuestion?.endedAt
-              ? formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
+            specificExercise.find((v: ExercisePublic) => v.questionId === activeQuestion.id)?.choiceIds.length === 0
+              ? formatMessage(examMessages.ExamQuestionBlock.unanswered)
+              : formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
                   spentTime: (
                     ((specificExercise
                       .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
@@ -153,8 +154,7 @@ const ExamQuestionBlock: React.VFC<
                         ?.questionStartedAt?.getTime() || 0)) /
                     1000
                   ).toFixed(2),
-                })
-              : formatMessage(examMessages.ExamQuestionBlock.unanswered),
+                }),
             formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
               spentTime: (
                 sum(exercisePublic.filter(v => v.questionId === activeQuestion.id).map(v => v.duration) || 0) /
