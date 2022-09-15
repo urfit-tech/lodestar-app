@@ -201,6 +201,10 @@ const CheckoutBlock: React.VFC<{
     ),
   })
 
+  const hasGiftPlan = check.orderProductGiftPlans.some(v => {
+    return v !== null ? v.giftPlan.gift.isDeliverable === true : false
+  })
+
   if (isAuthenticating) {
     return (
       <DefaultLayout>
@@ -236,7 +240,7 @@ const CheckoutBlock: React.VFC<{
     if (isFieldsValidate) {
       ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
     } else {
-      isValidShipping = !hasPhysicalProduct || validateShipping(shipping)
+      isValidShipping = (!hasPhysicalProduct && !hasGiftPlan) || validateShipping(shipping)
       isValidInvoice = Number(settings['feature.invoice.disable'])
         ? true
         : Number(settings['feature.invoice_member_info_input.disable'])
@@ -392,7 +396,7 @@ const CheckoutBlock: React.VFC<{
         </Box>
       )}
 
-      {hasPhysicalProduct && (
+      {(hasPhysicalProduct || hasGiftPlan) && (
         <div ref={shippingRef} className="mb-3">
           <AdminCard>
             <ShippingInput

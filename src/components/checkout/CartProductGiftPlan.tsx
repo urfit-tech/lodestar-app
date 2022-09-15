@@ -42,7 +42,7 @@ const CartProductGiftPlan: React.VFC<{ productId: string; isTargetLoaded: boolea
 }) => {
   const { productGiftPlan } = useProductGiftPlan(productId)
 
-  return isTargetLoaded ? (
+  return isTargetLoaded && productGiftPlan.productGiftPlanId ? (
     <GiftPlanBlock>
       <GiftDescriptionBlock>
         <GiftTag>贈品</GiftTag>
