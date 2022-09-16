@@ -56,7 +56,7 @@ const ProjectPageHelmet: React.VFC<{ project: ProjectProps }> = ({ project }) =>
             offerCount: projectPlans.length,
             lowPrice: Math.min(...projectPlans),
             highPrice: Math.max(...projectPlans),
-            priceCurrency: app.settings['currency_id'] || process.env.SYS_CURRENCY,
+            priceCurrency: app.settings['currency_id'] || process.env.REACT_APP_SYS_CURRENCY,
           },
         },
       ]}

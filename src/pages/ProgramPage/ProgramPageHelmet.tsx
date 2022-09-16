@@ -58,7 +58,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
               offerCount: programPlans.length,
               lowPrice: Math.min(...programPlans),
               highPrice: Math.max(...programPlans),
-              priceCurrency: app.settings['currency_id'] || process.env.SYS_CURRENCY,
+              priceCurrency: app.settings['currency_id'] || process.env.REACT_APP_SYS_CURRENCY,
             },
           },
           {
