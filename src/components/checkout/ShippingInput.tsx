@@ -1,4 +1,4 @@
-import { Button, Form, Input, Radio, Select } from 'antd'
+import { Button, Checkbox, Form, Input, Radio, Select } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import { camelCase } from 'lodash'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
@@ -24,6 +24,14 @@ const StyledPriceTag = styled.span`
   color: ${props => props.theme['@primary-color']};
 `
 
+const StyledCheckBox = styled(Checkbox)`
+  margin-top: 24px;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+  color: var(--gray-darker);
+`
+
 type cvsOptionsProps = {
   cvsType: string
   storeId: string
@@ -45,6 +53,7 @@ const ShippingInput: React.VFC<{
   const { currencyId: appCurrencyId, settings } = useApp()
   const { city, district, zipCode, handleCityChange, handleDistrictChange } = useTwZipCode()
   const [isCitySelectorChange, setIsCitySelectorChange] = useState(false)
+  const [isOutsideTaiwanIsland, setIsOutsideTaiwanIsland] = useState(value?.isOutsideTaiwanIsland === 'true')
 
   const nameRef = useRef<Input | null>(null)
   const phoneRef = useRef<Input | null>(null)
@@ -76,6 +85,7 @@ const ShippingInput: React.VFC<{
       city: value?.city || '',
       district: value?.district || '',
       address: value?.address || '',
+      isOutsideTaiwanIsland: value?.isOutsideTaiwanIsland || 'false',
       shippingMethod: value?.shippingMethod || 'home-delivery',
       specification: value?.specification || '',
       storeId: value?.storeId || '',
@@ -238,6 +248,7 @@ const ShippingInput: React.VFC<{
                 setIsCitySelectorChange(true)
               }}
               onBlur={() => handleChange('zipCode', zipCode)}
+              disabled={isOutsideTaiwanIsland}
             >
               {cities.map(city => {
                 return <Select.Option key={city}>{city}</Select.Option>
@@ -252,6 +263,7 @@ const ShippingInput: React.VFC<{
                 setIsCitySelectorChange(true)
               }}
               onBlur={() => handleChange('zipCode', zipCode)}
+              disabled={isOutsideTaiwanIsland}
             >
               {isCitySelectorChange && value?.city === undefined
                 ? districts[city].map(district => {
@@ -269,9 +281,19 @@ const ShippingInput: React.VFC<{
                 value={value?.address}
                 onBlur={event => handleChange('address', event.target.value)}
                 onChange={event => handleChange('address', event.target.value)}
+                disabled={isOutsideTaiwanIsland}
               />
             </div>
           </Input.Group>
+          <StyledCheckBox
+            defaultChecked={value?.isOutsideTaiwanIsland === 'true'}
+            onChange={() => {
+              setIsOutsideTaiwanIsland(!isOutsideTaiwanIsland)
+              handleChange('isOutsideTaiwanIsland', (!isOutsideTaiwanIsland).toString())
+            }}
+          >
+            台灣離島/海外不寄送
+          </StyledCheckBox>
         </Form.Item>
       ) : (
         <Form.Item

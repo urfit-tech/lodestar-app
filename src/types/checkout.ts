@@ -82,6 +82,7 @@ export type ShippingProps = {
   city?: string
   district?: string
   address?: string
+  isOutsideTaiwanIsland?: string
   shippingMethod?: string
   specification?: string
   storeId?: string

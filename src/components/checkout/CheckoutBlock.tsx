@@ -331,7 +331,7 @@ const CheckoutBlock: React.VFC<{
         memberId: member.id,
         metadata: {
           invoice,
-          shipping: hasPhysicalProduct ? shipping : member.shipping,
+          shipping: hasPhysicalProduct || hasGiftPlan ? shipping : member.shipping,
           payment,
         },
         memberPhones: invoice.phone ? [{ member_id: member.id, phone: invoice.phone }] : [],
