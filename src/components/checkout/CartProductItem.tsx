@@ -54,7 +54,7 @@ const CartProductItem: React.VFC<{
   const { formatMessage } = useIntl()
   const { enabledModules, id: appId } = useApp()
   const { updatePluralCartProductQuantity } = useContext(CartContext)
-  const { target } = useSimpleProduct({ id })
+  const { target, loading } = useSimpleProduct({ id })
   const [pluralProductQuantity, setPluralProductQuantity] = useState(quantity || 1)
   const tracking = useTracking()
   const { resourceCollection } = useResourceCollection([
@@ -66,10 +66,14 @@ const CartProductItem: React.VFC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, pluralProductQuantity])
 
+  useEffect(() => {
+    if (!loading) {
+      onTargetLoaded?.(true)
+    }
+  }, [loading, onTargetLoaded])
+
   if (!target) {
     return <Spinner size="lg" />
-  } else {
-    onTargetLoaded?.(true)
   }
 
   const [productType] = id.split('_') as [ProductType]
