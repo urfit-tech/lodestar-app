@@ -1164,5 +1164,18 @@
   "voucher.noUsePeriod": "無使用期限",
   "voucher.redeemable": "可兌換",
   "voucher.tab.exchange": "兌換代碼",
-  "voucher.title.add": "新增兌換券"
+  "voucher.title.add": "新增兌換券",
+  "checkout.ui.gift": "贈品",
+  "checkout.content.gift": "【贈品】",
+  "checkoutMessages.ui.approved": "我同意",
+  "input.ContactInfoInput.contactInfo": "聯絡資訊",
+  "input.ContactInfoInput.contactInfoDescription": "請填寫真實資料，填寫後不可更改，僅通知資訊與相關連繫使用",
+  "input.ContactInfoInput.name": "姓名",
+  "input.ContactInfoInput.phone": "電話",
+  "input.ContactInfoInput.email": "email",
+  "input.ContactInfoInput.nameHelpText": "請填寫姓名",
+  "input.ContactInfoInput.phoneHelpText": "請確認電話格式",
+  "input.ContactInfoInput.emailHelpText": "請確認email格式",
+  "common.programPlan": "訂閱課程",
+  "checkout.label.outsideTaiwanIslandNoShipping": "台灣離島/海外不寄送"
 }

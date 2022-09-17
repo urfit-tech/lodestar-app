@@ -498,6 +498,9 @@ export const checkoutMessages = {
   button: defineMessages({
     cartSubmit: { id: 'checkout.cart.submit', defaultMessage: '前往結帳' },
   }),
+  ui: defineMessages({
+    gift: { id: 'checkout.ui.gift', defaultMessage: '贈品' },
+  }),
   label: defineMessages({
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
     groupBuyingPlan: {
@@ -593,6 +596,10 @@ export const checkoutMessages = {
     couponAmount: { id: 'checkout.coupon.amount', defaultMessage: '金額 {amount} 元' },
     couponCode: { id: 'checkout.coupon.codes', defaultMessage: '折扣代碼' },
     total: { id: 'checkout.content.total', defaultMessage: '共' },
+    gift: {
+      id: 'checkout.content.gift',
+      defaultMessage: '【贈品】',
+    },
   }),
   link: defineMessages({
     cartExplore: { id: 'checkout.cart.explore', defaultMessage: `來去逛逛` },
@@ -672,6 +679,10 @@ export const checkoutMessages = {
     sendByPost: { id: 'checkout.label.sendByPost', defaultMessage: '郵寄' },
     homeDelivery: { id: 'checkout.label.homeDelivery', defaultMessage: '宅配' },
     other: { id: 'checkout.label.other', defaultMessage: '其他' },
+    outsideTaiwanIslandNoShipping: {
+      id: 'checkout.label.outsideTaiwanIslandNoShipping',
+      defaultMessage: '台灣離島/海外不寄送',
+    },
   }),
   event: defineMessages({
     inventoryShortage: { id: 'checkout.event.inventoryShortage', defaultMessage: '庫存不足請調整數量' },

@@ -1,6 +1,8 @@
 import { useProductGiftPlan } from 'lodestar-app-element/src/hooks/giftPlan'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { checkoutMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { CustomRatioImage } from '../common/Image'
 
@@ -40,12 +42,13 @@ const CartProductGiftPlan: React.VFC<{ productId: string; isTargetLoaded: boolea
   productId,
   isTargetLoaded,
 }) => {
+  const { formatMessage } = useIntl()
   const { productGiftPlan } = useProductGiftPlan(productId)
 
   return isTargetLoaded && productGiftPlan.productGiftPlanId ? (
     <GiftPlanBlock>
       <GiftDescriptionBlock>
-        <GiftTag>贈品</GiftTag>
+        <GiftTag>{formatMessage(checkoutMessages.ui.gift)}</GiftTag>
         <GiftName>{productGiftPlan.gift.title}</GiftName>
       </GiftDescriptionBlock>
       <CustomRatioImage width="52px" ratio={1 / 1} src={productGiftPlan.gift.coverUrl || EmptyCover} />

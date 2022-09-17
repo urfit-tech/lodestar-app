@@ -47,7 +47,9 @@ const CheckoutCard: React.VFC<
       {check.orderProductGiftPlans.map((v, index) =>
         v !== null ? (
           <div key={index} className="row mb-2">
-            <div className="col-6 offset-md-4 col-md-4">【贈品】{v.giftPlan.gift.title}</div>
+            <div className="col-6 offset-md-4 col-md-4">{`${formatMessage(checkoutMessages.content.gift)} ${
+              v.giftPlan.gift.title
+            }`}</div>
           </div>
         ) : null,
       )}

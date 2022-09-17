@@ -292,7 +292,7 @@ const ShippingInput: React.VFC<{
               handleChange('isOutsideTaiwanIsland', (!isOutsideTaiwanIsland).toString())
             }}
           >
-            台灣離島/海外不寄送
+            {formatMessage(checkoutMessages.shipping.outsideTaiwanIslandNoShipping)}
           </StyledCheckBox>
         </Form.Item>
       ) : (
