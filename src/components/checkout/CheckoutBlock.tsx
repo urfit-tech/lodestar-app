@@ -175,6 +175,7 @@ const CheckoutBlock: React.VFC<{
       withError: boolean
     }
   }>({})
+  const [hasGiftPlan, setHasGiftPlan] = useState(false)
 
   const { memberId: referrerId, validateStatus } = useMemberValidation(referrerEmail)
 
@@ -184,7 +185,7 @@ const CheckoutBlock: React.VFC<{
   const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
     productIds: cartProducts.map(cartProduct => cartProduct.productId),
     discountId,
-    shipping: hasPhysicalProduct ? shipping : null,
+    shipping: hasPhysicalProduct || hasGiftPlan ? shipping : null,
     options: cartProducts.reduce<{ [ProductId: string]: any }>(
       (accumulator, currentValue) => ({
         ...accumulator,
@@ -201,9 +202,13 @@ const CheckoutBlock: React.VFC<{
     ),
   })
 
-  const hasGiftPlan = check.orderProductGiftPlans.some(v => {
-    return v !== null ? v.giftPlan.gift.isDeliverable === true : false
-  })
+  useEffect(() => {
+    setHasGiftPlan(
+      check.orderProductGiftPlans.some(v => {
+        return v !== null ? v.giftPlan.gift.isDeliverable === true : false
+      }),
+    )
+  }, [check])
 
   if (isAuthenticating) {
     return (
