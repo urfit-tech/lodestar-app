@@ -203,11 +203,14 @@ const CheckoutBlock: React.VFC<{
   })
 
   useEffect(() => {
-    setHasGiftPlan(
-      check.orderProductGiftPlans.some(v => {
-        return v !== null ? v.giftPlan.gift.isDeliverable === true : false
-      }),
-    )
+    let hasGiftPlan = false
+    check.orderProducts.forEach(orderProduct => {
+      hasGiftPlan =
+        orderProduct.options?.giftPlans?.some(v => {
+          return v.giftPlan.gift.isDeliverable === true
+        }) || false
+    })
+    setHasGiftPlan(hasGiftPlan)
   }, [check])
 
   if (isAuthenticating) {

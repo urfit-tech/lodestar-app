@@ -15,5 +15,7 @@ type Gift = {
   id: string
   title: string
   coverUrl: string | null
+  price: number
+  currencyId: string
   isDeliverable: boolean
 }

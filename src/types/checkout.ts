@@ -1,4 +1,4 @@
-import { ProductGiftPlan as OrderProductGiftPlanProps } from '../types/gift'
+import { ProductGiftPlan } from '../types/gift'
 
 export type OrderProductProps = {
   productId: string
@@ -12,6 +12,7 @@ export type OrderProductProps = {
     quantity?: number
     currencyId?: string
     currencyPrice?: number
+    giftPlans?: ProductGiftPlan[]
   }
 }
 
@@ -35,7 +36,6 @@ export type ShippingOptionIdType = 'sevenEleven' | 'familyMart' | 'okMart' | 'se
 
 export type CheckProps = {
   orderProducts: OrderProductProps[]
-  orderProductGiftPlans: OrderProductGiftPlanProps[]
   orderDiscounts: OrderDiscountProps[]
   shippingOption: ShippingOptionProps | null
 }

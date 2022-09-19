@@ -44,15 +44,17 @@ const CheckoutCard: React.VFC<
         </div>
       ))}
 
-      {check.orderProductGiftPlans.map((v, index) =>
-        v !== null ? (
-          <div key={index} className="row mb-2">
-            <div className="col-6 offset-md-4 col-md-4">{`${formatMessage(checkoutMessages.content.gift)} ${
-              v.giftPlan.gift.title
-            }`}</div>
-          </div>
-        ) : null,
-      )}
+      {check.orderProducts.map((orderProduct, index) => {
+        return orderProduct.options?.giftPlans?.map(v => {
+          return (
+            <div key={index} className="row mb-2">
+              <div className="col-6 offset-md-4 col-md-4">{`${formatMessage(checkoutMessages.content.gift)} ${
+                v.giftPlan.gift.title
+              }`}</div>
+            </div>
+          )
+        })
+      })}
 
       {check?.orderDiscounts?.map((orderDiscount, index) => (
         <div key={index} className="row mb-2">
