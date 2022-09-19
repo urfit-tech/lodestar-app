@@ -127,19 +127,21 @@ const ExamBlock: React.VFC<{
     setStatus(isTaken ? 'result' : 'intro')
   }, [isTaken])
 
+  const now = moment()
   let examStatus
   let exerciseId: string
 
-  const examinableTime = extraExpiredAt
-    ? { startedAt: null, endedAt: extraExpiredAt }
-    : exam.examinableUnit && exam.examinableAmount && productDeliveredAt
-    ? {
-        startedAt: null,
-        endedAt: moment(productDeliveredAt).add(exam.examinableAmount, exam.examinableUnit).toDate(),
-      }
-    : exam.examinableStartedAt && exam.examinableEndedAt
-    ? { startedAt: exam.examinableStartedAt, endedAt: exam.examinableEndedAt }
-    : { startedAt: null, endedAt: null }
+  const examinableTime =
+    exam.examinableStartedAt && exam.examinableEndedAt
+      ? extraExpiredAt
+        ? { startedAt: exam.examinableStartedAt, endedAt: extraExpiredAt }
+        : exam.examinableUnit && exam.examinableAmount && productDeliveredAt
+        ? {
+            startedAt: moment(productDeliveredAt).toDate(),
+            endedAt: moment(productDeliveredAt).add(exam.examinableAmount, exam.examinableUnit).toDate(),
+          }
+        : { startedAt: exam.examinableStartedAt, endedAt: exam.examinableEndedAt }
+      : { startedAt: null, endedAt: null }
 
   const handleStart = () => {
     const beganAt = moment()
@@ -303,7 +305,13 @@ const ExamBlock: React.VFC<{
       // TODO: can named ExerciseBlock or keep ExamResultBlock
       <ExamResultBlock
         nextProgramContentId={nextProgramContentId}
-        isAvailableToRetry={exam.isAvailableToRetry}
+        isAvailableToRetry={
+          exam.isAvailableToRetry
+            ? examinableTime?.startedAt && examinableTime?.endedAt
+              ? now.isAfter(examinableTime.startedAt) && now.isBefore(examinableTime.endedAt)
+              : exam.isAvailableToRetry
+            : exam.isAvailableToRetry
+        }
         isAvailableAnnounceScore={exam.isAvailableAnnounceScore}
         passingScore={exam.passingScore}
         timeLimitUnit={exam.timeLimitUnit}
