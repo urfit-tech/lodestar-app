@@ -152,7 +152,7 @@ const BlogPostPage: React.VFC = () => {
       <BlogPostPageHelmet post={post} />
 
       <div className="container py-sm-5">
-        <div className="row">
+        <div className="row justify-content-center">
           <div className="col-12 col-lg-9">
             {!loadingPost && (
               <PostCover
@@ -229,6 +229,7 @@ const BlogPostPage: React.VFC = () => {
                 )}
               </div>
             </div>
+            <div className="row">{postId && <RelativePostCollection postId={postId} tags={post?.tags} />}</div>
             <div className="mb-4">
               <StyledPostTitle className="mb-3">{formatMessage(messages.blogSuggestion)}</StyledPostTitle>
               {currentMemberId && (
@@ -250,9 +251,6 @@ const BlogPostPage: React.VFC = () => {
                 </div>
               ))}
             </div>
-          </div>
-          <div className="col-12 col-lg-3 pl-4">
-            {postId && <RelativePostCollection postId={postId} tags={post?.tags} />}
           </div>
         </div>
       </div>
