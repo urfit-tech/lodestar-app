@@ -46,11 +46,14 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
               name: review?.memberName || review?.memberId || '',
             },
           })),
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: averageScore,
-            reviewCount: reviewCount,
-          },
+          // google search console says reviewCount must be a positive integer
+          ...(Math.floor(reviewCount) > 0 && {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: averageScore,
+              reviewCount: Math.floor(reviewCount),
+            },
+          }),
           offers: {
             '@type': 'AggregateOffer',
             offerCount: allPlanPrice.length,
