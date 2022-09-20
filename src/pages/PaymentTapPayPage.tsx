@@ -62,7 +62,11 @@ const PaymentTapPayBlock: React.VFC = () => {
     setIsPaying(true)
     try {
       const path = await payPayment(memberCreditCardId)
-      history.push(path)
+      if (path.includes('http')) {
+        window.location.assign(path)
+      } else {
+        history.push(path)
+      }
     } catch (err) {
       message.error((err as any).toString())
     }
