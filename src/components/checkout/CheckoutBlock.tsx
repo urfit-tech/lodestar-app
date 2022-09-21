@@ -475,7 +475,7 @@ const CheckoutBlock: React.VFC<{
                   <Input
                     variant="outline"
                     placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
-                    onBlur={e => setReferrerEmail(e.target.value)}
+                    onBlur={e => setReferrerEmail(e.target.value.trim())}
                   />
                 </StyledInputWrapper>
               </Form.Item>
@@ -510,7 +510,7 @@ const CheckoutBlock: React.VFC<{
                   <Input
                     variant="outline"
                     placeholder={formatMessage(commonMessages.form.placeholder.referrerEmail)}
-                    onBlur={e => setReferrerEmail(e.target.value)}
+                    onBlur={e => setReferrerEmail(e.target.value.trim())}
                   />
                 </StyledInputWrapper>
               </Form.Item>
