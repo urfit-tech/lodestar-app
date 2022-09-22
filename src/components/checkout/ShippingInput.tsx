@@ -93,10 +93,14 @@ const ShippingInput: React.VFC<{
       ...newShippingOption,
     }
     newValue[key] = inputValue
+
     if (key === 'city') {
       newValue['district'] = districts[inputValue][0]
       handleDistrictChange(districts[inputValue][0])
+    } else if (key === 'isOutsideTaiwanIsland' && inputValue === 'true') {
+      newValue['shippingMethod'] = ''
     }
+
     localStorage.setItem('kolable.cart.shipping', JSON.stringify(newValue))
     onChange && onChange(newValue)
   }
