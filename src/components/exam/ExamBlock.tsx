@@ -127,19 +127,21 @@ const ExamBlock: React.VFC<{
     setStatus(isTaken ? 'result' : 'intro')
   }, [isTaken])
 
+  const now = moment()
   let examStatus
   let exerciseId: string
 
-  const examinableTime = extraExpiredAt
-    ? { startedAt: null, endedAt: extraExpiredAt }
-    : exam.examinableUnit && exam.examinableAmount && productDeliveredAt
-    ? {
-        startedAt: null,
-        endedAt: moment(productDeliveredAt).add(exam.examinableAmount, exam.examinableUnit).toDate(),
-      }
-    : exam.examinableStartedAt && exam.examinableEndedAt
-    ? { startedAt: exam.examinableStartedAt, endedAt: exam.examinableEndedAt }
-    : { startedAt: null, endedAt: null }
+  const examinableTime =
+    exam.examinableStartedAt && exam.examinableEndedAt
+      ? extraExpiredAt
+        ? { startedAt: exam.examinableStartedAt, endedAt: extraExpiredAt }
+        : exam.examinableUnit && exam.examinableAmount && productDeliveredAt
+        ? {
+            startedAt: moment(productDeliveredAt).toDate(),
+            endedAt: moment(productDeliveredAt).add(exam.examinableAmount, exam.examinableUnit).toDate(),
+          }
+        : { startedAt: exam.examinableStartedAt, endedAt: exam.examinableEndedAt }
+      : { startedAt: null, endedAt: null }
 
   const handleStart = () => {
     const beganAt = moment()
@@ -151,6 +153,7 @@ const ExamBlock: React.VFC<{
           program_content_id: programContentId,
           exam_id: exam.id,
           started_at: beganAt,
+          answer: [],
         },
       },
     })
@@ -165,12 +168,16 @@ const ExamBlock: React.VFC<{
     examFinishedAt.current = null
   }
 
-  const handleFinish = () => {
+  const handleFinish = (isFinal: boolean) => {
     const finishedAt = moment()
 
     if (examBeganAt.current && !examFinishedAt.current) {
       examFinishedAt.current = finishedAt
     }
+
+    const choiceIds = questions.map(question =>
+      question.questionOptions?.filter(choice => choice.isSelected).map(choice => choice.id),
+    )
 
     updateExercise({
       variables: {
@@ -178,7 +185,7 @@ const ExamBlock: React.VFC<{
         answer: questions.map((question, index) => ({
           questionId: question.id,
           questionPoints: exam.point,
-          choiceIds: question.questionOptions?.filter(choice => choice.isSelected).map(choice => choice.id),
+          choiceIds: choiceIds[index],
           gainedPoints: question.gainedPoints,
           startedAt: index === 0 ? examBeganAt.current : questions[index - 1]?.endedAt,
           endedAt: index === questions.length - 1 ? finishedAt : question.endedAt,
@@ -189,7 +196,7 @@ const ExamBlock: React.VFC<{
       .then(() => {
         onRefetchSpecificExercise?.()
         onRefetchExercisePublic?.()
-        setStatus('result')
+        isFinal && setStatus('result')
       })
       .catch(error => handleError(error))
   }
@@ -298,7 +305,13 @@ const ExamBlock: React.VFC<{
       // TODO: can named ExerciseBlock or keep ExamResultBlock
       <ExamResultBlock
         nextProgramContentId={nextProgramContentId}
-        isAvailableToRetry={exam.isAvailableToRetry}
+        isAvailableToRetry={
+          exam.isAvailableToRetry
+            ? examinableTime?.startedAt && examinableTime?.endedAt
+              ? now.isAfter(examinableTime.startedAt) && now.isBefore(examinableTime.endedAt)
+              : exam.isAvailableToRetry
+            : exam.isAvailableToRetry
+        }
         isAvailableAnnounceScore={exam.isAvailableAnnounceScore}
         passingScore={exam.passingScore}
         timeLimitUnit={exam.timeLimitUnit}
@@ -309,9 +322,9 @@ const ExamBlock: React.VFC<{
         averageGainedPoints={averageGainedPoints}
         timeSpent={
           examBeganAt.current && examFinishedAt.current
-            ? examFinishedAt.current.diff(examBeganAt.current)
+            ? examFinishedAt.current.diff(examBeganAt.current) / 1000
             : specificExercise?.[0]?.startedAt && specificExercise?.[0]?.endedAt
-            ? specificExercise[0].endedAt.getTime() - specificExercise[0].startedAt.getTime()
+            ? (specificExercise[0].endedAt.getTime() - specificExercise[0].startedAt.getTime()) / 1000
             : undefined
         }
         onReAnswer={() => {

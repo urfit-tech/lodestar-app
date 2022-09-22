@@ -166,7 +166,7 @@ const ExamResultBlock: React.VFC<
         {
           columns: [
             formatMessage(examMessages.ExamResultBlock.averageAnswerTime),
-            `${durationFullFormatter((timeSpent || 0) / 1000 / questions.length)}`,
+            `${durationFullFormatter((timeSpent || 0) / questions.length)}`,
             `${durationFullFormatter(totalDuration / questions.length)}`,
           ],
           hidden: !Boolean(timeSpent),
@@ -179,9 +179,9 @@ const ExamResultBlock: React.VFC<
             timeLimitUnit &&
             moment.duration(timeLimitAmount, timeLimitUnit as DurationInputArg2).asMilliseconds() &&
             timeSpent > moment.duration(timeLimitAmount, timeLimitUnit as DurationInputArg2).asMilliseconds() ? (
-              <StyledErrorText>{durationFullFormatter((timeSpent || 0) / 1000)}</StyledErrorText>
+              <StyledErrorText>{durationFullFormatter(timeSpent || 0)}</StyledErrorText>
             ) : (
-              `${durationFullFormatter((timeSpent || 0) / 1000)}`
+              `${durationFullFormatter(timeSpent || 0)}`
             ),
             `${durationFullFormatter(totalDuration)}`,
           ],
