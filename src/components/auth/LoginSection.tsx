@@ -1,5 +1,6 @@
 import { Button, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { message } from 'antd'
+import { AxiosError } from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
@@ -65,9 +66,13 @@ const LoginSection: React.VFC<{
           reset()
           back && history.push(back)
         })
-        .catch((error: Error) => {
-          const code = error.message as keyof typeof codeMessages
-          message.error(formatMessage(codeMessages[code]))
+        .catch((error: AxiosError) => {
+          if (error.isAxiosError && error.response) {
+            const code = error.response.data.code as keyof typeof codeMessages
+            message.error(formatMessage(codeMessages[code]))
+          } else {
+            message.error(error.message)
+          }
         })
         .catch(handleError)
         .finally(() => setLoading(false))
