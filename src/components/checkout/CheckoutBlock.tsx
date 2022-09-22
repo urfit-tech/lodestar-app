@@ -175,7 +175,7 @@ const CheckoutBlock: React.VFC<{
       withError: boolean
     }
   }>({})
-  const [hasGiftPlan, setHasGiftPlan] = useState(false)
+  const [isGiftPlanDeliverable, setIsGiftPlanDeliverable] = useState(false)
 
   const { memberId: referrerId, validateStatus } = useMemberValidation(referrerEmail)
 
@@ -185,7 +185,7 @@ const CheckoutBlock: React.VFC<{
   const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
     productIds: cartProducts.map(cartProduct => cartProduct.productId),
     discountId,
-    shipping: hasPhysicalProduct || (hasGiftPlan && shipping.isOutsideTaiwanIsland === 'false') ? shipping : null,
+    shipping: hasPhysicalProduct || isGiftPlanDeliverable ? shipping : null,
     options: cartProducts.reduce<{ [ProductId: string]: any }>(
       (accumulator, currentValue) => ({
         ...accumulator,
@@ -203,14 +203,15 @@ const CheckoutBlock: React.VFC<{
   })
 
   useEffect(() => {
-    let hasGiftPlan = false
+    let isDeliverable = false
     check.orderProducts.forEach(orderProduct => {
-      hasGiftPlan =
-        orderProduct.options?.giftPlans?.some(v => {
-          return v.giftPlan.gift.isDeliverable === true
-        }) || false
+      orderProduct.options?.giftPlans?.forEach(v => {
+        if (v.giftPlan.gift.isDeliverable) {
+          isDeliverable = true
+        }
+      })
     })
-    setHasGiftPlan(hasGiftPlan)
+    setIsGiftPlanDeliverable(isDeliverable)
   }, [check])
 
   if (isAuthenticating) {
@@ -248,7 +249,7 @@ const CheckoutBlock: React.VFC<{
     if (isFieldsValidate) {
       ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
     } else {
-      isValidShipping = (!hasPhysicalProduct && !hasGiftPlan) || validateShipping(shipping)
+      isValidShipping = (!hasPhysicalProduct && !isGiftPlanDeliverable) || validateShipping(shipping)
       isValidInvoice = Number(settings['feature.invoice.disable'])
         ? true
         : Number(settings['feature.invoice_member_info_input.disable'])
@@ -339,7 +340,7 @@ const CheckoutBlock: React.VFC<{
         memberId: member.id,
         metadata: {
           invoice,
-          shipping: hasPhysicalProduct || hasGiftPlan ? shipping : member.shipping,
+          shipping: hasPhysicalProduct || isGiftPlanDeliverable ? shipping : member.shipping,
           payment,
         },
         memberPhones: invoice.phone ? [{ member_id: member.id, phone: invoice.phone }] : [],
@@ -404,7 +405,7 @@ const CheckoutBlock: React.VFC<{
         </Box>
       )}
 
-      {(hasPhysicalProduct || hasGiftPlan) && (
+      {(hasPhysicalProduct || isGiftPlanDeliverable) && (
         <div ref={shippingRef} className="mb-3">
           <AdminCard>
             <ShippingInput
