@@ -413,6 +413,7 @@ const CheckoutBlock: React.VFC<{
               shippingMethods={memberShop?.shippingMethods}
               onChange={value => setShipping(value)}
               isValidating={isValidating}
+              isGiftPlanDeliverable={isGiftPlanDeliverable}
             />
           </AdminCard>
         </div>

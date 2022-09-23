@@ -17,6 +17,13 @@ const StyledTitle = styled.div`
   ${CommonTitleMixin}
 `
 
+const GiftPlanDeliverNoticeBloack = styled.div`
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+  color: var(--gray-darker);
+`
+
 const StyledPriceTag = styled.span`
   font-size: 14px;
   font-weight: 500;
@@ -48,7 +55,8 @@ const ShippingInput: React.VFC<{
   onChange?: (value: ShippingProps) => void
   isValidating?: boolean
   shippingMethods?: ShippingOptionProps[]
-}> = ({ value, onChange, isValidating, shippingMethods }) => {
+  isGiftPlanDeliverable?: boolean
+}> = ({ value, onChange, isValidating, shippingMethods, isGiftPlanDeliverable }) => {
   const { formatMessage } = useIntl()
   const { currencyId: appCurrencyId, settings } = useApp()
   const { city, district, zipCode, handleCityChange, handleDistrictChange } = useTwZipCode()
@@ -166,6 +174,14 @@ const ShippingInput: React.VFC<{
   return (
     <div>
       <StyledTitle className="mb-4">{formatMessage(checkoutMessages.shipping.shippingInput)}</StyledTitle>
+
+      {isGiftPlanDeliverable && (
+        <GiftPlanDeliverNoticeBloack className="mb-4">
+          <p>{formatMessage(checkoutMessages.shipping.giftPlanDeliverNotice1)}</p>
+          <p>{formatMessage(checkoutMessages.shipping.giftPlanDeliverNotice2)}</p>
+          <p>{formatMessage(checkoutMessages.shipping.giftPlanDeliverNotice3)}</p>
+        </GiftPlanDeliverNoticeBloack>
+      )}
 
       {shippingMethods && (
         <Form.Item required label={formatMessage(checkoutMessages.shipping.shippingMethod)}>
