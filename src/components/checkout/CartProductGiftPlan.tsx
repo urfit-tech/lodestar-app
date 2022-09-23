@@ -44,8 +44,13 @@ const CartProductGiftPlan: React.VFC<{ productId: string; isTargetLoaded: boolea
 }) => {
   const { formatMessage } = useIntl()
   const { productGiftPlan } = useProductGiftPlan(productId)
+  let isAvailable =
+    (productGiftPlan.startedAt && Date.now() < new Date(productGiftPlan.startedAt).getTime()) ||
+    (productGiftPlan.endedAt && Date.now() > new Date(productGiftPlan.endedAt).getTime())
+      ? false
+      : true
 
-  return isTargetLoaded && productGiftPlan.productGiftPlanId ? (
+  return isTargetLoaded && productGiftPlan.productGiftPlanId && isAvailable ? (
     <GiftPlanBlock>
       <GiftDescriptionBlock>
         <GiftTag>{formatMessage(checkoutMessages.ui.gift)}</GiftTag>
