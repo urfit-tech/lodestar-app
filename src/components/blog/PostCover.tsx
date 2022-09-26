@@ -138,7 +138,7 @@ const PostCover: React.VFC<{
         isScrollingDown ? (
           <StyledOverlayBlock className="animated fadeInDown pb-4" width={layoutContentElem?.scrollWidth}>
             <div className="container">
-              <div className="row">
+              <div className="row justify-content-center">
                 <div className="col-12 col-lg-9">
                   <StyledOverlay className="d-flex align-items-center justify-content-between">
                     <StyledTitle>{title}</StyledTitle>
