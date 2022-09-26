@@ -150,19 +150,19 @@ const BlogPostPage: React.VFC = () => {
   return (
     <DefaultLayout white noHeader={isScrollingDown}>
       <BlogPostPageHelmet post={post} />
-      {!loadingPost && (
-        <PostCover
-          title={post?.title || ''}
-          coverUrl={post?.videoUrl || post?.coverUrl || null}
-          type={post?.videoUrl ? 'video' : 'picture'}
-          merchandises={post?.merchandises || []}
-          isScrollingDown={isScrollingDown}
-        />
-      )}
 
-      <div className="container py-5">
-        <div className="row">
+      <div className="container py-sm-5">
+        <div className="row justify-content-center">
           <div className="col-12 col-lg-9">
+            {!loadingPost && (
+              <PostCover
+                title={post?.title || ''}
+                coverUrl={post?.videoUrl || post?.coverUrl || null}
+                type={post?.videoUrl ? 'video' : 'picture'}
+                merchandises={post?.merchandises || []}
+                isScrollingDown={isScrollingDown}
+              />
+            )}
             <StyledPostMeta className="pb-3">
               <Icon as={UserOIcon} className="mr-1" />
               <span className="mr-2">{post?.author.name}</span>
@@ -229,6 +229,7 @@ const BlogPostPage: React.VFC = () => {
                 )}
               </div>
             </div>
+            <div className="row">{postId && <RelativePostCollection postId={postId} tags={post?.tags} />}</div>
             <div className="mb-4">
               <StyledPostTitle className="mb-3">{formatMessage(messages.blogSuggestion)}</StyledPostTitle>
               {currentMemberId && (
@@ -250,9 +251,6 @@ const BlogPostPage: React.VFC = () => {
                 </div>
               ))}
             </div>
-          </div>
-          <div className="col-12 col-lg-3 pl-4">
-            {postId && <RelativePostCollection postId={postId} tags={post?.tags} />}
           </div>
         </div>
       </div>
