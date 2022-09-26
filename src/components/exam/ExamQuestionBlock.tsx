@@ -2,6 +2,7 @@ import { Button, Icon, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
 import { CommonLargeTextMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import { durationFullFormatter } from 'lodestar-app-element/src/helpers'
 import moment from 'moment'
 import { sum } from 'ramda'
 import React, { memo, useState } from 'react'
@@ -95,7 +96,7 @@ const ExamQuestionBlock: React.VFC<
     >[]
     specificExercise: ExercisePublic[]
     exerciseAmount: number
-    onFinish?: () => void
+    onFinish?: (isFinal: boolean) => void
     onNextStep?: () => void
     onChoiceSelect?: (questionId: string, choiceId: string) => void
     onQuestionFinish?: (questionId: string, endedAt: Date) => void
@@ -144,36 +145,33 @@ const ExamQuestionBlock: React.VFC<
             formatMessage(examMessages.ExamQuestionBlock.spendTime),
             specificExercise.find((v: ExercisePublic) => v.questionId === activeQuestion.id)?.choiceIds.length === 0
               ? formatMessage(examMessages.ExamQuestionBlock.unanswered)
-              : formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
-                  spentTime: (
-                    ((specificExercise
+              : specificExercise.find((v: ExercisePublic) => v.questionId === activeQuestion.id)?.questionEndedAt &&
+                specificExercise.find((v: ExercisePublic) => v.questionId === activeQuestion.id)?.questionStartedAt
+              ? durationFullFormatter(
+                  ((specificExercise
+                    .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
+                    ?.questionEndedAt?.getTime() || 0) -
+                    (specificExercise
                       .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
-                      ?.questionEndedAt?.getTime() || 0) -
-                      (specificExercise
-                        .find((v: ExercisePublic) => v.questionId === activeQuestion.id)
-                        ?.questionStartedAt?.getTime() || 0)) /
-                    1000
-                  ).toFixed(2),
-                }),
-            formatMessage(examMessages.ExamQuestionBlock.spentTimeBySec, {
-              spentTime: (
-                sum(exercisePublic.filter(v => v.questionId === activeQuestion.id).map(v => v.duration) || 0) /
-                exercisePublic.filter(v => v.questionId === activeQuestion.id).length
-              )
-                .toFixed(2)
-                .toString(),
-            }),
+                      ?.questionStartedAt?.getTime() || 0)) /
+                    1000,
+                )
+              : formatMessage(examMessages.ExamQuestionBlock.unansweredTime),
+            durationFullFormatter(
+              sum(exercisePublic.filter(v => v.questionId === activeQuestion.id).map(v => v.duration) || 0) /
+                exercisePublic.filter(v => v.questionId === activeQuestion.id).length,
+            ),
           ],
         },
         {
           columns: [
             formatMessage(examMessages.ExamQuestionBlock.averageCorrectRate),
             '',
-            `${
+            `${(
               (exercisePublic.filter(v => v.questionId === activeQuestion.id).filter(w => w.isCorrect).length /
                 exerciseAmount) *
               100
-            }%`,
+            ).toFixed(2)}%`,
           ],
         },
       ],
@@ -284,11 +282,12 @@ const ExamQuestionBlock: React.VFC<
         {index < questions.length - 1 && (
           <Button
             variant="primary"
-            disabled={activeQuestion.questionOptions?.every(v => !v.isSelected)}
+            disabled={showDetail ? false : activeQuestion.questionOptions?.every(v => !v.isSelected)}
             onClick={() => {
-              setIndex(prev => prev + 1)
               const finishedAt = moment()
               !showDetail && onQuestionFinish?.(activeQuestion.id, finishedAt.toDate())
+              !showDetail && onFinish?.(false)
+              setIndex(prev => prev + 1)
             }}
           >
             {formatMessage(examMessages.ExamQuestionBlock.nextQuestion)}
@@ -298,8 +297,8 @@ const ExamQuestionBlock: React.VFC<
         {index === questions.length - 1 && (
           <Button
             variant="primary"
-            disabled={activeQuestion.questionOptions?.every(v => !v.isSelected)}
-            onClick={() => (showDetail ? onNextStep?.() : onFinish?.())}
+            disabled={showDetail ? false : activeQuestion.questionOptions?.every(v => !v.isSelected)}
+            onClick={() => (showDetail ? onNextStep?.() : onFinish?.(true))}
           >
             {showDetail
               ? formatMessage(examMessages.ExamQuestionBlock.showResult)
