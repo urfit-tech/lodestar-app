@@ -8,6 +8,7 @@ import axios from 'axios'
 import gql from 'graphql-tag'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
+import TokenTypeLabel from 'lodestar-app-element/src/components/labels/TokenTypeLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -210,7 +211,7 @@ const OrderCollectionAdminCard: React.VFC<
             return (
               <OrderProductRow key={`Token_${v.giftPlan.gift.id}`} className="d-table-row">
                 <OrderProductCell className="pr-4">
-                  <ProductTypeLabel productType="GiftPlan" />
+                  <TokenTypeLabel tokenType="GiftPlan" />
                 </OrderProductCell>
                 <OrderProductCell className="pr-4" grow>
                   <div className="d-flex align-items-center">
