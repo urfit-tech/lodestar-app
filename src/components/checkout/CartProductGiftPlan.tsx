@@ -50,13 +50,13 @@ const CartProductGiftPlan: React.VFC<{ productId: string; isTargetLoaded: boolea
       ? false
       : true
 
-  return isTargetLoaded && productGiftPlan.productGiftPlanId && isAvailable ? (
+  return isTargetLoaded && productGiftPlan.id && isAvailable ? (
     <GiftPlanBlock>
       <GiftDescriptionBlock>
         <GiftTag>{formatMessage(checkoutMessages.ui.gift)}</GiftTag>
-        <GiftName>{productGiftPlan.gift.title}</GiftName>
+        <GiftName>{productGiftPlan.giftPlan.gift.title}</GiftName>
       </GiftDescriptionBlock>
-      <CustomRatioImage width="52px" ratio={1 / 1} src={productGiftPlan.gift.coverUrl || EmptyCover} />
+      <CustomRatioImage width="52px" ratio={1 / 1} src={productGiftPlan.giftPlan.gift.coverUrl || EmptyCover} />
     </GiftPlanBlock>
   ) : null
 }
