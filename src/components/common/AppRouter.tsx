@@ -18,10 +18,6 @@ const defaultRoutesMap: RoutesMap = {
     path: '/',
     pageName: 'HomePage',
   },
-  about: {
-    path: '/about',
-    pageName: 'AboutPage',
-  },
   // system
   error: {
     path: '/error',
