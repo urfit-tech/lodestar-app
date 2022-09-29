@@ -109,7 +109,7 @@ const ProgramContentBlock: React.VFC<{
               className="mb-4"
               onClick={() => {
                 Cookies.set('redirect', window.location.href)
-                history.push('/auth')
+                history.push(`/auth?programContentId=${programContentId}`)
               }}
             >
               <LockIcon className="mr-2 mb-1" />
