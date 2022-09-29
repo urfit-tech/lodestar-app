@@ -45,11 +45,11 @@ const CheckoutCard: React.VFC<
       ))}
 
       {check.orderProducts.map((orderProduct, index) => {
-        return orderProduct.options?.giftPlans?.map(v => {
+        return orderProduct.options?.productGiftPlan?.giftPlan?.gifts?.map(v => {
           return (
             <div key={index} className="row mb-2">
               <div className="col-6 offset-md-4 col-md-4">{`${formatMessage(checkoutMessages.content.gift)} ${
-                v.giftPlan.gift.title
+                v.title
               }`}</div>
             </div>
           )

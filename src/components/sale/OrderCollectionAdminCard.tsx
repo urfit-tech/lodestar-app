@@ -22,7 +22,7 @@ import hasura from '../../hasura'
 import { dateFormatter, dateRangeFormatter, handleError } from '../../helpers'
 import { codeMessages, commonMessages, saleMessages } from '../../helpers/translation'
 import { OrderDiscountProps } from '../../types/checkout'
-import { ProductGiftPlan } from '../../types/gift'
+import { Gift } from '../../types/gift'
 import { ShippingMethodType } from '../../types/merchandise'
 import { ProductType } from '../../types/product'
 import AdminCard from '../common/AdminCard'
@@ -207,21 +207,21 @@ const OrderCollectionAdminCard: React.VFC<
           </OrderProductRow>
         ))}
         {record.orderProducts.map(orderProduct =>
-          orderProduct.options?.giftPlans?.map((v: ProductGiftPlan) => {
+          orderProduct.options?.productGiftPlan?.giftPlan.gifts.map((gift: Gift) => {
             return (
-              <OrderProductRow key={`Token_${v.giftPlan.gift.id}`} className="d-table-row">
+              <OrderProductRow key={`Token_${gift.id}`} className="d-table-row">
                 <OrderProductCell className="pr-4">
                   <TokenTypeLabel tokenType="GiftPlan" />
                 </OrderProductCell>
                 <OrderProductCell className="pr-4" grow>
                   <div className="d-flex align-items-center">
                     {!orderProduct.deliveredAt && <LockIcon className="mr-1" />}
-                    {v.giftPlan.gift.title}
+                    {gift.title}
                   </div>
                 </OrderProductCell>
                 <OrderProductCell className="text-right">
-                  {v.giftPlan.gift.price === 0 && Boolean(settings['hide_zero_price.enabled']) ? null : (
-                    <PriceLabel currencyId={v.giftPlan.gift.currencyId} listPrice={v.giftPlan.gift.price} />
+                  {gift.price === 0 && Boolean(settings['hide_zero_price.enabled']) ? null : (
+                    <PriceLabel currencyId={gift.currencyId} listPrice={gift.price} />
                   )}
                 </OrderProductCell>
               </OrderProductRow>

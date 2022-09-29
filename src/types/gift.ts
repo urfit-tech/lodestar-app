@@ -8,10 +8,10 @@ export type ProductGiftPlan = {
 type GiftPlan = {
   id: string
   title?: string
-  gift: Gift
+  gifts: Gift[]
 }
 
-type Gift = {
+export type Gift = {
   id: string
   title: string
   coverUrl: string | null

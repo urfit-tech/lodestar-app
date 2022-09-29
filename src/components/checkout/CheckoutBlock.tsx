@@ -205,8 +205,8 @@ const CheckoutBlock: React.VFC<{
   useEffect(() => {
     let isDeliverable = false
     check.orderProducts.forEach(orderProduct => {
-      orderProduct.options?.giftPlans?.forEach(v => {
-        if (v.giftPlan.gift.isDeliverable) {
+      orderProduct.options?.productGiftPlan?.giftPlan?.gifts?.forEach(gift => {
+        if (gift.isDeliverable) {
           isDeliverable = true
         }
       })

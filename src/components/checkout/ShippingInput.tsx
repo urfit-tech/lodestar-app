@@ -17,7 +17,7 @@ const StyledTitle = styled.div`
   ${CommonTitleMixin}
 `
 
-const GiftPlanDeliverNoticeBloack = styled.div`
+const GiftPlanDeliverNoticeBlock = styled.div`
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.2px;
@@ -176,11 +176,11 @@ const ShippingInput: React.VFC<{
       <StyledTitle className="mb-4">{formatMessage(checkoutMessages.shipping.shippingInput)}</StyledTitle>
 
       {isGiftPlanDeliverable && (
-        <GiftPlanDeliverNoticeBloack className="mb-4">
+        <GiftPlanDeliverNoticeBlock className="mb-4">
           <p>{formatMessage(checkoutMessages.shipping.giftPlanDeliverNotice1)}</p>
           <p>{formatMessage(checkoutMessages.shipping.giftPlanDeliverNotice2)}</p>
           <p>{formatMessage(checkoutMessages.shipping.giftPlanDeliverNotice3)}</p>
-        </GiftPlanDeliverNoticeBloack>
+        </GiftPlanDeliverNoticeBlock>
       )}
 
       {shippingMethods && (
@@ -258,7 +258,11 @@ const ShippingInput: React.VFC<{
           validateStatus={isValidating && addressRef.current?.input.value === '' ? 'error' : undefined}
         >
           <Input.Group compact>
-            <Select className="col-lg-2" disabled value={isCitySelectorChange ? zipCode : value?.zipCode}></Select>
+            <Select
+              className="col-lg-2"
+              disabled
+              value={isCitySelectorChange || !value?.zipCode ? zipCode : value?.zipCode}
+            ></Select>
             <Select
               className="col-lg-2"
               value={value?.city || city}
@@ -285,7 +289,7 @@ const ShippingInput: React.VFC<{
               onBlur={() => handleChange('zipCode', zipCode)}
               disabled={isOutsideTaiwanIsland}
             >
-              {isCitySelectorChange && value?.city === undefined
+              {!isCitySelectorChange && value?.city === undefined
                 ? districts[city].map(district => {
                     return <Select.Option key={district}>{district}</Select.Option>
                   })

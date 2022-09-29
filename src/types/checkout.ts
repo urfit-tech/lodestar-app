@@ -12,7 +12,7 @@ export type OrderProductProps = {
     quantity?: number
     currencyId?: string
     currencyPrice?: number
-    giftPlans?: ProductGiftPlan[]
+    productGiftPlan?: ProductGiftPlan
   }
 }
 

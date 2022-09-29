@@ -1180,5 +1180,6 @@
   "checkout.label.outsideTaiwanIslandNoShipping": "台灣離島/海外不寄送",
   "checkout.label.giftPlanDeliverNotice1": "(1) 請確實填寫收件地址與聯絡電話，以利贈品順利送達。",
   "checkout.label.giftPlanDeliverNotice2": "(2) 贈品若因資訊填寫錯誤而無法順利送達，將不再補發寄送。",
-  "checkout.label.giftPlanDeliverNotice3": "(3) 台灣離島/海外恕不寄送，請勾選下方選項。"
+  "checkout.label.giftPlanDeliverNotice3": "(3) 台灣離島/海外恕不寄送，請勾選下方選項。",
+  "common.label.hasGiftPlan": "附贈品"
 }
