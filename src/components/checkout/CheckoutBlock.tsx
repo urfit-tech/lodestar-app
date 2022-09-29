@@ -185,7 +185,7 @@ const CheckoutBlock: React.VFC<{
   const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
     productIds: cartProducts.map(cartProduct => cartProduct.productId),
     discountId,
-    shipping: hasPhysicalProduct || isGiftPlanDeliverable ? shipping : null,
+    shipping: isGiftPlanDeliverable ? { ...shipping, shippingMethod: undefined } : hasPhysicalProduct ? shipping : null,
     options: cartProducts.reduce<{ [ProductId: string]: any }>(
       (accumulator, currentValue) => ({
         ...accumulator,
