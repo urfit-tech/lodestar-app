@@ -162,7 +162,7 @@ const BlogPostPage: React.VFC = () => {
       <CWLBreadcrumb post={post} />
 
       <div className="container py-5 container-post-page">
-        <div className="row">
+        <div className="row justify-content-center">
           {/* <div className="col-12 col-lg-9"> */}
           <div className="col-12">
             <StyledPostMeta className="pb-3">
@@ -231,6 +231,7 @@ const BlogPostPage: React.VFC = () => {
                 )}
               </div>
             </div>
+            {/* <div className="row">{postId && <RelativePostCollection postId={postId} tags={post?.tags} />}</div> */}
             <div className="mb-4">
               <StyledPostTitle className="mb-3">{formatMessage(messages.blogSuggestion)}</StyledPostTitle>
               {currentMemberId && (
@@ -253,9 +254,6 @@ const BlogPostPage: React.VFC = () => {
               ))}
             </div>
           </div>
-          {/* <div className="col-12 col-lg-3 pl-4">
-            {postId && <RelativePostCollection postId={postId} tags={post?.tags} />}
-          </div> */}
         </div>
       </div>
     </DefaultLayout>

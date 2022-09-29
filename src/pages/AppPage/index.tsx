@@ -38,6 +38,7 @@ import {
 import HaohaomingSection from '../../components/page/HaohaomingSection'
 import hasura from '../../hasura'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
+import { MetaTag } from '../../types/metaTag'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 import CraftBlock from './CraftBlock'
@@ -125,7 +126,12 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   }
   return (
     <>
-      <PageHelmet onLoaded={() => setMetaLoaded(true)} />
+      <PageHelmet
+        title={appPage?.title || ''}
+        pageCraftData={appPage?.craftData}
+        pageMetaTags={appPage?.metaTags}
+        onLoaded={() => setMetaLoaded(true)}
+      />
       {metaLoaded && <Tracking.View />}
       {appPage ? (
         <DefaultLayout {...appPage.options}>
@@ -172,9 +178,11 @@ export const usePage = (path: string) => {
           }
         ) {
           id
+          title
           path
           options
           craft_data
+          meta_tag
           app_page_sections(order_by: { position: asc }) {
             id
             options
@@ -199,16 +207,20 @@ export const usePage = (path: string) => {
 
   const appPage: {
     id: string | null
+    title: string | null
     path: string | null
-    craftData: { [key: string]: string } | null
+    craftData: { [key: string]: any } | null
     options: { [key: string]: string } | null
+    metaTags: MetaTag | null
     appPageSections: AppPageSectionProps[]
   } | null = data?.app_page[0]
     ? {
         id: data.app_page[0].id,
+        title: data.app_page[0].title,
         path: data.app_page[0].path,
         craftData: data.app_page[0].craft_data,
         options: data.app_page[0].options || null,
+        metaTags: data.app_page[0].meta_tag || null,
         appPageSections: data.app_page[0]
           ? data.app_page[0].app_page_sections.map((v: { id: string; options: any; type: string }) => ({
               id: v.id,
