@@ -63,7 +63,10 @@ const PageHelmet: React.FC<
       <meta
         key="description"
         name="description"
-        content={xss(getBraftContent(props.description || '{}').slice(0, 150) || app.settings['description'])}
+        content={
+          xss(props.pageMetaTags?.seo?.description || '') ||
+          xss(getBraftContent(props.description || '{}').slice(0, 150) || app.settings['description'])
+        }
       />
       <meta
         key="keywords"
