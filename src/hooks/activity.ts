@@ -228,7 +228,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
             started_at
             ended_at
           }
-          activity_tickets(where: { is_published: { _eq: true } }, order_by: { started_at: asc }) {
+          activity_tickets(where: { is_published: { _eq: true } }, order_by: { ended_at: asc }) {
             id
             count
             description

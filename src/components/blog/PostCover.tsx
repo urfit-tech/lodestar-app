@@ -25,12 +25,21 @@ const StyledPlayer = styled.div`
   background: black;
 `
 
-const StyledPictureCover = styled.div<{ pictureUrl: string }>`
+const StyledPictureCover = styled.div`
+  margin-bottom: 24px;
   height: 670px;
   max-height: 67vw;
-  background-image: url(${props => props.pictureUrl});
-  background-size: cover;
-  background-position: center;
+
+  @media (max-width: 575px) {
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-bottom: 40px;
+  }
+
+  img {
+    height: auto;
+    width: 100%;
+  }
 `
 const StyledVideoCover = styled.div<{ height?: number | null }>`
   background: black;
@@ -131,7 +140,7 @@ const PostCover: React.VFC<{
         isScrollingDown ? (
           <StyledOverlayBlock className="animated fadeInDown pb-4" width={layoutContentElem?.scrollWidth}>
             <div className="container">
-              <div className="row">
+              <div className="row justify-content-center">
                 <div className="col-12 col-lg-9">
                   <StyledOverlay className="d-flex align-items-center justify-content-between">
                     <StyledTitle>{title}</StyledTitle>
@@ -161,7 +170,8 @@ const PostCover: React.VFC<{
 
   if (type === 'picture') {
     return (
-      <StyledPictureCover id="post-cover" pictureUrl={coverUrl || EmptyCover}>
+      <StyledPictureCover id="post-cover">
+        <img src={coverUrl || EmptyCover} alt="cover" />
         {merchandiseModal}
       </StyledPictureCover>
     )

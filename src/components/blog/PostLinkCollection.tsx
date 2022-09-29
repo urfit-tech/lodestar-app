@@ -24,15 +24,26 @@ export const PopularPostCollection: React.VFC = () => {
 
 export const RelativePostCollection: React.VFC<{ postId: string; tags?: string[] }> = ({ postId, tags }) => {
   const { formatMessage } = useIntl()
-  const { posts, postCount, fetchMorePost } = useRelativePostCollection(postId, tags)
-  const [page, setPage] = useState(0)
+  const { posts } = useRelativePostCollection(postId, tags)
 
   return (
-    <PostLinkCollection
-      title={posts.length ? formatMessage(messages.relative) : undefined}
-      posts={posts}
-      onFetchMore={posts.length < postCount ? () => fetchMorePost(page + 1).then(() => setPage(page + 1)) : undefined}
-    />
+    <div className="col-12">
+      <StyledTitle className="mb-3">{posts.length ? formatMessage(messages.relative) : undefined}</StyledTitle>
+      <div className="row">
+        {posts.slice(0, 3).map(post => (
+          <div key={post.id} className="col-12 col-sm-4 pb-2 mb-4">
+            <Link to={`/posts/${post.codeName || post.id}`}>
+              <div className="row">
+                <div className="mb-3 col-6 col-sm-12">
+                  <PostPreviewCover coverUrl={post.coverUrl} withVideo={typeof post.videoUrl === 'string'} />
+                </div>
+                <StyledPostTitle className="col-6 col-sm-12">{post.title}</StyledPostTitle>
+              </div>
+            </Link>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
