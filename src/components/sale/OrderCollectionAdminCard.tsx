@@ -22,7 +22,6 @@ import hasura from '../../hasura'
 import { dateFormatter, dateRangeFormatter, handleError } from '../../helpers'
 import { codeMessages, commonMessages, saleMessages } from '../../helpers/translation'
 import { OrderDiscountProps } from '../../types/checkout'
-import { Gift } from '../../types/gift'
 import { ShippingMethodType } from '../../types/merchandise'
 import { ProductType } from '../../types/product'
 import AdminCard from '../common/AdminCard'
@@ -155,79 +154,81 @@ const OrderCollectionAdminCard: React.VFC<
   const expandedRow = (record: OrderRow) => (
     <div className="pr-3">
       <OrderProductTable className="mb-4">
-        {record.orderProducts.map(orderProduct => (
-          <OrderProductRow key={orderProduct.id} className="d-table-row">
-            <OrderProductCell className="pr-4">
-              {orderProduct.product.type ? (
-                <ProductTypeLabel productType={orderProduct.product.type} />
-              ) : (
-                <>{formatMessage(commonMessages.unknown.type)}</>
-              )}
-            </OrderProductCell>
-            <OrderProductCell className="pr-4" grow>
-              <div className="d-flex align-items-center">
-                {!orderProduct.deliveredAt && <LockIcon className="mr-1" />}
-                {orderProduct.name}
-                {orderProduct.endedAt && orderProduct.product.type !== 'AppointmentPlan' && (
-                  <span className="ml-2">
-                    ({moment(orderProduct.endedAt).format('YYYY-MM-DD HH:mm')}{' '}
-                    {formatMessage(commonMessages.term.expiredAt)})
-                  </span>
+        {record.orderProducts
+          .filter(orderProduct => orderProduct.product.type !== 'Token')
+          .map(orderProduct => (
+            <OrderProductRow key={orderProduct.id} className="d-table-row">
+              <OrderProductCell className="pr-4">
+                {orderProduct.product.type ? (
+                  <ProductTypeLabel productType={orderProduct.product.type} />
+                ) : (
+                  <>{formatMessage(commonMessages.unknown.type)}</>
                 )}
-                {orderProduct.startedAt && orderProduct.endedAt && orderProduct.product.type === 'AppointmentPlan' && (
-                  <span>
-                    (
-                    {dateRangeFormatter({
-                      startedAt: orderProduct.startedAt,
-                      endedAt: orderProduct.endedAt,
-                      dateFormat: 'YYYY-MM-DD',
-                    })}
-                    )
-                  </span>
+              </OrderProductCell>
+              <OrderProductCell className="pr-4" grow>
+                <div className="d-flex align-items-center">
+                  {!orderProduct.deliveredAt && <LockIcon className="mr-1" />}
+                  {orderProduct.name}
+                  {orderProduct.endedAt && orderProduct.product.type !== 'AppointmentPlan' && (
+                    <span className="ml-2">
+                      ({moment(orderProduct.endedAt).format('YYYY-MM-DD HH:mm')}{' '}
+                      {formatMessage(commonMessages.term.expiredAt)})
+                    </span>
+                  )}
+                  {orderProduct.startedAt && orderProduct.endedAt && orderProduct.product.type === 'AppointmentPlan' && (
+                    <span>
+                      (
+                      {dateRangeFormatter({
+                        startedAt: orderProduct.startedAt,
+                        endedAt: orderProduct.endedAt,
+                        dateFormat: 'YYYY-MM-DD',
+                      })}
+                      )
+                    </span>
+                  )}
+                  {orderProduct.quantity && <span>{` X${orderProduct.quantity} `}</span>}
+                </div>
+              </OrderProductCell>
+              <OrderProductCell className="text-right">
+                {orderProduct.price === 0 && Boolean(settings['hide_zero_price.enabled']) ? null : (
+                  <PriceLabel
+                    currencyId={
+                      orderProduct.product.type === 'MerchandiseSpec' && orderProduct.options?.currencyId === 'LSC'
+                        ? 'LSC'
+                        : orderProduct.currencyId
+                    }
+                    listPrice={
+                      orderProduct.product.type === 'MerchandiseSpec' && orderProduct.options?.currencyId === 'LSC'
+                        ? orderProduct.options.currencyPrice
+                        : orderProduct.price
+                    }
+                  />
                 )}
-                {orderProduct.quantity && <span>{` X${orderProduct.quantity} `}</span>}
-              </div>
-            </OrderProductCell>
-            <OrderProductCell className="text-right">
-              {orderProduct.price === 0 && Boolean(settings['hide_zero_price.enabled']) ? null : (
-                <PriceLabel
-                  currencyId={
-                    orderProduct.product.type === 'MerchandiseSpec' && orderProduct.options?.currencyId === 'LSC'
-                      ? 'LSC'
-                      : orderProduct.currencyId
-                  }
-                  listPrice={
-                    orderProduct.product.type === 'MerchandiseSpec' && orderProduct.options?.currencyId === 'LSC'
-                      ? orderProduct.options.currencyPrice
-                      : orderProduct.price
-                  }
-                />
-              )}
-            </OrderProductCell>
-          </OrderProductRow>
-        ))}
-        {record.orderProducts.map(orderProduct =>
-          orderProduct.options?.productGiftPlan?.giftPlan.gifts.map((gift: Gift) => {
+              </OrderProductCell>
+            </OrderProductRow>
+          ))}
+        {record.orderProducts
+          .filter(orderProduct => orderProduct.product.type === 'Token')
+          .map(orderProduct => {
             return (
-              <OrderProductRow key={`Token_${gift.id}`} className="d-table-row">
+              <OrderProductRow key={`Token_${orderProduct.id}`} className="d-table-row">
                 <OrderProductCell className="pr-4">
                   <TokenTypeLabel tokenType="GiftPlan" />
                 </OrderProductCell>
                 <OrderProductCell className="pr-4" grow>
                   <div className="d-flex align-items-center">
                     {!orderProduct.deliveredAt && <LockIcon className="mr-1" />}
-                    {gift.title}
+                    {orderProduct.name}
                   </div>
                 </OrderProductCell>
                 <OrderProductCell className="text-right">
-                  {gift.price === 0 && Boolean(settings['hide_zero_price.enabled']) ? null : (
-                    <PriceLabel currencyId={gift.currencyId} listPrice={gift.price} />
+                  {orderProduct.price === 0 && Boolean(settings['hide_zero_price.enabled']) ? null : (
+                    <PriceLabel currencyId={orderProduct.options?.currencyId} listPrice={orderProduct.price} />
                   )}
                 </OrderProductCell>
               </OrderProductRow>
             )
-          }),
-        )}
+          })}
       </OrderProductTable>
 
       <div className="row">
