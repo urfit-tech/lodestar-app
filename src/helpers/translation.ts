@@ -498,6 +498,9 @@ export const checkoutMessages = {
   button: defineMessages({
     cartSubmit: { id: 'checkout.cart.submit', defaultMessage: '前往結帳' },
   }),
+  ui: defineMessages({
+    gift: { id: 'checkout.ui.gift', defaultMessage: '贈品' },
+  }),
   label: defineMessages({
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },
     groupBuyingPlan: {
@@ -593,6 +596,10 @@ export const checkoutMessages = {
     couponAmount: { id: 'checkout.coupon.amount', defaultMessage: '金額 {amount} 元' },
     couponCode: { id: 'checkout.coupon.codes', defaultMessage: '折扣代碼' },
     total: { id: 'checkout.content.total', defaultMessage: '共' },
+    gift: {
+      id: 'checkout.content.gift',
+      defaultMessage: '【贈品】',
+    },
   }),
   link: defineMessages({
     cartExplore: { id: 'checkout.cart.explore', defaultMessage: `來去逛逛` },
@@ -662,9 +669,7 @@ export const checkoutMessages = {
     shippingInput: { id: 'checkout.label.shippingInput', defaultMessage: '寄送資訊' },
     shippingMethod: { id: 'checkout.label.shippingMethod', defaultMessage: '寄送方式' },
     specification: { id: 'checkout.label.specification', defaultMessage: '商品規格與備註' },
-
     selectStore: { id: 'checkout.label.selectStore', defaultMessage: '選擇門市' },
-
     sevenEleven: { id: 'checkout.label.sevenEleven', defaultMessage: '7-11超商取貨' },
     familyMart: { id: 'checkout.label.familyMart', defaultMessage: '全家超商取貨' },
     hiLife: { id: 'checkout.label.hiLife', defaultMessage: '萊爾富超商取貨' },
@@ -672,6 +677,22 @@ export const checkoutMessages = {
     sendByPost: { id: 'checkout.label.sendByPost', defaultMessage: '郵寄' },
     homeDelivery: { id: 'checkout.label.homeDelivery', defaultMessage: '宅配' },
     other: { id: 'checkout.label.other', defaultMessage: '其他' },
+    outsideTaiwanIslandNoShipping: {
+      id: 'checkout.label.outsideTaiwanIslandNoShipping',
+      defaultMessage: '台灣離島/海外不寄送',
+    },
+    giftPlanDeliverNotice1: {
+      id: 'checkout.label.giftPlanDeliverNotice1',
+      defaultMessage: '(1) 請確實填寫收件地址與聯絡電話，以利贈品順利送達。',
+    },
+    giftPlanDeliverNotice2: {
+      id: 'checkout.label.giftPlanDeliverNotice2',
+      defaultMessage: '(2) 贈品若因資訊填寫錯誤而無法順利送達，將不再補發寄送。',
+    },
+    giftPlanDeliverNotice3: {
+      id: 'checkout.label.giftPlanDeliverNotice3',
+      defaultMessage: '(3) 台灣離島/海外恕不寄送，請勾選下方選項。',
+    },
   }),
   event: defineMessages({
     inventoryShortage: { id: 'checkout.event.inventoryShortage', defaultMessage: '庫存不足請調整數量' },

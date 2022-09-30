@@ -70,6 +70,11 @@
   max-width: 432px;
 }
 
+.ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled),
+.ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled) {
+  background-color: #f7f8f8;
+}
+
 .short-bf-content {
   height: 240px;
 }

@@ -175,6 +175,7 @@ const CheckoutBlock: React.VFC<{
       withError: boolean
     }
   }>({})
+  const [isGiftPlanDeliverable, setIsGiftPlanDeliverable] = useState(false)
 
   const { memberId: referrerId, validateStatus } = useMemberValidation(referrerEmail)
 
@@ -184,7 +185,7 @@ const CheckoutBlock: React.VFC<{
   const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
     productIds: cartProducts.map(cartProduct => cartProduct.productId),
     discountId,
-    shipping: hasPhysicalProduct ? shipping : null,
+    shipping: isGiftPlanDeliverable ? { ...shipping, shippingMethod: undefined } : hasPhysicalProduct ? shipping : null,
     options: cartProducts.reduce<{ [ProductId: string]: any }>(
       (accumulator, currentValue) => ({
         ...accumulator,
@@ -200,6 +201,18 @@ const CheckoutBlock: React.VFC<{
       {},
     ),
   })
+
+  useEffect(() => {
+    let isDeliverable = false
+    check.orderProducts.forEach(orderProduct => {
+      orderProduct.options?.productGiftPlan?.giftPlan?.gifts?.forEach(gift => {
+        if (gift.isDeliverable) {
+          isDeliverable = true
+        }
+      })
+    })
+    setIsGiftPlanDeliverable(isDeliverable)
+  }, [check])
 
   if (isAuthenticating) {
     return (
@@ -236,7 +249,7 @@ const CheckoutBlock: React.VFC<{
     if (isFieldsValidate) {
       ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
     } else {
-      isValidShipping = !hasPhysicalProduct || validateShipping(shipping)
+      isValidShipping = (!hasPhysicalProduct && !isGiftPlanDeliverable) || validateShipping(shipping)
       isValidInvoice = Number(settings['feature.invoice.disable'])
         ? true
         : Number(settings['feature.invoice_member_info_input.disable'])
@@ -327,7 +340,7 @@ const CheckoutBlock: React.VFC<{
         memberId: member.id,
         metadata: {
           invoice,
-          shipping: hasPhysicalProduct ? shipping : member.shipping,
+          shipping: hasPhysicalProduct || isGiftPlanDeliverable ? shipping : member.shipping,
           payment,
         },
         memberPhones: invoice.phone ? [{ member_id: member.id, phone: invoice.phone }] : [],
@@ -392,7 +405,7 @@ const CheckoutBlock: React.VFC<{
         </Box>
       )}
 
-      {hasPhysicalProduct && (
+      {(hasPhysicalProduct || isGiftPlanDeliverable) && (
         <div ref={shippingRef} className="mb-3">
           <AdminCard>
             <ShippingInput
@@ -400,6 +413,7 @@ const CheckoutBlock: React.VFC<{
               shippingMethods={memberShop?.shippingMethods}
               onChange={value => setShipping(value)}
               isValidating={isValidating}
+              isGiftPlanDeliverable={isGiftPlanDeliverable}
             />
           </AdminCard>
         </div>
