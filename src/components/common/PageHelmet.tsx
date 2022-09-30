@@ -19,7 +19,7 @@ const PageHelmet: React.FC<
   }>
 > = props => {
   const app = useApp()
-  const { defaultOgImg, defaultOgDescription } = usePageDefaultMetaValues(props.pageCraftData)
+  const { defaultImg, defaultDescription } = usePageDefaultMetaValues(props.pageCraftData)
 
   const openGraph = props.openGraph || [
     { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
@@ -37,17 +37,14 @@ const PageHelmet: React.FC<
       property: 'og:description',
       content:
         props.pageMetaTags?.openGraph?.description ||
-        defaultOgDescription ||
+        defaultDescription ||
         app.settings['open_graph.description'] ||
         app.settings['description'],
     },
     {
       property: 'og:image',
       content:
-        props.pageMetaTags?.openGraph?.image ||
-        defaultOgImg ||
-        app.settings['open_graph.image'] ||
-        app.settings['logo'],
+        props.pageMetaTags?.openGraph?.image || defaultImg || app.settings['open_graph.image'] || app.settings['logo'],
     },
     { property: 'og:imageAlt', content: props.pageMetaTags?.openGraph?.imageAlt || '' },
   ]
@@ -65,6 +62,7 @@ const PageHelmet: React.FC<
         name="description"
         content={
           xss(props.pageMetaTags?.seo?.description || '') ||
+          xss(defaultDescription) ||
           xss(getBraftContent(props.description || '{}').slice(0, 150) || app.settings['description'])
         }
       />
@@ -85,17 +83,17 @@ const PageHelmet: React.FC<
 export default PageHelmet
 
 const usePageDefaultMetaValues = (craftData?: { [key: string]: any } | null) => {
-  let defaultOgImg = ''
-  let defaultOgDescription = ''
+  let defaultImg = ''
+  let defaultDescription = ''
   if (craftData) {
     craftData?.ROOT?.nodes?.forEach((node: string) => {
-      if (!defaultOgImg && craftData && craftData[node].type.resolvedName === 'CraftImage') {
-        defaultOgImg = craftData[node].props.customStyle.backgroundImage.match(/\(([^)]+)\)/, '')[1]
+      if (!defaultImg && craftData && craftData[node].type.resolvedName === 'CraftImage') {
+        defaultImg = craftData[node].props.customStyle.backgroundImage.match(/\(([^)]+)\)/, '')[1]
       }
-      if (!defaultOgDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
-        defaultOgDescription = craftData[node].props.content.substr(0, 150)
+      if (!defaultDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
+        defaultDescription = craftData[node].props.content.substr(0, 150)
       }
     })
   }
-  return { defaultOgImg: defaultOgImg, defaultOgDescription: defaultOgDescription }
+  return { defaultImg: defaultImg, defaultDescription: defaultDescription }
 }
