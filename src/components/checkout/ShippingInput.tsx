@@ -102,6 +102,14 @@ const ShippingInput: React.VFC<{
     }
     newValue[key] = inputValue
 
+    if (!newValue['city']) {
+      newValue['city'] = city
+    }
+
+    if (!newValue['district']) {
+      newValue['district'] = district
+    }
+
     if (key === 'city') {
       newValue['district'] = districts[inputValue][0]
       handleDistrictChange(districts[inputValue][0])
@@ -257,47 +265,53 @@ const ShippingInput: React.VFC<{
           label={formatMessage(checkoutMessages.form.label.receiverAddress)}
           validateStatus={isValidating && addressRef.current?.input.value === '' ? 'error' : undefined}
         >
-          <Input.Group compact>
-            <Select
-              className="col-lg-2"
-              disabled
-              value={isCitySelectorChange || !value?.zipCode ? zipCode : value?.zipCode}
-            ></Select>
-            <Select
-              className="col-lg-2"
-              value={value?.city || city}
-              onChange={(v: string) => {
-                handleChange('city', v)
-                handleCityChange(v)
-                setIsCitySelectorChange(true)
-              }}
-              onBlur={() => handleChange('zipCode', zipCode)}
-              disabled={isOutsideTaiwanIsland}
-            >
-              {cities.map(city => {
-                return <Select.Option key={city}>{city}</Select.Option>
-              })}
-            </Select>
-            <Select
-              className="col-lg-2"
-              value={value?.district || district}
-              onChange={(w: string) => {
-                handleChange('district', w)
-                handleDistrictChange(w)
-                setIsCitySelectorChange(true)
-              }}
-              onBlur={() => handleChange('zipCode', zipCode)}
-              disabled={isOutsideTaiwanIsland}
-            >
-              {!isCitySelectorChange && value?.city === undefined
-                ? districts[city].map(district => {
-                    return <Select.Option key={district}>{district}</Select.Option>
-                  })
-                : districts[value?.city || ''].map(district => {
-                    return <Select.Option key={district}>{district}</Select.Option>
-                  })}
-            </Select>
-            <div className="col-lg-6">
+          <div className="row">
+            <div className="col-12 col-lg-2">
+              <Select
+                className="col-12"
+                disabled
+                value={isCitySelectorChange || !value?.zipCode ? zipCode : value?.zipCode}
+              ></Select>
+            </div>
+            <div className="col-12 col-lg-2">
+              <Select
+                className="col-12"
+                value={value?.city || city}
+                onChange={(v: string) => {
+                  handleChange('city', v)
+                  handleCityChange(v)
+                  setIsCitySelectorChange(true)
+                }}
+                onBlur={() => handleChange('zipCode', zipCode)}
+                disabled={isOutsideTaiwanIsland}
+              >
+                {cities?.map(city => {
+                  return <Select.Option key={city}>{city}</Select.Option>
+                })}
+              </Select>
+            </div>
+            <div className="col-12 col-lg-2">
+              <Select
+                className="col-12"
+                value={value?.district || district}
+                onChange={(w: string) => {
+                  handleChange('district', w)
+                  handleDistrictChange(w)
+                  setIsCitySelectorChange(true)
+                }}
+                onBlur={() => handleChange('zipCode', zipCode)}
+                disabled={isOutsideTaiwanIsland}
+              >
+                {isCitySelectorChange || value?.city
+                  ? districts[value?.city || ''].map(district => {
+                      return <Select.Option key={district}>{district}</Select.Option>
+                    })
+                  : districts[city].map(district => {
+                      return <Select.Option key={district}>{district}</Select.Option>
+                    })}
+              </Select>
+            </div>
+            <div className="col-12 col-lg-6">
               <Input
                 ref={addressRef}
                 placeholder={formatMessage(checkoutMessages.form.message.addressText)}
@@ -308,7 +322,7 @@ const ShippingInput: React.VFC<{
                 disabled={isOutsideTaiwanIsland}
               />
             </div>
-          </Input.Group>
+          </div>
           <StyledCheckBox
             defaultChecked={value?.isOutsideTaiwanIsland === 'true'}
             onChange={() => {
