@@ -285,9 +285,11 @@ const ShippingInput: React.VFC<{
                 onBlur={() => handleChange('zipCode', zipCode)}
                 disabled={isOutsideTaiwanIsland}
               >
-                {cities?.map(city => {
-                  return <Select.Option key={city}>{city}</Select.Option>
-                })}
+                {cities
+                  ?.filter(city => ['澎湖縣', '金門縣', '連江縣'].includes(city) === false)
+                  .map(city => {
+                    return <Select.Option key={city}>{city}</Select.Option>
+                  })}
               </Select>
             </div>
             <div className="col-12 col-lg-2">
@@ -303,12 +305,22 @@ const ShippingInput: React.VFC<{
                 disabled={isOutsideTaiwanIsland}
               >
                 {isCitySelectorChange || value?.city
-                  ? districts[value?.city || ''].map(district => {
-                      return <Select.Option key={district}>{district}</Select.Option>
-                    })
-                  : districts[city].map(district => {
-                      return <Select.Option key={district}>{district}</Select.Option>
-                    })}
+                  ? districts[value?.city || '']
+                      .filter(
+                        district =>
+                          ['釣魚台列嶼', '綠島鄉', '蘭嶼鄉', '東沙群島', '南沙群島'].includes(district) === false,
+                      )
+                      .map(district => {
+                        return <Select.Option key={district}>{district}</Select.Option>
+                      })
+                  : districts[city]
+                      .filter(
+                        district =>
+                          ['釣魚台列嶼', '綠島鄉', '蘭嶼鄉', '東沙群島', '南沙群島'].includes(district) === false,
+                      )
+                      .map(district => {
+                        return <Select.Option key={district}>{district}</Select.Option>
+                      })}
               </Select>
             </div>
             <div className="col-12 col-lg-6">
