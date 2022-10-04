@@ -8766,6 +8766,7 @@ export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk {
   title: string;
   cover_url: string | null;
   description: string | null;
+  meta_tag: any | null;
   /**
    * An array relationship
    */

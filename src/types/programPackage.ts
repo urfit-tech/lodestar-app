@@ -1,11 +1,12 @@
 import { PeriodType } from '../types/program'
-import { Category } from './general'
+import { Category, MetaTag } from './general'
 
 export type ProgramPackageProps = {
   id: string
   title: string
   coverUrl: string | null
   description: string | null
+  metaTags?: MetaTag
 }
 
 export type ProgramPackagePlanProps = {
