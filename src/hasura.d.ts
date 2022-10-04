@@ -3625,6 +3625,7 @@ export interface GET_POST_post {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+  meta_tag: any | null;
   /**
    * An aggregate relationship
    */
@@ -3902,6 +3903,7 @@ export interface GET_POST_post_by_pk {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+  meta_tag: any | null;
   /**
    * An aggregate relationship
    */
@@ -12027,6 +12029,7 @@ export interface PostParts {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+  meta_tag: any | null;
   /**
    * An aggregate relationship
    */
