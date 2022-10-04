@@ -37,6 +37,8 @@ const StyledPictureCover = styled.div`
   img {
     height: auto;
     width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
   }
 `
 const StyledVideoCover = styled.div<{ height?: number | null }>`
