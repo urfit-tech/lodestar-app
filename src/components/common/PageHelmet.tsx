@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet'
 import { Thing, WithContext } from 'schema-dts'
 import xss from 'xss'
 import { getBraftContent } from '../../helpers'
-import { MetaTag } from '../../types/metaTag'
+import { MetaTag } from '../../types/general'
 
 const PageHelmet: React.FC<
   Partial<{
@@ -46,7 +46,7 @@ const PageHelmet: React.FC<
       content:
         props.pageMetaTags?.openGraph?.image || defaultImg || app.settings['open_graph.image'] || app.settings['logo'],
     },
-    { property: 'og:imageAlt', content: props.pageMetaTags?.openGraph?.imageAlt || '' },
+    { property: 'og:image:alt', content: props.pageMetaTags?.openGraph?.imageAlt || '' },
   ]
 
   useEffect(() => {

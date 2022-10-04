@@ -8252,6 +8252,7 @@ export interface GET_PROGRAM_program_by_pk {
   sold_at: any | null;
   description: string | null;
   cover_video_url: string | null;
+  meta_tag: any | null;
   is_issues_open: boolean;
   is_private: boolean;
   is_countdown_timer_visible: boolean;

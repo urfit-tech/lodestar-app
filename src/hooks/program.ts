@@ -251,6 +251,7 @@ export const useProgram = (programId: string) => {
           sold_at
           description
           cover_video_url
+          meta_tag
           is_issues_open
           is_private
           is_countdown_timer_visible
@@ -371,6 +372,7 @@ export const useProgram = (programId: string) => {
             isSoldOut: data.program_by_pk.is_sold_out,
             description: data.program_by_pk.description,
             coverVideoUrl: data.program_by_pk.cover_video_url,
+            metaTags: data.program_by_pk.meta_tag,
             isIssuesOpen: data.program_by_pk.is_issues_open,
             isEnrolledCountVisible: data.program_by_pk.is_enrolled_count_visible,
             isPrivate: data.program_by_pk.is_private,

@@ -38,7 +38,7 @@ import {
 import HaohaomingSection from '../../components/page/HaohaomingSection'
 import hasura from '../../hasura'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
-import { MetaTag } from '../../types/metaTag'
+import { MetaTag } from '../../types/general'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 import CraftBlock from './CraftBlock'
