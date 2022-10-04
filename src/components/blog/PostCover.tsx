@@ -43,6 +43,7 @@ const StyledPictureCover = styled.div`
 `
 const StyledVideoCover = styled.div<{ height?: number | null }>`
   background: black;
+  margin-bottom: 24px;
 
   ${desktopViewMixin(css`
     padding: 2.5rem 0;
@@ -170,15 +171,19 @@ const PostCover: React.VFC<{
 
   if (type === 'picture') {
     return (
-      <StyledPictureCover id="post-cover">
-        <img src={coverUrl || EmptyCover} alt="cover" />
-        {merchandiseModal}
-      </StyledPictureCover>
+      <div className="container pt-sm-5">
+        <div className="row justify-content-center">
+          <StyledPictureCover id="post-cover" className="col-12 col-lg-9">
+            <img src={coverUrl || EmptyCover} alt="cover" />
+            {merchandiseModal}
+          </StyledPictureCover>
+        </div>
+      </div>
     )
   }
 
   return (
-    <StyledVideoCover ref={coverRef} id="post-cover" style={{ height: coverHeight ? `${coverHeight}px` : '' }}>
+    <StyledVideoCover ref={coverRef} id="post-cover" className="col-12 pt-sm-5" style={{ height: coverHeight ? `${coverHeight}px` : '' }}>
       <div className="container">
         <StyledVideoBlock
           className={`${!isClosed && isScrollingDown ? 'animated fadeInUp' : ''}`}
