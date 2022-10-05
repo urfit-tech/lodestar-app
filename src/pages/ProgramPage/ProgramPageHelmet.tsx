@@ -19,9 +19,12 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
 
     return (
       <PageHelmet
-        title={program.title}
-        description={getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150)}
-        keywords={program.tags}
+        title={program.metaTag.seo?.pageTitle || program.title}
+        description={
+          program.metaTag.seo?.description.slice(0, 150) ||
+          getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150)
+        }
+        keywords={program.metaTag.seo?.keywords?.split(',') || program.tags}
         onLoaded={onLoaded}
         jsonLd={[
           {
@@ -80,12 +83,21 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
           { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
           { property: 'og:type', content: 'website' },
           { property: 'og:url', content: window.location.href },
-          { property: 'og:title', content: program.title || app.settings['open_graph.title'] },
+          {
+            property: 'og:title',
+            content: program.metaTag.openGraph?.title || program.title || app.settings['open_graph.title'],
+          },
           {
             property: 'og:description',
-            content: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
+            content:
+              program.metaTag.openGraph?.description ||
+              getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
           },
-          { property: 'og:image', content: program.coverUrl || app.settings['open_graph.image'] },
+          {
+            property: 'og:image',
+            content: program.metaTag.openGraph?.image || program.coverUrl || app.settings['open_graph.image'],
+          },
+          { property: 'og:image:alt', content: program.metaTag.openGraph?.imageAlt },
         ]}
       />
     )

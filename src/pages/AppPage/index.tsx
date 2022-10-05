@@ -38,7 +38,7 @@ import {
 import HaohaomingSection from '../../components/page/HaohaomingSection'
 import hasura from '../../hasura'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
-import { MetaTag } from '../../types/metaTag'
+import { MetaTag } from '../../types/general'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 import CraftBlock from './CraftBlock'
@@ -129,7 +129,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
       <PageHelmet
         title={appPage?.title || ''}
         pageCraftData={appPage?.craftData}
-        pageMetaTags={appPage?.metaTags}
+        pageMetaTag={appPage?.metaTag}
         onLoaded={() => setMetaLoaded(true)}
       />
       {metaLoaded && <Tracking.View />}
@@ -211,7 +211,7 @@ export const usePage = (path: string) => {
     path: string | null
     craftData: { [key: string]: any } | null
     options: { [key: string]: string } | null
-    metaTags: MetaTag | null
+    metaTag: MetaTag | null
     appPageSections: AppPageSectionProps[]
   } | null = data?.app_page[0]
     ? {
@@ -220,7 +220,7 @@ export const usePage = (path: string) => {
         path: data.app_page[0].path,
         craftData: data.app_page[0].craft_data,
         options: data.app_page[0].options || null,
-        metaTags: data.app_page[0].meta_tag || null,
+        metaTag: data.app_page[0].meta_tag || null,
         appPageSections: data.app_page[0]
           ? data.app_page[0].app_page_sections.map((v: { id: string; options: any; type: string }) => ({
               id: v.id,

@@ -1,4 +1,4 @@
-import { Category } from './general'
+import { Category, MetaTag } from './general'
 
 type ProgramPlanType = 'subscribeFromNow' | 'subscribeAll' | 'unknown'
 export type ProgramRoleName = 'owner' | 'instructor' | 'assistant'
@@ -29,6 +29,7 @@ export type ProgramBriefProps = {
 export type Program = ProgramBriefProps & {
   description: string | null
   coverVideoUrl: string | null
+  metaTag: MetaTag
   isIssuesOpen: boolean
   isSoldOut: boolean | null
   isCountdownTimerVisible?: boolean
