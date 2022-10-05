@@ -67,7 +67,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
           title: '',
           coverUrl: '',
           description: null,
-          metaTags: null,
+          metaTag: null,
           plans: [],
           programs: [],
         }
@@ -76,7 +76,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
           title: data.program_package_by_pk.title,
           coverUrl: data.program_package_by_pk.cover_url,
           description: data.program_package_by_pk.description,
-          metaTags: data.program_package_by_pk.meta_tag,
+          metaTag: data.program_package_by_pk.meta_tag,
           plans: data.program_package_by_pk.program_package_plans.map(programPackagePlan => ({
             id: programPackagePlan.id,
             title: programPackagePlan.title,

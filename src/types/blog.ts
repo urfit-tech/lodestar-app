@@ -41,7 +41,7 @@ export type Post = Omit<PostPreviewProps, 'authorId'> & {
   source: string | null
   merchandises: MerchandiseProps[]
   description: string | null
-  metaTags: MetaTag
+  metaTag: MetaTag
   prevPost: {
     id: string
     codeName: string | null

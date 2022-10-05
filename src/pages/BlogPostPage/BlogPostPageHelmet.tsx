@@ -11,14 +11,14 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
 
   return (
     <PageHelmet
-      title={post.metaTags.seo?.pageTitle || post.title}
+      title={post.metaTag.seo?.pageTitle || post.title}
       description={
-        post.metaTags.openGraph?.description?.slice(0, 150) ||
+        post.metaTag.openGraph?.description?.slice(0, 150) ||
         getBraftContent(post.description || '').slice(0, 150) ||
         post.abstract?.slice(0, 150) ||
         app.settings['description']
       }
-      keywords={post.metaTags.seo?.keywords?.split(',') || post.tags}
+      keywords={post.metaTag.seo?.keywords?.split(',') || post.tags}
       jsonLd={[
         {
           '@context': 'https://schema.org',
@@ -54,20 +54,20 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
         { property: 'profile:username', content: post.author.username },
         ...post.tags.map(tag => ({ property: 'article:tag', content: tag })),
         { property: 'og:url', content: window.location.href },
-        { property: 'og:title', content: post.metaTags.openGraph?.title || post.title || app.settings['title'] },
+        { property: 'og:title', content: post.metaTag.openGraph?.title || post.title || app.settings['title'] },
         {
           property: 'og:description',
           content:
-            post.metaTags.openGraph?.description?.slice(0, 150) ||
+            post.metaTag.openGraph?.description?.slice(0, 150) ||
             getBraftContent(post.description || '').slice(0, 150) ||
             post.abstract?.slice(0, 150) ||
             app.settings['description'],
         },
         {
           property: 'og:image',
-          content: post.metaTags.openGraph?.image || post.coverUrl || app.settings['open_graph.image'],
+          content: post.metaTag.openGraph?.image || post.coverUrl || app.settings['open_graph.image'],
         },
-        { property: 'og:image:alt', content: post.metaTags.openGraph?.imageAlt || '' },
+        { property: 'og:image:alt', content: post.metaTag.openGraph?.imageAlt || '' },
       ]}
     >
       <link rel="canonical" href={window.location.origin + `/posts/${post.id}`} />

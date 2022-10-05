@@ -18,14 +18,14 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
 
   return (
     <PageHelmet
-      title={programPackage.metaTags?.seo?.pageTitle || programPackage.title}
+      title={programPackage.metaTag?.seo?.pageTitle || programPackage.title}
       description={
-        programPackage.metaTags?.seo?.description?.slice(0, 150) ||
+        programPackage.metaTag?.seo?.description?.slice(0, 150) ||
         getBraftContent(programPackage.description || '').slice(0, 150) ||
         app.settings['description']
       }
       keywords={
-        programPackage.metaTags?.seo?.keywords?.split(',') || programPackage.programs.map(program => program.title)
+        programPackage.metaTag?.seo?.keywords?.split(',') || programPackage.programs.map(program => program.title)
       }
       jsonLd={[
         {
@@ -75,22 +75,21 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
         { property: 'og:url', content: window.location.href },
         {
           property: 'og:title',
-          content:
-            programPackage.metaTags?.openGraph?.title || programPackage.title || app.settings['open_graph.title'],
+          content: programPackage.metaTag?.openGraph?.title || programPackage.title || app.settings['open_graph.title'],
         },
         {
           property: 'og:description',
           content:
-            programPackage.metaTags?.openGraph?.description?.slice(0, 150) ||
+            programPackage.metaTag?.openGraph?.description?.slice(0, 150) ||
             getBraftContent(programPackage.description || '').slice(0, 150) ||
             app.settings['description'],
         },
         {
           property: 'og:image',
           content:
-            programPackage.metaTags?.openGraph?.image || programPackage.coverUrl || app.settings['open_graph.image'],
+            programPackage.metaTag?.openGraph?.image || programPackage.coverUrl || app.settings['open_graph.image'],
         },
-        { property: 'og:image:alt', content: programPackage.metaTags?.openGraph?.imageAlt || '' },
+        { property: 'og:image:alt', content: programPackage.metaTag?.openGraph?.imageAlt || '' },
       ]}
     />
   )

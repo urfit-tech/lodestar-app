@@ -29,7 +29,7 @@ export type ProgramBriefProps = {
 export type Program = ProgramBriefProps & {
   description: string | null
   coverVideoUrl: string | null
-  metaTags: MetaTag
+  metaTag: MetaTag
   isIssuesOpen: boolean
   isSoldOut: boolean | null
   isCountdownTimerVisible?: boolean

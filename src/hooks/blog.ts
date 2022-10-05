@@ -384,7 +384,7 @@ export const usePost = (search: string) => {
         coverUrl: dataPost.cover_url,
         videoUrl: dataPost.video_url,
         abstract: dataPost.abstract,
-        metaTags: dataPost.meta_tag,
+        metaTag: dataPost.meta_tag,
         author: {
           id: dataPost.post_roles[0]?.member?.id || '',
           name: dataPost.post_roles[0]?.member?.name || '',

@@ -6,7 +6,7 @@ export type ProgramPackageProps = {
   title: string
   coverUrl: string | null
   description: string | null
-  metaTags?: MetaTag
+  metaTag?: MetaTag
 }
 
 export type ProgramPackagePlanProps = {

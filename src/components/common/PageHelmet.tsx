@@ -14,7 +14,7 @@ const PageHelmet: React.FC<
     jsonLd: WithContext<Thing>[]
     openGraph: { property: string; content: string }[]
     pageCraftData: { [key: string]: any } | null
-    pageMetaTags?: MetaTag | null
+    pageMetaTag?: MetaTag | null
     onLoaded: () => void
   }>
 > = props => {
@@ -28,15 +28,12 @@ const PageHelmet: React.FC<
     {
       property: 'og:title',
       content:
-        props.pageMetaTags?.openGraph?.title ||
-        props.title ||
-        app.settings['open_graph.title'] ||
-        app.settings['title'],
+        props.pageMetaTag?.openGraph?.title || props.title || app.settings['open_graph.title'] || app.settings['title'],
     },
     {
       property: 'og:description',
       content:
-        props.pageMetaTags?.openGraph?.description ||
+        props.pageMetaTag?.openGraph?.description ||
         defaultDescription ||
         app.settings['open_graph.description'] ||
         app.settings['description'],
@@ -44,9 +41,9 @@ const PageHelmet: React.FC<
     {
       property: 'og:image',
       content:
-        props.pageMetaTags?.openGraph?.image || defaultImg || app.settings['open_graph.image'] || app.settings['logo'],
+        props.pageMetaTag?.openGraph?.image || defaultImg || app.settings['open_graph.image'] || app.settings['logo'],
     },
-    { property: 'og:image:alt', content: props.pageMetaTags?.openGraph?.imageAlt || '' },
+    { property: 'og:image:alt', content: props.pageMetaTag?.openGraph?.imageAlt || '' },
   ]
 
   useEffect(() => {
@@ -56,12 +53,12 @@ const PageHelmet: React.FC<
 
   return (
     <Helmet onChangeClientState={() => props.onLoaded?.()}>
-      <title>{xss(props.pageMetaTags?.seo?.pageTitle || props.title || app.settings['title'])}</title>
+      <title>{xss(props.pageMetaTag?.seo?.pageTitle || props.title || app.settings['title'])}</title>
       <meta
         key="description"
         name="description"
         content={
-          xss(props.pageMetaTags?.seo?.description || '') ||
+          xss(props.pageMetaTag?.seo?.description || '') ||
           xss(defaultDescription) ||
           xss(getBraftContent(props.description || '{}').slice(0, 150) || app.settings['description'])
         }
@@ -69,7 +66,7 @@ const PageHelmet: React.FC<
       <meta
         key="keywords"
         name="keywords"
-        content={xss(props.pageMetaTags?.seo?.keywords || props.keywords?.join() || app.settings['keywords'])}
+        content={xss(props.pageMetaTag?.seo?.keywords || props.keywords?.join() || app.settings['keywords'])}
       />
       {props.jsonLd && <script type="application/ld+json">{xss(JSON.stringify(props.jsonLd))}</script>}
       {openGraph.map(({ property, content }, index) => (
