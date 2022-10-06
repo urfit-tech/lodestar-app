@@ -1,6 +1,6 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import PageHelmet from '../../components/common/PageHelmet'
-import { getInfinityDate, notEmpty } from '../../helpers'
+import { getBraftContent, getInfinityDate, notEmpty } from '../../helpers'
 import { Post } from '../../types/blog'
 
 const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
@@ -11,9 +11,14 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
 
   return (
     <PageHelmet
-      title={post.title}
-      description={post.abstract || app.settings['description']}
-      keywords={post.tags}
+      title={post.metaTag?.seo?.pageTitle || post.title}
+      description={
+        post.metaTag?.seo?.description?.slice(0, 150) ||
+        getBraftContent(post.description || '').slice(0, 150) ||
+        post.abstract?.slice(0, 150) ||
+        app.settings['description']
+      }
+      keywords={post.metaTag?.seo?.keywords?.split(',') || post.tags}
       jsonLd={[
         {
           '@context': 'https://schema.org',
@@ -49,9 +54,20 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
         { property: 'profile:username', content: post.author.username },
         ...post.tags.map(tag => ({ property: 'article:tag', content: tag })),
         { property: 'og:url', content: window.location.href },
-        { property: 'og:title', content: post.title || app.settings['title'] },
-        { property: 'og:description', content: post.abstract || app.settings['description'] },
-        { property: 'og:image', content: post.coverUrl || app.settings['open_graph.image'] },
+        { property: 'og:title', content: post.metaTag?.openGraph?.title || post.title || app.settings['title'] },
+        {
+          property: 'og:description',
+          content:
+            post.metaTag?.openGraph?.description?.slice(0, 150) ||
+            getBraftContent(post.description || '').slice(0, 150) ||
+            post.abstract?.slice(0, 150) ||
+            app.settings['description'],
+        },
+        {
+          property: 'og:image',
+          content: post.metaTag?.openGraph?.image || post.coverUrl || app.settings['open_graph.image'],
+        },
+        { property: 'og:image:alt', content: post.metaTag?.openGraph?.imageAlt || '' },
       ]}
     >
       <link rel="canonical" href={window.location.origin + `/posts/${post.id}`} />

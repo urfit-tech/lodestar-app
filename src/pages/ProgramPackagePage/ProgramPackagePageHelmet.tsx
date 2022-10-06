@@ -18,9 +18,15 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
 
   return (
     <PageHelmet
-      title={programPackage.title}
-      description={programPackage.description || app.settings['description']}
-      keywords={programPackage.programs.map(program => program.title)}
+      title={programPackage.metaTag?.seo?.pageTitle || programPackage.title}
+      description={
+        programPackage.metaTag?.seo?.description?.slice(0, 150) ||
+        getBraftContent(programPackage.description || '').slice(0, 150) ||
+        app.settings['description']
+      }
+      keywords={
+        programPackage.metaTag?.seo?.keywords?.split(',') || programPackage.programs.map(program => program.title)
+      }
       jsonLd={[
         {
           '@context': 'https://schema.org',
@@ -67,12 +73,23 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
         { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: window.location.href },
-        { property: 'og:title', content: programPackage.title || app.settings['open_graph.title'] },
+        {
+          property: 'og:title',
+          content: programPackage.metaTag?.openGraph?.title || programPackage.title || app.settings['open_graph.title'],
+        },
         {
           property: 'og:description',
-          content: getBraftContent(programPackage.description || app.settings['description'] || '{}').slice(0, 150),
+          content:
+            programPackage.metaTag?.openGraph?.description?.slice(0, 150) ||
+            getBraftContent(programPackage.description || '').slice(0, 150) ||
+            app.settings['description'],
         },
-        { property: 'og:image', content: programPackage.coverUrl || app.settings['open_graph.image'] },
+        {
+          property: 'og:image',
+          content:
+            programPackage.metaTag?.openGraph?.image || programPackage.coverUrl || app.settings['open_graph.image'],
+        },
+        { property: 'og:image:alt', content: programPackage.metaTag?.openGraph?.imageAlt || '' },
       ]}
     />
   )

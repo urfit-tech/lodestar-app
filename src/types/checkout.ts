@@ -1,3 +1,5 @@
+import { ProductGiftPlan } from '../types/gift'
+
 export type OrderProductProps = {
   productId: string
   name: string
@@ -10,6 +12,7 @@ export type OrderProductProps = {
     quantity?: number
     currencyId?: string
     currencyPrice?: number
+    productGiftPlan?: ProductGiftPlan
   }
 }
 
@@ -75,7 +78,11 @@ export type CouponProps = {
 export type ShippingProps = {
   name?: string
   phone?: string
+  zipCode?: string
+  city?: string
+  district?: string
   address?: string
+  isOutsideTaiwanIsland?: string
   shippingMethod?: string
   specification?: string
   storeId?: string

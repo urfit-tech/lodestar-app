@@ -7,7 +7,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
-import React, { Fragment, useContext, useEffect } from 'react'
+import React, { Fragment, useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { AiOutlineClose } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -20,6 +20,7 @@ import EmptyAvatar from '../../images/avatar.svg'
 import { CartProductProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
 import { CustomRatioImage } from '../common/Image'
+import CartProductGiftPlan from './CartProductGiftPlan'
 import CartProductItem from './CartProductItem'
 
 type CartProductTableCardProps = CardProps & {
@@ -37,6 +38,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { removeCartProducts } = useContext(CartContext)
+  const [isTargetLoaded, setIsTargetLoaded] = useState(false)
   const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
   const { memberShop } = useMemberShop(shopId)
   const { resourceCollection } = useResourceCollection(
@@ -97,6 +99,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                     id={cartProduct.productId}
                     quantity={cartProduct.options?.quantity}
                     buyableQuantity={cartProduct.buyableQuantity}
+                    onTargetLoaded={setIsTargetLoaded}
                   />
                   <Icon
                     as={AiOutlineClose}
@@ -116,6 +119,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                     }}
                   />
                 </div>
+                <CartProductGiftPlan productId={cartProduct.productId} isTargetLoaded={isTargetLoaded} />
                 <Divider className="my-4" />
               </Fragment>
             ),

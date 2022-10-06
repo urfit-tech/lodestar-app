@@ -88,7 +88,7 @@ const ProgramPlanCard: React.VFC<{
             periodType={periodType}
             currencyId={currencyId}
           />
-          {productGiftPlan.productGiftPlanId && <GiftPlanTag />}
+          {productGiftPlan.id && <GiftPlanTag />}
         </StyledPriceBlock>
         {programPlan.isCountdownTimerVisible && programPlan.soldAt && isOnSale && (
           <StyledCountDownBlock>

@@ -31,7 +31,11 @@ export const useCheck = ({
 }) => {
   const { authToken } = useAuth()
   const { id: appId } = useApp()
-  const [check, setCheck] = useState<CheckProps>({ orderProducts: [], orderDiscounts: [], shippingOption: null })
+  const [check, setCheck] = useState<CheckProps>({
+    orderProducts: [],
+    orderDiscounts: [],
+    shippingOption: null,
+  })
   const [orderChecking, setOrderChecking] = useState(false)
   const [orderPlacing, setOrderPlacing] = useState(false)
   const [checkError, setCheckError] = useState<Error | null>(null)
