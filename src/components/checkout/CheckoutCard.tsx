@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/react'
 import { CardProps } from 'antd/lib/card'
 import { camelCase } from 'lodash'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { prop, sum } from 'ramda'
@@ -9,7 +10,6 @@ import { useIntl } from 'react-intl'
 import { checkoutMessages } from '../../helpers/translation'
 import { CartProductProps, CheckProps, InvoiceProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const CheckoutCard: React.VFC<
   CardProps & {
@@ -43,6 +43,18 @@ const CheckoutCard: React.VFC<
           </div>
         </div>
       ))}
+
+      {check.orderProducts.map((orderProduct, index) => {
+        return orderProduct.options?.productGiftPlan?.giftPlan?.gifts?.map(v => {
+          return (
+            <div key={index} className="row mb-2">
+              <div className="col-6 offset-md-4 col-md-4">{`${formatMessage(checkoutMessages.content.gift)} ${
+                v.title
+              }`}</div>
+            </div>
+          )
+        })
+      })}
 
       {check?.orderDiscounts?.map((orderDiscount, index) => (
         <div key={index} className="row mb-2">

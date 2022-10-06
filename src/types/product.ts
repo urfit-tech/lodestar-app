@@ -10,3 +10,4 @@ export type ProductType =
   | 'PodcastProgram'
   | 'PodcastPlan'
   | 'AppointmentPlan'
+  | 'Token'

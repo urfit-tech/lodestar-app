@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet'
 import { Thing, WithContext } from 'schema-dts'
 import xss from 'xss'
 import { getBraftContent } from '../../helpers'
-import { MetaTag } from '../../types/metaTag'
+import { MetaTag } from '../../types/general'
 
 const PageHelmet: React.FC<
   Partial<{
@@ -14,12 +14,12 @@ const PageHelmet: React.FC<
     jsonLd: WithContext<Thing>[]
     openGraph: { property: string; content: string }[]
     pageCraftData: { [key: string]: any } | null
-    pageMetaTags?: MetaTag | null
+    pageMetaTag?: MetaTag | null
     onLoaded: () => void
   }>
 > = props => {
   const app = useApp()
-  const { defaultOgImg, defaultOgDescription } = usePageDefaultMetaValues(props.pageCraftData)
+  const { defaultImg, defaultDescription } = usePageDefaultMetaValues(props.pageCraftData)
 
   const openGraph = props.openGraph || [
     { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
@@ -28,28 +28,22 @@ const PageHelmet: React.FC<
     {
       property: 'og:title',
       content:
-        props.pageMetaTags?.openGraph?.title ||
-        props.title ||
-        app.settings['open_graph.title'] ||
-        app.settings['title'],
+        props.pageMetaTag?.openGraph?.title || props.title || app.settings['open_graph.title'] || app.settings['title'],
     },
     {
       property: 'og:description',
       content:
-        props.pageMetaTags?.openGraph?.description ||
-        defaultOgDescription ||
+        props.pageMetaTag?.openGraph?.description ||
+        defaultDescription ||
         app.settings['open_graph.description'] ||
         app.settings['description'],
     },
     {
       property: 'og:image',
       content:
-        props.pageMetaTags?.openGraph?.image ||
-        defaultOgImg ||
-        app.settings['open_graph.image'] ||
-        app.settings['logo'],
+        props.pageMetaTag?.openGraph?.image || defaultImg || app.settings['open_graph.image'] || app.settings['logo'],
     },
-    { property: 'og:imageAlt', content: props.pageMetaTags?.openGraph?.imageAlt || '' },
+    { property: 'og:image:alt', content: props.pageMetaTag?.openGraph?.imageAlt || '' },
   ]
 
   useEffect(() => {
@@ -59,16 +53,20 @@ const PageHelmet: React.FC<
 
   return (
     <Helmet onChangeClientState={() => props.onLoaded?.()}>
-      <title>{xss(props.pageMetaTags?.seo?.pageTitle || props.title || app.settings['title'])}</title>
+      <title>{xss(props.pageMetaTag?.seo?.pageTitle || props.title || app.settings['title'])}</title>
       <meta
         key="description"
         name="description"
-        content={xss(getBraftContent(props.description || '{}').slice(0, 150) || app.settings['description'])}
+        content={
+          xss(props.pageMetaTag?.seo?.description || '') ||
+          xss(defaultDescription) ||
+          xss(getBraftContent(props.description || '{}').slice(0, 150) || app.settings['description'])
+        }
       />
       <meta
         key="keywords"
         name="keywords"
-        content={xss(props.pageMetaTags?.seo?.keywords || props.keywords?.join() || app.settings['keywords'])}
+        content={xss(props.pageMetaTag?.seo?.keywords || props.keywords?.join() || app.settings['keywords'])}
       />
       {props.jsonLd && <script type="application/ld+json">{xss(JSON.stringify(props.jsonLd))}</script>}
       {openGraph.map(({ property, content }, index) => (
@@ -82,17 +80,17 @@ const PageHelmet: React.FC<
 export default PageHelmet
 
 const usePageDefaultMetaValues = (craftData?: { [key: string]: any } | null) => {
-  let defaultOgImg = ''
-  let defaultOgDescription = ''
+  let defaultImg = ''
+  let defaultDescription = ''
   if (craftData) {
     craftData?.ROOT?.nodes?.forEach((node: string) => {
-      if (!defaultOgImg && craftData && craftData[node].type.resolvedName === 'CraftImage') {
-        defaultOgImg = craftData[node].props.customStyle.backgroundImage.match(/\(([^)]+)\)/, '')[1]
+      if (!defaultImg && craftData && craftData[node].type.resolvedName === 'CraftImage') {
+        defaultImg = craftData[node].props.customStyle.backgroundImage.match(/\(([^)]+)\)/, '')[1]
       }
-      if (!defaultOgDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
-        defaultOgDescription = craftData[node].props.content.substr(0, 150)
+      if (!defaultDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
+        defaultDescription = craftData[node].props.content.substr(0, 150)
       }
     })
   }
-  return { defaultOgImg: defaultOgImg, defaultOgDescription: defaultOgDescription }
+  return { defaultImg: defaultImg, defaultDescription: defaultDescription }
 }

@@ -1,4 +1,4 @@
-import { Category } from './general'
+import { Category, MetaTag } from './general'
 import { MerchandiseProps } from './merchandise'
 import { SuggestProps } from './practice'
 
@@ -41,6 +41,7 @@ export type Post = Omit<PostPreviewProps, 'authorId'> & {
   source: string | null
   merchandises: MerchandiseProps[]
   description: string | null
+  metaTag: MetaTag
   prevPost: {
     id: string
     codeName: string | null

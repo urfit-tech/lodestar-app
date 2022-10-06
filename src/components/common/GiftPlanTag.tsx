@@ -10,7 +10,7 @@ const StyledTag = styled.p`
   border-radius: 4px;
 `
 const messages = defineMessages({
-  hasGiftPlan: { id: 'common.label.hasGiftPlan', defaultMessage: '有贈品' },
+  hasGiftPlan: { id: 'common.label.hasGiftPlan', defaultMessage: '附贈品' },
 })
 
 const GiftPlanTag: React.VFC = () => {
