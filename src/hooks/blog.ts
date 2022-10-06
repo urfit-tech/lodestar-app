@@ -239,6 +239,7 @@ export const usePost = (search: string) => {
         views
         published_at
         updated_at
+        meta_tag
         post_suggests_aggregate: post_issue_aggregate {
           aggregate {
             count
@@ -383,6 +384,7 @@ export const usePost = (search: string) => {
         coverUrl: dataPost.cover_url,
         videoUrl: dataPost.video_url,
         abstract: dataPost.abstract,
+        metaTag: dataPost.meta_tag,
         author: {
           id: dataPost.post_roles[0]?.member?.id || '',
           name: dataPost.post_roles[0]?.member?.name || '',

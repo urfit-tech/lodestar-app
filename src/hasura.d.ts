@@ -3625,6 +3625,7 @@ export interface GET_POST_post {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+  meta_tag: any | null;
   /**
    * An aggregate relationship
    */
@@ -3902,6 +3903,7 @@ export interface GET_POST_post_by_pk {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+  meta_tag: any | null;
   /**
    * An aggregate relationship
    */
@@ -8252,6 +8254,7 @@ export interface GET_PROGRAM_program_by_pk {
   sold_at: any | null;
   description: string | null;
   cover_video_url: string | null;
+  meta_tag: any | null;
   is_issues_open: boolean;
   is_private: boolean;
   is_countdown_timer_visible: boolean;
@@ -8765,6 +8768,7 @@ export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk {
   title: string;
   cover_url: string | null;
   description: string | null;
+  meta_tag: any | null;
   /**
    * An array relationship
    */
@@ -12025,6 +12029,7 @@ export interface PostParts {
   views: number;
   published_at: any | null;
   updated_at: any | null;
+  meta_tag: any | null;
   /**
    * An aggregate relationship
    */
