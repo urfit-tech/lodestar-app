@@ -60,7 +60,7 @@ const PageHelmet: React.FC<
         content={
           xss(props.pageMetaTag?.seo?.description || '') ||
           xss(defaultDescription) ||
-          xss(getBraftContent(props.description || '{}').slice(0, 150) || app.settings['description'])
+          xss(getBraftContent(props.description || '{}')?.slice(0, 150) || app.settings['description'])
         }
       />
       <meta
