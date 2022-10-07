@@ -1,6 +1,6 @@
 import { Icon } from '@chakra-ui/react'
 import { Button } from 'antd'
-import { uniq } from 'ramda'
+import { flatten, prop, sortBy, uniq } from 'ramda'
 import React, { useState } from 'react'
 import { AiOutlineRight, AiOutlineUnorderedList } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -42,7 +42,7 @@ const ProgramCollection: React.VFC<{
   const [displayType, setDisplayType] = useState<'grid' | 'list'>(defaultDisplayType)
   const { formatMessage } = useIntl()
 
-  const categories = uniq(programs.map(program => program.categories).flat())
+  const categories = sortBy(prop('position'))(uniq(flatten(programs.map(program => program.categories))))
 
   return (
     <div className="container p-4">
