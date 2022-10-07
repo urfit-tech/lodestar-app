@@ -245,11 +245,8 @@ const ExamBlock: React.VFC<{
             return
           }
           const isMultipleAnswers =
-            (
-              question.questionOptions?.filter(
-                (option, index) => question.questionOptions?.indexOf(option) !== index,
-              ) || []
-            ).length >= 2
+            (question.questionOptions?.filter(questionOption => questionOption.isAnswer) || []).length > 1
+
           const newChoices =
             question.questionOptions?.map(questionOption => {
               return questionOption.id === choiceId
