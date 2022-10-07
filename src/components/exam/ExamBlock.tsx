@@ -194,8 +194,8 @@ const ExamBlock: React.VFC<{
       },
     })
       .then(() => {
-        onRefetchSpecificExercise?.()
-        onRefetchExercisePublic?.()
+        isFinal && onRefetchSpecificExercise?.()
+        isFinal && onRefetchExercisePublic?.()
         isFinal && setStatus('result')
       })
       .catch(error => handleError(error))
