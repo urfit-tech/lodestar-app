@@ -21,8 +21,8 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
       <PageHelmet
         title={program.metaTag?.seo?.pageTitle || program.title}
         description={
-          program.metaTag?.seo?.description.slice(0, 150) ||
-          getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150)
+          program.metaTag?.seo?.description?.slice(0, 150) ||
+          getBraftContent(program.description || app.settings['description'] || '{}')?.slice(0, 150)
         }
         keywords={program.metaTag?.seo?.keywords?.split(',') || program.tags}
         onLoaded={onLoaded}
@@ -32,7 +32,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
             '@type': 'Product',
             name: program.title || app.settings['title'],
             image: program.coverUrl || app.settings['open_graph.image'],
-            description: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
+            description: getBraftContent(program.description || app.settings['description'] || '{}')?.slice(0, 150),
             sku: resourceCollection[0]?.sku,
             mpn: program.id,
             brand: {
@@ -71,7 +71,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
             '@context': 'https://schema.org',
             '@type': 'Course',
             name: program.title,
-            description: getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
+            description: getBraftContent(program.description || app.settings['description'] || '{}')?.slice(0, 150),
             provider: {
               '@type': 'Organization',
               name: app.settings['name'],
@@ -91,7 +91,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
             property: 'og:description',
             content:
               program.metaTag?.openGraph?.description ||
-              getBraftContent(program.description || app.settings['description'] || '{}').slice(0, 150),
+              getBraftContent(program.description || app.settings['description'] || '{}')?.slice(0, 150),
           },
           {
             property: 'og:image',
