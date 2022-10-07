@@ -39,16 +39,11 @@ const OrderTaskPage: React.VFC = () => {
   const history = useHistory()
   const { taskId } = useParams<{ taskId: string }>()
   const { authToken } = useAuth()
-  const { task, retry } = useTask('order', taskId)
+  const { task, code, retry } = useTask('order', taskId)
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
-    if (task?.failedReason) {
-      message.error(formatMessage(commonMessages.status.fail))
-      setErrorMessage(task?.failedReason)
-      return
-    }
-    if (authToken && task?.finishedOn && task?.returnvalue?.orderId) {
+    if (authToken && code === null && task?.finishedOn && task?.returnvalue?.orderId) {
       // do not need to pay
       if (task.returnvalue.totalAmount <= 0) {
         window.location.assign(`/orders/${task.returnvalue.orderId}?tracking=1`)
@@ -68,8 +63,10 @@ const OrderTaskPage: React.VFC = () => {
           })
           .catch(handleError)
       }
+    } else if (code !== null) {
+      setErrorMessage(code)
     }
-  }, [authToken, formatMessage, history, task])
+  }, [authToken, formatMessage, history, code, task])
 
   if (errorMessage) {
     return (
@@ -78,7 +75,9 @@ const OrderTaskPage: React.VFC = () => {
           <Icon as={ErrorIcon} w={100} h={100} />
 
           <div className="mb-4 d-flex flex-column text-center">
-            <StyledTitle className="mb-2">{errorMessage}</StyledTitle>
+            <StyledTitle className="mb-2">
+              {formatMessage(codeMessages[errorMessage as keyof typeof codeMessages])}
+            </StyledTitle>
           </div>
 
           <Link to="/">

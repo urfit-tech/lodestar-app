@@ -171,6 +171,7 @@
   "checkout.text.groupBuyingRuleLink": "Rules and Refunds",
   "checkout.title.cart": "Shopping List",
   "checkout.title.chooseCart": "Choose checkout cart",
+  "code.E_QUEUE": "System is busy",
   "code.E_BIND_CREDIT_CARD": "Error binding credit card",
   "code.E_CHECKOUT_ORDER": "Checkout error",
   "code.E_CHECK_PRODUCT_VALID": "product is invalid",
