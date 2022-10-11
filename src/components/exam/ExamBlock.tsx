@@ -73,6 +73,7 @@ const ExamBlock: React.VFC<{
   totalDuration: number
   averageGainedPoints: number
   exerciseAmount: number
+  onRefetchExam?: () => void
   onRefetchSpecificExercise?: () => void
   onRefetchExercisePublic?: () => void
 }> = ({
@@ -89,6 +90,7 @@ const ExamBlock: React.VFC<{
   totalDuration,
   averageGainedPoints,
   exerciseAmount,
+  onRefetchExam,
   onRefetchSpecificExercise,
   onRefetchExercisePublic,
 }) => {
@@ -194,6 +196,7 @@ const ExamBlock: React.VFC<{
       },
     })
       .then(() => {
+        isFinal && onRefetchExam?.()
         isFinal && onRefetchSpecificExercise?.()
         isFinal && onRefetchExercisePublic?.()
         isFinal && setStatus('result')
