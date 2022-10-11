@@ -200,7 +200,7 @@ const ExamQuestionBlock: React.VFC<
             key={choice.id}
             showDetail={showDetail}
             selectedCount={choices.filter(choice => choice.isSelected).length}
-            isCorrect={Boolean(choice.isAnswer)}
+            isCorrect={!!choice.isAnswer}
             isSelected={!!choice.isSelected}
             onClick={() => onChoiceSelect?.(activeQuestion.id, choice.id)}
           >
