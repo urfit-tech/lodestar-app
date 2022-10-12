@@ -87,15 +87,15 @@ const ShippingInput: React.VFC<{
     }
 
     const newValue: ShippingProps = {
-      name: value?.name || '',
-      phone: value?.phone || '',
+      name: value?.name?.trim() || '',
+      phone: value?.phone?.trim() || '',
       zipCode: value?.zipCode || '',
       city: value?.city || '',
       district: value?.district || '',
-      address: value?.address || '',
+      address: value?.address?.trim() || '',
       isOutsideTaiwanIsland: value?.isOutsideTaiwanIsland || 'false',
       shippingMethod: value?.shippingMethod || 'home-delivery',
-      specification: value?.specification || '',
+      specification: value?.specification?.trim() || '',
       storeId: value?.storeId || '',
       storeName: value?.storeName || '',
       ...newShippingOption,
