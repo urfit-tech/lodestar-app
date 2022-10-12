@@ -41,7 +41,14 @@ const ProgramContentExerciseBlock: React.VFC<{
     refetch: refetchExercisePublic,
   } = useExercisePublic(programContent.id)
 
-  const { loadingExamId, errorExamId, loadingExam, errorExam, exam } = useExam(programContent.id, specificExercise)
+  const {
+    loadingExamId,
+    errorExamId,
+    loadingExam,
+    errorExam,
+    exam,
+    refetch: refetchExam,
+  } = useExam(programContent.id, specificExercise)
 
   const contentType = programContent.contentType
 
@@ -123,6 +130,7 @@ const ProgramContentExerciseBlock: React.VFC<{
         totalDuration={totalDuration}
         averageGainedPoints={averageGainedPoints}
         exerciseAmount={exerciseAmount}
+        onRefetchExam={refetchExam}
         onRefetchSpecificExercise={refetchSpecificExercise}
         onRefetchExercisePublic={refetchExercisePublic}
       />

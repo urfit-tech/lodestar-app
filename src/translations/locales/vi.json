@@ -171,6 +171,7 @@
   "checkout.text.groupBuyingRuleLink": "Quy tắc và tiền hoàn lại",
   "checkout.title.cart": "Danh sách mua sắm",
   "checkout.title.chooseCart": "Chọn giỏ hàng thanh toán",
+  "code.E_QUEUE": "系統正在忙碌中",
   "code.E_BIND_CREDIT_CARD": "Lỗi khi ràng buộc thẻ tín dụng",
   "code.E_CHECKOUT_ORDER": "Lỗi thanh toán",
   "code.E_CHECK_PRODUCT_VALID": "product is invalid",
