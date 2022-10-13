@@ -171,6 +171,7 @@
   "checkout.text.groupBuyingRuleLink": "規定與退費",
   "checkout.title.cart": "購物清單",
   "checkout.title.chooseCart": "選擇結帳購物車",
+  "code.E_QUEUE": "系統正在忙碌中",
   "code.E_BIND_CREDIT_CARD": "綁定信用卡錯誤",
   "code.E_CHECKOUT_ORDER": "結帳錯誤",
   "code.E_CHECK_PRODUCT_VALID": "product is invalid",

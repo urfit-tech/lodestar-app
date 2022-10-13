@@ -58,7 +58,7 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
   const { authToken, currentMemberId } = useAuth()
   const [loading, setLoading] = useState(false)
 
-  const handleInsert = (setLoading: React.Dispatch<React.SetStateAction<boolean>>, code: string) => {
+  const handleInsert = (setLoading: React.Dispatch<React.SetStateAction<boolean>>, voucherCode: string) => {
     if (!currentMemberId) {
       return
     }
@@ -68,7 +68,7 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
       .post(
         `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
         {
-          code,
+          code: voucherCode.trim(),
           type: 'Voucher',
         },
         {

@@ -171,6 +171,7 @@
   "checkout.text.groupBuyingRuleLink": "Aturan dan Pengembalian Dana",
   "checkout.title.cart": "Daftar Belanja",
   "checkout.title.chooseCart": "Pilih keranjang pembayaran",
+  "code.E_QUEUE": "系統正在忙碌中",
   "code.E_BIND_CREDIT_CARD": "Kesalahan mengikat kartu kredit",
   "code.E_CHECKOUT_ORDER": "Kesalahan pembayaran",
   "code.E_CHECK_PRODUCT_VALID": "product is invalid",

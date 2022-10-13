@@ -9,6 +9,7 @@ export const useExam = (programContentId: string, latestExercise: ExercisePublic
     loading: loadingExamId,
     error: errorExamId,
     data: programContentBodyData,
+    refetch,
   } = useQuery<hasura.GET_EXAM_ID, hasura.GET_EXAM_IDVariables>(
     gql`
       query GET_EXAM_ID($programContentId: uuid!) {
@@ -70,6 +71,7 @@ export const useExam = (programContentId: string, latestExercise: ExercisePublic
       },
     },
   )
+
   const exam: Pick<
     Exam,
     | 'id'
@@ -119,8 +121,8 @@ export const useExam = (programContentId: string, latestExercise: ExercisePublic
                 return {
                   id: x.id,
                   value: x.value,
-                  isAnswer: x.is_answer,
-                  isSelected: latestExercise.find(v => v.questionId === w.id)?.choiceIds.includes(x.id),
+                  isAnswer: Boolean(x.is_answer),
+                  isSelected: Boolean(latestExercise.find(v => v.questionId === w.id)?.choiceIds.includes(x.id)),
                 }
               }) || [],
           })) || [],
@@ -135,6 +137,7 @@ export const useExam = (programContentId: string, latestExercise: ExercisePublic
     errorExam,
     examId,
     exam,
+    refetch,
   }
 }
 

@@ -1619,6 +1619,10 @@ export const codeMessages = defineMessages({
     id: 'code.E_SETUP_TPCLIENT',
     defaultMessage: 'E_SETUP_TPCLIENT',
   },
+  E_QUEUE: {
+    id: 'code.E_QUEUE',
+    defaultMessage: '系統正在忙碌中。',
+  },
   E_BIND_CREDIT_CARD: {
     id: 'code.E_BIND_CREDIT_CARD',
     defaultMessage: '綁定信用卡錯誤',

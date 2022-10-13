@@ -8699,6 +8699,7 @@ export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PROGRAM_PACKAGE_INTRODUCTION_program_package_by_pk_program_package_programs_program_program_categories {
@@ -8932,6 +8933,7 @@ export interface GET_PROGRAM_PACKAGE_CONTENT_program_package_by_pk_program_packa
   __typename: "category";
   id: string;
   name: string;
+  position: number;
 }
 
 export interface GET_PROGRAM_PACKAGE_CONTENT_program_package_by_pk_program_package_programs_program_program_categories {

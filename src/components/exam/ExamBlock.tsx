@@ -73,6 +73,7 @@ const ExamBlock: React.VFC<{
   totalDuration: number
   averageGainedPoints: number
   exerciseAmount: number
+  onRefetchExam?: () => void
   onRefetchSpecificExercise?: () => void
   onRefetchExercisePublic?: () => void
 }> = ({
@@ -89,6 +90,7 @@ const ExamBlock: React.VFC<{
   totalDuration,
   averageGainedPoints,
   exerciseAmount,
+  onRefetchExam,
   onRefetchSpecificExercise,
   onRefetchExercisePublic,
 }) => {
@@ -194,8 +196,9 @@ const ExamBlock: React.VFC<{
       },
     })
       .then(() => {
-        onRefetchSpecificExercise?.()
-        onRefetchExercisePublic?.()
+        isFinal && onRefetchExam?.()
+        isFinal && onRefetchSpecificExercise?.()
+        isFinal && onRefetchExercisePublic?.()
         isFinal && setStatus('result')
       })
       .catch(error => handleError(error))
@@ -245,11 +248,8 @@ const ExamBlock: React.VFC<{
             return
           }
           const isMultipleAnswers =
-            (
-              question.questionOptions?.filter(
-                (option, index) => question.questionOptions?.indexOf(option) !== index,
-              ) || []
-            ).length >= 2
+            (question.questionOptions?.filter(questionOption => questionOption.isAnswer) || []).length > 1
+
           const newChoices =
             question.questionOptions?.map(questionOption => {
               return questionOption.id === choiceId
