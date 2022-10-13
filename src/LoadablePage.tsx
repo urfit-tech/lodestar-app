@@ -24,9 +24,11 @@ const LoadablePage: React.VFC<{ pageName: string }> = ({ pageName }) => {
     vtmz: StringParam,
   })
   if (utmQuery.utm_source) {
-    Cookies.set('utm_medium', utmQuery.utm_medium, { expires: Number(settings['utm.expires']) || 30 })
-    Cookies.set('utm_source', utmQuery.utm_source, { expires: Number(settings['utm.expires']) || 30 })
-    Cookies.set('utm_term', utmQuery.utm_term, { expires: Number(settings['utm.expires']) || 30 })
+    utmQuery.utm_medium &&
+      Cookies.set('utm_medium', utmQuery.utm_medium, { expires: Number(settings['utm.expires']) || 30 })
+    utmQuery.utm_source &&
+      Cookies.set('utm_source', utmQuery.utm_source, { expires: Number(settings['utm.expires']) || 30 })
+    utmQuery.utm_term && Cookies.set('utm_term', utmQuery.utm_term, { expires: Number(settings['utm.expires']) || 30 })
   }
 
   useEffect(() => {
