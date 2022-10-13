@@ -103,7 +103,7 @@
     "lodestar-app-element": "urfit-tech/lodestar-app-element#v1.22.0",
     "moment-timezone": "^0.5.31",
     "mustache": "^4.2.0",
-    "node-sass": "7.0.1",
+    "node-sass": "4.14.1",
     "organize-imports-cli": "0.7.0",
     "prettier": "2.4.1",
     "qrcode.react": "^1.0.0",
