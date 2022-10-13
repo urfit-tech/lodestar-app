@@ -65,7 +65,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
     const phoneNumber = form.getFieldValue('phoneNumber')
     if (sendSmsCode && phoneNumber) {
       setSendingState('loading')
-      sendSmsCode({ phoneNumber })
+      sendSmsCode({ phoneNumber: phoneNumber.trim() })
         .then(() => {
           setSendingState('idle')
           // TODO: locale
@@ -90,7 +90,8 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
           return
         }
         setVerifying(true)
-        verifySmsCode({ phoneNumber: values.phoneNumber.trim(), code: values.code })
+        const phoneNumber = values.phoneNumber.trim()
+        verifySmsCode({ phoneNumber , code: values.code.trim() })
           .then(() => {
             if (settings['feature.signup_info.enable'] === '1') {
               setAuthState('signup_info')
@@ -98,7 +99,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               setAuthState('register')
             }
 
-            sessionStorage.setItem('phone', values.phoneNumber.trim())
+            sessionStorage.setItem('phone', phoneNumber)
           })
           .catch((error: Error) => {
             message.error('簡訊驗證失敗')
@@ -276,11 +277,19 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               },
               (error, values) => {
                 if (error) return
+                const signPropertyTypes: { [key: string]: string } = {}
+                signProperties.forEach(p => (signPropertyTypes[p.id] = p.type))
                 setSignupInfos(
-                  Object.keys(values).map(id => ({
-                    id: id,
-                    value: values[id] || '',
-                  })),
+                  Object.keys(values).map(id => {
+                    let value = values[id] || ''
+                    if (signPropertyTypes[id] === 'input') {
+                      value = value.trim()
+                    }
+                    return {
+                      id: id,
+                      value: value,
+                    }
+                  }),
                 )
                 setAuthState('register')
               },

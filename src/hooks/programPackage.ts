@@ -29,6 +29,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
                 category {
                   id
                   name
+                  position
                 }
               }
             }
@@ -98,6 +99,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
             categories: packageProgram.program.program_categories.map(programCategory => ({
               id: programCategory.category.id,
               name: programCategory.category.name,
+              position: programCategory.category.position,
             })),
           })),
         }
@@ -269,6 +271,7 @@ export const useProgramPackage = (programPackageId: string, memberId: string | n
                 category {
                   id
                   name
+                  position
                 }
               }
             }
@@ -332,6 +335,7 @@ export const useProgramPackage = (programPackageId: string, memberId: string | n
             categories: programPackageProgram.program.program_categories.map(programCategory => ({
               id: programCategory.category.id,
               name: programCategory.category.name,
+              position: programCategory.category.position,
             })),
           }))
 

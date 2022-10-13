@@ -13,6 +13,7 @@ export const useTask = (queue: string, taskId: string) => {
     finishedOn: number | null
     processedOn: number | null
   } | null>(null)
+  const [code, setCode] = useState<string | null>(null)
 
   useEffect(() => {
     authToken &&
@@ -21,7 +22,9 @@ export const useTask = (queue: string, taskId: string) => {
           headers: { authorization: `Bearer ${authToken}` },
         })
         .then(({ data: { code, result } }) => {
-          if (code === 'SUCCESS') {
+          if (code !== 'SUCCESS') {
+            setCode(code)
+          } else {
             setTask(result)
           }
           if (!result || !result.finishedOn) {
@@ -29,5 +32,5 @@ export const useTask = (queue: string, taskId: string) => {
           }
         })
   }, [authToken, queue, taskId, retry])
-  return { task, retry }
+  return { task, code, retry }
 }

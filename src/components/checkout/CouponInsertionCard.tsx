@@ -60,7 +60,7 @@ const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInse
           .post(
             `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
             {
-              code: values.code,
+              code: values.code.trim(),
               type: 'Coupon',
             },
             {
