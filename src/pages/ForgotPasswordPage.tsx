@@ -48,14 +48,15 @@ const ForgotPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
       }
 
       setLoading(true)
+      const trimedEmail = values.email.trim()
       axios
         .post(`${process.env.REACT_APP_API_BASE_ROOT}/auth/forgot-password`, {
           appId,
-          account: values.email,
+          account: trimedEmail,
         })
         .then(({ data: { code } }) => {
           if (code === 'SUCCESS') {
-            history.push(`/check-email?email=${values.email}&type=forgot-password`)
+            history.push(`/check-email?email=${trimedEmail}&type=forgot-password`)
           } else {
             message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
           }
