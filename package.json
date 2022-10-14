@@ -48,6 +48,7 @@
     "@types/braft-editor": "^2.2.0",
     "@types/decamelize": "^3.0.3",
     "@types/howler": "^2.2.4",
+    "@types/js-cookie": "^3.0.2",
     "@types/jsonwebtoken": "8.5.0",
     "@types/lodash": "^4.14.157",
     "@types/moment-timezone": "^0.5.13",
@@ -163,8 +164,7 @@
     ]
   },
   "devDependencies": {
-    "@oclif/core": "^1.0.11",
-    "@types/js-cookie": "^3.0.2"
+    "@oclif/core": "^1.0.11"
   },
   "resolutions": {
     "@craftjs/utils": "0.1.0-beta.20",
