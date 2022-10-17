@@ -241,6 +241,7 @@ const ShippingInput: React.VFC<{
               defaultValue={value?.name || ''}
               value={isOutsideTaiwanIsland ? undefined : value?.name}
               disabled={isOutsideTaiwanIsland}
+              onChange={event => handleChange('name', event.target.value)}
               onBlur={event => handleChange('name', event.target.value)}
             />
           </Form.Item>
@@ -255,8 +256,9 @@ const ShippingInput: React.VFC<{
               ref={phoneRef}
               placeholder={formatMessage(checkoutMessages.form.message.phone)}
               defaultValue={value?.phone || ''}
-              value={isOutsideTaiwanIsland ? undefined : value?.name}
+              value={isOutsideTaiwanIsland ? undefined : value?.phone}
               disabled={isOutsideTaiwanIsland}
+              onChange={event => handleChange('phone', event.target.value)}
               onBlur={event => handleChange('phone', event.target.value)}
             />
           </Form.Item>
