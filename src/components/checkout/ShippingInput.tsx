@@ -239,6 +239,7 @@ const ShippingInput: React.VFC<{
               ref={nameRef}
               placeholder={formatMessage(checkoutMessages.form.message.nameText)}
               defaultValue={value?.name || ''}
+              value={isOutsideTaiwanIsland ? undefined : value?.name}
               disabled={isOutsideTaiwanIsland}
               onBlur={event => handleChange('name', event.target.value)}
             />
@@ -254,6 +255,7 @@ const ShippingInput: React.VFC<{
               ref={phoneRef}
               placeholder={formatMessage(checkoutMessages.form.message.phone)}
               defaultValue={value?.phone || ''}
+              value={isOutsideTaiwanIsland ? undefined : value?.name}
               disabled={isOutsideTaiwanIsland}
               onBlur={event => handleChange('phone', event.target.value)}
             />
@@ -272,13 +274,15 @@ const ShippingInput: React.VFC<{
               <Select
                 className="col-12"
                 disabled
-                value={isCitySelectorChange || !value?.zipCode ? zipCode : value?.zipCode}
+                value={
+                  isOutsideTaiwanIsland ? undefined : isCitySelectorChange || !value?.zipCode ? zipCode : value?.zipCode
+                }
               ></Select>
             </div>
             <div className="col-12 col-lg-2">
               <Select
                 className="col-12"
-                value={value?.city || city}
+                value={isOutsideTaiwanIsland ? undefined : value?.city || city}
                 onChange={(v: string) => {
                   handleChange('city', v)
                   handleCityChange(v)
@@ -299,7 +303,7 @@ const ShippingInput: React.VFC<{
             <div className="col-12 col-lg-2">
               <Select
                 className="col-12"
-                value={value?.district || district}
+                value={isOutsideTaiwanIsland ? undefined : value?.district || district}
                 onChange={(w: string) => {
                   handleChange('district', w)
                   handleDistrictChange(w)
@@ -336,7 +340,7 @@ const ShippingInput: React.VFC<{
                 ref={addressRef}
                 placeholder={formatMessage(checkoutMessages.form.message.addressText)}
                 defaultValue={value?.address || ''}
-                value={value?.address}
+                value={isOutsideTaiwanIsland ? undefined : value?.address}
                 onBlur={event => handleChange('address', event.target.value)}
                 onChange={event => handleChange('address', event.target.value)}
                 disabled={isOutsideTaiwanIsland}
