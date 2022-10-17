@@ -16,14 +16,13 @@ const LoadablePage: React.VFC<{ pageName: string }> = ({ pageName }) => {
   const { refetchNotifications } = useContext(NotificationContext)
 
   const [utmQuery] = useQueryParams({
+    utm_id: StringParam,
     utm_medium: StringParam,
     utm_source: StringParam,
     utm_term: StringParam,
-    vtm_channel: StringParam,
-    vtm_stat_id: StringParam,
-    vtmz: StringParam,
   })
   if (utmQuery.utm_source) {
+    utmQuery.utm_id && Cookies.set('utm_id', utmQuery.utm_id, { expires: Number(settings['utm.expires']) || 30 })
     utmQuery.utm_medium &&
       Cookies.set('utm_medium', utmQuery.utm_medium, { expires: Number(settings['utm.expires']) || 30 })
     utmQuery.utm_source &&
