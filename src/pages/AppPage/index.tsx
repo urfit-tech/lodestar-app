@@ -1,12 +1,14 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Editor, Frame } from '@craftjs/core'
 import gql from 'graphql-tag'
+import Cookies from 'js-cookie'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useState } from 'react'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParams } from 'use-query-params'
 import MessengerChat from '../../components/common/MessengerChat'
 import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -116,6 +118,21 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   const { settings } = useApp()
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPage, appPage } = usePage(location.pathname)
+
+  const [utmQuery] = useQueryParams({
+    utm_id: StringParam,
+    utm_medium: StringParam,
+    utm_source: StringParam,
+    utm_term: StringParam,
+  })
+  if (utmQuery.utm_source) {
+    utmQuery.utm_id && Cookies.set('utm_id', utmQuery.utm_id, { expires: Number(settings['utm.expires']) || 30 })
+    utmQuery.utm_medium &&
+      Cookies.set('utm_medium', utmQuery.utm_medium, { expires: Number(settings['utm.expires']) || 30 })
+    utmQuery.utm_source &&
+      Cookies.set('utm_source', utmQuery.utm_source, { expires: Number(settings['utm.expires']) || 30 })
+    utmQuery.utm_term && Cookies.set('utm_term', utmQuery.utm_term, { expires: Number(settings['utm.expires']) || 30 })
+  }
 
   if (loadingAppPage) {
     return <LoadingPage />
