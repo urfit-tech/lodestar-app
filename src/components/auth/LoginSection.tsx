@@ -37,7 +37,7 @@ const LoginSection: React.VFC<{
   const { formatMessage } = useIntl()
   const tracking = useTracking()
   const history = useHistory()
-  const [back] = useQueryParam('back', StringParam)
+  const [returnTo] = useQueryParam('returnTo', StringParam)
   const { login } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
@@ -64,7 +64,7 @@ const LoginSection: React.VFC<{
           tracking.login()
           setVisible?.(false)
           reset()
-          back && history.push(back)
+          returnTo && history.push(returnTo)
         })
         .catch((error: AxiosError) => {
           if (error.isAxiosError && error.response) {
