@@ -31,7 +31,7 @@ const GoogleLogo = styled.span`
 const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
-  const [back] = useQueryParam('back', StringParam)
+  const [returnTo] = useQueryParam('returnTo', StringParam)
 
   return (
     <a
@@ -44,7 +44,7 @@ const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ account
           btoa(
             JSON.stringify({
               provider: 'facebook',
-              redirect: back || window.location.pathname + window.location.search,
+              redirect: returnTo || window.location.pathname + window.location.search,
               accountLinkToken: accountLinkToken,
             }),
           ),
@@ -69,7 +69,7 @@ const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ account
 const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings } = useApp()
   const { formatMessage } = useIntl()
-  const [back] = useQueryParam('back', StringParam)
+  const [returnTo] = useQueryParam('returnTo', StringParam)
 
   return (
     <a
@@ -82,7 +82,7 @@ const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLi
           btoa(
             JSON.stringify({
               provider: 'google',
-              redirect: back || window.location.pathname + window.location.search,
+              redirect: returnTo || window.location.pathname + window.location.search,
               accountLinkToken: accountLinkToken,
             }),
           ),
@@ -107,7 +107,7 @@ const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLi
 const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
-  const [back] = useQueryParam('back', StringParam)
+  const [returnTo] = useQueryParam('returnTo', StringParam)
 
   if (loading) {
     return <Spinner />
@@ -124,7 +124,7 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
           btoa(
             JSON.stringify({
               provider: 'line',
-              redirect: back || window.location.pathname + window.location.search,
+              redirect: returnTo || window.location.pathname + window.location.search,
               accountLinkToken: accountLinkToken,
             }),
           ),
@@ -149,7 +149,7 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
 const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
-  const [back] = useQueryParam('back', StringParam)
+  const [returnTo] = useQueryParam('returnTo', StringParam)
   const [programContentId] = useQueryParam('programContentId', StringParam)
 
   if (loading) {
@@ -166,7 +166,7 @@ const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accoun
           btoa(
             JSON.stringify({
               provider: 'parenting',
-              redirect: back || window.location.pathname + window.location.search,
+              redirect: returnTo || window.location.pathname + window.location.search,
               accountLinkToken: accountLinkToken,
               programContentId: programContentId,
             }),

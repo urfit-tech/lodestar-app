@@ -61,6 +61,7 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
         condition: {
           organizer_id: { _eq: options?.organizerId },
           published_at: { _is_null: false },
+          is_private: { _eq: false },
         },
       },
     },

@@ -231,7 +231,7 @@ const ShippingInput: React.VFC<{
       <div className="row">
         <div className="col-12 col-lg-6">
           <Form.Item
-            required
+            required={!isOutsideTaiwanIsland}
             label={formatMessage(checkoutMessages.form.label.receiverName)}
             validateStatus={isValidating && nameRef.current?.input.value === '' ? 'error' : undefined}
           >
@@ -239,13 +239,16 @@ const ShippingInput: React.VFC<{
               ref={nameRef}
               placeholder={formatMessage(checkoutMessages.form.message.nameText)}
               defaultValue={value?.name || ''}
+              value={isOutsideTaiwanIsland ? undefined : value?.name}
+              disabled={isOutsideTaiwanIsland}
+              onChange={event => handleChange('name', event.target.value)}
               onBlur={event => handleChange('name', event.target.value)}
             />
           </Form.Item>
         </div>
         <div className="col-12 col-lg-6">
           <Form.Item
-            required
+            required={!isOutsideTaiwanIsland}
             label={formatMessage(checkoutMessages.form.label.receiverPhone)}
             validateStatus={isValidating && phoneRef.current?.input.value === '' ? 'error' : undefined}
           >
@@ -253,6 +256,9 @@ const ShippingInput: React.VFC<{
               ref={phoneRef}
               placeholder={formatMessage(checkoutMessages.form.message.phone)}
               defaultValue={value?.phone || ''}
+              value={isOutsideTaiwanIsland ? undefined : value?.phone}
+              disabled={isOutsideTaiwanIsland}
+              onChange={event => handleChange('phone', event.target.value)}
               onBlur={event => handleChange('phone', event.target.value)}
             />
           </Form.Item>
@@ -261,7 +267,7 @@ const ShippingInput: React.VFC<{
 
       {!!Number(settings['checkout.taiwan_shipping_selector']) ? (
         <Form.Item
-          required
+          required={!isOutsideTaiwanIsland}
           label={formatMessage(checkoutMessages.form.label.receiverAddress)}
           validateStatus={isValidating && addressRef.current?.input.value === '' ? 'error' : undefined}
         >
@@ -270,13 +276,15 @@ const ShippingInput: React.VFC<{
               <Select
                 className="col-12"
                 disabled
-                value={isCitySelectorChange || !value?.zipCode ? zipCode : value?.zipCode}
+                value={
+                  isOutsideTaiwanIsland ? undefined : isCitySelectorChange || !value?.zipCode ? zipCode : value?.zipCode
+                }
               ></Select>
             </div>
             <div className="col-12 col-lg-2">
               <Select
                 className="col-12"
-                value={value?.city || city}
+                value={isOutsideTaiwanIsland ? undefined : value?.city || city}
                 onChange={(v: string) => {
                   handleChange('city', v)
                   handleCityChange(v)
@@ -297,7 +305,7 @@ const ShippingInput: React.VFC<{
             <div className="col-12 col-lg-2">
               <Select
                 className="col-12"
-                value={value?.district || district}
+                value={isOutsideTaiwanIsland ? undefined : value?.district || district}
                 onChange={(w: string) => {
                   handleChange('district', w)
                   handleDistrictChange(w)
@@ -334,7 +342,7 @@ const ShippingInput: React.VFC<{
                 ref={addressRef}
                 placeholder={formatMessage(checkoutMessages.form.message.addressText)}
                 defaultValue={value?.address || ''}
-                value={value?.address}
+                value={isOutsideTaiwanIsland ? undefined : value?.address}
                 onBlur={event => handleChange('address', event.target.value)}
                 onChange={event => handleChange('address', event.target.value)}
                 disabled={isOutsideTaiwanIsland}
@@ -368,14 +376,16 @@ const ShippingInput: React.VFC<{
         </Form.Item>
       )}
 
-      <Form.Item label={formatMessage(checkoutMessages.shipping.specification)}>
-        <Input.TextArea
-          ref={specificationRef}
-          rows={5}
-          defaultValue={value?.specification || ''}
-          onBlur={event => handleChange('specification', event.target.value)}
-        />
-      </Form.Item>
+      {!isGiftPlanDeliverable && (
+        <Form.Item label={formatMessage(checkoutMessages.shipping.specification)}>
+          <Input.TextArea
+            ref={specificationRef}
+            rows={5}
+            defaultValue={value?.specification || ''}
+            onBlur={event => handleChange('specification', event.target.value)}
+          />
+        </Form.Item>
+      )}
     </div>
   )
 }
