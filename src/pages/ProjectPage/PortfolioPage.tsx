@@ -5,6 +5,7 @@ import { gql } from 'graphql-tag'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useState } from 'react'
+import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import { DeepPick } from 'ts-deep-pick/lib'
@@ -13,9 +14,12 @@ import SocialSharePopover from '../../components/common/SocialSharePopover'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import CreatorCard from '../../containers/common/CreatorCard'
 import hasura from '../../hasura'
+import { handleError } from '../../helpers'
+import { useMutateProject } from '../../hooks/project'
 import { CalendarOIcon, EyeIcon, UserOIcon } from '../../images'
 import { Project } from '../../types/project'
 import LoadingPage from '../LoadingPage'
+import pageMessages from '../translation'
 
 // @ts-ignore
 type Portfolio = DeepPick<
@@ -37,131 +41,156 @@ type Portfolio = DeepPick<
   | 'projectRoles.[].member.[].pictureUrl'
   | 'projectRoles.[].identity.[].id'
   | 'projectRoles.[].identity.[].name'
+  | 'projectReactions.[].id'
+  | 'projectReactions.[].member.[].id'
 >
 
 const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
-  const { loading, portfolio, error } = useProjectPortfolio(id)
-  const [isLiked, setIsLiked] = useState(false)
   const theme = useAppTheme()
+  const { formatMessage } = useIntl()
+  const [isLiked, setIsLiked] = useState(false)
+  const { loading, portfolio, error, refetch } = useProjectPortfolio(id)
+  const { insertProjectReaction, deleteProjectReaction, addProjectView } = useMutateProject(id)
 
   const handleLikeStatus = async () => {
     if (isLiked) {
-      // await deletePortfolioReaction()
+      await deleteProjectReaction()
       setIsLiked(false)
     } else {
-      // await insertPortfolioReaction()
+      await insertProjectReaction()
       setIsLiked(true)
     }
-    // await refetchPortfolio()
+    await refetch()
   }
 
-  if (loading) return <LoadingPage />
-  if (error) return <></>
+  try {
+    const visitedProjects = JSON.parse(sessionStorage.getItem('kolable.project.portfolio.visited') || '[]') as string[]
+    if (!visitedProjects.includes(id)) {
+      visitedProjects.push(id)
+      sessionStorage.setItem('kolable.project.portfolio.visited', JSON.stringify(visitedProjects))
+      addProjectView()
+    }
+  } catch (error) {
+    handleError(error)
+  }
 
   return (
     <DefaultLayout white>
-      <Box bg="#000" p="2.5rem" mb="2.5rem">
-        <Box className="container">
-          {portfolio.coverUrl && (
-            <Box position="relative" pt="56.25%">
-              <Box position="absolute" top="0" right="0" bottom="0" left="0" bg="#000">
-                <ReactPlayer url={portfolio.coverUrl} width="100%" height="100%" controls />
-              </Box>
-            </Box>
-          )}
-        </Box>
-      </Box>
-      <Box className="container">
-        <Box className="row justify-content-center">
-          <Box className="col-12 col-lg-9">
-            <Flex mb="3rem" alignItems="center">
-              <Flex>
-                <Image
-                  src={portfolio.creator?.pictureUrl || ''}
-                  alt={portfolio.creator?.name}
-                  boxSize="3rem"
-                  borderRadius="1.5rem"
-                  backgroundPosition="center"
-                  backgroundSize="cover"
-                  backgroundColor="#ccc"
-                />
-
-                <Box ml="0.75rem">
-                  <Box>{portfolio.title}</Box>
-                  <Flex color="var(--gray-dark)" fontSize="14px" letterSpacing="0.4px">
-                    <Flex alignItems="center" mr="0.75rem">
-                      <Icon as={UserOIcon} mr="0.25rem" />
-                      <Box>{portfolio.creator?.name}</Box>
-                    </Flex>
-                    <Flex alignItems="center" mr="0.75rem">
-                      <Icon as={CalendarOIcon} mr="0.25rem" />
-                      <Box>{dayjs(portfolio.createdAt).format('YYYY-MM-DD')}</Box>
-                    </Flex>
-                    <Flex alignItems="center" mr="0.75rem">
-                      <Icon as={EyeIcon} mr="0.25rem" />
-                      <Box>{portfolio.views}</Box>
-                    </Flex>
-                  </Flex>
+      {loading ? (
+        <LoadingPage />
+      ) : error ? (
+        <Flex justifyContent="center" alignItems="center" h="100%" w="100%">
+          {formatMessage(pageMessages.PortfolioPage.loadingPortfolioPageError)}
+        </Flex>
+      ) : (
+        <>
+          <Box bg="#000" p="2.5rem" mb="2.5rem">
+            <Box className="container">
+              {portfolio.coverUrl && (
+                <Box position="relative" pt="56.25%">
+                  <Box position="absolute" top="0" right="0" bottom="0" left="0" bg="#000">
+                    <ReactPlayer url={portfolio.coverUrl} width="100%" height="100%" controls />
+                  </Box>
                 </Box>
-              </Flex>
-
-              <Spacer />
-
-              <Flex>
-                <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
-                <LikesCountButton
-                  onClick={handleLikeStatus}
-                  count={0}
-                  isLiked={isLiked}
-                  defaultColor={theme.colors.primary[500]}
-                />
-              </Flex>
-            </Flex>
-
-            <Box mb="2.5rem">
-              <BraftContent>{portfolio.description}</BraftContent>
-            </Box>
-
-            <Flex mb="1.5rem">
-              <Flex alignItems="center" color="primary.500">
-                {portfolio.projectTags.map(tag => (
-                  <Link key={tag.name} to={`/posts/?tags=${tag}`} className="mr-2">
-                    <Box as="span" fontSize="14px" lineHeight="22px" letterSpacing="0.4px">
-                      #{tag.name}
-                    </Box>
-                  </Link>
-                ))}
-              </Flex>
-              <Spacer />
-
-              <Flex>
-                <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
-                <LikesCountButton
-                  onClick={handleLikeStatus}
-                  count={0}
-                  isLiked={isLiked}
-                  defaultColor={theme.colors.primary[500]}
-                />
-              </Flex>
-            </Flex>
-
-            <Divider />
-
-            <Box>參與者</Box>
-
-            <Box>
-              <CreatorCard id={portfolio.creator?.id || ''} />
+              )}
             </Box>
           </Box>
-        </Box>
-      </Box>
-      <Box bg="#f7f8f8">相關分類</Box>
+          <Box className="container">
+            <Box className="row justify-content-center">
+              <Box className="col-12 col-lg-9">
+                <Flex mb="3rem" alignItems="center">
+                  <Flex>
+                    <Image
+                      src={portfolio.creator?.pictureUrl || ''}
+                      alt={portfolio.creator?.name}
+                      boxSize="3rem"
+                      borderRadius="1.5rem"
+                      backgroundPosition="center"
+                      backgroundSize="cover"
+                      backgroundColor="#ccc"
+                    />
+
+                    <Box ml="0.75rem">
+                      <Box>{portfolio.title}</Box>
+                      <Flex color="var(--gray-dark)" fontSize="14px" letterSpacing="0.4px">
+                        <Flex alignItems="center" mr="0.75rem">
+                          <Icon as={UserOIcon} mr="0.25rem" />
+                          <Box>{portfolio.creator?.name}</Box>
+                        </Flex>
+                        <Flex alignItems="center" mr="0.75rem">
+                          <Icon as={CalendarOIcon} mr="0.25rem" />
+                          <Box>{dayjs(portfolio.createdAt).format('YYYY-MM-DD')}</Box>
+                        </Flex>
+                        <Flex alignItems="center" mr="0.75rem">
+                          <Icon as={EyeIcon} mr="0.25rem" />
+                          <Box>{portfolio.views}</Box>
+                        </Flex>
+                      </Flex>
+                    </Box>
+                  </Flex>
+
+                  <Spacer />
+
+                  <Flex>
+                    <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
+                    <LikesCountButton
+                      onClick={handleLikeStatus}
+                      count={portfolio.projectReactions.length}
+                      isLiked={isLiked}
+                      defaultColor={theme.colors.primary[500]}
+                    />
+                  </Flex>
+                </Flex>
+
+                <Box mb="2.5rem">
+                  <BraftContent>{portfolio.description}</BraftContent>
+                </Box>
+
+                <Flex mb="1.5rem">
+                  <Flex alignItems="center" color="primary.500">
+                    {portfolio.projectTags.map(tag => (
+                      <Link key={tag.name} to={`/posts/?tags=${tag}`} className="mr-2">
+                        <Box as="span" fontSize="14px" lineHeight="22px" letterSpacing="0.4px">
+                          #{tag.name}
+                        </Box>
+                      </Link>
+                    ))}
+                  </Flex>
+                  <Spacer />
+
+                  <Flex>
+                    <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
+                    <LikesCountButton
+                      onClick={handleLikeStatus}
+                      count={portfolio.projectReactions.length}
+                      isLiked={isLiked}
+                      defaultColor={theme.colors.primary[500]}
+                    />
+                  </Flex>
+                </Flex>
+
+                <Divider />
+
+                <Box>參與者</Box>
+
+                <Box>
+                  <CreatorCard id={portfolio.creator?.id || ''} />
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+          <Box bg="#f7f8f8">相關分類</Box>
+        </>
+      )}
     </DefaultLayout>
   )
 }
 
 const useProjectPortfolio = (projectId: string) => {
-  const { loading, data, error } = useQuery<hasura.GET_PROJECT_PORTFOLIO, hasura.GET_PROJECT_PORTFOLIOVariables>(
+  const { loading, data, error, refetch } = useQuery<
+    hasura.GET_PROJECT_PORTFOLIO,
+    hasura.GET_PROJECT_PORTFOLIOVariables
+  >(
     gql`
       query GET_PROJECT_PORTFOLIO($id: uuid!) {
         project_by_pk(id: $id) {
@@ -207,6 +236,10 @@ const useProjectPortfolio = (projectId: string) => {
               name
             }
           }
+          project_reactions {
+            id
+            member_id
+          }
         }
       }
     `,
@@ -241,11 +274,19 @@ const useProjectPortfolio = (projectId: string) => {
           name: v.identity.name,
         },
       })) || [],
+    projectReactions:
+      data?.project_by_pk?.project_reactions.map(v => ({
+        id: v.id,
+        member: {
+          id: v?.member_id,
+        },
+      })) || [],
   }
   return {
     loading,
     error,
     portfolio,
+    refetch,
   }
 }
 

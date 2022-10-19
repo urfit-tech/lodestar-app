@@ -9335,6 +9335,92 @@ export interface GET_PROJECT_INTRO_COLLECTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: INSERT_PROJECT_REACTION
+// ====================================================
+
+export interface INSERT_PROJECT_REACTION_insert_project_reaction {
+  __typename: "project_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_PROJECT_REACTION {
+  /**
+   * insert data into the table: "project_reaction"
+   */
+  insert_project_reaction: INSERT_PROJECT_REACTION_insert_project_reaction | null;
+}
+
+export interface INSERT_PROJECT_REACTIONVariables {
+  projectId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_PROJECT_REACTION
+// ====================================================
+
+export interface DELETE_PROJECT_REACTION_delete_project_reaction {
+  __typename: "project_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_PROJECT_REACTION {
+  /**
+   * delete data from the table: "project_reaction"
+   */
+  delete_project_reaction: DELETE_PROJECT_REACTION_delete_project_reaction | null;
+}
+
+export interface DELETE_PROJECT_REACTIONVariables {
+  projectId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: ADD_PROJECT_VIEWS
+// ====================================================
+
+export interface ADD_PROJECT_VIEWS_update_project {
+  __typename: "project_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface ADD_PROJECT_VIEWS {
+  /**
+   * update data of the table: "project"
+   */
+  update_project: ADD_PROJECT_VIEWS_update_project | null;
+}
+
+export interface ADD_PROJECT_VIEWSVariables {
+  projectId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PRODUCT_REVIEW
 // ====================================================
 
@@ -11366,6 +11452,12 @@ export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_roles {
   identity: GET_PROJECT_PORTFOLIO_project_by_pk_project_roles_identity;
 }
 
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_reactions {
+  __typename: "project_reaction";
+  id: any;
+  member_id: string;
+}
+
 export interface GET_PROJECT_PORTFOLIO_project_by_pk {
   __typename: "project";
   id: any;
@@ -11386,6 +11478,10 @@ export interface GET_PROJECT_PORTFOLIO_project_by_pk {
    * An array relationship
    */
   project_roles: GET_PROJECT_PORTFOLIO_project_by_pk_project_roles[];
+  /**
+   * An array relationship
+   */
+  project_reactions: GET_PROJECT_PORTFOLIO_project_by_pk_project_reactions[];
 }
 
 export interface GET_PROJECT_PORTFOLIO {
@@ -15140,6 +15236,23 @@ export enum project_plan_update_column {
   sale_price = "sale_price",
   sold_at = "sold_at",
   title = "title",
+}
+
+/**
+ * unique or primary key constraints on table "project_reaction"
+ */
+export enum project_reaction_constraint {
+  project_reaction_pkey = "project_reaction_pkey",
+}
+
+/**
+ * update columns of table "project_reaction"
+ */
+export enum project_reaction_update_column {
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
+  project_id = "project_id",
 }
 
 /**
@@ -24563,6 +24676,7 @@ export interface project_bool_exp {
   preview_url?: String_comparison_exp | null;
   project_categories?: project_category_bool_exp | null;
   project_plans?: project_plan_bool_exp | null;
+  project_reactions?: project_reaction_bool_exp | null;
   project_roles?: project_role_bool_exp | null;
   project_sales?: project_sales_bool_exp | null;
   project_sections?: project_section_bool_exp | null;
@@ -24645,6 +24759,7 @@ export interface project_insert_input {
   preview_url?: string | null;
   project_categories?: project_category_arr_rel_insert_input | null;
   project_plans?: project_plan_arr_rel_insert_input | null;
+  project_reactions?: project_reaction_arr_rel_insert_input | null;
   project_roles?: project_role_arr_rel_insert_input | null;
   project_sales?: project_sales_obj_rel_insert_input | null;
   project_sections?: project_section_arr_rel_insert_input | null;
@@ -24878,6 +24993,50 @@ export interface project_plan_product_on_conflict {
   constraint: project_plan_product_constraint;
   update_columns: project_plan_product_update_column[];
   where?: project_plan_product_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "project_reaction"
+ */
+export interface project_reaction_arr_rel_insert_input {
+  data: project_reaction_insert_input[];
+  on_conflict?: project_reaction_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "project_reaction". All fields are combined with a logical 'AND'.
+ */
+export interface project_reaction_bool_exp {
+  _and?: project_reaction_bool_exp[] | null;
+  _not?: project_reaction_bool_exp | null;
+  _or?: project_reaction_bool_exp[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  project?: project_bool_exp | null;
+  project_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "project_reaction"
+ */
+export interface project_reaction_insert_input {
+  created_at?: any | null;
+  id?: any | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  project?: project_obj_rel_insert_input | null;
+  project_id?: any | null;
+}
+
+/**
+ * on_conflict condition type for table "project_reaction"
+ */
+export interface project_reaction_on_conflict {
+  constraint: project_reaction_constraint;
+  update_columns: project_reaction_update_column[];
+  where?: project_reaction_bool_exp | null;
 }
 
 /**

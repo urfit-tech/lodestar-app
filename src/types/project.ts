@@ -91,6 +91,11 @@ type ProjectRole = {
   identity: Identity
 }
 
+type ProjectReaction = {
+  id: string
+  member: Member
+}
+
 export type Project = {
   id: string
   type: string
@@ -121,4 +126,5 @@ export type Project = {
   projectRoles: ProjectRole[]
   projectSections: ProjectSectionProps[]
   projectTags: Tag[]
+  projectReactions: ProjectReaction[]
 }

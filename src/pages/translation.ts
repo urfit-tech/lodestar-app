@@ -73,6 +73,13 @@ const pageMessages = {
     overview: { id: 'page.MerchandisePageTabs.overview', defaultMessage: 'Overview' },
     qa: { id: 'page.MerchandisePageTabs.qa', defaultMessage: 'Q&A' },
   }),
+  // PortfolioPage
+  PortfolioPage: defineMessages({
+    loadingPortfolioPageError: {
+      id: 'page.PortfolioPage.loadingPortfolioPageError',
+      defaultMessage: 'loading portfolio error',
+    },
+  }),
 }
 
 export default pageMessages
