@@ -249,7 +249,10 @@ const CheckoutBlock: React.VFC<{
     if (isFieldsValidate) {
       ;({ isValidInvoice, isValidShipping } = isFieldsValidate({ invoice, shipping }))
     } else {
-      isValidShipping = (!hasPhysicalProduct && !isGiftPlanDeliverable) || validateShipping(shipping)
+      isValidShipping =
+        (!hasPhysicalProduct &&
+          (!isGiftPlanDeliverable || (isGiftPlanDeliverable && shipping.isOutsideTaiwanIsland === 'true'))) ||
+        validateShipping(shipping)
       isValidInvoice = Number(settings['feature.invoice.disable'])
         ? true
         : Number(settings['feature.invoice_member_info_input.disable'])

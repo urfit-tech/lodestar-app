@@ -428,7 +428,9 @@ const useSearchProductCollection = (
             member_id
           }
         }
-        activity(where: { published_at: { _is_null: false }, _or: [{ title: { _ilike: $title } }] }) {
+        activity(
+          where: { published_at: { _is_null: false }, is_private: { _eq: false }, _or: [{ title: { _ilike: $title } }] }
+        ) {
           id
           cover_url
           title

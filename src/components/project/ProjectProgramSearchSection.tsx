@@ -210,6 +210,7 @@ const GET_PROGRAM_PACKAGE_ID_BY_TITLE = gql`
         title: { _ilike: $searchText }
         program_package_categories: { category: { name: { _eq: $programPackageCategory } } }
         published_at: { _is_null: false }
+        is_private: { _eq: false }
       }
     ) {
       id
