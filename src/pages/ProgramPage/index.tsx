@@ -28,6 +28,7 @@ import ProgramBestReviewsCarousel from './ProgramBestReviewsCarousel'
 import ProgramContentListSection from './ProgramContentListSection'
 import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
 import { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
+import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
 import ProgramPageHelmet from './ProgramPageHelmet'
 import ProgramPlanCard from './ProgramPlanCard'
 
@@ -135,6 +136,15 @@ const ProgramPage: React.VFC = () => {
       )
     : false
 
+  let pageNavActiveLink
+  if (!isEnrolledByProgramPackage && Number(settings['layout.program_page'])) {
+    pageNavActiveLink = isEnrolled
+      ? { text: '開始進行', linkto: `/programs/${program.id}/contents` }
+      : { text: '開始進行', linkto: settings['link.program_page'] }
+  } else if (!isEnrolledByProgramPackage && !Number(settings['layout.program_page']) && isEnrolled) {
+    pageNavActiveLink = { text: '進入課程', linkto: `${program.id}/contents` }
+  }
+
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
       <ProgramPageHelmet program={program} onLoaded={() => setMetaLoaded(true)} />
@@ -148,6 +158,7 @@ const ProgramPage: React.VFC = () => {
             program={program}
             isEnrolledByProgramPackage={isEnrolledByProgramPackage}
             isDelivered={isDelivered}
+            pageNavActiveLink={pageNavActiveLink}
           />
         )}
 
@@ -155,6 +166,12 @@ const ProgramPage: React.VFC = () => {
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-8">
+                {!Number(settings['layout.program_page']) && (
+                  <div id="program-instructor-collection" className="mb-5">
+                    <ProgramInstructorCollectionBlock program={program} />
+                  </div>
+                )}
+
                 {!Number(settings['layout.program_page']) ? (
                   <Responsive.Default>
                     <ClassCouponBlock />
@@ -198,7 +215,7 @@ const ProgramPage: React.VFC = () => {
                 </div>
 
                 {!Number(settings['layout.program_page']) ? (
-                  <div className="mb-5">
+                  <div id="program-content-list-section" className="mb-5">
                     <ProgramContentListSection program={program} />
                   </div>
                 ) : null}
@@ -228,7 +245,14 @@ const ProgramPage: React.VFC = () => {
                       </StyledProgramInfoCard>
                     </Responsive.Desktop>
                   </div>
-                  <div className={ program.plans.filter(programPlan => programPlan.publishedAt).length === 1 ? 'positionSticky' : undefined }>
+                  <div
+                    id="program-plans-card"
+                    className={
+                      program.plans.filter(programPlan => programPlan.publishedAt).length === 1
+                        ? 'positionSticky'
+                        : undefined
+                    }
+                  >
                     {!isEnrolledByProgramPackage && (
                       <div className="mb-5">
                         <div id="subscription">
@@ -247,16 +271,6 @@ const ProgramPage: React.VFC = () => {
               )}
             </div>
 
-            {/* {!Number(settings['layout.program_page']) && (
-              <div className="row">
-                <div className="col-12 col-lg-8">
-                  <div className="mb-5">
-                    <ProgramInstructorCollectionBlock program={program} />
-                  </div>
-                </div>
-              </div>
-            )} */}
-
             <div id="customer-review" ref={customerReviewBlockRef}>
               {enabledModules.customer_review && (
                 <div className="row">
@@ -273,37 +287,39 @@ const ProgramPage: React.VFC = () => {
       </div>
 
       {!isEnrolledByProgramPackage && (
-        <Responsive.Default>
-          <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
-            {Number(settings['layout.program_page']) ? (
-              <StyledButtonWrapper>
-                <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
-                  <Button isFullWidth colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
-                    {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
+        <div className="ab-test-program-page-nav-hide">
+          <Responsive.Default>
+            <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
+              {Number(settings['layout.program_page']) ? (
+                <StyledButtonWrapper>
+                  <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
+                    <Button isFullWidth colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
+                      {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
+                    </Button>
+                  </Link>
+                </StyledButtonWrapper>
+              ) : isEnrolled ? (
+                <StyledButtonWrapper>
+                  <Link to={`${program.id}/contents`}>
+                    <Button variant="primary" isFullWidth>
+                      {formatMessage(commonMessages.button.enter)}
+                    </Button>
+                  </Link>
+                </StyledButtonWrapper>
+              ) : (
+                <StyledButtonWrapper>
+                  <Button
+                    variant="primary"
+                    isFullWidth
+                    onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    {formatMessage(commonMessages.button.viewProject)}
                   </Button>
-                </Link>
-              </StyledButtonWrapper>
-            ) : isEnrolled ? (
-              <StyledButtonWrapper>
-                <Link to={`${program.id}/contents`}>
-                  <Button variant="primary" isFullWidth>
-                    {formatMessage(commonMessages.button.enter)}
-                  </Button>
-                </Link>
-              </StyledButtonWrapper>
-            ) : (
-              <StyledButtonWrapper>
-                <Button
-                  variant="primary"
-                  isFullWidth
-                  onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                >
-                  {formatMessage(commonMessages.button.viewProject)}
-                </Button>
-              </StyledButtonWrapper>
-            )}
-          </FixedBottomBlock>
-        </Responsive.Default>
+                </StyledButtonWrapper>
+              )}
+            </FixedBottomBlock>
+          </Responsive.Default>
+        </div>
       )}
     </DefaultLayout>
   )
