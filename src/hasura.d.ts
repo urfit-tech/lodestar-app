@@ -3469,12 +3469,12 @@ export interface GET_POST_post_post_reaction_aggregate {
 }
 
 export interface GET_POST_post_post_roles_member {
-  __typename: "member";
-  id: string;
-  name: string;
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
   picture_url: string | null;
   abstract: string | null;
-  username: string;
+  username: string | null;
 }
 
 export interface GET_POST_post_post_roles {
@@ -3488,7 +3488,7 @@ export interface GET_POST_post_post_roles {
   /**
    * An object relationship
    */
-  member: GET_POST_post_post_roles_member;
+  member: GET_POST_post_post_roles_member | null;
 }
 
 export interface GET_POST_post_post_categories_category {
@@ -3747,12 +3747,12 @@ export interface GET_POST_post_by_pk_post_reaction_aggregate {
 }
 
 export interface GET_POST_post_by_pk_post_roles_member {
-  __typename: "member";
-  id: string;
-  name: string;
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
   picture_url: string | null;
   abstract: string | null;
-  username: string;
+  username: string | null;
 }
 
 export interface GET_POST_post_by_pk_post_roles {
@@ -3766,7 +3766,7 @@ export interface GET_POST_post_by_pk_post_roles {
   /**
    * An object relationship
    */
-  member: GET_POST_post_by_pk_post_roles_member;
+  member: GET_POST_post_by_pk_post_roles_member | null;
 }
 
 export interface GET_POST_post_by_pk_post_categories_category {
@@ -11393,6 +11393,7 @@ export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_ta
   id: any;
   title: string;
   cover_url: string | null;
+  preview_url: string | null;
   /**
    * An object relationship
    */
@@ -12091,12 +12092,12 @@ export interface PostParts_post_reaction_aggregate {
 }
 
 export interface PostParts_post_roles_member {
-  __typename: "member";
-  id: string;
-  name: string;
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
   picture_url: string | null;
   abstract: string | null;
-  username: string;
+  username: string | null;
 }
 
 export interface PostParts_post_roles {
@@ -12110,7 +12111,7 @@ export interface PostParts_post_roles {
   /**
    * An object relationship
    */
-  member: PostParts_post_roles_member;
+  member: PostParts_post_roles_member | null;
 }
 
 export interface PostParts_post_categories_category {
@@ -22545,7 +22546,7 @@ export interface post_role_bool_exp {
   _not?: post_role_bool_exp | null;
   _or?: post_role_bool_exp[] | null;
   id?: uuid_comparison_exp | null;
-  member?: member_bool_exp | null;
+  member?: member_public_bool_exp | null;
   member_id?: String_comparison_exp | null;
   name?: String_comparison_exp | null;
   position?: Int_comparison_exp | null;
@@ -22558,7 +22559,7 @@ export interface post_role_bool_exp {
  */
 export interface post_role_insert_input {
   id?: any | null;
-  member?: member_obj_rel_insert_input | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   name?: string | null;
   position?: number | null;
@@ -25012,7 +25013,7 @@ export interface project_reaction_bool_exp {
   _or?: project_reaction_bool_exp[] | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
-  member?: member_bool_exp | null;
+  member?: member_public_bool_exp | null;
   member_id?: String_comparison_exp | null;
   project?: project_bool_exp | null;
   project_id?: uuid_comparison_exp | null;
@@ -25024,7 +25025,7 @@ export interface project_reaction_bool_exp {
 export interface project_reaction_insert_input {
   created_at?: any | null;
   id?: any | null;
-  member?: member_obj_rel_insert_input | null;
+  member?: member_public_obj_rel_insert_input | null;
   member_id?: string | null;
   project?: project_obj_rel_insert_input | null;
   project_id?: any | null;
