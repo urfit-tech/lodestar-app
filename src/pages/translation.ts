@@ -79,6 +79,14 @@ const pageMessages = {
       id: 'page.PortfolioPage.loadingPortfolioPageError',
       defaultMessage: 'loading portfolio error',
     },
+    participant: {
+      id: 'page.PortfolioPage.participant',
+      defaultMessage: 'participant',
+    },
+    relatedCategories: {
+      id: 'page.PortfolioPage.relatedCategory',
+      defaultMessage: 'Related Categories',
+    },
   }),
 }
 

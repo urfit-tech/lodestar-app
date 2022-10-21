@@ -195,7 +195,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                         fontWeight="bold"
                         mb="1.25rem"
                       >
-                        參與者
+                        {formatMessage(pageMessages.PortfolioPage.participant)}
                       </Box>
                       <Spacer />
 
@@ -258,7 +258,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                 <Box className="row justify-content-center">
                   <Box className="col-12 col-lg-9" my="4rem">
                     <Box mb="1rem" fontSize="18px" color="var(--gray-darker)" letterSpacing="0.8px" fontWeight="bold">
-                      相關分類
+                      {formatMessage(pageMessages.PortfolioPage.relatedCategories)}
                     </Box>
                     <Flex>
                       {portfolio.relatedProjects
