@@ -9156,7 +9156,7 @@ export interface GET_PROJECT_project_by_pk {
   __typename: "project";
   id: any;
   /**
-   * funding / pre-order / on-sale / modular
+   * funding / pre-order / on-sale / modular / portfolio
    */
   type: string;
   title: string;
@@ -9283,7 +9283,7 @@ export interface GET_PROJECT_INTRO_COLLECTION_project {
   __typename: "project";
   id: any;
   /**
-   * funding / pre-order / on-sale / modular
+   * funding / pre-order / on-sale / modular / portfolio
    */
   type: string;
   title: string;
@@ -9327,6 +9327,92 @@ export interface GET_PROJECT_INTRO_COLLECTION {
 
 export interface GET_PROJECT_INTRO_COLLECTIONVariables {
   condition: project_bool_exp;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_PROJECT_REACTION
+// ====================================================
+
+export interface INSERT_PROJECT_REACTION_insert_project_reaction {
+  __typename: "project_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_PROJECT_REACTION {
+  /**
+   * insert data into the table: "project_reaction"
+   */
+  insert_project_reaction: INSERT_PROJECT_REACTION_insert_project_reaction | null;
+}
+
+export interface INSERT_PROJECT_REACTIONVariables {
+  projectId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_PROJECT_REACTION
+// ====================================================
+
+export interface DELETE_PROJECT_REACTION_delete_project_reaction {
+  __typename: "project_reaction_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_PROJECT_REACTION {
+  /**
+   * delete data from the table: "project_reaction"
+   */
+  delete_project_reaction: DELETE_PROJECT_REACTION_delete_project_reaction | null;
+}
+
+export interface DELETE_PROJECT_REACTIONVariables {
+  projectId: any;
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: ADD_PROJECT_VIEWS
+// ====================================================
+
+export interface ADD_PROJECT_VIEWS_update_project {
+  __typename: "project_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface ADD_PROJECT_VIEWS {
+  /**
+   * update data of the table: "project"
+   */
+  update_project: ADD_PROJECT_VIEWS_update_project | null;
+}
+
+export interface ADD_PROJECT_VIEWSVariables {
+  projectId: any;
 }
 
 /* tslint:disable */
@@ -11285,6 +11371,137 @@ export interface GET_BEST_REVIEWSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PROJECT_PORTFOLIO
+// ====================================================
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_creator {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_tags_project_creator {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_tags_project {
+  __typename: "project";
+  id: any;
+  title: string;
+  cover_url: string | null;
+  preview_url: string | null;
+  /**
+   * An object relationship
+   */
+  creator: GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_tags_project_creator | null;
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_tags {
+  __typename: "project_tag";
+  /**
+   * An object relationship
+   */
+  project: GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_tags_project | null;
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag {
+  __typename: "tag";
+  name: string;
+  /**
+   * An array relationship
+   */
+  project_tags: GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_tags[];
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_tags {
+  __typename: "project_tag";
+  id: any;
+  tag_name: string;
+  /**
+   * An object relationship
+   */
+  tag: GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag | null;
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_roles_member {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+  picture_url: string | null;
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_roles_identity {
+  __typename: "identity";
+  id: any;
+  name: string;
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_roles {
+  __typename: "project_role";
+  id: any;
+  /**
+   * An object relationship
+   */
+  member: GET_PROJECT_PORTFOLIO_project_by_pk_project_roles_member | null;
+  /**
+   * An object relationship
+   */
+  identity: GET_PROJECT_PORTFOLIO_project_by_pk_project_roles_identity;
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_reactions {
+  __typename: "project_reaction";
+  id: any;
+  member_id: string;
+}
+
+export interface GET_PROJECT_PORTFOLIO_project_by_pk {
+  __typename: "project";
+  id: any;
+  title: string;
+  description: string | null;
+  cover_url: string | null;
+  views: any;
+  created_at: any;
+  /**
+   * An object relationship
+   */
+  creator: GET_PROJECT_PORTFOLIO_project_by_pk_creator | null;
+  /**
+   * An array relationship
+   */
+  project_tags: GET_PROJECT_PORTFOLIO_project_by_pk_project_tags[];
+  /**
+   * An array relationship
+   */
+  project_roles: GET_PROJECT_PORTFOLIO_project_by_pk_project_roles[];
+  /**
+   * An array relationship
+   */
+  project_reactions: GET_PROJECT_PORTFOLIO_project_by_pk_project_reactions[];
+}
+
+export interface GET_PROJECT_PORTFOLIO {
+  /**
+   * fetch data from the table: "project" using primary key columns
+   */
+  project_by_pk: GET_PROJECT_PORTFOLIO_project_by_pk | null;
+}
+
+export interface GET_PROJECT_PORTFOLIOVariables {
+  id: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: SEARCH_PRODUCT_COLLECTION
 // ====================================================
 
@@ -11707,7 +11924,7 @@ export interface SEARCH_PRODUCT_COLLECTION_project {
   __typename: "project";
   id: any;
   /**
-   * funding / pre-order / on-sale / modular
+   * funding / pre-order / on-sale / modular / portfolio
    */
   type: string;
   title: string;
@@ -13103,6 +13320,24 @@ export enum file_update_column {
   uri = "uri",
   viewed_at = "viewed_at",
   viewed_count = "viewed_count",
+}
+
+/**
+ * unique or primary key constraints on table "identity"
+ */
+export enum identity_constraint {
+  identity_pkey = "identity_pkey",
+}
+
+/**
+ * update columns of table "identity"
+ */
+export enum identity_update_column {
+  app_id = "app_id",
+  id = "id",
+  name = "name",
+  position = "position",
+  type = "type",
 }
 
 /**
@@ -15005,6 +15240,40 @@ export enum project_plan_update_column {
 }
 
 /**
+ * unique or primary key constraints on table "project_reaction"
+ */
+export enum project_reaction_constraint {
+  project_reaction_pkey = "project_reaction_pkey",
+}
+
+/**
+ * update columns of table "project_reaction"
+ */
+export enum project_reaction_update_column {
+  created_at = "created_at",
+  id = "id",
+  member_id = "member_id",
+  project_id = "project_id",
+}
+
+/**
+ * unique or primary key constraints on table "project_role"
+ */
+export enum project_role_constraint {
+  project_role_pkey = "project_role_pkey",
+}
+
+/**
+ * update columns of table "project_role"
+ */
+export enum project_role_update_column {
+  id = "id",
+  identity_id = "identity_id",
+  member_id = "member_id",
+  project_id = "project_id",
+}
+
+/**
  * unique or primary key constraints on table "project_section"
  */
 export enum project_section_constraint {
@@ -15068,6 +15337,7 @@ export enum project_update_column {
   title = "title",
   type = "type",
   updates = "updates",
+  views = "views",
 }
 
 /**
@@ -18280,6 +18550,50 @@ export interface file_on_conflict {
 }
 
 /**
+ * Boolean expression to filter rows from the table "identity". All fields are combined with a logical 'AND'.
+ */
+export interface identity_bool_exp {
+  _and?: identity_bool_exp[] | null;
+  _not?: identity_bool_exp | null;
+  _or?: identity_bool_exp[] | null;
+  app_id?: String_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  name?: String_comparison_exp | null;
+  position?: Int_comparison_exp | null;
+  project_roles?: project_role_bool_exp | null;
+  type?: String_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "identity"
+ */
+export interface identity_insert_input {
+  app_id?: string | null;
+  id?: any | null;
+  name?: string | null;
+  position?: number | null;
+  project_roles?: project_role_arr_rel_insert_input | null;
+  type?: string | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "identity"
+ */
+export interface identity_obj_rel_insert_input {
+  data: identity_insert_input;
+  on_conflict?: identity_on_conflict | null;
+}
+
+/**
+ * on_conflict condition type for table "identity"
+ */
+export interface identity_on_conflict {
+  constraint: identity_constraint;
+  update_columns: identity_update_column[];
+  where?: identity_bool_exp | null;
+}
+
+/**
  * input type for inserting array relation for remote table "invoice"
  */
 export interface invoice_arr_rel_insert_input {
@@ -18749,6 +19063,7 @@ export interface member_bool_exp {
   program_content_progresses?: program_content_progress_bool_exp | null;
   program_roles?: program_role_bool_exp | null;
   program_tempo_deliveries?: program_tempo_delivery_bool_exp | null;
+  project_roles?: project_role_bool_exp | null;
   refresh_token?: uuid_comparison_exp | null;
   reviews?: review_bool_exp | null;
   role?: String_comparison_exp | null;
@@ -19005,6 +19320,7 @@ export interface member_insert_input {
   program_content_progresses?: program_content_progress_arr_rel_insert_input | null;
   program_roles?: program_role_arr_rel_insert_input | null;
   program_tempo_deliveries?: program_tempo_delivery_arr_rel_insert_input | null;
+  project_roles?: project_role_arr_rel_insert_input | null;
   refresh_token?: any | null;
   reviews?: review_arr_rel_insert_input | null;
   role?: string | null;
@@ -24361,6 +24677,8 @@ export interface project_bool_exp {
   preview_url?: String_comparison_exp | null;
   project_categories?: project_category_bool_exp | null;
   project_plans?: project_plan_bool_exp | null;
+  project_reactions?: project_reaction_bool_exp | null;
+  project_roles?: project_role_bool_exp | null;
   project_sales?: project_sales_bool_exp | null;
   project_sections?: project_section_bool_exp | null;
   project_tags?: project_tag_bool_exp | null;
@@ -24371,6 +24689,7 @@ export interface project_bool_exp {
   title?: String_comparison_exp | null;
   type?: String_comparison_exp | null;
   updates?: jsonb_comparison_exp | null;
+  views?: numeric_comparison_exp | null;
 }
 
 /**
@@ -24441,6 +24760,8 @@ export interface project_insert_input {
   preview_url?: string | null;
   project_categories?: project_category_arr_rel_insert_input | null;
   project_plans?: project_plan_arr_rel_insert_input | null;
+  project_reactions?: project_reaction_arr_rel_insert_input | null;
+  project_roles?: project_role_arr_rel_insert_input | null;
   project_sales?: project_sales_obj_rel_insert_input | null;
   project_sections?: project_section_arr_rel_insert_input | null;
   project_tags?: project_tag_arr_rel_insert_input | null;
@@ -24451,6 +24772,7 @@ export interface project_insert_input {
   title?: string | null;
   type?: string | null;
   updates?: any | null;
+  views?: any | null;
 }
 
 /**
@@ -24672,6 +24994,96 @@ export interface project_plan_product_on_conflict {
   constraint: project_plan_product_constraint;
   update_columns: project_plan_product_update_column[];
   where?: project_plan_product_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "project_reaction"
+ */
+export interface project_reaction_arr_rel_insert_input {
+  data: project_reaction_insert_input[];
+  on_conflict?: project_reaction_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "project_reaction". All fields are combined with a logical 'AND'.
+ */
+export interface project_reaction_bool_exp {
+  _and?: project_reaction_bool_exp[] | null;
+  _not?: project_reaction_bool_exp | null;
+  _or?: project_reaction_bool_exp[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  member?: member_public_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  project?: project_bool_exp | null;
+  project_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "project_reaction"
+ */
+export interface project_reaction_insert_input {
+  created_at?: any | null;
+  id?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
+  member_id?: string | null;
+  project?: project_obj_rel_insert_input | null;
+  project_id?: any | null;
+}
+
+/**
+ * on_conflict condition type for table "project_reaction"
+ */
+export interface project_reaction_on_conflict {
+  constraint: project_reaction_constraint;
+  update_columns: project_reaction_update_column[];
+  where?: project_reaction_bool_exp | null;
+}
+
+/**
+ * input type for inserting array relation for remote table "project_role"
+ */
+export interface project_role_arr_rel_insert_input {
+  data: project_role_insert_input[];
+  on_conflict?: project_role_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "project_role". All fields are combined with a logical 'AND'.
+ */
+export interface project_role_bool_exp {
+  _and?: project_role_bool_exp[] | null;
+  _not?: project_role_bool_exp | null;
+  _or?: project_role_bool_exp[] | null;
+  id?: uuid_comparison_exp | null;
+  identity?: identity_bool_exp | null;
+  identity_id?: uuid_comparison_exp | null;
+  member?: member_public_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  project?: project_bool_exp | null;
+  project_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "project_role"
+ */
+export interface project_role_insert_input {
+  id?: any | null;
+  identity?: identity_obj_rel_insert_input | null;
+  identity_id?: any | null;
+  member?: member_public_obj_rel_insert_input | null;
+  member_id?: string | null;
+  project?: project_obj_rel_insert_input | null;
+  project_id?: any | null;
+}
+
+/**
+ * on_conflict condition type for table "project_role"
+ */
+export interface project_role_on_conflict {
+  constraint: project_role_constraint;
+  update_columns: project_role_update_column[];
+  where?: project_role_bool_exp | null;
 }
 
 /**
@@ -25624,6 +26036,7 @@ export interface tag_bool_exp {
   podcast_program_tags?: podcast_program_tag_bool_exp | null;
   post_tags?: post_tag_bool_exp | null;
   program_tags?: program_tag_bool_exp | null;
+  project_tags?: project_tag_bool_exp | null;
   search_tags?: search_tag_bool_exp | null;
   type?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
@@ -25643,6 +26056,7 @@ export interface tag_insert_input {
   podcast_program_tags?: podcast_program_tag_arr_rel_insert_input | null;
   post_tags?: post_tag_arr_rel_insert_input | null;
   program_tags?: program_tag_arr_rel_insert_input | null;
+  project_tags?: project_tag_arr_rel_insert_input | null;
   search_tags?: search_tag_arr_rel_insert_input | null;
   type?: string | null;
   updated_at?: any | null;

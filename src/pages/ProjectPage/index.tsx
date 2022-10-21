@@ -12,6 +12,7 @@ import LoadingPage from '../LoadingPage'
 import FundingPage from './FundingPage'
 import ModularPage from './ModularPage'
 import OnSalePage from './OnSalePage'
+import PortfolioPage from './PortfolioPage'
 import ProjectPageHelmet from './ProjectPageHelmet'
 
 const renderProjectPage = (project: ProjectProps) => {
@@ -28,6 +29,8 @@ const renderProjectPage = (project: ProjectProps) => {
       return <OnSalePage {...project} />
     case 'modular':
       return <ModularPage projectId={project.id} />
+    case 'portfolio':
+      return <PortfolioPage id={project.id} />
     default:
       return <div>Default Project Page</div>
   }
