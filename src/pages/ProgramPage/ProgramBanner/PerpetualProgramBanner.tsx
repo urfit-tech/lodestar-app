@@ -5,13 +5,12 @@ import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import CWLBreadcrumb from '../../../components/common/CWLBreadcrumb'
-import CWLPageNavButtons from '../../../components/common/CWLPageNavButtons'
+import FullSizeBanner from './FullSizeBanner'
 import { BREAK_POINT } from '../../../components/common/Responsive'
 import VideoPlayer from '../../../components/common/VideoPlayer'
+import CWLBreadcrumb from '../../../components/common/CWLBreadcrumb'
 import { commonMessages } from '../../../helpers/translation'
 import { Program } from '../../../types/program'
-import FullSizeBanner from './FullSizeBanner'
 
 const StyledTags = styled.div`
   margin-bottom: 1rem;
@@ -20,10 +19,9 @@ const StyledTags = styled.div`
 `
 const StyledTitle = styled.h1`
   margin: 0;
-  font-weight: 900;
+  font-weight: 500;
   font-size: 28px;
   line-height: 1.23;
-  text-align: left;
   letter-spacing: 0.23px;
 
   @media (min-width: ${BREAK_POINT}px) {
@@ -46,12 +44,12 @@ const StyledPlayer = styled.div`
   background: black;
 `
 
-const StyledTitleBlock = styled.div`
+const StyledTitleBlock = styled.div<{ noVideo?: boolean }>`
   position: relative;
-  padding: 1rem 0;
+  padding: ${props => (props.noVideo ? '6rem 2rem' : '2rem')};
 
   @media (min-width: ${BREAK_POINT}px) {
-    padding: 4rem 0 2rem 0;
+    padding: ${props => (props.noVideo ? '7.5rem 2rem' : '4rem 2rem')};
   }
 `
 const StyledVideoBlock = styled.div`
@@ -76,112 +74,52 @@ const PerpetualProgramBanner: React.VFC<{
   }
   isEnrolledByProgramPackage?: boolean
   isDelivered?: boolean
-  pageNavActiveLink?: any
-}> = ({ program, isEnrolledByProgramPackage, isDelivered, pageNavActiveLink }) => {
+}> = ({ program, isEnrolledByProgramPackage, isDelivered }) => {
   const history = useHistory()
   const { settings } = useApp()
   const { formatMessage } = useIntl()
-  const navButtons: {
-    text: string
-    targetId: string
-    gtmName: string
-    gtmAction: string
-    gtmLabel: string
-    linkto?: any
-  }[] = [
-    {
-      text: '講師簡介',
-      targetId: '#program-instructor-collection',
-      gtmName: '課介頁',
-      gtmAction: '錨點',
-      gtmLabel: '講師簡介',
-    },
-    {
-      text: '課程內容',
-      targetId: '#program-content-list-section',
-      gtmName: '課介頁',
-      gtmAction: '錨點',
-      gtmLabel: '課程內容',
-    },
-  ]
-
-  if (program.coverVideoUrl) {
-    navButtons.unshift({
-      text: '介紹影片',
-      targetId: '#program-info-video',
-      gtmName: '課介頁',
-      gtmAction: '錨點',
-      gtmLabel: '介紹影片',
-    })
-  }
-  if (pageNavActiveLink) {
-    navButtons.push({
-      text: pageNavActiveLink.text,
-      targetId: '^_^',
-      linkto: pageNavActiveLink.linkto,
-      gtmName: '課介頁',
-      gtmAction: '錨點',
-      gtmLabel: pageNavActiveLink.text,
-    })
-  } else {
-    navButtons.push({
-      text: '查看方案',
-      targetId: '#program-plans-card',
-      gtmName: '課介頁',
-      gtmAction: '錨點',
-      gtmLabel: '查看方案',
-    })
-  }
 
   return (
     <div>
-      {!program.coverVideoUrl && (
-        <React.Fragment>
-          <div id="program-banner">
-            <FullSizeBanner
-              coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
-            />
+      <FullSizeBanner
+        coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
+      />
+
+      <CWLBreadcrumb program={program} />
+
+      <StyledTitleBlock noVideo={!program.coverVideoUrl}>
+        <StyledTags className="text-center">
+          {program.tags?.map(programTag => (
+            <StyledLink key={programTag} to={`/search?tag=${programTag}&tab=programs`} className="mr-2">
+              #{programTag}
+            </StyledLink>
+          ))}
+        </StyledTags>
+
+        <StyledTitle className="text-center">{program.title}</StyledTitle>
+        {isEnrolledByProgramPackage && (
+          <div className="mt-4 text-center">
+            {isDelivered ? (
+              <StyledButton
+                colorScheme="primary"
+                onClick={() => {
+                  history.push(`/programs/${program.id}/contents`)
+                }}
+              >
+                {formatMessage(commonMessages.button.enter)}
+              </StyledButton>
+            ) : (
+              <StyledButton colorScheme="gray" color="darkGray" isActive>
+                {formatMessage(commonMessages.button.unOpened)}
+              </StyledButton>
+            )}
           </div>
-          <CWLPageNavButtons mainBlock="program-banner" navButtons={navButtons} />
-          <CWLBreadcrumb program={program} />
-        </React.Fragment>
-      )}
-
-      <div className="container">
-        <StyledTitleBlock>
-          <StyledTags className="text-center">
-            {program.tags?.map(programTag => (
-              <StyledLink key={programTag} to={`/search?tag=${programTag}&tab=programs`} className="mr-2">
-                #{programTag}
-              </StyledLink>
-            ))}
-          </StyledTags>
-
-          <StyledTitle className="text-center">{program.title}</StyledTitle>
-          {isEnrolledByProgramPackage && (
-            <div className="mt-4 text-center">
-              {isDelivered ? (
-                <StyledButton
-                  colorScheme="primary"
-                  onClick={() => {
-                    history.push(`/programs/${program.id}/contents`)
-                  }}
-                >
-                  {formatMessage(commonMessages.button.enter)}
-                </StyledButton>
-              ) : (
-                <StyledButton colorScheme="gray" color="darkGray" isActive>
-                  {formatMessage(commonMessages.button.unOpened)}
-                </StyledButton>
-              )}
-            </div>
-          )}
-        </StyledTitleBlock>
-      </div>
+        )}
+      </StyledTitleBlock>
 
       {program.coverVideoUrl && (
         <StyledVideoBlock>
-          <div id="program-info-video" className="container">
+          <div className="container">
             <StyledVideoWrapper>
               <StyledPlayer>
                 {program.coverVideoUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
@@ -205,8 +143,6 @@ const PerpetualProgramBanner: React.VFC<{
               </StyledPlayer>
             </StyledVideoWrapper>
           </div>
-          <CWLPageNavButtons mainBlock="program-info-video" navButtons={navButtons} />
-          <CWLBreadcrumb program={program} />
         </StyledVideoBlock>
       )}
     </div>
