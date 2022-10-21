@@ -142,6 +142,8 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                   <Spacer />
 
                   <Flex>
+                    {/* TODO: apply tag */}
+                    {/* <ApplyTagButton /> */}
                     <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
                     <LikesCountButton
                       onClick={handleLikeStatus}
@@ -169,6 +171,8 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                   <Spacer />
 
                   <Flex>
+                    {/* TODO: apply tag */}
+                    {/* <ApplyTagButton /> */}
                     <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
                     <LikesCountButton
                       onClick={handleLikeStatus}
@@ -193,6 +197,16 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                       >
                         參與者
                       </Box>
+                      <Spacer />
+
+                      {/*
+                        TODO: apply tag 
+                        <Box>
+                        <Icon as={TicketOIcon} color="primary.500" mr="0.5rem" />
+                        <Box as="span" fontSize="14px" lineHeight="22px" color="primary.500" fontWeight="500">
+                          申請標記
+                        </Box>
+                      </Box> */}
                     </Flex>
                     {Object.entries(groupBy(role => role.identity.id, portfolio.projectRoles)).map((roles, index) => (
                       <Box key={index}>
