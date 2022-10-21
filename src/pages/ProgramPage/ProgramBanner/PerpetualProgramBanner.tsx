@@ -5,12 +5,12 @@ import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import FullSizeBanner from './FullSizeBanner'
 import { BREAK_POINT } from '../../../components/common/Responsive'
 import VideoPlayer from '../../../components/common/VideoPlayer'
 import CWLBreadcrumb from '../../../components/common/CWLBreadcrumb'
 import { commonMessages } from '../../../helpers/translation'
 import { Program } from '../../../types/program'
+import FullSizeBanner from './FullSizeBanner'
 
 const StyledTags = styled.div`
   margin-bottom: 1rem;

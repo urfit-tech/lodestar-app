@@ -1,10 +1,8 @@
 import { Icon } from '@chakra-ui/icons'
 import { Skeleton } from '@chakra-ui/react'
 import { usePublicMember } from 'lodestar-app-element/src/hooks/data'
-import moment from 'moment-timezone'
 import React from 'react'
 import { StyledPostMeta } from '.'
-import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 
 const PostPreviewMeta: React.VFC<{

@@ -28,6 +28,7 @@ import ProgramBestReviewsCarousel from './ProgramBestReviewsCarousel'
 import ProgramContentListSection from './ProgramContentListSection'
 import ProgramContentCountBlock from './ProgramInfoBlock/ProgramContentCountBlock'
 import { StyledProgramInfoCard } from './ProgramInfoBlock/ProgramInfoCard'
+import ProgramInstructorCollectionBlock from './ProgramInstructorCollectionBlock'
 import ProgramPageHelmet from './ProgramPageHelmet'
 import ProgramPlanCard from './ProgramPlanCard'
 
@@ -155,6 +156,11 @@ const ProgramPage: React.VFC = () => {
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-8">
+                {!settings['layout.program_page'] && (
+                  <div className="mb-5">
+                    <ProgramInstructorCollectionBlock program={program} />
+                  </div>
+                )}
                 {!Number(settings['layout.program_page']) ? (
                   <Responsive.Default>
                     <ClassCouponBlock />
@@ -228,7 +234,13 @@ const ProgramPage: React.VFC = () => {
                       </StyledProgramInfoCard>
                     </Responsive.Desktop>
                   </div>
-                  <div className={ program.plans.filter(programPlan => programPlan.publishedAt).length === 1 ? 'positionSticky' : undefined }>
+                  <div
+                    className={
+                      program.plans.filter(programPlan => programPlan.publishedAt).length === 1
+                        ? 'positionSticky'
+                        : undefined
+                    }
+                  >
                     {!isEnrolledByProgramPackage && (
                       <div className="mb-5">
                         <div id="subscription">
@@ -247,7 +259,8 @@ const ProgramPage: React.VFC = () => {
               )}
             </div>
 
-            {/* {!Number(settings['layout.program_page']) && (
+            {/* 
+            {!Number(settings['layout.program_page']) ? (
               <div className="row">
                 <div className="col-12 col-lg-8">
                   <div className="mb-5">
@@ -255,7 +268,9 @@ const ProgramPage: React.VFC = () => {
                   </div>
                 </div>
               </div>
-            )} */}
+            )} 
+            ) : null}
+            */}
 
             <div id="customer-review" ref={customerReviewBlockRef}>
               {enabledModules.customer_review && (

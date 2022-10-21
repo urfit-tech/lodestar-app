@@ -9,7 +9,6 @@ import { AiOutlineCalendar, AiOutlinePlaySquare, AiOutlineVideoCamera } from 're
 import { useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { useEnrolledProgramIds, useProgramContentBody } from '../../hooks/program'
@@ -275,8 +274,6 @@ const SortBySectionItem: React.VFC<{
     programId: string
     programContentId?: string
   }>()
-  const [previousPage] = useQueryParam('back', StringParam)
-
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
 
   const isActive = programContent.id === programContentId
@@ -301,7 +298,7 @@ const SortBySectionItem: React.VFC<{
       onClick={() => {
         onClick?.()
         history.push(
-          `/programs/${programId}/contents/${programContent.id}${previousPage ? `?back=${previousPage}` : ''}`,
+          `/programs/${programId}/contents/${programContent.id}${programPackageId ? `?back=${programPackageId}` : ''}`,
         )
       }}
     >
@@ -393,7 +390,6 @@ const SortByDateItem: React.VFC<{
     programContentId?: string
   }>()
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
-  const [previousPage] = useQueryParam('back', StringParam)
 
   return (
     <StyledItem
@@ -401,7 +397,9 @@ const SortByDateItem: React.VFC<{
       onClick={() => {
         onClick?.()
         history.push(
-          `/programs/${programId}/contents/${programContent.id}${previousPage ? `?back=${previousPage}` : ''}`,
+          `/programs/${programId}/contents/${programContent.id}${
+            programPackageId !== null ? `?back=${programPackageId}` : ''
+          }`,
         )
       }}
     >

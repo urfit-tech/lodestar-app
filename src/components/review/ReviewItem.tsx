@@ -226,7 +226,7 @@ const INSERT_REVIEW_REPLY = gql`
 
 const StyledIconButton = styled(IconButton)<{ isActive?: boolean }>`
   &&& {
-    border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray)')};
+    border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-dark)')};
     color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-dark)')};
     border-radius: 50%;
     background: white;
@@ -306,7 +306,7 @@ const LikeButton: React.VFC<{
         icon={<StyledIcon as={isLiked ? HeartFillIcon : HeartIcon} />}
         className="mr-2"
       />
-      <StyledLikedCount isActive={isLiked}>{likedCount}</StyledLikedCount>
+      {isLiked && <StyledLikedCount isActive={isLiked}>{likedCount}</StyledLikedCount>}
     </div>
   )
 }
