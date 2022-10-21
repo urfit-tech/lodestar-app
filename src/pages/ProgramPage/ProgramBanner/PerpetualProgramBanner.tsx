@@ -81,18 +81,56 @@ const PerpetualProgramBanner: React.VFC<{
   const history = useHistory()
   const { settings } = useApp()
   const { formatMessage } = useIntl()
-  const navButtons: { text: string; targetId: string; linkto?: any }[] = [
-    { text: '講師簡介', targetId: '#program-instructor-collection' },
-    { text: '課程內容', targetId: '#program-content-list-section' },
+  const navButtons: {
+    text: string
+    targetId: string
+    gtmName: string
+    gtmAction: string
+    gtmLabel: string
+    linkto?: any
+  }[] = [
+    {
+      text: '講師簡介',
+      targetId: '#program-instructor-collection',
+      gtmName: '課介頁',
+      gtmAction: '錨點',
+      gtmLabel: '講師簡介',
+    },
+    {
+      text: '課程內容',
+      targetId: '#program-content-list-section',
+      gtmName: '課介頁',
+      gtmAction: '錨點',
+      gtmLabel: '課程內容',
+    },
   ]
 
   if (program.coverVideoUrl) {
-    navButtons.unshift({ text: '介紹影片', targetId: '#program-info-video' })
+    navButtons.unshift({
+      text: '介紹影片',
+      targetId: '#program-info-video',
+      gtmName: '課介頁',
+      gtmAction: '錨點',
+      gtmLabel: '介紹影片',
+    })
   }
   if (pageNavActiveLink) {
-    navButtons.push({ text: pageNavActiveLink.text, targetId: '^_^', linkto: pageNavActiveLink.linkto })
+    navButtons.push({
+      text: pageNavActiveLink.text,
+      targetId: '^_^',
+      linkto: pageNavActiveLink.linkto,
+      gtmName: '課介頁',
+      gtmAction: '錨點',
+      gtmLabel: pageNavActiveLink.text,
+    })
   } else {
-    navButtons.push({ text: '查看方案', targetId: '#program-plans-card' })
+    navButtons.push({
+      text: '查看方案',
+      targetId: '#program-plans-card',
+      gtmName: '課介頁',
+      gtmAction: '錨點',
+      gtmLabel: '查看方案',
+    })
   }
 
   return (
