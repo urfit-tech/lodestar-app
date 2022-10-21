@@ -16,9 +16,3 @@ export type MetaTag = {
   seo?: { pageTitle?: string; description: string; keywords?: string }
   openGraph?: { title?: string; description?: string; image?: string; imageAlt?: string }
 }
-
-export type Tag = {
-  name: string
-  type: string
-  filterable: boolean
-}

@@ -1,5 +1,4 @@
-import { Member } from 'lodestar-app-element/src/types/data'
-import { Category, Tag } from './general'
+import { Category } from './general'
 
 type ProjectSectionProps = {
   id: string
@@ -32,11 +31,13 @@ export type ProjectPlanBasicProps = {
 }
 export type ProjectPlanProps = ProjectPlanBasicProps & {
   projectTitle: string
+
   isParticipantsVisible: boolean
   isPhysical: boolean
   isLimited: boolean
   isEnrolled?: boolean
   isExpired?: boolean
+
   buyableQuantity: number | null
   projectPlanEnrollmentCount: number
 }
@@ -78,53 +79,4 @@ export type ProjectProps = ProjectBasicProps & {
 
   projectSections: ProjectSectionProps[]
   projectPlans?: ProjectPlanProps[]
-}
-
-type Identity = {
-  id: string
-  type: string
-  name: string
-}
-type ProjectRole = {
-  id: string
-  member: Member
-  identity: Identity
-}
-
-type ProjectReaction = {
-  id: string
-  member: Member
-}
-
-export type Project = {
-  id: string
-  type: string
-  title: string
-  abstract: string | null
-  description: string | null
-  targetAmount: number | null
-  introduction: string | null
-  updates: any
-  comments: any
-  contents: any
-  coverType: string
-  coverUrl: string | null
-  createdAt: Date
-  publishedAt: Date | null
-  expiredAt: Date | null
-  template: string | null
-  isParticipantsVisible: boolean
-  isCountdownTimerVisible: boolean
-  previewUrl: string | null
-  targetUnit: 'funds' | 'participants'
-  introductionDesktop: string | null
-  views: number
-  creator: Member | null
-  projectSales: number
-  categories: Category[]
-  projectPlans: ProjectPlanProps[]
-  projectRoles: ProjectRole[]
-  projectSections: ProjectSectionProps[]
-  projectTags: Tag[]
-  projectReactions: ProjectReaction[]
 }

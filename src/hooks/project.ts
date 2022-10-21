@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
@@ -336,55 +336,5 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
     errorProjects: error,
     projects,
     refetchProjects: refetch,
-  }
-}
-
-export const useMutateProject = (projectId: string) => {
-  const { currentMemberId } = useAuth()
-  const [insertProjectReactionHandler] = useMutation<
-    hasura.INSERT_PROJECT_REACTION,
-    hasura.INSERT_PROJECT_REACTIONVariables
-  >(
-    gql`
-      mutation INSERT_PROJECT_REACTION($projectId: uuid!, $memberId: String!) {
-        insert_project_reaction(objects: { project_id: $projectId, member_id: $memberId }) {
-          affected_rows
-        }
-      }
-    `,
-  )
-  const [deleteProjectReactionHandler] = useMutation<
-    hasura.DELETE_PROJECT_REACTION,
-    hasura.DELETE_PROJECT_REACTIONVariables
-  >(gql`
-    mutation DELETE_PROJECT_REACTION($projectId: uuid!, $memberId: String!) {
-      delete_project_reaction(where: { project_id: { _eq: $projectId }, member_id: { _eq: $memberId } }) {
-        affected_rows
-      }
-    }
-  `)
-
-  const [addProjectViewsHandler] = useMutation<hasura.ADD_PROJECT_VIEWS, hasura.ADD_PROJECT_VIEWSVariables>(gql`
-    mutation ADD_PROJECT_VIEWS($projectId: uuid!) {
-      update_project(where: { id: { _eq: $projectId } }, _inc: { views: 1 }) {
-        affected_rows
-      }
-    }
-  `)
-
-  const insertProjectReaction = () => {
-    return insertProjectReactionHandler({ variables: { projectId, memberId: currentMemberId || '' } })
-  }
-  const deleteProjectReaction = () => {
-    return deleteProjectReactionHandler({ variables: { projectId, memberId: currentMemberId || '' } })
-  }
-  const addProjectView = () => {
-    return addProjectViewsHandler({ variables: { projectId } })
-  }
-
-  return {
-    insertProjectReaction,
-    deleteProjectReaction,
-    addProjectView,
   }
 }

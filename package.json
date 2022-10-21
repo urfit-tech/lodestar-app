@@ -87,7 +87,6 @@
     "braft-editor": "^2.3.9",
     "customize-cra": "^1.0.0",
     "dashjs": "^4.3.0",
-    "dayjs": "^1.11.5",
     "decamelize": "^6.0.0",
     "dotenv-flow": "^3.2.0",
     "env-cmd": "^10.1.0",

@@ -183,12 +183,7 @@ const PostCover: React.VFC<{
   }
 
   return (
-    <StyledVideoCover
-      ref={coverRef}
-      id="post-cover"
-      className="col-12 pt-sm-5"
-      style={{ height: coverHeight ? `${coverHeight}px` : '' }}
-    >
+    <StyledVideoCover ref={coverRef} id="post-cover" className="col-12 pt-sm-5" style={{ height: coverHeight ? `${coverHeight}px` : '' }}>
       <div className="container">
         <StyledVideoBlock
           className={`${!isClosed && isScrollingDown ? 'animated fadeInUp' : ''}`}
