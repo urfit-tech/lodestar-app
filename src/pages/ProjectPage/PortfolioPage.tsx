@@ -115,9 +115,8 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                       alt={portfolio.creator?.name}
                       boxSize="3rem"
                       borderRadius="1.5rem"
-                      backgroundPosition="center"
-                      backgroundSize="cover"
                       backgroundColor="#ccc"
+                      objectFit="cover"
                     />
 
                     <Box ml="0.75rem">
@@ -234,6 +233,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                                   h="2.25rem"
                                   borderRadius="50%"
                                   mr="0.75rem"
+                                  objectFit="cover"
                                 />
                                 <Box color="var(--gray-darker)">{role.member.name}</Box>
                               </Box>
@@ -270,8 +270,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                                 src={relatedProject.previewUrl || EmptyCover}
                                 mb="0.75rem"
                                 h="calc(100% * 2/3)"
-                                backgroundPosition="center"
-                                backgroundSize="cover"
+                                objectFit="cover"
                               />
                               <Box key={index} mb="1rem" noOfLines={2}>
                                 {relatedProject.title}
@@ -284,6 +283,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                                   h="1.5rem"
                                   borderRadius="50%"
                                   mr="0.5rem"
+                                  objectFit="cover"
                                 />
                                 <Box fontSize="14px" color="var(--gray-dark)" letterSpacing="0.4px">
                                   {relatedProject.creator.name}
