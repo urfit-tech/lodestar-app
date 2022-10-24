@@ -243,7 +243,6 @@ const CheckoutBlock: React.VFC<{
         return
       }
     }
-
     let isValidShipping = false
     let isValidInvoice = false
     if (isFieldsValidate) {
@@ -276,28 +275,30 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
-    if (
-      hasPhysicalProduct &&
-      memberShop &&
-      memberShop.shippingMethods.find(shippingMethod => shippingMethod.id === shipping.shippingMethod) === undefined
-    ) {
-      shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
-      return
-    }
-    if (
-      csvShippingMethods.find(shippingMethod => shippingMethod === shipping.shippingMethod) &&
-      shipping.storeId === ''
-    ) {
-      shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
-      return
-    }
+    if (shipping.isOutsideTaiwanIsland === 'false') {
+      if (
+        hasPhysicalProduct &&
+        memberShop &&
+        memberShop.shippingMethods.find(shippingMethod => shippingMethod.id === shipping.shippingMethod) === undefined
+      ) {
+        shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
+        return
+      }
+      if (
+        csvShippingMethods.find(shippingMethod => shippingMethod === shipping.shippingMethod) &&
+        shipping.storeId === ''
+      ) {
+        shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
+        return
+      }
 
-    if (!isValidShipping) {
-      shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
-      return
-    } else if (totalPrice > 0 && !isValidInvoice) {
-      invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
-      return
+      if (!isValidShipping) {
+        shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
+        return
+      } else if (totalPrice > 0 && !isValidInvoice) {
+        invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
+        return
+      }
     }
 
     if (referrerEmail && !validateStatus) {
