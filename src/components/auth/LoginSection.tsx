@@ -1,6 +1,7 @@
 import { Button, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
-import { message } from 'antd'
+import { message, Modal } from 'antd'
 import { AxiosError } from 'axios'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
@@ -16,6 +17,7 @@ import { authMessages, codeMessages, commonMessages } from '../../helpers/transl
 import { AuthState } from '../../types/member'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton, ParentingLoginButton } from './SocialLoginButton'
+import * as localAuthMessages from './translation'
 
 const ForgetPassword = styled.div`
   margin-bottom: 1.5rem;
@@ -25,6 +27,17 @@ const ForgetPassword = styled.div`
   a {
     color: #9b9b9b;
   }
+`
+
+const StyledModal = styled(Modal)`
+  && .ant-modal-footer {
+    border-top: 0;
+    padding: 0 1.5rem 1.5rem;
+  }
+`
+
+const StyledModalTitle = styled.div`
+  ${CommonTitleMixin}
 `
 
 const LoginSection: React.VFC<{
@@ -47,6 +60,7 @@ const LoginSection: React.VFC<{
       password: '',
     },
   })
+  const [alertModalVisible, setAlertModalVisible] = useState(false)
 
   const handleLogin = handleSubmit(
     ({ account, password }) => {
@@ -55,6 +69,8 @@ const LoginSection: React.VFC<{
       }
 
       setLoading(true)
+      // TODO: check device
+
       login({
         account: account.trim().toLowerCase(),
         password: password,
@@ -82,6 +98,7 @@ const LoginSection: React.VFC<{
     },
   )
 
+  const handleCheckDevice = handleSubmit(() => {})
   return (
     <>
       {renderTitle ? renderTitle() : <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>}
@@ -154,6 +171,16 @@ const LoginSection: React.VFC<{
               {formatMessage(commonMessages.button.signUp)}
             </Button>
           </StyledAction>
+
+          {/* check device modal */}
+          <StyledModal width={400} centered visible={}>
+            <StyledModalTitle className="mb-4">
+              {formatMessage(localAuthMessages.default.LoginSection.loginAlertModalTitle)}
+            </StyledModalTitle>
+            <div className="mb-4">
+              {formatMessage(localAuthMessages.default.LoginSection.loginAlertModelDescription)}
+            </div>
+          </StyledModal>
         </>
       )}
     </>
