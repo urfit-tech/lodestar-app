@@ -135,7 +135,7 @@ const PerpetualProgramBanner: React.VFC<{
 
   return (
     <div>
-      <div className={!program.coverVideoUrl ? 'ab-test-program-page-nav-hide' : ''}>
+      <div className={program.coverVideoUrl ? 'ab-test-program-page-nav-hide' : ''}>
         <div id="program-banner">
           <FullSizeBanner
             coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
