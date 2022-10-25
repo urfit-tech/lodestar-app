@@ -20,7 +20,9 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import axios from 'axios'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
@@ -30,7 +32,6 @@ import { handleError } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import { OrderDiscountProps } from '../../types/checkout'
 import { ProductType } from '../../types/product'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const messages = defineMessages({
   requestRefund: { id: 'order.OrderRequestRefundModal.requestRefund', defaultMessage: '申請退款' },
@@ -71,6 +72,7 @@ const OrderRequestRefundModal: React.VFC<{
   totalPrice: number
   onRefetch?: () => void
 }> = ({ orderId, orderProducts, orderDiscounts, totalPrice, onRefetch }) => {
+  const { settings } = useApp()
   const theme = useAppTheme()
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -165,16 +167,18 @@ const OrderRequestRefundModal: React.VFC<{
 
   return (
     <>
-      <Button
-        onClick={onOpen}
-        variant="outline"
-        _hover={{
-          color: theme.colors.primary[500],
-          borderColor: theme.colors.primary[500],
-        }}
-      >
-        {formatMessage(messages.requestRefund)}
-      </Button>
+      {settings['order.apply_refund.enabled'] === 'true' && (
+        <Button
+          onClick={onOpen}
+          variant="outline"
+          _hover={{
+            color: theme.colors.primary[500],
+            borderColor: theme.colors.primary[500],
+          }}
+        >
+          {formatMessage(messages.requestRefund)}
+        </Button>
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
