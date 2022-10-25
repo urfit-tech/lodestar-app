@@ -22,7 +22,6 @@ import {
 import axios from 'axios'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
@@ -72,7 +71,6 @@ const OrderRequestRefundModal: React.VFC<{
   totalPrice: number
   onRefetch?: () => void
 }> = ({ orderId, orderProducts, orderDiscounts, totalPrice, onRefetch }) => {
-  const { settings } = useApp()
   const theme = useAppTheme()
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -167,18 +165,16 @@ const OrderRequestRefundModal: React.VFC<{
 
   return (
     <>
-      {settings['order.apply_refund.enabled'] === 'true' && (
-        <Button
-          onClick={onOpen}
-          variant="outline"
-          _hover={{
-            color: theme.colors.primary[500],
-            borderColor: theme.colors.primary[500],
-          }}
-        >
-          {formatMessage(messages.requestRefund)}
-        </Button>
-      )}
+      <Button
+        onClick={onOpen}
+        variant="outline"
+        _hover={{
+          color: theme.colors.primary[500],
+          borderColor: theme.colors.primary[500],
+        }}
+      >
+        {formatMessage(messages.requestRefund)}
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
