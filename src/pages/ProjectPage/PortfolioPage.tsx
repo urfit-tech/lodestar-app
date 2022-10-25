@@ -252,7 +252,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
             </Box>
           </Box>
 
-          {portfolio.projectTags.length === 0 ? null : (
+          {portfolio.relatedProjects.length === 0 ? null : (
             <Box bg="#f7f8f8">
               <Box className="container">
                 <Box className="row justify-content-center">
@@ -261,37 +261,35 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                       {formatMessage(pageMessages.PortfolioPage.relatedPortfolios)}
                     </Box>
                     <Flex>
-                      {portfolio.relatedProjects
-                        .filter(relatedProject => relatedProject.id !== id)
-                        .map((relatedProject, index) => (
-                          <Box w="calc( (100% - 3rem) / 3)" mr={index === 2 ? '0' : '1rem'}>
-                            <Link to={`/projects/${relatedProject.id}`}>
+                      {portfolio.relatedProjects.map((relatedProject, index) => (
+                        <Box w="calc( (100% - 3rem) / 3)" mr={index === 2 ? '0' : '1rem'}>
+                          <Link to={`/projects/${relatedProject.id}`}>
+                            <Image
+                              src={relatedProject.previewUrl || EmptyCover}
+                              mb="0.75rem"
+                              h="calc(100% * 2/3)"
+                              objectFit="cover"
+                            />
+                            <Box key={index} mb="1rem" noOfLines={2}>
+                              {relatedProject.title}
+                            </Box>
+                            <Flex alignItems="center">
                               <Image
-                                src={relatedProject.previewUrl || EmptyCover}
-                                mb="0.75rem"
-                                h="calc(100% * 2/3)"
+                                src={relatedProject.creator.pictureUrl || EmptyAvatar}
+                                alt={relatedProject.creator.name}
+                                w="1.5rem"
+                                h="1.5rem"
+                                borderRadius="50%"
+                                mr="0.5rem"
                                 objectFit="cover"
                               />
-                              <Box key={index} mb="1rem" noOfLines={2}>
-                                {relatedProject.title}
+                              <Box fontSize="14px" color="var(--gray-dark)" letterSpacing="0.4px">
+                                {relatedProject.creator.name}
                               </Box>
-                              <Flex alignItems="center">
-                                <Image
-                                  src={relatedProject.creator.pictureUrl || EmptyAvatar}
-                                  alt={relatedProject.creator.name}
-                                  w="1.5rem"
-                                  h="1.5rem"
-                                  borderRadius="50%"
-                                  mr="0.5rem"
-                                  objectFit="cover"
-                                />
-                                <Box fontSize="14px" color="var(--gray-dark)" letterSpacing="0.4px">
-                                  {relatedProject.creator.name}
-                                </Box>
-                              </Flex>
-                            </Link>
-                          </Box>
-                        ))}
+                            </Flex>
+                          </Link>
+                        </Box>
+                      ))}
                     </Flex>
                   </Box>
                 </Box>
@@ -323,7 +321,11 @@ const useProjectPortfolio = (projectId: string) => {
             name
             picture_url
           }
-          project_tags(where: { project: { type: { _eq: "portfolio" } } }, order_by: { position: asc }, limit: 3) {
+          project_tags(
+            where: { tag: { project_tags: { project: { type: { _eq: "portfolio" } } } } }
+            order_by: { position: asc }
+            limit: 3
+          ) {
             id
             tag_name
             tag {
@@ -331,6 +333,7 @@ const useProjectPortfolio = (projectId: string) => {
               project_tags {
                 project {
                   id
+                  type
                   title
                   cover_url
                   preview_url
@@ -407,20 +410,23 @@ const useProjectPortfolio = (projectId: string) => {
       flatten(
         data?.project_by_pk?.project_tags.map(
           v =>
-            v.tag?.project_tags.map(w => ({
-              id: w.project?.id || '',
-              title: w.project?.title || '',
-              previewUrl: w.project?.preview_url || null,
-              creator: {
-                id: w.project?.creator?.id || '',
-                name: w.project?.creator?.name || '',
-                pictureUrl: w.project?.creator?.picture_url || null,
-              },
-            })) || [],
+            v.tag?.project_tags
+              .filter(w => w.project?.type === 'portfolio' && w.project.id !== projectId)
+              .map(x => ({
+                id: x.project?.id || '',
+                title: x.project?.title || '',
+                previewUrl: x.project?.preview_url || null,
+                creator: {
+                  id: x.project?.creator?.id || '',
+                  name: x.project?.creator?.name || '',
+                  pictureUrl: x.project?.creator?.picture_url || null,
+                },
+              })) || [],
         ) || [],
       ),
     ),
   }
+
   return {
     loading,
     error,

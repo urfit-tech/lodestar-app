@@ -11391,6 +11391,10 @@ export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_ta
 export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_tags_project {
   __typename: "project";
   id: any;
+  /**
+   * funding / pre-order / on-sale / modular / portfolio
+   */
+  type: string;
   title: string;
   cover_url: string | null;
   preview_url: string | null;
@@ -13779,6 +13783,7 @@ export enum member_update_column {
   facebook_user_id = "facebook_user_id",
   google_user_id = "google_user_id",
   id = "id",
+  last_member_note_created = "last_member_note_created",
   line_user_id = "line_user_id",
   logined_at = "logined_at",
   manager_id = "manager_id",
@@ -15913,6 +15918,7 @@ export interface activity_bool_exp {
   _not?: activity_bool_exp | null;
   _or?: activity_bool_exp[] | null;
   activity_categories?: activity_category_bool_exp | null;
+  activity_during_period?: activity_during_period_bool_exp | null;
   activity_enrollments?: activity_enrollment_bool_exp | null;
   activity_sessions?: activity_session_bool_exp | null;
   activity_tags?: activity_tag_bool_exp | null;
@@ -15982,6 +15988,36 @@ export interface activity_category_on_conflict {
 }
 
 /**
+ * Boolean expression to filter rows from the table "activity_during_period". All fields are combined with a logical 'AND'.
+ */
+export interface activity_during_period_bool_exp {
+  _and?: activity_during_period_bool_exp[] | null;
+  _not?: activity_during_period_bool_exp | null;
+  _or?: activity_during_period_bool_exp[] | null;
+  activity?: activity_bool_exp | null;
+  activity_id?: uuid_comparison_exp | null;
+  ended_at?: timestamptz_comparison_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "activity_during_period"
+ */
+export interface activity_during_period_insert_input {
+  activity?: activity_obj_rel_insert_input | null;
+  activity_id?: any | null;
+  ended_at?: any | null;
+  started_at?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "activity_during_period"
+ */
+export interface activity_during_period_obj_rel_insert_input {
+  data: activity_during_period_insert_input;
+}
+
+/**
  * input type for inserting array relation for remote table "activity_enrollment"
  */
 export interface activity_enrollment_arr_rel_insert_input {
@@ -16030,6 +16066,7 @@ export interface activity_enrollment_insert_input {
  */
 export interface activity_insert_input {
   activity_categories?: activity_category_arr_rel_insert_input | null;
+  activity_during_period?: activity_during_period_obj_rel_insert_input | null;
   activity_enrollments?: activity_enrollment_arr_rel_insert_input | null;
   activity_sessions?: activity_session_arr_rel_insert_input | null;
   activity_tags?: activity_tag_arr_rel_insert_input | null;
@@ -19016,6 +19053,7 @@ export interface member_bool_exp {
   issue_replies?: issue_reply_bool_exp | null;
   issue_reply_reactions?: issue_reply_reaction_bool_exp | null;
   issues?: issue_bool_exp | null;
+  last_member_note_created?: timestamptz_comparison_exp | null;
   line_user_id?: String_comparison_exp | null;
   logined_at?: timestamptz_comparison_exp | null;
   manager?: member_bool_exp | null;
@@ -19273,6 +19311,7 @@ export interface member_insert_input {
   issue_replies?: issue_reply_arr_rel_insert_input | null;
   issue_reply_reactions?: issue_reply_reaction_arr_rel_insert_input | null;
   issues?: issue_arr_rel_insert_input | null;
+  last_member_note_created?: any | null;
   line_user_id?: string | null;
   logined_at?: any | null;
   manager?: member_obj_rel_insert_input | null;
