@@ -83,9 +83,9 @@ const pageMessages = {
       id: 'page.PortfolioPage.participant',
       defaultMessage: 'participant',
     },
-    relatedCategories: {
-      id: 'page.PortfolioPage.relatedCategory',
-      defaultMessage: 'Related Categories',
+    relatedPortfolios: {
+      id: 'page.PortfolioPage.relatedPortfolios',
+      defaultMessage: 'Related Portfolios',
     },
   }),
 }

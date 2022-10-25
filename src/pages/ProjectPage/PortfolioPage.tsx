@@ -258,7 +258,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                 <Box className="row justify-content-center">
                   <Box className="col-12 col-lg-9" my="4rem">
                     <Box mb="1rem" fontSize="18px" color="var(--gray-darker)" letterSpacing="0.8px" fontWeight="bold">
-                      {formatMessage(pageMessages.PortfolioPage.relatedCategories)}
+                      {formatMessage(pageMessages.PortfolioPage.relatedPortfolios)}
                     </Box>
                     <Flex>
                       {portfolio.relatedProjects
