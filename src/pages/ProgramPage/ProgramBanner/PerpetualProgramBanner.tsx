@@ -135,17 +135,15 @@ const PerpetualProgramBanner: React.VFC<{
 
   return (
     <div>
-      {!program.coverVideoUrl && (
-        <React.Fragment>
-          <div id="program-banner">
-            <FullSizeBanner
-              coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
-            />
-          </div>
-          <CWLPageNavButtons mainBlock="program-banner" navButtons={navButtons} />
-          <CWLBreadcrumb program={program} />
-        </React.Fragment>
-      )}
+      <div className={!program.coverVideoUrl ? 'ab-test-program-page-nav-hide' : ''}>
+        <div id="program-banner">
+          <FullSizeBanner
+            coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
+          />
+        </div>
+        <CWLPageNavButtons mainBlock="program-banner" navButtons={navButtons} />
+        <CWLBreadcrumb program={program} />
+      </div>
 
       <div className="container">
         <StyledTitleBlock>
@@ -206,7 +204,9 @@ const PerpetualProgramBanner: React.VFC<{
             </StyledVideoWrapper>
           </div>
           <CWLPageNavButtons mainBlock="program-info-video" navButtons={navButtons} />
-          <CWLBreadcrumb program={program} />
+          <div className="ab-test-program-page-nav-block" style={{ display: 'none' }}>
+            <CWLBreadcrumb program={program} />
+          </div>
         </StyledVideoBlock>
       )}
     </div>
