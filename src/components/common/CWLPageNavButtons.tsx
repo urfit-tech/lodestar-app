@@ -64,24 +64,26 @@ const CWLPageNavButtons: React.VFC<{
   let currentTop = 0
 
   const setPageNavFixed = () => {
-    const pageNav = document.querySelector('.pageNavButtonsContainer')
-    const pageNavBlockTop = pageNav?.getBoundingClientRect().top
-    const fixBlock = document.querySelector(`#${mainBlock}`)?.getBoundingClientRect()
-    if (currentTop && fixBlock && currentTop < fixBlock.top) {
-      setIsPageNavMobileHide(true)
-    }
-    if (currentTop && fixBlock && currentTop > fixBlock.top) {
-      setIsPageNavMobileHide(false)
-    }
-    if (pageNavBlockTop && pageNavBlockTop <= 65) {
-      setIsPageNavFixed(true)
-    }
-    if (fixBlock && fixBlock.top + fixBlock.height >= 65) {
-      setIsPageNavFixed(false)
-    }
-    if (fixBlock) {
-      currentTop = fixBlock.top
-    }
+    const pageNav = document.querySelectorAll('.pageNavButtonsContainer')
+    Array.from(pageNav).map(navBlock => {
+      const pageNavBlockTop = navBlock?.getBoundingClientRect().top
+      const fixBlock = document.querySelector(`#${mainBlock}`)?.getBoundingClientRect()
+      if (currentTop && fixBlock && currentTop < fixBlock.top) {
+        setIsPageNavMobileHide(true)
+      }
+      if (currentTop && fixBlock && currentTop > fixBlock.top) {
+        setIsPageNavMobileHide(false)
+      }
+      if (pageNavBlockTop && pageNavBlockTop <= 65) {
+        setIsPageNavFixed(true)
+      }
+      if (fixBlock && fixBlock.top + fixBlock.height >= 65) {
+        setIsPageNavFixed(false)
+      }
+      if (fixBlock) {
+        currentTop = fixBlock.top
+      }
+    })
   }
 
   const onNavButtonClick = (element: any) => {
