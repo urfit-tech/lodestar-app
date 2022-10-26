@@ -69,10 +69,10 @@ const CWLPageNavButtons: React.VFC<{
       const pageNavBlockTop = navBlock?.getBoundingClientRect().top
       const fixBlock = document.querySelector(`#${mainBlock}`)?.getBoundingClientRect()
       if (currentTop && fixBlock && currentTop < fixBlock.top) {
-        setIsPageNavMobileHide(true)
+        setIsPageNavMobileHide(false)
       }
       if (currentTop && fixBlock && currentTop > fixBlock.top) {
-        setIsPageNavMobileHide(false)
+        setIsPageNavMobileHide(true)
       }
       if (pageNavBlockTop && pageNavBlockTop <= 65) {
         setIsPageNavFixed(true)
