@@ -255,6 +255,7 @@ const CWLPageNavButtons: React.VFC<{
             transform: isPageNavMobileHide ? 'translateY(200%)' : 'translateY(0%)',
             zIndex: '1000',
           }}
+          className="pageNavButtonsContainer"
         >
           <PageNav style={{ whiteSpace: 'nowrap' }}>
             {navButtons.map(item => {
