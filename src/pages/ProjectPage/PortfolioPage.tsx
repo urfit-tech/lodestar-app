@@ -3,7 +3,6 @@ import { Box, Divider, Flex, Icon, Image, Spacer } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { gql } from 'graphql-tag'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
-import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { flatten, groupBy, prop, uniqBy } from 'ramda'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -56,7 +55,6 @@ type Portfolio = DeepPick<
 }
 
 const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
-  const theme = useAppTheme()
   const { formatMessage } = useIntl()
   const [isLiked, setIsLiked] = useState(false)
   const { loading, portfolio, error, refetch } = useProjectPortfolio(id)
