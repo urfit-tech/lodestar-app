@@ -149,8 +149,9 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
 const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
+  const query = new URLSearchParams(window.location.search)
+  const programContentId = query.get('programContentId')
   const [returnTo] = useQueryParam('returnTo', StringParam)
-  const [programContentId] = useQueryParam('programContentId', StringParam)
 
   if (loading) {
     return <Spinner />

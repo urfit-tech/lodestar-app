@@ -191,7 +191,7 @@ const ShippingInput: React.VFC<{
         </GiftPlanDeliverNoticeBlock>
       )}
 
-      {shippingMethods && (
+      {shippingMethods && !isOutsideTaiwanIsland && (
         <Form.Item required label={formatMessage(checkoutMessages.shipping.shippingMethod)}>
           <Radio.Group
             value={value?.shippingMethod || 'home-delivery'}
@@ -233,7 +233,9 @@ const ShippingInput: React.VFC<{
           <Form.Item
             required={!isOutsideTaiwanIsland}
             label={formatMessage(checkoutMessages.form.label.receiverName)}
-            validateStatus={isValidating && nameRef.current?.input.value === '' ? 'error' : undefined}
+            validateStatus={
+              !isOutsideTaiwanIsland && isValidating && nameRef.current?.input.value === '' ? 'error' : undefined
+            }
           >
             <Input
               ref={nameRef}
@@ -250,7 +252,9 @@ const ShippingInput: React.VFC<{
           <Form.Item
             required={!isOutsideTaiwanIsland}
             label={formatMessage(checkoutMessages.form.label.receiverPhone)}
-            validateStatus={isValidating && phoneRef.current?.input.value === '' ? 'error' : undefined}
+            validateStatus={
+              !isOutsideTaiwanIsland && isValidating && phoneRef.current?.input.value === '' ? 'error' : undefined
+            }
           >
             <Input
               ref={phoneRef}
@@ -269,7 +273,9 @@ const ShippingInput: React.VFC<{
         <Form.Item
           required={!isOutsideTaiwanIsland}
           label={formatMessage(checkoutMessages.form.label.receiverAddress)}
-          validateStatus={isValidating && addressRef.current?.input.value === '' ? 'error' : undefined}
+          validateStatus={
+            !isOutsideTaiwanIsland && isValidating && addressRef.current?.input.value === '' ? 'error' : undefined
+          }
         >
           <div className="row">
             <div className="col-12 col-lg-2">
@@ -363,7 +369,9 @@ const ShippingInput: React.VFC<{
         <Form.Item
           required
           label={formatMessage(checkoutMessages.form.label.receiverAddress)}
-          validateStatus={isValidating && addressRef.current?.input.value === '' ? 'error' : undefined}
+          validateStatus={
+            !isOutsideTaiwanIsland && isValidating && addressRef.current?.input.value === '' ? 'error' : undefined
+          }
         >
           <Input
             ref={addressRef}
