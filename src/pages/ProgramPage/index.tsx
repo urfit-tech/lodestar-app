@@ -81,7 +81,7 @@ const ProgramPage: React.VFC = () => {
   const { programId } = useParams<{ programId: string }>()
   const { pathname } = useLocation()
   const { currentMemberId } = useAuth()
-  const { id: appId, settings, enabledModules } = useApp()
+  const { id: appId, settings, enabledModules, loading: loadingApp } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
   const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program } = useProgram(programId)
@@ -147,7 +147,7 @@ const ProgramPage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
-      <ProgramPageHelmet program={program} onLoaded={() => setMetaLoaded(true)} />
+      {!loadingApp && <ProgramPageHelmet program={program} onLoaded={() => setMetaLoaded(true)} />}
       {resourceCollection[0] && metaLoaded && <Tracking.Detail resource={resourceCollection[0]} />}
 
       <div>

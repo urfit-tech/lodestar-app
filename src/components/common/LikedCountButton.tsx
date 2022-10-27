@@ -3,10 +3,11 @@ import styled, { css } from 'styled-components'
 import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 
-const StyledIconButton = styled(IconButton)<{ isActive?: boolean }>`
+const StyledIconButton = styled(IconButton)<{ isActive?: boolean; defaultColor?: string }>`
   &&& {
     border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray)')};
-    color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-dark)')};
+    color: ${props =>
+      props.isActive ? props.theme['@primary-color'] : props.defaultColor ? props.defaultColor : 'var(--gray)'};
     border-radius: 50%;
     background: white;
   }
@@ -27,16 +28,18 @@ const StyledLikedCount = styled.span<{ isActive?: boolean }>`
     `}
 `
 
-const LikedCountButton: React.VFC<{ onClick: () => void; isLiked: boolean; count: number }> = ({
+const LikedCountButton: React.VFC<{ onClick: () => void; isLiked: boolean; count: number; defaultColor?: string }> = ({
   onClick,
   isLiked,
   count,
+  defaultColor,
 }) => {
   return (
     <div onClick={onClick}>
       <StyledIconButton
         variant="ghost"
         isActive={isLiked}
+        defaultColor={defaultColor}
         icon={<StyledIcon as={isLiked ? HeartFillIcon : HeartIcon} />}
         className="mr-2"
       />

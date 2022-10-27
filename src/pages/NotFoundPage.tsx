@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button } from '@chakra-ui/react'
+import { Button, Stack } from '@chakra-ui/react'
 import { Icon as AntdIcon } from 'antd'
 import React from 'react'
 import { Helmet } from 'react-helmet'
@@ -8,6 +8,7 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import { CenteredBox } from '../components/layout/DefaultLayout/DefaultLayout.styled'
 import { commonMessages } from '../helpers/translation'
 import { ReactComponent as routeErrorIcon } from '../images/404.svg'
 import { ReactComponent as error2Icon } from '../images/error-2.svg'
@@ -61,6 +62,7 @@ const NotFoundPage: React.VFC<{
   const { formatMessage } = useIntl()
   let history = useHistory()
   const [errorCode] = useQueryParam('code', StringParam)
+  const [period] = useQueryParam('period', StringParam)
 
   const isPaymentGatewayError: boolean = errorCode === 'E_PAYMENT_GATEWAY'
 
@@ -75,8 +77,8 @@ const NotFoundPage: React.VFC<{
           history.goBack()
         }
 
-  return (
-    <DefaultLayout centeredBox>
+  const content = (
+    <>
       <Helmet>
         <meta name="robots" content="noindex" />
       </Helmet>
@@ -119,9 +121,12 @@ const NotFoundPage: React.VFC<{
             formatMessage(
               variant === 'error'
                 ? commonMessages.content.errorDescription
+                : variant === 'repairing' && period
+                ? commonMessages.content.repairingDescriptionWithPeriod
                 : variant === 'repairing'
                 ? commonMessages.content.repairingDescription
                 : commonMessages.content.routeErrorDescription,
+              { period, br: <br /> },
             )
           )}
         </StyledDescription>
@@ -137,7 +142,14 @@ const NotFoundPage: React.VFC<{
           )
         )}
       </StyledWrapper>
-    </DefaultLayout>
+    </>
+  )
+  return variant === 'repairing' ? (
+    <Stack justifyContent="center" alignItems="center" height="100vh" backgroundColor="#f7f8f8">
+      <CenteredBox>{content}</CenteredBox>
+    </Stack>
+  ) : (
+    <DefaultLayout centeredBox>{content}</DefaultLayout>
   )
 }
 
