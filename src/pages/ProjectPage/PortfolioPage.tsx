@@ -109,48 +109,32 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
             <Box className="row justify-content-center">
               <Box className="col-12 col-lg-9">
                 <Flex mb="3rem" alignItems="center">
-                  <Flex>
-                    <Image
-                      src={portfolio.creator?.pictureUrl || EmptyAvatar}
-                      alt={portfolio.creator?.name}
-                      boxSize="3rem"
-                      borderRadius="1.5rem"
-                      backgroundColor="#ccc"
-                      objectFit="cover"
-                    />
+                  <Image
+                    src={portfolio.creator?.pictureUrl || EmptyAvatar}
+                    alt={portfolio.creator?.name}
+                    boxSize="3rem"
+                    borderRadius="1.5rem"
+                    backgroundColor="#ccc"
+                    objectFit="cover"
+                  />
 
-                    <Box ml="0.75rem">
-                      <Box>{portfolio.title}</Box>
-                      <Flex color="var(--gray-dark)" fontSize="14px" letterSpacing="0.4px">
-                        <Flex alignItems="center" mr="0.75rem">
-                          <Icon as={UserOIcon} mr="0.25rem" />
-                          <Box>{portfolio.creator?.name}</Box>
-                        </Flex>
-                        <Flex alignItems="center" mr="0.75rem">
-                          <Icon as={CalendarOIcon} mr="0.25rem" />
-                          <Box>{dayjs(portfolio.createdAt).format('YYYY-MM-DD')}</Box>
-                        </Flex>
-                        <Flex alignItems="center" mr="0.75rem">
-                          <Icon as={EyeIcon} mr="0.25rem" />
-                          <Box>{portfolio.views}</Box>
-                        </Flex>
+                  <Box ml="0.75rem">
+                    <Box>{portfolio.title}</Box>
+                    <Flex color="var(--gray-dark)" fontSize="14px" letterSpacing="0.4px">
+                      <Flex alignItems="center" mr="0.75rem">
+                        <Icon as={UserOIcon} mr="0.25rem" />
+                        <Box>{portfolio.creator?.name}</Box>
                       </Flex>
-                    </Box>
-                  </Flex>
-
-                  <Spacer />
-
-                  <Flex>
-                    {/* TODO: apply tag */}
-                    {/* <ApplyTagButton /> */}
-                    <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
-                    <LikesCountButton
-                      onClick={handleLikeStatus}
-                      count={portfolio.projectReactions.length}
-                      isLiked={isLiked}
-                      defaultColor={theme.colors.primary[500]}
-                    />
-                  </Flex>
+                      <Flex alignItems="center" mr="0.75rem">
+                        <Icon as={CalendarOIcon} mr="0.25rem" />
+                        <Box>{dayjs(portfolio.createdAt).format('YYYY-MM-DD')}</Box>
+                      </Flex>
+                      <Flex alignItems="center" mr="0.75rem">
+                        <Icon as={EyeIcon} mr="0.25rem" />
+                        <Box>{portfolio.views}</Box>
+                      </Flex>
+                    </Flex>
+                  </Box>
                 </Flex>
 
                 <Box mb="2.5rem">
@@ -172,12 +156,11 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                   <Flex>
                     {/* TODO: apply tag */}
                     {/* <ApplyTagButton /> */}
-                    <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
+                    <SocialSharePopover url={window.location.href} />
                     <LikesCountButton
                       onClick={handleLikeStatus}
                       count={portfolio.projectReactions.length}
                       isLiked={isLiked}
-                      defaultColor={theme.colors.primary[500]}
                     />
                   </Flex>
                 </Flex>
@@ -322,7 +305,9 @@ const useProjectPortfolio = (projectId: string) => {
             picture_url
           }
           project_tags(
-            where: { tag: { project_tags: { project: { type: { _eq: "portfolio" } } } } }
+            where: {
+              tag: { project_tags: { project: { type: { _eq: "portfolio" }, published_at: { _lt: "now()" } } } }
+            }
             order_by: { position: asc }
             limit: 3
           ) {
@@ -334,6 +319,7 @@ const useProjectPortfolio = (projectId: string) => {
                 project {
                   id
                   type
+                  published_at
                   title
                   cover_url
                   preview_url
@@ -411,7 +397,13 @@ const useProjectPortfolio = (projectId: string) => {
         data?.project_by_pk?.project_tags.map(
           v =>
             v.tag?.project_tags
-              .filter(w => w.project?.type === 'portfolio' && w.project.id !== projectId)
+              .filter(
+                w =>
+                  w.project?.type === 'portfolio' &&
+                  w.project.published_at &&
+                  new Date(w.project.published_at).getTime() < Date.now() &&
+                  w.project.id !== projectId,
+              )
               .map(x => ({
                 id: x.project?.id || '',
                 title: x.project?.title || '',
