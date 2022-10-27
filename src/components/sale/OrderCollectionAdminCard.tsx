@@ -261,7 +261,7 @@ const OrderCollectionAdminCard: React.VFC<
               {formatMessage(commonMessages.ui.repay)}
             </Button>
           )}
-          {settings['order.refund.enabled'] === '1' && record.status === 'SUCCESS' && (
+          {settings['order.apply_refund.enabled'] === '1' && record.status === 'SUCCESS' && (
             <OrderRequestRefundModal
               orderId={record.id}
               orderProducts={record.orderProducts}
