@@ -85,10 +85,10 @@ const usePageDefaultMetaValues = (craftData?: { [key: string]: any } | null) => 
   if (craftData) {
     craftData?.ROOT?.nodes?.forEach((node: string) => {
       if (!defaultImg && craftData && craftData[node].type.resolvedName === 'CraftImage') {
-        defaultImg = craftData[node].props.customStyle.backgroundImage.match(/\(([^)]+)\)/, '')[1]
+        defaultImg = craftData[node]?.props?.customStyle?.backgroundImage?.match(/\(([^)]+)\)/, '')[1]
       }
       if (!defaultDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
-        defaultDescription = craftData[node].props.content.substr(0, 150)
+        defaultDescription = craftData[node]?.props?.content?.substr(0, 150)
       }
     })
   }
