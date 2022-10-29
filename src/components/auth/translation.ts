@@ -62,6 +62,10 @@ const authMessages = {
       id: 'auth.LoginSection.cancelLogin',
       defaultMessage: '取消',
     },
+    loginSuccess: {
+      id: 'auth.LoginSection.loginSuccess',
+      defaultMessage: '登入成功',
+    },
   }),
 }
 
