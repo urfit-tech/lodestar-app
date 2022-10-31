@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet'
 import { Thing, WithContext } from 'schema-dts'
 import xss from 'xss'
 import LocaleContext from '../../contexts/LocaleContext'
-import { getBraftContent } from '../../helpers'
+import { getBraftContent, getOgLocale } from '../../helpers'
 
 const PageHelmet: React.FC<
   Partial<{
@@ -18,23 +18,7 @@ const PageHelmet: React.FC<
 > = props => {
   const app = useApp()
   const { currentLocale } = useContext(LocaleContext)
-  let formattedCurrentLocale = 'zh_TW'
-  switch (currentLocale) {
-    case 'en-us':
-      formattedCurrentLocale = 'en_US'
-      break
-    case 'id':
-      formattedCurrentLocale = 'id_ID'
-      break
-    case 'vi':
-      formattedCurrentLocale = 'vi_VN'
-      break
-    case 'zh-cn':
-      formattedCurrentLocale = 'zh_CN'
-      break
-    default:
-      break
-  }
+  const ogLocale = getOgLocale(currentLocale)
 
   const openGraph = props.openGraph || [
     { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
@@ -43,7 +27,9 @@ const PageHelmet: React.FC<
     { property: 'og:title', content: app.settings['open_graph.title'] || app.settings['title'] },
     { property: 'og:description', content: app.settings['open_graph.description'] || app.settings['description'] },
     { property: 'og:image', content: app.settings['open_graph.image'] || app.settings['logo'] },
-    { property: 'og:locale', content: formattedCurrentLocale },
+    { property: 'og:image:width', content: '1200' },
+    { property: 'og:image:height', content: '630' },
+    { property: 'og:locale', content: ogLocale },
   ]
 
   useEffect(() => {

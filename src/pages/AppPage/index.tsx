@@ -40,6 +40,7 @@ import {
 import HaohaomingSection from '../../components/page/HaohaomingSection'
 import LocaleContext from '../../contexts/LocaleContext'
 import hasura from '../../hasura'
+import { getBraftContent, getOgLocale } from '../../helpers'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { MetaTag } from '../../types/general'
 import LoadingPage from '../LoadingPage'
@@ -120,23 +121,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   const { currentLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPage, appPage } = usePage(location.pathname)
-  let formattedCurrentLocale = 'zh_TW'
-  switch (currentLocale) {
-    case 'en-us':
-      formattedCurrentLocale = 'en_US'
-      break
-    case 'id':
-      formattedCurrentLocale = 'id_ID'
-      break
-    case 'vi':
-      formattedCurrentLocale = 'vi_VN'
-      break
-    case 'zh-cn':
-      formattedCurrentLocale = 'zh_CN'
-      break
-    default:
-      break
-  }
+  const ogLocale = getOgLocale(currentLocale)
 
   const [utmQuery] = useQueryParams({
     utm_id: StringParam,
@@ -183,11 +168,12 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
               },
               {
                 property: 'og:description',
-                content:
+                content: getBraftContent(
                   appPage?.metaTag?.openGraph?.description ||
-                  appPage.defaultSettings.description ||
-                  settings['open_graph.description'] ||
-                  settings['description'],
+                    appPage.defaultSettings.description ||
+                    settings['open_graph.description'] ||
+                    settings['description'],
+                )?.slice(0, 150),
               },
               {
                 property: 'og:image',
@@ -197,8 +183,10 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
                   settings['open_graph.image'] ||
                   settings['logo'],
               },
+              { property: 'og:image:width', content: '1200' },
+              { property: 'og:image:height', content: '630' },
               { property: 'og:image:alt', content: appPage?.metaTag?.openGraph?.imageAlt || '' },
-              { property: 'og:locale', content: formattedCurrentLocale },
+              { property: 'og:locale', content: ogLocale },
             ]}
             onLoaded={() => setMetaLoaded(true)}
           />

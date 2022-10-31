@@ -1,10 +1,14 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useContext } from 'react'
 import PageHelmet from '../../components/common/PageHelmet'
-import { getBraftContent, getInfinityDate, notEmpty } from '../../helpers'
+import LocaleContext from '../../contexts/LocaleContext'
+import { getBraftContent, getInfinityDate, getOgLocale, notEmpty } from '../../helpers'
 import { Post } from '../../types/blog'
 
 const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
   const app = useApp()
+  const { currentLocale } = useContext(LocaleContext)
+  const ogLocale = getOgLocale(currentLocale)
   const nameSlices = post.author.name.split(' ')
   const lastName = nameSlices.pop() || ''
   const firstName = nameSlices.join(' ') || ''
@@ -12,12 +16,7 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
   return (
     <PageHelmet
       title={post.metaTag?.seo?.pageTitle || post.title}
-      description={
-        post.metaTag?.seo?.description?.slice(0, 150) ||
-        getBraftContent(post.description || '').slice(0, 150) ||
-        post.abstract?.slice(0, 150) ||
-        app.settings['description']
-      }
+      description={post.metaTag?.seo?.description || post.description || post.abstract || ''}
       keywords={post.metaTag?.seo?.keywords?.split(',') || post.tags}
       jsonLd={[
         {
@@ -57,17 +56,24 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
         { property: 'og:title', content: post.metaTag?.openGraph?.title || post.title || app.settings['title'] },
         {
           property: 'og:description',
-          content:
-            post.metaTag?.openGraph?.description?.slice(0, 150) ||
-            getBraftContent(post.description || '').slice(0, 150) ||
-            post.abstract?.slice(0, 150) ||
-            app.settings['description'],
+          content: getBraftContent(
+            post.metaTag?.openGraph?.description ||
+              post.description ||
+              post.abstract ||
+              app.settings['open_graph.description'] ||
+              app.settings['description'] ||
+              '{}',
+          )?.slice(0, 150),
         },
         {
           property: 'og:image',
-          content: post.metaTag?.openGraph?.image || post.coverUrl || app.settings['open_graph.image'],
+          content:
+            post.metaTag?.openGraph?.image || post.coverUrl || app.settings['open_graph.image'] || app.settings['logo'],
         },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
         { property: 'og:image:alt', content: post.metaTag?.openGraph?.imageAlt || '' },
+        { property: 'og:locale', content: ogLocale },
       ]}
     >
       <link rel="canonical" href={window.location.origin + `/posts/${post.id}`} />
