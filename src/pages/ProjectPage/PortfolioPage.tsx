@@ -135,9 +135,11 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                   </Box>
                 </Flex>
 
-                <Box mb="2.5rem">
-                  <BraftContent>{portfolio.description}</BraftContent>
-                </Box>
+                {portfolio.description ? (
+                  <Box mb="2.5rem">
+                    <BraftContent>{portfolio.description}</BraftContent>
+                  </Box>
+                ) : null}
 
                 <Flex mb="1.5rem">
                   <Flex alignItems="center" color="primary.500">
@@ -149,6 +151,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                       </Link>
                     ))}
                   </Flex>
+
                   <Spacer />
 
                   <Flex>
@@ -162,24 +165,24 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                     />
                   </Flex>
                 </Flex>
-
-                <Divider />
-
                 {portfolio.projectRoles.length === 0 ? null : (
-                  <Box mt="1.5rem">
-                    <Flex>
-                      <Box
-                        fontSize="18px"
-                        letterSpacing="0.8px"
-                        color="var(--gray-darker)"
-                        fontWeight="bold"
-                        mb="1.25rem"
-                      >
-                        {formatMessage(pageMessages.PortfolioPage.participant)}
-                      </Box>
-                      <Spacer />
+                  <>
+                    <Divider />
 
-                      {/*
+                    <Box mt="1.5rem">
+                      <Flex>
+                        <Box
+                          fontSize="18px"
+                          letterSpacing="0.8px"
+                          color="var(--gray-darker)"
+                          fontWeight="bold"
+                          mb="1.25rem"
+                        >
+                          {formatMessage(pageMessages.PortfolioPage.participant)}
+                        </Box>
+                        <Spacer />
+
+                        {/*
                         TODO: apply tag 
                         <Box>
                         <Icon as={TicketOIcon} color="primary.500" mr="0.5rem" />
@@ -187,47 +190,50 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                           申請標記
                         </Box>
                       </Box> */}
-                    </Flex>
-                    {Object.entries(groupBy(role => role.identity.id, portfolio.projectRoles)).map((roles, index) => (
-                      <Box key={index}>
-                        <Box mb="0.75rem" color="var(--gray-darker)" fontWeight="500">
-                          {roles?.[1]?.[0].identity.name}
-                        </Box>
-                        <Box mb="1.25rem">
-                          <Flex flexWrap="wrap">
-                            {roles?.[1].map((role, index) => (
-                              <Box
-                                key={index}
-                                display="inline-flex"
-                                py="0.25rem"
-                                pl="0.25rem"
-                                pr="1rem"
-                                alignItems="center"
-                                border="solid 1px #ececec"
-                                borderRadius="22px"
-                                mr="0.75rem"
-                              >
-                                <Image
-                                  src={role.member.pictureUrl || EmptyAvatar}
-                                  alt={role.member.name}
-                                  w="2.25rem"
-                                  h="2.25rem"
-                                  borderRadius="50%"
+                      </Flex>
+                      {Object.entries(groupBy(role => role.identity.id, portfolio.projectRoles)).map((roles, index) => (
+                        <Box key={index}>
+                          <Box mb="0.75rem" color="var(--gray-darker)" fontWeight="500">
+                            {roles?.[1]?.[0].identity.name}
+                          </Box>
+                          <Box mb="1.25rem">
+                            <Flex flexWrap="wrap">
+                              {roles?.[1].map((role, index) => (
+                                <Box
+                                  key={index}
+                                  display="inline-flex"
+                                  py="0.25rem"
+                                  pl="0.25rem"
+                                  pr="1rem"
+                                  alignItems="center"
+                                  border="solid 1px #ececec"
+                                  borderRadius="22px"
                                   mr="0.75rem"
-                                  objectFit="cover"
-                                />
-                                <Box color="var(--gray-darker)">{role.member.name}</Box>
-                              </Box>
-                            ))}
-                          </Flex>
+                                >
+                                  <Image
+                                    src={role.member.pictureUrl || EmptyAvatar}
+                                    alt={role.member.name}
+                                    w="2.25rem"
+                                    h="2.25rem"
+                                    borderRadius="50%"
+                                    mr="0.75rem"
+                                    objectFit="cover"
+                                  />
+                                  <Box color="var(--gray-darker)">{role.member.name}</Box>
+                                </Box>
+                              ))}
+                            </Flex>
+                          </Box>
                         </Box>
-                      </Box>
-                    ))}
-                  </Box>
+                      ))}
+                    </Box>
+                  </>
                 )}
 
-                <Box>
-                  <CreatorCard id={portfolio.creator?.id || ''} />
+                <Divider />
+
+                <Box pt="2.5rem" pb="5rem">
+                  <CreatorCard id={portfolio.creator?.id || ''} noPadding={true} />
                 </Box>
               </Box>
             </Box>
@@ -330,7 +336,7 @@ const useProjectPortfolio = (projectId: string) => {
               }
             }
           }
-          project_roles(order_by: { identity: { position: asc } }) {
+          project_roles(where: { identity: { name: { _neq: "author" } } }, order_by: { identity: { position: asc } }) {
             id
             member {
               id
