@@ -83,15 +83,17 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
   }
 
   return (
-    <DefaultLayout white>
+    <Box>
       {loading ? (
         <LoadingPage />
       ) : error ? (
-        <Flex justifyContent="center" alignItems="center" h="100%" w="100%">
-          {formatMessage(pageMessages.PortfolioPage.loadingPortfolioPageError)}
-        </Flex>
+        <DefaultLayout white>
+          <Flex justifyContent="center" alignItems="center" h="100%" w="100%">
+            {formatMessage(pageMessages.PortfolioPage.loadingPortfolioPageError)}
+          </Flex>
+        </DefaultLayout>
       ) : (
-        <>
+        <DefaultLayout white>
           <Box bg="#000" p="2.5rem" mb="2.5rem">
             <Box className="container">
               {portfolio.coverUrl && (
@@ -289,9 +291,9 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
               </Box>
             </Box>
           )}
-        </>
+        </DefaultLayout>
       )}
-    </DefaultLayout>
+    </Box>
   )
 }
 
