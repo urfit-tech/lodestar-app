@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
@@ -38,6 +38,7 @@ import {
   TeacherSection,
 } from '../../components/page'
 import HaohaomingSection from '../../components/page/HaohaomingSection'
+import LocaleContext from '../../contexts/LocaleContext'
 import hasura from '../../hasura'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { MetaTag } from '../../types/general'
@@ -116,8 +117,26 @@ const sectionConverter = {
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { settings } = useApp()
+  const { currentLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPage, appPage } = usePage(location.pathname)
+  let formattedCurrentLocale = 'zh_TW'
+  switch (currentLocale) {
+    case 'en-us':
+      formattedCurrentLocale = 'en_US'
+      break
+    case 'id':
+      formattedCurrentLocale = 'id_ID'
+      break
+    case 'vi':
+      formattedCurrentLocale = 'vi_VN'
+      break
+    case 'zh-cn':
+      formattedCurrentLocale = 'zh_CN'
+      break
+    default:
+      break
+  }
 
   const [utmQuery] = useQueryParams({
     utm_id: StringParam,
@@ -147,9 +166,40 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
       {appPage ? (
         <>
           <PageHelmet
-            title={appPage?.title || ''}
-            pageCraftData={appPage?.craftData}
-            pageMetaTag={appPage?.metaTag}
+            title={appPage?.metaTag?.seo?.pageTitle || appPage?.title || ''}
+            description={appPage?.metaTag?.seo?.description || appPage.defaultSettings.description || ''}
+            keywords={appPage?.metaTag?.seo?.keywords?.split(',')}
+            openGraph={[
+              { property: 'fb:app_id', content: settings['auth.facebook_app_id'] },
+              { property: 'og:type', content: 'website' },
+              { property: 'og:url', content: window.location.href },
+              {
+                property: 'og:title',
+                content:
+                  appPage?.metaTag?.openGraph?.title ||
+                  appPage?.title ||
+                  settings['open_graph.title'] ||
+                  settings['title'],
+              },
+              {
+                property: 'og:description',
+                content:
+                  appPage?.metaTag?.openGraph?.description ||
+                  appPage.defaultSettings.description ||
+                  settings['open_graph.description'] ||
+                  settings['description'],
+              },
+              {
+                property: 'og:image',
+                content:
+                  appPage?.metaTag?.openGraph?.image ||
+                  appPage.defaultSettings.img ||
+                  settings['open_graph.image'] ||
+                  settings['logo'],
+              },
+              { property: 'og:image:alt', content: appPage?.metaTag?.openGraph?.imageAlt || '' },
+              { property: 'og:locale', content: formattedCurrentLocale },
+            ]}
             onLoaded={() => setMetaLoaded(true)}
           />
           <DefaultLayout {...appPage.options}>
@@ -218,6 +268,20 @@ export const usePage = (path: string) => {
     },
   )
 
+  let defaultImg = '',
+    defaultDescription = ''
+  if (data?.app_page[0]?.craft_data) {
+    const craftData = data.app_page[0].craft_data
+    craftData?.ROOT?.nodes?.forEach((node: string) => {
+      if (!defaultImg && craftData && craftData[node].type.resolvedName === 'CraftImage') {
+        defaultImg = craftData[node]?.props?.customStyle?.backgroundImage?.match(/(?:\(['"]?)(.*?)(?:['"]?\))/, '')[1]
+      }
+      if (!defaultDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
+        defaultDescription = craftData[node]?.props?.content
+      }
+    })
+  }
+
   type AppPageSectionProps = {
     id: string
     options: any
@@ -232,6 +296,7 @@ export const usePage = (path: string) => {
     options: { [key: string]: string } | null
     metaTag: MetaTag | null
     appPageSections: AppPageSectionProps[]
+    defaultSettings: { img: string; description: string }
   } | null = data?.app_page[0]
     ? {
         id: data.app_page[0].id,
@@ -247,6 +312,10 @@ export const usePage = (path: string) => {
               type: v.type as SectionType,
             }))
           : [],
+        defaultSettings: {
+          img: defaultImg,
+          description: defaultDescription,
+        },
       }
     : null
   return {
