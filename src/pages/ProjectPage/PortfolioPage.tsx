@@ -247,15 +247,21 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                     <Box mb="1rem" fontSize="18px" color="var(--gray-darker)" letterSpacing="0.8px" fontWeight="bold">
                       {formatMessage(pageMessages.PortfolioPage.relatedPortfolios)}
                     </Box>
-                    <Flex>
+                    <Flex flexWrap="wrap">
                       {portfolio.relatedProjects.map((relatedProject, index) => (
-                        <Box w="calc( (100% - 3rem) / 3)" mr={index === 2 ? '0' : '1rem'}>
+                        <Box
+                          key={index}
+                          w={{ base: '100%', lg: 'calc( (100% - 3rem) / 3)' }}
+                          mr={{ base: 0, lg: index === 2 ? '0' : '1rem' }}
+                          mb={{ base: index === portfolio.relatedProjects.length - 1 ? '0' : '2.5rem', lg: 0 }}
+                        >
                           <Link to={`/projects/${relatedProject.id}`}>
                             <Image
                               src={relatedProject.previewUrl || EmptyCover}
                               mb="0.75rem"
-                              h="calc(100% * 2/3)"
+                              h={{ lg: 'calc(100% * 2/3)' }}
                               objectFit="cover"
+                              objectPosition="center"
                             />
                             <Box key={index} mb="1rem" noOfLines={2}>
                               {relatedProject.title}
