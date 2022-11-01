@@ -422,3 +422,24 @@ export const getInfinityDate = () => {
   const MAX_TIMESTAMP = 8640000000000000
   return new Date(MAX_TIMESTAMP)
 }
+
+export const getOgLocale = (currentLocale: string) => {
+  let formattedCurrentLocale = 'zh_TW'
+  switch (currentLocale) {
+    case 'en-us':
+      formattedCurrentLocale = 'en_US'
+      break
+    case 'id':
+      formattedCurrentLocale = 'id_ID'
+      break
+    case 'vi':
+      formattedCurrentLocale = 'vi_VN'
+      break
+    case 'zh-cn':
+      formattedCurrentLocale = 'zh_CN'
+      break
+    default:
+      break
+  }
+  return formattedCurrentLocale
+}
