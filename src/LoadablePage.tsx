@@ -10,11 +10,13 @@ import NotificationContext from './contexts/NotificationContext'
 const Refresh: React.VFC<{
   pageName: string
 }> = React.memo(({ pageName }) => {
-  const { refreshToken, currentMemberId } = useAuth()
+  const { refreshToken, authToken } = useAuth()
 
   useEffect(() => {
-    refreshToken?.()
-  }, [currentMemberId, pageName, refreshToken])
+    if (!authToken) {
+      refreshToken?.()
+    }
+  }, [pageName, authToken, refreshToken])
   return <></>
 }, equals)
 
