@@ -1951,6 +1951,13 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fingerprintjs/fingerprintjs@^3.3.6":
+  version "3.3.6"
+  resolved "https://registry.yarnpkg.com/@fingerprintjs/fingerprintjs/-/fingerprintjs-3.3.6.tgz#4c3f1726dc0cb10b915cfce78d9471b38cd809bd"
+  integrity sha512-Inh0OoFVzO2PLvrUF8RZhY9NVDdg9DJHQ5YlvXhrGtQxSPzy2smS3TWzLAi+zlHSJNHSvi+1zYayLen2lGxjdA==
+  dependencies:
+    tslib "^2.0.1"
+
 "@formatjs/ecma402-abstract@1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@formatjs/ecma402-abstract/-/ecma402-abstract-1.4.0.tgz#ac6c17a8fffac43c6d68c849a7b732626d32654c"
@@ -11002,9 +11009,9 @@ lodash.xorby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#v1.24.0:
+lodestar-app-element@urfit-tech/lodestar-app-element#v1.26.0:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/6b549fdda25e4ce85e42a414a2dfa4f0043f0552"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/77bb54e86493833d21ddf133ed15962eb8cebe02"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -11013,6 +11020,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#v1.24.0:
     "@craftjs/core" "0.1.0-beta.20"
     "@emotion/react" "11"
     "@emotion/styled" "11"
+    "@fingerprintjs/fingerprintjs" "^3.3.6"
     "@types/mustache" "4.0.1"
     "@types/node" "12.0.0"
     "@types/ramda" "0.27.45"

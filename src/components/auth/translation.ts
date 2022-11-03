@@ -45,6 +45,28 @@ const authMessages = {
     fetchError: { id: 'auth.RegisterSection.fetchError', defaultMessage: '讀取失敗' },
     registerFailed: { id: 'auth.RegisterSection.registerFailed', defaultMessage: '註冊失敗，請聯繫網站管理者' },
   }),
+  LoginSection: defineMessages({
+    loginAlertModalTitle: {
+      id: 'auth.LoginSection.loginAlertModalTitle',
+      defaultMessage: '帳號重複登入',
+    },
+    loginAlertModelDescription: {
+      id: 'auth.LoginSection.loginAlertModelDescription',
+      defaultMessage: '目前有其他裝置正在使用這組帳號，是否要將另一個裝置登出？',
+    },
+    forceLogout: {
+      id: 'auth.LoginSection.forceLogout',
+      defaultMessage: '強制登出',
+    },
+    cancelLogin: {
+      id: 'auth.LoginSection.cancelLogin',
+      defaultMessage: '取消',
+    },
+    loginSuccess: {
+      id: 'auth.LoginSection.loginSuccess',
+      defaultMessage: '登入成功',
+    },
+  }),
 }
 
 export default authMessages

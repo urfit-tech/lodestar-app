@@ -4,7 +4,8 @@ import { usePublicMember } from '../../hooks/member'
 
 const CreatorCard: React.VFC<{
   id: string
-}> = ({ id }) => {
+  noPadding?: boolean
+}> = ({ id, noPadding }) => {
   const { member } = usePublicMember(id)
 
   return (
@@ -19,6 +20,7 @@ const CreatorCard: React.VFC<{
       withPodcast
       withAppointment
       withBlog
+      noPadding
     />
   )
 }

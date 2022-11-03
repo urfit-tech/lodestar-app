@@ -11395,6 +11395,7 @@ export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_tags_tag_project_ta
    * funding / pre-order / on-sale / modular / portfolio
    */
   type: string;
+  published_at: any | null;
   title: string;
   cover_url: string | null;
   preview_url: string | null;
