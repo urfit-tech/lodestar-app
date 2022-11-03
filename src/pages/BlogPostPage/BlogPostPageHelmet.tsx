@@ -2,7 +2,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useContext } from 'react'
 import PageHelmet from '../../components/common/PageHelmet'
 import LocaleContext from '../../contexts/LocaleContext'
-import { getBraftContent, getOgLocale } from '../../helpers'
+import { getBraftContent, getInfinityDate, getOgLocale, notEmpty } from '../../helpers'
 import { Post } from '../../types/blog'
 
 const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
@@ -38,20 +38,20 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
       openGraph={[
         { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
         { property: 'og:type', content: 'article' },
-        // { property: 'article:published_time', content: post.publishedAt?.toISOString() || '' },
-        // { property: 'article:modified_time', content: post.updatedAt.toISOString() },
-        // { property: 'article:expiration_time', content: getInfinityDate().toISOString() },
-        // {
-        //   property: 'article:section',
-        //   content: post.categories
-        //     .map(category => category?.name)
-        //     .filter(notEmpty)
-        //     .join('|'),
-        // },
+        { property: 'article:published_time', content: post.publishedAt?.toISOString() || '' },
+        { property: 'article:modified_time', content: post.updatedAt.toISOString() },
+        { property: 'article:expiration_time', content: getInfinityDate().toISOString() },
+        {
+          property: 'article:section',
+          content: post.categories
+            .map(category => category?.name)
+            .filter(notEmpty)
+            .join('|'),
+        },
+        ...post.tags.map(tag => ({ property: 'article:tag', content: tag })),
         // { property: 'profile:first_name', content: firstName },
         // { property: 'profile:last_name', content: lastName },
         // { property: 'profile:username', content: post.author.username },
-        // ...post.tags.map(tag => ({ property: 'article:tag', content: tag })),
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: post.metaTag?.openGraph?.title || post.title || app.settings['title'] },
         {
