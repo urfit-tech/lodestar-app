@@ -1,4 +1,3 @@
-import dayjs from 'dayjs'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useContext } from 'react'
 import PageHelmet from '../../components/common/PageHelmet'
@@ -38,21 +37,8 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
       ]}
       openGraph={[
         { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
+        { property: 'og:site_name', content: app.settings['name'] },
         { property: 'og:type', content: 'article' },
-        { property: 'article:published_time', content: dayjs(post.publishedAt)?.format() || '' },
-        { property: 'article:modified_time', content: dayjs(post.updatedAt).format() },
-        { property: 'article:expiration_time', content: dayjs(getInfinityDate()).format() },
-        {
-          property: 'article:section',
-          content: post.categories
-            .map(category => category?.name)
-            .filter(notEmpty)
-            .join('|'),
-        },
-        ...post.tags.map(tag => ({ property: 'article:tag', content: tag })),
-        // { property: 'profile:first_name', content: firstName },
-        // { property: 'profile:last_name', content: lastName },
-        // { property: 'profile:username', content: post.author.username },
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: post.metaTag?.openGraph?.title || post.title || app.settings['title'] },
         {
@@ -66,6 +52,7 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
               '{}',
           )?.slice(0, 150),
         },
+        { property: 'og:locale', content: ogLocale },
         {
           property: 'og:image',
           content:
@@ -74,7 +61,17 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
         { property: 'og:image:alt', content: post.metaTag?.openGraph?.imageAlt || '' },
-        { property: 'og:locale', content: ogLocale },
+        { property: 'article:published_time', content: post.publishedAt?.toISOString() || '' },
+        { property: 'article:modified_time', content: post.updatedAt.toISOString() },
+        { property: 'article:expiration_time', content: getInfinityDate().toISOString() },
+        {
+          property: 'article:section',
+          content: post.categories
+            .map(category => category?.name)
+            .filter(notEmpty)
+            .join('|'),
+        },
+        ...post.tags.map(tag => ({ property: 'article:tag', content: tag })),
       ]}
     >
       <link rel="canonical" href={window.location.origin + `/posts/${post.id}`} />

@@ -22,14 +22,15 @@ const PageHelmet: React.FC<
 
   const openGraph = props.openGraph || [
     { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
+    { property: 'og:site_name', content: app.settings['name'] },
     { property: 'og:type', content: 'website' },
     { property: 'og:url', content: window.location.href },
     { property: 'og:title', content: app.settings['open_graph.title'] || app.settings['title'] },
     { property: 'og:description', content: app.settings['open_graph.description'] || app.settings['description'] },
+    { property: 'og:locale', content: ogLocale },
     { property: 'og:image', content: app.settings['open_graph.image'] || app.settings['logo'] },
     { property: 'og:image:width', content: '1200' },
     { property: 'og:image:height', content: '630' },
-    { property: 'og:locale', content: ogLocale },
   ]
 
   useEffect(() => {
