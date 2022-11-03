@@ -368,7 +368,7 @@ export const hasJsonStructure = (data: string) => {
   return true
 }
 
-export const getBraftContent = (data: string) => {
+export const getBraftContent = (data: string = '{}') => {
   if (hasJsonStructure(data)) {
     const json = JSON.parse(data)
     if (json.blocks) {
