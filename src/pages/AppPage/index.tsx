@@ -118,10 +118,10 @@ const sectionConverter = {
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { settings } = useApp()
-  const { currentLocale } = useContext(LocaleContext)
+  const { defaultLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPage, appPage } = usePage(location.pathname)
-  const ogLocale = getOgLocale(currentLocale)
+  const ogLocale = getOgLocale(defaultLocale)
 
   const [utmQuery] = useQueryParams({
     utm_id: StringParam,

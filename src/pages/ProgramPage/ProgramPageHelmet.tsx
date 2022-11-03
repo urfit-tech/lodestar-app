@@ -11,8 +11,8 @@ import { Program } from '../../types/program'
 const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentProps<typeof PageHelmet>, 'onLoaded'>> =
   ({ program, onLoaded }) => {
     const app = useApp()
-    const { currentLocale } = useContext(LocaleContext)
-    const ogLocale = getOgLocale(currentLocale)
+    const { defaultLocale } = useContext(LocaleContext)
+    const ogLocale = getOgLocale(defaultLocale)
     const programPlans = program.plans.map(plan =>
       plan.salePrice !== null && moment() <= moment(plan.endedAt) ? plan.salePrice : plan.listPrice,
     )

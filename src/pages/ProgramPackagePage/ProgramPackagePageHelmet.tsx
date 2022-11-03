@@ -10,8 +10,8 @@ import { ProgramPackage } from '../../types/programPackage'
 
 const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = ({ programPackage }) => {
   const app = useApp()
-  const { currentLocale } = useContext(LocaleContext)
-  const ogLocale = getOgLocale(currentLocale)
+  const { defaultLocale } = useContext(LocaleContext)
+  const ogLocale = getOgLocale(defaultLocale)
   const allPlanPrice = programPackage.plans.map(plan =>
     plan.salePrice !== null && moment() <= moment(plan.soldAt) ? plan.salePrice : plan.listPrice,
   )

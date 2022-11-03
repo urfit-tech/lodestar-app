@@ -17,8 +17,8 @@ const PageHelmet: React.FC<
   }>
 > = props => {
   const app = useApp()
-  const { currentLocale } = useContext(LocaleContext)
-  const ogLocale = getOgLocale(currentLocale)
+  const { defaultLocale } = useContext(LocaleContext)
+  const ogLocale = getOgLocale(defaultLocale)
 
   const openGraph = props.openGraph || [
     { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },

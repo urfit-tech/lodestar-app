@@ -16,10 +16,12 @@ export const SUPPORTED_LOCALES = [
   { locale: 'id', label: 'Indonesia' },
 ]
 type LocaleContextProps = {
+  defaultLocale: string
   currentLocale: string
   setCurrentLocale?: (language: string) => void
 }
 const defaultLocaleContextValue: LocaleContextProps = {
+  defaultLocale: '',
   currentLocale: 'zh-tw',
 }
 
@@ -28,6 +30,7 @@ export const LocaleContext = createContext<LocaleContextProps>(defaultLocaleCont
 export const LocaleProvider: React.FC = ({ children }) => {
   const { enabledModules, settings, id: appId } = useApp()
   const [currentLocale, setCurrentLocale] = useState(defaultLocaleContextValue.currentLocale)
+  const defaultLocale = settings['language'] || 'en-us'
 
   const { data } = useQuery<hasura.GET_APP_LANGUAGE, hasura.GET_APP_LANGUAGEVariables>(
     gql`
@@ -44,7 +47,7 @@ export const LocaleProvider: React.FC = ({ children }) => {
   const appLocaleMessages = data?.app_language.find(v => v.language === currentLocale)?.data || {}
 
   useEffect(() => {
-    let currentLocale = defaultLocaleContextValue.currentLocale || settings['language']
+    let currentLocale = defaultLocaleContextValue.currentLocale || defaultLocale
     const cachedLocale = localStorage.getItem('kolable.app.language')?.toLowerCase()
     if (
       cachedLocale &&
@@ -60,7 +63,7 @@ export const LocaleProvider: React.FC = ({ children }) => {
     }
 
     setCurrentLocale(currentLocale)
-  }, [enabledModules, settings])
+  }, [defaultLocale, enabledModules, settings])
 
   moment.locale(currentLocale)
   let localeMessages: { [key: string]: string } = defaultLocaleMessages
@@ -74,6 +77,7 @@ export const LocaleProvider: React.FC = ({ children }) => {
   return (
     <LocaleContext.Provider
       value={{
+        defaultLocale,
         currentLocale,
         setCurrentLocale: (newLocale: string) => {
           if (SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === newLocale)) {
