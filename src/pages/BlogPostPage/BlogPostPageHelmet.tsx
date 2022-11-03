@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useContext } from 'react'
 import PageHelmet from '../../components/common/PageHelmet'
@@ -38,9 +39,9 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
       openGraph={[
         { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
         { property: 'og:type', content: 'article' },
-        { property: 'article:published_time', content: post.publishedAt?.toISOString() || '' },
-        { property: 'article:modified_time', content: post.updatedAt.toISOString() },
-        { property: 'article:expiration_time', content: getInfinityDate().toISOString() },
+        { property: 'article:published_time', content: dayjs(post.publishedAt)?.format() || '' },
+        { property: 'article:modified_time', content: dayjs(post.updatedAt).format() },
+        { property: 'article:expiration_time', content: dayjs(getInfinityDate()).format() },
         {
           property: 'article:section',
           content: post.categories
