@@ -46,7 +46,7 @@ const LoginSection: React.VFC<{
   accountLinkToken?: string
   renderTitle?: () => React.ReactNode
 }> = ({ noGeneralLogin, onAuthStateChange, accountLinkToken, renderTitle }) => {
-  const { settings, enabledModules, id: appId } = useApp()
+  const { settings, id: appId } = useApp()
   const { formatMessage } = useIntl()
   const tracking = useTracking()
   const history = useHistory()
@@ -73,60 +73,33 @@ const LoginSection: React.VFC<{
       }
 
       setLoading(true)
-      // TODO: check device
-
-      if (enabledModules.login_restriction) {
-        checkDevice({ appId, account }).then(deviceStatus => {
-          console.log('device', deviceStatus)
-          if (deviceStatus === 'limited') {
+      login({
+        account: account.trim().toLowerCase(),
+        password: password,
+        accountLinkToken: accountLinkToken,
+      })
+        .then(() => {
+          tracking.login()
+          setVisible?.(false)
+          reset()
+          returnTo && history.push(returnTo)
+        })
+        .catch((error: AxiosError) => {
+          if (error.message === 'E_BIND_DEVICE') {
             setAlertModalVisible(true)
+            return
+          }
+          if (error.isAxiosError && error.response) {
+            const code = error.response.data.code as keyof typeof codeMessages
+            message.error(formatMessage(codeMessages[code]))
           } else {
-            login({
-              account: account.trim().toLowerCase(),
-              password: password,
-              accountLinkToken: accountLinkToken,
-            })
-              .then(() => {
-                tracking.login()
-                setVisible?.(false)
-                reset()
-                returnTo && history.push(returnTo)
-              })
-              .catch((error: AxiosError) => {
-                if (error.isAxiosError && error.response) {
-                  const code = error.response.data.code as keyof typeof codeMessages
-                  message.error(formatMessage(codeMessages[code]))
-                } else {
-                  message.error(error.message)
-                }
-              })
-              .catch(handleError)
-              .finally(() => setLoading(false))
+            message.error(error.message)
           }
         })
-      } else {
-        login({
-          account: account.trim().toLowerCase(),
-          password: password,
-          accountLinkToken: accountLinkToken,
+        .catch(error => {
+          console.log('error', error)
         })
-          .then(() => {
-            tracking.login()
-            setVisible?.(false)
-            reset()
-            returnTo && history.push(returnTo)
-          })
-          .catch((error: AxiosError) => {
-            if (error.isAxiosError && error.response) {
-              const code = error.response.data.code as keyof typeof codeMessages
-              message.error(formatMessage(codeMessages[code]))
-            } else {
-              message.error(error.message)
-            }
-          })
-          .catch(handleError)
-          .finally(() => setLoading(false))
-      }
+        .finally(() => setLoading(false))
     },
     error => {
       console.error(error)
