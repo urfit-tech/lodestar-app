@@ -3,7 +3,6 @@ import { Box, Divider, Flex, Icon, Image, Spacer } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { gql } from 'graphql-tag'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
-import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { flatten, groupBy, prop, uniqBy } from 'ramda'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -56,7 +55,6 @@ type Portfolio = DeepPick<
 }
 
 const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
-  const theme = useAppTheme()
   const { formatMessage } = useIntl()
   const [isLiked, setIsLiked] = useState(false)
   const { loading, portfolio, error, refetch } = useProjectPortfolio(id)
@@ -85,15 +83,17 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
   }
 
   return (
-    <DefaultLayout white>
+    <Box>
       {loading ? (
         <LoadingPage />
       ) : error ? (
-        <Flex justifyContent="center" alignItems="center" h="100%" w="100%">
-          {formatMessage(pageMessages.PortfolioPage.loadingPortfolioPageError)}
-        </Flex>
+        <DefaultLayout white>
+          <Flex justifyContent="center" alignItems="center" h="100%" w="100%">
+            {formatMessage(pageMessages.PortfolioPage.loadingPortfolioPageError)}
+          </Flex>
+        </DefaultLayout>
       ) : (
-        <>
+        <DefaultLayout white>
           <Box bg="#000" p="2.5rem" mb="2.5rem">
             <Box className="container">
               {portfolio.coverUrl && (
@@ -109,53 +109,39 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
             <Box className="row justify-content-center">
               <Box className="col-12 col-lg-9">
                 <Flex mb="3rem" alignItems="center">
-                  <Flex>
-                    <Image
-                      src={portfolio.creator?.pictureUrl || EmptyAvatar}
-                      alt={portfolio.creator?.name}
-                      boxSize="3rem"
-                      borderRadius="1.5rem"
-                      backgroundColor="#ccc"
-                      objectFit="cover"
-                    />
+                  <Image
+                    src={portfolio.creator?.pictureUrl || EmptyAvatar}
+                    alt={portfolio.creator?.name}
+                    boxSize="3rem"
+                    borderRadius="1.5rem"
+                    backgroundColor="#ccc"
+                    objectFit="cover"
+                  />
 
-                    <Box ml="0.75rem">
-                      <Box>{portfolio.title}</Box>
-                      <Flex color="var(--gray-dark)" fontSize="14px" letterSpacing="0.4px">
-                        <Flex alignItems="center" mr="0.75rem">
-                          <Icon as={UserOIcon} mr="0.25rem" />
-                          <Box>{portfolio.creator?.name}</Box>
-                        </Flex>
-                        <Flex alignItems="center" mr="0.75rem">
-                          <Icon as={CalendarOIcon} mr="0.25rem" />
-                          <Box>{dayjs(portfolio.createdAt).format('YYYY-MM-DD')}</Box>
-                        </Flex>
-                        <Flex alignItems="center" mr="0.75rem">
-                          <Icon as={EyeIcon} mr="0.25rem" />
-                          <Box>{portfolio.views}</Box>
-                        </Flex>
+                  <Box ml="0.75rem">
+                    <Box>{portfolio.title}</Box>
+                    <Flex color="var(--gray-dark)" fontSize="14px" letterSpacing="0.4px">
+                      <Flex alignItems="center" mr="0.75rem">
+                        <Icon as={UserOIcon} mr="0.25rem" />
+                        <Box>{portfolio.creator?.name}</Box>
                       </Flex>
-                    </Box>
-                  </Flex>
-
-                  <Spacer />
-
-                  <Flex>
-                    {/* TODO: apply tag */}
-                    {/* <ApplyTagButton /> */}
-                    <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
-                    <LikesCountButton
-                      onClick={handleLikeStatus}
-                      count={portfolio.projectReactions.length}
-                      isLiked={isLiked}
-                      defaultColor={theme.colors.primary[500]}
-                    />
-                  </Flex>
+                      <Flex alignItems="center" mr="0.75rem">
+                        <Icon as={CalendarOIcon} mr="0.25rem" />
+                        <Box>{dayjs(portfolio.createdAt).format('YYYY-MM-DD')}</Box>
+                      </Flex>
+                      <Flex alignItems="center" mr="0.75rem">
+                        <Icon as={EyeIcon} mr="0.25rem" />
+                        <Box>{portfolio.views}</Box>
+                      </Flex>
+                    </Flex>
+                  </Box>
                 </Flex>
 
-                <Box mb="2.5rem">
-                  <BraftContent>{portfolio.description}</BraftContent>
-                </Box>
+                {portfolio.description ? (
+                  <Box mb="2.5rem">
+                    <BraftContent>{portfolio.description}</BraftContent>
+                  </Box>
+                ) : null}
 
                 <Flex mb="1.5rem">
                   <Flex alignItems="center" color="primary.500">
@@ -167,38 +153,38 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                       </Link>
                     ))}
                   </Flex>
+
                   <Spacer />
 
                   <Flex>
                     {/* TODO: apply tag */}
                     {/* <ApplyTagButton /> */}
-                    <SocialSharePopover url={window.location.href} color={theme.colors.primary[500]} />
+                    <SocialSharePopover url={window.location.href} />
                     <LikesCountButton
                       onClick={handleLikeStatus}
                       count={portfolio.projectReactions.length}
                       isLiked={isLiked}
-                      defaultColor={theme.colors.primary[500]}
                     />
                   </Flex>
                 </Flex>
-
-                <Divider />
-
                 {portfolio.projectRoles.length === 0 ? null : (
-                  <Box mt="1.5rem">
-                    <Flex>
-                      <Box
-                        fontSize="18px"
-                        letterSpacing="0.8px"
-                        color="var(--gray-darker)"
-                        fontWeight="bold"
-                        mb="1.25rem"
-                      >
-                        {formatMessage(pageMessages.PortfolioPage.participant)}
-                      </Box>
-                      <Spacer />
+                  <>
+                    <Divider />
 
-                      {/*
+                    <Box mt="1.5rem">
+                      <Flex>
+                        <Box
+                          fontSize="18px"
+                          letterSpacing="0.8px"
+                          color="var(--gray-darker)"
+                          fontWeight="bold"
+                          mb="1.25rem"
+                        >
+                          {formatMessage(pageMessages.PortfolioPage.participant)}
+                        </Box>
+                        <Spacer />
+
+                        {/*
                         TODO: apply tag 
                         <Box>
                         <Icon as={TicketOIcon} color="primary.500" mr="0.5rem" />
@@ -206,47 +192,50 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                           申請標記
                         </Box>
                       </Box> */}
-                    </Flex>
-                    {Object.entries(groupBy(role => role.identity.id, portfolio.projectRoles)).map((roles, index) => (
-                      <Box key={index}>
-                        <Box mb="0.75rem" color="var(--gray-darker)" fontWeight="500">
-                          {roles?.[1]?.[0].identity.name}
-                        </Box>
-                        <Box mb="1.25rem">
-                          <Flex flexWrap="wrap">
-                            {roles?.[1].map((role, index) => (
-                              <Box
-                                key={index}
-                                display="inline-flex"
-                                py="0.25rem"
-                                pl="0.25rem"
-                                pr="1rem"
-                                alignItems="center"
-                                border="solid 1px #ececec"
-                                borderRadius="22px"
-                                mr="0.75rem"
-                              >
-                                <Image
-                                  src={role.member.pictureUrl || EmptyAvatar}
-                                  alt={role.member.name}
-                                  w="2.25rem"
-                                  h="2.25rem"
-                                  borderRadius="50%"
+                      </Flex>
+                      {Object.entries(groupBy(role => role.identity.id, portfolio.projectRoles)).map((roles, index) => (
+                        <Box key={index}>
+                          <Box mb="0.75rem" color="var(--gray-darker)" fontWeight="500">
+                            {roles?.[1]?.[0].identity.name}
+                          </Box>
+                          <Box mb="1.25rem">
+                            <Flex flexWrap="wrap">
+                              {roles?.[1].map((role, index) => (
+                                <Box
+                                  key={index}
+                                  display="inline-flex"
+                                  py="0.25rem"
+                                  pl="0.25rem"
+                                  pr="1rem"
+                                  alignItems="center"
+                                  border="solid 1px #ececec"
+                                  borderRadius="22px"
                                   mr="0.75rem"
-                                  objectFit="cover"
-                                />
-                                <Box color="var(--gray-darker)">{role.member.name}</Box>
-                              </Box>
-                            ))}
-                          </Flex>
+                                >
+                                  <Image
+                                    src={role.member.pictureUrl || EmptyAvatar}
+                                    alt={role.member.name}
+                                    w="2.25rem"
+                                    h="2.25rem"
+                                    borderRadius="50%"
+                                    mr="0.75rem"
+                                    objectFit="cover"
+                                  />
+                                  <Box color="var(--gray-darker)">{role.member.name}</Box>
+                                </Box>
+                              ))}
+                            </Flex>
+                          </Box>
                         </Box>
-                      </Box>
-                    ))}
-                  </Box>
+                      ))}
+                    </Box>
+                  </>
                 )}
 
-                <Box>
-                  <CreatorCard id={portfolio.creator?.id || ''} />
+                <Divider />
+
+                <Box pt="2.5rem" pb="5rem">
+                  <CreatorCard id={portfolio.creator?.id || ''} noPadding={true} />
                 </Box>
               </Box>
             </Box>
@@ -260,15 +249,21 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                     <Box mb="1rem" fontSize="18px" color="var(--gray-darker)" letterSpacing="0.8px" fontWeight="bold">
                       {formatMessage(pageMessages.PortfolioPage.relatedPortfolios)}
                     </Box>
-                    <Flex>
+                    <Flex flexWrap="wrap">
                       {portfolio.relatedProjects.map((relatedProject, index) => (
-                        <Box w="calc( (100% - 3rem) / 3)" mr={index === 2 ? '0' : '1rem'}>
+                        <Box
+                          key={index}
+                          w={{ base: '100%', lg: 'calc( (100% - 3rem) / 3)' }}
+                          mr={{ base: 0, lg: index === 2 ? '0' : '1rem' }}
+                          mb={{ base: index === portfolio.relatedProjects.length - 1 ? '0' : '2.5rem', lg: 0 }}
+                        >
                           <Link to={`/projects/${relatedProject.id}`}>
                             <Image
                               src={relatedProject.previewUrl || EmptyCover}
                               mb="0.75rem"
-                              h="calc(100% * 2/3)"
+                              h={{ lg: 'calc(100% * 2/3)' }}
                               objectFit="cover"
+                              objectPosition="center"
                             />
                             <Box key={index} mb="1rem" noOfLines={2}>
                               {relatedProject.title}
@@ -296,9 +291,9 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
               </Box>
             </Box>
           )}
-        </>
+        </DefaultLayout>
       )}
-    </DefaultLayout>
+    </Box>
   )
 }
 
@@ -322,7 +317,9 @@ const useProjectPortfolio = (projectId: string) => {
             picture_url
           }
           project_tags(
-            where: { tag: { project_tags: { project: { type: { _eq: "portfolio" } } } } }
+            where: {
+              tag: { project_tags: { project: { type: { _eq: "portfolio" }, published_at: { _lt: "now()" } } } }
+            }
             order_by: { position: asc }
             limit: 3
           ) {
@@ -334,6 +331,7 @@ const useProjectPortfolio = (projectId: string) => {
                 project {
                   id
                   type
+                  published_at
                   title
                   cover_url
                   preview_url
@@ -346,7 +344,7 @@ const useProjectPortfolio = (projectId: string) => {
               }
             }
           }
-          project_roles(order_by: { identity: { position: asc } }) {
+          project_roles(where: { identity: { name: { _neq: "author" } } }, order_by: { identity: { position: asc } }) {
             id
             member {
               id
@@ -411,7 +409,13 @@ const useProjectPortfolio = (projectId: string) => {
         data?.project_by_pk?.project_tags.map(
           v =>
             v.tag?.project_tags
-              .filter(w => w.project?.type === 'portfolio' && w.project.id !== projectId)
+              .filter(
+                w =>
+                  w.project?.type === 'portfolio' &&
+                  w.project.published_at &&
+                  new Date(w.project.published_at).getTime() < Date.now() &&
+                  w.project.id !== projectId,
+              )
               .map(x => ({
                 id: x.project?.id || '',
                 title: x.project?.title || '',

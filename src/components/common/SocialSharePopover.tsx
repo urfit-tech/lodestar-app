@@ -23,7 +23,7 @@ const StyledPopperContent = styled.div`
   gap: 10px;
 `
 
-const SocialSharePopover: React.FC<{ url: string; color?: string }> = ({ url, color, children }) => {
+const SocialSharePopover: React.FC<{ url: string }> = ({ url, children }) => {
   const toast = useToast()
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
@@ -86,11 +86,7 @@ const SocialSharePopover: React.FC<{ url: string; color?: string }> = ({ url, co
       {children ? (
         children
       ) : (
-        <StyledIconButton
-          variant="ghost"
-          icon={<Icon as={BsShareFill} color={color ? color : '#9b9b9b'} />}
-          className="mr-2"
-        />
+        <StyledIconButton variant="ghost" icon={<Icon as={BsShareFill} color="#9b9b9b" />} className="mr-2" />
       )}
     </Popover>
   )

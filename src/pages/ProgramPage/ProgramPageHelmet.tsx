@@ -1,14 +1,18 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import moment from 'moment'
+import { useContext } from 'react'
 import PageHelmet from '../../components/common/PageHelmet'
-import { getBraftContent } from '../../helpers'
+import LocaleContext from '../../contexts/LocaleContext'
+import { getBraftContent, getOgLocale } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { Program } from '../../types/program'
 
 const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentProps<typeof PageHelmet>, 'onLoaded'>> =
   ({ program, onLoaded }) => {
     const app = useApp()
+    const { currentLocale } = useContext(LocaleContext)
+    const ogLocale = getOgLocale(currentLocale)
     const programPlans = program.plans.map(plan =>
       plan.salePrice !== null && moment() <= moment(plan.endedAt) ? plan.salePrice : plan.listPrice,
     )
@@ -20,10 +24,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
     return (
       <PageHelmet
         title={program.metaTag?.seo?.pageTitle || program.title}
-        description={
-          program.metaTag?.seo?.description?.slice(0, 150) ||
-          getBraftContent(program.description || app.settings['description'] || '{}')?.slice(0, 150)
-        }
+        description={program.metaTag?.seo?.description || program.description || ''}
         keywords={program.metaTag?.seo?.keywords?.split(',') || program.tags}
         onLoaded={onLoaded}
         jsonLd={[
@@ -85,19 +86,34 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
           { property: 'og:url', content: window.location.href },
           {
             property: 'og:title',
-            content: program.metaTag?.openGraph?.title || program.title || app.settings['open_graph.title'],
+            content:
+              program.metaTag?.openGraph?.title ||
+              program.title ||
+              app.settings['open_graph.title'] ||
+              app.settings['title'],
           },
           {
             property: 'og:description',
-            content:
+            content: getBraftContent(
               program.metaTag?.openGraph?.description ||
-              getBraftContent(program.description || app.settings['description'] || '{}')?.slice(0, 150),
+                program.description ||
+                app.settings['open_graph.description'] ||
+                app.settings['description'] ||
+                '{}',
+            )?.slice(0, 150),
           },
           {
             property: 'og:image',
-            content: program.metaTag?.openGraph?.image || program.coverUrl || app.settings['open_graph.image'],
+            content:
+              program.metaTag?.openGraph?.image ||
+              program.coverUrl ||
+              app.settings['open_graph.image'] ||
+              app.settings['logo'],
           },
+          { property: 'og:image:width', content: '1200' },
+          { property: 'og:image:height', content: '630' },
           { property: 'og:image:alt', content: program.metaTag?.openGraph?.imageAlt },
+          { property: 'og:locale', content: ogLocale },
         ]}
       />
     )

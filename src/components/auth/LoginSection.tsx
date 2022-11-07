@@ -1,6 +1,7 @@
 import { Button, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
-import { message } from 'antd'
+import { message, Modal } from 'antd'
 import { AxiosError } from 'axios'
+import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
@@ -16,6 +17,7 @@ import { authMessages, codeMessages, commonMessages } from '../../helpers/transl
 import { AuthState } from '../../types/member'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton, ParentingLoginButton } from './SocialLoginButton'
+import * as localAuthMessages from './translation'
 
 const ForgetPassword = styled.div`
   margin-bottom: 1.5rem;
@@ -27,35 +29,119 @@ const ForgetPassword = styled.div`
   }
 `
 
+const StyledModal = styled(Modal)`
+  && .ant-modal-footer {
+    border-top: 0;
+    padding: 0 1.5rem 1.5rem;
+  }
+`
+
+const StyledModalTitle = styled.div`
+  ${CommonTitleMixin}
+`
+
 const LoginSection: React.VFC<{
   noGeneralLogin?: boolean
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
   accountLinkToken?: string
   renderTitle?: () => React.ReactNode
 }> = ({ noGeneralLogin, onAuthStateChange, accountLinkToken, renderTitle }) => {
-  const { settings } = useApp()
+  const { settings, enabledModules, id: appId } = useApp()
   const { formatMessage } = useIntl()
   const tracking = useTracking()
   const history = useHistory()
   const [returnTo] = useQueryParam('returnTo', StringParam)
-  const { login } = useAuth()
+  const { login, checkDevice, forceLogin } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
+  const [forceLoginLoading, setForceLoginLoading] = useState(false)
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       account: '',
       password: '',
     },
   })
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false)
 
   const handleLogin = handleSubmit(
     ({ account, password }) => {
       if (login === undefined) {
         return
       }
+      if (checkDevice === undefined) {
+        return
+      }
 
       setLoading(true)
-      login({
+      // TODO: check device
+
+      if (enabledModules.login_restriction) {
+        checkDevice({ appId, account }).then(deviceStatus => {
+          console.log('device', deviceStatus)
+          if (deviceStatus === 'limited') {
+            setAlertModalVisible(true)
+          } else {
+            login({
+              account: account.trim().toLowerCase(),
+              password: password,
+              accountLinkToken: accountLinkToken,
+            })
+              .then(() => {
+                tracking.login()
+                setVisible?.(false)
+                reset()
+                returnTo && history.push(returnTo)
+              })
+              .catch((error: AxiosError) => {
+                if (error.isAxiosError && error.response) {
+                  const code = error.response.data.code as keyof typeof codeMessages
+                  message.error(formatMessage(codeMessages[code]))
+                } else {
+                  message.error(error.message)
+                }
+              })
+              .catch(handleError)
+              .finally(() => setLoading(false))
+          }
+        })
+      } else {
+        login({
+          account: account.trim().toLowerCase(),
+          password: password,
+          accountLinkToken: accountLinkToken,
+        })
+          .then(() => {
+            tracking.login()
+            setVisible?.(false)
+            reset()
+            returnTo && history.push(returnTo)
+          })
+          .catch((error: AxiosError) => {
+            if (error.isAxiosError && error.response) {
+              const code = error.response.data.code as keyof typeof codeMessages
+              message.error(formatMessage(codeMessages[code]))
+            } else {
+              message.error(error.message)
+            }
+          })
+          .catch(handleError)
+          .finally(() => setLoading(false))
+      }
+    },
+    error => {
+      console.error(error)
+    },
+  )
+
+  const handleForceLogin = handleSubmit(
+    ({ account, password }) => {
+      if (forceLogin === undefined) {
+        return
+      }
+
+      setForceLoginLoading(true)
+
+      forceLogin({
         account: account.trim().toLowerCase(),
         password: password,
         accountLinkToken: accountLinkToken,
@@ -65,6 +151,7 @@ const LoginSection: React.VFC<{
           setVisible?.(false)
           reset()
           returnTo && history.push(returnTo)
+          message.success(formatMessage(localAuthMessages.default.LoginSection.loginSuccess))
         })
         .catch((error: AxiosError) => {
           if (error.isAxiosError && error.response) {
@@ -75,13 +162,15 @@ const LoginSection: React.VFC<{
           }
         })
         .catch(handleError)
-        .finally(() => setLoading(false))
+        .finally(() => {
+          setLoading(false)
+          setForceLoginLoading(false)
+        })
     },
     error => {
       console.error(error)
     },
   )
-
   return (
     <>
       {renderTitle ? renderTitle() : <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>}
@@ -154,6 +243,28 @@ const LoginSection: React.VFC<{
               {formatMessage(commonMessages.button.signUp)}
             </Button>
           </StyledAction>
+
+          {/* check device modal */}
+          <StyledModal
+            width={400}
+            centered
+            visible={alertModalVisible}
+            okText={formatMessage(localAuthMessages.default.LoginSection.forceLogout)}
+            cancelText={formatMessage(localAuthMessages.default.LoginSection.cancelLogin)}
+            okButtonProps={{ loading: forceLoginLoading, type: 'primary' }}
+            onOk={() => handleForceLogin()}
+            onCancel={() => {
+              setAlertModalVisible(false)
+              setLoading(false)
+            }}
+          >
+            <StyledModalTitle className="mb-4">
+              {formatMessage(localAuthMessages.default.LoginSection.loginAlertModalTitle)}
+            </StyledModalTitle>
+            <div className="mb-4">
+              {formatMessage(localAuthMessages.default.LoginSection.loginAlertModelDescription)}
+            </div>
+          </StyledModal>
         </>
       )}
     </>

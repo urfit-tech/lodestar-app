@@ -1,13 +1,17 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import moment from 'moment'
+import { useContext } from 'react'
 import PageHelmet from '../../components/common/PageHelmet'
-import { getBraftContent } from '../../helpers'
+import LocaleContext from '../../contexts/LocaleContext'
+import { getBraftContent, getOgLocale } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { ProgramPackage } from '../../types/programPackage'
 
 const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = ({ programPackage }) => {
   const app = useApp()
+  const { currentLocale } = useContext(LocaleContext)
+  const ogLocale = getOgLocale(currentLocale)
   const allPlanPrice = programPackage.plans.map(plan =>
     plan.salePrice !== null && moment() <= moment(plan.soldAt) ? plan.salePrice : plan.listPrice,
   )
@@ -19,11 +23,7 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
   return (
     <PageHelmet
       title={programPackage.metaTag?.seo?.pageTitle || programPackage.title}
-      description={
-        programPackage.metaTag?.seo?.description?.slice(0, 150) ||
-        getBraftContent(programPackage.description || '').slice(0, 150) ||
-        app.settings['description']
-      }
+      description={programPackage.metaTag?.seo?.description || programPackage.description || ''}
       keywords={
         programPackage.metaTag?.seo?.keywords?.split(',') || programPackage.programs.map(program => program.title)
       }
@@ -75,21 +75,34 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
         { property: 'og:url', content: window.location.href },
         {
           property: 'og:title',
-          content: programPackage.metaTag?.openGraph?.title || programPackage.title || app.settings['open_graph.title'],
+          content:
+            programPackage.metaTag?.openGraph?.title ||
+            programPackage.title ||
+            app.settings['open_graph.title'] ||
+            app.settings['title'],
         },
         {
           property: 'og:description',
-          content:
-            programPackage.metaTag?.openGraph?.description?.slice(0, 150) ||
-            getBraftContent(programPackage.description || '').slice(0, 150) ||
-            app.settings['description'],
+          content: getBraftContent(
+            programPackage.metaTag?.openGraph?.description ||
+              programPackage.description ||
+              app.settings['open_graph.description'] ||
+              app.settings['description'] ||
+              '{}',
+          )?.slice(0, 150),
         },
         {
           property: 'og:image',
           content:
-            programPackage.metaTag?.openGraph?.image || programPackage.coverUrl || app.settings['open_graph.image'],
+            programPackage.metaTag?.openGraph?.image ||
+            programPackage.coverUrl ||
+            app.settings['open_graph.image'] ||
+            app.settings['logo'],
         },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
         { property: 'og:image:alt', content: programPackage.metaTag?.openGraph?.imageAlt || '' },
+        { property: 'og:locale', content: ogLocale },
       ]}
     />
   )
