@@ -4,10 +4,11 @@ import { camelCase } from 'lodash'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { cities, districts, useTwZipCode } from 'use-tw-zipcode'
+import twZipCode from '../../../node_modules/use-tw-zipcode/dist'
 import { checkoutMessages } from '../../helpers/translation'
 import { ShippingOptionProps, ShippingProps } from '../../types/checkout'
 
@@ -102,6 +103,10 @@ const ShippingInput: React.VFC<{
     }
     newValue[key] = inputValue
 
+    if (!newValue['zipCode']) {
+      newValue['zipCode'] = zipCode
+    }
+
     if (!newValue['city']) {
       newValue['city'] = city
     }
@@ -178,6 +183,16 @@ const ShippingInput: React.VFC<{
     }
     window.open(cvsSelectionUrl)
   }
+
+  useEffect(() => {
+    if (value?.city && value?.district && !value?.zipCode) {
+      handleChange('zipCode', twZipCode.zipCodes[value?.city][value?.district])
+    } else if (!value?.zipCode || isCitySelectorChange) {
+      handleChange('zipCode', zipCode)
+    } else {
+      handleChange('zipCode', value?.zipCode)
+    }
+  }, [zipCode, isCitySelectorChange, value?.zipCode, value?.city, value?.district])
 
   return (
     <div>
@@ -282,9 +297,7 @@ const ShippingInput: React.VFC<{
               <Select
                 className="col-12"
                 disabled
-                value={
-                  isOutsideTaiwanIsland ? undefined : isCitySelectorChange || !value?.zipCode ? zipCode : value?.zipCode
-                }
+                value={isOutsideTaiwanIsland ? undefined : isCitySelectorChange ? zipCode : value?.zipCode}
               ></Select>
             </div>
             <div className="col-12 col-lg-2">
@@ -296,7 +309,6 @@ const ShippingInput: React.VFC<{
                   handleCityChange(v)
                   setIsCitySelectorChange(true)
                 }}
-                onBlur={() => handleChange('zipCode', zipCode)}
                 disabled={isOutsideTaiwanIsland}
               >
                 {cities.map(city => {
@@ -317,7 +329,6 @@ const ShippingInput: React.VFC<{
                   handleDistrictChange(w)
                   setIsCitySelectorChange(true)
                 }}
-                onBlur={() => handleChange('zipCode', zipCode)}
                 disabled={isOutsideTaiwanIsland}
               >
                 {isCitySelectorChange || value?.city
