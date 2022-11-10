@@ -118,10 +118,10 @@ const sectionConverter = {
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { settings } = useApp()
-  const { currentLocale } = useContext(LocaleContext)
+  const { defaultLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPage, appPage } = usePage(location.pathname)
-  const ogLocale = getOgLocale(currentLocale)
+  const ogLocale = getOgLocale(defaultLocale)
 
   const [utmQuery] = useQueryParams({
     utm_id: StringParam,
@@ -156,6 +156,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
             keywords={appPage?.metaTag?.seo?.keywords?.split(',')}
             openGraph={[
               { property: 'fb:app_id', content: settings['auth.facebook_app_id'] },
+              { property: 'og:site_name', content: settings['name'] },
               { property: 'og:type', content: 'website' },
               { property: 'og:url', content: window.location.href },
               {
@@ -175,6 +176,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
                     settings['description'],
                 )?.slice(0, 150),
               },
+              { property: 'og:locale', content: ogLocale },
               {
                 property: 'og:image',
                 content:
@@ -186,7 +188,6 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
               { property: 'og:image:width', content: '1200' },
               { property: 'og:image:height', content: '630' },
               { property: 'og:image:alt', content: appPage?.metaTag?.openGraph?.imageAlt || '' },
-              { property: 'og:locale', content: ogLocale },
             ]}
             onLoaded={() => setMetaLoaded(true)}
           />

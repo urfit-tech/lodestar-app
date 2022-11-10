@@ -20,6 +20,7 @@ import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { zipCodes } from 'use-tw-zipcode'
 import CartProductTableCard, { useProductInventory } from '../../components/checkout/CartProductTableCard'
 import CheckoutCard from '../../components/checkout/CheckoutCard'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
@@ -113,6 +114,9 @@ const CheckoutBlock: React.VFC<{
     shipping: {
       name: '',
       phone: '',
+      city: '台北市',
+      district: '中正區',
+      zipCode: '100',
       address: '',
       shippingMethod: 'home-delivery',
       specification: '',
@@ -139,6 +143,10 @@ const CheckoutBlock: React.VFC<{
       : {
           ...cachedPaymentInfo.shipping,
           ...member?.shipping,
+          zipCode:
+            !member?.shipping?.zipCode && member?.shipping?.city && member?.shipping?.district
+              ? zipCodes[member.shipping.city][member.shipping.district]
+              : member?.shipping?.zipCode || cachedPaymentInfo.shipping.zipCode,
         }
 
     cachedPaymentInfo.invoice = cachedInvoice
