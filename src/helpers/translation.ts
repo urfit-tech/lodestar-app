@@ -1743,6 +1743,10 @@ export const codeMessages = defineMessages({
     id: 'code.E_NO_PRICE',
     defaultMessage: '零元訂單無法建立交易',
   },
+  E_BIND_DEVICE: {
+    id: 'code.E_BIND_DEVICE',
+    defaultMessage: '該帳號登入裝置已達上限',
+  },
 })
 
 export const certificateMessages = {
