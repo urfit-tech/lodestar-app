@@ -11,8 +11,8 @@ import { Program } from '../../types/program'
 const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentProps<typeof PageHelmet>, 'onLoaded'>> =
   ({ program, onLoaded }) => {
     const app = useApp()
-    const { currentLocale } = useContext(LocaleContext)
-    const ogLocale = getOgLocale(currentLocale)
+    const { defaultLocale } = useContext(LocaleContext)
+    const ogLocale = getOgLocale(defaultLocale)
     const programPlans = program.plans.map(plan =>
       plan.salePrice !== null && moment() <= moment(plan.endedAt) ? plan.salePrice : plan.listPrice,
     )
@@ -82,6 +82,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
         ]}
         openGraph={[
           { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
+          { property: 'og:site_name', content: app.settings['name'] },
           { property: 'og:type', content: 'website' },
           { property: 'og:url', content: window.location.href },
           {
@@ -102,6 +103,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
                 '{}',
             )?.slice(0, 150),
           },
+          { property: 'og:locale', content: ogLocale },
           {
             property: 'og:image',
             content:
@@ -113,7 +115,6 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
           { property: 'og:image:width', content: '1200' },
           { property: 'og:image:height', content: '630' },
           { property: 'og:image:alt', content: program.metaTag?.openGraph?.imageAlt },
-          { property: 'og:locale', content: ogLocale },
         ]}
       />
     )

@@ -7,7 +7,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { cities, districts, useTwZipCode } from 'use-tw-zipcode'
+import { cities, districts, useTwZipCode, zipCodes } from 'use-tw-zipcode'
 import { checkoutMessages } from '../../helpers/translation'
 import { ShippingOptionProps, ShippingProps } from '../../types/checkout'
 
@@ -59,8 +59,7 @@ const ShippingInput: React.VFC<{
 }> = ({ value, onChange, isValidating, shippingMethods, isGiftPlanDeliverable }) => {
   const { formatMessage } = useIntl()
   const { currencyId: appCurrencyId, settings } = useApp()
-  const { city, district, zipCode, handleCityChange, handleDistrictChange } = useTwZipCode()
-  const [isCitySelectorChange, setIsCitySelectorChange] = useState(false)
+  const { handleCityChange, handleDistrictChange } = useTwZipCode()
   const [isOutsideTaiwanIsland, setIsOutsideTaiwanIsland] = useState(value?.isOutsideTaiwanIsland === 'true')
 
   const nameRef = useRef<Input | null>(null)
@@ -86,12 +85,12 @@ const ShippingInput: React.VFC<{
       localStorage.setItem('kolable.cart.shippingOptions', JSON.stringify(newShippingOption))
     }
 
-    const newValue: ShippingProps = {
+    let newValue: ShippingProps = {
       name: value?.name?.trim() || '',
       phone: value?.phone?.trim() || '',
-      zipCode: value?.zipCode || '',
-      city: value?.city || '',
-      district: value?.district || '',
+      zipCode: value?.zipCode || '100',
+      city: value?.city || '台北市',
+      district: value?.district || '中正區',
       address: value?.address?.trim() || '',
       isOutsideTaiwanIsland: value?.isOutsideTaiwanIsland || 'false',
       shippingMethod: value?.shippingMethod || 'home-delivery',
@@ -100,15 +99,16 @@ const ShippingInput: React.VFC<{
       storeName: value?.storeName || '',
       ...newShippingOption,
     }
-    newValue[key] = inputValue
 
-    if (!newValue['city']) {
-      newValue['city'] = city
+    let newZipCode = value?.zipCode
+
+    if (key === 'city') {
+      newZipCode = zipCodes[inputValue][districts[inputValue][0]]
+    } else if (key === 'district' && value?.city) {
+      newZipCode = zipCodes[value.city][inputValue]
     }
 
-    if (!newValue['district']) {
-      newValue['district'] = district
-    }
+    newValue = { ...value, zipCode: newZipCode, [key]: inputValue }
 
     if (key === 'city') {
       newValue['district'] = districts[inputValue][0]
@@ -279,24 +279,16 @@ const ShippingInput: React.VFC<{
         >
           <div className="row">
             <div className="col-12 col-lg-2">
-              <Select
-                className="col-12"
-                disabled
-                value={
-                  isOutsideTaiwanIsland ? undefined : isCitySelectorChange || !value?.zipCode ? zipCode : value?.zipCode
-                }
-              ></Select>
+              <Select className="col-12" disabled value={isOutsideTaiwanIsland ? undefined : value?.zipCode}></Select>
             </div>
             <div className="col-12 col-lg-2">
               <Select
                 className="col-12"
-                value={isOutsideTaiwanIsland ? undefined : value?.city || city}
+                value={isOutsideTaiwanIsland ? undefined : value?.city}
                 onChange={(v: string) => {
                   handleChange('city', v)
                   handleCityChange(v)
-                  setIsCitySelectorChange(true)
                 }}
-                onBlur={() => handleChange('zipCode', zipCode)}
                 disabled={isOutsideTaiwanIsland}
               >
                 {cities.map(city => {
@@ -311,36 +303,23 @@ const ShippingInput: React.VFC<{
             <div className="col-12 col-lg-2">
               <Select
                 className="col-12"
-                value={isOutsideTaiwanIsland ? undefined : value?.district || district}
+                value={isOutsideTaiwanIsland ? undefined : value?.district}
                 onChange={(w: string) => {
                   handleChange('district', w)
                   handleDistrictChange(w)
-                  setIsCitySelectorChange(true)
                 }}
-                onBlur={() => handleChange('zipCode', zipCode)}
                 disabled={isOutsideTaiwanIsland}
               >
-                {isCitySelectorChange || value?.city
-                  ? districts[value?.city || ''].map(district => {
-                      return (
-                        <Select.Option
-                          key={district}
-                          disabled={['釣魚台列嶼', '綠島鄉', '蘭嶼鄉', '東沙群島', '南沙群島'].includes(district)}
-                        >
-                          {district}
-                        </Select.Option>
-                      )
-                    })
-                  : districts[city].map(district => {
-                      return (
-                        <Select.Option
-                          key={district}
-                          disabled={['釣魚台列嶼', '綠島鄉', '蘭嶼鄉', '東沙群島', '南沙群島'].includes(district)}
-                        >
-                          {district}
-                        </Select.Option>
-                      )
-                    })}
+                {districts[value?.city || ''].map(district => {
+                  return (
+                    <Select.Option
+                      key={district}
+                      disabled={['釣魚台列嶼', '綠島鄉', '蘭嶼鄉', '東沙群島', '南沙群島'].includes(district)}
+                    >
+                      {district}
+                    </Select.Option>
+                  )
+                })}
               </Select>
             </div>
             <div className="col-12 col-lg-6">
