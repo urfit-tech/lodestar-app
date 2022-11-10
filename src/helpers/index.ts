@@ -165,6 +165,8 @@ export const getNotificationIconType = (type: string) => {
       return 'book'
     case 'reaction':
       return 'heart'
+    case 'mark':
+      return 'tag'
     default:
       return 'question'
   }

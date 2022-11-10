@@ -344,7 +344,14 @@ const useProjectPortfolio = (projectId: string) => {
               }
             }
           }
-          project_roles(where: { identity: { name: { _neq: "author" } } }, order_by: { identity: { position: asc } }) {
+          project_roles(
+            where: {
+              identity: { name: { _neq: "author" } }
+              rejected_at: { _is_null: true }
+              agreed_at: { _is_null: false }
+            }
+            order_by: { identity: { position: asc } }
+          ) {
             id
             member {
               id
