@@ -118,7 +118,7 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
                       '{{STATE}}',
                       JSON.stringify({
                         provider: 'google',
-                        redirect: window.location.pathname,
+                        redirect: window.location.pathname + window.location.search,
                       }),
                     )}
                 >
