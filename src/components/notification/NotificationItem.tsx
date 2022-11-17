@@ -48,7 +48,7 @@ const NotificationItem: React.VFC<{
           if (referenceUrl) {
             if (referenceUrl.startsWith('http')) {
               const url = new URL(referenceUrl)
-              history.push(url.pathname)
+              type === 'mark' ? window.open(url.href) : history.push(url.pathname)
             } else {
               history.push(referenceUrl)
             }
