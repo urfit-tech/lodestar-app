@@ -303,10 +303,12 @@ const CheckoutBlock: React.VFC<{
       if (!isValidShipping) {
         shippingRef.current?.scrollIntoView({ behavior: 'smooth' })
         return
-      } else if (totalPrice > 0 && !isValidInvoice) {
-        invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
-        return
       }
+    }
+
+    if (totalPrice > 0 && !isValidInvoice) {
+      invoiceRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return
     }
 
     if (referrerEmail && !validateStatus) {
