@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -5,6 +6,7 @@ import { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import LocaleContext from '../contexts/LocaleContext'
 import { productMessages } from '../helpers/translation'
+import { IpApiResponseFail, IpApiResponseSuccess } from '../types/general'
 
 export const useInterval = (callback: Function, delay: number | null, immediately?: boolean) => {
   const savedCallback = useRef<Function>()
@@ -129,4 +131,19 @@ export async function sleep(time: number): Promise<void> {
   return new Promise<void>((res, rej) => {
     setTimeout(res, time)
   })
+}
+
+export async function fetchCurrentGeolocation() {
+  try {
+    const { data: currentIp } = await axios.get<string>('https://api.ipify.org/')
+    const getCountryRequest = await axios.get<IpApiResponseSuccess | IpApiResponseFail>(
+      `http://ip-api.com/json/${currentIp}?fields=58175`,
+    )
+    if (getCountryRequest.data.status === 'fail') {
+      throw new Error(getCountryRequest.data.message)
+    }
+    return { currentIp, currentCountry: getCountryRequest.data.country, error: null }
+  } catch (error) {
+    return { currentIp: null, currentCountry: null, error }
+  }
 }

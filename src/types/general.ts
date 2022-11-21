@@ -22,3 +22,24 @@ export type Tag = {
   type: string
   filterable: boolean
 }
+
+interface IpApiResponse {
+  query: string
+  country: string
+  countryCode: string
+  region: string
+  regionName: string
+  city: string
+  zip: string
+  timezone: string
+  isp: string
+}
+
+export interface IpApiResponseSuccess extends IpApiResponse {
+  status: 'success'
+}
+
+export interface IpApiResponseFail extends IpApiResponse {
+  status: 'fail'
+  message: string
+}
