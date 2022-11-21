@@ -272,7 +272,7 @@ export const useProgram = (programId: string) => {
               name
             }
           }
-          program_roles(order_by: { created_at: asc, id: desc }) {
+          program_roles(order_by: [{ created_at: asc}, { id: desc }]) {
             id
             name
             member_id
