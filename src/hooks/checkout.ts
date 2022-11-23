@@ -93,7 +93,7 @@ export const useCheck = ({
       payment?: PaymentProps | null,
     ) => {
       setOrderPlacing(true)
-      const { currentIp, currentCountry } = await fetchCurrentGeolocation()
+      const { ip, country, countryCode } = await fetchCurrentGeolocation()
       return Axios.post<{ code: string; message: string; result: { id: string } }>(
         `${process.env.REACT_APP_API_BASE_ROOT}/tasks/order`,
         {
@@ -102,7 +102,7 @@ export const useCheck = ({
           discountId,
           shipping,
           invoice,
-          geolocation: { ip: currentIp || '', country: currentCountry || '' },
+          geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
           options,
         },
         {
