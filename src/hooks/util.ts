@@ -135,17 +135,14 @@ export async function sleep(time: number): Promise<void> {
 
 export async function fetchCurrentGeolocation() {
   try {
-    const { data: currentIp } = await axios.get<string>('https://api.ipify.org/')
-    const getGeolocationRequest = await axios.get<IpApiResponseSuccess | IpApiResponseFail>(
-      `http://ip-api.com/json/${currentIp}?fields=58175`,
-    )
-    if (getGeolocationRequest.data.status === 'fail') {
-      throw new Error(getGeolocationRequest.data.message)
+    const getGeolocationRequest = await axios.get<IpApiResponseSuccess | IpApiResponseFail>(`https://ipapi.co/json/`)
+    if (getGeolocationRequest.data?.error) {
+      throw new Error(getGeolocationRequest.data.reason)
     }
     return {
-      ip: currentIp,
-      country: getGeolocationRequest.data.country,
-      countryCode: getGeolocationRequest.data.countryCode,
+      ip: getGeolocationRequest.data.ip,
+      country: getGeolocationRequest.data.country_name,
+      countryCode: getGeolocationRequest.data.country_code,
       error: null,
     }
   } catch (error) {
