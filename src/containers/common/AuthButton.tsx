@@ -1,4 +1,5 @@
 import { Button, Popover } from 'antd'
+import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext } from 'react'
@@ -17,10 +18,23 @@ const AuthButton: React.VFC = () => {
 
   const { settings } = useApp()
 
+  let utm: any
+  try {
+    utm = JSON.parse(Cookies.get('utm'))
+  } catch (error) {
+    utm = {}
+  }
+
   const handleClick = () => {
     if (settings['auth.parenting.client_id'] && settings['auth.email.disabled']) {
       const state = btoa(
-        JSON.stringify({ provider: 'parenting', redirect: window.location.pathname + window.location.search }),
+        JSON.stringify({
+          provider: 'parenting',
+          redirect:
+            window.location.pathname +
+            '?' +
+            new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
+        }),
       )
       const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/parenting`)
       const oauthLink = `https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id=${settings['auth.parenting.client_id']}&redirect_uri=${redirectUri}&state=${state}&scope=`
@@ -28,7 +42,13 @@ const AuthButton: React.VFC = () => {
       window.location.assign(oauthLink)
     } else if (settings['auth.cw.client_id'] && settings['auth.email.disabled']) {
       const state = btoa(
-        JSON.stringify({ provider: 'cw', redirect: window.location.pathname + window.location.search }),
+        JSON.stringify({
+          provider: 'cw',
+          redirect:
+            window.location.pathname +
+            '?' +
+            new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
+        }),
       )
       const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/cw`)
       const endpoint = settings[`auth.cw.endpoint`] || 'https://dev-account.cwg.tw'
