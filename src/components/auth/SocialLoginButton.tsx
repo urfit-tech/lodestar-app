@@ -36,7 +36,7 @@ const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ account
 
   let utm
   try {
-    utm = JSON.parse(Cookies.get('utm'))
+    utm = JSON.parse(Cookies.get('utm') || '{}')
   } catch (error) {
     utm = {}
   }
