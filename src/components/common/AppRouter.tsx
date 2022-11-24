@@ -311,6 +311,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/settings/certificates',
     pageName: 'member/CertificateCollectionAdminPage',
   },
+  member_device_admin: {
+    path: '/settings/devices',
+    pageName: 'member/DeviceManagementAdminPage',
+  },
   // deprecated
   funding: {
     path: '/funding/:projectId',

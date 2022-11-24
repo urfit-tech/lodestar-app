@@ -13,6 +13,7 @@ import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { useSocialCardCollection } from '../../hooks/member'
+import { DeviceIcon } from '../../images'
 import { ReactComponent as BookIcon } from '../../images/book.svg'
 import { ReactComponent as MemberCertificateIcon } from '../../images/certificate.svg'
 import { ReactComponent as ClipboardListIcon } from '../../images/clipboard-list.svg'
@@ -198,6 +199,15 @@ export const MemberAdminMenu: React.VFC<
         <Menu.Item key="member_cards_admin">
           <Icon as={MemberCardIcon} className="mr-2" />
           {formatMessage(commonMessages.content.memberCard)}
+        </Menu.Item>
+      ),
+    },
+    {
+      key: 'member_device_admin',
+      item: enabledModules.device_management && (
+        <Menu.Item key="member_device_admin">
+          <Icon as={DeviceIcon} className="mr-2" />
+          {formatMessage(commonMessages.content.deviceManagement)}
         </Menu.Item>
       ),
     },

@@ -1,5 +1,6 @@
 export { ReactComponent as Backward5Icon } from './backward-5.svg'
 export { ReactComponent as CalendarOIcon } from './calendar-alt-o.svg'
+export { ReactComponent as DeviceIcon } from './device.svg'
 export { ReactComponent as EllipsisIcon } from './ellipsis.svg'
 export { ReactComponent as ErrorIcon } from './error.svg'
 export { ReactComponent as EyeIcon } from './eye.svg'
