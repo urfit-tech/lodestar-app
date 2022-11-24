@@ -1,4 +1,5 @@
 import { Button, Icon, Spinner } from '@chakra-ui/react'
+import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -29,9 +30,19 @@ const GoogleLogo = styled.span`
 `
 
 const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
-  const { settings } = useApp()
+  const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [returnTo] = useQueryParam('returnTo', StringParam)
+
+  let utm
+  try {
+    utm = JSON.parse(Cookies.get('utm'))
+  } catch (error) {
+    utm = {}
+  }
+  if (loading) {
+    return <Spinner />
+  }
 
   return (
     <a
@@ -44,7 +55,11 @@ const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ account
           btoa(
             JSON.stringify({
               provider: 'facebook',
-              redirect: returnTo || window.location.pathname + window.location.search,
+              redirect:
+                returnTo ||
+                window.location.pathname +
+                  '?' +
+                  new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
               accountLinkToken: accountLinkToken,
             }),
           ),
@@ -67,9 +82,19 @@ const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ account
 }
 
 const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
-  const { settings } = useApp()
+  const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [returnTo] = useQueryParam('returnTo', StringParam)
+
+  let utm
+  try {
+    utm = JSON.parse(Cookies.get('utm'))
+  } catch (error) {
+    utm = {}
+  }
+  if (loading) {
+    return <Spinner />
+  }
 
   return (
     <a
@@ -82,7 +107,11 @@ const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLi
           btoa(
             JSON.stringify({
               provider: 'google',
-              redirect: returnTo || window.location.pathname + window.location.search,
+              redirect:
+                returnTo ||
+                window.location.pathname +
+                  '?' +
+                  new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
               accountLinkToken: accountLinkToken,
             }),
           ),
@@ -109,6 +138,13 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
   const { formatMessage } = useIntl()
   const [returnTo] = useQueryParam('returnTo', StringParam)
 
+  let utm
+  try {
+    utm = JSON.parse(Cookies.get('utm'))
+  } catch (error) {
+    utm = {}
+  }
+
   if (loading) {
     return <Spinner />
   }
@@ -124,7 +160,11 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
           btoa(
             JSON.stringify({
               provider: 'line',
-              redirect: returnTo || window.location.pathname + window.location.search,
+              redirect:
+                returnTo ||
+                window.location.pathname +
+                  '?' +
+                  new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
               accountLinkToken: accountLinkToken,
             }),
           ),
@@ -153,6 +193,13 @@ const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accoun
   const programContentId = query.get('programContentId')
   const [returnTo] = useQueryParam('returnTo', StringParam)
 
+  let utm
+  try {
+    utm = JSON.parse(Cookies.get('utm'))
+  } catch (error) {
+    utm = {}
+  }
+
   if (loading) {
     return <Spinner />
   }
@@ -167,7 +214,11 @@ const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accoun
           btoa(
             JSON.stringify({
               provider: 'parenting',
-              redirect: returnTo || window.location.pathname + window.location.search,
+              redirect:
+                returnTo ||
+                window.location.pathname +
+                  '?' +
+                  new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
               accountLinkToken: accountLinkToken,
               programContentId: programContentId,
             }),
