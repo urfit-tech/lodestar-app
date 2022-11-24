@@ -125,18 +125,23 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
 
   const [utmQuery] = useQueryParams({
     utm_id: StringParam,
-    utm_medium: StringParam,
     utm_source: StringParam,
+    utm_medium: StringParam,
     utm_term: StringParam,
+    utm_content: StringParam,
+    utm_campaign: StringParam,
+    utm_source_platform: StringParam,
+    utm_creative_format: StringParam,
+    utm_marketing_tactic: StringParam,
   })
-  if (utmQuery.utm_source) {
-    utmQuery.utm_id && Cookies.set('utm_id', utmQuery.utm_id, { expires: Number(settings['utm.expires']) || 30 })
-    utmQuery.utm_medium &&
-      Cookies.set('utm_medium', utmQuery.utm_medium, { expires: Number(settings['utm.expires']) || 30 })
-    utmQuery.utm_source &&
-      Cookies.set('utm_source', utmQuery.utm_source, { expires: Number(settings['utm.expires']) || 30 })
-    utmQuery.utm_term && Cookies.set('utm_term', utmQuery.utm_term, { expires: Number(settings['utm.expires']) || 30 })
-  }
+  utmQuery.utm_source &&
+    Cookies.set('utm', JSON.stringify(utmQuery), { expires: Number(settings['utm.expires']) || 30 })
+  utmQuery.utm_id && Cookies.set('utm_id', utmQuery.utm_id, { expires: Number(settings['utm.expires']) || 30 })
+  utmQuery.utm_medium &&
+    Cookies.set('utm_medium', utmQuery.utm_medium, { expires: Number(settings['utm.expires']) || 30 })
+  utmQuery.utm_source &&
+    Cookies.set('utm_source', utmQuery.utm_source, { expires: Number(settings['utm.expires']) || 30 })
+  utmQuery.utm_term && Cookies.set('utm_term', utmQuery.utm_term, { expires: Number(settings['utm.expires']) || 30 })
 
   if (loadingAppPage) {
     return <LoadingPage />
