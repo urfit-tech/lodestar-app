@@ -20,7 +20,7 @@ const AuthButton: React.VFC = () => {
 
   let utm: any
   try {
-    utm = JSON.parse(Cookies.get('utm'))
+    utm = JSON.parse(Cookies.get('utm') || '{}')
   } catch (error) {
     utm = {}
   }
