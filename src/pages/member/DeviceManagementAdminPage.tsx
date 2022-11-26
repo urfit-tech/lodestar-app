@@ -95,9 +95,9 @@ const DeviceManagementAdminPage: React.VFC = () => {
     )
   }
 
-  if (!loading && !enabledModules.device_management) {
-    return <ForbiddenPage />
-  }
+  // if (!loading && !enabledModules.device_management) {
+  //   return <ForbiddenPage />
+  // }
 
   return (
     <MemberAdminLayout content={{ icon: DeviceIcon, title: formatMessage(commonMessages.content.deviceManagement) }}>
