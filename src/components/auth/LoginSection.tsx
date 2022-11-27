@@ -62,6 +62,7 @@ const LoginSection: React.VFC<{
     },
   })
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false)
+  const [showLoginAlert, setShowLoginAlert] = useState<boolean>(false)
 
   const handleLogin = handleSubmit(
     ({ account, password }) => {
@@ -85,8 +86,13 @@ const LoginSection: React.VFC<{
           returnTo && history.push(returnTo)
         })
         .catch((error: AxiosError) => {
-          if (error.message === 'E_BIND_DEVICE') {
+          if (error.message === 'E_LOGIN_DEVICE') {
             setAlertModalVisible(true)
+            return
+          }
+
+          if (error.message === 'E_BIND_DEVICE') {
+            setShowLoginAlert(true)
             return
           }
           if (error.isAxiosError && error.response) {
@@ -236,6 +242,31 @@ const LoginSection: React.VFC<{
             </StyledModalTitle>
             <div className="mb-4">
               {formatMessage(localAuthMessages.default.LoginSection.loginAlertModelDescription)}
+            </div>
+          </StyledModal>
+
+          {/* device reach limit alert */}
+          <StyledModal
+            width={400}
+            centered
+            visible={showLoginAlert}
+            okText={formatMessage(localAuthMessages.default.LoginSection.deviceReachLimitConfirm)}
+            okButtonProps={{ type: 'primary' }}
+            onOk={() => {
+              setShowLoginAlert(false)
+              setLoading(false)
+            }}
+            cancelText={null}
+            onCancel={() => {
+              setShowLoginAlert(false)
+              setLoading(false)
+            }}
+          >
+            <StyledModalTitle className="mb-4">
+              {formatMessage(localAuthMessages.default.LoginSection.deviceReachLimitTitle)}
+            </StyledModalTitle>
+            <div className="mb-4">
+              {formatMessage(localAuthMessages.default.LoginSection.deviceReachLimitDescription)}
             </div>
           </StyledModal>
         </>

@@ -1,8 +1,12 @@
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Icon, SkeletonText } from '@chakra-ui/react'
-import { Button, message, Modal } from 'antd'
+import FingerprintJS from '@fingerprintjs/fingerprintjs'
+import { Button, Modal } from 'antd'
+import { gql } from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -11,40 +15,21 @@ import AdminCard from '../../components/common/AdminCard'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
+import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
-import { DeviceIcon, ComputerIcon, MobileIcon, TabletIcon } from '../../images'
+import { ComputerIcon, DeviceIcon, MobileIcon, TabletIcon } from '../../images'
 import ForbiddenPage from '../ForbiddenPage'
 
-const deviceCollection = [
-  {
-    type: 'desktop',
-    os: 'Mac OS',
-    lastLoginAt: '2022-10-25 18:23',
-    browser: 'Google Chrome',
-    ipAddress: '123.122.132.1',
-  },
-  {
-    type: 'desktop',
-    os: 'Win XX',
-    lastLoginAt: '2022-10-25 18:23',
-    browser: 'Google Chrome',
-    ipAddress: '123.122.132.1',
-  },
-  {
-    type: 'tablet',
-    os: 'OS',
-    lastLoginAt: '2022-10-25 18:23',
-    browser: 'Google Chrome',
-    ipAddress: '123.122.132.1',
-  },
-  {
-    type: 'mobile',
-    os: 'ios',
-    lastLoginAt: '2022-10-25 18:23',
-    browser: 'Google Chrome',
-    ipAddress: '123.122.132.1',
-  },
-]
+const fpPromise = FingerprintJS.load()
+const getVisitorId = async () => {
+  // Get the visitor identifier when you need it.
+  const fp = await fpPromise
+  const result = await fp.get()
+
+  // This is the visitor identifier:
+  const visitorId = result.visitorId
+  return visitorId
+}
 
 const messages = defineMessages({
   description: {
@@ -59,10 +44,14 @@ const messages = defineMessages({
   tablet: { id: 'page.deviceManagementAdmin.tablet', defaultMessage: '平板 {os}' },
   mobile: { id: 'page.deviceManagementAdmin.mobile', defaultMessage: '手機 {os}' },
   unKnownDevice: { id: 'page.deviceManagementAdmin.unKnownDevice', defaultMessage: '未知的裝置 {os}' },
-  logoutTitle: {id: 'page.deviceManagementAdmin.logoutTitle', defaultMessage: '退出裝置' },
-  logoutDescription: { id: 'page.deviceManagementAdmin.logoutDescription', defaultMessage: '若進行退出裝置將會解除此裝置的綁定與終止連線。'},
-  logoutCancel: { id: 'page.deviceManagementAdmin.logoutCancel', defaultMessage: '取消'},
-  logoutConfirm: { id: 'page.deviceManagementAdmin.logoutConfirm', defaultMessage: '確認'}
+  removeDeviceTitle: { id: 'page.deviceManagementAdmin.removeDeviceTitle', defaultMessage: '退出裝置' },
+  removeDeviceDescription: {
+    id: 'page.deviceManagementAdmin.removeDeviceDescription',
+    defaultMessage: '若進行退出裝置將會解除此裝置的綁定與終止連線。',
+  },
+  removeDeviceCancel: { id: 'page.deviceManagementAdmin.removeDeviceCancel', defaultMessage: '取消' },
+  removeDeviceConfirm: { id: 'page.deviceManagementAdmin.removeDeviceConfirm', defaultMessage: '確認' },
+  removeAlert: { id: 'page.deviceManagementAdmin.removeAlert', defaultMessage: '目前裝置已中止連線，請再重新登入' },
 })
 
 const StyledDescription = styled.span`
@@ -94,7 +83,7 @@ const StyledDeviceDetailsSection = styled.div`
   @media (min-width: ${BREAK_POINT}px) {
     flex-flow: row;
     margin-bottom: 0rem;
-    > div:first-child{
+    > div:first-child {
       min-width: 13rem;
     }
   }
@@ -152,7 +141,6 @@ const StyledLoginInfo = styled.div`
   color: var(--gray-darker);
 `
 
-
 const StyledModal = styled(Modal)`
   && .ant-modal-footer {
     padding: 0 1.5rem 1.5rem;
@@ -197,7 +185,7 @@ const DeviceDisplaySection: React.VFC<{ type: string; os: string }> = ({ type, o
   return (
     <>
       <Icon as={DeviceIcon} w={73} h={73} />
-      <StyledDeviceTitle>{formatMessage(messages.unKnownDevice) + os}</StyledDeviceTitle>
+      <StyledDeviceTitle>{formatMessage(messages.unKnownDevice, { os })}</StyledDeviceTitle>
     </>
   )
 }
@@ -205,14 +193,42 @@ const DeviceDisplaySection: React.VFC<{ type: string; os: string }> = ({ type, o
 const DeviceManagementAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { currentMemberId, isAuthenticated, isAuthenticating } = useAuth()
+  const { currentMemberId, isAuthenticated, isAuthenticating, refreshToken } = useAuth()
   const { settings, loading, enabledModules } = useApp()
 
-  const [ modalVisible , setModalVisible ] = useState(false)
-  const [logoutLoading, setLogoutLoading ] = useState(false)
+  const { loadingMemberDevices, devices, refetchMemberDevice, deleteMemberDevice } = useMemberDevice()
 
-  const handleLogout = ()=>{
-    
+  const [currentDeviceId, setCurrentDeviceId] = useState<string | null>(null)
+  const [removeDeviceLoading, setRemoveDeviceLoading] = useState(false)
+
+  const handleRemoveDevice = (fingerPrintId: string) => {
+    setRemoveDeviceLoading(true)
+
+    return deleteMemberDevice?.(fingerPrintId)
+      .then(() => {
+        refetchMemberDevice?.()
+      })
+      .catch(error => {
+        console.error(error)
+      })
+      .finally(() => {
+        setCurrentDeviceId(null)
+        setRemoveDeviceLoading(false)
+      })
+      .then(() => {
+        return FingerprintJS.load()
+      })
+      .then(fp => fp.get())
+      .then(result => {
+        const currentFingerPrintId = result.visitorId
+        if (fingerPrintId === currentFingerPrintId) {
+          alert(formatMessage(messages.removeAlert))
+          refreshToken?.()
+        }
+      })
+      .catch(error => {
+        console.error(error)
+      })
   }
 
   useEffect(() => {
@@ -238,22 +254,25 @@ const DeviceManagementAdminPage: React.VFC = () => {
       <div className="mb-5">
         <StyledDescription>
           {formatMessage(messages.description, {
-            number: settings['device_num'] || 1,
+            number: settings['bind_device_num'] || 1,
           })}
         </StyledDescription>
       </div>
 
       <AdminCard style={{ padding: '0px 16px' }}>
-        {deviceCollection.map(device => {
+        {loadingMemberDevices && <SkeletonText mt="1" noOfLines={5} spacing="5" />}
+        {devices.map(device => {
           return (
-            <StyledItem>
+            <StyledItem key={device.id}>
               <StyledDeviceDetailsSection>
                 <StyledDeviceDisplayContainer>
-                  <DeviceDisplaySection type={device.type} os={device.os} />
+                  <DeviceDisplaySection type={device.type} os={device.osName} />
                 </StyledDeviceDisplayContainer>
                 <div>
                   <StyledLoginInfo>
-                    {formatMessage(messages.lastLoginAt, { dateTime: device.lastLoginAt })}
+                    {formatMessage(messages.lastLoginAt, {
+                      dateTime: moment(device.lastLoginAt).format('YYYY/MM/DD HH:mm:ss'),
+                    })}
                   </StyledLoginInfo>
                   <StyledLoginInfo>{formatMessage(messages.browser, { browser: device.browser })}</StyledLoginInfo>
                   <StyledLoginInfo>
@@ -262,36 +281,95 @@ const DeviceManagementAdminPage: React.VFC = () => {
                 </div>
               </StyledDeviceDetailsSection>
               <StyledLogoutSection>
-                <Button onClick={()=>setModalVisible(true)}>{formatMessage(messages.logout)}</Button>
+                <Button
+                  onClick={() => {
+                    setCurrentDeviceId(device.id)
+                  }}
+                >
+                  {formatMessage(messages.logout)}
+                </Button>
               </StyledLogoutSection>
             </StyledItem>
           )
         })}
+        <StyledModal
+          width={400}
+          centered
+          visible={Boolean(currentDeviceId)}
+          okText={formatMessage(messages.removeDeviceConfirm)}
+          cancelText={formatMessage(messages.removeDeviceCancel)}
+          okButtonProps={{ loading: removeDeviceLoading, type: 'danger' }}
+          onOk={() => currentDeviceId && handleRemoveDevice(currentDeviceId)}
+          onCancel={() => {
+            setCurrentDeviceId(null)
+            setRemoveDeviceLoading(false)
+          }}
+        >
+          <StyledModalTitle className="mb-4">{formatMessage(messages.removeDeviceTitle)}</StyledModalTitle>
+          <div className="mb-4">{formatMessage(messages.removeDeviceDescription)}</div>
+        </StyledModal>
       </AdminCard>
-
-
-      <StyledModal
-            width={400}
-            centered
-            visible={modalVisible}
-            okText={formatMessage(messages.logoutConfirm)}
-            cancelText={formatMessage(messages.logoutCancel)}
-            okButtonProps={{ loading: logoutLoading, type: 'danger' }}
-            onOk={() => handleLogout()}
-            onCancel={() => {
-              setModalVisible(false)
-              setLogoutLoading(false)
-            }}
-          >
-            <StyledModalTitle className="mb-4">
-              {formatMessage(messages.logoutTitle)}
-            </StyledModalTitle>
-            <div className="mb-4">
-              {formatMessage(messages.logoutDescription)}
-            </div>
-          </StyledModal>
     </MemberAdminLayout>
   )
+}
+
+const useMemberDevice = () => {
+  const { currentMemberId } = useAuth()
+
+  const { loading, error, data, refetch } = useQuery<hasura.GET_MEMBER_DEVICE, hasura.GET_MEMBER_DEVICEVariables>(
+    gql`
+      query GET_MEMBER_DEVICE($memberId: String!) {
+        member_device(where: { member_id: { _eq: $memberId } }, order_by: { last_login_at: desc }) {
+          id
+          fingerprint_id
+          type
+          browser
+          os_name
+          last_login_at
+          options
+          ip_address
+        }
+      }
+    `,
+    { variables: { memberId: currentMemberId || '' } },
+  )
+
+  const DELETE_MEMBER_DEVICE = gql`
+    mutation DELETE_MEMBER_DEVICE($memberId: String!, $fingerPrintId: String!) {
+      delete_member_device(where: { member_id: { _eq: $memberId }, fingerprint_id: { _eq: $fingerPrintId } }) {
+        affected_rows
+      }
+    }
+  `
+
+  const [deleteMemberDeviceHandler] = useMutation<hasura.DELETE_MEMBER_DEVICE, hasura.DELETE_MEMBER_DEVICEVariables>(
+    DELETE_MEMBER_DEVICE,
+  )
+
+  const deleteMemberDevice = (fingerPrintId: string) => {
+    return deleteMemberDeviceHandler({ variables: { memberId: currentMemberId || '', fingerPrintId } })
+  }
+  const devices =
+    loading || error || !data
+      ? []
+      : data?.member_device.map(device => {
+          return {
+            id: device.fingerprint_id,
+            type: device.type || 'unknown',
+            browser: device.browser || 'unknown',
+            osName: device.os_name || 'unknown',
+            lastLoginAt: new Date(device.last_login_at),
+            ipAddress: device.ip_address || '0.0.0.0',
+          }
+        })
+
+  return {
+    loadingMemberDevices: loading,
+    errorMemberDevices: error,
+    devices,
+    refetchMemberDevice: refetch,
+    deleteMemberDevice,
+  }
 }
 
 export default DeviceManagementAdminPage
