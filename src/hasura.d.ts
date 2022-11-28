@@ -10793,6 +10793,78 @@ export interface GET_MEMBER_CONTRACTSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_MEMBER_DEVICE
+// ====================================================
+
+export interface GET_MEMBER_DEVICE_member_device {
+  __typename: "member_device";
+  id: any;
+  fingerprint_id: string;
+  type: string | null;
+  browser: string | null;
+  os_name: string | null;
+  last_login_at: any | null;
+  options: any | null;
+  ip_address: string | null;
+}
+
+export interface GET_MEMBER_DEVICE {
+  /**
+   * fetch data from the table: "member_device"
+   */
+  member_device: GET_MEMBER_DEVICE_member_device[];
+}
+
+export interface GET_MEMBER_DEVICEVariables {
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_MEMBER_DEVICE
+// ====================================================
+
+export interface DELETE_MEMBER_DEVICE_delete_member_device_returning {
+  __typename: "member_device";
+  id: any;
+  member_id: string;
+  fingerprint_id: string;
+}
+
+export interface DELETE_MEMBER_DEVICE_delete_member_device {
+  __typename: "member_device_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+  /**
+   * data from the rows affected by the mutation
+   */
+  returning: DELETE_MEMBER_DEVICE_delete_member_device_returning[];
+}
+
+export interface DELETE_MEMBER_DEVICE {
+  /**
+   * delete data from the table: "member_device"
+   */
+  delete_member_device: DELETE_MEMBER_DEVICE_delete_member_device | null;
+}
+
+export interface DELETE_MEMBER_DEVICEVariables {
+  memberId: string;
+  fingerPrintId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_POINT_STATUS
 // ====================================================
 
