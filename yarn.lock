@@ -11011,7 +11011,7 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element#feature/add-device-management-module:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/5a3aa035e4007501f4a03e5b31ef0f7ce952aa78"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/db6f408328fe230f6a7550fa740f9879746d569b"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"

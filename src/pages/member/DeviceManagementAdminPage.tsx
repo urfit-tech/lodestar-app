@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Icon, SkeletonText } from '@chakra-ui/react'
-import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import { Button, Modal } from 'antd'
 import { gql } from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
@@ -19,17 +18,7 @@ import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ComputerIcon, DeviceIcon, MobileIcon, TabletIcon } from '../../images'
 import ForbiddenPage from '../ForbiddenPage'
-
-const fpPromise = FingerprintJS.load()
-const getVisitorId = async () => {
-  // Get the visitor identifier when you need it.
-  const fp = await fpPromise
-  const result = await fp.get()
-
-  // This is the visitor identifier:
-  const visitorId = result.visitorId
-  return visitorId
-}
+import { getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
 
 const messages = defineMessages({
   description: {
@@ -44,6 +33,7 @@ const messages = defineMessages({
   tablet: { id: 'page.deviceManagementAdmin.tablet', defaultMessage: '平板 {os}' },
   mobile: { id: 'page.deviceManagementAdmin.mobile', defaultMessage: '手機 {os}' },
   unKnownDevice: { id: 'page.deviceManagementAdmin.unKnownDevice', defaultMessage: '未知的裝置 {os}' },
+  currentDevice: {id: 'page.deviceManagementAdmin.currentDevice', defaultMessage: '當前裝置'},
   removeDeviceTitle: { id: 'page.deviceManagementAdmin.removeDeviceTitle', defaultMessage: '退出裝置' },
   removeDeviceDescription: {
     id: 'page.deviceManagementAdmin.removeDeviceDescription',
@@ -72,6 +62,14 @@ const StyledItem = styled.div`
     flex-flow: row;
     justify-content: space-between;
   }
+`
+const StyledLabel = styled.span`
+  padding: 0.2rem 0.5rem;
+  color: white;
+  font-size: 14px;
+  border-radius: 11px;
+  background: var(--gray-darker);
+  white-space: nowrap;
 `
 
 const StyledDeviceDetailsSection = styled.div`
@@ -193,13 +191,15 @@ const DeviceDisplaySection: React.VFC<{ type: string; os: string }> = ({ type, o
 const DeviceManagementAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { currentMemberId, isAuthenticated, isAuthenticating, refreshToken } = useAuth()
+  const { currentMemberId, isAuthenticated, isAuthenticating } = useAuth()
   const { settings, loading, enabledModules } = useApp()
 
   const { loadingMemberDevices, devices, refetchMemberDevice, deleteMemberDevice } = useMemberDevice()
 
-  const [currentDeviceId, setCurrentDeviceId] = useState<string | null>(null)
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null)
   const [removeDeviceLoading, setRemoveDeviceLoading] = useState(false)
+  const [currentFingerPrintId, setCurrentFingerPrintId] = useState<string | null>(null)
+
 
   const handleRemoveDevice = (fingerPrintId: string) => {
     setRemoveDeviceLoading(true)
@@ -212,24 +212,22 @@ const DeviceManagementAdminPage: React.VFC = () => {
         console.error(error)
       })
       .finally(() => {
-        setCurrentDeviceId(null)
+        setSelectedDeviceId(null)
         setRemoveDeviceLoading(false)
       })
-      .then(() => {
-        return FingerprintJS.load()
-      })
-      .then(fp => fp.get())
-      .then(result => {
-        const currentFingerPrintId = result.visitorId
-        if (fingerPrintId === currentFingerPrintId) {
-          alert(formatMessage(messages.removeAlert))
-          refreshToken?.()
-        }
-      })
-      .catch(error => {
-        console.error(error)
-      })
   }
+
+  const currentDevice = devices.filter(device=>device.id === currentFingerPrintId)
+
+  const devicesForRender = [...currentDevice, ...devices.filter(device=>device.id !== currentFingerPrintId)]
+
+  useEffect(()=>{
+    async function setFingerPrintId(){
+      const fingerPrintId = await getFingerPrintId()
+      setCurrentFingerPrintId(fingerPrintId)
+    }
+    setFingerPrintId()
+  },[])
 
   useEffect(() => {
     if (!isAuthenticating && !isAuthenticated && !currentMemberId) {
@@ -237,6 +235,7 @@ const DeviceManagementAdminPage: React.VFC = () => {
     }
   }, [currentMemberId, isAuthenticated, isAuthenticating, history])
 
+ 
   if (loading) {
     return (
       <DefaultLayout>
@@ -261,7 +260,7 @@ const DeviceManagementAdminPage: React.VFC = () => {
 
       <AdminCard style={{ padding: '0px 16px' }}>
         {loadingMemberDevices && <SkeletonText mt="1" noOfLines={5} spacing="5" />}
-        {devices.map(device => {
+        {devicesForRender.map(device => {
           return (
             <StyledItem key={device.id}>
               <StyledDeviceDetailsSection>
@@ -280,14 +279,15 @@ const DeviceManagementAdminPage: React.VFC = () => {
                   </StyledLoginInfo>
                 </div>
               </StyledDeviceDetailsSection>
-              <StyledLogoutSection>
+              <StyledLogoutSection> 
+                {device.id === currentFingerPrintId ? <StyledLabel>{formatMessage(messages.currentDevice)}</StyledLabel>:
                 <Button
                   onClick={() => {
-                    setCurrentDeviceId(device.id)
+                    setSelectedDeviceId(device.id)
                   }}
                 >
                   {formatMessage(messages.logout)}
-                </Button>
+                </Button>}
               </StyledLogoutSection>
             </StyledItem>
           )
@@ -295,13 +295,13 @@ const DeviceManagementAdminPage: React.VFC = () => {
         <StyledModal
           width={400}
           centered
-          visible={Boolean(currentDeviceId)}
+          visible={Boolean(selectedDeviceId)}
           okText={formatMessage(messages.removeDeviceConfirm)}
           cancelText={formatMessage(messages.removeDeviceCancel)}
           okButtonProps={{ loading: removeDeviceLoading, type: 'danger' }}
-          onOk={() => currentDeviceId && handleRemoveDevice(currentDeviceId)}
+          onOk={() => selectedDeviceId && handleRemoveDevice(selectedDeviceId)}
           onCancel={() => {
-            setCurrentDeviceId(null)
+            setSelectedDeviceId(null)
             setRemoveDeviceLoading(false)
           }}
         >

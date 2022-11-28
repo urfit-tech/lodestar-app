@@ -51,7 +51,7 @@ const LoginSection: React.VFC<{
   const tracking = useTracking()
   const history = useHistory()
   const [returnTo] = useQueryParam('returnTo', StringParam)
-  const { login, checkDevice, forceLogin } = useAuth()
+  const { login, forceLogin } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
   const [forceLoginLoading, setForceLoginLoading] = useState(false)
@@ -67,9 +67,6 @@ const LoginSection: React.VFC<{
   const handleLogin = handleSubmit(
     ({ account, password }) => {
       if (login === undefined) {
-        return
-      }
-      if (checkDevice === undefined) {
         return
       }
 
