@@ -1,9 +1,7 @@
 import { SkeletonText } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
-import { useHistory } from 'react-router-dom'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import VoucherCollectionBlock from '../../containers/voucher/VoucherCollectionBlock'
@@ -13,15 +11,7 @@ import ForbiddenPage from '../ForbiddenPage'
 
 const VoucherCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const history = useHistory()
-  const { currentMemberId, isAuthenticated, isAuthenticating } = useAuth()
   const app = useApp()
-
-  useEffect(() => {
-    if (!isAuthenticating && !isAuthenticated && !currentMemberId) {
-      history.push('/')
-    }
-  }, [currentMemberId, isAuthenticated, isAuthenticating, history])
 
   if (app.loading) {
     return (
