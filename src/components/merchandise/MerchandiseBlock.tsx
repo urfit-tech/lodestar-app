@@ -12,6 +12,7 @@ import styled, { css } from 'styled-components'
 import CartContext from '../../contexts/CartContext'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages, voucherMessages } from '../../helpers/translation'
+import { useMerchandiseSpecQuantity } from '../../hooks/merchandise'
 import EmptyCover from '../../images/empty-cover.png'
 import { MerchandiseProps } from '../../types/merchandise'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
@@ -119,9 +120,10 @@ const MerchandiseBlock: React.VFC<{
   const [imageIndex, setImageIndex] = useState(0)
   const [selectedSpec, setSelectedSpec] = useState(merchandise.specs[0])
   const [quantity, setQuantity] = useState(1)
+  const { merchandiseSpec } = useMerchandiseSpecQuantity(selectedSpec.id)
 
   const inCartQuantity = getCartProduct?.(`MerchandiseSpec_${selectedSpec.id}`)?.options?.quantity || 0
-  const remainQuantity = (selectedSpec.buyableQuantity || 0) - inCartQuantity
+  const remainQuantity = (merchandiseSpec?.buyableQuantity || 0) - inCartQuantity
 
   return (
     <div className="row justify-content-between">
@@ -273,8 +275,8 @@ const MerchandiseBlock: React.VFC<{
           </StyledInfo>
         )}
 
-        {withPaymentButton ? (
-          <MerchandisePaymentButton merchandise={merchandise} merchandiseSpec={selectedSpec} quantity={quantity} />
+        {withPaymentButton && merchandiseSpec ? (
+          <MerchandisePaymentButton merchandise={merchandise} merchandiseSpec={merchandiseSpec} quantity={quantity} />
         ) : (
           <StyledButtonBlock>
             <Link to={`/merchandises/${merchandise.id}`}>
