@@ -275,8 +275,10 @@ const MerchandiseBlock: React.VFC<{
           </StyledInfo>
         )}
 
-        {withPaymentButton && merchandiseSpec ? (
-          <MerchandisePaymentButton merchandise={merchandise} merchandiseSpec={merchandiseSpec} quantity={quantity} />
+        {withPaymentButton ? (
+          merchandiseSpec && (
+            <MerchandisePaymentButton merchandise={merchandise} merchandiseSpec={merchandiseSpec} quantity={quantity} />
+          )
         ) : (
           <StyledButtonBlock>
             <Link to={`/merchandises/${merchandise.id}`}>
