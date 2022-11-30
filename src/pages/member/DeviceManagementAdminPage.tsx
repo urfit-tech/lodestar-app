@@ -8,7 +8,6 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AdminCard from '../../components/common/AdminCard'
 import { BREAK_POINT } from '../../components/common/Responsive'
@@ -190,8 +189,6 @@ const DeviceDisplaySection: React.VFC<{ type: string; os: string }> = ({ type, o
 
 const DeviceManagementAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const history = useHistory()
-  const { currentMemberId, isAuthenticated, isAuthenticating } = useAuth()
   const { settings, loading, enabledModules } = useApp()
 
   const { loadingMemberDevices, devices, refetchMemberDevice, deleteMemberDevice } = useMemberDevice()
@@ -228,13 +225,6 @@ const DeviceManagementAdminPage: React.VFC = () => {
     }
     setFingerPrintId()
   },[])
-
-  useEffect(() => {
-    if (!isAuthenticating && !isAuthenticated && !currentMemberId) {
-      history.push('/')
-    }
-  }, [currentMemberId, isAuthenticated, isAuthenticating, history])
-
  
   if (loading) {
     return (
