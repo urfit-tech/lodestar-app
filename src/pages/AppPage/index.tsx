@@ -1,11 +1,14 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Editor, Frame } from '@craftjs/core'
+import Axios from 'axios'
 import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React, { useContext, useState } from 'react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
@@ -117,7 +120,8 @@ const sectionConverter = {
 
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
-  const { settings } = useApp()
+  const { settings, id: appId } = useApp()
+  const { updateAuthToken } = useAuth()
   const { defaultLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPage, appPage } = usePage(location.pathname)
@@ -142,6 +146,34 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   utmQuery.utm_source &&
     Cookies.set('utm_source', utmQuery.utm_source, { expires: Number(settings['utm.expires']) || 30 })
   utmQuery.utm_term && Cookies.set('utm_term', utmQuery.utm_term, { expires: Number(settings['utm.expires']) || 30 })
+
+  useEffect(() => {
+    const refreshTokenAsync = async () => {
+      const fingerPrintId = await getFingerPrintId()
+
+      const {
+        data: { code, message, result },
+      } = await Axios.post(
+        `${process.env.REACT_APP_API_BASE_ROOT}/auth/refresh-token`,
+        { appId, fingerPrintId },
+        {
+          method: 'POST',
+          withCredentials: true,
+        },
+      )
+
+      if (code === 'SUCCESS') {
+        updateAuthToken?.(result.authToken)
+      } else if (code === 'E_NO_DEVICE') {
+        updateAuthToken?.(null)
+        alert('您已被登出，目前有其他裝置登入這組帳號')
+      } else {
+        updateAuthToken?.(null)
+      }
+    }
+
+    refreshTokenAsync()
+  }, [location.pathname])
 
   if (loadingAppPage) {
     return <LoadingPage />

@@ -5,6 +5,7 @@ import { gql } from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -17,7 +18,6 @@ import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ComputerIcon, DeviceIcon, MobileIcon, TabletIcon } from '../../images'
 import ForbiddenPage from '../ForbiddenPage'
-import { getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
 
 const messages = defineMessages({
   description: {
@@ -32,7 +32,7 @@ const messages = defineMessages({
   tablet: { id: 'page.deviceManagementAdmin.tablet', defaultMessage: '平板 {os}' },
   mobile: { id: 'page.deviceManagementAdmin.mobile', defaultMessage: '手機 {os}' },
   unKnownDevice: { id: 'page.deviceManagementAdmin.unKnownDevice', defaultMessage: '未知的裝置 {os}' },
-  currentDevice: {id: 'page.deviceManagementAdmin.currentDevice', defaultMessage: '當前裝置'},
+  currentDevice: { id: 'page.deviceManagementAdmin.currentDevice', defaultMessage: '當前裝置' },
   removeDeviceTitle: { id: 'page.deviceManagementAdmin.removeDeviceTitle', defaultMessage: '退出裝置' },
   removeDeviceDescription: {
     id: 'page.deviceManagementAdmin.removeDeviceDescription',
@@ -197,7 +197,6 @@ const DeviceManagementAdminPage: React.VFC = () => {
   const [removeDeviceLoading, setRemoveDeviceLoading] = useState(false)
   const [currentFingerPrintId, setCurrentFingerPrintId] = useState<string | null>(null)
 
-
   const handleRemoveDevice = (fingerPrintId: string) => {
     setRemoveDeviceLoading(true)
 
@@ -214,18 +213,18 @@ const DeviceManagementAdminPage: React.VFC = () => {
       })
   }
 
-  const currentDevice = devices.filter(device=>device.id === currentFingerPrintId)
+  const currentDevice = devices.filter(device => device.id === currentFingerPrintId)
 
-  const devicesForRender = [...currentDevice, ...devices.filter(device=>device.id !== currentFingerPrintId)]
+  const devicesForRender = [...currentDevice, ...devices.filter(device => device.id !== currentFingerPrintId)]
 
-  useEffect(()=>{
-    async function setFingerPrintId(){
+  useEffect(() => {
+    async function setFingerPrintId() {
       const fingerPrintId = await getFingerPrintId()
       setCurrentFingerPrintId(fingerPrintId)
     }
     setFingerPrintId()
-  },[])
- 
+  }, [])
+
   if (loading) {
     return (
       <DefaultLayout>
@@ -269,15 +268,18 @@ const DeviceManagementAdminPage: React.VFC = () => {
                   </StyledLoginInfo>
                 </div>
               </StyledDeviceDetailsSection>
-              <StyledLogoutSection> 
-                {device.id === currentFingerPrintId ? <StyledLabel>{formatMessage(messages.currentDevice)}</StyledLabel>:
-                <Button
-                  onClick={() => {
-                    setSelectedDeviceId(device.id)
-                  }}
-                >
-                  {formatMessage(messages.logout)}
-                </Button>}
+              <StyledLogoutSection>
+                {device.id === currentFingerPrintId ? (
+                  <StyledLabel>{formatMessage(messages.currentDevice)}</StyledLabel>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      setSelectedDeviceId(device.id)
+                    }}
+                  >
+                    {formatMessage(messages.logout)}
+                  </Button>
+                )}
               </StyledLogoutSection>
             </StyledItem>
           )
