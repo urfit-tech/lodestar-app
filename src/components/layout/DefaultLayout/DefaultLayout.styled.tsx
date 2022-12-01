@@ -17,11 +17,19 @@ export const StyledLayoutHeader = styled(Layout.Header)`
   }
 `
 export const LogoBlock = styled.div`
+  display: flex;
   height: 36px;
-  line-height: 36px;
+  margin-right: 20px;
+  align-items: center;
+
+  @media (max-width: 575px) {
+    margin-right: 0;
+  }
 
   a {
-    display: inline-block;
+    display: flex;
+    height: 100%;
+    align-items: center;
   }
 `
 export const SearchBlock = styled.div`
