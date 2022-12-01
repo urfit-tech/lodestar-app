@@ -105,7 +105,7 @@ const ProgramContentListSection: React.VFC<{
         .filter(programContentSection => programContentSection.contents.length)
         .map(programContentSection => (
           <ProgramSectionBlock key={programContentSection.id}>
-            {/* <ProgramSectionTitle className="mb-3">{programContentSection.title}</ProgramSectionTitle> */}
+            <ProgramSectionTitle className="mb-3">{programContentSection.title}</ProgramSectionTitle>
 
             {programContentSection.contents.map(programContent => (
               <ProgramContentItem
