@@ -36,7 +36,7 @@ const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ account
 
   let utm
   try {
-    utm = JSON.parse(Cookies.get('utm'))
+    utm = JSON.parse(Cookies.get('utm') || '{}')
   } catch (error) {
     utm = {}
   }
@@ -88,7 +88,7 @@ const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLi
 
   let utm
   try {
-    utm = JSON.parse(Cookies.get('utm'))
+    utm = JSON.parse(Cookies.get('utm') || '{}')
   } catch (error) {
     utm = {}
   }
@@ -140,7 +140,7 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
 
   let utm
   try {
-    utm = JSON.parse(Cookies.get('utm'))
+    utm = JSON.parse(Cookies.get('utm') || '{}')
   } catch (error) {
     utm = {}
   }
@@ -195,7 +195,7 @@ const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accoun
 
   let utm
   try {
-    utm = JSON.parse(Cookies.get('utm'))
+    utm = JSON.parse(Cookies.get('utm') || '{}')
   } catch (error) {
     utm = {}
   }

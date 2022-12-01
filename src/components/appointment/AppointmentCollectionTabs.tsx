@@ -226,7 +226,6 @@ const AppointmentPlanCollection: React.FC<{
               />
             )}
             startedAt={selectedPeriod?.startedAt}
-            warningText={formatMessage(productMessages.appointment.warningText.news)}
           />
         </div>
       ))}

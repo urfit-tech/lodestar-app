@@ -122,6 +122,7 @@ const CheckoutBlock: React.VFC<{
       specification: '',
       storeId: '',
       storeName: '',
+      isOutsideTaiwanIsland: 'false',
     },
     invoice: {
       name: member?.name || '',
@@ -283,7 +284,7 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
-    if (shipping.isOutsideTaiwanIsland === 'false') {
+    if (shipping.isOutsideTaiwanIsland !== 'true') {
       if (
         hasPhysicalProduct &&
         memberShop &&

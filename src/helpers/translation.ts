@@ -293,6 +293,7 @@ export const commonMessages = {
     selectPodcast: { id: 'product.podcast.title.select', defaultMessage: '精選廣播' },
     salePrice: { id: 'product.program.content.price.sale', defaultMessage: '優惠價' },
     managementSystem: { id: 'common.content.managementSystem', defaultMessage: '管理後台' },
+    deviceManagement: { id: 'common.content.deviceManagement', defaultMessage: '裝置管理' },
     resetPassword: {
       id: 'users.form.message.password.reset.already',
       defaultMessage: '已重設您的密碼，請回首頁並重新登入。',
