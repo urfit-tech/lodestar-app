@@ -89,6 +89,7 @@ export const commonMessages = {
     uploadFile: { id: 'common.ui.uploadFile', defaultMessage: '上傳檔案' },
     uploadImage: { id: 'common.ui.uploadImage', defaultMessage: '上傳圖片' },
     cancel: { id: 'common.ui.cancel', defaultMessage: '取消' },
+    submit: { id: 'common.ui.submit', defaultMessage: '送出' },
     groupBuying: { id: 'common.ui.groupBuying', defaultMessage: '我的團購' },
     send: { id: 'common.ui.send', defaultMessage: '發送' },
     sendNow: { id: 'common.ui.sendNow', defaultMessage: '立即發送' },
@@ -235,6 +236,8 @@ export const commonMessages = {
     date: { id: 'common.term.date', defaultMessage: '日期：' },
     availableForLimitTime: { id: 'common.label.availableForLimitTime', defaultMessage: '可觀看' },
     isExpired: { id: 'common.label.isExpired', defaultMessage: '已到期' },
+    applyTag: { id: 'common.label.applyTag', defaultMessage: '申請標記' },
+    participateRole: { id: 'common.label.participateRole', defaultMessage: '參與職位' },
   }),
   form: {
     message: defineMessages({
@@ -257,6 +260,7 @@ export const commonMessages = {
       smsVerification: { id: 'common.form.placeholder.smsVerification', defaultMessage: '簡訊驗證碼' },
       search: { id: 'common.searchPlaceholder', defaultMessage: '選擇兌換項目' },
       referrerEmail: { id: 'common.label.referrerEmail', defaultMessage: '請輸入推薦人的註冊信箱' },
+      selectRole: { id: 'common.form.placeholder.selectRole', defaultMessage: '請選擇職位' },
     }),
     option: defineMessages({
       unsolved: { id: 'common.select.option.unsolved', defaultMessage: '未解決' },
@@ -439,6 +443,7 @@ export const commonMessages = {
     selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
     delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
     noOrderLog: { id: 'common.text.noOrderLog', default: '尚無消費紀錄' },
+    appliedTag: { id: 'common.text.appliedTag', defaultMessage: '已送出標記申請' },
   }),
 }
 

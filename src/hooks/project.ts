@@ -388,3 +388,20 @@ export const useMutateProject = (projectId: string) => {
     addProjectView,
   }
 }
+
+export const useMutateProjectRole = (projectId: string, identityId: string) => {
+  const { currentMemberId } = useAuth()
+  const [insertProjectRoleHandler] = useMutation(
+    gql`
+      mutation INSERT_PROJECT_ROLE($projectId: uuid!, $memberId: String!, $identityId: uuid!) {
+        insert_project_role(objects: { project_id: $projectId, member_id: $memberId, identity_id: $identityId }) {
+          affected_rows
+        }
+      }
+    `,
+  )
+  const insertProjectRole = () => {
+    return insertProjectRoleHandler({ variables: { projectId, memberId: currentMemberId, identityId } })
+  }
+  return { insertProjectRole }
+}
