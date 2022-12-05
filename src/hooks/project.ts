@@ -420,6 +420,7 @@ export const useProjectRole = (projectId: string) => {
           agreed_at
           rejected_at
           identity {
+            id
             name
           }
         }

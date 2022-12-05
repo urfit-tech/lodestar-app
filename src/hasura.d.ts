@@ -9485,6 +9485,7 @@ export interface INSERT_PROJECT_ROLEVariables {
 
 export interface GET_PROJECT_ROLES_project_role_identity {
   __typename: "identity";
+  id: any;
   name: string;
 }
 
