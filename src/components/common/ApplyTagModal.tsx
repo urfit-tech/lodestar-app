@@ -6,7 +6,7 @@ import CommonModal from './CommonModal'
 import { commonMessages } from '../../helpers/translation'
 import styled from 'styled-components'
 import { AuthModalContext } from '../auth/AuthModal'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useAuthModal } from '../../hooks/auth'
 import { useMutateProjectRole, useProjectRole } from '../../hooks/project'
 import Cookies from 'js-cookie'
@@ -48,14 +48,14 @@ const ApplyTagModal: React.VFC<{
     .filter(v => v.memberId === currentMemberId && v.rejectAt === null)
     .map(v => v.identityId)
 
-  const handleOpen = useCallback(() => {
+  const handleOpen = () => {
     if (!isAuthenticated) {
       Cookies.set('isApplyingTag', 'true')
       authModal.open(setAuthModalVisible)
     } else {
       onOpen()
     }
-  }, [isAuthenticated, authModal, setAuthModalVisible, onOpen])
+  }
 
   const handleClose = () => {
     Cookies.remove('isApplyingTag')
@@ -88,7 +88,7 @@ const ApplyTagModal: React.VFC<{
       handleOpen()
       Cookies.remove('isApplyingTag')
     }
-  }, [handleOpen])
+  }, [])
 
   return (
     <>
