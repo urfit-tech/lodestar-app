@@ -34,15 +34,19 @@ const ApplyTagModal: React.VFC<{
 }> = ({ projectId, renderTrigger }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, currentMemberId } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const authModal = useAuthModal()
   const { formatMessage } = useIntl()
   const [selectedIdentityId, setSelectedIdentityId] = useState<string | null>(null)
   const { insertProjectRole } = useMutateProjectRole(projectId, selectedIdentityId)
   const { projectRoles } = useProjectRole(projectId)
-  const participateRoles = uniqBy(v => v.identityId, projectRoles)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const uniqueProjectRoles = uniqBy(v => v.identityId, projectRoles)
+  const appliedRoleIds = projectRoles
+    .filter(v => v.memberId === currentMemberId && v.rejectAt === null)
+    .map(v => v.identityId)
 
   const handleOpen = useCallback(() => {
     if (!isAuthenticated) {
@@ -110,8 +114,10 @@ const ApplyTagModal: React.VFC<{
           placeholder={formatMessage(commonMessages.form.placeholder.selectRole)}
           onChange={e => setSelectedIdentityId(e.target.value)}
         >
-          {participateRoles.map(role => (
-            <option value={role.identityId}>{role.identityName}</option>
+          {uniqueProjectRoles.map(role => (
+            <option key={role.id} value={role.identityId} disabled={appliedRoleIds.includes(role.identityId)}>
+              {role.identityName}
+            </option>
           ))}
         </Select>
       </CommonModal>

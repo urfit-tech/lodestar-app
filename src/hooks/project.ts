@@ -413,8 +413,12 @@ export const useProjectRole = (projectId: string) => {
     gql`
       query GET_PROJECT_ROLES($projectId: uuid!) {
         project_role(where: { project_id: { _eq: $projectId } }) {
+          id
           identity_id
           project_id
+          member_id
+          agreed_at
+          rejected_at
           identity {
             name
           }
@@ -427,9 +431,13 @@ export const useProjectRole = (projectId: string) => {
     loading || error || !data
       ? []
       : data.project_role.map(v => ({
+          id: v.id,
           identityId: v.identity_id,
           projectId: v.project_id,
+          memberId: v.member_id,
           identityName: v.identity.name,
+          agreedAt: v.agreed_at,
+          rejectAt: v.rejected_at,
         }))
 
   return {

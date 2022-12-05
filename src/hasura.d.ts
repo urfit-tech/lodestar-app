@@ -9490,8 +9490,12 @@ export interface GET_PROJECT_ROLES_project_role_identity {
 
 export interface GET_PROJECT_ROLES_project_role {
   __typename: "project_role";
+  id: any;
   identity_id: any;
   project_id: any;
+  member_id: string;
+  agreed_at: any | null;
+  rejected_at: any | null;
   /**
    * An object relationship
    */
