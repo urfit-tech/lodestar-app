@@ -6,9 +6,11 @@ import CommonModal from './CommonModal'
 import { commonMessages } from '../../helpers/translation'
 import styled from 'styled-components'
 import { AuthModalContext } from '../auth/AuthModal'
-import { useContext, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useAuthModal } from '../../hooks/auth'
-import { useMutateProjectRole } from '../../hooks/project'
+import { useMutateProjectRole, useProjectRole } from '../../hooks/project'
+import Cookies from 'js-cookie'
+import { uniqBy } from 'ramda'
 
 const StyledContentText = styled.div`
   width: 58px;
@@ -36,60 +38,81 @@ const ApplyTagModal: React.VFC<{
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const authModal = useAuthModal()
   const { formatMessage } = useIntl()
-  // TODO: selectedIdentityId initial value
-  const [selectedIdentityId, setSelectedIdentityId] = useState<string>('62a4828a-3042-421f-82fb-5fe352a4ff8b')
+  const [selectedIdentityId, setSelectedIdentityId] = useState<string | null>(null)
   const { insertProjectRole } = useMutateProjectRole(projectId, selectedIdentityId)
+  const { projectRoles } = useProjectRole(projectId)
+  const participateRoles = uniqBy(v => v.identityId, projectRoles)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
     if (!isAuthenticated) {
-      // TODO: open auth modal after login
+      Cookies.set('isApplyingTag', 'true')
       authModal.open(setAuthModalVisible)
     } else {
       onOpen()
     }
+  }, [isAuthenticated, authModal, setAuthModalVisible, onOpen])
+
+  const handleClose = () => {
+    Cookies.remove('isApplyingTag')
+    onClose()
   }
 
   const handleSubmit = async () => {
+    if (!insertProjectRole) {
+      return toast({
+        title: formatMessage(commonMessages.form.placeholder.selectRole),
+        status: 'error',
+        duration: 1500,
+        position: 'top',
+      })
+    }
+    setIsLoading(true)
     await insertProjectRole()
-    // TODO: toast style
     toast({
       title: formatMessage(commonMessages.text.appliedTag),
       status: 'success',
       duration: 1500,
       position: 'top',
     })
+    setIsLoading(false)
     onClose()
   }
+
+  useEffect(() => {
+    if (Boolean(Cookies.get('isApplyingTag'))) {
+      handleOpen()
+      Cookies.remove('isApplyingTag')
+    }
+  }, [handleOpen])
 
   return (
     <>
       {renderTrigger?.({ setVisible: handleOpen }) || <ApplyTagButton onClick={handleOpen} />}
       <CommonModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleClose}
         title={formatMessage(commonMessages.label.applyTag)}
         renderFooter={() => (
           <>
-            {/* TODO: button style */}
-            <Button className="mt-n3" mr="0.75rem" onClick={onClose}>
+            <Button mr="0.75rem" onClick={handleClose}>
               {formatMessage(commonMessages.ui.cancel)}
             </Button>
-            <Button colorScheme="primary" className="mt-n3" onClick={handleSubmit}>
+            <Button isLoading={isLoading} colorScheme="primary" onClick={handleSubmit}>
               {formatMessage(commonMessages.ui.submit)}
             </Button>
           </>
         )}
-        closeOnOverlayClick={false}
         isCentered
       >
         <StyledContentText>{formatMessage(commonMessages.label.participateRole)}</StyledContentText>
         <Select
-          color="var(--gray)"
           placeholder={formatMessage(commonMessages.form.placeholder.selectRole)}
           onChange={e => setSelectedIdentityId(e.target.value)}
         >
-          {/* TODO: get identity id, name */}
-          <option value={'62a4828a-3042-421f-82fb-5fe352a4ff8b'}>製作人</option>
+          {participateRoles.map(role => (
+            <option value={role.identityId}>{role.identityName}</option>
+          ))}
         </Select>
       </CommonModal>
     </>
