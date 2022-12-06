@@ -13,6 +13,7 @@ import { AuthState } from '../types/member'
 const StyledContainer = styled(Container)`
   background: #ffffff;
   padding: 56px 64px;
+  user-select: none;
 `
 
 const AuthPage: React.VFC = () => {
