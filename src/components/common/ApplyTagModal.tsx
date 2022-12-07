@@ -114,11 +114,13 @@ const ApplyTagModal: React.VFC<{
           placeholder={formatMessage(commonMessages.form.placeholder.selectRole)}
           onChange={e => setSelectedIdentityId(e.target.value)}
         >
-          {uniqueProjectRoles.map(role => (
-            <option key={role.id} value={role.identityId} disabled={appliedRoleIds.includes(role.identityId)}>
-              {role.identityName}
-            </option>
-          ))}
+          {uniqueProjectRoles
+            .filter(role => role.identityName !== 'author')
+            .map(role => (
+              <option key={role.id} value={role.identityId} disabled={appliedRoleIds.includes(role.identityId)}>
+                {role.identityName}
+              </option>
+            ))}
         </Select>
       </CommonModal>
     </>
