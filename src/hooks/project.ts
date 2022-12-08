@@ -388,3 +388,63 @@ export const useMutateProject = (projectId: string) => {
     addProjectView,
   }
 }
+
+export const useMutateProjectRole = (projectId: string, identityId: string | null) => {
+  const { currentMemberId } = useAuth()
+  const [insertProjectRoleHandler] = useMutation(
+    gql`
+      mutation INSERT_PROJECT_ROLE($projectId: uuid!, $memberId: String!, $identityId: uuid!) {
+        insert_project_role(objects: { project_id: $projectId, member_id: $memberId, identity_id: $identityId }) {
+          affected_rows
+        }
+      }
+    `,
+  )
+  const insertProjectRole = identityId
+    ? () => {
+        return insertProjectRoleHandler({ variables: { projectId, memberId: currentMemberId, identityId } })
+      }
+    : null
+  return { insertProjectRole }
+}
+
+export const useProjectRole = (projectId: string) => {
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PROJECT_ROLES, hasura.GET_PROJECT_ROLESVariables>(
+    gql`
+      query GET_PROJECT_ROLES($projectId: uuid!) {
+        project_role(where: { project_id: { _eq: $projectId } }) {
+          id
+          identity_id
+          project_id
+          member_id
+          agreed_at
+          rejected_at
+          identity {
+            id
+            name
+          }
+        }
+      }
+    `,
+    { variables: { projectId } },
+  )
+  const projectRoles =
+    loading || error || !data
+      ? []
+      : data.project_role.map(v => ({
+          id: v.id,
+          identityId: v.identity_id,
+          projectId: v.project_id,
+          memberId: v.member_id,
+          identityName: v.identity.name,
+          agreedAt: v.agreed_at,
+          rejectAt: v.rejected_at,
+        }))
+
+  return {
+    loadingProjectRoles: loading,
+    errorProjectRoles: error,
+    projectRoles,
+    refetchProjectRoles: refetch,
+  }
+}
