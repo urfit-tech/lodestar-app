@@ -11,6 +11,7 @@ import { useAuthModal } from '../../hooks/auth'
 import { useMutateProjectRole, useProjectRole } from '../../hooks/project'
 import Cookies from 'js-cookie'
 import { uniqBy } from 'ramda'
+import { handleError } from '../../helpers'
 
 const StyledContentText = styled.div`
   width: 58px;
@@ -40,13 +41,16 @@ const ApplyTagModal: React.VFC<{
   const { formatMessage } = useIntl()
   const [selectedIdentityId, setSelectedIdentityId] = useState<string | null>(null)
   const { insertProjectRole } = useMutateProjectRole(projectId, selectedIdentityId)
-  const { projectRoles } = useProjectRole(projectId)
+  const { projectRoles, refetchProjectRoles } = useProjectRole(projectId)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const uniqueProjectRoles = uniqBy(v => v.identityId, projectRoles)
   const appliedRoleIds = projectRoles
     .filter(v => v.memberId === currentMemberId && v.rejectAt === null)
     .map(v => v.identityId)
+  const applyingRoleIds = projectRoles.filter(
+    v => v.memberId === currentMemberId && v.rejectAt === null && v.agreedAt === null,
+  )
 
   const handleOpen = () => {
     if (!isAuthenticated) {
@@ -81,6 +85,7 @@ const ApplyTagModal: React.VFC<{
     })
     setIsLoading(false)
     onClose()
+    refetchProjectRoles().catch(handleError)
   }
 
   useEffect(() => {
@@ -117,7 +122,11 @@ const ApplyTagModal: React.VFC<{
           {uniqueProjectRoles
             .filter(role => role.identityName !== 'author')
             .map(role => (
-              <option key={role.id} value={role.identityId} disabled={appliedRoleIds.includes(role.identityId)}>
+              <option
+                key={role.id}
+                value={role.identityId}
+                disabled={appliedRoleIds.includes(role.identityId) || applyingRoleIds.includes(role.identityId)}
+              >
                 {role.identityName}
               </option>
             ))}
