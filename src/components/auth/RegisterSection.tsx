@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useState } from 'react'
-import { AiOutlineLock, AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'react-icons/ai'
+import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
@@ -50,6 +50,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
   const [verifying, setVerifying] = useState(false)
   const [authState, setAuthState] = useState<'sms_verification' | 'register' | 'signup_info'>()
   const [signupInfos, setSignupInfos] = useState<{ id: string; value: string }[]>()
+  const [passwordShow, setPasswordShow] = useState(false)
 
   useEffect(() => {
     setAuthState(
@@ -91,7 +92,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
         }
         setVerifying(true)
         const phoneNumber = values.phoneNumber.trim()
-        verifySmsCode({ phoneNumber , code: values.code.trim() })
+        verifySmsCode({ phoneNumber, code: values.code.trim() })
           .then(() => {
             if (settings['feature.signup_info.enable'] === '1') {
               setAuthState('signup_info')
@@ -468,9 +469,15 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
             ],
           })(
             <MigrationInput
-              type="password"
+              type={passwordShow ? 'text' : 'password'}
               placeholder={formatMessage(commonMessages.form.placeholder.password)}
-              suffix={<AiOutlineLock />}
+              suffix={
+                <Icon
+                  className="cursor-pointer"
+                  as={passwordShow ? AiOutlineEye : AiOutlineEyeInvisible}
+                  onClick={() => setPasswordShow(!passwordShow)}
+                />
+              }
             />,
           )}
         </Form.Item>

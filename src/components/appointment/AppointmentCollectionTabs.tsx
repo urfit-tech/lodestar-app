@@ -1,5 +1,11 @@
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import moment from 'moment'
 import momentTz from 'moment-timezone'
 import React, { useContext, useEffect, useState } from 'react'
@@ -10,13 +16,7 @@ import styled from 'styled-components'
 import { productMessages } from '../../helpers/translation'
 import { AppointmentPeriod, AppointmentPlan } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import AppointmentPeriodCollection from './AppointmentPeriodCollection'
-import Tracking from 'lodestar-app-element/src/components/common/Tracking'
-import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 
 const StyledTab = styled.div`
   margin-bottom: 0.75rem;
@@ -226,7 +226,6 @@ const AppointmentPlanCollection: React.FC<{
               />
             )}
             startedAt={selectedPeriod?.startedAt}
-            warningText={formatMessage(productMessages.appointment.warningText.news)}
           />
         </div>
       ))}

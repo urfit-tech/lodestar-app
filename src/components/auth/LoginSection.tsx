@@ -7,7 +7,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai'
+import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -51,7 +51,7 @@ const LoginSection: React.VFC<{
   const tracking = useTracking()
   const history = useHistory()
   const [returnTo] = useQueryParam('returnTo', StringParam)
-  const { login, checkDevice, forceLogin } = useAuth()
+  const { login, forceLogin } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
   const [forceLoginLoading, setForceLoginLoading] = useState(false)
@@ -62,13 +62,12 @@ const LoginSection: React.VFC<{
     },
   })
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false)
+  const [showLoginAlert, setShowLoginAlert] = useState<boolean>(false)
+  const [passwordShow, setPasswordShow] = useState(false)
 
   const handleLogin = handleSubmit(
     ({ account, password }) => {
       if (login === undefined) {
-        return
-      }
-      if (checkDevice === undefined) {
         return
       }
 
@@ -85,8 +84,13 @@ const LoginSection: React.VFC<{
           returnTo && history.push(returnTo)
         })
         .catch((error: AxiosError) => {
-          if (error.message === 'E_BIND_DEVICE') {
+          if (error.message === 'E_LOGIN_DEVICE') {
             setAlertModalVisible(true)
+            return
+          }
+
+          if (error.message === 'E_BIND_DEVICE') {
+            setShowLoginAlert(true)
             return
           }
           if (error.isAxiosError && error.response) {
@@ -188,12 +192,20 @@ const LoginSection: React.VFC<{
 
           <InputGroup className="mb-3">
             <Input
-              type="password"
+              type={passwordShow ? 'text' : 'password'}
               name="password"
               ref={register({ required: formatMessage(commonMessages.form.message.password) })}
               placeholder={formatMessage(commonMessages.form.message.password)}
             />
-            <InputRightElement children={<Icon as={AiOutlineLock} />} />
+            <InputRightElement
+              children={
+                <Icon
+                  className="cursor-pointer"
+                  as={passwordShow ? AiOutlineEye : AiOutlineEyeInvisible}
+                  onClick={() => setPasswordShow(!passwordShow)}
+                />
+              }
+            />
           </InputGroup>
 
           <ForgetPassword>
@@ -236,6 +248,31 @@ const LoginSection: React.VFC<{
             </StyledModalTitle>
             <div className="mb-4">
               {formatMessage(localAuthMessages.default.LoginSection.loginAlertModelDescription)}
+            </div>
+          </StyledModal>
+
+          {/* device reach limit alert */}
+          <StyledModal
+            width={400}
+            centered
+            visible={showLoginAlert}
+            okText={formatMessage(localAuthMessages.default.LoginSection.deviceReachLimitConfirm)}
+            okButtonProps={{ type: 'primary' }}
+            onOk={() => {
+              setShowLoginAlert(false)
+              setLoading(false)
+            }}
+            cancelText={null}
+            onCancel={() => {
+              setShowLoginAlert(false)
+              setLoading(false)
+            }}
+          >
+            <StyledModalTitle className="mb-4">
+              {formatMessage(localAuthMessages.default.LoginSection.deviceReachLimitTitle)}
+            </StyledModalTitle>
+            <div className="mb-4">
+              {formatMessage(localAuthMessages.default.LoginSection.deviceReachLimitDescription)}
             </div>
           </StyledModal>
         </>
