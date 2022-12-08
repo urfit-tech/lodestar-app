@@ -10,6 +10,7 @@ import VoucherCollectionBlockComponent from '../../components/voucher/VoucherCol
 import hasura from '../../hasura'
 import { voucherMessages } from '../../helpers/translation'
 import { useEnrolledProductIds } from '../../hooks/data'
+import { fetchCurrentGeolocation } from '../../hooks/util'
 
 const VoucherCollectionBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -93,7 +94,8 @@ const VoucherCollectionBlock: React.VFC = () => {
   )
 }
 
-const exchangeVoucherCode = (authToken: string | null, voucherId: string, selectedProductIds: string[]) => {
+const exchangeVoucherCode = async (authToken: string | null, voucherId: string, selectedProductIds: string[]) => {
+  const { ip, country, countryCode } = await fetchCurrentGeolocation()
   return axios.post(
     `${process.env.REACT_APP_API_BASE_ROOT}/tasks/order`,
     {
@@ -101,6 +103,7 @@ const exchangeVoucherCode = (authToken: string | null, voucherId: string, select
       discountId: `Voucher_${voucherId}`,
       productIds: selectedProductIds,
       invoice: {},
+      geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
     },
     {
       headers: { authorization: `Bearer ${authToken}` },

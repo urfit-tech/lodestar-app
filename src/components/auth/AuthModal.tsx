@@ -20,6 +20,7 @@ const StyledContainer = styled.div`
   @media (min-width: ${BREAK_POINT}px) {
     padding: 1rem;
   }
+  user-select: none;
 `
 export const StyledTitle = styled.h1`
   ${CommonLargeTitleMixin}
