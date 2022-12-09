@@ -4,12 +4,13 @@ import { filter } from 'ramda'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
+import { useAuthModal } from '../../hooks/auth'
 import { AuthModalContext } from '../auth/AuthModal'
 import { MemberAdminMenu } from '../common/AdminMenu'
 import { useAppRouter } from '../common/AppRouter'
+import PageHelmet from '../common/PageHelmet'
 import Responsive from '../common/Responsive'
 import DefaultLayout from './DefaultLayout'
-import { useAuthModal } from '../../hooks/auth'
 
 const StyledContent = styled.div<{ white?: boolean; footerHeight: number }>`
   min-width: 240px;
@@ -41,6 +42,7 @@ const MemberAdminLayout: React.FC<{
 
   return (
     <DefaultLayout noFooter>
+      <PageHelmet title={content.title} />
       <div className="d-flex">
         <Responsive.Desktop>
           <StyledContent className="pl-5 py-5" footerHeight={0}>
