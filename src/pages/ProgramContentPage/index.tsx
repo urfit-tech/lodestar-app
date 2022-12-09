@@ -17,6 +17,7 @@ import { ProgressProvider } from '../../contexts/ProgressContext'
 import { hasJsonStructure } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
+import ProgramPageHelmet from '../ProgramPage/ProgramPageHelmet'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
@@ -36,7 +37,7 @@ const ProgramContentPage: React.VFC = () => {
     programId: string
     programContentId: string
   }>()
-  const { enabledModules, settings, id: appId } = useApp()
+  const { enabledModules, settings, id: appId, loading: loadingApp } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
@@ -54,6 +55,7 @@ const ProgramContentPage: React.VFC = () => {
 
   return (
     <Layout>
+      {!loadingApp && <ProgramPageHelmet program={program!} />}
       <StyledPageHeader
         title={program?.title || programId}
         extra={
