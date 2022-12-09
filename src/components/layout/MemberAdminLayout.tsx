@@ -1,13 +1,15 @@
 import { Icon } from '@chakra-ui/icons'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { filter } from 'ramda'
-import React from 'react'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
+import { AuthModalContext } from '../auth/AuthModal'
 import { MemberAdminMenu } from '../common/AdminMenu'
 import { useAppRouter } from '../common/AppRouter'
 import Responsive from '../common/Responsive'
 import DefaultLayout from './DefaultLayout'
+import { useAuthModal } from '../../hooks/auth'
 
 const StyledContent = styled.div<{ white?: boolean; footerHeight: number }>`
   min-width: 240px;
@@ -32,8 +34,10 @@ const MemberAdminLayout: React.FC<{
 }> = ({ content, children }) => {
   const location = useLocation()
   const { routesMap } = useAppRouter()
+  const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
   const defaultSelectedKeys = Object.keys(filter(routeProps => routeProps.path === location.pathname, routesMap))
   const { renderMemberAdminMenu } = useCustomRenderer()
+  const authModal = useAuthModal()
 
   return (
     <DefaultLayout noFooter>
@@ -51,6 +55,14 @@ const MemberAdminLayout: React.FC<{
           {children}
         </StyledContent>
       </div>
+      <AuthModalContext.Consumer>
+        {({ setVisible: setAuthModalVisible }) => {
+          if (!isAuthenticating && !isAuthenticated && !currentMemberId) {
+            authModal.open(setAuthModalVisible)
+          }
+          return <></>
+        }}
+      </AuthModalContext.Consumer>
     </DefaultLayout>
   )
 }

@@ -1,9 +1,8 @@
 import { Tab, TabPanels, Tabs } from '@chakra-ui/react'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { reverse } from 'ramda'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useHistory } from 'react-router-dom'
 import CouponAdminCard from '../../components/checkout/CouponAdminCard'
 import CouponInsertionCard from '../../components/checkout/CouponInsertionCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
@@ -14,16 +13,9 @@ import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
 
 const CouponCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const history = useHistory()
-  const { currentMemberId, isAuthenticated, isAuthenticating } = useAuth()
+  const { currentMemberId } = useAuth()
   const { coupons } = useCouponCollection(currentMemberId || '')
   const [activeKey, setActiveKey] = useState('available')
-
-  useEffect(() => {
-    if (!isAuthenticating && !isAuthenticated && !currentMemberId) {
-      history.push('/')
-    }
-  }, [currentMemberId, isAuthenticated, isAuthenticating, history])
 
   const tabContents = [
     {

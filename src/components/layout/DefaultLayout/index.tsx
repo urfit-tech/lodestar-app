@@ -82,7 +82,7 @@ const DefaultLayout: React.FC<{
       <StyledLayoutWrapper variant={white ? 'white' : undefined}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
           <div className="d-flex align-items-center">
-            <LogoBlock className="mr-4">
+            <LogoBlock>
               {renderTitle ? (
                 renderTitle()
               ) : (

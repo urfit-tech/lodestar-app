@@ -66,6 +66,18 @@ const authMessages = {
       id: 'auth.LoginSection.loginSuccess',
       defaultMessage: '登入成功',
     },
+    deviceReachLimitTitle: {
+      id: 'auth.LoginSection.deviceReachLimitTitle',
+      defaultMessage: '裝置綁定已達上限',
+    },
+    deviceReachLimitDescription: {
+      id: 'auth.LoginSection.deviceReachLimitDescription',
+      defaultMessage: '裝置綁定已達上限，請至裝置管理頁移除裝置，方可於當前裝置登入。',
+    },
+    deviceReachLimitConfirm: {
+      id: 'auth.LoginSection.deviceReachLimitConfirm',
+      defaultMessage: '確定',
+    },
   }),
 }
 

@@ -27,13 +27,12 @@ const StyledPlayer = styled.div`
 
 const StyledPictureCover = styled.div`
   margin-bottom: 24px;
-  height: 670px;
   max-height: 67vw;
 
   @media (max-width: 575px) {
     margin-left: -15px;
     margin-right: -15px;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
   }
 
   img {

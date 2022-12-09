@@ -6265,6 +6265,44 @@ export interface GET_MERCHANDISE_COLLECTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_MERCHANDISE_SPEC_QUANTITY
+// ====================================================
+
+export interface GET_MERCHANDISE_SPEC_QUANTITY_merchandise_spec_by_pk_merchandise_spec_inventory_status {
+  __typename: "merchandise_spec_inventory_status";
+  buyable_quantity: any | null;
+}
+
+export interface GET_MERCHANDISE_SPEC_QUANTITY_merchandise_spec_by_pk {
+  __typename: "merchandise_spec";
+  id: any;
+  title: string;
+  list_price: any;
+  sale_price: any | null;
+  quota: number;
+  /**
+   * An object relationship
+   */
+  merchandise_spec_inventory_status: GET_MERCHANDISE_SPEC_QUANTITY_merchandise_spec_by_pk_merchandise_spec_inventory_status | null;
+}
+
+export interface GET_MERCHANDISE_SPEC_QUANTITY {
+  /**
+   * fetch data from the table: "merchandise_spec" using primary key columns
+   */
+  merchandise_spec_by_pk: GET_MERCHANDISE_SPEC_QUANTITY_merchandise_spec_by_pk | null;
+}
+
+export interface GET_MERCHANDISE_SPEC_QUANTITYVariables {
+  merchandiseSpecId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_MERCHANDISE
 // ====================================================
 
@@ -6305,11 +6343,6 @@ export interface GET_MERCHANDISE_merchandise_by_pk_member_shop {
   shipping_methods: any | null;
 }
 
-export interface GET_MERCHANDISE_merchandise_by_pk_merchandise_specs_merchandise_spec_inventory_status {
-  __typename: "merchandise_spec_inventory_status";
-  buyable_quantity: any | null;
-}
-
 export interface GET_MERCHANDISE_merchandise_by_pk_merchandise_specs {
   __typename: "merchandise_spec";
   id: any;
@@ -6317,10 +6350,6 @@ export interface GET_MERCHANDISE_merchandise_by_pk_merchandise_specs {
   list_price: any;
   sale_price: any | null;
   quota: number;
-  /**
-   * An object relationship
-   */
-  merchandise_spec_inventory_status: GET_MERCHANDISE_merchandise_by_pk_merchandise_specs_merchandise_spec_inventory_status | null;
 }
 
 export interface GET_MERCHANDISE_merchandise_by_pk {
@@ -10785,6 +10814,67 @@ export interface GET_MEMBER_CONTRACTS {
 
 export interface GET_MEMBER_CONTRACTSVariables {
   memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_DEVICE
+// ====================================================
+
+export interface GET_MEMBER_DEVICE_member_device {
+  __typename: "member_device";
+  id: any;
+  fingerprint_id: string;
+  type: string | null;
+  browser: string | null;
+  os_name: string | null;
+  last_login_at: any | null;
+  options: any | null;
+  ip_address: string | null;
+}
+
+export interface GET_MEMBER_DEVICE {
+  /**
+   * fetch data from the table: "member_device"
+   */
+  member_device: GET_MEMBER_DEVICE_member_device[];
+}
+
+export interface GET_MEMBER_DEVICEVariables {
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DELETE_MEMBER_DEVICE
+// ====================================================
+
+export interface DELETE_MEMBER_DEVICE_delete_member_device {
+  __typename: "member_device_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface DELETE_MEMBER_DEVICE {
+  /**
+   * delete data from the table: "member_device"
+   */
+  delete_member_device: DELETE_MEMBER_DEVICE_delete_member_device | null;
+}
+
+export interface DELETE_MEMBER_DEVICEVariables {
+  memberId: string;
+  fingerPrintId: string;
 }
 
 /* tslint:disable */

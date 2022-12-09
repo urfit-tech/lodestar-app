@@ -3,7 +3,12 @@ import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { flatten, uniq } from 'ramda'
 import hasura from '../hasura'
-import { MerchandiseBriefProps, MerchandiseProps, OrderLogWithMerchandiseSpecProps } from '../types/merchandise'
+import {
+  MerchandiseBriefProps,
+  MerchandiseProps,
+  MerchandiseSpecProps,
+  OrderLogWithMerchandiseSpecProps,
+} from '../types/merchandise'
 
 export const useMerchandiseCollection = (options?: {
   search?: string | null
@@ -122,6 +127,47 @@ export const useMerchandiseCollection = (options?: {
   }
 }
 
+export const useMerchandiseSpecQuantity = (merchandiseSpecId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_MERCHANDISE_SPEC_QUANTITY,
+    hasura.GET_MERCHANDISE_SPEC_QUANTITYVariables
+  >(
+    gql`
+      query GET_MERCHANDISE_SPEC_QUANTITY($merchandiseSpecId: uuid!) {
+        merchandise_spec_by_pk(id: $merchandiseSpecId) {
+          id
+          title
+          list_price
+          sale_price
+          quota
+          merchandise_spec_inventory_status {
+            buyable_quantity
+          }
+        }
+      }
+    `,
+    { variables: { merchandiseSpecId } },
+  )
+  const merchandiseSpec: MerchandiseSpecProps | null =
+    loading || error || !data || !data.merchandise_spec_by_pk
+      ? null
+      : {
+          id: data?.merchandise_spec_by_pk?.id,
+          title: data?.merchandise_spec_by_pk?.title,
+          listPrice: data?.merchandise_spec_by_pk?.list_price,
+          salePrice: data?.merchandise_spec_by_pk?.sale_price,
+          quota: data?.merchandise_spec_by_pk?.quota,
+          buyableQuantity: data?.merchandise_spec_by_pk?.merchandise_spec_inventory_status?.buyable_quantity,
+        }
+
+  return {
+    loadingMerchandiseSpec: loading,
+    errorMerchandiseSpec: error,
+    merchandiseSpec,
+    refetchMerchandiseSpec: refetch,
+  }
+}
+
 export const useMerchandise = (merchandiseId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_MERCHANDISE, hasura.GET_MERCHANDISEVariables>(
     gql`
@@ -165,9 +211,6 @@ export const useMerchandise = (merchandiseId: string) => {
             list_price
             sale_price
             quota
-            merchandise_spec_inventory_status {
-              buyable_quantity
-            }
           }
         }
       }
@@ -233,7 +276,6 @@ export const useMerchandise = (merchandiseId: string) => {
             listPrice: v.list_price,
             salePrice: v.sale_price,
             quota: v.quota,
-            buyableQuantity: v.merchandise_spec_inventory_status?.buyable_quantity || 0,
           })),
         }
 
