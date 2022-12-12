@@ -333,7 +333,7 @@
   "common.form.placeholder.smsVerification": "簡訊驗證碼",
   "common.form.placeholder.username": "使用者名稱",
   "common.form.validator": "確認密碼與新密碼相同",
-  "common.introduction": "簡介",
+  "common.introduction": "簡述",
   "common.label.availableForLimitTime": "可觀看 {amount} {unit}",
   "common.label.category": "類別",
   "common.label.firstPeriod": "首期",
