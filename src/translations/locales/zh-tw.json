@@ -1208,5 +1208,7 @@
   "voucher.noUsePeriod": "無使用期限",
   "voucher.redeemable": "可兌換",
   "voucher.tab.exchange": "兌換代碼",
-  "voucher.title.add": "新增兌換券"
+  "voucher.title.add": "新增兌換券",
+  "common.text.publish": "發布",
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "內容預計於"
 }

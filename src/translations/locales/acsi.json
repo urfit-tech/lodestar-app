@@ -964,5 +964,7 @@
   "voucher.notice": "兌換券為一次使用後失效，請一次兌換完畢",
   "voucher.redeemable": "可兌換",
   "voucher.tab.exchange": "兌換代碼",
-  "voucher.title.add": "新增兌換券"
+  "voucher.title.add": "新增兌換券",
+  "common.text.publish": "發布",
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "內容預計於"
 }
