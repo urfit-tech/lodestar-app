@@ -359,6 +359,7 @@ const ProgramContentPlayerCover: React.VFC<{
     url,
   } = useRouteMatch<{ programContentId: string }>()
   const { formatMessage } = useIntl()
+  const urlParams = new URLSearchParams(window.location.search)
 
   return (
     <StyledCover className="d-flex align-items-center justify-content-center">
@@ -370,7 +371,7 @@ const ProgramContentPlayerCover: React.VFC<{
         <CountDownPlayButton
           onPlayNext={() => {
             onSetIsCoverShowing?.(false)
-            history.push(url.replace(currentContentId, nextProgramContent.id))
+            history.push(`${url.replace(currentContentId, nextProgramContent.id)}?back=${urlParams.get('back')}`)
           }}
         />
         <StyledCancelButton onClick={() => onSetIsCoverShowing?.(false)}>
