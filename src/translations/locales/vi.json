@@ -1208,5 +1208,7 @@
   "voucher.noUsePeriod": "No UsePeriod",
   "voucher.redeemable": "có thể đổi được",
   "voucher.tab.exchange": "Mã trao đổi",
-  "voucher.title.add": "Thêm Voucher"
+  "voucher.title.add": "Thêm Voucher",
+  "common.text.publish": "công bố",
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "Nội dung sẽ ở"
 }

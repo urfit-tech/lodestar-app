@@ -1208,5 +1208,7 @@
   "voucher.noUsePeriod": "No UsePeriod",
   "voucher.redeemable": "redeemable",
   "voucher.tab.exchange": "Exchange Code",
-  "voucher.title.add": "Add Voucher"
+  "voucher.title.add": "Add Voucher",
+  "common.text.publish": "publish",
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "The content will at"
 }

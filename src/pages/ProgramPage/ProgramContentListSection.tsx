@@ -1,14 +1,15 @@
 import { Divider, Icon, Tag, Typography } from 'antd'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import moment from 'moment-timezone'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { AuthModalContext } from '../../components/auth/AuthModal'
 import ProgramContentTrialModal from '../../components/program/ProgramContentTrialModal'
-import { durationFormatter } from '../../helpers'
-import { productMessages } from '../../helpers/translation'
+import { durationFormatter, isMobile } from '../../helpers'
+import { commonMessages, productMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 
@@ -24,10 +25,8 @@ const ProgramSectionTitle = styled.h3`
   font-size: 20px;
   font-weight: bold;
 `
-const ProgramContentItem = styled.div<{ isEnrolled: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+
+const MobileProgramContentItem = styled.div<{ isEnrolled: boolean }>`
   position: relative;
   margin-bottom: 12px;
   padding: 1rem;
@@ -40,6 +39,13 @@ const ProgramContentItem = styled.div<{ isEnrolled: boolean }>`
     font-size: 12px;
   }
 `
+
+const ProgramContentItem = styled(MobileProgramContentItem)<{ isEnrolled: boolean }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
 const StyledObscure = styled.span`
   &::before {
     content: ' ';
@@ -57,6 +63,7 @@ const StyledTag = styled(Tag)`
   }
 `
 const StyledDuration = styled.span`
+  font-size: 12px;
   color: rgb(155, 155, 155);
 `
 
@@ -107,55 +114,119 @@ const ProgramContentListSection: React.VFC<{
           <ProgramSectionBlock key={programContentSection.id}>
             <ProgramSectionTitle className="mb-3">{programContentSection.title}</ProgramSectionTitle>
 
-            {programContentSection.contents.map(programContent => (
-              <ProgramContentItem
-                key={programContent.id}
-                isEnrolled={isEnrolled}
-                onClick={() => {
-                  if (isEnrolled) {
-                    history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
-                  }
-                  if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
-                    const url = new URL(window.location.href)
-                    url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
-                    url.searchParams.set('programContentId', programContent.id)
-                    window.history.pushState({}, '', url.toString())
-                    setAuthModalVisible?.(true)
-                  }
-                }}
-              >
-                <Typography.Text>
-                  {programContent.contentType === 'video' ? (
-                    <Icon type="video-camera" className="mr-2" />
-                  ) : (
-                    <Icon type="file-text" className="mr-2" />
-                  )}
-                  <span>{programContent.title}</span>
-                </Typography.Text>
+            {programContentSection.contents.map(programContent =>
+              isMobile ? (
+                <MobileProgramContentItem
+                  key={programContent.id}
+                  isEnrolled={isEnrolled}
+                  onClick={() => {
+                    if (isEnrolled) {
+                      history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
+                    }
+                    if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
+                      const url = new URL(window.location.href)
+                      url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
+                      url.searchParams.set('programContentId', programContent.id)
+                      window.history.pushState({}, '', url.toString())
+                      setAuthModalVisible?.(true)
+                    }
+                  }}
+                >
+                  <Typography.Text className="d-flex align-items-center">
+                    <span>{programContent.title}</span>
+                  </Typography.Text>
 
-                <StyledDuration>
-                  {(programContent.displayMode === DisplayModeEnum.trial ||
-                    (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
-                  !isEnrolled ? (
-                    <ProgramContentTrialModal
-                      programContentId={programContent.id}
-                      render={({ setVisible }) => (
-                        <StyledObscure onClick={() => setVisible(true)}>
-                          <StyledTag color={theme.colors.primary[500]}>
-                            {formatMessage(productMessages.program.content.trial)}
-                          </StyledTag>
-                        </StyledObscure>
-                      )}
-                    />
-                  ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
-                    <StyledTag color={theme.colors.primary[500]}>
-                      {formatMessage(productMessages.program.content.trial)}
-                    </StyledTag>
-                  ) : null}
-                  {durationFormatter(programContent.duration) || ''}
-                </StyledDuration>
-              </ProgramContentItem>
-            ))}
+                  <StyledDuration className="mt-2 d-flex align-items-center duration-text">
+                    {(programContent.displayMode === DisplayModeEnum.trial ||
+                      (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
+                    !isEnrolled ? (
+                      <ProgramContentTrialModal
+                        programContentId={programContent.id}
+                        render={({ setVisible }) => (
+                          <StyledObscure onClick={() => setVisible(true)}>
+                            <StyledTag color={theme.colors.primary[500]}>
+                              {formatMessage(productMessages.program.content.trial)}
+                            </StyledTag>
+                          </StyledObscure>
+                        )}
+                      />
+                    ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
+                      <StyledTag color={theme.colors.primary[500]}>
+                        {formatMessage(productMessages.program.content.trial)}
+                      </StyledTag>
+                    ) : null}
+                    {programContent.contentType === 'video' ? (
+                      <Icon type="video-camera" className="mr-2" />
+                    ) : (
+                      <Icon type="file-text" className="mr-2" />
+                    )}
+                    {durationFormatter(programContent.duration) || ''}
+                    <span className="ml-2">
+                      {moment().isBefore(moment(programContent.publishedAt)) &&
+                        ` (${moment(programContent.publishedAt).format('MM/DD')} ${formatMessage(
+                          commonMessages.text.publish,
+                        )}) `}
+                    </span>
+                  </StyledDuration>
+                </MobileProgramContentItem>
+              ) : (
+                <ProgramContentItem
+                  key={programContent.id}
+                  isEnrolled={isEnrolled}
+                  onClick={() => {
+                    if (isEnrolled) {
+                      history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
+                    }
+                    if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
+                      const url = new URL(window.location.href)
+                      url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
+                      url.searchParams.set('programContentId', programContent.id)
+                      window.history.pushState({}, '', url.toString())
+                      setAuthModalVisible?.(true)
+                    }
+                  }}
+                >
+                  <Typography.Text className="d-flex align-items-center">
+                    {programContent.contentType === 'video' ? (
+                      <Icon type="video-camera" className="mr-2" />
+                    ) : (
+                      <Icon type="file-text" className="mr-2" />
+                    )}
+                    <span>{programContent.title}</span>
+                  </Typography.Text>
+
+                  <StyledDuration>
+                    {(programContent.displayMode === DisplayModeEnum.trial ||
+                      (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
+                    !isEnrolled ? (
+                      <ProgramContentTrialModal
+                        programContentId={programContent.id}
+                        render={({ setVisible }) => (
+                          <StyledObscure onClick={() => setVisible(true)}>
+                            <StyledTag color={theme.colors.primary[500]}>
+                              {formatMessage(productMessages.program.content.trial)}
+                            </StyledTag>
+                          </StyledObscure>
+                        )}
+                      />
+                    ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
+                      <StyledObscure>
+                        <StyledTag color={theme.colors.primary[500]}>
+                          {formatMessage(productMessages.program.content.trial)}
+                        </StyledTag>
+                      </StyledObscure>
+                    ) : null}
+                    <span className="mr-2">
+                      {moment().isBefore(moment(programContent.publishedAt)) &&
+                        ` (${moment(programContent.publishedAt).format('MM/DD')} ${formatMessage(
+                          commonMessages.text.publish,
+                        )})`}
+                    </span>
+                    {durationFormatter(programContent.duration) || ''}
+                  </StyledDuration>
+                </ProgramContentItem>
+              ),
+            )}
           </ProgramSectionBlock>
         ))}
     </>

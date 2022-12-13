@@ -444,6 +444,7 @@ export const commonMessages = {
     delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
     noOrderLog: { id: 'common.text.noOrderLog', default: '尚無消費紀錄' },
     appliedTag: { id: 'common.text.appliedTag', defaultMessage: '已送出標記申請' },
+    publish: { id: 'common.text.publish', default: 'publish' },
   }),
 }
 

@@ -1208,5 +1208,7 @@
   "voucher.noUsePeriod": "Tidak Ada Periode Penggunaan",
   "voucher.redeemable": "dapat ditukarkan",
   "voucher.tab.exchange": "Kode Tukar",
-  "voucher.title.add": "Tambahkan Voucher"
+  "voucher.title.add": "Tambahkan Voucher",
+  "common.text.publish": "menerbitkan",
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "Konten akan di"
 }

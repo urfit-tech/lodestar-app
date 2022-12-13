@@ -272,7 +272,7 @@ export const useProgram = (programId: string) => {
               name
             }
           }
-          program_roles(order_by: [{ created_at: asc}, { id: desc }]) {
+          program_roles(order_by: [{ created_at: asc }, { id: desc }]) {
             id
             name
             member_id
@@ -316,7 +316,7 @@ export const useProgram = (programId: string) => {
             id
             title
             description
-            program_contents(where: { published_at: { _lte: "now()" } }, order_by: { position: asc }) {
+            program_contents(order_by: { position: asc }) {
               id
               title
               abstract
