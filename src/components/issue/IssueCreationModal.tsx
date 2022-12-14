@@ -4,6 +4,7 @@ import { FormComponentProps } from 'antd/lib/form'
 import { ModalProps } from 'antd/lib/modal'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
+import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
@@ -13,7 +14,6 @@ import { createUploadFn } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import MessageButton from '../common/MessageButton'
 import MigrationInput from '../common/MigrationInput'
-import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 type IssueCreationModalProps = ModalProps &
   FormComponentProps & {
@@ -92,7 +92,9 @@ const IssueCreationModal: React.VFC<IssueCreationModalProps> = ({ threadId, form
               rules: [
                 {
                   validator: (rule, value: EditorState, callback) => {
-                    value.isEmpty() ? callback(formatMessage(issueMessages.form.validator.enterQuestion)) : callback()
+                    value.toText().trim().length === 0
+                      ? callback(formatMessage(issueMessages.form.validator.enterQuestion))
+                      : callback()
                   },
                 },
               ],
