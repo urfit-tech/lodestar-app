@@ -17,9 +17,9 @@ import { ProgressProvider } from '../../contexts/ProgressContext'
 import { hasJsonStructure } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
-import ProgramPageHelmet from '../ProgramPage/ProgramPageHelmet'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
+import ProgramContentPageHelmet from './ProgramContentPageHelmet'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
 
 const StyledLink = styled(Link)`
@@ -55,7 +55,7 @@ const ProgramContentPage: React.VFC = () => {
 
   return (
     <Layout>
-      {!loadingApp && <ProgramPageHelmet program={program!} />}
+      {!loadingApp && <ProgramContentPageHelmet program={program!} contentId={programContentId} />}
       <StyledPageHeader
         title={program?.title || programId}
         extra={
