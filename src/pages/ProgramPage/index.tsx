@@ -120,7 +120,7 @@ const ProgramPage: React.VFC = () => {
   }
 
   if (!visitIntro && isEnrolled) {
-    return <Redirect to={`/programs/${programId}/contents?back=${previousPage}`} />
+    return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
   }
 
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
