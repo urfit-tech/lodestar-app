@@ -69,7 +69,7 @@ const ProgramContentBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { loading: loadingApp, enabledModules } = useApp()
-  const { authToken, currentMemberId, isAuthenticated } = useAuth()
+  const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const { hasProgramContentPermission, isLoginTrial } = useHasProgramContentPermission(programContentId)
@@ -157,8 +157,8 @@ const ProgramContentBlock: React.VFC<{
         </div>
       )}
       {programContent.contentType === 'video' &&
-        hasProgramContentPermission &&
-        moment().isAfter(moment(programContent.publishedAt)) && (
+        ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
+          currentUserRole === 'app-owner') && (
           <ProgramContentPlayer
             key={programContent.id}
             programContentId={programContentId}
@@ -192,7 +192,8 @@ const ProgramContentBlock: React.VFC<{
 
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) &&
         moment().isBefore(moment(programContent.publishedAt)) &&
-        hasProgramContentPermission && (
+        hasProgramContentPermission &&
+        currentUserRole !== 'app-owner' && (
           <StyledUnpublishedBlock>
             <StyledIcon as={LockIcon} className="mb-3" />
             <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
@@ -208,8 +209,8 @@ const ProgramContentBlock: React.VFC<{
         <StyledContentBlock className="mb-3">
           <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
           {programContent.programContentBody &&
-            moment().isAfter(moment(programContent.publishedAt)) &&
-            hasProgramContentPermission &&
+            ((moment().isAfter(moment(programContent.publishedAt)) && hasProgramContentPermission) ||
+              currentUserRole === 'app-owner') &&
             !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
               <BraftContent>{programContent.programContentBody.description}</BraftContent>
             )}
@@ -236,7 +237,8 @@ const ProgramContentBlock: React.VFC<{
           <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
         )}
 
-      {hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt)) && (
+      {((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
+        currentUserRole === 'app-owner') && (
         <ProgramContentTabs
           programId={programId}
           programRoles={programRoles}
