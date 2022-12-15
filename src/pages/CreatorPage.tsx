@@ -17,6 +17,7 @@ import PostItemCollection from '../components/blog/PostItemCollection'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import CreatorIntroBlock from '../components/common/CreatorIntroBlock'
 import OverviewBlock from '../components/common/OverviewBlock'
+import PageHelmet from '../components/common/PageHelmet'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCollectionBlock from '../components/merchandise/MerchandiseCollectionBlock'
 import PodcastProgramCard from '../components/podcast/PodcastProgramCard'
@@ -61,6 +62,9 @@ const StyledCallToSubscription = styled.div`
 const CreatorPage: React.VFC = () => {
   const { creatorId } = useParams<{ creatorId: string }>()
   const { member: creator, loadingMember: loadingCreator } = usePublicMember(creatorId)
+  const avatarUrl = creator?.pictureUrl
+  const creatorName = creator?.name || creator?.username || ''
+  const description = creator?.description || ''
 
   if (loadingCreator) {
     return (
@@ -76,9 +80,19 @@ const CreatorPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      <PageHelmet
+        title={creatorName}
+        description={description}
+        keywords={[creatorName]}
+        openGraph={[
+          { property: 'og:title', content: creatorName },
+          { property: 'og:image', content: avatarUrl! },
+          { property: 'og:description', content: description },
+        ]}
+      />
       <CreatorIntroBlock
-        avatarUrl={creator?.pictureUrl}
-        title={creator?.name || creator?.username || ''}
+        avatarUrl={avatarUrl}
+        title={creatorName}
         subTitle=""
         description={creator?.abstract || ''}
         tags={creator?.specialtyNames || null}

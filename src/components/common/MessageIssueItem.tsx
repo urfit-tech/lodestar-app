@@ -54,6 +54,9 @@ const MessageIssueItem: React.VFC<{
         title={title}
         description={description}
         onSubmit={({ title, description }) => {
+          if (description.toText().trim().length === 0) {
+            return Promise.reject(message.error(formatMessage(issueMessages.form.validator.enterQuestion)))
+          }
           return updateIssue({ title, description: description?.toRAW() })
             .then(() => {
               onRefetch?.()
@@ -78,15 +81,18 @@ const MessageIssueItem: React.VFC<{
                     {formatMessage(issueMessages.dropdown.content.delete)}
                   </Menu.Item>
                   <Menu.Item
-                    onClick={() =>
-                      updateIssue({
+                    onClick={() => {
+                      if (description.trim().length === 0) {
+                        return Promise.reject(message.error(formatMessage(issueMessages.form.validator.enterQuestion)))
+                      }
+                      return updateIssue({
                         title: title,
                         description: description,
                         solvedAt: solvedAt ? null : new Date(),
                       })
                         .then(() => onRefetch?.())
                         .catch(() => message.error(formatMessage(issueMessages.messageError.question)))
-                    }
+                    }}
                   >
                     {formatMessage(issueMessages.content.markAs)}
                     {solvedAt

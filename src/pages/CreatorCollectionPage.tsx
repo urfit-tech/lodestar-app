@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import CreatorBriefCard from '../components/appointment/CreatorBriefCard'
+import PageHelmet from '../components/common/PageHelmet'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { desktopViewMixin } from '../helpers'
@@ -50,6 +51,7 @@ const CreatorCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout>
+      <PageHelmet title={pageTitle} />
       <StyledSection>
         <div className="py-5 container">
           <StyledTitle>

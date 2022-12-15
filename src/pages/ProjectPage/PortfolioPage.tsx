@@ -19,9 +19,11 @@ import { useMutateProject } from '../../hooks/project'
 import { CalendarOIcon, EyeIcon, UserOIcon } from '../../images'
 import EmptyAvatar from '../../images/avatar.svg'
 import EmptyCover from '../../images/empty-cover.png'
+import { TicketOIcon } from '../../images'
 import { Project } from '../../types/project'
 import LoadingPage from '../LoadingPage'
 import pageMessages from '../translation'
+import ApplyTagModal from '../../components/common/ApplyTagModal'
 
 // @ts-ignore
 type Portfolio = DeepPick<
@@ -157,8 +159,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                   <Spacer />
 
                   <Flex>
-                    {/* TODO: apply tag */}
-                    {/* <ApplyTagButton /> */}
+                    <ApplyTagModal projectId={id} />
                     <SocialSharePopover url={window.location.href} />
                     <LikesCountButton
                       onClick={handleLikeStatus}
@@ -172,26 +173,28 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                     <Divider />
 
                     <Box mt="1.5rem">
-                      <Flex>
+                      <Flex mb="1.25rem">
                         <Box
                           fontSize="18px"
                           letterSpacing="0.8px"
                           color="var(--gray-darker)"
                           fontWeight="bold"
-                          mb="1.25rem"
+                          mr="0.75rem"
                         >
                           {formatMessage(pageMessages.PortfolioPage.participant)}
                         </Box>
+                        <ApplyTagModal
+                          projectId={id}
+                          renderTrigger={({ setVisible }) => (
+                            <Box onClick={setVisible} _hover={{ cursor: 'pointer' }}>
+                              <Icon as={TicketOIcon} color="primary.500" mr="0.5rem" />
+                              <Box as="span" fontSize="14px" lineHeight="22px" color="primary.500" fontWeight="500">
+                                {formatMessage(pageMessages.PortfolioPage.applyTag)}
+                              </Box>
+                            </Box>
+                          )}
+                        />
                         <Spacer />
-
-                        {/*
-                        TODO: apply tag 
-                        <Box>
-                        <Icon as={TicketOIcon} color="primary.500" mr="0.5rem" />
-                        <Box as="span" fontSize="14px" lineHeight="22px" color="primary.500" fontWeight="500">
-                          申請標記
-                        </Box>
-                      </Box> */}
                       </Flex>
                       {Object.entries(groupBy(role => role.identity.id, portfolio.projectRoles)).map((roles, index) => (
                         <Box key={index}>

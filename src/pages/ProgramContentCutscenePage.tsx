@@ -141,11 +141,19 @@ const ProgramContentCutscenePage: React.VFC = () => {
     Object.keys(lastProgramContent).includes(programId) &&
     flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(lastProgramContent[programId])
   ) {
-    return <Redirect to={`/programs/${programId}/contents/${lastProgramContent[programId]}?back=${previousPage}`} />
+    return (
+      <Redirect
+        to={`/programs/${programId}/contents/${lastProgramContent[programId]}?back=${
+          previousPage || `programs_${programId}`
+        }`}
+      />
+    )
   } else {
     return (
       <Redirect
-        to={`/programs/${programId}/contents/${program?.contentSections[0].contents[0].id}?back=${previousPage}`}
+        to={`/programs/${programId}/contents/${program?.contentSections[0].contents[0].id}?back=${
+          previousPage || `programs_${programId}`
+        }`}
       />
     )
   }
