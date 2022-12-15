@@ -87,6 +87,10 @@ const pageMessages = {
       id: 'page.PortfolioPage.relatedPortfolios',
       defaultMessage: 'Related Portfolios',
     },
+    applyTag: {
+      id: 'page.PortfolioPage.applyTag',
+      defaultMessage: 'apply tag',
+    },
   }),
 }
 

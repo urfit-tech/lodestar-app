@@ -1,6 +1,7 @@
 import { SkeletonText } from '@chakra-ui/react'
 import { Button, Tabs } from 'antd'
 import BraftEditor from 'braft-editor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -16,11 +17,12 @@ import PostItemCollection from '../components/blog/PostItemCollection'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import CreatorIntroBlock from '../components/common/CreatorIntroBlock'
 import OverviewBlock from '../components/common/OverviewBlock'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import PageHelmet from '../components/common/PageHelmet'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCollectionBlock from '../components/merchandise/MerchandiseCollectionBlock'
 import PodcastProgramCard from '../components/podcast/PodcastProgramCard'
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
+import ProgramCollection from '../components/program/ProgramCollection'
 import PodcastProgramTimeline from '../containers/podcast/PodcastProgramTimeline'
 import { desktopViewMixin } from '../helpers'
 import { commonMessages, usersMessages } from '../helpers/translation'
@@ -33,7 +35,6 @@ import { useEnrolledPodcastPlansCreators, usePodcastPlanIds, usePodcastProgramCo
 import { usePublishedProgramCollection } from '../hooks/program'
 import { MemberPublicProps } from '../types/member'
 import NotFoundPage from './NotFoundPage'
-import ProgramCollection from '../components/program/ProgramCollection'
 
 const StyledDescription = styled.div`
   color: var(--gray-dark);
@@ -61,6 +62,9 @@ const StyledCallToSubscription = styled.div`
 const CreatorPage: React.VFC = () => {
   const { creatorId } = useParams<{ creatorId: string }>()
   const { member: creator, loadingMember: loadingCreator } = usePublicMember(creatorId)
+  const avatarUrl = creator?.pictureUrl
+  const creatorName = creator?.name || creator?.username || ''
+  const description = creator?.description || ''
 
   if (loadingCreator) {
     return (
@@ -76,9 +80,19 @@ const CreatorPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      <PageHelmet
+        title={creatorName}
+        description={description}
+        keywords={[creatorName]}
+        openGraph={[
+          { property: 'og:title', content: creatorName },
+          { property: 'og:image', content: avatarUrl! },
+          { property: 'og:description', content: description },
+        ]}
+      />
       <CreatorIntroBlock
-        avatarUrl={creator?.pictureUrl}
-        title={creator?.name || creator?.username || ''}
+        avatarUrl={avatarUrl}
+        title={creatorName}
         subTitle=""
         description={creator?.abstract || ''}
         tags={creator?.specialtyNames || null}

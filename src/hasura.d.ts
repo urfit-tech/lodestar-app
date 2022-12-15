@@ -9450,6 +9450,76 @@ export interface ADD_PROJECT_VIEWSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: INSERT_PROJECT_ROLE
+// ====================================================
+
+export interface INSERT_PROJECT_ROLE_insert_project_role {
+  __typename: "project_role_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_PROJECT_ROLE {
+  /**
+   * insert data into the table: "project_role"
+   */
+  insert_project_role: INSERT_PROJECT_ROLE_insert_project_role | null;
+}
+
+export interface INSERT_PROJECT_ROLEVariables {
+  projectId: any;
+  memberId: string;
+  identityId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_PROJECT_ROLES
+// ====================================================
+
+export interface GET_PROJECT_ROLES_project_role_identity {
+  __typename: "identity";
+  id: any;
+  name: string;
+}
+
+export interface GET_PROJECT_ROLES_project_role {
+  __typename: "project_role";
+  id: any;
+  identity_id: any;
+  project_id: any;
+  member_id: string;
+  agreed_at: any | null;
+  rejected_at: any | null;
+  /**
+   * An object relationship
+   */
+  identity: GET_PROJECT_ROLES_project_role_identity;
+}
+
+export interface GET_PROJECT_ROLES {
+  /**
+   * fetch data from the table: "project_role"
+   */
+  project_role: GET_PROJECT_ROLES_project_role[];
+}
+
+export interface GET_PROJECT_ROLESVariables {
+  projectId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PRODUCT_REVIEW
 // ====================================================
 

@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { LockIcon } from '@chakra-ui/icons'
+import { Icon, LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
@@ -9,6 +9,7 @@ import { throttle } from 'lodash'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import moment from 'moment-timezone'
 import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
@@ -18,7 +19,7 @@ import PracticeDescriptionBlock from '../../components/practice/PracticeDescript
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { productMessages } from '../../helpers/translation'
+import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { DisplayModeEnum, ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
 import pageMessages from '../translation'
@@ -26,11 +27,35 @@ import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
 import ProgramContentTabs from './ProgramContentTabs'
+import ProgramContentPageMessages from './translation'
 
 const StyledTitle = styled.h3`
   padding-bottom: 1.25rem;
   border-bottom: 1px solid #e8e8e8;
   font-size: 20px;
+`
+
+const StyledUnpublishedBlock = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: 368px;
+  background-color: var(--gray-darker);
+  color: #fff;
+  p {
+    font-size: 16px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 0.2px;
+  }
+`
+
+const StyledIcon = styled(Icon)`
+  font-size: 64px;
 `
 
 const ProgramContentBlock: React.VFC<{
@@ -44,7 +69,7 @@ const ProgramContentBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { loading: loadingApp, enabledModules } = useApp()
-  const { authToken, currentMemberId, isAuthenticated } = useAuth()
+  const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const { hasProgramContentPermission, isLoginTrial } = useHasProgramContentPermission(programContentId)
@@ -67,7 +92,9 @@ const ProgramContentBlock: React.VFC<{
       !refetchProgress ||
       initialProgress === 1 ||
       !currentMemberId ||
-      !isAuthenticated
+      !isAuthenticated ||
+      !hasProgramContentPermission ||
+      (programContentBodyType === 'text' && moment().isBefore(moment(programContent?.publishedAt)))
     ) {
       return
     }
@@ -85,6 +112,8 @@ const ProgramContentBlock: React.VFC<{
     refetchProgress,
     currentMemberId,
     isAuthenticated,
+    hasProgramContentPermission,
+    programContent?.publishedAt,
   ])
 
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
@@ -127,47 +156,67 @@ const ProgramContentBlock: React.VFC<{
           )}
         </div>
       )}
-      {programContent.contentType === 'video' && hasProgramContentPermission && (
-        <ProgramContentPlayer
-          key={programContent.id}
-          programContentId={programContentId}
-          nextProgramContent={nextProgramContent}
-          onVideoEvent={e => {
-            if (e.type === 'progress') {
-              insertProgramProgress(e.progress)
-            } else {
-              axios
-                .post(
-                  `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
-                  {
-                    programContentId,
-                    data: e.videoState,
-                  },
-                  { headers: { authorization: `Bearer ${authToken}` } },
-                )
-                .then(({ data: { code, result } }) => {
-                  if (code === 'SUCCESS') {
-                    return
-                  }
-                })
-                .catch(() => {})
-              if (e.type === 'ended') {
-                insertProgramProgress(1)?.then(() => refetchProgress())
+      {programContent.contentType === 'video' &&
+        ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
+          currentUserRole === 'app-owner') && (
+          <ProgramContentPlayer
+            key={programContent.id}
+            programContentId={programContentId}
+            nextProgramContent={nextProgramContent}
+            onVideoEvent={e => {
+              if (e.type === 'progress') {
+                insertProgramProgress(e.progress)
+              } else {
+                axios
+                  .post(
+                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+                    {
+                      programContentId,
+                      data: e.videoState,
+                    },
+                    { headers: { authorization: `Bearer ${authToken}` } },
+                  )
+                  .then(({ data: { code, result } }) => {
+                    if (code === 'SUCCESS') {
+                      return
+                    }
+                  })
+                  .catch(() => {})
+                if (e.type === 'ended') {
+                  insertProgramProgress(1)?.then(() => refetchProgress())
+                }
               }
-            }
-          }}
-        />
-      )}
+            }}
+          />
+        )}
+
+      {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) &&
+        moment().isBefore(moment(programContent.publishedAt)) &&
+        hasProgramContentPermission &&
+        currentUserRole !== 'app-owner' && (
+          <StyledUnpublishedBlock>
+            <StyledIcon as={LockIcon} className="mb-3" />
+            <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
+            <p>
+              {`${moment(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
+                commonMessages.text.publish,
+              )}`}
+            </p>
+          </StyledUnpublishedBlock>
+        )}
+
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) && (
         <StyledContentBlock className="mb-3">
           <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
-
           {programContent.programContentBody &&
+            ((moment().isAfter(moment(programContent.publishedAt)) && hasProgramContentPermission) ||
+              currentUserRole === 'app-owner') &&
             !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
               <BraftContent>{programContent.programContentBody.description}</BraftContent>
             )}
         </StyledContentBlock>
       )}
+
       {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
         <div className="mb-4">
           <PracticeDescriptionBlock
@@ -187,12 +236,17 @@ const ProgramContentBlock: React.VFC<{
           programContent.programContentBody?.type === 'exam') && (
           <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
         )}
-      <ProgramContentTabs
-        programId={programId}
-        programRoles={programRoles}
-        programContent={programContent}
-        issueEnabled={issueEnabled}
-      />
+
+      {((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
+        currentUserRole === 'app-owner') && (
+        <ProgramContentTabs
+          programId={programId}
+          programRoles={programRoles}
+          programContent={programContent}
+          issueEnabled={issueEnabled}
+        />
+      )}
+
       {programContent.programContentBody?.type !== 'practice' && instructor && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />
       )}
