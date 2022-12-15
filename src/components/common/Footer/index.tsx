@@ -117,7 +117,7 @@ export const SocialLinks: React.VFC = () => {
 
 const Footer: React.VFC = () => {
   const { settings } = useApp()
-  if (!!settings['footer.custom.enabled']) {
+  if (!!Number(settings['footer.custom.enabled'])) {
     return isMobile ? (
       <div
         style={{ height: Number(settings['footer.custom.mobile.height']) }}
