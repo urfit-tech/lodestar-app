@@ -49,7 +49,7 @@ const OrderTaskPage: React.VFC = () => {
         window.location.assign(`/orders/${task.returnvalue.orderId}?tracking=1`)
       } else {
         const search = window.location.search
-        const clientBackUrl = search.substring(1, search.length).split('&')[0].split('return')[1]
+        const clientBackUrl = search.substring(1, search.length).split('&')[0].split('=')[1]
         axios
           .post(
             `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
