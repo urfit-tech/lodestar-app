@@ -1,4 +1,5 @@
 {
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "內容預計於",
   "RedeemPageMessages.*.duplicate": "複製",
   "RedeemPageMessages.*.noItem": "查無項目",
   "activity.*.add": "新增",
@@ -529,6 +530,7 @@
   "common.text.notFoundMemberEmail": "找不到這個註冊信箱",
   "common.text.orderSuccessHint": "若你選擇「{method}」需於付款完成後，{waitingDays} 個工作日才會開通。",
   "common.text.orderTracking": "訂單查詢",
+  "common.text.publish": "發布",
   "common.text.repairingDescription": "本系統正在進行例行性維護，暫時無法提供服務。{br}造成不便敬請見諒。",
   "common.text.repairingDescriptionWithPeriod": "本系統於 {period}{br}進行例行性維護，暫時無法提供服務。{br}造成不便敬請見諒。",
   "common.text.searchResult": "搜尋結果",
@@ -736,6 +738,7 @@
   "page.*.cancel": "取消",
   "page.*.intro": "簡介",
   "page.*.review": "評價",
+  "page.AppPage.logoutAlert": "您已被登出，目前有其他裝置登入這組帳號",
   "page.JoinPage.title": "加入 KOLABLE!",
   "page.MemberCertificatePage.congratulations": "已取得證書，快分享給身邊的朋友吧！",
   "page.MemberCertificatePage.deliveredAt": "發放日期：{deliveredAt}",
@@ -1208,7 +1211,5 @@
   "voucher.noUsePeriod": "無使用期限",
   "voucher.redeemable": "可兌換",
   "voucher.tab.exchange": "兌換代碼",
-  "voucher.title.add": "新增兌換券",
-  "common.text.publish": "發布",
-  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "內容預計於"
+  "voucher.title.add": "新增兌換券"
 }

@@ -1,4 +1,5 @@
 {
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "The content will at",
   "RedeemPageMessages.*.duplicate": "Duplicate",
   "RedeemPageMessages.*.noItem": "Check no items",
   "activity.*.add": "Add",
@@ -529,6 +530,7 @@
   "common.text.notFoundMemberEmail": "Cannot find this registered email",
   "common.text.orderSuccessHint": "If you choose \"{method}\", it will not be activated until {waitingDays} working days after payment is completed. ",
   "common.text.orderTracking": "Order Tracking",
+  "common.text.publish": "publish",
   "common.text.repairingDescription": "The website is currently undergoing maintenance, please stop using it temporarily",
   "common.text.repairingDescriptionWithPeriod": "本系統於 {period}{br}進行例行性維護，暫時無法提供服務。{br}造成不便敬請見諒。",
   "common.text.searchResult": "Search Results",
@@ -736,6 +738,7 @@
   "page.*.cancel": "Cancel",
   "page.*.intro": "簡介",
   "page.*.review": "評價",
+  "page.AppPage.logoutAlert": "您已被登出，目前有其他裝置登入這組帳號",
   "page.JoinPage.title": "Join KOLABLE!",
   "page.MemberCertificatePage.congratulations": "已取得證書，快分享給身邊的朋友吧！",
   "page.MemberCertificatePage.deliveredAt": "發放日期：{deliveredAt}",
@@ -1208,7 +1211,5 @@
   "voucher.noUsePeriod": "No UsePeriod",
   "voucher.redeemable": "redeemable",
   "voucher.tab.exchange": "Exchange Code",
-  "voucher.title.add": "Add Voucher",
-  "common.text.publish": "publish",
-  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "The content will at"
+  "voucher.title.add": "Add Voucher"
 }

@@ -1,4 +1,5 @@
 {
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "Nội dung sẽ ở",
   "RedeemPageMessages.*.duplicate": "複製",
   "RedeemPageMessages.*.noItem": "查無項目",
   "activity.*.add": "Thêm",
@@ -529,6 +530,7 @@
   "common.text.notFoundMemberEmail": "Không thể tìm thấy email đã đăng ký này",
   "common.text.orderSuccessHint": "Nếu bạn chọn\" {method} \", nó sẽ không được kích hoạt cho đến {waitDays} ngày làm việc sau khi thanh toán hoàn tất. ",
   "common.text.orderTracking": "Theo dõi Đơn hàng",
+  "common.text.publish": "công bố",
   "common.text.repairingDescription": "Trang web hiện đang được bảo trì, vui lòng ngừng sử dụng tạm thời",
   "common.text.repairingDescriptionWithPeriod": "本系統於 {period}{br}進行例行性維護，暫時無法提供服務。{br}造成不便敬請見諒。",
   "common.text.searchResult": "Kết quả Tìm kiếm",
@@ -736,6 +738,7 @@
   "page.*.cancel": "取消",
   "page.*.intro": "簡介",
   "page.*.review": "評價",
+  "page.AppPage.logoutAlert": "您已被登出，目前有其他裝置登入這組帳號",
   "page.JoinPage.title": "Join KOLABLE!",
   "page.MemberCertificatePage.congratulations": "已取得證書，快分享給身邊的朋友吧！",
   "page.MemberCertificatePage.deliveredAt": "發放日期：{deliveredAt}",
@@ -1208,7 +1211,5 @@
   "voucher.noUsePeriod": "No UsePeriod",
   "voucher.redeemable": "có thể đổi được",
   "voucher.tab.exchange": "Mã trao đổi",
-  "voucher.title.add": "Thêm Voucher",
-  "common.text.publish": "công bố",
-  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "Nội dung sẽ ở"
+  "voucher.title.add": "Thêm Voucher"
 }
