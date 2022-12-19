@@ -71,6 +71,7 @@ const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInse
           )
           .then(({ data: { code } }) => {
             if (code === 'SUCCESS') {
+              setCouponCode(null)
               message.success(formatMessage(messages.CouponInsertionCard.addSuccess))
               onInsert && onInsert()
             } else {

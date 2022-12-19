@@ -46,15 +46,9 @@ const StyledFormItem = styled(Form.Item)`
 
 type VoucherInsertBlockProps = CardProps &
   FormComponentProps & {
-    onRefetchVoucherCollection?: () => void
-    onRefetchEnrolledProgramIds?: () => void
+    onRefetch?: () => void
   }
-const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
-  form,
-  onRefetchVoucherCollection,
-  onRefetchEnrolledProgramIds,
-  ...cardProps
-}) => {
+const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onRefetch, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId } = useAuth()
   const [loading, setLoading] = useState(false)
@@ -80,8 +74,7 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
       .then(({ data: { code } }) => {
         if (code === 'SUCCESS') {
           message.success(formatMessage(voucherMessages.messages.addVoucher))
-          onRefetchVoucherCollection?.()
-          onRefetchEnrolledProgramIds?.()
+          onRefetch?.()
         } else {
           message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
         }
