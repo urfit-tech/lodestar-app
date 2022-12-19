@@ -11009,9 +11009,9 @@ lodash.xorby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#master:
+lodestar-app-element@urfit-tech/lodestar-app-element#feature/shipping-phone-add-validator:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/2c1b7c24a0fcf03a7637570a0e44ccb537c90c0f"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/429d37e8524e0743e15f47decb9dc49de02cabfe"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -11070,6 +11070,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     ts-deep-pick "0.2.2"
     typescript "4.4.3"
     use-query-params "1.2.3"
+    use-tw-zipcode "^2.0.4"
     uuid "8.3.2"
 
 log-symbols@^1.0.2:
