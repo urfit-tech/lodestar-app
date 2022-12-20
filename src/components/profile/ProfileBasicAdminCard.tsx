@@ -15,7 +15,19 @@ import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
 import ImageUploader from '../common/ImageUploader'
 import MigrationInput from '../common/MigrationInput'
-import { StyledForm } from '../layout'
+
+export const StyledForm = styled(Form)`
+  .ant-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    .ant-row {
+      flex-direction: row;
+    }
+  }
+`
 
 const StyledFormItem = styled(Form.Item)`
   .ant-form-item-children {
