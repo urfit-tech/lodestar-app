@@ -9,7 +9,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { DeepPick } from 'ts-deep-pick/lib'
@@ -17,11 +17,13 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import ActivityBlock from '../components/activity/ActivityBlock'
 import CreatorBriefCard from '../components/appointment/CreatorBriefCard'
 import { AuthModalContext } from '../components/auth/AuthModal'
+import PostCard from '../components/blog/PostCard'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { StyledBanner } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCard from '../components/merchandise/MerchandiseCard'
+import ProgramPackageCard from '../components/package/PackageCard'
 import PodcastProgramBriefCard from '../components/podcast/PodcastProgramBriefCard'
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
 import ProgramCard from '../components/program/ProgramCard'
@@ -30,21 +32,13 @@ import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { ReactComponent as SearchIcon } from '../images/search.svg'
 import { Activity } from '../types/activity'
+import { PostPreviewProps } from '../types/blog'
 import { MerchandiseBriefProps } from '../types/merchandise'
 import { PodcastProgramBriefProps } from '../types/podcast'
 import { PeriodType, ProgramBriefProps, ProgramPlan, ProgramRole } from '../types/program'
+import { ProgramPackageProps } from '../types/programPackage'
 import { ProjectIntroProps } from '../types/project'
-
-const messages = defineMessages({
-  noTagContent: { id: 'common.text.noTagContent', defaultMessage: '找不到關於這個標籤的內容' },
-  noSearchResult: { id: 'common.text.noSearchResult', defaultMessage: '找不到相關內容' },
-  program: { id: 'common.product.program', defaultMessage: '線上課程' },
-  activity: { id: 'common.product.activity', defaultMessage: '活動' },
-  podcast: { id: 'common.product.podcast', defaultMessage: '廣播' },
-  creator: { id: 'common.product.creator', defaultMessage: '大師' },
-  merchandise: { id: 'common.product.merchandise', defaultMessage: '商品' },
-  project: { id: 'common.product.project', defaultMessage: '專案' },
-})
+import pageMessages from './translation'
 
 const StyledTitle = styled.div`
   color: var(--gray-darker);
@@ -203,12 +197,21 @@ const SearchResultBlock: React.VFC<{
   if (errorSearchResults || sum(Object.values(searchResults).map(value => value.length)) === 0) {
     return (
       <StyledContent className="d-flex align-items-center justify-content-center">
-        {formatMessage(messages.noSearchResult)}
+        {formatMessage(pageMessages.SearchPage.noSearchResult)}
       </StyledContent>
     )
   }
 
   const defaultActiveKey = Object.keys(searchResults).find(key => searchResults[key]?.length > 0)
+
+  const projectSearchResults = {
+    fundings: searchResults.projects.filter(project => project.type === 'funding'),
+    preOrders: searchResults.projects.filter(project => project.type === 'pre-order'),
+    portfolios: searchResults.projects.filter(project => project.type === 'portfolio'),
+    others: searchResults.projects.filter(
+      project => project.type !== 'funding' && project.type !== 'pre-order' && project.type !== 'portfolio',
+    ),
+  }
 
   return (
     <Tabs
@@ -223,7 +226,10 @@ const SearchResultBlock: React.VFC<{
       )}
     >
       {searchResults.programs.length > 0 && (
-        <Tabs.TabPane key="programs" tab={`${formatMessage(messages.program)} (${searchResults.programs.length})`}>
+        <Tabs.TabPane
+          key="programs"
+          tab={`${formatMessage(pageMessages.SearchPage.program)} (${searchResults.programs.length})`}
+        >
           <div className="container py-5">
             <div className="row">
               {searchResults.programs.map(program => (
@@ -235,8 +241,31 @@ const SearchResultBlock: React.VFC<{
           </div>
         </Tabs.TabPane>
       )}
+      {searchResults.programPackages.length > 0 && (
+        <Tabs.TabPane
+          key="programPackages"
+          tab={`${formatMessage(pageMessages.SearchPage.programPackage)} (${searchResults.programPackages.length})`}
+        >
+          <div className="container py-5">
+            <div className="row">
+              {searchResults.programPackages.map(programPackage => (
+                <div key={programPackage.id} className="col-12 col-md-6 col-lg-4 mb-4">
+                  <ProgramPackageCard
+                    id={programPackage.id}
+                    coverUrl={programPackage.coverUrl}
+                    title={programPackage.title}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </Tabs.TabPane>
+      )}
       {searchResults.activities.length > 0 && (
-        <Tabs.TabPane key="activities" tab={`${formatMessage(messages.activity)} (${searchResults.activities.length})`}>
+        <Tabs.TabPane
+          key="activities"
+          tab={`${formatMessage(pageMessages.SearchPage.activity)} (${searchResults.activities.length})`}
+        >
           <div className="container py-5">
             <div className="row">
               {searchResults.activities.map(activity => (
@@ -257,10 +286,88 @@ const SearchResultBlock: React.VFC<{
           </div>
         </Tabs.TabPane>
       )}
+      {projectSearchResults.others.length > 0 && (
+        <Tabs.TabPane
+          key="projects"
+          tab={`${formatMessage(pageMessages.SearchPage.project)} (${projectSearchResults.others.length})`}
+        >
+          <div className="container py-5">
+            <div className="row">
+              {projectSearchResults.others.map(project => (
+                <div key={project.id} className="col-12 col-lg-4 mb-5">
+                  <Link to={`/projects/${project.id}`}>
+                    <ProjectIntroCard {...project} />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Tabs.TabPane>
+      )}
+      {projectSearchResults.fundings.length > 0 && (
+        <Tabs.TabPane
+          key="fundingProjects"
+          tab={`${formatMessage(pageMessages.SearchPage.fundingProject)} (${projectSearchResults.fundings.length})`}
+        >
+          <div className="container py-5">
+            <div className="row">
+              {projectSearchResults.fundings.map(project => (
+                <div key={project.id} className="col-12 col-lg-4 mb-5">
+                  <Link to={`/projects/${project.id}`}>
+                    <ProjectIntroCard {...project} />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Tabs.TabPane>
+      )}
+      {projectSearchResults.preOrders.length > 0 && (
+        <Tabs.TabPane
+          key="preOrderProjects"
+          tab={`${formatMessage(pageMessages.SearchPage.preOrderProject)} (${projectSearchResults.preOrders.length})`}
+        >
+          <div className="container py-5">
+            <div className="row">
+              {projectSearchResults.preOrders.map(project => (
+                <div key={project.id} className="col-12 col-lg-4 mb-5">
+                  <Link to={`/projects/${project.id}`}>
+                    <ProjectIntroCard {...project} />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Tabs.TabPane>
+      )}
+      {searchResults.posts.length > 0 && (
+        <Tabs.TabPane
+          key="posts"
+          tab={`${formatMessage(pageMessages.SearchPage.podcast)} (${searchResults.posts.length})`}
+        >
+          <div className="container py-5">
+            <div className="row">
+              {searchResults.posts.map(post => (
+                <div key={post.id} className="col-6 col-md-3 mb-4">
+                  <PostCard
+                    id={post.id}
+                    codeName={post.codeName}
+                    coverUrl={post.coverUrl}
+                    videoUrl={post.videoUrl}
+                    title={post.title}
+                    authorId={post.authorId}
+                    publishedAt={post.publishedAt}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </Tabs.TabPane>
+      )}
       {searchResults.podcastPrograms.length > 0 && (
         <Tabs.TabPane
           key="podcastPrograms"
-          tab={`${formatMessage(messages.podcast)} (${searchResults.podcastPrograms.length})`}
+          tab={`${formatMessage(pageMessages.SearchPage.podcast)} (${searchResults.podcastPrograms.length})`}
         >
           <div className="container py-5">
             <div className="row">
@@ -301,7 +408,10 @@ const SearchResultBlock: React.VFC<{
         </Tabs.TabPane>
       )}
       {searchResults.creators.length > 0 && (
-        <Tabs.TabPane key="creators" tab={`${formatMessage(messages.creator)} (${searchResults.creators.length})`}>
+        <Tabs.TabPane
+          key="creators"
+          tab={`${formatMessage(pageMessages.SearchPage.creator)} (${searchResults.creators.length})`}
+        >
           <div className="container py-5">
             <div className="row">
               {searchResults.creators.map(creator => (
@@ -318,7 +428,7 @@ const SearchResultBlock: React.VFC<{
       {searchResults.merchandises.length > 0 && (
         <Tabs.TabPane
           key="merchandises"
-          tab={`${formatMessage(messages.merchandise)} (${searchResults.merchandises.length})`}
+          tab={`${formatMessage(pageMessages.SearchPage.merchandise)} (${searchResults.merchandises.length})`}
         >
           <div className="container py-5">
             <div className="row">
@@ -333,11 +443,14 @@ const SearchResultBlock: React.VFC<{
           </div>
         </Tabs.TabPane>
       )}
-      {searchResults.projects.length > 0 && (
-        <Tabs.TabPane key="projects" tab={`${formatMessage(messages.project)} (${searchResults.projects.length})`}>
+      {projectSearchResults.portfolios.length > 0 && (
+        <Tabs.TabPane
+          key="portfolioProjects"
+          tab={`${formatMessage(pageMessages.SearchPage.portfolioProject)} (${projectSearchResults.portfolios.length})`}
+        >
           <div className="container py-5">
             <div className="row">
-              {searchResults.projects.map(project => (
+              {projectSearchResults.portfolios.map(project => (
                 <div key={project.id} className="col-12 col-lg-4 mb-5">
                   <Link to={`/projects/${project.id}`}>
                     <ProjectIntroCard {...project} />
@@ -370,8 +483,13 @@ const useSearchProductCollection = (
             published_at: { _is_null: false }
             is_private: { _eq: false }
             is_deleted: { _eq: false }
-            _or: [{ title: { _ilike: $title } }, { program_tags: { tag_name: { _eq: $tag } } }]
+            _or: [
+              { title: { _ilike: $title } }
+              { description: { _ilike: $title } }
+              { program_tags: { tag_name: { _eq: $tag } } }
+            ]
           }
+          order_by: [{ created_at: desc }]
         ) {
           id
           cover_url
@@ -429,7 +547,12 @@ const useSearchProductCollection = (
           }
         }
         activity(
-          where: { published_at: { _is_null: false }, is_private: { _eq: false }, _or: [{ title: { _ilike: $title } }] }
+          where: {
+            published_at: { _is_null: false }
+            is_private: { _eq: false }
+            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $title } }]
+          }
+          order_by: [{ created_at: desc }]
         ) {
           id
           cover_url
@@ -482,8 +605,13 @@ const useSearchProductCollection = (
         podcast_program(
           where: {
             published_at: { _is_null: false }
-            _or: [{ title: { _ilike: $title } }, { podcast_program_tags: { tag_name: { _eq: $tag } } }]
+            _or: [
+              { title: { _ilike: $title } }
+              { podcast_program_body: { description: { _ilike: $title } } }
+              { podcast_program_tags: { tag_name: { _eq: $tag } } }
+            ]
           }
+          order_by: [{ created_at: desc }]
         ) {
           id
           cover_url
@@ -515,7 +643,10 @@ const useSearchProductCollection = (
             member_id
           }
         }
-        podcast_plan_enrollment(where: { member_id: { _eq: $memberId } }) {
+        podcast_plan_enrollment(
+          where: { member_id: { _eq: $memberId } }
+          order_by: [{ podcast_plan: { created_at: desc } }]
+        ) {
           podcast_plan_id
           podcast_plan {
             id
@@ -527,6 +658,7 @@ const useSearchProductCollection = (
             role: { _eq: "content-creator" }
             _or: [{ name: { _ilike: $title } }, { username: { _ilike: $title } }, { tag_names: { _has_key: $tag } }]
           }
+          order_by: [{ created_at: desc }]
         ) {
           id
           picture_url
@@ -540,6 +672,7 @@ const useSearchProductCollection = (
             is_deleted: { _eq: false }
             _or: [{ title: { _ilike: $title } }, { merchandise_tags: { tag_name: { _eq: $tag } } }]
           }
+          order_by: [{ created_at: desc }]
         ) {
           id
           title
@@ -568,10 +701,18 @@ const useSearchProductCollection = (
         }
         project(
           where: {
-            type: { _in: ["on-sale", "pre-order", "funding"] }
+            type: { _in: ["on-sale", "pre-order", "funding", "portfolio"] }
             published_at: { _is_null: false }
-            _or: [{ title: { _ilike: $title } }]
+            _or: [
+              { title: { _ilike: $title } }
+              { introduction: { _ilike: $title } }
+              { introduction_desktop: { _ilike: $title } }
+              { creator: { name: { _ilike: $title } } }
+              { project_roles: { member: { name: { _ilike: $title } } } }
+              { project_roles: { identity: { name: { _ilike: $title } } } }
+            ]
           }
+          order_by: [{ created_at: desc }]
         ) {
           id
           type
@@ -621,6 +762,40 @@ const useSearchProductCollection = (
             }
           }
         }
+        post(
+          where: {
+            is_deleted: { _eq: false }
+            published_at: { _is_null: false }
+            _or: [
+              { title: { _ilike: $title } }
+              { description: { _ilike: $title } }
+              { post_roles: { name: { _like: $title } } }
+            ]
+          }
+          order_by: [{ created_at: desc }, { position: asc }]
+        ) {
+          id
+          code_name
+          title
+          cover_url
+          video_url
+          published_at
+          post_roles(where: { name: { _eq: "author" } }) {
+            id
+            member_id
+          }
+        }
+        program_package(
+          where: {
+            published_at: { _is_null: false }
+            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $title } }]
+          }
+          order_by: [{ created_at: desc }, { published_at: desc }]
+        ) {
+          id
+          cover_url
+          title
+        }
       }
     `,
     {
@@ -640,6 +815,7 @@ const useSearchProductCollection = (
       plans: ProgramPlan[]
       isEnrolled: boolean
     })[]
+    programPackages: Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title'>[]
     activities: DeepPick<
       Activity,
       | 'id'
@@ -672,6 +848,7 @@ const useSearchProductCollection = (
     }[]
     merchandises: MerchandiseBriefProps[]
     projects: ProjectIntroProps[]
+    posts: Pick<PostPreviewProps, 'id' | 'codeName' | 'coverUrl' | 'videoUrl' | 'title' | 'authorId' | 'publishedAt'>[]
   } = {
     programs:
       data?.program.map(program => ({
@@ -723,6 +900,12 @@ const useSearchProductCollection = (
           publishedAt: new Date(programPlan.published_at),
         })),
         isEnrolled: program.program_enrollments.length > 0,
+      })) || [],
+    programPackages:
+      data?.program_package.map(programPackage => ({
+        id: programPackage.id,
+        coverUrl: programPackage.cover_url,
+        title: programPackage.title,
       })) || [],
     activities:
       data?.activity
@@ -876,6 +1059,16 @@ const useSearchProductCollection = (
           createAt: new Date(project_plan.created_at),
         })),
       })) || [],
+    posts:
+      data?.post.map(post => ({
+        id: post.id,
+        codeName: post.code_name,
+        title: post.title,
+        coverUrl: post.cover_url,
+        videoUrl: post.video_url,
+        authorId: post.post_roles[0]?.member_id || '',
+        publishedAt: post.published_at ? new Date(post.published_at) : null,
+      })) ?? [],
   }
 
   return {
