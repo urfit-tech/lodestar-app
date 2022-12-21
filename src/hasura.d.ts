@@ -12138,6 +12138,33 @@ export interface SEARCH_PRODUCT_COLLECTION_project {
   project_plans: SEARCH_PRODUCT_COLLECTION_project_project_plans[];
 }
 
+export interface SEARCH_PRODUCT_COLLECTION_post_post_roles {
+  __typename: "post_role";
+  id: any;
+  member_id: string;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_post {
+  __typename: "post";
+  id: any;
+  code_name: string | null;
+  title: string;
+  cover_url: string | null;
+  video_url: string | null;
+  published_at: any | null;
+  /**
+   * An array relationship
+   */
+  post_roles: SEARCH_PRODUCT_COLLECTION_post_post_roles[];
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_program_package {
+  __typename: "program_package";
+  id: any;
+  cover_url: string | null;
+  title: string;
+}
+
 export interface SEARCH_PRODUCT_COLLECTION {
   /**
    * fetch data from the table: "program"
@@ -12167,6 +12194,14 @@ export interface SEARCH_PRODUCT_COLLECTION {
    * fetch data from the table: "project"
    */
   project: SEARCH_PRODUCT_COLLECTION_project[];
+  /**
+   * fetch data from the table: "post"
+   */
+  post: SEARCH_PRODUCT_COLLECTION_post[];
+  /**
+   * fetch data from the table: "program_package"
+   */
+  program_package: SEARCH_PRODUCT_COLLECTION_program_package[];
 }
 
 export interface SEARCH_PRODUCT_COLLECTIONVariables {
