@@ -16163,6 +16163,7 @@ export enum podcast_program_select_column {
   abstract = "abstract",
   content_type = "content_type",
   cover_url = "cover_url",
+  created_at = "created_at",
   creator_id = "creator_id",
   duration = "duration",
   duration_second = "duration_second",
@@ -16213,6 +16214,7 @@ export enum podcast_program_update_column {
   abstract = "abstract",
   content_type = "content_type",
   cover_url = "cover_url",
+  created_at = "created_at",
   creator_id = "creator_id",
   duration = "duration",
   duration_second = "duration_second",
@@ -26332,6 +26334,7 @@ export interface podcast_program_bool_exp {
   abstract?: String_comparison_exp | null;
   content_type?: String_comparison_exp | null;
   cover_url?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   creator?: member_public_bool_exp | null;
   creator_id?: String_comparison_exp | null;
   duration?: numeric_comparison_exp | null;
@@ -26465,6 +26468,7 @@ export interface podcast_program_insert_input {
   abstract?: string | null;
   content_type?: string | null;
   cover_url?: string | null;
+  created_at?: any | null;
   creator?: member_public_obj_rel_insert_input | null;
   creator_id?: string | null;
   duration?: any | null;
