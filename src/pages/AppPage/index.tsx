@@ -167,7 +167,9 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
             withCredentials: true,
           },
         )
-        if (code !== 'SUCCESS') {
+        if (code === 'SUCCESS') {
+          updateAuthToken?.(result.authToken)
+        } else {
           updateAuthToken?.(null)
         }
         if (code === 'E_NO_DEVICE') {
