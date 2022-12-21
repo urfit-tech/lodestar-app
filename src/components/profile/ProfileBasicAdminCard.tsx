@@ -2,6 +2,7 @@ import { Button, Textarea } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
+import BraftEditor from 'braft-editor'
 import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -95,7 +96,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
               : member.pictureUrl,
             title: values.title,
             abstract: values.abstract,
-            description: values.description,
+            description: values.description.toRAW(),
           },
         })
           .then(() => {
@@ -160,7 +161,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
         </Form.Item>
         <Form.Item label={formatMessage(profileMessages.form.message.intro)} wrapperCol={{ md: { span: 20 } }}>
           {form.getFieldDecorator('description', {
-            initialValue: member && member.description,
+            initialValue: member && BraftEditor.createEditorState(member.description),
           })(
             <StyledBraftEditor
               language={braftLanguageFn}
