@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { renderMemberAbstract } from '../../components/common/CustomRender'
 import MemberAvatar from '../../components/common/MemberAvatar'
+import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MerchandiseOrderCollectionBlock from '../../components/merchandise/MerchandiseOrderCollectionBlock'
 import ProgramPackageCollectionBlock from '../../components/package/ProgramPackageCollectionBlock'
@@ -48,7 +49,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   const { formatMessage } = useIntl()
   const { memberId } = useParams<{ memberId: string }>()
   const { isAuthenticated, currentMemberId, permissions } = useAuth()
-  const { id: appId, settings } = useApp()
+  const { id: appId, settings, loading: loadingApp, navs } = useApp()
   const { member } = usePublicMember(memberId)
   const { loadingProgramPackageIds, enrolledProgramPackagePlanIds } = useEnrolledProgramPackagePlanIds(memberId)
   const { loadingExpiredOwnedProducts, expiredOwnedProducts: expiredOwnedProgramPackagePlanIds } =
@@ -170,6 +171,8 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   )
   return (
     <DefaultLayout>
+      {/* // TODO: need to extend page helmet */}
+      {!loadingApp && <PageHelmet title={formatMessage(commonMessages.content.myPage)} />}
       <div className=" py-4 py-sm-5" style={{ background: 'white' }}>
         <div className="container d-flex flex-column flex-sm-row align-items-center">
           {!member ? (
