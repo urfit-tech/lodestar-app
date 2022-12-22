@@ -6,6 +6,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { handleError } from '../../helpers'
 import { checkoutMessages, codeMessages, commonMessages } from '../../helpers/translation'
 import AdminCard from '../common/AdminCard'
@@ -50,6 +51,7 @@ const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInse
   const { formatMessage } = useIntl()
   const { authToken } = useAuth()
   const [loading, setLoading] = useState(false)
+  const [couponCode, setCouponCode] = useQueryParam('couponCode', StringParam)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -69,6 +71,7 @@ const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInse
           )
           .then(({ data: { code } }) => {
             if (code === 'SUCCESS') {
+              setCouponCode(null)
               message.success(formatMessage(messages.CouponInsertionCard.addSuccess))
               onInsert && onInsert()
             } else {
@@ -86,7 +89,7 @@ const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInse
     <AdminCard {...cardProps}>
       <Form layout="inline" onSubmit={handleSubmit}>
         <StyledFormItem label={formatMessage(checkoutMessages.form.label.addCoupon)}>
-          {form.getFieldDecorator('code', { rules: [{ required: true }] })(<StyledInput />)}
+          {form.getFieldDecorator('code', { initialValue: couponCode, rules: [{ required: true }] })(<StyledInput />)}
         </StyledFormItem>
         <StyledFormItem>
           <StyledButton loading={loading} type="primary" htmlType="submit" disabled={!form.getFieldValue('code')}>

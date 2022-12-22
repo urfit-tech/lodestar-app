@@ -52,11 +52,19 @@ const StyledBraftContent = styled.div`
   font-size: 14px;
 `
 
+const StyledEnrollment = styled.div`
+  color: var(--black-45);
+  text-align: right;
+  font-size: 14px;
+  letter-spacing: 0.18px;
+`
+
 const ProgramPlanCard: React.VFC<{
   programId: string
   programPlan: ProgramPlan & {
     isSubscription: boolean
     groupBuyingPeople: number
+    enrollmentCount: number
   }
 }> = ({ programId, programPlan }) => {
   const { formatMessage } = useIntl()
@@ -98,6 +106,12 @@ const ProgramPlanCard: React.VFC<{
       </header>
       <StyledBraftContent>
         <BraftContent>{programPlan.description}</BraftContent>
+        {programPlan.isParticipantsVisible && (
+          <StyledEnrollment>
+            <span className="mr-2">{programPlan.enrollmentCount}</span>
+            <span>{formatMessage(commonMessages.unit.people)}</span>
+          </StyledEnrollment>
+        )}
       </StyledBraftContent>
       {program?.isSoldOut ? (
         <Button isFullWidth isDisabled>

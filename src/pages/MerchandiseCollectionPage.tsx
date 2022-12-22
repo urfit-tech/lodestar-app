@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
 import { HStack, useRadioGroup } from '@chakra-ui/react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -7,13 +8,14 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
+import PageHelmet from '../components/common/PageHelmet'
 import Responsive from '../components/common/Responsive'
 import SearchInput from '../components/common/SearchInput'
 import { StyledBanner, StyledBannerTitle, StyledCollection } from '../components/layout'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseCollection from '../components/merchandise/MerchandiseCollection'
 import RadioCard from '../components/RadioCard'
-import { commonMessages, productMessages } from '../helpers/translation'
+import { commonMessages, productMessages, usersMessages } from '../helpers/translation'
 import { useNav } from '../hooks/data'
 import { useMerchandiseCollection } from '../hooks/merchandise'
 import { ReactComponent as ShopIcon } from '../images/shop.svg'
@@ -53,6 +55,7 @@ enum MerchandiseType {
 }
 
 const MerchandiseCollectionPage: React.VFC = () => {
+  const { loading: loadingApp, navs } = useApp()
   const { formatMessage } = useIntl()
   const [tag] = useQueryParam('tag', StringParam)
   const [keyword, setKeyword] = useQueryParam('keyword', StringParam)
@@ -65,7 +68,11 @@ const MerchandiseCollectionPage: React.VFC = () => {
   const { pageTitle } = useNav()
 
   const [selectedMerchandiseType, setSelectedMerchandiseType] = useState<MerchandiseType | null>(
-    isPhysical === undefined || isPhysical === null ? null : isPhysical ? MerchandiseType.Physical : MerchandiseType.Virtual,
+    isPhysical === undefined || isPhysical === null
+      ? null
+      : isPhysical
+      ? MerchandiseType.Physical
+      : MerchandiseType.Virtual,
   )
   const [categoryId, setCategoryId] = useState<string | null>()
 
@@ -143,6 +150,15 @@ const MerchandiseCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      {/* // TODO: need to extend page helmet */}
+      {!loadingApp && (
+        <PageHelmet
+          title={
+            navs.filter(nav => nav.block === 'header').find(nav => nav.href === window.location.pathname)?.label ||
+            formatMessage(usersMessages.tab.merchandises)
+          }
+        />
+      )}
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
