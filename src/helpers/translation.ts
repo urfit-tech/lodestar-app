@@ -1036,9 +1036,9 @@ export const profileMessages = {
         id: 'common.form.message.name',
         defaultMessage: '請輸入名稱',
       },
-      title: { id: 'common.title', defaultMessage: '稱謂' },
-      abstract: { id: 'common.abstract', defaultMessage: '摘要（100 字內）' },
-      intro: { id: 'common.introduction', defaultMessage: '描述' },
+      title: { id: 'common.title', defaultMessage: '稱號' },
+      abstract: { id: 'common.abstract', defaultMessage: '介紹' },
+      intro: { id: 'common.introduction', defaultMessage: '簡述' },
       currentPassword: {
         id: 'settings.profile.form.message.currentPassword',
         defaultMessage: '請輸入目前密碼',

@@ -8141,6 +8141,16 @@ export interface GET_PROGRAM_program_by_pk_program_plans_currency {
   name: string;
 }
 
+export interface GET_PROGRAM_program_by_pk_program_plans_program_plan_enrollments_aggregate_aggregate {
+  __typename: "program_plan_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_PROGRAM_program_by_pk_program_plans_program_plan_enrollments_aggregate {
+  __typename: "program_plan_enrollment_aggregate";
+  aggregate: GET_PROGRAM_program_by_pk_program_plans_program_plan_enrollments_aggregate_aggregate | null;
+}
+
 export interface GET_PROGRAM_program_by_pk_program_plans {
   __typename: "program_plan";
   id: any;
@@ -8168,6 +8178,10 @@ export interface GET_PROGRAM_program_by_pk_program_plans {
   auto_renewed: boolean;
   is_countdown_timer_visible: boolean;
   group_buying_people: any | null;
+  /**
+   * An aggregate relationship
+   */
+  program_plan_enrollments_aggregate: GET_PROGRAM_program_by_pk_program_plans_program_plan_enrollments_aggregate;
 }
 
 export interface GET_PROGRAM_program_by_pk_program_review_score {

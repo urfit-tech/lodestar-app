@@ -6,6 +6,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { handleError } from '../../helpers'
 import { codeMessages, commonMessages, voucherMessages } from '../../helpers/translation'
 import AdminCard from '../common/AdminCard'
@@ -45,18 +46,13 @@ const StyledFormItem = styled(Form.Item)`
 
 type VoucherInsertBlockProps = CardProps &
   FormComponentProps & {
-    onRefetchVoucherCollection?: () => void
-    onRefetchEnrolledProgramIds?: () => void
+    onRefetch?: () => void
   }
-const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
-  form,
-  onRefetchVoucherCollection,
-  onRefetchEnrolledProgramIds,
-  ...cardProps
-}) => {
+const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onRefetch, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId } = useAuth()
   const [loading, setLoading] = useState(false)
+  const [voucherCode, setVoucherCode] = useQueryParam('voucherCode', StringParam)
 
   const handleInsert = (setLoading: React.Dispatch<React.SetStateAction<boolean>>, voucherCode: string) => {
     if (!currentMemberId) {
@@ -78,8 +74,7 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
       .then(({ data: { code } }) => {
         if (code === 'SUCCESS') {
           message.success(formatMessage(voucherMessages.messages.addVoucher))
-          onRefetchVoucherCollection?.()
-          onRefetchEnrolledProgramIds?.()
+          onRefetch?.()
         } else {
           message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
         }
@@ -105,7 +100,7 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
     <AdminCard {...cardProps}>
       <Form layout="inline" onSubmit={handleSubmit}>
         <StyledFormItem label={formatMessage(voucherMessages.title.addVoucher)}>
-          {form.getFieldDecorator('code', { rules: [{ required: true }] })(
+          {form.getFieldDecorator('code', { initialValue: voucherCode, rules: [{ required: true }] })(
             <StyledInput
               placeholder={formatMessage(voucherMessages.form.placeholder.voucherEnter)}
               autoComplete="off"

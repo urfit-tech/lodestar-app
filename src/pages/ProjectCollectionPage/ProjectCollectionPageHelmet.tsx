@@ -27,13 +27,7 @@ const ProjectCollectionPageHelmet: React.VFC<{ projects: ProjectIntroProps[] }> 
           itemListElement: projects.map((project, index) => ({
             '@type': 'ListItem',
             position: index + 1,
-            item: {
-              '@type': 'Thing',
-              name: project.title,
-              url: window.location.origin + `/projects/${project.id}`,
-              image: project.coverUrl || seoMeta?.image || settings['open_graph.image'],
-              description: project.description || '',
-            },
+            url: window.location.origin + `/projects/${project.id}`,
           })),
         },
       ]}

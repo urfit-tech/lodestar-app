@@ -20,6 +20,7 @@ type ActivityPageHelmetProps = DeepPick<
   | 'description'
   | 'coverUrl'
   | 'tags'
+  | 'publishedAt'
   | 'tickets.[].startedAt'
   | 'tickets.[].endedAt'
   | 'tickets.[].price'
@@ -104,6 +105,9 @@ const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ 
           description: getBraftContent(activity.description || app.settings['description']),
           offers: {
             '@type': 'AggregateOffer',
+            availability: 'InStock',
+            url: window.location.href,
+            validFrom: activity.publishedAt?.toISOString(),
             offerCount: activity.tickets.length,
             lowPrice: Math.min(...activity.tickets.map(activityTicket => activityTicket.price)),
             highPrice: Math.max(...activity.tickets.map(activityTicket => activityTicket.price)),

@@ -4,6 +4,7 @@ import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import LocaleContext from '../../../contexts/LocaleContext'
+import { isMobile } from '../../../helpers'
 import { ReactComponent as FacebookIcon } from '../../../images/facebook-icon.svg'
 import { ReactComponent as GroupIcon } from '../../../images/group-icon.svg'
 import { ReactComponent as InstagramIcon } from '../../../images/instagram-icon.svg'
@@ -116,11 +117,23 @@ export const SocialLinks: React.VFC = () => {
 
 const Footer: React.VFC = () => {
   const { settings } = useApp()
-  if (settings['footer.type'] === 'multiline') {
+  if (!!Number(settings['footer.custom.enabled'])) {
+    return isMobile ? (
+      <div
+        style={{ height: Number(settings['footer.custom.mobile.height']) }}
+        dangerouslySetInnerHTML={{ __html: settings['footer.custom.mobile.html'] }}
+      />
+    ) : (
+      <div
+        style={{ height: Number(settings['footer.custom.height']) }}
+        dangerouslySetInnerHTML={{ __html: settings['footer.custom.html'] }}
+      />
+    )
+  } else if (settings['footer.type'] === 'multiline') {
     return <MultilineFooter />
+  } else {
+    return <DefaultFooter />
   }
-
-  return <DefaultFooter />
 }
 
 export default Footer

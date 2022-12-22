@@ -48,10 +48,12 @@ const OrderTaskPage: React.VFC = () => {
       if (task.returnvalue.totalAmount <= 0) {
         window.location.assign(`/orders/${task.returnvalue.orderId}?tracking=1`)
       } else {
+        const search = window.location.search
+        const clientBackUrl = search.substring(1, search.length).split('&')[0].split('=')[1]
         axios
           .post(
             `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-            { orderId: task.returnvalue.orderId, clientBackUrl: window.location.origin },
+            { orderId: task.returnvalue.orderId, clientBackUrl: clientBackUrl || window.location.origin },
             { headers: { authorization: `Bearer ${authToken}` } },
           )
           .then(({ data: { code, result } }) => {
