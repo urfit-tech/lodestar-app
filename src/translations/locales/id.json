@@ -1,4 +1,5 @@
 {
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "Konten akan di",
   "RedeemPageMessages.*.duplicate": "Duplikat",
   "RedeemPageMessages.*.noItem": "Cek tidak ada item",
   "activity.*.add": "新增",
@@ -245,7 +246,7 @@
   "code.E_ZOOM_SECRET": "E_ZOOM_SECRET",
   "code.SUCCESS": "Sukses",
   "common.about": "約",
-  "common.abstract": "摘要",
+  "common.abstract": "介紹",
   "common.activity": "Aktivitas",
   "common.activity.all": "Semua entitas",
   "common.alert.isEnrolled": "你已持有課堂課程，確定要換購嗎？",
@@ -529,13 +530,14 @@
   "common.text.notFoundMemberEmail": "Tidak dapat menemukan email terdaftar ini",
   "common.text.orderSuccessHint": "Jika Anda memilih \"{method}\", itu tidak akan diaktifkan sampai {waitingDays} hari kerja setelah pembayaran selesai. ",
   "common.text.orderTracking": "Pelacakan Pesanan",
+  "common.text.publish": "menerbitkan",
   "common.text.repairingDescription": "Situs web sedang dalam perbaikan, harap berhenti menggunakannya untuk sementara",
   "common.text.repairingDescriptionWithPeriod": "本系統於 {period}{br}進行例行性維護，暫時無法提供服務。{br}造成不便敬請見諒。",
   "common.text.searchResult": "Hasil Pencarian",
   "common.text.selfDeliver": "Tidak dapat mengirim ke diri sendiri",
   "common.text.selfReferringIsNotAllowed": "Tidak dapat mengisi kotak surat Anda sendiri",
   "common.text.use": "gunakan",
-  "common.title": "稱謂",
+  "common.title": "稱號",
   "common.title.course": "Buka Kursus",
   "common.title.error": "Ups!",
   "common.title.password.forgot": "Lupa kata sandi",
@@ -736,6 +738,7 @@
   "page.*.cancel": "Batal",
   "page.*.intro": "簡介",
   "page.*.review": "評價",
+  "page.AppPage.logoutAlert": "您已被登出，目前有其他裝置登入這組帳號",
   "page.JoinPage.title": "Join KOLABLE!",
   "page.MemberCertificatePage.congratulations": "已取得證書，快分享給身邊的朋友吧！",
   "page.MemberCertificatePage.deliveredAt": "發放日期：{deliveredAt}",
@@ -1208,7 +1211,5 @@
   "voucher.noUsePeriod": "Tidak Ada Periode Penggunaan",
   "voucher.redeemable": "dapat ditukarkan",
   "voucher.tab.exchange": "Kode Tukar",
-  "voucher.title.add": "Tambahkan Voucher",
-  "common.text.publish": "menerbitkan",
-  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "Konten akan di"
+  "voucher.title.add": "Tambahkan Voucher"
 }

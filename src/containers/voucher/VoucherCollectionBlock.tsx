@@ -5,9 +5,11 @@ import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { VoucherProps } from '../../components/voucher/Voucher'
 import VoucherCollectionBlockComponent from '../../components/voucher/VoucherCollectionBlock'
 import hasura from '../../hasura'
+import { handleError } from '../../helpers'
 import { voucherMessages } from '../../helpers/translation'
 import { useEnrolledProductIds } from '../../hooks/data'
 import { fetchCurrentGeolocation } from '../../hooks/util'
@@ -15,6 +17,7 @@ import { fetchCurrentGeolocation } from '../../hooks/util'
 const VoucherCollectionBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken } = useAuth()
+  const [voucherCode, setVoucherCode] = useQueryParam('voucherCode', StringParam)
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_VOUCHER_COLLECTION,
     hasura.GET_VOUCHER_COLLECTIONVariables
@@ -80,6 +83,17 @@ const VoucherCollectionBlock: React.VFC = () => {
       .finally(() => setLoading(false))
   }
 
+  const handleRefetch = () => {
+    refetch()
+      .then(() => {
+        refetchEnrolledProductIds().catch(handleError)
+      })
+      .catch(handleError)
+      .finally(() => {
+        voucherCode && setVoucherCode(null)
+      })
+  }
+
   return (
     <VoucherCollectionBlockComponent
       memberId={currentMemberId}
@@ -88,8 +102,7 @@ const VoucherCollectionBlock: React.VFC = () => {
       voucherCollection={voucherCollection}
       disabledProductIds={enrolledProductIds}
       onExchange={handleExchange}
-      onRefetch={refetch}
-      onRefetchEnrolledProgramIds={refetchEnrolledProductIds}
+      onRefetch={handleRefetch}
     />
   )
 }

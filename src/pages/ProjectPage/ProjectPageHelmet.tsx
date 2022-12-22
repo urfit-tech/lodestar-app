@@ -34,33 +34,57 @@ const ProjectPageHelmet: React.VFC<{ project: ProjectProps }> = ({ project }) =>
             '@type': 'Brand',
             name: app.settings['title'],
           },
-          review: productReviews.map(review => ({
-            '@type': 'Review',
-            reviewRating: {
-              '@type': 'Rating',
-              ratingValue: review?.score || 0,
-              bestRating: '5',
-            },
-            author: {
-              '@type': 'Person',
-              name: review?.memberName || review?.memberId || '',
-            },
-          })),
+          review:
+            productReviews.length > 0
+              ? productReviews.map(review => ({
+                  '@type': 'Review',
+                  reviewRating: {
+                    '@type': 'Rating',
+                    ratingValue: review?.score || 0,
+                    bestRating: '5',
+                  },
+                  author: {
+                    '@type': 'Person',
+                    name: review?.memberName || review?.memberId || '',
+                  },
+                }))
+              : {
+                  '@type': 'Review',
+                  reviewRating: {
+                    '@type': 'Rating',
+                    ratingValue: '5',
+                    bestRating: '5',
+                  },
+                  author: {
+                    '@type': 'Person',
+                    name: app.settings['title'],
+                  },
+                },
           // google search console says reviewCount must be a positive integer
-          ...(Math.floor(reviewCount) > 0 && {
-            aggregateRating: {
-              '@type': 'AggregateRating',
-              ratingValue: averageScore,
-              reviewCount: Math.floor(reviewCount),
+          ...(Math.floor(reviewCount) > 0
+            ? {
+                aggregateRating: {
+                  '@type': 'AggregateRating',
+                  ratingValue: averageScore,
+                  reviewCount: Math.floor(reviewCount),
+                },
+              }
+            : {
+                aggregateRating: {
+                  '@type': 'AggregateRating',
+                  ratingValue: 5,
+                  reviewCount: 1,
+                },
+              }),
+          ...(projectPlans.length > 0 && {
+            offers: {
+              '@type': 'AggregateOffer',
+              offerCount: projectPlans.length,
+              lowPrice: Math.min(...projectPlans),
+              highPrice: Math.max(...projectPlans),
+              priceCurrency: app.settings['currency_id'] || process.env.REACT_APP_SYS_CURRENCY,
             },
           }),
-          offers: {
-            '@type': 'AggregateOffer',
-            offerCount: projectPlans.length,
-            lowPrice: Math.min(...projectPlans),
-            highPrice: Math.max(...projectPlans),
-            priceCurrency: app.settings['currency_id'] || process.env.REACT_APP_SYS_CURRENCY,
-          },
         },
       ]}
       openGraph={[

@@ -24,17 +24,7 @@ const VoucherCollectionBlock: React.VFC<{
     voucherId: string,
   ) => void
   onRefetch?: () => void
-  onRefetchEnrolledProgramIds?: () => void
-}> = ({
-  memberId,
-  loading,
-  error,
-  voucherCollection,
-  disabledProductIds,
-  onExchange,
-  onRefetch,
-  onRefetchEnrolledProgramIds,
-}) => {
+}> = ({ memberId, loading, error, voucherCollection, disabledProductIds, onExchange, onRefetch }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   if (!memberId || loading) {
@@ -68,10 +58,7 @@ const VoucherCollectionBlock: React.VFC<{
   return (
     <>
       <div className="mb-5">
-        <VoucherInsertBlock
-          onRefetchVoucherCollection={onRefetch}
-          onRefetchEnrolledProgramIds={onRefetchEnrolledProgramIds}
-        />
+        <VoucherInsertBlock onRefetch={onRefetch} />
       </div>
 
       <VoucherCollectionTabs vouchers={vouchers} />

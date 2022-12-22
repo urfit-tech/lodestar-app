@@ -8,6 +8,10 @@ import CheckoutGroupBuyingForm, {
 } from 'lodestar-app-element/src/components/forms/CheckoutGroupBuyingForm'
 import ContactInfoInput from 'lodestar-app-element/src/components/inputs/ContactInfoInput'
 import InvoiceInput, { validateInvoice } from 'lodestar-app-element/src/components/inputs/InvoiceInput'
+import ShippingInput, {
+  csvShippingMethods,
+  validateShipping,
+} from 'lodestar-app-element/src/components/inputs/ShippingInput'
 import PaymentSelector from 'lodestar-app-element/src/components/selectors/PaymentSelector'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -24,7 +28,6 @@ import { zipCodes } from 'use-tw-zipcode'
 import CartProductTableCard, { useProductInventory } from '../../components/checkout/CartProductTableCard'
 import CheckoutCard from '../../components/checkout/CheckoutCard'
 import DiscountSelectionCard from '../../components/checkout/DiscountSelectionCard'
-import ShippingInput, { csvShippingMethods, validateShipping } from '../../components/checkout/ShippingInput'
 import AdminCard from '../../components/common/AdminCard'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import CartContext from '../../contexts/CartContext'

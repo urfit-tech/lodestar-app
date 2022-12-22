@@ -2,19 +2,33 @@ import { Button, Textarea } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
+import BraftEditor from 'braft-editor'
+import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid'
-import { uploadFile } from '../../helpers'
+import { createUploadFn, uploadFile } from '../../helpers'
 import { commonMessages, profileMessages } from '../../helpers/translation'
 import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
 import ImageUploader from '../common/ImageUploader'
 import MigrationInput from '../common/MigrationInput'
-import { StyledForm } from '../layout'
+
+export const StyledForm = styled(Form)`
+  .ant-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    .ant-row {
+      flex-direction: row;
+    }
+  }
+`
 
 const StyledFormItem = styled(Form.Item)`
   .ant-form-item-children {
@@ -47,6 +61,20 @@ type ProfileBasicAdminCardProps = CardProps &
     memberId: string
   }
 
+const braftLanguageFn = (languages: { [lan: string]: any }, context: any) => {
+  if (context === 'braft-editor') {
+    languages['zh-hant'].controls.normal = '內文'
+    languages['zh-hant'].controls.fontSize = '字級'
+    languages['zh-hant'].controls.removeStyles = '清除樣式'
+    languages['zh-hant'].controls.code = '程式碼'
+    languages['zh-hant'].controls.link = '連結'
+    languages['zh-hant'].controls.hr = '水平線'
+    languages['zh-hant'].controls.fullscreen = '全螢幕'
+
+    return languages['zh-hant']
+  }
+}
+
 const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { id: appId } = useApp()
   const { authToken } = useAuth()
@@ -75,7 +103,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
               : member.pictureUrl,
             title: values.title,
             abstract: values.abstract,
-            description: values.description,
+            description: values.description.toRAW(),
           },
         })
           .then(() => {
@@ -138,10 +166,39 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
             rules: [{ max: 100 }],
           })(<Textarea rows={2} />)}
         </Form.Item>
-        <Form.Item label={formatMessage(profileMessages.form.message.intro)}>
+        <Form.Item label={formatMessage(profileMessages.form.message.intro)} wrapperCol={{ md: { span: 20 } }}>
           {form.getFieldDecorator('description', {
-            initialValue: member && member.description,
-          })(<Textarea rows={5} />)}
+            initialValue: member && BraftEditor.createEditorState(member.description),
+          })(
+            <StyledBraftEditor
+              language={braftLanguageFn}
+              controls={[
+                'headings',
+                'font-size',
+                'line-height',
+                'text-color',
+                'bold',
+                'italic',
+                'underline',
+                'strike-through',
+                'remove-styles',
+                'separator',
+                'text-align',
+                'separator',
+                'list-ol',
+                'list-ul',
+                'blockquote',
+                'code',
+                'separator',
+                'media',
+                'link',
+                'hr',
+                'separator',
+                'fullscreen',
+              ]}
+              media={{ uploadFn: createUploadFn(appId, authToken) }}
+            />,
+          )}
         </Form.Item>
         <Form.Item wrapperCol={{ md: { offset: 4 } }}>
           <Button
