@@ -8,6 +8,7 @@ import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import PageHelmet from '../components/common/PageHelmet'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import MerchandiseBlock from '../components/merchandise/MerchandiseBlock'
 import { useMerchandise } from '../hooks/merchandise'
@@ -21,7 +22,7 @@ const MerchandisePage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { merchandiseId } = useParams<{ merchandiseId: string }>()
   const { merchandise } = useMerchandise(merchandiseId)
-  const { id: appId } = useApp()
+  const { id: appId, loading: loadingApp } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:merchandise:${merchandiseId}`], true)
 
   useEffect(() => {
@@ -45,6 +46,8 @@ const MerchandisePage: React.VFC = () => {
   return (
     <DefaultLayout white>
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {/* // TODO: need to extend page helmet */}
+      {!loadingApp && <PageHelmet title={merchandise?.title} />}
       <StyledContainer className="container">
         <div className="my-4">{merchandise && <MerchandiseBlock merchandise={merchandise} withPaymentButton />}</div>
 
