@@ -1211,5 +1211,6 @@
   "voucher.noUsePeriod": "无使用期限",
   "voucher.redeemable": "可兑换",
   "voucher.tab.exchange": "兑换代码",
-  "voucher.title.add": "新增兑换券"
+  "voucher.title.add": "新增兑换券",
+  "common.member.creatorPage": "个人专页"
 }
