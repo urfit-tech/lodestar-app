@@ -47,11 +47,12 @@ export const StyledPostTitle = styled.div<{ rows?: number }>`
     }
     &.featuring {
       font-size: 16px;
-      font-weight: normal;
+      font-weight: 600;
+      margin-bottom: 4px;
     }
     &.list-item {
-      -webkit-line-clamp: 1;
-      height: 1.5em;
+      // -webkit-line-clamp: 1;
+      min-height: 1.5em;
       font-size: 20px;
     }
   `)}

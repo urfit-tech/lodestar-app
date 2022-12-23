@@ -101,7 +101,7 @@ const BlogPostCollectionPage: React.VFC = () => {
                   />
                 </div>
                 <div className="col-6 col-lg-8 pl-3 pl-lg-4">
-                  <StyledPostTitle className="list-item">
+                  <StyledPostTitle className="list-item" rows={2}>
                     <Link to={`/posts/${post.codeName || post.id}`}>{post.title} </Link>
                   </StyledPostTitle>
                   <div className="mb-lg-4">

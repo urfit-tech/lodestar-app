@@ -21,7 +21,7 @@ const StyledWrapper = styled.div`
     bottom: 0;
     left: 0;
     content: ' ';
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, black);
+    background-image: linear-gradient(rgba(0, 0, 0, 0) 25%, black);
   }
 `
 const StyledBody = styled.div`
