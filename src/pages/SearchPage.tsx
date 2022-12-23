@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Icon } from '@chakra-ui/icons'
-import { SkeletonText } from '@chakra-ui/react'
+import { Skeleton, Stack } from '@chakra-ui/react'
 import { Tabs } from 'antd'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
@@ -87,7 +87,12 @@ const SearchPage: React.VFC = () => {
       </StyledBanner>
 
       {isAuthenticating || loading ? (
-        <SkeletonText mt="1" noOfLines={4} spacing="4" />
+        <Stack spacing="20px" className="container mt-5">
+          <Skeleton height="20px" />
+          <Skeleton height="20px" />
+          <Skeleton height="20px" />
+          <Skeleton height="20px" />
+        </Stack>
       ) : (
         <SearchResultBlock memberId={currentMemberId} title={enabledModules.search ? title : undefined} tag={tag} />
       )}
@@ -191,7 +196,14 @@ const SearchResultBlock: React.VFC<{
   }, [searchResults])
 
   if (loadingSearchResults) {
-    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
+    return (
+      <Stack spacing="20px" className="container mt-5">
+        <Skeleton height="20px" />
+        <Skeleton height="20px" />
+        <Skeleton height="20px" />
+        <Skeleton height="20px" />
+      </Stack>
+    )
   }
 
   if (errorSearchResults || sum(Object.values(searchResults).map(value => value.length)) === 0) {
@@ -203,15 +215,6 @@ const SearchResultBlock: React.VFC<{
   }
 
   const defaultActiveKey = Object.keys(searchResults).find(key => searchResults[key]?.length > 0)
-
-  const projectSearchResults = {
-    fundings: searchResults.projects.filter(project => project.type === 'funding'),
-    preOrders: searchResults.projects.filter(project => project.type === 'pre-order'),
-    portfolios: searchResults.projects.filter(project => project.type === 'portfolio'),
-    others: searchResults.projects.filter(
-      project => project.type !== 'funding' && project.type !== 'pre-order' && project.type !== 'portfolio',
-    ),
-  }
 
   return (
     <Tabs
@@ -286,14 +289,14 @@ const SearchResultBlock: React.VFC<{
           </div>
         </Tabs.TabPane>
       )}
-      {projectSearchResults.others.length > 0 && (
+      {searchResults.projects.length > 0 && (
         <Tabs.TabPane
           key="projects"
-          tab={`${formatMessage(pageMessages.SearchPage.project)} (${projectSearchResults.others.length})`}
+          tab={`${formatMessage(pageMessages.SearchPage.project)} (${searchResults.projects.length})`}
         >
           <div className="container py-5">
             <div className="row">
-              {projectSearchResults.others.map(project => (
+              {searchResults.projects.map(project => (
                 <div key={project.id} className="col-12 col-lg-4 mb-5">
                   <Link to={`/projects/${project.id}`}>
                     <ProjectIntroCard {...project} />
@@ -304,14 +307,14 @@ const SearchResultBlock: React.VFC<{
           </div>
         </Tabs.TabPane>
       )}
-      {projectSearchResults.fundings.length > 0 && (
+      {searchResults.fundingProjects.length > 0 && (
         <Tabs.TabPane
           key="fundingProjects"
-          tab={`${formatMessage(pageMessages.SearchPage.fundingProject)} (${projectSearchResults.fundings.length})`}
+          tab={`${formatMessage(pageMessages.SearchPage.fundingProject)} (${searchResults.fundingProjects.length})`}
         >
           <div className="container py-5">
             <div className="row">
-              {projectSearchResults.fundings.map(project => (
+              {searchResults.fundingProjects.map(project => (
                 <div key={project.id} className="col-12 col-lg-4 mb-5">
                   <Link to={`/projects/${project.id}`}>
                     <ProjectIntroCard {...project} />
@@ -322,14 +325,14 @@ const SearchResultBlock: React.VFC<{
           </div>
         </Tabs.TabPane>
       )}
-      {projectSearchResults.preOrders.length > 0 && (
+      {searchResults.preOrderProjects.length > 0 && (
         <Tabs.TabPane
           key="preOrderProjects"
-          tab={`${formatMessage(pageMessages.SearchPage.preOrderProject)} (${projectSearchResults.preOrders.length})`}
+          tab={`${formatMessage(pageMessages.SearchPage.preOrderProject)} (${searchResults.preOrderProjects.length})`}
         >
           <div className="container py-5">
             <div className="row">
-              {projectSearchResults.preOrders.map(project => (
+              {searchResults.preOrderProjects.map(project => (
                 <div key={project.id} className="col-12 col-lg-4 mb-5">
                   <Link to={`/projects/${project.id}`}>
                     <ProjectIntroCard {...project} />
@@ -343,7 +346,7 @@ const SearchResultBlock: React.VFC<{
       {searchResults.posts.length > 0 && (
         <Tabs.TabPane
           key="posts"
-          tab={`${formatMessage(pageMessages.SearchPage.podcast)} (${searchResults.posts.length})`}
+          tab={`${formatMessage(pageMessages.SearchPage.post)} (${searchResults.posts.length})`}
         >
           <div className="container py-5">
             <div className="row">
@@ -443,14 +446,14 @@ const SearchResultBlock: React.VFC<{
           </div>
         </Tabs.TabPane>
       )}
-      {projectSearchResults.portfolios.length > 0 && (
+      {searchResults.portfolioProjects.length > 0 && (
         <Tabs.TabPane
           key="portfolioProjects"
-          tab={`${formatMessage(pageMessages.SearchPage.portfolioProject)} (${projectSearchResults.portfolios.length})`}
+          tab={`${formatMessage(pageMessages.SearchPage.portfolioProject)} (${searchResults.portfolioProjects.length})`}
         >
           <div className="container py-5">
             <div className="row">
-              {projectSearchResults.portfolios.map(project => (
+              {searchResults.portfolioProjects.map(project => (
                 <div key={project.id} className="col-12 col-lg-4 mb-5">
                   <Link to={`/projects/${project.id}`}>
                     <ProjectIntroCard {...project} />
@@ -485,11 +488,11 @@ const useSearchProductCollection = (
             is_deleted: { _eq: false }
             _or: [
               { title: { _ilike: $title } }
-              { description: { _ilike: $title } }
+              { abstract: { _ilike: $title } }
               { program_tags: { tag_name: { _eq: $tag } } }
             ]
           }
-          order_by: [{ created_at: desc }]
+          order_by: [{ created_at: desc }, { published_at: desc }]
         ) {
           id
           cover_url
@@ -552,7 +555,7 @@ const useSearchProductCollection = (
             is_private: { _eq: false }
             _or: [{ title: { _ilike: $title } }, { description: { _ilike: $title } }]
           }
-          order_by: [{ created_at: desc }]
+          order_by: [{ created_at: desc }, { published_at: desc }]
         ) {
           id
           cover_url
@@ -611,7 +614,7 @@ const useSearchProductCollection = (
               { podcast_program_tags: { tag_name: { _eq: $tag } } }
             ]
           }
-          order_by: [{ created_at: desc }]
+          order_by: [{ created_at: desc }, { published_at: desc }]
         ) {
           id
           cover_url
@@ -672,7 +675,7 @@ const useSearchProductCollection = (
             is_deleted: { _eq: false }
             _or: [{ title: { _ilike: $title } }, { merchandise_tags: { tag_name: { _eq: $tag } } }]
           }
-          order_by: [{ created_at: desc }]
+          order_by: [{ created_at: desc }, { published_at: desc }]
         ) {
           id
           title
@@ -705,6 +708,7 @@ const useSearchProductCollection = (
             published_at: { _is_null: false }
             _or: [
               { title: { _ilike: $title } }
+              { description: { _ilike: $title } }
               { introduction: { _ilike: $title } }
               { introduction_desktop: { _ilike: $title } }
               { creator: { name: { _ilike: $title } } }
@@ -712,7 +716,7 @@ const useSearchProductCollection = (
               { project_roles: { identity: { name: { _ilike: $title } } } }
             ]
           }
-          order_by: [{ created_at: desc }]
+          order_by: [{ created_at: desc }, { published_at: desc }]
         ) {
           id
           type
@@ -769,10 +773,15 @@ const useSearchProductCollection = (
             _or: [
               { title: { _ilike: $title } }
               { description: { _ilike: $title } }
-              { post_roles: { name: { _like: $title } } }
+              {
+                _and: [
+                  { post_roles: { name: { _eq: "author" } } }
+                  { post_roles: { member: { name: { _ilike: $title } } } }
+                ]
+              }
             ]
           }
-          order_by: [{ created_at: desc }, { position: asc }]
+          order_by: [{ created_at: desc }, { published_at: desc }]
         ) {
           id
           code_name
@@ -807,6 +816,47 @@ const useSearchProductCollection = (
       },
     },
   )
+
+  const projects: ProjectIntroProps[] =
+    data?.project.map(project => ({
+      id: project.id,
+      type: project.type,
+      title: project.title,
+      coverType: project.cover_type,
+      coverUrl: project.cover_url,
+      previewUrl: project.preview_url,
+      abstract: project.abstract,
+      introduction: project.introduction,
+      description: project.description,
+      targetAmount: project.target_amount,
+      targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
+      expiredAt: project.expired_at ? new Date(project.expired_at) : null,
+      isParticipantsVisible: project.is_participants_visible,
+      isCountdownTimerVisible: project.is_countdown_timer_visible,
+      totalSales: project.project_sales?.total_sales,
+      categories: project.project_categories.map(projectCategory => ({
+        id: projectCategory.category.id,
+        name: projectCategory.category.name,
+      })),
+      enrollmentCount: sum(
+        project.project_plans.map(projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0),
+      ),
+      projectPlans: project.project_plans.map(project_plan => ({
+        id: project_plan.id,
+        coverUrl: project_plan.cover_url,
+        title: project_plan.title,
+        description: project_plan.description,
+        isSubscription: project_plan.is_subscription,
+        periodAmount: project_plan.period_amount,
+        periodType: project_plan.period_type,
+        listPrice: project_plan.list_price,
+        salePrice: project_plan.sale_price,
+        soldAt: project_plan.sold_at ? new Date(project_plan.sold_at) : null,
+        discountDownPrice: project_plan.discount_down_price,
+        createdAt: new Date(project_plan.created_at),
+        createAt: new Date(project_plan.created_at),
+      })),
+    })) || []
 
   const searchResults: {
     [key: string]: any
@@ -847,6 +897,9 @@ const useSearchProductCollection = (
       abstract: string | null
     }[]
     merchandises: MerchandiseBriefProps[]
+    fundingProjects: ProjectIntroProps[]
+    preOrderProjects: ProjectIntroProps[]
+    portfolioProjects: ProjectIntroProps[]
     projects: ProjectIntroProps[]
     posts: Pick<PostPreviewProps, 'id' | 'codeName' | 'coverUrl' | 'videoUrl' | 'title' | 'authorId' | 'publishedAt'>[]
   } = {
@@ -1017,48 +1070,12 @@ const useSearchProductCollection = (
           salePrice: spec.sale_price,
         })),
       })) || [],
-    projects:
-      data?.project.map(project => ({
-        id: project.id,
-        type: project.type,
-        title: project.title,
-        coverType: project.cover_type,
-        coverUrl: project.cover_url,
-        previewUrl: project.preview_url,
-        abstract: project.abstract,
-        introduction: project.introduction,
-        description: project.description,
-        targetAmount: project.target_amount,
-        targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
-        expiredAt: project.expired_at ? new Date(project.expired_at) : null,
-        isParticipantsVisible: project.is_participants_visible,
-        isCountdownTimerVisible: project.is_countdown_timer_visible,
-        totalSales: project.project_sales?.total_sales,
-        categories: project.project_categories.map(projectCategory => ({
-          id: projectCategory.category.id,
-          name: projectCategory.category.name,
-        })),
-        enrollmentCount: sum(
-          project.project_plans.map(
-            projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0,
-          ),
-        ),
-        projectPlans: project.project_plans.map(project_plan => ({
-          id: project_plan.id,
-          coverUrl: project_plan.cover_url,
-          title: project_plan.title,
-          description: project_plan.description,
-          isSubscription: project_plan.is_subscription,
-          periodAmount: project_plan.period_amount,
-          periodType: project_plan.period_type,
-          listPrice: project_plan.list_price,
-          salePrice: project_plan.sale_price,
-          soldAt: project_plan.sold_at ? new Date(project_plan.sold_at) : null,
-          discountDownPrice: project_plan.discount_down_price,
-          createdAt: new Date(project_plan.created_at),
-          createAt: new Date(project_plan.created_at),
-        })),
-      })) || [],
+    fundingProjects: projects.filter(project => project.type === 'funding'),
+    preOrderProjects: projects.filter(project => project.type === 'pre-order'),
+    portfolioProjects: projects.filter(project => project.type === 'portfolio'),
+    projects: projects.filter(
+      project => project.type !== 'funding' && project.type !== 'pre-order' && project.type !== 'portfolio',
+    ),
     posts:
       data?.post.map(post => ({
         id: post.id,
