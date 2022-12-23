@@ -3929,6 +3929,16 @@ ajv@^8.0.0, ajv@^8.0.1, ajv@^8.8.0:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
+ajv@^8.11.2:
+  version "8.11.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.11.2.tgz#aecb20b50607acf2569b6382167b65a96008bb78"
+  integrity sha512-E4bfmKAhGiSTvMfL1Myyycaub+cUEU2/IvpylXkUu7CHBkBj1f/ikdzbD7YQ6FKUbixDxeYvB/xY4fvyroDlQg==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    json-schema-traverse "^1.0.0"
+    require-from-string "^2.0.2"
+    uri-js "^4.2.2"
+
 alphanum-sort@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
@@ -11011,7 +11021,7 @@ lodash.xorby@^4.7.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/691c540623dc49a6817e97b6e5ac98715313d482"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/8f24fcdf7fe95f3033e943671e617539cddca338"
   dependencies:
     "@apollo/react-hooks" "3.1.5"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -11033,6 +11043,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     "@types/react-slick" "^0.23.5"
     "@types/styled-components" "5.1.14"
     "@types/uuid" "8.3.1"
+    ajv "^8.11.2"
     antd "3"
     apollo-cache-inmemory "1.6.6"
     apollo-client "2.6.10"
