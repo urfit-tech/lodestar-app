@@ -30,7 +30,7 @@ const PostItemCollection: React.VFC<{
   const { formatMessage } = useIntl()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
   const categories = uniqBy(category => category.id, posts.map(post => post.categories).flat())
-  console.log('selectedCategoryId', selectedCategoryId)
+  // console.log('selectedCategoryId', selectedCategoryId)
   const displayPost = selectedCategoryId ? posts : posts.slice(3)
   return (
     <>
