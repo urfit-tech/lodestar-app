@@ -30,7 +30,8 @@ const PostItemCollection: React.VFC<{
   const { formatMessage } = useIntl()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
   const categories = uniqBy(category => category.id, posts.map(post => post.categories).flat())
-
+  // console.log('selectedCategoryId', selectedCategoryId)
+  const displayPost = selectedCategoryId ? posts : posts.slice(3)
   return (
     <>
       {withTagSelector && (
@@ -59,7 +60,7 @@ const PostItemCollection: React.VFC<{
       )}
 
       <div className="row">
-        {posts
+        {displayPost
           .filter(post => !selectedCategoryId || post.categories.some(category => category.id === selectedCategoryId))
           .map(post => (
             <div key={post.id} className="col-6 col-lg-4 pb-2 mb-4">
@@ -67,7 +68,7 @@ const PostItemCollection: React.VFC<{
                 <div className="mb-3">
                   <PostPreviewCover coverUrl={post.coverUrl} withVideo={typeof post.videoUrl === 'string'} />
                 </div>
-                <StyledPostTitle>{post.title}</StyledPostTitle>
+                <StyledPostTitle rows={2}>{post.title}</StyledPostTitle>
                 <PostPreviewMeta authorId={post.authorId} publishedAt={post.publishedAt} />
               </Link>
             </div>

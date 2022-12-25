@@ -102,7 +102,7 @@
     "libphonenumber-js": "1.9.34",
     "lint-staged": "10.5.4",
     "lodash": "^4.17.15",
-    "lodestar-app-element": "urfit-tech/lodestar-app-element#master",
+    "lodestar-app-element": "urfit-tech/lodestar-app-element#v1.31.0",
     "moment-timezone": "^0.5.31",
     "mustache": "^4.2.0",
     "node-sass": "4.14.1",
@@ -115,7 +115,6 @@
     "rc-tooltip": "^4.2.1",
     "react": "17.0.2",
     "react-app-rewire-hot-loader": "^2.0.1",
-    "react-app-rewired": "^2.1.8",
     "react-bootstrap": "^1.1.1",
     "react-dom": "17.0.2",
     "react-facebook-pixel": "1.0.4",
@@ -165,7 +164,8 @@
     ]
   },
   "devDependencies": {
-    "@oclif/core": "^1.0.11"
+    "@oclif/core": "^1.0.11",
+    "react-app-rewired": "^2.2.1"
   },
   "resolutions": {
     "@craftjs/utils": "0.1.0-beta.20",

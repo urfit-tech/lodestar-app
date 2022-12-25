@@ -156,6 +156,7 @@ const ProgramContentBlock: React.VFC<{
           )}
         </div>
       )}
+
       {programContent.contentType === 'video' &&
         ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
@@ -190,8 +191,7 @@ const ProgramContentBlock: React.VFC<{
           />
         )}
 
-      {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) &&
-        moment().isBefore(moment(programContent.publishedAt)) &&
+      {moment().isBefore(moment(programContent.publishedAt)) &&
         hasProgramContentPermission &&
         currentUserRole !== 'app-owner' && (
           <StyledUnpublishedBlock>
@@ -217,23 +217,26 @@ const ProgramContentBlock: React.VFC<{
         </StyledContentBlock>
       )}
 
-      {enabledModules.practice && programContent.programContentBody?.type === 'practice' && (
-        <div className="mb-4">
-          <PracticeDescriptionBlock
-            programContentId={programContentId}
-            isCoverRequired={!!programContent.metadata?.isCoverRequired}
-            title={programContent.title}
-            description={programContent.programContentBody?.description || ''}
-            duration={programContent.duration || 0}
-            score={programContent.metadata?.difficulty || 0}
-            attachments={programContent.attachments || []}
-          />
-        </div>
-      )}
+      {enabledModules.practice &&
+        programContent.programContentBody?.type === 'practice' &&
+        (moment().isAfter(moment(programContent.publishedAt)) || currentUserRole === 'app-owner') && (
+          <div className="mb-4">
+            <PracticeDescriptionBlock
+              programContentId={programContentId}
+              isCoverRequired={!!programContent.metadata?.isCoverRequired}
+              title={programContent.title}
+              description={programContent.programContentBody?.description || ''}
+              duration={programContent.duration || 0}
+              score={programContent.metadata?.difficulty || 0}
+              attachments={programContent.attachments || []}
+            />
+          </div>
+        )}
       {/* // TODO: combine two modules in exam */}
       {(enabledModules.exercise || enabledModules.exam) &&
         (programContent.programContentBody?.type === 'exercise' ||
-          programContent.programContentBody?.type === 'exam') && (
+          programContent.programContentBody?.type === 'exam') &&
+        (moment().isAfter(moment(programContent.publishedAt)) || currentUserRole === 'app-owner') && (
           <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
         )}
 
