@@ -1211,5 +1211,6 @@
   "voucher.noUsePeriod": "No UsePeriod",
   "voucher.redeemable": "redeemable",
   "voucher.tab.exchange": "Exchange Code",
-  "voucher.title.add": "Add Voucher"
+  "voucher.title.add": "Add Voucher",
+  "common.member.creatorPage": "Personal page"
 }

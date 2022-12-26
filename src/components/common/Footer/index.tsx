@@ -129,7 +129,7 @@ const Footer: React.VFC = () => {
         dangerouslySetInnerHTML={{ __html: settings['footer.custom.html'] }}
       />
     )
-  } else if (settings['footer.type'] === 'multiline') {
+  } else if (settings['footer.type'] === 'multiple') {
     return <MultilineFooter />
   } else {
     return <DefaultFooter />
