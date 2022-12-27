@@ -12,6 +12,7 @@ import {
   ModalContent,
   ModalOverlay,
   SkeletonText,
+  useToast,
 } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -24,6 +25,7 @@ import hasura from '../../../hasura'
 import { notEmpty } from '../../../helpers'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as SearchIcon } from '../../../images/search.svg'
+import layoutMessages from '../translation'
 
 const StyledModalBody = styled(ModalBody)`
   && {
@@ -82,6 +84,7 @@ export type FilterType = {
 
 const GlobalSearchModal: React.VFC = () => {
   const history = useHistory()
+  const toast = useToast()
   const { enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const [isOpen, setIsModalOpen] = useState(false)
@@ -145,6 +148,15 @@ const GlobalSearchModal: React.VFC = () => {
                         ...filter,
                       })
                       return
+                    }
+                    if (keyword.length <= 1) {
+                      toast({
+                        title: formatMessage(layoutMessages.GlobalSearchModal.atLeastTwoChar),
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: false,
+                        position: 'top',
+                      })
                     }
                     history.push(`/search?q=${keyword}`)
                   }}
