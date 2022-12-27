@@ -2,6 +2,7 @@ import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { MetaProductType } from 'lodestar-app-element/src/types/metaProduct'
 import { useIntl } from 'react-intl'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
@@ -558,5 +559,36 @@ export const useMemberValidation = (email: string) => {
     memberId,
     validateStatus,
     refetchMemberId: refetch,
+  }
+}
+
+export const useIdentity = (type: MetaProductType, roleName?: string) => {
+  const condition: hasura.GET_IDENTITYVariables['condition'] = {
+    type: { _eq: type },
+    name: { _eq: roleName },
+  }
+  const { loading, error, data, refetch } = useQuery<hasura.GET_IDENTITY, hasura.GET_IDENTITYVariables>(
+    gql`
+      query GET_IDENTITY($condition: identity_bool_exp!) {
+        identity(where: $condition, order_by: { position: asc }) {
+          id
+          name
+          position
+        }
+      }
+    `,
+    { variables: { condition } },
+  )
+  const identityCollection =
+    loading || error || !data
+      ? []
+      : data.identity.map(v => ({
+          id: v.id,
+          name: v.name,
+          position: v.position,
+        }))
+
+  return {
+    identityCollection,
   }
 }
