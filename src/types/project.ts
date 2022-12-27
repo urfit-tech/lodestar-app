@@ -85,6 +85,7 @@ type Identity = {
   type: string
   name: string
 }
+
 type ProjectRole = {
   id: string
   member: Member
@@ -120,6 +121,7 @@ export type Project = {
   introductionDesktop: string | null
   views: number
   creator: Member | null
+  author: Member | null
   projectSales: number
   categories: Category[]
   projectPlans: ProjectPlanProps[]
