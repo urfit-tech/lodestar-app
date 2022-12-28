@@ -1004,6 +1004,21 @@ const useSearchProductCollection = (
             isPublished: ticket.is_published,
           })),
         })) || [],
+    projects: projects.filter(
+      project => project.type !== 'funding' && project.type !== 'pre-order' && project.type !== 'portfolio',
+    ),
+    fundingProjects: projects.filter(project => project.type === 'funding'),
+    preOrderProjects: projects.filter(project => project.type === 'pre-order'),
+    posts:
+      data?.post.map(post => ({
+        id: post.id,
+        codeName: post.code_name,
+        title: post.title,
+        coverUrl: post.cover_url,
+        videoUrl: post.video_url,
+        authorId: post.post_roles[0]?.member_id || '',
+        publishedAt: post.published_at ? new Date(post.published_at) : null,
+      })) ?? [],
     podcastPrograms:
       data?.podcast_program.map(podcastProgram => ({
         id: podcastProgram.id,
@@ -1075,22 +1090,7 @@ const useSearchProductCollection = (
           salePrice: spec.sale_price,
         })),
       })) || [],
-    fundingProjects: projects.filter(project => project.type === 'funding'),
-    preOrderProjects: projects.filter(project => project.type === 'pre-order'),
     portfolioProjects: projects.filter(project => project.type === 'portfolio'),
-    projects: projects.filter(
-      project => project.type !== 'funding' && project.type !== 'pre-order' && project.type !== 'portfolio',
-    ),
-    posts:
-      data?.post.map(post => ({
-        id: post.id,
-        codeName: post.code_name,
-        title: post.title,
-        coverUrl: post.cover_url,
-        videoUrl: post.video_url,
-        authorId: post.post_roles[0]?.member_id || '',
-        publishedAt: post.published_at ? new Date(post.published_at) : null,
-      })) ?? [],
   }
 
   return {
