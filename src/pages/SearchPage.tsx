@@ -711,7 +711,6 @@ const useSearchProductCollection = (
               { description: { _ilike: $description } }
               { introduction: { _ilike: $description } }
               { introduction_desktop: { _ilike: $description } }
-              { creator: { name: { _ilike: $title } } }
               { project_roles: { member: { name: { _ilike: $title } } } }
               { project_roles: { identity: { name: { _ilike: $title } } } }
             ]
