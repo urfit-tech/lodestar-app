@@ -139,7 +139,7 @@ const CreatorTabs: React.VFC<{
   const isEnrolledPodcastPlan = enrolledPodcastPlansCreators
     .map(enrolledPodcastPlansCreator => enrolledPodcastPlansCreator.id)
     .includes(creatorId)
-
+  console.log('creatorPage', activities)
   const tabContents: {
     key: string
     name: string
@@ -149,7 +149,7 @@ const CreatorTabs: React.VFC<{
     {
       key: 'introduction',
       name: formatMessage(usersMessages.tab.intro),
-      isVisible: !!member,
+      isVisible: true,
       content: (
         <div className="row">
           <div className="col-lg-8 col-12 mb-4">
@@ -181,13 +181,8 @@ const CreatorTabs: React.VFC<{
       isVisible: programs.length > 0,
       content: (
         <>
-          {programs.length === 0 ? (
-            <div className="row">
-              <StyledDescription className="ml-3">{formatMessage(commonMessages.content.noProgram)}</StyledDescription>
-            </div>
-          ) : (
-            <ProgramCollection programs={programs} />
-          )}
+          <div>123</div>
+          <ProgramCollection programs={programs} />
         </>
       ),
     },
@@ -197,26 +192,22 @@ const CreatorTabs: React.VFC<{
       isVisible: activities.length > 0,
       content: (
         <div className="row">
-          {activities.length === 0 ? (
-            <StyledDescription className="ml-3">{formatMessage(commonMessages.content.noActivity)}</StyledDescription>
-          ) : (
-            activities
-              .filter(activity => activity.endedAt && activity.endedAt.getTime() > Date.now())
-              .map(activity => (
-                <div key={activity.id} className="col-12 col-lg-4 mb-4">
-                  <ActivityBlock
-                    id={activity.id}
-                    title={activity.title}
-                    coverUrl={activity.coverUrl || undefined}
-                    isParticipantsVisible={activity.isParticipantsVisible}
-                    participantCount={activity.participantCount}
-                    totalSeats={activity.totalSeats}
-                    startedAt={activity.startedAt || undefined}
-                    endedAt={activity.endedAt || undefined}
-                  />
-                </div>
-              ))
-          )}
+          {activities
+            // .filter(activity => activity.endedAt && activity.endedAt.getTime() > Date.now())
+            .map(activity => (
+              <div key={activity.id} className="col-12 col-lg-4 mb-4">
+                <ActivityBlock
+                  id={activity.id}
+                  title={activity.title}
+                  coverUrl={activity.coverUrl || undefined}
+                  isParticipantsVisible={activity.isParticipantsVisible}
+                  participantCount={activity.participantCount}
+                  totalSeats={activity.totalSeats}
+                  startedAt={activity.startedAt || undefined}
+                  endedAt={activity.endedAt || undefined}
+                />
+              </div>
+            ))}
         </div>
       ),
     },
@@ -226,11 +217,7 @@ const CreatorTabs: React.VFC<{
       isVisible: Boolean(enabledModules.blog) && posts.length > 0,
       content: (
         <>
-          {posts.length === 0 ? (
-            <StyledDescription className="ml-3">{formatMessage(commonMessages.content.noPost)}</StyledDescription>
-          ) : (
-            <PostItemCollection posts={posts} />
-          )}
+          <PostItemCollection posts={posts} pageName={'creatorPage'} />
         </>
       ),
     },
@@ -240,27 +227,22 @@ const CreatorTabs: React.VFC<{
       isVisible: Boolean(enabledModules.podcast) && podcastPrograms.length > 0 && !isEnrolledPodcastPlan,
       content: (
         <>
-          {podcastPrograms.length === 0 && (
-            <StyledDescription className="ml-3">{formatMessage(commonMessages.content.noPodcast)}</StyledDescription>
-          )}
-          {podcastPlanIds.length > 0 && !isEnrolledPodcastPlan && (
-            <StyledCallToSubscription className="mb-5">
-              <div className="row align-items-center">
-                <div className="col-12 col-lg-6">{formatMessage(usersMessages.tab.podcasts)}</div>
-                <div className="col-12 col-lg-6">
-                  <Button
-                    icon="plus"
-                    size="large"
-                    onClick={() =>
-                      isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
-                    }
-                  >
-                    {formatMessage(commonMessages.button.subscribe)}
-                  </Button>
-                </div>
+          <StyledCallToSubscription className="mb-5">
+            <div className="row align-items-center">
+              <div className="col-12 col-lg-6">{formatMessage(usersMessages.tab.podcasts)}</div>
+              <div className="col-12 col-lg-6">
+                <Button
+                  icon="plus"
+                  size="large"
+                  onClick={() =>
+                    isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
+                  }
+                >
+                  {formatMessage(commonMessages.button.subscribe)}
+                </Button>
               </div>
-            </StyledCallToSubscription>
-          )}
+            </div>
+          </StyledCallToSubscription>
           <div className="row">
             <div className="col-12 col-lg-8 mb-3">
               <PodcastProgramTimeline
@@ -323,13 +305,7 @@ const CreatorTabs: React.VFC<{
       content: (
         <div className="row">
           <div className="col-lg-8 col-12 mb-3">
-            {appointmentPlans.length === 0 ? (
-              <StyledDescription className="ml-3">
-                {formatMessage(commonMessages.content.noAppointment)}
-              </StyledDescription>
-            ) : (
-              <AppointmentCollectionTabs appointmentPlans={appointmentPlans} />
-            )}
+            <AppointmentCollectionTabs appointmentPlans={appointmentPlans} />
           </div>
 
           <div className="col-lg-4 col-12">
