@@ -67,7 +67,7 @@ const StyledTabBarWrapper = styled.div`
 const SearchPage: React.VFC = () => {
   const [title] = useQueryParam('q', StringParam)
   const [tag] = useQueryParam('tag', StringParam)
-  const { isAuthenticating, currentMemberId } = useAuth()
+  const { currentMemberId } = useAuth()
   const { loading, enabledModules } = useApp()
 
   return (
@@ -86,7 +86,7 @@ const SearchPage: React.VFC = () => {
         </div>
       </StyledBanner>
 
-      {isAuthenticating || loading ? (
+      {loading ? (
         <Stack spacing="20px" className="container mt-5">
           <Skeleton height="20px" />
           <Skeleton height="20px" />
@@ -480,7 +480,7 @@ const useSearchProductCollection = (
     hasura.SEARCH_PRODUCT_COLLECTIONVariables
   >(
     gql`
-      query SEARCH_PRODUCT_COLLECTION($memberId: String, $title: String, $tag: String) {
+      query SEARCH_PRODUCT_COLLECTION($memberId: String, $title: String, $tag: String, $description: String) {
         program(
           where: {
             published_at: { _is_null: false }
@@ -492,7 +492,7 @@ const useSearchProductCollection = (
               { program_tags: { tag_name: { _eq: $tag } } }
             ]
           }
-          order_by: [{ created_at: desc }, { published_at: desc }]
+          order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
           id
           cover_url
@@ -553,9 +553,9 @@ const useSearchProductCollection = (
           where: {
             published_at: { _is_null: false }
             is_private: { _eq: false }
-            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $title } }]
+            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $description } }]
           }
-          order_by: [{ created_at: desc }, { published_at: desc }]
+          order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
           id
           cover_url
@@ -610,11 +610,11 @@ const useSearchProductCollection = (
             published_at: { _is_null: false }
             _or: [
               { title: { _ilike: $title } }
-              { podcast_program_body: { description: { _ilike: $title } } }
+              { podcast_program_body: { description: { _ilike: $description } } }
               { podcast_program_tags: { tag_name: { _eq: $tag } } }
             ]
           }
-          order_by: [{ created_at: desc }, { published_at: desc }]
+          order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
           id
           cover_url
@@ -648,7 +648,7 @@ const useSearchProductCollection = (
         }
         podcast_plan_enrollment(
           where: { member_id: { _eq: $memberId } }
-          order_by: [{ podcast_plan: { created_at: desc } }]
+          order_by: [{ podcast_plan: { published_at: desc } }]
         ) {
           podcast_plan_id
           podcast_plan {
@@ -675,7 +675,7 @@ const useSearchProductCollection = (
             is_deleted: { _eq: false }
             _or: [{ title: { _ilike: $title } }, { merchandise_tags: { tag_name: { _eq: $tag } } }]
           }
-          order_by: [{ created_at: desc }, { published_at: desc }]
+          order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
           id
           title
@@ -708,15 +708,15 @@ const useSearchProductCollection = (
             published_at: { _is_null: false }
             _or: [
               { title: { _ilike: $title } }
-              { description: { _ilike: $title } }
-              { introduction: { _ilike: $title } }
-              { introduction_desktop: { _ilike: $title } }
+              { description: { _ilike: $description } }
+              { introduction: { _ilike: $description } }
+              { introduction_desktop: { _ilike: $description } }
               { creator: { name: { _ilike: $title } } }
               { project_roles: { member: { name: { _ilike: $title } } } }
               { project_roles: { identity: { name: { _ilike: $title } } } }
             ]
           }
-          order_by: [{ created_at: desc }, { published_at: desc }]
+          order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
           id
           type
@@ -772,7 +772,7 @@ const useSearchProductCollection = (
             published_at: { _is_null: false }
             _or: [
               { title: { _ilike: $title } }
-              { description: { _ilike: $title } }
+              { description: { _ilike: $description } }
               {
                 _and: [
                   { post_roles: { name: { _eq: "author" } } }
@@ -781,7 +781,7 @@ const useSearchProductCollection = (
               }
             ]
           }
-          order_by: [{ created_at: desc }, { published_at: desc }]
+          order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
           id
           code_name
@@ -797,9 +797,9 @@ const useSearchProductCollection = (
         program_package(
           where: {
             published_at: { _is_null: false }
-            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $title } }]
+            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $description } }]
           }
-          order_by: [{ created_at: desc }, { published_at: desc }]
+          order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
           id
           cover_url
@@ -812,6 +812,7 @@ const useSearchProductCollection = (
         memberId: memberId || '',
         title:
           filter?.title && filter.title.length > 1 ? `%${filter.title.replace(/_/g, '\\_').split('').join('%')}%` : '',
+        description: filter?.title && filter.title.length > 1 ? `%${filter.title}%` : '',
         tag: filter?.tag || '',
       },
     },

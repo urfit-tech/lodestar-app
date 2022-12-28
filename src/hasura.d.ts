@@ -187,33 +187,6 @@ export interface GET_MANAGEMENT_DOMAINVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_IDENTITY
-// ====================================================
-
-export interface GET_IDENTITY_identity {
-  __typename: "identity";
-  id: any;
-  name: string;
-  position: number;
-}
-
-export interface GET_IDENTITY {
-  /**
-   * fetch data from the table: "identity"
-   */
-  identity: GET_IDENTITY_identity[];
-}
-
-export interface GET_IDENTITYVariables {
-  condition: identity_bool_exp;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL mutation operation: UPDATE_ISSUE_STATUS
 // ====================================================
 
@@ -4924,6 +4897,33 @@ export interface SEARCH_MEMBER {
 export interface SEARCH_MEMBERVariables {
   email: string;
   appId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_IDENTITY
+// ====================================================
+
+export interface GET_IDENTITY_identity {
+  __typename: "identity";
+  id: any;
+  name: string;
+  position: number;
+}
+
+export interface GET_IDENTITY {
+  /**
+   * fetch data from the table: "identity"
+   */
+  identity: GET_IDENTITY_identity[];
+}
+
+export interface GET_IDENTITYVariables {
+  condition: identity_bool_exp;
 }
 
 /* tslint:disable */
@@ -12255,6 +12255,7 @@ export interface SEARCH_PRODUCT_COLLECTIONVariables {
   memberId?: string | null;
   title?: string | null;
   tag?: string | null;
+  description?: string | null;
 }
 
 /* tslint:disable */
