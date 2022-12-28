@@ -157,6 +157,7 @@ const GlobalSearchModal: React.VFC = () => {
                         isClosable: false,
                         position: 'top',
                       })
+                      return
                     }
                     history.push(`/search?q=${keyword}`)
                   }}
