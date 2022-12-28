@@ -12146,6 +12146,12 @@ export interface SEARCH_PRODUCT_COLLECTION_project_project_plans {
   project_plan_enrollments_aggregate: SEARCH_PRODUCT_COLLECTION_project_project_plans_project_plan_enrollments_aggregate;
 }
 
+export interface SEARCH_PRODUCT_COLLECTION_project_author {
+  __typename: "project_role";
+  id: any;
+  member_id: string;
+}
+
 export interface SEARCH_PRODUCT_COLLECTION_project {
   __typename: "project";
   id: any;
@@ -12183,6 +12189,10 @@ export interface SEARCH_PRODUCT_COLLECTION_project {
    * An array relationship
    */
   project_plans: SEARCH_PRODUCT_COLLECTION_project_project_plans[];
+  /**
+   * An array relationship
+   */
+  author: SEARCH_PRODUCT_COLLECTION_project_author[];
 }
 
 export interface SEARCH_PRODUCT_COLLECTION_post_post_roles {

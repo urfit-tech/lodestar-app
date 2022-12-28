@@ -765,6 +765,10 @@ const useSearchProductCollection = (
               }
             }
           }
+          author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
+            id
+            member_id
+          }
         }
         post(
           where: {
@@ -835,6 +839,7 @@ const useSearchProductCollection = (
       isParticipantsVisible: project.is_participants_visible,
       isCountdownTimerVisible: project.is_countdown_timer_visible,
       totalSales: project.project_sales?.total_sales,
+      authorId: project.author[0]?.member_id,
       categories: project.project_categories.map(projectCategory => ({
         id: projectCategory.category.id,
         name: projectCategory.category.name,

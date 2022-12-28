@@ -54,12 +54,12 @@ export type ProjectBasicProps = {
   targetAmount: number
   targetUnit: 'funds' | 'participants'
   expiredAt: Date | null
-
   isParticipantsVisible: boolean
   isCountdownTimerVisible: boolean
   totalSales: number
   enrollmentCount: number
   categories: Category[]
+  authorId?: string
 }
 export type ProjectIntroProps = ProjectBasicProps & {
   projectPlans?: ProjectPlanBasicProps[]
