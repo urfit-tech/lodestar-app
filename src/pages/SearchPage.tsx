@@ -776,12 +776,7 @@ const useSearchProductCollection = (
             _or: [
               { title: { _ilike: $title } }
               { description: { _ilike: $description } }
-              {
-                _and: [
-                  { post_roles: { name: { _eq: "author" } } }
-                  { post_roles: { member: { name: { _ilike: $title } } } }
-                ]
-              }
+              { post_roles: { name: { _eq: "author" }, member: { name: { _ilike: $title } } } }
             ]
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
