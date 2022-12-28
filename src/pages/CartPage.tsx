@@ -25,7 +25,7 @@ const CartPage: React.VFC = () => {
   const [shopId] = useQueryParam('shopId', StringParam)
   const { cartProducts } = useContext(CartContext)
   const { id: appId, settings } = useApp()
-  const { isAuthenticating, currentMemberId } = useAuth()
+  const { isAuthenticating, authToken, currentMemberId } = useAuth()
   const { loadingMember, member } = useMember(currentMemberId || '')
   const cartProductGroups = groupBy(cartProduct => cartProduct.shopId || '', cartProducts)
   const shopIds = Object.keys(cartProductGroups)
@@ -49,7 +49,7 @@ const CartPage: React.VFC = () => {
 
   const filteredResourceUrns = filteredResourceCollection.map(resource => resource.urn)
 
-  if (isAuthenticating || loadingMember) {
+  if ((isAuthenticating && !authToken) || loadingMember) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />

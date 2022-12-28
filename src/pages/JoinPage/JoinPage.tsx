@@ -13,7 +13,7 @@ const JoinPage: React.VFC = () => {
   const currentUsername = currentMember?.username
 
   useEffect(() => {
-    if (!isAuthenticating && !currentUsername) {
+    if (!(isAuthenticating && !authToken) && !currentUsername) {
       Cookies.set('redirect', window.location.href)
       history.push('/auth')
     }
