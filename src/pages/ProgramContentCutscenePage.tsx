@@ -58,12 +58,12 @@ const ProgramContentCutscenePage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const { id: appId } = useApp()
-  const { isAuthenticating, isAuthenticated } = useAuth()
+  const { isAuthenticating, isAuthenticated, authToken } = useAuth()
   const { programId } = useParams<{ programId: string }>()
   const [previousPage] = useQueryParam('back', StringParam)
   const { loadingProgram, program, errorProgram } = useProgram(programId)
 
-  if (loadingProgram || isAuthenticating || !program) {
+  if (loadingProgram || (isAuthenticating && !authToken) || !program) {
     return (
       <Box className="d-flex justify-content-center align-items-center" h="100vh">
         <Spinner />
