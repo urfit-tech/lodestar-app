@@ -26,12 +26,13 @@ const StyledTagButton = styled(Button)<{ selected?: boolean }>`
 const PostItemCollection: React.VFC<{
   posts: PostPreviewProps[]
   withTagSelector?: boolean
-}> = ({ posts, withTagSelector }) => {
+  pageName?: String
+}> = ({ posts, withTagSelector, pageName }) => {
   const { formatMessage } = useIntl()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
   const categories = uniqBy(category => category.id, posts.map(post => post.categories).flat())
-  console.log('selectedCategoryId', selectedCategoryId)
-  const displayPost = selectedCategoryId ? posts : posts.slice(3)
+  console.log('selectedCategoryId', selectedCategoryId, withTagSelector, pageName)
+  const displayPost = selectedCategoryId || pageName === 'creatorPage' ? posts : posts.slice(3)
   return (
     <>
       {withTagSelector && (
