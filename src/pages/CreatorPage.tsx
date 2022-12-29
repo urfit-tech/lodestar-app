@@ -60,7 +60,6 @@ const StyledCallToSubscription = styled.div`
 `
 
 const CreatorPage: React.VFC = () => {
-  const { settings } = useApp()
   const { creatorId } = useParams<{ creatorId: string }>()
   const { member: creator, loadingMember: loadingCreator } = usePublicMember(creatorId)
   const avatarUrl = creator?.pictureUrl
@@ -75,10 +74,7 @@ const CreatorPage: React.VFC = () => {
     )
   }
 
-  if (
-    (!creator || !['content-creator', 'app-owner'].includes(creator.role)) &&
-    !Number(settings['nav.creator_page.enabled'])
-  ) {
+  if (!creator || !['content-creator', 'app-owner'].includes(creator.role)) {
     return <NotFoundPage />
   }
 
@@ -124,8 +120,13 @@ const CreatorTabs: React.VFC<{
   const [isMerchandisesPhysical] = useQueryParam('isPhysical', BooleanParam)
 
   const { currentMemberId, isAuthenticated } = useAuth()
-  const { programs } = usePublishedProgramCollection({ instructorId: creatorId, isPrivate: false })
-  const { activities } = usePublishedActivityCollection({ organizerId: creatorId })
+  const { programs } = usePublishedProgramCollection({
+    instructorId: creatorId,
+    isPrivate: false,
+  })
+  const { activities } = usePublishedActivityCollection({
+    organizerId: creatorId,
+  })
   const { posts } = usePostPreviewCollection({ authorId: creatorId })
   const { podcastPlanIds } = usePodcastPlanIds(creatorId)
   const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(currentMemberId || '')
@@ -138,7 +139,194 @@ const CreatorTabs: React.VFC<{
   const isEnrolledPodcastPlan = enrolledPodcastPlansCreators
     .map(enrolledPodcastPlansCreator => enrolledPodcastPlansCreator.id)
     .includes(creatorId)
+  const tabContents: {
+    key: string
+    name: string
+    isVisible: boolean
+    content?: React.ReactElement
+  }[] = [
+    {
+      key: 'introduction',
+      name: formatMessage(usersMessages.tab.intro),
+      isVisible: true,
+      content: (
+        <div className="row">
+          <div className="col-lg-8 col-12 mb-4">
+            {member?.description && !BraftEditor.createEditorState(member?.description).isEmpty() ? (
+              <BraftContent>{member?.description}</BraftContent>
+            ) : (
+              <StyledDescription className="ml-3">
+                {formatMessage(commonMessages.content.noIntroduction)}
+              </StyledDescription>
+            )}
+          </div>
+          <div className="col-lg-4 col-12">
+            <OverviewBlock
+              programs={programs}
+              previousPage={`creators_${creatorId}`}
+              podcastPrograms={podcastPrograms}
+              onChangeTab={key => setActiveKey(key)}
+              onSubscribe={() =>
+                isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
+              }
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'programs',
+      name: formatMessage(usersMessages.tab.addPrograms),
+      isVisible: programs.length > 0,
+      content: (
+        <>
+          <ProgramCollection programs={programs} />
+        </>
+      ),
+    },
+    {
+      key: 'activities',
+      name: formatMessage(usersMessages.tab.addActivities),
+      isVisible: activities.length > 0,
+      content: (
+        <div className="row">
+          {activities.map(activity => (
+            <div key={activity.id} className="col-12 col-lg-4 mb-4">
+              <ActivityBlock
+                id={activity.id}
+                title={activity.title}
+                coverUrl={activity.coverUrl || undefined}
+                isParticipantsVisible={activity.isParticipantsVisible}
+                participantCount={activity.participantCount}
+                totalSeats={activity.totalSeats}
+                startedAt={activity.startedAt || undefined}
+                endedAt={activity.endedAt || undefined}
+              />
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      key: 'posts',
+      name: formatMessage(usersMessages.tab.mediaPost),
+      isVisible: Boolean(enabledModules.blog) && posts.length > 0,
+      content: (
+        <>
+          <PostItemCollection posts={posts} pageName="creatorPage" />
+        </>
+      ),
+    },
+    {
+      key: 'podcasts',
+      name: formatMessage(usersMessages.tab.podcasts),
+      isVisible: Boolean(enabledModules.podcast) && podcastPrograms.length > 0 && !isEnrolledPodcastPlan,
+      content: (
+        <>
+          <StyledCallToSubscription className="mb-5">
+            <div className="row align-items-center">
+              <div className="col-12 col-lg-6">{formatMessage(usersMessages.tab.podcasts)}</div>
+              <div className="col-12 col-lg-6">
+                <Button
+                  icon="plus"
+                  size="large"
+                  onClick={() =>
+                    isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
+                  }
+                >
+                  {formatMessage(commonMessages.button.subscribe)}
+                </Button>
+              </div>
+            </div>
+          </StyledCallToSubscription>
+          <div className="row">
+            <div className="col-12 col-lg-8 mb-3">
+              <PodcastProgramTimeline
+                memberId={currentMemberId}
+                podcastPrograms={podcastPrograms}
+                renderItem={({ podcastProgram, isEnrolled, isSubscribed }) => {
+                  const elem = (
+                    <PodcastProgramCard
+                      coverUrl={podcastProgram.coverUrl}
+                      title={podcastProgram.title}
+                      instructor={podcastProgram.instructor}
+                      salePrice={podcastProgram.salePrice}
+                      listPrice={podcastProgram.listPrice}
+                      duration={podcastProgram.duration}
+                      durationSecond={podcastProgram.durationSecond}
+                      isEnrolled={isEnrolled}
+                    />
+                  )
 
+                  if (isEnrolledPodcastPlan) {
+                    return (
+                      <Link to={`/podcasts/${podcastProgram.id}?instructorId=${podcastProgram?.instructor?.id}`}>
+                        {elem}
+                      </Link>
+                    )
+                  }
+
+                  return (
+                    <PodcastProgramPopover
+                      key={podcastProgram.id}
+                      isEnrolled={isEnrolled}
+                      isSubscribed={isSubscribed}
+                      podcastProgramId={podcastProgram.id}
+                      title={podcastProgram.title}
+                      listPrice={podcastProgram.listPrice}
+                      salePrice={podcastProgram.salePrice}
+                      duration={podcastProgram.duration}
+                      durationSecond={podcastProgram.durationSecond}
+                      description={podcastProgram.description}
+                      categories={podcastProgram.categories}
+                      instructor={podcastProgram.instructor}
+                      onSubscribe={() =>
+                        isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
+                      }
+                    >
+                      {elem}
+                    </PodcastProgramPopover>
+                  )
+                }}
+              />
+            </div>
+          </div>
+        </>
+      ),
+    },
+    {
+      key: 'appointments',
+      name: formatMessage(usersMessages.tab.appointments),
+      isVisible: Boolean(enabledModules.appointment) && appointmentPlans.length > 0,
+      content: (
+        <div className="row">
+          <div className="col-lg-8 col-12 mb-3">
+            <AppointmentCollectionTabs appointmentPlans={appointmentPlans} />
+          </div>
+
+          <div className="col-lg-4 col-12">
+            <OverviewBlock
+              programs={programs}
+              previousPage={`creators_${creatorId}`}
+              podcastPrograms={podcastPrograms}
+              onChangeTab={key => setActiveKey(key)}
+              onSubscribe={() => (isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible?.(true))}
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'merchandises',
+      name: formatMessage(usersMessages.tab.merchandises),
+      isVisible: Boolean(enabledModules.merchandise) && merchandises?.length > 0,
+      content: (
+        <>
+          <MerchandiseCollectionBlock merchandises={merchandises} />
+        </>
+      ),
+    },
+  ].filter(v => v.isVisible)
   return (
     <>
       <Tabs
@@ -152,207 +340,13 @@ const CreatorTabs: React.VFC<{
           </div>
         )}
       >
-        {!!member && (
-          <Tabs.TabPane tab={formatMessage(usersMessages.tab.intro)} key="introduction">
-            <div className="container py-4">
-              <div className="row">
-                <div className="col-lg-8 col-12 mb-4">
-                  {member.description && !BraftEditor.createEditorState(member.description).isEmpty() ? (
-                    <BraftContent>{member.description}</BraftContent>
-                  ) : (
-                    <StyledDescription className="ml-3">
-                      {formatMessage(commonMessages.content.noIntroduction)}
-                    </StyledDescription>
-                  )}
-                </div>
-                <div className="col-lg-4 col-12">
-                  <OverviewBlock
-                    programs={programs}
-                    previousPage={`creators_${creatorId}`}
-                    podcastPrograms={podcastPrograms}
-                    onChangeTab={key => setActiveKey(key)}
-                    onSubscribe={() =>
-                      isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          </Tabs.TabPane>
-        )}
-
-        <Tabs.TabPane tab={formatMessage(usersMessages.tab.addPrograms)} key="programs">
-          <div className="container py-4">
-            {programs.length === 0 ? (
-              <div className="row">
-                <StyledDescription className="ml-3">
-                  {formatMessage(commonMessages.content.noProgram)}
-                </StyledDescription>
-              </div>
-            ) : (
-              <ProgramCollection programs={programs} />
-            )}
-          </div>
-        </Tabs.TabPane>
-
-        <Tabs.TabPane tab={formatMessage(usersMessages.tab.addActivities)} key="activities">
-          <div className="container py-4">
-            <div className="row">
-              {activities.length === 0 ? (
-                <StyledDescription className="ml-3">
-                  {formatMessage(commonMessages.content.noActivity)}
-                </StyledDescription>
-              ) : (
-                activities
-                  .filter(activity => activity.endedAt && activity.endedAt.getTime() > Date.now())
-                  .map(activity => (
-                    <div key={activity.id} className="col-12 col-lg-4 mb-4">
-                      <ActivityBlock
-                        id={activity.id}
-                        title={activity.title}
-                        coverUrl={activity.coverUrl || undefined}
-                        isParticipantsVisible={activity.isParticipantsVisible}
-                        participantCount={activity.participantCount}
-                        totalSeats={activity.totalSeats}
-                        startedAt={activity.startedAt || undefined}
-                        endedAt={activity.endedAt || undefined}
-                      />
-                    </div>
-                  ))
-              )}
-            </div>
-          </div>
-        </Tabs.TabPane>
-
-        {enabledModules.blog && (
-          <Tabs.TabPane tab={formatMessage(usersMessages.tab.mediaPost)} key="posts">
-            <div className="container py-4">
-              {posts.length === 0 ? (
-                <StyledDescription className="ml-3">{formatMessage(commonMessages.content.noPost)}</StyledDescription>
-              ) : (
-                <PostItemCollection posts={posts} />
-              )}
-            </div>
-          </Tabs.TabPane>
-        )}
-
-        {enabledModules.podcast && (
-          <Tabs.TabPane tab={formatMessage(usersMessages.tab.podcasts)} key="podcasts">
-            <div className="container py-4">
-              {podcastPrograms.length === 0 && (
-                <StyledDescription className="ml-3">
-                  {formatMessage(commonMessages.content.noPodcast)}
-                </StyledDescription>
-              )}
-              {podcastPlanIds.length > 0 && !isEnrolledPodcastPlan && (
-                <StyledCallToSubscription className="mb-5">
-                  <div className="row align-items-center">
-                    <div className="col-12 col-lg-6">{formatMessage(usersMessages.tab.podcasts)}</div>
-                    <div className="col-12 col-lg-6">
-                      <Button
-                        icon="plus"
-                        size="large"
-                        onClick={() =>
-                          isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
-                        }
-                      >
-                        {formatMessage(commonMessages.button.subscribe)}
-                      </Button>
-                    </div>
-                  </div>
-                </StyledCallToSubscription>
-              )}
-              <div className="row">
-                <div className="col-12 col-lg-8 mb-3">
-                  <PodcastProgramTimeline
-                    memberId={currentMemberId}
-                    podcastPrograms={podcastPrograms}
-                    renderItem={({ podcastProgram, isEnrolled, isSubscribed }) => {
-                      const elem = (
-                        <PodcastProgramCard
-                          coverUrl={podcastProgram.coverUrl}
-                          title={podcastProgram.title}
-                          instructor={podcastProgram.instructor}
-                          salePrice={podcastProgram.salePrice}
-                          listPrice={podcastProgram.listPrice}
-                          duration={podcastProgram.duration}
-                          durationSecond={podcastProgram.durationSecond}
-                          isEnrolled={isEnrolled}
-                        />
-                      )
-
-                      if (isEnrolledPodcastPlan) {
-                        return (
-                          <Link to={`/podcasts/${podcastProgram.id}?instructorId=${podcastProgram?.instructor?.id}`}>
-                            {elem}
-                          </Link>
-                        )
-                      }
-
-                      return (
-                        <PodcastProgramPopover
-                          key={podcastProgram.id}
-                          isEnrolled={isEnrolled}
-                          isSubscribed={isSubscribed}
-                          podcastProgramId={podcastProgram.id}
-                          title={podcastProgram.title}
-                          listPrice={podcastProgram.listPrice}
-                          salePrice={podcastProgram.salePrice}
-                          duration={podcastProgram.duration}
-                          durationSecond={podcastProgram.durationSecond}
-                          description={podcastProgram.description}
-                          categories={podcastProgram.categories}
-                          instructor={podcastProgram.instructor}
-                          onSubscribe={() =>
-                            isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible && setAuthModalVisible(true)
-                          }
-                        >
-                          {elem}
-                        </PodcastProgramPopover>
-                      )
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </Tabs.TabPane>
-        )}
-
-        {enabledModules.appointment && (
-          <Tabs.TabPane tab={formatMessage(usersMessages.tab.appointments)} key="appointments">
-            <div className="container py-4">
-              <div className="row">
-                <div className="col-lg-8 col-12 mb-3">
-                  {appointmentPlans.length === 0 ? (
-                    <StyledDescription className="ml-3">
-                      {formatMessage(commonMessages.content.noAppointment)}
-                    </StyledDescription>
-                  ) : (
-                    <AppointmentCollectionTabs appointmentPlans={appointmentPlans} />
-                  )}
-                </div>
-
-                <div className="col-lg-4 col-12">
-                  <OverviewBlock
-                    programs={programs}
-                    previousPage={`creators_${creatorId}`}
-                    podcastPrograms={podcastPrograms}
-                    onChangeTab={key => setActiveKey(key)}
-                    onSubscribe={() => (isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible?.(true))}
-                  />
-                </div>
-              </div>
-            </div>
-          </Tabs.TabPane>
-        )}
-
-        {enabledModules.merchandise && (
-          <Tabs.TabPane tab={formatMessage(usersMessages.tab.merchandises)} key="merchandises">
-            <div className="container py-4">
-              <MerchandiseCollectionBlock merchandises={merchandises} />
-            </div>
-          </Tabs.TabPane>
-        )}
+        {tabContents.map(v => {
+          return (
+            <Tabs.TabPane tab={v.name} key={v.key}>
+              <div className="container py-4">{v.content}</div>
+            </Tabs.TabPane>
+          )
+        })}
       </Tabs>
     </>
   )
