@@ -30,7 +30,7 @@ const DefaultOauth2Section: React.VFC = () => {
   const [code] = useQueryParam('code', StringParam)
   const [state] = useQueryParam('state', StringParam)
   const { settings } = useApp()
-  const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
+  const { isAuthenticating, authToken, currentMemberId, socialLogin } = useAuth()
   const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
@@ -71,16 +71,23 @@ const DefaultOauth2Section: React.VFC = () => {
   }, [accessToken, updateYoutubeChannelIds, currentMemberId, history, redirect, formatMessage])
 
   useEffect(() => {
-    if (!isAuthenticating && currentMemberId && provider === 'google') {
+    if (!(isAuthenticating && !authToken) && currentMemberId && provider === 'google') {
       handleFetchYoutubeApi()
     }
-  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, provider])
+  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, authToken, provider])
 
   // Authorization Code Flow
   useEffect(() => {
     const clientId = settings['auth.line_client_id']
     const clientSecret = settings['auth.line_client_secret']
-    if (!isAuthenticating && !currentMemberId && code && provider === 'line' && clientId && clientSecret) {
+    if (
+      !(isAuthenticating && !authToken) &&
+      !currentMemberId &&
+      code &&
+      provider === 'line' &&
+      clientId &&
+      clientSecret
+    ) {
       const hostPath = window.location.port
         ? `https://${window.location.hostname}:${window.location.port}`
         : `https://${window.location.hostname}`
@@ -111,11 +118,22 @@ const DefaultOauth2Section: React.VFC = () => {
         .then(() => history.push(redirect))
         .catch(handleError)
     }
-  }, [accountLinkToken, isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
+  }, [
+    accountLinkToken,
+    isAuthenticating,
+    authToken,
+    currentMemberId,
+    code,
+    settings,
+    provider,
+    socialLogin,
+    history,
+    redirect,
+  ])
 
   // Implicit Flow
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && (provider === 'google' || provider === 'facebook')) {
+    if (!(isAuthenticating && !authToken) && !currentMemberId && (provider === 'google' || provider === 'facebook')) {
       socialLogin?.({
         provider: provider,
         providerToken: accessToken,
@@ -123,7 +141,7 @@ const DefaultOauth2Section: React.VFC = () => {
         .then(() => history.push(redirect))
         .catch(handleError)
     }
-  }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
+  }, [isAuthenticating, authToken, currentMemberId, socialLogin, provider, accessToken, history, redirect])
 
   return <LoadingPage />
 }
@@ -134,7 +152,7 @@ const Oauth2Section: React.VFC = () => {
   const [state] = useQueryParam('state', StringParam)
   const [code] = useQueryParam('code', StringParam)
   const { id: appId } = useApp()
-  const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
+  const { isAuthenticating, authToken, currentMemberId, socialLogin } = useAuth()
   const host = window.location.origin
   const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
 
@@ -146,7 +164,7 @@ const Oauth2Section: React.VFC = () => {
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && appId && code) {
+    if (!(isAuthenticating && !authToken) && !currentMemberId && appId && code) {
       const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(
@@ -173,7 +191,19 @@ const Oauth2Section: React.VFC = () => {
         })
         .catch(handleError)
     }
-  }, [accountLinkToken, appId, code, currentMemberId, history, host, isAuthenticating, provider, redirect, socialLogin])
+  }, [
+    accountLinkToken,
+    appId,
+    code,
+    currentMemberId,
+    history,
+    host,
+    isAuthenticating,
+    authToken,
+    provider,
+    redirect,
+    socialLogin,
+  ])
 
   return <LoadingPage />
 }

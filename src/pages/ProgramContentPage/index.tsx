@@ -38,12 +38,12 @@ const ProgramContentPage: React.VFC = () => {
     programContentId: string
   }>()
   const { enabledModules, settings, id: appId, loading: loadingApp } = useApp()
-  const { currentMemberId, isAuthenticating } = useAuth()
+  const { currentMemberId, isAuthenticating, authToken } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
 
-  if (isAuthenticating || loadingProgram) {
+  if ((isAuthenticating && !authToken) || loadingProgram) {
     return <></>
   }
 

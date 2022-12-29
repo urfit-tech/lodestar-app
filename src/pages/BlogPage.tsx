@@ -72,7 +72,7 @@ const BlogPage: React.VFC = () => {
 
           <div className="col-12 col-lg-9">
             <StyledTitle>{formatMessage(messages.latest)}</StyledTitle>
-            <PostItemCollection posts={posts.slice(3)} withTagSelector />
+            <PostItemCollection posts={posts} withTagSelector />
           </div>
         </div>
       </div>

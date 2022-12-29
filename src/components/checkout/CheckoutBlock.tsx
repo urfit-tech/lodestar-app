@@ -87,7 +87,7 @@ const CheckoutBlock: React.VFC<{
 }> = ({ member, shopId, cartProducts, isFieldsValidate, renderInvoice, renderTerms }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
+  const { isAuthenticating, authToken, isAuthenticated, currentMemberId } = useAuth()
   const { settings, enabledModules } = useApp()
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
@@ -226,7 +226,7 @@ const CheckoutBlock: React.VFC<{
     setIsGiftPlanDeliverable(isDeliverable)
   }, [check])
 
-  if (isAuthenticating) {
+  if (isAuthenticating && !authToken) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
