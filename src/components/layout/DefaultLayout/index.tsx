@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
+import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
 import DefaultAvatar from '../../../images/avatar.svg'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
@@ -72,7 +73,7 @@ const DefaultLayout: React.FC<{
   const { name, settings, enabledModules } = useApp()
   const { navs } = useNav()
   const { visible: playerVisible } = useContext(PodcastPlayerContext)
-  const { renderCartButton, renderMyPageNavItem } = useCustomRenderer()
+  const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
   const [visible, setVisible] = useState(false)
 
   return (
@@ -193,6 +194,27 @@ const DefaultLayout: React.FC<{
                 )}
 
               {isAuthenticated &&
+                (renderCreatorPageNavItem?.({
+                  memberId: currentMemberId,
+                }) ||
+                  (!!Number(settings['nav.creator_page.enabled']) && (
+                    <Menu>
+                      <MenuButton
+                        as={
+                          settings['style.header.menu_button.animation.enable'] === '1'
+                            ? StyledNavAnimationButton
+                            : StyledNavButton
+                        }
+                        onClick={() => history.push(`/creators/${currentMemberId}`)}
+                      >
+                        <Link to={`/creators/${currentMemberId}`}>
+                          {settings['nav.creator_page.name'] || formatMessage(commonMessages.button.creatorPage)}
+                        </Link>
+                      </MenuButton>
+                    </Menu>
+                  )))}
+
+              {isAuthenticated &&
                 (renderMyPageNavItem?.({
                   memberId: currentMemberId,
                 }) ||
@@ -206,10 +228,8 @@ const DefaultLayout: React.FC<{
                         }
                         onClick={() => history.push(`/members/${currentMemberId}`)}
                       >
-
-                        <Link to={`/members/${currentMemberId}`}> 
-                        {/* {formatMessage(commonMessages.button.myPage)} */}
-                        我的課程
+                        <Link to={`/members/${currentMemberId}`}>
+                          {settings['nav.my_page.name'] || formatMessage(commonMessages.button.myPage)}
                         </Link>
                       </MenuButton>
                     </Menu>

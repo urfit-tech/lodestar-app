@@ -17,7 +17,7 @@ const ProgramCollection: React.FC<{
   })[]
 }> = ({ programs }) => {
   const { id: appId } = useApp()
-  const { isAuthenticating } = useAuth()
+  const { isAuthenticating, authToken } = useAuth()
   const tracking = useTracking()
   const [type] = useQueryParam('type', StringParam)
   const [noPrice] = useQueryParam('noPrice', BooleanParam)
@@ -42,7 +42,7 @@ const ProgramCollection: React.FC<{
               const resource = resourceCollection[idx]
               resource && tracking.click(resource, { position: idx + 1 })
             }}
-            previousPage={isAuthenticating ? `programs` : undefined}
+            previousPage={isAuthenticating && !authToken ? `programs` : undefined}
           />
         </div>
       ))}

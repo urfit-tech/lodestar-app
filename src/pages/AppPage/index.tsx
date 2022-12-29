@@ -132,24 +132,30 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   const { formatMessage } = useIntl()
 
   const [utmQuery] = useQueryParams({
-    utm_id: StringParam,
+    utm_campaign: StringParam,
     utm_source: StringParam,
     utm_medium: StringParam,
-    utm_term: StringParam,
     utm_content: StringParam,
-    utm_campaign: StringParam,
+    // GA4: https://support.google.com/analytics/answer/10917952?hl=en#cc-set-up&zippy=%2Cin-this-article
     utm_source_platform: StringParam,
+    utm_campaign_id: StringParam,
     utm_creative_format: StringParam,
     utm_marketing_tactic: StringParam,
+    // Adwords
+    utm_term: StringParam,
+    // custom
+    utm_id: StringParam,
+    utm_brand: StringParam,
+    utm_adgroup: StringParam,
+    utm_adname: StringParam,
+    utm_categories: StringParam,
+    utm_tags: StringParam,
   })
-  utmQuery.utm_source &&
+  if (utmQuery.utm_source) {
     Cookies.set('utm', JSON.stringify(utmQuery), { expires: Number(settings['utm.expires']) || 30 })
-  utmQuery.utm_id && Cookies.set('utm_id', utmQuery.utm_id, { expires: Number(settings['utm.expires']) || 30 })
-  utmQuery.utm_medium &&
-    Cookies.set('utm_medium', utmQuery.utm_medium, { expires: Number(settings['utm.expires']) || 30 })
-  utmQuery.utm_source &&
-    Cookies.set('utm_source', utmQuery.utm_source, { expires: Number(settings['utm.expires']) || 30 })
-  utmQuery.utm_term && Cookies.set('utm_term', utmQuery.utm_term, { expires: Number(settings['utm.expires']) || 30 })
+    Cookies.set('landing', window.location.href, { expires: Number(settings['utm.expires']) || 30 })
+    Cookies.set('referrer', document.referrer, { expires: Number(settings['utm.expires']) || 30 })
+  }
 
   useEffect(() => {
     if (enabledModules.login_restriction || enabledModules.device_management) {

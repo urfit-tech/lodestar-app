@@ -966,5 +966,6 @@
   "voucher.tab.exchange": "兌換代碼",
   "voucher.title.add": "新增兌換券",
   "common.text.publish": "發布",
-  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "內容預計於"
+  "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "內容預計於",
+  "common.member.creatorPage": "個人專頁"
 }

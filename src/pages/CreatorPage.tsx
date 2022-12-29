@@ -60,6 +60,7 @@ const StyledCallToSubscription = styled.div`
 `
 
 const CreatorPage: React.VFC = () => {
+  const { settings } = useApp()
   const { creatorId } = useParams<{ creatorId: string }>()
   const { member: creator, loadingMember: loadingCreator } = usePublicMember(creatorId)
   const avatarUrl = creator?.pictureUrl
@@ -74,7 +75,10 @@ const CreatorPage: React.VFC = () => {
     )
   }
 
-  if (!creator || !['content-creator', 'app-owner'].includes(creator.role)) {
+  if (
+    (!creator || !['content-creator', 'app-owner'].includes(creator.role)) &&
+    !Number(settings['nav.creator_page.enabled'])
+  ) {
     return <NotFoundPage />
   }
 
@@ -341,6 +345,7 @@ const CreatorTabs: React.VFC<{
             </div>
           </Tabs.TabPane>
         )}
+
         {enabledModules.merchandise && (
           <Tabs.TabPane tab={formatMessage(usersMessages.tab.merchandises)} key="merchandises">
             <div className="container py-4">

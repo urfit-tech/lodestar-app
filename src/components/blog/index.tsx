@@ -17,7 +17,7 @@ export const StyledPostTitle = styled.div<{ rows?: number }>`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: ${props => props.rows || 1};
-  margin-bottom: 0.75rem;
+  margin-bottom: 4px;
   overflow: hidden;
   width: 100%;
   height: calc(${props => props.rows || 1} * 1.5em);
@@ -27,10 +27,10 @@ export const StyledPostTitle = styled.div<{ rows?: number }>`
 
   &.headline,
   &.featuring {
-    color: white;
     font-size: 20px;
     font-weight: bold;
     letter-spacing: 0.77px;
+    margin-bottom: 4px;
   }
   &.list-item {
     -webkit-line-clamp: 2;
@@ -44,14 +44,17 @@ export const StyledPostTitle = styled.div<{ rows?: number }>`
     &.headline {
       font-size: 20px;
       font-weight: bold;
+      color: white;
     }
     &.featuring {
       font-size: 16px;
-      font-weight: normal;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: white;
     }
     &.list-item {
-      -webkit-line-clamp: 1;
-      height: 1.5em;
+      // -webkit-line-clamp: 1;
+      min-height: 1.5em;
       font-size: 20px;
     }
   `)}

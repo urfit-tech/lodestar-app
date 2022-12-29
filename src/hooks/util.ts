@@ -33,10 +33,10 @@ export const useSwarmify = () => {
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
   const { settings } = useApp()
-  const { currentMember, isAuthenticating } = useAuth()
+  const { currentMember, isAuthenticating, authToken } = useAuth()
   const swarmcdnkey = settings['swarmify.cdn_key']
 
-  if (theme && !isAuthenticating && swarmcdnkey && settings['feature.swarmify.enabled'] === '1') {
+  if (theme && !(isAuthenticating && !authToken) && swarmcdnkey && settings['feature.swarmify.enabled'] === '1') {
     const swarmoptions = {
       swarmcdnkey,
       theme: {

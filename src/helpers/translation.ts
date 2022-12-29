@@ -186,6 +186,7 @@ export const commonMessages = {
     home: { id: 'common.button.home', defaultMessage: '首頁' },
     backToHome: { id: 'common.button.backToHome', defaultMessage: '回首頁' },
     myPage: { id: 'common.member.myPage', defaultMessage: '我的課程' },
+    creatorPage: { id: 'common.member.creatorPage', defaultMessage: 'Creator page' },
     reply: { id: 'common.button.reply', defaultMessage: '回覆' },
     leaveQuestion: { id: 'common.button.leaveQuestion', defaultMessage: '留下你的問題...' },
     allCategory: { id: 'common.button.all', defaultMessage: '全部分類' },
