@@ -6,6 +6,10 @@ const pageMessages = {
     review: { id: 'page.*.review', defaultMessage: '評價' },
     intro: { id: 'page.*.intro', defaultMessage: '簡介' },
   }),
+  // AppPage
+  AppPage: defineMessages({
+    logoutAlert: { id: 'page.AppPage.logoutAlert', defaultMessage: '您已被登出，目前有其他裝置登入這組帳號' },
+  }),
   // ProgramContentPage
   ProgramContentPage: defineMessages({
     foo: { id: 'page.ProgramContentPage.foo', defaultMessage: 'Foo Message' },
@@ -86,6 +90,10 @@ const pageMessages = {
     relatedPortfolios: {
       id: 'page.PortfolioPage.relatedPortfolios',
       defaultMessage: 'Related Portfolios',
+    },
+    applyTag: {
+      id: 'page.PortfolioPage.applyTag',
+      defaultMessage: 'apply tag',
     },
   }),
 }

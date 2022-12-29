@@ -6,36 +6,42 @@ import PageHelmet from '../../components/common/PageHelmet'
 import LocaleContext from '../../contexts/LocaleContext'
 import { getBraftContent, getOgLocale } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
-import { ProgramPackage } from '../../types/programPackage'
+import { Program } from '../../types/program'
 
-const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = ({ programPackage }) => {
+const ProgramContentPageHelmet: React.VFC<
+  { program: Program; contentId: string } & Pick<React.ComponentProps<typeof PageHelmet>, 'onLoaded'>
+> = ({ program, contentId, onLoaded }) => {
   const app = useApp()
   const { defaultLocale } = useContext(LocaleContext)
   const ogLocale = getOgLocale(defaultLocale)
-  const allPlanPrice = programPackage.plans.map(plan =>
-    plan.salePrice !== null && moment() <= moment(plan.soldAt) ? plan.salePrice : plan.listPrice,
+  const programPlans = program.plans.map(plan =>
+    plan.salePrice !== null && moment() <= moment(plan.endedAt) ? plan.salePrice : plan.listPrice,
   )
 
-  const { resourceCollection } = useResourceCollection([`${app.id}:program_package:${programPackage.id}`])
-  const { averageScore, reviewCount } = useReviewAggregate(`/program-packages/${programPackage.id}`)
-  const { productReviews } = useProductReviews(`/program-packages/${programPackage.id}`)
+  const programContent = program.contentSections
+    .map(({ contents }) => contents)
+    .flat()
+    .find(({ id }) => id === contentId)
+
+  const { resourceCollection } = useResourceCollection([`${app.id}:program:${program.id}`])
+  const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
+  const { productReviews } = useProductReviews(`/programs/${program.id}`)
 
   return (
     <PageHelmet
-      title={programPackage.metaTag?.seo?.pageTitle || programPackage.title}
-      description={programPackage.metaTag?.seo?.description || programPackage.description || ''}
-      keywords={
-        programPackage.metaTag?.seo?.keywords?.split(',') || programPackage.programs.map(program => program.title)
-      }
+      title={(programContent && programContent.title) || program.metaTag?.seo?.pageTitle || program.title}
+      description={program.metaTag?.seo?.description || program.description || ''}
+      keywords={program.metaTag?.seo?.keywords?.split(',') || program.tags}
+      onLoaded={onLoaded}
       jsonLd={[
         {
           '@context': 'https://schema.org',
           '@type': 'Product',
-          name: programPackage.title || app.settings['title'],
-          image: programPackage.coverUrl || app.settings['open_graph.image'],
-          description: getBraftContent(programPackage.description || app.settings['description'] || '{}'),
+          name: (programContent && programContent.title) || program.title || app.settings['title'],
+          image: program.coverUrl || app.settings['open_graph.image'],
+          description: getBraftContent(program.description || app.settings['description'] || '{}')?.slice(0, 150),
           sku: resourceCollection[0]?.sku,
-          mpn: programPackage.id,
+          mpn: program.id,
           brand: {
             '@type': 'Brand',
             name: app.settings['title'],
@@ -82,15 +88,26 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
                   reviewCount: 1,
                 },
               }),
-          ...(allPlanPrice.length > 0 && {
+          ...(programPlans.length > 0 && {
             offers: {
               '@type': 'AggregateOffer',
-              offerCount: allPlanPrice.length,
-              lowPrice: Math.min(...allPlanPrice),
-              highPrice: Math.max(...allPlanPrice),
+              offerCount: programPlans.length,
+              lowPrice: Math.min(...programPlans),
+              highPrice: Math.max(...programPlans),
               priceCurrency: app.settings['currency_id'] || process.env.REACT_APP_SYS_CURRENCY,
             },
           }),
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Course',
+          name: (programContent && programContent.title) || program.title,
+          description: getBraftContent(program.description || app.settings['description'] || '{}')?.slice(0, 150),
+          provider: {
+            '@type': 'Organization',
+            name: app.settings['name'],
+            sameAs: `https://${window.location.host}`,
+          },
         },
       ]}
       openGraph={[
@@ -101,16 +118,17 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
         {
           property: 'og:title',
           content:
-            programPackage.metaTag?.openGraph?.title ||
-            programPackage.title ||
+            (programContent && programContent.title) ||
+            program.metaTag?.openGraph?.title ||
+            program.title ||
             app.settings['open_graph.title'] ||
             app.settings['title'],
         },
         {
           property: 'og:description',
           content: getBraftContent(
-            programPackage.metaTag?.openGraph?.description ||
-              programPackage.description ||
+            program.metaTag?.openGraph?.description ||
+              program.description ||
               app.settings['open_graph.description'] ||
               app.settings['description'] ||
               '{}',
@@ -120,17 +138,17 @@ const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = 
         {
           property: 'og:image',
           content:
-            programPackage.metaTag?.openGraph?.image ||
-            programPackage.coverUrl ||
+            program.metaTag?.openGraph?.image ||
+            program.coverUrl ||
             app.settings['open_graph.image'] ||
             app.settings['logo'],
         },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
-        { property: 'og:image:alt', content: programPackage.metaTag?.openGraph?.imageAlt || '' },
+        { property: 'og:image:alt', content: program.metaTag?.openGraph?.imageAlt },
       ]}
     />
   )
 }
 
-export default ProgramPackagePageHelmet
+export default ProgramContentPageHelmet

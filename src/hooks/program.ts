@@ -272,7 +272,7 @@ export const useProgram = (programId: string) => {
               name
             }
           }
-          program_roles(order_by: [{ created_at: asc}, { id: desc }]) {
+          program_roles(order_by: [{ created_at: asc }, { id: desc }]) {
             id
             name
             member_id
@@ -302,6 +302,11 @@ export const useProgram = (programId: string) => {
             auto_renewed
             is_countdown_timer_visible
             group_buying_people
+            program_plan_enrollments_aggregate {
+              aggregate {
+                count
+              }
+            }
           }
           program_review_score {
             score
@@ -316,7 +321,7 @@ export const useProgram = (programId: string) => {
             id
             title
             description
-            program_contents(where: { published_at: { _lte: "now()" } }, order_by: { position: asc }) {
+            program_contents(order_by: { position: asc }) {
               id
               title
               abstract
@@ -415,6 +420,7 @@ export const useProgram = (programId: string) => {
               publishedAt: programPlan.published_at,
               isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
               groupBuyingPeople: programPlan.group_buying_people || 1,
+              enrollmentCount: programPlan.program_plan_enrollments_aggregate.aggregate?.count || 0,
             })),
             duration: data.program_by_pk.program_duration?.duration,
             score: data.program_by_pk.program_review_score?.score,

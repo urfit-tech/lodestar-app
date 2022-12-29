@@ -2,19 +2,22 @@ import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
 import { Select } from '@chakra-ui/react'
 import { Card } from 'antd'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { flatten, sum } from 'ramda'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { AiOutlineCalendar, AiOutlinePlaySquare, AiOutlineVideoCamera } from 'react-icons/ai'
+import { AiOutlineCalendar, AiOutlineFileText, AiOutlinePlaySquare, AiOutlineVideoCamera } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
+import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds, useProgramContentBody } from '../../hooks/program'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
+import { useHasProgramContentPermission } from '../../pages/ProgramContentPage/ProgramContentBlock'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 import programMessages from './translation'
 
@@ -274,12 +277,17 @@ const SortBySectionItem: React.VFC<{
     programId: string
     programContentId?: string
   }>()
+  const [previousPage] = useQueryParam('back', StringParam)
+  const { hasProgramContentPermission } = useHasProgramContentPermission(programContent.id)
+
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
 
   const isActive = programContent.id === programContentId
   const isTrial = programContent?.displayMode === DisplayModeEnum.trial
   const isLoginTrial = programContent?.displayMode === DisplayModeEnum.loginToTrial
-  const isLock = !isEnrolled && !isTrial && !(isLoginTrial ? Boolean(currentMemberId && isAuthenticated) : false)
+  const isLock =
+    (!isEnrolled && !isTrial && !(isLoginTrial ? Boolean(currentMemberId && isAuthenticated) : false)) ||
+    !hasProgramContentPermission
 
   useEffect(() => {
     if (isActive) {
@@ -315,20 +323,35 @@ const SortBySectionItem: React.VFC<{
           {!isLoading && isLock ? (
             <>
               <StyledIcon as={LockIcon} className="mr-2" />
-              {programContent.contentType === 'video' && <span>{durationFormatter(programContent.duration)}</span>}
+              <span>
+                {programContent.contentType === 'video' && <span>{durationFormatter(programContent.duration)}</span>}
+              </span>
             </>
           ) : programContent.contentType === 'video' ? (
             <>
               <StyledIcon as={AiOutlineVideoCamera} className="mr-2" />
-              <span>{durationFormatter(programContent.duration)}</span>
+              <span>
+                {durationFormatter(programContent.duration)}
+                <span className="ml-2">
+                  {moment().isBefore(moment(programContent.publishedAt)) &&
+                    `(${moment(programContent.publishedAt).format('MM/DD')} ${formatMessage(
+                      commonMessages.text.publish,
+                    )})`}
+                </span>
+              </span>
             </>
           ) : programContent.contentType === 'practice' ? (
             <StyledIcon as={PracticeIcon} className="mr-2" />
           ) : programContent.contentType === 'exercise' ? (
             <ExerciseQuestionCount contentBodyId={programContent.contentBodyId} programContent={programContent} />
           ) : (
-            // <StyledIcon as={AiOutlineFileText} />
-            <StyledIcon as={AiOutlinePlaySquare} />
+            <>
+              <StyledIcon as={AiOutlineFileText} className="mr-2" />
+              <span>
+                {moment().isBefore(moment(programContent.publishedAt)) &&
+                  `${moment(programContent.publishedAt).format('MM/DD')} ${formatMessage(commonMessages.text.publish)}`}
+              </span>
+            </>
           )}
         </div>
         {programContent.materials && programContent?.materials.length !== 0 && (

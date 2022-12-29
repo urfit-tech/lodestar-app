@@ -7,8 +7,9 @@ import * as CraftElement from 'lodestar-app-element/src/components/common/CraftE
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
+import { fetchCurrentGeolocation, getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
@@ -48,6 +49,7 @@ import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { MetaTag } from '../../types/general'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
+import pageMessages from '../translation'
 import CraftBlock from './CraftBlock'
 
 type SectionType =
@@ -120,12 +122,14 @@ const sectionConverter = {
 
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
-  const { settings, id: appId } = useApp()
+  const { settings, id: appId, enabledModules } = useApp()
   const { updateAuthToken } = useAuth()
   const { defaultLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPage, appPage } = usePage(location.pathname)
   const ogLocale = getOgLocale(defaultLocale)
+
+  const { formatMessage } = useIntl()
 
   const [utmQuery] = useQueryParams({
     utm_id: StringParam,
@@ -148,31 +152,31 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   utmQuery.utm_term && Cookies.set('utm_term', utmQuery.utm_term, { expires: Number(settings['utm.expires']) || 30 })
 
   useEffect(() => {
-    const refreshTokenAsync = async () => {
-      const fingerPrintId = await getFingerPrintId()
+    if (enabledModules.login_restriction || enabledModules.device_management) {
+      const refreshTokenAsync = async () => {
+        const fingerPrintId = await getFingerPrintId()
+        const { ip, country, countryCode } = await fetchCurrentGeolocation()
 
-      const {
-        data: { code, message, result },
-      } = await Axios.post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/auth/refresh-token`,
-        { appId, fingerPrintId },
-        {
-          method: 'POST',
-          withCredentials: true,
-        },
-      )
-
-      if (code === 'SUCCESS') {
-        updateAuthToken?.(result.authToken)
-      } else if (code === 'E_NO_DEVICE') {
-        updateAuthToken?.(null)
-        alert('您已被登出，目前有其他裝置登入這組帳號')
-      } else {
-        updateAuthToken?.(null)
+        const {
+          data: { code, message, result },
+        } = await Axios.post(
+          `${process.env.REACT_APP_API_BASE_ROOT}/auth/refresh-token`,
+          { appId, fingerPrintId, geoLocation: { ip, country, countryCode } },
+          {
+            method: 'POST',
+            withCredentials: true,
+          },
+        )
+        if (code !== 'SUCCESS') {
+          updateAuthToken?.(null)
+        }
+        if (code === 'E_NO_DEVICE') {
+          alert(formatMessage(pageMessages.AppPage.logoutAlert))
+        }
       }
-    }
 
-    refreshTokenAsync()
+      refreshTokenAsync()
+    }
   }, [location.pathname])
 
   if (loadingAppPage) {
