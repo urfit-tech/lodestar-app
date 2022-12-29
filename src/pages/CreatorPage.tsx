@@ -139,7 +139,6 @@ const CreatorTabs: React.VFC<{
   const isEnrolledPodcastPlan = enrolledPodcastPlansCreators
     .map(enrolledPodcastPlansCreator => enrolledPodcastPlansCreator.id)
     .includes(creatorId)
-  console.log('creatorPage', activities)
   const tabContents: {
     key: string
     name: string
@@ -181,7 +180,6 @@ const CreatorTabs: React.VFC<{
       isVisible: programs.length > 0,
       content: (
         <>
-          <div>123</div>
           <ProgramCollection programs={programs} />
         </>
       ),
@@ -192,22 +190,20 @@ const CreatorTabs: React.VFC<{
       isVisible: activities.length > 0,
       content: (
         <div className="row">
-          {activities
-            // .filter(activity => activity.endedAt && activity.endedAt.getTime() > Date.now())
-            .map(activity => (
-              <div key={activity.id} className="col-12 col-lg-4 mb-4">
-                <ActivityBlock
-                  id={activity.id}
-                  title={activity.title}
-                  coverUrl={activity.coverUrl || undefined}
-                  isParticipantsVisible={activity.isParticipantsVisible}
-                  participantCount={activity.participantCount}
-                  totalSeats={activity.totalSeats}
-                  startedAt={activity.startedAt || undefined}
-                  endedAt={activity.endedAt || undefined}
-                />
-              </div>
-            ))}
+          {activities.map(activity => (
+            <div key={activity.id} className="col-12 col-lg-4 mb-4">
+              <ActivityBlock
+                id={activity.id}
+                title={activity.title}
+                coverUrl={activity.coverUrl || undefined}
+                isParticipantsVisible={activity.isParticipantsVisible}
+                participantCount={activity.participantCount}
+                totalSeats={activity.totalSeats}
+                startedAt={activity.startedAt || undefined}
+                endedAt={activity.endedAt || undefined}
+              />
+            </div>
+          ))}
         </div>
       ),
     },
@@ -217,7 +213,7 @@ const CreatorTabs: React.VFC<{
       isVisible: Boolean(enabledModules.blog) && posts.length > 0,
       content: (
         <>
-          <PostItemCollection posts={posts} pageName={'creatorPage'} />
+          <PostItemCollection posts={posts} pageName="creatorPage" />
         </>
       ),
     },
