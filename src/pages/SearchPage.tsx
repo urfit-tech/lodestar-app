@@ -488,7 +488,7 @@ const useSearchProductCollection = (
             is_deleted: { _eq: false }
             _or: [
               { title: { _ilike: $title } }
-              { abstract: { _ilike: $title } }
+              { description: { _ilike: $description } }
               { program_tags: { tag_name: { _eq: $tag } } }
             ]
           }
