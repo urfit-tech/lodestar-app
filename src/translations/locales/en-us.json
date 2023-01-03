@@ -245,6 +245,7 @@
   "code.E_VALIDATE_CREDIT_CARD": "Credit card verification error",
   "code.E_ZOOM_SECRET": "E_ZOOM_SECRET",
   "code.SUCCESS": "Success",
+  "common.GlobalSearchInput.atLeastTwoChar": "Please enter at least two characters",
   "common.about": "about",
   "common.abstract": "介紹",
   "common.activity": "Activity",

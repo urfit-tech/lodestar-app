@@ -245,6 +245,7 @@
   "code.E_VALIDATE_CREDIT_CARD": "Lỗi xác minh thẻ tín dụng",
   "code.E_ZOOM_SECRET": "E_ZOOM_SECRET",
   "code.SUCCESS": "Thành công",
+  "common.GlobalSearchInput.atLeastTwoChar": "Please enter at least two characters",
   "common.about": "khoảng",
   "common.abstract": "介紹",
   "common.activity": "Hoạt động",
