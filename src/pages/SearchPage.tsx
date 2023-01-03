@@ -961,44 +961,38 @@ const useSearchProductCollection = (
         title: programPackage.title,
       })) || [],
     activities:
-      data?.activity
-        .filter(
-          activity =>
-            activity.activity_sessions_aggregate.aggregate?.max?.ended_at &&
-            new Date(activity.activity_sessions_aggregate.aggregate.max?.ended_at).getTime() < Date.now(),
-        )
-        .map(activity => ({
-          id: activity.id,
-          coverUrl: activity.cover_url,
-          title: activity.title,
-          isParticipantsVisible: activity.is_participants_visible,
-          publishedAt: new Date(activity.published_at),
-          startedAt: activity.activity_sessions_aggregate.aggregate?.min?.started_at
-            ? new Date(activity.activity_sessions_aggregate.aggregate.min.started_at)
-            : null,
-          endedAt: activity.activity_sessions_aggregate.aggregate?.max?.ended_at
-            ? new Date(activity.activity_sessions_aggregate.aggregate.max.ended_at)
-            : null,
-          organizerId: activity.organizer_id,
-          supportLocales: activity.support_locales,
-          categories: activity.activity_categories.map(activityCategory => ({
-            id: activityCategory.category.id,
-            name: activityCategory.category.name,
-          })),
-          participantCount: activity.activity_enrollments_aggregate.aggregate?.count || 0,
-          totalSeats: activity.activity_tickets_aggregate.aggregate?.sum?.count || 0,
-          tickets: activity.activity_tickets_aggregate?.nodes?.map(ticket => ({
-            id: ticket.id,
-            title: ticket.title,
-            startedAt: new Date(ticket.started_at),
-            endedAt: new Date(ticket.ended_at),
-            price: ticket.price,
-            count: ticket.count,
-            currencyId: ticket.currency_id,
-            description: ticket.description,
-            isPublished: ticket.is_published,
-          })),
-        })) || [],
+      data?.activity.map(activity => ({
+        id: activity.id,
+        coverUrl: activity.cover_url,
+        title: activity.title,
+        isParticipantsVisible: activity.is_participants_visible,
+        publishedAt: new Date(activity.published_at),
+        startedAt: activity.activity_sessions_aggregate.aggregate?.min?.started_at
+          ? new Date(activity.activity_sessions_aggregate.aggregate.min.started_at)
+          : null,
+        endedAt: activity.activity_sessions_aggregate.aggregate?.max?.ended_at
+          ? new Date(activity.activity_sessions_aggregate.aggregate.max.ended_at)
+          : null,
+        organizerId: activity.organizer_id,
+        supportLocales: activity.support_locales,
+        categories: activity.activity_categories.map(activityCategory => ({
+          id: activityCategory.category.id,
+          name: activityCategory.category.name,
+        })),
+        participantCount: activity.activity_enrollments_aggregate.aggregate?.count || 0,
+        totalSeats: activity.activity_tickets_aggregate.aggregate?.sum?.count || 0,
+        tickets: activity.activity_tickets_aggregate?.nodes?.map(ticket => ({
+          id: ticket.id,
+          title: ticket.title,
+          startedAt: new Date(ticket.started_at),
+          endedAt: new Date(ticket.ended_at),
+          price: ticket.price,
+          count: ticket.count,
+          currencyId: ticket.currency_id,
+          description: ticket.description,
+          isPublished: ticket.is_published,
+        })),
+      })) || [],
     projects: projects.filter(
       project => project.type !== 'funding' && project.type !== 'pre-order' && project.type !== 'portfolio',
     ),
