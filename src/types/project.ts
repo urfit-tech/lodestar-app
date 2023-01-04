@@ -54,12 +54,12 @@ export type ProjectBasicProps = {
   targetAmount: number
   targetUnit: 'funds' | 'participants'
   expiredAt: Date | null
-
   isParticipantsVisible: boolean
   isCountdownTimerVisible: boolean
   totalSales: number
   enrollmentCount: number
   categories: Category[]
+  authorId?: string
 }
 export type ProjectIntroProps = ProjectBasicProps & {
   projectPlans?: ProjectPlanBasicProps[]
@@ -85,6 +85,7 @@ type Identity = {
   type: string
   name: string
 }
+
 type ProjectRole = {
   id: string
   member: Member
@@ -120,6 +121,7 @@ export type Project = {
   introductionDesktop: string | null
   views: number
   creator: Member | null
+  author: Member | null
   projectSales: number
   categories: Category[]
   projectPlans: ProjectPlanProps[]

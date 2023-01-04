@@ -96,6 +96,30 @@ const pageMessages = {
       defaultMessage: 'apply tag',
     },
   }),
+  SearchPage: defineMessages({
+    fundingProject: {
+      id: 'page.SearchPage.fundingProject',
+      defaultMessage: 'Funding Project',
+    },
+    portfolioProject: {
+      id: 'page.SearchPage.portfolioProject',
+      defaultMessage: 'Portfolio Project',
+    },
+    preOrderProject: {
+      id: 'page.SearchPage.preOrderProject',
+      defaultMessage: 'PreOrder Project',
+    },
+    noTagContent: { id: 'page.SearchPage.noTagContent', defaultMessage: 'No content found for this tag' },
+    noSearchResult: { id: 'page.SearchPage.noSearchResult', defaultMessage: 'No related content found' },
+    program: { id: 'page.SearchPage.program', defaultMessage: 'Online Course' },
+    programPackage: { id: 'page.SearchPage.programPackage', defaultMessage: 'Program Package' },
+    activity: { id: 'page.SearchPage.activity', defaultMessage: 'Activity' },
+    podcast: { id: 'page.SearchPage.podcast', defaultMessage: 'Broadcast' },
+    post: { id: 'page.SearchPage.post', defaultMessage: 'Post' },
+    creator: { id: 'page.SearchPage.creator', defaultMessage: 'Master' },
+    merchandise: { id: 'page.SearchPage.merchandise', defaultMessage: 'merchandise' },
+    project: { id: 'page.SearchPage.project', defaultMessage: 'Project' },
+  }),
 }
 
 export default pageMessages
