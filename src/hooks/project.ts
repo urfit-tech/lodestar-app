@@ -67,6 +67,109 @@ export const useEnrolledProjectPlanIds = (memberId: string) => {
     refetchEnrolledProjectPlanIds: refetch,
   }
 }
+export const useMemberProjectCollection = (memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<hasura.GET_MEMBER_PROJECT, hasura.GET_MEMBER_PROJECTVariables>(
+    gql`
+      query GET_MEMBER_PROJECT($memberId: String!) {
+        project(
+          where: {
+            type: { _eq: "portfolio" }
+            published_at: { _is_null: false }
+            _or: [{ project_roles: { member_id: { _eq: $memberId }, project: { published_at: { _is_null: false } } } }]
+            project_roles: { identity: { name: { _eq: "author" } } }
+          }
+        ) {
+          id
+          type
+          title
+          cover_type
+          cover_url
+          preview_url
+          abstract
+          introduction
+          description
+          target_unit
+          target_amount
+          expired_at
+          is_participants_visible
+          is_countdown_timer_visible
+          views
+          project_categories(order_by: { position: asc }) {
+            id
+            category {
+              id
+              name
+            }
+          }
+          project_sales {
+            total_sales
+          }
+          project_plans {
+            id
+            cover_url
+            title
+            description
+            is_subscription
+            period_amount
+            period_type
+            list_price
+            sale_price
+            sold_at
+            discount_down_price
+            created_at
+            is_participants_visible
+            is_physical
+            is_limited
+            project_plan_enrollments_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
+          author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
+            id
+            member_id
+          }
+        }
+      }
+    `,
+    {
+      variables: { memberId },
+    },
+  )
+  const projects =
+    loading || error || !data
+      ? []
+      : data?.project.map(project => ({
+          id: project.id,
+          type: project.type,
+          title: project.title,
+          coverType: project.cover_type,
+          coverUrl: project.cover_url,
+          previewUrl: project.preview_url,
+          abstract: project.abstract,
+          introduction: project.introduction,
+          description: project.description,
+          targetAmount: project.target_amount,
+          targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
+          expiredAt: project.expired_at ? new Date(project.expired_at) : null,
+          isParticipantsVisible: project.is_participants_visible,
+          isCountdownTimerVisible: project.is_countdown_timer_visible,
+          authorId: project.author[0]?.member_id,
+          totalSales: project.project_sales?.total_sales,
+          views: project.views,
+          enrollmentCount: sum(
+            project.project_plans.map(
+              projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0,
+            ),
+          ),
+          categories: project.project_categories.map(projectCategory => ({
+            id: projectCategory.category.id,
+            name: projectCategory.category.name,
+          })),
+        }))
+  return { projects }
+}
 
 export const useProject = (projectId: string) => {
   const { currentMemberId } = useAuth()
