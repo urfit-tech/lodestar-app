@@ -339,6 +339,10 @@ export const commonMessages = {
       id: 'common.noIntroduction',
       defaultMessage: '目前還沒有新增介紹',
     },
+    noProject: {
+      id: 'common.noProject',
+      defaultMessage: '尚無任何作品',
+    },
     noProgram: {
       id: 'common.noProgram',
       defaultMessage: '目前還沒有建立課程',

@@ -63,6 +63,7 @@ export type ProjectBasicProps = {
 }
 export type ProjectIntroProps = ProjectBasicProps & {
   projectPlans?: ProjectPlanBasicProps[]
+  views?: number
 }
 
 export type ProjectProps = ProjectBasicProps & {

@@ -181,7 +181,6 @@ const CreatorTabs: React.VFC<{
       content: projects.filter(v => v.authorId !== creatorId),
     },
   ]
-  // console.log(projects, { projectsTab, creatorId, member }, 'createpage')
   const tabContents: {
     key: string
     name: string
@@ -234,9 +233,6 @@ const CreatorTabs: React.VFC<{
       content: (
         <Tabs
           defaultActiveKey="1"
-          onChange={(key: string) => {
-            console.log(key)
-          }}
           renderTabBar={(tabsProps, DefaultTabBar) => (
             <ProjectTabStyl className="container">
               <DefaultTabBar {...tabsProps} />
@@ -247,15 +243,21 @@ const CreatorTabs: React.VFC<{
             return (
               <Tabs.TabPane tab={project.name} key={project.key}>
                 <div className="row">
-                  {project.content.map(item => {
-                    return (
-                      <div key={item.id} className="col-12 col-lg-4 mb-5">
-                        <Link to={`/projects/${item.id}`}>
-                          <ProjectIntroCard {...item} />
-                        </Link>
-                      </div>
-                    )
-                  })}
+                  {project.content.length > 0 ? (
+                    project.content.map(item => {
+                      return (
+                        <div key={item.id} className="col-12 col-lg-4 mb-5">
+                          <Link to={`/projects/${item.id}`}>
+                            <ProjectIntroCard {...item} />
+                          </Link>
+                        </div>
+                      )
+                    })
+                  ) : (
+                    <StyledDescription className="d-flex flex-grow-1 justify-content-center text-center container col-12 align-self-center">
+                      {formatMessage(commonMessages.content.noProject)}
+                    </StyledDescription>
+                  )}
                 </div>
               </Tabs.TabPane>
             )
