@@ -8381,6 +8381,34 @@ export interface GET_PROGRAMVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: ADD_PROGRAM_VIEWS
+// ====================================================
+
+export interface ADD_PROGRAM_VIEWS_update_program {
+  __typename: "program_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface ADD_PROGRAM_VIEWS {
+  /**
+   * update data of the table: "program"
+   */
+  update_program: ADD_PROGRAM_VIEWS_update_program | null;
+}
+
+export interface ADD_PROGRAM_VIEWSVariables {
+  programId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PROGRAM_CONTENT
 // ====================================================
 
@@ -17610,6 +17638,7 @@ export enum program_select_column {
   support_locales = "support_locales",
   title = "title",
   updated_at = "updated_at",
+  views = "views",
 }
 
 /**
@@ -17730,6 +17759,7 @@ export enum program_update_column {
   support_locales = "support_locales",
   title = "title",
   updated_at = "updated_at",
+  views = "views",
 }
 
 /**
@@ -28148,6 +28178,7 @@ export interface program_bool_exp {
   support_locales?: jsonb_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+  views?: numeric_comparison_exp | null;
 }
 
 export interface program_category_aggregate_bool_exp {
@@ -29066,6 +29097,7 @@ export interface program_insert_input {
   support_locales?: any | null;
   title?: string | null;
   updated_at?: any | null;
+  views?: any | null;
 }
 
 /**
