@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import { DeepPick } from 'ts-deep-pick/lib'
+import ApplyTagModal from '../../components/common/ApplyTagModal'
 import LikesCountButton from '../../components/common/LikedCountButton'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -16,14 +17,12 @@ import CreatorCard from '../../containers/common/CreatorCard'
 import hasura from '../../hasura'
 import { handleError } from '../../helpers'
 import { useMutateProject } from '../../hooks/project'
-import { CalendarOIcon, EyeIcon, UserOIcon } from '../../images'
+import { CalendarOIcon, EyeIcon, TicketOIcon, UserOIcon } from '../../images'
 import EmptyAvatar from '../../images/avatar.svg'
 import EmptyCover from '../../images/empty-cover.png'
-import { TicketOIcon } from '../../images'
 import { Project } from '../../types/project'
 import LoadingPage from '../LoadingPage'
 import pageMessages from '../translation'
-import ApplyTagModal from '../../components/common/ApplyTagModal'
 
 // @ts-ignore
 type Portfolio = DeepPick<
@@ -37,6 +36,9 @@ type Portfolio = DeepPick<
   | 'creator.id'
   | 'creator.name'
   | 'creator.pictureUrl'
+  | 'author.id'
+  | 'author.name'
+  | 'author.pictureUrl'
   | 'projectTags.[].id'
   | 'projectTags.[].name'
   | 'projectRoles.[].id'
@@ -112,8 +114,8 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
               <Box className="col-12 col-lg-9">
                 <Flex mb="3rem" alignItems="center">
                   <Image
-                    src={portfolio.creator?.pictureUrl || EmptyAvatar}
-                    alt={portfolio.creator?.name}
+                    src={portfolio.author?.pictureUrl || EmptyAvatar}
+                    alt={portfolio.author?.name}
                     boxSize="3rem"
                     borderRadius="1.5rem"
                     backgroundColor="#ccc"
@@ -125,7 +127,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                     <Flex color="var(--gray-dark)" fontSize="14px" letterSpacing="0.4px">
                       <Flex alignItems="center" mr="0.75rem">
                         <Icon as={UserOIcon} mr="0.25rem" />
-                        <Box>{portfolio.creator?.name}</Box>
+                        <Box>{portfolio.author?.name}</Box>
                       </Flex>
                       <Flex alignItems="center" mr="0.75rem">
                         <Icon as={CalendarOIcon} mr="0.25rem" />
@@ -168,6 +170,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                     />
                   </Flex>
                 </Flex>
+
                 {portfolio.projectRoles.length === 0 ? null : (
                   <>
                     <Divider />
@@ -238,7 +241,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                 <Divider />
 
                 <Box pt="2.5rem" pb="5rem">
-                  <CreatorCard id={portfolio.creator?.id || ''} noPadding={true} />
+                  <CreatorCard id={portfolio.author?.id || ''} noPadding={true} />
                 </Box>
               </Box>
             </Box>
@@ -319,6 +322,14 @@ const useProjectPortfolio = (projectId: string) => {
             name
             picture_url
           }
+          author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
+            id
+            member {
+              id
+              name
+              picture_url
+            }
+          }
           project_tags(
             where: {
               tag: { project_tags: { project: { type: { _eq: "portfolio" }, published_at: { _lt: "now()" } } } }
@@ -387,6 +398,11 @@ const useProjectPortfolio = (projectId: string) => {
       id: data?.project_by_pk?.creator?.id || '',
       name: data?.project_by_pk?.creator?.name || '',
       pictureUrl: data?.project_by_pk?.creator?.picture_url || null,
+    },
+    author: {
+      id: data?.project_by_pk?.author[0]?.member?.id || '',
+      name: data?.project_by_pk?.author[0]?.member?.name || '',
+      pictureUrl: data?.project_by_pk?.author[0]?.member?.picture_url || null,
     },
     projectTags:
       data?.project_by_pk?.project_tags.map(v => ({
