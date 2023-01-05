@@ -245,6 +245,7 @@
   "code.E_VALIDATE_CREDIT_CARD": "Kesalahan verifikasi kartu kredit",
   "code.E_ZOOM_SECRET": "E_ZOOM_SECRET",
   "code.SUCCESS": "Sukses",
+  "common.GlobalSearchInput.atLeastTwoChar": "Please enter at least two characters",
   "common.about": "約",
   "common.abstract": "介紹",
   "common.activity": "Aktivitas",

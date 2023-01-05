@@ -245,6 +245,7 @@
   "code.E_VALIDATE_CREDIT_CARD": "信用卡验证错误",
   "code.E_ZOOM_SECRET": "E_ZOOM_SECRET",
   "code.SUCCESS": "成功",
+  "common.GlobalSearchInput.atLeastTwoChar": "请输入至少两个以上字元",
   "common.about": "约",
   "common.abstract": "介紹",
   "common.activity": "活动",
