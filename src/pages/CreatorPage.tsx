@@ -59,7 +59,7 @@ const StyledCallToSubscription = styled.div`
     }
   `)}
 `
-const ProjectTabStyl = styled.div`
+const ProjectTabStyle = styled.div`
   .ant-tabs-bar {
     border: none;
   }
@@ -171,12 +171,12 @@ const CreatorTabs: React.VFC<{
 
   const projectsTab = [
     {
-      key: 'myproject',
+      key: 'myProject',
       name: formatMessage(usersMessages.tab.addProjectsTab1),
       content: projects.filter(v => v.authorId === creatorId),
     },
     {
-      key: 'otherproject',
+      key: 'otherProject',
       name: formatMessage(usersMessages.tab.addProjectsTab2),
       content: projects.filter(v => v.authorId !== creatorId),
     },
@@ -234,9 +234,9 @@ const CreatorTabs: React.VFC<{
         <Tabs
           defaultActiveKey="1"
           renderTabBar={(tabsProps, DefaultTabBar) => (
-            <ProjectTabStyl className="container">
+            <ProjectTabStyle className="container">
               <DefaultTabBar {...tabsProps} />
-            </ProjectTabStyl>
+            </ProjectTabStyle>
           )}
         >
           {projectsTab.map(project => {
