@@ -96,7 +96,7 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
         program_content_body(
           where: { program_contents: { program_content_section: { program_id: { _eq: $programId } } } }
         ) {
-          program_contents(order_by: { published_at: desc }) {
+          program_contents(where: { published_at: { _is_null: false } }, order_by: { published_at: desc }) {
             id
             content_section_id
             program_content_progress(where: { member_id: { _eq: $memberId } }) {
