@@ -9144,6 +9144,132 @@ export interface GET_ENROLLED_PROJECT_PLAN_IDSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_MEMBER_PROJECT
+// ====================================================
+
+export interface GET_MEMBER_PROJECT_project_project_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface GET_MEMBER_PROJECT_project_project_categories {
+  __typename: "project_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: GET_MEMBER_PROJECT_project_project_categories_category;
+}
+
+export interface GET_MEMBER_PROJECT_project_project_sales {
+  __typename: "project_sales";
+  total_sales: any | null;
+}
+
+export interface GET_MEMBER_PROJECT_project_project_plans_project_plan_enrollments_aggregate_aggregate {
+  __typename: "project_plan_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface GET_MEMBER_PROJECT_project_project_plans_project_plan_enrollments_aggregate {
+  __typename: "project_plan_enrollment_aggregate";
+  aggregate: GET_MEMBER_PROJECT_project_project_plans_project_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface GET_MEMBER_PROJECT_project_project_plans {
+  __typename: "project_plan";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  description: string | null;
+  is_subscription: boolean;
+  period_amount: any | null;
+  /**
+   * Y / M / W / D
+   */
+  period_type: string | null;
+  list_price: any | null;
+  sale_price: any | null;
+  sold_at: any | null;
+  discount_down_price: any;
+  created_at: any;
+  is_participants_visible: boolean;
+  is_physical: boolean;
+  is_limited: boolean;
+  /**
+   * An aggregate relationship
+   */
+  project_plan_enrollments_aggregate: GET_MEMBER_PROJECT_project_project_plans_project_plan_enrollments_aggregate;
+}
+
+export interface GET_MEMBER_PROJECT_project_author {
+  __typename: "project_role";
+  id: any;
+  member_id: string;
+}
+
+export interface GET_MEMBER_PROJECT_project {
+  __typename: "project";
+  id: any;
+  /**
+   * funding / pre-order / on-sale / modular / portfolio
+   */
+  type: string;
+  title: string;
+  /**
+   * image / video
+   */
+  cover_type: string;
+  cover_url: string | null;
+  preview_url: string | null;
+  abstract: string | null;
+  introduction: string | null;
+  description: string | null;
+  /**
+   * funds / participants
+   */
+  target_unit: string;
+  target_amount: any | null;
+  expired_at: any | null;
+  is_participants_visible: boolean;
+  is_countdown_timer_visible: boolean;
+  views: any;
+  /**
+   * An array relationship
+   */
+  project_categories: GET_MEMBER_PROJECT_project_project_categories[];
+  /**
+   * An object relationship
+   */
+  project_sales: GET_MEMBER_PROJECT_project_project_sales | null;
+  /**
+   * An array relationship
+   */
+  project_plans: GET_MEMBER_PROJECT_project_project_plans[];
+  /**
+   * An array relationship
+   */
+  author: GET_MEMBER_PROJECT_project_author[];
+}
+
+export interface GET_MEMBER_PROJECT {
+  /**
+   * fetch data from the table: "project"
+   */
+  project: GET_MEMBER_PROJECT_project[];
+}
+
+export interface GET_MEMBER_PROJECTVariables {
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PROJECT
 // ====================================================
 
@@ -17610,6 +17736,7 @@ export enum program_select_column {
   support_locales = "support_locales",
   title = "title",
   updated_at = "updated_at",
+  views = "views",
 }
 
 /**
@@ -17730,6 +17857,7 @@ export enum program_update_column {
   support_locales = "support_locales",
   title = "title",
   updated_at = "updated_at",
+  views = "views",
 }
 
 /**
@@ -28148,6 +28276,7 @@ export interface program_bool_exp {
   support_locales?: jsonb_comparison_exp | null;
   title?: String_comparison_exp | null;
   updated_at?: timestamptz_comparison_exp | null;
+  views?: numeric_comparison_exp | null;
 }
 
 export interface program_category_aggregate_bool_exp {
@@ -29066,6 +29195,7 @@ export interface program_insert_input {
   support_locales?: any | null;
   title?: string | null;
   updated_at?: any | null;
+  views?: any | null;
 }
 
 /**
