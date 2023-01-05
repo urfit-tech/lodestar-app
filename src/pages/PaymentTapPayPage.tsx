@@ -52,7 +52,7 @@ const PaymentTapPayBlock: React.VFC = () => {
 
   const [tpCreditCard, setTpCreditCard] = useState<TPCreditCard | null>(null)
   const [memberCreditCardId, setMemberCreditCardId] = useState<string | null>(null)
-  const { currentMemberId, isAuthenticating, authToken } = useAuth()
+  const { currentMemberId, isAuthenticating } = useAuth()
   const { payPayment } = usePayment(paymentNo)
   const [isPaying, setIsPaying] = useState(false)
 
@@ -94,7 +94,7 @@ const PaymentTapPayBlock: React.VFC = () => {
 
           <StyledFreeSubscriptionNotice>{formatMessage(messages.freeSubscriptionNotice)}</StyledFreeSubscriptionNotice>
         </div>
-      ) : isAuthenticating && !authToken ? (
+      ) : isAuthenticating ? (
         <div>Authenticating...</div>
       ) : (
         <div>無法取得會員資料</div>

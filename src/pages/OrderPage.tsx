@@ -37,7 +37,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   const [withTracking] = useQueryParam('tracking', BooleanParam)
   const [errorCode] = useQueryParam('code', StringParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
-  const { currentMemberId, isAuthenticating, authToken } = useAuth()
+  const { currentMemberId, isAuthenticating } = useAuth()
   const { loading: isOrderLoading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
     GET_ORDERS_PRODUCT,
     { variables: { orderId: orderId } },
@@ -78,7 +78,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
     }
   }, [order, settings, withTracking])
 
-  if (isAppLoading || isOrderLoading || (isAuthenticating && !authToken) || productResourceCollectionLoading) {
+  if (isAppLoading || isOrderLoading || isAuthenticating || productResourceCollectionLoading) {
     return <LoadingPage />
   }
   if (!order) {

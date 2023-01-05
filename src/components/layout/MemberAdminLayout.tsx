@@ -35,7 +35,7 @@ const MemberAdminLayout: React.FC<{
 }> = ({ content, children }) => {
   const location = useLocation()
   const { routesMap } = useAppRouter()
-  const { isAuthenticating, authToken, isAuthenticated, currentMemberId } = useAuth()
+  const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
   const defaultSelectedKeys = Object.keys(filter(routeProps => routeProps.path === location.pathname, routesMap))
   const { renderMemberAdminMenu } = useCustomRenderer()
   const authModal = useAuthModal()
@@ -59,7 +59,7 @@ const MemberAdminLayout: React.FC<{
       </div>
       <AuthModalContext.Consumer>
         {({ setVisible: setAuthModalVisible }) => {
-          if (!(isAuthenticating && !authToken) && !isAuthenticated && !currentMemberId) {
+          if (!isAuthenticating && !isAuthenticated && !currentMemberId) {
             authModal.open(setAuthModalVisible)
           }
           return <></>
