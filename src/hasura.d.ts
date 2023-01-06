@@ -8381,6 +8381,34 @@ export interface GET_PROGRAMVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: ADD_PROGRAM_VIEWS
+// ====================================================
+
+export interface ADD_PROGRAM_VIEWS_update_program {
+  __typename: "program_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface ADD_PROGRAM_VIEWS {
+  /**
+   * update data of the table: "program"
+   */
+  update_program: ADD_PROGRAM_VIEWS_update_program | null;
+}
+
+export interface ADD_PROGRAM_VIEWSVariables {
+  programId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PROGRAM_CONTENT
 // ====================================================
 
