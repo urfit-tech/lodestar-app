@@ -1,17 +1,23 @@
-import { Button, Form, Icon, message } from 'antd'
+import { useQuery } from '@apollo/react-hooks'
+import { Button, Form, Icon, message, Spin } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
+import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
+import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import MigrationInput from '../components/common/MigrationInput'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import hasura from '../hasura'
 import { handleError } from '../helpers'
 import { codeMessages, commonMessages, usersMessages } from '../helpers/translation'
+import pageMessages from './translation'
 
 const StyledContainer = styled.div`
   padding: 4rem 1rem;
@@ -37,36 +43,73 @@ const StyledTitle = styled.h1`
 
 const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const { formatMessage } = useIntl()
+  const { login } = useAuth()
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)
   const [memberId] = useQueryParam('member', StringParam)
+  const [isProjectPortfolioParticipant] = useQueryParam('isProjectPortfolioParticipant', BooleanParam)
+
   const { id: appId } = useApp()
+  const tracking = useTracking()
   const [loading, setLoading] = useState(false)
+  const { data: memberEmailData, loading: loadingMemberEmail } = useQuery<
+    hasura.GET_EMAIL_BY_MEMBER_ID,
+    hasura.GET_EMAIL_BY_MEMBER_IDVariables
+  >(GET_EMAIL_BY_MEMBER_ID, { variables: { memberId: memberId || '' } })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     form.validateFields((error, values) => {
-      if (!error) {
+      if (!error && login) {
         setLoading(true)
-        axios
-          .post(
-            `${process.env.REACT_APP_API_BASE_ROOT}/auth/reset-password`,
-            {
-              appId,
-              memberId,
-              newPassword: values.password,
-            },
-            { headers: { Authorization: `Bearer ${token}` } },
-          )
-          .then(({ data: { code } }) => {
-            if (code === 'SUCCESS') {
-              history.push('/reset-password-success')
-            } else {
-              message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-            }
-          })
-          .catch(handleError)
-          .finally(() => setLoading(false))
+        if (isProjectPortfolioParticipant) {
+          axios
+            .post(
+              `${process.env.REACT_APP_API_BASE_ROOT}/auth/set-participant-password`,
+              {
+                appId,
+                memberId,
+                password: values.password,
+              },
+              { headers: { Authorization: `Bearer ${token}` } },
+            )
+            .then(({ data: { code } }) => {
+              if (code === 'SUCCESS') {
+                tracking.login()
+                login({
+                  account: memberEmailData?.member_public[0].email || '',
+                  password: values.password,
+                })
+                  .then(() => history.push('/admin/project-portfolio?tab=marked'))
+                  .catch(handleError)
+                  .finally(() => setLoading(false))
+              } else {
+                message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+              }
+            })
+            .catch(handleError)
+            .finally(() => setLoading(false))
+        } else {
+          axios
+            .post(
+              `${process.env.REACT_APP_API_BASE_ROOT}/auth/reset-password`,
+              {
+                appId,
+                memberId,
+                newPassword: values.password,
+              },
+              { headers: { Authorization: `Bearer ${token}` } },
+            )
+            .then(({ data: { code } }) => {
+              if (code === 'SUCCESS') {
+                history.push('/reset-password-success')
+              } else {
+                message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+              }
+            })
+            .catch(handleError)
+            .finally(() => setLoading(false))
+        }
       }
     })
   }
@@ -82,7 +125,24 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   return (
     <DefaultLayout noFooter centeredBox>
       <StyledContainer>
-        <StyledTitle>{formatMessage(usersMessages.title.resetPassword)}</StyledTitle>
+        {isProjectPortfolioParticipant ? (
+          loadingMemberEmail ? (
+            <Spin />
+          ) : (
+            <>
+              <StyledTitle>
+                {formatMessage(pageMessages.ResetPasswordPage.TitleFirstText, {
+                  account: memberEmailData?.member_public[0].email,
+                })}
+                <br />
+                {formatMessage(pageMessages.ResetPasswordPage.TitleSecondText)}
+              </StyledTitle>
+            </>
+          )
+        ) : (
+          <StyledTitle>{formatMessage(usersMessages.title.resetPassword)}</StyledTitle>
+        )}
+
         <Form onSubmit={handleSubmit}>
           <Form.Item>
             {form.getFieldDecorator('password', {
@@ -127,7 +187,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
             )}
           </Form.Item>
           <Form.Item className="m-0">
-            <Button htmlType="submit" type="primary" block loading={loading}>
+            <Button htmlType="submit" type="primary" block loading={loading || loadingMemberEmail}>
               {formatMessage(commonMessages.button.confirm)}
             </Button>
           </Form.Item>
@@ -136,5 +196,14 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
     </DefaultLayout>
   )
 }
+
+const GET_EMAIL_BY_MEMBER_ID = gql`
+  query GET_EMAIL_BY_MEMBER_ID($memberId: String!) {
+    member_public(where: { id: { _eq: $memberId } }) {
+      id
+      email
+    }
+  }
+`
 
 export default Form.create<FormComponentProps>()(ResetPasswordPage)

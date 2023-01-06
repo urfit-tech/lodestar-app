@@ -11819,6 +11819,7 @@ export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_roles_identity {
 export interface GET_PROJECT_PORTFOLIO_project_by_pk_project_roles {
   __typename: "project_role";
   id: any;
+  agreed_at: any | null;
   /**
    * An object relationship
    */
@@ -11874,6 +11875,32 @@ export interface GET_PROJECT_PORTFOLIO {
 
 export interface GET_PROJECT_PORTFOLIOVariables {
   id: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_EMAIL_BY_MEMBER_ID
+// ====================================================
+
+export interface GET_EMAIL_BY_MEMBER_ID_member_public {
+  __typename: "member_public";
+  id: string | null;
+  email: string | null;
+}
+
+export interface GET_EMAIL_BY_MEMBER_ID {
+  /**
+   * fetch data from the table: "member_public"
+   */
+  member_public: GET_EMAIL_BY_MEMBER_ID_member_public[];
+}
+
+export interface GET_EMAIL_BY_MEMBER_IDVariables {
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -18223,11 +18250,26 @@ export enum property_select_column {
   app_id = "app_id",
   created_at = "created_at",
   id = "id",
+  is_editable = "is_editable",
   name = "name",
   placeholder = "placeholder",
   position = "position",
   type = "type",
   updated_at = "updated_at",
+}
+
+/**
+ * select "property_aggregate_bool_exp_bool_and_arguments_columns" columns of table "property"
+ */
+export enum property_select_column_property_aggregate_bool_exp_bool_and_arguments_columns {
+  is_editable = "is_editable",
+}
+
+/**
+ * select "property_aggregate_bool_exp_bool_or_arguments_columns" columns of table "property"
+ */
+export enum property_select_column_property_aggregate_bool_exp_bool_or_arguments_columns {
+  is_editable = "is_editable",
 }
 
 /**
@@ -18237,6 +18279,7 @@ export enum property_update_column {
   app_id = "app_id",
   created_at = "created_at",
   id = "id",
+  is_editable = "is_editable",
   name = "name",
   placeholder = "placeholder",
   position = "position",
@@ -30786,7 +30829,23 @@ export interface project_tag_on_conflict {
 }
 
 export interface property_aggregate_bool_exp {
+  bool_and?: property_aggregate_bool_exp_bool_and | null;
+  bool_or?: property_aggregate_bool_exp_bool_or | null;
   count?: property_aggregate_bool_exp_count | null;
+}
+
+export interface property_aggregate_bool_exp_bool_and {
+  arguments: property_select_column_property_aggregate_bool_exp_bool_and_arguments_columns;
+  distinct?: boolean | null;
+  filter?: property_bool_exp | null;
+  predicate: Boolean_comparison_exp;
+}
+
+export interface property_aggregate_bool_exp_bool_or {
+  arguments: property_select_column_property_aggregate_bool_exp_bool_or_arguments_columns;
+  distinct?: boolean | null;
+  filter?: property_bool_exp | null;
+  predicate: Boolean_comparison_exp;
 }
 
 export interface property_aggregate_bool_exp_count {
@@ -30815,6 +30874,7 @@ export interface property_bool_exp {
   app_id?: String_comparison_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   id?: uuid_comparison_exp | null;
+  is_editable?: Boolean_comparison_exp | null;
   member_properties?: member_property_bool_exp | null;
   member_properties_aggregate?: member_property_aggregate_bool_exp | null;
   name?: String_comparison_exp | null;
@@ -30832,6 +30892,7 @@ export interface property_insert_input {
   app_id?: string | null;
   created_at?: any | null;
   id?: any | null;
+  is_editable?: boolean | null;
   member_properties?: member_property_arr_rel_insert_input | null;
   name?: string | null;
   placeholder?: string | null;
