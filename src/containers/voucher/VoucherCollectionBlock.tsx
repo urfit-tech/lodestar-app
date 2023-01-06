@@ -91,6 +91,7 @@ const VoucherCollectionBlock: React.VFC = () => {
       .catch(handleError)
       .finally(() => {
         voucherCode && setVoucherCode(null)
+        window.location.reload()
       })
   }
 
