@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -43,7 +43,7 @@ const StyledTitle = styled.h1`
 
 const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const { formatMessage } = useIntl()
-  const { login } = useAuth()
+  const { login, authToken, currentMemberId, isAuthenticating } = useAuth()
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)
   const [memberId] = useQueryParam('member', StringParam)
@@ -121,6 +121,14 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   //   } catch (error) {}
   //   setAuthToken && setAuthToken(null)
   // }, [setAuthToken])
+
+  useEffect(() => {
+    if (authToken && currentMemberId && currentMemberId === memberId) {
+      history.push('/admin/project-portfolio?tab=marked')
+    }
+  }, [authToken, currentMemberId, history, memberId])
+
+  if (isAuthenticating) return <Spin />
 
   return (
     <DefaultLayout noFooter centeredBox>
