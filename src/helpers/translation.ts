@@ -902,6 +902,7 @@ export const productMessages = {
       unPurchased: { id: 'product.program.content.unPurchased', defaultMessage: '購買方案解鎖內容' },
       description: { id: 'product.program.description', defaultMessage: '方案：' },
       trial: { id: 'product.program.tag.trial', defaultMessage: '試看' },
+      audioTrial: { id: 'product.program.tag.audioTrial', defaultMessage: 'Audio Trial' },
       total: {
         id: 'product.program.content.notation.total',
         defaultMessage: '定價或優惠價 - 首期折扣 = 首期支付金額',

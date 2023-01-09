@@ -1223,5 +1223,10 @@
   "voucher.noUsePeriod": "无使用期限",
   "voucher.redeemable": "可兑换",
   "voucher.tab.exchange": "兑换代码",
-  "voucher.title.add": "新增兑换券"
+  "voucher.title.add": "新增兑换券",
+  "product.program.tag.audioTrial": "试听",
+  "common.AudioPlayer.playRate": "播放速度",
+  "common.AudioPlayer.listLoop": "列表循环",
+  "common.AudioPlayer.singleLoop": "单曲循环",
+  "common.AudioPlayer.random": "随机播放"
 }

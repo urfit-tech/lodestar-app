@@ -967,5 +967,10 @@
   "voucher.title.add": "新增兌換券",
   "common.text.publish": "發布",
   "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "內容預計於",
-  "common.member.creatorPage": "個人專頁"
+  "common.member.creatorPage": "個人專頁",
+  "product.program.tag.audioTrial": "試聽",
+  "common.AudioPlayer.playRate": "播放速度",
+  "common.AudioPlayer.listLoop": "列表循環",
+  "common.AudioPlayer.singleLoop": "單曲循環",
+  "common.AudioPlayer.random": "隨機播放"
 }

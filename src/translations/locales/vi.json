@@ -1223,5 +1223,10 @@
   "voucher.noUsePeriod": "No UsePeriod",
   "voucher.redeemable": "có thể đổi được",
   "voucher.tab.exchange": "Mã trao đổi",
-  "voucher.title.add": "Thêm Voucher"
+  "voucher.title.add": "Thêm Voucher",
+  "product.program.tag.audioTrial": "dùng thử âm thanh",
+  "common.AudioPlayer.playRate": "tỷ lệ chơi",
+  "common.AudioPlayer.listLoop": "Vòng lặp danh sách",
+  "common.AudioPlayer.singleLoop": "Vòng lặp đơn",
+  "common.AudioPlayer.random": "Ngẫu nhiên"
 }
