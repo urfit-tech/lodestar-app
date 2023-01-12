@@ -72,6 +72,7 @@ const VoucherCollectionBlock: React.VFC = () => {
         setVisible(false)
         message.success(formatMessage(voucherMessages.messages.exchangeVoucher))
         refetch()
+        window.location.reload()
       })
       .catch(error => {
         try {
@@ -89,9 +90,7 @@ const VoucherCollectionBlock: React.VFC = () => {
         refetchEnrolledProductIds().catch(handleError)
       })
       .catch(handleError)
-      .finally(() => {
-        voucherCode && setVoucherCode(null)
-      })
+      .finally(() => voucherCode && setVoucherCode(null))
   }
 
   return (

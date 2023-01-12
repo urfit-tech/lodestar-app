@@ -461,11 +461,24 @@ export const useProgram = (programId: string) => {
     [data, error, loading],
   )
 
+  const [addProgramViewsHandler] = useMutation<hasura.ADD_PROGRAM_VIEWS, hasura.ADD_PROGRAM_VIEWSVariables>(gql`
+    mutation ADD_PROGRAM_VIEWS($programId: uuid!) {
+      update_program(where: { id: { _eq: $programId } }, _inc: { views: 1 }) {
+        affected_rows
+      }
+    }
+  `)
+
+  const addProgramView = () => {
+    return addProgramViewsHandler({ variables: { programId } })
+  }
+
   return {
     loadingProgram: loading,
     errorProgram: error,
     program,
     refetchProgram: refetch,
+    addProgramView,
   }
 }
 
