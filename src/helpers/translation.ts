@@ -339,6 +339,10 @@ export const commonMessages = {
       id: 'common.noIntroduction',
       defaultMessage: '目前還沒有新增介紹',
     },
+    noProject: {
+      id: 'common.noProject',
+      defaultMessage: '尚無任何作品',
+    },
     noProgram: {
       id: 'common.noProgram',
       defaultMessage: '目前還沒有建立課程',
@@ -1409,6 +1413,9 @@ export const usersMessages = {
   tab: defineMessages({
     intro: { id: 'users.tab.member.intro', defaultMessage: '介紹' },
     addPrograms: { id: 'common.member.course', defaultMessage: '開設課程' },
+    addProjects: { id: 'common.member.projects', defaultMessage: '作品專案' },
+    addProjectsTab1: { id: 'common.member.projects.tab1', defaultMessage: '我的作品' },
+    addProjectsTab2: { id: 'common.member.projects.tab2', defaultMessage: '參與作品' },
     addActivities: { id: 'common.member.activity', defaultMessage: '開設活動' },
     mediaPost: { id: 'common.tab.mediaPost', defaultMessage: '媒體文章' },
     podcasts: { id: 'common.member.podcasts', defaultMessage: '廣播頻道' },

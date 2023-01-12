@@ -16,7 +16,7 @@ import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
-import { desktopViewMixin, rgba } from '../../helpers'
+import { desktopViewMixin, handleError, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
@@ -83,7 +83,7 @@ const ProgramPage: React.VFC = () => {
   const { id: appId, settings, enabledModules, loading: loadingApp } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
   const { visible } = useContext(PodcastPlayerContext)
-  const { loadingProgram, program } = useProgram(programId)
+  const { loadingProgram, program, addProgramView } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
@@ -94,6 +94,17 @@ const ProgramPage: React.VFC = () => {
   const isEnrolled = enrolledProgramIds.includes(programId)
   const [previousPage] = useQueryParam('back', StringParam)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
+
+  try {
+    const visitedPrograms = JSON.parse(sessionStorage.getItem('kolable.programs.visited') || '[]') as string[]
+    if (!visitedPrograms.includes(programId)) {
+      visitedPrograms.push(programId)
+      sessionStorage.setItem('kolable.programs.visited', JSON.stringify(visitedPrograms))
+      addProgramView()
+    }
+  } catch (error) {
+    handleError(error)
+  }
 
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock) {

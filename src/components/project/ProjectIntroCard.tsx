@@ -1,4 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
+import { Icon, ViewIcon } from '@chakra-ui/icons'
 import { Progress } from 'antd'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
@@ -107,6 +107,7 @@ const ProjectIntroCard: React.VFC<ProjectIntroProps> = ({
   enrollmentCount,
   authorId,
   id,
+  views,
 }) => {
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
@@ -196,11 +197,17 @@ const ProjectIntroCard: React.VFC<ProjectIntroProps> = ({
         )}
       </StyledCardBody>
       {type === 'portfolio' && (
-        <InstructorPlaceHolder className="mb-3">
+        <InstructorPlaceHolder className="mb-3 d-flex p-2  align-content-center justify-content-between">
           {authorId && (
             <Link to={`/creators/${authorId}?tabkey=introduction`}>
               <MemberAvatar memberId={authorId} withName />
             </Link>
+          )}
+          {views && (
+            <div>
+              <Icon as={ViewIcon} className="mr-1" />
+              <span>{views}</span>
+            </div>
           )}
         </InstructorPlaceHolder>
       )}
