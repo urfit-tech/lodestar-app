@@ -11,6 +11,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
+import { useManagementDomain } from '../components/common/AdminMenu'
 import MigrationInput from '../components/common/MigrationInput'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -48,10 +49,11 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const [token] = useQueryParam('token', StringParam)
   const [memberId] = useQueryParam('member', StringParam)
   const [isProjectPortfolioParticipant] = useQueryParam('isProjectPortfolioParticipant', BooleanParam)
-
   const { id: appId } = useApp()
   const tracking = useTracking()
+  const { managementDomain } = useManagementDomain(appId)
   const [loading, setLoading] = useState(false)
+
   const { data: memberEmailData, loading: loadingMemberEmail } = useQuery<
     hasura.GET_EMAIL_BY_MEMBER_ID,
     hasura.GET_EMAIL_BY_MEMBER_IDVariables
@@ -80,7 +82,9 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
                   account: memberEmailData?.member_public[0].email || '',
                   password: values.password,
                 })
-                  .then(() => history.push('/admin/project-portfolio?tab=marked'))
+                  .then(() =>
+                    window.location.replace(`//${managementDomain?.domain[0]}/admin/project-portfolio?tab=marked`),
+                  )
                   .catch(handleError)
                   .finally(() => setLoading(false))
               } else {
