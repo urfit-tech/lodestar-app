@@ -82,17 +82,18 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
                   account: memberEmailData?.member_public[0].email || '',
                   password: values.password,
                 })
-                  .then(() =>
-                    apolloClient
-                      .query<hasura.GET_MANAGEMENT_DOMAIN, hasura.GET_MANAGEMENT_DOMAINVariables>({
-                        query: GET_MANAGEMENT_DOMAIN,
-                        variables: {
-                          appId,
-                        },
-                      })
-                      .then(res =>
-                        window.location.replace(`//${res.data.app_host?.[0]}/admin/project-portfolio?tab=marked`),
-                      ),
+                  .then(
+                    async () =>
+                      await apolloClient
+                        .query<hasura.GET_MANAGEMENT_DOMAIN, hasura.GET_MANAGEMENT_DOMAINVariables>({
+                          query: GET_MANAGEMENT_DOMAIN,
+                          variables: {
+                            appId,
+                          },
+                        })
+                        .then(res =>
+                          window.location.replace(`//${res.data.app_host?.[0]}/admin/project-portfolio?tab=marked`),
+                        ),
                   )
                   .catch(handleError)
                   .finally(() => setLoading(false))
