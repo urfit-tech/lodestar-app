@@ -243,15 +243,17 @@ export const MemberAdminMenu: React.VFC<
   )
 }
 
-export const useManagementDomain = (appId: string) => {
+export const GET_MANAGEMENT_DOMAIN = gql`
+  query GET_MANAGEMENT_DOMAIN($appId: String) {
+    app_host(where: { app_id: { _eq: $appId } }, limit: 1, order_by: { priority: asc }) {
+      host
+    }
+  }
+`
+
+const useManagementDomain = (appId: string) => {
   const { loading, error, data } = useQuery<hasura.GET_MANAGEMENT_DOMAIN, hasura.GET_MANAGEMENT_DOMAINVariables>(
-    gql`
-      query GET_MANAGEMENT_DOMAIN($appId: String) {
-        app_host(where: { app_id: { _eq: $appId } }, limit: 1, order_by: { priority: asc }) {
-          host
-        }
-      }
-    `,
+    GET_MANAGEMENT_DOMAIN,
     { variables: { appId } },
   )
   const managementDomain: { domain: string[] } | null =

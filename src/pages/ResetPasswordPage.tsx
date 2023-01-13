@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import { Button, Form, Icon, message, Spin } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
@@ -11,7 +11,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import { useManagementDomain } from '../components/common/AdminMenu'
+import { GET_MANAGEMENT_DOMAIN } from '../components/common/AdminMenu'
 import MigrationInput from '../components/common/MigrationInput'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -51,7 +51,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const [isProjectPortfolioParticipant] = useQueryParam('isProjectPortfolioParticipant', BooleanParam)
   const { id: appId } = useApp()
   const tracking = useTracking()
-  const { managementDomain } = useManagementDomain(appId)
+  const apolloClient = useApolloClient()
   const [loading, setLoading] = useState(false)
 
   const { data: memberEmailData, loading: loadingMemberEmail } = useQuery<
@@ -83,7 +83,16 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
                   password: values.password,
                 })
                   .then(() =>
-                    window.location.replace(`//${managementDomain?.domain[0]}/admin/project-portfolio?tab=marked`),
+                    apolloClient
+                      .query<hasura.GET_MANAGEMENT_DOMAIN, hasura.GET_MANAGEMENT_DOMAINVariables>({
+                        query: GET_MANAGEMENT_DOMAIN,
+                        variables: {
+                          appId,
+                        },
+                      })
+                      .then(res =>
+                        window.location.replace(`//${res.data.app_host?.[0]}/admin/project-portfolio?tab=marked`),
+                      ),
                   )
                   .catch(handleError)
                   .finally(() => setLoading(false))
@@ -128,9 +137,17 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
 
   useEffect(() => {
     if (authToken && currentMemberId && currentMemberId === memberId) {
-      history.push('/admin/project-portfolio?tab=marked')
+      apolloClient
+        .query<hasura.GET_MANAGEMENT_DOMAIN, hasura.GET_MANAGEMENT_DOMAINVariables>({
+          query: GET_MANAGEMENT_DOMAIN,
+          variables: {
+            appId,
+          },
+        })
+        .then(res => window.location.replace(`//${res.data.app_host?.[0]}/admin/project-portfolio?tab=marked`))
+        .catch(error => handleError(error))
     }
-  }, [authToken, currentMemberId, history, memberId])
+  }, [apolloClient, appId, authToken, currentMemberId, history, memberId])
 
   if (isAuthenticating) return <Spin />
 
