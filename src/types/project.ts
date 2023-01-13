@@ -89,6 +89,7 @@ type Identity = {
 
 type ProjectRole = {
   id: string
+  agreedAt: Date | null
   member: Member
   identity: Identity
 }
