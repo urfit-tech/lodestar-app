@@ -84,6 +84,7 @@ export const usePublicMember = (memberId: string) => {
           description
           role
           title
+          has_backstage_enter_permission
           member_specialities {
             id
             tag_name
@@ -108,6 +109,7 @@ export const usePublicMember = (memberId: string) => {
           description: data.member_public[0].description,
           title: data.member_public[0].title,
           specialtyNames: data.member_public[0].member_specialities.map(v => v.tag_name),
+          hasBackstageEnterPermission: Boolean(data.member_public[0].has_backstage_enter_permission),
         }
 
   return {

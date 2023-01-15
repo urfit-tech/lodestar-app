@@ -99,7 +99,7 @@ const CreatorPage: React.VFC = () => {
     )
   }
 
-  if (!creator || !['content-creator', 'app-owner'].includes(creator.role)) {
+  if (!creator || !creator.hasBackstageEnterPermission) {
     return <NotFoundPage />
   }
 

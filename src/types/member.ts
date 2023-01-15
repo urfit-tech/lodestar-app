@@ -13,8 +13,8 @@ export type MemberPublicProps = {
   abstract: string | null
   description: string | null
   title: string | null
-
   specialtyNames?: string[]
+  hasBackstageEnterPermission?: boolean
 }
 
 export type MemberProps = {
