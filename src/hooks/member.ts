@@ -27,6 +27,7 @@ export const useMember = (memberId: string) => {
           facebook_user_id
           google_user_id
           youtube_channel_ids
+          verified_emails
           member_phones(limit: 1) {
             id
             phone
@@ -58,6 +59,7 @@ export const useMember = (memberId: string) => {
           facebookUserId: data.member_by_pk.facebook_user_id,
           googleUserId: data.member_by_pk.google_user_id,
           youtubeChannelIds: data.member_by_pk.youtube_channel_ids,
+          verifiedEmails: data.member_by_pk.verified_emails,
           phone: data.member_by_pk.member_phones[0]?.phone || '',
         }
 

@@ -1,4 +1,4 @@
-import { Icon } from '@chakra-ui/icons'
+import { CheckCircleIcon, Icon, WarningIcon } from '@chakra-ui/icons'
 import { Button } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
@@ -27,6 +27,19 @@ const StyledText = styled.div`
   line-height: normal;
 `
 
+const UnVerifiedSuffix: React.VFC<{}> = ({}) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <div style={{ marginRight: '1rem', color: '#F56565' }}>
+      <span style={{ paddingRight: '0.5rem', fontWeight: '500' }}>
+        {formatMessage(profileMessages.form.message.emailUnVerified)}
+      </span>
+      <WarningIcon color="#F56565" />
+    </div>
+  )
+}
+
 type ProfileAccountAdminCardProps = CardProps &
   FormComponentProps & {
     memberId: string
@@ -38,6 +51,7 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
   const updateMember = useUpdateMember()
 
   const isYouTubeConnected = member?.youtubeChannelIds !== null
+  const isVerifiedCurrentEmail = member?.verifiedEmails?.includes(member.email)
 
   const handleSubmit = () => {
     form.validateFields((error, values) => {
@@ -94,7 +108,12 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
                 message: formatMessage(commonMessages.form.message.email),
               },
             ],
-          })(<MigrationInput />)}
+          })(
+            <MigrationInput
+              suffix={isVerifiedCurrentEmail ? <CheckCircleIcon /> : <UnVerifiedSuffix />}
+              suffixWidth="auto"
+            />,
+          )}
         </Form.Item>
 
         {enabledModules.social_connect && (

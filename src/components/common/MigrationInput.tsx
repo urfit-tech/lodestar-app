@@ -4,13 +4,14 @@ const MigrationInput: ComponentWithAs<
   'input',
   InputProps & {
     suffix?: React.ReactNode
+    suffixWidth?: string
   }
-> = ({ suffix, ...inputProps }) => {
+> = ({ suffix, suffixWidth, ...inputProps }) => {
   if (suffix) {
     return (
       <InputGroup>
         <ChakraInput {...inputProps} />
-        <InputRightElement children={suffix} />
+        <InputRightElement width={suffixWidth || '2.5rem'} children={suffix} />
       </InputGroup>
     )
   }
