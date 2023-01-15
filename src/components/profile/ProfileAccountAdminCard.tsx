@@ -112,9 +112,9 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
             <MigrationInput
               suffix={
                 settings['feature.email_verification'] &&
-                (isVerifiedCurrentEmail ? <CheckCircleIcon /> : <UnVerifiedSuffix />)
+                (isVerifiedCurrentEmail ? <CheckCircleIcon color="#319795" /> : <UnVerifiedSuffix />)
               }
-              suffixWidth="auto"
+              suffixWidth={settings['feature.email_verification'] && (isVerifiedCurrentEmail ? undefined : 'auto')}
             />,
           )}
         </Form.Item>

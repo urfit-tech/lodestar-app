@@ -1770,6 +1770,10 @@ export const codeMessages = defineMessages({
     id: 'code.E_BIND_DEVICE',
     defaultMessage: '該帳號登入裝置已達上限',
   },
+  E_VERIFY_EMAIL: {
+    id: 'code.E_VERIFY_EMAIL',
+    defaultMessage: '信箱驗證失敗',
+  },
 })
 
 export const certificateMessages = {
