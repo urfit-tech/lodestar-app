@@ -92,7 +92,9 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
                           },
                         })
                         .then(res =>
-                          window.location.replace(`//${res.data.app_host?.[0]}/admin/project-portfolio?tab=marked`),
+                          window.location.replace(
+                            `//${res.data.app_host?.[0].host}/admin/project-portfolio?tab=marked`,
+                          ),
                         ),
                   )
                   .catch(handleError)
@@ -145,7 +147,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
             appId,
           },
         })
-        .then(res => window.location.replace(`//${res.data.app_host?.[0]}/admin/project-portfolio?tab=marked`))
+        .then(res => window.location.replace(`//${res.data.app_host?.[0].host}/admin/project-portfolio?tab=marked`))
         .catch(error => handleError(error))
     }
   }, [apolloClient, appId, authToken, currentMemberId, history, memberId])
