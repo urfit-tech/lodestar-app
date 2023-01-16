@@ -32,6 +32,11 @@ import Responsive, { BREAK_POINT } from '../common/Responsive'
 import commonMessages from './translation'
 
 type AudioPlayerMode = 'loop' | 'single-loop' | 'random'
+type AudioEvent = {
+  type: 'pause' | 'seeked' | 'progress' | 'ended'
+  progress: number
+  audioState: { playbackRate: number; startedAt: number; endedAt: number }
+}
 
 const StyledSlider = styled(Slider)<{ height?: number }>`
   && {
@@ -159,17 +164,23 @@ const AudioPlayer: React.VFC<{
   title: string
   mode?: 'default' | 'preview'
   audioUrl?: string
+  lastProgress?: number
+  autoPlay?: boolean
   onPrev?: () => void
   onNext?: () => void
-}> = ({ title, mode = 'default', audioUrl, onPrev, onNext }) => {
+  onAudioEvent?: (event: AudioEvent) => void
+}> = ({ title, mode = 'default', audioUrl, lastProgress, autoPlay, onPrev, onNext, onAudioEvent }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const modeRef = useRef<AudioPlayerMode>('loop')
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(true)
   const [playing, setPlaying] = useState(false)
-  const [playRate, setPlayRate] = useState(1)
+  const [playRate, setPlayRate] = useState(Number(localStorage.getItem('audioPlayer.rate')) || 1)
   const [duration, setDuration] = useState(0)
   const [progress, setProgress] = useState(0)
+  const lastEndedTime = useRef<number>(0)
+
+  audioRef.current && (audioRef.current.defaultPlaybackRate = playRate)
 
   const handlePauseOrPlay = (state: boolean) => {
     audioRef.current && (audioRef.current.autoplay = !state)
@@ -181,6 +192,7 @@ const AudioPlayer: React.VFC<{
   }, [duration])
 
   useEffect(() => {
+    localStorage.setItem('audioPlayer.rate', JSON.stringify(playRate))
     audioRef.current && (audioRef.current.playbackRate = playRate)
   }, [playRate])
 
@@ -220,7 +232,7 @@ const AudioPlayer: React.VFC<{
               </div>
             </Responsive.Desktop>
             <div className="col-11 col-lg-4 d-flex align-items-center justify-content-center">
-              {mode === 'default' ? (
+              {mode === 'default' && onPrev ? (
                 <StyledShiftButton type="link" variant="bar" onClick={() => onPrev?.()}>
                   <Icon as={PrevIcon} />
                 </StyledShiftButton>
@@ -258,7 +270,7 @@ const AudioPlayer: React.VFC<{
                   <Icon as={Forward5Icon} />
                 </StyledButton>
               </StyledButtonGroup>
-              {mode === 'default' ? (
+              {mode === 'default' && onNext ? (
                 <StyledShiftButton type="link" variant="bar" onClick={() => onNext?.()}>
                   <Icon as={NextIcon} />
                 </StyledShiftButton>
@@ -274,7 +286,6 @@ const AudioPlayer: React.VFC<{
                 onChange={mode => {
                   modeRef.current = mode
                   localStorage.setItem('audioPlayer.mode', mode)
-                  audioRef.current && (audioRef.current.loop = mode === 'single-loop')
                 }}
               /> */}
               {/* // TODO: 播放清單視情況再來進行擴充 */}
@@ -298,10 +309,71 @@ const AudioPlayer: React.VFC<{
         }}
         src={audioUrl}
         loop={modeRef.current === 'single-loop'}
-        onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
+        onLoadedMetadata={() => {
+          if (audioRef.current) {
+            const duration = audioRef.current.duration
+            const progress = lastProgress && lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
+            audioRef.current.currentTime = duration * progress
+            lastEndedTime.current = duration * progress
+            setDuration(audioRef.current.duration)
+          }
+        }}
+        onTimeUpdate={() => {
+          const currentTime = audioRef.current?.currentTime || 0
+          onAudioEvent?.({
+            type: 'progress',
+            progress: currentTime / duration,
+            audioState: {
+              playbackRate: playRate || 1,
+              startedAt: lastEndedTime.current || 0,
+              endedAt: currentTime,
+            },
+          })
+        }}
+        onPause={() => {
+          setPlaying(false)
+          const currentTime = audioRef.current?.currentTime || 0
+          onAudioEvent?.({
+            type: 'pause',
+            progress: currentTime / duration,
+            audioState: {
+              playbackRate: playRate || 1,
+              startedAt: lastEndedTime.current || 0,
+              endedAt: currentTime || 0,
+            },
+          })
+          lastEndedTime.current = currentTime
+        }}
+        onSeeked={() => {
+          const currentTime = audioRef.current?.currentTime || 0
+          onAudioEvent?.({
+            type: 'seeked',
+            progress: currentTime / duration,
+            audioState: {
+              playbackRate: 0,
+              startedAt: lastEndedTime.current || 0,
+              endedAt: currentTime,
+            },
+          })
+          lastEndedTime.current = currentTime
+        }}
         onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onEnded={() => {}}
+        onEnded={() => {
+          const currentTime = audioRef.current?.currentTime || 0
+          const endedAt = currentTime || duration || 0
+          onAudioEvent?.({
+            type: 'ended',
+            progress: currentTime / duration,
+            audioState: {
+              playbackRate: playRate || 1,
+              startedAt: lastEndedTime.current || 0,
+              endedAt,
+            },
+          })
+          lastEndedTime.current = endedAt
+          onNext?.()
+        }}
+        autoPlay={autoPlay}
       />
     </div>
   )
