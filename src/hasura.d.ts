@@ -15036,6 +15036,7 @@ export enum member_select_column {
   status = "status",
   title = "title",
   username = "username",
+  verified_emails = "verified_emails",
   youtube_channel_ids = "youtube_channel_ids",
   zoom_user_id_deprecate = "zoom_user_id_deprecate",
 }
@@ -15287,6 +15288,7 @@ export enum member_update_column {
   status = "status",
   title = "title",
   username = "username",
+  verified_emails = "verified_emails",
   youtube_channel_ids = "youtube_channel_ids",
   zoom_user_id_deprecate = "zoom_user_id_deprecate",
 }
@@ -17106,6 +17108,35 @@ export enum program_content_attachment_select_column {
 }
 
 /**
+ * unique or primary key constraints on table "program_content_audio"
+ */
+export enum program_content_audio_constraint {
+  program_content_audio_pkey = "program_content_audio_pkey",
+}
+
+/**
+ * select columns of table "program_content_audio"
+ */
+export enum program_content_audio_select_column {
+  created_at = "created_at",
+  data = "data",
+  id = "id",
+  program_content_id = "program_content_id",
+  updated_at = "updated_at",
+}
+
+/**
+ * update columns of table "program_content_audio"
+ */
+export enum program_content_audio_update_column {
+  created_at = "created_at",
+  data = "data",
+  id = "id",
+  program_content_id = "program_content_id",
+  updated_at = "updated_at",
+}
+
+/**
  * unique or primary key constraints on table "program_content_body"
  */
 export enum program_content_body_constraint {
@@ -18111,6 +18142,7 @@ export enum project_role_constraint {
  */
 export enum project_role_select_column {
   agreed_at = "agreed_at",
+  created_at = "created_at",
   has_sended_marked_notification = "has_sended_marked_notification",
   id = "id",
   identity_id = "identity_id",
@@ -18139,6 +18171,7 @@ export enum project_role_select_column_project_role_aggregate_bool_exp_bool_or_a
  */
 export enum project_role_update_column {
   agreed_at = "agreed_at",
+  created_at = "created_at",
   has_sended_marked_notification = "has_sended_marked_notification",
   id = "id",
   identity_id = "identity_id",
@@ -23126,6 +23159,7 @@ export interface member_bool_exp {
   status?: String_comparison_exp | null;
   title?: String_comparison_exp | null;
   username?: String_comparison_exp | null;
+  verified_emails?: jsonb_comparison_exp | null;
   vouchers?: voucher_bool_exp | null;
   vouchers_aggregate?: voucher_aggregate_bool_exp | null;
   youtube_channel_ids?: jsonb_comparison_exp | null;
@@ -23420,6 +23454,7 @@ export interface member_insert_input {
   status?: string | null;
   title?: string | null;
   username?: string | null;
+  verified_emails?: any | null;
   vouchers?: voucher_arr_rel_insert_input | null;
   youtube_channel_ids?: any | null;
   zoom_user_id_deprecate?: string | null;
@@ -23937,6 +23972,7 @@ export interface member_public_bool_exp {
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   email?: String_comparison_exp | null;
+  has_backstage_enter_permission?: Int_comparison_exp | null;
   id?: String_comparison_exp | null;
   member_specialities?: member_speciality_bool_exp | null;
   member_specialities_aggregate?: member_speciality_aggregate_bool_exp | null;
@@ -23945,6 +23981,7 @@ export interface member_public_bool_exp {
   picture_url?: String_comparison_exp | null;
   role?: String_comparison_exp | null;
   roles?: jsonb_comparison_exp | null;
+  status?: String_comparison_exp | null;
   tag_names?: jsonb_comparison_exp | null;
   title?: String_comparison_exp | null;
   username?: String_comparison_exp | null;
@@ -23960,6 +23997,7 @@ export interface member_public_insert_input {
   created_at?: any | null;
   description?: string | null;
   email?: string | null;
+  has_backstage_enter_permission?: number | null;
   id?: string | null;
   member_specialities?: member_speciality_arr_rel_insert_input | null;
   metadata?: any | null;
@@ -23967,6 +24005,7 @@ export interface member_public_insert_input {
   picture_url?: string | null;
   role?: string | null;
   roles?: any | null;
+  status?: string | null;
   tag_names?: any | null;
   title?: string | null;
   username?: string | null;
@@ -28491,6 +28530,61 @@ export interface program_content_attachment_insert_input {
   updated_at?: any | null;
 }
 
+export interface program_content_audio_aggregate_bool_exp {
+  count?: program_content_audio_aggregate_bool_exp_count | null;
+}
+
+export interface program_content_audio_aggregate_bool_exp_count {
+  arguments?: program_content_audio_select_column[] | null;
+  distinct?: boolean | null;
+  filter?: program_content_audio_bool_exp | null;
+  predicate: Int_comparison_exp;
+}
+
+/**
+ * input type for inserting array relation for remote table "program_content_audio"
+ */
+export interface program_content_audio_arr_rel_insert_input {
+  data: program_content_audio_insert_input[];
+  on_conflict?: program_content_audio_on_conflict | null;
+}
+
+/**
+ * Boolean expression to filter rows from the table "program_content_audio". All fields are combined with a logical 'AND'.
+ */
+export interface program_content_audio_bool_exp {
+  _and?: program_content_audio_bool_exp[] | null;
+  _not?: program_content_audio_bool_exp | null;
+  _or?: program_content_audio_bool_exp[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  data?: jsonb_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  program_content?: program_content_bool_exp | null;
+  program_content_id?: uuid_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "program_content_audio"
+ */
+export interface program_content_audio_insert_input {
+  created_at?: any | null;
+  data?: any | null;
+  id?: any | null;
+  program_content?: program_content_obj_rel_insert_input | null;
+  program_content_id?: any | null;
+  updated_at?: any | null;
+}
+
+/**
+ * on_conflict condition type for table "program_content_audio"
+ */
+export interface program_content_audio_on_conflict {
+  constraint: program_content_audio_constraint;
+  update_columns: program_content_audio_update_column[];
+  where?: program_content_audio_bool_exp | null;
+}
+
 /**
  * Boolean expression to filter rows from the table "program_content_body". All fields are combined with a logical 'AND'.
  */
@@ -28564,6 +28658,8 @@ export interface program_content_bool_exp {
   practices_aggregate?: practice_aggregate_bool_exp | null;
   program_content_attachments?: program_content_attachment_bool_exp | null;
   program_content_attachments_aggregate?: program_content_attachment_aggregate_bool_exp | null;
+  program_content_audios?: program_content_audio_bool_exp | null;
+  program_content_audios_aggregate?: program_content_audio_aggregate_bool_exp | null;
   program_content_body?: program_content_body_bool_exp | null;
   program_content_materials?: program_content_material_bool_exp | null;
   program_content_materials_aggregate?: program_content_material_aggregate_bool_exp | null;
@@ -28650,6 +28746,7 @@ export interface program_content_insert_input {
   position?: number | null;
   practices?: practice_arr_rel_insert_input | null;
   program_content_attachments?: program_content_attachment_arr_rel_insert_input | null;
+  program_content_audios?: program_content_audio_arr_rel_insert_input | null;
   program_content_body?: program_content_body_obj_rel_insert_input | null;
   program_content_materials?: program_content_material_arr_rel_insert_input | null;
   program_content_plans?: program_content_plan_arr_rel_insert_input | null;
@@ -30652,6 +30749,7 @@ export interface project_role_bool_exp {
   _not?: project_role_bool_exp | null;
   _or?: project_role_bool_exp[] | null;
   agreed_at?: timestamptz_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
   has_sended_marked_notification?: Boolean_comparison_exp | null;
   id?: uuid_comparison_exp | null;
   identity?: identity_bool_exp | null;
@@ -30669,6 +30767,7 @@ export interface project_role_bool_exp {
  */
 export interface project_role_insert_input {
   agreed_at?: any | null;
+  created_at?: any | null;
   has_sended_marked_notification?: boolean | null;
   id?: any | null;
   identity?: identity_obj_rel_insert_input | null;
