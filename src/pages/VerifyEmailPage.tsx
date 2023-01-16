@@ -55,7 +55,7 @@ const VerifyEmailPage: React.VFC = () => {
         .then(({ data: { code, message, result } }) => {
           if (code === 'SUCCESS') {
             antdMessage.success('信箱驗證成功')
-            history.push(`/settings/profile`)
+            window.location.assign(`/settings/profile`)
           } else {
             antdMessage.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
             setErrorMessage(message)
