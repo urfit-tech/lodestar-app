@@ -113,7 +113,9 @@ const SearchResultBlock: React.VFC<{
 
   const { loadingSearchResults, errorSearchResults, searchResults } = useSearchProductCollection(
     memberId,
-    settings['search.general_member_result.enabled'] ? ['content-creator', 'general-member'] : ['content-creator'],
+    Number(settings['search.general_member_result.enabled'])
+      ? ['content-creator', 'general-member']
+      : ['content-creator'],
     {
       title,
       tag,
