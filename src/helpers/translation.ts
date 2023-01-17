@@ -32,6 +32,7 @@ export const commonMessages = {
     about: { id: 'common.about', defaultMessage: '約' },
     countdown: { id: 'common.countdown', defaultMessage: '優惠倒數' },
     more: { id: 'common.more', defaultMessage: '查看更多' },
+    check: { id: 'common.check', defaultMessage: '查看' },
   }),
   term: defineMessages({
     grid: { id: 'common.term.grid', defaultMessage: '格狀' },
@@ -128,6 +129,12 @@ export const commonMessages = {
     success: defineMessages({
       passwordUpdate: { id: 'common.message.success.password.updated', defaultMessage: '已更新密碼' },
       save: { id: 'common.message.success.save', defaultMessage: '儲存成功' },
+    }),
+    warning: defineMessages({
+      emailVerification: {
+        id: 'common.message.warning.emailVerification',
+        defaultMessage: '請驗證您的信箱來完成帳號設定。',
+      },
     }),
   },
   event: defineMessages({
@@ -1051,6 +1058,7 @@ export const profileMessages = {
       socialConnected: { id: 'profile.message.socialConnected', defaultMessage: '已綁定 {site} 帳號' },
       socialUnconnected: { id: 'profile.message.socialUnconnected', defaultMessage: '尚未綁定 {site} 帳號' },
       noYouTubeChannel: { id: 'profile.message.noYouTubeChannel', defaultMessage: '無 YouTube 頻道' },
+      emailUnVerified: { id: 'profile.message.emailUnVerified', defaultMessage: '未驗證' },
     }),
     placeholder: defineMessages({
       title: {
@@ -1761,6 +1769,10 @@ export const codeMessages = defineMessages({
   E_BIND_DEVICE: {
     id: 'code.E_BIND_DEVICE',
     defaultMessage: '該帳號登入裝置已達上限',
+  },
+  E_VERIFY_EMAIL: {
+    id: 'code.E_VERIFY_EMAIL',
+    defaultMessage: '信箱驗證失敗',
   },
 })
 

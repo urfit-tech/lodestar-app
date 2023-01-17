@@ -35,6 +35,7 @@ export type MemberProps = {
   facebookUserId: string | null
   googleUserId: string | null
   youtubeChannelIds: string[] | null
+  verifiedEmails: string[] | null
 
   phone?: string
 }

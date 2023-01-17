@@ -5855,6 +5855,7 @@ export interface GET_MEMBER_member_by_pk {
    * array of youtube channel ids
    */
   youtube_channel_ids: any | null;
+  verified_emails: any;
   /**
    * An array relationship
    */
