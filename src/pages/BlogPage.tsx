@@ -25,12 +25,21 @@ const BlogPage: React.VFC = () => {
   const app = useApp()
 
   const { posts } = usePostPreviewCollection()
-  const latestPosts = posts.slice(0, 3)
 
+  const latestPosts = posts
+    .sort((a, b) => {
+      if (a.pinned_at && b.pinned_at) {
+        return new Date(b.pinned_at).getTime() - new Date(a.pinned_at).getTime()
+      } else {
+        let set1 = a.pinned_at ? 1 : 0
+        let set2 = b.pinned_at ? 1 : 0
+        return set2 - set1
+      }
+    })
+    .slice(0, 3)
   if (!app.loading && !app.enabledModules.blog) {
     return <ForbiddenPage />
   }
-
   return (
     <DefaultLayout white>
       {/* // TODO: need to extend page helmet */}

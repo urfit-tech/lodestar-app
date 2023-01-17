@@ -17,6 +17,7 @@ export type PostPreviewProps = PostLinkProps & {
   updatedAt: Date
   categories: Category[]
   tags: string[]
+  pinned_at?: string | null
 }
 
 export type PostRoleName = 'author' | 'creator'
