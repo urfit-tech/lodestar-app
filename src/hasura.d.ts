@@ -5899,6 +5899,7 @@ export interface GET_PUBLIC_MEMBER_member_public {
   description: string | null;
   role: string | null;
   title: string | null;
+  has_backstage_enter_permission: number | null;
   /**
    * An array relationship
    */
@@ -12447,6 +12448,7 @@ export interface SEARCH_PRODUCT_COLLECTIONVariables {
   title?: string | null;
   tag?: string | null;
   description?: string | null;
+  memberRoles: string[];
 }
 
 /* tslint:disable */
