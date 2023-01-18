@@ -28,11 +28,11 @@ const BlogPage: React.VFC = () => {
 
   const latestPosts = posts
     .sort((a, b) => {
-      if (a.pinned_at && b.pinned_at) {
-        return new Date(b.pinned_at).getTime() - new Date(a.pinned_at).getTime()
+      if (a.pinnedAt && b.pinnedAt) {
+        return new Date(b.pinnedAt).getTime() - new Date(a.pinnedAt).getTime()
       } else {
-        let set1 = a.pinned_at ? 1 : 0
-        let set2 = b.pinned_at ? 1 : 0
+        let set1 = a.pinnedAt ? 1 : 0
+        let set2 = b.pinnedAt ? 1 : 0
         return set2 - set1
       }
     })

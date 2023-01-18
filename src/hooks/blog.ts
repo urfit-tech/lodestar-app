@@ -72,7 +72,7 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
             coverUrl: post.cover_url,
             videoUrl: post.video_url,
             abstract: post.abstract,
-            pinned_at: post.pinned_at,
+            pinnedAt: post.pinned_at,
             authorId: post.post_roles[0]?.member_id || '',
             publishedAt: post.published_at ? new Date(post.published_at) : null,
             updatedAt: new Date(post.updated_at),

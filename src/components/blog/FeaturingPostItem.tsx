@@ -37,7 +37,7 @@ const FeaturingPostItem: React.VFC<
   PostPreviewProps & {
     variant?: 'headline' | 'featuring'
   }
-> = ({ coverUrl, videoUrl, title, authorId, publishedAt, variant, pinned_at }) => {
+> = ({ coverUrl, videoUrl, title, authorId, publishedAt, variant, pinnedAt }) => {
   const { member } = usePublicMember(authorId)
 
   return (
@@ -46,7 +46,7 @@ const FeaturingPostItem: React.VFC<
       <StyledBody>
         <div className="d-flex align-items-center justify-content-center">
           <StyledPostTitle className={variant}>{title}</StyledPostTitle>
-          {pinned_at ? <Icon as={PinOIcon} className="mr-1" /> : ''}
+          {pinnedAt ? <Icon as={PinOIcon} className="mr-1" /> : ''}
         </div>
 
         <StyledPostMeta>
