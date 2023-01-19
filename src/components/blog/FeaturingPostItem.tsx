@@ -5,6 +5,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { StyledPostMeta, StyledPostTitle } from '.'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
+import { ReactComponent as PinOIcon } from '../../images/pin.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { PostPreviewProps } from '../../types/blog'
 import PostPreviewCover from './PostPreviewCover'
@@ -36,14 +37,18 @@ const FeaturingPostItem: React.VFC<
   PostPreviewProps & {
     variant?: 'headline' | 'featuring'
   }
-> = ({ coverUrl, videoUrl, title, authorId, publishedAt, variant }) => {
+> = ({ coverUrl, videoUrl, title, authorId, publishedAt, variant, pinnedAt }) => {
   const { member } = usePublicMember(authorId)
 
   return (
     <StyledWrapper className="mb-3">
       <PostPreviewCover variant="featuring" coverUrl={coverUrl} withVideo={typeof videoUrl === 'string'} />
       <StyledBody>
-        <StyledPostTitle className={variant}>{title}</StyledPostTitle>
+        <div className="d-flex align-items-center justify-content-center">
+          <StyledPostTitle className={variant}>{title}</StyledPostTitle>
+          {pinnedAt ? <Icon as={PinOIcon} className="mr-1" /> : ''}
+        </div>
+
         <StyledPostMeta>
           <Icon as={UserOIcon} className="mr-1" />
           <span className="mr-2">{member?.name || ''}</span>
