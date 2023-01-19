@@ -27,6 +27,7 @@ export const useMember = (memberId: string) => {
           facebook_user_id
           google_user_id
           youtube_channel_ids
+          verified_emails
           member_phones(limit: 1) {
             id
             phone
@@ -58,6 +59,7 @@ export const useMember = (memberId: string) => {
           facebookUserId: data.member_by_pk.facebook_user_id,
           googleUserId: data.member_by_pk.google_user_id,
           youtubeChannelIds: data.member_by_pk.youtube_channel_ids,
+          verifiedEmails: data.member_by_pk.verified_emails,
           phone: data.member_by_pk.member_phones[0]?.phone || '',
         }
 
@@ -84,6 +86,7 @@ export const usePublicMember = (memberId: string) => {
           description
           role
           title
+          has_backstage_enter_permission
           member_specialities {
             id
             tag_name
@@ -108,6 +111,7 @@ export const usePublicMember = (memberId: string) => {
           description: data.member_public[0].description,
           title: data.member_public[0].title,
           specialtyNames: data.member_public[0].member_specialities.map(v => v.tag_name),
+          hasBackstageEnterPermission: Boolean(data.member_public[0].has_backstage_enter_permission),
         }
 
   return {

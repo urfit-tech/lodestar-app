@@ -11,6 +11,7 @@ import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
+import { useMember } from '../../../hooks/member'
 import DefaultAvatar from '../../../images/avatar.svg'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
 import CartDropdown from '../../checkout/CartDropdown'
@@ -43,6 +44,21 @@ const StyledLayoutWrapper = styled(StyledLayout)`
     }
   }
 `
+const StyledNotificationBar = styled.div<{ variant?: string }>`
+  position: sticky;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  height: 40px;
+  line-height: 40px;
+  width: 100%;
+  background: ${props => (props.variant === 'warning' ? '#F56565' : '#111')};
+  text-align: center;
+  color: ${props => (props.variant === 'warning' ? 'white' : '#777')};
+  font-weight: 500;
+  font-size: 14px;
+`
+
 const DefaultLayout: React.FC<{
   white?: boolean
   noHeader?: boolean
@@ -71,10 +87,13 @@ const DefaultLayout: React.FC<{
   const { renderFooter } = useCustomRenderer()
   const { currentMemberId, isAuthenticated, currentMember } = useAuth()
   const { name, settings, enabledModules } = useApp()
+  const { member } = useMember(currentMemberId || '')
   const { navs } = useNav()
   const { visible: playerVisible } = useContext(PodcastPlayerContext)
   const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
   const [visible, setVisible] = useState(false)
+
+  const isUnVerifiedEmails = member ? !member.verifiedEmails?.includes(member.email) : false
 
   return (
     <AuthModalContext.Provider value={{ visible, setVisible }}>
@@ -258,6 +277,14 @@ const DefaultLayout: React.FC<{
         </StyledLayoutHeader>
 
         <StyledLayoutContent id="layout-content" className={`${noHeader ? 'full-height' : ''}`}>
+          {settings['feature.email_verification'] && isUnVerifiedEmails && (
+            <StyledNotificationBar variant="warning">
+              <p>
+                {formatMessage(commonMessages.message.warning.emailVerification)}
+                <Link to={`/settings/profile`}>{formatMessage(commonMessages.defaults.check)}</Link>
+              </p>
+            </StyledNotificationBar>
+          )}
           <LayoutContentWrapper
             footerHeight={noFooter ? 0 : settings['footer.type'] === 'multiline' ? 108 : 65}
             centeredBox={centeredBox}

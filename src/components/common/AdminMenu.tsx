@@ -13,12 +13,12 @@ import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { useSocialCardCollection } from '../../hooks/member'
-import { ReactComponent as DeviceIcon } from '../../images/device.svg'
 // import { ReactComponent as BookIcon } from '../../images/book.svg'
 import { ReactComponent as MemberCertificateIcon } from '../../images/certificate.svg'
 import { ReactComponent as ClipboardListIcon } from '../../images/clipboard-list.svg'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
+import { ReactComponent as DeviceIcon } from '../../images/device.svg'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
@@ -259,15 +259,17 @@ export const MemberAdminMenu: React.VFC<
   )
 }
 
+export const GET_MANAGEMENT_DOMAIN = gql`
+  query GET_MANAGEMENT_DOMAIN($appId: String) {
+    app_host(where: { app_id: { _eq: $appId } }, limit: 1, order_by: { priority: asc }) {
+      host
+    }
+  }
+`
+
 const useManagementDomain = (appId: string) => {
   const { loading, error, data } = useQuery<hasura.GET_MANAGEMENT_DOMAIN, hasura.GET_MANAGEMENT_DOMAINVariables>(
-    gql`
-      query GET_MANAGEMENT_DOMAIN($appId: String) {
-        app_host(where: { app_id: { _eq: $appId } }, limit: 1, order_by: { priority: asc }) {
-          host
-        }
-      }
-    `,
+    GET_MANAGEMENT_DOMAIN,
     { variables: { appId } },
   )
   const managementDomain: { domain: string[] } | null =

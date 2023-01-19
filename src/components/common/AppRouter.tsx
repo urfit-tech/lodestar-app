@@ -52,6 +52,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/reset-password-success',
     pageName: 'ResetPasswordSuccessPage',
   },
+  verify_email: {
+    path: '/verify-email',
+    pageName: 'VerifyEmailPage',
+  },
   oauth2: {
     path: '/oauth2',
     pageName: 'OAuth2Page',

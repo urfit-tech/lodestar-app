@@ -107,14 +107,20 @@ const SearchResultBlock: React.VFC<{
 }> = ({ memberId, title, tag }) => {
   const { formatMessage } = useIntl()
   const { isAuthenticated } = useAuth()
-  const { enabledModules } = useApp()
+  const { enabledModules, settings } = useApp()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [tab, setTab] = useQueryParam('tab', StringParam)
 
-  const { loadingSearchResults, errorSearchResults, searchResults } = useSearchProductCollection(memberId, {
-    title,
-    tag,
-  })
+  const { loadingSearchResults, errorSearchResults, searchResults } = useSearchProductCollection(
+    memberId,
+    Number(settings['search.general_member_result.enabled'])
+      ? ['content-creator', 'general-member']
+      : ['content-creator'],
+    {
+      title,
+      tag,
+    },
+  )
 
   useEffect(() => {
     if (searchResults) {
@@ -470,6 +476,7 @@ const SearchResultBlock: React.VFC<{
 
 const useSearchProductCollection = (
   memberId: string | null,
+  memberRoles: string[],
   filter?: {
     title?: string | null
     tag?: string | null
@@ -480,7 +487,13 @@ const useSearchProductCollection = (
     hasura.SEARCH_PRODUCT_COLLECTIONVariables
   >(
     gql`
-      query SEARCH_PRODUCT_COLLECTION($memberId: String, $title: String, $tag: String, $description: String) {
+      query SEARCH_PRODUCT_COLLECTION(
+        $memberId: String
+        $title: String
+        $tag: String
+        $description: String
+        $memberRoles: [String!]!
+      ) {
         program(
           where: {
             published_at: { _is_null: false }
@@ -658,8 +671,9 @@ const useSearchProductCollection = (
         }
         member_public(
           where: {
-            role: { _eq: "content-creator" }
+            role: { _in: $memberRoles }
             _or: [{ name: { _ilike: $title } }, { username: { _ilike: $title } }, { tag_names: { _has_key: $tag } }]
+            has_backstage_enter_permission: { _eq: "1" }
           }
           order_by: [{ created_at: desc }]
         ) {
@@ -812,6 +826,7 @@ const useSearchProductCollection = (
           filter?.title && filter.title.length > 1 ? `%${filter.title.replace(/_/g, '\\_').split('').join('%')}%` : '',
         description: filter?.title && filter.title.length > 1 ? `%${filter.title}%` : '',
         tag: filter?.tag || '',
+        memberRoles: memberRoles,
       },
     },
   )
