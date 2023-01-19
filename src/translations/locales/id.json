@@ -1223,5 +1223,10 @@
   "voucher.noUsePeriod": "Tidak Ada Periode Penggunaan",
   "voucher.redeemable": "dapat ditukarkan",
   "voucher.tab.exchange": "Kode Tukar",
-  "voucher.title.add": "Tambahkan Voucher"
+  "voucher.title.add": "Tambahkan Voucher",
+  "product.program.tag.audioTrial": "Uji coba audio",
+  "common.AudioPlayer.playRate": "Tingkat bermain",
+  "common.AudioPlayer.listLoop": "Putaran daftar",
+  "common.AudioPlayer.singleLoop": "Putaran tunggal",
+  "common.AudioPlayer.random": "Acak"
 }

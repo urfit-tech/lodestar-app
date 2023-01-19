@@ -11,6 +11,7 @@ import ProgramContentTrialModal from '../../components/program/ProgramContentTri
 import { durationFormatter, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
+import { MicrophoneIcon } from '../../images'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 
 const StyledTitle = styled.h2`
@@ -113,7 +114,6 @@ const ProgramContentListSection: React.VFC<{
         .map(programContentSection => (
           <ProgramSectionBlock key={programContentSection.id}>
             <ProgramSectionTitle className="mb-3">{programContentSection.title}</ProgramSectionTitle>
-
             {programContentSection.contents.map(programContent =>
               isMobile ? (
                 <MobileProgramContentItem
@@ -141,22 +141,33 @@ const ProgramContentListSection: React.VFC<{
                       (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
                     !isEnrolled ? (
                       <ProgramContentTrialModal
+                        programId={program.id}
                         programContentId={programContent.id}
                         render={({ setVisible }) => (
                           <StyledObscure onClick={() => setVisible(true)}>
                             <StyledTag color={theme.colors.primary[500]}>
-                              {formatMessage(productMessages.program.content.trial)}
+                              {formatMessage(
+                                programContent.contentType === 'video'
+                                  ? productMessages.program.content.trial
+                                  : productMessages.program.content.audioTrial,
+                              )}
                             </StyledTag>
                           </StyledObscure>
                         )}
                       />
                     ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
                       <StyledTag color={theme.colors.primary[500]}>
-                        {formatMessage(productMessages.program.content.trial)}
+                        {formatMessage(
+                          programContent.contentType === 'video'
+                            ? productMessages.program.content.trial
+                            : productMessages.program.content.audioTrial,
+                        )}
                       </StyledTag>
                     ) : null}
                     {programContent.contentType === 'video' ? (
                       <Icon type="video-camera" className="mr-2" />
+                    ) : programContent.contentType === 'audio' ? (
+                      <MicrophoneIcon className="mr-2" />
                     ) : (
                       <Icon type="file-text" className="mr-2" />
                     )}
@@ -189,6 +200,8 @@ const ProgramContentListSection: React.VFC<{
                   <Typography.Text className="d-flex align-items-center">
                     {programContent.contentType === 'video' ? (
                       <Icon type="video-camera" className="mr-2" />
+                    ) : programContent.contentType === 'audio' ? (
+                      <MicrophoneIcon className="mr-2" />
                     ) : (
                       <Icon type="file-text" className="mr-2" />
                     )}
@@ -200,11 +213,16 @@ const ProgramContentListSection: React.VFC<{
                       (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
                     !isEnrolled ? (
                       <ProgramContentTrialModal
+                        programId={program.id}
                         programContentId={programContent.id}
                         render={({ setVisible }) => (
                           <StyledObscure onClick={() => setVisible(true)}>
                             <StyledTag color={theme.colors.primary[500]}>
-                              {formatMessage(productMessages.program.content.trial)}
+                              {formatMessage(
+                                programContent.contentType === 'video'
+                                  ? productMessages.program.content.trial
+                                  : productMessages.program.content.audioTrial,
+                              )}
                             </StyledTag>
                           </StyledObscure>
                         )}
@@ -212,7 +230,11 @@ const ProgramContentListSection: React.VFC<{
                     ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
                       <StyledObscure>
                         <StyledTag color={theme.colors.primary[500]}>
-                          {formatMessage(productMessages.program.content.trial)}
+                          {formatMessage(
+                            programContent.contentType === 'video'
+                              ? productMessages.program.content.trial
+                              : productMessages.program.content.audioTrial,
+                          )}
                         </StyledTag>
                       </StyledObscure>
                     ) : null}

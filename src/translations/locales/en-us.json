@@ -1223,5 +1223,10 @@
   "voucher.noUsePeriod": "No UsePeriod",
   "voucher.redeemable": "redeemable",
   "voucher.tab.exchange": "Exchange Code",
-  "voucher.title.add": "Add Voucher"
+  "voucher.title.add": "Add Voucher",
+  "product.program.tag.audioTrial": "Audio trial",
+  "common.AudioPlayer.playRate": "Play rate",
+  "common.AudioPlayer.listLoop": "List loop",
+  "common.AudioPlayer.singleLoop": "Single loop",
+  "common.AudioPlayer.random": "Random"
 }
