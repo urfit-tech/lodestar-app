@@ -2,9 +2,9 @@ import { Icon } from '@chakra-ui/icons'
 import { Button, message as antdMessage } from 'antd'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -12,6 +12,8 @@ import { StyledContainer } from '../components/layout/DefaultLayout/DefaultLayou
 import { handleError } from '../helpers'
 import { codeMessages } from '../helpers/translation'
 import { ReactComponent as ErrorIcon } from '../images/error.svg'
+import { useMember } from '../hooks/member'
+
 
 const StyledWrapper = styled.div`
   padding: 4rem 1rem;
@@ -36,38 +38,50 @@ const StyledWarning = styled.div`
 
 const VerifyEmailPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const history = useHistory()
   const [token] = useQueryParam('token', StringParam)
 
+
   const [memberId] = useQueryParam('member', StringParam)
-  const { authToken, currentMember } = useAuth()
+  const { authToken } = useAuth()
+  const { member } = useMember(memberId || '')
+
 
   const [errorMessage, setErrorMessage] = useState('')
 
-  useEffect(() => {
-    if (authToken && token && memberId && currentMember) {
+  const verifyEmail = useCallback(()=>{
+    if (authToken && token && memberId === member?.id && member?.email) {
+
       axios
         .post(
           `${process.env.REACT_APP_API_BASE_ROOT}/auth/verify-email`,
-          { memberId, email: currentMember?.email, token },
+          { memberId, email: member.email, token },
           { headers: { authorization: `Bearer ${authToken}` } },
         )
         .then(({ data: { code, message, result } }) => {
           if (code === 'SUCCESS') {
-            antdMessage.success('信箱驗證成功')
-            window.location.assign(`/settings/profile`)
+  
+              window.location.replace(`/settings/profile?verified=1`)
+     
+           
           } else {
             antdMessage.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
             setErrorMessage(message)
+
           }
         })
-        .catch(handleError)
+        .catch(error=>{
+          handleError(error)
+        })
     }
-  }, [token, memberId, authToken, currentMember])
+  },[token, memberId, authToken, member?.id, member?.email, formatMessage])
+
+  useEffect(() => {
+    verifyEmail()
+  }, [verifyEmail])
 
   if (errorMessage) {
     return (
-      <DefaultLayout noFooter noHeader centeredBox>
+      <DefaultLayout noFooter noHeader centeredBox noNotificationBar>
         <StyledWrapper className="d-flex flex-column justify-content-between align-items-center">
           <Icon as={ErrorIcon} w={100} h={100} />
 
@@ -86,7 +100,7 @@ const VerifyEmailPage: React.VFC = () => {
   }
 
   return (
-    <DefaultLayout noFooter noHeader centeredBox>
+    <DefaultLayout noFooter noHeader centeredBox noNotificationBar>
       <StyledContainer>
         <div className="text-center">
           信箱驗證中，請稍候...
