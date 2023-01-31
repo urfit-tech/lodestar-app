@@ -1876,6 +1876,50 @@ export interface GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDSVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PROGRAM_PREVIEW
+// ====================================================
+
+export interface GET_PROGRAM_PREVIEW_program_by_pk_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * instructor / assistant 
+   */
+  name: string;
+  member_id: string;
+}
+
+export interface GET_PROGRAM_PREVIEW_program_by_pk {
+  __typename: "program";
+  id: any;
+  cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
+  title: string;
+  abstract: string | null;
+  /**
+   * An array relationship
+   */
+  program_roles: GET_PROGRAM_PREVIEW_program_by_pk_program_roles[];
+}
+
+export interface GET_PROGRAM_PREVIEW {
+  /**
+   * fetch data from the table: "program" using primary key columns
+   */
+  program_by_pk: GET_PROGRAM_PREVIEW_program_by_pk | null;
+}
+
+export interface GET_PROGRAM_PREVIEWVariables {
+  programId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PROJECT_ENROLLMENT_COUNT
 // ====================================================
 
