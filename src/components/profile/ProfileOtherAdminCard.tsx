@@ -6,13 +6,19 @@ import { FormComponentProps } from 'antd/lib/form'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { FormEvent, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import hasura from '../../hasura'
 import { handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import AdminCard from '../common/AdminCard'
 import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'
+const messages = defineMessages({
+  otherInfoTitle: { id: 'member.messages.ui.otherInfoTitle', defaultMessage: '其他資料' },
+  phone: { id: 'member.messages.ui.phone', defaultMessage: '手機號碼' },
+  enterPhone: { id: 'member.messages.ui.enterPhone', defaultMessage: '請輸入手機號碼' },
+  enter: { id: 'member.messages.ui.messages.enter', defineMessages: '請輸入' },
+})
 
 const GET_POHNE_ENABLE_SETTING = gql`
   query GET_POHNE_ENABLE_SETTING {
@@ -125,15 +131,6 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
     UPDATE_MEMBER_PHONE,
   )
   console.log({ properties, memberId }, 'isPhoneEableStatus')
-  // const validatorPhonenumber = (callback: (arg0: string | undefined) => void) => {
-  //   let checkPhonenumber = form.getFieldValue('phone')
-  //   const regex = /^\+?\(?[0-9]+\)?-?[0-9]+$/
-  //   if (checkPhonenumber.match(regex)) {
-  //     callback('請輸入正確格式手機號碼!')
-  //   } else {
-  //     callback('')
-  //   }
-  // }
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     form.validateFields((error, formValues) => {
@@ -159,8 +156,6 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
 
           delete formValues['phone']
         }
-        debugger
-        // console.log(`${property_id}: ${value}`)
         updateMemberProperty({
           variables: {
             memberId,
@@ -185,7 +180,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
   return (
     <AdminCard {...cardProps}>
       <Typography.Title className="mb-4" level={4}>
-        {'其他資料'}
+        {formatMessage(messages.otherInfoTitle)}
       </Typography.Title>
       <StyledForm
         labelCol={{ span: 24, md: { span: 4 } }}
@@ -193,21 +188,20 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
         onSubmit={handleSubmit}
       >
         {phoneEnableStatus ? (
-          <Form.Item label={`手機號碼`}>
+          <Form.Item label={formatMessage(messages.phone)}>
             {form.getFieldDecorator(`phone`, {
               initialValue: phoneNumber,
               validateTrigger: 'onSubmit',
               rules: [
                 {
                   required: true,
-                  message: `請輸入手機號碼`,
+                  message: formatMessage(messages.enterPhone),
                 },
                 {
-                  validator: (value, callback) => {
-                    // let checkPhonenumber = form.getFieldValue('phone')
+                  validator: (rule, value, callback) => {
                     const regex = /^\+?\(?[0-9]+\)?-?[0-9]+$/g
                     if (!form.getFieldValue('phone').match(regex)) {
-                      callback('你就沒打正確的手機號碼! 為什麼還可以通過')
+                      callback(formatMessage(messages.enterPhone))
                     } else {
                       callback()
                     }
@@ -227,57 +221,15 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
               {form.getFieldDecorator(`${item.id}`, {
                 initialValue: defaultValue,
                 rules: [
-                  // {
-                  //   type: 'string',
-                  //   message: `請輸入${item.name}`,
-                  // },
                   {
                     required: true,
-                    message: `請輸入${item.name}`,
+                    message: `${formatMessage(messages.enter)}${item.name}`,
                   },
                 ],
               })(<MigrationInput type={item.id} />)}
             </Form.Item>
           )
         })}
-        {/* <Form.Item label={formatMessage(settingsMessages.profile.form.label.currentPassword)}>
-          {form.getFieldDecorator('password', {
-            rules: [
-              {
-                required: true,
-                message: formatMessage(profileMessages.form.message.currentPassword),
-              },
-            ],
-          })(<MigrationInput type="password" />)}
-        </Form.Item>
-        <Form.Item label={formatMessage(settingsMessages.profile.form.label.newPassword)}>
-          {form.getFieldDecorator('newPassword', {
-            rules: [
-              {
-                required: true,
-                message: formatMessage(settingsMessages.profile.form.message.newPassword),
-              },
-            ],
-          })(<MigrationInput type="password" />)}
-        </Form.Item>
-        <Form.Item label={formatMessage(settingsMessages.profile.form.label.confirmation)}>
-          {form.getFieldDecorator('confirmPassword', {
-            rules: [
-              {
-                required: true,
-                message: formatMessage(settingsMessages.profile.form.message.confirmation),
-              },
-              {
-                validator: (rule, value, callback) => {
-                  if (value && form.getFieldValue('newPassword') !== value) {
-                    callback(new Error(formatMessage(settingsMessages.profile.form.validator.password)))
-                  }
-                  callback()
-                },
-              },
-            ],
-          })(<MigrationInput type="password" />)}
-        </Form.Item> */}
         <Form.Item wrapperCol={{ md: { offset: 4 } }}>
           <Button variant="outline" className="mr-2" onClick={() => form.resetFields()}>
             {formatMessage(commonMessages.ui.cancel)}
