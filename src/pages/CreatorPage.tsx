@@ -23,6 +23,7 @@ import MerchandiseCollectionBlock from '../components/merchandise/MerchandiseCol
 import PodcastProgramCard from '../components/podcast/PodcastProgramCard'
 import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
 import ProgramCollection from '../components/program/ProgramCollection'
+import ProjectIntroCard from '../components/project/ProjectIntroCard'
 import PodcastProgramTimeline from '../containers/podcast/PodcastProgramTimeline'
 import { desktopViewMixin } from '../helpers'
 import { commonMessages, usersMessages } from '../helpers/translation'
@@ -33,9 +34,9 @@ import { usePublicMember } from '../hooks/member'
 import { useMerchandiseCollection } from '../hooks/merchandise'
 import { useEnrolledPodcastPlansCreators, usePodcastPlanIds, usePodcastProgramCollection } from '../hooks/podcast'
 import { usePublishedProgramCollection } from '../hooks/program'
+import { useMemberProjectCollection } from '../hooks/project'
 import { MemberPublicProps } from '../types/member'
 import NotFoundPage from './NotFoundPage'
-
 const StyledDescription = styled.div`
   color: var(--gray-dark);
   font-size: 14px;
@@ -58,7 +59,31 @@ const StyledCallToSubscription = styled.div`
     }
   `)}
 `
-
+const ProjectTabStyle = styled.div`
+  .ant-tabs-bar {
+    border: none;
+  }
+  .ant-tabs-tab-active {
+    padding: 10px 20px;
+    border-radius: 22px;
+    background-color: #4c5b8f;
+    border: solid 1px #4c5b8f;
+    color: #fff;
+    &:hover {
+      color: #fff;
+    }
+  }
+  .ant-tabs-tab {
+    padding: 10px 20px;
+    border-radius: 22px;
+    margin: 10px 0;
+    border: solid 1px #cdcdcd;
+    margin-right: 20px;
+  }
+  .ant-tabs-nav .ant-tabs-ink-bar {
+    background-color: transparent;
+  }
+`
 const CreatorPage: React.VFC = () => {
   const { creatorId } = useParams<{ creatorId: string }>()
   const { member: creator, loadingMember: loadingCreator } = usePublicMember(creatorId)
@@ -74,7 +99,7 @@ const CreatorPage: React.VFC = () => {
     )
   }
 
-  if (!creator || !['content-creator', 'app-owner'].includes(creator.role)) {
+  if (!creator || !creator.hasBackstageEnterPermission) {
     return <NotFoundPage />
   }
 
@@ -117,9 +142,12 @@ const CreatorTabs: React.VFC<{
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { enabledModules } = useApp()
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
+  const [defaultActive] = useQueryParam('active', StringParam)
   const [isMerchandisesPhysical] = useQueryParam('isPhysical', BooleanParam)
 
   const { currentMemberId, isAuthenticated } = useAuth()
+  const { projects } = useMemberProjectCollection(creatorId || '')
+
   const { programs } = usePublishedProgramCollection({
     instructorId: creatorId,
     isPrivate: false,
@@ -127,6 +155,7 @@ const CreatorTabs: React.VFC<{
   const { activities } = usePublishedActivityCollection({
     organizerId: creatorId,
   })
+
   const { posts } = usePostPreviewCollection({ authorId: creatorId })
   const { podcastPlanIds } = usePodcastPlanIds(creatorId)
   const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(currentMemberId || '')
@@ -139,6 +168,19 @@ const CreatorTabs: React.VFC<{
   const isEnrolledPodcastPlan = enrolledPodcastPlansCreators
     .map(enrolledPodcastPlansCreator => enrolledPodcastPlansCreator.id)
     .includes(creatorId)
+
+  const projectsTab = [
+    {
+      key: 'myProject',
+      name: formatMessage(usersMessages.tab.addProjectsTab1),
+      content: projects.filter(v => v.authorId === creatorId),
+    },
+    {
+      key: 'otherProject',
+      name: formatMessage(usersMessages.tab.addProjectsTab2),
+      content: projects.filter(v => v.authorId !== creatorId),
+    },
+  ]
   const tabContents: {
     key: string
     name: string
@@ -182,6 +224,45 @@ const CreatorTabs: React.VFC<{
         <>
           <ProgramCollection programs={programs} />
         </>
+      ),
+    },
+    {
+      key: 'projects',
+      name: formatMessage(usersMessages.tab.addProjects),
+      isVisible: projects.length > 0,
+      content: (
+        <Tabs
+          defaultActiveKey="1"
+          renderTabBar={(tabsProps, DefaultTabBar) => (
+            <ProjectTabStyle className="container">
+              <DefaultTabBar {...tabsProps} />
+            </ProjectTabStyle>
+          )}
+        >
+          {projectsTab.map(project => {
+            return (
+              <Tabs.TabPane tab={project.name} key={project.key}>
+                <div className="row">
+                  {project.content.length > 0 ? (
+                    project.content.map(item => {
+                      return (
+                        <div key={item.id} className="col-12 col-lg-4 mb-5">
+                          <Link to={`/projects/${item.id}`}>
+                            <ProjectIntroCard {...item} />
+                          </Link>
+                        </div>
+                      )
+                    })
+                  ) : (
+                    <StyledDescription className="d-flex flex-grow-1 justify-content-center text-center container col-12 align-self-center">
+                      {formatMessage(commonMessages.content.noProject)}
+                    </StyledDescription>
+                  )}
+                </div>
+              </Tabs.TabPane>
+            )
+          })}
+        </Tabs>
       ),
     },
     {

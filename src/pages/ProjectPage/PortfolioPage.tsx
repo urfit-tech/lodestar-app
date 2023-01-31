@@ -42,6 +42,7 @@ type Portfolio = DeepPick<
   | 'projectTags.[].id'
   | 'projectTags.[].name'
   | 'projectRoles.[].id'
+  | 'projectRoles.[].agreedAt'
   | 'projectRoles.[].member.id'
   | 'projectRoles.[].member.name'
   | 'projectRoles.[].member.pictureUrl'
@@ -217,6 +218,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                                   border="solid 1px #ececec"
                                   borderRadius="22px"
                                   mr="0.75rem"
+                                  bgColor={role.agreedAt ? '' : '#f7f8f8'}
                                 >
                                   <Image
                                     src={role.member.pictureUrl || EmptyAvatar}
@@ -227,7 +229,9 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                                     mr="0.75rem"
                                     objectFit="cover"
                                   />
-                                  <Box color="var(--gray-darker)">{role.member.name}</Box>
+                                  <Box color={role.agreedAt ? 'var(--gray-darker)' : 'var(--gray-dark)'}>
+                                    {role.member.name}
+                                  </Box>
                                 </Box>
                               ))}
                             </Flex>
@@ -359,14 +363,11 @@ const useProjectPortfolio = (projectId: string) => {
             }
           }
           project_roles(
-            where: {
-              identity: { name: { _neq: "author" } }
-              rejected_at: { _is_null: true }
-              agreed_at: { _is_null: false }
-            }
+            where: { identity: { name: { _neq: "author" } }, rejected_at: { _is_null: true } }
             order_by: { identity: { position: asc } }
           ) {
             id
+            agreed_at
             member {
               id
               name
@@ -412,6 +413,7 @@ const useProjectPortfolio = (projectId: string) => {
     projectRoles:
       data?.project_by_pk?.project_roles.map(v => ({
         id: v.id,
+        agreedAt: v.agreed_at ? new Date(v.agreed_at) : null,
         member: {
           id: v.member?.id || '',
           name: v.member?.name || '',

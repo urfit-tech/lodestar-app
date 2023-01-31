@@ -13,8 +13,8 @@ export type MemberPublicProps = {
   abstract: string | null
   description: string | null
   title: string | null
-
   specialtyNames?: string[]
+  hasBackstageEnterPermission?: boolean
 }
 
 export type MemberProps = {
@@ -35,6 +35,7 @@ export type MemberProps = {
   facebookUserId: string | null
   googleUserId: string | null
   youtubeChannelIds: string[] | null
+  verifiedEmails: string[] | null
 
   phone?: string
 }

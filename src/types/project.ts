@@ -63,6 +63,7 @@ export type ProjectBasicProps = {
 }
 export type ProjectIntroProps = ProjectBasicProps & {
   projectPlans?: ProjectPlanBasicProps[]
+  views?: number
 }
 
 export type ProjectProps = ProjectBasicProps & {
@@ -88,6 +89,7 @@ type Identity = {
 
 type ProjectRole = {
   id: string
+  agreedAt: Date | null
   member: Member
   identity: Identity
 }
