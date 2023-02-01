@@ -46,14 +46,14 @@ const FeaturingPostItem: React.VFC<
       <StyledBody>
         <div className="d-flex align-items-center justify-content-center">
           <StyledPostTitle className={variant}>{title}</StyledPostTitle>
-          {pinnedAt ? <Icon as={PinOIcon} className="mr-1" /> : ''}
         </div>
 
         <StyledPostMeta>
           <Icon as={UserOIcon} className="mr-1" />
           <span className="mr-2">{member?.name || ''}</span>
           <Icon as={CalendarAltOIcon} className="mr-1" />
-          <span>{publishedAt ? moment(publishedAt).format('YYYY-MM-DD') : ''}</span>
+          <span className="mr-2">{publishedAt ? moment(publishedAt).format('YYYY-MM-DD') : ''}</span>
+          {pinnedAt ? <Icon as={PinOIcon} className="mr-1" /> : ''}
         </StyledPostMeta>
       </StyledBody>
     </StyledWrapper>
