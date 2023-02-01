@@ -830,30 +830,30 @@ export interface INSERT_SUGGESTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_POHNE_ENABLE_SETTING
+// GraphQL query operation: GET_PHONE_ENABLE_SETTING
 // ====================================================
 
-export interface GET_POHNE_ENABLE_SETTING_setting_app_settings {
+export interface GET_PHONE_ENABLE_SETTING_setting_app_settings {
   __typename: "app_setting";
   id: any;
   key: string;
   value: string;
 }
 
-export interface GET_POHNE_ENABLE_SETTING_setting {
+export interface GET_PHONE_ENABLE_SETTING_setting {
   __typename: "setting";
   key: string;
   /**
    * An array relationship
    */
-  app_settings: GET_POHNE_ENABLE_SETTING_setting_app_settings[];
+  app_settings: GET_PHONE_ENABLE_SETTING_setting_app_settings[];
 }
 
-export interface GET_POHNE_ENABLE_SETTING {
+export interface GET_PHONE_ENABLE_SETTING {
   /**
    * fetch data from the table: "setting"
    */
-  setting: GET_POHNE_ENABLE_SETTING_setting[];
+  setting: GET_PHONE_ENABLE_SETTING_setting[];
 }
 
 /* tslint:disable */
@@ -889,17 +889,17 @@ export interface GET_MEMBER_PHONEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_PROPERTY
+// GraphQL query operation: GET_EDITABLE_PROPERTY
 // ====================================================
 
-export interface GET_PROPERTY_property_member_properties {
+export interface GET_EDITABLE_PROPERTY_property_member_properties {
   __typename: "member_property";
   id: any;
   member_id: string;
   value: string;
 }
 
-export interface GET_PROPERTY_property {
+export interface GET_EDITABLE_PROPERTY_property {
   __typename: "property";
   id: any;
   name: string;
@@ -908,17 +908,17 @@ export interface GET_PROPERTY_property {
   /**
    * An array relationship
    */
-  member_properties: GET_PROPERTY_property_member_properties[];
+  member_properties: GET_EDITABLE_PROPERTY_property_member_properties[];
 }
 
-export interface GET_PROPERTY {
+export interface GET_EDITABLE_PROPERTY {
   /**
    * fetch data from the table: "property"
    */
-  property: GET_PROPERTY_property[];
+  property: GET_EDITABLE_PROPERTY_property[];
 }
 
-export interface GET_PROPERTYVariables {
+export interface GET_EDITABLE_PROPERTYVariables {
   type: string;
 }
 
