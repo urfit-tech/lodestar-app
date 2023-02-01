@@ -23,9 +23,10 @@ const StyledWrapper = styled.div<{ coverType: string; coverUrl: string }>`
 const FundingCoverBlock: React.VFC<{
   coverType: string
   coverUrl: string
-}> = ({ coverType, coverUrl }) => {
+  previewUrl?: string
+}> = ({ coverType, coverUrl, previewUrl }) => {
   return (
-    <StyledWrapper coverType={coverType} coverUrl={coverUrl}>
+    <StyledWrapper coverType={coverType} coverUrl={previewUrl || coverUrl}>
       {coverType === 'video' && (
         <StyledPlayer>
           {coverUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (

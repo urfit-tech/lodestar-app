@@ -80,6 +80,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
   expiredAt,
   coverType,
   coverUrl,
+  previewUrl,
   title,
   abstract,
   description,
@@ -109,7 +110,11 @@ const FundingPage: React.VFC<ProjectProps> = ({
       <StyledCover className="container mb-4">
         <div className="row">
           <div className="col-12 col-lg-8">
-            <FundingCoverBlock coverType={coverType} coverUrl={coverUrl || EmptyCover} />
+            <FundingCoverBlock
+              coverType={coverType}
+              coverUrl={coverUrl || EmptyCover}
+              previewUrl={previewUrl || EmptyCover}
+            />
           </div>
           <div className="col-12 col-lg-4">
             <FundingSummaryBlock
