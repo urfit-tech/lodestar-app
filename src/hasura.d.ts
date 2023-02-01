@@ -972,15 +972,7 @@ export interface UPDATE_MEMBER_PROPERTYVariables {
 // GraphQL mutation operation: UPDATE_MEMBER_PHONE
 // ====================================================
 
-export interface UPDATE_MEMBER_PHONE_delete_member_phone {
-  __typename: "member_phone_mutation_response";
-  /**
-   * number of rows affected by the mutation
-   */
-  affected_rows: number;
-}
-
-export interface UPDATE_MEMBER_PHONE_insert_member_phone {
+export interface UPDATE_MEMBER_PHONE_update_member_phone {
   __typename: "member_phone_mutation_response";
   /**
    * number of rows affected by the mutation
@@ -990,17 +982,41 @@ export interface UPDATE_MEMBER_PHONE_insert_member_phone {
 
 export interface UPDATE_MEMBER_PHONE {
   /**
-   * delete data from the table: "member_phone"
+   * update data of the table: "member_phone"
    */
-  delete_member_phone: UPDATE_MEMBER_PHONE_delete_member_phone | null;
-  /**
-   * insert data into the table: "member_phone"
-   */
-  insert_member_phone: UPDATE_MEMBER_PHONE_insert_member_phone | null;
+  update_member_phone: UPDATE_MEMBER_PHONE_update_member_phone | null;
 }
 
 export interface UPDATE_MEMBER_PHONEVariables {
-  memberId: string;
+  phoneId: any;
+  phoneValue: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_MEMBER_PHONE
+// ====================================================
+
+export interface INSERT_MEMBER_PHONE_insert_member_phone {
+  __typename: "member_phone_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_MEMBER_PHONE {
+  /**
+   * insert data into the table: "member_phone"
+   */
+  insert_member_phone: INSERT_MEMBER_PHONE_insert_member_phone | null;
+}
+
+export interface INSERT_MEMBER_PHONEVariables {
   memberPhone: member_phone_insert_input[];
 }
 

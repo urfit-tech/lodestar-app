@@ -49,7 +49,6 @@ const ProfileAdminPage: React.VFC = () => {
       <div className="mb-3" id="account">
         {currentMemberId && <ProfileAccountAdminCard memberId={currentMemberId} />}
       </div>
-      <div className="mb-3">{currentMemberId && <ProfileBasicAdminCard memberId={currentMemberId} />}</div>
       <div className="mb-3">{currentMemberId && <ProfileOtherAdminCard memberId={currentMemberId} />}</div>
       <div className="mb-3">{currentMemberId && <ProfileAccountAdminCard memberId={currentMemberId} />}</div>
       <div className="mb-3">{currentMemberId && <ProfilePasswordAdminCard memberId={currentMemberId} />}</div>

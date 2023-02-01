@@ -17,7 +17,7 @@ const messages = defineMessages({
   otherInfoTitle: { id: 'member.messages.ui.otherInfoTitle', defaultMessage: '其他資料' },
   phone: { id: 'member.messages.ui.phone', defaultMessage: '手機號碼' },
   enterPhone: { id: 'member.messages.ui.enterPhone', defaultMessage: '請輸入手機號碼' },
-  enter: { id: 'member.messages.ui.messages.enter', defineMessages: '請輸入' },
+  enter: { id: 'member.messages.ui.enter', defaultMessage: '請輸入' },
 })
 
 const GET_POHNE_ENABLE_SETTING = gql`
@@ -34,7 +34,7 @@ const GET_POHNE_ENABLE_SETTING = gql`
 `
 const GET_MEMBER_PHONE = gql`
   query GET_MEMBER_PHONE($memberId: String!) {
-    member_phone(where: { member_id: { _eq: $memberId } }) {
+    member_phone(where: { member_id: { _eq: $memberId } }, limit: 1, order_by: { updated_at: asc }) {
       id
       member_id
       phone
@@ -88,13 +88,29 @@ const useMemberPhoneEableSetting = (memberId: string) => {
     phoneEnable.loading || phoneEnable.error || !phoneEnable.data
       ? null
       : phoneEnable.data.setting[0].app_settings[0].value
-  const phoneNumber =
-    phoneNumberData.loading || phoneNumberData.error || !phoneNumberData.data
-      ? null
-      : phoneNumberData.data.member_phone.find((item: { member_id: string }) => item.member_id === memberId)?.phone ||
-        ''
-  console.log(phoneNumber, phoneEnable, 'phonetest')
-  return { phoneEnableStatus, phoneNumber }
+  let defaultPhoneNumber = null
+
+  // ? null
+  // : {
+  //     id:
+  //     value:
+  //       phoneNumberData.data.member_phone.find((item: { member_id: string }) => item.member_id === memberId)
+  //         ?.phone || '',
+  //   }
+
+  if (phoneNumberData.loading || phoneNumberData.error || !phoneNumberData.data) {
+    defaultPhoneNumber = null
+  } else {
+    let data = phoneNumberData.data.member_phone.find((item: { member_id: string }) => item.member_id === memberId) || {
+      id: '',
+      phone: '',
+    }
+    defaultPhoneNumber = {
+      id: data?.id,
+      value: data?.phone,
+    }
+  }
+  return { phoneEnableStatus, defaultPhoneNumber, refetchPhoneMember: phoneNumberData.refetch }
 }
 const UPDATE_MEMBER_PROPERTY = gql`
   mutation UPDATE_MEMBER_PROPERTY($memberId: String!, $memberProperties: [member_property_insert_input!]!) {
@@ -107,22 +123,25 @@ const UPDATE_MEMBER_PROPERTY = gql`
   }
 `
 const UPDATE_MEMBER_PHONE = gql`
-  mutation UPDATE_MEMBER_PHONE($memberId: String!, $memberPhone: [member_phone_insert_input!]!) {
-    delete_member_phone(where: { member_id: { _eq: $memberId } }) {
+  mutation UPDATE_MEMBER_PHONE($phoneId: uuid!, $phoneValue: String!) {
+    update_member_phone(where: { id: { _eq: $phoneId } }, _set: { phone: $phoneValue }) {
       affected_rows
     }
+  }
+`
+const INSERT_MEMBER_PHONE = gql`
+  mutation INSERT_MEMBER_PHONE($memberPhone: [member_phone_insert_input!]!) {
     insert_member_phone(objects: $memberPhone) {
       affected_rows
     }
   }
 `
-
 type ProfileOtherAdminCardProps = CardProps & FormComponentProps & { memberId: string }
 const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { authToken } = useAuth()
   const [loading, setLoading] = useState(false)
-  const { phoneEnableStatus, phoneNumber } = useMemberPhoneEableSetting(memberId)
+  const { phoneEnableStatus, defaultPhoneNumber, refetchPhoneMember } = useMemberPhoneEableSetting(memberId)
   const { properties, refetchProperties, errorProperties, loadingProperties } = useProperty()
   const [updateMemberProperty] = useMutation<hasura.UPDATE_MEMBER_PROPERTY, hasura.UPDATE_MEMBER_PROPERTYVariables>(
     UPDATE_MEMBER_PROPERTY,
@@ -130,50 +149,58 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
   const [updateMemberPhone] = useMutation<hasura.UPDATE_MEMBER_PHONE, hasura.UPDATE_MEMBER_PHONEVariables>(
     UPDATE_MEMBER_PHONE,
   )
-  console.log({ properties, memberId }, 'isPhoneEableStatus')
+  const [insertMemberPhone] = useMutation<hasura.INSERT_MEMBER_PHONE, hasura.INSERT_MEMBER_PHONEVariables>(
+    INSERT_MEMBER_PHONE,
+  )
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     form.validateFields((error, formValues) => {
       if (!error) {
         setLoading(true)
-        if (formValues['phone']) {
-          updateMemberPhone({
+        try {
+          if (formValues['phone']) {
+            if (defaultPhoneNumber?.value === '') {
+              insertMemberPhone({
+                variables: {
+                  memberPhone: Object.keys(formValues)
+                    .filter(propertyId => propertyId === 'phone')
+                    .map(() => ({
+                      member_id: memberId,
+                      phone: formValues['phone'],
+                    })),
+                },
+              })
+            } else {
+              updateMemberPhone({
+                variables: {
+                  phoneId: defaultPhoneNumber?.id,
+                  phoneValue: formValues['phone'] || defaultPhoneNumber?.value,
+                },
+              })
+            }
+
+            delete formValues['phone']
+          }
+          updateMemberProperty({
             variables: {
               memberId,
-              memberPhone: Object.keys(formValues)
-                .filter(propertyId => propertyId === 'phone')
-                .map(() => ({
+              memberProperties: Object.keys(formValues)
+                .filter(propertyId => formValues[propertyId])
+                .map(propertyId => ({
                   member_id: memberId,
-                  phone: formValues['phone'],
+                  property_id: propertyId,
+                  value: formValues[propertyId],
                 })),
             },
           })
-            .then(() => {
-              message.success(formatMessage(commonMessages.event.successfullySaved))
-              refetchProperties()
-            })
-            .catch(handleError)
-
-          delete formValues['phone']
+          refetchPhoneMember()
+          refetchProperties()
+          message.success(formatMessage(commonMessages.event.successfullySaved))
+        } catch (err) {
+          handleError(err)
+        } finally {
+          setLoading(false)
         }
-        updateMemberProperty({
-          variables: {
-            memberId,
-            memberProperties: Object.keys(formValues)
-              .filter(propertyId => formValues[propertyId])
-              .map(propertyId => ({
-                member_id: memberId,
-                property_id: propertyId,
-                value: formValues[propertyId],
-              })),
-          },
-        })
-          .then(() => {
-            message.success(formatMessage(commonMessages.event.successfullySaved))
-            refetchProperties()
-          })
-          .catch(handleError)
-          .finally(() => setLoading(false))
       }
     })
   }
@@ -190,7 +217,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
         {phoneEnableStatus ? (
           <Form.Item label={formatMessage(messages.phone)}>
             {form.getFieldDecorator(`phone`, {
-              initialValue: phoneNumber,
+              initialValue: defaultPhoneNumber?.value,
               validateTrigger: 'onSubmit',
               rules: [
                 {
@@ -215,7 +242,6 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
         )}
         {properties.map(item => {
           let defaultValue = item.memberProperties.find(item => item.member_id === memberId)?.value || ''
-          console.log('defaultValue', defaultValue)
           return (
             <Form.Item label={`${item.name}`}>
               {form.getFieldDecorator(`${item.id}`, {
