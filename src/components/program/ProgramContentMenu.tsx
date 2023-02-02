@@ -14,6 +14,7 @@ import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds, useProgramContentBody } from '../../hooks/program'
+import { MicrophoneIcon } from '../../images'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
@@ -324,12 +325,17 @@ const SortBySectionItem: React.VFC<{
             <>
               <StyledIcon as={LockIcon} className="mr-2" />
               <span>
-                {programContent.contentType === 'video' && <span>{durationFormatter(programContent.duration)}</span>}
+                {(programContent.contentType === 'video' || programContent.contentType === 'audio') && (
+                  <span>{durationFormatter(programContent.duration)}</span>
+                )}
               </span>
             </>
-          ) : programContent.contentType === 'video' ? (
+          ) : programContent.contentType === 'video' || programContent.contentType === 'audio' ? (
             <>
-              <StyledIcon as={AiOutlineVideoCamera} className="mr-2" />
+              <StyledIcon
+                as={programContent.contentType === 'video' ? AiOutlineVideoCamera : MicrophoneIcon}
+                className="mr-2"
+              />
               <span>
                 {durationFormatter(programContent.duration)}
                 <span className="ml-2">

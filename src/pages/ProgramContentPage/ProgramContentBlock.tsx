@@ -11,14 +11,17 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
+import { useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
+import AudioPlayer from '../../components/common/AudioPlayer'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
+import { getFileDownloadableLink } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { DisplayModeEnum, ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
@@ -68,18 +71,37 @@ const ProgramContentBlock: React.VFC<{
 }> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { loading: loadingApp, enabledModules } = useApp()
+  const { loading: loadingApp, enabledModules, id: appId } = useApp()
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const { hasProgramContentPermission, isLoginTrial } = useHasProgramContentPermission(programContentId)
+  const [audioUrl, setAudioUrl] = useState<string>()
 
   const instructor = programRoles.filter(role => role.name === 'instructor')[0]
+  const {
+    params: { programContentId: currentContentId },
+    url,
+  } = useRouteMatch<{ programContentId: string }>()
+  const urlParams = new URLSearchParams(window.location.search)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
     programContentProgress?.find(progress => progress.programContentId === programContentId)?.progress || 0
 
+  const currentProgramContentProgress = programContentProgress?.find(
+    progress => progress.programContentId === programContentId,
+  )
+
+  const lastProgress =
+    (!!currentProgramContentProgress?.lastProgress && currentProgramContentProgress?.lastProgress !== 1) ||
+    currentProgramContentProgress?.progress !== 1
+      ? currentProgramContentProgress?.lastProgress || 0
+      : 0
+
+  const prevProgramContent = flatten(programContentSections.map(v => v.contents)).find(
+    (_, i, contents) => contents[i + 1]?.id === programContentId,
+  )
   const nextProgramContent = flatten(programContentSections.map(v => v.contents)).find(
     (_, i, contents) => contents[i - 1]?.id === programContentId,
   )
@@ -88,6 +110,7 @@ const ProgramContentBlock: React.VFC<{
     if (
       loadingProgramContent ||
       programContentBodyType === 'video' ||
+      programContentBodyType === 'audio' ||
       !insertProgress ||
       !refetchProgress ||
       initialProgress === 1 ||
@@ -115,6 +138,14 @@ const ProgramContentBlock: React.VFC<{
     hasProgramContentPermission,
     programContent?.publishedAt,
   ])
+
+  useEffect(() => {
+    if (!audioUrl && programContentBodyType === 'audio') {
+      getFileDownloadableLink(`audios/${appId}/${programId}/${programContentId}`, authToken).then(url => {
+        setAudioUrl(url)
+      })
+    }
+  }, [programContentBodyType, programContentId, programId])
 
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -185,6 +216,59 @@ const ProgramContentBlock: React.VFC<{
                   .catch(() => {})
                 if (e.type === 'ended') {
                   insertProgramProgress(1)?.then(() => refetchProgress())
+                }
+              }
+            }}
+          />
+        )}
+
+      {programContent.contentType === 'audio' &&
+        ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
+          currentUserRole === 'app-owner') && (
+          <AudioPlayer
+            autoPlay
+            title={programContent.title}
+            audioUrl={audioUrl}
+            lastProgress={lastProgress}
+            onPrev={
+              prevProgramContent
+                ? () => {
+                    history.push(
+                      `${url.replace(currentContentId, prevProgramContent?.id || '')}?back=${urlParams.get('back')}`,
+                    )
+                  }
+                : undefined
+            }
+            onNext={
+              nextProgramContent
+                ? () => {
+                    history.push(
+                      `${url.replace(currentContentId, nextProgramContent?.id || '')}?back=${urlParams.get('back')}`,
+                    )
+                  }
+                : undefined
+            }
+            onAudioEvent={e => {
+              if (e.type === 'progress') {
+                insertProgramProgress(e.progress)
+              } else {
+                axios
+                  .post(
+                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+                    {
+                      programContentId,
+                      data: e.audioState,
+                    },
+                    { headers: { authorization: `Bearer ${authToken}` } },
+                  )
+                  .then(({ data: { code, result } }) => {
+                    if (code === 'SUCCESS') {
+                      return
+                    }
+                  })
+                  .catch(() => {})
+                if (e.type === 'ended') {
+                  insertProgramProgress(1)
                 }
               }
             }}

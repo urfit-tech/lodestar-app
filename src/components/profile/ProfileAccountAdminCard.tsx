@@ -16,6 +16,7 @@ import { ReactComponent as YouTubeIcon } from '../../images/youtube-icon.svg'
 import AdminCard from '../common/AdminCard'
 import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'
+import {default as localProfileMessages} from './translation'
 
 const StyledSocialLogo = styled.div`
   width: 44px;
@@ -28,11 +29,26 @@ const StyledSocialLogo = styled.div`
 `
 const StyledText = styled.div`
   line-height: normal;
+  margin-top: 0.5rem;
+
+  @media (min-width: 768px) {
+   margin-top: 0rem;
+   white-space: nowrap;
+
+  }
 `
 
 const StyledFormItem = styled(Form.Item)`
   span.ant-form-item-children {
     display: flex;
+    align-items: left;
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    span.ant-form-item-children {
+      flex-direction: row;
+    }
   }
 `
 
@@ -50,6 +66,7 @@ const UnVerifiedSuffix: React.VFC<{}> = ({}) => {
 }
 
 const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, memberId }) => {
+  const {formatMessage} = useIntl()
   const [count, setCount] = useState<number>(30)
   const [showButton, setShowButton] = useState<boolean>(true)
 
@@ -68,7 +85,7 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
         { headers: { Authorization: `Bearer ${authToken}` } },
       )
       .then(({ data: { code } }) => {
-        message.success('驗證信寄送成功')
+        message.success(formatMessage(localProfileMessages.ProfileAccountAdminCard.sendVerifiedEmailSuccessfully))
         setShowButton(false)
         const interval = setInterval(() => {
           setCount(currentCount => --currentCount)
@@ -89,13 +106,13 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
   }
 
   return (
-    <div className="ml-2">
+    <div className="d-flex ml-2 align-items-center">
       {showButton ? (
         <Button colorScheme="teal" variant="link" onClick={handleClick}>
-          寄驗證信
+          {formatMessage(localProfileMessages.ProfileAccountAdminCard.sendEmail)}
         </Button>
       ) : (
-        <StyledText>{count} 秒後可再寄送</StyledText>
+        <StyledText>{formatMessage(localProfileMessages.ProfileAccountAdminCard.sendEmailAfter, {count})}</StyledText>
       )}
     </div>
   )
@@ -174,7 +191,7 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
             <MigrationInput
               suffix={
                 settings['feature.email_verification'] &&
-                (isVerifiedCurrentEmail ? <CheckCircleIcon color="#319795" /> : <UnVerifiedSuffix />)
+                (isVerifiedCurrentEmail ? <CheckCircleIcon color="#4ed1b3" /> : <UnVerifiedSuffix />)
               }
               suffixWidth={settings['feature.email_verification'] && (isVerifiedCurrentEmail ? undefined : 'auto')}
             />,

@@ -18,6 +18,15 @@ const defaultRoutesMap: RoutesMap = {
     path: '/',
     pageName: 'HomePage',
   },
+  // meeting
+  meetsUs: {
+    path: '/meets/us',
+    pageName: 'MeetingPage',
+  },
+  meetsOne: {
+    path: '/meets/:username',
+    pageName: 'MeetingPage',
+  },
   // system
   error: {
     path: '/error',

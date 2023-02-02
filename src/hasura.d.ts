@@ -3259,6 +3259,7 @@ export interface GET_POST_PREVIEW_COLLECTION_post {
   cover_url: string | null;
   video_url: string | null;
   abstract: string | null;
+  pinned_at: any | null;
   published_at: any | null;
   updated_at: any | null;
   /**
