@@ -1,4 +1,6 @@
+import { useQuery } from '@apollo/react-hooks'
 import { Box } from '@chakra-ui/react'
+import gql from 'graphql-tag'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { sum } from 'ramda'
 import React from 'react'
@@ -8,8 +10,9 @@ import { CustomRatioImage } from '../../components/common/Image'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import ProgressBar from '../../components/common/ProgressBar'
 import { useProgramContentProgress } from '../../contexts/ProgressContext'
-import { useProgram } from '../../hooks/program'
+import hasura from '../../hasura'
 import EmptyCover from '../../images/empty-cover.png'
+import { ProgramPreview, ProgramRoleName } from '../../types/program'
 
 const StyledWrapper = styled.div`
   overflow: hidden;
@@ -48,7 +51,7 @@ const ProgramCard: React.VFC<{
   isExpired?: boolean
   previousPage?: string
 }> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress, isExpired, previousPage }) => {
-  const { program } = useProgram(programId)
+  const { programPreview } = useProgramPreview(programId)
   const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
 
   const viewRate = programContentProgress?.length
@@ -57,9 +60,9 @@ const ProgramCard: React.VFC<{
 
   return (
     <Box opacity={isExpired ? '50%' : '100%'}>
-      {!noInstructor && program?.roles && (
+      {!noInstructor && programPreview?.roles && (
         <AvatarPlaceHolder className="my-3">
-          {program.roles
+          {programPreview.roles
             .filter(role => role.name === 'instructor')
             .slice(0, 1)
             .map(role => (
@@ -85,12 +88,16 @@ const ProgramCard: React.VFC<{
           <CustomRatioImage
             width="100%"
             ratio={9 / 16}
-            src={(program && (program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl)) || EmptyCover}
+            src={
+              (programPreview &&
+                (programPreview.coverThumbnailUrl || programPreview.coverUrl || programPreview.coverMobileUrl)) ||
+              EmptyCover
+            }
             shape="rounded"
           />
           <StyledMeta>
-            <StyledTitle>{program && program.title}</StyledTitle>
-            <StyledDescription>{program && program.abstract}</StyledDescription>
+            <StyledTitle>{programPreview && programPreview.title}</StyledTitle>
+            <StyledDescription>{programPreview && programPreview.abstract}</StyledDescription>
 
             {withProgress && !loadingProgress && <ProgressBar percent={Math.floor(viewRate * 100)} />}
           </StyledMeta>
@@ -101,3 +108,51 @@ const ProgramCard: React.VFC<{
 }
 
 export default ProgramCard
+
+const useProgramPreview = (programId: string) => {
+  const { loading, data, error, refetch } = useQuery<hasura.GET_PROGRAM_PREVIEW, hasura.GET_PROGRAM_PREVIEWVariables>(
+    gql`
+      query GET_PROGRAM_PREVIEW($programId: uuid!) {
+        program_by_pk(id: $programId) {
+          id
+          cover_url
+          cover_mobile_url
+          cover_thumbnail_url
+          title
+          abstract
+          program_roles(order_by: [{ created_at: asc }, { id: desc }]) {
+            id
+            name
+            member_id
+          }
+        }
+      }
+    `,
+    { variables: { programId } },
+  )
+
+  const programPreview: ProgramPreview | null =
+    loading || error || !data || !data.program_by_pk
+      ? null
+      : {
+          id: data.program_by_pk.id,
+          coverUrl: data.program_by_pk.cover_url,
+          coverMobileUrl: data.program_by_pk.cover_mobile_url,
+          coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url,
+          title: data.program_by_pk.title,
+          abstract: data.program_by_pk.abstract,
+          roles: data.program_by_pk.program_roles.map(programRole => ({
+            id: programRole.id,
+            name: programRole.name as ProgramRoleName,
+            memberId: programRole.member_id,
+            memberName: programRole.member_id,
+          })),
+        }
+
+  return {
+    loadingProgramPreview: loading,
+    errorProgramPreview: error,
+    programPreview,
+    refetchProgramPreview: refetch,
+  }
+}
