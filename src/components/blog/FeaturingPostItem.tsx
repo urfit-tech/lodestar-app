@@ -53,7 +53,7 @@ const FeaturingPostItem: React.VFC<
           <span className="mr-2">{member?.name || ''}</span>
           <Icon as={CalendarAltOIcon} className="mr-1" />
           <span className="mr-2">{publishedAt ? moment(publishedAt).format('YYYY-MM-DD') : ''}</span>
-          {pinnedAt ? <Icon as={PinOIcon} className="mr-1" /> : ''}
+          {pinnedAt ? <Icon as={PinOIcon} : ''}
         </StyledPostMeta>
       </StyledBody>
     </StyledWrapper>
