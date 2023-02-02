@@ -830,6 +830,202 @@ export interface INSERT_SUGGESTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_PHONE_ENABLE_SETTING
+// ====================================================
+
+export interface GET_PHONE_ENABLE_SETTING_setting_app_settings {
+  __typename: "app_setting";
+  id: any;
+  key: string;
+  value: string;
+}
+
+export interface GET_PHONE_ENABLE_SETTING_setting {
+  __typename: "setting";
+  key: string;
+  /**
+   * An array relationship
+   */
+  app_settings: GET_PHONE_ENABLE_SETTING_setting_app_settings[];
+}
+
+export interface GET_PHONE_ENABLE_SETTING {
+  /**
+   * fetch data from the table: "setting"
+   */
+  setting: GET_PHONE_ENABLE_SETTING_setting[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_PHONE
+// ====================================================
+
+export interface GET_MEMBER_PHONE_member_phone {
+  __typename: "member_phone";
+  id: any;
+  member_id: string;
+  phone: string;
+}
+
+export interface GET_MEMBER_PHONE {
+  /**
+   * fetch data from the table: "member_phone"
+   */
+  member_phone: GET_MEMBER_PHONE_member_phone[];
+}
+
+export interface GET_MEMBER_PHONEVariables {
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_EDITABLE_PROPERTY
+// ====================================================
+
+export interface GET_EDITABLE_PROPERTY_property_member_properties {
+  __typename: "member_property";
+  id: any;
+  member_id: string;
+  value: string;
+}
+
+export interface GET_EDITABLE_PROPERTY_property {
+  __typename: "property";
+  id: any;
+  name: string;
+  placeholder: string | null;
+  is_editable: boolean;
+  /**
+   * An array relationship
+   */
+  member_properties: GET_EDITABLE_PROPERTY_property_member_properties[];
+}
+
+export interface GET_EDITABLE_PROPERTY {
+  /**
+   * fetch data from the table: "property"
+   */
+  property: GET_EDITABLE_PROPERTY_property[];
+}
+
+export interface GET_EDITABLE_PROPERTYVariables {
+  type: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UPDATE_MEMBER_PROPERTY
+// ====================================================
+
+export interface UPDATE_MEMBER_PROPERTY_delete_member_property {
+  __typename: "member_property_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface UPDATE_MEMBER_PROPERTY_insert_member_property {
+  __typename: "member_property_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface UPDATE_MEMBER_PROPERTY {
+  /**
+   * delete data from the table: "member_property"
+   */
+  delete_member_property: UPDATE_MEMBER_PROPERTY_delete_member_property | null;
+  /**
+   * insert data into the table: "member_property"
+   */
+  insert_member_property: UPDATE_MEMBER_PROPERTY_insert_member_property | null;
+}
+
+export interface UPDATE_MEMBER_PROPERTYVariables {
+  memberId: string;
+  memberProperties: member_property_insert_input[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UPDATE_MEMBER_PHONE
+// ====================================================
+
+export interface UPDATE_MEMBER_PHONE_update_member_phone {
+  __typename: "member_phone_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface UPDATE_MEMBER_PHONE {
+  /**
+   * update data of the table: "member_phone"
+   */
+  update_member_phone: UPDATE_MEMBER_PHONE_update_member_phone | null;
+}
+
+export interface UPDATE_MEMBER_PHONEVariables {
+  phoneId: any;
+  phoneValue: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: INSERT_MEMBER_PHONE
+// ====================================================
+
+export interface INSERT_MEMBER_PHONE_insert_member_phone {
+  __typename: "member_phone_mutation_response";
+  /**
+   * number of rows affected by the mutation
+   */
+  affected_rows: number;
+}
+
+export interface INSERT_MEMBER_PHONE {
+  /**
+   * insert data into the table: "member_phone"
+   */
+  insert_member_phone: INSERT_MEMBER_PHONE_insert_member_phone | null;
+}
+
+export interface INSERT_MEMBER_PHONEVariables {
+  memberPhone: member_phone_insert_input[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PROGRAM_CONTENT_TRIAL
 // ====================================================
 

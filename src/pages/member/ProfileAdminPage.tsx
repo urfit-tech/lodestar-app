@@ -1,17 +1,17 @@
+import { message } from 'antd'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
+import { useHistory, useLocation } from 'react-router'
+import { BooleanParam, useQueryParam } from 'use-query-params'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import ProfileAccountAdminCard from '../../components/profile/ProfileAccountAdminCard'
 import ProfileBasicAdminCard from '../../components/profile/ProfileBasicAdminCard'
+import ProfileOtherAdminCard from '../../components/profile/ProfileOtherAdminCard'
 import ProfilePasswordAdminCard from '../../components/profile/ProfilePasswordAdminCard'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
-import { useHistory, useLocation } from 'react-router'
-import { BooleanParam, useQueryParam } from 'use-query-params'
-import { message } from 'antd'
 import memberPageMessages from './translation'
-
 
 const ProfileAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -21,16 +21,15 @@ const ProfileAdminPage: React.VFC = () => {
 
   const { hash, pathname } = useLocation()
   const [isVerified] = useQueryParam('verified', BooleanParam)
-  
-  useEffect(()=>{
-    if (isVerified){
+
+  useEffect(() => {
+    if (isVerified) {
       message.success(formatMessage(memberPageMessages.ProfileAdminPage.verifiedEmailSuccess))
       history.replace(pathname)
     }
-  },[isVerified,history,pathname, formatMessage])
+  }, [isVerified, history, pathname, formatMessage])
 
   useEffect(() => {
-    
     if (hash === '') {
       return
     }
@@ -50,6 +49,8 @@ const ProfileAdminPage: React.VFC = () => {
       <div className="mb-3" id="account">
         {currentMemberId && <ProfileAccountAdminCard memberId={currentMemberId} />}
       </div>
+      <div className="mb-3">{currentMemberId && <ProfileOtherAdminCard memberId={currentMemberId} />}</div>
+      <div className="mb-3">{currentMemberId && <ProfileAccountAdminCard memberId={currentMemberId} />}</div>
       <div className="mb-3">{currentMemberId && <ProfilePasswordAdminCard memberId={currentMemberId} />}</div>
     </MemberAdminLayout>
   )
