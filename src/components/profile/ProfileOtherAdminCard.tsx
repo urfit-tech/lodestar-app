@@ -10,10 +10,11 @@ import React, { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../../hasura'
 import { handleError } from '../../helpers'
-import { commonMessages, profileOtherAdminMessage } from '../../helpers/translation'
+import { commonMessages } from '../../helpers/translation'
 import AdminCard from '../common/AdminCard'
 import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'
+import profileMessages from './translation'
 const useIsEditableProperty = () => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_EDITABLE_PROPERTY,
@@ -84,7 +85,6 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
     UPDATE_MEMBER_PROPERTY,
   )
   const { settings } = useApp()
-  console.log(settings, 'settings')
   const [updateMemberPhone] = useMutation<hasura.UPDATE_MEMBER_PHONE, hasura.UPDATE_MEMBER_PHONEVariables>(
     UPDATE_MEMBER_PHONE,
   )
@@ -148,7 +148,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
     return (
       <AdminCard {...cardProps}>
         <Typography.Title className="mb-4" level={4}>
-          {formatMessage(profileOtherAdminMessage.ui.otherInfoTitle)}
+          {formatMessage(profileMessages.ProfileOtherAdminCard.otherInfoTitle)}
         </Typography.Title>
         <StyledForm
           labelCol={{ span: 24, md: { span: 4 } }}
@@ -156,20 +156,20 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
           onSubmit={handleSubmit}
         >
           {settings['profile_page.edit_phone.enable'] === '1' ? (
-            <Form.Item label={formatMessage(profileOtherAdminMessage.ui.phone)}>
+            <Form.Item label={formatMessage(profileMessages.ProfileOtherAdminCard.phone)}>
               {form.getFieldDecorator(`phone`, {
                 initialValue: defaultPhoneNumber?.value,
                 validateTrigger: 'onSubmit',
                 rules: [
                   {
                     required: true,
-                    message: formatMessage(profileOtherAdminMessage.ui.enterPhone),
+                    message: formatMessage(profileMessages.ProfileOtherAdminCard.enterPhone),
                   },
                   {
                     validator: (rule, value, callback) => {
                       const regex = /^\+?\(?[0-9]+\)?-?[0-9]+$/g
                       if (!form.getFieldValue('phone').match(regex)) {
-                        callback(formatMessage(profileOtherAdminMessage.ui.enterPhone))
+                        callback(formatMessage(profileMessages.ProfileOtherAdminCard.entercorrectPhone))
                       } else {
                         callback()
                       }
@@ -190,7 +190,9 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                   rules: [
                     {
                       required: true,
-                      message: `${formatMessage(profileOtherAdminMessage.ui.enter)}${item.name}`,
+                      message: formatMessage(profileMessages.ProfileOtherAdminCard.enter, {
+                        enterlabel: item.name,
+                      }),
                     },
                   ],
                 })(<MigrationInput type={item.id} />)}

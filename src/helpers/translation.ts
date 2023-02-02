@@ -739,14 +739,7 @@ export const programMessages = {
     },
   }),
 }
-export const profileOtherAdminMessage = {
-  ui: defineMessages({
-    otherInfoTitle: { id: 'member.messages.ui.otherInfoTitle', defaultMessage: '其他資料' },
-    phone: { id: 'member.messages.ui.phone', defaultMessage: '手機號碼' },
-    enterPhone: { id: 'member.messages.ui.enterPhone', defaultMessage: '請輸入手機號碼' },
-    enter: { id: 'member.messages.ui.enter', defaultMessage: '請輸入' },
-  }),
-}
+
 export const activityMessages = {
   label: defineMessages({
     online: { id: 'activity.label.online', defaultMessage: '線上' },
