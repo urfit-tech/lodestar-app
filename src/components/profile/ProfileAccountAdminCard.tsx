@@ -7,7 +7,7 @@ import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages, profileMessages, settingsMessages } from '../../helpers/translation'
@@ -29,13 +29,21 @@ const StyledSocialLogo = styled.div`
 `
 const StyledText = styled.div`
   line-height: normal;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
 
   @media (min-width: 768px) {
    margin-top: 0rem;
    white-space: nowrap;
 
   }
+`
+
+const StyledButton = styled(Button)`
+margin-top: .75rem;
+@media (min-width: 768px) {
+  margin-top: 0rem;
+
+ }
 `
 
 const StyledFormItem = styled(Form.Item)`
@@ -73,7 +81,41 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
   const { authToken } = useAuth()
   const { id: appId } = useApp()
 
+  useEffect(()=>{
+    const lastSendTime = Number(localStorage.getItem('currentTime'))
+    const currentTime = Math.round(new Date().getTime() / 1000)
+    const seconds = currentTime - lastSendTime
+
+    if(seconds > 30){
+      setCount(30)
+      setShowButton(true)
+      localStorage.removeItem('currentTime')
+      return ()=>{}
+    }else{
+      setCount(30 - seconds)
+      setShowButton(false)
+      const initialInterval = setInterval(() => {
+        setCount(currentTime => --currentTime)
+      }, 1000)
+
+      const initialTimeout = setTimeout(() => {
+        clearInterval(initialInterval)
+        setShowButton(true)
+        setCount(30)
+        localStorage.removeItem('currentTime')
+      }, 1000 * (30 - seconds))
+
+      return () => {
+        clearInterval(initialInterval)
+        clearTimeout(initialTimeout)
+        setShowButton(true)
+      }
+    }
+  },[])
+
   const handleClick = () => {
+    const currentTime = Math.round(new Date().getTime() / 1000)
+    localStorage.setItem('currentTime', currentTime.toString())
     axios
       .post(
         `${process.env.REACT_APP_API_BASE_ROOT}/auth/request-email-verification`,
@@ -87,18 +129,21 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
       .then(({ data: { code } }) => {
         message.success(formatMessage(localProfileMessages.ProfileAccountAdminCard.sendVerifiedEmailSuccessfully))
         setShowButton(false)
+        
         const interval = setInterval(() => {
           setCount(currentCount => --currentCount)
         }, 1000)
 
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
           clearInterval(interval)
           setShowButton(true)
           setCount(30)
+          localStorage.removeItem('currentTime')
         }, 1000 * 30)
         // cleanup
         return () => {
           clearInterval(interval)
+          clearTimeout(timeout)
           setShowButton(true)
         }
       })
@@ -108,9 +153,9 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
   return (
     <div className="d-flex ml-2 align-items-center">
       {showButton ? (
-        <Button colorScheme="teal" variant="link" onClick={handleClick}>
+        <StyledButton colorScheme="teal" variant="link" onClick={handleClick}>
           {formatMessage(localProfileMessages.ProfileAccountAdminCard.sendEmail)}
-        </Button>
+        </StyledButton>
       ) : (
         <StyledText>{formatMessage(localProfileMessages.ProfileAccountAdminCard.sendEmailAfter, {count})}</StyledText>
       )}
@@ -190,13 +235,13 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
           })(
             <MigrationInput
               suffix={
-                settings['feature.email_verification'] &&
+                settings['feature.email_verification.enabled'] === '1' &&
                 (isVerifiedCurrentEmail ? <CheckCircleIcon color="#4ed1b3" /> : <UnVerifiedSuffix />)
               }
-              suffixWidth={settings['feature.email_verification'] && (isVerifiedCurrentEmail ? undefined : 'auto')}
+              suffixWidth={settings['feature.email_verification.enabled'] === '1' && isVerifiedCurrentEmail ? undefined : 'auto'}
             />,
           )}
-          {settings['feature.email_verification'] && !isVerifiedCurrentEmail && (
+          {settings['feature.email_verification.enabled'] === '1' && !isVerifiedCurrentEmail && (
             <CountDownText email={form.getFieldValue('_email').trim().toLowerCase()} memberId={memberId} />
           )}
         </StyledFormItem>
