@@ -126,9 +126,8 @@ const ProgramContentMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
-  currentProgramContentId?: string
   onSelect?: (programContentId: string) => void
-}> = ({ program, currentProgramContentId, onSelect, isScrollToTop }) => {
+}> = ({ program, onSelect, isScrollToTop }) => {
   const { formatMessage } = useIntl()
   const [sortBy, setSortBy] = useState('section')
   const { search } = useLocation()
@@ -158,7 +157,6 @@ const ProgramContentMenu: React.VFC<{
           isLoading={enrolledProgramIdsLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
-          currentProgramContentId={currentProgramContentId}
         />
       )}
       {sortBy === 'date' && (
@@ -179,8 +177,7 @@ const ProgramContentSectionMenu: React.VFC<{
   isLoading: boolean
   isScrollToTop?: boolean
   onSelect?: (programContentId: string) => void
-  currentProgramContentId?: string
-}> = ({ program, programPackageId, isEnrolled, isLoading, isScrollToTop, onSelect, currentProgramContentId }) => {
+}> = ({ program, programPackageId, isEnrolled, isLoading, isScrollToTop, onSelect }) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
 
   if (!program.contentSections || program.contentSections.length === 0) {
@@ -199,7 +196,6 @@ const ProgramContentSectionMenu: React.VFC<{
           isLoading={isLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
-          currentProgramContentId={currentProgramContentId}
         />
       ))}
     </>
@@ -216,18 +212,8 @@ const ContentSection: React.VFC<{
   isScrollToTop?: boolean
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
-  currentProgramContentId?: string
-}> = ({
-  programContentSection,
-  programPackageId,
-  isEnrolled,
-  isLoading,
-  defaultCollapse,
-  isScrollToTop,
-  onSelect,
-  currentProgramContentId,
-}) => {
-  const programContentProgress = useProgramContentProgress(currentProgramContentId)
+}> = ({ programContentSection, programPackageId, isEnrolled, isLoading, defaultCollapse, isScrollToTop, onSelect }) => {
+  const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
 
   const contentProgress =
@@ -258,7 +244,6 @@ const ContentSection: React.VFC<{
             isEnrolled={isEnrolled}
             isLoading={isLoading}
             onClick={() => onSelect?.(programContent.id)}
-            currentProgramContentId={currentProgramContentId}
           />
         ))}
       </StyledContentSectionBody>
@@ -275,7 +260,6 @@ const SortBySectionItem: React.VFC<{
   isScrollToTop?: boolean
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
-  currentProgramContentId?: string
 }> = ({
   programContent,
   progress,
@@ -285,7 +269,6 @@ const SortBySectionItem: React.VFC<{
   isScrollToTop,
   onSetIsCollapse,
   onClick,
-  currentProgramContentId,
 }) => {
   const currentRef = useRef<HTMLInputElement>(null)
   const { formatMessage } = useIntl()
@@ -300,7 +283,7 @@ const SortBySectionItem: React.VFC<{
 
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
 
-  const isActive = programContent.id === currentProgramContentId
+  const isActive = programContent.id === programContentId
   const isTrial = programContent?.displayMode === DisplayModeEnum.trial
   const isLoginTrial = programContent?.displayMode === DisplayModeEnum.loginToTrial
   const isLock =
@@ -503,13 +486,13 @@ const ExerciseQuestionCount: React.VFC<{ contentBodyId: string; programContent: 
   )
 }
 
-const useProgramContentProgress = (currentProgramContentId?: string) => {
+const useProgramContentProgress = () => {
   const { programContentId } = useParams<{ programContentId: string }>()
   const { programContentProgress, refetchProgress } = useContext(ProgressContext)
 
   useEffect(() => {
     refetchProgress?.()
-  }, [programContentId, refetchProgress, currentProgramContentId])
+  }, [programContentId, refetchProgress])
 
   return programContentProgress
 }

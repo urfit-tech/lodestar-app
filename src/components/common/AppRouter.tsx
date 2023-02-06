@@ -173,10 +173,6 @@ const defaultRoutesMap: RoutesMap = {
     path: '/programs/:programId/contents/:programContentId',
     pageName: 'ProgramContentPage',
   },
-  test_program_content: {
-    path: '/test-programs/:programId/contents/:programContentId',
-    pageName: 'TestProgramContentPage',
-  },
   program_package: {
     path: '/program-packages/:programPackageId',
     pageName: 'ProgramPackagePage',
