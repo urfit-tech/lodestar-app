@@ -951,7 +951,6 @@ export interface INSERT_MEMBER_PROPERTY {
 }
 
 export interface INSERT_MEMBER_PROPERTYVariables {
-  memberId: string;
   memberProperties: member_property_insert_input[];
 }
 
@@ -981,7 +980,7 @@ export interface UPDATE_MEMBER_PROPERTY {
 
 export interface UPDATE_MEMBER_PROPERTYVariables {
   memberId: string;
-  propertyId: string;
+  propertyId: any;
   value: string;
 }
 

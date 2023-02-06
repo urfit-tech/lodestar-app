@@ -168,10 +168,10 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
 
             delete formValues['phone']
           }
-          if (memberProperties.length > 0) {
-            Object.keys(formValues)
-              .filter(propertyId => formValues[propertyId])
-              .forEach(propertyId => {
+          Object.keys(formValues)
+            .filter(propertyId => formValues[propertyId])
+            .forEach(propertyId => {
+              if (memberProperties.find(item => item.id === propertyId)) {
                 updateMemberProperty({
                   variables: {
                     memberId: memberId,
@@ -179,21 +179,20 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                     value: formValues[propertyId],
                   },
                 })
-              })
-          } else {
-            insertMemberProperty({
-              variables: {
-                memberId,
-                memberProperties: Object.keys(formValues)
-                  .filter(propertyId => formValues[propertyId])
-                  .map(propertyId => ({
-                    member_id: memberId,
-                    property_id: propertyId,
-                    value: formValues[propertyId],
-                  })),
-              },
+              } else {
+                insertMemberProperty({
+                  variables: {
+                    memberProperties: [
+                      {
+                        member_id: memberId,
+                        property_id: propertyId,
+                        value: formValues[propertyId],
+                      },
+                    ],
+                  },
+                })
+              }
             })
-          }
 
           refetchPhoneMember()
           refetchProperties()
@@ -301,7 +300,7 @@ const GET_MEMBER_PHONE = gql`
 `
 
 const INSERT_MEMBER_PROPERTY = gql`
-  mutation INSERT_MEMBER_PROPERTY($memberId: String!, $memberProperties: [member_property_insert_input!]!) {
+  mutation INSERT_MEMBER_PROPERTY($memberProperties: [member_property_insert_input!]!) {
     insert_member_property(objects: $memberProperties) {
       affected_rows
     }
