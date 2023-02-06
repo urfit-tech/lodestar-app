@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Button } from '@chakra-ui/react'
-import { Form, message, Typography } from 'antd'
+import { Form, message, Select, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import gql from 'graphql-tag'
@@ -54,6 +54,45 @@ const useIsEditableProperty = () => {
     refetchProperties: refetch,
   }
 }
+const useMemberPropertyCollection = (memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_MEMBER_PROPERTY_COLLECTION,
+    hasura.GET_MEMBER_PROPERTY_COLLECTIONVariables
+  >(
+    gql`
+      query GET_MEMBER_PROPERTY_COLLECTION($memberId: String!) {
+        member_property(where: { member_id: { _eq: $memberId } }) {
+          id
+          property {
+            id
+            name
+          }
+          value
+        }
+      }
+    `,
+    {
+      variables: {
+        memberId,
+      },
+    },
+  )
+
+  const memberProperties: { id: String; name: String; value: String }[] =
+    loading || error || !data
+      ? []
+      : data?.member_property.map(v => ({
+          id: v.property.id,
+          name: v.property.name,
+          value: v.value,
+        }))
+  return {
+    loadingMemberProperties: loading,
+    errorMemberProperties: error,
+    memberProperties,
+    refetchMemberProperties: refetch,
+  }
+}
 const useMemberPhoneEnableSetting = (memberId: string) => {
   const phoneNumberData = useQuery<hasura.GET_MEMBER_PHONE, hasura.GET_MEMBER_PHONEVariables>(GET_MEMBER_PHONE, {
     variables: { memberId: memberId },
@@ -81,8 +120,16 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
   const [loading, setLoading] = useState(false)
   const { defaultPhoneNumber, refetchPhoneMember } = useMemberPhoneEnableSetting(memberId)
   const { properties, refetchProperties, errorProperties, loadingProperties } = useIsEditableProperty()
+  const { loadingMemberProperties, errorMemberProperties, memberProperties } = useMemberPropertyCollection(memberId)
+
+  if (errorProperties || errorMemberProperties) {
+    handleError(errorProperties || errorMemberProperties)
+  }
   const [updateMemberProperty] = useMutation<hasura.UPDATE_MEMBER_PROPERTY, hasura.UPDATE_MEMBER_PROPERTYVariables>(
     UPDATE_MEMBER_PROPERTY,
+  )
+  const [insertMemberProperty] = useMutation<hasura.INSERT_MEMBER_PROPERTY, hasura.INSERT_MEMBER_PROPERTYVariables>(
+    INSERT_MEMBER_PROPERTY,
   )
   const { settings } = useApp()
   const [updateMemberPhone] = useMutation<hasura.UPDATE_MEMBER_PHONE, hasura.UPDATE_MEMBER_PHONEVariables>(
@@ -91,6 +138,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
   const [insertMemberPhone] = useMutation<hasura.INSERT_MEMBER_PHONE, hasura.INSERT_MEMBER_PHONEVariables>(
     INSERT_MEMBER_PHONE,
   )
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     form.validateFields((error, formValues) => {
@@ -120,18 +168,33 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
 
             delete formValues['phone']
           }
-          updateMemberProperty({
-            variables: {
-              memberId,
-              memberProperties: Object.keys(formValues)
-                .filter(propertyId => formValues[propertyId])
-                .map(propertyId => ({
-                  member_id: memberId,
-                  property_id: propertyId,
-                  value: formValues[propertyId],
-                })),
-            },
-          })
+          if (memberProperties.length > 0) {
+            Object.keys(formValues)
+              .filter(propertyId => formValues[propertyId])
+              .forEach(propertyId => {
+                updateMemberProperty({
+                  variables: {
+                    memberId: memberId,
+                    propertyId: propertyId,
+                    value: formValues[propertyId],
+                  },
+                })
+              })
+          } else {
+            insertMemberProperty({
+              variables: {
+                memberId,
+                memberProperties: Object.keys(formValues)
+                  .filter(propertyId => formValues[propertyId])
+                  .map(propertyId => ({
+                    member_id: memberId,
+                    property_id: propertyId,
+                    value: formValues[propertyId],
+                  })),
+              },
+            })
+          }
+
           refetchPhoneMember()
           refetchProperties()
           message.success(formatMessage(commonMessages.event.successfullySaved))
@@ -181,21 +244,33 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
           ) : (
             <></>
           )}
-          {properties.map(item => {
-            let defaultValue = item.memberProperties.find(item => item.member_id === memberId)?.value || ''
+          {properties.map(property => {
+            let defaultValue = memberProperties.find(field => field.id === property.id)?.value || ''
             return (
-              <Form.Item label={`${item.name}`} key={item.id}>
-                {form.getFieldDecorator(`${item.id}`, {
+              <Form.Item label={`${property.name}`} key={property.id}>
+                {form.getFieldDecorator(`${property.id}`, {
                   initialValue: defaultValue,
                   rules: [
                     {
                       required: true,
                       message: formatMessage(profileMessages.ProfileOtherAdminCard.enter, {
-                        enterlabel: item.name,
+                        enterlabel: property.name,
                       }),
                     },
                   ],
-                })(<MigrationInput type={item.id} />)}
+                })(
+                  property?.placeholder?.includes('/') ? (
+                    <Select>
+                      {property?.placeholder?.split('/').map((value: string, idx: number) => (
+                        <Select.Option key={idx} value={value}>
+                          {value}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  ) : (
+                    <MigrationInput type={property.id} />
+                  ),
+                )}
               </Form.Item>
             )
           })}
@@ -224,12 +299,20 @@ const GET_MEMBER_PHONE = gql`
     }
   }
 `
-const UPDATE_MEMBER_PROPERTY = gql`
-  mutation UPDATE_MEMBER_PROPERTY($memberId: String!, $memberProperties: [member_property_insert_input!]!) {
-    delete_member_property(where: { member_id: { _eq: $memberId } }) {
+
+const INSERT_MEMBER_PROPERTY = gql`
+  mutation INSERT_MEMBER_PROPERTY($memberId: String!, $memberProperties: [member_property_insert_input!]!) {
+    insert_member_property(objects: $memberProperties) {
       affected_rows
     }
-    insert_member_property(objects: $memberProperties) {
+  }
+`
+const UPDATE_MEMBER_PROPERTY = gql`
+  mutation UPDATE_MEMBER_PROPERTY($memberId: String!, $propertyId: uuid!, $value: String!) {
+    update_member_property(
+      where: { member_id: { _eq: $memberId }, property_id: { _eq: $propertyId } }
+      _set: { value: $value }
+    ) {
       affected_rows
     }
   }
