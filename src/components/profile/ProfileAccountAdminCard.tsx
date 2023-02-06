@@ -80,9 +80,9 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
   const { id: appId } = useApp()
 
   useEffect(() => {
-    const lastVerifySent = Number(localStorage.getItem('verifyTime'))
+    const lastVerificationSent = Number(localStorage.getItem('verifyTime'))
     const currentTime = Math.round(new Date().getTime() / 1000)
-    const seconds = currentTime - lastVerifySent
+    const seconds = currentTime - lastVerificationSent
 
     if (seconds > 30) {
       setCount(30)
