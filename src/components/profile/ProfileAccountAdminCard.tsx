@@ -16,7 +16,7 @@ import { ReactComponent as YouTubeIcon } from '../../images/youtube-icon.svg'
 import AdminCard from '../common/AdminCard'
 import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'
-import {default as localProfileMessages} from './translation'
+import { default as localProfileMessages } from './translation'
 
 const StyledSocialLogo = styled.div`
   width: 44px;
@@ -32,18 +32,16 @@ const StyledText = styled.div`
   margin-top: 0.75rem;
 
   @media (min-width: 768px) {
-   margin-top: 0rem;
-   white-space: nowrap;
-
+    margin-top: 0rem;
+    white-space: nowrap;
   }
 `
 
 const StyledButton = styled(Button)`
-margin-top: .75rem;
-@media (min-width: 768px) {
-  margin-top: 0rem;
-
- }
+  margin-top: 0.75rem;
+  @media (min-width: 768px) {
+    margin-top: 0rem;
+  }
 `
 
 const StyledFormItem = styled(Form.Item)`
@@ -74,24 +72,24 @@ const UnVerifiedSuffix: React.VFC<{}> = ({}) => {
 }
 
 const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, memberId }) => {
-  const {formatMessage} = useIntl()
+  const { formatMessage } = useIntl()
   const [count, setCount] = useState<number>(30)
   const [showButton, setShowButton] = useState<boolean>(true)
 
   const { authToken } = useAuth()
   const { id: appId } = useApp()
 
-  useEffect(()=>{
-    const lastSendTime = Number(localStorage.getItem('currentTime'))
+  useEffect(() => {
+    const lastVerifySent = Number(localStorage.getItem('verifyTime'))
     const currentTime = Math.round(new Date().getTime() / 1000)
-    const seconds = currentTime - lastSendTime
+    const seconds = currentTime - lastVerifySent
 
-    if(seconds > 30){
+    if (seconds > 30) {
       setCount(30)
       setShowButton(true)
-      localStorage.removeItem('currentTime')
-      return ()=>{}
-    }else{
+      localStorage.removeItem('verifyTime')
+      return () => {}
+    } else {
       setCount(30 - seconds)
       setShowButton(false)
       const initialInterval = setInterval(() => {
@@ -102,7 +100,7 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
         clearInterval(initialInterval)
         setShowButton(true)
         setCount(30)
-        localStorage.removeItem('currentTime')
+        localStorage.removeItem('verifyTime')
       }, 1000 * (30 - seconds))
 
       return () => {
@@ -111,11 +109,11 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
         setShowButton(true)
       }
     }
-  },[])
+  }, [])
 
   const handleClick = () => {
     const currentTime = Math.round(new Date().getTime() / 1000)
-    localStorage.setItem('currentTime', currentTime.toString())
+    localStorage.setItem('verifyTime', currentTime.toString())
     axios
       .post(
         `${process.env.REACT_APP_API_BASE_ROOT}/auth/request-email-verification`,
@@ -129,7 +127,7 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
       .then(({ data: { code } }) => {
         message.success(formatMessage(localProfileMessages.ProfileAccountAdminCard.sendVerifiedEmailSuccessfully))
         setShowButton(false)
-        
+
         const interval = setInterval(() => {
           setCount(currentCount => --currentCount)
         }, 1000)
@@ -157,7 +155,7 @@ const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, 
           {formatMessage(localProfileMessages.ProfileAccountAdminCard.sendEmail)}
         </StyledButton>
       ) : (
-        <StyledText>{formatMessage(localProfileMessages.ProfileAccountAdminCard.sendEmailAfter, {count})}</StyledText>
+        <StyledText>{formatMessage(localProfileMessages.ProfileAccountAdminCard.sendEmailAfter, { count })}</StyledText>
       )}
     </div>
   )
@@ -238,7 +236,9 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
                 settings['feature.email_verification.enabled'] === '1' &&
                 (isVerifiedCurrentEmail ? <CheckCircleIcon color="#4ed1b3" /> : <UnVerifiedSuffix />)
               }
-              suffixWidth={settings['feature.email_verification.enabled'] === '1' && isVerifiedCurrentEmail ? undefined : 'auto'}
+              suffixWidth={
+                settings['feature.email_verification.enabled'] === '1' && isVerifiedCurrentEmail ? undefined : 'auto'
+              }
             />,
           )}
           {settings['feature.email_verification.enabled'] === '1' && !isVerifiedCurrentEmail && (
