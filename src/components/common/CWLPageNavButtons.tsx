@@ -47,6 +47,7 @@ const PageNavItem = styled.li<{ disabled?: Boolean; mobile?: Boolean }>`
 
 const CWLPageNavButtons: React.VFC<{
   mainBlock: String
+  isVideoBlock?: Boolean
   navButtons: Array<{
     text: string
     targetId: string
@@ -55,7 +56,7 @@ const CWLPageNavButtons: React.VFC<{
     gtmLabel: string
     linkto?: any
   }>
-}> = ({ mainBlock, navButtons }) => {
+}> = ({ mainBlock, isVideoBlock, navButtons }) => {
   const [isPageNavFixed, setIsPageNavFixed] = useState(false)
   const [isPageNavMobileHide, setIsPageNavMobileHide] = useState(false)
   const [disabled, setDisabled] = useState(false)
@@ -174,13 +175,13 @@ const CWLPageNavButtons: React.VFC<{
   }
 
   useEffect(() => {
-    if (layoutContent) {
+    if (layoutContent && !isVideoBlock) {
       layoutContent.addEventListener('scroll', setPageNavFixed)
       handleScrollDataLayer(layoutContent)
     }
 
     return () => {
-      if (layoutContent) {
+      if (layoutContent && !isVideoBlock) {
         layoutContent.removeEventListener('scroll', setPageNavFixed)
       }
     }

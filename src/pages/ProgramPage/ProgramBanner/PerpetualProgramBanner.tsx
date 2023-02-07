@@ -203,7 +203,7 @@ const PerpetualProgramBanner: React.VFC<{
               </StyledPlayer>
             </StyledVideoWrapper>
           </div>
-          <CWLPageNavButtons mainBlock="program-info-video" navButtons={navButtons} />
+          <CWLPageNavButtons isVideoBlock mainBlock="program-info-video" navButtons={navButtons} />
           <div className="ab-test-program-page-nav-block" style={{ display: 'none' }}>
             <CWLBreadcrumb program={program} />
           </div>
