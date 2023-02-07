@@ -344,7 +344,7 @@ const CheckoutBlock: React.VFC<{
       })
     }
 
-    const taskId = await placeOrder(
+    const { orderId, paymentNo, payToken } = await placeOrder(
       'perpetual',
       {
         ...invoice,
@@ -366,7 +366,7 @@ const CheckoutBlock: React.VFC<{
     }).catch(() => {})
 
     await removeCartProducts?.(cartProducts.map(cartProduct => cartProduct.productId))
-    history.push(`/tasks/order/${taskId}`)
+    history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`)
   }
 
   const groupBuyingEnabledVerify = (cartProduct: CartProductProps) => {
