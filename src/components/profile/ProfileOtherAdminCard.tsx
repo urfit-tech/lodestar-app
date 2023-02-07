@@ -168,31 +168,69 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
 
             delete formValues['phone']
           }
-          Object.keys(formValues)
+          let updateMemberPropertyArray =
+            Object.keys(formValues)
+              .filter(propertyId => memberProperties.find(item => item.id === propertyId))
+              .filter(propertyId => formValues[propertyId])
+              .map(propertyId => {
+                return {
+                  where: { member_id: { _eq: memberId }, property_id: { _eq: propertyId } },
+                  _set: { value: formValues[propertyId] },
+                }
+              }) || []
+          if (updateMemberPropertyArray.length > 0) {
+            updateMemberProperty({
+              variables: {
+                updateMemberProperties: updateMemberPropertyArray,
+              },
+            })
+          }
+
+          let insertMemberPropertyArray = Object.keys(formValues)
+            .filter(propertyId => memberProperties.find(item => item.id !== propertyId))
             .filter(propertyId => formValues[propertyId])
-            .forEach(propertyId => {
-              if (memberProperties.find(item => item.id === propertyId)) {
-                updateMemberProperty({
-                  variables: {
-                    memberId: memberId,
-                    propertyId: propertyId,
-                    value: formValues[propertyId],
-                  },
-                })
-              } else {
-                insertMemberProperty({
-                  variables: {
-                    memberProperties: [
-                      {
-                        member_id: memberId,
-                        property_id: propertyId,
-                        value: formValues[propertyId],
-                      },
-                    ],
-                  },
-                })
+            .map(propertyId => {
+              return {
+                member_id: memberId,
+                property_id: propertyId,
+                value: formValues[propertyId],
               }
             })
+
+          if (insertMemberPropertyArray.length > 0) {
+            insertMemberProperty({
+              variables: {
+                memberProperties: insertMemberPropertyArray,
+              },
+            })
+          }
+
+          console.log('upateOtherInfo', updateMemberPropertyArray, insertMemberPropertyArray)
+          // Object.keys(formValues)
+          //   .filter(propertyId => formValues[propertyId])
+          //   .forEach(propertyId => {
+          //     if (memberProperties.find(item => item.id === propertyId)) {
+          //       updateMemberProperty({
+          //         variables: {
+          //           memberId: memberId,
+          //           propertyId: propertyId,
+          //           value: formValues[propertyId],
+          //         },
+          //       })
+          //     } else {
+          //       insertMemberProperty({
+          //         variables: {
+          //           memberProperties: [
+          //             {
+          //               member_id: memberId,
+          //               property_id: propertyId,
+          //               value: formValues[propertyId],
+          //             },
+          //           ],
+          //         },
+          //       })
+          //     }
+          //   })
 
           refetchPhoneMember()
           refetchProperties()
@@ -251,7 +289,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                   initialValue: defaultValue,
                   rules: [
                     {
-                      required: true,
+                      required: false,
                       message: formatMessage(profileMessages.ProfileOtherAdminCard.enter, {
                         enterlabel: property.name,
                       }),
@@ -307,11 +345,8 @@ const INSERT_MEMBER_PROPERTY = gql`
   }
 `
 const UPDATE_MEMBER_PROPERTY = gql`
-  mutation UPDATE_MEMBER_PROPERTY($memberId: String!, $propertyId: uuid!, $value: String!) {
-    update_member_property(
-      where: { member_id: { _eq: $memberId }, property_id: { _eq: $propertyId } }
-      _set: { value: $value }
-    ) {
+  mutation UPDATE_MEMBER_PROPERTY($updateMemberProperties: [member_property_update!]!) {
+    update_member_property(updates: $updateMemberProperties) {
       affected_rows
     }
   }

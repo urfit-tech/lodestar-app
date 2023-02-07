@@ -979,9 +979,7 @@ export interface UPDATE_MEMBER_PROPERTY {
 }
 
 export interface UPDATE_MEMBER_PROPERTYVariables {
-  memberId: string;
-  propertyId: any;
-  value: string;
+  updateMemberProperties: member_property_set_input[];
 }
 
 /* tslint:disable */
@@ -24223,6 +24221,18 @@ export interface member_property_on_conflict {
   constraint: member_property_constraint;
   update_columns: member_property_update_column[];
   where?: member_property_bool_exp | null;
+}
+
+/**
+ * input type for updating data in table "member_property"
+ */
+export interface member_property_set_input {
+  created_at?: any | null;
+  id?: any | null;
+  member_id?: string | null;
+  property_id?: any | null;
+  updated_at?: any | null;
+  value?: string | null;
 }
 
 /**
