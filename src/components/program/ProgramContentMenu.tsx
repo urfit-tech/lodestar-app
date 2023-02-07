@@ -280,16 +280,10 @@ const SortBySectionItem: React.VFC<{
   }>()
   const [previousPage] = useQueryParam('back', StringParam)
   const { hasProgramContentPermission } = useHasProgramContentPermission(programContent.id)
-  const [currentProgramContentId, setCurrentProgramContentId] = useState(programContentId)
 
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
 
-  useEffect(() => {
-    const pathArr = window.location.pathname.split('/')
-    setCurrentProgramContentId(pathArr[pathArr.length - 1])
-  }, [window.location.pathname])
-
-  const isActive = programContent.id === currentProgramContentId
+  const isActive = programContent.id === programContentId
   const isTrial = programContent?.displayMode === DisplayModeEnum.trial
   const isLoginTrial = programContent?.displayMode === DisplayModeEnum.loginToTrial
   const isLock =
