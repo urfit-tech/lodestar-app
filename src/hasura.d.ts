@@ -830,7 +830,7 @@ export interface INSERT_SUGGESTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_EDITABLE_PROPERTY
+// GraphQL query operation: GET_PHONE_ENABLE_SETTING
 // ====================================================
 
 export interface GET_EDITABLE_PROPERTY_property_member_properties {
