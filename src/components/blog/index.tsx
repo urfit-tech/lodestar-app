@@ -31,6 +31,7 @@ export const StyledPostTitle = styled.div<{ rows?: number }>`
     font-weight: bold;
     letter-spacing: 0.77px;
     margin-bottom: 4px;
+    color: white;
   }
   &.list-item {
     -webkit-line-clamp: 2;
@@ -44,7 +45,6 @@ export const StyledPostTitle = styled.div<{ rows?: number }>`
     &.headline {
       font-size: 20px;
       font-weight: bold;
-      color: white;
     }
     &.featuring {
       font-size: 16px;

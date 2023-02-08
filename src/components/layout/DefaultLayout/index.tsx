@@ -65,6 +65,7 @@ const DefaultLayout: React.FC<{
   noFooter?: boolean
   noCart?: boolean
   noGeneralLogin?: boolean
+  noNotificationBar?: boolean
   centeredBox?: boolean
   footerBottomSpace?: string
   renderTitle?: () => React.ReactNode
@@ -75,6 +76,7 @@ const DefaultLayout: React.FC<{
   noFooter,
   noCart,
   noGeneralLogin,
+  noNotificationBar,
   centeredBox,
   footerBottomSpace,
   renderTitle,
@@ -277,15 +279,16 @@ const DefaultLayout: React.FC<{
         </StyledLayoutHeader>
 
         <StyledLayoutContent id="layout-content" className={`${noHeader ? 'full-height' : ''}`}>
-          {settings['feature.email_verification'] && isUnVerifiedEmails && (
+          {settings['feature.email_verification'] && isUnVerifiedEmails && !noNotificationBar && (
             <StyledNotificationBar variant="warning">
               <p>
                 {formatMessage(commonMessages.message.warning.emailVerification)}
-                <Link to={`/settings/profile`}>{formatMessage(commonMessages.defaults.check)}</Link>
+                <Link to={`/settings/profile#account`}>{formatMessage(commonMessages.defaults.check)}</Link>
               </p>
             </StyledNotificationBar>
           )}
           <LayoutContentWrapper
+           
             footerHeight={noFooter ? 0 : settings['footer.type'] === 'multiline' ? 108 : 65}
             centeredBox={centeredBox}
           >

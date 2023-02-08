@@ -1,9 +1,13 @@
 import { Modal } from 'antd'
 import BraftEditor from 'braft-editor'
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import { useProgramContent } from '../../hooks/program'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { getFileDownloadableLink } from '../../helpers'
+import { useProgramContent } from '../../hooks/program'
+import AudioPlayer from '../common/AudioPlayer'
 import ProgramContentPlayer from './ProgramContentPlayer'
 
 const StyledModal = styled(Modal)`
@@ -41,15 +45,26 @@ type ProgramContentTrialModalProps = {
   render?: React.VFC<{
     setVisible: React.Dispatch<React.SetStateAction<boolean>>
   }>
+  programId: string
   programContentId: string
 }
 const ProgramContentTrialModal: React.VFC<ProgramContentTrialModalProps> = ({
   render,
+  programId,
   programContentId,
   ...modalProps
 }) => {
+  const { id: appId } = useApp()
+  const { authToken } = useAuth()
   const { programContent } = useProgramContent(programContentId)
   const [visible, setVisible] = useState(false)
+  const [audioUrl, setAudioUrl] = useState<string>()
+
+  useEffect(() => {
+    getFileDownloadableLink(`audios/${appId}/${programId}/${programContentId}`, authToken).then(url => {
+      setAudioUrl(url)
+    })
+  }, [programContentId, programId])
 
   return (
     <>
@@ -70,6 +85,9 @@ const ProgramContentTrialModal: React.VFC<ProgramContentTrialModalProps> = ({
           <>
             {programContent.programContentBody.type === 'video' && (
               <ProgramContentPlayer programContentId={programContentId} />
+            )}
+            {programContent.programContentBody.type === 'audio' && (
+              <AudioPlayer title={programContent.title} audioUrl={audioUrl} mode="preview" />
             )}
             {!BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
               <BraftContent>{programContent.programContentBody.description}</BraftContent>
