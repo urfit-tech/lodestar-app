@@ -280,7 +280,6 @@ const DefaultLayout: React.FC<{
             </StyledNotificationBar>
           )}
           <LayoutContentWrapper
-           
             footerHeight={noFooter ? 0 : settings['footer.type'] === 'multiline' ? 108 : 65}
             centeredBox={centeredBox}
           >

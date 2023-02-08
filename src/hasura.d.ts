@@ -830,7 +830,7 @@ export interface INSERT_SUGGESTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_EDITABLE_PROPERTY
+// GraphQL query operation: GET_PHONE_ENABLE_SETTING
 // ====================================================
 
 export interface GET_EDITABLE_PROPERTY_property_member_properties {
@@ -869,6 +869,42 @@ export interface GET_EDITABLE_PROPERTYVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_MEMBER_PROPERTY_COLLECTION
+// ====================================================
+
+export interface GET_MEMBER_PROPERTY_COLLECTION_member_property_property {
+  __typename: "property";
+  id: any;
+  name: string;
+}
+
+export interface GET_MEMBER_PROPERTY_COLLECTION_member_property {
+  __typename: "member_property";
+  id: any;
+  /**
+   * An object relationship
+   */
+  property: GET_MEMBER_PROPERTY_COLLECTION_member_property_property;
+  value: string;
+}
+
+export interface GET_MEMBER_PROPERTY_COLLECTION {
+  /**
+   * fetch data from the table: "member_property"
+   */
+  member_property: GET_MEMBER_PROPERTY_COLLECTION_member_property[];
+}
+
+export interface GET_MEMBER_PROPERTY_COLLECTIONVariables {
+  memberId: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_MEMBER_PHONE
 // ====================================================
 
@@ -896,10 +932,10 @@ export interface GET_MEMBER_PHONEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: UPDATE_MEMBER_PROPERTY
+// GraphQL mutation operation: INSERT_MEMBER_PROPERTY
 // ====================================================
 
-export interface UPDATE_MEMBER_PROPERTY_delete_member_property {
+export interface INSERT_MEMBER_PROPERTY_insert_member_property {
   __typename: "member_property_mutation_response";
   /**
    * number of rows affected by the mutation
@@ -907,7 +943,27 @@ export interface UPDATE_MEMBER_PROPERTY_delete_member_property {
   affected_rows: number;
 }
 
-export interface UPDATE_MEMBER_PROPERTY_insert_member_property {
+export interface INSERT_MEMBER_PROPERTY {
+  /**
+   * insert data into the table: "member_property"
+   */
+  insert_member_property: INSERT_MEMBER_PROPERTY_insert_member_property | null;
+}
+
+export interface INSERT_MEMBER_PROPERTYVariables {
+  memberProperties: member_property_insert_input[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UPDATE_MEMBER_PROPERTY
+// ====================================================
+
+export interface UPDATE_MEMBER_PROPERTY_update_member_property {
   __typename: "member_property_mutation_response";
   /**
    * number of rows affected by the mutation
@@ -917,18 +973,13 @@ export interface UPDATE_MEMBER_PROPERTY_insert_member_property {
 
 export interface UPDATE_MEMBER_PROPERTY {
   /**
-   * delete data from the table: "member_property"
+   * update data of the table: "member_property"
    */
-  delete_member_property: UPDATE_MEMBER_PROPERTY_delete_member_property | null;
-  /**
-   * insert data into the table: "member_property"
-   */
-  insert_member_property: UPDATE_MEMBER_PROPERTY_insert_member_property | null;
+  update_member_property: UPDATE_MEMBER_PROPERTY_update_member_property | null;
 }
 
 export interface UPDATE_MEMBER_PROPERTYVariables {
-  memberId: string;
-  memberProperties: member_property_insert_input[];
+  updateMemberProperties: member_property_updates[];
 }
 
 /* tslint:disable */
@@ -24170,6 +24221,23 @@ export interface member_property_on_conflict {
   constraint: member_property_constraint;
   update_columns: member_property_update_column[];
   where?: member_property_bool_exp | null;
+}
+
+/**
+ * input type for updating data in table "member_property"
+ */
+export interface member_property_set_input {
+  created_at?: any | null;
+  id?: any | null;
+  member_id?: string | null;
+  property_id?: any | null;
+  updated_at?: any | null;
+  value?: string | null;
+}
+
+export interface member_property_updates {
+  _set?: member_property_set_input | null;
+  where: member_property_bool_exp;
 }
 
 /**

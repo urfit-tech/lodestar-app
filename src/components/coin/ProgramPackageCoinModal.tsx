@@ -3,6 +3,7 @@ import { Button, Divider } from '@chakra-ui/react'
 import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
 import gql from 'graphql-tag'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import React, { useState } from 'react'
@@ -17,7 +18,6 @@ import { useEnrolledProgramIds } from '../../hooks/program'
 import EmptyCover from '../../images/empty-cover.png'
 import { CurrencyProps, PeriodType } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const messages = defineMessages({
   programPackageContent: { id: 'project.label.programPackageContent', defaultMessage: '課程內容' },
