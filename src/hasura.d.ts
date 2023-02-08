@@ -830,65 +830,6 @@ export interface INSERT_SUGGESTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_PHONE_ENABLE_SETTING
-// ====================================================
-
-export interface GET_PHONE_ENABLE_SETTING_setting_app_settings {
-  __typename: "app_setting";
-  id: any;
-  key: string;
-  value: string;
-}
-
-export interface GET_PHONE_ENABLE_SETTING_setting {
-  __typename: "setting";
-  key: string;
-  /**
-   * An array relationship
-   */
-  app_settings: GET_PHONE_ENABLE_SETTING_setting_app_settings[];
-}
-
-export interface GET_PHONE_ENABLE_SETTING {
-  /**
-   * fetch data from the table: "setting"
-   */
-  setting: GET_PHONE_ENABLE_SETTING_setting[];
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_MEMBER_PHONE
-// ====================================================
-
-export interface GET_MEMBER_PHONE_member_phone {
-  __typename: "member_phone";
-  id: any;
-  member_id: string;
-  phone: string;
-}
-
-export interface GET_MEMBER_PHONE {
-  /**
-   * fetch data from the table: "member_phone"
-   */
-  member_phone: GET_MEMBER_PHONE_member_phone[];
-}
-
-export interface GET_MEMBER_PHONEVariables {
-  memberId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_EDITABLE_PROPERTY
 // ====================================================
 
@@ -920,6 +861,33 @@ export interface GET_EDITABLE_PROPERTY {
 
 export interface GET_EDITABLE_PROPERTYVariables {
   type: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_PHONE
+// ====================================================
+
+export interface GET_MEMBER_PHONE_member_phone {
+  __typename: "member_phone";
+  id: any;
+  member_id: string;
+  phone: string;
+}
+
+export interface GET_MEMBER_PHONE {
+  /**
+   * fetch data from the table: "member_phone"
+   */
+  member_phone: GET_MEMBER_PHONE_member_phone[];
+}
+
+export interface GET_MEMBER_PHONEVariables {
+  memberId: string;
 }
 
 /* tslint:disable */
