@@ -187,7 +187,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
           }
 
           let insertMemberPropertyArray = Object.keys(formValues)
-            .filter(propertyId => memberProperties.find(item => item.id !== propertyId))
+            .filter(propertyId => !memberProperties.some(item => item.id === propertyId))
             .filter(propertyId => formValues[propertyId])
             .map(propertyId => {
               return {
@@ -204,34 +204,6 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
               },
             })
           }
-
-          console.log('upateOtherInfo', updateMemberPropertyArray, insertMemberPropertyArray)
-          // Object.keys(formValues)
-          //   .filter(propertyId => formValues[propertyId])
-          //   .forEach(propertyId => {
-          //     if (memberProperties.find(item => item.id === propertyId)) {
-          //       updateMemberProperty({
-          //         variables: {
-          //           memberId: memberId,
-          //           propertyId: propertyId,
-          //           value: formValues[propertyId],
-          //         },
-          //       })
-          //     } else {
-          //       insertMemberProperty({
-          //         variables: {
-          //           memberProperties: [
-          //             {
-          //               member_id: memberId,
-          //               property_id: propertyId,
-          //               value: formValues[propertyId],
-          //             },
-          //           ],
-          //         },
-          //       })
-          //     }
-          //   })
-
           refetchPhoneMember()
           refetchProperties()
           message.success(formatMessage(commonMessages.event.successfullySaved))
@@ -345,7 +317,7 @@ const INSERT_MEMBER_PROPERTY = gql`
   }
 `
 const UPDATE_MEMBER_PROPERTY = gql`
-  mutation UPDATE_MEMBER_PROPERTY($updateMemberProperties: [member_property_update!]!) {
+  mutation UPDATE_MEMBER_PROPERTY($updateMemberProperties: [member_property_updates!]!) {
     update_member_property(updates: $updateMemberProperties) {
       affected_rows
     }

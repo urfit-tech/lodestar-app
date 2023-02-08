@@ -979,7 +979,7 @@ export interface UPDATE_MEMBER_PROPERTY {
 }
 
 export interface UPDATE_MEMBER_PROPERTYVariables {
-  updateMemberProperties: member_property_set_input[];
+  updateMemberProperties: member_property_updates[];
 }
 
 /* tslint:disable */
@@ -24233,6 +24233,11 @@ export interface member_property_set_input {
   property_id?: any | null;
   updated_at?: any | null;
   value?: string | null;
+}
+
+export interface member_property_updates {
+  _set?: member_property_set_input | null;
+  where: member_property_bool_exp;
 }
 
 /**
