@@ -3,6 +3,7 @@ import { Button, Divider } from '@chakra-ui/react'
 import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
 import gql from 'graphql-tag'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import React, { useState } from 'react'
@@ -17,7 +18,6 @@ import { useEnrolledProgramIds } from '../../hooks/program'
 import EmptyCover from '../../images/empty-cover.png'
 import { CurrencyProps, PeriodType } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const messages = defineMessages({
   programPackageContent: { id: 'project.label.programPackageContent', defaultMessage: '課程內容' },
@@ -120,9 +120,9 @@ const ProgramPackageCoinModal: React.VFC<
       phone: '',
       email: currentMember?.email || '',
     })
-      .then(taskId => {
-        history.push(`/tasks/order/${taskId}`)
-      })
+      .then(({ orderId, paymentNo, payToken }) =>
+        history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`),
+      )
       .catch(handleError)
   }
 

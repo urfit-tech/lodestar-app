@@ -87,7 +87,7 @@ const ProgramContentTrialModal: React.VFC<ProgramContentTrialModalProps> = ({
               <ProgramContentPlayer programContentId={programContentId} />
             )}
             {programContent.programContentBody.type === 'audio' && (
-              <AudioPlayer title={programContent.title} audioUrl={audioUrl} mode="preview" />
+              <AudioPlayer title={programContent.title} audioUrl={audioUrl} mode="preview" autoPlay />
             )}
             {!BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
               <BraftContent>{programContent.programContentBody.description}</BraftContent>
