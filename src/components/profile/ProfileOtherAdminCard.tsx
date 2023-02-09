@@ -1,11 +1,10 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
-import { Button } from '@chakra-ui/react'
+import { Button, Skeleton } from '@chakra-ui/react'
 import { Form, message, Select, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../../hasura'
@@ -15,116 +14,16 @@ import AdminCard from '../common/AdminCard'
 import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'
 import profileMessages from './translation'
-const useIsEditableProperty = () => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GET_EDITABLE_PROPERTY,
-    hasura.GET_EDITABLE_PROPERTYVariables
-  >(
-    gql`
-      query GET_EDITABLE_PROPERTY($type: String!) {
-        property(where: { type: { _eq: $type }, is_editable: { _eq: true } }, order_by: { position: asc }) {
-          id
-          name
-          placeholder
-          is_editable
-          member_properties {
-            id
-            member_id
-            value
-          }
-        }
-      }
-    `,
-    { variables: { type: 'member' } },
-  )
-
-  const properties =
-    data?.property.map(v => ({
-      id: v.id,
-      name: v.name,
-      placeholder: v.placeholder?.replace(/[()]/g, ''),
-      isEditable: v.is_editable,
-      memberProperties: v.member_properties,
-    })) || []
-
-  return {
-    loadingProperties: loading,
-    errorProperties: error,
-    properties,
-    refetchProperties: refetch,
-  }
-}
-const useMemberPropertyCollection = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GET_MEMBER_PROPERTY_COLLECTION,
-    hasura.GET_MEMBER_PROPERTY_COLLECTIONVariables
-  >(
-    gql`
-      query GET_MEMBER_PROPERTY_COLLECTION($memberId: String!) {
-        member_property(where: { member_id: { _eq: $memberId } }) {
-          id
-          property {
-            id
-            name
-          }
-          value
-        }
-      }
-    `,
-    {
-      variables: {
-        memberId,
-      },
-    },
-  )
-
-  const memberProperties: { id: String; name: String; value: String }[] =
-    loading || error || !data
-      ? []
-      : data?.member_property.map(v => ({
-          id: v.property.id,
-          name: v.property.name,
-          value: v.value,
-        }))
-  return {
-    loadingMemberProperties: loading,
-    errorMemberProperties: error,
-    memberProperties,
-    refetchMemberProperties: refetch,
-  }
-}
-const useMemberPhoneEnableSetting = (memberId: string) => {
-  const phoneNumberData = useQuery<hasura.GET_MEMBER_PHONE, hasura.GET_MEMBER_PHONEVariables>(GET_MEMBER_PHONE, {
-    variables: { memberId: memberId },
-  })
-  let defaultPhoneNumber = null
-  if (phoneNumberData.loading || phoneNumberData.error || !phoneNumberData.data) {
-    defaultPhoneNumber = null
-  } else {
-    let data = phoneNumberData.data.member_phone.find((item: { member_id: string }) => item.member_id === memberId) || {
-      id: '',
-      phone: '',
-    }
-    defaultPhoneNumber = {
-      id: data?.id,
-      value: data?.phone,
-    }
-  }
-  return { defaultPhoneNumber, refetchPhoneMember: phoneNumberData.refetch }
-}
 
 type ProfileOtherAdminCardProps = CardProps & FormComponentProps & { memberId: string }
+
 const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
-  const { authToken } = useAuth()
   const [loading, setLoading] = useState(false)
   const { defaultPhoneNumber, refetchPhoneMember } = useMemberPhoneEnableSetting(memberId)
   const { properties, refetchProperties, errorProperties, loadingProperties } = useIsEditableProperty()
   const { loadingMemberProperties, errorMemberProperties, memberProperties } = useMemberPropertyCollection(memberId)
 
-  if (errorProperties || errorMemberProperties) {
-    handleError(errorProperties || errorMemberProperties)
-  }
   const [updateMemberProperty] = useMutation<hasura.UPDATE_MEMBER_PROPERTY, hasura.UPDATE_MEMBER_PROPERTYVariables>(
     UPDATE_MEMBER_PROPERTY,
   )
@@ -146,7 +45,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
         setLoading(true)
         try {
           if (formValues['phone']) {
-            if (defaultPhoneNumber?.value === '') {
+            if (defaultPhoneNumber?.phone === '') {
               insertMemberPhone({
                 variables: {
                   memberPhone: Object.keys(formValues)
@@ -161,7 +60,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
               updateMemberPhone({
                 variables: {
                   phoneId: defaultPhoneNumber?.id,
-                  phoneValue: formValues['phone'] || defaultPhoneNumber?.value,
+                  phoneValue: formValues['phone'] || defaultPhoneNumber?.phone,
                 },
               })
             }
@@ -215,8 +114,16 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
       }
     })
   }
-  let phoneEnableCheck = settings['profile_page.edit_phone.enable'] === '1'
-  if (phoneEnableCheck || properties.length > 0) {
+
+  if (errorProperties || errorMemberProperties) {
+    handleError(errorProperties || errorMemberProperties)
+  }
+
+  if (loadingProperties || loadingMemberProperties) {
+    return <Skeleton />
+  }
+
+  if (settings['profile_page.edit_phone.enable'] === '1' || properties.length > 0) {
     return (
       <AdminCard {...cardProps}>
         <Typography.Title className="mb-4" level={4}>
@@ -230,7 +137,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
           {settings['profile_page.edit_phone.enable'] === '1' ? (
             <Form.Item label={formatMessage(profileMessages.ProfileOtherAdminCard.phone)}>
               {form.getFieldDecorator(`phone`, {
-                initialValue: defaultPhoneNumber?.value,
+                initialValue: defaultPhoneNumber?.phone,
                 validateTrigger: 'onSubmit',
                 rules: [
                   {
@@ -299,9 +206,100 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
   }
 }
 export default Form.create<ProfileOtherAdminCardProps>()(ProfileOtherAdminCard)
+
+const useIsEditableProperty = () => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_EDITABLE_PROPERTY,
+    hasura.GET_EDITABLE_PROPERTYVariables
+  >(
+    gql`
+      query GET_EDITABLE_PROPERTY($type: String!) {
+        property(where: { type: { _eq: $type }, is_editable: { _eq: true } }, order_by: { position: asc }) {
+          id
+          name
+          placeholder
+          is_editable
+          member_properties {
+            id
+            member_id
+            value
+          }
+        }
+      }
+    `,
+    { variables: { type: 'member' } },
+  )
+
+  const properties =
+    data?.property.map(v => ({
+      id: v.id,
+      name: v.name,
+      placeholder: v.placeholder?.replace(/[()]/g, ''),
+      isEditable: v.is_editable,
+      memberProperties: v.member_properties,
+    })) || []
+
+  return {
+    loadingProperties: loading,
+    errorProperties: error,
+    properties,
+    refetchProperties: refetch,
+  }
+}
+const useMemberPropertyCollection = (memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_MEMBER_PROPERTY_COLLECTION,
+    hasura.GET_MEMBER_PROPERTY_COLLECTIONVariables
+  >(
+    gql`
+      query GET_MEMBER_PROPERTY_COLLECTION($memberId: String!) {
+        member_property(where: { member_id: { _eq: $memberId } }) {
+          id
+          property {
+            id
+            name
+          }
+          value
+        }
+      }
+    `,
+    {
+      variables: {
+        memberId,
+      },
+    },
+  )
+
+  const memberProperties: { id: String; name: String; value: String }[] =
+    data?.member_property.map(v => ({
+      id: v.property.id,
+      name: v.property.name,
+      value: v.value,
+    })) || []
+
+  return {
+    loadingMemberProperties: loading,
+    errorMemberProperties: error,
+    memberProperties,
+    refetchMemberProperties: refetch,
+  }
+}
+const useMemberPhoneEnableSetting = (memberId: string) => {
+  const { data, refetch } = useQuery<hasura.GET_MEMBER_PHONE, hasura.GET_MEMBER_PHONEVariables>(GET_MEMBER_PHONE, {
+    variables: { memberId: memberId },
+  })
+
+  const defaultPhoneNumber = {
+    id: data?.member_phone[0].id || '',
+    phone: data?.member_phone[0].phone || '',
+  }
+
+  return { defaultPhoneNumber, refetchPhoneMember: refetch }
+}
+
 const GET_MEMBER_PHONE = gql`
   query GET_MEMBER_PHONE($memberId: String!) {
-    member_phone(where: { member_id: { _eq: $memberId } }, limit: 1, order_by: { updated_at: asc }) {
+    member_phone(where: { member_id: { _eq: $memberId } }, limit: 1, order_by: { updated_at: desc }) {
       id
       member_id
       phone
