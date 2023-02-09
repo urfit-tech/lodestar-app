@@ -22,7 +22,8 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
   const [loading, setLoading] = useState(false)
   const { defaultPhoneNumber, refetchPhoneMember } = useMemberPhoneEnableSetting(memberId)
   const { properties, refetchProperties, errorProperties, loadingProperties } = useIsEditableProperty()
-  const { loadingMemberProperties, errorMemberProperties, memberProperties } = useMemberPropertyCollection(memberId)
+  const { loadingMemberProperties, errorMemberProperties, refetchMemberProperties, memberProperties } =
+    useMemberPropertyCollection(memberId)
 
   const [updateMemberProperty] = useMutation<hasura.UPDATE_MEMBER_PROPERTY, hasura.UPDATE_MEMBER_PROPERTYVariables>(
     UPDATE_MEMBER_PROPERTY,
@@ -37,6 +38,8 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
   const [insertMemberPhone] = useMutation<hasura.INSERT_MEMBER_PHONE, hasura.INSERT_MEMBER_PHONEVariables>(
     INSERT_MEMBER_PHONE,
   )
+
+  console.log(memberProperties, 'memberProperties')
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -64,13 +67,13 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                 },
               })
             }
-
+            refetchPhoneMember()
             delete formValues['phone']
           }
+
           let updateMemberPropertyArray =
             Object.keys(formValues)
               .filter(propertyId => memberProperties.find(item => item.id === propertyId))
-              .filter(propertyId => formValues[propertyId])
               .map(propertyId => {
                 return {
                   where: { member_id: { _eq: memberId }, property_id: { _eq: propertyId } },
@@ -83,11 +86,12 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                 updateMemberProperties: updateMemberPropertyArray,
               },
             })
+
+            refetchMemberProperties()
           }
 
           let insertMemberPropertyArray = Object.keys(formValues)
             .filter(propertyId => !memberProperties.some(item => item.id === propertyId))
-            .filter(propertyId => formValues[propertyId])
             .map(propertyId => {
               return {
                 member_id: memberId,
@@ -102,8 +106,9 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                 memberProperties: insertMemberPropertyArray,
               },
             })
+
+            refetchMemberProperties()
           }
-          refetchPhoneMember()
           refetchProperties()
           message.success(formatMessage(commonMessages.event.successfullySaved))
         } catch (err) {
@@ -316,7 +321,7 @@ const INSERT_MEMBER_PROPERTY = gql`
 `
 const UPDATE_MEMBER_PROPERTY = gql`
   mutation UPDATE_MEMBER_PROPERTY($updateMemberProperties: [member_property_updates!]!) {
-    update_member_property(updates: $updateMemberProperties) {
+    update_member_property_many(updates: $updateMemberProperties) {
       affected_rows
     }
   }

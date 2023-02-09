@@ -830,7 +830,7 @@ export interface INSERT_SUGGESTIONVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_PHONE_ENABLE_SETTING
+// GraphQL query operation: GET_EDITABLE_PROPERTY
 // ====================================================
 
 export interface GET_EDITABLE_PROPERTY_property_member_properties {
@@ -963,7 +963,7 @@ export interface INSERT_MEMBER_PROPERTYVariables {
 // GraphQL mutation operation: UPDATE_MEMBER_PROPERTY
 // ====================================================
 
-export interface UPDATE_MEMBER_PROPERTY_update_member_property {
+export interface UPDATE_MEMBER_PROPERTY_update_member_property_many {
   __typename: "member_property_mutation_response";
   /**
    * number of rows affected by the mutation
@@ -973,9 +973,9 @@ export interface UPDATE_MEMBER_PROPERTY_update_member_property {
 
 export interface UPDATE_MEMBER_PROPERTY {
   /**
-   * update data of the table: "member_property"
+   * update multiples rows of table: "member_property"
    */
-  update_member_property: UPDATE_MEMBER_PROPERTY_update_member_property | null;
+  update_member_property_many: (UPDATE_MEMBER_PROPERTY_update_member_property_many | null)[] | null;
 }
 
 export interface UPDATE_MEMBER_PROPERTYVariables {
