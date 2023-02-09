@@ -45,7 +45,7 @@ const ProfileAdminPage: React.VFC = () => {
 
   return (
     <MemberAdminLayout content={{ icon: UserIcon, title: formatMessage(commonMessages.content.personalSettings) }}>
-      <div className="mb-3">{currentMemberId && <ProfileBasicAdminCard memberId={currentMemberId} />}</div>.
+      <div className="mb-3">{currentMemberId && <ProfileBasicAdminCard memberId={currentMemberId} />}</div>
       <div className="mb-3">{currentMemberId && <ProfileOtherAdminCard memberId={currentMemberId} />}</div>
       <div className="mb-3" id="account">
         {currentMemberId && <ProfileAccountAdminCard memberId={currentMemberId} />}
