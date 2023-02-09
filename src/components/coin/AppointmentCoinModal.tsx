@@ -96,9 +96,9 @@ const AppointmentCoinModal: React.VFC<
       phone,
       email: currentMember?.email || '',
     })
-      .then(({ orderId, paymentNo, payToken }) =>
-        history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`),
-      )
+      .then(taskId => {
+        history.push(`/tasks/order/${taskId}`)
+      })
       .catch(handleError)
   }
 

@@ -94,21 +94,9 @@ export const useCheck = ({
     ) => {
       setOrderPlacing(true)
       const { ip, country, countryCode } = await fetchCurrentGeolocation()
-      return Axios.post<{
-        code: string
-        message: string
-        result: {
-          orderId: string
-          totalAmount: number
-          paymentNo: string | null
-          payToken: string | null
-          products: { name: string; price: number }[]
-          discounts: { name: string; price: number }[]
-        }
-      }>(
-        `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
+      return Axios.post<{ code: string; message: string; result: { id: string } }>(
+        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/order`,
         {
-          clientBackUrl: window.location.origin,
           paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
           productIds,
           discountId,
@@ -125,7 +113,8 @@ export const useCheck = ({
           if (code === 'SUCCESS') {
             ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
             ReactGA.ga('send', 'pageview')
-            return result
+
+            return result.id
           } else {
             throw new Error(message)
           }
