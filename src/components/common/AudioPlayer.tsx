@@ -373,6 +373,9 @@ const AudioPlayer: React.VFC<{
           lastEndedTime.current = endedAt
           onNext?.()
         }}
+        onCanPlay={() => {
+          audioRef.current?.play()
+        }}
         autoPlay={autoPlay}
       />
     </div>

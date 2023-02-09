@@ -47,6 +47,16 @@ export type Program = ProgramBriefProps & {
   })[]
 }
 
+export type ProgramPreview = {
+  id: string
+  coverUrl: string | null
+  coverMobileUrl: string | null
+  coverThumbnailUrl: string | null
+  title: string
+  abstract: string | null
+  roles: ProgramRole[]
+}
+
 export type ProgramRole = {
   id: string
   name: ProgramRoleName
