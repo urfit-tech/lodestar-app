@@ -19,7 +19,7 @@ type ProfileOtherAdminCardProps = CardProps & FormComponentProps & { memberId: s
 
 const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const { defaultPhoneNumber, refetchPhoneMember } = useMemberPhoneEnableSetting(memberId)
   const { properties, refetchProperties, errorProperties, loadingProperties } = useIsEditableProperty()
   const { loadingMemberProperties, errorMemberProperties, refetchMemberProperties, memberProperties } =
@@ -39,17 +39,15 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
     INSERT_MEMBER_PHONE,
   )
 
-  console.log(memberProperties, 'memberProperties')
-
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.validateFields((error, formValues) => {
+    form.validateFields(async (error, formValues) => {
       if (!error) {
         setLoading(true)
         try {
           if (formValues['phone']) {
             if (defaultPhoneNumber?.phone === '') {
-              insertMemberPhone({
+              await insertMemberPhone({
                 variables: {
                   memberPhone: Object.keys(formValues)
                     .filter(propertyId => propertyId === 'phone')
@@ -60,7 +58,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                 },
               })
             } else {
-              updateMemberPhone({
+              await updateMemberPhone({
                 variables: {
                   phoneId: defaultPhoneNumber?.id,
                   phoneValue: formValues['phone'] || defaultPhoneNumber?.phone,
@@ -74,6 +72,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
           let updateMemberPropertyArray =
             Object.keys(formValues)
               .filter(propertyId => memberProperties.find(item => item.id === propertyId))
+              .filter(propertyId => formValues[propertyId])
               .map(propertyId => {
                 return {
                   where: { member_id: { _eq: memberId }, property_id: { _eq: propertyId } },
@@ -81,7 +80,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                 }
               }) || []
           if (updateMemberPropertyArray.length > 0) {
-            updateMemberProperty({
+            await updateMemberProperty({
               variables: {
                 updateMemberProperties: updateMemberPropertyArray,
               },
@@ -92,6 +91,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
 
           let insertMemberPropertyArray = Object.keys(formValues)
             .filter(propertyId => !memberProperties.some(item => item.id === propertyId))
+            .filter(propertyId => formValues[propertyId])
             .map(propertyId => {
               return {
                 member_id: memberId,
@@ -101,7 +101,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
             })
 
           if (insertMemberPropertyArray.length > 0) {
-            insertMemberProperty({
+            await insertMemberProperty({
               variables: {
                 memberProperties: insertMemberPropertyArray,
               },
@@ -125,7 +125,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
   }
 
   if (loadingProperties || loadingMemberProperties) {
-    return <Skeleton />
+    return <Skeleton loading={loading} avatar active />
   }
 
   if (settings['profile_page.edit_phone.enable'] === '1' || properties.length > 0) {
@@ -160,7 +160,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                     },
                   },
                 ],
-              })(<MigrationInput type="phone" />)}
+              })(<MigrationInput type="phone" disabled={loading} />)}
             </Form.Item>
           ) : (
             <></>
@@ -181,7 +181,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                   ],
                 })(
                   property?.placeholder?.includes('/') ? (
-                    <Select>
+                    <Select disabled={loading}>
                       {property?.placeholder?.split('/').map((value: string, idx: number) => (
                         <Select.Option key={idx} value={value}>
                           {value}
@@ -189,7 +189,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                       ))}
                     </Select>
                   ) : (
-                    <MigrationInput type={property.id} />
+                    <MigrationInput type={property.id} disabled={loading} />
                   ),
                 )}
               </Form.Item>
@@ -199,7 +199,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
             <Button variant="outline" className="mr-2" onClick={() => form.resetFields()}>
               {formatMessage(commonMessages.ui.cancel)}
             </Button>
-            <Button variant="primary" type="submit" loading={loading}>
+            <Button variant="primary" type="submit" disabled={loading} isLoading={loading} _hover={{}}>
               {formatMessage(commonMessages.button.save)}
             </Button>
           </Form.Item>
