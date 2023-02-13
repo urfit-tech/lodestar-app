@@ -295,8 +295,8 @@ const useMemberPhoneEnableSetting = (memberId: string) => {
   })
 
   const defaultPhoneNumber = {
-    id: data?.member_phone?.[0].id || '',
-    phone: data?.member_phone?.[0].phone || '',
+    id: data?.member_phone?.[0]?.id || '',
+    phone: data?.member_phone?.[0]?.phone || '',
   }
 
   return { defaultPhoneNumber, refetchPhoneMember: refetch }
