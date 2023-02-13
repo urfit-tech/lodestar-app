@@ -1775,6 +1775,14 @@ export const codeMessages = defineMessages({
     id: 'code.E_VERIFY_EMAIL',
     defaultMessage: '信箱驗證失敗',
   },
+  E_COUPON_OUTDATED: {
+    id: 'code.E_COUPON_OUTDATED',
+    defaultMessage: '折價券已過期, 請重新下單',
+  },
+  E_COUPON_USED: {
+    id: 'code.E_COUPON_USED',
+    defaultMessage: '折價券已使用, 請重新下單',
+  },
 })
 
 export const certificateMessages = {
