@@ -673,7 +673,7 @@ const useSearchProductCollection = (
           where: {
             role: { _in: $memberRoles }
             _or: [{ name: { _ilike: $title } }, { username: { _ilike: $title } }, { tag_names: { _has_key: $tag } }]
-            has_backstage_enter_permission: { _eq: "1" }
+            has_backstage_enter_permission: { _eq: 1 }
           }
           order_by: [{ created_at: desc }]
         ) {
