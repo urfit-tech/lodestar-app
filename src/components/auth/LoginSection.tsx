@@ -42,17 +42,18 @@ const StyledModalTitle = styled.div`
 
 const LoginSection: React.VFC<{
   noGeneralLogin?: boolean
+  isBusinessMember?: boolean
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
   accountLinkToken?: string
   renderTitle?: () => React.ReactNode
-}> = ({ noGeneralLogin, onAuthStateChange, accountLinkToken, renderTitle }) => {
-  const { settings, id: appId } = useApp()
+}> = ({ noGeneralLogin, isBusinessMember, onAuthStateChange, accountLinkToken, renderTitle }) => {
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
   const tracking = useTracking()
   const history = useHistory()
   const [returnTo] = useQueryParam('returnTo', StringParam)
   const { login, forceLogin } = useAuth()
-  const { setVisible } = useContext(AuthModalContext)
+  const { setVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
   const [forceLoginLoading, setForceLoginLoading] = useState(false)
   const { register, handleSubmit, reset } = useForm({
@@ -141,6 +142,7 @@ const LoginSection: React.VFC<{
         .catch(handleError)
         .finally(() => {
           setLoading(false)
+          setIsBusinessMember?.(false)
           setForceLoginLoading(false)
         })
     },
@@ -240,6 +242,7 @@ const LoginSection: React.VFC<{
             onOk={() => handleForceLogin()}
             onCancel={() => {
               setAlertModalVisible(false)
+              setIsBusinessMember?.(false)
               setLoading(false)
             }}
           >

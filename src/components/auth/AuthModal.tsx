@@ -46,7 +46,9 @@ export const StyledAction = styled.div`
 export const AuthModalContext = React.createContext<{
   visible: boolean
   setVisible?: React.Dispatch<React.SetStateAction<boolean>>
-}>({ visible: false })
+  isBusinessMember?: boolean
+  setIsBusinessMember?: React.Dispatch<React.SetStateAction<boolean>>
+}>({ visible: false, isBusinessMember: false })
 
 type AuthModalProps = {
   defaultAuthState?: AuthState
@@ -56,7 +58,7 @@ type AuthModalProps = {
 }
 const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin, onAuthStateChange, renderTitle }) => {
   const { renderAuthModal } = useCustomRenderer()
-  const { visible, setVisible } = useContext(AuthModalContext)
+  const { visible, setVisible, isBusinessMember, setIsBusinessMember } = useContext(AuthModalContext)
   const [authState, setAuthState] = useState(defaultAuthState || 'login')
 
   return (
@@ -66,7 +68,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin,
         centered
         width={window.innerWidth > BREAK_POINT ? window.innerWidth / 2.5 : window.innerWidth}
         footer={null}
-        onCancel={() => setVisible && setVisible(false)}
+        onCancel={() => {
+          setVisible?.(false)
+          setIsBusinessMember?.(false)
+        }}
         visible={visible}
         maskClosable={!(authState === 'register')}
       >
@@ -74,7 +79,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin,
           {authState === 'login' ? (
             <LoginSection onAuthStateChange={setAuthState} noGeneralLogin={noGeneralLogin} renderTitle={renderTitle} />
           ) : authState === 'register' ? (
-            <RegisterSection onAuthStateChange={setAuthState} />
+            <RegisterSection onAuthStateChange={setAuthState} isBusinessMember={isBusinessMember} />
           ) : null}
         </StyledContainer>
       </Modal>

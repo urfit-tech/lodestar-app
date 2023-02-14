@@ -26,16 +26,17 @@ const StyledParagraph = styled.p`
 `
 
 type RegisterSectionProps = FormComponentProps & {
+  isBusinessMember?: boolean
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
 }
 
-const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateChange }) => {
+const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMember, onAuthStateChange }) => {
   const { settings, enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const { register, sendSmsCode, verifySmsCode } = useAuth()
-  const { setVisible } = useContext(AuthModalContext)
+  const { setVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const { renderRegisterTerm } = useCustomRenderer()
-  const { loadingSignUpProperty, signUpProperties, errorSignUpProperty } = useSignUpProperty()
+  const { loadingSignUpProperty, signUpProperties, errorSignUpProperty } = useSignUpProperty(isBusinessMember ?? false)
 
   const [loading, setLoading] = useState(false)
   const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'ready'>('ready')
@@ -48,11 +49,11 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
     setAuthState(
       enabledModules.sms_verification
         ? 'sms_verification'
-        : settings['feature.signup_info.enable'] === '1'
+        : settings['feature.signup_info.enable'] === '1' || (enabledModules.business_member && isBusinessMember)
         ? 'signup_info'
         : 'register',
     )
-  }, [enabledModules.sms_verification, settings])
+  }, [enabledModules.sms_verification, settings, enabledModules.business_member, isBusinessMember])
 
   const handleSmsSend = () => {
     const phoneNumber = form.getFieldValue('phoneNumber')
@@ -86,7 +87,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
         const phoneNumber = values.phoneNumber.trim()
         verifySmsCode({ phoneNumber, code: values.code.trim() })
           .then(() => {
-            if (settings['feature.signup_info.enable'] === '1') {
+            if (settings['feature.signup_info.enable'] === '1' || isBusinessMember) {
               setAuthState('signup_info')
             } else {
               setAuthState('register')
@@ -145,6 +146,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               )
 
             setVisible?.(false)
+            setIsBusinessMember?.(false)
             form.resetFields()
           })
           .catch((error: Error) => {

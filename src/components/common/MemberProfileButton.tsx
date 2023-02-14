@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons'
-import { Box, Collapse, useDisclosure } from '@chakra-ui/react'
+import { Box, Center, Collapse, Flex, Spacer, useDisclosure } from '@chakra-ui/react'
 import { Button, Icon, List, message, Popover } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -12,6 +12,8 @@ import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
+import { PlusIcon } from '../../images/index'
+import { AuthModalContext } from '../auth/AuthModal'
 import { MemberAdminMenu } from './AdminMenu'
 import GlobalSearchInput from './GlobalSearchInput'
 import MemberAvatar from './MemberAvatar'
@@ -51,6 +53,9 @@ const StyledCollapseIconWrapper = styled(Box)`
   && {
     margin: auto 0;
   }
+`
+const StyledListItem = styled(Flex)`
+  padding: 16px 16px 16px 0px;
 `
 
 export const CollapseNavLinks: React.VFC<{ nav: AppNavProps }> = ({ nav }) => {
@@ -163,6 +168,7 @@ const MemberProfileButton: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { close } = useContext(PodcastPlayerContext)
+  const { setVisible: setAuthModalVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const { renderMemberProfile, renderMemberAdminMenu, renderLogout, renderMyPageNavItem } = useCustomRenderer()
   const { logout } = useAuth()
   const { enabledModules, settings } = useApp()
@@ -213,13 +219,40 @@ const MemberProfileButton: React.VFC<{
           <MemberAdminMenu renderAdminMenu={renderMemberAdminMenu} style={{ border: 'none' }} />
         </BorderedItem>
 
-        {renderLogout?.({
-          logout: () => {
-            close?.()
-            logout?.()
-          },
-          DefaultLogout,
-        }) || <DefaultLogout />}
+        <BorderedItem>
+          {renderLogout?.({
+            logout: () => {
+              close?.()
+              logout?.()
+            },
+            DefaultLogout,
+          }) || <DefaultLogout />}
+        </BorderedItem>
+
+        {/* TODO: if module exists & logged in */}
+        <StyledListItem>
+          <Center mr="1">
+            <MemberAvatar memberId="aa08ece2-d70c-4233-99d5-02b7692f80c3" size={25} />
+          </Center>
+          <Center>公司ABCDEFG</Center>
+          <Spacer />
+          <Center className="cursor-pointer">切換</Center>
+        </StyledListItem>
+
+        {/* TODO: if module exists */}
+        <StyledListItem className="cursor-pointer">
+          <Center mr="2">
+            <PlusIcon />
+          </Center>
+          <Box
+            onClick={() => {
+              setIsBusinessMember?.(true)
+              setAuthModalVisible?.(true)
+            }}
+          >
+            加入公司
+          </Box>
+        </StyledListItem>
       </StyledList>
     </Wrapper>
   )
