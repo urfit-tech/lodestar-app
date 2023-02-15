@@ -6,10 +6,6 @@ const authMessages = {
     isRequiredWarning: { id: 'auth.*.isRequiredWarning', defaultMessage: '請填入{name}' },
   }),
   RegisterSection: defineMessages({
-    nameFieldWarning: {
-      id: 'auth.RegisterSection.nameFieldWarning',
-      defaultMessage: 'please enter your name.',
-    },
     emailIsAlreadyRegistered: {
       id: 'auth.RegisterSection.emailIsAlreadyRegistered',
       defaultMessage: '此信箱已註冊',
@@ -33,6 +29,10 @@ const authMessages = {
     enterName: {
       id: 'auth.RegisterSection.enterName',
       defaultMessage: '請填入姓名',
+    },
+    nameFieldWarning: {
+      id: 'auth.RegisterSection.nameFieldWarning',
+      defaultMessage: 'please enter your name.',
     },
     term: { id: 'auth.RegisterSection.term', defaultMessage: '條款' },
     isMember: { id: 'auth.RegisterSection.isMember', defaultMessage: '已經是會員了嗎?' },
