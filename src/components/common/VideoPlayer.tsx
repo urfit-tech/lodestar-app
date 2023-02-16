@@ -1,5 +1,5 @@
 import { Skeleton } from '@chakra-ui/skeleton'
-import React, { useContext, useRef } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
 import 'video.js/dist/video-js.min.css'
 import 'videojs-contrib-quality-levels'
@@ -31,11 +31,8 @@ type VideoJsPlayerProps = {
   onError?: (player: VideoJsPlayer, event: Event) => void
 }
 const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
-  const playerRef = useRef<VideoJsPlayer>()
+  const playerRef = useRef<VideoJsPlayer | null>(null)
   const { currentLocale } = useContext(LocaleContext)
-
-  if (props.loading) return <Skeleton width="100%" height="400px" />
-  if (props.error) return <div>{props.error}</div>
 
   const videoOptions: VideoJsPlayerOptions = {
     html5: {
@@ -106,6 +103,21 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
 
     setCaption(playerRef.current)
   }
+
+  // Dispose the Video.js player when the functional component unmounts
+  useEffect(() => {
+    const player = playerRef.current
+
+    return () => {
+      if (player && !player.isDisposed()) {
+        player.dispose()
+        playerRef.current = null
+      }
+    }
+  }, [playerRef])
+
+  if (props.loading) return <Skeleton width="100%" height="400px" />
+  if (props.error) return <div>{props.error}</div>
 
   return (
     <div>
