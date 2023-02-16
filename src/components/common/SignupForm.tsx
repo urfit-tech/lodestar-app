@@ -1,4 +1,3 @@
-import { Button } from '@chakra-ui/react'
 import { Checkbox, Col, Form, Input, Row, Select } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { useIntl } from 'react-intl'
@@ -15,16 +14,17 @@ const StyledCheckboxGroup = styled(Checkbox.Group)`
 
 const SignupForm: React.VFC<
   FormComponentProps & {
-    defaultPropertyRender?: React.ReactNode
     signupProperties: SignupProperty[]
+    renderDefaultProperty?: React.ReactNode
+    renderSubmitButton?: React.ReactNode
     onSubmit?: (e: any) => void
   }
-> = ({ form, defaultPropertyRender, signupProperties, onSubmit }) => {
+> = ({ form, renderDefaultProperty, signupProperties, renderSubmitButton, onSubmit }) => {
   const { formatMessage } = useIntl()
 
   return (
     <>
-      {defaultPropertyRender}
+      {renderDefaultProperty}
       <Form layout="vertical" onSubmit={e => onSubmit?.(e)}>
         {signupProperties.map(signupProperty => {
           switch (signupProperty.type) {
@@ -101,11 +101,7 @@ const SignupForm: React.VFC<
           }
         })}
 
-        <Form.Item>
-          <Button colorScheme="primary" type="submit" isFullWidth block="true">
-            {formatMessage(commonMessages['*'].nextStep)}
-          </Button>
-        </Form.Item>
+        {renderSubmitButton}
       </Form>
     </>
   )

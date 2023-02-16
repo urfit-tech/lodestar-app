@@ -275,7 +275,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
         <SignupForm
           form={form}
           signupProperties={signupProperties}
-          defaultPropertyRender={
+          renderDefaultProperty={
             <Form.Item key="name" label={formatMessage(authMessages.RegisterSection.name)}>
               {form.getFieldDecorator('name', {
                 rules: [
@@ -285,6 +285,13 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
                   },
                 ],
               })(<Input placeholder={formatMessage(authMessages.RegisterSection.nameFieldWarning)} />)}
+            </Form.Item>
+          }
+          renderSubmitButton={
+            <Form.Item>
+              <Button colorScheme="primary" type="submit" isFullWidth block="true">
+                {formatMessage(authMessages.RegisterSection.nextStep)}
+              </Button>
             </Form.Item>
           }
           onSubmit={(e: any) => {
