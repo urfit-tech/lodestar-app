@@ -85,7 +85,9 @@ const CoinCheckoutModal: React.VFC<{
       phone: '',
       email: currentMember?.email || '',
     })
-      .then(taskId => history.push(`/tasks/order/${taskId}`))
+      .then(({ orderId, paymentNo, payToken }) =>
+        history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`),
+      )
       .catch(handleError)
   }
   const handleOpen = () => {
