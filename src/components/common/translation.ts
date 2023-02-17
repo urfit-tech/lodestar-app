@@ -1,7 +1,13 @@
 import { defineMessages } from 'react-intl'
 
 const commonMessages = {
-  '*': defineMessages({}),
+  '*': defineMessages({
+    isRequiredWarning: { id: 'common.*.isRequiredWarning', defaultMessage: '請填入{name}' },
+    nextStep: {
+      id: 'common.*.nextStep',
+      defaultMessage: '下一步',
+    },
+  }),
   GlobalSearchInput: defineMessages({
     atLeastTwoChar: {
       id: 'common.GlobalSearchInput.atLeastTwoChar',
