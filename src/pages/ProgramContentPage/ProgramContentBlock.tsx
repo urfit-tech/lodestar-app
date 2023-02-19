@@ -192,7 +192,6 @@ const ProgramContentBlock: React.VFC<{
         ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
           <ProgramContentPlayer
-            key={programContent.id}
             programContentId={programContentId}
             nextProgramContent={nextProgramContent}
             onVideoEvent={e => {
