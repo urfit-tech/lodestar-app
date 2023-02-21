@@ -1051,7 +1051,15 @@ export const profileMessages = {
       },
       title: { id: 'common.title', defaultMessage: '稱號' },
       abstract: { id: 'common.abstract', defaultMessage: '介紹' },
+      abstractPlaceHolder: {
+        id: 'common.abstractPlaceHolder',
+        defaultMessage: 'Introduce yourself in one simple sentence.',
+      },
       intro: { id: 'common.introduction', defaultMessage: '簡述' },
+      introPlaceHolder: {
+        id: 'common.introductionPlaceHolder',
+        defaultMessage: 'Please fill in your personal introduction, including past experience, sharing.',
+      },
       currentPassword: {
         id: 'settings.profile.form.message.currentPassword',
         defaultMessage: '請輸入目前密碼',

@@ -86,7 +86,7 @@ const SocialSharePopover: React.FC<{ url: string }> = ({ url, children }) => {
       {children ? (
         children
       ) : (
-        <StyledIconButton variant="ghost" icon={<Icon as={BsShareFill} color="#9b9b9b" />} className="mr-2" />
+        <StyledIconButton variant="ghost" icon={<Icon as={BsShareFill} color="#585858" />} className="mr-2" />
       )}
     </Popover>
   )
