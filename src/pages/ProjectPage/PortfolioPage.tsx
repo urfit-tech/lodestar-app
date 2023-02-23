@@ -151,7 +151,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                 <Flex mb="1.5rem">
                   <Flex alignItems="center" color="primary.500">
                     {portfolio.projectTags.map(tag => (
-                      <Link key={tag.name} to={`/posts/?tags=${tag}`} className="mr-2">
+                      <Link key={tag.name} to={`/posts/?tags=${tag.name}`} className="mr-2">
                         <Box as="span" fontSize="14px" lineHeight="22px" letterSpacing="0.4px">
                           #{tag.name}
                         </Box>

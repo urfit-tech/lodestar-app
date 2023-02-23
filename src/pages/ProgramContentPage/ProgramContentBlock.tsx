@@ -19,6 +19,7 @@ import styled from 'styled-components'
 import AudioPlayer from '../../components/common/AudioPlayer'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
+import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import { getFileDownloadableLink } from '../../helpers'
@@ -71,6 +72,7 @@ const ProgramContentBlock: React.VFC<{
 }> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
+  const { currentResource, updateElementList } = useContext(MediaPlayerContext)
   const { loading: loadingApp, enabledModules, id: appId } = useApp()
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
@@ -188,11 +190,20 @@ const ProgramContentBlock: React.VFC<{
         </div>
       )}
 
+      {currentResource && (
+        <div className="d-flex p-5 align-items-center">
+          Please turn off the background mode to display.{' '}
+          <Button variant="link" onClick={() => updateElementList?.([])}>
+            Switch to foreground
+          </Button>
+        </div>
+      )}
+
       {programContent.contentType === 'video' &&
+        !currentResource &&
         ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
           <ProgramContentPlayer
-            key={programContent.id}
             programContentId={programContentId}
             nextProgramContent={nextProgramContent}
             onVideoEvent={e => {
@@ -223,6 +234,7 @@ const ProgramContentBlock: React.VFC<{
         )}
 
       {programContent.contentType === 'audio' &&
+        !currentResource &&
         ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
           <AudioPlayer

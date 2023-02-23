@@ -164,7 +164,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
           {form.getFieldDecorator('abstract', {
             initialValue: member && member.abstract,
             rules: [{ max: 100 }],
-          })(<Textarea rows={2} />)}
+          })(<Textarea rows={2} placeholder={formatMessage(profileMessages.form.message.abstractPlaceHolder)} />)}
         </Form.Item>
         <Form.Item label={formatMessage(profileMessages.form.message.intro)} wrapperCol={{ md: { span: 20 } }}>
           {form.getFieldDecorator('description', {
@@ -197,6 +197,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
                 'fullscreen',
               ]}
               media={{ uploadFn: createUploadFn(appId, authToken) }}
+              placeholder={formatMessage(profileMessages.form.message.introPlaceHolder)}
             />,
           )}
         </Form.Item>
