@@ -3,6 +3,7 @@ import { Box, Center, Collapse, Flex, Spacer, useDisclosure } from '@chakra-ui/r
 import { Button, Icon, List, message, Popover } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { parsePayload } from 'lodestar-app-element/src/hooks/util'
 import { AppNavProps } from 'lodestar-app-element/src/types/app'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
@@ -170,8 +171,11 @@ const MemberProfileButton: React.VFC<{
   const { close } = useContext(PodcastPlayerContext)
   const { setVisible: setAuthModalVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const { renderMemberProfile, renderMemberAdminMenu, renderLogout, renderMyPageNavItem } = useCustomRenderer()
-  const { logout } = useAuth()
+  const { logout, switchMember, authToken } = useAuth()
   const { enabledModules, settings } = useApp()
+
+  const authPayload = parsePayload(authToken || '')
+  const loggedInMembers = authPayload?.loggedInMembers || []
 
   const content = (
     <Wrapper>
@@ -229,30 +233,43 @@ const MemberProfileButton: React.VFC<{
           }) || <DefaultLogout />}
         </BorderedItem>
 
-        {/* TODO: if module exists & logged in */}
-        <StyledListItem>
-          <Center mr="1">
-            <MemberAvatar memberId="aa08ece2-d70c-4233-99d5-02b7692f80c3" size={25} />
-          </Center>
-          <Center>公司ABCDEFG</Center>
-          <Spacer />
-          <Center className="cursor-pointer">切換</Center>
-        </StyledListItem>
+        {enabledModules.business_member &&
+          loggedInMembers
+            ?.filter(m => authPayload?.isBusiness !== m.isBusiness)
+            ?.map(m => {
+              return (
+                <StyledListItem key={m.id}>
+                  <Center mr="1">
+                    <MemberAvatar memberId={m.id} size={25} />
+                  </Center>
+                  <Center>{m.username}</Center>
+                  <Spacer />
+                  <Center
+                    className="cursor-pointer"
+                    onClick={() => {
+                      switchMember?.({ memberId: m.id })
+                    }}
+                  >
+                    {formatMessage(commonMessages.ui.switch)}
+                  </Center>
+                </StyledListItem>
+              )
+            })}
 
-        {/* TODO: if module exists */}
-        <StyledListItem className="cursor-pointer">
-          <Center mr="2">
-            <PlusIcon />
-          </Center>
-          <Box
+        {enabledModules.business_member && (
+          <StyledListItem
+            className="cursor-pointer"
             onClick={() => {
               setIsBusinessMember?.(true)
               setAuthModalVisible?.(true)
             }}
           >
-            加入公司
-          </Box>
-        </StyledListItem>
+            <Center mr="2">
+              <PlusIcon />
+            </Center>
+            {formatMessage(commonMessages.content.registerCompany)}
+          </StyledListItem>
+        )}
       </StyledList>
     </Wrapper>
   )

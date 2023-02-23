@@ -2,15 +2,18 @@ import { Button, Icon } from '@chakra-ui/react'
 import { Form, Input, message, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import Axios from 'axios'
-import jwt from 'jsonwebtoken'
+import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { parsePayload } from 'lodestar-app-element/src/hooks/util'
 import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { v4 as uuid } from 'uuid'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
-import { handleError } from '../../helpers'
+import hasura from '../../hasura'
+import { handleError, uploadFile } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import { useSignUpProperty } from '../../hooks/common'
 import { AuthState } from '../../types/member'
@@ -19,6 +22,9 @@ import SignupForm from '../common/SignupForm'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
 import authMessages from './translation'
+import BusinessSignupForm from '../common/businessSignupForm'
+import { isEmpty } from 'ramda'
+import { useQuery } from '@apollo/react-hooks'
 
 const StyledParagraph = styled.p`
   color: var(--gray-dark);
@@ -37,6 +43,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
   const { setVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const { renderRegisterTerm } = useCustomRenderer()
   const { loadingSignUpProperty, signUpProperties, errorSignUpProperty } = useSignUpProperty(isBusinessMember ?? false)
+  const { loadingPropertyIdMap, propertyIdMap, errorPropertyIdMap } = useBusinessSignupPropertyIdMap()
 
   const [loading, setLoading] = useState(false)
   const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'ready'>('ready')
@@ -113,15 +120,28 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
           username: values.username.trim().toLowerCase(),
           email: values.email.trim().toLowerCase(),
           password: values.password,
+          isBusiness: isBusinessMember ?? false,
         })
-          .then(authToken => {
-            const currentMemberId = jwt.decode(authToken)?.sub
+          .then(async authToken => {
+            const decodedToken = parsePayload(authToken)
+            if (!decodedToken) {
+              throw new Error('no auth token')
+            }
+            const currentMemberId = decodedToken.sub
+            const avatarId = uuid()
+            const path = `avatar/${decodedToken.appId}/${currentMemberId}`
+            const pictureUrl = `https://${process.env.REACT_APP_S3_BUCKET}/${path}/${avatarId}`
+
+            if (values.companyPictureFile) {
+              await uploadFile(path, values.companyPictureFile, authToken)
+            }
+
             process.env.REACT_APP_GRAPHQL_ENDPOINT &&
               Axios.post(
                 process.env.REACT_APP_GRAPHQL_ENDPOINT,
                 {
                   query: `mutation UPDATE_MEMBER_INFO($memberId: String!, $name: String,$memberProperties: [member_property_insert_input!]!) {
-                  update_member(where: { id: { _eq: $memberId } }, _set: { name: $name }) {
+                  update_member(where: { id: { _eq: $memberId } }, _set: $setMember) {
                     affected_rows
                   }
 
@@ -132,9 +152,11 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
                   `,
                   variables: {
                     memberId: currentMemberId,
-                    name: signupInfos?.find(v => v.id === 'name')?.value,
+                    setMember: isBusinessMember
+                      ? { picture_url: pictureUrl }
+                      : { name: signupInfos?.find(v => v.id === 'name')?.value },
                     memberProperties: signupInfos
-                      ?.filter(v => v.id !== 'name')
+                      ?.filter(v => v.id !== 'name' && v.id !== 'pictureUrl')
                       ?.map(v => ({
                         member_id: currentMemberId,
                         property_id: v.id,
@@ -254,63 +276,104 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
   }
 
   if (authState === 'signup_info') {
-    if (loadingSignUpProperty) return <Skeleton active />
-    if (errorSignUpProperty) return <>{formatMessage(authMessages.RegisterSection.fetchError)}</>
+    if (loadingSignUpProperty || loadingPropertyIdMap) return <Skeleton active />
+    if (errorSignUpProperty || errorPropertyIdMap || isEmpty(propertyIdMap)) {
+      return <>{formatMessage(authMessages.RegisterSection.fetchError)}</>
+    }
 
     return (
       <>
         <StyledTitle>{formatMessage(authMessages.RegisterSection.signupInfo)}</StyledTitle>
-        <SignupForm
-          form={form}
-          signUpProperties={signUpProperties}
-          renderDefaultProperty={
-            <Form.Item key="name" label={formatMessage(authMessages.RegisterSection.name)}>
-              {form.getFieldDecorator('name', {
-                rules: [
-                  {
-                    required: true,
-                    message: formatMessage(authMessages.RegisterSection.enterName),
+        {isBusinessMember ? (
+          <BusinessSignupForm
+            form={form}
+            onSubmit={submitValues => {
+              form.validateFieldsAndScroll(
+                {
+                  scroll: {
+                    offsetTop: 35,
                   },
-                ],
-              })(<Input placeholder={formatMessage(authMessages.RegisterSection.nameFieldWarning)} />)}
-            </Form.Item>
-          }
-          renderSubmitButton={
-            <Form.Item>
-              <Button colorScheme="primary" type="submit" isFullWidth block="true">
-                {formatMessage(authMessages.RegisterSection.nextStep)}
-              </Button>
-            </Form.Item>
-          }
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault()
-            form.validateFieldsAndScroll(
-              {
-                scroll: {
-                  offsetTop: 35,
                 },
-              },
-              (error, values) => {
-                if (error) return
-                const signPropertyTypes: { [key: string]: string } = {}
-                signUpProperties.forEach(p => (signPropertyTypes[p.id] = p.type))
-                setSignupInfos(
-                  Object.keys(values).map(id => {
-                    let value = values[id] || ''
-                    if (signPropertyTypes[id] === 'input') {
-                      value = value.trim()
-                    }
-                    return {
-                      id: id,
-                      value: value,
-                    }
-                  }),
-                )
-                setAuthState('register')
-              },
-            )
-          }}
-        />
+                (error, values) => {
+                  if (error) return
+                  const propertyValues = { ...values, ...submitValues }
+                  alert(JSON.stringify(propertyValues))
+                  alert(
+                    JSON.stringify(
+                      Object.keys(propertyValues)
+                        .map(key => ({
+                          id: propertyIdMap[key],
+                          value: propertyValues[key],
+                        }))
+                        .filter(property => property.id && property.value),
+                    ),
+                  )
+                  setSignupInfos(
+                    Object.keys(propertyValues)
+                      .map(key => ({
+                        id: propertyIdMap[key],
+                        value: propertyValues[key],
+                      }))
+                      .filter(property => property.id !== undefined),
+                  )
+                  setAuthState('register')
+                },
+              )
+            }}
+          />
+        ) : (
+          <SignupForm
+            form={form}
+            signUpProperties={signUpProperties}
+            renderDefaultProperty={
+              <Form.Item key="name" label={formatMessage(authMessages.RegisterSection.name)}>
+                {form.getFieldDecorator('name', {
+                  rules: [
+                    {
+                      required: true,
+                      message: formatMessage(authMessages.RegisterSection.enterName),
+                    },
+                  ],
+                })(<Input placeholder={formatMessage(authMessages.RegisterSection.nameFieldWarning)} />)}
+              </Form.Item>
+            }
+            renderSubmitButton={
+              <Form.Item>
+                <Button colorScheme="primary" type="submit" isFullWidth block="true">
+                  {formatMessage(authMessages.RegisterSection.nextStep)}
+                </Button>
+              </Form.Item>
+            }
+            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+              e.preventDefault()
+              form.validateFieldsAndScroll(
+                {
+                  scroll: {
+                    offsetTop: 35,
+                  },
+                },
+                (error, values) => {
+                  if (error) return
+                  const signPropertyTypes: { [key: string]: string } = {}
+                  signUpProperties.forEach(p => (signPropertyTypes[p.id] = p.type))
+                  setSignupInfos(
+                    Object.keys(values).map(id => {
+                      let value = values[id] || ''
+                      if (signPropertyTypes[id] === 'input') {
+                        value = value.trim()
+                      }
+                      return {
+                        id: id,
+                        value: value,
+                      }
+                    }),
+                  )
+                  setAuthState('register')
+                },
+              )
+            }}
+          />
+        )}
       </>
     )
   }
@@ -434,6 +497,39 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
       </StyledAction>
     </>
   )
+}
+
+export const useBusinessSignupPropertyIdMap = () => {
+  const nameMap: { [key: string]: string } = {
+    公司抬頭: 'companyTitle',
+    公司簡稱: 'companyShortName',
+    公司統編: 'companyUniformNumber',
+    公司類型: 'companyType',
+    官方網站: 'officialWebsite',
+    公司縣市: 'city',
+    公司鄉鎮區: 'district',
+    公司地址: 'companyAddress',
+    公司負責人: 'personInChargeOfTheCompany',
+    公司電話: 'companyPhone',
+    公司簡介: 'companyAbstract',
+    公司介紹: 'companyIntro',
+  }
+  const { loading, error, data } = useQuery<hasura.GET_BUSINESS_SIGNUP_PROPERTY_ID_MAP>(
+    gql`
+      query GET_BUSINESS_SIGNUP_PROPERTY_ID_MAP($condition: property_bool_exp!) {
+        property(where: $condition) {
+          id
+          name
+        }
+      }
+    `,
+    { variables: { condition: { _and: [{ name: { _in: Object.keys(nameMap) } }, { is_business: { _eq: true } }] } } },
+  )
+  const propertyIdMap: { [key: string]: string } = {}
+  if (data !== undefined) {
+    data.property.map(p => (propertyIdMap[nameMap[p.name]] = p.id))
+  }
+  return { loadingPropertyIdMap: loading, propertyIdMap, errorPropertyIdMap: error }
 }
 
 export default Form.create<RegisterSectionProps>()(RegisterSection)

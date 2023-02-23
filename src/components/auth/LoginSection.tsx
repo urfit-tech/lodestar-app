@@ -154,22 +154,22 @@ const LoginSection: React.VFC<{
     <>
       {renderTitle ? renderTitle() : <StyledTitle>{formatMessage(authMessages.title.login)}</StyledTitle>}
 
-      {!!settings['auth.parenting.client_id'] && (
+      {!isBusinessMember && !!settings['auth.parenting.client_id'] && (
         <div className="mb-3" style={{ width: '100%' }}>
           <ParentingLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
-      {!!settings['auth.facebook_app_id'] && (
+      {!isBusinessMember && !!settings['auth.facebook_app_id'] && (
         <div className="mb-3" style={{ width: '100%' }}>
           <FacebookLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
-      {!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
+      {!isBusinessMember && !!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
         <div className="mb-3" style={{ width: '100%' }}>
           <LineLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
-      {!!settings['auth.google_client_id'] && (
+      {!isBusinessMember && !!settings['auth.google_client_id'] && (
         <div className="mb-3" style={{ width: '100%' }}>
           <GoogleLoginButton accountLinkToken={accountLinkToken} />
         </div>
@@ -219,7 +219,9 @@ const LoginSection: React.VFC<{
           </Button>
 
           <StyledAction>
-            <span>{formatMessage(authMessages.content.noMember)}</span>
+            <span>
+              {formatMessage(isBusinessMember ? authMessages.content.noCompany : authMessages.content.noMember)}
+            </span>
             <Button
               colorScheme="primary"
               variant="ghost"
@@ -227,7 +229,7 @@ const LoginSection: React.VFC<{
               lineHeight="unset"
               onClick={() => onAuthStateChange('register')}
             >
-              {formatMessage(commonMessages.button.signUp)}
+              {formatMessage(isBusinessMember ? commonMessages.button.instantlySignUp : commonMessages.button.signUp)}
             </Button>
           </StyledAction>
 

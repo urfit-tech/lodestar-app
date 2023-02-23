@@ -77,7 +77,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin,
       >
         <StyledContainer>
           {authState === 'login' ? (
-            <LoginSection onAuthStateChange={setAuthState} noGeneralLogin={noGeneralLogin} renderTitle={renderTitle} />
+            <LoginSection
+              onAuthStateChange={setAuthState}
+              noGeneralLogin={noGeneralLogin}
+              renderTitle={renderTitle}
+              isBusinessMember={isBusinessMember}
+            />
           ) : authState === 'register' ? (
             <RegisterSection onAuthStateChange={setAuthState} isBusinessMember={isBusinessMember} />
           ) : null}
