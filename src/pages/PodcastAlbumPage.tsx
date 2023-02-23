@@ -1,9 +1,11 @@
 import { SkeletonText } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import React, { useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
+import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import PodcastAlbumBanner from '../components/common/podcastAlbum/PodcastAlbumBanner'
@@ -11,7 +13,6 @@ import PodcastAlbumContentListBlock from '../components/common/podcastAlbum/Podc
 import PodcastAlbumInstructorCollectionBlock from '../components/common/podcastAlbum/PodcastAlbumInstructorCollectionBlock'
 import PodcastAlbumSubscriptionPlanCard from '../components/common/podcastAlbum/PodcastAlbumSubscriptionPlanCard'
 import Responsive, { BREAK_POINT } from '../components/common/Responsive'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import PodcastPlayerContext from '../contexts/PodcastPlayerContext'
 import { desktopViewMixin } from '../helpers'
@@ -81,6 +82,9 @@ const PodcastAlbumPage: React.VFC = () => {
   return (
     <DefaultLayout white>
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      <Helmet>
+        <title>{podcastAlbum.title}</title>
+      </Helmet>
       <PodcastAlbumBanner podcastAlbum={podcastAlbum} />
 
       <StyledPodcastAlbumIntroBlock>

@@ -3,6 +3,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
+import { Helmet } from 'react-helmet'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { AuthModalContext } from '../components/auth/AuthModal'
@@ -57,6 +58,9 @@ const PodcastProgramCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      <Helmet>
+        <title>{pageTitle || formatMessage(productMessages.podcast.title.broadcast)}</title>
+      </Helmet>
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
