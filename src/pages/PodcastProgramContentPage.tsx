@@ -1,12 +1,13 @@
 import { SkeletonText } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../components/common/Responsive'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import PodcastProgramCover from '../components/podcast/PodcastProgramCover'
 import CreatorCard from '../containers/common/CreatorCard'
@@ -46,6 +47,9 @@ const PodcastProgramContentPage: React.VFC = () => {
 
   return (
     <DefaultLayout noFooter>
+      <Helmet>
+        <title>{podcastProgram.title}</title>
+      </Helmet>
       <div className="row no-gutters">
         <div className="col-12 col-lg-4">
           {currentMemberId && (

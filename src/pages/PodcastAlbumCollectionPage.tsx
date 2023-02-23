@@ -5,6 +5,7 @@ import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/co
 import { flatten, prop, sortBy, uniqBy } from 'ramda'
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
+import { Helmet } from 'react-helmet'
 import { AiFillAppstore } from 'react-icons/ai'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -137,6 +138,9 @@ const PodcastAlbumCollectionPage: React.VFC = () => {
 
   return (
     <DefaultLayout white>
+      <Helmet>
+        <title>{title || pageTitle || formatMessage(productMessages.program.title.explore)}</title>
+      </Helmet>
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>
