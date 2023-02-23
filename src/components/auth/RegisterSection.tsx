@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Button, Icon, Input } from '@chakra-ui/react'
-import { Checkbox, Col, Form, message, Row, Select, Skeleton } from 'antd'
+import { Button, Icon } from '@chakra-ui/react'
+import { Form, Input, message, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import Axios from 'axios'
 import gql from 'graphql-tag'
@@ -17,20 +17,26 @@ import { handleError } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import { AuthState } from '../../types/member'
 import MigrationInput from '../common/MigrationInput'
+import SignupForm from '../common/SignupForm'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
 import authMessages from './translation'
 
+export type SignupProperty = {
+  id: string
+  propertyId: string
+  type: string
+  name: string
+  isRequired: boolean
+  placeHolder?: string
+  selectOptions?: string[]
+  ruleMessage?: string
+  rowAmount?: number
+}
+
 const StyledParagraph = styled.p`
   color: var(--gray-dark);
   font-size: 14px;
-`
-
-const StyledCheckboxGroup = styled(Checkbox.Group)`
-  && .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: ${props => props.theme['@primary-color']};
-    border-color: ${props => props.theme['@primary-color']};
-  }
 `
 
 type RegisterSectionProps = FormComponentProps & {
@@ -43,7 +49,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
   const { register, sendSmsCode, verifySmsCode } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
   const { renderRegisterTerm } = useCustomRenderer()
-  const { loadingSighProperty, signProperties, errorSignProperty } = useSignupProperty()
+  const { loadingSignupProperty, signupProperties, errorSignupProperty } = useSignupProperty()
 
   const [loading, setLoading] = useState(false)
   const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'ready'>('ready')
@@ -260,15 +266,35 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
   }
 
   if (authState === 'signup_info') {
-    if (loadingSighProperty) return <Skeleton active />
-    if (errorSignProperty) return <>{formatMessage(authMessages.RegisterSection.fetchError)}</>
+    if (loadingSignupProperty) return <Skeleton active />
+    if (errorSignupProperty) return <>{formatMessage(authMessages.RegisterSection.fetchError)}</>
 
     return (
       <>
         <StyledTitle>{formatMessage(authMessages.RegisterSection.signupInfo)}</StyledTitle>
-        <Form
-          layout="vertical"
-          onSubmit={e => {
+        <SignupForm
+          form={form}
+          signupProperties={signupProperties}
+          renderDefaultProperty={
+            <Form.Item key="name" label={formatMessage(authMessages.RegisterSection.name)}>
+              {form.getFieldDecorator('name', {
+                rules: [
+                  {
+                    required: true,
+                    message: formatMessage(authMessages.RegisterSection.enterName),
+                  },
+                ],
+              })(<Input placeholder={formatMessage(authMessages.RegisterSection.nameFieldWarning)} />)}
+            </Form.Item>
+          }
+          renderSubmitButton={
+            <Form.Item>
+              <Button colorScheme="primary" type="submit" isFullWidth block="true">
+                {formatMessage(authMessages.RegisterSection.nextStep)}
+              </Button>
+            </Form.Item>
+          }
+          onSubmit={(e: any) => {
             e.preventDefault()
             form.validateFieldsAndScroll(
               {
@@ -279,7 +305,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               (error, values) => {
                 if (error) return
                 const signPropertyTypes: { [key: string]: string } = {}
-                signProperties.forEach(p => (signPropertyTypes[p.id] = p.type))
+                signupProperties.forEach(p => (signPropertyTypes[p.id] = p.type))
                 setSignupInfos(
                   Object.keys(values).map(id => {
                     let value = values[id] || ''
@@ -296,99 +322,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               },
             )
           }}
-        >
-          <Form.Item key="name" label={formatMessage(authMessages.RegisterSection.name)}>
-            {form.getFieldDecorator('name', {
-              rules: [
-                {
-                  required: true,
-                  message: formatMessage(authMessages.RegisterSection.enterName),
-                },
-              ],
-            })(<Input placeholder={formatMessage(authMessages.RegisterSection.nameFieldWarning)} />)}
-          </Form.Item>
-
-          {signProperties.map(signProperty => {
-            switch (signProperty.type) {
-              case 'input':
-                return (
-                  <Form.Item key={signProperty.propertyId} label={signProperty.name}>
-                    {form.getFieldDecorator(signProperty.propertyId, {
-                      rules: [
-                        {
-                          required: signProperty.isRequired,
-                          message:
-                            signProperty.ruleMessage ||
-                            formatMessage(authMessages['*'].isRequiredWarning, { name: signProperty.name }),
-                        },
-                      ],
-                    })(<Input placeholder={signProperty.placeHolder} />)}
-                  </Form.Item>
-                )
-              case 'checkbox':
-                return (
-                  <Form.Item key={signProperty.propertyId} label={signProperty.name}>
-                    {form.getFieldDecorator(signProperty.propertyId, {
-                      valuePropName: 'checked',
-                      rules: [
-                        {
-                          required: signProperty.isRequired,
-                          message:
-                            signProperty.ruleMessage ||
-                            formatMessage(authMessages['*'].isRequiredWarning, { name: signProperty.name }),
-                        },
-                      ],
-                    })(
-                      <StyledCheckboxGroup className="StyledCheckboxGroup">
-                        <Row>
-                          {signProperty.selectOptions?.map(selectOption => (
-                            <Col className="mb-2" span={Math.floor(24 / (signProperty?.rowAmount || 1))}>
-                              <Checkbox value={selectOption}>{selectOption}</Checkbox>
-                            </Col>
-                          ))}
-                        </Row>
-                      </StyledCheckboxGroup>,
-                    )}
-                  </Form.Item>
-                )
-              case 'select':
-                return (
-                  <Form.Item key={signProperty.propertyId} label={signProperty.name}>
-                    {form.getFieldDecorator(signProperty.propertyId, {
-                      rules: [
-                        {
-                          required: signProperty.isRequired,
-                          message:
-                            signProperty.ruleMessage ||
-                            formatMessage(authMessages['*'].isRequiredWarning, { name: signProperty.name }),
-                        },
-                      ],
-                    })(
-                      <Select placeholder={signProperty.placeHolder}>
-                        {signProperty.selectOptions?.map(selectOption => (
-                          <Select.Option value={selectOption}>{selectOption}</Select.Option>
-                        ))}
-                      </Select>,
-                    )}
-                  </Form.Item>
-                )
-              // TODO: finish it
-              case 'radio':
-                return <></>
-              // TODO: finish it
-              case 'textArea':
-                return <></>
-              default:
-                return <></>
-            }
-          })}
-
-          <Form.Item>
-            <Button colorScheme="primary" type="submit" isFullWidth block="true" loading={verifying.toString()}>
-              {formatMessage(authMessages.RegisterSection.nextStep)}
-            </Button>
-          </Form.Item>
-        </Form>
+        />
       </>
     )
   }
@@ -531,17 +465,7 @@ const useSignupProperty = () => {
       }
     `,
   )
-  const signProperties: {
-    id: string
-    propertyId: string
-    type: string
-    name: string
-    isRequired: boolean
-    placeHolder?: string
-    selectOptions?: string[]
-    ruleMessage?: string
-    rowAmount?: number
-  }[] =
+  const signupProperties: SignupProperty[] =
     data?.signup_property.map(v => ({
       id: v.id,
       propertyId: v.property.id,
@@ -555,9 +479,9 @@ const useSignupProperty = () => {
     })) || []
 
   return {
-    loadingSighProperty: loading,
-    signProperties,
-    errorSignProperty: error,
+    loadingSignupProperty: loading,
+    signupProperties,
+    errorSignupProperty: error,
   }
 }
 

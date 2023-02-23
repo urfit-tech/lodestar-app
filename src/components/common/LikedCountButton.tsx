@@ -6,7 +6,7 @@ import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 const StyledIconButton = styled(IconButton)<{ isActive?: boolean }>`
   &&& {
     border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray)')};
-    color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray)')};
+    color: ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray-darker)')};
     border-radius: 50%;
     background: white;
   }

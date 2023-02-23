@@ -1051,7 +1051,15 @@ export const profileMessages = {
       },
       title: { id: 'common.title', defaultMessage: '稱號' },
       abstract: { id: 'common.abstract', defaultMessage: '介紹' },
+      abstractPlaceHolder: {
+        id: 'common.abstractPlaceHolder',
+        defaultMessage: 'Introduce yourself in one simple sentence.',
+      },
       intro: { id: 'common.introduction', defaultMessage: '簡述' },
+      introPlaceHolder: {
+        id: 'common.introductionPlaceHolder',
+        defaultMessage: 'Please fill in your personal introduction, including past experience, sharing.',
+      },
       currentPassword: {
         id: 'settings.profile.form.message.currentPassword',
         defaultMessage: '請輸入目前密碼',
@@ -1774,6 +1782,14 @@ export const codeMessages = defineMessages({
   E_VERIFY_EMAIL: {
     id: 'code.E_VERIFY_EMAIL',
     defaultMessage: '信箱驗證失敗',
+  },
+  E_COUPON_OUTDATED: {
+    id: 'code.E_COUPON_OUTDATED',
+    defaultMessage: '折價券已過期, 請重新下單',
+  },
+  E_COUPON_USED: {
+    id: 'code.E_COUPON_USED',
+    defaultMessage: '折價券已使用, 請重新下單',
   },
 })
 

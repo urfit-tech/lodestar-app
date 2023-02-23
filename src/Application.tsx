@@ -11,6 +11,7 @@ import ErrorBoundary from './containers/common/ErrorBoundary'
 import { CartProvider } from './contexts/CartContext'
 import { CustomRendererProps, CustomRendererProvider } from './contexts/CustomRendererContext'
 import { LocaleProvider } from './contexts/LocaleContext'
+import { MediaPlayerProvider } from './contexts/MediaPlayerContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { PodcastPlayerProvider } from './contexts/PodcastPlayerContext'
 import './styles.scss'
@@ -28,13 +29,15 @@ const Application: React.FC<{
             <CartProvider>
               <NotificationProvider>
                 <PodcastPlayerProvider>
-                  <ConfigProvider locale={zhTW}>
-                    <CustomRendererProvider renderer={customRender}>
-                      <AppRouter extra={extraRouteProps}>
-                        <GlobalPodcastPlayer />
-                      </AppRouter>
-                    </CustomRendererProvider>
-                  </ConfigProvider>
+                  <MediaPlayerProvider>
+                    <ConfigProvider locale={zhTW}>
+                      <CustomRendererProvider renderer={customRender}>
+                        <AppRouter extra={extraRouteProps}>
+                          <GlobalPodcastPlayer />
+                        </AppRouter>
+                      </CustomRendererProvider>
+                    </ConfigProvider>
+                  </MediaPlayerProvider>
                 </PodcastPlayerProvider>
               </NotificationProvider>
             </CartProvider>
