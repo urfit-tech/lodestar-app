@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { Helmet } from 'react-helmet'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import PodcastPlayer from './PodcastPlayer'
 
@@ -25,7 +24,6 @@ const GlobalPodcastPlayer: React.VFC = () => {
 
   return (
     <>
-      <Helmet>{currentPodcastProgramContent?.title && <title>{currentPodcastProgramContent.title}</title>}</Helmet>
       {visible ? (
         <PodcastPlayer
           loading={loading}
