@@ -75,6 +75,12 @@
   background-color: #f7f8f8;
 }
 
+// BraftEditor
+.public-DraftEditorPlaceholder-root,
+.public-DraftEditorPlaceholder-hasFocus {
+  color: #cdcece;
+}
+
 .short-bf-content {
   height: 240px;
 }
