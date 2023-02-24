@@ -4,6 +4,32 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_BUSINESS_SIGNUP_PROPERTY_ID_MAP
+// ====================================================
+
+export interface GET_BUSINESS_SIGNUP_PROPERTY_ID_MAP_property {
+  __typename: "property";
+  id: any;
+  name: string;
+}
+
+export interface GET_BUSINESS_SIGNUP_PROPERTY_ID_MAP {
+  /**
+   * fetch data from the table: "property"
+   */
+  property: GET_BUSINESS_SIGNUP_PROPERTY_ID_MAP_property[];
+}
+
+export interface GET_BUSINESS_SIGNUP_PROPERTY_ID_MAPVariables {
+  condition: property_bool_exp;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PRODUCT_INVENTORY
 // ====================================================
 
@@ -824,6 +850,7 @@ export interface GET_EDITABLE_PROPERTY {
 
 export interface GET_EDITABLE_PROPERTYVariables {
   type: string;
+  isBusiness: boolean;
 }
 
 /* tslint:disable */
@@ -5186,6 +5213,10 @@ export interface GET_SIGNUP_PROPERTY {
   signup_property: GET_SIGNUP_PROPERTY_signup_property[];
 }
 
+export interface GET_SIGNUP_PROPERTYVariables {
+  isBusiness: boolean;
+}
+
 /* tslint:disable */
 /* eslint-disable */
 // @generated
@@ -6154,6 +6185,7 @@ export interface GET_MEMBER_member_by_pk {
    */
   youtube_channel_ids: any | null;
   verified_emails: any;
+  is_business: boolean;
   /**
    * An array relationship
    */

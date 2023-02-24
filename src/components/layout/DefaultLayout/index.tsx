@@ -2,7 +2,7 @@ import { Menu, MenuButton, MenuList } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -92,12 +92,13 @@ const DefaultLayout: React.FC<{
   const { navs } = useNav()
   const { visible: playerVisible } = useContext(PodcastPlayerContext)
   const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
+  const [isBusinessMember, setIsBusinessMember] = useState(false)
   const [visible, setVisible] = useState(false)
 
   const isUnVerifiedEmails = member ? !member.verifiedEmails?.includes(member.email) : false
 
   return (
-    <AuthModalContext.Provider value={{ visible, setVisible }}>
+    <AuthModalContext.Provider value={{ visible, setVisible, isBusinessMember, setIsBusinessMember }}>
       {visible && <AuthModal noGeneralLogin={noGeneralLogin} renderTitle={renderAuthModalTitle} />}
 
       <StyledLayoutWrapper variant={white ? 'white' : undefined}>

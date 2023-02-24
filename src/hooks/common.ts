@@ -594,11 +594,11 @@ export const useIdentity = (type: MetaProductType, roleName?: string) => {
   }
 }
 
-export const useSignUpProperty = () => {
+export const useSignUpProperty = (isBusiness: boolean = false) => {
   const { loading, error, data } = useQuery<hasura.GET_SIGNUP_PROPERTY>(
     gql`
-      query GET_SIGNUP_PROPERTY {
-        signup_property(order_by: { position: asc }) {
+      query GET_SIGNUP_PROPERTY($isBusiness: Boolean!) {
+        signup_property(where: { property: { is_business: { _eq: $isBusiness } } }, order_by: { position: asc }) {
           id
           is_required
           options
@@ -610,6 +610,7 @@ export const useSignUpProperty = () => {
         }
       }
     `,
+    { variables: { isBusiness } },
   )
   const signUpProperties: SignupProperty[] =
     data?.signup_property.map(v => ({

@@ -212,14 +212,17 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
 }
 export default Form.create<ProfileOtherAdminCardProps>()(ProfileOtherAdminCard)
 
-const useIsEditableProperty = () => {
+export const useIsEditableProperty = (isBusiness: boolean = false) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_EDITABLE_PROPERTY,
     hasura.GET_EDITABLE_PROPERTYVariables
   >(
     gql`
-      query GET_EDITABLE_PROPERTY($type: String!) {
-        property(where: { type: { _eq: $type }, is_editable: { _eq: true } }, order_by: { position: asc }) {
+      query GET_EDITABLE_PROPERTY($type: String!, $isBusiness: Boolean!) {
+        property(
+          where: { type: { _eq: $type }, is_editable: { _eq: true }, is_business: { _eq: $isBusiness } }
+          order_by: { position: asc }
+        ) {
           id
           name
           placeholder
@@ -232,7 +235,7 @@ const useIsEditableProperty = () => {
         }
       }
     `,
-    { variables: { type: 'member' } },
+    { variables: { type: 'member', isBusiness } },
   )
 
   const properties =
@@ -251,7 +254,7 @@ const useIsEditableProperty = () => {
     refetchProperties: refetch,
   }
 }
-const useMemberPropertyCollection = (memberId: string) => {
+export const useMemberPropertyCollection = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_MEMBER_PROPERTY_COLLECTION,
     hasura.GET_MEMBER_PROPERTY_COLLECTIONVariables
@@ -312,14 +315,14 @@ const GET_MEMBER_PHONE = gql`
   }
 `
 
-const INSERT_MEMBER_PROPERTY = gql`
+export const INSERT_MEMBER_PROPERTY = gql`
   mutation INSERT_MEMBER_PROPERTY($memberProperties: [member_property_insert_input!]!) {
     insert_member_property(objects: $memberProperties) {
       affected_rows
     }
   }
 `
-const UPDATE_MEMBER_PROPERTY = gql`
+export const UPDATE_MEMBER_PROPERTY = gql`
   mutation UPDATE_MEMBER_PROPERTY($updateMemberProperties: [member_property_updates!]!) {
     update_member_property_many(updates: $updateMemberProperties) {
       affected_rows
