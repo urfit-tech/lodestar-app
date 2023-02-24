@@ -25,13 +25,7 @@ const SignupPropertyModal: React.VFC = () => {
   }, [location, isAuthenticating, currentMemberId, isFinishedSignUpProperty])
 
   return (
-    <Modal
-      // closable={false}
-      footer={null}
-      onCancel={() => setVisible && setVisible(false)}
-      visible={visible}
-      maskClosable={false}
-    >
+    <Modal footer={null} onCancel={() => setVisible && setVisible(false)} visible={visible} maskClosable={false}>
       <StyledTitle>{formatMessage(commonMessages.SignupPropertyModal.signupInfo)}</StyledTitle>
       <SignupPropertySection onModalVisible={setVisible} />
     </Modal>
