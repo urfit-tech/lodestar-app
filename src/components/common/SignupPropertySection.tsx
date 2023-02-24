@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/react'
-import { Form, Input, Skeleton } from 'antd'
+import { Form, Input, message, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import Axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -108,7 +108,7 @@ const SignupPropertySection: React.VFC<SignPropertySectionProps> = ({ form, onMo
                 },
                 { headers: { Authorization: `Bearer ${authToken}` } },
               )
-                .then(() => {})
+                .then(() => message.success(commonMessages['*'].successfullyUpdate))
                 .catch(error => handleError(error))
                 .finally(() => {
                   setLoading(false)

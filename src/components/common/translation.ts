@@ -2,6 +2,7 @@ import { defineMessages } from 'react-intl'
 
 const commonMessages = {
   '*': defineMessages({
+    successfullyUpdate: { id: 'common.*.successfullyUpdate', defaultMessage: '更新成功' },
     save: { id: 'common.*.save', defaultMessage: '儲存' },
     isRequiredWarning: { id: 'common.*.isRequiredWarning', defaultMessage: '請填入{name}' },
     nextStep: {
