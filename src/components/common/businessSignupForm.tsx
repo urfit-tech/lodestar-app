@@ -9,6 +9,8 @@ import ImageUploader from './ImageUploader'
 import commonMessages from './translation'
 import { commonMessages as helperCommonMessages } from '../../helpers/translation'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
+import profileMessages from '../profile/translation'
 
 const companyTypes = [
   { label: '上市櫃公司', value: 'listedCompany' },
@@ -20,24 +22,39 @@ const companyTypes = [
   { label: '合夥企業', value: 'partnership' },
 ]
 type BusinessSignupFromSubmitValue = {
-  companyPictureFile: File | null
   companyCity: string
   companyDistrict: string
 }
 
+const StyledUploadWarning = styled.div`
+  color: var(--gray-dark);
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  height: 100%;
+`
+
 const BusinessSignupForm: React.VFC<
-  FormComponentProps & { onSubmit?: (submitValues: BusinessSignupFromSubmitValue) => void }
-> = ({ form, onSubmit }) => {
+  FormComponentProps & {
+    companyPictureFile: File | null
+    setCompanyPictureFile: React.Dispatch<React.SetStateAction<File | null>>
+    onSubmit?: (submitValues: BusinessSignupFromSubmitValue) => void
+  }
+> = ({ form, companyPictureFile, setCompanyPictureFile, onSubmit }) => {
   const { city, district, handleDistrictChange, handleCityChange } = useTwZipCode()
   const { formatMessage } = useIntl()
-
-  const [companyPictureFile, setCompanyPictureFile] = useState<File | null>(null)
 
   const businessFormUpperItems = [
     {
       label: formatMessage(authMessages.RegisterSection.companyPictureFile),
       decoratorId: 'companyPictureFile',
-      child: <ImageUploader file={companyPictureFile} onChange={file => setCompanyPictureFile(file)} />,
+      child: (
+        <ImageUploader
+          file={companyPictureFile}
+          customStyle={{ shape: 'circle', width: '128px', ratio: 1 }}
+          customButtonStyle={{ width: '80%' }}
+          onChange={file => setCompanyPictureFile(file)}
+        />
+      ),
     },
     {
       label: formatMessage(authMessages.RegisterSection.companyTitle),
@@ -76,7 +93,12 @@ const BusinessSignupForm: React.VFC<
       child: <Input placeholder={formatMessage(authMessages.RegisterSection.officialWebsiteMessage)} />,
     },
     {
-      label: formatMessage(authMessages.RegisterSection.companyAddress),
+      label: (
+        <>
+          <label style={{ color: 'red' }}>* </label>
+          {formatMessage(authMessages.RegisterSection.companyAddress)}
+        </>
+      ),
       style: { marginBottom: '12px' },
       decoratorId: 'cityAndDistrict',
       child: (
@@ -149,7 +171,7 @@ const BusinessSignupForm: React.VFC<
       layout="vertical"
       onSubmit={e => {
         e.preventDefault()
-        onSubmit?.({ companyPictureFile, companyCity: city, companyDistrict: district })
+        onSubmit?.({ companyCity: city, companyDistrict: district })
       }}
     >
       {businessFormUpperItems.map(item => (

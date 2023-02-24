@@ -235,7 +235,7 @@ const MemberProfileButton: React.VFC<{
 
         {enabledModules.business_member &&
           loggedInMembers
-            ?.filter(m => authPayload?.isBusiness !== m.isBusiness)
+            ?.filter(m => authPayload?.sub !== m.id)
             ?.map(m => {
               return (
                 <StyledListItem key={m.id}>

@@ -51,6 +51,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
   const [authState, setAuthState] = useState<'sms_verification' | 'register' | 'signup_info'>()
   const [signupInfos, setSignupInfos] = useState<{ id: string; value: string }[]>()
   const [passwordShow, setPasswordShow] = useState(false)
+  const [companyPictureFile, setCompanyPictureFile] = useState<File | null>(null)
 
   useEffect(() => {
     setAuthState(
@@ -128,27 +129,28 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
               throw new Error('no auth token')
             }
             const currentMemberId = decodedToken.sub
-            const avatarId = uuid()
-            const path = `avatar/${decodedToken.appId}/${currentMemberId}`
-            const pictureUrl = `https://${process.env.REACT_APP_S3_BUCKET}/${path}/${avatarId}`
+            let pictureUrl = null
 
-            if (values.companyPictureFile) {
-              await uploadFile(path, values.companyPictureFile, authToken)
+            if (companyPictureFile) {
+              const avatarId = uuid()
+              const path = `avatars/${decodedToken.appId}/${currentMemberId}/${avatarId}`
+              pictureUrl = `https://${process.env.REACT_APP_S3_BUCKET}/${path}`
+              await uploadFile(path, companyPictureFile, authToken)
             }
 
             process.env.REACT_APP_GRAPHQL_ENDPOINT &&
               Axios.post(
                 process.env.REACT_APP_GRAPHQL_ENDPOINT,
                 {
-                  query: `mutation UPDATE_MEMBER_INFO($memberId: String!, $name: String,$memberProperties: [member_property_insert_input!]!) {
-                  update_member(where: { id: { _eq: $memberId } }, _set: $setMember) {
-                    affected_rows
+                  query: `mutation UPDATE_MEMBER_INFO($memberId: String!, $setMember: member_set_input, $memberProperties: [member_property_insert_input!]!) {
+                    update_member(where: { id: { _eq: $memberId } }, _set: $setMember) {
+                      affected_rows
+                    }
+  
+                    insert_member_property(objects: $memberProperties) {
+                      affected_rows
+                    }
                   }
-
-                  insert_member_property(objects: $memberProperties) {
-                    affected_rows
-                  }
-                }
                   `,
                   variables: {
                     memberId: currentMemberId,
@@ -283,10 +285,16 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
 
     return (
       <>
-        <StyledTitle>{formatMessage(authMessages.RegisterSection.signupInfo)}</StyledTitle>
+        <StyledTitle>
+          {formatMessage(
+            isBusinessMember ? authMessages.RegisterSection.signupInfo : commonMessages.content.registerCompany,
+          )}
+        </StyledTitle>
         {isBusinessMember ? (
           <BusinessSignupForm
             form={form}
+            companyPictureFile={companyPictureFile}
+            setCompanyPictureFile={setCompanyPictureFile}
             onSubmit={submitValues => {
               form.validateFieldsAndScroll(
                 {
@@ -297,24 +305,13 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
                 (error, values) => {
                   if (error) return
                   const propertyValues = { ...values, ...submitValues }
-                  alert(JSON.stringify(propertyValues))
-                  alert(
-                    JSON.stringify(
-                      Object.keys(propertyValues)
-                        .map(key => ({
-                          id: propertyIdMap[key],
-                          value: propertyValues[key],
-                        }))
-                        .filter(property => property.id && property.value),
-                    ),
-                  )
                   setSignupInfos(
                     Object.keys(propertyValues)
                       .map(key => ({
                         id: propertyIdMap[key],
                         value: propertyValues[key],
                       }))
-                      .filter(property => property.id !== undefined),
+                      .filter(property => property.id !== undefined && property.value !== undefined),
                   )
                   setAuthState('register')
                 },
