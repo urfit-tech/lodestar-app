@@ -1,5 +1,5 @@
 import { Button, Icon } from '@chakra-ui/react'
-import { Form, Input, message, Skeleton } from 'antd'
+import { Checkbox, Form, Input, message, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import Axios from 'axios'
 import gql from 'graphql-tag'
@@ -22,7 +22,7 @@ import SignupForm from '../common/SignupForm'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
 import authMessages from './translation'
-import BusinessSignupForm from '../common/businessSignupForm'
+import BusinessSignupForm from '../common/BusinessSignupForm'
 import { isEmpty } from 'ramda'
 import { useQuery } from '@apollo/react-hooks'
 
@@ -287,7 +287,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
       <>
         <StyledTitle>
           {formatMessage(
-            isBusinessMember ? authMessages.RegisterSection.signupInfo : commonMessages.content.registerCompany,
+            isBusinessMember ? commonMessages.content.registerCompany : authMessages.RegisterSection.signupInfo,
           )}
         </StyledTitle>
         {isBusinessMember ? (
@@ -379,27 +379,28 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
     <>
       <StyledTitle>{formatMessage(authMessages.RegisterSection.signUp)}</StyledTitle>
 
-      {!!settings['auth.facebook_app_id'] && (
+      {!isBusinessMember && !!settings['auth.facebook_app_id'] && (
         <div className="mb-3">
           <FacebookLoginButton />
         </div>
       )}
-      {!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
+      {!isBusinessMember && !!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
         <div className="mb-3">
           <LineLoginButton />
         </div>
       )}
-      {!!settings['auth.google_client_id'] && (
+      {!isBusinessMember && !!settings['auth.google_client_id'] && (
         <div className="mb-3">
           <GoogleLoginButton />
         </div>
       )}
 
-      {(!!settings['auth.facebook_app_id'] ||
-        !!settings['auth.google_client_id'] ||
-        (!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'])) && (
-        <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
-      )}
+      {!isBusinessMember &&
+        (!!settings['auth.facebook_app_id'] ||
+          !!settings['auth.google_client_id'] ||
+          (!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'])) && (
+          <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
+        )}
 
       <Form
         onSubmit={e => {
@@ -464,7 +465,18 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
           )}
         </Form.Item>
         <StyledParagraph>
-          {renderRegisterTerm?.() || (
+          {renderRegisterTerm?.() || isBusinessMember ? (
+            <Form.Item>
+              {form.getFieldDecorator('registerTerm', {
+                rules: [
+                  {
+                    required: true,
+                    message: formatMessage(commonMessages.ui.checkPlease),
+                  },
+                ],
+              })(<Checkbox>{formatMessage(authMessages.RegisterSection.businessTerm)}</Checkbox>)}
+            </Form.Item>
+          ) : (
             <span>
               {formatMessage(authMessages.RegisterSection.registration)}
               <a href="/terms" target="_blank" rel="noopener noreferrer" className="ml-1">
@@ -481,7 +493,11 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
       </Form>
 
       <StyledAction>
-        <span>{formatMessage(authMessages.RegisterSection.isMember)}</span>
+        <span>
+          {formatMessage(
+            isBusinessMember ? authMessages.RegisterSection.isBusiness : authMessages.RegisterSection.isMember,
+          )}
+        </span>
         <Button
           colorScheme="primary"
           variant="ghost"

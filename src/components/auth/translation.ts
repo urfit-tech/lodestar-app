@@ -36,7 +36,12 @@ const authMessages = {
       defaultMessage: 'please enter your name.',
     },
     term: { id: 'auth.RegisterSection.term', defaultMessage: '條款' },
+    businessTerm: {
+      id: 'auth.RegisterSection.businessTerm',
+      defaultMessage: '我保證本人為公司官方代表，並有權代表公司建立及管理專頁。本人和公司皆同意公司專頁的額外條款',
+    },
     isMember: { id: 'auth.RegisterSection.isMember', defaultMessage: '已經是會員了嗎?' },
+    isBusiness: { id: 'auth.RegisterSection.isBusiness', defaultMessage: '已有公司帳號?' },
     registration: {
       id: 'auth.RegisterSection.registration',
       defaultMessage: '註冊表示您已閱讀並同意各項',

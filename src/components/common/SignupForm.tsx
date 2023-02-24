@@ -3,7 +3,6 @@ import { FormComponentProps } from 'antd/lib/form'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { SignupProperty } from '../../types/general'
-import authMessages from '../auth/translation'
 import commonMessages from './translation'
 
 const StyledCheckboxGroup = styled(Checkbox.Group)`

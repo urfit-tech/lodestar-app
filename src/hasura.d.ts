@@ -5213,6 +5213,10 @@ export interface GET_SIGNUP_PROPERTY {
   signup_property: GET_SIGNUP_PROPERTY_signup_property[];
 }
 
+export interface GET_SIGNUP_PROPERTYVariables {
+  isBusiness: boolean;
+}
+
 /* tslint:disable */
 /* eslint-disable */
 // @generated

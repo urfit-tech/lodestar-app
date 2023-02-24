@@ -101,6 +101,7 @@ export const commonMessages = {
     allCategory: { id: 'common.ui.allCategory', defaultMessage: '全部分類' },
     groupBuy: { id: 'common.ui.groupBuy', defaultMessage: '立即團購' },
     switch: { id: 'common.ui.switch', defaultMessage: '切換' },
+    checkPlease: { id: 'common.ui.checkPlease', defaultMessage: '請勾選' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },

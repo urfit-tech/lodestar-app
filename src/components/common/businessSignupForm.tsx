@@ -2,15 +2,12 @@ import { Form, Input, Select } from 'antd'
 import { Button } from '@chakra-ui/react'
 import { FormComponentProps } from 'antd/lib/form'
 import { checkUniformNumber, validationRegExp } from 'lodestar-app-element/src/helpers'
-import { useState } from 'react'
 import { cities, districts, useTwZipCode } from 'use-tw-zipcode'
 import authMessages from '../auth/translation'
 import ImageUploader from './ImageUploader'
 import commonMessages from './translation'
 import { commonMessages as helperCommonMessages } from '../../helpers/translation'
 import { useIntl } from 'react-intl'
-import styled from 'styled-components'
-import profileMessages from '../profile/translation'
 
 const companyTypes = [
   { label: '上市櫃公司', value: 'listedCompany' },
@@ -25,13 +22,6 @@ type BusinessSignupFromSubmitValue = {
   companyCity: string
   companyDistrict: string
 }
-
-const StyledUploadWarning = styled.div`
-  color: var(--gray-dark);
-  font-size: 14px;
-  letter-spacing: 0.4px;
-  height: 100%;
-`
 
 const BusinessSignupForm: React.VFC<
   FormComponentProps & {
