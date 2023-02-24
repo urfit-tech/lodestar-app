@@ -6,6 +6,7 @@ import { MetaProductType } from 'lodestar-app-element/src/types/metaProduct'
 import { useIntl } from 'react-intl'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
+import { SignupProperty } from '../types/general'
 import { ProductType } from '../types/product'
 import { PeriodType } from '../types/program'
 
@@ -590,5 +591,80 @@ export const useIdentity = (type: MetaProductType, roleName?: string) => {
 
   return {
     identityCollection,
+  }
+}
+
+export const useSignUpProperty = () => {
+  const { loading, error, data } = useQuery<hasura.GET_SIGNUP_PROPERTY>(
+    gql`
+      query GET_SIGNUP_PROPERTY {
+        signup_property(order_by: { position: asc }) {
+          id
+          is_required
+          options
+          type
+          property {
+            id
+            name
+          }
+        }
+      }
+    `,
+  )
+  const signUpProperties: SignupProperty[] =
+    data?.signup_property.map(v => ({
+      id: v.id,
+      propertyId: v.property.id,
+      type: v.type,
+      name: v.property.name,
+      isRequired: v.is_required,
+      placeHolder: v.options?.placeholder || '',
+      selectOptions: v.options?.options || [],
+      ruleMessage: v.options?.ruleMessage || '',
+      rowAmount: v.options?.rowAmount || 1,
+    })) || []
+
+  return {
+    loadingSignUpProperty: loading,
+    signUpProperties,
+    errorSignUpProperty: error,
+  }
+}
+
+export const useMemberSignUpProperty = (propertyList: string[], memberId: string) => {
+  const { loading, error, data } = useQuery<
+    hasura.GET_MEMBER_SIGNUP_PROPERTY,
+    hasura.GET_MEMBER_SIGNUP_PROPERTYVariables
+  >(
+    gql`
+      query GET_MEMBER_SIGNUP_PROPERTY($propertyList: [uuid!], $memberId: String!) {
+        member_property(where: { property_id: { _in: $propertyList }, member_id: { _eq: $memberId } }) {
+          id
+          property_id
+          value
+        }
+        member(where: { id: { _eq: $memberId } }) {
+          id
+          name
+        }
+      }
+    `,
+    { variables: { propertyList, memberId } },
+  )
+
+  const memberSignUpProperties: { id: string; propertyId: string; value: string }[] =
+    data?.member_property.map(v => ({
+      id: v.id,
+      propertyId: v.property_id,
+      value: v.value,
+    })) || []
+
+  const memberName = data?.member[0].name
+
+  return {
+    loading,
+    error,
+    memberSignUpProperties,
+    memberName,
   }
 }

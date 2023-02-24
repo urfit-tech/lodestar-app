@@ -2,7 +2,7 @@ import { Checkbox, Col, Form, Input, Row, Select } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { SignupProperty } from '../auth/RegisterSection'
+import { SignupProperty } from '../../types/general'
 import commonMessages from './translation'
 
 const StyledCheckboxGroup = styled(Checkbox.Group)`
@@ -14,24 +14,33 @@ const StyledCheckboxGroup = styled(Checkbox.Group)`
 
 const SignupForm: React.VFC<
   FormComponentProps & {
-    signupProperties: SignupProperty[]
+    signUpProperties: SignupProperty[]
+    memberSignUpProperties?: {
+      id: string
+      propertyId: string
+      value: string
+    }[]
     renderDefaultProperty?: React.ReactNode
     renderSubmitButton?: React.ReactNode
     onSubmit?: (e: any) => void
   }
-> = ({ form, renderDefaultProperty, signupProperties, renderSubmitButton, onSubmit }) => {
+> = ({ form, signUpProperties, memberSignUpProperties, renderDefaultProperty, renderSubmitButton, onSubmit }) => {
   const { formatMessage } = useIntl()
 
   return (
     <>
       {renderDefaultProperty}
       <Form layout="vertical" onSubmit={e => onSubmit?.(e)}>
-        {signupProperties.map(signupProperty => {
+        {signUpProperties.map(signupProperty => {
           switch (signupProperty.type) {
             case 'input':
               return (
                 <Form.Item key={signupProperty.propertyId} label={signupProperty.name}>
                   {form.getFieldDecorator(signupProperty.propertyId, {
+                    initialValue:
+                      memberSignUpProperties?.find(
+                        memberSignUpProperty => memberSignUpProperty.propertyId === signupProperty.propertyId,
+                      )?.value || '',
                     rules: [
                       {
                         required: signupProperty.isRequired,
@@ -57,7 +66,12 @@ const SignupForm: React.VFC<
                       },
                     ],
                   })(
-                    <StyledCheckboxGroup className="StyledCheckboxGroup">
+                    <StyledCheckboxGroup
+                      className="StyledCheckboxGroup"
+                      defaultValue={memberSignUpProperties
+                        ?.find(memberSignUpProperty => memberSignUpProperty.propertyId === signupProperty.propertyId)
+                        ?.value.split(',')}
+                    >
                       <Row>
                         {signupProperty.selectOptions?.map(selectOption => (
                           <Col className="mb-2" span={Math.floor(24 / (signupProperty?.rowAmount || 1))}>

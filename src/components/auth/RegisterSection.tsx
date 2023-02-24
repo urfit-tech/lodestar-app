@@ -1,9 +1,7 @@
-import { useQuery } from '@apollo/react-hooks'
 import { Button, Icon } from '@chakra-ui/react'
 import { Form, Input, message, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import Axios from 'axios'
-import gql from 'graphql-tag'
 import jwt from 'jsonwebtoken'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -12,27 +10,15 @@ import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail, AiOutlinePhone, AiO
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
-import hasura from '../../hasura'
 import { handleError } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
+import { useSignUpProperty } from '../../hooks/common'
 import { AuthState } from '../../types/member'
 import MigrationInput from '../common/MigrationInput'
 import SignupForm from '../common/SignupForm'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
 import authMessages from './translation'
-
-export type SignupProperty = {
-  id: string
-  propertyId: string
-  type: string
-  name: string
-  isRequired: boolean
-  placeHolder?: string
-  selectOptions?: string[]
-  ruleMessage?: string
-  rowAmount?: number
-}
 
 const StyledParagraph = styled.p`
   color: var(--gray-dark);
@@ -49,7 +35,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
   const { register, sendSmsCode, verifySmsCode } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
   const { renderRegisterTerm } = useCustomRenderer()
-  const { loadingSignupProperty, signupProperties, errorSignupProperty } = useSignupProperty()
+  const { loadingSignUpProperty, signUpProperties, errorSignUpProperty } = useSignUpProperty()
 
   const [loading, setLoading] = useState(false)
   const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'ready'>('ready')
@@ -266,15 +252,15 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
   }
 
   if (authState === 'signup_info') {
-    if (loadingSignupProperty) return <Skeleton active />
-    if (errorSignupProperty) return <>{formatMessage(authMessages.RegisterSection.fetchError)}</>
+    if (loadingSignUpProperty) return <Skeleton active />
+    if (errorSignUpProperty) return <>{formatMessage(authMessages.RegisterSection.fetchError)}</>
 
     return (
       <>
         <StyledTitle>{formatMessage(authMessages.RegisterSection.signupInfo)}</StyledTitle>
         <SignupForm
           form={form}
-          signupProperties={signupProperties}
+          signUpProperties={signUpProperties}
           renderDefaultProperty={
             <Form.Item key="name" label={formatMessage(authMessages.RegisterSection.name)}>
               {form.getFieldDecorator('name', {
@@ -294,7 +280,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               </Button>
             </Form.Item>
           }
-          onSubmit={(e: any) => {
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault()
             form.validateFieldsAndScroll(
               {
@@ -305,7 +291,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
               (error, values) => {
                 if (error) return
                 const signPropertyTypes: { [key: string]: string } = {}
-                signupProperties.forEach(p => (signPropertyTypes[p.id] = p.type))
+                signUpProperties.forEach(p => (signPropertyTypes[p.id] = p.type))
                 setSignupInfos(
                   Object.keys(values).map(id => {
                     let value = values[id] || ''
@@ -446,43 +432,6 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, onAuthStateCha
       </StyledAction>
     </>
   )
-}
-
-const useSignupProperty = () => {
-  const { loading, error, data } = useQuery<hasura.GET_SIGNUP_PROPERTY>(
-    gql`
-      query GET_SIGNUP_PROPERTY {
-        signup_property(order_by: { position: asc }) {
-          id
-          is_required
-          options
-          type
-          property {
-            id
-            name
-          }
-        }
-      }
-    `,
-  )
-  const signupProperties: SignupProperty[] =
-    data?.signup_property.map(v => ({
-      id: v.id,
-      propertyId: v.property.id,
-      type: v.type,
-      name: v.property.name,
-      isRequired: v.is_required,
-      placeHolder: v.options?.placeholder || '',
-      selectOptions: v.options?.options || [],
-      ruleMessage: v.options?.ruleMessage || '',
-      rowAmount: v.options?.rowAmount || 1,
-    })) || []
-
-  return {
-    loadingSignupProperty: loading,
-    signupProperties,
-    errorSignupProperty: error,
-  }
 }
 
 export default Form.create<RegisterSectionProps>()(RegisterSection)

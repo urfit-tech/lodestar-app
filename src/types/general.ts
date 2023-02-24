@@ -61,3 +61,15 @@ export interface IpApiResponseFail {
   error: true
   reason: string
 }
+
+export type SignupProperty = {
+  id: string
+  propertyId: string
+  type: string
+  name: string
+  isRequired: boolean
+  placeHolder?: string
+  selectOptions?: string[]
+  ruleMessage?: string
+  rowAmount?: number
+}
