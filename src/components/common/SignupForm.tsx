@@ -57,6 +57,9 @@ const SignupForm: React.VFC<
                 <Form.Item key={signupProperty.propertyId} label={signupProperty.name}>
                   {form.getFieldDecorator(signupProperty.propertyId, {
                     valuePropName: 'checked',
+                    initialValue: memberSignUpProperties
+                      ?.find(memberSignUpProperty => memberSignUpProperty.propertyId === signupProperty.propertyId)
+                      ?.value.split(','),
                     rules: [
                       {
                         required: signupProperty.isRequired,
