@@ -30,7 +30,8 @@ const SignupPropertySection: React.VFC<SignPropertySectionProps> = ({ form, onMo
   )
 
   if (loadingSignUpProperty || loadingMemberSignUpProperty) return <Skeleton active />
-  if (errorSignUpProperty || errorMemberSignUpProperty) return <>{formatMessage(commonMessages['*'].fetchError)}</>
+  if (errorSignUpProperty || errorMemberSignUpProperty)
+    return <div>{formatMessage(commonMessages['*'].fetchError)}</div>
 
   return (
     <SignupForm
@@ -108,9 +109,9 @@ const SignupPropertySection: React.VFC<SignPropertySectionProps> = ({ form, onMo
                 },
                 { headers: { Authorization: `Bearer ${authToken}` } },
               )
-                .then(() => message.success(commonMessages['*'].successfullyUpdate))
                 .catch(error => handleError(error))
                 .finally(() => {
+                  message.success(formatMessage(commonMessages['*'].successfullyUpdate))
                   setLoading(false)
                   onModalVisible?.(false)
                 })
