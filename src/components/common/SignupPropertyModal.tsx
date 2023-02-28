@@ -3,7 +3,6 @@ import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/commo
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import SignupPropertySection from './SignupPropertySection'
 import commonMessages from './translation'
@@ -18,11 +17,10 @@ const SignupPropertyModal: React.VFC = () => {
   const { isAuthenticating, currentMemberId, isFinishedSignUpProperty } = useAuth()
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
-  const location = useLocation()
 
   useEffect(() => {
     !isAuthenticating && currentMemberId && !isFinishedSignUpProperty && setVisible(true)
-  }, [location, isAuthenticating, currentMemberId, isFinishedSignUpProperty])
+  }, [isAuthenticating, currentMemberId, isFinishedSignUpProperty])
 
   return (
     <Modal footer={null} onCancel={() => setVisible && setVisible(false)} visible={visible} maskClosable={false}>
