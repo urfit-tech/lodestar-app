@@ -52,7 +52,7 @@ const SignupPropertySection: React.VFC<SignPropertySectionProps> = ({ form, onMo
       }
       renderSubmitButton={
         <Form.Item>
-          <Button loading={loading} colorScheme="primary" type="submit" isFullWidth block="true">
+          <Button loading={loading ? 'true' : 'false'} colorScheme="primary" type="submit" isFullWidth block="true">
             {formatMessage(commonMessages['*'].save)}
           </Button>
         </Form.Item>
