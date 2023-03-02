@@ -55,7 +55,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
 
   useEffect(() => {
     setAuthState(
-      enabledModules.sms_verification
+      enabledModules.sms_verification && !isBusinessMember
         ? 'sms_verification'
         : settings['feature.signup_info.enable'] === '1' || (enabledModules.business_member && isBusinessMember)
         ? 'signup_info'
