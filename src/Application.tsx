@@ -6,6 +6,7 @@ import { LodestarAppProvider } from 'lodestar-app-element/src/contexts/LodestarA
 import React from 'react'
 import { StyleSheetManager } from 'styled-components'
 import AppRouter, { RouteProps } from './components/common/AppRouter'
+import SignupPropertyModal from './components/common/SignupPropertyModal'
 import GlobalPodcastPlayer from './components/podcast/GlobalPodcastPlayer'
 import ErrorBoundary from './containers/common/ErrorBoundary'
 import { CartProvider } from './contexts/CartContext'
@@ -34,6 +35,7 @@ const Application: React.FC<{
                       <CustomRendererProvider renderer={customRender}>
                         <AppRouter extra={extraRouteProps}>
                           <GlobalPodcastPlayer />
+                          <SignupPropertyModal key={document.location.href} />
                         </AppRouter>
                       </CustomRendererProvider>
                     </ConfigProvider>

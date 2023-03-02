@@ -43,7 +43,7 @@ const OrderTaskPage: React.VFC = () => {
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
-    if (authToken && code === null && task?.finishedOn && task?.returnvalue?.orderId) {
+    if (authToken && code === 'SUCCESS' && task?.finishedOn && task?.returnvalue?.orderId) {
       // do not need to pay
       if (task.returnvalue.totalAmount <= 0) {
         window.location.assign(`/orders/${task.returnvalue.orderId}?tracking=1`)
@@ -65,10 +65,12 @@ const OrderTaskPage: React.VFC = () => {
           })
           .catch(handleError)
       }
-    } else if (code !== null) {
+    } else if (code !== 'SUCCESS') {
+      setErrorMessage(errorMessage.split(':')[0])
+    } else {
       setErrorMessage(code)
     }
-  }, [authToken, formatMessage, history, code, task])
+  }, [authToken, formatMessage, history, code, task, errorMessage])
 
   if (errorMessage) {
     return (
