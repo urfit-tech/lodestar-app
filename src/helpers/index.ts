@@ -151,6 +151,13 @@ export const durationFullFormatter = (seconds: number) => {
 export const braftLanguageFn = (languages: { [lan: string]: any }, context: any) => {
   if (context === 'braft-editor') {
     languages['zh-hant'].controls.normal = '內文'
+    languages['zh-hant'].controls.fontSize = '字級'
+    languages['zh-hant'].controls.removeStyles = '清除樣式'
+    languages['zh-hant'].controls.code = '程式碼'
+    languages['zh-hant'].controls.link = '連結'
+    languages['zh-hant'].controls.hr = '水平線'
+    languages['zh-hant'].controls.fullscreen = '全螢幕'
+
     return languages['zh-hant']
   }
 }

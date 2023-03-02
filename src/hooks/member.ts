@@ -28,6 +28,7 @@ export const useMember = (memberId: string) => {
           google_user_id
           youtube_channel_ids
           verified_emails
+          is_business
           member_phones(limit: 1) {
             id
             phone
@@ -38,7 +39,7 @@ export const useMember = (memberId: string) => {
     { variables: { memberId } },
   )
 
-  const member: MemberProps | null =
+  const member: (MemberProps) | null =
     loading || error || !data || !data.member_by_pk
       ? null
       : {
@@ -60,6 +61,7 @@ export const useMember = (memberId: string) => {
           googleUserId: data.member_by_pk.google_user_id,
           youtubeChannelIds: data.member_by_pk.youtube_channel_ids,
           verifiedEmails: data.member_by_pk.verified_emails,
+          isBusiness: data.member_by_pk.is_business,
           phone: data.member_by_pk.member_phones[0]?.phone || '',
         }
 

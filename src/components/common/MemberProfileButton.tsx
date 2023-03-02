@@ -1,8 +1,9 @@
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons'
-import { Box, Collapse, useDisclosure } from '@chakra-ui/react'
+import { Box, Center, Collapse, Flex, Spacer, useDisclosure } from '@chakra-ui/react'
 import { Button, Icon, List, message, Popover } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { parsePayload } from 'lodestar-app-element/src/hooks/util'
 import { AppNavProps } from 'lodestar-app-element/src/types/app'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
@@ -12,6 +13,8 @@ import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
+import { PlusIcon } from '../../images/index'
+import { AuthModalContext } from '../auth/AuthModal'
 import { MemberAdminMenu } from './AdminMenu'
 import GlobalSearchInput from './GlobalSearchInput'
 import MemberAvatar from './MemberAvatar'
@@ -51,6 +54,9 @@ const StyledCollapseIconWrapper = styled(Box)`
   && {
     margin: auto 0;
   }
+`
+const StyledListItem = styled(Flex)`
+  padding: 16px 16px 16px 0px;
 `
 
 export const CollapseNavLinks: React.VFC<{ nav: AppNavProps }> = ({ nav }) => {
@@ -163,9 +169,13 @@ const MemberProfileButton: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { close } = useContext(PodcastPlayerContext)
+  const { setVisible: setAuthModalVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const { renderMemberProfile, renderMemberAdminMenu, renderLogout, renderMyPageNavItem } = useCustomRenderer()
-  const { logout } = useAuth()
+  const { logout, switchMember, authToken } = useAuth()
   const { enabledModules, settings } = useApp()
+
+  const authPayload = parsePayload(authToken || '')
+  const loggedInMembers = authPayload?.loggedInMembers || []
 
   const content = (
     <Wrapper>
@@ -213,13 +223,53 @@ const MemberProfileButton: React.VFC<{
           <MemberAdminMenu renderAdminMenu={renderMemberAdminMenu} style={{ border: 'none' }} />
         </BorderedItem>
 
-        {renderLogout?.({
-          logout: () => {
-            close?.()
-            logout?.()
-          },
-          DefaultLogout,
-        }) || <DefaultLogout />}
+        <BorderedItem>
+          {renderLogout?.({
+            logout: () => {
+              close?.()
+              logout?.()
+            },
+            DefaultLogout,
+          }) || <DefaultLogout />}
+        </BorderedItem>
+
+        {enabledModules.business_member &&
+          loggedInMembers
+            ?.filter(m => authPayload?.sub !== m.id)
+            ?.map(m => {
+              return (
+                <StyledListItem key={m.id}>
+                  <Center mr="1">
+                    <MemberAvatar memberId={m.id} size={25} />
+                  </Center>
+                  <Center>{m.username}</Center>
+                  <Spacer />
+                  <Center
+                    className="cursor-pointer"
+                    onClick={() => {
+                      switchMember?.({ memberId: m.id })
+                    }}
+                  >
+                    {formatMessage(commonMessages.ui.switch)}
+                  </Center>
+                </StyledListItem>
+              )
+            })}
+
+        {enabledModules.business_member && (
+          <StyledListItem
+            className="cursor-pointer"
+            onClick={() => {
+              setIsBusinessMember?.(true)
+              setAuthModalVisible?.(true)
+            }}
+          >
+            <Center mr="2">
+              <PlusIcon />
+            </Center>
+            {formatMessage(commonMessages.content.registerCompany)}
+          </StyledListItem>
+        )}
       </StyledList>
     </Wrapper>
   )

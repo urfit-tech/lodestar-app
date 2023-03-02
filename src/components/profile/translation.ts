@@ -25,6 +25,14 @@ const profileMessages = {
     },
     enter: { id: 'profileMessages.ProfileOtherAdminCard.enter', defaultMessage: '請輸入 {enterlabel}' },
   }),
+  ProfileBasicBusinessCard: defineMessages({
+    basicInfo: { id: 'profileMessages.ProfileBasicBusinessCard.basicInfo', defaultMessage: '基本資料' },
+    companyPicture: { id: 'profileMessages.ProfileBasicBusinessCard.companyPicture', defaultMessage: '公司資料' },
+    notUploaded: { id: 'profileMessages.ProfileBasicBusinessCard.notUploaded', defaultMessage: '尚未上傳' },
+  }),
+  ProfileIntroBusinessCard: defineMessages({
+    intro: { id: 'profileMessages.ProfileIntroBusinessCard.intro', defaultMessage: '公司介紹' },
+  }),
 }
 
 export default profileMessages
