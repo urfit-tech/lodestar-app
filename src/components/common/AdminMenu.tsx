@@ -5,6 +5,7 @@ import { ClickParam, MenuProps } from 'antd/lib/menu'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { parsePayload } from 'lodestar-app-element/src/hooks/util'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -13,6 +14,7 @@ import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
 import { useSocialCardCollection } from '../../hooks/member'
+import { CompanyIcon } from '../../images'
 // import { ReactComponent as BookIcon } from '../../images/book.svg'
 import { ReactComponent as MemberCertificateIcon } from '../../images/certificate.svg'
 import { ReactComponent as ClipboardListIcon } from '../../images/clipboard-list.svg'
@@ -87,11 +89,12 @@ export const MemberAdminMenu: React.VFC<
   MenuProps & { renderAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement }
 > = ({ renderAdminMenu, ...props }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, currentUserRole, permissions } = useAuth()
+  const { currentMemberId, currentUserRole, permissions, authToken } = useAuth()
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
   const { socialCards } = useSocialCardCollection()
 
+  const payload = authToken ? parsePayload(authToken) : null
   const defaultMenuItems = [
     // {
     //   key: 'management_system',
@@ -106,17 +109,23 @@ export const MemberAdminMenu: React.VFC<
     // },
     {
       key: 'member_profile_admin',
-      item: settings['custom.member_profile_admin.link'] ? (
-        <Menu.Item key="_blank_member_profile_admin" data-href={`${settings['custom.member_profile_admin.link']}`}>
-          <Icon as={UserIcon} className="mr-2" />
-          {formatMessage(commonMessages.content.personalSettings)}
-        </Menu.Item>
-      ) : (
-        <Menu.Item key="member_profile_admin">
-          <Icon as={UserIcon} className="mr-2" />
-          {formatMessage(commonMessages.content.personalSettings)}
-        </Menu.Item>
-      ),
+      item:
+        enabledModules.business_member && payload?.isBusiness ? (
+          <Menu.Item key="member_profile_admin">
+            <Icon as={CompanyIcon} className="mr-2" />
+            {formatMessage(commonMessages.content.companySettings)}
+          </Menu.Item>
+        ) : settings['custom.member_profile_admin.link'] ? (
+          <Menu.Item key="_blank_member_profile_admin" data-href={`${settings['custom.member_profile_admin.link']}`}>
+            <Icon as={UserIcon} className="mr-2" />
+            {formatMessage(commonMessages.content.personalSettings)}
+          </Menu.Item>
+        ) : (
+          <Menu.Item key="member_profile_admin">
+            <Icon as={UserIcon} className="mr-2" />
+            {formatMessage(commonMessages.content.personalSettings)}
+          </Menu.Item>
+        ),
     },
     // {
     //   key: 'member_program_issues_admin',

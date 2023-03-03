@@ -482,57 +482,58 @@ export const useProgram = (programId: string) => {
   }
 }
 
-export const useProgramContent = (programContentId: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GET_PROGRAM_CONTENT, hasura.GET_PROGRAM_CONTENTVariables>(
-    gql`
-      query GET_PROGRAM_CONTENT($programContentId: uuid!) {
-        program_content_by_pk(id: $programContentId) {
+export const GET_PROGRAM_CONTENT = gql`
+  query GET_PROGRAM_CONTENT($programContentId: uuid!) {
+    program_content_by_pk(id: $programContentId) {
+      id
+      title
+      abstract
+      created_at
+      published_at
+      display_mode
+      list_price
+      sale_price
+      sold_at
+      metadata
+      duration
+      program_content_plans {
+        id
+        program_plan {
           id
           title
-          abstract
-          created_at
-          published_at
-          display_mode
-          list_price
-          sale_price
-          sold_at
-          metadata
-          duration
-          program_content_plans {
-            id
-            program_plan {
-              id
-              title
-            }
-          }
-          program_content_body {
-            id
-            description
-            data
-            type
-          }
-          program_content_materials {
-            id
-            data
-            created_at
-          }
-          program_content_videos {
-            attachment {
-              id
-              size
-              options
-              data
-            }
-          }
-          program_content_attachments {
-            attachment_id
-            data
-            options
-            created_at
-          }
         }
       }
-    `,
+      program_content_body {
+        id
+        description
+        data
+        type
+      }
+      program_content_materials {
+        id
+        data
+        created_at
+      }
+      program_content_videos {
+        attachment {
+          id
+          size
+          options
+          data
+        }
+      }
+      program_content_attachments {
+        attachment_id
+        data
+        options
+        created_at
+      }
+    }
+  }
+`
+export const useProgramContent = (programContentId: string) => {
+  const { loading, error, data, refetch } = useQuery<hasura.GET_PROGRAM_CONTENT, hasura.GET_PROGRAM_CONTENTVariables>(
+    GET_PROGRAM_CONTENT,
     {
       variables: { programContentId },
       notifyOnNetworkStatusChange: true,

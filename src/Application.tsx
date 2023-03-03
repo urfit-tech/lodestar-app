@@ -6,11 +6,13 @@ import { LodestarAppProvider } from 'lodestar-app-element/src/contexts/LodestarA
 import React from 'react'
 import { StyleSheetManager } from 'styled-components'
 import AppRouter, { RouteProps } from './components/common/AppRouter'
+import SignupPropertyModal from './components/common/SignupPropertyModal'
 import GlobalPodcastPlayer from './components/podcast/GlobalPodcastPlayer'
 import ErrorBoundary from './containers/common/ErrorBoundary'
 import { CartProvider } from './contexts/CartContext'
 import { CustomRendererProps, CustomRendererProvider } from './contexts/CustomRendererContext'
 import { LocaleProvider } from './contexts/LocaleContext'
+import { MediaPlayerProvider } from './contexts/MediaPlayerContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { PodcastPlayerProvider } from './contexts/PodcastPlayerContext'
 import './styles.scss'
@@ -28,13 +30,16 @@ const Application: React.FC<{
             <CartProvider>
               <NotificationProvider>
                 <PodcastPlayerProvider>
-                  <ConfigProvider locale={zhTW}>
-                    <CustomRendererProvider renderer={customRender}>
-                      <AppRouter extra={extraRouteProps}>
-                        <GlobalPodcastPlayer />
-                      </AppRouter>
-                    </CustomRendererProvider>
-                  </ConfigProvider>
+                  <MediaPlayerProvider>
+                    <ConfigProvider locale={zhTW}>
+                      <CustomRendererProvider renderer={customRender}>
+                        <AppRouter extra={extraRouteProps}>
+                          <GlobalPodcastPlayer />
+                          <SignupPropertyModal key={document.location.href} />
+                        </AppRouter>
+                      </CustomRendererProvider>
+                    </ConfigProvider>
+                  </MediaPlayerProvider>
                 </PodcastPlayerProvider>
               </NotificationProvider>
             </CartProvider>

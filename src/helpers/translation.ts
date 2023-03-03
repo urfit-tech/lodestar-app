@@ -12,6 +12,7 @@ export const authMessages = {
   }),
   content: defineMessages({
     noMember: { id: 'auth.content.noMember', defaultMessage: '還不是會員嗎？' },
+    noCompany: { id: 'auth.content.noCompany', defaultMessage: '還沒有公司帳號嗎？' },
     isMember: { id: 'auth.content.isMember', defaultMessage: '已經是會員了嗎?' },
     loginFb: { id: 'auth.content.loginFb', defaultMessage: 'Facebook 登入/註冊' },
   }),
@@ -99,6 +100,8 @@ export const commonMessages = {
     virtual: { id: 'common.ui.virtual', defaultMessage: '虛擬' },
     allCategory: { id: 'common.ui.allCategory', defaultMessage: '全部分類' },
     groupBuy: { id: 'common.ui.groupBuy', defaultMessage: '立即團購' },
+    switch: { id: 'common.ui.switch', defaultMessage: '切換' },
+    checkPlease: { id: 'common.ui.checkPlease', defaultMessage: '請勾選' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },
@@ -164,6 +167,7 @@ export const commonMessages = {
     onSale: { id: 'common.button.onSale', defaultMessage: '販售中' },
     toCalendar: { id: 'common.button.toCalendar', defaultMessage: '加入行事曆' },
     signUp: { id: 'common.button.signUp', defaultMessage: '註冊' },
+    instantlySignUp: { id: 'common.button.instantlySignUp', defaultMessage: '立即註冊' },
     sendSms: { id: 'common.button.sendSms', defaultMessage: '發送簡訊碼' },
     sendSmsIdle: { id: 'common.button.sendSmsIdle', defaultMessage: '已發送簡訊碼，請稍後再嘗試' },
     verifySms: { id: 'common.button.verifySms', defaultMessage: '驗證簡訊碼' },
@@ -280,6 +284,7 @@ export const commonMessages = {
   content: defineMessages({
     memberProfile: { id: 'common.memberProfile', defaultMessage: '個人檔案' },
     personalSettings: { id: 'common.personalSettings', defaultMessage: '個人設定' },
+    companySettings: { id: 'common.companySettings', defaultMessage: '公司設定' },
     courseProblem: { id: 'common.courseProblem', defaultMessage: '課程問題' },
     practiceManagement: { id: 'common.practiceManagement', defaultMessage: '作業管理' },
     orderHistory: { id: 'common.orderHistory', defaultMessage: '訂單紀錄' },
@@ -306,6 +311,7 @@ export const commonMessages = {
     salePrice: { id: 'product.program.content.price.sale', defaultMessage: '優惠價' },
     managementSystem: { id: 'common.content.managementSystem', defaultMessage: '管理後台' },
     deviceManagement: { id: 'common.content.deviceManagement', defaultMessage: '裝置管理' },
+    registerCompany: { id: 'common.content.registerCompany', defaultMessage: '加入公司' },
     resetPassword: {
       id: 'users.form.message.password.reset.already',
       defaultMessage: '已重設您的密碼，請回首頁並重新登入。',
@@ -1051,7 +1057,15 @@ export const profileMessages = {
       },
       title: { id: 'common.title', defaultMessage: '稱號' },
       abstract: { id: 'common.abstract', defaultMessage: '介紹' },
+      abstractPlaceHolder: {
+        id: 'common.abstractPlaceHolder',
+        defaultMessage: 'Introduce yourself in one simple sentence.',
+      },
       intro: { id: 'common.introduction', defaultMessage: '簡述' },
+      introPlaceHolder: {
+        id: 'common.introductionPlaceHolder',
+        defaultMessage: 'Please fill in your personal introduction, including past experience, sharing.',
+      },
       currentPassword: {
         id: 'settings.profile.form.message.currentPassword',
         defaultMessage: '請輸入目前密碼',
@@ -1774,6 +1788,14 @@ export const codeMessages = defineMessages({
   E_VERIFY_EMAIL: {
     id: 'code.E_VERIFY_EMAIL',
     defaultMessage: '信箱驗證失敗',
+  },
+  E_COUPON_OUTDATED: {
+    id: 'code.E_COUPON_OUTDATED',
+    defaultMessage: '折價券已過期, 請重新下單',
+  },
+  E_COUPON_USED: {
+    id: 'code.E_COUPON_USED',
+    defaultMessage: '折價券已使用, 請重新下單',
   },
 })
 

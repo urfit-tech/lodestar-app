@@ -22,11 +22,8 @@ export const useTask = (queue: string, taskId: string) => {
           headers: { authorization: `Bearer ${authToken}` },
         })
         .then(({ data: { code, result } }) => {
-          if (code !== 'SUCCESS') {
-            setCode(code)
-          } else {
-            setTask(result)
-          }
+          setCode(code)
+          setTask(result)
           if (!result || !result.finishedOn) {
             setTimeout(() => setRetry(v => v + 1), 1000)
           }

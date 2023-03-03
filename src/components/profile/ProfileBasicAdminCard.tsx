@@ -10,7 +10,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid'
-import { createUploadFn, uploadFile } from '../../helpers'
+import { braftLanguageFn, createUploadFn, uploadFile } from '../../helpers'
 import { commonMessages, profileMessages } from '../../helpers/translation'
 import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
@@ -60,20 +60,6 @@ type ProfileBasicAdminCardProps = CardProps &
   FormComponentProps & {
     memberId: string
   }
-
-const braftLanguageFn = (languages: { [lan: string]: any }, context: any) => {
-  if (context === 'braft-editor') {
-    languages['zh-hant'].controls.normal = '內文'
-    languages['zh-hant'].controls.fontSize = '字級'
-    languages['zh-hant'].controls.removeStyles = '清除樣式'
-    languages['zh-hant'].controls.code = '程式碼'
-    languages['zh-hant'].controls.link = '連結'
-    languages['zh-hant'].controls.hr = '水平線'
-    languages['zh-hant'].controls.fullscreen = '全螢幕'
-
-    return languages['zh-hant']
-  }
-}
 
 const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { id: appId } = useApp()
@@ -164,7 +150,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
           {form.getFieldDecorator('abstract', {
             initialValue: member && member.abstract,
             rules: [{ max: 100 }],
-          })(<Textarea rows={2} />)}
+          })(<Textarea rows={2} placeholder={formatMessage(profileMessages.form.message.abstractPlaceHolder)} />)}
         </Form.Item>
         <Form.Item label={formatMessage(profileMessages.form.message.intro)} wrapperCol={{ md: { span: 20 } }}>
           {form.getFieldDecorator('description', {
@@ -197,6 +183,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
                 'fullscreen',
               ]}
               media={{ uploadFn: createUploadFn(appId, authToken) }}
+              placeholder={formatMessage(profileMessages.form.message.introPlaceHolder)}
             />,
           )}
         </Form.Item>
