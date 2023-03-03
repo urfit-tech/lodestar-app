@@ -85,12 +85,12 @@ const LoginSection: React.VFC<{
           returnTo && history.push(returnTo)
         })
         .catch((error: AxiosError) => {
-          if (error.message === 'E_LOGIN_DEVICE') {
+          if (error.code === 'E_LOGIN_DEVICE') {
             setAlertModalVisible(true)
             return
           }
 
-          if (error.message === 'E_BIND_DEVICE') {
+          if (error.code === 'E_BIND_DEVICE') {
             setShowLoginAlert(true)
             return
           }
