@@ -1,5 +1,6 @@
 import { Modal } from 'antd'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -14,13 +15,18 @@ export const StyledTitle = styled.h1`
 `
 
 const SignupPropertyModal: React.VFC = () => {
+  const { settings } = useApp()
   const { isAuthenticating, currentMemberId, isFinishedSignUpProperty } = useAuth()
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    !isAuthenticating && currentMemberId && !isFinishedSignUpProperty && setVisible(true)
-  }, [isAuthenticating, currentMemberId, isFinishedSignUpProperty])
+    settings['feature.signup_info.enable'] === '1' &&
+      !isAuthenticating &&
+      currentMemberId &&
+      !isFinishedSignUpProperty &&
+      setVisible(true)
+  }, [settings, isAuthenticating, currentMemberId, isFinishedSignUpProperty])
 
   return (
     <Modal footer={null} onCancel={() => setVisible && setVisible(false)} visible={visible} maskClosable={false}>
