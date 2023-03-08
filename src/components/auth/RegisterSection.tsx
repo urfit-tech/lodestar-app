@@ -213,6 +213,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
                 { headers: { Authorization: `Bearer ${authToken}` } },
               )
             setIsBusinessMember?.(false)
+            setVisible?.(false)
           })
           .catch((error: Error) => {
             const code = error.message as keyof typeof codeMessages
@@ -231,10 +232,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
               }
             }
           })
-          .finally(() => {
-            setVisible?.(false)
-            setLoading(false)
-          })
+          .finally(() => setLoading(false))
       })
   }
 
