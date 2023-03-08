@@ -119,48 +119,41 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
         }
         setLoading(true)
         if (isBusinessMember) {
-          await apolloClient
-            .query<hasura.GET_MEMBER_EMAIl, hasura.GET_MEMBER_EMAIlVariables>({
-              query: gql`
-                query GET_MEMBER_EMAIl($appId: String!, $email: String!) {
-                  member(where: { app_id: { _eq: $appId }, email: { _eq: $email } }) {
-                    id
-                    email
-                  }
+          const { data: email } = await apolloClient.query<hasura.GET_MEMBER_EMAIl, hasura.GET_MEMBER_EMAIlVariables>({
+            query: gql`
+              query GET_MEMBER_EMAIl($appId: String!, $email: String!) {
+                member(where: { app_id: { _eq: $appId }, email: { _eq: $email } }) {
+                  id
+                  email
                 }
-              `,
-              variables: { appId, email: values.email.trim().toLowerCase() },
-            })
-            .then(({ data }) => {
-              if (data?.member?.[0]) {
-                message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
-                setLoading(false)
-                return
               }
-            })
-            .catch(() => message.error(formatMessage(authMessages.RegisterSection.registerFailed)))
-          await apolloClient
-            .query<hasura.GET_MEMBER_USERNAME, hasura.GET_MEMBER_USERNAMEVariables>({
-              query: gql`
-                query GET_MEMBER_USERNAME($appId: String!, $username: String!) {
-                  member(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
-                    id
-                    username
-                  }
+            `,
+            variables: { appId, email: values.email.trim().toLowerCase() },
+          })
+          const { data: username } = await apolloClient.query<
+            hasura.GET_MEMBER_USERNAME,
+            hasura.GET_MEMBER_USERNAMEVariables
+          >({
+            query: gql`
+              query GET_MEMBER_USERNAME($appId: String!, $username: String!) {
+                member(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
+                  id
+                  username
                 }
-              `,
-              variables: { appId, username: values.username.trim().toLowerCase() },
-            })
-            .then(({ data }) => {
-              if (data?.member?.[0]) {
-                message.error(formatMessage(authMessages.RegisterSection.usernameIsAlreadyRegistered))
-                setLoading(false)
-                return
               }
-            })
-            .catch(() => message.error(formatMessage(authMessages.RegisterSection.registerFailed)))
+            `,
+            variables: { appId, username: values.username.trim().toLowerCase() },
+          })
+          if (email) {
+            message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
+            setLoading(false)
+            return
+          } else if (username) {
+            message.error(formatMessage(authMessages.RegisterSection.usernameIsAlreadyRegistered))
+            setLoading(false)
+            return
+          }
         }
-
         register({
           username: values.username.trim().toLowerCase(),
           email: values.email.trim().toLowerCase(),
@@ -212,8 +205,8 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
                 },
                 { headers: { Authorization: `Bearer ${authToken}` } },
               )
-            setIsBusinessMember?.(false)
             setVisible?.(false)
+            setIsBusinessMember?.(false)
           })
           .catch((error: Error) => {
             const code = error.message as keyof typeof codeMessages
