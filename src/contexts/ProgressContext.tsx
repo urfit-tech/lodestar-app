@@ -7,6 +7,7 @@ import hasura from '../hasura'
 type ProgressProps = {
   loadingProgress?: boolean
   programContentProgress?: {
+    programContentType: string | null
     programContentId: string
     programContentSectionId: string
     progress: number
@@ -96,6 +97,7 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
         program_content_body(
           where: { program_contents: { program_content_section: { program_id: { _eq: $programId } } } }
         ) {
+          type
           program_contents(where: { published_at: { _is_null: false } }, order_by: { published_at: desc }) {
             id
             content_section_id
@@ -117,12 +119,15 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
         ? undefined
         : flatten(
             data.program_content_body.map(contentBody =>
-              contentBody.program_contents.map(content => ({
-                programContentId: content.id,
-                programContentSectionId: content.content_section_id,
-                progress: content.program_content_progress[0]?.progress || 0,
-                lastProgress: content.program_content_progress[0]?.last_progress || 0,
-              })),
+              contentBody.program_contents.map(content => {
+                return {
+                  programContentType: contentBody.type,
+                  programContentId: content.id,
+                  programContentSectionId: content.content_section_id,
+                  progress: content.program_content_progress[0]?.progress || 0,
+                  lastProgress: content.program_content_progress[0]?.last_progress || 0,
+                }
+              }),
             ),
           ),
     [data, error, loading],

@@ -20,6 +20,8 @@ import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
 import { useHasProgramContentPermission } from '../../pages/ProgramContentPage/ProgramContentBlock'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
+import { Exam, ExercisePublic, Question, programContentProgress } from '../../types/exam'
+import { useExam, useExercisePublic, useSpecificExercise, useCurrentExercisePublicTotal } from '../../hooks/exam'
 import programMessages from './translation'
 
 const StyledIcon = styled(Icon)`
@@ -202,6 +204,7 @@ const ProgramContentSectionMenu: React.VFC<{
   )
 }
 
+// 這一塊跑 menu content的內容
 const ContentSection: React.VFC<{
   programContentSection: ProgramContentSection & {
     contents: ProgramContent[]
@@ -215,11 +218,17 @@ const ContentSection: React.VFC<{
 }> = ({ programContentSection, programPackageId, isEnrolled, isLoading, defaultCollapse, isScrollToTop, onSelect }) => {
   const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
+  const [passExam, setPassExam] = useState([])
 
   const contentProgress =
     programContentProgress?.filter(progress => progress.programContentSectionId === programContentSection.id) || []
+  const otherProgress = contentProgress.filter(
+    progress => progress.programContentType !== 'exam' && progress.programContentType !== 'text',
+  )
   const sectionProgress = contentProgress.length
-    ? Math.floor((sum(contentProgress.map(progress => progress.progress)) * 100) / contentProgress.length)
+    ? Math.floor(
+        ((sum(otherProgress.map(progress => progress.progress)) + passExam.length) * 100) / contentProgress.length,
+      )
     : 0
 
   return (
@@ -238,11 +247,13 @@ const ContentSection: React.VFC<{
             isScrollToTop={isScrollToTop}
             key={programContent.id}
             programContent={programContent}
-            progress={contentProgress.find(progress => progress.programContentId === programContent.id)?.progress || 0}
+            contentCurrentProgress={contentProgress.find(item => item.programContentId === programContent.id)}
             programPackageId={programPackageId}
             onSetIsCollapse={setIsCollapse}
             isEnrolled={isEnrolled}
             isLoading={isLoading}
+            passExam={passExam}
+            setPassExam={setPassExam}
             onClick={() => onSelect?.(programContent.id)}
           />
         ))}
@@ -253,22 +264,26 @@ const ContentSection: React.VFC<{
 
 const SortBySectionItem: React.VFC<{
   programContent: ProgramContent
-  progress: number
+  contentCurrentProgress: programContentProgress | undefined
   programPackageId: string | null
   isEnrolled: boolean
   isLoading: boolean
   isScrollToTop?: boolean
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
+  passExam: string[]
+  setPassExam: any
 }> = ({
   programContent,
-  progress,
   programPackageId,
   isEnrolled,
   isLoading,
   isScrollToTop,
   onSetIsCollapse,
   onClick,
+  passExam,
+  setPassExam,
+  contentCurrentProgress,
 }) => {
   const currentRef = useRef<HTMLInputElement>(null)
   const { formatMessage } = useIntl()
@@ -279,6 +294,46 @@ const SortBySectionItem: React.VFC<{
     programContentId?: string
   }>()
   const [previousPage] = useQueryParam('back', StringParam)
+  const [exerciseId] = useQueryParam('exerciseId', StringParam)
+
+  const type = contentCurrentProgress?.programContentType || ''
+  const { loadingSpecificExercise, specificExercise, refetchSpecificExercise, isTaken, exerciseAnswerer } =
+    useSpecificExercise(programContent.id, currentMemberId || '', exerciseId)
+  const {
+    loadingExamId,
+    errorExamId,
+    loadingExam,
+    errorExam,
+    exam,
+    refetch: refetchExam,
+  } = useExam(programContent.id, specificExercise)
+
+  const questionsIdCondition = exam.questions.map(question => {
+    return question.id
+  })
+  const { currentExamData, gaindedPointsTotal, refetchCurrentExamData, questionPointsTotal } =
+    useCurrentExercisePublicTotal(currentMemberId || '', programContent.id, questionsIdCondition)
+  let progress = 0
+  const passingScore = exam.passingScore
+
+  if (type === 'text' || type === 'exam') {
+    if (gaindedPointsTotal !== null) {
+      // let checkScore = gaindedPointsTotal !== null ? gaindedPointsTotal : 0
+
+      if (passingScore <= gaindedPointsTotal) {
+        progress = 1
+      } else if (passingScore > gaindedPointsTotal) {
+        progress = 0.5
+      }
+    }
+
+    if (!passExam.includes(programContent.id) && gaindedPointsTotal && passingScore <= gaindedPointsTotal) {
+      setPassExam([...passExam, programContent.id])
+      passExam.push(programContent.id)
+    }
+  } else {
+    progress = contentCurrentProgress?.progress || 0
+  }
   const { hasProgramContentPermission } = useHasProgramContentPermission(programContent.id)
 
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
@@ -304,8 +359,12 @@ const SortBySectionItem: React.VFC<{
     <StyledItem
       ref={currentRef}
       className={`${progressStatus} ${isActive ? 'active' : isLock ? 'lock' : ''}`}
-      onClick={() => {
+      onClick={async () => {
         onClick?.()
+        if (type === 'text' || type === 'exam') {
+          await refetchExam()
+          await refetchCurrentExamData()
+        }
         history.push(
           `/programs/${programId}/contents/${programContent.id}${previousPage ? `?back=${previousPage}` : ''}`,
         )
@@ -388,7 +447,6 @@ const ProgramContentDateMenu: React.VFC<{
   if (programContents.length === 0) {
     return <EmptyMenu />
   }
-
   return (
     <div>
       {programContents.map(programContent => (

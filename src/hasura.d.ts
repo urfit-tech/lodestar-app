@@ -2577,6 +2577,7 @@ export interface GET_PROGRAM_CONTENT_PROGRESS_program_content_body_program_conte
 
 export interface GET_PROGRAM_CONTENT_PROGRESS_program_content_body {
   __typename: "program_content_body";
+  type: string | null;
   /**
    * An array relationship
    */
@@ -5685,6 +5686,52 @@ export interface GET_CONTENT_DELIVERED_ATVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetExercisePublicTotal
+// ====================================================
+
+export interface GetExercisePublicTotal_exercise_public_exercise {
+  __typename: "exercise";
+  id: any;
+}
+
+export interface GetExercisePublicTotal_exercise_public {
+  __typename: "exercise_public";
+  duration: any | null;
+  choice_ids: string | null;
+  gained_points: string | null;
+  is_correct: string | null;
+  member_id: string | null;
+  question_ended_at: string | null;
+  question_id: string | null;
+  question_points: string | null;
+  question_started_at: string | null;
+  ended_at: any | null;
+  started_at: any | null;
+  exercise_id: any | null;
+  program_content_id: any | null;
+  /**
+   * An object relationship
+   */
+  exercise: GetExercisePublicTotal_exercise_public_exercise | null;
+}
+
+export interface GetExercisePublicTotal {
+  /**
+   * fetch data from the table: "exercise_public"
+   */
+  exercise_public: GetExercisePublicTotal_exercise_public[];
+}
+
+export interface GetExercisePublicTotalVariables {
+  condition: exercise_public_bool_exp;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_EXERCISE_PUBLIC
 // ====================================================
 
@@ -5734,6 +5781,35 @@ export interface GET_EXERCISE_PUBLIC {
 
 export interface GET_EXERCISE_PUBLICVariables {
   programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_SPECIFIC_EXERCISE
+// ====================================================
+
+export interface GET_SPECIFIC_EXERCISE_exercise {
+  __typename: "exercise";
+  id: any;
+  answer: any | null;
+  member_id: string;
+  started_at: any | null;
+  ended_at: any | null;
+}
+
+export interface GET_SPECIFIC_EXERCISE {
+  /**
+   * fetch data from the table: "exercise"
+   */
+  exercise: GET_SPECIFIC_EXERCISE_exercise[];
+}
+
+export interface GET_SPECIFIC_EXERCISEVariables {
+  condition: exercise_bool_exp;
 }
 
 /* tslint:disable */
@@ -11984,35 +12060,6 @@ export interface GET_PROGRAM_CONTENT_DISPLAY_MODEVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_SPECIFIC_EXERCISE
-// ====================================================
-
-export interface GET_SPECIFIC_EXERCISE_exercise {
-  __typename: "exercise";
-  id: any;
-  answer: any | null;
-  member_id: string;
-  started_at: any | null;
-  ended_at: any | null;
-}
-
-export interface GET_SPECIFIC_EXERCISE {
-  /**
-   * fetch data from the table: "exercise"
-   */
-  exercise: GET_SPECIFIC_EXERCISE_exercise[];
-}
-
-export interface GET_SPECIFIC_EXERCISEVariables {
-  condition: exercise_bool_exp;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_BEST_REVIEWS
 // ====================================================
 
@@ -15355,6 +15402,8 @@ export enum member_select_column {
   google_user_id = "google_user_id",
   id = "id",
   is_business = "is_business",
+  last_member_note_answered = "last_member_note_answered",
+  last_member_note_called = "last_member_note_called",
   last_member_note_created = "last_member_note_created",
   line_user_id = "line_user_id",
   logined_at = "logined_at",
@@ -15622,6 +15671,8 @@ export enum member_update_column {
   google_user_id = "google_user_id",
   id = "id",
   is_business = "is_business",
+  last_member_note_answered = "last_member_note_answered",
+  last_member_note_called = "last_member_note_called",
   last_member_note_created = "last_member_note_created",
   line_user_id = "line_user_id",
   logined_at = "logined_at",
@@ -22757,6 +22808,30 @@ export interface exercise_on_conflict {
 }
 
 /**
+ * Boolean expression to filter rows from the table "exercise_public". All fields are combined with a logical 'AND'.
+ */
+export interface exercise_public_bool_exp {
+  _and?: exercise_public_bool_exp[] | null;
+  _not?: exercise_public_bool_exp | null;
+  _or?: exercise_public_bool_exp[] | null;
+  choice_ids?: String_comparison_exp | null;
+  duration?: float8_comparison_exp | null;
+  ended_at?: timestamptz_comparison_exp | null;
+  exercise?: exercise_bool_exp | null;
+  exercise_id?: uuid_comparison_exp | null;
+  gained_points?: String_comparison_exp | null;
+  is_correct?: String_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  program_content_id?: uuid_comparison_exp | null;
+  question_ended_at?: String_comparison_exp | null;
+  question_id?: String_comparison_exp | null;
+  question_points?: String_comparison_exp | null;
+  question_started_at?: String_comparison_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
+}
+
+/**
  * Boolean expression to filter rows from the table "file". All fields are combined with a logical 'AND'.
  */
 export interface file_bool_exp {
@@ -22824,6 +22899,21 @@ export interface file_on_conflict {
   constraint: file_constraint;
   update_columns: file_update_column[];
   where?: file_bool_exp | null;
+}
+
+/**
+ * Boolean expression to compare columns of type "float8". All fields are combined with logical 'AND'.
+ */
+export interface float8_comparison_exp {
+  _eq?: any | null;
+  _gt?: any | null;
+  _gte?: any | null;
+  _in?: any[] | null;
+  _is_null?: boolean | null;
+  _lt?: any | null;
+  _lte?: any | null;
+  _neq?: any | null;
+  _nin?: any[] | null;
 }
 
 /**
@@ -23430,6 +23520,8 @@ export interface member_bool_exp {
   issue_reply_reactions_aggregate?: issue_reply_reaction_aggregate_bool_exp | null;
   issues?: issue_bool_exp | null;
   issues_aggregate?: issue_aggregate_bool_exp | null;
+  last_member_note_answered?: timestamptz_comparison_exp | null;
+  last_member_note_called?: timestamptz_comparison_exp | null;
   last_member_note_created?: timestamptz_comparison_exp | null;
   line_user_id?: String_comparison_exp | null;
   logined_at?: timestamptz_comparison_exp | null;
@@ -23767,6 +23859,8 @@ export interface member_insert_input {
   issue_replies?: issue_reply_arr_rel_insert_input | null;
   issue_reply_reactions?: issue_reply_reaction_arr_rel_insert_input | null;
   issues?: issue_arr_rel_insert_input | null;
+  last_member_note_answered?: any | null;
+  last_member_note_called?: any | null;
   last_member_note_created?: any | null;
   line_user_id?: string | null;
   logined_at?: any | null;

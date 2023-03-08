@@ -200,7 +200,68 @@ export const useExamExaminableTimeLimit = (programContentId: string, memberId: s
     productDeliveredAt,
   }
 }
-
+export const useCurrentExercisePublicTotal = (memberId: string, programContentId: string, questions: string[]) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GetExercisePublicTotal,
+    hasura.GetExercisePublicTotalVariables
+  >(
+    gql`
+      query GetExercisePublicTotal($condition: exercise_public_bool_exp!) {
+        exercise_public(where: $condition, order_by: { exercise: { created_at: desc } }) {
+          duration
+          choice_ids
+          gained_points
+          is_correct
+          member_id
+          question_ended_at
+          question_id
+          question_points
+          question_started_at
+          ended_at
+          started_at
+          exercise_id
+          program_content_id
+          exercise {
+            id
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        condition: {
+          member_id: { _eq: memberId },
+          program_content_id: { _eq: programContentId },
+          _or: questions.map((question: string) => {
+            return { question_id: { _eq: question } }
+          }),
+        },
+      },
+    },
+  )
+  const checkExamData = questions.some(questionId => {
+    return data?.exercise_public.find(item => item.question_id === questionId)
+  })
+  const currentExamData = checkExamData
+    ? questions.map(questionId => {
+        return data?.exercise_public.find(item => item.question_id === questionId)
+      })
+    : []
+  const gaindedPointsTotal =
+    currentExamData.length > 0
+      ? currentExamData.reduce((acc, item) => {
+          return acc + Number(item?.gained_points || 0)
+        }, 0)
+      : null
+  const questionPointsTotal =
+    currentExamData.length > 0
+      ? currentExamData.reduce((acc, item) => {
+          return acc + Number(item?.question_points || 0)
+        }, 0)
+      : null
+  const refetchCurrentExamData = refetch
+  return { currentExamData, gaindedPointsTotal, questionPointsTotal, refetchCurrentExamData }
+}
 export const useExercisePublic = (programContentId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_EXERCISE_PUBLIC, hasura.GET_EXERCISE_PUBLICVariables>(
     gql`
@@ -270,5 +331,65 @@ export const useExercisePublic = (programContentId: string) => {
     averageGainedPoints,
     exerciseAmount,
     refetch,
+  }
+}
+export const useSpecificExercise = (programContentId: string, memberId: string, exerciseId?: string | null) => {
+  const condition: hasura.GET_SPECIFIC_EXERCISEVariables['condition'] = {
+    id: exerciseId ? { _eq: exerciseId } : undefined,
+    program_content_id: { _eq: programContentId },
+    member_id: exerciseId ? undefined : { _eq: memberId },
+    answer: { _is_null: false },
+  }
+
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_SPECIFIC_EXERCISE,
+    hasura.GET_SPECIFIC_EXERCISEVariables
+  >(
+    gql`
+      query GET_SPECIFIC_EXERCISE($condition: exercise_bool_exp!) {
+        exercise(where: $condition, order_by: [{ created_at: desc }], limit: 1) {
+          id
+          answer
+          member_id
+          started_at
+          ended_at
+        }
+      }
+    `,
+    {
+      variables: { condition },
+      fetchPolicy: 'no-cache',
+    },
+  )
+
+  const specificExercise: ExercisePublic[] =
+    data?.exercise?.[0]?.answer?.map((v: any) => ({
+      exerciseId: data.exercise?.[0].id,
+      programContentId: programContentId,
+      startedAt: data.exercise?.[0]?.started_at ? new Date(data.exercise[0].started_at) : null,
+      endedAt: data.exercise?.[0]?.ended_at ? new Date(data.exercise[0].ended_at) : null,
+      questionId: v?.questionId.toString(),
+      questionPoints: Number(v?.questionPoints),
+      gainedPoints: Number(v?.gainedPoints),
+      isCorrect: Boolean(v?.gainedPoints === v?.questionPoints),
+      questionStartedAt: v?.startedAt ? new Date(v.startedAt) : null,
+      questionEndedAt: v?.endedAt ? new Date(v.endedAt) : null,
+      duration:
+        data.exercise?.[0]?.ended_at && data.exercise[0]?.ended_at
+          ? new Date(data.exercise?.[0].ended_at).getTime() - new Date(data.exercise[0].started_at).getTime()
+          : 0,
+      choiceIds: v.choiceIds,
+    })) || []
+
+  const isTaken = data?.exercise.length !== 0
+  const exerciseAnswerer = data?.exercise?.[0]?.member_id
+
+  return {
+    loadingSpecificExercise: loading,
+    errorSpecificExercise: error,
+    isTaken,
+    exerciseAnswerer,
+    specificExercise,
+    refetchSpecificExercise: refetch,
   }
 }
