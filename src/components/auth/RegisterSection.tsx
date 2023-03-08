@@ -119,7 +119,10 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
         }
         setLoading(true)
         if (isBusinessMember) {
-          const { data: email } = await apolloClient.query<hasura.GET_MEMBER_EMAIl, hasura.GET_MEMBER_EMAIlVariables>({
+          const { data: dataEmail } = await apolloClient.query<
+            hasura.GET_MEMBER_EMAIl,
+            hasura.GET_MEMBER_EMAIlVariables
+          >({
             query: gql`
               query GET_MEMBER_EMAIl($appId: String!, $email: String!) {
                 member(where: { app_id: { _eq: $appId }, email: { _eq: $email } }) {
@@ -130,7 +133,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             `,
             variables: { appId, email: values.email.trim().toLowerCase() },
           })
-          const { data: username } = await apolloClient.query<
+          const { data: dataUsername } = await apolloClient.query<
             hasura.GET_MEMBER_USERNAME,
             hasura.GET_MEMBER_USERNAMEVariables
           >({
@@ -144,11 +147,11 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             `,
             variables: { appId, username: values.username.trim().toLowerCase() },
           })
-          if (email) {
+          if (dataEmail.member.length >= 1) {
             message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
             setLoading(false)
             return
-          } else if (username) {
+          } else if (dataUsername.member.length >= 1) {
             message.error(formatMessage(authMessages.RegisterSection.usernameIsAlreadyRegistered))
             setLoading(false)
             return
