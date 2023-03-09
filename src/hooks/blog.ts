@@ -614,14 +614,14 @@ export const useMutatePostReaction = (postId?: string) => {
   )
 
   const handleChangePostLikeLocalStorage = (action: 'insert' | 'delete') => {
-    const postLikedData: { postId: string }[] = JSON.parse(localStorage.getItem('kolabe.post_reaction') || '[]')
+    const postLikedData: { postId: string }[] = JSON.parse(localStorage.getItem('kolable.post_reaction') || '[]')
     if (postId) {
       if (action === 'insert') {
         postLikedData.push({ postId: postId })
-        localStorage.setItem('kolabe.post_reaction', JSON.stringify(postLikedData))
+        localStorage.setItem('kolable.post_reaction', JSON.stringify(postLikedData))
       } else {
         const newPostLikedData = postLikedData.filter(v => v.postId !== postId)
-        localStorage.setItem('kolabe.post_reaction', JSON.stringify(newPostLikedData))
+        localStorage.setItem('kolable.post_reaction', JSON.stringify(newPostLikedData))
       }
     }
   }

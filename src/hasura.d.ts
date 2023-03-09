@@ -4,6 +4,60 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_MEMBER_EMAIl
+// ====================================================
+
+export interface GET_MEMBER_EMAIl_member {
+  __typename: "member";
+  id: string;
+  email: string;
+}
+
+export interface GET_MEMBER_EMAIl {
+  /**
+   * fetch data from the table: "member"
+   */
+  member: GET_MEMBER_EMAIl_member[];
+}
+
+export interface GET_MEMBER_EMAIlVariables {
+  appId: string;
+  email: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_USERNAME
+// ====================================================
+
+export interface GET_MEMBER_USERNAME_member {
+  __typename: "member";
+  id: string;
+  username: string;
+}
+
+export interface GET_MEMBER_USERNAME {
+  /**
+   * fetch data from the table: "member"
+   */
+  member: GET_MEMBER_USERNAME_member[];
+}
+
+export interface GET_MEMBER_USERNAMEVariables {
+  appId: string;
+  username: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_BUSINESS_SIGNUP_PROPERTY_ID_MAP
 // ====================================================
 
@@ -15355,6 +15409,8 @@ export enum member_select_column {
   google_user_id = "google_user_id",
   id = "id",
   is_business = "is_business",
+  last_member_note_answered = "last_member_note_answered",
+  last_member_note_called = "last_member_note_called",
   last_member_note_created = "last_member_note_created",
   line_user_id = "line_user_id",
   logined_at = "logined_at",
@@ -15622,6 +15678,8 @@ export enum member_update_column {
   google_user_id = "google_user_id",
   id = "id",
   is_business = "is_business",
+  last_member_note_answered = "last_member_note_answered",
+  last_member_note_called = "last_member_note_called",
   last_member_note_created = "last_member_note_created",
   line_user_id = "line_user_id",
   logined_at = "logined_at",
@@ -23430,6 +23488,8 @@ export interface member_bool_exp {
   issue_reply_reactions_aggregate?: issue_reply_reaction_aggregate_bool_exp | null;
   issues?: issue_bool_exp | null;
   issues_aggregate?: issue_aggregate_bool_exp | null;
+  last_member_note_answered?: timestamptz_comparison_exp | null;
+  last_member_note_called?: timestamptz_comparison_exp | null;
   last_member_note_created?: timestamptz_comparison_exp | null;
   line_user_id?: String_comparison_exp | null;
   logined_at?: timestamptz_comparison_exp | null;
@@ -23767,6 +23827,8 @@ export interface member_insert_input {
   issue_replies?: issue_reply_arr_rel_insert_input | null;
   issue_reply_reactions?: issue_reply_reaction_arr_rel_insert_input | null;
   issues?: issue_arr_rel_insert_input | null;
+  last_member_note_answered?: any | null;
+  last_member_note_called?: any | null;
   last_member_note_created?: any | null;
   line_user_id?: string | null;
   logined_at?: any | null;
