@@ -315,8 +315,8 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
   }
 
   if (authState === 'signup_info') {
-    if (loadingSignUpProperty || loadingPropertyIdMap) return <Skeleton active />
-    if (errorSignUpProperty || errorPropertyIdMap || isEmpty(propertyIdMap)) {
+    if (loadingSignUpProperty || (isBusinessMember && loadingPropertyIdMap)) return <Skeleton active />
+    if (errorSignUpProperty || (isBusinessMember && (errorPropertyIdMap || isEmpty(propertyIdMap)))) {
       return <>{formatMessage(authMessages.RegisterSection.fetchError)}</>
     }
 
