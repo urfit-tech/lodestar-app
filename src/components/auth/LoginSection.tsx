@@ -4,6 +4,7 @@ import { AxiosError } from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -84,25 +85,19 @@ const LoginSection: React.VFC<{
           reset()
           returnTo && history.push(returnTo)
         })
-        .catch((error: AxiosError) => {
-          if (error.code === 'E_LOGIN_DEVICE') {
+        .catch(error => {
+          if (error instanceof LoginDeviceError) {
             setAlertModalVisible(true)
-            return
+          } else if (error instanceof BindDeviceError) {
+            setShowLoginAlert(true)
           }
 
-          if (error.code === 'E_BIND_DEVICE') {
-            setShowLoginAlert(true)
-            return
-          }
-          if (error.isAxiosError && error.response) {
-            const code = error.response.data.code as keyof typeof codeMessages
+          if (error instanceof BackendServerError) {
+            const code = error.code as keyof typeof codeMessages
             message.error(formatMessage(codeMessages[code]))
           } else {
             message.error(error.message)
           }
-        })
-        .catch(error => {
-          console.log('error', error)
         })
         .finally(() => setLoading(false))
     },
