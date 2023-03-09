@@ -1,3 +1,4 @@
+import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import { Button, Icon } from '@chakra-ui/react'
 import { Checkbox, Form, Input, message, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
@@ -6,6 +7,7 @@ import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { parsePayload } from 'lodestar-app-element/src/hooks/util'
+import { isEmpty } from 'ramda'
 import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -13,18 +15,16 @@ import styled from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import hasura from '../../hasura'
-import { handleError, uploadFile } from '../../helpers'
+import { uploadFile } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import { useSignUpProperty } from '../../hooks/common'
 import { AuthState } from '../../types/member'
+import BusinessSignupForm from '../common/BusinessSignupForm'
 import MigrationInput from '../common/MigrationInput'
 import SignupForm from '../common/SignupForm'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
 import authMessages from './translation'
-import BusinessSignupForm from '../common/BusinessSignupForm'
-import { isEmpty } from 'ramda'
-import { useQuery } from '@apollo/react-hooks'
 
 const StyledParagraph = styled.p`
   color: var(--gray-dark);
@@ -37,8 +37,9 @@ type RegisterSectionProps = FormComponentProps & {
 }
 
 const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMember, onAuthStateChange }) => {
-  const { settings, enabledModules } = useApp()
+  const { settings, enabledModules, id: appId } = useApp()
   const { formatMessage } = useIntl()
+  const apolloClient = useApolloClient()
   const { register, sendSmsCode, verifySmsCode } = useAuth()
   const { setVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const { renderRegisterTerm } = useCustomRenderer()
@@ -112,11 +113,50 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
 
   const handleRegister = () => {
     register &&
-      form.validateFields((error, values) => {
+      form.validateFields(async (error, values) => {
         if (error) {
           return
         }
         setLoading(true)
+        if (isBusinessMember) {
+          const { data: dataEmail } = await apolloClient.query<
+            hasura.GET_MEMBER_EMAIl,
+            hasura.GET_MEMBER_EMAIlVariables
+          >({
+            query: gql`
+              query GET_MEMBER_EMAIl($appId: String!, $email: String!) {
+                member(where: { app_id: { _eq: $appId }, email: { _eq: $email } }) {
+                  id
+                  email
+                }
+              }
+            `,
+            variables: { appId, email: values.email.trim().toLowerCase() },
+          })
+          const { data: dataUsername } = await apolloClient.query<
+            hasura.GET_MEMBER_USERNAME,
+            hasura.GET_MEMBER_USERNAMEVariables
+          >({
+            query: gql`
+              query GET_MEMBER_USERNAME($appId: String!, $username: String!) {
+                member(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
+                  id
+                  username
+                }
+              }
+            `,
+            variables: { appId, username: values.username.trim().toLowerCase() },
+          })
+          if (dataEmail.member.length >= 1) {
+            message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
+            setLoading(false)
+            return
+          } else if (dataUsername.member.length >= 1) {
+            message.error(formatMessage(authMessages.RegisterSection.usernameIsAlreadyRegistered))
+            setLoading(false)
+            return
+          }
+        }
         register({
           username: values.username.trim().toLowerCase(),
           email: values.email.trim().toLowerCase(),
@@ -168,10 +208,8 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
                 },
                 { headers: { Authorization: `Bearer ${authToken}` } },
               )
-
             setVisible?.(false)
             setIsBusinessMember?.(false)
-            form.resetFields()
           })
           .catch((error: Error) => {
             const code = error.message as keyof typeof codeMessages
@@ -190,7 +228,6 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
               }
             }
           })
-          .catch(handleError)
           .finally(() => setLoading(false))
       })
   }

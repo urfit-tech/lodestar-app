@@ -2,6 +2,7 @@ import { Icon } from '@chakra-ui/icons'
 import { Divider, SkeletonText } from '@chakra-ui/react'
 import { throttle } from 'lodash'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -15,7 +16,6 @@ import { RelativePostCollection } from '../../components/blog/PostLinkCollection
 import CreatorCard from '../../components/common/CreatorCard'
 import LikesCountButton from '../../components/common/LikedCountButton'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MessageSuggestItem from '../../components/practice/MessageSuggestItem'
 import SuggestionCreationModal from '../../components/practice/SuggestionCreationModal'
@@ -78,7 +78,7 @@ const BlogPostPage: React.VFC = () => {
   const [isLiked, setIsLiked] = useState(false)
 
   const handleGetPostLikes = () => {
-    const postLikesData: { postId: string }[] = JSON.parse(localStorage.getItem('kolabe.post_reaction') || '[]')
+    const postLikesData: { postId: string }[] = JSON.parse(localStorage.getItem('kolable.post_reaction') || '[]')
     const isThisPostLikes: boolean = postLikesData.some(v => v.postId === postId)
     setIsLiked(isThisPostLikes)
   }

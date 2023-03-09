@@ -1,22 +1,20 @@
-import { Form, Input, Select } from 'antd'
 import { Button } from '@chakra-ui/react'
+import { Form, Input, Select } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { checkUniformNumber, validationRegExp } from 'lodestar-app-element/src/helpers'
+import { useIntl } from 'react-intl'
 import { cities, districts, useTwZipCode } from 'use-tw-zipcode'
+import { commonMessages as helperCommonMessages } from '../../helpers/translation'
 import authMessages from '../auth/translation'
 import ImageUploader from './ImageUploader'
 import commonMessages from './translation'
-import { commonMessages as helperCommonMessages } from '../../helpers/translation'
-import { useIntl } from 'react-intl'
 
 const companyTypes = [
-  { label: '上市櫃公司', value: 'listedCompany' },
-  { label: '個人創業', value: 'personalEntrepreneurship' },
+  { label: '行號(工作室等)', value: 'firmOrWorkShop' },
+  { label: '有限公司', value: 'limitedCompany' },
+  { label: '股份有限公司', value: 'companyLimited' },
   { label: '政府機構', value: 'governmentAgency' },
   { label: '非營利組織', value: 'nonprofitOrganization' },
-  { label: '獨資公司', value: 'soleProprietorship' },
-  { label: '私人所有', value: 'privatelyHeld' },
-  { label: '合夥企業', value: 'partnership' },
 ]
 type BusinessSignupFromSubmitValue = {
   companyCity: string
@@ -49,20 +47,8 @@ const BusinessSignupForm: React.VFC<
     {
       label: formatMessage(authMessages.RegisterSection.companyTitle),
       decoratorId: 'companyTitle',
-      rules: [
-        {
-          required: true,
-          message: formatMessage(commonMessages['*'].isRequiredWarning, {
-            name: formatMessage(authMessages.RegisterSection.companyTitle),
-          }),
-        },
-        {
-          // TODO: consider other language
-          pattern: /((股份)?有限公司)$/,
-          message: formatMessage(authMessages.RegisterSection.companyTitleMessage),
-        },
-      ],
-      child: <Input placeholder={formatMessage(authMessages.RegisterSection.companyTitleMessage)} />,
+      rules: [],
+      child: <Input />,
     },
     {
       label: formatMessage(authMessages.RegisterSection.companyShortName),
@@ -177,6 +163,12 @@ const BusinessSignupForm: React.VFC<
           >
             {form.getFieldDecorator('companyUniformNumber', {
               rules: [
+                {
+                  required: true,
+                  message: formatMessage(commonMessages['*'].isRequiredWarning, {
+                    name: formatMessage(authMessages.RegisterSection.companyUniformNumber),
+                  }),
+                },
                 {
                   pattern: /^\d{8}$/,
                   message: formatMessage(authMessages.RegisterSection.uniformNumberLength),

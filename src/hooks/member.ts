@@ -39,7 +39,7 @@ export const useMember = (memberId: string) => {
     { variables: { memberId } },
   )
 
-  const member: (MemberProps) | null =
+  const member: MemberProps | null =
     loading || error || !data || !data.member_by_pk
       ? null
       : {
