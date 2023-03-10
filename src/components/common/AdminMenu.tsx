@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { parsePayload } from 'lodestar-app-element/src/hooks/util'
-import React from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -27,6 +27,7 @@ import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
+import { AuthModalContext } from '../auth/AuthModal'
 import { useAppRouter } from './AppRouter'
 
 const StyledMenu = styled(Menu)`
@@ -74,6 +75,7 @@ export const MemberAdminMenu: React.VFC<
   MenuProps & { renderAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement }
 > = ({ renderAdminMenu, ...props }) => {
   const { formatMessage } = useIntl()
+  const { isBusinessMember } = useContext(AuthModalContext)
   const { currentMemberId, currentUserRole, permissions, authToken } = useAuth()
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
@@ -83,14 +85,13 @@ export const MemberAdminMenu: React.VFC<
   const defaultMenuItems = [
     {
       key: 'management_system',
-      item: (currentUserRole === 'app-owner' ||
-        currentUserRole === 'content-creator' ||
-        permissions.BACKSTAGE_ENTER) && (
-        <Menu.Item key="management_system" className="managementSystem">
-          <SettingsIcon className="mr-2" />
-          {formatMessage(commonMessages.content.managementSystem)}
-        </Menu.Item>
-      ),
+      item: !isBusinessMember &&
+        (currentUserRole === 'app-owner' || currentUserRole === 'content-creator' || permissions.BACKSTAGE_ENTER) && (
+          <Menu.Item key="management_system" className="managementSystem">
+            <SettingsIcon className="mr-2" />
+            {formatMessage(commonMessages.content.managementSystem)}
+          </Menu.Item>
+        ),
     },
     {
       key: 'member_profile_admin',
