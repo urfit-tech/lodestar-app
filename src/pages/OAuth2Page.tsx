@@ -62,10 +62,10 @@ const DefaultOauth2Section: React.VFC = () => {
               memberId: currentMemberId,
               data: youtubeIds,
             },
-          }).then(() => history.push(redirect))
+          }).then(() => (window.location.href = redirect))
         } catch (error) {
           message.error(formatMessage(profileMessages.form.message.noYouTubeChannel))
-          history.push(redirect)
+          window.location.href = redirect
         }
       })
   }, [accessToken, updateYoutubeChannelIds, currentMemberId, history, redirect, formatMessage])
@@ -108,7 +108,7 @@ const DefaultOauth2Section: React.VFC = () => {
             accountLinkToken: accountLinkToken,
           })
         })
-        .then(() => history.push(redirect))
+        .then(() => (window.location.href = redirect))
         .catch(handleError)
     }
   }, [accountLinkToken, isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
@@ -120,7 +120,7 @@ const DefaultOauth2Section: React.VFC = () => {
         provider: provider,
         providerToken: accessToken,
       })
-        .then(() => history.push(redirect))
+        .then(() => (window.location.href = redirect))
         .catch(handleError)
     }
   }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
@@ -169,7 +169,7 @@ const Oauth2Section: React.VFC = () => {
           }
         })
         .then(() => {
-          history.push(redirect)
+          window.location.href = redirect
         })
         .catch(handleError)
     }
