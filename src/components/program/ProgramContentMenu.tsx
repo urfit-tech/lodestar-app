@@ -316,10 +316,8 @@ const SortBySectionItem: React.VFC<{
   let progress = 0
   const passingScore = exam.passingScore
 
-  if (type === 'text' || type === 'exam') {
+  if (type === 'exercise' || type === 'exam') {
     if (gaindedPointsTotal !== null) {
-      // let checkScore = gaindedPointsTotal !== null ? gaindedPointsTotal : 0
-
       if (passingScore <= gaindedPointsTotal) {
         progress = 1
       } else if (passingScore > gaindedPointsTotal) {
