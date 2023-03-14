@@ -45,7 +45,7 @@ export const ProgressProvider: React.FC<{
   )
 }
 
-export const useInsertProgress = (memberId: string) => {
+const useInsertProgress = (memberId: string) => {
   const [insertProgramContentProgress] = useMutation<
     hasura.INSERT_PROGRAM_CONTENT_PROGRESS,
     hasura.INSERT_PROGRAM_CONTENT_PROGRESSVariables
