@@ -247,7 +247,7 @@ export const useCurrentExercisePublicTotal = (memberId: string, programContentId
         return data?.exercise_public.find(item => item.question_id === questionId)
       })
     : []
-  const gaindedPointsTotal =
+  const gainedPointsTotal =
     currentExamData.length > 0
       ? currentExamData.reduce((acc, item) => {
           return acc + Number(item?.gained_points || 0)
@@ -260,7 +260,7 @@ export const useCurrentExercisePublicTotal = (memberId: string, programContentId
         }, 0)
       : null
   const refetchCurrentExamData = refetch
-  return { currentExamData, gaindedPointsTotal, questionPointsTotal, refetchCurrentExamData }
+  return { currentExamData, gainedPointsTotal, questionPointsTotal, refetchCurrentExamData }
 }
 export const useExercisePublic = (programContentId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_EXERCISE_PUBLIC, hasura.GET_EXERCISE_PUBLICVariables>(
