@@ -1,4 +1,7 @@
 {
+  "ProgramContentPageMessages.ProgramContentBlock.backgroundMode": "Background mode",
+  "ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription": "You can turn off the screen and continue listening to the content.",
+  "ProgramContentPageMessages.ProgramContentBlock.currentlyInBackgroundMode": "Currently in Background mode.",
   "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "Nội dung sẽ ở",
   "RedeemPageMessages.*.duplicate": "複製",
   "RedeemPageMessages.*.noItem": "查無項目",
