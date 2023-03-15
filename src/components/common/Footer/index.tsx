@@ -128,7 +128,9 @@ const Footer: React.VFC = () => {
       <>
         <div
           style={{
-            height: settings['footer.custom.mobile.height'] ? Number(settings['footer.custom.mobile.height']) : 0,
+            height: isNaN(Number(settings['footer.custom.mobile.height']))
+              ? 0
+              : Number(settings['footer.custom.mobile.height']),
           }}
           dangerouslySetInnerHTML={{ __html: settings['footer.custom.mobile.html'] }}
         />
@@ -136,7 +138,9 @@ const Footer: React.VFC = () => {
       </>
     ) : (
       <div
-        style={{ height: settings['footer.custom.height'] ? Number(settings['footer.custom.height']) : 0 }}
+        style={{
+          height: isNaN(Number(settings['footer.custom.height'])) ? 0 : Number(settings['footer.custom.height']),
+        }}
         dangerouslySetInnerHTML={{ __html: settings['footer.custom.html'] }}
       />
     )
