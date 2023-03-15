@@ -170,7 +170,8 @@ const MemberProfileButton: React.VFC<{
   const history = useHistory()
   const { close } = useContext(PodcastPlayerContext)
   const { setVisible: setAuthModalVisible, setIsBusinessMember } = useContext(AuthModalContext)
-  const { renderMemberProfile, renderMemberAdminMenu, renderLogout, renderMyPageNavItem } = useCustomRenderer()
+  const { renderMemberProfile, renderMemberAdminMenu, renderLogout, renderMyPageNavItem, renderCreatorPageNavItem } =
+    useCustomRenderer()
   const { logout, switchMember, authToken } = useAuth()
   const { enabledModules, settings } = useApp()
 
@@ -210,6 +211,13 @@ const MemberProfileButton: React.VFC<{
 
         <Responsive.Default>
           <CustomNavLinks />
+          {renderCreatorPageNavItem?.({ memberId: member.id }) ||
+            (!(settings['nav.creator_page.enabled'] === '0') && (
+              <List.Item onClick={() => history.push(`/creators/${member.id}`)} style={{ cursor: 'pointer' }}>
+                <BlankIcon className="mr-2" />
+                {formatMessage(commonMessages.content.creatorPage)}
+              </List.Item>
+            ))}
           {renderMyPageNavItem?.({ memberId: member.id }) ||
             (!(settings['nav.my_page.disable'] === '1') && (
               <BorderedItem onClick={() => history.push(`/members/${member.id}`)} style={{ cursor: 'pointer' }}>
