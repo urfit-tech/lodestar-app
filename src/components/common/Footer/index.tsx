@@ -127,14 +127,16 @@ const Footer: React.VFC = () => {
     return isMobile ? (
       <>
         <div
-          style={{ height: Number(settings['footer.custom.mobile.height']) }}
+          style={{
+            height: settings['footer.custom.mobile.height'] ? Number(settings['footer.custom.mobile.height']) : 0,
+          }}
           dangerouslySetInnerHTML={{ __html: settings['footer.custom.mobile.html'] }}
         />
         {(podcastPlayerVisible || mediaPlayerVisible) && <EmptyBlock height="92px" />}
       </>
     ) : (
       <div
-        style={{ height: Number(settings['footer.custom.height']) }}
+        style={{ height: settings['footer.custom.height'] ? Number(settings['footer.custom.height']) : 0 }}
         dangerouslySetInnerHTML={{ __html: settings['footer.custom.html'] }}
       />
     )
