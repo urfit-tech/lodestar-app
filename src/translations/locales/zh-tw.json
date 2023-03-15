@@ -1,4 +1,7 @@
 {
+  "ProgramContentPageMessages.ProgramContentBlock.backgroundMode": "通勤模式",
+  "ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription": "您可以關閉螢幕並繼續收聽",
+  "ProgramContentPageMessages.ProgramContentBlock.currentlyInBackgroundMode": "目前為通勤模式",
   "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "內容預計於",
   "RedeemPageMessages.*.duplicate": "複製",
   "RedeemPageMessages.*.noItem": "查無項目",
