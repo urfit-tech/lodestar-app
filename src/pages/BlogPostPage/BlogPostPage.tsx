@@ -75,7 +75,7 @@ const BlogPostPage: React.VFC = () => {
   const [isLiked, setIsLiked] = useState(false)
 
   const handleGetPostLikes = () => {
-    const postLikesData: { postId: string }[] = JSON.parse(localStorage.getItem('kolabe.post_reaction') || '[]')
+    const postLikesData: { postId: string }[] = JSON.parse(localStorage.getItem('kolable.post_reaction') || '[]')
     const isThisPostLikes: boolean = postLikesData.some(v => v.postId === postId)
     setIsLiked(isThisPostLikes)
   }

@@ -122,7 +122,7 @@ const ProgramContentPage: React.VFC = () => {
                 history.push(`/programs`)
               }
             } else if (page === 'program-packages') {
-              history.push(`/program-packages/${targetId}`)
+              history.push(`/program-packages/${targetId}/contents`)
             } else if (page === 'members') {
               history.push(`/members/${targetId}`)
             } else if (page === 'projects') {
