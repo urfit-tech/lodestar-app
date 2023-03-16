@@ -14750,6 +14750,81 @@ export enum exercise_constraint {
 }
 
 /**
+ * select columns of table "exercise_public"
+ */
+export enum exercise_public_select_column {
+  choice_ids = "choice_ids",
+  duration = "duration",
+  ended_at = "ended_at",
+  exercise_id = "exercise_id",
+  gained_points = "gained_points",
+  is_correct = "is_correct",
+  member_id = "member_id",
+  program_content_id = "program_content_id",
+  question_ended_at = "question_ended_at",
+  question_id = "question_id",
+  question_points = "question_points",
+  question_started_at = "question_started_at",
+  started_at = "started_at",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_avg_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_avg_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_corr_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_corr_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_covar_samp_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_max_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_max_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_min_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_min_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_stddev_samp_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_sum_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_sum_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_var_samp_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_var_samp_arguments_columns {
+  duration = "duration",
+}
+
+/**
  * select columns of table "exercise"
  */
 export enum exercise_select_column {
@@ -22778,6 +22853,8 @@ export interface exercise_bool_exp {
   ended_at?: timestamptz_comparison_exp | null;
   exam?: exam_bool_exp | null;
   exam_id?: uuid_comparison_exp | null;
+  exercise_publics?: exercise_public_bool_exp | null;
+  exercise_publics_aggregate?: exercise_public_aggregate_bool_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -22796,6 +22873,7 @@ export interface exercise_insert_input {
   ended_at?: any | null;
   exam?: exam_obj_rel_insert_input | null;
   exam_id?: any | null;
+  exercise_publics?: exercise_public_arr_rel_insert_input | null;
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
@@ -22806,12 +22884,157 @@ export interface exercise_insert_input {
 }
 
 /**
+ * input type for inserting object relation for remote table "exercise"
+ */
+export interface exercise_obj_rel_insert_input {
+  data: exercise_insert_input;
+  on_conflict?: exercise_on_conflict | null;
+}
+
+/**
  * on_conflict condition type for table "exercise"
  */
 export interface exercise_on_conflict {
   constraint: exercise_constraint;
   update_columns: exercise_update_column[];
   where?: exercise_bool_exp | null;
+}
+
+export interface exercise_public_aggregate_bool_exp {
+  avg?: exercise_public_aggregate_bool_exp_avg | null;
+  corr?: exercise_public_aggregate_bool_exp_corr | null;
+  count?: exercise_public_aggregate_bool_exp_count | null;
+  covar_samp?: exercise_public_aggregate_bool_exp_covar_samp | null;
+  max?: exercise_public_aggregate_bool_exp_max | null;
+  min?: exercise_public_aggregate_bool_exp_min | null;
+  stddev_samp?: exercise_public_aggregate_bool_exp_stddev_samp | null;
+  sum?: exercise_public_aggregate_bool_exp_sum | null;
+  var_samp?: exercise_public_aggregate_bool_exp_var_samp | null;
+}
+
+export interface exercise_public_aggregate_bool_exp_avg {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_avg_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_corr {
+  arguments: exercise_public_aggregate_bool_exp_corr_arguments;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_corr_arguments {
+  X: exercise_public_select_column_exercise_public_aggregate_bool_exp_corr_arguments_columns;
+  Y: exercise_public_select_column_exercise_public_aggregate_bool_exp_corr_arguments_columns;
+}
+
+export interface exercise_public_aggregate_bool_exp_count {
+  arguments?: exercise_public_select_column[] | null;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: Int_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_covar_samp {
+  arguments: exercise_public_aggregate_bool_exp_covar_samp_arguments;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_covar_samp_arguments {
+  X: exercise_public_select_column_exercise_public_aggregate_bool_exp_covar_samp_arguments_columns;
+  Y: exercise_public_select_column_exercise_public_aggregate_bool_exp_covar_samp_arguments_columns;
+}
+
+export interface exercise_public_aggregate_bool_exp_max {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_max_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_min {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_min_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_stddev_samp {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_stddev_samp_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_sum {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_sum_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_var_samp {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_var_samp_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+/**
+ * input type for inserting array relation for remote table "exercise_public"
+ */
+export interface exercise_public_arr_rel_insert_input {
+  data: exercise_public_insert_input[];
+}
+
+/**
+ * Boolean expression to filter rows from the table "exercise_public". All fields are combined with a logical 'AND'.
+ */
+export interface exercise_public_bool_exp {
+  _and?: exercise_public_bool_exp[] | null;
+  _not?: exercise_public_bool_exp | null;
+  _or?: exercise_public_bool_exp[] | null;
+  choice_ids?: String_comparison_exp | null;
+  duration?: float8_comparison_exp | null;
+  ended_at?: timestamptz_comparison_exp | null;
+  exercise?: exercise_bool_exp | null;
+  exercise_id?: uuid_comparison_exp | null;
+  gained_points?: String_comparison_exp | null;
+  is_correct?: String_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  program_content_id?: uuid_comparison_exp | null;
+  question_ended_at?: String_comparison_exp | null;
+  question_id?: String_comparison_exp | null;
+  question_points?: String_comparison_exp | null;
+  question_started_at?: String_comparison_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "exercise_public"
+ */
+export interface exercise_public_insert_input {
+  choice_ids?: string | null;
+  duration?: any | null;
+  ended_at?: any | null;
+  exercise?: exercise_obj_rel_insert_input | null;
+  exercise_id?: any | null;
+  gained_points?: string | null;
+  is_correct?: string | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  program_content_id?: any | null;
+  question_ended_at?: string | null;
+  question_id?: string | null;
+  question_points?: string | null;
+  question_started_at?: string | null;
+  started_at?: any | null;
 }
 
 /**
@@ -22882,6 +23105,21 @@ export interface file_on_conflict {
   constraint: file_constraint;
   update_columns: file_update_column[];
   where?: file_bool_exp | null;
+}
+
+/**
+ * Boolean expression to compare columns of type "float8". All fields are combined with logical 'AND'.
+ */
+export interface float8_comparison_exp {
+  _eq?: any | null;
+  _gt?: any | null;
+  _gte?: any | null;
+  _in?: any[] | null;
+  _is_null?: boolean | null;
+  _lt?: any | null;
+  _lte?: any | null;
+  _neq?: any | null;
+  _nin?: any[] | null;
 }
 
 /**

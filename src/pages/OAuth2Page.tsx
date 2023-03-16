@@ -1,14 +1,14 @@
-import { message } from 'antd'
+// import { message } from 'antd'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useCallback, useEffect } from 'react'
-import { useIntl } from 'react-intl'
+import React, { useEffect } from 'react'
+// import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { handleError } from '../helpers'
-import { profileMessages } from '../helpers/translation'
-import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
+// import { profileMessages } from '../helpers/translation'
+// import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
 import LoadingPage from '../pages/LoadingPage'
 
 type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth' | 'cw'
@@ -25,13 +25,13 @@ const OAuth2Page: React.VFC = () => {
 
 // TODO: add oauth2 sections of Facebook, Google, Line
 const DefaultOauth2Section: React.VFC = () => {
-  const { formatMessage } = useIntl()
+  // const { formatMessage } = useIntl()
   const history = useHistory()
   const [code] = useQueryParam('code', StringParam)
   const [state] = useQueryParam('state', StringParam)
   const { settings } = useApp()
   const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
-  const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
+  // const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
@@ -46,35 +46,35 @@ const DefaultOauth2Section: React.VFC = () => {
     accountLinkToken: string
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
-  const handleFetchYoutubeApi = useCallback(() => {
-    fetch('https://www.googleapis.com/youtube/v3/channels?part=id&mine=true', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        accept: 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(data => {
-        try {
-          const youtubeIds: string[] = data.items.map((item: any) => item.id)
-          updateYoutubeChannelIds({
-            variables: {
-              memberId: currentMemberId,
-              data: youtubeIds,
-            },
-          }).then(() => history.push(redirect))
-        } catch (error) {
-          message.error(formatMessage(profileMessages.form.message.noYouTubeChannel))
-          history.push(redirect)
-        }
-      })
-  }, [accessToken, updateYoutubeChannelIds, currentMemberId, history, redirect, formatMessage])
+  // const handleFetchYoutubeApi = useCallback(() => {
+  //   fetch('https://www.googleapis.com/youtube/v3/channels?part=id&mine=true', {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //       accept: 'application/json',
+  //     },
+  //   })
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       try {
+  //         const youtubeIds: string[] = data.items.map((item: any) => item.id)
+  //         updateYoutubeChannelIds({
+  //           variables: {
+  //             memberId: currentMemberId,
+  //             data: youtubeIds,
+  //           },
+  //         }).then(() => (window.location.href = redirect))
+  //       } catch (error) {
+  //         message.error(formatMessage(profileMessages.form.message.noYouTubeChannel))
+  //         window.location.href = redirect
+  //       }
+  //     })
+  // }, [accessToken, updateYoutubeChannelIds, currentMemberId, history, redirect, formatMessage])
 
-  useEffect(() => {
-    if (!isAuthenticating && currentMemberId && provider === 'google') {
-      handleFetchYoutubeApi()
-    }
-  }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, provider])
+  // useEffect(() => {
+  //   if (!isAuthenticating && currentMemberId && provider === 'google') {
+  //     handleFetchYoutubeApi()
+  //   }
+  // }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, provider])
 
   // Authorization Code Flow
   useEffect(() => {
@@ -108,7 +108,7 @@ const DefaultOauth2Section: React.VFC = () => {
             accountLinkToken: accountLinkToken,
           })
         })
-        .then(() => history.push(redirect))
+        .then(() => (window.location.href = redirect))
         .catch(handleError)
     }
   }, [accountLinkToken, isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
@@ -120,7 +120,7 @@ const DefaultOauth2Section: React.VFC = () => {
         provider: provider,
         providerToken: accessToken,
       })
-        .then(() => history.push(redirect))
+        .then(() => (window.location.href = redirect))
         .catch(handleError)
     }
   }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
@@ -169,7 +169,7 @@ const Oauth2Section: React.VFC = () => {
           }
         })
         .then(() => {
-          history.push(redirect)
+          window.location.href = redirect
         })
         .catch(handleError)
     }

@@ -315,8 +315,8 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
   }
 
   if (authState === 'signup_info') {
-    if (loadingSignUpProperty || loadingPropertyIdMap) return <Skeleton active />
-    if (errorSignUpProperty || errorPropertyIdMap || isEmpty(propertyIdMap)) {
+    if (loadingSignUpProperty || (isBusinessMember && loadingPropertyIdMap)) return <Skeleton active />
+    if (errorSignUpProperty || (isBusinessMember && (errorPropertyIdMap || isEmpty(propertyIdMap)))) {
       return <>{formatMessage(authMessages.RegisterSection.fetchError)}</>
     }
 
@@ -502,25 +502,27 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
           )}
         </Form.Item>
         <StyledParagraph>
-          {renderRegisterTerm?.() || isBusinessMember ? (
-            <Form.Item>
-              {form.getFieldDecorator('registerTerm', {
-                rules: [
-                  {
-                    required: true,
-                    message: formatMessage(commonMessages.ui.checkPlease),
-                  },
-                ],
-              })(<Checkbox>{formatMessage(authMessages.RegisterSection.businessTerm)}</Checkbox>)}
-            </Form.Item>
-          ) : (
-            <span>
-              {formatMessage(authMessages.RegisterSection.registration)}
-              <a href="/terms" target="_blank" rel="noopener noreferrer" className="ml-1">
-                {formatMessage(authMessages.RegisterSection.term)}
-              </a>
-            </span>
-          )}
+          {renderRegisterTerm?.() ? (
+            isBusinessMember ? (
+              <Form.Item>
+                {form.getFieldDecorator('registerTerm', {
+                  rules: [
+                    {
+                      required: true,
+                      message: formatMessage(commonMessages.ui.checkPlease),
+                    },
+                  ],
+                })(<Checkbox>{formatMessage(authMessages.RegisterSection.businessTerm)}</Checkbox>)}
+              </Form.Item>
+            ) : (
+              <span>
+                {formatMessage(authMessages.RegisterSection.registration)}
+                <a href="/terms" target="_blank" rel="noopener noreferrer" className="ml-1">
+                  {formatMessage(authMessages.RegisterSection.term)}
+                </a>
+              </span>
+            )
+          ) : null}
         </StyledParagraph>
         <Form.Item>
           <Button colorScheme="primary" type="submit" isFullWidth isLoading={loading}>

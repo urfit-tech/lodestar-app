@@ -2,12 +2,13 @@ import { Menu, MenuButton, MenuList } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
+import MediaPlayerContext from '../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
@@ -91,7 +92,8 @@ const DefaultLayout: React.FC<{
   const { name, settings, enabledModules } = useApp()
   const { member } = useMember(currentMemberId || '')
   const { navs } = useNav()
-  const { visible: playerVisible } = useContext(PodcastPlayerContext)
+  const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
+  const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
   const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
   const [isBusinessMember, setIsBusinessMember] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -230,7 +232,7 @@ const DefaultLayout: React.FC<{
                         onClick={() => history.push(`/creators/${currentMemberId}`)}
                       >
                         <Link to={`/creators/${currentMemberId}`}>
-                          {settings['nav.creator_page.name'] || formatMessage(commonMessages.button.creatorPage)}
+                          {formatMessage(commonMessages.button.creatorPage)}
                         </Link>
                       </MenuButton>
                     </Menu>
@@ -250,9 +252,7 @@ const DefaultLayout: React.FC<{
                         }
                         onClick={() => history.push(`/members/${currentMemberId}`)}
                       >
-                        <Link to={`/members/${currentMemberId}`}>
-                          {settings['nav.my_page.name'] || formatMessage(commonMessages.button.myPage)}
-                        </Link>
+                        <Link to={`/members/${currentMemberId}`}>{formatMessage(commonMessages.button.myPage)}</Link>
                       </MenuButton>
                     </Menu>
                   )))}
@@ -300,7 +300,7 @@ const DefaultLayout: React.FC<{
           <Responsive.Default>
             {typeof footerBottomSpace === 'string' && <EmptyBlock height={footerBottomSpace} />}
           </Responsive.Default>
-          {playerVisible && <EmptyBlock height="76px" />}
+          {(podcastPlayerVisible || mediaPlayerVisible) && <EmptyBlock height="76px" />}
         </StyledLayoutContent>
       </StyledLayoutWrapper>
     </AuthModalContext.Provider>
