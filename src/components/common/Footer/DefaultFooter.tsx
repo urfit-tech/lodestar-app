@@ -81,7 +81,7 @@ const DefaultFooter: React.VFC = () => {
         </div>
         <div className="blank" />
         <StyledCopyright className="py-3 copyright">
-          Copyright © {new Date().getFullYear()} {name} Inc. All rights reserved
+          Copyright © {new Date().getFullYear()} {name} All rights reserved
         </StyledCopyright>
       </StyledContainer>
     </StyledFooter>

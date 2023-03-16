@@ -72,7 +72,7 @@ const MultilineFooter: React.VFC = () => {
       <StyledCopyright className="py-3 text-center">
         {renderCopyright?.(name) || (
           <span>
-            Copyright © {new Date().getFullYear()} {name} Inc. All rights reserved
+            Copyright © {new Date().getFullYear()} {name} All rights reserved
           </span>
         )}
       </StyledCopyright>
