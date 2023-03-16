@@ -8,7 +8,6 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
-import MediaPlayerContext from '../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
@@ -91,8 +90,7 @@ const DefaultLayout: React.FC<{
   const { name, settings, enabledModules } = useApp()
   const { member } = useMember(currentMemberId || '')
   const { navs } = useNav()
-  const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
-  const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
+  const { visible: playerVisible } = useContext(PodcastPlayerContext)
   const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
   const [isBusinessMember, setIsBusinessMember] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -292,7 +290,7 @@ const DefaultLayout: React.FC<{
           <Responsive.Default>
             {typeof footerBottomSpace === 'string' && <EmptyBlock height={footerBottomSpace} />}
           </Responsive.Default>
-          {(podcastPlayerVisible || mediaPlayerVisible) && <EmptyBlock height="76px" />}
+          {playerVisible && <EmptyBlock height="76px" />}
         </StyledLayoutContent>
       </StyledLayoutWrapper>
     </AuthModalContext.Provider>

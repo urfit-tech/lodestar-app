@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Icon, LockIcon } from '@chakra-ui/icons'
-import { Button, SkeletonText, Switch } from '@chakra-ui/react'
+import { Button, SkeletonText } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import gql from 'graphql-tag'
@@ -17,16 +17,14 @@ import { useHistory } from 'react-router'
 import { useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import AudioPlayer from '../../components/common/AudioPlayer'
-import { EmptyBlock } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { getFileDownloadableLink, isMobile } from '../../helpers'
+import { getFileDownloadableLink } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
-import { CarIcon } from '../../images'
 import { DisplayModeEnum, ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
 import pageMessages from '../translation'
 import { StyledContentBlock } from './index.styled'
@@ -34,18 +32,6 @@ import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
 import ProgramContentTabs from './ProgramContentTabs'
 import ProgramContentPageMessages from './translation'
-
-const StyledTitleBlock = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid #e8e8e8;
-`
-
-const StyledMobileTitle = styled.h3`
-  font-size: 20px;
-`
 
 const StyledTitle = styled.h3`
   padding-bottom: 1.25rem;
@@ -72,11 +58,6 @@ const StyledUnpublishedBlock = styled.div`
   }
 `
 
-const StyledBackgroundModeDescriptionBlock = styled(StyledUnpublishedBlock)`
-  background-color: #e2e8ef;
-  color: var(--gray-darker);
-`
-
 const StyledIcon = styled(Icon)`
   font-size: 64px;
 `
@@ -91,13 +72,7 @@ const ProgramContentBlock: React.VFC<{
 }> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const {
-    resourceList,
-    currentResource,
-    updateElementList,
-    play: playInBackground,
-    setMediaPlayerVisible,
-  } = useContext(MediaPlayerContext)
+  const { currentResource, updateElementList } = useContext(MediaPlayerContext)
   const { loading: loadingApp, enabledModules, id: appId } = useApp()
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
@@ -167,32 +142,12 @@ const ProgramContentBlock: React.VFC<{
   ])
 
   useEffect(() => {
-    if (programContentBodyType === 'audio') {
+    if (!audioUrl && programContentBodyType === 'audio') {
       getFileDownloadableLink(`audios/${appId}/${programId}/${programContentId}`, authToken).then(url => {
         setAudioUrl(url)
       })
     }
   }, [programContentBodyType, programContentId, programId])
-
-  useEffect(() => {
-    if (currentResource) {
-      const programContentList = programContentSections.flatMap(contentSection => contentSection.contents) || []
-      updateElementList?.(
-        programContentList.map(content => ({
-          title: content.title,
-          type: 'ProgramContent',
-          options: {
-            programId: programId,
-            contentType: content.contentType,
-            videoId: content.contentType === 'video' ? content?.videos?.[0]?.id : undefined,
-          },
-          target: content.id,
-        })) || [],
-      )
-      const currentIndex = programContentList.findIndex(content => content.id === programContentId)
-      currentIndex >= 0 && playInBackground?.(currentIndex)
-    }
-  }, [programId])
 
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -236,11 +191,12 @@ const ProgramContentBlock: React.VFC<{
       )}
 
       {currentResource && (
-        <StyledBackgroundModeDescriptionBlock>
-          <CarIcon className="mb-2" style={{ display: 'block' }} />
-          <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.currentlyInBackgroundMode)}</p>
-          <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription)}</p>
-        </StyledBackgroundModeDescriptionBlock>
+        <div className="d-flex p-5 align-items-center">
+          Please turn off the background mode to display.{' '}
+          <Button variant="link" onClick={() => updateElementList?.([])}>
+            Switch to foreground
+          </Button>
+        </div>
       )}
 
       {programContent.contentType === 'video' &&
@@ -347,48 +303,7 @@ const ProgramContentBlock: React.VFC<{
 
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) && (
         <StyledContentBlock className="mb-3">
-          {isMobile && enabledModules.background_mode ? (
-            <StyledTitleBlock>
-              <StyledMobileTitle>{programContent.title}</StyledMobileTitle>
-              <div>
-                <span className="mr-2">
-                  {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
-                </span>
-                <Switch
-                  colorScheme="whatsapp"
-                  onChange={e => {
-                    if (currentResource) {
-                      updateElementList?.([])
-                      setMediaPlayerVisible?.(false)
-                    } else {
-                      const programContentList =
-                        programContentSections.flatMap(contentSection => contentSection.contents) || []
-                      updateElementList?.(
-                        programContentList
-                          .filter(content => !content.videos?.some(video => video?.data?.source === 'youtube'))
-                          .map(content => ({
-                            title: content.title,
-                            type: 'ProgramContent',
-                            options: {
-                              programId: programId,
-                              contentType: content.contentType,
-                              videoId: content.contentType === 'video' ? content?.videos?.[0]?.id : undefined,
-                            },
-                            target: content.id,
-                          })) || [],
-                      )
-                      const currentIndex = programContentList.findIndex(content => content.id === programContentId)
-                      currentIndex >= 0 && playInBackground?.(currentIndex)
-                    }
-                  }}
-                  isChecked={currentResource ? true : false}
-                />
-              </div>
-            </StyledTitleBlock>
-          ) : (
-            <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
-          )}
-
+          <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
           {programContent.programContentBody &&
             ((moment().isAfter(moment(programContent.publishedAt)) && hasProgramContentPermission) ||
               currentUserRole === 'app-owner') &&
@@ -434,8 +349,6 @@ const ProgramContentBlock: React.VFC<{
       {programContent.programContentBody?.type !== 'practice' && instructor && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />
       )}
-
-      {resourceList.length > 0 && <EmptyBlock height="64px" />}
     </div>
   )
 }

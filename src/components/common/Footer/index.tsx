@@ -4,15 +4,12 @@ import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import LocaleContext from '../../../contexts/LocaleContext'
-import MediaPlayerContext from '../../../contexts/MediaPlayerContext'
-import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { isMobile } from '../../../helpers'
 import { ReactComponent as FacebookIcon } from '../../../images/facebook-icon.svg'
 import { ReactComponent as GroupIcon } from '../../../images/group-icon.svg'
 import { ReactComponent as InstagramIcon } from '../../../images/instagram-icon.svg'
 import { ReactComponent as LineIcon } from '../../../images/line-icon.svg'
 import { ReactComponent as YoutubeIcon } from '../../../images/youtube-icon.svg'
-import { EmptyBlock } from '../../layout/DefaultLayout/DefaultLayout.styled'
 import { BREAK_POINT } from '../Responsive'
 import DefaultFooter from './DefaultFooter'
 import MultilineFooter from './MultilineFooter'
@@ -120,44 +117,22 @@ export const SocialLinks: React.VFC = () => {
 
 const Footer: React.VFC = () => {
   const { settings } = useApp()
-  const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
-  const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
-
   if (!!Number(settings['footer.custom.enabled'])) {
     return isMobile ? (
-      <>
-        <div
-          style={{
-            height: isNaN(Number(settings['footer.custom.mobile.height']))
-              ? 0
-              : Number(settings['footer.custom.mobile.height']),
-          }}
-          dangerouslySetInnerHTML={{ __html: settings['footer.custom.mobile.html'] }}
-        />
-        {(podcastPlayerVisible || mediaPlayerVisible) && <EmptyBlock height="92px" />}
-      </>
+      <div
+        style={{ height: Number(settings['footer.custom.mobile.height']) }}
+        dangerouslySetInnerHTML={{ __html: settings['footer.custom.mobile.html'] }}
+      />
     ) : (
       <div
-        style={{
-          height: isNaN(Number(settings['footer.custom.height'])) ? 0 : Number(settings['footer.custom.height']),
-        }}
+        style={{ height: Number(settings['footer.custom.height']) }}
         dangerouslySetInnerHTML={{ __html: settings['footer.custom.html'] }}
       />
     )
   } else if (settings['footer.type'] === 'multiple') {
-    return (
-      <>
-        <MultilineFooter />
-        {(podcastPlayerVisible || mediaPlayerVisible) && <EmptyBlock height="92px" />}
-      </>
-    )
+    return <MultilineFooter />
   } else {
-    return (
-      <>
-        <DefaultFooter />
-        {(podcastPlayerVisible || mediaPlayerVisible) && <EmptyBlock height="92px" />}
-      </>
-    )
+    return <DefaultFooter />
   }
 }
 

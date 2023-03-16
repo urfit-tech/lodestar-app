@@ -15,7 +15,6 @@ import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../components/review/ReviewCollectionBlock'
-import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, handleError, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -83,8 +82,7 @@ const ProgramPage: React.VFC = () => {
   const { currentMemberId } = useAuth()
   const { id: appId, settings, enabledModules, loading: loadingApp } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
-  const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
-  const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
+  const { visible } = useContext(PodcastPlayerContext)
   const { loadingProgram, program, addProgramView } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
   const planBlockRef = useRef<HTMLDivElement | null>(null)
@@ -281,7 +279,7 @@ const ProgramPage: React.VFC = () => {
 
       {!isEnrolledByProgramPackage && (
         <Responsive.Default>
-          <FixedBottomBlock bottomSpace={podcastPlayerVisible || mediaPlayerVisible ? '92px' : ''}>
+          <FixedBottomBlock bottomSpace={visible ? '92px' : ''}>
             {Number(settings['layout.program_page']) ? (
               <StyledButtonWrapper>
                 <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>

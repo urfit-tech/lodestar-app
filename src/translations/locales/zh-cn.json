@@ -1,7 +1,4 @@
 {
-  "ProgramContentPageMessages.ProgramContentBlock.backgroundMode": "通勤模式",
-  "ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription": "您可以关闭屏幕并继续收听内容",
-  "ProgramContentPageMessages.ProgramContentBlock.currentlyInBackgroundMode": "目前为通勤模式",
   "ProgramContentPageMessages.ProgramContentBlock.theContentWillAt": "内容预计于",
   "RedeemPageMessages.*.duplicate": "复制",
   "RedeemPageMessages.*.noItem": "查无项目",

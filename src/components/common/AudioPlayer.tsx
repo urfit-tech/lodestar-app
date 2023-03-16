@@ -2,7 +2,6 @@ import { ButtonProps } from '@chakra-ui/button'
 import { Icon } from '@chakra-ui/icons'
 import { useInterval } from '@chakra-ui/react'
 import { Button } from 'antd'
-import HLS from 'hls.js'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import React, { useEffect, useRef, useState } from 'react'
@@ -28,7 +27,6 @@ import {
   PrevIcon,
   ShuffleIcon,
   SingleLoopIcon,
-  TimesIcon,
 } from '../../images'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 import commonMessages from './translation'
@@ -155,20 +153,6 @@ const StyledRotateIcon = styled(Icon)`
     }
   }
 `
-const CloseBlock = styled.div`
-  .chakra-icon {
-    font-size: 16px;
-  }
-  ${desktopViewMixin(css`
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    .chakra-icon {
-      font-size: 20px;
-    }
-  `)}
-`
 
 const durationFormat: (time: number) => string = time => {
   return `${Math.floor(time / 60)}:${Math.floor(time % 60)
@@ -185,8 +169,7 @@ const AudioPlayer: React.VFC<{
   onPrev?: () => void
   onNext?: () => void
   onAudioEvent?: (event: AudioEvent) => void
-  onClose?: () => void
-}> = ({ title, mode = 'default', audioUrl, lastProgress, autoPlay, onPrev, onNext, onAudioEvent, onClose }) => {
+}> = ({ title, mode = 'default', audioUrl, lastProgress, autoPlay, onPrev, onNext, onAudioEvent }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const modeRef = useRef<AudioPlayerMode>('loop')
   const [visible, setVisible] = useState(false)
@@ -203,14 +186,6 @@ const AudioPlayer: React.VFC<{
     audioRef.current && (audioRef.current.autoplay = !state)
     setPlaying(!state)
   }
-
-  useEffect(() => {
-    if (audioRef.current && audioUrl?.includes('.m3u8') && HLS.isSupported()) {
-      const hls = new HLS()
-      hls.loadSource(audioUrl)
-      hls.attachMedia(audioRef.current)
-    }
-  }, [audioUrl])
 
   useEffect(() => {
     duration > 0 && setLoading(false)
@@ -250,20 +225,13 @@ const AudioPlayer: React.VFC<{
           </Responsive.Default>
 
           <div className="row flex-nowrap py-2">
-            {onClose && (
-              <CloseBlock className="col-1 d-flex align-items-center">
-                <StyledButton type="link" variant="bar" onClick={() => onClose?.()}>
-                  <Icon as={TimesIcon} />
-                </StyledButton>
-              </CloseBlock>
-            )}
             <Responsive.Desktop>
               <div className="col-2 col-lg-4 d-flex d-lg-block align-items-center justify-content-start">
                 <StyledTitle>{title}</StyledTitle>
                 <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
               </div>
             </Responsive.Desktop>
-            <div className="col-10 col-lg-4 d-flex align-items-center justify-content-center">
+            <div className="col-11 col-lg-4 d-flex align-items-center justify-content-center">
               {mode === 'default' && onPrev ? (
                 <StyledShiftButton type="link" variant="bar" onClick={() => onPrev?.()}>
                   <Icon as={PrevIcon} />
@@ -405,13 +373,9 @@ const AudioPlayer: React.VFC<{
           lastEndedTime.current = endedAt
           onNext?.()
         }}
-        onCanPlay={
-          /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
-            ? undefined
-            : () => {
-                audioRef.current?.play()
-              }
-        }
+        onCanPlay={() => {
+          audioRef.current?.play()
+        }}
         autoPlay={autoPlay}
       />
     </div>
