@@ -83,13 +83,14 @@ export const MemberAdminMenu: React.VFC<
   const defaultMenuItems = [
     {
       key: 'management_system',
-      item: !payload?.isBusiness &&
-        (currentUserRole === 'app-owner' || currentUserRole === 'content-creator' || permissions.BACKSTAGE_ENTER) && (
-          <Menu.Item key="management_system" className="managementSystem">
-            <SettingsIcon className="mr-2" />
-            {formatMessage(commonMessages.content.managementSystem)}
-          </Menu.Item>
-        ),
+      item: (currentUserRole === 'app-owner' ||
+        currentUserRole === 'content-creator' ||
+        permissions.BACKSTAGE_ENTER) && (
+        <Menu.Item key="management_system" className="managementSystem">
+          <SettingsIcon className="mr-2" />
+          {formatMessage(commonMessages.content.managementSystem)}
+        </Menu.Item>
+      ),
     },
     {
       key: 'member_profile_admin',
