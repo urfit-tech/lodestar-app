@@ -78,8 +78,8 @@ export const MemberAdminMenu: React.VFC<
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
   const { socialCards } = useSocialCardCollection()
-
   const payload = authToken ? parsePayload(authToken) : null
+
   const defaultMenuItems = [
     {
       key: 'management_system',

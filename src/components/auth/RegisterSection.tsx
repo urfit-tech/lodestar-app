@@ -196,7 +196,11 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
                     memberId: currentMemberId,
                     setMember: isBusinessMember
                       ? { picture_url: pictureUrl }
-                      : { name: signupInfos?.find(v => v.id === 'name')?.value },
+                      : {
+                          name: isBusinessMember
+                            ? signupInfos?.find(v => v.id === 'companyShortName')?.value
+                            : signupInfos?.find(v => v.id === 'name')?.value,
+                        },
                     memberProperties: signupInfos
                       ?.filter(v => v.id !== 'name' && v.id !== 'pictureUrl')
                       ?.map(v => ({
