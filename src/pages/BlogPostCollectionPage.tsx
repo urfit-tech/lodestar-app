@@ -89,8 +89,10 @@ const BlogPostCollectionPage: React.VFC = () => {
               <div
                 key={post.id}
                 className="row no-gutters align-items-center mb-4 cursor-pointer"
-                onClick={() => {
-                  history.push(`/posts/${post.codeName || post.id}`)
+                onClick={e => {
+                  if (e.target instanceof HTMLAnchorElement === false) {
+                    history.push(`/posts/${post.codeName || post.id}`)
+                  }
                 }}
               >
                 <div className="col-6 col-lg-4">
