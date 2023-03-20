@@ -166,6 +166,8 @@ const Oauth2Section: React.VFC = () => {
               providerToken: result.token,
               accountLinkToken: accountLinkToken,
             })
+          } else {
+            console.log(code, message, result)
           }
         })
         .then(() => {
