@@ -301,8 +301,8 @@ const SortBySectionItem: React.VFC<{
 
   let progress = 0
   if (type === 'exercise' || type === 'exam') {
-    if (currentExamExerciseData && currentExamExerciseData.length > 0) {
-      let { gainedPointsTotal, passingScore, questionPointsTotal } = currentExamExerciseData[0]
+    if (currentExamExerciseData) {
+      let { gainedPointsTotal, passingScore } = currentExamExerciseData
       if (gainedPointsTotal !== null && !isNaN(gainedPointsTotal) && !loadingCurrentExamData && !errorCurrentExamData) {
         if (passingScore <= gainedPointsTotal) {
           progress = 1

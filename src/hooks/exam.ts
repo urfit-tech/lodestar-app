@@ -229,29 +229,19 @@ export const useExamExercise = (programContentId: string, memberId: string, exer
     `,
     { variables: { condition } },
   )
-  const currentExamExerciseData =
+  const currentExamExerciseData: {
+    passingScore: number
+    gainedPointsTotal: number
+  } | null =
     loading && error && !data
-      ? []
-      : data?.exercise.map(Citem => {
-          const passingScore = Citem?.exam?.passing_score
-          const gainedPointsTotal =
-            Citem?.exercise_publics.length > 0
-              ? Citem?.exercise_publics.reduce((acc, item) => {
-                  return acc + Number(item?.gained_points || 0)
-                }, 0)
-              : null
-          const questionPointsTotal =
-            Citem?.exercise_publics.length > 0
-              ? Citem?.exercise_publics.reduce((acc, item) => {
-                  return acc + Number(item?.question_points || 0)
-                }, 0)
-              : null
-          return {
-            passingScore,
-            gainedPointsTotal,
-            questionPointsTotal,
-          }
-        })
+      ? null
+      : {
+          passingScore: data?.exercise?.[0].exam?.passing_score || 0,
+          gainedPointsTotal:
+            data?.exercise?.[0].exercise_publics.reduce((acc, item) => {
+              return acc + Number(item?.gained_points)
+            }, 0) || 0,
+        }
   return {
     currentExamExerciseData,
     refetchCurrentExamData: refetch,
