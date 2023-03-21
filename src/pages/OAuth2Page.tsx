@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 // import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -129,15 +129,13 @@ const DefaultOauth2Section: React.VFC = () => {
 }
 
 const Oauth2Section: React.VFC = () => {
-  const history = useHistory()
   const { provider } = useParams<{ provider: ProviderType }>()
   const [state] = useQueryParam('state', StringParam)
   const [code] = useQueryParam('code', StringParam)
   const { id: appId } = useApp()
-  const { authToken, isAuthenticating, socialLogin, currentMemberId } = useAuth()
+  const { isAuthenticating, socialLogin, currentMemberId } = useAuth()
   const host = window.location.origin
   const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
-  const [isGetTokenStart, setIsGetTokenStart] = useState(false)
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const {
@@ -147,8 +145,17 @@ const Oauth2Section: React.VFC = () => {
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && appId && code && !isGetTokenStart) {
-      setIsGetTokenStart(true)
+    if (
+      !isAuthenticating &&
+      !currentMemberId &&
+      appId &&
+      code &&
+      accountLinkToken &&
+      host &&
+      provider &&
+      redirect &&
+      socialLogin
+    ) {
       console.log('get token start')
       const redirectUri = `${host}/oauth2/${provider}`
       axios
@@ -170,7 +177,7 @@ const Oauth2Section: React.VFC = () => {
               accountLinkToken: accountLinkToken,
             })
           } else {
-            console.log({ resultCode, message, result, authToken, redirect })
+            console.log({ resultCode, message, result, redirect })
           }
         })
         .then(() => {
@@ -178,24 +185,11 @@ const Oauth2Section: React.VFC = () => {
         })
         .catch(handleError)
     } else if (isAuthenticating && currentMemberId) {
-      console.log({ isAuthenticating, currentMemberId, appId, code, authToken, redirect })
+      console.log({ isAuthenticating, currentMemberId, appId, code, redirect })
 
       window.location.href = redirect
     }
-  }, [
-    accountLinkToken,
-    appId,
-    code,
-    history,
-    host,
-    isAuthenticating,
-    provider,
-    redirect,
-    socialLogin,
-    currentMemberId,
-    authToken,
-    isGetTokenStart,
-  ])
+  }, [accountLinkToken, appId, code, host, isAuthenticating, provider, redirect, socialLogin, currentMemberId])
 
   return <LoadingPage />
 }
