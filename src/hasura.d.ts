@@ -3686,234 +3686,10 @@ export interface GET_RELATIVE_POST_COLLECTIONVariables {
 // GraphQL query operation: GET_POST
 // ====================================================
 
-export interface GET_POST_post_post_suggests_aggregate_aggregate {
-  __typename: "post_issue_aggregate_fields";
-  count: number;
-}
-
-export interface GET_POST_post_post_suggests_aggregate {
-  __typename: "post_issue_aggregate";
-  aggregate: GET_POST_post_post_suggests_aggregate_aggregate | null;
-}
-
-export interface GET_POST_post_post_suggests_suggest_suggest_reactions {
-  __typename: "issue_reaction";
-  id: any;
-  member_id: string;
-}
-
-export interface GET_POST_post_post_suggests_suggest_suggest_replies_aggregate_aggregate {
-  __typename: "issue_reply_aggregate_fields";
-  count: number;
-}
-
-export interface GET_POST_post_post_suggests_suggest_suggest_replies_aggregate {
-  __typename: "issue_reply_aggregate";
-  aggregate: GET_POST_post_post_suggests_suggest_suggest_replies_aggregate_aggregate | null;
-}
-
-export interface GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions {
-  __typename: "issue_reply_reaction";
-  member_id: string;
-}
-
-export interface GET_POST_post_post_suggests_suggest_suggest_replies {
-  __typename: "issue_reply";
-  id: any;
-  content: string;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  suggest_reply_reactions: GET_POST_post_post_suggests_suggest_suggest_replies_suggest_reply_reactions[];
-}
-
-export interface GET_POST_post_post_suggests_suggest {
-  __typename: "issue";
-  id: any;
-  description: string;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  suggest_reactions: GET_POST_post_post_suggests_suggest_suggest_reactions[];
-  /**
-   * An aggregate relationship
-   */
-  suggest_replies_aggregate: GET_POST_post_post_suggests_suggest_suggest_replies_aggregate;
-  /**
-   * An array relationship
-   */
-  suggest_replies: GET_POST_post_post_suggests_suggest_suggest_replies[];
-}
-
-export interface GET_POST_post_post_suggests {
-  __typename: "post_issue";
-  /**
-   * An object relationship
-   */
-  suggest: GET_POST_post_post_suggests_suggest | null;
-}
-
-export interface GET_POST_post_post_reaction {
-  __typename: "post_reaction";
-  member_id: string;
-}
-
-export interface GET_POST_post_post_reaction_aggregate_aggregate {
-  __typename: "post_reaction_aggregate_fields";
-  count: number;
-}
-
-export interface GET_POST_post_post_reaction_aggregate {
-  __typename: "post_reaction_aggregate";
-  aggregate: GET_POST_post_post_reaction_aggregate_aggregate | null;
-}
-
-export interface GET_POST_post_post_roles_member {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-  picture_url: string | null;
-  abstract: string | null;
-  username: string | null;
-}
-
 export interface GET_POST_post_post_roles {
   __typename: "post_role";
   id: any;
-  /**
-   * creator | author
-   */
-  name: string;
   member_id: string;
-  /**
-   * An object relationship
-   */
-  member: GET_POST_post_post_roles_member | null;
-}
-
-export interface GET_POST_post_post_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface GET_POST_post_post_categories {
-  __typename: "post_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: GET_POST_post_post_categories_category;
-}
-
-export interface GET_POST_post_post_tags {
-  __typename: "post_tag";
-  id: any;
-  tag_name: string;
-}
-
-export interface GET_POST_post_post_merchandises_merchandise_merchandise_tags {
-  __typename: "merchandise_tag";
-  tag_name: string;
-}
-
-export interface GET_POST_post_post_merchandises_merchandise_merchandise_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface GET_POST_post_post_merchandises_merchandise_merchandise_categories {
-  __typename: "merchandise_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: GET_POST_post_post_merchandises_merchandise_merchandise_categories_category;
-}
-
-export interface GET_POST_post_post_merchandises_merchandise_merchandise_imgs {
-  __typename: "merchandise_img";
-  id: any;
-  url: string;
-  /**
-   * cover | common
-   */
-  type: string;
-}
-
-export interface GET_POST_post_post_merchandises_merchandise_member_shop {
-  __typename: "member_shop";
-  id: any;
-  title: string;
-  shipping_methods: any | null;
-}
-
-export interface GET_POST_post_post_merchandises_merchandise_merchandise_specs_merchandise_spec_inventory_status {
-  __typename: "merchandise_spec_inventory_status";
-  buyable_quantity: any | null;
-}
-
-export interface GET_POST_post_post_merchandises_merchandise_merchandise_specs {
-  __typename: "merchandise_spec";
-  id: any;
-  title: string;
-  list_price: any;
-  sale_price: any | null;
-  quota: number;
-  /**
-   * An object relationship
-   */
-  merchandise_spec_inventory_status: GET_POST_post_post_merchandises_merchandise_merchandise_specs_merchandise_spec_inventory_status | null;
-}
-
-export interface GET_POST_post_post_merchandises_merchandise {
-  __typename: "merchandise";
-  id: any;
-  title: string;
-  sold_at: any | null;
-  abstract: string | null;
-  description: string | null;
-  started_at: any | null;
-  ended_at: any | null;
-  is_limited: boolean;
-  is_physical: boolean;
-  is_customized: boolean;
-  is_countdown_timer_visible: boolean;
-  currency_id: string;
-  /**
-   * An array relationship
-   */
-  merchandise_tags: GET_POST_post_post_merchandises_merchandise_merchandise_tags[];
-  /**
-   * An array relationship
-   */
-  merchandise_categories: GET_POST_post_post_merchandises_merchandise_merchandise_categories[];
-  /**
-   * An array relationship
-   */
-  merchandise_imgs: GET_POST_post_post_merchandises_merchandise_merchandise_imgs[];
-  /**
-   * An object relationship
-   */
-  member_shop: GET_POST_post_post_merchandises_merchandise_member_shop | null;
-  /**
-   * An array relationship
-   */
-  merchandise_specs: GET_POST_post_post_merchandises_merchandise_merchandise_specs[];
-}
-
-export interface GET_POST_post_post_merchandises {
-  __typename: "post_merchandise";
-  id: any;
-  /**
-   * An object relationship
-   */
-  merchandise: GET_POST_post_post_merchandises_merchandise;
 }
 
 export interface GET_POST_post {
@@ -3921,277 +3697,19 @@ export interface GET_POST_post {
   id: any;
   code_name: string | null;
   title: string;
-  source: string | null;
-  description: string | null;
   cover_url: string | null;
   video_url: string | null;
-  abstract: string | null;
-  views: number;
   published_at: any | null;
-  updated_at: any | null;
-  meta_tag: any | null;
-  /**
-   * An aggregate relationship
-   */
-  post_suggests_aggregate: GET_POST_post_post_suggests_aggregate;
-  /**
-   * An array relationship
-   */
-  post_suggests: GET_POST_post_post_suggests[];
-  /**
-   * An array relationship
-   */
-  post_reaction: GET_POST_post_post_reaction[];
-  /**
-   * An aggregate relationship
-   */
-  post_reaction_aggregate: GET_POST_post_post_reaction_aggregate;
   /**
    * An array relationship
    */
   post_roles: GET_POST_post_post_roles[];
-  /**
-   * An array relationship
-   */
-  post_categories: GET_POST_post_post_categories[];
-  /**
-   * An array relationship
-   */
-  post_tags: GET_POST_post_post_tags[];
-  /**
-   * An array relationship
-   */
-  post_merchandises: GET_POST_post_post_merchandises[];
-}
-
-export interface GET_POST_post_by_pk_post_suggests_aggregate_aggregate {
-  __typename: "post_issue_aggregate_fields";
-  count: number;
-}
-
-export interface GET_POST_post_by_pk_post_suggests_aggregate {
-  __typename: "post_issue_aggregate";
-  aggregate: GET_POST_post_by_pk_post_suggests_aggregate_aggregate | null;
-}
-
-export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_reactions {
-  __typename: "issue_reaction";
-  id: any;
-  member_id: string;
-}
-
-export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_aggregate_aggregate {
-  __typename: "issue_reply_aggregate_fields";
-  count: number;
-}
-
-export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_aggregate {
-  __typename: "issue_reply_aggregate";
-  aggregate: GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_aggregate_aggregate | null;
-}
-
-export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_suggest_reply_reactions {
-  __typename: "issue_reply_reaction";
-  member_id: string;
-}
-
-export interface GET_POST_post_by_pk_post_suggests_suggest_suggest_replies {
-  __typename: "issue_reply";
-  id: any;
-  content: string;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  suggest_reply_reactions: GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_suggest_reply_reactions[];
-}
-
-export interface GET_POST_post_by_pk_post_suggests_suggest {
-  __typename: "issue";
-  id: any;
-  description: string;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  suggest_reactions: GET_POST_post_by_pk_post_suggests_suggest_suggest_reactions[];
-  /**
-   * An aggregate relationship
-   */
-  suggest_replies_aggregate: GET_POST_post_by_pk_post_suggests_suggest_suggest_replies_aggregate;
-  /**
-   * An array relationship
-   */
-  suggest_replies: GET_POST_post_by_pk_post_suggests_suggest_suggest_replies[];
-}
-
-export interface GET_POST_post_by_pk_post_suggests {
-  __typename: "post_issue";
-  /**
-   * An object relationship
-   */
-  suggest: GET_POST_post_by_pk_post_suggests_suggest | null;
-}
-
-export interface GET_POST_post_by_pk_post_reaction {
-  __typename: "post_reaction";
-  member_id: string;
-}
-
-export interface GET_POST_post_by_pk_post_reaction_aggregate_aggregate {
-  __typename: "post_reaction_aggregate_fields";
-  count: number;
-}
-
-export interface GET_POST_post_by_pk_post_reaction_aggregate {
-  __typename: "post_reaction_aggregate";
-  aggregate: GET_POST_post_by_pk_post_reaction_aggregate_aggregate | null;
-}
-
-export interface GET_POST_post_by_pk_post_roles_member {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-  picture_url: string | null;
-  abstract: string | null;
-  username: string | null;
 }
 
 export interface GET_POST_post_by_pk_post_roles {
   __typename: "post_role";
   id: any;
-  /**
-   * creator | author
-   */
-  name: string;
   member_id: string;
-  /**
-   * An object relationship
-   */
-  member: GET_POST_post_by_pk_post_roles_member | null;
-}
-
-export interface GET_POST_post_by_pk_post_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface GET_POST_post_by_pk_post_categories {
-  __typename: "post_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: GET_POST_post_by_pk_post_categories_category;
-}
-
-export interface GET_POST_post_by_pk_post_tags {
-  __typename: "post_tag";
-  id: any;
-  tag_name: string;
-}
-
-export interface GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_tags {
-  __typename: "merchandise_tag";
-  tag_name: string;
-}
-
-export interface GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_categories {
-  __typename: "merchandise_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_categories_category;
-}
-
-export interface GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_imgs {
-  __typename: "merchandise_img";
-  id: any;
-  url: string;
-  /**
-   * cover | common
-   */
-  type: string;
-}
-
-export interface GET_POST_post_by_pk_post_merchandises_merchandise_member_shop {
-  __typename: "member_shop";
-  id: any;
-  title: string;
-  shipping_methods: any | null;
-}
-
-export interface GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_specs_merchandise_spec_inventory_status {
-  __typename: "merchandise_spec_inventory_status";
-  buyable_quantity: any | null;
-}
-
-export interface GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_specs {
-  __typename: "merchandise_spec";
-  id: any;
-  title: string;
-  list_price: any;
-  sale_price: any | null;
-  quota: number;
-  /**
-   * An object relationship
-   */
-  merchandise_spec_inventory_status: GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_specs_merchandise_spec_inventory_status | null;
-}
-
-export interface GET_POST_post_by_pk_post_merchandises_merchandise {
-  __typename: "merchandise";
-  id: any;
-  title: string;
-  sold_at: any | null;
-  abstract: string | null;
-  description: string | null;
-  started_at: any | null;
-  ended_at: any | null;
-  is_limited: boolean;
-  is_physical: boolean;
-  is_customized: boolean;
-  is_countdown_timer_visible: boolean;
-  currency_id: string;
-  /**
-   * An array relationship
-   */
-  merchandise_tags: GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_tags[];
-  /**
-   * An array relationship
-   */
-  merchandise_categories: GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_categories[];
-  /**
-   * An array relationship
-   */
-  merchandise_imgs: GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_imgs[];
-  /**
-   * An object relationship
-   */
-  member_shop: GET_POST_post_by_pk_post_merchandises_merchandise_member_shop | null;
-  /**
-   * An array relationship
-   */
-  merchandise_specs: GET_POST_post_by_pk_post_merchandises_merchandise_merchandise_specs[];
-}
-
-export interface GET_POST_post_by_pk_post_merchandises {
-  __typename: "post_merchandise";
-  id: any;
-  /**
-   * An object relationship
-   */
-  merchandise: GET_POST_post_by_pk_post_merchandises_merchandise;
 }
 
 export interface GET_POST_post_by_pk {
@@ -4199,47 +3717,13 @@ export interface GET_POST_post_by_pk {
   id: any;
   code_name: string | null;
   title: string;
-  source: string | null;
-  description: string | null;
   cover_url: string | null;
   video_url: string | null;
-  abstract: string | null;
-  views: number;
   published_at: any | null;
-  updated_at: any | null;
-  meta_tag: any | null;
-  /**
-   * An aggregate relationship
-   */
-  post_suggests_aggregate: GET_POST_post_by_pk_post_suggests_aggregate;
-  /**
-   * An array relationship
-   */
-  post_suggests: GET_POST_post_by_pk_post_suggests[];
-  /**
-   * An array relationship
-   */
-  post_reaction: GET_POST_post_by_pk_post_reaction[];
-  /**
-   * An aggregate relationship
-   */
-  post_reaction_aggregate: GET_POST_post_by_pk_post_reaction_aggregate;
   /**
    * An array relationship
    */
   post_roles: GET_POST_post_by_pk_post_roles[];
-  /**
-   * An array relationship
-   */
-  post_categories: GET_POST_post_by_pk_post_categories[];
-  /**
-   * An array relationship
-   */
-  post_tags: GET_POST_post_by_pk_post_tags[];
-  /**
-   * An array relationship
-   */
-  post_merchandises: GET_POST_post_by_pk_post_merchandises[];
 }
 
 export interface GET_POST {
@@ -12845,234 +12329,10 @@ export interface SEARCH_PRODUCT_COLLECTIONVariables {
 // GraphQL fragment: PostParts
 // ====================================================
 
-export interface PostParts_post_suggests_aggregate_aggregate {
-  __typename: "post_issue_aggregate_fields";
-  count: number;
-}
-
-export interface PostParts_post_suggests_aggregate {
-  __typename: "post_issue_aggregate";
-  aggregate: PostParts_post_suggests_aggregate_aggregate | null;
-}
-
-export interface PostParts_post_suggests_suggest_suggest_reactions {
-  __typename: "issue_reaction";
-  id: any;
-  member_id: string;
-}
-
-export interface PostParts_post_suggests_suggest_suggest_replies_aggregate_aggregate {
-  __typename: "issue_reply_aggregate_fields";
-  count: number;
-}
-
-export interface PostParts_post_suggests_suggest_suggest_replies_aggregate {
-  __typename: "issue_reply_aggregate";
-  aggregate: PostParts_post_suggests_suggest_suggest_replies_aggregate_aggregate | null;
-}
-
-export interface PostParts_post_suggests_suggest_suggest_replies_suggest_reply_reactions {
-  __typename: "issue_reply_reaction";
-  member_id: string;
-}
-
-export interface PostParts_post_suggests_suggest_suggest_replies {
-  __typename: "issue_reply";
-  id: any;
-  content: string;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  suggest_reply_reactions: PostParts_post_suggests_suggest_suggest_replies_suggest_reply_reactions[];
-}
-
-export interface PostParts_post_suggests_suggest {
-  __typename: "issue";
-  id: any;
-  description: string;
-  created_at: any;
-  member_id: string;
-  /**
-   * An array relationship
-   */
-  suggest_reactions: PostParts_post_suggests_suggest_suggest_reactions[];
-  /**
-   * An aggregate relationship
-   */
-  suggest_replies_aggregate: PostParts_post_suggests_suggest_suggest_replies_aggregate;
-  /**
-   * An array relationship
-   */
-  suggest_replies: PostParts_post_suggests_suggest_suggest_replies[];
-}
-
-export interface PostParts_post_suggests {
-  __typename: "post_issue";
-  /**
-   * An object relationship
-   */
-  suggest: PostParts_post_suggests_suggest | null;
-}
-
-export interface PostParts_post_reaction {
-  __typename: "post_reaction";
-  member_id: string;
-}
-
-export interface PostParts_post_reaction_aggregate_aggregate {
-  __typename: "post_reaction_aggregate_fields";
-  count: number;
-}
-
-export interface PostParts_post_reaction_aggregate {
-  __typename: "post_reaction_aggregate";
-  aggregate: PostParts_post_reaction_aggregate_aggregate | null;
-}
-
-export interface PostParts_post_roles_member {
-  __typename: "member_public";
-  id: string | null;
-  name: string | null;
-  picture_url: string | null;
-  abstract: string | null;
-  username: string | null;
-}
-
 export interface PostParts_post_roles {
   __typename: "post_role";
   id: any;
-  /**
-   * creator | author
-   */
-  name: string;
   member_id: string;
-  /**
-   * An object relationship
-   */
-  member: PostParts_post_roles_member | null;
-}
-
-export interface PostParts_post_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface PostParts_post_categories {
-  __typename: "post_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: PostParts_post_categories_category;
-}
-
-export interface PostParts_post_tags {
-  __typename: "post_tag";
-  id: any;
-  tag_name: string;
-}
-
-export interface PostParts_post_merchandises_merchandise_merchandise_tags {
-  __typename: "merchandise_tag";
-  tag_name: string;
-}
-
-export interface PostParts_post_merchandises_merchandise_merchandise_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface PostParts_post_merchandises_merchandise_merchandise_categories {
-  __typename: "merchandise_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: PostParts_post_merchandises_merchandise_merchandise_categories_category;
-}
-
-export interface PostParts_post_merchandises_merchandise_merchandise_imgs {
-  __typename: "merchandise_img";
-  id: any;
-  url: string;
-  /**
-   * cover | common
-   */
-  type: string;
-}
-
-export interface PostParts_post_merchandises_merchandise_member_shop {
-  __typename: "member_shop";
-  id: any;
-  title: string;
-  shipping_methods: any | null;
-}
-
-export interface PostParts_post_merchandises_merchandise_merchandise_specs_merchandise_spec_inventory_status {
-  __typename: "merchandise_spec_inventory_status";
-  buyable_quantity: any | null;
-}
-
-export interface PostParts_post_merchandises_merchandise_merchandise_specs {
-  __typename: "merchandise_spec";
-  id: any;
-  title: string;
-  list_price: any;
-  sale_price: any | null;
-  quota: number;
-  /**
-   * An object relationship
-   */
-  merchandise_spec_inventory_status: PostParts_post_merchandises_merchandise_merchandise_specs_merchandise_spec_inventory_status | null;
-}
-
-export interface PostParts_post_merchandises_merchandise {
-  __typename: "merchandise";
-  id: any;
-  title: string;
-  sold_at: any | null;
-  abstract: string | null;
-  description: string | null;
-  started_at: any | null;
-  ended_at: any | null;
-  is_limited: boolean;
-  is_physical: boolean;
-  is_customized: boolean;
-  is_countdown_timer_visible: boolean;
-  currency_id: string;
-  /**
-   * An array relationship
-   */
-  merchandise_tags: PostParts_post_merchandises_merchandise_merchandise_tags[];
-  /**
-   * An array relationship
-   */
-  merchandise_categories: PostParts_post_merchandises_merchandise_merchandise_categories[];
-  /**
-   * An array relationship
-   */
-  merchandise_imgs: PostParts_post_merchandises_merchandise_merchandise_imgs[];
-  /**
-   * An object relationship
-   */
-  member_shop: PostParts_post_merchandises_merchandise_member_shop | null;
-  /**
-   * An array relationship
-   */
-  merchandise_specs: PostParts_post_merchandises_merchandise_merchandise_specs[];
-}
-
-export interface PostParts_post_merchandises {
-  __typename: "post_merchandise";
-  id: any;
-  /**
-   * An object relationship
-   */
-  merchandise: PostParts_post_merchandises_merchandise;
 }
 
 export interface PostParts {
@@ -13080,47 +12340,13 @@ export interface PostParts {
   id: any;
   code_name: string | null;
   title: string;
-  source: string | null;
-  description: string | null;
   cover_url: string | null;
   video_url: string | null;
-  abstract: string | null;
-  views: number;
   published_at: any | null;
-  updated_at: any | null;
-  meta_tag: any | null;
-  /**
-   * An aggregate relationship
-   */
-  post_suggests_aggregate: PostParts_post_suggests_aggregate;
-  /**
-   * An array relationship
-   */
-  post_suggests: PostParts_post_suggests[];
-  /**
-   * An array relationship
-   */
-  post_reaction: PostParts_post_reaction[];
-  /**
-   * An aggregate relationship
-   */
-  post_reaction_aggregate: PostParts_post_reaction_aggregate;
   /**
    * An array relationship
    */
   post_roles: PostParts_post_roles[];
-  /**
-   * An array relationship
-   */
-  post_categories: PostParts_post_categories[];
-  /**
-   * An array relationship
-   */
-  post_tags: PostParts_post_tags[];
-  /**
-   * An array relationship
-   */
-  post_merchandises: PostParts_post_merchandises[];
 }
 
 /* tslint:disable */
@@ -13287,6 +12513,525 @@ export interface programFields {
    * An array relationship
    */
   program_content_sections: programFields_program_content_sections[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: ProgramParts
+// ====================================================
+
+export interface ProgramParts_program_content_sections_program_contents {
+  __typename: "program_content";
+  id: any;
+  /**
+   * sec
+   */
+  duration: any | null;
+}
+
+export interface ProgramParts_program_content_sections {
+  __typename: "program_content_section";
+  id: any;
+  /**
+   * An array relationship
+   */
+  program_contents: ProgramParts_program_content_sections_program_contents[];
+}
+
+export interface ProgramParts_program_plans_currency {
+  __typename: "currency";
+  id: string;
+  label: string;
+  unit: string;
+  name: string;
+}
+
+export interface ProgramParts_program_plans {
+  __typename: "program_plan";
+  id: any;
+  /**
+   * 1 - subscribe all / 2 - subscribe from now / 3 - all
+   */
+  type: number;
+  title: string;
+  description: string | null;
+  gains: any | null;
+  /**
+   * An object relationship
+   */
+  currency: ProgramParts_program_plans_currency;
+  list_price: any;
+  sale_price: any | null;
+  sold_at: any | null;
+  discount_down_price: any;
+  period_amount: any | null;
+  period_type: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  is_participants_visible: boolean;
+  published_at: any | null;
+}
+
+export interface ProgramParts_program_roles_member {
+  __typename: "member_public";
+  id: string | null;
+  picture_url: string | null;
+  username: string | null;
+  name: string | null;
+}
+
+export interface ProgramParts_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * An object relationship
+   */
+  member: ProgramParts_program_roles_member | null;
+}
+
+export interface ProgramParts_program_enrollments {
+  __typename: "program_enrollment";
+  member_id: string | null;
+}
+
+export interface ProgramParts {
+  __typename: "program";
+  id: any;
+  cover_url: string | null;
+  cover_mobile_url: string | null;
+  cover_thumbnail_url: string | null;
+  title: string;
+  abstract: string | null;
+  published_at: any | null;
+  is_subscription: boolean;
+  list_price: any | null;
+  sale_price: any | null;
+  sold_at: any | null;
+  is_enrolled_count_visible: boolean;
+  /**
+   * An array relationship
+   */
+  program_content_sections: ProgramParts_program_content_sections[];
+  /**
+   * An array relationship
+   */
+  program_plans: ProgramParts_program_plans[];
+  /**
+   * An array relationship
+   */
+  program_roles: ProgramParts_program_roles[];
+  /**
+   * An array relationship
+   */
+  program_enrollments: ProgramParts_program_enrollments[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: ActivityParts
+// ====================================================
+
+export interface ActivityParts_activity_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface ActivityParts_activity_categories {
+  __typename: "activity_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: ActivityParts_activity_categories_category;
+}
+
+export interface ActivityParts_activity_enrollments_aggregate_aggregate {
+  __typename: "activity_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface ActivityParts_activity_enrollments_aggregate {
+  __typename: "activity_enrollment_aggregate";
+  aggregate: ActivityParts_activity_enrollments_aggregate_aggregate | null;
+}
+
+export interface ActivityParts_activity_sessions_aggregate_aggregate_min {
+  __typename: "activity_session_min_fields";
+  started_at: any | null;
+}
+
+export interface ActivityParts_activity_sessions_aggregate_aggregate_max {
+  __typename: "activity_session_max_fields";
+  ended_at: any | null;
+}
+
+export interface ActivityParts_activity_sessions_aggregate_aggregate {
+  __typename: "activity_session_aggregate_fields";
+  min: ActivityParts_activity_sessions_aggregate_aggregate_min | null;
+  max: ActivityParts_activity_sessions_aggregate_aggregate_max | null;
+}
+
+export interface ActivityParts_activity_sessions_aggregate {
+  __typename: "activity_session_aggregate";
+  aggregate: ActivityParts_activity_sessions_aggregate_aggregate | null;
+}
+
+export interface ActivityParts_activity_tickets_aggregate_nodes {
+  __typename: "activity_ticket";
+  id: any;
+  /**
+   * unlimited as 99999999
+   */
+  count: number;
+  description: string | null;
+  started_at: any;
+  is_published: boolean;
+  ended_at: any;
+  price: any;
+  title: string;
+  currency_id: string;
+}
+
+export interface ActivityParts_activity_tickets_aggregate_aggregate_sum {
+  __typename: "activity_ticket_sum_fields";
+  /**
+   * unlimited as 99999999
+   */
+  count: number | null;
+}
+
+export interface ActivityParts_activity_tickets_aggregate_aggregate {
+  __typename: "activity_ticket_aggregate_fields";
+  sum: ActivityParts_activity_tickets_aggregate_aggregate_sum | null;
+}
+
+export interface ActivityParts_activity_tickets_aggregate {
+  __typename: "activity_ticket_aggregate";
+  nodes: ActivityParts_activity_tickets_aggregate_nodes[];
+  aggregate: ActivityParts_activity_tickets_aggregate_aggregate | null;
+}
+
+export interface ActivityParts {
+  __typename: "activity";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  published_at: any | null;
+  is_participants_visible: boolean;
+  organizer_id: string;
+  support_locales: any | null;
+  /**
+   * An array relationship
+   */
+  activity_categories: ActivityParts_activity_categories[];
+  /**
+   * An aggregate relationship
+   */
+  activity_enrollments_aggregate: ActivityParts_activity_enrollments_aggregate;
+  /**
+   * An aggregate relationship
+   */
+  activity_sessions_aggregate: ActivityParts_activity_sessions_aggregate;
+  /**
+   * An aggregate relationship
+   */
+  activity_tickets_aggregate: ActivityParts_activity_tickets_aggregate;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: PodcastProgramParts
+// ====================================================
+
+export interface PodcastProgramParts_podcast_program_roles_member {
+  __typename: "member_public";
+  id: string | null;
+  picture_url: string | null;
+  username: string | null;
+  name: string | null;
+}
+
+export interface PodcastProgramParts_podcast_program_roles {
+  __typename: "podcast_program_role";
+  id: any;
+  /**
+   * An object relationship
+   */
+  member: PodcastProgramParts_podcast_program_roles_member | null;
+}
+
+export interface PodcastProgramParts_podcast_program_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface PodcastProgramParts_podcast_program_categories {
+  __typename: "podcast_program_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: PodcastProgramParts_podcast_program_categories_category;
+}
+
+export interface PodcastProgramParts_podcast_program_enrollments {
+  __typename: "podcast_program_enrollment";
+  member_id: string | null;
+}
+
+export interface PodcastProgramParts {
+  __typename: "podcast_program";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  abstract: string | null;
+  duration: any;
+  duration_second: any;
+  published_at: any | null;
+  list_price: any;
+  sale_price: any | null;
+  sold_at: any | null;
+  /**
+   * An array relationship
+   */
+  podcast_program_roles: PodcastProgramParts_podcast_program_roles[];
+  /**
+   * An array relationship
+   */
+  podcast_program_categories: PodcastProgramParts_podcast_program_categories[];
+  /**
+   * An array relationship
+   */
+  podcast_program_enrollments: PodcastProgramParts_podcast_program_enrollments[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: MemberPublicParts
+// ====================================================
+
+export interface MemberPublicParts {
+  __typename: "member_public";
+  id: string | null;
+  picture_url: string | null;
+  name: string | null;
+  username: string | null;
+  abstract: string | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: MerchandiseParts
+// ====================================================
+
+export interface MerchandiseParts_merchandise_tags {
+  __typename: "merchandise_tag";
+  tag_name: string;
+}
+
+export interface MerchandiseParts_merchandise_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface MerchandiseParts_merchandise_categories {
+  __typename: "merchandise_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: MerchandiseParts_merchandise_categories_category;
+}
+
+export interface MerchandiseParts_merchandise_imgs {
+  __typename: "merchandise_img";
+  id: any;
+  url: string;
+}
+
+export interface MerchandiseParts_merchandise_specs {
+  __typename: "merchandise_spec";
+  id: any;
+  title: string;
+  list_price: any;
+  sale_price: any | null;
+}
+
+export interface MerchandiseParts {
+  __typename: "merchandise";
+  id: any;
+  title: string;
+  sold_at: any | null;
+  currency_id: string;
+  /**
+   * An array relationship
+   */
+  merchandise_tags: MerchandiseParts_merchandise_tags[];
+  /**
+   * An array relationship
+   */
+  merchandise_categories: MerchandiseParts_merchandise_categories[];
+  /**
+   * An array relationship
+   */
+  merchandise_imgs: MerchandiseParts_merchandise_imgs[];
+  /**
+   * An array relationship
+   */
+  merchandise_specs: MerchandiseParts_merchandise_specs[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: ProjectParts
+// ====================================================
+
+export interface ProjectParts_project_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface ProjectParts_project_categories {
+  __typename: "project_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: ProjectParts_project_categories_category;
+}
+
+export interface ProjectParts_project_sales {
+  __typename: "project_sales";
+  total_sales: any | null;
+}
+
+export interface ProjectParts_project_plans_project_plan_enrollments_aggregate_aggregate {
+  __typename: "project_plan_enrollment_aggregate_fields";
+  count: number;
+}
+
+export interface ProjectParts_project_plans_project_plan_enrollments_aggregate {
+  __typename: "project_plan_enrollment_aggregate";
+  aggregate: ProjectParts_project_plans_project_plan_enrollments_aggregate_aggregate | null;
+}
+
+export interface ProjectParts_project_plans {
+  __typename: "project_plan";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  description: string | null;
+  is_subscription: boolean;
+  period_amount: any | null;
+  /**
+   * Y / M / W / D
+   */
+  period_type: string | null;
+  list_price: any | null;
+  sale_price: any | null;
+  sold_at: any | null;
+  discount_down_price: any;
+  created_at: any;
+  is_participants_visible: boolean;
+  is_physical: boolean;
+  is_limited: boolean;
+  /**
+   * An aggregate relationship
+   */
+  project_plan_enrollments_aggregate: ProjectParts_project_plans_project_plan_enrollments_aggregate;
+}
+
+export interface ProjectParts_author {
+  __typename: "project_role";
+  id: any;
+  member_id: string;
+}
+
+export interface ProjectParts {
+  __typename: "project";
+  id: any;
+  /**
+   * funding / pre-order / on-sale / modular / portfolio
+   */
+  type: string;
+  title: string;
+  /**
+   * image / video
+   */
+  cover_type: string;
+  cover_url: string | null;
+  preview_url: string | null;
+  abstract: string | null;
+  introduction: string | null;
+  description: string | null;
+  /**
+   * funds / participants
+   */
+  target_unit: string;
+  target_amount: any | null;
+  expired_at: any | null;
+  is_participants_visible: boolean;
+  is_countdown_timer_visible: boolean;
+  /**
+   * An array relationship
+   */
+  project_categories: ProjectParts_project_categories[];
+  /**
+   * An object relationship
+   */
+  project_sales: ProjectParts_project_sales | null;
+  /**
+   * An array relationship
+   */
+  project_plans: ProjectParts_project_plans[];
+  /**
+   * An array relationship
+   */
+  author: ProjectParts_author[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: ProgramPackageParts
+// ====================================================
+
+export interface ProgramPackageParts {
+  __typename: "program_package";
+  id: any;
+  cover_url: string | null;
+  title: string;
 }
 
 /* tslint:disable */
@@ -14747,6 +14492,81 @@ export enum exam_update_column {
  */
 export enum exercise_constraint {
   exercise_pkey = "exercise_pkey",
+}
+
+/**
+ * select columns of table "exercise_public"
+ */
+export enum exercise_public_select_column {
+  choice_ids = "choice_ids",
+  duration = "duration",
+  ended_at = "ended_at",
+  exercise_id = "exercise_id",
+  gained_points = "gained_points",
+  is_correct = "is_correct",
+  member_id = "member_id",
+  program_content_id = "program_content_id",
+  question_ended_at = "question_ended_at",
+  question_id = "question_id",
+  question_points = "question_points",
+  question_started_at = "question_started_at",
+  started_at = "started_at",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_avg_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_avg_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_corr_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_corr_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_covar_samp_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_max_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_max_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_min_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_min_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_stddev_samp_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_sum_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_sum_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_var_samp_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_var_samp_arguments_columns {
+  duration = "duration",
 }
 
 /**
@@ -22778,6 +22598,8 @@ export interface exercise_bool_exp {
   ended_at?: timestamptz_comparison_exp | null;
   exam?: exam_bool_exp | null;
   exam_id?: uuid_comparison_exp | null;
+  exercise_publics?: exercise_public_bool_exp | null;
+  exercise_publics_aggregate?: exercise_public_aggregate_bool_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -22796,6 +22618,7 @@ export interface exercise_insert_input {
   ended_at?: any | null;
   exam?: exam_obj_rel_insert_input | null;
   exam_id?: any | null;
+  exercise_publics?: exercise_public_arr_rel_insert_input | null;
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
@@ -22806,12 +22629,157 @@ export interface exercise_insert_input {
 }
 
 /**
+ * input type for inserting object relation for remote table "exercise"
+ */
+export interface exercise_obj_rel_insert_input {
+  data: exercise_insert_input;
+  on_conflict?: exercise_on_conflict | null;
+}
+
+/**
  * on_conflict condition type for table "exercise"
  */
 export interface exercise_on_conflict {
   constraint: exercise_constraint;
   update_columns: exercise_update_column[];
   where?: exercise_bool_exp | null;
+}
+
+export interface exercise_public_aggregate_bool_exp {
+  avg?: exercise_public_aggregate_bool_exp_avg | null;
+  corr?: exercise_public_aggregate_bool_exp_corr | null;
+  count?: exercise_public_aggregate_bool_exp_count | null;
+  covar_samp?: exercise_public_aggregate_bool_exp_covar_samp | null;
+  max?: exercise_public_aggregate_bool_exp_max | null;
+  min?: exercise_public_aggregate_bool_exp_min | null;
+  stddev_samp?: exercise_public_aggregate_bool_exp_stddev_samp | null;
+  sum?: exercise_public_aggregate_bool_exp_sum | null;
+  var_samp?: exercise_public_aggregate_bool_exp_var_samp | null;
+}
+
+export interface exercise_public_aggregate_bool_exp_avg {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_avg_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_corr {
+  arguments: exercise_public_aggregate_bool_exp_corr_arguments;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_corr_arguments {
+  X: exercise_public_select_column_exercise_public_aggregate_bool_exp_corr_arguments_columns;
+  Y: exercise_public_select_column_exercise_public_aggregate_bool_exp_corr_arguments_columns;
+}
+
+export interface exercise_public_aggregate_bool_exp_count {
+  arguments?: exercise_public_select_column[] | null;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: Int_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_covar_samp {
+  arguments: exercise_public_aggregate_bool_exp_covar_samp_arguments;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_covar_samp_arguments {
+  X: exercise_public_select_column_exercise_public_aggregate_bool_exp_covar_samp_arguments_columns;
+  Y: exercise_public_select_column_exercise_public_aggregate_bool_exp_covar_samp_arguments_columns;
+}
+
+export interface exercise_public_aggregate_bool_exp_max {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_max_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_min {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_min_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_stddev_samp {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_stddev_samp_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_sum {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_sum_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_var_samp {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_var_samp_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+/**
+ * input type for inserting array relation for remote table "exercise_public"
+ */
+export interface exercise_public_arr_rel_insert_input {
+  data: exercise_public_insert_input[];
+}
+
+/**
+ * Boolean expression to filter rows from the table "exercise_public". All fields are combined with a logical 'AND'.
+ */
+export interface exercise_public_bool_exp {
+  _and?: exercise_public_bool_exp[] | null;
+  _not?: exercise_public_bool_exp | null;
+  _or?: exercise_public_bool_exp[] | null;
+  choice_ids?: String_comparison_exp | null;
+  duration?: float8_comparison_exp | null;
+  ended_at?: timestamptz_comparison_exp | null;
+  exercise?: exercise_bool_exp | null;
+  exercise_id?: uuid_comparison_exp | null;
+  gained_points?: String_comparison_exp | null;
+  is_correct?: String_comparison_exp | null;
+  member?: member_bool_exp | null;
+  member_id?: String_comparison_exp | null;
+  program_content_id?: uuid_comparison_exp | null;
+  question_ended_at?: String_comparison_exp | null;
+  question_id?: String_comparison_exp | null;
+  question_points?: String_comparison_exp | null;
+  question_started_at?: String_comparison_exp | null;
+  started_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "exercise_public"
+ */
+export interface exercise_public_insert_input {
+  choice_ids?: string | null;
+  duration?: any | null;
+  ended_at?: any | null;
+  exercise?: exercise_obj_rel_insert_input | null;
+  exercise_id?: any | null;
+  gained_points?: string | null;
+  is_correct?: string | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  program_content_id?: any | null;
+  question_ended_at?: string | null;
+  question_id?: string | null;
+  question_points?: string | null;
+  question_started_at?: string | null;
+  started_at?: any | null;
 }
 
 /**
@@ -22882,6 +22850,21 @@ export interface file_on_conflict {
   constraint: file_constraint;
   update_columns: file_update_column[];
   where?: file_bool_exp | null;
+}
+
+/**
+ * Boolean expression to compare columns of type "float8". All fields are combined with logical 'AND'.
+ */
+export interface float8_comparison_exp {
+  _eq?: any | null;
+  _gt?: any | null;
+  _gte?: any | null;
+  _in?: any[] | null;
+  _is_null?: boolean | null;
+  _lt?: any | null;
+  _lte?: any | null;
+  _neq?: any | null;
+  _nin?: any[] | null;
 }
 
 /**

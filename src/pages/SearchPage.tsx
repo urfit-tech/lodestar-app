@@ -487,6 +487,244 @@ const useSearchProductCollection = (
     hasura.SEARCH_PRODUCT_COLLECTIONVariables
   >(
     gql`
+      fragment ProgramParts on program {
+        id
+        cover_url
+        cover_mobile_url
+        cover_thumbnail_url
+        title
+        abstract
+        published_at
+        is_subscription
+        list_price
+        sale_price
+        sold_at
+        is_enrolled_count_visible
+        program_content_sections {
+          id
+          program_contents {
+            id
+            duration
+          }
+        }
+        program_plans(where: { published_at: { _is_null: false } }, limit: 1) {
+          id
+          type
+          title
+          description
+          gains
+          currency {
+            id
+            label
+            unit
+            name
+          }
+          list_price
+          sale_price
+          sold_at
+          discount_down_price
+          period_amount
+          period_type
+          started_at
+          ended_at
+          is_participants_visible
+          published_at
+        }
+        program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc }, limit: 1) {
+          id
+          member {
+            id
+            picture_url
+            username
+            name
+          }
+        }
+        program_enrollments(where: { member_id: { _eq: $memberId } }) {
+          member_id
+        }
+      }
+      fragment ActivityParts on activity {
+        id
+        cover_url
+        title
+        published_at
+        is_participants_visible
+        organizer_id
+        support_locales
+        activity_categories {
+          id
+          category {
+            id
+            name
+          }
+        }
+        activity_enrollments_aggregate {
+          aggregate {
+            count
+          }
+        }
+        activity_sessions_aggregate {
+          aggregate {
+            min {
+              started_at
+            }
+            max {
+              ended_at
+            }
+          }
+        }
+        activity_tickets_aggregate {
+          nodes {
+            id
+            count
+            description
+            started_at
+            is_published
+            ended_at
+            price
+            title
+            currency_id
+          }
+          aggregate {
+            sum {
+              count
+            }
+          }
+        }
+      }
+      fragment PodcastProgramParts on podcast_program {
+        id
+        cover_url
+        title
+        abstract
+        duration
+        duration_second
+        published_at
+        list_price
+        sale_price
+        sold_at
+        podcast_program_roles(where: { name: { _eq: "instructor" } }, limit: 1) {
+          id
+          member {
+            id
+            picture_url
+            username
+            name
+          }
+        }
+        podcast_program_categories(order_by: { position: asc }) {
+          id
+          category {
+            id
+            name
+          }
+        }
+        podcast_program_enrollments(where: { member_id: { _eq: $memberId } }) {
+          member_id
+        }
+      }
+      fragment MemberPublicParts on member_public {
+        id
+        picture_url
+        name
+        username
+        abstract
+      }
+      fragment MerchandiseParts on merchandise {
+        id
+        title
+        sold_at
+        currency_id
+        merchandise_tags(order_by: { position: asc }) {
+          tag_name
+        }
+        merchandise_categories(order_by: { position: asc }) {
+          id
+          category {
+            id
+            name
+          }
+        }
+        merchandise_imgs(where: { type: { _eq: "cover" } }, limit: 1) {
+          id
+          url
+        }
+        merchandise_specs {
+          id
+          title
+          list_price
+          sale_price
+        }
+      }
+      fragment ProjectParts on project {
+        id
+        type
+        title
+        cover_type
+        cover_url
+        preview_url
+        abstract
+        introduction
+        description
+        target_unit
+        target_amount
+        expired_at
+        is_participants_visible
+        is_countdown_timer_visible
+        project_categories(order_by: { position: asc }) {
+          id
+          category {
+            id
+            name
+          }
+        }
+        project_sales {
+          total_sales
+        }
+        project_plans {
+          id
+          cover_url
+          title
+          description
+          is_subscription
+          period_amount
+          period_type
+          list_price
+          sale_price
+          sold_at
+          discount_down_price
+          created_at
+          is_participants_visible
+          is_physical
+          is_limited
+          project_plan_enrollments_aggregate {
+            aggregate {
+              count
+            }
+          }
+        }
+        author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
+          id
+          member_id
+        }
+      }
+      fragment PostParts on post {
+        id
+        code_name
+        title
+        cover_url
+        video_url
+        published_at
+        post_roles(where: { name: { _eq: "author" } }) {
+          id
+          member_id
+        }
+      }
+      fragment ProgramPackageParts on program_package {
+        id
+        cover_url
+        title
+      }
       query SEARCH_PRODUCT_COLLECTION(
         $memberId: String
         $title: String
@@ -507,60 +745,7 @@ const useSearchProductCollection = (
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
-          id
-          cover_url
-          cover_mobile_url
-          cover_thumbnail_url
-          title
-          abstract
-          published_at
-          is_subscription
-          list_price
-          sale_price
-          sold_at
-          is_enrolled_count_visible
-          program_content_sections {
-            id
-            program_contents {
-              id
-              duration
-            }
-          }
-          program_plans(where: { published_at: { _is_null: false } }, limit: 1) {
-            id
-            type
-            title
-            description
-            gains
-            currency {
-              id
-              label
-              unit
-              name
-            }
-            list_price
-            sale_price
-            sold_at
-            discount_down_price
-            period_amount
-            period_type
-            started_at
-            ended_at
-            is_participants_visible
-            published_at
-          }
-          program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc }, limit: 1) {
-            id
-            member {
-              id
-              picture_url
-              username
-              name
-            }
-          }
-          program_enrollments(where: { member_id: { _eq: $memberId } }) {
-            member_id
-          }
+          ...ProgramParts
         }
         activity(
           where: {
@@ -570,53 +755,7 @@ const useSearchProductCollection = (
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
-          id
-          cover_url
-          title
-          published_at
-          is_participants_visible
-          organizer_id
-          support_locales
-          activity_categories {
-            id
-            category {
-              id
-              name
-            }
-          }
-          activity_enrollments_aggregate {
-            aggregate {
-              count
-            }
-          }
-          activity_sessions_aggregate {
-            aggregate {
-              min {
-                started_at
-              }
-              max {
-                ended_at
-              }
-            }
-          }
-          activity_tickets_aggregate {
-            nodes {
-              id
-              count
-              description
-              started_at
-              is_published
-              ended_at
-              price
-              title
-              currency_id
-            }
-            aggregate {
-              sum {
-                count
-              }
-            }
-          }
+          ...ActivityParts
         }
         podcast_program(
           where: {
@@ -629,35 +768,7 @@ const useSearchProductCollection = (
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
-          id
-          cover_url
-          title
-          abstract
-          duration
-          duration_second
-          published_at
-          list_price
-          sale_price
-          sold_at
-          podcast_program_roles(where: { name: { _eq: "instructor" } }, limit: 1) {
-            id
-            member {
-              id
-              picture_url
-              username
-              name
-            }
-          }
-          podcast_program_categories(order_by: { position: asc }) {
-            id
-            category {
-              id
-              name
-            }
-          }
-          podcast_program_enrollments(where: { member_id: { _eq: $memberId } }) {
-            member_id
-          }
+          ...PodcastProgramParts
         }
         podcast_plan_enrollment(
           where: { member_id: { _eq: $memberId } }
@@ -677,11 +788,7 @@ const useSearchProductCollection = (
           }
           order_by: [{ created_at: desc }]
         ) {
-          id
-          picture_url
-          name
-          username
-          abstract
+          ...MemberPublicParts
         }
         merchandise(
           where: {
@@ -691,30 +798,7 @@ const useSearchProductCollection = (
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
-          id
-          title
-          sold_at
-          currency_id
-          merchandise_tags(order_by: { position: asc }) {
-            tag_name
-          }
-          merchandise_categories(order_by: { position: asc }) {
-            id
-            category {
-              id
-              name
-            }
-          }
-          merchandise_imgs(where: { type: { _eq: "cover" } }, limit: 1) {
-            id
-            url
-          }
-          merchandise_specs {
-            id
-            title
-            list_price
-            sale_price
-          }
+          ...MerchandiseParts
         }
         project(
           where: {
@@ -731,57 +815,7 @@ const useSearchProductCollection = (
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
-          id
-          type
-          title
-          cover_type
-          cover_url
-          preview_url
-          abstract
-          introduction
-          description
-          target_unit
-          target_amount
-          expired_at
-          is_participants_visible
-          is_countdown_timer_visible
-
-          project_categories(order_by: { position: asc }) {
-            id
-            category {
-              id
-              name
-            }
-          }
-          project_sales {
-            total_sales
-          }
-          project_plans {
-            id
-            cover_url
-            title
-            description
-            is_subscription
-            period_amount
-            period_type
-            list_price
-            sale_price
-            sold_at
-            discount_down_price
-            created_at
-            is_participants_visible
-            is_physical
-            is_limited
-            project_plan_enrollments_aggregate {
-              aggregate {
-                count
-              }
-            }
-          }
-          author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
-            id
-            member_id
-          }
+          ...ProjectParts
         }
         post(
           where: {
@@ -795,16 +829,7 @@ const useSearchProductCollection = (
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
-          id
-          code_name
-          title
-          cover_url
-          video_url
-          published_at
-          post_roles(where: { name: { _eq: "author" } }) {
-            id
-            member_id
-          }
+          ...PostParts
         }
         program_package(
           where: {
@@ -813,9 +838,7 @@ const useSearchProductCollection = (
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
-          id
-          cover_url
-          title
+          ...ProgramPackageParts
         }
       }
     `,
