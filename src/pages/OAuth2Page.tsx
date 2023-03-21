@@ -134,7 +134,7 @@ const Oauth2Section: React.VFC = () => {
   const [state] = useQueryParam('state', StringParam)
   const [code] = useQueryParam('code', StringParam)
   const { id: appId } = useApp()
-  const { isAuthenticating, socialLogin } = useAuth()
+  const { isAuthenticating, socialLogin, currentMemberId } = useAuth()
   const host = window.location.origin
   const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
 
@@ -146,7 +146,7 @@ const Oauth2Section: React.VFC = () => {
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   useEffect(() => {
-    if (!isAuthenticating && appId && code) {
+    if (!isAuthenticating && !currentMemberId && appId && code) {
       const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(
@@ -177,7 +177,7 @@ const Oauth2Section: React.VFC = () => {
     } else if (isAuthenticating) {
       window.location.href = redirect
     }
-  }, [accountLinkToken, appId, code, history, host, isAuthenticating, provider, redirect, socialLogin])
+  }, [accountLinkToken, appId, code, history, host, isAuthenticating, provider, redirect, socialLogin, currentMemberId])
 
   return <LoadingPage />
 }
