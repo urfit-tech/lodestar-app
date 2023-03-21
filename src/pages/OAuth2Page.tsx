@@ -143,9 +143,22 @@ const Oauth2Section: React.VFC = () => {
   }: {
     redirect: string
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
-
+  console.log(
+    'outside',
+    JSON.stringify({
+      currentMemberId,
+      appId,
+      code,
+      accountLinkToken,
+      host,
+      provider,
+      redirect,
+      socialLogin,
+    }),
+  )
   useEffect(() => {
     console.log(
+      'inside',
       JSON.stringify({
         currentMemberId,
         appId,
@@ -191,7 +204,7 @@ const Oauth2Section: React.VFC = () => {
 
       window.location.href = redirect
     }
-  }, [accountLinkToken, appId, code, host, provider, redirect, socialLogin, currentMemberId])
+  }, [currentMemberId])
 
   return <LoadingPage />
 }
