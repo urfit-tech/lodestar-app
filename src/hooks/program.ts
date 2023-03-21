@@ -560,7 +560,9 @@ export const useProgramContent = (programContentId: string) => {
               data.program_content_by_pk.program_content_videos.length > 0
                 ? 'video'
                 : data.program_content_by_pk.program_content_body?.type,
-            publishedAt: new Date(data.program_content_by_pk.published_at),
+            publishedAt: data.program_content_by_pk.published_at
+              ? new Date(data.program_content_by_pk.published_at)
+              : null,
             displayMode: data.program_content_by_pk.display_mode as DisplayMode,
             listPrice: data.program_content_by_pk.list_price,
             salePrice: data.program_content_by_pk.sale_price,
