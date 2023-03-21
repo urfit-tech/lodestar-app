@@ -350,8 +350,6 @@ const SortBySectionItem: React.VFC<{
         onClick?.()
         if (type === 'exercise' || type === 'exam') {
           await refetchCurrentExamData()
-
-          // await refetchCurrentExamData()
         }
         history.push(
           `/programs/${programId}/contents/${programContent.id}${previousPage ? `?back=${previousPage}` : ''}`,
