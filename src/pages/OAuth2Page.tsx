@@ -15,6 +15,7 @@ type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth
 
 const OAuth2Page: React.VFC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
+  console.log({ provider })
 
   if (['parenting', 'commonhealth', 'cw'].includes(provider)) {
     return <Oauth2Section />
@@ -204,7 +205,7 @@ const Oauth2Section: React.VFC = () => {
 
       window.location.href = redirect
     }
-  }, [currentMemberId])
+  }, [])
 
   return <LoadingPage />
 }
