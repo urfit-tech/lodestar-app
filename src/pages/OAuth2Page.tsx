@@ -156,7 +156,17 @@ const Oauth2Section: React.VFC = () => {
       redirect &&
       socialLogin
     ) {
-      console.log('get token start')
+      console.log('get token start', {
+        isAuthenticating,
+        currentMemberId,
+        appId,
+        code,
+        accountLinkToken,
+        host,
+        provider,
+        redirect,
+        socialLogin,
+      })
       const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(
