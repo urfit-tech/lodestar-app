@@ -134,7 +134,7 @@ const Oauth2Section: React.VFC = () => {
   const [state] = useQueryParam('state', StringParam)
   const [code] = useQueryParam('code', StringParam)
   const { id: appId } = useApp()
-  const { isAuthenticating, socialLogin, currentMemberId } = useAuth()
+  const { authToken, isAuthenticating, socialLogin, currentMemberId } = useAuth()
   const host = window.location.origin
   const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
 
@@ -159,25 +159,39 @@ const Oauth2Section: React.VFC = () => {
           },
           { withCredentials: true },
         )
-        .then(({ data: { code, message, result } }) => {
-          if (code === 'SUCCESS') {
+        .then(({ data: { code: resultCode, message, result } }) => {
+          if (resultCode === 'SUCCESS') {
             return socialLogin?.({
               provider,
               providerToken: result.token,
               accountLinkToken: accountLinkToken,
             })
           } else {
-            console.log(code, message, result)
+            console.log({ resultCode, message, result, authToken, redirect })
           }
         })
         .then(() => {
           window.location.href = redirect
         })
         .catch(handleError)
-    } else if (isAuthenticating) {
+    } else if (isAuthenticating && currentMemberId) {
+      console.log({ isAuthenticating, currentMemberId, appId, code, authToken, redirect })
+
       window.location.href = redirect
     }
-  }, [accountLinkToken, appId, code, history, host, isAuthenticating, provider, redirect, socialLogin, currentMemberId])
+  }, [
+    accountLinkToken,
+    appId,
+    code,
+    history,
+    host,
+    isAuthenticating,
+    provider,
+    redirect,
+    socialLogin,
+    currentMemberId,
+    authToken,
+  ])
 
   return <LoadingPage />
 }
