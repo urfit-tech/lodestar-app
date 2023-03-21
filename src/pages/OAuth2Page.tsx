@@ -145,17 +145,19 @@ const Oauth2Section: React.VFC = () => {
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   useEffect(() => {
-    console.log({
-      isAuthenticating,
-      currentMemberId,
-      appId,
-      code,
-      accountLinkToken,
-      host,
-      provider,
-      redirect,
-      socialLogin,
-    })
+    console.log(
+      JSON.stringify({
+        isAuthenticating,
+        currentMemberId,
+        appId,
+        code,
+        accountLinkToken,
+        host,
+        provider,
+        redirect,
+        socialLogin,
+      }),
+    )
     if (!isAuthenticating && !currentMemberId && appId && code && host && provider && redirect && socialLogin) {
       console.log('get token start')
       const redirectUri = `${host}/oauth2/${provider}`
