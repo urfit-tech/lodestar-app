@@ -59,7 +59,7 @@ export type ExercisePublic = {
   choiceIds: string[]
 }
 export type programContentProgress = {
-  programContentType: string | null
+  programCotnentBodyType: string | null
   programContentId: string
   programContentSectionId?: string
   progress: number

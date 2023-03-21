@@ -5732,6 +5732,54 @@ export interface GetExercisePublicTotalVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_EXAM_EXERCISE
+// ====================================================
+
+export interface GET_EXAM_EXERCISE_exercise_exercise_publics {
+  __typename: "exercise_public";
+  exercise_id: any | null;
+  question_points: string | null;
+  question_id: string | null;
+  question_started_at: string | null;
+  gained_points: string | null;
+}
+
+export interface GET_EXAM_EXERCISE_exercise_exam {
+  __typename: "exam";
+  id: any;
+  passing_score: any;
+}
+
+export interface GET_EXAM_EXERCISE_exercise {
+  __typename: "exercise";
+  id: any;
+  /**
+   * An array relationship
+   */
+  exercise_publics: GET_EXAM_EXERCISE_exercise_exercise_publics[];
+  /**
+   * An object relationship
+   */
+  exam: GET_EXAM_EXERCISE_exercise_exam | null;
+}
+
+export interface GET_EXAM_EXERCISE {
+  /**
+   * fetch data from the table: "exercise"
+   */
+  exercise: GET_EXAM_EXERCISE_exercise[];
+}
+
+export interface GET_EXAM_EXERCISEVariables {
+  condition: exercise_bool_exp;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_EXERCISE_PUBLIC
 // ====================================================
 
@@ -14743,6 +14791,81 @@ export enum exercise_constraint {
 }
 
 /**
+ * select columns of table "exercise_public"
+ */
+export enum exercise_public_select_column {
+  choice_ids = "choice_ids",
+  duration = "duration",
+  ended_at = "ended_at",
+  exercise_id = "exercise_id",
+  gained_points = "gained_points",
+  is_correct = "is_correct",
+  member_id = "member_id",
+  program_content_id = "program_content_id",
+  question_ended_at = "question_ended_at",
+  question_id = "question_id",
+  question_points = "question_points",
+  question_started_at = "question_started_at",
+  started_at = "started_at",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_avg_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_avg_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_corr_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_corr_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_covar_samp_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_max_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_max_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_min_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_min_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_stddev_samp_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_sum_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_sum_arguments_columns {
+  duration = "duration",
+}
+
+/**
+ * select "exercise_public_aggregate_bool_exp_var_samp_arguments_columns" columns of table "exercise_public"
+ */
+export enum exercise_public_select_column_exercise_public_aggregate_bool_exp_var_samp_arguments_columns {
+  duration = "duration",
+}
+
+/**
  * select columns of table "exercise"
  */
 export enum exercise_select_column {
@@ -22771,6 +22894,8 @@ export interface exercise_bool_exp {
   ended_at?: timestamptz_comparison_exp | null;
   exam?: exam_bool_exp | null;
   exam_id?: uuid_comparison_exp | null;
+  exercise_publics?: exercise_public_bool_exp | null;
+  exercise_publics_aggregate?: exercise_public_aggregate_bool_exp | null;
   id?: uuid_comparison_exp | null;
   member?: member_bool_exp | null;
   member_id?: String_comparison_exp | null;
@@ -22789,6 +22914,7 @@ export interface exercise_insert_input {
   ended_at?: any | null;
   exam?: exam_obj_rel_insert_input | null;
   exam_id?: any | null;
+  exercise_publics?: exercise_public_arr_rel_insert_input | null;
   id?: any | null;
   member?: member_obj_rel_insert_input | null;
   member_id?: string | null;
@@ -22799,12 +22925,112 @@ export interface exercise_insert_input {
 }
 
 /**
+ * input type for inserting object relation for remote table "exercise"
+ */
+export interface exercise_obj_rel_insert_input {
+  data: exercise_insert_input;
+  on_conflict?: exercise_on_conflict | null;
+}
+
+/**
  * on_conflict condition type for table "exercise"
  */
 export interface exercise_on_conflict {
   constraint: exercise_constraint;
   update_columns: exercise_update_column[];
   where?: exercise_bool_exp | null;
+}
+
+export interface exercise_public_aggregate_bool_exp {
+  avg?: exercise_public_aggregate_bool_exp_avg | null;
+  corr?: exercise_public_aggregate_bool_exp_corr | null;
+  count?: exercise_public_aggregate_bool_exp_count | null;
+  covar_samp?: exercise_public_aggregate_bool_exp_covar_samp | null;
+  max?: exercise_public_aggregate_bool_exp_max | null;
+  min?: exercise_public_aggregate_bool_exp_min | null;
+  stddev_samp?: exercise_public_aggregate_bool_exp_stddev_samp | null;
+  sum?: exercise_public_aggregate_bool_exp_sum | null;
+  var_samp?: exercise_public_aggregate_bool_exp_var_samp | null;
+}
+
+export interface exercise_public_aggregate_bool_exp_avg {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_avg_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_corr {
+  arguments: exercise_public_aggregate_bool_exp_corr_arguments;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_corr_arguments {
+  X: exercise_public_select_column_exercise_public_aggregate_bool_exp_corr_arguments_columns;
+  Y: exercise_public_select_column_exercise_public_aggregate_bool_exp_corr_arguments_columns;
+}
+
+export interface exercise_public_aggregate_bool_exp_count {
+  arguments?: exercise_public_select_column[] | null;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: Int_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_covar_samp {
+  arguments: exercise_public_aggregate_bool_exp_covar_samp_arguments;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_covar_samp_arguments {
+  X: exercise_public_select_column_exercise_public_aggregate_bool_exp_covar_samp_arguments_columns;
+  Y: exercise_public_select_column_exercise_public_aggregate_bool_exp_covar_samp_arguments_columns;
+}
+
+export interface exercise_public_aggregate_bool_exp_max {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_max_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_min {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_min_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_stddev_samp {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_stddev_samp_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_sum {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_sum_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+export interface exercise_public_aggregate_bool_exp_var_samp {
+  arguments: exercise_public_select_column_exercise_public_aggregate_bool_exp_var_samp_arguments_columns;
+  distinct?: boolean | null;
+  filter?: exercise_public_bool_exp | null;
+  predicate: float8_comparison_exp;
+}
+
+/**
+ * input type for inserting array relation for remote table "exercise_public"
+ */
+export interface exercise_public_arr_rel_insert_input {
+  data: exercise_public_insert_input[];
 }
 
 /**
@@ -22829,6 +23055,27 @@ export interface exercise_public_bool_exp {
   question_points?: String_comparison_exp | null;
   question_started_at?: String_comparison_exp | null;
   started_at?: timestamptz_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "exercise_public"
+ */
+export interface exercise_public_insert_input {
+  choice_ids?: string | null;
+  duration?: any | null;
+  ended_at?: any | null;
+  exercise?: exercise_obj_rel_insert_input | null;
+  exercise_id?: any | null;
+  gained_points?: string | null;
+  is_correct?: string | null;
+  member?: member_obj_rel_insert_input | null;
+  member_id?: string | null;
+  program_content_id?: any | null;
+  question_ended_at?: string | null;
+  question_id?: string | null;
+  question_points?: string | null;
+  question_started_at?: string | null;
+  started_at?: any | null;
 }
 
 /**
@@ -24456,6 +24703,8 @@ export interface member_public_bool_exp {
   email?: String_comparison_exp | null;
   has_backstage_enter_permission?: Int_comparison_exp | null;
   id?: String_comparison_exp | null;
+  member_permissions?: member_permission_bool_exp | null;
+  member_permissions_aggregate?: member_permission_aggregate_bool_exp | null;
   member_specialities?: member_speciality_bool_exp | null;
   member_specialities_aggregate?: member_speciality_aggregate_bool_exp | null;
   metadata?: jsonb_comparison_exp | null;
@@ -24481,6 +24730,7 @@ export interface member_public_insert_input {
   email?: string | null;
   has_backstage_enter_permission?: number | null;
   id?: string | null;
+  member_permissions?: member_permission_arr_rel_insert_input | null;
   member_specialities?: member_speciality_arr_rel_insert_input | null;
   metadata?: any | null;
   name?: string | null;

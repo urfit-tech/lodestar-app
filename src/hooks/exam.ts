@@ -200,67 +200,64 @@ export const useExamExaminableTimeLimit = (programContentId: string, memberId: s
     productDeliveredAt,
   }
 }
-export const useCurrentExercisePublicTotal = (memberId: string, programContentId: string, questions: string[]) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetExercisePublicTotal,
-    hasura.GetExercisePublicTotalVariables
-  >(
+
+export const useExamExercise = (programContentId: string, memberId: string, exerciseId?: string | null) => {
+  const condition: hasura.GET_EXAM_EXERCISEVariables['condition'] = {
+    id: exerciseId ? { _eq: exerciseId } : undefined,
+    program_content_id: { _eq: programContentId },
+    member_id: exerciseId ? undefined : { _eq: memberId },
+    answer: { _is_null: false },
+  }
+  const { loading, error, data, refetch } = useQuery<hasura.GET_EXAM_EXERCISE, hasura.GET_EXAM_EXERCISEVariables>(
     gql`
-      query GetExercisePublicTotal($condition: exercise_public_bool_exp!) {
-        exercise_public(where: $condition, order_by: { exercise: { created_at: desc } }) {
-          duration
-          choice_ids
-          gained_points
-          is_correct
-          member_id
-          question_ended_at
-          question_id
-          question_points
-          question_started_at
-          ended_at
-          started_at
-          exercise_id
-          program_content_id
-          exercise {
+      query GET_EXAM_EXERCISE($condition: exercise_bool_exp!) {
+        exercise(where: $condition, order_by: { created_at: desc }, limit: 1) {
+          id
+          exercise_publics {
+            exercise_id
+            question_points
+            question_id
+            question_started_at
+            gained_points
+          }
+          exam {
             id
+            passing_score
           }
         }
       }
     `,
-    {
-      variables: {
-        condition: {
-          member_id: { _eq: memberId },
-          program_content_id: { _eq: programContentId },
-          _or: questions.map((question: string) => {
-            return { question_id: { _eq: question } }
-          }),
-        },
-      },
-    },
+    { variables: { condition } },
   )
-  const checkExamData = questions.some(questionId => {
-    return data?.exercise_public.find(item => item.question_id === questionId)
-  })
-  const currentExamData = checkExamData
-    ? questions.map(questionId => {
-        return data?.exercise_public.find(item => item.question_id === questionId)
-      })
-    : []
-  const gaindedPointsTotal =
-    currentExamData.length > 0
-      ? currentExamData.reduce((acc, item) => {
-          return acc + Number(item?.gained_points || 0)
-        }, 0)
-      : null
-  const questionPointsTotal =
-    currentExamData.length > 0
-      ? currentExamData.reduce((acc, item) => {
-          return acc + Number(item?.question_points || 0)
-        }, 0)
-      : null
-  const refetchCurrentExamData = refetch
-  return { currentExamData, gaindedPointsTotal, questionPointsTotal, refetchCurrentExamData }
+  const currentExamExerciseData =
+    loading && error && !data
+      ? []
+      : data?.exercise.map(Citem => {
+          const passingScore = Citem?.exam?.passing_score
+          const gainedPointsTotal =
+            Citem?.exercise_publics.length > 0
+              ? Citem?.exercise_publics.reduce((acc, item) => {
+                  return acc + Number(item?.gained_points || 0)
+                }, 0)
+              : null
+          const questionPointsTotal =
+            Citem?.exercise_publics.length > 0
+              ? Citem?.exercise_publics.reduce((acc, item) => {
+                  return acc + Number(item?.question_points || 0)
+                }, 0)
+              : null
+          return {
+            passingScore,
+            gainedPointsTotal,
+            questionPointsTotal,
+          }
+        })
+  return {
+    currentExamExerciseData,
+    refetchCurrentExamData: refetch,
+    loadingCurrentExamData: loading,
+    errorCurrentExamData: error,
+  }
 }
 export const useExercisePublic = (programContentId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_EXERCISE_PUBLIC, hasura.GET_EXERCISE_PUBLICVariables>(

@@ -7,7 +7,7 @@ import hasura from '../hasura'
 type ProgressProps = {
   loadingProgress?: boolean
   programContentProgress?: {
-    programContentType: string | null
+    programCotnentBodyType: string | null
     programContentId: string
     programContentSectionId: string
     progress: number
@@ -121,7 +121,7 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
             data.program_content_body.map(contentBody =>
               contentBody.program_contents.map(content => {
                 return {
-                  programContentType: contentBody.type,
+                  programCotnentBodyType: contentBody.type,
                   programContentId: content.id,
                   programContentSectionId: content.content_section_id,
                   progress: content.program_content_progress[0]?.progress || 0,
