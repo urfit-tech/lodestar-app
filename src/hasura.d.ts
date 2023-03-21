@@ -5686,52 +5686,6 @@ export interface GET_CONTENT_DELIVERED_ATVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetExercisePublicTotal
-// ====================================================
-
-export interface GetExercisePublicTotal_exercise_public_exercise {
-  __typename: "exercise";
-  id: any;
-}
-
-export interface GetExercisePublicTotal_exercise_public {
-  __typename: "exercise_public";
-  duration: any | null;
-  choice_ids: string | null;
-  gained_points: string | null;
-  is_correct: string | null;
-  member_id: string | null;
-  question_ended_at: string | null;
-  question_id: string | null;
-  question_points: string | null;
-  question_started_at: string | null;
-  ended_at: any | null;
-  started_at: any | null;
-  exercise_id: any | null;
-  program_content_id: any | null;
-  /**
-   * An object relationship
-   */
-  exercise: GetExercisePublicTotal_exercise_public_exercise | null;
-}
-
-export interface GetExercisePublicTotal {
-  /**
-   * fetch data from the table: "exercise_public"
-   */
-  exercise_public: GetExercisePublicTotal_exercise_public[];
-}
-
-export interface GetExercisePublicTotalVariables {
-  condition: exercise_public_bool_exp;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_EXAM_EXERCISE
 // ====================================================
 

@@ -222,7 +222,7 @@ const ContentSection: React.VFC<{
   const contentProgress =
     programContentProgress?.filter(progress => progress.programContentSectionId === programContentSection.id) || []
   const otherProgress = contentProgress.filter(
-    progress => progress.programCotnentBodyType !== 'exam' && progress.programCotnentBodyType !== 'exercise',
+    progress => progress.programContentBodyType !== 'exam' && progress.programContentBodyType !== 'exercise',
   )
   const sectionProgress = contentProgress.length
     ? Math.floor(
@@ -295,7 +295,7 @@ const SortBySectionItem: React.VFC<{
   const [previousPage] = useQueryParam('back', StringParam)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
 
-  const type = contentCurrentProgress?.programCotnentBodyType || ''
+  const type = contentCurrentProgress?.programContentBodyType || ''
   const { currentExamExerciseData, loadingCurrentExamData, errorCurrentExamData, refetchCurrentExamData } =
     useExamExercise(programContent.id, currentMemberId || '', exerciseId)
 
