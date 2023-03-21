@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 // import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -137,6 +137,7 @@ const Oauth2Section: React.VFC = () => {
   const { authToken, isAuthenticating, socialLogin, currentMemberId } = useAuth()
   const host = window.location.origin
   const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
+  const [isGetTokenStart, setIsGetTokenStart] = useState(false)
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const {
@@ -146,7 +147,9 @@ const Oauth2Section: React.VFC = () => {
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
 
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && appId && code) {
+    if (!isAuthenticating && !currentMemberId && appId && code && !isGetTokenStart) {
+      setIsGetTokenStart(true)
+      console.log('get token start')
       const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(
@@ -191,6 +194,7 @@ const Oauth2Section: React.VFC = () => {
     socialLogin,
     currentMemberId,
     authToken,
+    isGetTokenStart,
   ])
 
   return <LoadingPage />
