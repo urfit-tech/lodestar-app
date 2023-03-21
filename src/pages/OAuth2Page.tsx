@@ -133,7 +133,7 @@ const Oauth2Section: React.VFC = () => {
   const [state] = useQueryParam('state', StringParam)
   const [code] = useQueryParam('code', StringParam)
   const { id: appId } = useApp()
-  const { isAuthenticating, socialLogin, currentMemberId } = useAuth()
+  const { socialLogin, currentMemberId } = useAuth()
   const host = window.location.origin
   const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
 
@@ -147,7 +147,6 @@ const Oauth2Section: React.VFC = () => {
   useEffect(() => {
     console.log(
       JSON.stringify({
-        isAuthenticating,
         currentMemberId,
         appId,
         code,
@@ -158,7 +157,7 @@ const Oauth2Section: React.VFC = () => {
         socialLogin,
       }),
     )
-    if (!isAuthenticating && !currentMemberId && appId && code && host && provider && redirect && socialLogin) {
+    if (!currentMemberId && appId && code && host && provider && redirect && socialLogin) {
       console.log('get token start')
       const redirectUri = `${host}/oauth2/${provider}`
       axios
@@ -187,12 +186,12 @@ const Oauth2Section: React.VFC = () => {
           window.location.href = redirect
         })
         .catch(handleError)
-    } else if (isAuthenticating && currentMemberId) {
-      console.log({ isAuthenticating, currentMemberId, appId, code, redirect })
+    } else if (currentMemberId) {
+      console.log({ currentMemberId, appId, code, redirect })
 
       window.location.href = redirect
     }
-  }, [accountLinkToken, appId, code, host, isAuthenticating, provider, redirect, socialLogin, currentMemberId])
+  }, [accountLinkToken, appId, code, host, provider, redirect, socialLogin, currentMemberId])
 
   return <LoadingPage />
 }
