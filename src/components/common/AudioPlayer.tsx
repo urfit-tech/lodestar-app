@@ -195,6 +195,7 @@ const AudioPlayer: React.VFC<{
   const [playRate, setPlayRate] = useState(Number(localStorage.getItem('audioPlayer.rate')) || 1)
   const [duration, setDuration] = useState(0)
   const [progress, setProgress] = useState(0)
+  const [timeCodeAudioUrl, setTimeCodeAudioUrl] = useState('')
   const lastEndedTime = useRef<number>(0)
 
   audioRef.current && (audioRef.current.defaultPlaybackRate = playRate)
@@ -214,7 +215,8 @@ const AudioPlayer: React.VFC<{
 
   useEffect(() => {
     duration > 0 && setLoading(false)
-  }, [duration])
+    setTimeCodeAudioUrl(`${audioUrl}#t=${new Date(lastEndedTime.current * 1000).toISOString().slice(11, 19)}`)
+  }, [audioUrl, duration])
 
   useEffect(() => {
     localStorage.setItem('audioPlayer.rate', JSON.stringify(playRate))
@@ -339,7 +341,7 @@ const AudioPlayer: React.VFC<{
         ref={ref => {
           audioRef.current = ref
         }}
-        src={audioUrl}
+        src={timeCodeAudioUrl ? timeCodeAudioUrl : audioUrl}
         loop={modeRef.current === 'single-loop'}
         onLoadedMetadata={() => {
           if (audioRef.current) {
