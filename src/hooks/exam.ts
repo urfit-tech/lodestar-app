@@ -236,9 +236,9 @@ export const useExamExercise = (programContentId: string, memberId: string, exer
     loading && error && !data
       ? null
       : {
-          passingScore: data?.exercise?.[0].exam?.passing_score || 0,
+          passingScore: data?.exercise?.[0]?.exam?.passing_score || 0,
           gainedPointsTotal:
-            data?.exercise?.[0].exercise_publics.reduce((acc, item) => {
+            data?.exercise?.[0]?.exercise_publics?.reduce((acc, item) => {
               return acc + Number(item?.gained_points)
             }, 0) || 0,
         }
