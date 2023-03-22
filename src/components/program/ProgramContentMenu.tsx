@@ -316,7 +316,6 @@ const SortBySectionItem: React.VFC<{
         passExam.push(programContent.id)
       }
     }
-    // let {} = currentExercise[0]
   } else {
     progress = contentCurrentProgress?.progress || 0
   }
