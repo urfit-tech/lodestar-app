@@ -1,4 +1,4 @@
-import { Tab, TabPanels, Tabs } from '@chakra-ui/react'
+import { SkeletonText, Tab, TabPanels, Tabs } from '@chakra-ui/react'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { reverse } from 'ramda'
 import React, { useState } from 'react'
@@ -14,7 +14,7 @@ import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
 const CouponCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { coupons } = useCouponCollection(currentMemberId || '')
+  const { loadingCoupons, coupons } = useCouponCollection(currentMemberId || '')
   const [activeKey, setActiveKey] = useState('available')
 
   const tabContents = [
@@ -37,40 +37,47 @@ const CouponCollectionAdminPage: React.VFC = () => {
       key: 'expired',
       tab: formatMessage(usersMessages.tab.expired),
       coupons: coupons.filter(
-        coupon =>
-          (coupon.couponCode.couponPlan.endedAt && coupon.couponCode.couponPlan.endedAt.getTime() < Date.now()) ||
-          coupon.status.used,
+        coupon => coupon.couponCode.couponPlan.endedAt && coupon.couponCode.couponPlan.endedAt.getTime() < Date.now(),
       ),
+    },
+    {
+      key: 'used',
+      tab: formatMessage(usersMessages.tab.used),
+      coupons: coupons.filter(coupon => coupon.status.used),
     },
   ]
 
   return (
     <MemberAdminLayout content={{ icon: TicketIcon, title: formatMessage(usersMessages.title.coupon) }}>
-      <div className="mb-5">
-        <CouponInsertionCard onInsert={() => window.location.reload()} />
-      </div>
-
-      <Tabs colorScheme="primary">
-        <StyledTabList>
-          {tabContents.map(v => (
-            <Tab key={v.key} onClick={() => setActiveKey(v.key)} isSelected={v.key === activeKey}>
-              {v.tab}
-            </Tab>
-          ))}
-        </StyledTabList>
-
-        <TabPanels>
-          {tabContents.map(v => (
-            <StyledTabPanel className="row">
-              {reverse(v.coupons).map(coupon => (
-                <div className="mb-3 col-12 col-md-6" key={coupon.id}>
-                  <CouponAdminCard coupon={coupon} outdated={coupon.status.outdated} />
-                </div>
+      {loadingCoupons ? (
+        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+      ) : (
+        <>
+          <div className="mb-5">
+            <CouponInsertionCard onInsert={() => window.location.reload()} />
+          </div>
+          <Tabs colorScheme="primary">
+            <StyledTabList>
+              {tabContents.map(v => (
+                <Tab key={v.key} onClick={() => setActiveKey(v.key)} isSelected={v.key === activeKey}>
+                  {v.tab}
+                </Tab>
               ))}
-            </StyledTabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
+            </StyledTabList>
+            <TabPanels>
+              {tabContents.map(v => (
+                <StyledTabPanel className="row">
+                  {reverse(v.coupons).map(coupon => (
+                    <div className="mb-3 col-12 col-md-6" key={coupon.id}>
+                      <CouponAdminCard coupon={coupon} currentTab={v.key} />
+                    </div>
+                  ))}
+                </StyledTabPanel>
+              ))}
+            </TabPanels>
+          </Tabs>
+        </>
+      )}
     </MemberAdminLayout>
   )
 }

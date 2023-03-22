@@ -105,6 +105,10 @@ export type VoucherProps = {
     id: string
     code: string
   }
+  status: {
+    outdated?: boolean | null
+    used?: boolean | null
+  }
 }
 const Voucher: React.VFC<VoucherProps> = ({
   title,
