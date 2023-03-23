@@ -194,6 +194,12 @@ const ProgramContentBlock: React.VFC<{
     }
   }, [programId])
 
+  useEffect(() => {
+    if (resourceList.length === 0) {
+      refetchProgress?.()
+    }
+  }, [resourceList])
+
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
@@ -378,6 +384,7 @@ const ProgramContentBlock: React.VFC<{
                             target: content.id,
                           })) || [],
                       )
+                      refetchProgress()
                       const currentIndex = programContentList.findIndex(content => content.id === programContentId)
                       currentIndex >= 0 && playInBackground?.(currentIndex)
                     }
