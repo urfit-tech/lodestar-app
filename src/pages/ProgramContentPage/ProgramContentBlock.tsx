@@ -378,6 +378,7 @@ const ProgramContentBlock: React.VFC<{
                             target: content.id,
                           })) || [],
                       )
+                      refetchProgress()
                       const currentIndex = programContentList.findIndex(content => content.id === programContentId)
                       currentIndex >= 0 && playInBackground?.(currentIndex)
                     }
