@@ -1,9 +1,9 @@
 import { Icon } from '@chakra-ui/icons'
 import { usePublicMember } from 'lodestar-app-element/src/hooks/data'
 import React from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { StyledPostMeta, StyledPostTitle } from '.'
-import { ReactComponent as PinOIcon } from '../../images/pin.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { PostPreviewProps } from '../../types/blog'
 import PostPreviewCover from './PostPreviewCover'
@@ -48,7 +48,9 @@ const FeaturingPostItem: React.VFC<
 
         <StyledPostMeta>
           <Icon as={UserOIcon} className="mr-1" />
-          <span className="mr-2">{member?.name || ''}</span>
+          <span className="mr-2">
+            <Link to={`/creators/${member?.id}`}>{member?.name || ''}</Link>
+          </span>
           {/* <Icon as={CalendarAltOIcon} className="mr-1" />
           <span className="mr-2">{publishedAt ? moment(publishedAt).format('YYYY-MM-DD') : ''}</span>
           {pinnedAt ? <Icon as={PinOIcon} /> : ''} */}

@@ -633,6 +633,7 @@
   "common.unknown.period": "未知周期",
   "common.unknown.type": "未知类别",
   "common.uploading": "上传中",
+  "common.used": "已使用",
   "commonMessages.conetnt.busyError": "錯誤代碼：{errorCode}",
   "commonMessages.content.busyContact": "若還是未開通訂單，請聯繫平台客服",
   "commonMessages.content.busyOther": "訂單出現異狀，請聯繫平台客服",

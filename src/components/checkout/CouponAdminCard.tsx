@@ -60,30 +60,31 @@ const StyledTitle = styled.span`
   font-weight: bold;
   white-space: break-spaces;
 `
-const StyledPriceLabel = styled.span<{ outdated?: boolean }>`
-  color: ${props => (props.outdated ? 'var(--gray)' : props.theme['@primary-color'])};
+const StyledPriceLabel = styled.span<{ currentTab: string }>`
+  color: ${props => (props.currentTab !== 'available' ? 'var(--gray)' : props.theme['@primary-color'])};
   font-size: 24px;
   letter-spacing: 0.2px;
 `
-const StyledText = styled.span<{ outdated?: boolean }>`
+const StyledText = styled.span<{ currentTab: string }>`
   padding: 2px 6px;
-  color: ${props => (props.outdated ? 'var(--gray-dark)' : props.theme['@primary-color'])};
-  background-color: ${props => (props.outdated ? 'var(--gray-lighter)' : props.theme['@processing-color'])};
+  color: ${props => (props.currentTab !== 'available' ? 'var(--gray-dark)' : props.theme['@primary-color'])};
+  background-color: ${props =>
+    props.currentTab !== 'available' ? 'var(--gray-lighter)' : props.theme['@processing-color']};
   font-size: 14px;
   line-height: 1.57;
   letter-spacing: 0.4px;
 `
-const StyledCode = styled.div<{ outdated?: boolean }>`
+const StyledCode = styled.div<{ currentTab: string }>`
   font-size: 16px;
   font-weight: bold;
   letter-spacing: 0.2px;
-  color: ${props => (props.outdated ? 'var(--gray)' : props.theme['@primary-color'])};
+  color: ${props => (props.currentTab !== 'available' ? 'var(--gray)' : props.theme['@primary-color'])};
 `
 
 const CouponAdminCard: React.VFC<{
   coupon: CouponProps
-  outdated?: boolean
-}> = ({ coupon, outdated }) => {
+  currentTab: string
+}> = ({ coupon, currentTab }) => {
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
 
@@ -93,7 +94,7 @@ const CouponAdminCard: React.VFC<{
         <div className="py-4">
           <div className="d-flex align-items-start justify-content-between">
             <StyledTitle>{coupon.couponCode.couponPlan.title}</StyledTitle>
-            <StyledPriceLabel className="ml-4" outdated={outdated}>
+            <StyledPriceLabel className="ml-4" currentTab={currentTab}>
               {coupon.couponCode.couponPlan.type === 'cash' ? (
                 <PriceLabel listPrice={coupon.couponCode.couponPlan.amount} />
               ) : coupon.couponCode.couponPlan.type === 'percent' ? (
@@ -105,11 +106,11 @@ const CouponAdminCard: React.VFC<{
               ) : null}
             </StyledPriceLabel>
           </div>
-          <StyledCode outdated={outdated}>{coupon.couponCode.code}</StyledCode>
+          <StyledCode currentTab={currentTab}>{coupon.couponCode.code}</StyledCode>
         </div>
       }
     >
-      <StyledText outdated={outdated}>
+      <StyledText currentTab={currentTab}>
         {coupon.couponCode.couponPlan.constraint
           ? formatMessage(checkoutMessages.coupon.full, {
               amount: <PriceLabel listPrice={coupon.couponCode.couponPlan.constraint} />,

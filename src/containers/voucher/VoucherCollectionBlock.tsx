@@ -53,6 +53,7 @@ const VoucherCollectionBlock: React.VFC = () => {
         id: voucher.voucher_code.id,
         code: voucher.voucher_code.code,
       },
+      status: { outdated: voucher.status?.outdated, used: voucher.status?.used },
     })) || []
 
   const handleExchange = (

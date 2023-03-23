@@ -37,6 +37,16 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
     currentResource?.options?.programId,
     currentMemberId || '',
   )
+  const currentProgramContentProgress = programContentProgress?.find(
+    progress => progress.programContentId === currentResource?.target,
+  )
+
+  const lastProgress =
+    (!!currentProgramContentProgress?.lastProgress && currentProgramContentProgress?.lastProgress !== 1) ||
+    currentProgramContentProgress?.progress !== 1
+      ? currentProgramContentProgress?.lastProgress || 0
+      : 0
+
   const insertProgress = useInsertProgress(currentMemberId || '')
 
   const insertProgramProgress = throttle(async (progress: number) => {
@@ -110,6 +120,7 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
           <AudioPlayer
             title={currentResource.title}
             audioUrl={sourceUrl}
+            lastProgress={lastProgress}
             onPrev={
               currentIndex !== 0
                 ? () => {
