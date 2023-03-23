@@ -11,6 +11,7 @@ import { StyledContainer } from '../components/layout/DefaultLayout/DefaultLayou
 import { handleError } from '../helpers'
 import { codeMessages, commonMessages } from '../helpers/translation'
 import { useTask } from '../hooks/task'
+import { sleep } from '../hooks/util'
 import { ReactComponent as ErrorIcon } from '../images/error.svg'
 
 const StyledWrapper = styled.div`
@@ -46,7 +47,7 @@ const OrderTaskPage: React.VFC = () => {
     if (authToken && code === 'SUCCESS' && task?.finishedOn && task?.returnvalue?.orderId) {
       // do not need to pay
       if (task.returnvalue.totalAmount <= 0) {
-        window.location.assign(`/orders/${task.returnvalue.orderId}?tracking=1`)
+        sleep(5000).then(() => window.location.assign(`/orders/${task.returnvalue.orderId}?tracking=1`))
       } else {
         const search = window.location.search
         const clientBackUrl = search.substring(1, search.length).split('&')[0].split('=')[1]
