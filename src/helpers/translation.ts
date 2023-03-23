@@ -1448,6 +1448,7 @@ export const usersMessages = {
     notYet: { id: 'common.notYet', defaultMessage: '未啟用' },
     available: { id: 'common.available', defaultMessage: '可使用' },
     expired: { id: 'common.expired', defaultMessage: '已失效' },
+    used: { id: 'common.used', defaultMessage: 'used' },
   }),
   title: defineMessages({
     coupon: { id: 'common.coupon', defaultMessage: '折價券' },

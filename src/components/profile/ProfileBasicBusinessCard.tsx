@@ -1,29 +1,29 @@
+import { useMutation } from '@apollo/react-hooks'
 import { Button, Skeleton } from '@chakra-ui/react'
-import { Form, Typography, Select, message } from 'antd'
+import { Form, message, Select, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
+import { v4 as uuid } from 'uuid'
+import hasura from '../../hasura'
+import { handleError, uploadFile } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import profileMessages from './translation'
+import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
+import ImageUploader from '../common/ImageUploader'
 import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'
-import hasura from '../../hasura'
 import {
   INSERT_MEMBER_PROPERTY,
   UPDATE_MEMBER_PROPERTY,
   useIsEditableProperty,
   useMemberPropertyCollection,
 } from './ProfileOtherAdminCard'
-import { FormEvent, useState } from 'react'
-import { handleError, uploadFile } from '../../helpers'
-import { useMutation } from '@apollo/react-hooks'
-import styled from 'styled-components'
-import ImageUploader from '../common/ImageUploader'
-import { useMember, useUpdateMember } from '../../hooks/member'
-import { v4 as uuid } from 'uuid'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import profileMessages from './translation'
 
 const StyledFormItem = styled(Form.Item)`
   .ant-form-item-children {
@@ -78,12 +78,16 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
         if (avatarImageFile) {
           await uploadFile(`avatars/${appId}/${memberId}/${avatarId}`, avatarImageFile, authToken)
         }
+        const companyShortNamePropertyId = Object.keys(formValues).filter(
+          propertyId => propertyId === memberProperties.find(item => item.name === '公司簡稱')?.id,
+        )?.[0]
+
         await updateMember({
           variables: {
             memberId,
             email: member.email.trim().toLowerCase(),
             username: member.username,
-            name: member.name,
+            name: formValues[companyShortNamePropertyId] || member.name,
             pictureUrl: avatarImageFile
               ? `https://${process.env.REACT_APP_S3_BUCKET}/avatars/${appId}/${memberId}/${avatarId}`
               : member.pictureUrl,
@@ -149,7 +153,6 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
   if (loadingProperties || loadingMemberProperties) {
     return <Skeleton loading={loading} avatar active />
   }
-
   return (
     <AdminCard {...cardProps}>
       <Typography.Title className="mb-4" level={4}>

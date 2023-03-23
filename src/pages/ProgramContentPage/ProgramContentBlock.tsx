@@ -360,6 +360,7 @@ const ProgramContentBlock: React.VFC<{
                     if (currentResource) {
                       updateElementList?.([])
                       setMediaPlayerVisible?.(false)
+                      refetchProgress()
                     } else {
                       const programContentList =
                         programContentSections.flatMap(contentSection => contentSection.contents) || []
