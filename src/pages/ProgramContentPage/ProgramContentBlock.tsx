@@ -194,6 +194,12 @@ const ProgramContentBlock: React.VFC<{
     }
   }, [programId])
 
+  useEffect(() => {
+    if (resourceList.length === 0) {
+      refetchProgress?.()
+    }
+  }, [resourceList])
+
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
