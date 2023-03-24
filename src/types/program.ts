@@ -1,6 +1,6 @@
 import { Category, MetaTag } from './general'
 
-type ProgramPlanType = 'subscribeFromNow' | 'subscribeAll' | 'unknown'
+export type ProgramPlanType = 'subscribeFromNow' | 'subscribeAll' | 'unknown'
 export type ProgramRoleName = 'owner' | 'instructor' | 'assistant'
 
 export type PeriodType = 'D' | 'W' | 'M' | 'Y'

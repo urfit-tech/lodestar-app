@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { sum } from 'ramda'
+import { flatten, sum } from 'ramda'
 import React, { useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -29,13 +29,20 @@ import PodcastProgramPopover from '../components/podcast/PodcastProgramPopover'
 import ProgramCard from '../components/program/ProgramCard'
 import ProjectIntroCard from '../components/project/ProjectIntroCard'
 import hasura from '../hasura'
-import { notEmpty } from '../helpers'
+import { hasJsonStructure, notEmpty } from '../helpers'
 import { ReactComponent as SearchIcon } from '../images/search.svg'
 import { Activity } from '../types/activity'
 import { PostPreviewProps } from '../types/blog'
 import { MerchandiseBriefProps } from '../types/merchandise'
 import { PodcastProgramBriefProps } from '../types/podcast'
-import { PeriodType, ProgramBriefProps, ProgramPlan, ProgramRole } from '../types/program'
+import {
+  PeriodType,
+  ProgramBriefProps,
+  ProgramPlan,
+  ProgramPlanType,
+  ProgramRole,
+  ProgramRoleName,
+} from '../types/program'
 import { ProgramPackageProps } from '../types/programPackage'
 import { ProjectIntroProps } from '../types/project'
 import pageMessages from './translation'
@@ -482,11 +489,30 @@ const useSearchProductCollection = (
     tag?: string | null
   },
 ) => {
-  const calcSortWeights = (data: any, columns: string[], searchText: string) => {
-    let weight = 0
-    if (searchText)
-      columns.forEach((column, index) => data[column].includes(searchText) ?? weight + Math.pow(index + 1, 3))
-    return weight
+  const sorting = (dataA: any, dataB: any, sorter: string[], search: string) => {
+    const calcSortWeights = (data: any, columns: string[], searchText: string) => {
+      let weight = 0
+      if (searchText)
+        columns.forEach((column, index) =>
+          data[column] && typeof data[column] === 'string' && data[column].includes(searchText)
+            ? (weight = weight + Math.pow(index + 1, 3))
+            : null,
+        )
+      return weight
+    }
+    const compareA = calcSortWeights(
+      dataA,
+      ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+      filter?.title || '',
+    )
+    const compareB = calcSortWeights(
+      dataB,
+      ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+      filter?.title || '',
+    )
+    if (compareA > compareB) return 1
+    else if (compareA < compareB) return -1
+    else return 0
   }
 
   const { loading, error, data, refetch } = useQuery<
@@ -494,175 +520,6 @@ const useSearchProductCollection = (
     hasura.SEARCH_PRODUCT_COLLECTIONVariables
   >(
     gql`
-      fragment ProgramSearchParts on program {
-        id
-        cover_url
-        cover_mobile_url
-        cover_thumbnail_url
-        title
-        abstract
-        published_at
-        is_subscription
-        list_price
-        sale_price
-        sold_at
-        is_enrolled_count_visible
-        program_content_sections {
-          id
-          program_contents {
-            id
-            duration
-          }
-        }
-        program_plans(where: { published_at: { _is_null: false } }, limit: 1) {
-          id
-          type
-          title
-          description
-          gains
-          currency {
-            id
-            label
-            unit
-            name
-          }
-          list_price
-          sale_price
-          sold_at
-          discount_down_price
-          period_amount
-          period_type
-          started_at
-          ended_at
-          is_participants_visible
-          published_at
-        }
-        program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc }, limit: 1) {
-          id
-          member {
-            id
-            picture_url
-            username
-            name
-          }
-        }
-        program_enrollments(where: { member_id: { _eq: $memberId } }) {
-          member_id
-        }
-      }
-      fragment ActivitySearchParts on activity {
-        id
-        cover_url
-        title
-        published_at
-        is_participants_visible
-        organizer_id
-        support_locales
-        activity_categories {
-          id
-          category {
-            id
-            name
-          }
-        }
-        activity_enrollments_aggregate {
-          aggregate {
-            count
-          }
-        }
-        activity_sessions_aggregate {
-          aggregate {
-            min {
-              started_at
-            }
-            max {
-              ended_at
-            }
-          }
-        }
-        activity_tickets_aggregate {
-          nodes {
-            id
-            count
-            description
-            started_at
-            is_published
-            ended_at
-            price
-            title
-            currency_id
-          }
-          aggregate {
-            sum {
-              count
-            }
-          }
-        }
-      }
-      fragment PodcastProgramSearchParts on podcast_program {
-        id
-        cover_url
-        title
-        abstract
-        duration
-        duration_second
-        published_at
-        list_price
-        sale_price
-        sold_at
-        podcast_program_roles(where: { name: { _eq: "instructor" } }, limit: 1) {
-          id
-          member {
-            id
-            picture_url
-            username
-            name
-          }
-        }
-        podcast_program_categories(order_by: { position: asc }) {
-          id
-          category {
-            id
-            name
-          }
-        }
-        podcast_program_enrollments(where: { member_id: { _eq: $memberId } }) {
-          member_id
-        }
-      }
-      fragment MemberPublicSearchParts on member_public {
-        id
-        picture_url
-        name
-        username
-        abstract
-      }
-      fragment MerchandiseSearchParts on merchandise {
-        id
-        title
-        sold_at
-        currency_id
-        merchandise_tags(order_by: { position: asc }) {
-          tag_name
-        }
-        merchandise_categories(order_by: { position: asc }) {
-          id
-          category {
-            id
-            name
-          }
-        }
-        merchandise_imgs(where: { type: { _eq: "cover" } }, limit: 1) {
-          id
-          url
-        }
-        merchandise_specs {
-          id
-          title
-          list_price
-          sale_price
-        }
-      }
       query SEARCH_PRODUCT_COLLECTION(
         $memberId: String
         $title: String
@@ -683,7 +540,86 @@ const useSearchProductCollection = (
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
-          ...ProgramSearchParts
+          id
+          cover_url
+          cover_mobile_url
+          cover_thumbnail_url
+          title
+          abstract
+          description
+          published_at
+          is_subscription
+          list_price
+          sale_price
+          sold_at
+          is_enrolled_count_visible
+          program_content_sections {
+            id
+            program_contents {
+              id
+              duration
+            }
+          }
+          program_plans(where: { published_at: { _is_null: false } }, limit: 1) {
+            id
+            type
+            title
+            description
+            gains
+            currency {
+              id
+              label
+              unit
+              name
+            }
+            list_price
+            sale_price
+            sold_at
+            discount_down_price
+            period_amount
+            period_type
+            started_at
+            ended_at
+            is_participants_visible
+            published_at
+          }
+          program_roles(where: { name: { _eq: "instructor" } }, order_by: { created_at: asc }, limit: 1) {
+            id
+            member {
+              id
+              picture_url
+              username
+              name
+            }
+          }
+          program_enrollments(where: { member_id: { _eq: $memberId } }) {
+            member_id
+          }
+        }
+        program_package(
+          where: {
+            published_at: { _is_null: false }
+            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $description } }]
+          }
+          order_by: [{ published_at: desc }, { created_at: desc }]
+        ) {
+          id
+          cover_url
+          title
+          description
+          program_package_programs {
+            id
+            program {
+              id
+              program_roles(where: { name: { _eq: "instructor" } }) {
+                id
+                member {
+                  id
+                  name
+                }
+              }
+            }
+          }
         }
         activity(
           where: {
@@ -693,50 +629,58 @@ const useSearchProductCollection = (
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
-          ...ActivitySearchParts
-        }
-        podcast_program(
-          where: {
-            published_at: { _is_null: false }
-            _or: [
-              { title: { _ilike: $title } }
-              { podcast_program_body: { description: { _ilike: $description } } }
-              { podcast_program_tags: { tag_name: { _eq: $tag } } }
-            ]
-          }
-          order_by: [{ published_at: desc }, { created_at: desc }]
-        ) {
-          ...PodcastProgramSearchParts
-        }
-        podcast_plan_enrollment(
-          where: { member_id: { _eq: $memberId } }
-          order_by: [{ podcast_plan: { published_at: desc } }]
-        ) {
-          podcast_plan_id
-          podcast_plan {
+          id
+          cover_url
+          title
+          description
+          published_at
+          is_participants_visible
+          organizer_id
+          support_locales
+          organizer {
             id
-            creator_id
+            name
           }
-        }
-        member_public(
-          where: {
-            role: { _in: $memberRoles }
-            _or: [{ name: { _ilike: $title } }, { username: { _ilike: $title } }, { tag_names: { _has_key: $tag } }]
-            has_backstage_enter_permission: { _eq: 1 }
+          activity_categories {
+            id
+            category {
+              id
+              name
+            }
           }
-          order_by: [{ created_at: desc }]
-        ) {
-          ...MemberPublicSearchParts
-        }
-        merchandise(
-          where: {
-            published_at: { _is_null: false }
-            is_deleted: { _eq: false }
-            _or: [{ title: { _ilike: $title } }, { merchandise_tags: { tag_name: { _eq: $tag } } }]
+          activity_enrollments_aggregate {
+            aggregate {
+              count
+            }
           }
-          order_by: [{ published_at: desc }, { created_at: desc }]
-        ) {
-          ...MerchandiseSearchParts
+          activity_sessions_aggregate {
+            aggregate {
+              min {
+                started_at
+              }
+              max {
+                ended_at
+              }
+            }
+          }
+          activity_tickets_aggregate {
+            nodes {
+              id
+              count
+              description
+              started_at
+              is_published
+              ended_at
+              price
+              title
+              currency_id
+            }
+            aggregate {
+              sum {
+                count
+              }
+            }
+          }
         }
         project(
           where: {
@@ -761,12 +705,20 @@ const useSearchProductCollection = (
           preview_url
           abstract
           introduction
+          introduction_desktop
           description
           target_unit
           target_amount
           expired_at
           is_participants_visible
           is_countdown_timer_visible
+          project_roles(where: { identity: { name: { _eq: "author" } } }) {
+            id
+            member {
+              id
+              name
+            }
+          }
           project_categories(order_by: { position: asc }) {
             id
             category {
@@ -819,25 +771,121 @@ const useSearchProductCollection = (
           id
           code_name
           title
+          description
           cover_url
           video_url
           published_at
           post_roles(where: { name: { _eq: "author" } }) {
             id
             member_id
+            member {
+              id
+              name
+            }
           }
         }
-        program_package(
+        podcast_program(
           where: {
             published_at: { _is_null: false }
-            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $description } }]
+            _or: [
+              { title: { _ilike: $title } }
+              { podcast_program_body: { description: { _ilike: $description } } }
+              { podcast_program_tags: { tag_name: { _eq: $tag } } }
+            ]
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
           id
           cover_url
           title
-          description
+          abstract
+          duration
+          duration_second
+          published_at
+          list_price
+          sale_price
+          sold_at
+          podcast_program_body {
+            id
+            description
+          }
+          podcast_program_roles(where: { name: { _eq: "instructor" } }, limit: 1) {
+            id
+            member {
+              id
+              picture_url
+              username
+              name
+            }
+          }
+          podcast_program_categories(order_by: { position: asc }) {
+            id
+            category {
+              id
+              name
+            }
+          }
+          podcast_program_enrollments(where: { member_id: { _eq: $memberId } }) {
+            member_id
+          }
+        }
+        podcast_plan_enrollment(
+          where: { member_id: { _eq: $memberId } }
+          order_by: [{ podcast_plan: { published_at: desc } }]
+        ) {
+          podcast_plan_id
+          podcast_plan {
+            id
+            creator_id
+          }
+        }
+        member_public(
+          where: {
+            role: { _in: $memberRoles }
+            _or: [{ name: { _ilike: $title } }, { username: { _ilike: $title } }, { tag_names: { _has_key: $tag } }]
+            has_backstage_enter_permission: { _eq: 1 }
+          }
+          order_by: [{ created_at: desc }]
+        ) {
+          id
+          picture_url
+          name
+          username
+          abstract
+        }
+        merchandise(
+          where: {
+            published_at: { _is_null: false }
+            is_deleted: { _eq: false }
+            _or: [{ title: { _ilike: $title } }, { merchandise_tags: { tag_name: { _eq: $tag } } }]
+          }
+          order_by: [{ published_at: desc }, { created_at: desc }]
+        ) {
+          id
+          title
+          abstract
+          sold_at
+          currency_id
+          merchandise_tags(order_by: { position: asc }) {
+            tag_name
+          }
+          merchandise_categories(order_by: { position: asc }) {
+            id
+            category {
+              id
+              name
+            }
+          }
+          merchandise_imgs(where: { type: { _eq: "cover" } }, limit: 1) {
+            id
+            url
+          }
+          merchandise_specs {
+            id
+            title
+            list_price
+            sale_price
+          }
         }
       }
     `,
@@ -853,7 +901,7 @@ const useSearchProductCollection = (
     },
   )
 
-  const projects: ProjectIntroProps[] =
+  const projects: (ProjectIntroProps & { authorSearchString: string })[] =
     data?.project.map(project => ({
       id: project.id,
       type: project.type,
@@ -863,6 +911,7 @@ const useSearchProductCollection = (
       previewUrl: project.preview_url,
       abstract: project.abstract,
       introduction: project.introduction,
+      introductionDesktop: project.introduction_desktop,
       description: project.description,
       targetAmount: project.target_amount,
       targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
@@ -893,12 +942,7 @@ const useSearchProductCollection = (
         createdAt: new Date(project_plan.created_at),
         createAt: new Date(project_plan.created_at),
       })),
-      // { title: { _ilike: $title } }
-      // { description: { _ilike: $description } }
-      // { introduction: { _ilike: $description } }
-      // { introduction_desktop: { _ilike: $description } }
-      // { project_roles: { member: { name: { _ilike: $title } } } }
-      // { project_roles: { identity: { name: { _ilike: $title } } } }
+      authorSearchString: project.project_roles.map(v => v.member?.name).toString(),
     })) || []
 
   const searchResults: {
@@ -907,13 +951,15 @@ const useSearchProductCollection = (
       roles: ProgramRole[]
       plans: ProgramPlan[]
       isEnrolled: boolean
+      instructorsSearchString: string
     })[]
-    programPackages: Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title'>[]
-    activities: DeepPick<
+    programPackages: Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title' | 'description'>[]
+    activities: (DeepPick<
       Activity,
       | 'id'
       | 'coverUrl'
       | 'title'
+      | 'description'
       | 'isParticipantsVisible'
       | 'startedAt'
       | 'endedAt'
@@ -931,29 +977,26 @@ const useSearchProductCollection = (
       | 'tickets.[].currencyId'
       | 'tickets.[].description'
       | 'tickets.[].isPublished'
-    >[]
-    podcastPrograms: PodcastProgramBriefProps[]
+    > & { ticketTitleSearchString: string; ticketDescriptionSearchString: string })[]
+    podcastPrograms: (PodcastProgramBriefProps & { instructorsSearchString: string; bodyDescription: string })[]
     creators: {
       id: string
       avatarUrl: string | null
       name: string
       abstract: string | null
     }[]
-    merchandises: MerchandiseBriefProps[]
-    fundingProjects: ProjectIntroProps[]
-    preOrderProjects: ProjectIntroProps[]
-    portfolioProjects: ProjectIntroProps[]
-    projects: ProjectIntroProps[]
-    posts: Pick<PostPreviewProps, 'id' | 'codeName' | 'coverUrl' | 'videoUrl' | 'title' | 'authorId' | 'publishedAt'>[]
+    merchandises: (MerchandiseBriefProps & { abstract: string })[]
+    fundingProjects: (ProjectIntroProps & { authorSearchString: string })[]
+    preOrderProjects: (ProjectIntroProps & { authorSearchString: string })[]
+    portfolioProjects: (ProjectIntroProps & { authorSearchString: string })[]
+    projects: (ProjectIntroProps & { authorSearchString: string })[]
+    posts: (Pick<
+      PostPreviewProps,
+      'id' | 'codeName' | 'coverUrl' | 'videoUrl' | 'title' | 'authorId' | 'publishedAt'
+    > & { authorSearchString: string; description: string })[]
   } = {
     programs:
       data?.program
-        .sort((a, b) =>
-          calcSortWeights(a, ['description', 'title'], filter?.title || '') >
-          calcSortWeights(b, ['description', 'title'], filter?.title || '')
-            ? 1
-            : -1,
-        )
         .map(program => ({
           id: program.id,
           coverUrl: program.cover_url,
@@ -961,6 +1004,12 @@ const useSearchProductCollection = (
           coverThumbnailUrl: program.cover_thumbnail_url,
           title: program.title,
           abstract: program.abstract,
+          description:
+            program?.description && hasJsonStructure(program.description || '')
+              ? JSON.parse(program.description)
+                  ?.blocks.map((v: any) => v?.text)
+                  .toString()
+              : program.description,
           publishedAt: new Date(program.published_at),
           isSubscription: program.is_subscription,
           listPrice: program.list_price,
@@ -975,13 +1024,18 @@ const useSearchProductCollection = (
           ),
           roles: program.program_roles.map(programRole => ({
             id: programRole.id,
-            name: 'instructor',
+            name: 'instructor' as ProgramRoleName,
             memberId: programRole.member?.id || '',
             memberName: programRole.member?.name || '',
           })),
+          instructorsSearchString: program.program_roles.map(v => v.member?.name).toString(),
           plans: program.program_plans.map(programPlan => ({
             id: programPlan.id,
-            type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
+            type: (programPlan.type === 1
+              ? 'subscribeFromNow'
+              : programPlan.type === 2
+              ? 'subscribeAll'
+              : 'unknown') as ProgramPlanType,
             title: programPlan.title,
             description: programPlan.description,
             gains: programPlan.gains,
@@ -1003,32 +1057,37 @@ const useSearchProductCollection = (
             publishedAt: new Date(programPlan.published_at),
           })),
           isEnrolled: program.program_enrollments.length > 0,
-        })) || [],
+        }))
+        .sort((a, b) => sorting(a, b, ['instructorsSearchString', 'title', 'description'], filter?.title || '')) || [],
     programPackages:
       data?.program_package
-        .sort((a, b) =>
-          calcSortWeights(a, ['description', 'title'], filter?.title || '') >
-          calcSortWeights(b, ['description', 'title'], filter?.title || '')
-            ? 1
-            : -1,
-        )
         .map(programPackage => ({
           id: programPackage.id,
           coverUrl: programPackage.cover_url,
           title: programPackage.title,
-        })) || [],
+          description:
+            programPackage?.description && hasJsonStructure(programPackage.description || '')
+              ? JSON.parse(programPackage.description)
+                  ?.blocks.map((v: any) => v?.text)
+                  .toString()
+              : programPackage.description,
+          instructorsSearchString: flatten(
+            programPackage.program_package_programs.map(v => v.program.program_roles.map(w => w.member?.name)),
+          ).toString(),
+        }))
+        .sort((a, b) => sorting(a, b, ['instructorsSearchString', 'title', 'description'], filter?.title || '')) || [],
     activities:
       data?.activity
-        .sort((a, b) =>
-          calcSortWeights(a, ['description', 'title'], filter?.title || '') >
-          calcSortWeights(b, ['description', 'title'], filter?.title || '')
-            ? 1
-            : -1,
-        )
         .map(activity => ({
           id: activity.id,
           coverUrl: activity.cover_url,
           title: activity.title,
+          description:
+            activity?.description && hasJsonStructure(activity.description || '')
+              ? JSON.parse(activity.description)
+                  ?.blocks.map((v: any) => v?.text)
+                  .toString()
+              : activity.description,
           isParticipantsVisible: activity.is_participants_visible,
           publishedAt: new Date(activity.published_at),
           startedAt: activity.activity_sessions_aggregate.aggregate?.min?.started_at
@@ -1056,22 +1115,75 @@ const useSearchProductCollection = (
             description: ticket.description,
             isPublished: ticket.is_published,
           })),
-        })) || [],
+          organizerSearchString: activity.organizer?.name,
+          ticketTitleSearchString: activity.activity_tickets_aggregate.nodes.map(v => v.title).toString(),
+          ticketDescriptionSearchString: activity.activity_tickets_aggregate.nodes
+            .map(v =>
+              v?.description && hasJsonStructure(v?.description || '')
+                ? JSON.parse(v.description)
+                    ?.blocks.map((v: any) => v?.text)
+                    .toString()
+                : v?.description,
+            )
+            .toString(),
+        }))
+        .sort((a, b) =>
+          sorting(
+            a,
+            b,
+            [
+              'organizerSearchString',
+              'title',
+              'description',
+              'ticketTitleSearchString',
+              'ticketDescriptionSearchString',
+            ],
+            filter?.title || '',
+          ),
+        ) || [],
     projects: projects
-      .sort((a, b) => (calcSortWeights(a, ['project'], '') > calcSortWeights(b, [], '') ? 1 : -1))
-      .filter(project => project.type !== 'funding' && project.type !== 'pre-order' && project.type !== 'portfolio'),
+      .filter(project => project.type !== 'funding' && project.type !== 'pre-order' && project.type !== 'portfolio')
+      .sort((a, b) =>
+        sorting(
+          a,
+          b,
+          ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+          filter?.title || '',
+        ),
+      ),
     fundingProjects: projects
-      .sort((a, b) => (calcSortWeights(a, [], '') > calcSortWeights(b, [], '') ? 1 : -1))
-      .filter(project => project.type === 'funding'),
+      .filter(project => project.type === 'funding')
+      .sort((a, b) =>
+        sorting(
+          a,
+          b,
+          ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+          filter?.title || '',
+        ),
+      ),
     preOrderProjects: projects
-      .sort((a, b) => (calcSortWeights(a, [], '') > calcSortWeights(b, [], '') ? 1 : -1))
-      .filter(project => project.type === 'pre-order'),
+      .filter(project => project.type === 'pre-order')
+      .sort((a, b) =>
+        sorting(
+          a,
+          b,
+          ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+          filter?.title || '',
+        ),
+      ),
     portfolioProjects: projects
-      .sort((a, b) => (calcSortWeights(a, [], '') > calcSortWeights(b, [], '') ? 1 : -1))
-      .filter(project => project.type === 'portfolio'),
+      .filter(project => project.type === 'portfolio')
+      .sort((a, b) =>
+        sorting(
+          a,
+          b,
+          ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+          filter?.title || '',
+        ),
+      ),
     posts:
       data?.post
-        .sort((a, b) => (calcSortWeights(a, [], '') > calcSortWeights(b, [], '') ? 1 : -1))
+        .sort((a, b) => sorting(a, b, ['authorSearchString', 'title', 'description'], filter?.title || ''))
         .map(post => ({
           id: post.id,
           codeName: post.code_name,
@@ -1080,10 +1192,19 @@ const useSearchProductCollection = (
           videoUrl: post.video_url,
           authorId: post.post_roles[0]?.member_id || '',
           publishedAt: post.published_at ? new Date(post.published_at) : null,
+          authorSearchString: post.post_roles.map(v => v.member?.name).toString(),
+          description:
+            post?.description && hasJsonStructure(post.description || '')
+              ? JSON.parse(post.description)
+                  ?.blocks.map((v: any) => v?.text)
+                  .toString()
+              : '',
         })) ?? [],
     podcastPrograms:
       data?.podcast_program
-        .sort((a, b) => (calcSortWeights(a, [], '') > calcSortWeights(b, [], '') ? 1 : -1))
+        .sort((a, b) =>
+          sorting(a, b, ['instructorsSearchString', 'title', 'description', 'bodyDescription'], filter?.title || ''),
+        )
         .map(podcastProgram => ({
           id: podcastProgram.id,
           coverUrl: podcastProgram.cover_url,
@@ -1094,6 +1215,7 @@ const useSearchProductCollection = (
           duration: podcastProgram.duration,
           durationSecond: podcastProgram.duration_second,
           description: podcastProgram.abstract,
+          bodyDescription: podcastProgram.podcast_program_body?.description || '',
           categories: podcastProgram.podcast_program_categories.map(podcastProgramCategory => ({
             id: podcastProgramCategory.category.id,
             name: podcastProgramCategory.category.name,
@@ -1108,6 +1230,7 @@ const useSearchProductCollection = (
                   '',
               }
             : null,
+          instructorsSearchString: podcastProgram.podcast_program_roles.map(v => v.member?.name).toString(),
           isEnrolled: podcastProgram.podcast_program_enrollments.length > 0,
           isSubscribed: data.podcast_plan_enrollment
             .map(podcastPlanEnrollment => podcastPlanEnrollment.podcast_plan?.creator_id)
@@ -1115,20 +1238,19 @@ const useSearchProductCollection = (
             .includes(podcastProgram.podcast_program_roles[0].member?.id || ''),
         })) || [],
     creators:
-      data?.member_public
-        .sort((a, b) => (calcSortWeights(a, [], '') > calcSortWeights(b, [], '') ? 1 : -1))
-        .map(member => ({
-          id: member.id || '',
-          avatarUrl: member.picture_url,
-          name: member.name || member.username || '',
-          abstract: member.abstract,
-        })) || [],
+      data?.member_public.map(member => ({
+        id: member.id || '',
+        avatarUrl: member.picture_url,
+        name: member.name || member.username || '',
+        abstract: member.abstract,
+      })) || [],
     merchandises:
       data?.merchandise
-        .sort((a, b) => (calcSortWeights(a, [], '') > calcSortWeights(b, [], '') ? 1 : -1))
+        .sort((a, b) => sorting(a, b, ['title', 'abstract'], filter?.title || ''))
         .map(merchandise => ({
           id: merchandise.id,
           title: merchandise.title,
+          abstract: merchandise.abstract || '',
           soldAt: merchandise.sold_at ? new Date(merchandise.sold_at) : null,
           minPrice: min(
             merchandise.merchandise_specs.map(spec =>
