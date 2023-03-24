@@ -1,15 +1,18 @@
+import { useApolloClient } from '@apollo/react-hooks'
 import { CheckCircleIcon, Icon, WarningIcon } from '@chakra-ui/icons'
 import { Button } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
+import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { commonMessages, profileMessages, settingsMessages } from '../../helpers/translation'
 import { useMember, useUpdateMember } from '../../hooks/member'
 import { ReactComponent as YouTubeIcon } from '../../images/youtube-icon.svg'
@@ -167,17 +170,57 @@ type ProfileAccountAdminCardProps = CardProps &
   }
 const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
-  const { enabledModules, settings } = useApp()
-
+  const { id: appId, enabledModules, settings } = useApp()
+  const apolloClient = useApolloClient()
   const { member } = useMember(memberId)
   const updateMember = useUpdateMember()
+  const [usernameIsChanged, setUsernameIsChanged] = useState(false)
+  const [emailIsChanged, setEmailIsChanged] = useState(false)
 
   const isYouTubeConnected = member?.youtubeChannelIds !== null
   const isVerifiedCurrentEmail = member?.verifiedEmails?.includes(member.email)
 
   const handleSubmit = () => {
-    form.validateFields((error, values) => {
+    form.validateFields(async (error, values) => {
       if (error || !member) {
+        return
+      }
+
+      const { data: dataEmail } = await apolloClient.query<hasura.GET_MEMBER_EMAIl, hasura.GET_MEMBER_EMAIlVariables>({
+        query: gql`
+          query GET_MEMBER_EMAIl($appId: String!, $email: String!) {
+            member(where: { app_id: { _eq: $appId }, email: { _eq: $email } }) {
+              id
+              email
+            }
+          }
+        `,
+        variables: { appId, email: values._email.trim().toLowerCase() },
+        fetchPolicy: 'no-cache',
+      })
+      const { data: dataUsername } = await apolloClient.query<
+        hasura.GET_MEMBER_USERNAME,
+        hasura.GET_MEMBER_USERNAMEVariables
+      >({
+        query: gql`
+          query GET_MEMBER_USERNAME($appId: String!, $username: String!) {
+            member(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
+              id
+              username
+            }
+          }
+        `,
+        variables: { appId, username: values.username.trim().toLowerCase() },
+        fetchPolicy: 'no-cache',
+      })
+
+      if (dataUsername.member.length >= 1 && usernameIsChanged) {
+        message.error(formatMessage(commonMessages.text.usernameIsAlreadyExist))
+        return
+      }
+
+      if (dataEmail.member.length >= 1 && emailIsChanged) {
+        message.error(formatMessage(commonMessages.text.emailIsAlreadyExist))
         return
       }
 
@@ -191,7 +234,11 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
           description: member.description,
         },
       })
-        .then(() => message.success(formatMessage(commonMessages.event.successfullySaved)))
+        .then(() => {
+          message.success(formatMessage(commonMessages.event.successfullySaved))
+          setUsernameIsChanged(false)
+          setEmailIsChanged(false)
+        })
         .catch(err => message.error(err.message))
     })
   }
@@ -213,6 +260,10 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
         <Form.Item label={formatMessage(commonMessages.label.username)} style={{}}>
           {form.getFieldDecorator('username', {
             initialValue: member && member.username,
+            getValueFromEvent: e => {
+              member?.username === e.target.value ? setUsernameIsChanged(false) : setUsernameIsChanged(true)
+              return e.target.value
+            },
             rules: [
               {
                 required: true,
@@ -224,6 +275,10 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
         <StyledFormItem label={formatMessage(commonMessages.label.email)} className="d-flex">
           {form.getFieldDecorator('_email', {
             initialValue: member && member.email,
+            getValueFromEvent: e => {
+              member?.email === e.target.value ? setEmailIsChanged(false) : setEmailIsChanged(true)
+              return e.target.value
+            },
             rules: [
               {
                 required: true,
