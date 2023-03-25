@@ -117,15 +117,15 @@ header .d-flex.align-items-center > button:first-child {
   margin-left: 1rem;
   color: #373737 !important;
 }
-header .d-flex.align-items-center > button:first-child::before {
-  content: '';
-  margin-right: 5px;
-  margin-top: -2px;
-  width: 18px;
-  height: 16px;
-  background: url(./images/icon-headphone.png) center center no-repeat;
-  background-size: cover;
-}
+// header .d-flex.align-items-center > button:first-child::before {
+//   content: '';
+//   margin-right: 5px;
+//   margin-top: -2px;
+//   width: 18px;
+//   height: 16px;
+//   background: url(./images/icon-headphone.png) center center no-repeat;
+//   background-size: cover;
+// }
 header .d-flex.align-items-center > button:first-child::after {
   content: '';
   position: absolute;
