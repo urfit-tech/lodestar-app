@@ -63,7 +63,7 @@ const ActivityCollectionPage = () => {
     nav => nav.locale === currentLocale && nav.href === `${location.pathname}${active ? `?categories=${active}` : ''}`,
   )?.label
   const { formatMessage } = useIntl()
-  const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection({
+  const { loadingActivities, errorActivities, activities, title } = usePublishedActivityCollection({
     categoryId: active ? active : undefined,
   })
 
@@ -79,6 +79,7 @@ const ActivityCollectionPage = () => {
   }
 
   const activityCollectionPageTitle =
+    title ||
     pageTitle ||
     categories.find(category => category.id === active)?.name ||
     formatMessage(productMessages.activity.title.default)
