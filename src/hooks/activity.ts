@@ -145,6 +145,7 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
     refetchActivities: refetch,
     activities,
     title: getActivityTileData?.category_by_pk?.name,
+    getActivityTileLoading,
   }
 }
 

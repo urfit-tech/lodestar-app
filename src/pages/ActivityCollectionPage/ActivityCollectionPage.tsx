@@ -63,9 +63,10 @@ const ActivityCollectionPage = () => {
     nav => nav.locale === currentLocale && nav.href === `${location.pathname}${active ? `?categories=${active}` : ''}`,
   )?.label
   const { formatMessage } = useIntl()
-  const { loadingActivities, errorActivities, activities, title } = usePublishedActivityCollection({
-    categoryId: active ? active : undefined,
-  })
+  const { loadingActivities, errorActivities, activities, title, getActivityTileLoading } =
+    usePublishedActivityCollection({
+      categoryId: active ? active : undefined,
+    })
 
   const categories: Category[] = sortBy(prop('position'))(
     uniqBy(category => category.id, unnest(activities.map(activity => activity.categories))),
@@ -97,7 +98,9 @@ const ActivityCollectionPage = () => {
           {!noTitle && (
             <StyledBannerTitle className="d-flex align-items-center">
               <Icon as={AiFillAppstore} className="mr-3" />
-              <span>{loading ? <StyledSkeleton height="28px" /> : activityCollectionPageTitle}</span>
+              <span>
+                {loading || getActivityTileLoading ? <StyledSkeleton height="28px" /> : activityCollectionPageTitle}
+              </span>
             </StyledBannerTitle>
           )}
 
