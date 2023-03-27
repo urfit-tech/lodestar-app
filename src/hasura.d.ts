@@ -889,6 +889,7 @@ export interface GET_EDITABLE_PROPERTY_property {
   name: string;
   placeholder: string | null;
   is_editable: boolean;
+  is_required: boolean;
   /**
    * An array relationship
    */

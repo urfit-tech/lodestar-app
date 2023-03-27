@@ -52,6 +52,7 @@ const authMessages = {
     registerFailed: { id: 'auth.RegisterSection.registerFailed', defaultMessage: '註冊失敗，請聯繫網站管理者' },
     companyPictureFile: { id: 'auth.RegisterSection.companyPictureFile', defaultMessage: '公司標誌' },
     companyTitle: { id: 'auth.RegisterSection.companyTitle', defaultMessage: '公司抬頭' },
+    companyTitleIsRequired: { id: 'auth.RegisterSection.companyTitleIsRequired', defaultMessage: '請填入公司抬頭' },
     companyShortName: { id: 'auth.RegisterSection.companyShortName', defaultMessage: '公司簡稱' },
     companyShortNameMessage: {
       id: 'auth.RegisterSection.companyShortNameMessage',
