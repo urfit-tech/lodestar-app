@@ -1,4 +1,4 @@
-import { Button, Icon, Skeleton } from '@chakra-ui/react'
+import { Button, Icon, Skeleton, SkeletonText } from '@chakra-ui/react'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
@@ -134,7 +134,7 @@ const ActivityCollectionPage = () => {
 
       <StyledCollection>
         <div className="container">
-          {loadingActivities && <Skeleton />}
+          {loadingActivities && <SkeletonText mt="1" noOfLines={4} spacing="4" />}
           {errorActivities && <div>{formatMessage(commonMessages.status.readingError)}</div>}
           <ActivityCollection activities={filteredActivities} />
         </div>
