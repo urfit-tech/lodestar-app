@@ -2632,6 +2632,7 @@ export interface GET_PROGRAM_CONTENT_PROGRESS_program_content_body_program_conte
 
 export interface GET_PROGRAM_CONTENT_PROGRESS_program_content_body {
   __typename: "program_content_body";
+  type: string | null;
   /**
    * An array relationship
    */
@@ -5766,6 +5767,54 @@ export interface GET_CONTENT_DELIVERED_ATVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_EXAM_EXERCISE
+// ====================================================
+
+export interface GET_EXAM_EXERCISE_exercise_exercise_publics {
+  __typename: "exercise_public";
+  exercise_id: any | null;
+  question_points: string | null;
+  question_id: string | null;
+  question_started_at: string | null;
+  gained_points: string | null;
+}
+
+export interface GET_EXAM_EXERCISE_exercise_exam {
+  __typename: "exam";
+  id: any;
+  passing_score: any;
+}
+
+export interface GET_EXAM_EXERCISE_exercise {
+  __typename: "exercise";
+  id: any;
+  /**
+   * An array relationship
+   */
+  exercise_publics: GET_EXAM_EXERCISE_exercise_exercise_publics[];
+  /**
+   * An object relationship
+   */
+  exam: GET_EXAM_EXERCISE_exercise_exam | null;
+}
+
+export interface GET_EXAM_EXERCISE {
+  /**
+   * fetch data from the table: "exercise"
+   */
+  exercise: GET_EXAM_EXERCISE_exercise[];
+}
+
+export interface GET_EXAM_EXERCISEVariables {
+  condition: exercise_bool_exp;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_EXERCISE_PUBLIC
 // ====================================================
 
@@ -5815,6 +5864,35 @@ export interface GET_EXERCISE_PUBLIC {
 
 export interface GET_EXERCISE_PUBLICVariables {
   programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_SPECIFIC_EXERCISE
+// ====================================================
+
+export interface GET_SPECIFIC_EXERCISE_exercise {
+  __typename: "exercise";
+  id: any;
+  answer: any | null;
+  member_id: string;
+  started_at: any | null;
+  ended_at: any | null;
+}
+
+export interface GET_SPECIFIC_EXERCISE {
+  /**
+   * fetch data from the table: "exercise"
+   */
+  exercise: GET_SPECIFIC_EXERCISE_exercise[];
+}
+
+export interface GET_SPECIFIC_EXERCISEVariables {
+  condition: exercise_bool_exp;
 }
 
 /* tslint:disable */
@@ -12057,35 +12135,6 @@ export interface GET_PROGRAM_CONTENT_DISPLAY_MODE {
 
 export interface GET_PROGRAM_CONTENT_DISPLAY_MODEVariables {
   id: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_SPECIFIC_EXERCISE
-// ====================================================
-
-export interface GET_SPECIFIC_EXERCISE_exercise {
-  __typename: "exercise";
-  id: any;
-  answer: any | null;
-  member_id: string;
-  started_at: any | null;
-  ended_at: any | null;
-}
-
-export interface GET_SPECIFIC_EXERCISE {
-  /**
-   * fetch data from the table: "exercise"
-   */
-  exercise: GET_SPECIFIC_EXERCISE_exercise[];
-}
-
-export interface GET_SPECIFIC_EXERCISEVariables {
-  condition: exercise_bool_exp;
 }
 
 /* tslint:disable */

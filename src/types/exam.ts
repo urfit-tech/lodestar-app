@@ -49,7 +49,7 @@ export type ExercisePublic = {
   memberId?: string
   startedAt: Date | null
   endedAt: Date | null
-  questionId?: string
+  questionId?: string | null
   questionPoints: number
   gainedPoints: number
   isCorrect: boolean
@@ -57,6 +57,13 @@ export type ExercisePublic = {
   questionEndedAt: Date | null
   duration: number
   choiceIds: string[]
+}
+export type programContentProgress = {
+  programContentBodyType: string | null
+  programContentId: string
+  programContentSectionId?: string
+  progress: number
+  lastProgress?: number
 }
 
 export type Exercise = {
