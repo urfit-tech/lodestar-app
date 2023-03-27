@@ -144,7 +144,10 @@ const ProgramContentBlock: React.VFC<{
       !currentMemberId ||
       !isAuthenticated ||
       !hasProgramContentPermission ||
-      (programContentBodyType === 'text' && moment().isBefore(moment(programContent?.publishedAt)))
+      (programContentBodyType &&
+        ['text', 'practice', 'exam'].includes(programContentBodyType) &&
+        moment().isBefore(moment(programContent?.publishedAt))) ||
+      programContent?.publishedAt === null
     ) {
       return
     }
@@ -154,12 +157,9 @@ const ProgramContentBlock: React.VFC<{
       lastProgress: 1,
     }).then(() => refetchProgress())
   }, [
-    initialProgress,
-    insertProgress,
     loadingProgramContent,
     programContentBodyType,
     programContentId,
-    refetchProgress,
     currentMemberId,
     isAuthenticated,
     hasProgramContentPermission,
