@@ -23,6 +23,7 @@ import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
 import { ReactComponent as DeviceIcon } from '../../images/device.svg'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
+import { ReactComponent as GroupBuyIcon } from '../../images/group-buy.svg'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
@@ -190,15 +191,15 @@ export const MemberAdminMenu: React.VFC<
         </Menu.Item>
       ),
     },
-    // {
-    //   key: 'member_group_buying_admin',
-    //   item: enabledModules.group_buying && (
-    //     <Menu.Item key="member_group_buying_admin">
-    //       <Icon as={GroupBuyIcon} className="mr-2" />
-    //       {formatMessage(commonMessages.ui.groupBuying)}
-    //     </Menu.Item>
-    //   ),
-    // },
+    {
+      key: 'member_group_buying_admin',
+      item: enabledModules.group_buying && (
+        <Menu.Item key="member_group_buying_admin">
+          <Icon as={GroupBuyIcon} className="mr-2" />
+          {formatMessage(commonMessages.ui.groupBuying)}
+        </Menu.Item>
+      ),
+    },
     {
       key: 'member_coupons_admin',
       item: (
