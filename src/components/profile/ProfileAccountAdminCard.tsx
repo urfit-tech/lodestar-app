@@ -5,7 +5,6 @@ import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
-import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
@@ -14,7 +13,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { commonMessages, profileMessages, settingsMessages } from '../../helpers/translation'
-import { useMember, useUpdateMember } from '../../hooks/member'
+import { GET_MEMBER_EMAIL, GET_MEMBER_USERNAME, useMember, useUpdateMember } from '../../hooks/member'
 import { ReactComponent as YouTubeIcon } from '../../images/youtube-icon.svg'
 import AdminCard from '../common/AdminCard'
 import MigrationInput from '../common/MigrationInput'
@@ -187,14 +186,7 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
       }
 
       const { data: dataEmail } = await apolloClient.query<hasura.GET_MEMBER_EMAIl, hasura.GET_MEMBER_EMAIlVariables>({
-        query: gql`
-          query GET_MEMBER_EMAIl($appId: String!, $email: String!) {
-            member(where: { app_id: { _eq: $appId }, email: { _eq: $email } }) {
-              id
-              email
-            }
-          }
-        `,
+        query: GET_MEMBER_EMAIL,
         variables: { appId, email: values._email.trim().toLowerCase() },
         fetchPolicy: 'no-cache',
       })
@@ -202,14 +194,7 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
         hasura.GET_MEMBER_USERNAME,
         hasura.GET_MEMBER_USERNAMEVariables
       >({
-        query: gql`
-          query GET_MEMBER_USERNAME($appId: String!, $username: String!) {
-            member(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
-              id
-              username
-            }
-          }
-        `,
+        query: GET_MEMBER_USERNAME,
         variables: { appId, username: values.username.trim().toLowerCase() },
         fetchPolicy: 'no-cache',
       })

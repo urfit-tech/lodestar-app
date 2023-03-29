@@ -4,52 +4,24 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_MEMBER_EMAIl
+// GraphQL query operation: GET_APPOINTMENT_PERIOD_MEET_ID
 // ====================================================
 
-export interface GET_MEMBER_EMAIl_member {
-  __typename: "member";
-  id: string;
-  email: string;
+export interface GET_APPOINTMENT_PERIOD_MEET_ID_order_product {
+  __typename: "order_product";
+  id: any;
+  options: any | null;
 }
 
-export interface GET_MEMBER_EMAIl {
+export interface GET_APPOINTMENT_PERIOD_MEET_ID {
   /**
-   * fetch data from the table: "member"
+   * fetch data from the table: "order_product"
    */
-  member: GET_MEMBER_EMAIl_member[];
+  order_product: GET_APPOINTMENT_PERIOD_MEET_ID_order_product[];
 }
 
-export interface GET_MEMBER_EMAIlVariables {
-  appId: string;
-  email: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_MEMBER_USERNAME
-// ====================================================
-
-export interface GET_MEMBER_USERNAME_member {
-  __typename: "member";
-  id: string;
-  username: string;
-}
-
-export interface GET_MEMBER_USERNAME {
-  /**
-   * fetch data from the table: "member"
-   */
-  member: GET_MEMBER_USERNAME_member[];
-}
-
-export interface GET_MEMBER_USERNAMEVariables {
-  appId: string;
-  username: string;
+export interface GET_APPOINTMENT_PERIOD_MEET_IDVariables {
+  orderProductId: any;
 }
 
 /* tslint:disable */
@@ -6695,6 +6667,60 @@ export interface GET_PUBLISHED_CREATOR {
    * fetch data from the table: "creator"
    */
   creator: GET_PUBLISHED_CREATOR_creator[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_EMAIl
+// ====================================================
+
+export interface GET_MEMBER_EMAIl_member {
+  __typename: "member";
+  id: string;
+  email: string;
+}
+
+export interface GET_MEMBER_EMAIl {
+  /**
+   * fetch data from the table: "member"
+   */
+  member: GET_MEMBER_EMAIl_member[];
+}
+
+export interface GET_MEMBER_EMAIlVariables {
+  appId: string;
+  email: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_USERNAME
+// ====================================================
+
+export interface GET_MEMBER_USERNAME_member {
+  __typename: "member";
+  id: string;
+  username: string;
+}
+
+export interface GET_MEMBER_USERNAME {
+  /**
+   * fetch data from the table: "member"
+   */
+  member: GET_MEMBER_USERNAME_member[];
+}
+
+export interface GET_MEMBER_USERNAMEVariables {
+  appId: string;
+  username: string;
 }
 
 /* tslint:disable */
