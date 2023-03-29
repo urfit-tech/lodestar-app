@@ -4,60 +4,6 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_MEMBER_EMAIl
-// ====================================================
-
-export interface GET_MEMBER_EMAIl_member {
-  __typename: "member";
-  id: string;
-  email: string;
-}
-
-export interface GET_MEMBER_EMAIl {
-  /**
-   * fetch data from the table: "member"
-   */
-  member: GET_MEMBER_EMAIl_member[];
-}
-
-export interface GET_MEMBER_EMAIlVariables {
-  appId: string;
-  email: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_MEMBER_USERNAME
-// ====================================================
-
-export interface GET_MEMBER_USERNAME_member {
-  __typename: "member";
-  id: string;
-  username: string;
-}
-
-export interface GET_MEMBER_USERNAME {
-  /**
-   * fetch data from the table: "member"
-   */
-  member: GET_MEMBER_USERNAME_member[];
-}
-
-export interface GET_MEMBER_USERNAMEVariables {
-  appId: string;
-  username: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_BUSINESS_SIGNUP_PROPERTY_ID_MAP
 // ====================================================
 
@@ -865,6 +811,60 @@ export interface INSERT_SUGGESTIONVariables {
   title?: string | null;
   description?: string | null;
   isPublic?: boolean | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_EMAIl
+// ====================================================
+
+export interface GET_MEMBER_EMAIl_member {
+  __typename: "member";
+  id: string;
+  email: string;
+}
+
+export interface GET_MEMBER_EMAIl {
+  /**
+   * fetch data from the table: "member"
+   */
+  member: GET_MEMBER_EMAIl_member[];
+}
+
+export interface GET_MEMBER_EMAIlVariables {
+  appId: string;
+  email: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_USERNAME
+// ====================================================
+
+export interface GET_MEMBER_USERNAME_member {
+  __typename: "member";
+  id: string;
+  username: string;
+}
+
+export interface GET_MEMBER_USERNAME {
+  /**
+   * fetch data from the table: "member"
+   */
+  member: GET_MEMBER_USERNAME_member[];
+}
+
+export interface GET_MEMBER_USERNAMEVariables {
+  appId: string;
+  username: string;
 }
 
 /* tslint:disable */
@@ -5798,15 +5798,25 @@ export interface GET_EXAM_EXERCISE_exercise {
   exam: GET_EXAM_EXERCISE_exercise_exam | null;
 }
 
+export interface GET_EXAM_EXERCISE_practice {
+  __typename: "practice";
+  id: any;
+}
+
 export interface GET_EXAM_EXERCISE {
   /**
    * fetch data from the table: "exercise"
    */
   exercise: GET_EXAM_EXERCISE_exercise[];
+  /**
+   * fetch data from the table: "practice"
+   */
+  practice: GET_EXAM_EXERCISE_practice[];
 }
 
 export interface GET_EXAM_EXERCISEVariables {
   condition: exercise_bool_exp;
+  praticeCondition: practice_bool_exp;
 }
 
 /* tslint:disable */

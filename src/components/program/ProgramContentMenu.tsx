@@ -316,6 +316,16 @@ const SortBySectionItem: React.VFC<{
         passExam.push(programContent.id)
       }
     }
+  } else if (type === 'practice') {
+    if (currentExamExerciseData) {
+      let { practiceTotal } = currentExamExerciseData
+      if (practiceTotal && practiceTotal > 0) {
+        progress = 1
+        setPassExam([...passExam, programContent.id])
+      }
+    } else {
+      progress = 0
+    }
   } else {
     progress = contentCurrentProgress?.progress || 0
   }
