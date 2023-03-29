@@ -208,9 +208,13 @@ export const useExamExercise = (programContentId: string, memberId: string, exer
     member_id: exerciseId ? undefined : { _eq: memberId },
     answer: { _is_null: false },
   }
+  const praticeCondition: hasura.GET_EXAM_EXERCISEVariables['praticeCondition'] = {
+    program_content_id: { _eq: programContentId },
+    member_id: exerciseId ? undefined : { _eq: memberId },
+  }
   const { loading, error, data, refetch } = useQuery<hasura.GET_EXAM_EXERCISE, hasura.GET_EXAM_EXERCISEVariables>(
     gql`
-      query GET_EXAM_EXERCISE($condition: exercise_bool_exp!) {
+      query GET_EXAM_EXERCISE($condition: exercise_bool_exp!, $praticeCondition: practice_bool_exp!) {
         exercise(where: $condition, order_by: { created_at: desc }, limit: 1) {
           id
           exercise_publics {
@@ -225,22 +229,28 @@ export const useExamExercise = (programContentId: string, memberId: string, exer
             passing_score
           }
         }
+        practice(where: $praticeCondition, order_by: { created_at: desc }, limit: 1) {
+          id
+        }
       }
     `,
-    { variables: { condition } },
+    { variables: { condition, praticeCondition } },
   )
+
   const currentExamExerciseData: {
+    practiceTotal: number | undefined
     passingScore: number
-    gainedPointsTotal: number
+    gainedPointsTotal: number | null
   } | null =
     loading && error && !data
       ? null
       : {
+          practiceTotal: data?.practice.length,
           passingScore: data?.exercise?.[0]?.exam?.passing_score || 0,
           gainedPointsTotal:
             data?.exercise?.[0]?.exercise_publics?.reduce((acc, item) => {
               return acc + Number(item?.gained_points)
-            }, 0) || 0,
+            }, 0) || null,
         }
   return {
     currentExamExerciseData,
@@ -249,6 +259,7 @@ export const useExamExercise = (programContentId: string, memberId: string, exer
     errorCurrentExamData: error,
   }
 }
+
 export const useExercisePublic = (programContentId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_EXERCISE_PUBLIC, hasura.GET_EXERCISE_PUBLICVariables>(
     gql`
