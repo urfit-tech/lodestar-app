@@ -269,7 +269,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                           },
                         },
                       )
-                      .then(({ data: { code, message, data } }) => window.open(data.options.startUrl))
+                      .then(({ data: { code, message, data } }) => window.open(data.target.startUrl))
                   } catch (error) {
                     console.log(`get meets error: ${error}`)
                     window.open(
