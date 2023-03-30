@@ -43,7 +43,8 @@ const ProgramContentTabs: React.VFC<{
   const { enabledModules } = useApp()
   const [activeKey, setActiveKey] = useState('issue')
 
-  const isIssueThreadVisible = issueEnabled
+  let isIssueThreadVisible =
+    programContent?.contentType === 'exercise' || programContent?.contentType === 'exam' ? false : issueEnabled
   const isPracticesVisible = enabledModules.practice && programContent.programContentBody?.type === 'practice'
   const isMaterialVisible = programContent.materials.length !== 0
 

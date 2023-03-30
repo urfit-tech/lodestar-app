@@ -18,6 +18,7 @@ import hasura from '../../hasura'
 import { uploadFile } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import { useSignUpProperty } from '../../hooks/common'
+import { GET_MEMBER_EMAIL, GET_MEMBER_USERNAME } from '../../hooks/member'
 import { AuthState } from '../../types/member'
 import BusinessSignupForm from '../common/BusinessSignupForm'
 import MigrationInput from '../common/MigrationInput'
@@ -123,28 +124,14 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             hasura.GET_MEMBER_EMAIl,
             hasura.GET_MEMBER_EMAIlVariables
           >({
-            query: gql`
-              query GET_MEMBER_EMAIl($appId: String!, $email: String!) {
-                member(where: { app_id: { _eq: $appId }, email: { _eq: $email } }) {
-                  id
-                  email
-                }
-              }
-            `,
+            query: GET_MEMBER_EMAIL,
             variables: { appId, email: values.email.trim().toLowerCase() },
           })
           const { data: dataUsername } = await apolloClient.query<
             hasura.GET_MEMBER_USERNAME,
             hasura.GET_MEMBER_USERNAMEVariables
           >({
-            query: gql`
-              query GET_MEMBER_USERNAME($appId: String!, $username: String!) {
-                member(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
-                  id
-                  username
-                }
-              }
-            `,
+            query: GET_MEMBER_USERNAME,
             variables: { appId, username: values.username.trim().toLowerCase() },
           })
           if (dataEmail.member.length >= 1) {

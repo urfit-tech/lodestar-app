@@ -413,3 +413,20 @@ export const usePublishedCreator = () => {
     refetchCreators: refetch,
   }
 }
+
+export const GET_MEMBER_EMAIL = gql`
+  query GET_MEMBER_EMAIl($appId: String!, $email: String!) {
+    member(where: { app_id: { _eq: $appId }, email: { _eq: $email } }) {
+      id
+      email
+    }
+  }
+`
+export const GET_MEMBER_USERNAME = gql`
+  query GET_MEMBER_USERNAME($appId: String!, $username: String!) {
+    member(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
+      id
+      username
+    }
+  }
+`

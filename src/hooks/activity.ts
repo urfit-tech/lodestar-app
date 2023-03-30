@@ -67,6 +67,27 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
     },
   )
 
+  const {
+    loading: getActivityTileLoading,
+    error: getActivityTileError,
+    data: getActivityTileData,
+    refetch: getActivityTileRefetch,
+  } = useQuery<hasura.GET_ACTIVITY_TITLE, hasura.GET_ACTIVITY_TITLEVariables>(
+    gql`
+      query GET_ACTIVITY_TITLE($categoryId: String!) {
+        category_by_pk(id: $categoryId) {
+          id
+          name
+        }
+      }
+    `,
+    {
+      variables: {
+        categoryId: options?.categoryId || '',
+      },
+    },
+  )
+
   const activities: DeepPick<
     Activity,
     | 'id'
@@ -123,6 +144,8 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
     errorActivities: error,
     refetchActivities: refetch,
     activities,
+    title: getActivityTileData?.category_by_pk?.name,
+    getActivityTileLoading,
   }
 }
 

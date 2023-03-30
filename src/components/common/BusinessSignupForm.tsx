@@ -9,7 +9,7 @@ import authMessages from '../auth/translation'
 import ImageUploader from './ImageUploader'
 import commonMessages from './translation'
 
-const companyTypes = [
+export const companyTypes = [
   { label: '行號(工作室等)', value: 'firmOrWorkShop' },
   { label: '有限公司', value: 'limitedCompany' },
   { label: '股份有限公司', value: 'companyLimited' },
@@ -47,7 +47,7 @@ const BusinessSignupForm: React.VFC<
     {
       label: formatMessage(authMessages.RegisterSection.companyTitle),
       decoratorId: 'companyTitle',
-      rules: [],
+      rules: [{ required: true, message: formatMessage(authMessages.RegisterSection.companyTitleIsRequired) }],
       child: <Input />,
     },
     {
