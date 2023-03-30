@@ -269,16 +269,18 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                           },
                         },
                       )
-                      .then(({ data: { code, message, data } }) => window.open(data.target.startUrl))
+                      .then(({ data: { code, message, data } }) =>
+                        window.open(data.target.startUrl, '_blank', 'noopener=yes,noreferrer=yes'),
+                      )
                   } catch (error) {
                     console.log(`get meets error: ${error}`)
                     window.open(
-                      `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}"`,
+                      `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
                     )
                   }
                 } else {
                   window.open(
-                    `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}"`,
+                    `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
                   )
                 }
               }}
