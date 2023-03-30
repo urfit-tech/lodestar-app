@@ -270,7 +270,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                         },
                       )
                       .then(({ data: { code, message, data } }) =>
-                        window.open(data.target.startUrl, '_blank', 'noopener=yes,noreferrer=yes'),
+                        window.open(data.target, '_blank', 'noopener=yes,noreferrer=yes'),
                       )
                   } catch (error) {
                     console.log(`get meets error: ${error}`)
