@@ -153,7 +153,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                     validator: (rule, value, callback) => {
                       const regex = /^\+?\(?[0-9]+\)?-?[0-9]+$/g
                       if (!form.getFieldValue('phone').match(regex)) {
-                        callback(formatMessage(profileMessages.ProfileOtherAdminCard.entercorrectPhone))
+                        callback(formatMessage(profileMessages.ProfileOtherAdminCard.enterCorrectPhone))
                       } else {
                         callback()
                       }
@@ -227,6 +227,7 @@ export const useIsEditableProperty = (isBusiness: boolean = false) => {
           name
           placeholder
           is_editable
+          is_required
           member_properties {
             id
             member_id
@@ -244,6 +245,7 @@ export const useIsEditableProperty = (isBusiness: boolean = false) => {
       name: v.name,
       placeholder: v.placeholder?.replace(/[()]/g, ''),
       isEditable: v.is_editable,
+      isRequired: v.is_required,
       memberProperties: v.member_properties,
     })) || []
 

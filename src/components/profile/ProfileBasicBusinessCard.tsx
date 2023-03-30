@@ -5,6 +5,7 @@ import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { checkUniformNumber } from 'lodestar-app-element/src/helpers'
 import { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -14,6 +15,7 @@ import { handleError, uploadFile } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
+import { companyTypes } from '../common/BusinessSignupForm'
 import ImageUploader from '../common/ImageUploader'
 import MigrationInput from '../common/MigrationInput'
 import { StyledForm } from '../layout'
@@ -189,10 +191,22 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
                 initialValue: defaultValue,
                 rules: [
                   {
-                    required: false,
+                    required: property.isRequired,
                     message: formatMessage(profileMessages.ProfileOtherAdminCard.enter, {
-                      enterlabel: property.name,
+                      enterLabel: property.name,
                     }),
+                  },
+                  {
+                    validator: async (_, value, callback) => {
+                      if (
+                        property.name === '公司統編' &&
+                        value?.toString().length === 8 &&
+                        !checkUniformNumber(value)
+                      ) {
+                        await callback(formatMessage(profileMessages.ProfileOtherAdminCard.uniformNumberIsInvalidated))
+                      }
+                      await callback()
+                    },
                   },
                 ],
               })(
@@ -200,7 +214,9 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
                   <Select disabled={loading}>
                     {property?.placeholder?.split('/').map((value: string, idx: number) => (
                       <Select.Option key={idx} value={value}>
-                        {value}
+                        {property.name === '公司類型'
+                          ? companyTypes.filter(companyType => companyType.value === value)[0]?.label
+                          : value}
                       </Select.Option>
                     ))}
                   </Select>

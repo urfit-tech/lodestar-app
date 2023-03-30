@@ -461,9 +461,11 @@ export const commonMessages = {
     },
     selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
     delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
-    noOrderLog: { id: 'common.text.noOrderLog', default: '尚無消費紀錄' },
+    noOrderLog: { id: 'common.text.noOrderLog', defaultMessage: '尚無消費紀錄' },
     appliedTag: { id: 'common.text.appliedTag', defaultMessage: '已送出標記申請' },
-    publish: { id: 'common.text.publish', default: 'publish' },
+    publish: { id: 'common.text.publish', defaultMessage: 'publish' },
+    emailIsAlreadyExist: { id: 'common.text.emailIsAlreadyExist', defaultMessage: 'Email is already exist' },
+    usernameIsAlreadyExist: { id: 'common.text.usernameIsAlreadyExist', defaultMessage: 'Username is already exist' },
   }),
 }
 

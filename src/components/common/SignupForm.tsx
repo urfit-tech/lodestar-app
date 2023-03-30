@@ -77,7 +77,11 @@ const SignupForm: React.VFC<
                     >
                       <Row>
                         {signupProperty.selectOptions?.map(selectOption => (
-                          <Col className="mb-2" span={Math.floor(24 / (signupProperty?.rowAmount || 1))}>
+                          <Col
+                            key={selectOption}
+                            className="mb-2"
+                            span={Math.floor(24 / (signupProperty?.rowAmount || 1))}
+                          >
                             <Checkbox value={selectOption}>{selectOption}</Checkbox>
                           </Col>
                         ))}

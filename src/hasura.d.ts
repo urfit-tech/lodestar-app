@@ -4,52 +4,24 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_MEMBER_EMAIl
+// GraphQL query operation: GET_APPOINTMENT_PERIOD_MEET_ID
 // ====================================================
 
-export interface GET_MEMBER_EMAIl_member {
-  __typename: "member";
-  id: string;
-  email: string;
+export interface GET_APPOINTMENT_PERIOD_MEET_ID_order_product {
+  __typename: "order_product";
+  id: any;
+  options: any | null;
 }
 
-export interface GET_MEMBER_EMAIl {
+export interface GET_APPOINTMENT_PERIOD_MEET_ID {
   /**
-   * fetch data from the table: "member"
+   * fetch data from the table: "order_product"
    */
-  member: GET_MEMBER_EMAIl_member[];
+  order_product: GET_APPOINTMENT_PERIOD_MEET_ID_order_product[];
 }
 
-export interface GET_MEMBER_EMAIlVariables {
-  appId: string;
-  email: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_MEMBER_USERNAME
-// ====================================================
-
-export interface GET_MEMBER_USERNAME_member {
-  __typename: "member";
-  id: string;
-  username: string;
-}
-
-export interface GET_MEMBER_USERNAME {
-  /**
-   * fetch data from the table: "member"
-   */
-  member: GET_MEMBER_USERNAME_member[];
-}
-
-export interface GET_MEMBER_USERNAMEVariables {
-  appId: string;
-  username: string;
+export interface GET_APPOINTMENT_PERIOD_MEET_IDVariables {
+  orderProductId: any;
 }
 
 /* tslint:disable */
@@ -889,6 +861,7 @@ export interface GET_EDITABLE_PROPERTY_property {
   name: string;
   placeholder: string | null;
   is_editable: boolean;
+  is_required: boolean;
   /**
    * An array relationship
    */
@@ -2631,6 +2604,7 @@ export interface GET_PROGRAM_CONTENT_PROGRESS_program_content_body_program_conte
 
 export interface GET_PROGRAM_CONTENT_PROGRESS_program_content_body {
   __typename: "program_content_body";
+  type: string | null;
   /**
    * An array relationship
    */
@@ -5765,6 +5739,54 @@ export interface GET_CONTENT_DELIVERED_ATVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GET_EXAM_EXERCISE
+// ====================================================
+
+export interface GET_EXAM_EXERCISE_exercise_exercise_publics {
+  __typename: "exercise_public";
+  exercise_id: any | null;
+  question_points: string | null;
+  question_id: string | null;
+  question_started_at: string | null;
+  gained_points: string | null;
+}
+
+export interface GET_EXAM_EXERCISE_exercise_exam {
+  __typename: "exam";
+  id: any;
+  passing_score: any;
+}
+
+export interface GET_EXAM_EXERCISE_exercise {
+  __typename: "exercise";
+  id: any;
+  /**
+   * An array relationship
+   */
+  exercise_publics: GET_EXAM_EXERCISE_exercise_exercise_publics[];
+  /**
+   * An object relationship
+   */
+  exam: GET_EXAM_EXERCISE_exercise_exam | null;
+}
+
+export interface GET_EXAM_EXERCISE {
+  /**
+   * fetch data from the table: "exercise"
+   */
+  exercise: GET_EXAM_EXERCISE_exercise[];
+}
+
+export interface GET_EXAM_EXERCISEVariables {
+  condition: exercise_bool_exp;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_EXERCISE_PUBLIC
 // ====================================================
 
@@ -5814,6 +5836,35 @@ export interface GET_EXERCISE_PUBLIC {
 
 export interface GET_EXERCISE_PUBLICVariables {
   programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_SPECIFIC_EXERCISE
+// ====================================================
+
+export interface GET_SPECIFIC_EXERCISE_exercise {
+  __typename: "exercise";
+  id: any;
+  answer: any | null;
+  member_id: string;
+  started_at: any | null;
+  ended_at: any | null;
+}
+
+export interface GET_SPECIFIC_EXERCISE {
+  /**
+   * fetch data from the table: "exercise"
+   */
+  exercise: GET_SPECIFIC_EXERCISE_exercise[];
+}
+
+export interface GET_SPECIFIC_EXERCISEVariables {
+  condition: exercise_bool_exp;
 }
 
 /* tslint:disable */
@@ -6616,6 +6667,60 @@ export interface GET_PUBLISHED_CREATOR {
    * fetch data from the table: "creator"
    */
   creator: GET_PUBLISHED_CREATOR_creator[];
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_EMAIl
+// ====================================================
+
+export interface GET_MEMBER_EMAIl_member {
+  __typename: "member";
+  id: string;
+  email: string;
+}
+
+export interface GET_MEMBER_EMAIl {
+  /**
+   * fetch data from the table: "member"
+   */
+  member: GET_MEMBER_EMAIl_member[];
+}
+
+export interface GET_MEMBER_EMAIlVariables {
+  appId: string;
+  email: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_MEMBER_USERNAME
+// ====================================================
+
+export interface GET_MEMBER_USERNAME_member {
+  __typename: "member";
+  id: string;
+  username: string;
+}
+
+export interface GET_MEMBER_USERNAME {
+  /**
+   * fetch data from the table: "member"
+   */
+  member: GET_MEMBER_USERNAME_member[];
+}
+
+export interface GET_MEMBER_USERNAMEVariables {
+  appId: string;
+  username: string;
 }
 
 /* tslint:disable */
@@ -12056,35 +12161,6 @@ export interface GET_PROGRAM_CONTENT_DISPLAY_MODE {
 
 export interface GET_PROGRAM_CONTENT_DISPLAY_MODEVariables {
   id: any;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GET_SPECIFIC_EXERCISE
-// ====================================================
-
-export interface GET_SPECIFIC_EXERCISE_exercise {
-  __typename: "exercise";
-  id: any;
-  answer: any | null;
-  member_id: string;
-  started_at: any | null;
-  ended_at: any | null;
-}
-
-export interface GET_SPECIFIC_EXERCISE {
-  /**
-   * fetch data from the table: "exercise"
-   */
-  exercise: GET_SPECIFIC_EXERCISE_exercise[];
-}
-
-export interface GET_SPECIFIC_EXERCISEVariables {
-  condition: exercise_bool_exp;
 }
 
 /* tslint:disable */

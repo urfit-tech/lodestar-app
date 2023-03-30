@@ -144,7 +144,10 @@ const ProgramContentBlock: React.VFC<{
       !currentMemberId ||
       !isAuthenticated ||
       !hasProgramContentPermission ||
-      (programContentBodyType === 'text' && moment().isBefore(moment(programContent?.publishedAt)))
+      (programContentBodyType &&
+        ['text', 'practice', 'exam'].includes(programContentBodyType) &&
+        moment().isBefore(moment(programContent?.publishedAt))) ||
+      programContent?.publishedAt === null
     ) {
       return
     }
@@ -154,12 +157,9 @@ const ProgramContentBlock: React.VFC<{
       lastProgress: 1,
     }).then(() => refetchProgress())
   }, [
-    initialProgress,
-    insertProgress,
     loadingProgramContent,
     programContentBodyType,
     programContentId,
-    refetchProgress,
     currentMemberId,
     isAuthenticated,
     hasProgramContentPermission,
@@ -193,6 +193,12 @@ const ProgramContentBlock: React.VFC<{
       currentIndex >= 0 && playInBackground?.(currentIndex)
     }
   }, [programId])
+
+  useEffect(() => {
+    if (resourceList.length === 0) {
+      refetchProgress?.()
+    }
+  }, [resourceList])
 
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -378,6 +384,7 @@ const ProgramContentBlock: React.VFC<{
                             target: content.id,
                           })) || [],
                       )
+                      refetchProgress()
                       const currentIndex = programContentList.findIndex(content => content.id === programContentId)
                       currentIndex >= 0 && playInBackground?.(currentIndex)
                     }
