@@ -489,21 +489,24 @@ const useSearchProductCollection = (
     tag?: string | null
   },
 ) => {
+  const calcSortWeights = (data: any, columns: string[], searchText: string) => {
+    let weight = 0
+    if (searchText)
+      columns.forEach((column, index) =>
+        data[column] &&
+        typeof data[column] === 'string' &&
+        data[column].toLowerCase().includes(searchText.toLowerCase())
+          ? (weight = weight + Math.pow(index + 2, 3))
+          : null,
+      )
+    return weight
+  }
+
   const sorting = (dataA: any, dataB: any, sorter: string[], search: string) => {
-    const calcSortWeights = (data: any, columns: string[], searchText: string) => {
-      let weight = 0
-      if (searchText)
-        columns.forEach((column, index) =>
-          data[column] && typeof data[column] === 'string' && data[column].includes(searchText)
-            ? (weight = weight + Math.pow(index + 1, 3))
-            : null,
-        )
-      return weight
-    }
     const compareA = calcSortWeights(dataA, sorter, search)
     const compareB = calcSortWeights(dataB, sorter, search)
-    if (compareA > compareB) return 1
-    else if (compareA < compareB) return -1
+    if (compareA > compareB) return -1
+    else if (compareA < compareB) return 1
     else return 0
   }
 
@@ -1057,7 +1060,7 @@ const useSearchProductCollection = (
           })),
           isEnrolled: program.program_enrollments.length > 0,
         }))
-        .sort((a, b) => sorting(a, b, ['instructorsSearchString', 'title', 'description'], filter?.title || '')) || [],
+        .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')) || [],
     programPackages:
       data?.program_package
         .map(programPackage => ({
@@ -1074,7 +1077,7 @@ const useSearchProductCollection = (
             programPackage.program_package_programs.map(v => v.program.program_roles.map(w => w.member?.name)),
           ).toString(),
         }))
-        .sort((a, b) => sorting(a, b, ['instructorsSearchString', 'title', 'description'], filter?.title || '')) || [],
+        .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')) || [],
     activities:
       data?.activity
         .map(activity => ({
@@ -1146,7 +1149,7 @@ const useSearchProductCollection = (
         sorting(
           a,
           b,
-          ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+          ['introductionDesktop', 'introduction', 'description', 'title', 'authorSearchString'],
           filter?.title || '',
         ),
       ),
@@ -1201,9 +1204,6 @@ const useSearchProductCollection = (
         })) ?? [],
     podcastPrograms:
       data?.podcast_program
-        .sort((a, b) =>
-          sorting(a, b, ['instructorsSearchString', 'title', 'description', 'bodyDescription'], filter?.title || ''),
-        )
         .map(podcastProgram => ({
           id: podcastProgram.id,
           coverUrl: podcastProgram.cover_url,
@@ -1235,7 +1235,10 @@ const useSearchProductCollection = (
             .map(podcastPlanEnrollment => podcastPlanEnrollment.podcast_plan?.creator_id)
             .filter(notEmpty)
             .includes(podcastProgram.podcast_program_roles[0].member?.id || ''),
-        })) || [],
+        }))
+        .sort((a, b) =>
+          sorting(a, b, ['bodyDescription', 'description', 'title', 'instructorsSearchString'], filter?.title || ''),
+        ) || [],
     creators:
       data?.member_public.map(member => ({
         id: member.id || '',
@@ -1245,7 +1248,6 @@ const useSearchProductCollection = (
       })) || [],
     merchandises:
       data?.merchandise
-        .sort((a, b) => sorting(a, b, ['title', 'abstract'], filter?.title || ''))
         .map(merchandise => ({
           id: merchandise.id,
           title: merchandise.title,
@@ -1278,7 +1280,8 @@ const useSearchProductCollection = (
             listPrice: spec.list_price,
             salePrice: spec.sale_price,
           })),
-        })) || [],
+        }))
+        .sort((a, b) => sorting(a, b, ['abstract', 'title'], filter?.title || '')) || [],
   }
 
   return {
