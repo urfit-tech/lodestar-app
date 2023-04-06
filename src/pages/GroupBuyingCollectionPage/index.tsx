@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { Skeleton, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { EmptyBlock } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniq } from 'ramda'
@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import types from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
+import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as GroupBuyIcon } from '../../images/group-buy.svg'
 import GroupBuyingDisplayCard from './GroupBuyingDisplayCard'
 
@@ -51,19 +52,10 @@ const messages = defineMessages({
 
 const GroupBuyingCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
-  const { status, groupBuyingOrderCollection, refetch } = useGroupBuyingLogs(currentMemberId)
+  const { currentMemberId, isAuthenticating } = useAuth()
+  const { loading, error, groupBuyingOrderCollection, refetch } = useGroupBuyingLogs(currentMemberId)
 
   const [tab, setTab] = useState('sendable')
-
-  let content = null
-  if (status === 'loading') {
-    content = <Skeleton />
-  }
-
-  if (status === 'error') {
-    content = <div>error...</div>
-  }
 
   const tabContents: {
     key: string
@@ -95,59 +87,73 @@ const GroupBuyingCollectionPage: React.VFC = () => {
     },
   ]
 
-  content = (
-    <Tabs colorScheme="primary">
-      <StyledTabList>
-        {tabContents.map(v => (
-          <Tab key={v.key} onClick={() => setTab(v.key)} isSelected={v.key === tab}>
-            {v.name}
-          </Tab>
-        ))}
-      </StyledTabList>
-
-      <TabPanels>
-        {tabContents.map(v => {
-          const displayOrders = groupBuyingOrderCollection.filter(v.isDisplay)
-
-          return (
-            <StyledTabPanel>
-              {displayOrders.length === 0 ? (
-                <EmptyBlock>{v.emptyText}</EmptyBlock>
-              ) : (
-                <div className="row">
-                  {displayOrders.map(order => (
-                    <div className="col-12 col-md-6 col-lg-4 mb-4" key={order.id}>
-                      <GroupBuyingDisplayCard
-                        orderId={order.id}
-                        imgUrl={order.coverUrl}
-                        title={order.name}
-                        partnerMemberIds={order.partnerMemberIds}
-                        onRefetch={!order.transferredAt ? () => refetch() : null}
-                        transferredAt={order.transferredAt}
-                        sentByCurrentMember={!!order.transferredAt && order.parentOrderMember.id === currentMemberId}
-                        memberEmail={
-                          order.transferredAt &&
-                          (order.parentOrderMember.id === currentMemberId
-                            ? order.member.email
-                            : order.member.id === currentMemberId
-                            ? order.parentOrderMember.email
-                            : null)
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </StyledTabPanel>
-          )
-        })}
-      </TabPanels>
-    </Tabs>
-  )
-
   return (
     <MemberAdminLayout content={{ icon: GroupBuyIcon, title: formatMessage(commonMessages.ui.groupBuying) }}>
-      {content}
+      <Tabs colorScheme="primary">
+        <StyledTabList>
+          {tabContents.map(v => (
+            <Tab key={v.key} onClick={() => setTab(v.key)} isSelected={v.key === tab}>
+              {v.name}
+            </Tab>
+          ))}
+        </StyledTabList>
+
+        <TabPanels>
+          {tabContents.map(v => {
+            const displayOrders = groupBuyingOrderCollection.filter(v.isDisplay)
+
+            return (
+              <StyledTabPanel>
+                {loading || !currentMemberId ? (
+                  <div className="row">
+                    {Array.from(Array(9)).map((v, index) => (
+                      <Box key={index} className="col-12 col-md-6 col-lg-4 mb-4">
+                        <Box
+                          className="p-4"
+                          borderRadius="4px"
+                          h="300px"
+                          bg="#ffffff"
+                          boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.06)"
+                        >
+                          <Box pt={`${900 / 16}%`} bgImg={`${EmptyCover}`} bgSize="cover" bgPosition="center"></Box>
+                        </Box>
+                      </Box>
+                    ))}
+                  </div>
+                ) : error ? (
+                  <>error</>
+                ) : displayOrders.length === 0 ? (
+                  <EmptyBlock>{v.emptyText}</EmptyBlock>
+                ) : (
+                  <div className="row">
+                    {displayOrders.map(order => (
+                      <div className="col-12 col-md-6 col-lg-4 mb-4" key={order.id}>
+                        <GroupBuyingDisplayCard
+                          orderId={order.id}
+                          imgUrl={order.coverUrl}
+                          title={order.name}
+                          partnerMemberIds={order.partnerMemberIds}
+                          onRefetch={!order.transferredAt ? () => refetch() : null}
+                          transferredAt={order.transferredAt}
+                          sentByCurrentMember={!!order.transferredAt && order.parentOrderMember.id === currentMemberId}
+                          memberEmail={
+                            order.transferredAt &&
+                            (order.parentOrderMember.id === currentMemberId
+                              ? order.member.email
+                              : order.member.id === currentMemberId
+                              ? order.parentOrderMember.email
+                              : null)
+                          }
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </StyledTabPanel>
+            )
+          })}
+        </TabPanels>
+      </Tabs>
     </MemberAdminLayout>
   )
 }
@@ -187,31 +193,28 @@ const useGroupBuyingLogs = (memberId: string | null) => {
     },
   )
 
-  const status: 'loading' | 'error' | 'completed' = !memberId || loading ? 'loading' : error ? 'error' : 'completed'
-
   const groupBuyingOrderCollection: groupBuyingOrderProps[] =
-    memberId && data
-      ? data.order_group_buying_log.map(v => ({
-          id: v.order_id || '',
-          parentOrderMember: {
-            id: v.parent_order_member_id || '',
-            email: v.parent_order_member_email || '',
-          },
-          member: {
-            id: v.member_id || '',
-            email: v.member_email || '',
-          },
-          name: v.name || '',
-          startedAt: v.started_at ? new Date(v.started_at) : null,
-          endedAt: v.ended_at ? new Date(v.ended_at) : null,
-          transferredAt: v.transferred_at ? new Date(v.transferred_at) : null,
-          coverUrl: v.cover_url || '',
-          partnerMemberIds: uniq(v.parent_order_log?.sub_order_logs.map(v => v.member_id) || []),
-        }))
-      : []
-
+    data?.order_group_buying_log.map(v => ({
+      id: v.order_id || '',
+      parentOrderMember: {
+        id: v.parent_order_member_id || '',
+        email: v.parent_order_member_email || '',
+      },
+      member: {
+        id: v.member_id || '',
+        email: v.member_email || '',
+      },
+      name: v.name || '',
+      startedAt: v.started_at ? new Date(v.started_at) : null,
+      endedAt: v.ended_at ? new Date(v.ended_at) : null,
+      transferredAt: v.transferred_at ? new Date(v.transferred_at) : null,
+      coverUrl: v.cover_url || '',
+      partnerMemberIds: uniq(v.parent_order_log?.sub_order_logs.map(v => v.member_id) || []),
+    })) || []
+  console.log({ loading, error, data })
   return {
-    status,
+    loading,
+    error,
     groupBuyingOrderCollection,
     refetch,
   }
