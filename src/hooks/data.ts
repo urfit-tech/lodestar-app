@@ -6,6 +6,7 @@ import { ProductType } from 'lodestar-app-element/src/types/product'
 import { sum } from 'ramda'
 import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
+import { v4 as uuid } from 'uuid'
 import LocaleContext from '../contexts/LocaleContext'
 import { GET_NOTIFICATIONS, NotificationProps } from '../contexts/NotificationContext'
 import hasura from '../hasura'
@@ -224,21 +225,11 @@ export const useUploadAttachments = () => {
   `)
 
   return async (type: string, target: string, files: File[]) => {
-    const { data } = await insertAttachment({
-      variables: {
-        attachments: files.map(() => ({
-          type,
-          target,
-          app_id: appId,
-        })),
-      },
-    })
-
-    const attachmentIds: string[] = data?.insert_attachment?.returning.map((v: any) => v.id) || []
-
+    const attachmentIds: string[] = []
     try {
       for (let index = 0; files[index]; index++) {
-        const attachmentId = attachmentIds[index]
+        const attachmentId = uuid()
+        attachmentIds.push(attachmentId)
         const file = files[index]
         await uploadFile(`attachments/${attachmentId}`, file, authToken)
         await insertAttachment({
@@ -246,6 +237,8 @@ export const useUploadAttachments = () => {
             attachments: [
               {
                 id: attachmentId,
+                type,
+                target,
                 data: {
                   lastModified: file.lastModified,
                   name: file.name,
