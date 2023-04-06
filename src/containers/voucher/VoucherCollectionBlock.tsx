@@ -110,7 +110,7 @@ const VoucherCollectionBlock: React.VFC = () => {
 const exchangeVoucherCode = async (authToken: string | null, voucherId: string, selectedProductIds: string[]) => {
   const { ip, country, countryCode } = await fetchCurrentGeolocation()
   return axios.post(
-    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/order`,
+    `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
     {
       paymentModel: { type: 'perpetual' },
       discountId: `Voucher_${voucherId}`,

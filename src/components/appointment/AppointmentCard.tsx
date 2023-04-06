@@ -238,50 +238,50 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
               type="primary"
               onClick={async () => {
                 if (enabledModules.meet_service) {
-                  if (enabledModules.meet_service) {
-                    const { data } = await apolloClient.query<
-                      hasura.GET_APPOINTMENT_PERIOD_MEET_ID,
-                      hasura.GET_APPOINTMENT_PERIOD_MEET_IDVariables
-                    >({
-                      query: gql`
-                        query GET_APPOINTMENT_PERIOD_MEET_ID($orderProductId: uuid!) {
-                          order_product(where: { id: { _eq: $orderProductId } }) {
-                            id
-                            options
-                          }
+                  const { data } = await apolloClient.query<
+                    hasura.GET_APPOINTMENT_PERIOD_MEET_ID,
+                    hasura.GET_APPOINTMENT_PERIOD_MEET_IDVariables
+                  >({
+                    query: gql`
+                      query GET_APPOINTMENT_PERIOD_MEET_ID($orderProductId: uuid!) {
+                        order_product(where: { id: { _eq: $orderProductId } }) {
+                          id
+                          options
                         }
-                      `,
-                      variables: { orderProductId: orderProduct.id },
-                    })
-                    const meetId = data.order_product?.[0]?.options?.meetId
+                      }
+                    `,
+                    variables: { orderProductId: orderProduct.id },
+                  })
+                  const meetId = data.order_product?.[0]?.options?.meetId
 
-                    try {
-                      await axios
-                        .post(
-                          `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/kolable/meets/${meetId}`,
-                          {
-                            role: 'guest',
-                            name: `${appId}-${currentMemberId}`,
+                  try {
+                    await axios
+                      .post(
+                        `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/kolable/meets/${meetId}`,
+                        {
+                          role: 'guest',
+                          name: `${appId}-${currentMemberId}`,
+                        },
+                        {
+                          headers: {
+                            Authorization: `Bearer ${authToken}`,
+                            'x-api-key': 'kolable',
                           },
-                          {
-                            headers: {
-                              Authorization: `Bearer ${authToken}`,
-                              'x-api-key': 'kolable',
-                            },
-                          },
-                        )
-                        .then(({ data: { code, message, data } }) => window.open(data.options.startUrl))
-                    } catch (error) {
-                      console.log(`get meets error: ${error}`)
-                      window.open(
-                        `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}"`,
+                        },
                       )
-                    }
-                  } else {
+                      .then(({ data: { code, message, data } }) =>
+                        window.open(data.target, '_blank', 'noopener=yes,noreferrer=yes'),
+                      )
+                  } catch (error) {
+                    console.log(`get meets error: ${error}`)
                     window.open(
-                      `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}"`,
+                      `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
                     )
                   }
+                } else {
+                  window.open(
+                    `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
+                  )
                 }
               }}
             >

@@ -12482,6 +12482,7 @@ export interface SEARCH_PRODUCT_COLLECTION_program {
   cover_thumbnail_url: string | null;
   title: string;
   abstract: string | null;
+  description: string | null;
   published_at: any | null;
   is_subscription: boolean;
   list_price: any | null;
@@ -12504,6 +12505,57 @@ export interface SEARCH_PRODUCT_COLLECTION_program {
    * An array relationship
    */
   program_enrollments: SEARCH_PRODUCT_COLLECTION_program_program_enrollments[];
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_program_package_program_package_programs_program_program_roles_member {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_program_package_program_package_programs_program_program_roles {
+  __typename: "program_role";
+  id: any;
+  /**
+   * An object relationship
+   */
+  member: SEARCH_PRODUCT_COLLECTION_program_package_program_package_programs_program_program_roles_member | null;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_program_package_program_package_programs_program {
+  __typename: "program";
+  id: any;
+  /**
+   * An array relationship
+   */
+  program_roles: SEARCH_PRODUCT_COLLECTION_program_package_program_package_programs_program_program_roles[];
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_program_package_program_package_programs {
+  __typename: "program_package_program";
+  id: any;
+  /**
+   * An object relationship
+   */
+  program: SEARCH_PRODUCT_COLLECTION_program_package_program_package_programs_program;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_program_package {
+  __typename: "program_package";
+  id: any;
+  cover_url: string | null;
+  title: string;
+  description: string | null;
+  /**
+   * An array relationship
+   */
+  program_package_programs: SEARCH_PRODUCT_COLLECTION_program_package_program_package_programs[];
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_activity_organizer {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
 }
 
 export interface SEARCH_PRODUCT_COLLECTION_activity_activity_categories_category {
@@ -12592,10 +12644,15 @@ export interface SEARCH_PRODUCT_COLLECTION_activity {
   id: any;
   cover_url: string | null;
   title: string;
+  description: string | null;
   published_at: any | null;
   is_participants_visible: boolean;
   organizer_id: string;
   support_locales: any | null;
+  /**
+   * An object relationship
+   */
+  organizer: SEARCH_PRODUCT_COLLECTION_activity_organizer | null;
   /**
    * An array relationship
    */
@@ -12614,149 +12671,19 @@ export interface SEARCH_PRODUCT_COLLECTION_activity {
   activity_tickets_aggregate: SEARCH_PRODUCT_COLLECTION_activity_activity_tickets_aggregate;
 }
 
-export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_roles_member {
+export interface SEARCH_PRODUCT_COLLECTION_project_project_roles_member {
   __typename: "member_public";
   id: string | null;
-  picture_url: string | null;
-  username: string | null;
   name: string | null;
 }
 
-export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_roles {
-  __typename: "podcast_program_role";
+export interface SEARCH_PRODUCT_COLLECTION_project_project_roles {
+  __typename: "project_role";
   id: any;
   /**
    * An object relationship
    */
-  member: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_roles_member | null;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_categories {
-  __typename: "podcast_program_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_categories_category;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_enrollments {
-  __typename: "podcast_program_enrollment";
-  member_id: string | null;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_podcast_program {
-  __typename: "podcast_program";
-  id: any;
-  cover_url: string | null;
-  title: string;
-  abstract: string | null;
-  duration: any;
-  duration_second: any;
-  published_at: any | null;
-  list_price: any;
-  sale_price: any | null;
-  sold_at: any | null;
-  /**
-   * An array relationship
-   */
-  podcast_program_roles: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_roles[];
-  /**
-   * An array relationship
-   */
-  podcast_program_categories: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_categories[];
-  /**
-   * An array relationship
-   */
-  podcast_program_enrollments: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_enrollments[];
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_podcast_plan_enrollment_podcast_plan {
-  __typename: "podcast_plan";
-  id: any;
-  creator_id: string;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_podcast_plan_enrollment {
-  __typename: "podcast_plan_enrollment";
-  podcast_plan_id: any | null;
-  /**
-   * An object relationship
-   */
-  podcast_plan: SEARCH_PRODUCT_COLLECTION_podcast_plan_enrollment_podcast_plan | null;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_member_public {
-  __typename: "member_public";
-  id: string | null;
-  picture_url: string | null;
-  name: string | null;
-  username: string | null;
-  abstract: string | null;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_tags {
-  __typename: "merchandise_tag";
-  tag_name: string;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_categories_category {
-  __typename: "category";
-  id: string;
-  name: string;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_categories {
-  __typename: "merchandise_category";
-  id: any;
-  /**
-   * An object relationship
-   */
-  category: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_categories_category;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_imgs {
-  __typename: "merchandise_img";
-  id: any;
-  url: string;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_specs {
-  __typename: "merchandise_spec";
-  id: any;
-  title: string;
-  list_price: any;
-  sale_price: any | null;
-}
-
-export interface SEARCH_PRODUCT_COLLECTION_merchandise {
-  __typename: "merchandise";
-  id: any;
-  title: string;
-  sold_at: any | null;
-  currency_id: string;
-  /**
-   * An array relationship
-   */
-  merchandise_tags: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_tags[];
-  /**
-   * An array relationship
-   */
-  merchandise_categories: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_categories[];
-  /**
-   * An array relationship
-   */
-  merchandise_imgs: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_imgs[];
-  /**
-   * An array relationship
-   */
-  merchandise_specs: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_specs[];
+  member: SEARCH_PRODUCT_COLLECTION_project_project_roles_member | null;
 }
 
 export interface SEARCH_PRODUCT_COLLECTION_project_project_categories_category {
@@ -12837,6 +12764,7 @@ export interface SEARCH_PRODUCT_COLLECTION_project {
   preview_url: string | null;
   abstract: string | null;
   introduction: string | null;
+  introduction_desktop: string | null;
   description: string | null;
   /**
    * funds / participants
@@ -12846,6 +12774,10 @@ export interface SEARCH_PRODUCT_COLLECTION_project {
   expired_at: any | null;
   is_participants_visible: boolean;
   is_countdown_timer_visible: boolean;
+  /**
+   * An array relationship
+   */
+  project_roles: SEARCH_PRODUCT_COLLECTION_project_project_roles[];
   /**
    * An array relationship
    */
@@ -12864,10 +12796,20 @@ export interface SEARCH_PRODUCT_COLLECTION_project {
   author: SEARCH_PRODUCT_COLLECTION_project_author[];
 }
 
+export interface SEARCH_PRODUCT_COLLECTION_post_post_roles_member {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+}
+
 export interface SEARCH_PRODUCT_COLLECTION_post_post_roles {
   __typename: "post_role";
   id: any;
   member_id: string;
+  /**
+   * An object relationship
+   */
+  member: SEARCH_PRODUCT_COLLECTION_post_post_roles_member | null;
 }
 
 export interface SEARCH_PRODUCT_COLLECTION_post {
@@ -12875,6 +12817,7 @@ export interface SEARCH_PRODUCT_COLLECTION_post {
   id: any;
   code_name: string | null;
   title: string;
+  description: string | null;
   cover_url: string | null;
   video_url: string | null;
   published_at: any | null;
@@ -12884,11 +12827,160 @@ export interface SEARCH_PRODUCT_COLLECTION_post {
   post_roles: SEARCH_PRODUCT_COLLECTION_post_post_roles[];
 }
 
-export interface SEARCH_PRODUCT_COLLECTION_program_package {
-  __typename: "program_package";
+export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_body {
+  __typename: "podcast_program_body";
+  id: any;
+  description: string | null;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_roles_member {
+  __typename: "member_public";
+  id: string | null;
+  picture_url: string | null;
+  username: string | null;
+  name: string | null;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_roles {
+  __typename: "podcast_program_role";
+  id: any;
+  /**
+   * An object relationship
+   */
+  member: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_roles_member | null;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_categories {
+  __typename: "podcast_program_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_categories_category;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_enrollments {
+  __typename: "podcast_program_enrollment";
+  member_id: string | null;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_podcast_program {
+  __typename: "podcast_program";
   id: any;
   cover_url: string | null;
   title: string;
+  abstract: string | null;
+  duration: any;
+  duration_second: any;
+  published_at: any | null;
+  list_price: any;
+  sale_price: any | null;
+  sold_at: any | null;
+  /**
+   * An object relationship
+   */
+  podcast_program_body: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_body | null;
+  /**
+   * An array relationship
+   */
+  podcast_program_roles: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_roles[];
+  /**
+   * An array relationship
+   */
+  podcast_program_categories: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_categories[];
+  /**
+   * An array relationship
+   */
+  podcast_program_enrollments: SEARCH_PRODUCT_COLLECTION_podcast_program_podcast_program_enrollments[];
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_podcast_plan_enrollment_podcast_plan {
+  __typename: "podcast_plan";
+  id: any;
+  creator_id: string;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_podcast_plan_enrollment {
+  __typename: "podcast_plan_enrollment";
+  podcast_plan_id: any | null;
+  /**
+   * An object relationship
+   */
+  podcast_plan: SEARCH_PRODUCT_COLLECTION_podcast_plan_enrollment_podcast_plan | null;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_member_public {
+  __typename: "member_public";
+  id: string | null;
+  picture_url: string | null;
+  name: string | null;
+  username: string | null;
+  abstract: string | null;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_tags {
+  __typename: "merchandise_tag";
+  tag_name: string;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_categories_category {
+  __typename: "category";
+  id: string;
+  name: string;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_categories {
+  __typename: "merchandise_category";
+  id: any;
+  /**
+   * An object relationship
+   */
+  category: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_categories_category;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_imgs {
+  __typename: "merchandise_img";
+  id: any;
+  url: string;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_specs {
+  __typename: "merchandise_spec";
+  id: any;
+  title: string;
+  list_price: any;
+  sale_price: any | null;
+}
+
+export interface SEARCH_PRODUCT_COLLECTION_merchandise {
+  __typename: "merchandise";
+  id: any;
+  title: string;
+  abstract: string | null;
+  sold_at: any | null;
+  currency_id: string;
+  /**
+   * An array relationship
+   */
+  merchandise_tags: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_tags[];
+  /**
+   * An array relationship
+   */
+  merchandise_categories: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_categories[];
+  /**
+   * An array relationship
+   */
+  merchandise_imgs: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_imgs[];
+  /**
+   * An array relationship
+   */
+  merchandise_specs: SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_specs[];
 }
 
 export interface SEARCH_PRODUCT_COLLECTION {
@@ -12897,9 +12989,21 @@ export interface SEARCH_PRODUCT_COLLECTION {
    */
   program: SEARCH_PRODUCT_COLLECTION_program[];
   /**
+   * fetch data from the table: "program_package"
+   */
+  program_package: SEARCH_PRODUCT_COLLECTION_program_package[];
+  /**
    * fetch data from the table: "activity"
    */
   activity: SEARCH_PRODUCT_COLLECTION_activity[];
+  /**
+   * fetch data from the table: "project"
+   */
+  project: SEARCH_PRODUCT_COLLECTION_project[];
+  /**
+   * fetch data from the table: "post"
+   */
+  post: SEARCH_PRODUCT_COLLECTION_post[];
   /**
    * fetch data from the table: "podcast_program"
    */
@@ -12916,18 +13020,6 @@ export interface SEARCH_PRODUCT_COLLECTION {
    * fetch data from the table: "merchandise"
    */
   merchandise: SEARCH_PRODUCT_COLLECTION_merchandise[];
-  /**
-   * fetch data from the table: "project"
-   */
-  project: SEARCH_PRODUCT_COLLECTION_project[];
-  /**
-   * fetch data from the table: "post"
-   */
-  post: SEARCH_PRODUCT_COLLECTION_post[];
-  /**
-   * fetch data from the table: "program_package"
-   */
-  program_package: SEARCH_PRODUCT_COLLECTION_program_package[];
 }
 
 export interface SEARCH_PRODUCT_COLLECTIONVariables {
