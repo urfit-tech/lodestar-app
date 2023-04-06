@@ -531,6 +531,7 @@ const useSearchProductCollection = (
               { title: { _ilike: $title } }
               { description: { _ilike: $description } }
               { program_tags: { tag_name: { _eq: $tag } } }
+              { program_roles: { name: { _eq: "instructor" }, member: { name: { _ilike: $title } } } }
             ]
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
@@ -594,7 +595,15 @@ const useSearchProductCollection = (
         program_package(
           where: {
             published_at: { _is_null: false }
-            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $description } }]
+            _or: [
+              { title: { _ilike: $title } }
+              { description: { _ilike: $description } }
+              {
+                program_package_programs: {
+                  program: { program_roles: { name: { _eq: "instructor" }, member: { name: { _ilike: $title } } } }
+                }
+              }
+            ]
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
@@ -620,7 +629,11 @@ const useSearchProductCollection = (
           where: {
             published_at: { _is_null: false }
             is_private: { _eq: false }
-            _or: [{ title: { _ilike: $title } }, { description: { _ilike: $description } }]
+            _or: [
+              { title: { _ilike: $title } }
+              { description: { _ilike: $description } }
+              { organizer: { name: { _ilike: $title } } }
+            ]
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
@@ -786,6 +799,7 @@ const useSearchProductCollection = (
               { title: { _ilike: $title } }
               { podcast_program_body: { description: { _ilike: $description } } }
               { podcast_program_tags: { tag_name: { _eq: $tag } } }
+              { podcast_program_roles: { name: { _eq: "instructor" }, member: { name: { _ilike: $title } } } }
             ]
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
@@ -859,7 +873,11 @@ const useSearchProductCollection = (
           where: {
             published_at: { _is_null: false }
             is_deleted: { _eq: false }
-            _or: [{ title: { _ilike: $title } }, { merchandise_tags: { tag_name: { _eq: $tag } } }]
+            _or: [
+              { title: { _ilike: $title } }
+              { merchandise_tags: { tag_name: { _eq: $tag } } }
+              { member: { name: { _ilike: $title } } }
+            ]
           }
           order_by: [{ published_at: desc }, { created_at: desc }]
         ) {
@@ -868,6 +886,10 @@ const useSearchProductCollection = (
           abstract
           sold_at
           currency_id
+          member {
+            id
+            name
+          }
           merchandise_tags(order_by: { position: asc }) {
             tag_name
           }
@@ -987,7 +1009,7 @@ const useSearchProductCollection = (
       name: string
       abstract: string | null
     }[]
-    merchandises: (MerchandiseBriefProps & { abstract: string })[]
+    merchandises: (MerchandiseBriefProps & { shopkeeper: string; abstract: string })[]
     fundingProjects: (ProjectIntroProps & { authorSearchString: string })[]
     preOrderProjects: (ProjectIntroProps & { authorSearchString: string })[]
     portfolioProjects: (ProjectIntroProps & { authorSearchString: string })[]
@@ -1159,7 +1181,7 @@ const useSearchProductCollection = (
         sorting(
           a,
           b,
-          ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+          ['introductionDesktop', 'introduction', 'description', 'title', 'authorSearchString'],
           filter?.title || '',
         ),
       ),
@@ -1169,7 +1191,7 @@ const useSearchProductCollection = (
         sorting(
           a,
           b,
-          ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+          ['introductionDesktop', 'introduction', 'description', 'title', 'authorSearchString'],
           filter?.title || '',
         ),
       ),
@@ -1179,13 +1201,12 @@ const useSearchProductCollection = (
         sorting(
           a,
           b,
-          ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
+          ['introductionDesktop', 'introduction', 'description', 'title', 'authorSearchString'],
           filter?.title || '',
         ),
       ),
     posts:
       data?.post
-        .sort((a, b) => sorting(a, b, ['authorSearchString', 'title', 'description'], filter?.title || ''))
         .map(post => ({
           id: post.id,
           codeName: post.code_name,
@@ -1201,7 +1222,8 @@ const useSearchProductCollection = (
                   ?.blocks.map((v: any) => v?.text)
                   .toString()
               : '',
-        })) ?? [],
+        }))
+        .sort((a, b) => sorting(a, b, ['description', 'title', 'authorSearchString'], filter?.title || '')) || [],
     podcastPrograms:
       data?.podcast_program
         .map(podcastProgram => ({
@@ -1250,6 +1272,7 @@ const useSearchProductCollection = (
       data?.merchandise
         .map(merchandise => ({
           id: merchandise.id,
+          shopkeeper: merchandise.member?.name || '',
           title: merchandise.title,
           abstract: merchandise.abstract || '',
           soldAt: merchandise.sold_at ? new Date(merchandise.sold_at) : null,
@@ -1281,7 +1304,7 @@ const useSearchProductCollection = (
             salePrice: spec.sale_price,
           })),
         }))
-        .sort((a, b) => sorting(a, b, ['abstract', 'title'], filter?.title || '')) || [],
+        .sort((a, b) => sorting(a, b, ['shopkeeper', 'abstract', 'title'], filter?.title || '')) || [],
   }
 
   return {

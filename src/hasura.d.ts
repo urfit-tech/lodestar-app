@@ -12924,6 +12924,12 @@ export interface SEARCH_PRODUCT_COLLECTION_member_public {
   abstract: string | null;
 }
 
+export interface SEARCH_PRODUCT_COLLECTION_merchandise_member {
+  __typename: "member_public";
+  id: string | null;
+  name: string | null;
+}
+
 export interface SEARCH_PRODUCT_COLLECTION_merchandise_merchandise_tags {
   __typename: "merchandise_tag";
   tag_name: string;
@@ -12965,6 +12971,10 @@ export interface SEARCH_PRODUCT_COLLECTION_merchandise {
   abstract: string | null;
   sold_at: any | null;
   currency_id: string;
+  /**
+   * An object relationship
+   */
+  member: SEARCH_PRODUCT_COLLECTION_merchandise_member | null;
   /**
    * An array relationship
    */
