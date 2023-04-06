@@ -500,16 +500,8 @@ const useSearchProductCollection = (
         )
       return weight
     }
-    const compareA = calcSortWeights(
-      dataA,
-      ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
-      filter?.title || '',
-    )
-    const compareB = calcSortWeights(
-      dataB,
-      ['authorSearchString', 'title', 'description', 'introduction', 'introductionDesktop'],
-      filter?.title || '',
-    )
+    const compareA = calcSortWeights(dataA, sorter, search)
+    const compareB = calcSortWeights(dataB, sorter, search)
     if (compareA > compareB) return 1
     else if (compareA < compareB) return -1
     else return 0
