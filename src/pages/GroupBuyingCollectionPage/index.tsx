@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
+import { Box, Flex, Image, Skeleton, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { EmptyBlock } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniq } from 'ramda'
@@ -52,7 +52,7 @@ const messages = defineMessages({
 
 const GroupBuyingCollectionPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, isAuthenticating } = useAuth()
+  const { currentMemberId } = useAuth()
   const { loading, error, groupBuyingOrderCollection, refetch } = useGroupBuyingLogs(currentMemberId)
 
   const [tab, setTab] = useState('sendable')
@@ -115,13 +115,30 @@ const GroupBuyingCollectionPage: React.VFC = () => {
                           bg="#ffffff"
                           boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.06)"
                         >
-                          <Box pt={`${900 / 16}%`} bgImg={`${EmptyCover}`} bgSize="cover" bgPosition="center"></Box>
+                          <Box mb="1rem" pt={`${900 / 16}%`} position="relative">
+                            <Image
+                              src={EmptyCover}
+                              alt="empty-cover"
+                              top="0"
+                              bgSize="cover"
+                              bgPosition="center"
+                              position="absolute"
+                              w="100%"
+                              h="100%"
+                            />
+                          </Box>
+                          <Skeleton>title</Skeleton>
+                          <Box mt="1rem">
+                            <Skeleton h="40px">button</Skeleton>
+                          </Box>
                         </Box>
                       </Box>
                     ))}
                   </div>
-                ) : error ? (
-                  <>error</>
+                ) : !error ? (
+                  <Flex justifyContent="center" alignItems="center" h="50vh">
+                    error
+                  </Flex>
                 ) : displayOrders.length === 0 ? (
                   <EmptyBlock>{v.emptyText}</EmptyBlock>
                 ) : (
