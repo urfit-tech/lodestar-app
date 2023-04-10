@@ -222,7 +222,7 @@ const GET_PRACTICE = gql`
           }
         }
       }
-      practice_attachments {
+      practice_attachments(where: { data: { _is_null: false } }) {
         attachment_id
         data
         options

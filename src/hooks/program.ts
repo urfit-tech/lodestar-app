@@ -522,7 +522,7 @@ export const GET_PROGRAM_CONTENT = gql`
           data
         }
       }
-      program_content_attachments {
+      program_content_attachments(where: { data: { _is_null: false } }) {
         attachment_id
         data
         options
