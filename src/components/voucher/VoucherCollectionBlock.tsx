@@ -50,7 +50,7 @@ const VoucherCollectionBlock: React.VFC = () => {
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
     await axios
       .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/order`,
+        `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
         {
           paymentModel: { type: 'perpetual' },
           discountId: `Voucher_${voucherId}`,
@@ -69,9 +69,10 @@ const VoucherCollectionBlock: React.VFC = () => {
       })
       .catch(error => handleError(error))
       .finally(() => {
-        setTimeout(() => {
-          window.location.reload()
-        }, 2000)
+        setLoading(false)
+        //   setTimeout(() => {
+        //     window.location.reload()
+        //   }, 2000)
       })
   }
 
