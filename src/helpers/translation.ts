@@ -476,9 +476,6 @@ export const voucherMessages = {
   }),
   content: defineMessages({
     details: { id: 'voucher.content', defaultMessage: '詳情' },
-    fromNow: { id: 'voucher.fromNow', defaultMessage: '即日起' },
-    noUsePeriod: { id: 'voucher.noUsePeriod', defaultMessage: '無使用期限' },
-    redeemable: { id: 'voucher.redeemable', defaultMessage: '可兌換' },
     amount: { id: 'voucher.amount', defaultMessage: '數量' },
     editProject: { id: 'voucher.modal.project.edit', defaultMessage: '編輯方案' },
   }),
@@ -504,7 +501,6 @@ export const voucherMessages = {
   messages: {
     addVoucher: { id: 'common.message.success.addVoucher', defaultMessage: '成功加入兌換券' },
     addVoucherError: { id: 'common.message.error.voucher.add.unable', defaultMessage: '無法加入兌換券' },
-    exchangeVoucher: { id: 'common.message.success.exchangeVoucher', defaultMessage: '兌換成功，請到「我的主頁」查看' },
     useVoucherError: { id: 'common.message.error.voucher.use.unable', defaultMessage: '無法使用兌換券' },
     addVoucherPlan: { id: 'common.message.success', defaultMessage: '已建立兌換方案' },
     addVoucherPlanError: { id: 'common.message.error.voucher.add.fail', defaultMessage: '建立兌換方案失敗' },
