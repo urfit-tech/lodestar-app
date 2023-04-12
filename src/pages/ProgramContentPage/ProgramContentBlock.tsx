@@ -35,9 +35,6 @@ import ProgramContentTabs from './ProgramContentTabs'
 import ProgramContentPageMessages from './translation'
 
 const StyledTitleBlock = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding-bottom: 1.25rem;
   border-bottom: 1px solid #e8e8e8;
 `
@@ -354,8 +351,8 @@ const ProgramContentBlock: React.VFC<{
         <StyledContentBlock className="mb-3">
           {isMobile && enabledModules.background_mode ? (
             <StyledTitleBlock>
-              <StyledMobileTitle>{programContent.title}</StyledMobileTitle>
-              <div>
+              <StyledMobileTitle className="mb-2 text-center">{programContent.title}</StyledMobileTitle>
+              <div className="d-flex justify-content-end">
                 <span className="mr-2">
                   {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
                 </span>
