@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { useApolloClient, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -158,7 +158,7 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         id: data.appointment_plan_by_pk.id,
         productType: 'AppointmentPlan',
         title: data.appointment_plan_by_pk.title,
-        coverUrl: data.appointment_plan_by_pk.creator && data.appointment_plan_by_pk.creator.picture_url,
+        coverUrl: data.appointment_plan_by_pk.creator && data.appointment_plan_by_pk.creator.picture_url || null,
         startedAt: data.appointment_plan_by_pk.appointment_periods[0]?.started_at,
         endedAt: data.appointment_plan_by_pk.appointment_periods[0]?.ended_at,
         isSubscription: false,
@@ -488,7 +488,7 @@ export const useSimpleProductCollection = () => {
               id: data.appointment_plan_by_pk.id,
               productType: 'AppointmentPlan',
               title: data.appointment_plan_by_pk.title,
-              coverUrl: data.appointment_plan_by_pk.creator && data.appointment_plan_by_pk.creator.picture_url,
+              coverUrl: data.appointment_plan_by_pk.creator && data.appointment_plan_by_pk.creator.picture_url || null,
               startedAt: data.appointment_plan_by_pk.appointment_periods[0]?.started_at,
               endedAt: data.appointment_plan_by_pk.appointment_periods[0]?.ended_at,
               isSubscription: false,

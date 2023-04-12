@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
@@ -205,7 +205,7 @@ const useSearchPrograms = (condition: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariable
     data:
       data?.program.map(v => ({
         id: v.id,
-        coverUrl: v.cover_url,
+        coverUrl: v.cover_url || null,
         title: v.title,
         score: v.program_review_score?.score || null,
         categoryNames: uniq(

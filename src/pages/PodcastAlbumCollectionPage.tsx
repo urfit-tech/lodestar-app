@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
@@ -245,7 +245,7 @@ const usePodcastAlbumCollection: (options: { categoryId?: string }) => {
     podcastAlbums:
       data?.podcast_album.map(v => ({
         id: v.id,
-        coverUrl: v.cover_url,
+        coverUrl: v.cover_url || null,
         title: v.title,
         unitCount: v.podcast_album_podcast_programs_aggregate?.aggregate?.count || 0,
         categories: v.podcast_album_categories.map(v => ({

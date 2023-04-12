@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -24,11 +24,11 @@ export const useNotifications = (limit: number) => {
       ? []
       : data.notification.map(notification => ({
           id: notification.id,
-          description: notification.description,
-          type: notification.type,
-          referenceUrl: notification.reference_url,
-          extra: notification.extra,
-          avatar: notification.avatar,
+          description: notification.description || '',
+          type: notification.type || null,
+          referenceUrl: notification.reference_url || null,
+          extra: notification.extra || null,
+          avatar: notification.avatar || null,
           readAt: notification.read_at ? new Date(notification.read_at) : null,
           updatedAt: new Date(notification.updated_at),
         }))
@@ -107,7 +107,7 @@ export const useCouponCollection = (memberId: string) => {
               constraint: coupon.coupon_code.coupon_plan.constraint,
               amount: coupon.coupon_code.coupon_plan.amount,
               title: coupon.coupon_code.coupon_plan.title,
-              description: coupon.coupon_code.coupon_plan.description,
+              description: coupon.coupon_code.coupon_plan.description || '',
               count: 0,
               remaining: 0,
               scope: coupon.coupon_code.coupon_plan.scope,

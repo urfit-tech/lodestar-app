@@ -1,13 +1,8 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import hasura from '../hasura'
-import {
-  AppointmentEnrollment,
-  AppointmentPeriod,
-  AppointmentPlan,
-  ReservationType,
-} from '../types/appointment'
+import { AppointmentEnrollment, AppointmentPeriod, AppointmentPlan, ReservationType } from '../types/appointment'
 
 export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) => {
   const { loading, error, data, refetch } = useQuery<
@@ -52,7 +47,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
       : data.appointment_plan.map(appointmentPlan => ({
           id: appointmentPlan.id,
           title: appointmentPlan.title,
-          description: appointmentPlan.description,
+          description: appointmentPlan.description || '',
           duration: appointmentPlan.duration,
           price: appointmentPlan.price,
           phone: null,
@@ -137,7 +132,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) 
       : {
           id: data.appointment_plan_by_pk.id,
           title: data.appointment_plan_by_pk.title,
-          description: data.appointment_plan_by_pk.description,
+          description: data.appointment_plan_by_pk.description || '',
           duration: data.appointment_plan_by_pk.duration,
           price: data.appointment_plan_by_pk.price,
           phone: null,
@@ -230,7 +225,7 @@ export const useEnrolledAppointmentCollection = (memberId: string) => {
               enrollment.order_product.deliverables &&
               enrollment.order_product.deliverables['join_url']) ||
             '',
-          appointmentIssue: enrollment.issue,
+          appointmentIssue: enrollment.issue || null,
           orderProduct: {
             id: enrollment.order_product_id,
             options: enrollment.order_product?.options,

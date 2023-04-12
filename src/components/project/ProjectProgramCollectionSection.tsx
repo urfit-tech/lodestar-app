@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
@@ -147,7 +147,7 @@ const useEnrolledPrivateTeachProgram = (memberId: string, programCategory: strin
       .map(programPlan => ({
         id: programPlan.program_plan?.program.id || '',
         title: programPlan.program_plan?.program.title || '',
-        coverUrl: programPlan.program_plan?.program.cover_url,
+        coverUrl: programPlan.program_plan?.program.cover_url || null,
         categories:
           programPlan.program_plan?.program?.program_categories
             .map(programCategory => ({

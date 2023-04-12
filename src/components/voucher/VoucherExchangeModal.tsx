@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Button, Divider, Icon, Spinner } from '@chakra-ui/react'
 import { Checkbox, Modal } from 'antd'
 import { gql } from 'graphql-tag'

@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import React from 'react'
 import ProjectPlanCollectionBlockComponent, {
@@ -24,7 +24,7 @@ const ProjectPlanCollectionBlock: React.VFC<{
               ? {
                   id: projectPlan.project_plan.id,
                   title: projectPlan.project_plan.title,
-                  description: projectPlan.project_plan.description,
+                  description: projectPlan.project_plan.description || '',
                   project: {
                     id: projectPlan.project_plan.project.id,
                     title: projectPlan.project_plan.project.title,

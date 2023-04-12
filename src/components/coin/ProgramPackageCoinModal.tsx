@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Button, Divider } from '@chakra-ui/react'
 import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
@@ -294,7 +294,7 @@ const useProgramPackageProgramCollection = (programPackageId: string, periodAmou
             : null,
           programs: data.program_package_by_pk.program_package_programs.map(v => ({
             id: v.program.id,
-            coverUrl: v.program.cover_url,
+            coverUrl: v.program.cover_url || null,
             title: v.program.title,
             plan: v.program.program_plans[0]
               ? {

@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { Button, Divider, Menu, MenuButton, MenuItem, MenuList, Progress, Spinner } from '@chakra-ui/react'
 import gql from 'graphql-tag'

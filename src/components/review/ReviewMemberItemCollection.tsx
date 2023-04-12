@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -162,10 +162,10 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
   const memberReviews: (ReviewProps & { isLiked: boolean; reactionCount: number })[] =
     data?.review_public.map(v => ({
       id: v.id,
-      memberId: v.member_id,
+      memberId: v.member_id || null,
       score: v.score,
-      title: v.title,
-      content: v.content,
+      title: v.title || null,
+      content: v.content || null,
       createdAt: new Date(v.created_at),
       updatedAt: new Date(v.updated_at),
       isLiked: v.review_reactions?.[0]?.member_id === currentMemberId,
@@ -174,7 +174,7 @@ const useReviewMemberCollection = (path: string, appId: string, currentMemberId:
         id: v.id,
         reviewReplyMemberId: v.member?.id,
         memberRole: v.member?.role,
-        content: v.content,
+        content: v.content || null,
         createdAt: new Date(v.created_at),
         updatedAt: new Date(v.updated_at),
       })),

@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Icon, LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText, Switch } from '@chakra-ui/react'
 import axios from 'axios'

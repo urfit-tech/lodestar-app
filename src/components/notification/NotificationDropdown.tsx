@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation } from '@apollo/client'
 import { Button, Icon } from '@chakra-ui/react'
 import { Badge, List, Popover } from 'antd'
 import gql from 'graphql-tag'

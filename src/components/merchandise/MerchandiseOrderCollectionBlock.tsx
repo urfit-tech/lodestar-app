@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'

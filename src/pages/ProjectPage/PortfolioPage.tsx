@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Box, Divider, Flex, Icon, Image, Spacer } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { gql } from 'graphql-tag'

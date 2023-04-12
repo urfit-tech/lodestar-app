@@ -1,6 +1,6 @@
+import { ApolloError } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Spinner } from '@chakra-ui/react'
-import { ApolloError } from 'apollo-client/errors/ApolloError'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import moment, { Moment } from 'moment'

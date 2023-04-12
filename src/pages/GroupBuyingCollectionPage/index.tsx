@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Skeleton, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { EmptyBlock } from 'lodestar-app-element/src/components/common'

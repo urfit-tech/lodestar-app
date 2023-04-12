@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Divider, Icon } from '@chakra-ui/react'
 import { Skeleton } from 'antd'
 import gql from 'graphql-tag'
@@ -168,8 +168,8 @@ const useEnrolledMembers = (targetId: string) => {
     { variables: { targetId } },
   )
   const enrolledMembers: (string | null)[] = [
-    ...(data?.program_enrollment?.map(v => v.member_id) || []),
-    ...(data?.program_plan_enrollment?.map(v => v.member_id) || []),
+    ...(data?.program_enrollment?.map(v => v.member_id || null) || []),
+    ...(data?.program_plan_enrollment?.map(v => v.member_id || null) || []),
   ]
 
   return {
@@ -206,8 +206,8 @@ const useCurrentMemberReview = (currentMemberId: string | null, path: string, ap
       memberId: v.member_id,
       score: v.score,
       title: v.title,
-      content: v.content,
-      privateContent: v.private_content,
+      content: v.content || null,
+      privateContent: v.private_content || null,
     })) || []
 
   return {

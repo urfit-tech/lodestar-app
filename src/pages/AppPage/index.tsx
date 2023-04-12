@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Editor, Frame } from '@craftjs/core'
 import Axios from 'axios'
 import gql from 'graphql-tag'
@@ -336,13 +336,13 @@ export const usePage = (path: string) => {
   } | null = data?.app_page[0]
     ? {
         id: data.app_page[0].id,
-        title: data.app_page[0].title,
-        path: data.app_page[0].path,
+        title: data.app_page[0].title || '',
+        path: data.app_page[0].path || '',
         craftData: data.app_page[0].craft_data,
         options: data.app_page[0].options || null,
         metaTag: data.app_page[0].meta_tag || null,
         appPageSections: data.app_page[0]
-          ? data.app_page[0].app_page_sections.map((v: { id: string; options: any; type: string }) => ({
+          ? data.app_page[0].app_page_sections.map(v => ({
               id: v.id,
               options: v.options,
               type: v.type as SectionType,

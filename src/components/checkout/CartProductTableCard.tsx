@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Button, Divider, Icon, SkeletonText } from '@chakra-ui/react'
 import { List } from 'antd'
 import { CardProps } from 'antd/lib/card'

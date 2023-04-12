@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { HStack, SkeletonText, useRadioGroup } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import gql from 'graphql-tag'

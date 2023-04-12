@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { sum, uniqBy } from 'ramda'
 import hasura from '../hasura'
@@ -66,22 +66,21 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
       ? {
           id: '',
           title: '',
-          coverUrl: '',
+          coverUrl: null,
           description: null,
-          metaTag: null,
           plans: [],
           programs: [],
         }
       : {
           id: programPackageId,
           title: data.program_package_by_pk.title,
-          coverUrl: data.program_package_by_pk.cover_url,
-          description: data.program_package_by_pk.description,
+          coverUrl: data.program_package_by_pk.cover_url || null,
+          description: data.program_package_by_pk.description || '',
           metaTag: data.program_package_by_pk.meta_tag,
           plans: data.program_package_by_pk.program_package_plans.map(programPackagePlan => ({
             id: programPackagePlan.id,
             title: programPackagePlan.title,
-            description: programPackagePlan.description,
+            description: programPackagePlan.description || '',
             isSubscription: programPackagePlan.is_subscription,
             isParticipantsVisible: programPackagePlan.is_participants_visible,
             periodAmount: programPackagePlan.period_amount,
@@ -95,7 +94,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
           programs: data.program_package_by_pk.program_package_programs.map(packageProgram => ({
             id: packageProgram.program.id,
             title: packageProgram.program.title,
-            coverUrl: packageProgram.program.cover_url,
+            coverUrl: packageProgram.program.cover_url || null,
             categories: packageProgram.program.program_categories.map(programCategory => ({
               id: programCategory.category.id,
               name: programCategory.category.name,

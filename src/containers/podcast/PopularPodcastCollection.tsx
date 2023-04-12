@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import { flatten, uniqBy } from 'ramda'
@@ -48,7 +48,7 @@ const PopularPodcastCollection: React.VFC = () => {
             data.podcast_program.map(podcastProgram =>
               podcastProgram.podcast_program_roles.map(role => ({
                 id: role.member?.id || '',
-                avatarUrl: role.member?.picture_url,
+                avatarUrl: role.member?.picture_url || null,
                 name: role.member?.name || '',
               })),
             ),

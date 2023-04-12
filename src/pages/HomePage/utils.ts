@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { sum } from 'ramda'
 import hasura from '../../hasura'
@@ -121,7 +121,7 @@ const useLastWatchedProgramContents = () => {
         programId: programContentProgress.program_content.program_content_section.program.id,
         id: programContentProgress.program_content.id,
         title: programContentProgress.program_content.title,
-        coverUrl: programContentProgress.program_content.program_content_section.program.cover_url,
+        coverUrl: programContentProgress.program_content.program_content_section.program.cover_url || null,
         type: programContentProgress.program_content.program_content_type?.type as 'video' | 'text' | null,
         duration: programContentProgress.program_content.duration || 0,
         progress: programContentProgress.progress * 100,
@@ -158,11 +158,11 @@ const useLatestPrograms: () => {
     latestPrograms:
       data?.latestUpdatedProgram.map(program => ({
         id: program.id,
-        coverUrl: program.cover_url,
-        coverMobileUrl: program.cover_mobile_url,
-        coverThumbnailUrl: program.cover_thumbnail_url,
+        coverUrl: program.cover_url || null,
+        coverMobileUrl: program.cover_mobile_url || null,
+        coverThumbnailUrl: program.cover_thumbnail_url || null,
         title: program.title,
-        abstract: program.abstract,
+        abstract: program.abstract || '',
         supportLocales: program.support_locales,
         publishedAt: program.published_at && new Date(program.published_at),
         isSubscription: program.is_subscription,
@@ -194,7 +194,7 @@ const useLatestPrograms: () => {
           id: programPlan.id,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
-          description: programPlan.description,
+          description: programPlan.description || '',
           gains: programPlan.gains,
           currency: {
             id: programPlan.currency.id,
@@ -259,9 +259,9 @@ const useAffordablePrograms: () => {
     affordablePrograms:
       data?.affordableProgram.map(program => ({
         id: program.id,
-        coverUrl: program.cover_url,
-        coverMobileUrl: program.cover_mobile_url,
-        coverThumbnailUrl: program.cover_thumbnail_url,
+        coverUrl: program.cover_url || null,
+        coverMobileUrl: program.cover_mobile_url || null,
+        coverThumbnailUrl: program.cover_thumbnail_url || null,
         title: program.title,
         abstract: null,
         supportLocales: program.support_locales,
@@ -290,7 +290,7 @@ const useAffordablePrograms: () => {
           id: programPlan.id,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
-          description: programPlan.description,
+          description: programPlan.description || '',
           gains: programPlan.gains,
           currency: {
             id: programPlan.currency.id,
@@ -341,11 +341,11 @@ const useHottestTagPrograms: () => {
     hottestTagPrograms:
       data?.hottestTagProgram.map(program => ({
         id: program.id,
-        coverUrl: program.cover_url,
-        coverMobileUrl: program.cover_mobile_url,
-        coverThumbnailUrl: program.cover_thumbnail_url,
+        coverUrl: program.cover_url || null,
+        coverMobileUrl: program.cover_mobile_url || null,
+        coverThumbnailUrl: program.cover_thumbnail_url || null,
         title: program.title,
-        abstract: program.abstract,
+        abstract: program.abstract || '',
         supportLocales: program.support_locales,
         publishedAt: program.published_at && new Date(program.published_at),
         isSubscription: program.is_subscription,
@@ -377,7 +377,7 @@ const useHottestTagPrograms: () => {
           id: programPlan.id,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
-          description: programPlan.description,
+          description: programPlan.description || '',
           gains: programPlan.gains,
           currency: {
             id: programPlan.currency.id,
@@ -428,11 +428,11 @@ const useUnitCategoryPrograms: () => {
     unitCategoryPrograms:
       data?.unitCategoryProgram.map(program => ({
         id: program.id,
-        coverUrl: program.cover_url,
-        coverMobileUrl: program.cover_mobile_url,
-        coverThumbnailUrl: program.cover_thumbnail_url,
+        coverUrl: program.cover_url || null,
+        coverMobileUrl: program.cover_mobile_url || null,
+        coverThumbnailUrl: program.cover_thumbnail_url || null,
         title: program.title,
-        abstract: program.abstract,
+        abstract: program.abstract || '',
         supportLocales: program.support_locales,
         publishedAt: program.published_at && new Date(program.published_at),
         isSubscription: program.is_subscription,
@@ -464,7 +464,7 @@ const useUnitCategoryPrograms: () => {
           id: programPlan.id,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
-          description: programPlan.description,
+          description: programPlan.description || '',
           gains: programPlan.gains,
           currency: {
             id: programPlan.currency.id,
@@ -515,11 +515,11 @@ const useSystematicCategoryPrograms: () => {
     systematicCategoryPrograms:
       data?.systematicCategoryProgram.map(program => ({
         id: program.id,
-        coverUrl: program.cover_url,
-        coverMobileUrl: program.cover_mobile_url,
-        coverThumbnailUrl: program.cover_thumbnail_url,
+        coverUrl: program.cover_url || null,
+        coverMobileUrl: program.cover_mobile_url || null,
+        coverThumbnailUrl: program.cover_thumbnail_url || null,
         title: program.title,
-        abstract: program.abstract,
+        abstract: program.abstract || '',
         supportLocales: program.support_locales,
         publishedAt: program.published_at && new Date(program.published_at),
         isSubscription: program.is_subscription,
@@ -551,7 +551,7 @@ const useSystematicCategoryPrograms: () => {
           id: programPlan.id,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
-          description: programPlan.description,
+          description: programPlan.description || '',
           gains: programPlan.gains,
           currency: {
             id: programPlan.currency.id,

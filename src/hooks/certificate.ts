@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import hasura from '../hasura'
 import { Certificate, MemberCertificate } from '../types/certificate'
@@ -173,12 +173,12 @@ export const useCertificate = (certificateId: string) => {
       : {
           id: data.certificate_by_pk.id,
           title: data.certificate_by_pk.title,
-          description: data.certificate_by_pk.description,
-          qualification: data.certificate_by_pk.qualification,
-          periodType: data.certificate_by_pk.period_type,
+          description: data.certificate_by_pk.description || '',
+          qualification: data.certificate_by_pk.qualification || '',
+          periodType: data.certificate_by_pk.period_type || null,
           periodAmount: data.certificate_by_pk.period_amount,
           createdAt: new Date(data.certificate_by_pk.created_at),
-          code: data.certificate_by_pk.code,
+          code: data.certificate_by_pk.code || null,
           template: data.certificate_by_pk.certificate_template?.template || null,
           templateImage: data.certificate_by_pk.certificate_template?.background_image || null,
         }

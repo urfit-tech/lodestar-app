@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -67,11 +67,11 @@ export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: st
           )
           .map(post => ({
             id: post.id,
-            codeName: post.code_name,
+            codeName: post.code_name || null,
             title: post.title,
-            coverUrl: post.cover_url,
-            videoUrl: post.video_url,
-            abstract: post.abstract,
+            coverUrl: post.cover_url || null,
+            videoUrl: post.video_url || null,
+            abstract: post.abstract || '',
             pinnedAt: post.pinned_at,
             authorId: post.post_roles[0]?.member_id || '',
             publishedAt: post.published_at ? new Date(post.published_at) : null,
@@ -124,10 +124,10 @@ export const usePopularPostCollection = () => {
       ? []
       : data.post.map(post => ({
           id: post.id,
-          codeName: post.code_name,
+          codeName: post.code_name || null,
           title: post.title,
-          coverUrl: post.cover_url,
-          videoUrl: post.video_url,
+          coverUrl: post.cover_url || null,
+          videoUrl: post.video_url || null,
         }))
 
   const postCount = data?.post_aggregate.aggregate?.count || 0
@@ -198,10 +198,10 @@ export const useRelativePostCollection = (id: string, tags?: string[]) => {
           .filter(post => post.id !== id)
           .map(post => ({
             id: post.id,
-            codeName: post.code_name,
+            codeName: post.code_name || null,
             title: post.title,
-            coverUrl: post.cover_url,
-            videoUrl: post.video_url,
+            coverUrl: post.cover_url || null,
+            videoUrl: post.video_url || null,
           }))
 
   const postCount = (data?.post_aggregate.aggregate?.count || 1) - 1
@@ -380,12 +380,12 @@ export const usePost = (search: string) => {
     ? null
     : {
         id: dataPost.id,
-        codeName: dataPost.code_name,
+        codeName: dataPost.code_name || null,
         title: dataPost.title,
-        source: dataPost.source,
-        coverUrl: dataPost.cover_url,
-        videoUrl: dataPost.video_url,
-        abstract: dataPost.abstract,
+        source: dataPost.source || null,
+        coverUrl: dataPost.cover_url || null,
+        videoUrl: dataPost.video_url || null,
+        abstract: dataPost.abstract || '',
         metaTag: dataPost.meta_tag,
         author: {
           id: dataPost.post_roles[0]?.member?.id || '',
@@ -417,8 +417,8 @@ export const usePost = (search: string) => {
             ),
           ),
           currencyId: v.merchandise.currency_id,
-          abstract: v.merchandise.abstract,
-          description: v.merchandise.description,
+          abstract: v.merchandise.abstract || '',
+          description: v.merchandise.description || '',
           startedAt: v.merchandise.started_at ? new Date(v.merchandise.started_at) : null,
           endedAt: v.merchandise.ended_at ? new Date(v.merchandise.ended_at) : null,
           isLimited: v.merchandise.is_limited,
@@ -451,7 +451,7 @@ export const usePost = (search: string) => {
             buyableQuantity: v.merchandise_spec_inventory_status?.buyable_quantity || 0,
           })),
         })),
-        description: dataPost.description,
+        description: dataPost.description || '',
         prevPost,
         nextPost,
         reactedMemberIdsCount: dataPost.post_reaction_aggregate.aggregate?.count || 0,
@@ -460,7 +460,7 @@ export const usePost = (search: string) => {
           .filter(notEmpty)
           .map(v => ({
             id: v.id,
-            description: v.description,
+            description: v.description || '',
             memberId: v.member_id,
             createdAt: new Date(v.created_at),
             reactedMemberIds: v.suggest_reactions.map(w => w.member_id) || [],
@@ -526,14 +526,14 @@ const useNearPost = (publishedAt?: Date) => {
   const prevPost = dataPrevPost?.post[0]
     ? {
         id: dataPrevPost.post[0].id,
-        codeName: dataPrevPost.post[0].code_name,
+        codeName: dataPrevPost.post[0].code_name || null,
         title: dataPrevPost.post[0].title,
       }
     : null
   const nextPost = dataNextPost?.post[0]
     ? {
         id: dataNextPost.post[0].id,
-        codeName: dataNextPost.post[0].code_name,
+        codeName: dataNextPost.post[0].code_name || null,
         title: dataNextPost.post[0].title,
       }
     : null
@@ -587,13 +587,13 @@ export const useLatestPost = (filter?: { limit?: number }) => {
       ? []
       : data.post.map(post => ({
           id: post.id,
-          codeName: post.code_name,
+          codeName: post.code_name || null,
           title: post.title,
-          coverUrl: post.cover_url,
-          videoUrl: post.video_url,
-          abstract: post.abstract,
+          coverUrl: post.cover_url || null,
+          videoUrl: post.video_url || null,
+          abstract: post.abstract || '',
           publishedAt: post.published_at ? new Date(post.published_at) : null,
-          description: post.description,
+          description: post.description || '',
         }))
 
   return {

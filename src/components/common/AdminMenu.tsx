@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Icon, SettingsIcon } from '@chakra-ui/icons'
 import { Menu } from 'antd'
 import { ClickParam, MenuProps } from 'antd/lib/menu'

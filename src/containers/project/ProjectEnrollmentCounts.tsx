@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Spinner } from '@chakra-ui/spinner'
 import gql from 'graphql-tag'
 import React from 'react'

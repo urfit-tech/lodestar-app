@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText } from '@chakra-ui/react'
 import { message, Table, Tooltip } from 'antd'
@@ -395,7 +395,7 @@ const useOrderLogCollection = (memberId: string) => {
         name: orderDiscount.name,
         type: orderDiscount.type,
         target: orderDiscount.target,
-        description: orderDiscount.description,
+        description: orderDiscount.description || '',
         price: orderDiscount.price,
         options: orderDiscount.options,
       })),

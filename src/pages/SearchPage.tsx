@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Skeleton, Stack } from '@chakra-ui/react'
 import { Tabs } from 'antd'
@@ -931,12 +931,12 @@ const useSearchProductCollection = (
       type: project.type,
       title: project.title,
       coverType: project.cover_type,
-      coverUrl: project.cover_url,
-      previewUrl: project.preview_url,
-      abstract: project.abstract,
-      introduction: project.introduction,
-      introductionDesktop: project.introduction_desktop,
-      description: project.description,
+      coverUrl: project.cover_url || null,
+      previewUrl: project.preview_url || null,
+      abstract: project.abstract || '',
+      introduction: project.introduction || '',
+      introductionDesktop: project.introduction_desktop || '',
+      description: project.description || '',
       targetAmount: project.target_amount,
       targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
       expiredAt: project.expired_at ? new Date(project.expired_at) : null,
@@ -953,12 +953,12 @@ const useSearchProductCollection = (
       ),
       projectPlans: project.project_plans.map(project_plan => ({
         id: project_plan.id,
-        coverUrl: project_plan.cover_url,
+        coverUrl: project_plan.cover_url || null,
         title: project_plan.title,
-        description: project_plan.description,
+        description: project_plan.description || '',
         isSubscription: project_plan.is_subscription,
         periodAmount: project_plan.period_amount,
-        periodType: project_plan.period_type,
+        periodType: project_plan.period_type || null,
         listPrice: project_plan.list_price,
         salePrice: project_plan.sale_price,
         soldAt: project_plan.sold_at ? new Date(project_plan.sold_at) : null,
@@ -1023,17 +1023,17 @@ const useSearchProductCollection = (
       data?.program
         .map(program => ({
           id: program.id,
-          coverUrl: program.cover_url,
-          coverMobileUrl: program.cover_mobile_url,
-          coverThumbnailUrl: program.cover_thumbnail_url,
+          coverUrl: program.cover_url || null,
+          coverMobileUrl: program.cover_mobile_url || null,
+          coverThumbnailUrl: program.cover_thumbnail_url || null,
           title: program.title,
-          abstract: program.abstract,
+          abstract: program.abstract || '',
           description:
             program?.description && hasJsonStructure(program.description || '')
               ? JSON.parse(program.description)
                   ?.blocks.map((v: any) => v?.text)
                   .toString()
-              : program.description,
+              : program.description || '',
           publishedAt: new Date(program.published_at),
           isSubscription: program.is_subscription,
           listPrice: program.list_price,
@@ -1061,7 +1061,7 @@ const useSearchProductCollection = (
               ? 'subscribeAll'
               : 'unknown') as ProgramPlanType,
             title: programPlan.title,
-            description: programPlan.description,
+            description: programPlan.description || '',
             gains: programPlan.gains,
             currency: {
               id: programPlan.currency.id,
@@ -1087,14 +1087,14 @@ const useSearchProductCollection = (
       data?.program_package
         .map(programPackage => ({
           id: programPackage.id,
-          coverUrl: programPackage.cover_url,
+          coverUrl: programPackage.cover_url || null,
           title: programPackage.title,
           description:
             programPackage?.description && hasJsonStructure(programPackage.description || '')
               ? JSON.parse(programPackage.description)
                   ?.blocks.map((v: any) => v?.text)
                   .toString()
-              : programPackage.description,
+              : programPackage.description || '',
           instructorsSearchString: flatten(
             programPackage.program_package_programs.map(v => v.program.program_roles.map(w => w.member?.name)),
           ).toString(),
@@ -1104,14 +1104,14 @@ const useSearchProductCollection = (
       data?.activity
         .map(activity => ({
           id: activity.id,
-          coverUrl: activity.cover_url,
+          coverUrl: activity.cover_url || null,
           title: activity.title,
           description:
             activity?.description && hasJsonStructure(activity.description || '')
               ? JSON.parse(activity.description)
                   ?.blocks.map((v: any) => v?.text)
                   .toString()
-              : activity.description,
+              : activity.description || '',
           isParticipantsVisible: activity.is_participants_visible,
           publishedAt: new Date(activity.published_at),
           startedAt: activity.activity_sessions_aggregate.aggregate?.min?.started_at
@@ -1136,7 +1136,7 @@ const useSearchProductCollection = (
             price: ticket.price,
             count: ticket.count,
             currencyId: ticket.currency_id,
-            description: ticket.description,
+            description: ticket.description || '',
             isPublished: ticket.is_published,
           })),
           organizerSearchString: activity.organizer?.name,
@@ -1147,7 +1147,7 @@ const useSearchProductCollection = (
                 ? JSON.parse(v.description)
                     ?.blocks.map((v: any) => v?.text)
                     .toString()
-                : v?.description,
+                : v?.description || '',
             )
             .toString(),
         }))
@@ -1209,10 +1209,10 @@ const useSearchProductCollection = (
       data?.post
         .map(post => ({
           id: post.id,
-          codeName: post.code_name,
+          codeName: post.code_name || null,
           title: post.title,
-          coverUrl: post.cover_url,
-          videoUrl: post.video_url,
+          coverUrl: post.cover_url || null,
+          videoUrl: post.video_url || null,
           authorId: post.post_roles[0]?.member_id || '',
           publishedAt: post.published_at ? new Date(post.published_at) : null,
           authorSearchString: post.post_roles.map(v => v.member?.name).toString(),
@@ -1228,14 +1228,14 @@ const useSearchProductCollection = (
       data?.podcast_program
         .map(podcastProgram => ({
           id: podcastProgram.id,
-          coverUrl: podcastProgram.cover_url,
+          coverUrl: podcastProgram.cover_url || null,
           title: podcastProgram.title,
           listPrice: podcastProgram.list_price,
           salePrice: podcastProgram.sale_price,
           soldAt: podcastProgram.sold_at && new Date(podcastProgram.sold_at),
           duration: podcastProgram.duration,
           durationSecond: podcastProgram.duration_second,
-          description: podcastProgram.abstract,
+          description: podcastProgram.abstract || '',
           bodyDescription: podcastProgram.podcast_program_body?.description || '',
           categories: podcastProgram.podcast_program_categories.map(podcastProgramCategory => ({
             id: podcastProgramCategory.category.id,
@@ -1264,9 +1264,9 @@ const useSearchProductCollection = (
     creators:
       data?.member_public.map(member => ({
         id: member.id || '',
-        avatarUrl: member.picture_url,
+        avatarUrl: member.picture_url || null,
         name: member.name || member.username || '',
-        abstract: member.abstract,
+        abstract: member.abstract || '',
       })) || [],
     merchandises:
       data?.merchandise

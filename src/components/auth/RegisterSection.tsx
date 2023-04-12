@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { useApolloClient, useQuery } from '@apollo/client'
 import { Button, Icon } from '@chakra-ui/react'
 import { Checkbox, Form, Input, message, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'

@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { useApolloClient, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Input, Select, Typography } from 'antd'
 import gql from 'graphql-tag'

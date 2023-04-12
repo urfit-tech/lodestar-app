@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
@@ -118,10 +118,10 @@ const useReviewPublicCollection = (path: string, appId: string) => {
   })[] =
     data?.review_public.map(v => ({
       id: v.id,
-      memberId: v.member_id,
+      memberId: v.member_id || null,
       score: v.score,
-      title: v.title,
-      content: v.content,
+      title: v.title || null,
+      content: v.content || null,
       createdAt: new Date(v.created_at),
       updatedAt: new Date(v.updated_at),
       reactionCount: v.review_reactions_aggregate.aggregate?.count || 0,
@@ -129,7 +129,7 @@ const useReviewPublicCollection = (path: string, appId: string) => {
         id: v.id,
         reviewReplyMemberId: v.member_id,
         memberRole: 'general-member',
-        content: v.content,
+        content: v.content || null,
         createdAt: new Date(v.created_at),
         updatedAt: new Date(v.updated_at),
       })),

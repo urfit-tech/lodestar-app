@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useMemo } from 'react'
 import hasura from '../hasura'
@@ -30,7 +30,7 @@ export const useProductReviews = (path: string) => {
         ? []
         : data.review_public.map(review => ({
             id: review.id,
-            memberId: review.member_id,
+            memberId: review.member_id || null,
             memberName: review.name || review.username,
             score: review.score,
           })),

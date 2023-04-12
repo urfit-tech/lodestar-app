@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { flatten, sum } from 'ramda'
 import { useMemo } from 'react'
@@ -113,7 +113,7 @@ export const useExam = (programContentId: string, latestExercise: ExercisePublic
             subject: w.subject,
             layout: w.layout,
             font: w.font,
-            explanation: w.explanation,
+            explanation: w.explanation || '',
             gainedPoints: Number(latestExercise?.find(v => v.questionId === w.id)?.gainedPoints || 0),
             startedAt: latestExercise?.find(v => v.questionId === w.id)?.startedAt || null,
             endedAt: latestExercise?.find(v => v.questionId === w.id)?.endedAt || null,

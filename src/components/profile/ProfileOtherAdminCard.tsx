@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/client'
 import { Button, Skeleton } from '@chakra-ui/react'
 import { Form, message, Select, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'

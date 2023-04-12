@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Select, SkeletonText } from '@chakra-ui/react'
 import { Checkbox } from 'antd'
 import gql from 'graphql-tag'

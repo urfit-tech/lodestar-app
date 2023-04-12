@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { flatten } from 'ramda'
 import React, { createContext, useMemo } from 'react'
@@ -121,7 +121,7 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
             data.program_content_body.map(contentBody =>
               contentBody.program_contents.map(content => {
                 return {
-                  programContentBodyType: contentBody.type,
+                  programContentBodyType: contentBody.type || null,
                   programContentId: content.id,
                   programContentSectionId: content.content_section_id,
                   progress: content.program_content_progress[0]?.progress || 0,

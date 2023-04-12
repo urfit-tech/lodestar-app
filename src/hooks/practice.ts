@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import hasura from '../hasura'
@@ -55,8 +55,8 @@ export const usePractice = (options: { practiceId?: string; memberId?: string | 
         id: data.practice[0].id,
         title: data.practice[0].title,
         createdAt: new Date(data.practice[0].created_at),
-        coverUrl: data.practice[0].cover_url,
-        description: data.practice[0].description,
+        coverUrl: data.practice[0].cover_url || null,
+        description: data.practice[0].description || '',
         memberId: data.practice[0].member_id,
         programContentId: data.practice[0].program_content.id,
         programContentTitle: data.practice[0].program_content.title,
@@ -83,7 +83,7 @@ export const usePractice = (options: { practiceId?: string; memberId?: string | 
           .filter(notEmpty)
           .map(v => ({
             id: v.id,
-            description: v.description,
+            description: v.description || '',
             memberId: v.member_id,
             createdAt: new Date(v.created_at),
             reactedMemberIds: v.suggest_reactions.map(w => w.member_id) || [],
@@ -128,7 +128,7 @@ export const usePracticeCollection = (options: {
       id: v.id,
       title: v.title,
       createdAt: new Date(v.created_at),
-      coverUrl: v.cover_url,
+      coverUrl: v.cover_url || null,
       memberId: v.member_id,
       suggestCount: v.practice_issues_aggregate.aggregate?.count || 0,
       reactedMemberIds: v.practice_reactions.map(w => w.member_id),
@@ -183,7 +183,7 @@ export const useMutatePractice = (practiceId: string) => {
         practiceId,
         coverUrl: props.coverUrl,
         title: props.title,
-        description: props.description,
+        description: props.description || '',
       },
     })
   }

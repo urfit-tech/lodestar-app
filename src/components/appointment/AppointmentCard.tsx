@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Textarea } from '@chakra-ui/react'
 import { Button, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 'antd'

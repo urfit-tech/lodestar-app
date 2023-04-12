@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { Button, SkeletonText, Tab, TabPanels, Tabs } from '@chakra-ui/react'
 import { message } from 'antd'
 import gql from 'graphql-tag'
@@ -288,7 +288,7 @@ const useCoinLogCollections = ({ memberId, current }: { memberId: string; curren
       : data.coin_log.map(coinLog => ({
           id: coinLog.id,
           title: coinLog.title,
-          description: coinLog.description,
+          description: coinLog.description || '',
           createdAt: new Date(coinLog.created_at),
           publishedAt: coinLog.started_at ? new Date(coinLog.started_at) : new Date(new Date(coinLog.created_at)),
           endedAt: coinLog.ended_at && new Date(coinLog.ended_at),

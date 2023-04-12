@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { useApolloClient, useQuery } from '@apollo/client'
 import { Button, Form, Icon, message, Spin } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'

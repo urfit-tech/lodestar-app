@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import {
   Box,
   Button,
@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
 import gql from 'graphql-tag'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -33,7 +34,6 @@ import { ProgramRole, ProgramRoleName } from '../../types/program'
 import { ReviewReplyItemProps } from '../../types/review'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const ReviewReplyContent = styled.div`
   padding: 16px;
