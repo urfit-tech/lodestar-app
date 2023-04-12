@@ -10,17 +10,31 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@main
-      - uses: jeanlescure/react-deploy-to-s3-action@main
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          args: --follow-symlinks --delete
-        env:
-          NODE_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
+          node-version: 14 # You can specify your desired Node.js version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to S3
+        uses: jakejarvis/s3-sync-action@v0.5.1
+        with:
+          args: --acl public-read --follow-symlinks --delete
+          AWS_REGION: us-east-1
           AWS_S3_BUCKET: ${{ github.ref == 'refs/heads/master' && 'static.kolable.com' || 'static-dev.kolable.com' }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SOURCE_DIR: build
           DEST_DIR: deploys/${{ github.repository }}/${{ github.ref }}
+
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
