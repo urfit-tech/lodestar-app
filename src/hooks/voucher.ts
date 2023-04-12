@@ -5,8 +5,8 @@ import hasura from '../hasura'
 
 export const useEnrolledVoucherCollection = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    hasura.GET_VOUCHER_COLLECTION,
-    hasura.GET_VOUCHER_COLLECTIONVariables
+    hasura.GET_ENROLLED_VOUCHER_COLLECTION,
+    hasura.GET_ENROLLED_VOUCHER_COLLECTIONVariables
   >(
     gql`
       query GET_ENROLLED_VOUCHER_COLLECTION($memberId: String!) {
