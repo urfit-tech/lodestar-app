@@ -131,27 +131,30 @@ const ProgramContentMenu: React.VFC<{
   onSelect?: (programContentId: string) => void
 }> = ({ program, onSelect, isScrollToTop }) => {
   const { formatMessage } = useIntl()
-  const [sortBy, setSortBy] = useState('section')
+  const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
   const { search } = useLocation()
   const { currentMemberId } = useAuth()
   const query = new URLSearchParams(search)
   const programPackageId = query.get('back')
   const { enrolledProgramIds, loading: enrolledProgramIdsLoading } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(program.id)
+  const programContents = program.contentSections.map(v => v.contents).flat()
 
   return (
     <StyledProgramContentMenu>
       <StyledHead className="d-flex justify-content-between align-items-center">
         <span>{formatMessage(programMessages.ProgramContentMenu.programList)}</span>
         <StyledSelectBlock>
-          <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value)}>
+          <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value as 'section' | 'date')}>
             <option value="section">{formatMessage(programMessages.ProgramContentMenu.unit)}</option>
             <option value="date">{formatMessage(programMessages.ProgramContentMenu.time)}</option>
           </Select>
         </StyledSelectBlock>
       </StyledHead>
 
-      {sortBy === 'section' && (
+      {programContents.length === 0 ? (
+        <EmptyMenu />
+      ) : sortBy === 'section' ? (
         <ProgramContentSectionMenu
           isScrollToTop={isScrollToTop}
           program={program}
@@ -160,10 +163,9 @@ const ProgramContentMenu: React.VFC<{
           isEnrolled={isEnrolled}
           onSelect={onSelect}
         />
-      )}
-      {sortBy === 'date' && (
+      ) : sortBy === 'date' ? (
         <ProgramContentDateMenu program={program} programPackageId={programPackageId} onSelect={onSelect} />
-      )}
+      ) : null}
     </StyledProgramContentMenu>
   )
 }
@@ -181,10 +183,6 @@ const ProgramContentSectionMenu: React.VFC<{
   onSelect?: (programContentId: string) => void
 }> = ({ program, programPackageId, isEnrolled, isLoading, isScrollToTop, onSelect }) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
-
-  if (!program.contentSections || program.contentSections.length === 0) {
-    return <EmptyMenu />
-  }
 
   return (
     <>
@@ -428,9 +426,6 @@ const ProgramContentDateMenu: React.VFC<{
   const programContentProgress = useProgramContentProgress()
   const programContents = flatten(program.contentSections.map(programContentSection => programContentSection.contents))
 
-  if (programContents.length === 0) {
-    return <EmptyMenu />
-  }
   return (
     <div>
       {programContents.map(programContent => (
