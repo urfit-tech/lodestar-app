@@ -379,6 +379,10 @@ const ProgramContentBlock: React.VFC<{
                               programId: programId,
                               contentType: content.contentType,
                               videoId: content.contentType === 'video' ? content?.videos?.[0]?.id : undefined,
+                              source: content.videos?.[0]?.options?.cloudflare
+                                ? 'cloudflare'
+                                : content.videos?.[0]?.data?.source,
+                              sourceUrl: content.videos?.[0]?.data?.url,
                             },
                             target: content.id,
                           })) || [],
