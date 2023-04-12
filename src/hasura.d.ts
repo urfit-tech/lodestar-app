@@ -2258,76 +2258,6 @@ export interface GET_PROJECT_PLAN_ENROLLMENT_COUNTVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GET_VOUCHER_COLLECTION
-// ====================================================
-
-export interface GET_VOUCHER_COLLECTION_voucher_status {
-  __typename: "voucher_status";
-  outdated: boolean | null;
-  used: boolean | null;
-}
-
-export interface GET_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan_voucher_plan_products {
-  __typename: "voucher_plan_product";
-  id: any;
-  product_id: string;
-}
-
-export interface GET_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan {
-  __typename: "voucher_plan";
-  id: any;
-  title: string;
-  description: string | null;
-  started_at: any | null;
-  ended_at: any | null;
-  is_transferable: boolean;
-  product_quantity_limit: number;
-  /**
-   * An array relationship
-   */
-  voucher_plan_products: GET_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan_voucher_plan_products[];
-}
-
-export interface GET_VOUCHER_COLLECTION_voucher_voucher_code {
-  __typename: "voucher_code";
-  id: any;
-  code: string;
-  /**
-   * An object relationship
-   */
-  voucher_plan: GET_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan;
-}
-
-export interface GET_VOUCHER_COLLECTION_voucher {
-  __typename: "voucher";
-  id: any;
-  /**
-   * An object relationship
-   */
-  status: GET_VOUCHER_COLLECTION_voucher_status | null;
-  /**
-   * An object relationship
-   */
-  voucher_code: GET_VOUCHER_COLLECTION_voucher_voucher_code;
-}
-
-export interface GET_VOUCHER_COLLECTION {
-  /**
-   * fetch data from the table: "voucher"
-   */
-  voucher: GET_VOUCHER_COLLECTION_voucher[];
-}
-
-export interface GET_VOUCHER_COLLECTIONVariables {
-  memberId: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GET_CART_PRODUCT_COLLECTION
 // ====================================================
 
@@ -8039,6 +7969,33 @@ export interface GET_PODCAST_ALBUMVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetPracticeExist
+// ====================================================
+
+export interface GetPracticeExist_practice {
+  __typename: "practice";
+  id: any;
+}
+
+export interface GetPracticeExist {
+  /**
+   * fetch data from the table: "practice"
+   */
+  practice: GetPracticeExist_practice[];
+}
+
+export interface GetPracticeExistVariables {
+  practiceId: any;
+  memberId: string;
+  programContentId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GET_PRACTICE
 // ====================================================
 
@@ -10411,6 +10368,76 @@ export interface GET_PRODUCT_EDITOR_IDS {
 
 export interface GET_PRODUCT_EDITOR_IDSVariables {
   targetId: any;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GET_ENROLLED_VOUCHER_COLLECTION
+// ====================================================
+
+export interface GET_ENROLLED_VOUCHER_COLLECTION_voucher_status {
+  __typename: "voucher_status";
+  outdated: boolean | null;
+  used: boolean | null;
+}
+
+export interface GET_ENROLLED_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan_voucher_plan_products {
+  __typename: "voucher_plan_product";
+  id: any;
+  product_id: string;
+}
+
+export interface GET_ENROLLED_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan {
+  __typename: "voucher_plan";
+  id: any;
+  title: string;
+  description: string | null;
+  started_at: any | null;
+  ended_at: any | null;
+  is_transferable: boolean;
+  product_quantity_limit: number;
+  /**
+   * An array relationship
+   */
+  voucher_plan_products: GET_ENROLLED_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan_voucher_plan_products[];
+}
+
+export interface GET_ENROLLED_VOUCHER_COLLECTION_voucher_voucher_code {
+  __typename: "voucher_code";
+  id: any;
+  code: string;
+  /**
+   * An object relationship
+   */
+  voucher_plan: GET_ENROLLED_VOUCHER_COLLECTION_voucher_voucher_code_voucher_plan;
+}
+
+export interface GET_ENROLLED_VOUCHER_COLLECTION_voucher {
+  __typename: "voucher";
+  id: any;
+  /**
+   * An object relationship
+   */
+  status: GET_ENROLLED_VOUCHER_COLLECTION_voucher_status | null;
+  /**
+   * An object relationship
+   */
+  voucher_code: GET_ENROLLED_VOUCHER_COLLECTION_voucher_voucher_code;
+}
+
+export interface GET_ENROLLED_VOUCHER_COLLECTION {
+  /**
+   * fetch data from the table: "voucher"
+   */
+  voucher: GET_ENROLLED_VOUCHER_COLLECTION_voucher[];
+}
+
+export interface GET_ENROLLED_VOUCHER_COLLECTIONVariables {
+  memberId: string;
 }
 
 /* tslint:disable */
@@ -19538,6 +19565,25 @@ export enum voucher_code_update_column {
 export enum voucher_constraint {
   voucher_pkey = "voucher_pkey",
   voucher_voucher_code_id_member_id_key = "voucher_voucher_code_id_member_id_key",
+}
+
+/**
+ * unique or primary key constraints on table "voucher_plan_category"
+ */
+export enum voucher_plan_category_constraint {
+  voucher_plan_category_pkey = "voucher_plan_category_pkey",
+}
+
+/**
+ * update columns of table "voucher_plan_category"
+ */
+export enum voucher_plan_category_update_column {
+  category_id = "category_id",
+  created_at = "created_at",
+  id = "id",
+  position = "position",
+  updated_at = "updated_at",
+  voucher_plan_id = "voucher_plan_id",
 }
 
 /**
@@ -33143,6 +33189,7 @@ export interface voucher_plan_bool_exp {
   _or?: voucher_plan_bool_exp[] | null;
   app?: app_bool_exp | null;
   app_id?: String_comparison_exp | null;
+  category?: voucher_plan_category_bool_exp | null;
   created_at?: timestamptz_comparison_exp | null;
   description?: String_comparison_exp | null;
   editor_id?: String_comparison_exp | null;
@@ -33162,11 +33209,60 @@ export interface voucher_plan_bool_exp {
 }
 
 /**
+ * Boolean expression to filter rows from the table "voucher_plan_category". All fields are combined with a logical 'AND'.
+ */
+export interface voucher_plan_category_bool_exp {
+  _and?: voucher_plan_category_bool_exp[] | null;
+  _not?: voucher_plan_category_bool_exp | null;
+  _or?: voucher_plan_category_bool_exp[] | null;
+  category?: category_bool_exp | null;
+  category_id?: String_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: uuid_comparison_exp | null;
+  position?: numeric_comparison_exp | null;
+  updated_at?: timestamptz_comparison_exp | null;
+  voucher_plan?: voucher_plan_bool_exp | null;
+  voucher_plan_id?: uuid_comparison_exp | null;
+}
+
+/**
+ * input type for inserting data into table "voucher_plan_category"
+ */
+export interface voucher_plan_category_insert_input {
+  category?: category_obj_rel_insert_input | null;
+  category_id?: string | null;
+  created_at?: any | null;
+  id?: any | null;
+  position?: any | null;
+  updated_at?: any | null;
+  voucher_plan?: voucher_plan_obj_rel_insert_input | null;
+  voucher_plan_id?: any | null;
+}
+
+/**
+ * input type for inserting object relation for remote table "voucher_plan_category"
+ */
+export interface voucher_plan_category_obj_rel_insert_input {
+  data: voucher_plan_category_insert_input;
+  on_conflict?: voucher_plan_category_on_conflict | null;
+}
+
+/**
+ * on_conflict condition type for table "voucher_plan_category"
+ */
+export interface voucher_plan_category_on_conflict {
+  constraint: voucher_plan_category_constraint;
+  update_columns: voucher_plan_category_update_column[];
+  where?: voucher_plan_category_bool_exp | null;
+}
+
+/**
  * input type for inserting data into table "voucher_plan"
  */
 export interface voucher_plan_insert_input {
   app?: app_obj_rel_insert_input | null;
   app_id?: string | null;
+  category?: voucher_plan_category_obj_rel_insert_input | null;
   created_at?: any | null;
   description?: string | null;
   editor_id?: string | null;

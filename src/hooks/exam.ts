@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { flatten, sum } from 'ramda'
+import { useMemo } from 'react'
 import { Exam, ExamTimeUnit, ExercisePublic, Question } from '../types/exam'
 import hasura from './../hasura'
 
@@ -229,19 +230,22 @@ export const useExamExercise = (programContentId: string, memberId: string, exer
     `,
     { variables: { condition } },
   )
-  const currentExamExerciseData: {
-    passingScore: number
-    gainedPointsTotal: number
-  } | null =
-    loading && error && !data
-      ? null
-      : {
-          passingScore: data?.exercise?.[0]?.exam?.passing_score || 0,
-          gainedPointsTotal:
-            data?.exercise?.[0]?.exercise_publics?.reduce((acc, item) => {
-              return acc + Number(item?.gained_points)
-            }, 0) || 0,
-        }
+
+  const latestExerciseData = data?.exercise?.[0]
+
+  const currentExamExerciseData: { passingScore: number; gainedPointsTotal: number } | null = useMemo(() => {
+    if (latestExerciseData)
+      return {
+        passingScore: latestExerciseData?.exam?.passing_score || 0,
+        gainedPointsTotal:
+          latestExerciseData?.exercise_publics?.reduce((acc, item) => {
+            return acc + Number(item?.gained_points)
+          }, 0) || 0,
+      }
+
+    return null
+  }, [latestExerciseData])
+
   return {
     currentExamExerciseData,
     refetchCurrentExamData: refetch,
