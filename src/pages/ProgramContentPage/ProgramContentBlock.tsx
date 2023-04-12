@@ -351,7 +351,7 @@ const ProgramContentBlock: React.VFC<{
         <StyledContentBlock className="mb-3">
           {isMobile && enabledModules.background_mode ? (
             <StyledTitleBlock>
-              <StyledMobileTitle className="mb-2 text-center">{programContent.title}</StyledMobileTitle>
+              <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
               <div className="d-flex justify-content-end">
                 <span className="mr-2">
                   {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
