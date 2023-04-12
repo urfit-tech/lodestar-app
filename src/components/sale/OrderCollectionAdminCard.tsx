@@ -373,7 +373,7 @@ const useOrderLogCollection = (memberId: string) => {
         sum(orderLog.order_discounts.map(prop('price'))) +
         (orderLog.shipping?.fee || 0),
       shipping: orderLog.shipping,
-      orderProducts: orderLog.order_products
+      orderProducts: [...orderLog.order_products]
         .sort((a, b) => (a.options?.position || 0) - (b.options?.position || 0))
         .map(orderProduct => ({
           id: orderProduct.id,

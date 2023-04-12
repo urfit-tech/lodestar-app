@@ -298,7 +298,7 @@ const useCoinLogCollections = ({ memberId, current }: { memberId: string; curren
   return {
     loadingCoinLogs: loading,
     errorCoinLogs: error,
-    coinLogs: coinLogs.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()),
+    coinLogs: [...coinLogs].sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()),
     refetchCoinLogs: () => {
       setIsNoMore(false)
       return refetch()
