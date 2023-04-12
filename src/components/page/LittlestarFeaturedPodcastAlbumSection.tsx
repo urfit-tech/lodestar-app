@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import styled from 'styled-components'
 import hasura from '../../hasura'

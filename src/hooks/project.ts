@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import hasura from '../hasura'

@@ -1,5 +1,4 @@
-import { QueryHookOptions, useMutation, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, QueryHookOptions, useMutation, useQuery } from '@apollo/client'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniq } from 'ramda'
 import { useMemo } from 'react'

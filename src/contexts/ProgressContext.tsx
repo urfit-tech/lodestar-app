@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { flatten } from 'ramda'
 import React, { createContext, useMemo } from 'react'
 import hasura from '../hasura'

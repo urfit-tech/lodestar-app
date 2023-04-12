@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Icon, SkeletonText } from '@chakra-ui/react'
 import { Tag } from 'antd'
-import gql from 'graphql-tag'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { ReactComponent as AngleThinLeftIcon } from '../../images/angle-thin-left.svg'

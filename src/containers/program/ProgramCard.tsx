@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Box } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { sum } from 'ramda'
 import React from 'react'

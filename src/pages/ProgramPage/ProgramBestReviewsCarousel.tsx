@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Button, SkeletonText } from '@chakra-ui/react'
 import { Carousel } from 'antd'
-import gql from 'graphql-tag'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import moment from 'moment'
 import { useState } from 'react'

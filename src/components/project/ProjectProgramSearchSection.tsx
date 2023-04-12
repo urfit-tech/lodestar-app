@@ -1,7 +1,6 @@
-import { useApolloClient, useQuery } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Input, Select, Typography } from 'antd'
-import gql from 'graphql-tag'
 import { debounce } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'

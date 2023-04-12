@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Button, Tag } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'

@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { flatten, uniqBy } from 'ramda'
 import React from 'react'
 import { AiOutlineRight } from 'react-icons/ai'

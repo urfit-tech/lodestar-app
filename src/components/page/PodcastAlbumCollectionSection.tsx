@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Skeleton } from '@chakra-ui/skeleton'
-import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import Responsive from 'lodestar-app-element/src/components/common/Responsive'
 import { Link } from 'react-router-dom'

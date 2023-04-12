@@ -1,5 +1,4 @@
-import { ApolloError } from '@apollo/client'
-import gql from 'graphql-tag'
+import { ApolloError, gql } from '@apollo/client'
 import React, { createContext } from 'react'
 import { useNotifications } from '../hooks/data'
 

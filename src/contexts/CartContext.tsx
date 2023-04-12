@@ -1,5 +1,4 @@
-import { useApolloClient, useMutation } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useApolloClient, useMutation } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniqBy } from 'ramda'

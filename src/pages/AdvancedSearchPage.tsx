@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Button, Icon, SkeletonText } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { isEmpty, uniq } from 'ramda'
 import { defineMessage, useIntl } from 'react-intl'

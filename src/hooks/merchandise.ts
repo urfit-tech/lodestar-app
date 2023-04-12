@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import { max, min } from 'lodash'
 import { flatten, uniq } from 'ramda'
 import hasura from '../hasura'

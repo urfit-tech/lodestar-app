@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { HTMLAttributes, useState } from 'react'
 import { useIntl } from 'react-intl'

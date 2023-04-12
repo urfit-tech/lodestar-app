@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import moment from 'moment'
 import hasura from '../hasura'
 import { AppointmentEnrollment, AppointmentPeriod, AppointmentPlan, ReservationType } from '../types/appointment'

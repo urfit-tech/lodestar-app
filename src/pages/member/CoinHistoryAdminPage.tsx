@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Button, SkeletonText, Tab, TabPanels, Tabs } from '@chakra-ui/react'
 import { message } from 'antd'
-import gql from 'graphql-tag'
 import { EmptyBlock } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'

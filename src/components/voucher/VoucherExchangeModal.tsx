@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Button, Divider, Icon, Spinner } from '@chakra-ui/react'
 import { Checkbox, Modal } from 'antd'
-import { gql } from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'

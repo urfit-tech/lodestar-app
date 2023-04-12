@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import { flatten, sum } from 'ramda'
 import { useMemo } from 'react'
 import { Exam, ExamTimeUnit, ExercisePublic, Question } from '../types/exam'

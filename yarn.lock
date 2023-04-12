@@ -8974,7 +8974,7 @@ graphql-request@^5.0.0:
     extract-files "^9.0.0"
     form-data "^3.0.0"
 
-graphql-tag@^2.11.0, graphql-tag@^2.12.5, graphql-tag@^2.12.6:
+graphql-tag@^2.11.0, graphql-tag@^2.12.6:
   version "2.12.6"
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.12.6.tgz#d441a569c1d2537ef10ca3d1633b48725329b5f1"
   integrity sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==
@@ -11388,13 +11388,15 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
   version "0.1.0"
   resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/2791b70d6332cbdc7667350eaf31cb208700e41b"
   dependencies:
-    "@apollo/react-hooks" "3.1.5"
+    "@apollo/client" "^3.7.11"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
     "@chakra-ui/icons" "1.0.0"
     "@chakra-ui/react" "1.1.2"
     "@craftjs/core" "0.1.0-beta.20"
+    "@emotion/core" "^11.0.0"
     "@emotion/react" "11"
     "@emotion/styled" "11"
+    "@fingerprintjs/fingerprintjs" "^3.3.6"
     "@types/mustache" "4.0.1"
     "@types/node" "12.0.0"
     "@types/ramda" "0.27.45"
@@ -11407,17 +11409,15 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     "@types/react-slick" "^0.23.5"
     "@types/styled-components" "5.1.14"
     "@types/uuid" "8.3.1"
+    ajv "^8.11.2"
     antd "3"
-    apollo-cache-inmemory "1.6.6"
-    apollo-client "2.6.10"
-    apollo-link "1.2.14"
-    apollo-link-error "1.1.13"
-    apollo-link-http "1.5.17"
     axios "0.21.4"
     braft-editor "2.3.9"
     classnames "^2.3.1"
+    dayjs "^1.11.7"
     framer-motion "2.9.4"
-    graphql-tag "2.12.5"
+    graphql "^16.6.0"
+    graphql-ws "^5.12.1"
     jsonwebtoken "8.5.1"
     libphonenumber-js "1.9.34"
     moment "^2.29.1"
@@ -11444,6 +11444,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     ts-deep-pick "0.2.2"
     typescript "4.4.3"
     use-query-params "1.2.3"
+    use-tw-zipcode "^2.0.4"
     uuid "8.3.2"
 
 log-symbols@^4.0.0, log-symbols@^4.1.0:

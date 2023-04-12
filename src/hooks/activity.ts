@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { flatten, prop, sum, uniqBy } from 'ramda'
 import { DeepPick } from 'ts-deep-pick/lib'
 import hasura from '../hasura'

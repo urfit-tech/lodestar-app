@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Box, Divider, Flex, Icon, Image, Spacer } from '@chakra-ui/react'
 import dayjs from 'dayjs'
-import { gql } from 'graphql-tag'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { flatten, groupBy, prop, uniqBy } from 'ramda'
 import { useState } from 'react'

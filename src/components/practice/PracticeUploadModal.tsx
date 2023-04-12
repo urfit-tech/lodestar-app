@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import { QuestionIcon } from '@chakra-ui/icons'
 import {
   Button,
@@ -12,7 +12,6 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
-import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'

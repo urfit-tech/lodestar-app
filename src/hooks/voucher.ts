@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import { VoucherProps } from '../components/voucher/Voucher'
 import hasura from '../hasura'
 

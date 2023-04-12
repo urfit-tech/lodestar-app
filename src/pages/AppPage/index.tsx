@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Editor, Frame } from '@craftjs/core'
 import Axios from 'axios'
-import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'

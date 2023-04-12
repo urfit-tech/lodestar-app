@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import { sum } from 'ramda'
 import hasura from '../../hasura'
 import { PeriodType, ProgramBriefProps, ProgramPlan, ProgramRole, ProgramRoleName } from '../../types/program'
