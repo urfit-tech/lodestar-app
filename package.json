@@ -5,7 +5,7 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-app-rewired start",
-    "build": "CI=false env-cmd -f .env.${NODE_ENV:-production} react-app-rewired build",
+    "build": "CI=false env-cmd -f .env.${NODE_ENV:-production} react-app-rewired --max-old-space-size=4096 build",
     "test": "react-app-rewired test",
     "typegen": "graphql-codegen",
     "format:organize-imports": "organize-imports-cli ./src/**/*.ts[x]",
