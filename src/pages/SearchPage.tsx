@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
-// import { Icon } from '@chakra-ui/icons'
+import { gql, useQuery } from '@apollo/client'
 import { Skeleton, Stack } from '@chakra-ui/react'
 import { Tabs } from 'antd'
 import { max, min } from 'lodash'
