@@ -1,7 +1,6 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { Icon, SkeletonText } from '@chakra-ui/react'
 import { Button, Modal } from 'antd'
-import { gql } from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -241,7 +240,7 @@ const DeviceManagementAdminPage: React.VFC = () => {
     <MemberAdminLayout content={{ icon: DeviceIcon, title: formatMessage(commonMessages.content.deviceManagement) }}>
       <div className="mb-5">
         <StyledDescription>
-          {formatMessage(messages.description, {
+          {formatMessage(messages.description || '', {
             number: settings['bind_device_num'] || 1,
           })}
         </StyledDescription>

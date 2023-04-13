@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { uniq } from 'ramda'
 import hasura from '../hasura'
@@ -48,17 +47,17 @@ export const useMember = (memberId: string) => {
           username: data.member_by_pk.username,
           name: data.member_by_pk.name,
           email: data.member_by_pk.email,
-          pictureUrl: data.member_by_pk.picture_url,
+          pictureUrl: data.member_by_pk.picture_url || null,
           shipping: data.member_by_pk.metadata.shipping || null,
           invoice: data.member_by_pk.metadata.invoice || null,
           payment: data.member_by_pk.metadata.payment || null,
-          title: data.member_by_pk.title,
-          abstract: data.member_by_pk.abstract,
-          description: data.member_by_pk.description,
+          title: data.member_by_pk.title || '',
+          abstract: data.member_by_pk.abstract || '',
+          description: data.member_by_pk.description || '',
           createdAt: data.member_by_pk.created_at,
           loginedAt: data.member_by_pk.logined_at,
-          facebookUserId: data.member_by_pk.facebook_user_id,
-          googleUserId: data.member_by_pk.google_user_id,
+          facebookUserId: data.member_by_pk.facebook_user_id || null,
+          googleUserId: data.member_by_pk.google_user_id || null,
           youtubeChannelIds: data.member_by_pk.youtube_channel_ids,
           verifiedEmails: data.member_by_pk.verified_emails,
           isBusiness: data.member_by_pk.is_business,
@@ -105,13 +104,13 @@ export const usePublicMember = (memberId: string) => {
       : {
           id: data.member_public[0].id || '',
           role: (data.member_public[0].role || 'anonymous') as UserRole,
-          pictureUrl: data.member_public[0].picture_url,
+          pictureUrl: data.member_public[0].picture_url || null,
           username: data.member_public[0].username || '',
-          name: data.member_public[0].name,
+          name: data.member_public[0].name || '',
           tags: (data.member_public[0].tag_names || []) as string[],
-          abstract: data.member_public[0].abstract,
-          description: data.member_public[0].description,
-          title: data.member_public[0].title,
+          abstract: data.member_public[0].abstract || '',
+          description: data.member_public[0].description || '',
+          title: data.member_public[0].title || '',
           specialtyNames: data.member_public[0].member_specialities.map(v => v.tag_name),
           hasBackstageEnterPermission: Boolean(data.member_public[0].has_backstage_enter_permission),
         }
@@ -219,10 +218,10 @@ export const useCreatorCollection = () => {
       ? []
       : data.member_public.map(member => ({
           id: member.id || '',
-          avatarUrl: member.picture_url,
+          avatarUrl: member.picture_url || null,
           name: member.name || member.username || '',
-          abstract: member.abstract,
-          description: member.description,
+          abstract: member.abstract || '',
+          description: member.description || '',
           title: member.title || '',
         }))
 
@@ -278,15 +277,15 @@ export const useSocialCardCollection = () => {
                   channel: {
                     id: socialCardEnrollment.social_card.member_social.id,
                     name: socialCardEnrollment.social_card.member_social.name,
-                    profileUrl: socialCardEnrollment.social_card.member_social.profile_url,
-                    url: socialCardEnrollment.social_card.member_social.channel_url,
+                    profileUrl: socialCardEnrollment.social_card.member_social.profile_url || null,
+                    url: socialCardEnrollment.social_card.member_social.channel_url || null,
                     type: socialCardEnrollment.social_card.member_social.type as MemberSocialType,
                   },
                   plan: {
                     id: socialCardEnrollment.social_card.id,
                     name: socialCardEnrollment.social_card.name,
-                    badgeUrl: socialCardEnrollment.social_card.badge_url,
-                    description: socialCardEnrollment.social_card.description,
+                    badgeUrl: socialCardEnrollment.social_card.badge_url || null,
+                    description: socialCardEnrollment.social_card.description || '',
                   },
                 }
               : null,
@@ -341,10 +340,10 @@ export const useLatestCreator = (topInstructorIds: string[], appId: string) => {
     avatarUrl: string | null
   }[] =
     data?.topInstructor.concat(data.otherInstructor).map(v => ({
-      id: v.id,
-      name: v.name,
-      abstract: v.abstract,
-      avatarUrl: v.picture_url,
+      id: v.id || null,
+      name: v.name || '',
+      abstract: v.abstract || '',
+      avatarUrl: v.picture_url || null,
     })) || []
 
   return {
@@ -393,9 +392,9 @@ export const usePublishedCreator = () => {
     loading || error || !data
       ? []
       : data.creator.map(v => ({
-          id: v.id,
-          name: v.name,
-          pictureUrl: v.picture_url,
+          id: v.id || null,
+          name: v.name || '',
+          pictureUrl: v.picture_url || null,
           title: v.member?.title || null,
           abstract: v.member?.abstract || null,
           categories: v.creator_categories.map(w => ({

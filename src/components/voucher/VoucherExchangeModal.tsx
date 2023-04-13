@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Button, Divider, Icon, Spinner } from '@chakra-ui/react'
 import { Checkbox, Modal } from 'antd'
-import { gql } from 'graphql-tag'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -31,15 +30,11 @@ const VoucherExchangeModal: React.VFC<{
   description: string | null
   productIds: string[]
   disabledProductIds: string[]
-  onExchange?: (
-    setVisible: React.Dispatch<React.SetStateAction<boolean>>,
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    selectedProductIds: string[],
-  ) => void
-}> = ({ productQuantityLimit, description, productIds, disabledProductIds, onExchange }) => {
+  loading: boolean
+  onExchange?: (setVisible: React.Dispatch<React.SetStateAction<boolean>>, selectedProductIds: string[]) => void
+}> = ({ productQuantityLimit, description, productIds, disabledProductIds, onExchange, loading }) => {
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
 
   // check the validity of product which type is ActivityTicket
@@ -62,7 +57,12 @@ const VoucherExchangeModal: React.VFC<{
 
   return (
     <>
-      <Button colorScheme="primary" onClick={() => setVisible(true)}>
+      <Button
+        isLoading={loading}
+        loadingText={formatMessage(voucherMessages.VoucherExchangeModal.exchanging)}
+        colorScheme="primary"
+        onClick={() => setVisible(true)}
+      >
         {formatMessage(voucherMessages.VoucherExchangeModal.useNow)}
       </Button>
 
@@ -135,11 +135,11 @@ const VoucherExchangeModal: React.VFC<{
               </Button>
               <Button
                 colorScheme="primary"
-                isLoading={loading}
+                isLoading={loading || loadingValidityCheck}
                 isDisabled={selectedProductIds.length === 0 || selectedProductIds.length > productQuantityLimit}
                 onClick={() => {
                   if (onExchange) {
-                    onExchange(setVisible, setLoading, selectedProductIds)
+                    onExchange(setVisible, selectedProductIds)
                   }
                 }}
               >

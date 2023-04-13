@@ -1,7 +1,7 @@
-import { useMutation } from '@apollo/react-hooks'
+import { gql, useMutation } from '@apollo/client'
 import { Button, ButtonGroup, Icon, IconButton, useToast } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
-import gql from 'graphql-tag'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -18,7 +18,6 @@ import { ReviewProps } from '../../types/review'
 import { AuthModalContext } from '../auth/AuthModal'
 import MemberAvatar from '../common/MemberAvatar'
 import StarRating from '../common/StarRating'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import ReviewReplyItem from './ReviewReplyItem'
 
 const ReviewContentBlock = styled.div`

@@ -1,5 +1,4 @@
-import { ApolloError } from 'apollo-client'
-import gql from 'graphql-tag'
+import { ApolloError, gql } from '@apollo/client'
 import React, { createContext } from 'react'
 import { useNotifications } from '../hooks/data'
 
@@ -46,13 +45,8 @@ const NotificationContext = createContext<{
 })
 
 export const NotificationProvider: React.FC = ({ children }) => {
-  const {
-    loadingNotifications,
-    errorNotifications,
-    notifications,
-    unreadCount,
-    refetchNotifications,
-  } = useNotifications(15)
+  const { loadingNotifications, errorNotifications, notifications, unreadCount, refetchNotifications } =
+    useNotifications(15)
 
   return (
     <NotificationContext.Provider

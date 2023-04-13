@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Skeleton } from '@chakra-ui/skeleton'
-import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import Responsive from 'lodestar-app-element/src/components/common/Responsive'
 import { Link } from 'react-router-dom'
@@ -212,7 +211,7 @@ const useNewestPodcastAlbumCollection: () => {
     podcastAlbums:
       data?.podcast_album.map(v => ({
         id: v.id,
-        coverUrl: v.cover_url,
+        coverUrl: v.cover_url || null,
         title: v.title,
         programCount: v.podcast_album_podcast_programs_aggregate?.aggregate?.count || 0,
         categoryNames: v.podcast_album_categories.map(w => w.category?.name).filter(notEmpty),

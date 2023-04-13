@@ -1,11 +1,10 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText } from '@chakra-ui/react'
 import { message, Table, Tooltip } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { ColumnProps } from 'antd/lib/table'
 import axios from 'axios'
-import gql from 'graphql-tag'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import TokenTypeLabel from 'lodestar-app-element/src/components/labels/TokenTypeLabel'
@@ -373,7 +372,7 @@ const useOrderLogCollection = (memberId: string) => {
         sum(orderLog.order_discounts.map(prop('price'))) +
         (orderLog.shipping?.fee || 0),
       shipping: orderLog.shipping,
-      orderProducts: orderLog.order_products
+      orderProducts: [...orderLog.order_products]
         .sort((a, b) => (a.options?.position || 0) - (b.options?.position || 0))
         .map(orderProduct => ({
           id: orderProduct.id,
@@ -395,7 +394,7 @@ const useOrderLogCollection = (memberId: string) => {
         name: orderDiscount.name,
         type: orderDiscount.type,
         target: orderDiscount.target,
-        description: orderDiscount.description,
+        description: orderDiscount.description || '',
         price: orderDiscount.price,
         options: orderDiscount.options,
       })),

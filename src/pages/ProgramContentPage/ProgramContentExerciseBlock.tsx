@@ -1,15 +1,11 @@
-import { useQuery } from '@apollo/react-hooks'
 import { Skeleton } from 'antd'
-import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React from 'react'
 import { StringParam, useQueryParam } from 'use-query-params'
 import ExamBlock from '../../components/exam/ExamBlock'
 import ExerciseBlock from '../../components/exercise/ExerciseBlock'
-import hasura from '../../hasura'
 import { useExam, useExercisePublic, useSpecificExercise } from '../../hooks/exam'
-import { ExercisePublic } from '../../types/exam'
 import {
   ProgramContent,
   ProgramContentAttachmentProps,

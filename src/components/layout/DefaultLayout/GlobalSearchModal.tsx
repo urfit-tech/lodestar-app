@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import {
   Button,
   Checkbox,
@@ -14,7 +14,6 @@ import {
   SkeletonText,
   useToast,
 } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { complement, equals, flatten, groupBy, includes, isEmpty, map, pluck, prop, sortBy, toPairs } from 'ramda'
 import React, { useState } from 'react'
