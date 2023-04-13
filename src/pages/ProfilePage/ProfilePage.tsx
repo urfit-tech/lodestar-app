@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Button, Tag } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -94,9 +93,9 @@ const ProfilePage: React.VFC = () => {
         id: data.member_public[0].id,
         name: data.member_public[0].name,
         title: data.member_public[0].title,
-        abstract: data.member_public[0].abstract,
-        description: data.member_public[0].description,
-        pictureUrl: data.member_public[0].picture_url,
+        abstract: data.member_public[0].abstract || '',
+        description: data.member_public[0].description || '',
+        pictureUrl: data.member_public[0].picture_url || null,
       }
     : null
   const memberProducts = useMemberProducts(member?.id || '')

@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniq } from 'ramda'
@@ -72,15 +71,15 @@ export const usePodcastProgramCollection = (creatorId?: string) => {
 
           return {
             id: podcastProgram.id,
-            coverUrl: podcastProgram.cover_url,
+            coverUrl: podcastProgram.cover_url || null,
             title: podcastProgram.title,
-            description: podcastProgram.abstract,
+            description: podcastProgram.abstract || '',
             duration: podcastProgram.duration,
             durationSecond: podcastProgram.duration_second,
             instructor: instructorMember
               ? {
                   id: instructorMember.id || '',
-                  avatarUrl: instructorMember.picture_url,
+                  avatarUrl: instructorMember.picture_url || null,
                   name: instructorMember.name || instructorMember.username || '',
                 }
               : null,
@@ -215,15 +214,15 @@ export const useEnrolledPodcastPrograms = (memberId: string) => {
 
             return {
               id: enrollment.podcast_program.id,
-              coverUrl: enrollment.podcast_program.cover_url,
+              coverUrl: enrollment.podcast_program.cover_url || null,
               title: enrollment.podcast_program.title,
-              description: enrollment.podcast_program.abstract,
-              duration: enrollment.podcast_program.duration,
+              description: enrollment.podcast_program.abstract || '',
+              duration: enrollment.podcast_program.duration || '',
               durationSecond: enrollment.podcast_program.duration_second,
               instructor: instructorMember
                 ? {
                     id: instructorMember.id || '',
-                    avatarUrl: instructorMember.picture_url,
+                    avatarUrl: instructorMember.picture_url || null,
                     name: instructorMember.name || instructorMember.username || '',
                   }
                 : null,
@@ -361,7 +360,7 @@ export const useEnrolledPodcastPlansCreators = (memberId: string) => {
             enrollment && enrollment.podcast_plan && enrollment.podcast_plan.creator
               ? {
                   id: enrollment.podcast_plan.creator.id || '',
-                  pictureUrl: enrollment.podcast_plan.creator.picture_url,
+                  pictureUrl: enrollment.podcast_plan.creator.picture_url || null,
                   name: enrollment.podcast_plan.creator.name || '',
                   username: enrollment.podcast_plan.creator.username || '',
                 }
@@ -665,7 +664,7 @@ export const usePlaylistPodcastPrograms = (playlistId: string) => {
       ? []
       : data.playlist_podcast_program.map(playlist => ({
           id: playlist.podcast_program.id,
-          coverUrl: playlist.podcast_program.cover_url,
+          coverUrl: playlist.podcast_program.cover_url || null,
           title: playlist.podcast_program.title,
           duration: playlist.podcast_program.duration,
           durationSecond: playlist.podcast_program.duration_second,

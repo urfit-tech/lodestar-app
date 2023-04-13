@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Button, Icon, Typography } from 'antd'
-import gql from 'graphql-tag'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -29,7 +28,7 @@ export const messages = defineMessages({
   orderTracking: { id: 'common.text.orderTracking', defaultMessage: '訂單查詢' },
 })
 
-const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
+const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
   const { formatMessage } = useIntl()
   const { orderId } = useParams<{ orderId: string }>()
   const location = useLocation()
@@ -38,10 +37,10 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   const [errorCode] = useQueryParam('code', StringParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
-  const { loading: isOrderLoading, data } = useQuery<hasura.GET_ORDERS_PRODUCT, hasura.GET_ORDERS_PRODUCTVariables>(
-    GET_ORDERS_PRODUCT,
-    { variables: { orderId: orderId } },
-  )
+  const { loading: isOrderLoading, data } = useQuery<
+    hasura.PH_GET_ORDERS_PRODUCT,
+    hasura.PH_GET_ORDERS_PRODUCTVariables
+  >(PH_GET_ORDERS_PRODUCT, { variables: { orderId: orderId } })
   const order = data?.order_log_by_pk
 
   const { resourceCollection: productResourceCollection, loading: productResourceCollectionLoading } =
@@ -238,8 +237,8 @@ const OrderPage: CustomVFC<{}, { order: hasura.GET_ORDERS_PRODUCT['order_log_by_
   )
 }
 
-const GET_ORDERS_PRODUCT = gql`
-  query GET_ORDERS_PRODUCT($orderId: String!) {
+const PH_GET_ORDERS_PRODUCT = gql`
+  query PH_GET_ORDERS_PRODUCT($orderId: String!) {
     order_log_by_pk(id: $orderId) {
       id
       message

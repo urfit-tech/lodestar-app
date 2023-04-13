@@ -476,9 +476,6 @@ export const voucherMessages = {
   }),
   content: defineMessages({
     details: { id: 'voucher.content', defaultMessage: '詳情' },
-    fromNow: { id: 'voucher.fromNow', defaultMessage: '即日起' },
-    noUsePeriod: { id: 'voucher.noUsePeriod', defaultMessage: '無使用期限' },
-    redeemable: { id: 'voucher.redeemable', defaultMessage: '可兌換' },
     amount: { id: 'voucher.amount', defaultMessage: '數量' },
     editProject: { id: 'voucher.modal.project.edit', defaultMessage: '編輯方案' },
   }),

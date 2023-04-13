@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import styled from 'styled-components'
 import hasura from '../../hasura'
@@ -153,10 +152,10 @@ const useFeaturePodcastAlbum: (filter: { categoryName?: string }) => {
     status: loading ? 'loading' : error ? 'error' : data ? 'success' : 'idle',
     podcastAlbum: podcastAlbum && {
       id: podcastAlbum.id,
-      coverUrl: podcastAlbum.cover_url,
+      coverUrl: podcastAlbum.cover_url || null,
       title: podcastAlbum.title,
       categoryNames: podcastAlbum.podcast_album_categories.map(v => v.category?.name).filter(notEmpty),
-      description: podcastAlbum.abstract,
+      description: podcastAlbum.abstract || '',
     },
   }
 }

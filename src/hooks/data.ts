@@ -1,11 +1,11 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { ProductType } from 'lodestar-app-element/src/types/product'
 import { sum } from 'ramda'
 import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
+import { v4 as uuid } from 'uuid'
 import LocaleContext from '../contexts/LocaleContext'
 import { GET_NOTIFICATIONS, NotificationProps } from '../contexts/NotificationContext'
 import hasura from '../hasura'
@@ -23,11 +23,11 @@ export const useNotifications = (limit: number) => {
       ? []
       : data.notification.map(notification => ({
           id: notification.id,
-          description: notification.description,
-          type: notification.type,
-          referenceUrl: notification.reference_url,
-          extra: notification.extra,
-          avatar: notification.avatar,
+          description: notification.description || '',
+          type: notification.type || null,
+          referenceUrl: notification.reference_url || null,
+          extra: notification.extra || null,
+          avatar: notification.avatar || null,
           readAt: notification.read_at ? new Date(notification.read_at) : null,
           updatedAt: new Date(notification.updated_at),
         }))
@@ -106,7 +106,7 @@ export const useCouponCollection = (memberId: string) => {
               constraint: coupon.coupon_code.coupon_plan.constraint,
               amount: coupon.coupon_code.coupon_plan.amount,
               title: coupon.coupon_code.coupon_plan.title,
-              description: coupon.coupon_code.coupon_plan.description,
+              description: coupon.coupon_code.coupon_plan.description || '',
               count: 0,
               remaining: 0,
               scope: coupon.coupon_code.coupon_plan.scope,
@@ -224,21 +224,11 @@ export const useUploadAttachments = () => {
   `)
 
   return async (type: string, target: string, files: File[]) => {
-    const { data } = await insertAttachment({
-      variables: {
-        attachments: files.map(() => ({
-          type,
-          target,
-          app_id: appId,
-        })),
-      },
-    })
-
-    const attachmentIds: string[] = data?.insert_attachment?.returning.map((v: any) => v.id) || []
-
+    const attachmentIds: string[] = []
     try {
       for (let index = 0; files[index]; index++) {
-        const attachmentId = attachmentIds[index]
+        const attachmentId = uuid()
+        attachmentIds.push(attachmentId)
         const file = files[index]
         await uploadFile(`attachments/${attachmentId}`, file, authToken)
         await insertAttachment({
@@ -246,6 +236,8 @@ export const useUploadAttachments = () => {
             attachments: [
               {
                 id: attachmentId,
+                type,
+                target,
                 data: {
                   lastModified: file.lastModified,
                   name: file.name,

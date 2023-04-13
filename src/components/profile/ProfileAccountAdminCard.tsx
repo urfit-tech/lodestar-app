@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient } from '@apollo/client'
 import { CheckCircleIcon, Icon, WarningIcon } from '@chakra-ui/icons'
 import { Button } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
@@ -216,7 +216,7 @@ const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form
           username: values.username,
           name: member.name,
           pictureUrl: member.pictureUrl,
-          description: member.description,
+          description: member.description || '',
         },
       })
         .then(() => {

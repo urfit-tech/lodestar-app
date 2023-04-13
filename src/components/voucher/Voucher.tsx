@@ -4,9 +4,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { rgba } from '../../helpers'
-import { commonMessages, voucherMessages } from '../../helpers/translation'
+import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { BREAK_POINT } from '../common/Responsive'
+import voucherMessages from './translation'
 
 const StyledWrapper = styled.div`
   position: relative;
@@ -132,13 +133,13 @@ const Voucher: React.VFC<VoucherProps> = ({
           <StyledTitle className="mb-1">{title}</StyledTitle>
           <StyledCode available={available}>{voucherCode.code}</StyledCode>
           <div>
-            {startedAt ? moment(startedAt).format('YYYY/MM/DD') : formatMessage(voucherMessages.content.fromNow)}
+            {startedAt ? moment(startedAt).format('YYYY/MM/DD') : formatMessage(voucherMessages.Voucher.fromNow)}
             {' ~ '}
-            {endedAt ? moment(endedAt).format('YYYY/MM/DD') : formatMessage(voucherMessages.content.noUsePeriod)}
+            {endedAt ? moment(endedAt).format('YYYY/MM/DD') : formatMessage(voucherMessages.Voucher.noUsePeriod)}
           </div>
 
           <StyledExtra className="d-flex align-items-center justify-content-between mt-4">
-            <div>{`${formatMessage(voucherMessages.content.redeemable)} ${productQuantityLimit} ${formatMessage(
+            <div>{`${formatMessage(voucherMessages.Voucher.redeemable)} ${productQuantityLimit} ${formatMessage(
               commonMessages.unit.item,
             )}`}</div>
             {available && extra && <div>{extra}</div>}

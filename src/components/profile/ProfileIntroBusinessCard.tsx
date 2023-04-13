@@ -2,15 +2,15 @@ import { Button } from '@chakra-ui/react'
 import { Form, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
+import BraftEditor from 'braft-editor'
+import { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { braftLanguageFn, handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import profileMessages from './translation'
+import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
 import { StyledForm } from '../layout'
-import { FormEvent, useState } from 'react'
-import { braftLanguageFn, handleError } from '../../helpers'
-import BraftEditor from 'braft-editor'
-import { useMember, useUpdateMember } from '../../hooks/member'
+import profileMessages from './translation'
 
 type ProfileIntroBusinessCardProps = CardProps & FormComponentProps & { memberId: string }
 
@@ -37,7 +37,7 @@ const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ fo
             name: member.name,
             pictureUrl: member.pictureUrl,
             title: member.title,
-            abstract: member.abstract,
+            abstract: member.abstract || '',
             description: values.companyIntro?.toRAW(),
           },
         })

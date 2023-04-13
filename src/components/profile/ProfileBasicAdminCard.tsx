@@ -88,7 +88,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
               ? `https://${process.env.REACT_APP_S3_BUCKET}/avatars/${appId}/${memberId}/${avatarId}`
               : member.pictureUrl,
             title: values.title,
-            abstract: values.abstract,
+            abstract: values.abstract || '',
             description: values.description.toRAW(),
           },
         })
@@ -148,7 +148,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
         </Form.Item>
         <Form.Item label={formatMessage(profileMessages.form.message.abstract)}>
           {form.getFieldDecorator('abstract', {
-            initialValue: member && member.abstract,
+            initialValue: (member && member.abstract) || '',
             rules: [{ max: 100 }],
           })(<Textarea rows={2} placeholder={formatMessage(profileMessages.form.message.abstractPlaceHolder)} />)}
         </Form.Item>

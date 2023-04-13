@@ -1,5 +1,4 @@
-import { QueryHookOptions, useMutation, useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, QueryHookOptions, useMutation, useQuery } from '@apollo/client'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniq } from 'ramda'
 import { useMemo } from 'react'
@@ -132,11 +131,11 @@ export const usePublishedProgramCollection = (options?: {
           )
           .map(program => ({
             id: program.id,
-            coverUrl: program.cover_url,
-            coverMobileUrl: program.cover_mobile_url,
-            coverThumbnailUrl: program.cover_thumbnail_url,
+            coverUrl: program.cover_url || null,
+            coverMobileUrl: program.cover_mobile_url || null,
+            coverThumbnailUrl: program.cover_thumbnail_url || null,
             title: program.title,
-            abstract: program.abstract,
+            abstract: program.abstract || '',
             supportLocales: program.support_locales,
             publishedAt: program.published_at && new Date(program.published_at),
             isSubscription: program.is_subscription,
@@ -162,7 +161,7 @@ export const usePublishedProgramCollection = (options?: {
               id: programPlan.id,
               type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
               title: programPlan.title || '',
-              description: programPlan.description,
+              description: programPlan.description || '',
               gains: programPlan.gains,
               currency: {
                 id: programPlan.currency.id,
@@ -368,15 +367,15 @@ export const useProgram = (programId: string) => {
         ? null
         : {
             id: data.program_by_pk.id,
-            coverUrl: data.program_by_pk.cover_url,
-            coverMobileUrl: data.program_by_pk.cover_mobile_url,
-            coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url,
+            coverUrl: data.program_by_pk.cover_url || null,
+            coverMobileUrl: data.program_by_pk.cover_mobile_url || null,
+            coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url || null,
             title: data.program_by_pk.title,
-            abstract: data.program_by_pk.abstract,
+            abstract: data.program_by_pk.abstract || '',
             publishedAt: new Date(data.program_by_pk.published_at),
-            isSoldOut: data.program_by_pk.is_sold_out,
-            description: data.program_by_pk.description,
-            coverVideoUrl: data.program_by_pk.cover_video_url,
+            isSoldOut: data.program_by_pk.is_sold_out || false,
+            description: data.program_by_pk.description || '',
+            coverVideoUrl: data.program_by_pk.cover_video_url || null,
             metaTag: data.program_by_pk.meta_tag,
             isIssuesOpen: data.program_by_pk.is_issues_open,
             isEnrolledCountVisible: data.program_by_pk.is_enrolled_count_visible,
@@ -399,7 +398,7 @@ export const useProgram = (programId: string) => {
               id: programPlan.id,
               type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
               title: programPlan.title || '',
-              description: programPlan.description,
+              description: programPlan.description || '',
               gains: programPlan.gains,
               currency: {
                 id: programPlan.currency.id,
@@ -427,11 +426,11 @@ export const useProgram = (programId: string) => {
             contentSections: data.program_by_pk.program_content_sections.map(programContentSection => ({
               id: programContentSection.id,
               title: programContentSection.title,
-              description: programContentSection.description,
+              description: programContentSection.description || '',
               contents: programContentSection.program_contents.map(programContent => ({
                 id: programContent.id,
                 title: programContent.title,
-                abstract: programContent.abstract,
+                abstract: programContent.abstract || '',
                 metadata: programContent.metadata,
                 duration: programContent.duration,
                 contentType:
@@ -522,7 +521,7 @@ export const GET_PROGRAM_CONTENT = gql`
           data
         }
       }
-      program_content_attachments {
+      program_content_attachments(where: { data: { _is_null: false } }) {
         attachment_id
         data
         options
@@ -553,13 +552,13 @@ export const useProgramContent = (programContentId: string) => {
         : {
             id: data.program_content_by_pk.id,
             title: data.program_content_by_pk.title,
-            abstract: data.program_content_by_pk.abstract,
+            abstract: data.program_content_by_pk.abstract || '',
             metadata: data.program_content_by_pk.metadata,
             duration: data.program_content_by_pk.duration,
             contentType:
               data.program_content_by_pk.program_content_videos.length > 0
                 ? 'video'
-                : data.program_content_by_pk.program_content_body?.type,
+                : data.program_content_by_pk.program_content_body?.type || null,
             publishedAt: data.program_content_by_pk.published_at
               ? new Date(data.program_content_by_pk.published_at)
               : null,
@@ -571,8 +570,8 @@ export const useProgramContent = (programContentId: string) => {
             programContentBody: data.program_content_by_pk.program_content_body
               ? {
                   id: data.program_content_by_pk.program_content_body.id,
-                  type: data.program_content_by_pk.program_content_body.type,
-                  description: data.program_content_by_pk.program_content_body.description,
+                  type: data.program_content_by_pk.program_content_body.type || null,
+                  description: data.program_content_by_pk.program_content_body.description || '',
                   data: data.program_content_by_pk.program_content_body.data,
                 }
               : null,
@@ -754,8 +753,8 @@ export const useProgramContentBody = (programContentBodyId: string) => {
   const programContentBody: ProgramContentBodyProps | null = data?.program_content_body_by_pk
     ? {
         id: data.program_content_body_by_pk.id,
-        type: data.program_content_body_by_pk.type,
-        description: data.program_content_body_by_pk.description,
+        type: data.program_content_body_by_pk.type || null,
+        description: data.program_content_body_by_pk.description || '',
         data: data.program_content_body_by_pk.data,
       }
     : null

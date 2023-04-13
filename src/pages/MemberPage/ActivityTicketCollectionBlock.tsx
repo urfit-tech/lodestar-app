@@ -82,7 +82,7 @@ const ActivityTicketCollectionBlock: React.VFC<{ memberId: string }> = ({ member
                     </div>
                   </Link>
                 ))
-              : enrolledActivitySessions
+              : [...enrolledActivitySessions]
                   .filter(session => session.isExpired === isExpired)
                   .sort((a, b) =>
                     isExpired ? b.endedAt.getTime() - a.endedAt.getTime() : a.endedAt.getTime() - b.endedAt.getTime(),

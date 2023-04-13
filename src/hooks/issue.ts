@@ -1,6 +1,5 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { EditorState } from 'braft-editor'
-import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import hasura from '../hasura'
@@ -32,7 +31,7 @@ const useIssue = (threadId: string) => {
       : data.issue.map(v => ({
           id: v.id,
           title: v.title,
-          description: v.description,
+          description: v.description || '',
           memberId: v.member_id,
           createdAt: new Date(v.created_at),
           solvedAt: v.solved_at ? new Date(v.solved_at) : null,
@@ -68,7 +67,7 @@ const useMutateIssue = (issueId: string) => {
         issueId,
         solvedAt: options?.solvedAt,
         title: options?.title,
-        description: options?.description,
+        description: options?.description || '',
       },
     })
   }

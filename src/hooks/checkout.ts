@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import Axios from 'axios'
-import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
@@ -245,7 +244,7 @@ export const useMemberShop = (id: string) => {
           id: data.member_shop_by_pk.id,
           title: data.member_shop_by_pk.title,
           shippingMethods: data.member_shop_by_pk.shipping_methods,
-          pictureUrl: data.member_shop_by_pk.member?.picture_url,
+          pictureUrl: data.member_shop_by_pk.member?.picture_url || null,
         }
 
   return {

@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import { max, min } from 'lodash'
 import { flatten, uniq } from 'ramda'
 import hasura from '../hasura'
@@ -244,8 +243,8 @@ export const useMerchandise = (merchandiseId: string) => {
             ),
           ),
           currencyId: data.merchandise_by_pk.currency_id,
-          abstract: data.merchandise_by_pk.abstract,
-          description: data.merchandise_by_pk.description,
+          abstract: data.merchandise_by_pk.abstract || '',
+          description: data.merchandise_by_pk.description || '',
           startedAt: data.merchandise_by_pk.started_at ? new Date(data.merchandise_by_pk.started_at) : null,
           endedAt: data.merchandise_by_pk.ended_at ? new Date(data.merchandise_by_pk.ended_at) : null,
           isLimited: data.merchandise_by_pk.is_limited,
@@ -342,7 +341,7 @@ export const useOrderLogsWithMerchandiseSpec = (memberId: string) => {
       createdAt: new Date(v.created_at),
       updatedAt: v.updated_at && new Date(v.updated_at),
       deliveredAt: v.delivered_at && new Date(v.delivered_at),
-      deliverMessage: v.deliver_message,
+      deliverMessage: v.deliver_message || '',
       shipping: v.shipping,
       invoice: v.invoice_options,
       orderProducts: v.order_products.map(w => ({

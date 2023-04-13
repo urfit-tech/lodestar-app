@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/react-hooks'
 // import { Icon } from '@chakra-ui/icons'
 import { Skeleton, Stack } from '@chakra-ui/react'
 import { Tabs } from 'antd'
-import gql from 'graphql-tag'
 import { max, min } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -931,12 +930,12 @@ const useSearchProductCollection = (
       type: project.type,
       title: project.title,
       coverType: project.cover_type,
-      coverUrl: project.cover_url,
-      previewUrl: project.preview_url,
-      abstract: project.abstract,
-      introduction: project.introduction,
-      introductionDesktop: project.introduction_desktop,
-      description: project.description,
+      coverUrl: project.cover_url || null,
+      previewUrl: project.preview_url || null,
+      abstract: project.abstract || '',
+      introduction: project.introduction || '',
+      introductionDesktop: project.introduction_desktop || '',
+      description: project.description || '',
       targetAmount: project.target_amount,
       targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
       expiredAt: project.expired_at ? new Date(project.expired_at) : null,
@@ -953,12 +952,12 @@ const useSearchProductCollection = (
       ),
       projectPlans: project.project_plans.map(project_plan => ({
         id: project_plan.id,
-        coverUrl: project_plan.cover_url,
+        coverUrl: project_plan.cover_url || null,
         title: project_plan.title,
-        description: project_plan.description,
+        description: project_plan.description || '',
         isSubscription: project_plan.is_subscription,
         periodAmount: project_plan.period_amount,
-        periodType: project_plan.period_type,
+        periodType: project_plan.period_type || null,
         listPrice: project_plan.list_price,
         salePrice: project_plan.sale_price,
         soldAt: project_plan.sold_at ? new Date(project_plan.sold_at) : null,
@@ -1019,153 +1018,144 @@ const useSearchProductCollection = (
       'id' | 'codeName' | 'coverUrl' | 'videoUrl' | 'title' | 'authorId' | 'publishedAt'
     > & { authorSearchString: string; description: string })[]
   } = {
-    programs:
-      data?.program
-        .map(program => ({
-          id: program.id,
-          coverUrl: program.cover_url,
-          coverMobileUrl: program.cover_mobile_url,
-          coverThumbnailUrl: program.cover_thumbnail_url,
-          title: program.title,
-          abstract: program.abstract,
-          description:
-            program?.description && hasJsonStructure(program.description || '')
-              ? JSON.parse(program.description)
-                  ?.blocks.map((v: any) => v?.text)
-                  .toString()
-              : program.description,
-          publishedAt: new Date(program.published_at),
-          isSubscription: program.is_subscription,
-          listPrice: program.list_price,
-          salePrice: program.sale_price,
-          soldAt: program.sold_at && new Date(program.sold_at),
-          isPrivate: false,
-          isEnrolledCountVisible: program.is_enrolled_count_visible,
-          totalDuration: sum(
-            program.program_content_sections.map(section =>
-              sum(section.program_contents.map(content => content.duration)),
-            ),
+    programs: [...(data?.program || [])]
+      .map(program => ({
+        id: program.id,
+        coverUrl: program.cover_url || null,
+        coverMobileUrl: program.cover_mobile_url || null,
+        coverThumbnailUrl: program.cover_thumbnail_url || null,
+        title: program.title,
+        abstract: program.abstract || '',
+        description:
+          program?.description && hasJsonStructure(program.description || '')
+            ? JSON.parse(program.description)
+                ?.blocks.map((v: any) => v?.text)
+                .toString()
+            : program.description || '',
+        publishedAt: new Date(program.published_at),
+        isSubscription: program.is_subscription,
+        listPrice: program.list_price,
+        salePrice: program.sale_price,
+        soldAt: program.sold_at && new Date(program.sold_at),
+        isPrivate: false,
+        isEnrolledCountVisible: program.is_enrolled_count_visible,
+        totalDuration: sum(
+          program.program_content_sections.map(section =>
+            sum(section.program_contents.map(content => content.duration)),
           ),
-          roles: program.program_roles.map(programRole => ({
-            id: programRole.id,
-            name: 'instructor' as ProgramRoleName,
-            memberId: programRole.member?.id || '',
-            memberName: programRole.member?.name || '',
-          })),
-          instructorsSearchString: program.program_roles.map(v => v.member?.name).toString(),
-          plans: program.program_plans.map(programPlan => ({
-            id: programPlan.id,
-            type: (programPlan.type === 1
-              ? 'subscribeFromNow'
-              : programPlan.type === 2
-              ? 'subscribeAll'
-              : 'unknown') as ProgramPlanType,
-            title: programPlan.title,
-            description: programPlan.description,
-            gains: programPlan.gains,
-            currency: {
-              id: programPlan.currency.id,
-              label: programPlan.currency.label,
-              unit: programPlan.currency.unit,
-              name: programPlan.currency.name,
-            },
-            listPrice: programPlan.list_price,
-            salePrice: programPlan.sale_price,
-            soldAt: programPlan.sold_at && new Date(programPlan.sold_at),
-            discountDownPrice: programPlan.discount_down_price,
-            periodAmount: programPlan.period_amount,
-            periodType: programPlan.period_type as PeriodType,
-            startedAt: programPlan.started_at && new Date(programPlan.started_at),
-            endedAt: programPlan.ended_at && new Date(programPlan.ended_at),
-            isParticipantsVisible: programPlan.is_participants_visible,
-            publishedAt: new Date(programPlan.published_at),
-          })),
-          isEnrolled: program.program_enrollments.length > 0,
-        }))
-        .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')) || [],
-    programPackages:
-      data?.program_package
-        .map(programPackage => ({
-          id: programPackage.id,
-          coverUrl: programPackage.cover_url,
-          title: programPackage.title,
-          description:
-            programPackage?.description && hasJsonStructure(programPackage.description || '')
-              ? JSON.parse(programPackage.description)
+        ),
+        roles: program.program_roles.map(programRole => ({
+          id: programRole.id,
+          name: 'instructor' as ProgramRoleName,
+          memberId: programRole.member?.id || '',
+          memberName: programRole.member?.name || '',
+        })),
+        instructorsSearchString: program.program_roles.map(v => v.member?.name).toString(),
+        plans: program.program_plans.map(programPlan => ({
+          id: programPlan.id,
+          type: (programPlan.type === 1
+            ? 'subscribeFromNow'
+            : programPlan.type === 2
+            ? 'subscribeAll'
+            : 'unknown') as ProgramPlanType,
+          title: programPlan.title,
+          description: programPlan.description || '',
+          gains: programPlan.gains,
+          currency: {
+            id: programPlan.currency.id,
+            label: programPlan.currency.label,
+            unit: programPlan.currency.unit,
+            name: programPlan.currency.name,
+          },
+          listPrice: programPlan.list_price,
+          salePrice: programPlan.sale_price,
+          soldAt: programPlan.sold_at && new Date(programPlan.sold_at),
+          discountDownPrice: programPlan.discount_down_price,
+          periodAmount: programPlan.period_amount,
+          periodType: programPlan.period_type as PeriodType,
+          startedAt: programPlan.started_at && new Date(programPlan.started_at),
+          endedAt: programPlan.ended_at && new Date(programPlan.ended_at),
+          isParticipantsVisible: programPlan.is_participants_visible,
+          publishedAt: new Date(programPlan.published_at),
+        })),
+        isEnrolled: program.program_enrollments.length > 0,
+      }))
+      .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')),
+    programPackages: [...(data?.program_package || [])]
+      .map(programPackage => ({
+        id: programPackage.id,
+        coverUrl: programPackage.cover_url || null,
+        title: programPackage.title,
+        description:
+          programPackage?.description && hasJsonStructure(programPackage.description || '')
+            ? JSON.parse(programPackage.description)
+                ?.blocks.map((v: any) => v?.text)
+                .toString()
+            : programPackage.description || '',
+        instructorsSearchString: flatten(
+          programPackage.program_package_programs.map(v => v.program.program_roles.map(w => w.member?.name)),
+        ).toString(),
+      }))
+      .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')),
+    activities: [...(data?.activity || [])]
+      .map(activity => ({
+        id: activity.id,
+        coverUrl: activity.cover_url || null,
+        title: activity.title,
+        description:
+          activity?.description && hasJsonStructure(activity.description || '')
+            ? JSON.parse(activity.description)
+                ?.blocks.map((v: any) => v?.text)
+                .toString()
+            : activity.description || '',
+        isParticipantsVisible: activity.is_participants_visible,
+        publishedAt: new Date(activity.published_at),
+        startedAt: activity.activity_sessions_aggregate.aggregate?.min?.started_at
+          ? new Date(activity.activity_sessions_aggregate.aggregate.min.started_at)
+          : null,
+        endedAt: activity.activity_sessions_aggregate.aggregate?.max?.ended_at
+          ? new Date(activity.activity_sessions_aggregate.aggregate.max.ended_at)
+          : null,
+        organizerId: activity.organizer_id,
+        supportLocales: activity.support_locales,
+        categories: activity.activity_categories.map(activityCategory => ({
+          id: activityCategory.category.id,
+          name: activityCategory.category.name,
+        })),
+        participantCount: activity.activity_enrollments_aggregate.aggregate?.count || 0,
+        totalSeats: activity.activity_tickets_aggregate.aggregate?.sum?.count || 0,
+        tickets: activity.activity_tickets_aggregate?.nodes?.map(ticket => ({
+          id: ticket.id,
+          title: ticket.title,
+          startedAt: new Date(ticket.started_at),
+          endedAt: new Date(ticket.ended_at),
+          price: ticket.price,
+          count: ticket.count,
+          currencyId: ticket.currency_id,
+          description: ticket.description || '',
+          isPublished: ticket.is_published,
+        })),
+        organizerSearchString: activity.organizer?.name,
+        ticketTitleSearchString: activity.activity_tickets_aggregate.nodes.map(v => v.title).toString(),
+        ticketDescriptionSearchString: activity.activity_tickets_aggregate.nodes
+          .map(v =>
+            v?.description && hasJsonStructure(v?.description || '')
+              ? JSON.parse(v.description)
                   ?.blocks.map((v: any) => v?.text)
                   .toString()
-              : programPackage.description,
-          instructorsSearchString: flatten(
-            programPackage.program_package_programs.map(v => v.program.program_roles.map(w => w.member?.name)),
-          ).toString(),
-        }))
-        .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')) || [],
-    activities:
-      data?.activity
-        .map(activity => ({
-          id: activity.id,
-          coverUrl: activity.cover_url,
-          title: activity.title,
-          description:
-            activity?.description && hasJsonStructure(activity.description || '')
-              ? JSON.parse(activity.description)
-                  ?.blocks.map((v: any) => v?.text)
-                  .toString()
-              : activity.description,
-          isParticipantsVisible: activity.is_participants_visible,
-          publishedAt: new Date(activity.published_at),
-          startedAt: activity.activity_sessions_aggregate.aggregate?.min?.started_at
-            ? new Date(activity.activity_sessions_aggregate.aggregate.min.started_at)
-            : null,
-          endedAt: activity.activity_sessions_aggregate.aggregate?.max?.ended_at
-            ? new Date(activity.activity_sessions_aggregate.aggregate.max.ended_at)
-            : null,
-          organizerId: activity.organizer_id,
-          supportLocales: activity.support_locales,
-          categories: activity.activity_categories.map(activityCategory => ({
-            id: activityCategory.category.id,
-            name: activityCategory.category.name,
-          })),
-          participantCount: activity.activity_enrollments_aggregate.aggregate?.count || 0,
-          totalSeats: activity.activity_tickets_aggregate.aggregate?.sum?.count || 0,
-          tickets: activity.activity_tickets_aggregate?.nodes?.map(ticket => ({
-            id: ticket.id,
-            title: ticket.title,
-            startedAt: new Date(ticket.started_at),
-            endedAt: new Date(ticket.ended_at),
-            price: ticket.price,
-            count: ticket.count,
-            currencyId: ticket.currency_id,
-            description: ticket.description,
-            isPublished: ticket.is_published,
-          })),
-          organizerSearchString: activity.organizer?.name,
-          ticketTitleSearchString: activity.activity_tickets_aggregate.nodes.map(v => v.title).toString(),
-          ticketDescriptionSearchString: activity.activity_tickets_aggregate.nodes
-            .map(v =>
-              v?.description && hasJsonStructure(v?.description || '')
-                ? JSON.parse(v.description)
-                    ?.blocks.map((v: any) => v?.text)
-                    .toString()
-                : v?.description,
-            )
-            .toString(),
-        }))
-        .sort((a, b) =>
-          sorting(
-            a,
-            b,
-            [
-              'organizerSearchString',
-              'title',
-              'description',
-              'ticketTitleSearchString',
-              'ticketDescriptionSearchString',
-            ],
-            filter?.title || '',
-          ),
-        ) || [],
-    projects: projects
+              : v?.description || '',
+          )
+          .toString(),
+      }))
+      .sort((a, b) =>
+        sorting(
+          a,
+          b,
+          ['ticketDescriptionSearchString', 'ticketTitleSearchString', 'description', 'title', 'organizerSearchString'],
+          filter?.title || '',
+        ),
+      ),
+    projects: [...projects]
       .filter(project => project.type !== 'funding' && project.type !== 'pre-order' && project.type !== 'portfolio')
       .sort((a, b) =>
         sorting(
@@ -1175,7 +1165,7 @@ const useSearchProductCollection = (
           filter?.title || '',
         ),
       ),
-    fundingProjects: projects
+    fundingProjects: [...projects]
       .filter(project => project.type === 'funding')
       .sort((a, b) =>
         sorting(
@@ -1185,7 +1175,7 @@ const useSearchProductCollection = (
           filter?.title || '',
         ),
       ),
-    preOrderProjects: projects
+    preOrderProjects: [...projects]
       .filter(project => project.type === 'pre-order')
       .sort((a, b) =>
         sorting(
@@ -1195,7 +1185,7 @@ const useSearchProductCollection = (
           filter?.title || '',
         ),
       ),
-    portfolioProjects: projects
+    portfolioProjects: [...projects]
       .filter(project => project.type === 'portfolio')
       .sort((a, b) =>
         sorting(
@@ -1205,106 +1195,103 @@ const useSearchProductCollection = (
           filter?.title || '',
         ),
       ),
-    posts:
-      data?.post
-        .map(post => ({
-          id: post.id,
-          codeName: post.code_name,
-          title: post.title,
-          coverUrl: post.cover_url,
-          videoUrl: post.video_url,
-          authorId: post.post_roles[0]?.member_id || '',
-          publishedAt: post.published_at ? new Date(post.published_at) : null,
-          authorSearchString: post.post_roles.map(v => v.member?.name).toString(),
-          description:
-            post?.description && hasJsonStructure(post.description || '')
-              ? JSON.parse(post.description)
-                  ?.blocks.map((v: any) => v?.text)
-                  .toString()
-              : '',
-        }))
-        .sort((a, b) => sorting(a, b, ['description', 'title', 'authorSearchString'], filter?.title || '')) || [],
-    podcastPrograms:
-      data?.podcast_program
-        .map(podcastProgram => ({
-          id: podcastProgram.id,
-          coverUrl: podcastProgram.cover_url,
-          title: podcastProgram.title,
-          listPrice: podcastProgram.list_price,
-          salePrice: podcastProgram.sale_price,
-          soldAt: podcastProgram.sold_at && new Date(podcastProgram.sold_at),
-          duration: podcastProgram.duration,
-          durationSecond: podcastProgram.duration_second,
-          description: podcastProgram.abstract,
-          bodyDescription: podcastProgram.podcast_program_body?.description || '',
-          categories: podcastProgram.podcast_program_categories.map(podcastProgramCategory => ({
-            id: podcastProgramCategory.category.id,
-            name: podcastProgramCategory.category.name,
-          })),
-          instructor: podcastProgram.podcast_program_roles[0]
-            ? {
-                id: podcastProgram.podcast_program_roles[0].member?.id || '',
-                avatarUrl: podcastProgram.podcast_program_roles[0].member?.picture_url || null,
-                name:
-                  podcastProgram.podcast_program_roles[0].member?.name ||
-                  podcastProgram.podcast_program_roles[0].member?.username ||
-                  '',
-              }
-            : null,
-          instructorsSearchString: podcastProgram.podcast_program_roles.map(v => v.member?.name).toString(),
-          isEnrolled: podcastProgram.podcast_program_enrollments.length > 0,
-          isSubscribed: data.podcast_plan_enrollment
-            .map(podcastPlanEnrollment => podcastPlanEnrollment.podcast_plan?.creator_id)
-            .filter(notEmpty)
-            .includes(podcastProgram.podcast_program_roles[0].member?.id || ''),
-        }))
-        .sort((a, b) =>
-          sorting(a, b, ['bodyDescription', 'description', 'title', 'instructorsSearchString'], filter?.title || ''),
-        ) || [],
+    posts: [...(data?.post || [])]
+      .map(post => ({
+        id: post.id,
+        codeName: post.code_name || null,
+        title: post.title,
+        coverUrl: post.cover_url || null,
+        videoUrl: post.video_url || null,
+        authorId: post.post_roles[0]?.member_id || '',
+        publishedAt: post.published_at ? new Date(post.published_at) : null,
+        authorSearchString: post.post_roles.map(v => v.member?.name).toString(),
+        description:
+          post?.description && hasJsonStructure(post.description || '')
+            ? JSON.parse(post.description)
+                ?.blocks.map((v: any) => v?.text)
+                .toString()
+            : '',
+      }))
+      .sort((a, b) => sorting(a, b, ['description', 'title', 'authorSearchString'], filter?.title || '')),
+    podcastPrograms: [...(data?.podcast_program || [])]
+      .map(podcastProgram => ({
+        id: podcastProgram.id,
+        coverUrl: podcastProgram.cover_url || null,
+        title: podcastProgram.title,
+        listPrice: podcastProgram.list_price,
+        salePrice: podcastProgram.sale_price,
+        soldAt: podcastProgram.sold_at && new Date(podcastProgram.sold_at),
+        duration: podcastProgram.duration,
+        durationSecond: podcastProgram.duration_second,
+        description: podcastProgram.abstract || '',
+        bodyDescription: podcastProgram.podcast_program_body?.description || '',
+        categories: podcastProgram.podcast_program_categories.map(podcastProgramCategory => ({
+          id: podcastProgramCategory.category.id,
+          name: podcastProgramCategory.category.name,
+        })),
+        instructor: podcastProgram.podcast_program_roles[0]
+          ? {
+              id: podcastProgram.podcast_program_roles[0].member?.id || '',
+              avatarUrl: podcastProgram.podcast_program_roles[0].member?.picture_url || null,
+              name:
+                podcastProgram.podcast_program_roles[0].member?.name ||
+                podcastProgram.podcast_program_roles[0].member?.username ||
+                '',
+            }
+          : null,
+        instructorsSearchString: podcastProgram.podcast_program_roles.map(v => v.member?.name).toString(),
+        isEnrolled: podcastProgram.podcast_program_enrollments.length > 0,
+        isSubscribed: data?.podcast_plan_enrollment
+          .map(podcastPlanEnrollment => podcastPlanEnrollment.podcast_plan?.creator_id)
+          .filter(notEmpty)
+          .includes(podcastProgram.podcast_program_roles[0].member?.id || ''),
+      }))
+      .sort((a, b) =>
+        sorting(a, b, ['bodyDescription', 'description', 'title', 'instructorsSearchString'], filter?.title || ''),
+      ),
     creators:
       data?.member_public.map(member => ({
         id: member.id || '',
-        avatarUrl: member.picture_url,
+        avatarUrl: member.picture_url || null,
         name: member.name || member.username || '',
-        abstract: member.abstract,
+        abstract: member.abstract || '',
       })) || [],
-    merchandises:
-      data?.merchandise
-        .map(merchandise => ({
-          id: merchandise.id,
-          shopkeeper: merchandise.member?.name || '',
-          title: merchandise.title,
-          abstract: merchandise.abstract || '',
-          soldAt: merchandise.sold_at ? new Date(merchandise.sold_at) : null,
-          minPrice: min(
-            merchandise.merchandise_specs.map(spec =>
-              merchandise.sold_at && typeof spec.sale_price === 'number' ? spec.sale_price : spec.list_price || 0,
-            ),
+    merchandises: [...(data?.merchandise || [])]
+      .map(merchandise => ({
+        id: merchandise.id,
+        shopkeeper: merchandise.member?.name || '',
+        title: merchandise.title,
+        abstract: merchandise.abstract || '',
+        soldAt: merchandise.sold_at ? new Date(merchandise.sold_at) : null,
+        minPrice: min(
+          merchandise.merchandise_specs.map(spec =>
+            merchandise.sold_at && typeof spec.sale_price === 'number' ? spec.sale_price : spec.list_price || 0,
           ),
-          maxPrice: max(
-            merchandise.merchandise_specs.map(spec =>
-              merchandise.sold_at && typeof spec.sale_price === 'number' ? spec.sale_price : spec.list_price || 0,
-            ),
+        ),
+        maxPrice: max(
+          merchandise.merchandise_specs.map(spec =>
+            merchandise.sold_at && typeof spec.sale_price === 'number' ? spec.sale_price : spec.list_price || 0,
           ),
-          currencyId: merchandise.currency_id,
-          tags: merchandise.merchandise_tags.map(v => v.tag_name),
-          categories: merchandise.merchandise_categories.map(v => ({
-            id: v.category.id,
-            name: v.category.name,
-          })),
-          images: merchandise.merchandise_imgs.map(v => ({
-            id: v.id,
-            url: v.url,
-            isCover: true,
-          })),
-          specs: merchandise.merchandise_specs.map(spec => ({
-            id: spec.id,
-            title: spec.title,
-            listPrice: spec.list_price,
-            salePrice: spec.sale_price,
-          })),
-        }))
-        .sort((a, b) => sorting(a, b, ['shopkeeper', 'abstract', 'title'], filter?.title || '')) || [],
+        ),
+        currencyId: merchandise.currency_id,
+        tags: merchandise.merchandise_tags.map(v => v.tag_name),
+        categories: merchandise.merchandise_categories.map(v => ({
+          id: v.category.id,
+          name: v.category.name,
+        })),
+        images: merchandise.merchandise_imgs.map(v => ({
+          id: v.id,
+          url: v.url,
+          isCover: true,
+        })),
+        specs: merchandise.merchandise_specs.map(spec => ({
+          id: spec.id,
+          title: spec.title,
+          listPrice: spec.list_price,
+          salePrice: spec.sale_price,
+        })),
+      }))
+      .sort((a, b) => sorting(a, b, ['shopkeeper', 'abstract', 'title'], filter?.title || '')),
   }
 
   return {

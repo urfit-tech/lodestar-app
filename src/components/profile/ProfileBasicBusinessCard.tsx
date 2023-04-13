@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation } from '@apollo/client'
 import { Button, Skeleton } from '@chakra-ui/react'
 import { Form, message, Select, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
@@ -94,8 +94,8 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
               ? `https://${process.env.REACT_APP_S3_BUCKET}/avatars/${appId}/${memberId}/${avatarId}`
               : member.pictureUrl,
             title: member.title,
-            abstract: member.abstract,
-            description: member.description,
+            abstract: member.abstract || '',
+            description: member.description || '',
           },
         })
         const updateMemberPropertyArray =

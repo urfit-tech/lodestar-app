@@ -1,7 +1,6 @@
-import { useMutation } from '@apollo/react-hooks'
+import { gql, useMutation } from '@apollo/client'
 import { Button, Icon } from '@chakra-ui/react'
 import { Badge, List, Popover } from 'antd'
-import gql from 'graphql-tag'
 import React, { useContext } from 'react'
 import { AiOutlineBell } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
