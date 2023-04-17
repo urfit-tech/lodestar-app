@@ -284,6 +284,7 @@ export const commonMessages = {
   content: defineMessages({
     memberProfile: { id: 'common.memberProfile', defaultMessage: '個人檔案' },
     personalSettings: { id: 'common.personalSettings', defaultMessage: '個人設定' },
+    learningAchievement: { id: 'common.learningAchievement', defaultMessage: 'Learning Achievement' },
     companySettings: { id: 'common.companySettings', defaultMessage: '公司設定' },
     courseProblem: { id: 'common.courseProblem', defaultMessage: '課程問題' },
     practiceManagement: { id: 'common.practiceManagement', defaultMessage: '作業管理' },
