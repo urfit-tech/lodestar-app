@@ -135,7 +135,7 @@ const GroupBuyingCollectionPage: React.VFC = () => {
                       </Box>
                     ))}
                   </div>
-                ) : !error ? (
+                ) : error ? (
                   <Flex justifyContent="center" alignItems="center" h="50vh">
                     error
                   </Flex>
