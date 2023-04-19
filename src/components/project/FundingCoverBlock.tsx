@@ -30,7 +30,14 @@ const FundingCoverBlock: React.VFC<{
       {coverType === 'video' && (
         <StyledPlayer>
           {coverUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
-            <video className="smartvideo" src={coverUrl} controls autoPlay style={{ width: '100%', height: '100%' }} />
+            <video
+              controlsList="nodownload"
+              className="smartvideo"
+              src={coverUrl}
+              controls
+              autoPlay
+              style={{ width: '100%', height: '100%' }}
+            />
           ) : (
             <ReactPlayer url={coverUrl} width="100%" height="100%" controls />
           )}
