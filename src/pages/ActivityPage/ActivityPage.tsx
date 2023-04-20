@@ -22,6 +22,7 @@ import { commonMessages, productMessages } from '../../helpers/translation'
 import { useActivity } from '../../hooks/activity'
 import { usePublicMember } from '../../hooks/member'
 import ActivityPageHelmet from './ActivityPageHelmet'
+import NotFoundPage from '../NotFoundPage'
 
 const ActivityContent = styled(Container)`
   && {
@@ -88,7 +89,7 @@ const ActivityPage: React.VFC = () => {
   }
 
   if (error || !activity) {
-    return <DefaultLayout white>{formatMessage(commonMessages.status.readingError)}</DefaultLayout>
+    return <NotFoundPage />
   }
 
   return (
