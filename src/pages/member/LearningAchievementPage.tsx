@@ -88,12 +88,50 @@ export type LearnedStatistic = {
   }
 }
 
+export type MemberAchievement = {
+  memberId: string
+  createdAt: Date
+  updatedAt: Date
+  achievementId: string
+  name: string
+  countable: boolean
+  isPublic: boolean
+}
+
 const LearningAchievementPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { learnedStatistic, learnedStatisticLoading, learnedStatisticError } = useLearnedStatistic(
     currentMemberId || '',
   )
+  const {
+    memberAchievement,
+    loading: memberAchievementLoading,
+    error: memberAchievementError,
+  } = useAchievement(currentMemberId || '')
+
+  const getAchievementTag = () => {
+    const tagFilter = memberAchievement?.filter(a => a.countable)
+    if (!tagFilter) return null
+    const counts = tagFilter.reduce((acc: any, cur) => {
+      if (cur.name in acc) {
+        acc[cur.name]++
+      } else {
+        acc[cur.name] = 1
+      }
+      return acc
+    }, {})
+
+    let maxCount = 0
+    let maxName = ''
+    for (let name in counts) {
+      if (counts[name] > maxCount) {
+        maxCount = counts[name]
+        maxName = name
+      }
+    }
+    return maxName
+  }
 
   return (
     <ChakraProvider theme={learningAchievementTheme}>
@@ -106,7 +144,11 @@ const LearningAchievementPage: React.FC = () => {
           }}
         >
           <StyledColGrid>
-            <InfoCard avgProgramProgressPercent={learnedStatistic.avgProgramProgressPercent} />
+            <InfoCard
+              avgProgramProgressPercent={learnedStatistic.avgProgramProgressPercent}
+              achievementCount={memberAchievement?.length || 0}
+              achievementTag={getAchievementTag()}
+            />
             <StyledRowGrid>
               <ProgramSummaryCard
                 programCount={learnedStatistic.programCount}
@@ -123,7 +165,7 @@ const LearningAchievementPage: React.FC = () => {
             </StyledRowGrid>
             <ProgressBarCard consecutiveDayOptions={learnedStatistic.consecutiveDayOptions} />
             <ProgramProgressDetailCard productOptions={learnedStatistic.productOptions} />
-            <BadgeCard />
+            <BadgeCard memberAchievement={memberAchievement || []} />
           </StyledColGrid>
         </MemberAdminLayout>
       )}
@@ -191,29 +233,6 @@ const useLearnedStatistic = (memberId: string) => {
     },
   )
 
-  const { data } = useQuery<hasura.GET_MEMBER_ACHIEVEMENT, hasura.GET_MEMBER_ACHIEVEMENTVariables>(
-    gql`
-      query GET_MEMBER_ACHIEVEMENT($memberId: String!) {
-        member_achievement(where: { member_id: { _eq: $memberId } }) {
-          member_id
-          created_at
-          updated_at
-          app_achievement {
-            id
-            name
-            countable
-            is_public
-            position
-            achievement_template {
-              picture_url
-            }
-          }
-        }
-      }
-    `,
-    { variables: { memberId } },
-  )
-
   // hard code
   const tags = ['溝通表達', '經營領導', '心靈成長', '職場專業', '創業開店', '健康家庭']
 
@@ -259,4 +278,42 @@ const useLearnedStatistic = (memberId: string) => {
   return { learnedStatistic, learnedStatisticLoading, learnedStatisticError }
 }
 
+const useAchievement = (memberId: string) => {
+  const { data, loading, error } = useQuery<hasura.GET_MEMBER_ACHIEVEMENT, hasura.GET_MEMBER_ACHIEVEMENTVariables>(
+    gql`
+      query GET_MEMBER_ACHIEVEMENT($memberId: String!) {
+        member_achievement(where: { member_id: { _eq: $memberId } }) {
+          member_id
+          created_at
+          updated_at
+          app_achievement {
+            id
+            name
+            countable
+            is_public
+            position
+            achievement_template {
+              picture_url
+            }
+          }
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+
+  const memberAchievement: MemberAchievement[] | null = data
+    ? data.member_achievement.map(a => ({
+        memberId: a.member_id || memberId,
+        createdAt: a.created_at,
+        updatedAt: a.updated_at,
+        name: a.app_achievement?.name || '',
+        isPublic: !!a.app_achievement?.is_public,
+        countable: !!a.app_achievement?.countable,
+        achievementId: a.app_achievement?.id,
+      }))
+    : null
+
+  return { memberAchievement, loading, error }
+}
 export default LearningAchievementPage

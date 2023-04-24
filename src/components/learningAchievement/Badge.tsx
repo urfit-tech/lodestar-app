@@ -1,19 +1,18 @@
+import {
+  Box,
+  Image,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
+  Text,
+} from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-
-import {
-  Text,
-  Box,
-  Popover,
-  PopoverTrigger,
-  Image,
-  PopoverContent,
-  PopoverArrow,
-  PopoverBody,
-  PopoverHeader,
-} from '@chakra-ui/react'
-import dayjs from 'dayjs'
 import learningAchievementMessages from './translation'
 
 const BadgeLayout = styled.div`
@@ -63,6 +62,7 @@ const Badge: React.FC<{
   startTime?: number | undefined
   endTime?: number | undefined
   badgeCollectedTime?: Date[] | undefined
+  isCountable?: boolean
 }> = ({
   src,
   repeatable,
@@ -76,6 +76,7 @@ const Badge: React.FC<{
   startTime,
   endTime,
   badgeCollectedTime,
+  isCountable,
 }) => {
   const { formatMessage } = useIntl()
 
@@ -88,14 +89,14 @@ const Badge: React.FC<{
               opacity={badgeCollectedTime?.length! > 0 ? 1 : 0.3}
               src={`https://static.kolable.com/images/cw/learning_achievement/${src}.png`}
             />
-            {badgeCollectedTime?.length! > 1 && (
+            {isCountable && badgeCollectedTime?.length! > 1 && (
               <BadgeCounter>
                 <Text fontSize="xs">{badgeCollectedTime?.length! > 99 ? '99+' : badgeCollectedTime?.length}</Text>
               </BadgeCounter>
             )}
           </BadgeImage>
         </PopoverTrigger>
-        {badgeCollectedTime?.length! > 0 && (
+        {isCountable && badgeCollectedTime?.length! > 0 && (
           <PopoverContent>
             <PopoverArrow />
             <PopoverHeader border={0} pb={0}>

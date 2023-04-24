@@ -1,5 +1,4 @@
 import { Avatar, Box, Center, Divider, Tag, Text } from '@chakra-ui/react'
-import { isEmpty } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -57,35 +56,18 @@ const BadgeProgressBox = styled(Box)`
   }
 `
 
-type InfoCardProps = Pick<LearnedStatistic, 'avgProgramProgressPercent'>
+type InfoCardProps = Pick<LearnedStatistic, 'avgProgramProgressPercent'> & {
+  achievementCount: number
+  achievementTag: string | null
+}
 
-const InfoCard: React.FC<InfoCardProps> = ({ avgProgramProgressPercent }) => {
+const InfoCard: React.FC<InfoCardProps> = ({ avgProgramProgressPercent, achievementCount, achievementTag }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { currentMember } = useAuth()
 
   const pushToProfile = (): void => {
     history.push('/settings/profile')
-  }
-
-  const getLearningAchievementTag = (): string => {
-    const tag: string = 'noon'
-    switch (tag) {
-      case 'morning':
-        return formatMessage(learningAchievementMessages['*'].morning) + '學習者'
-      case 'noon':
-        return formatMessage(learningAchievementMessages['*'].noon) + '學習者'
-      case 'afternoon':
-        return formatMessage(learningAchievementMessages['*'].afternoon) + '學習者'
-      case 'evening':
-        return formatMessage(learningAchievementMessages['*'].evening) + '學習者'
-      case 'midnight':
-        return formatMessage(learningAchievementMessages['*'].midnight) + '學習者'
-      case 'weekend':
-        return formatMessage(learningAchievementMessages['*'].weekend) + '學習者'
-      default:
-        return ''
-    }
   }
 
   return (
@@ -103,9 +85,9 @@ const InfoCard: React.FC<InfoCardProps> = ({ avgProgramProgressPercent }) => {
             </Text>
             <EditIcon onClick={pushToProfile} />
           </CustomerNameBox>
-          {!isEmpty(getLearningAchievementTag()) && (
+          {achievementTag && (
             <Tag size="lg" mt="2" borderRadius="full" variant="solid" backgroundColor="#049d96">
-              {getLearningAchievementTag()}
+              {achievementTag}
             </Tag>
           )}
         </Box>
@@ -113,7 +95,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ avgProgramProgressPercent }) => {
       <BadgeProgressBox>
         <Box textAlign="center">
           <Text fontSize="lg" as="b">
-            {9}
+            {achievementCount}
             {formatMessage(learningAchievementMessages.InfoCard.peices)}
           </Text>
           <Text fontSize="xs">{formatMessage(learningAchievementMessages.InfoCard.badgesCollected)}</Text>
