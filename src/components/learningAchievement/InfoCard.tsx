@@ -7,6 +7,7 @@ import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import AdminCard from '../../components/common/AdminCard'
 import { ReactComponent as EditIcon } from '../../images/edit.svg'
+import { LearnedStatistic } from '../../pages/member/LearningAchievementPage'
 import { BREAK_POINT } from '../common/Responsive'
 import learningAchievementMessages from './translation'
 
@@ -56,17 +57,12 @@ const BadgeProgressBox = styled(Box)`
   }
 `
 
-const infoData = {
-  user: '王大明',
-  medalCount: 9,
-  totalProgramProgress: 5,
-}
+type InfoCardProps = Pick<LearnedStatistic, 'avgProgramProgressPercent'>
 
-const InfoCard: React.FC = () => {
+const InfoCard: React.FC<InfoCardProps> = ({ avgProgramProgressPercent }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { currentMember } = useAuth()
-  const { user, medalCount, totalProgramProgress } = infoData
 
   const pushToProfile = (): void => {
     history.push('/settings/profile')
@@ -117,7 +113,7 @@ const InfoCard: React.FC = () => {
       <BadgeProgressBox>
         <Box textAlign="center">
           <Text fontSize="lg" as="b">
-            {medalCount}
+            {9}
             {formatMessage(learningAchievementMessages.InfoCard.peices)}
           </Text>
           <Text fontSize="xs">{formatMessage(learningAchievementMessages.InfoCard.badgesCollected)}</Text>
@@ -127,7 +123,7 @@ const InfoCard: React.FC = () => {
         </Center>
         <Box textAlign="center">
           <Text fontSize="lg" as="b">
-            {totalProgramProgress}%
+            {avgProgramProgressPercent}%
           </Text>
           <Text fontSize="xs">{formatMessage(learningAchievementMessages.InfoCard.totalProgramProgress)}</Text>
         </Box>

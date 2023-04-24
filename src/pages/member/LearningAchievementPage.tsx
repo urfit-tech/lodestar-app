@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -16,20 +17,6 @@ import learningAchievementMessages from '../../components/learningAchievement/tr
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as LearningAchievementIcon } from '../../images/icon-grid-view.svg'
-
-export type LearnedStatistic = {
-  memberId: string
-  programCount: number
-  programTagOptions: null | { count: number; tagName: string }[]
-  avgProgramProgressPercent: number
-  totalProgramContentCount: number
-  progressProgramContentCount: number
-  progressProgramCount: number
-  totalProgramTime: number
-  progressProgramTime: number
-  productOptions: { title: string; productId: string; progressPercent: number }[]
-  consecutiveDayOptions: null | { startedDay: string; endedDay: string; consecutiveDay: number }
-}
 
 const StyledRowGrid = styled.div`
   display: grid;
@@ -82,6 +69,25 @@ const learningAchievementTheme = extendTheme({
   },
 })
 
+export type LearnedStatistic = {
+  memberId: string
+  programCount: number
+  programTagOptions: { count: number; tagName: string }[]
+  avgProgramProgressPercent: number
+  totalProgramContentCount: number
+  progressProgramContentCount: number
+  progressProgramCount: number
+  totalProgramTime: number
+  progressProgramTime: number
+  productOptions: { title: string; progressPercent: number; purchasedAt: string }[]
+  consecutiveDayOptions: {
+    personalConsecutiveDay: number
+    personalMaxConsecutiveDay: number
+    allMemberMaxConsecutiveDay: number
+    allMemberAvgConsecutiveDay: number
+  }
+}
+
 const LearningAchievementPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
@@ -91,7 +97,7 @@ const LearningAchievementPage: React.FC = () => {
 
   return (
     <ChakraProvider theme={learningAchievementTheme}>
-      {!learnedStatisticLoading && (
+      {!learnedStatisticLoading && learnedStatistic && (
         <MemberAdminLayout
           content={{
             icon: LearningAchievementIcon,
@@ -100,28 +106,23 @@ const LearningAchievementPage: React.FC = () => {
           }}
         >
           <StyledColGrid>
-            <InfoCard />
+            <InfoCard avgProgramProgressPercent={learnedStatistic.avgProgramProgressPercent} />
             <StyledRowGrid>
               <ProgramSummaryCard
-                programCount={learnedStatistic?.programCount || 0}
-                programTagOptions={['溝通表達', '經營領導', '心靈成長', '職場專業', '創業開店', '健康家庭'].map(
-                  tag => ({
-                    tagName: tag,
-                    count: learnedStatistic?.programTagOptions?.find(data => data.tagName === tag)?.count || 0,
-                  }),
-                )}
+                programCount={learnedStatistic.programCount}
+                programTagOptions={learnedStatistic.programTagOptions}
               />
               <RadarCard
-                programCount={learnedStatistic?.programCount || 0}
-                totalProgramContentCount={learnedStatistic?.totalProgramContentCount || 0}
-                totalProgramTime={learnedStatistic?.totalProgramTime || 0}
-                progressProgramContentCount={learnedStatistic?.progressProgramContentCount || 0}
-                progressProgramTime={Math.round(learnedStatistic?.progressProgramTime || 0)}
-                progressProgramCount={learnedStatistic?.progressProgramCount || 0}
+                programCount={learnedStatistic.programCount}
+                totalProgramContentCount={learnedStatistic.totalProgramContentCount}
+                totalProgramTime={learnedStatistic.totalProgramTime}
+                progressProgramContentCount={learnedStatistic.progressProgramContentCount}
+                progressProgramTime={Math.round(learnedStatistic.progressProgramTime)}
+                progressProgramCount={learnedStatistic.progressProgramCount}
               />
             </StyledRowGrid>
-            <ProgressBarCard />
-            <ProgramProgressDetailCard productOptions={learnedStatistic?.productOptions || []} />
+            <ProgressBarCard consecutiveDayOptions={learnedStatistic.consecutiveDayOptions} />
+            <ProgramProgressDetailCard productOptions={learnedStatistic.productOptions} />
             <BadgeCard />
           </StyledColGrid>
         </MemberAdminLayout>
@@ -149,12 +150,44 @@ const useLearnedStatistic = (memberId: string) => {
           total_program_time
           progress_program_time
           product_options
-          consecutive_day_options
+          max_consecutive_day
+          avg_consecutive_day
+          the_newest_consecutive_day
         }
       }
     `,
     {
       variables: { memberId },
+    },
+  )
+
+  const { data: consecutiveDayStatisticData } = useQuery<hasura.GET_CW_CONSECUTIVE_DAT_STATISTIC>(gql`
+    query GET_CW_CONSECUTIVE_DAT_STATISTIC {
+      cw_consecutive_day_statistic {
+        max_consecutive_day
+        avg_consecutive_day
+      }
+    }
+  `)
+
+  const { data: orderProductPurchaseData } = useQuery<
+    hasura.GET_ORDER_PRODUCT_PURCHASED_AT,
+    hasura.GET_ORDER_PRODUCT_PURCHASED_ATVariables
+  >(
+    gql`
+      query GET_ORDER_PRODUCT_PURCHASED_AT($productIds: [String!]) {
+        order_product(where: { product_id: { _in: $productIds } }) {
+          product_id
+          created_at
+        }
+      }
+    `,
+    {
+      variables: {
+        productIds: learnedStatisticData?.cw_learned_statistic[0]?.product_options.map(
+          (option: { productId: string }) => option?.productId,
+        ),
+      },
     },
   )
 
@@ -181,19 +214,48 @@ const useLearnedStatistic = (memberId: string) => {
     { variables: { memberId } },
   )
 
-  const learnedStatistic: LearnedStatistic | undefined = learnedStatisticData?.cw_learned_statistic.map(data => ({
-    memberId: memberId || data?.member_id || '',
-    programCount: data?.program_count || 0,
-    programTagOptions: data?.program_tag_options,
-    avgProgramProgressPercent: data?.avg_program_progress_percent || 0,
-    totalProgramContentCount: data?.total_program_content_count || 0,
-    progressProgramContentCount: data?.progress_program_content_count || 0,
-    progressProgramCount: data?.progress_program_count || 0,
-    totalProgramTime: data?.total_program_time || 0,
-    progressProgramTime: data?.progress_program_time || 0,
-    productOptions: data?.product_options,
-    consecutiveDayOptions: data?.consecutive_day_options,
-  }))[0]
+  // hard code
+  const tags = ['溝通表達', '經營領導', '心靈成長', '職場專業', '創業開店', '健康家庭']
+
+  const learnedStatistic: LearnedStatistic | null = learnedStatisticData
+    ? learnedStatisticData.cw_learned_statistic.map(data => ({
+        memberId: data.member_id || memberId,
+        programCount: data.program_count || 0,
+        programTagOptions: tags.map(tag => ({
+          tagName: tag,
+          count:
+            data.program_tag_options?.find((data: { tagName: string; count: number }) => data.tagName === tag)?.count ||
+            0,
+        })),
+        avgProgramProgressPercent: Math.round(data.avg_program_progress_percent * 100) || 0,
+        totalProgramContentCount: data.total_program_content_count || 0,
+        progressProgramContentCount: data.progress_program_content_count || 0,
+        progressProgramCount: data.progress_program_count || 0,
+        totalProgramTime: Math.round(data.total_program_time / 3600) || 0, // hr
+        progressProgramTime: Math.round(data.progress_program_time / 3600) || 0, //hr
+        productOptions: data.product_options
+          ?.map((option: { title: string; progressPercent: number; productId: string }) => ({
+            title: option?.title,
+            progressPercent: Math.round(option?.progressPercent * 100),
+            purchasedAt: dayjs(
+              orderProductPurchaseData?.order_product.find(op => op.product_id === option?.productId)?.created_at,
+            ).format('YYYY-MM-DD'),
+          }))
+          .sort(
+            (a: { purchasedAt: string }, b: { purchasedAt: string }) =>
+              dayjs(b.purchasedAt).valueOf() - dayjs(a.purchasedAt).valueOf(),
+          ),
+        consecutiveDayOptions: {
+          personalConsecutiveDay: data.the_newest_consecutive_day || 0,
+          personalMaxConsecutiveDay: data.max_consecutive_day || 0,
+          allMemberMaxConsecutiveDay:
+            consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].max_consecutive_day || 0,
+          allMemberAvgConsecutiveDay:
+            consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].avg_consecutive_day || 0,
+        },
+      }))[0]
+    : null
+
   return { learnedStatistic, learnedStatisticLoading, learnedStatisticError }
 }
 

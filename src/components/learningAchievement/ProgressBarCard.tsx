@@ -1,10 +1,11 @@
+import { Box, Progress, Spacer, Text } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
+import AdminCard from '../../components/common/AdminCard'
 import { ReactComponent as BarChartIcon } from '../../images/bar-chart.svg'
 import { ReactComponent as Flag } from '../../images/flag.svg'
-import AdminCard from '../../components/common/AdminCard'
-import styled from 'styled-components'
-import { Text, Progress, Box, Spacer } from '@chakra-ui/react'
+import { LearnedStatistic } from '../../pages/member/LearningAchievementPage'
 import { BREAK_POINT } from '../common/Responsive'
 import learningAchievementMessages from './translation'
 
@@ -90,13 +91,15 @@ const ProgressBarContainer = styled(Box)`
   }
 `
 
-const ProgressBarCard: React.FC = () => {
+type ProgressBarCardProps = Pick<LearnedStatistic, 'consecutiveDayOptions'>
+
+const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions }) => {
   const { formatMessage } = useIntl()
   const progressBarData = {
-    bestRecord: 10,
-    siteAverage: 10,
-    siteBest: 24,
-    consecutiveDays: 9,
+    bestRecord: consecutiveDayOptions.personalMaxConsecutiveDay,
+    siteAverage: consecutiveDayOptions.allMemberAvgConsecutiveDay,
+    siteBest: consecutiveDayOptions.allMemberMaxConsecutiveDay,
+    consecutiveDays: consecutiveDayOptions.personalConsecutiveDay,
   }
 
   const calculateProgessBarPercentage = () => {

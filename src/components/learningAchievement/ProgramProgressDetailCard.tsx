@@ -24,17 +24,17 @@ const StyledColGrid = styled.div`
 `
 type TableRow = {
   title: string
-  progressRate: number
-  purchaseDate: Date
+  progressPercent: number
+  purchasedAt: string
 }
 
 const Trow: React.FC<{ tableRow: TableRow }> = ({ tableRow }) => {
-  const { title, progressRate, purchaseDate } = tableRow
+  const { title, progressPercent, purchasedAt } = tableRow
   return (
     <Tr>
       <Td>{title}</Td>
-      <Td isNumeric>{progressRate}</Td>
-      <Td isNumeric>{dayjs(purchaseDate).format('YYYY-MM-DD')}</Td>
+      <Td isNumeric>{progressPercent}</Td>
+      <Td isNumeric>{dayjs(purchasedAt).format('YYYY-MM-DD')}</Td>
     </Tr>
   )
 }
@@ -42,23 +42,21 @@ type ProgramProgressDetailCardProps = Pick<LearnedStatistic, 'productOptions'>
 
 const ProgramProgressDetailCard: React.FC<ProgramProgressDetailCardProps> = ({ productOptions }) => {
   const { formatMessage } = useIntl()
-  const testData = [
-    { title: '我是課程1', progressRate: 97, purchaseDate: new Date(Date.now()) },
-    { title: '我是課程2', progressRate: 95, purchaseDate: new Date(Date.now() - 86400000 * 2) },
-    { title: '我是課程3', progressRate: 99, purchaseDate: new Date(Date.now() - 86400000 * 1) },
-  ]
-  const [table, setTable] = useState<TableRow[]>(testData) // TODO: input data from graphql
+
+  const [table, setTable] = useState<TableRow[]>(productOptions) // TODO: input data from graphql
   const [isDsec, setDsec] = useState<boolean>(true)
 
   const sortByProgress = (): void => {
     const sortedTable = cloneDeep(
-      table.sort((a, b) => (a.progressRate < b.progressRate ? -1 : a.progressRate > b.progressRate ? 1 : 0)),
+      table.sort((a, b) =>
+        a.progressPercent < b.progressPercent ? -1 : a.progressPercent > b.progressPercent ? 1 : 0,
+      ),
     )
     isDsec ? setTable(sortedTable.reverse()) : setTable(sortedTable)
     setDsec(d => !d)
   }
   const sortByDate = (): void => {
-    const sortedTable = cloneDeep(table.sort((a, b) => a.purchaseDate.getTime() - b.purchaseDate.getTime()))
+    const sortedTable = cloneDeep(table.sort((a, b) => dayjs(a.purchasedAt).valueOf() - dayjs(b.purchasedAt).valueOf()))
     isDsec ? setTable(sortedTable.reverse()) : setTable(sortedTable)
     setDsec(d => !d)
   }
