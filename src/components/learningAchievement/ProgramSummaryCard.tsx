@@ -1,9 +1,10 @@
+import { Spacer, Text } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ReactComponent as TotalProgramIcon } from '../../images/combined-shape.svg'
-import AdminCard from '../../components/common/AdminCard'
 import styled from 'styled-components'
-import { Spacer, Text } from '@chakra-ui/react'
+import AdminCard from '../../components/common/AdminCard'
+import { ReactComponent as TotalProgramIcon } from '../../images/combined-shape.svg'
+import { LearnedStatistic } from '../../pages/member/LearningAchievementPage'
 import learningAchievementMessages from './translation'
 
 const StyledCard = styled(AdminCard)`
@@ -56,13 +57,9 @@ const TotalProgramImage = styled.div`
   z-index: 0;
 `
 
-const programSummaryData = {
-  programCount: 5,
-}
-
 const ProgramCategory: React.FC<{
-  tagName: string | undefined
-  tagCount: number | undefined
+  tagName: string
+  tagCount: number
 }> = ({ tagName, tagCount }) => {
   return (
     <StyledProgramCategory>
@@ -75,9 +72,12 @@ const ProgramCategory: React.FC<{
   )
 }
 
-const ProgramSummaryCard: React.FC = () => {
+type ProgramSummaryCardProps = Pick<LearnedStatistic, 'programCount' | 'programTagOptions'>
+
+const ProgramSummaryCard: React.FC<ProgramSummaryCardProps> = ({ programCount, programTagOptions }) => {
   const { formatMessage } = useIntl()
-  const { programCount } = programSummaryData
+  const tagCount = (tagName: '溝通表達' | '經營領導' | '心靈成長' | '職場專業' | '創業開店' | '健康家庭') =>
+    programTagOptions?.find(data => data.tagName === tagName)?.count || 0
   return (
     <StyledCard>
       <StyledColGrid>
@@ -93,7 +93,6 @@ const ProgramSummaryCard: React.FC = () => {
             {programCount}
           </Text>
           <Text zIndex="1" fontSize="sm">
-            {' '}
             &nbsp; {formatMessage(learningAchievementMessages.ProgramSummaryCard.programs)}
           </Text>
           <TotalProgramImage>
@@ -101,16 +100,34 @@ const ProgramSummaryCard: React.FC = () => {
           </TotalProgramImage>
         </TotalProgram>
         <StyledRowGrid>
-          <ProgramCategory tagName="Tag" tagCount={123} />
-          <ProgramCategory tagName="Tag" tagCount={123} />
+          <ProgramCategory
+            tagName={formatMessage(learningAchievementMessages.ProgramSummaryCard.communicationAndExpression)}
+            tagCount={tagCount('溝通表達')}
+          />
+          <ProgramCategory
+            tagName={formatMessage(learningAchievementMessages.ProgramSummaryCard.businessLeadership)}
+            tagCount={tagCount('經營領導')}
+          />
         </StyledRowGrid>
         <StyledRowGrid>
-          <ProgramCategory tagName="Tag" tagCount={123} />
-          <ProgramCategory tagName="Tag" tagCount={123} />
+          <ProgramCategory
+            tagName={formatMessage(learningAchievementMessages.ProgramSummaryCard.spiritualGrowth)}
+            tagCount={tagCount('心靈成長')}
+          />
+          <ProgramCategory
+            tagName={formatMessage(learningAchievementMessages.ProgramSummaryCard.professionalismInTheWorkplace)}
+            tagCount={tagCount('職場專業')}
+          />
         </StyledRowGrid>
         <StyledRowGrid>
-          <ProgramCategory tagName="Tag" tagCount={123} />
-          <ProgramCategory tagName="Tag" tagCount={123} />
+          <ProgramCategory
+            tagName={formatMessage(learningAchievementMessages.ProgramSummaryCard.entrepreneurshipAndStartingABusiness)}
+            tagCount={tagCount('創業開店')}
+          />
+          <ProgramCategory
+            tagName={formatMessage(learningAchievementMessages.ProgramSummaryCard.healthAndFamilyWellBeing)}
+            tagCount={tagCount('健康家庭')}
+          />
         </StyledRowGrid>
       </StyledColGrid>
     </StyledCard>

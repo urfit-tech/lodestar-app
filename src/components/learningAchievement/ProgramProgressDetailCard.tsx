@@ -1,13 +1,13 @@
+import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react'
+import dayjs from 'dayjs'
+import { cloneDeep } from 'lodash'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ReactComponent as SortIcon } from '../../images/sort.svg'
-import AdminCard from '../../components/common/AdminCard'
 import styled from 'styled-components'
-import { Text, Box } from '@chakra-ui/react'
-import { Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react'
-import dayjs from 'dayjs'
+import AdminCard from '../../components/common/AdminCard'
+import { ReactComponent as SortIcon } from '../../images/sort.svg'
+import { LearnedStatistic } from '../../pages/member/LearningAchievementPage'
 import learningAchievementMessages from './translation'
-import { cloneDeep } from 'lodash'
 
 const StyledCard = styled(AdminCard)`
   display: flex;
@@ -38,8 +38,9 @@ const Trow: React.FC<{ tableRow: TableRow }> = ({ tableRow }) => {
     </Tr>
   )
 }
+type ProgramProgressDetailCardProps = Pick<LearnedStatistic, 'productOptions'>
 
-const ProgramProgressDetailCard: React.FC = () => {
+const ProgramProgressDetailCard: React.FC<ProgramProgressDetailCardProps> = ({ productOptions }) => {
   const { formatMessage } = useIntl()
   const testData = [
     { title: '我是課程1', progressRate: 97, purchaseDate: new Date(Date.now()) },
@@ -69,13 +70,13 @@ const ProgramProgressDetailCard: React.FC = () => {
           {formatMessage(learningAchievementMessages.ProgramProgressDetailCard.progress)}
         </Text>
         <Box overflow="auto" maxHeight="150px">
-          <Table size="sm" whiteSpace="nowrap" fontSize='sm'>
+          <Table size="sm" whiteSpace="nowrap" fontSize="sm">
             <Thead position="sticky" top={0} bgColor="white">
               <Tr>
                 <Th w="60%" />
                 <Th w="20%" isNumeric onClick={sortByProgress}>
-                  <Box display="flex" alignItems="center" justifyContent="end" >
-                    <Text textAlign="end"  fontSize='sm'>
+                  <Box display="flex" alignItems="center" justifyContent="end">
+                    <Text textAlign="end" fontSize="sm">
                       {formatMessage(learningAchievementMessages.ProgramProgressDetailCard.progressRate)}
                     </Text>
                     <SortIcon />
@@ -83,7 +84,7 @@ const ProgramProgressDetailCard: React.FC = () => {
                 </Th>
                 <Th w="20%" isNumeric onClick={sortByDate}>
                   <Box display="flex" alignItems="center" justifyContent="end">
-                    <Text textAlign="end"  fontSize='sm'>
+                    <Text textAlign="end" fontSize="sm">
                       {formatMessage(learningAchievementMessages.ProgramProgressDetailCard.purchaseDate)}
                     </Text>
                     <SortIcon />

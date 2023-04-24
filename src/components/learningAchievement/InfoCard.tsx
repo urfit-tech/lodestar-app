@@ -1,13 +1,14 @@
+import { Avatar, Box, Center, Divider, Tag, Text } from '@chakra-ui/react'
+import { isEmpty } from 'lodash'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ReactComponent as EditIcon } from '../../images/edit.svg'
-import AdminCard from '../../components/common/AdminCard'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
-import { Avatar, Divider, Center, Tag, Box, Text } from '@chakra-ui/react'
+import AdminCard from '../../components/common/AdminCard'
+import { ReactComponent as EditIcon } from '../../images/edit.svg'
 import { BREAK_POINT } from '../common/Responsive'
 import learningAchievementMessages from './translation'
-import { useHistory } from 'react-router'
-import { isEmpty } from 'lodash'
 
 const StyledCard = styled(AdminCard)`
   .ant-card-body {
@@ -64,6 +65,7 @@ const infoData = {
 const InfoCard: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
+  const { currentMember } = useAuth()
   const { user, medalCount, totalProgramProgress } = infoData
 
   const pushToProfile = (): void => {
@@ -98,13 +100,15 @@ const InfoCard: React.FC = () => {
             <Avatar size="xl" />
           </Center>
         </Box>
-        <Box m='2'>
+        <Box m="2">
           <CustomerNameBox>
-            <Text color='var(--gray-darker)' fontSize='20px' as='b'>{user}</Text>
+            <Text color="var(--gray-darker)" fontSize="20px" as="b">
+              {currentMember?.name}
+            </Text>
             <EditIcon onClick={pushToProfile} />
           </CustomerNameBox>
           {!isEmpty(getLearningAchievementTag()) && (
-            <Tag size="lg" mt='2' borderRadius="full" variant="solid" backgroundColor="#049d96">
+            <Tag size="lg" mt="2" borderRadius="full" variant="solid" backgroundColor="#049d96">
               {getLearningAchievementTag()}
             </Tag>
           )}

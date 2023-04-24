@@ -1,15 +1,16 @@
+import { Box, Text, VStack } from '@chakra-ui/react'
+import { Chart as ChartJS, Filler, LineElement, PointElement, RadialLinearScale, Tooltip } from 'chart.js'
 import React, { ReactElement } from 'react'
+import { Radar } from 'react-chartjs-2'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import learningAchievementMessages from './translation'
+import styled from 'styled-components'
+import AdminCard from '../../components/common/AdminCard'
 import { ReactComponent as EyeIcon } from '../../images/eye-white.svg'
 import { ReactComponent as FileIcon } from '../../images/file-check.svg'
 import { ReactComponent as TimeIcon } from '../../images/time.svg'
-import AdminCard from '../../components/common/AdminCard'
-import styled from 'styled-components'
-import { Text, Box, VStack } from '@chakra-ui/react'
-import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js'
-import { Radar } from 'react-chartjs-2'
+import { LearnedStatistic } from '../../pages/member/LearningAchievementPage'
 import { BREAK_POINT } from '../common/Responsive'
+import learningAchievementMessages from './translation'
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip)
 
@@ -88,6 +89,7 @@ const chartOptions = {
   scales: {
     r: {
       min: 0,
+      max: 1,
       ticks: {
         stepSize: 2,
         display: false,
@@ -128,13 +130,29 @@ const LearningCategory: React.FC<{
   )
 }
 
-const RadarCard: React.FC = () => {
+type RadarCardProps = Pick<
+  LearnedStatistic,
+  | 'programCount'
+  | 'totalProgramContentCount'
+  | 'totalProgramTime'
+  | 'progressProgramContentCount'
+  | 'progressProgramTime'
+  | 'progressProgramCount'
+>
+
+const RadarCard: React.FC<RadarCardProps> = ({
+  programCount,
+  totalProgramContentCount,
+  totalProgramTime,
+  progressProgramContentCount,
+  progressProgramTime,
+  progressProgramCount,
+}) => {
   const { formatMessage } = useIntl()
-  // TODO : put data here
   const RadarData = {
-    explore: 5,
-    continuance: 6,
-    concentrate: 7,
+    explore: progressProgramContentCount,
+    continuance: progressProgramCount,
+    concentrate: progressProgramTime,
   }
 
   const chartData = {
@@ -145,7 +163,11 @@ const RadarCard: React.FC = () => {
     ],
     datasets: [
       {
-        data: [RadarData.explore, RadarData.continuance, RadarData.concentrate],
+        data: [
+          RadarData.explore / totalProgramContentCount,
+          RadarData.continuance / programCount,
+          RadarData.concentrate / totalProgramTime,
+        ],
         backgroundColor: 'rgba(255, 249, 225, 0.5)',
         borderColor: '#eeb944',
         borderWidth: 1,
@@ -186,7 +208,7 @@ const RadarCard: React.FC = () => {
               <TimeIcon />
             </LearningCategory>
           </StyledVStack>
-          <Box w="100%" justifyContent="center" display='flex'>
+          <Box w="100%" justifyContent="center" display="flex">
             <RadarBox>
               <Radar data={chartData} options={chartOptions} />
             </RadarBox>
