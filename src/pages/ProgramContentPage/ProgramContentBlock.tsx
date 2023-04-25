@@ -22,7 +22,7 @@ import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { getFileDownloadableLink, isMobile } from '../../helpers'
+import { getFileDownloadableLink, isAndroid, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { CarIcon } from '../../images'
@@ -349,7 +349,7 @@ const ProgramContentBlock: React.VFC<{
 
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) && (
         <StyledContentBlock className="mb-3">
-          {isMobile && enabledModules.background_mode ? (
+          {isMobile && !isAndroid && enabledModules.background_mode ? (
             <StyledTitleBlock>
               <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
               <div className="d-flex justify-content-end">
