@@ -90,7 +90,7 @@ const Badge: React.FC<{
             />
             {badgeCollectedTime?.length! > 1 && (
               <BadgeCounter>
-                <Text fontSize="xs">{badgeCollectedTime?.length}</Text>
+                <Text fontSize="xs">{badgeCollectedTime?.length! > 99 ? '99+' : badgeCollectedTime?.length}</Text>
               </BadgeCounter>
             )}
           </BadgeImage>
@@ -103,7 +103,7 @@ const Badge: React.FC<{
                 <Text fontSize="xs">{formatMessage(learningAchievementMessages.Badge.badgeCount)}</Text>
                 &nbsp;
                 <Text fontSize="xs" color="#049d97">
-                  {badgeCollectedTime?.length}
+                  {badgeCollectedTime?.length! > 99 ? '99+' : badgeCollectedTime?.length}
                 </Text>
                 &nbsp;
                 <Text fontSize="xs">{formatMessage(learningAchievementMessages.Badge.time)}</Text>
@@ -157,7 +157,7 @@ const Badge: React.FC<{
             {withMins && (
               <Text fontSize="xs">{formatMessage(learningAchievementMessages.Badge.completedProgramMin)}</Text>
             )}
-            <Box display="flex" alignItems="center" textAlign='center'>
+            <Box display="flex" alignItems="center" textAlign="center">
               <Text as="b" fontSize="xl">
                 {mins!}
                 {percent!}

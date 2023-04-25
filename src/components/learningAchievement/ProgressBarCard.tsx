@@ -93,16 +93,17 @@ const ProgressBarContainer = styled(Box)`
 const ProgressBarCard: React.FC = () => {
   const { formatMessage } = useIntl()
   const progressBarData = {
-    bestRecord: 9,
-    siteAverage: 6,
+    bestRecord: 10,
+    siteAverage: 10,
     siteBest: 24,
     consecutiveDays: 9,
   }
 
   const calculateProgessBarPercentage = () => {
-    const { bestRecord, siteBest, siteAverage } = progressBarData
-    const site: number = (siteAverage / siteBest) * 100
-    const member: number = (bestRecord / siteBest) * 100
+    const { consecutiveDays, siteBest, siteAverage } = progressBarData
+
+    const site: number = siteBest ? (siteAverage / siteBest) * 100 : 0
+    const member: number = siteBest ? (consecutiveDays / siteBest) * 100 : 0
     return { site, member }
   }
 
@@ -114,12 +115,16 @@ const ProgressBarCard: React.FC = () => {
         </Text>
         <StyledRowGrid>
           <ConsecutiveDays>
-            <Text zIndex="1" fontSize='sm'>{formatMessage(learningAchievementMessages.ProgressBarCard.bestRecord)}</Text>
+            <Text zIndex="1" fontSize="sm">
+              {formatMessage(learningAchievementMessages.ProgressBarCard.bestRecord)}
+            </Text>
             <Spacer />
             <Text fontSize="3xl" as="b">
               {progressBarData.bestRecord}
             </Text>
-            <Text zIndex="1" fontSize='sm'> &nbsp; {formatMessage(learningAchievementMessages.ProgressBarCard.days)}</Text>
+            <Text zIndex="1" fontSize="sm">
+              &nbsp; {formatMessage(learningAchievementMessages.ProgressBarCard.days)}
+            </Text>
             <EmbeddedImage>
               <BarChartIcon />
             </EmbeddedImage>
@@ -164,7 +169,7 @@ const ProgressBarCard: React.FC = () => {
             </Box>
             <Flag />
           </ProgressBarContainer>
-          <Text as="b" textAlign="center" fontSize="xs" color="#585858" position='absolute' bottom='0' right='0'>
+          <Text as="b" textAlign="center" fontSize="xs" color="#585858" position="absolute" bottom="0" right="0">
             {formatMessage(learningAchievementMessages.ProgressBarCard.siteBest, { days: progressBarData.siteBest })}
           </Text>
         </StyledRowGrid>
