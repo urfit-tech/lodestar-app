@@ -74,18 +74,18 @@ const ProgramProgressDetailCard: React.FC<ProgramProgressDetailCardProps> = ({ p
                 <Th w="60%" />
                 <Th w="20%" isNumeric onClick={sortByProgress}>
                   <Box display="flex" alignItems="center" justifyContent="end">
-                    <Text textAlign="end" fontSize="sm">
+                    <Text textAlign="end" fontSize="sm" cursor="pointer">
                       {formatMessage(learningAchievementMessages.ProgramProgressDetailCard.progressRate)}
                     </Text>
-                    <SortIcon />
+                    <SortIcon cursor="pointer" />
                   </Box>
                 </Th>
                 <Th w="20%" isNumeric onClick={sortByDate}>
                   <Box display="flex" alignItems="center" justifyContent="end">
-                    <Text textAlign="end" fontSize="sm">
+                    <Text textAlign="end" fontSize="sm" cursor="pointer">
                       {formatMessage(learningAchievementMessages.ProgramProgressDetailCard.purchaseDate)}
                     </Text>
-                    <SortIcon />
+                    <SortIcon cursor="pointer" />
                   </Box>
                 </Th>
               </Tr>
