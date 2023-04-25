@@ -1,7 +1,11 @@
+import { gql, useQuery } from '@apollo/client'
 import { Divider, Text } from '@chakra-ui/react'
+import dayjs from 'dayjs'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { MemberAchievement } from '../../pages/member/LearningAchievementPage'
 import AdminCard from '../common/AdminCard'
 import { BREAK_POINT } from '../common/Responsive'
@@ -49,7 +53,9 @@ type BadgeCardProps = { memberAchievement: MemberAchievement[] }
 
 const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
   const { formatMessage } = useIntl()
-  const badgeCollectedTime = [new Date(), new Date(), new Date()]
+  const { currentMemberId } = useAuth()
+  const { data } = useMemberLearnedLog(currentMemberId || '')
+
   return (
     <StyledCard>
       <Text as="b" fontSize="lg">
@@ -108,7 +114,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].morning)}
             startTime={7}
             endTime={11}
-            mins={10}
+            mins={data.find(d => d.key === 'learning-achievement-morning')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '晨型高效能').map(a => a.createdAt)}
             isCountable
           />
@@ -118,7 +124,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].noon)}
             startTime={12}
             endTime={14}
-            mins={10}
+            mins={data.find(d => d.key === 'learning-achievement-noon')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '午休不浪費').map(a => a.createdAt)}
             isCountable
           />
@@ -128,7 +134,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].afternoon)}
             startTime={15}
             endTime={18}
-            mins={10}
+            mins={data.find(d => d.key === 'learning-achievement-afternoon')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '午茶配著學').map(a => a.createdAt)}
             isCountable
           />
@@ -138,7 +144,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].evening)}
             startTime={19}
             endTime={23}
-            mins={10}
+            mins={data.find(d => d.key === 'learning-achievement-evening')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '晚自習充電').map(a => a.createdAt)}
             isCountable
           />
@@ -148,7 +154,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].midnight)}
             startTime={0}
             endTime={6}
-            mins={10}
+            mins={data.find(d => d.key === 'learning-achievement-midnight')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '夜貓好專注').map(a => a.createdAt)}
             isCountable
           />
@@ -156,7 +162,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             src="learning-achievement-weekend"
             repeatable
             badgeLabel={formatMessage(learningAchievementMessages['*'].weekend)}
-            mins={10}
+            mins={data.find(d => d.key === 'learning-achievement-weekend')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '週末學不厭').map(a => a.createdAt)}
             isCountable
           />
@@ -169,6 +175,192 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
       </StyledColGrid>
     </StyledCard>
   )
+}
+
+const useMemberLearnedLog = (memberId: string) => {
+  const today = dayjs()
+  const day = today.day()
+  const lastMonday = today
+    .subtract(7 + ((day + 6) % 7), 'day')
+    .startOf('day')
+    .toISOString()
+  const thisMonday = today
+    .subtract(day - (day === 0 ? -6 : 1), 'day')
+    .startOf('day')
+    .toISOString()
+
+  const { data, loading, error } = useQuery<
+    hasura.GET_LAST_WEEK_MEMBER_LEARNED_LOG,
+    hasura.GET_LAST_WEEK_MEMBER_LEARNED_LOGVariables
+  >(
+    gql`
+      query GET_LAST_WEEK_MEMBER_LEARNED_LOG($memberId: String!, $lastMonday: timestamptz!, $thisMonday: timestamptz!) {
+        member_learned_log(
+          where: {
+            _and: [
+              { member_id: { _eq: $memberId } }
+              { period: { _gte: $lastMonday } }
+              { period: { _lt: $thisMonday } }
+            ]
+          }
+        ) {
+          period
+          duration
+        }
+      }
+    `,
+    {
+      variables: {
+        memberId,
+        lastMonday,
+        thisMonday,
+      },
+    },
+  )
+
+  // fix it
+  const durationByAchievement = [
+    {
+      key: 'learning-achievement-morning',
+      value:
+        data &&
+        data.member_learned_log.filter(
+          log =>
+            dayjs(log.period).day() !== 0 &&
+            dayjs(log.period).day() !== 6 &&
+            dayjs(log.period).hour() >= 7 &&
+            dayjs(log.period).hour() <= 11,
+        ).length > 0
+          ? Math.round(
+              data?.member_learned_log
+                .filter(
+                  log =>
+                    dayjs(log.period).day() !== 0 &&
+                    dayjs(log.period).day() !== 6 &&
+                    dayjs(log.period).hour() >= 7 &&
+                    dayjs(log.period).hour() <= 11,
+                )
+                .map(log => log.duration)
+                .reduce((a, b) => a + b) / 60,
+            )
+          : 0,
+    },
+    {
+      key: 'learning-achievement-noon',
+      value:
+        data &&
+        data.member_learned_log.filter(
+          log =>
+            dayjs(log.period).day() !== 0 &&
+            dayjs(log.period).day() !== 6 &&
+            dayjs(log.period).hour() >= 12 &&
+            dayjs(log.period).hour() <= 14,
+        ).length > 0
+          ? Math.round(
+              data.member_learned_log
+                .filter(
+                  log =>
+                    dayjs(log.period).day() !== 0 &&
+                    dayjs(log.period).day() !== 6 &&
+                    dayjs(log.period).hour() >= 12 &&
+                    dayjs(log.period).hour() <= 14,
+                )
+                .map(log => log.duration)
+                .reduce((a, b) => a + b) / 60,
+            )
+          : 0,
+    },
+    {
+      key: 'learning-achievement-afternoon',
+      value:
+        data &&
+        data.member_learned_log.filter(
+          log =>
+            dayjs(log.period).day() !== 0 &&
+            dayjs(log.period).day() !== 6 &&
+            dayjs(log.period).hour() >= 15 &&
+            dayjs(log.period).hour() <= 18,
+        ).length > 0
+          ? Math.round(
+              data.member_learned_log
+                .filter(
+                  log =>
+                    dayjs(log.period).day() !== 0 &&
+                    dayjs(log.period).day() !== 6 &&
+                    dayjs(log.period).hour() >= 15 &&
+                    dayjs(log.period).hour() <= 18,
+                )
+                .map(log => log.duration)
+                .reduce((a, b) => a + b) / 60,
+            )
+          : 0,
+    },
+    {
+      key: 'learning-achievement-evening',
+      value:
+        data &&
+        data.member_learned_log.filter(
+          log =>
+            dayjs(log.period).day() !== 0 &&
+            dayjs(log.period).day() !== 6 &&
+            dayjs(log.period).hour() >= 19 &&
+            dayjs(log.period).hour() <= 23,
+        ).length > 0
+          ? Math.round(
+              data.member_learned_log
+                .filter(
+                  log =>
+                    dayjs(log.period).day() !== 0 &&
+                    dayjs(log.period).day() !== 6 &&
+                    dayjs(log.period).hour() >= 19 &&
+                    dayjs(log.period).hour() <= 23,
+                )
+                .map(log => log.duration)
+                .reduce((a, b) => a + b) / 60,
+            )
+          : 0,
+    },
+    {
+      key: 'learning-achievement-midnight',
+      value:
+        data &&
+        data.member_learned_log.filter(
+          log =>
+            dayjs(log.period).day() !== 0 &&
+            dayjs(log.period).day() !== 6 &&
+            dayjs(log.period).hour() >= 0 &&
+            dayjs(log.period).hour() <= 6,
+        ).length > 0
+          ? Math.round(
+              data.member_learned_log
+                .filter(
+                  log =>
+                    dayjs(log.period).day() !== 0 &&
+                    dayjs(log.period).day() !== 6 &&
+                    dayjs(log.period).hour() >= 0 &&
+                    dayjs(log.period).hour() <= 6,
+                )
+                .map(log => log.duration)
+                .reduce((a, b) => a + b) / 60,
+            )
+          : 0,
+    },
+    {
+      key: 'learning-achievement-weekend',
+      value:
+        data &&
+        data.member_learned_log.filter(log => dayjs(log.period).day() === 0 && dayjs(log.period).day() === 6).length > 0
+          ? Math.round(
+              data.member_learned_log
+                .filter(log => dayjs(log.period).day() === 0 && dayjs(log.period).day() === 6)
+                .map(log => log.duration)
+                .reduce((a, b) => a + b) / 60,
+            )
+          : 0,
+    },
+  ]
+
+  return { data: durationByAchievement, loading, error }
 }
 
 export default BadgeCard
