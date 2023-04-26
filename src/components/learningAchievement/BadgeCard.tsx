@@ -114,7 +114,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].morning)}
             startTime={7}
             endTime={11}
-            mins={data.find(d => d.key === 'learning-achievement-morning')?.value || 120}
+            mins={data.find(d => d.key === 'learning-achievement-morning')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '晨型高效能').map(a => a.createdAt)}
             isCountable
           />
@@ -124,7 +124,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].noon)}
             startTime={12}
             endTime={14}
-            mins={data.find(d => d.key === 'learning-achievement-noon')?.value || 120}
+            mins={data.find(d => d.key === 'learning-achievement-noon')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '午休不浪費').map(a => a.createdAt)}
             isCountable
           />
@@ -134,7 +134,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].afternoon)}
             startTime={15}
             endTime={18}
-            mins={data.find(d => d.key === 'learning-achievement-afternoon')?.value || 120}
+            mins={data.find(d => d.key === 'learning-achievement-afternoon')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '午茶配著學').map(a => a.createdAt)}
             isCountable
           />
@@ -144,7 +144,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].evening)}
             startTime={19}
             endTime={23}
-            mins={data.find(d => d.key === 'learning-achievement-evening')?.value || 120}
+            mins={data.find(d => d.key === 'learning-achievement-evening')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '晚自習充電').map(a => a.createdAt)}
             isCountable
           />
@@ -154,7 +154,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeLabel={formatMessage(learningAchievementMessages['*'].midnight)}
             startTime={0}
             endTime={6}
-            mins={data.find(d => d.key === 'learning-achievement-midnight')?.value || 120}
+            mins={data.find(d => d.key === 'learning-achievement-midnight')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '夜貓好專注').map(a => a.createdAt)}
             isCountable
           />
@@ -162,7 +162,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             src="learning-achievement-weekend"
             repeatable
             badgeLabel={formatMessage(learningAchievementMessages['*'].weekend)}
-            mins={data.find(d => d.key === 'learning-achievement-weekend')?.value || 120}
+            mins={data.find(d => d.key === 'learning-achievement-weekend')?.value || 0}
             badgeCollectedTime={memberAchievement.filter(a => a.name === '週末學不厭').map(a => a.createdAt)}
             isCountable
           />
