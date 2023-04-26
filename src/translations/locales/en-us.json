@@ -795,6 +795,7 @@
   "learningAchievement.InfoCard.badgesCollected": "badges",
   "learningAchievement.InfoCard.medalsCollected": "progress",
   "learningAchievement.InfoCard.peices": "pcs.",
+  "learningAchievement.ProgramProgressDetailCard.programName": "Progress Name",
   "learningAchievement.ProgramProgressDetailCard.progress": "Learning Progress per Program",
   "learningAchievement.ProgramProgressDetailCard.progressRate": "Progress Rate",
   "learningAchievement.ProgramProgressDetailCard.purchaseDate": "Purchase Date",

@@ -63,9 +63,9 @@ const ProgramCategory: React.FC<{
 }> = ({ tagName, tagCount }) => {
   return (
     <StyledProgramCategory>
-      <Text fontSize="xs">{tagName}</Text>
+      <Text pl='3' fontSize="xs">{tagName}</Text>
       <Spacer />
-      <Text fontSize="xs" as="b">
+      <Text pr='3'fontSize="xs" as="b">
         {tagCount}
       </Text>
     </StyledProgramCategory>
@@ -85,14 +85,14 @@ const ProgramSummaryCard: React.FC<ProgramSummaryCardProps> = ({ programCount, p
           {formatMessage(learningAchievementMessages.ProgramSummaryCard.programInProgress)}
         </Text>
         <TotalProgram>
-          <Text zIndex="1" fontSize="sm">
+          <Text zIndex="1" fontSize="sm" pl='3'>
             {formatMessage(learningAchievementMessages.ProgramSummaryCard.totalProgram)}
           </Text>
           <Spacer />
           <Text fontSize="3xl" as="b">
             {programCount}
           </Text>
-          <Text zIndex="1" fontSize="sm">
+          <Text zIndex="1" fontSize="sm" pr='3'>
             &nbsp; {formatMessage(learningAchievementMessages.ProgramSummaryCard.programs)}
           </Text>
           <TotalProgramImage>

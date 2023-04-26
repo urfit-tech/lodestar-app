@@ -71,6 +71,7 @@ const learningAchievementMessages = {
     days: { id: 'learningAchievement.ProgressBarCard.days', defaultMessage: 'days' },
   }),
   ProgramProgressDetailCard: defineMessages({
+    programName: { id: 'learningAchievement.ProgramProgressDetailCard.programName', defaultMessage: 'Progress Name' },
     progress: {
       id: 'learningAchievement.ProgramProgressDetailCard.progress',
       defaultMessage: 'Learning Progress per Program',

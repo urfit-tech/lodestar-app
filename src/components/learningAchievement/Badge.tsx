@@ -13,6 +13,7 @@ import dayjs from 'dayjs'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { isMobile } from '../../helpers'
 import learningAchievementMessages from './translation'
 
 const BadgeLayout = styled.div`
@@ -36,7 +37,7 @@ const BadgeText = styled(Box)`
 
 const BadgeCounter = styled(Box)`
   height: 20px;
-  width: 40px;
+  width: 30px;
   position: absolute;
   right: -10px;
   top: 12px;
@@ -82,19 +83,21 @@ const Badge: React.FC<{
 
   return (
     <BadgeLayout>
-      <Popover trigger="hover" variant="responsive">
+      <Popover variant="responsive" trigger={isMobile ? 'click' : 'hover'}>
         <PopoverTrigger>
-          <BadgeImage>
-            <Image
-              opacity={badgeCollectedTime?.length! > 0 ? 1 : 0.3}
-              src={`https://static.kolable.com/images/cw/learning_achievement/${src}.png`}
-            />
-            {isCountable && badgeCollectedTime?.length! > 1 && (
-              <BadgeCounter>
-                <Text fontSize="xs">{badgeCollectedTime?.length! > 99 ? '99+' : badgeCollectedTime?.length}</Text>
-              </BadgeCounter>
-            )}
-          </BadgeImage>
+          <button>
+            <BadgeImage>
+              <Image
+                opacity={badgeCollectedTime?.length! > 0 ? 1 : 0.3}
+                src={`https://static.kolable.com/images/cw/learning_achievement/${src}.png`}
+              />
+              {isCountable && badgeCollectedTime?.length! > 1 && (
+                <BadgeCounter>
+                  <Text fontSize="xs">{badgeCollectedTime?.length! > 99 ? '99+' : badgeCollectedTime?.length}</Text>
+                </BadgeCounter>
+              )}
+            </BadgeImage>
+          </button>
         </PopoverTrigger>
         {isCountable && badgeCollectedTime?.length! > 0 && (
           <PopoverContent>
