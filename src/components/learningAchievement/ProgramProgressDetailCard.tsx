@@ -33,7 +33,7 @@ const Trow: React.FC<{ tableRow: TableRow }> = ({ tableRow }) => {
   return (
     <Tr>
       <Td>{title}</Td>
-      <Td isNumeric>{progressPercent}</Td>
+      <Td isNumeric>{progressPercent}%</Td>
       <Td isNumeric>{dayjs(purchasedAt).format('YYYY-MM-DD')}</Td>
     </Tr>
   )
@@ -43,7 +43,7 @@ type ProgramProgressDetailCardProps = Pick<LearnedStatistic, 'productOptions'>
 const ProgramProgressDetailCard: React.FC<ProgramProgressDetailCardProps> = ({ productOptions }) => {
   const { formatMessage } = useIntl()
 
-  const [table, setTable] = useState<TableRow[]>(productOptions) // TODO: input data from graphql
+  const [table, setTable] = useState<TableRow[]>(productOptions)
   const [isDsec, setDsec] = useState<boolean>(true)
 
   const sortByProgress = (): void => {
@@ -71,7 +71,11 @@ const ProgramProgressDetailCard: React.FC<ProgramProgressDetailCardProps> = ({ p
           <Table size="sm" whiteSpace="nowrap" fontSize="sm">
             <Thead position="sticky" top={0} bgColor="white">
               <Tr>
-                <Th w="60%" />
+                <Th w="60%">
+                  <Text fontSize="sm">
+                    {formatMessage(learningAchievementMessages.ProgramProgressDetailCard.programName)}
+                  </Text>
+                </Th>
                 <Th w="20%" isNumeric onClick={sortByProgress}>
                   <Box display="flex" alignItems="center" justifyContent="end">
                     <Text textAlign="end" fontSize="sm" cursor="pointer">

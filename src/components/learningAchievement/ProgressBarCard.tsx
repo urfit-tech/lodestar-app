@@ -12,11 +12,12 @@ import learningAchievementMessages from './translation'
 const StyledCard = styled(AdminCard)`
   display: flex;
   align-items: center;
-
+  padding-bottom: 20px;
   .ant-card-body {
     width: 100%;
   }
   @media (min-width: ${BREAK_POINT}px) {
+    padding-bottom: 0px;
     height: 200px;
   }
 `
@@ -83,11 +84,12 @@ const EmbeddedImage = styled.div`
 `
 const ProgressBarContainer = styled(Box)`
   display: flex;
+  padding: 20px 0px 20px 30px;
   width: 100%;
   gap: 20px;
-  margin-bottom: 20px;
   @media (min-width: ${BREAK_POINT}px) {
     margin-bottom: 0px;
+    padding: 0px 0px 0px 30px;
   }
 `
 
@@ -118,14 +120,14 @@ const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions
         </Text>
         <StyledRowGrid>
           <ConsecutiveDays>
-            <Text zIndex="1" fontSize="sm">
+            <Text zIndex="1" fontSize="sm" pl="4">
               {formatMessage(learningAchievementMessages.ProgressBarCard.bestRecord)}
             </Text>
             <Spacer />
             <Text fontSize="3xl" as="b">
               {progressBarData.bestRecord}
             </Text>
-            <Text zIndex="1" fontSize="sm">
+            <Text zIndex="1" fontSize="sm" pr="4">
               &nbsp; {formatMessage(learningAchievementMessages.ProgressBarCard.days)}
             </Text>
             <EmbeddedImage>
@@ -136,7 +138,7 @@ const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions
             <Box w="100%">
               <PointerContainer value={calculateProgessBarPercentage().member}>
                 <Text
-                  right="-50px"
+                  right="-45px"
                   top="-40px"
                   w="100px"
                   as="b"
@@ -144,6 +146,7 @@ const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions
                   textAlign="center"
                   fontSize="xs"
                   color="#049d96"
+                  whiteSpace="pre-line"
                 >
                   {formatMessage(learningAchievementMessages.ProgressBarCard.currently, {
                     days: progressBarData.consecutiveDays,
@@ -155,7 +158,7 @@ const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions
               <PointerContainer value={calculateProgessBarPercentage().site}>
                 <BottomPointer />
                 <Text
-                  right="-50px"
+                  right="-45px"
                   bottom="-40px"
                   w="100px"
                   as="b"
@@ -163,6 +166,7 @@ const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions
                   textAlign="center"
                   fontSize="xs"
                   color="#cc9318"
+                  whiteSpace="pre-line"
                 >
                   {formatMessage(learningAchievementMessages.ProgressBarCard.siteAverage, {
                     days: progressBarData.siteAverage,
@@ -172,7 +176,16 @@ const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions
             </Box>
             <Flag />
           </ProgressBarContainer>
-          <Text as="b" textAlign="center" fontSize="xs" color="#585858" position="absolute" bottom="0" right="0">
+          <Text
+            as="b"
+            textAlign="end"
+            fontSize="xs"
+            color="#585858"
+            position="absolute"
+            bottom="-20px"
+            right="0"
+            whiteSpace="pre-line"
+          >
             {formatMessage(learningAchievementMessages.ProgressBarCard.siteBest, { days: progressBarData.siteBest })}
           </Text>
         </StyledRowGrid>

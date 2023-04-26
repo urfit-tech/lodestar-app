@@ -41,8 +41,11 @@ const CustomerNameBox = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 10px;
+  padding-left: 10px;
   @media (min-width: ${BREAK_POINT}px) {
     justify-content: start;
+    padding-left: 0px;
   }
 `
 
