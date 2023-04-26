@@ -338,6 +338,7 @@ const AudioPlayer: React.VFC<{
         </div>
       </BarBlock>
       <audio
+        controlsList="nodownload"
         ref={ref => {
           audioRef.current = ref
         }}

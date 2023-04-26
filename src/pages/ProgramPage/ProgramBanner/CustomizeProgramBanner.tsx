@@ -130,6 +130,7 @@ const CustomizeProgramBanner: React.VFC<{
             <StyledPlayer>
               {program.coverVideoUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
                 <video
+                  controlsList="nodownload"
                   className="smartvideo"
                   src={program.coverVideoUrl}
                   controls

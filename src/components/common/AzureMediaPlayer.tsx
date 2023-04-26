@@ -100,6 +100,7 @@ const AzureMediaPlayer = React.forwardRef(
 
     return (
       <video
+        controlsList="nodownload"
         id={id}
         ref={ref => {
           if (playerRef) {
