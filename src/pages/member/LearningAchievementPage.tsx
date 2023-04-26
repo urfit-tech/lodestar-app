@@ -1,6 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import dayjs from 'dayjs'
+import { isEmpty } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -236,44 +237,65 @@ const useLearnedStatistic = (memberId: string) => {
   // hard code
   const tags = ['溝通表達', '經營領導', '心靈成長', '職場專業', '創業開店', '健康家庭']
 
-  const learnedStatistic: LearnedStatistic | null = learnedStatisticData
-    ? learnedStatisticData.cw_learned_statistic.map(data => ({
-        memberId: data.member_id || memberId,
-        programCount: data.program_count || 0,
-        programTagOptions: tags.map(tag => ({
-          tagName: tag,
-          count:
-            data.program_tag_options?.find((data: { tagName: string; count: number }) => data.tagName === tag)?.count ||
-            0,
-        })),
-        avgProgramProgressPercent: Math.round(data.avg_program_progress_percent * 100) || 0,
-        totalProgramContentCount: data.total_program_content_count || 0,
-        progressProgramContentCount: data.progress_program_content_count || 0,
-        progressProgramCount: data.progress_program_count || 0,
-        totalProgramTime: Math.round(data.total_program_time / 3600) || 0, // hr
-        progressProgramTime: Math.round(data.progress_program_time / 3600) || 0, //hr
-        productOptions: data.product_options
-          ?.map((option: { title: string; progressPercent: number; productId: string }) => ({
-            title: option?.title,
-            progressPercent: Math.round(option?.progressPercent * 100),
-            purchasedAt: dayjs(
-              orderProductPurchaseData?.order_product.find(op => op.product_id === option?.productId)?.created_at,
-            ).format('YYYY-MM-DD'),
-          }))
-          .sort(
-            (a: { purchasedAt: string }, b: { purchasedAt: string }) =>
-              dayjs(b.purchasedAt).valueOf() - dayjs(a.purchasedAt).valueOf(),
-          ),
-        consecutiveDayOptions: {
-          personalConsecutiveDay: data.the_newest_consecutive_day || 0,
-          personalMaxConsecutiveDay: data.max_consecutive_day || 0,
-          allMemberMaxConsecutiveDay:
-            consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].max_consecutive_day || 0,
-          allMemberAvgConsecutiveDay:
-            consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].avg_consecutive_day || 0,
-        },
-      }))[0]
-    : null
+  const learnedStatistic: LearnedStatistic =
+    !isEmpty(learnedStatisticData?.cw_learned_statistic) && learnedStatisticData
+      ? learnedStatisticData.cw_learned_statistic.map(data => ({
+          memberId: data.member_id || memberId,
+          programCount: data.program_count || 0,
+          programTagOptions: tags.map(tag => ({
+            tagName: tag,
+            count:
+              data.program_tag_options?.find((data: { tagName: string; count: number }) => data.tagName === tag)
+                ?.count || 0,
+          })),
+          avgProgramProgressPercent: Math.round(data.avg_program_progress_percent * 100) || 0,
+          totalProgramContentCount: data.total_program_content_count || 0,
+          progressProgramContentCount: data.progress_program_content_count || 0,
+          progressProgramCount: data.progress_program_count || 0,
+          totalProgramTime: Math.round(data.total_program_time / 3600) || 0, // hr
+          progressProgramTime: Math.round(data.progress_program_time / 3600) || 0, //hr
+          productOptions: data.product_options
+            ?.map((option: { title: string; progressPercent: number; productId: string }) => ({
+              title: option?.title,
+              progressPercent: Math.round(option?.progressPercent * 100),
+              purchasedAt: dayjs(
+                orderProductPurchaseData?.order_product.find(op => op.product_id === option?.productId)?.created_at,
+              ).format('YYYY-MM-DD'),
+            }))
+            .sort(
+              (a: { purchasedAt: string }, b: { purchasedAt: string }) =>
+                dayjs(b.purchasedAt).valueOf() - dayjs(a.purchasedAt).valueOf(),
+            ),
+          consecutiveDayOptions: {
+            personalConsecutiveDay: data.the_newest_consecutive_day || 0,
+            personalMaxConsecutiveDay: data.max_consecutive_day || 0,
+            allMemberMaxConsecutiveDay:
+              consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].max_consecutive_day || 0,
+            allMemberAvgConsecutiveDay:
+              consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].avg_consecutive_day || 0,
+          },
+        }))[0]
+      : {
+          memberId,
+          programCount: 0,
+          programTagOptions: tags.map(tag => ({
+            tagName: tag,
+            count: 0,
+          })),
+          avgProgramProgressPercent: 0,
+          totalProgramContentCount: 0,
+          progressProgramContentCount: 0,
+          progressProgramCount: 0,
+          totalProgramTime: 0, // hr
+          progressProgramTime: 0, //hr
+          productOptions: [],
+          consecutiveDayOptions: {
+            personalConsecutiveDay: 0,
+            personalMaxConsecutiveDay: 0,
+            allMemberMaxConsecutiveDay: 0,
+            allMemberAvgConsecutiveDay: 0,
+          },
+        }
 
   return { learnedStatistic, learnedStatisticLoading, learnedStatisticError }
 }
