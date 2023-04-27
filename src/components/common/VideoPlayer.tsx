@@ -122,6 +122,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   return (
     <div>
       <video
+        controlsList="nodownload"
         width="100%"
         className="video-js vjs-big-play-centered"
         ref={ref => {

@@ -204,6 +204,7 @@ const PostCover: React.VFC<{
               <StyledPlayer>
                 {coverUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
                   <video
+                    controlsList="nodownload"
                     className="smartvideo"
                     src={coverUrl}
                     controls
