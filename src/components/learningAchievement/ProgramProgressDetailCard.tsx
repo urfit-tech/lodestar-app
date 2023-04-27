@@ -1,7 +1,7 @@
 import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import AdminCard from '../../components/common/AdminCard'
@@ -45,6 +45,10 @@ const ProgramProgressDetailCard: React.FC<ProgramProgressDetailCardProps> = ({ p
 
   const [table, setTable] = useState<TableRow[]>(productOptions)
   const [isDsec, setDsec] = useState<boolean>(true)
+
+  useEffect(() => {
+    setTable(productOptions)
+  }, [productOptions])
 
   const sortByProgress = (): void => {
     const sortedTable = cloneDeep(
