@@ -250,7 +250,7 @@ const MemberProfileButton: React.VFC<{
                   <Center mr="1">
                     <MemberAvatar memberId={m.id} size={25} />
                   </Center>
-                  <Center>{m.username}</Center>
+                  <Center>{m.name}</Center>
                   <Spacer />
                   <Center
                     className="cursor-pointer"
