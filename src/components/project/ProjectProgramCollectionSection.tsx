@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -135,28 +134,27 @@ const useEnrolledPrivateTeachProgram = (memberId: string, programCategory: strin
     },
   )
 
-  const programs: ProgramPackageProgram[] =
-    data?.program_plan_enrollment
-      .sort((a, b) => {
-        const dateCompare = normalizeTimeToSecond(a.ended_at) - normalizeTimeToSecond(b.ended_at)
-        if (dateCompare) {
-          return dateCompare
-        }
-        return (a.options?.position || 0) - (b.options?.position || 0)
-      })
-      .map(programPlan => ({
-        id: programPlan.program_plan?.program.id || '',
-        title: programPlan.program_plan?.program.title || '',
-        coverUrl: programPlan.program_plan?.program.cover_url,
-        categories:
-          programPlan.program_plan?.program?.program_categories
-            .map(programCategory => ({
-              id: programCategory.category.id,
-              name: programCategory.category.name,
-            }))
-            .filter(category => category.name !== programCategory) || [],
-        expiredAt: programPlan.ended_at ? new Date(programPlan.ended_at) : null,
-      })) || []
+  const programs: ProgramPackageProgram[] = [...(data?.program_plan_enrollment || [])]
+    .sort((a, b) => {
+      const dateCompare = normalizeTimeToSecond(a.ended_at) - normalizeTimeToSecond(b.ended_at)
+      if (dateCompare) {
+        return dateCompare
+      }
+      return (a.options?.position || 0) - (b.options?.position || 0)
+    })
+    .map(programPlan => ({
+      id: programPlan.program_plan?.program.id || '',
+      title: programPlan.program_plan?.program.title || '',
+      coverUrl: programPlan.program_plan?.program.cover_url || null,
+      categories:
+        programPlan.program_plan?.program?.program_categories
+          .map(programCategory => ({
+            id: programCategory.category.id,
+            name: programCategory.category.name,
+          }))
+          .filter(category => category.name !== programCategory) || [],
+      expiredAt: programPlan.ended_at ? new Date(programPlan.ended_at) : null,
+    }))
 
   return {
     loading,

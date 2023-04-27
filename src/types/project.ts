@@ -50,6 +50,7 @@ export type ProjectBasicProps = {
   previewUrl: string | null
   abstract: string | null
   introduction: string | null
+  introductionDesktop?: string | null
   description: string | null
   targetAmount: number
   targetUnit: 'funds' | 'participants'

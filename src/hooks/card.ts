@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import hasura from '../hasura'
 
 export const useEnrolledMembershipCardIds = (memberId: string) => {
@@ -57,7 +56,7 @@ export const useMembershipCard = (cardId: string) => {
       : {
           id: data.card_by_pk.id,
           title: data.card_by_pk.title,
-          description: data.card_by_pk.description,
+          description: data.card_by_pk.description || '',
           template: data.card_by_pk.template,
         }
 

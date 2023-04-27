@@ -416,7 +416,13 @@ const CreatorTabs: React.VFC<{
     <>
       <Tabs
         activeKey={
-          activeKey || (enabledModules.appointment && appointmentPlans.length !== 0 ? 'appointments' : 'introduction')
+          activeKey
+            ? activeKey === 'appointments'
+              ? enabledModules.appointment && appointmentPlans.length !== 0
+                ? 'appointments'
+                : 'introduction'
+              : activeKey
+            : 'introduction'
         }
         onChange={key => setActiveKey(key)}
         renderTabBar={(tabsProps, DefaultTabBar) => (

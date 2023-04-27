@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/react'
 import { Button, Divider } from 'antd'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import moment from 'moment'
 import React, { useContext } from 'react'
 import { AiOutlineLoading } from 'react-icons/ai'
@@ -10,7 +11,6 @@ import { desktopViewMixin } from '../../helpers'
 import { ReactComponent as PauseCircleIcon } from '../../images/pause-circle.svg'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { PodcastAlbumPreview } from '../../types/podcastAlbum'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 const StyledWrapper = styled.div<{ coverUrl?: string }>`
   padding: 4rem 1.5rem;
   background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${props => props.coverUrl || ''});
@@ -35,7 +35,7 @@ const StyledTitle = styled.h1`
   overflow: hidden;
 
   ${desktopViewMixin(css`
-    font-size: 40px;
+    font-size: 32px;
     font-weight: bold;
     letter-spacing: 1px;
   `)}

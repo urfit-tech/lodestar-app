@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Button, SkeletonText } from '@chakra-ui/react'
 import { Carousel } from 'antd'
-import gql from 'graphql-tag'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import moment from 'moment'
 import { useState } from 'react'
@@ -139,10 +138,10 @@ const useBestReviews: (pathname: string) => {
         .filter(v => v.review_reactions_aggregate.aggregate?.count)
         .map(v => ({
           id: v.id,
-          memberId: v.member_id,
+          memberId: v.member_id || null,
           score: v.score,
-          title: v.title,
-          content: v.content,
+          title: v.title || '',
+          content: v.content || null,
           updatedAt: new Date(v.updated_at),
           createdAt: new Date(v.created_at),
         })) || [],

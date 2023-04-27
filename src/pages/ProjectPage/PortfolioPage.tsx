@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Box, Divider, Flex, Icon, Image, Spacer } from '@chakra-ui/react'
 import dayjs from 'dayjs'
-import { gql } from 'graphql-tag'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { flatten, groupBy, prop, uniqBy } from 'ramda'
 import { useState } from 'react'
@@ -151,11 +150,9 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                 <Flex mb="1.5rem">
                   <Flex alignItems="center" color="primary.500">
                     {portfolio.projectTags.map(tag => (
-                      <Link key={tag.name} to={`/posts/?tags=${tag.name}`} className="mr-2">
-                        <Box as="span" fontSize="14px" lineHeight="22px" letterSpacing="0.4px">
-                          #{tag.name}
-                        </Box>
-                      </Link>
+                      <Box as="span" mr="2" fontSize="14px" lineHeight="22px" letterSpacing="0.4px">
+                        #{tag.name}
+                      </Box>
                     ))}
                   </Flex>
 

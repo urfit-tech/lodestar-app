@@ -13,12 +13,15 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
+import { useExamExercise } from '../../hooks/exam'
+import { usePracticeExist } from '../../hooks/practice'
 import { useEnrolledProgramIds, useProgramContentBody } from '../../hooks/program'
 import { MicrophoneIcon } from '../../images'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
 import { useHasProgramContentPermission } from '../../pages/ProgramContentPage/ProgramContentBlock'
+import { programContentProgress } from '../../types/exam'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 import programMessages from './translation'
 
@@ -129,27 +132,30 @@ const ProgramContentMenu: React.VFC<{
   onSelect?: (programContentId: string) => void
 }> = ({ program, onSelect, isScrollToTop }) => {
   const { formatMessage } = useIntl()
-  const [sortBy, setSortBy] = useState('section')
+  const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
   const { search } = useLocation()
   const { currentMemberId } = useAuth()
   const query = new URLSearchParams(search)
   const programPackageId = query.get('back')
   const { enrolledProgramIds, loading: enrolledProgramIdsLoading } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(program.id)
+  const programContents = program.contentSections.map(v => v.contents).flat()
 
   return (
     <StyledProgramContentMenu>
       <StyledHead className="d-flex justify-content-between align-items-center">
         <span>{formatMessage(programMessages.ProgramContentMenu.programList)}</span>
         <StyledSelectBlock>
-          <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value)}>
+          <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value as 'section' | 'date')}>
             <option value="section">{formatMessage(programMessages.ProgramContentMenu.unit)}</option>
             <option value="date">{formatMessage(programMessages.ProgramContentMenu.time)}</option>
           </Select>
         </StyledSelectBlock>
       </StyledHead>
 
-      {sortBy === 'section' && (
+      {programContents.length === 0 ? (
+        <EmptyMenu />
+      ) : sortBy === 'section' ? (
         <ProgramContentSectionMenu
           isScrollToTop={isScrollToTop}
           program={program}
@@ -158,10 +164,9 @@ const ProgramContentMenu: React.VFC<{
           isEnrolled={isEnrolled}
           onSelect={onSelect}
         />
-      )}
-      {sortBy === 'date' && (
+      ) : sortBy === 'date' ? (
         <ProgramContentDateMenu program={program} programPackageId={programPackageId} onSelect={onSelect} />
-      )}
+      ) : null}
     </StyledProgramContentMenu>
   )
 }
@@ -179,10 +184,6 @@ const ProgramContentSectionMenu: React.VFC<{
   onSelect?: (programContentId: string) => void
 }> = ({ program, programPackageId, isEnrolled, isLoading, isScrollToTop, onSelect }) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
-
-  if (!program.contentSections || program.contentSections.length === 0) {
-    return <EmptyMenu />
-  }
 
   return (
     <>
@@ -215,11 +216,17 @@ const ContentSection: React.VFC<{
 }> = ({ programContentSection, programPackageId, isEnrolled, isLoading, defaultCollapse, isScrollToTop, onSelect }) => {
   const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
+  const [passExam, setPassExam] = useState<string[]>([])
 
   const contentProgress =
     programContentProgress?.filter(progress => progress.programContentSectionId === programContentSection.id) || []
+  const otherProgress = contentProgress.filter(
+    progress => progress.programContentBodyType !== 'exam' && progress.programContentBodyType !== 'exercise',
+  )
   const sectionProgress = contentProgress.length
-    ? Math.floor((sum(contentProgress.map(progress => progress.progress)) * 100) / contentProgress.length)
+    ? Math.floor(
+        ((sum(otherProgress.map(progress => progress.progress)) + passExam.length) * 100) / contentProgress.length,
+      )
     : 0
 
   return (
@@ -238,12 +245,14 @@ const ContentSection: React.VFC<{
             isScrollToTop={isScrollToTop}
             key={programContent.id}
             programContent={programContent}
-            progress={contentProgress.find(progress => progress.programContentId === programContent.id)?.progress || 0}
-            programPackageId={programPackageId}
+            contentCurrentProgress={contentProgress.find(item => item.programContentId === programContent.id)}
             onSetIsCollapse={setIsCollapse}
             isEnrolled={isEnrolled}
             isLoading={isLoading}
+            passExam={passExam}
+            setPassExam={setPassExam}
             onClick={() => onSelect?.(programContent.id)}
+            programPackageId={programPackageId}
           />
         ))}
       </StyledContentSectionBody>
@@ -253,22 +262,26 @@ const ContentSection: React.VFC<{
 
 const SortBySectionItem: React.VFC<{
   programContent: ProgramContent
-  progress: number
-  programPackageId: string | null
+  contentCurrentProgress: programContentProgress | undefined
   isEnrolled: boolean
   isLoading: boolean
   isScrollToTop?: boolean
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
+  passExam?: string[]
+  setPassExam: React.Dispatch<React.SetStateAction<string[]>>
+  programPackageId: string | null
 }> = ({
   programContent,
-  progress,
-  programPackageId,
   isEnrolled,
   isLoading,
   isScrollToTop,
   onSetIsCollapse,
   onClick,
+  passExam = [],
+  setPassExam,
+  contentCurrentProgress,
+  programPackageId,
 }) => {
   const currentRef = useRef<HTMLInputElement>(null)
   const { formatMessage } = useIntl()
@@ -279,6 +292,36 @@ const SortBySectionItem: React.VFC<{
     programContentId?: string
   }>()
   const [previousPage] = useQueryParam('back', StringParam)
+  const [exerciseId] = useQueryParam('exerciseId', StringParam)
+
+  const contentType = contentCurrentProgress?.programContentBodyType || ''
+  const { currentExamExerciseData, loadingCurrentExamData, errorCurrentExamData, refetchCurrentExamData } =
+    useExamExercise(programContent.id, currentMemberId || '', exerciseId)
+  const { practiceIds } = usePracticeExist({ memberId: currentMemberId, programContentId: programContent.id })
+
+  let progress = 0
+  if (contentType === 'exercise' || contentType === 'exam') {
+    if (currentExamExerciseData) {
+      let { gainedPointsTotal, passingScore } = currentExamExerciseData
+      if (gainedPointsTotal !== null && !isNaN(gainedPointsTotal) && !loadingCurrentExamData && !errorCurrentExamData) {
+        if (passingScore <= gainedPointsTotal) {
+          progress = 1
+        } else if (passingScore > gainedPointsTotal) {
+          progress = 0.5
+        }
+      }
+
+      if (!passExam.includes(programContent.id) && gainedPointsTotal && passingScore <= gainedPointsTotal) {
+        setPassExam([...passExam, programContent.id])
+        passExam.push(programContent.id)
+      }
+    }
+  } else if (contentType === 'practice') {
+    progress = practiceIds && practiceIds.length > 1 ? 1 : 0
+  } else {
+    progress = contentCurrentProgress?.progress || 0
+  }
+
   const { hasProgramContentPermission } = useHasProgramContentPermission(programContent.id)
 
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
@@ -302,10 +345,14 @@ const SortBySectionItem: React.VFC<{
 
   return (
     <StyledItem
+      id={programContent.id}
       ref={currentRef}
       className={`${progressStatus} ${isActive ? 'active' : isLock ? 'lock' : ''}`}
-      onClick={() => {
+      onClick={async () => {
         onClick?.()
+        if (contentType === 'exercise' || contentType === 'exam') {
+          await refetchCurrentExamData()
+        }
         history.push(
           `/programs/${programId}/contents/${programContent.id}${programPackageId ? `?back=${programPackageId}` : ''}`,
         )
@@ -382,12 +429,7 @@ const ProgramContentDateMenu: React.VFC<{
   programPackageId: string | null
   onSelect?: (programContentId: string) => void
 }> = ({ program, programPackageId, onSelect }) => {
-  const programContentProgress = useProgramContentProgress()
   const programContents = flatten(program.contentSections.map(programContentSection => programContentSection.contents))
-
-  if (programContents.length === 0) {
-    return <EmptyMenu />
-  }
 
   return (
     <div>
@@ -395,11 +437,8 @@ const ProgramContentDateMenu: React.VFC<{
         <SortByDateItem
           key={programContent.id}
           programContent={programContent}
-          progress={
-            programContentProgress?.find(progress => progress.programContentId === programContent.id)?.progress || 0
-          }
-          programPackageId={programPackageId}
           onClick={() => onSelect && onSelect(programContent.id)}
+          programPackageId={programPackageId}
         />
       ))}
     </div>
@@ -408,21 +447,55 @@ const ProgramContentDateMenu: React.VFC<{
 
 const SortByDateItem: React.VFC<{
   programContent: ProgramContent
-  progress: number
-  programPackageId: string | null
   onClick?: () => void
-}> = ({ programContent, progress, programPackageId, onClick }) => {
+  programPackageId: string | null
+}> = ({ programContent, onClick, programPackageId }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { programId, programContentId } = useParams<{
     programId: string
     programContentId?: string
   }>()
-  const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
+  const { currentMemberId } = useAuth()
+
+  const [previousPage] = useQueryParam('back', StringParam)
+  const [exerciseId] = useQueryParam('exerciseId', StringParam)
+  const programContentProgress = useProgramContentProgress()
+  const { currentExamExerciseData, loadingCurrentExamData, errorCurrentExamData } = useExamExercise(
+    programContent.id,
+    currentMemberId || '',
+    exerciseId,
+  )
+  const { practiceIds } = usePracticeExist({ memberId: currentMemberId, programContentId: programContent.id })
+
+  let progress = 0
+  const contentType = programContentProgress?.find(
+    progress => progress.programContentId === programContent.id,
+  )?.programContentBodyType
+
+  if (contentType === 'exercise' || contentType === 'exam') {
+    if (currentExamExerciseData) {
+      let { gainedPointsTotal, passingScore } = currentExamExerciseData
+      if (gainedPointsTotal !== null && !isNaN(gainedPointsTotal) && !loadingCurrentExamData && !errorCurrentExamData) {
+        if (passingScore <= gainedPointsTotal) {
+          progress = 1
+        } else if (passingScore > gainedPointsTotal) {
+          progress = 0.5
+        }
+      }
+    }
+  } else if (contentType === 'practice') {
+    progress = practiceIds && practiceIds.length > 1 ? 1 : 0
+  } else {
+    progress = programContentProgress?.find(v => v.programContentId === programContentId)?.progress || 0
+  }
 
   return (
     <StyledItem
-      className={`${progressStatus} ${programContent.id === programContentId ? 'active' : ''}`}
+      id={programContent.id}
+      className={`${progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'} ${
+        programContent.id === programContentId ? 'active' : ''
+      }`}
       onClick={() => {
         onClick?.()
         history.push(

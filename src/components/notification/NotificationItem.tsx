@@ -1,6 +1,5 @@
-import { useMutation } from '@apollo/react-hooks'
+import { gql, useMutation } from '@apollo/client'
 import { Icon, List } from 'antd'
-import gql from 'graphql-tag'
 import moment from 'moment'
 import React from 'react'
 import { useHistory } from 'react-router-dom'

@@ -92,7 +92,7 @@ const DefaultFooter: React.VFC = () => {
             <a href="tel:0226620332">(02) 2662-0332</a> /<a href="mailto:bill@cw.com.tw"> bill@cw.com.tw</a>
           </StyledCopyright>
           <StyledCopyright className="copyright">
-            {/* Copyright © {new Date().getFullYear()} {name} Inc. All rights reserved */}
+            {/* Copyright © {new Date().getFullYear()} {name} All rights reserved */}
             Copyright © {new Date().getFullYear()} 天下學習 版權所有
           </StyledCopyright>
         </div>

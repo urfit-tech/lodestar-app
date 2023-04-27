@@ -1,14 +1,19 @@
+import { gql, useApolloClient } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Textarea } from '@chakra-ui/react'
 import { Button, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
+import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import StyledBraftEditor, { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
+import hasura from '../../hasura'
 import { dateRangeFormatter } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/appointment'
@@ -127,7 +132,10 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
   onRefetch,
   form,
 }) => {
+  const { id: appId, enabledModules } = useApp()
   const { formatMessage } = useIntl()
+  const { authToken, currentMemberId } = useAuth()
+  const apolloClient = useApolloClient()
   const updateAppointmentIssue = useUpdateAppointmentIssue(orderProduct.id, orderProduct.options)
   const cancelAppointment = useCancelAppointment(orderProduct.id, orderProduct.options)
 
@@ -227,11 +235,54 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
             </Button>
             <Button
               type="primary"
-              onClick={() =>
-                window.open(
-                  `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${member.name}"`,
-                )
-              }
+              onClick={async () => {
+                if (enabledModules.meet_service) {
+                  const { data } = await apolloClient.query<
+                    hasura.GET_APPOINTMENT_PERIOD_MEET_ID,
+                    hasura.GET_APPOINTMENT_PERIOD_MEET_IDVariables
+                  >({
+                    query: gql`
+                      query GET_APPOINTMENT_PERIOD_MEET_ID($orderProductId: uuid!) {
+                        order_product(where: { id: { _eq: $orderProductId } }) {
+                          id
+                          options
+                        }
+                      }
+                    `,
+                    variables: { orderProductId: orderProduct.id },
+                  })
+                  const meetId = data.order_product?.[0]?.options?.meetId
+
+                  try {
+                    await axios
+                      .post(
+                        `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/kolable/meets/${meetId}`,
+                        {
+                          role: 'guest',
+                          name: `${appId}-${currentMemberId}`,
+                        },
+                        {
+                          headers: {
+                            Authorization: `Bearer ${authToken}`,
+                            'x-api-key': 'kolable',
+                          },
+                        },
+                      )
+                      .then(({ data: { code, message, data } }) =>
+                        window.open(data.target, '_blank', 'noopener=yes,noreferrer=yes'),
+                      )
+                  } catch (error) {
+                    console.log(`get meets error: ${error}`)
+                    window.open(
+                      `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
+                    )
+                  }
+                } else {
+                  window.open(
+                    `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
+                  )
+                }
+              }}
             >
               {formatMessage(commonMessages.button.attend)}
             </Button>

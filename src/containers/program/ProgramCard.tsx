@@ -1,6 +1,5 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Box } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { sum } from 'ramda'
 import React from 'react'
@@ -136,11 +135,11 @@ const useProgramPreview = (programId: string) => {
       ? null
       : {
           id: data.program_by_pk.id,
-          coverUrl: data.program_by_pk.cover_url,
-          coverMobileUrl: data.program_by_pk.cover_mobile_url,
-          coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url,
+          coverUrl: data.program_by_pk.cover_url || null,
+          coverMobileUrl: data.program_by_pk.cover_mobile_url || null,
+          coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url || null,
           title: data.program_by_pk.title,
-          abstract: data.program_by_pk.abstract,
+          abstract: data.program_by_pk.abstract || '',
           roles: data.program_by_pk.program_roles.map(programRole => ({
             id: programRole.id,
             name: programRole.name as ProgramRoleName,

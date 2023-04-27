@@ -1,4 +1,4 @@
-import { Button, Icon, Skeleton } from '@chakra-ui/react'
+import { Button, Icon, Skeleton, SkeletonText } from '@chakra-ui/react'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
@@ -63,9 +63,10 @@ const ActivityCollectionPage = () => {
     nav => nav.locale === currentLocale && nav.href === `${location.pathname}${active ? `?categories=${active}` : ''}`,
   )?.label
   const { formatMessage } = useIntl()
-  const { loadingActivities, errorActivities, activities } = usePublishedActivityCollection({
-    categoryId: active ? active : undefined,
-  })
+  const { loadingActivities, errorActivities, activities, title, getActivityTileLoading } =
+    usePublishedActivityCollection({
+      categoryId: active ? active : undefined,
+    })
 
   const categories: Category[] = sortBy(prop('position'))(
     uniqBy(category => category.id, unnest(activities.map(activity => activity.categories))),
@@ -79,6 +80,7 @@ const ActivityCollectionPage = () => {
   }
 
   const activityCollectionPageTitle =
+    title ||
     pageTitle ||
     categories.find(category => category.id === active)?.name ||
     formatMessage(productMessages.activity.title.default)
@@ -96,7 +98,9 @@ const ActivityCollectionPage = () => {
           {!noTitle && (
             <StyledBannerTitle className="d-flex align-items-center">
               <Icon as={AiFillAppstore} className="mr-3" />
-              <span>{loading ? <StyledSkeleton height="28px" /> : activityCollectionPageTitle}</span>
+              <span>
+                {loading || getActivityTileLoading ? <StyledSkeleton height="28px" /> : activityCollectionPageTitle}
+              </span>
             </StyledBannerTitle>
           )}
 
@@ -130,7 +134,7 @@ const ActivityCollectionPage = () => {
 
       <StyledCollection>
         <div className="container">
-          {loadingActivities && <Skeleton />}
+          {loadingActivities && <SkeletonText mt="1" noOfLines={4} spacing="4" />}
           {errorActivities && <div>{formatMessage(commonMessages.status.readingError)}</div>}
           <ActivityCollection activities={filteredActivities} />
         </div>

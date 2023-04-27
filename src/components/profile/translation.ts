@@ -19,11 +19,15 @@ const profileMessages = {
     otherInfoTitle: { id: 'profileMessages.ProfileOtherAdminCard.otherInfoTitle', defaultMessage: '其他資料' },
     phone: { id: 'profileMessages.ProfileOtherAdminCard.phone', defaultMessage: '手機號碼' },
     enterPhone: { id: 'profileMessages.ProfileOtherAdminCard.enterPhone', defaultMessage: '請輸入手機號碼' },
-    entercorrectPhone: {
-      id: 'profileMessages.ProfileOtherAdminCard.entercorrectPhone',
+    enterCorrectPhone: {
+      id: 'profileMessages.ProfileOtherAdminCard.enterCorrectPhone',
       defaultMessage: '請輸入正確手機格式',
     },
-    enter: { id: 'profileMessages.ProfileOtherAdminCard.enter', defaultMessage: '請輸入 {enterlabel}' },
+    enter: { id: 'profileMessages.ProfileOtherAdminCard.enter', defaultMessage: '請輸入 {enterLabel}' },
+    uniformNumberIsInvalidated: {
+      id: 'profileMessages.ProfileOtherAdminCard.uniformNumberIsInvalidated',
+      defaultMessage: '統一編號無效',
+    },
   }),
   ProfileBasicBusinessCard: defineMessages({
     basicInfo: { id: 'profileMessages.ProfileBasicBusinessCard.basicInfo', defaultMessage: '基本資料' },

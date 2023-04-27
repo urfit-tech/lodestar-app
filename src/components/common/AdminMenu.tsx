@@ -1,8 +1,7 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Menu } from 'antd'
 import { ClickParam, MenuProps } from 'antd/lib/menu'
-import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { parsePayload } from 'lodestar-app-element/src/hooks/util'
@@ -22,6 +21,7 @@ import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
 import { ReactComponent as DeviceIcon } from '../../images/device.svg'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
+import { ReactComponent as GroupBuyIcon } from '../../images/group-buy.svg'
 import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
@@ -93,8 +93,8 @@ export const MemberAdminMenu: React.VFC<
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
   const { socialCards } = useSocialCardCollection()
-
   const payload = authToken ? parsePayload(authToken) : null
+
   const defaultMenuItems = [
     // {
     //   key: 'management_system',
@@ -104,6 +104,15 @@ export const MemberAdminMenu: React.VFC<
     //     <Menu.Item key="management_system" className="managementSystem">
     //       <SettingsIcon className="mr-2" />
     //       {formatMessage(commonMessages.content.managementSystem)}
+    //     </Menu.Item>
+    //   ),
+    // },
+    // {
+    //   key: 'member_learning_achievement',
+    //   item: (
+    //     <Menu.Item key="member_learning_achievement">
+    //       <Icon as={LearningAchievementIcon} className="mr-2" />
+    //       {formatMessage(commonMessages.content.learningAchievement)}
     //     </Menu.Item>
     //   ),
     // },
@@ -190,15 +199,15 @@ export const MemberAdminMenu: React.VFC<
         </Menu.Item>
       ),
     },
-    // {
-    //   key: 'member_group_buying_admin',
-    //   item: enabledModules.group_buying && (
-    //     <Menu.Item key="member_group_buying_admin">
-    //       <Icon as={GroupBuyIcon} className="mr-2" />
-    //       {formatMessage(commonMessages.ui.groupBuying)}
-    //     </Menu.Item>
-    //   ),
-    // },
+    {
+      key: 'member_group_buying_admin',
+      item: enabledModules.group_buying && (
+        <Menu.Item key="member_group_buying_admin">
+          <Icon as={GroupBuyIcon} className="mr-2" />
+          {formatMessage(commonMessages.ui.groupBuying)}
+        </Menu.Item>
+      ),
+    },
     {
       key: 'member_coupons_admin',
       item: (

@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { HStack, SkeletonText, useRadioGroup } from '@chakra-ui/react'
 import { Typography } from 'antd'
-import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { flatten, uniq } from 'ramda'
 import React, { useEffect, useState } from 'react'

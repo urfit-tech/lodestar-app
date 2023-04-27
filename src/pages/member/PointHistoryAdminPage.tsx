@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { gql, useQuery } from '@apollo/client'
 import { Button, SkeletonText } from '@chakra-ui/react'
 import { message, Tabs } from 'antd'
-import gql from 'graphql-tag'
 import { EmptyBlock } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -291,7 +290,7 @@ const usePointLogCollections = (memberId: string) => {
       ? []
       : data.point_log.map(pointLog => ({
           id: pointLog.id,
-          description: pointLog.description,
+          description: pointLog.description || '',
           createdAt: new Date(pointLog.created_at),
           endedAt: pointLog.ended_at && new Date(pointLog.ended_at),
           points: pointLog.point,

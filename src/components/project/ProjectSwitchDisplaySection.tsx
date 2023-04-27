@@ -1,5 +1,4 @@
-import { useApolloClient } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useApolloClient } from '@apollo/client'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect } from 'react'
 import hasura from '../../hasura'

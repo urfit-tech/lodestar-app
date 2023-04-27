@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
+import { gql, useMutation } from '@apollo/client'
 import {
   Button,
   ButtonGroup,
@@ -10,7 +10,6 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
-import gql from 'graphql-tag'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -145,7 +144,7 @@ const GroupBuyingDeliverModal: React.VFC<{
 const StyledCard = styled.div`
   border-radius: 4px;
   background: white;
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06); ;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
 `
 const StyledCardMeta = styled.div`
   font-size: 14px;

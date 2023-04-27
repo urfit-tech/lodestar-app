@@ -26,7 +26,7 @@ const BlogPage: React.VFC = () => {
 
   const { posts } = usePostPreviewCollection()
 
-  const latestPosts = posts
+  const latestPosts = [...posts]
     .sort((a, b) => {
       if (a.pinnedAt && b.pinnedAt) {
         return new Date(b.pinnedAt).getTime() - new Date(a.pinnedAt).getTime()

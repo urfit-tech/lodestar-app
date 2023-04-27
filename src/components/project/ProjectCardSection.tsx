@@ -223,8 +223,8 @@ const ProjectCardSection: React.VFC<{
                               onClick={() =>
                                 setSelectedItem({
                                   title: card.title,
-                                  abstract: card.abstract,
-                                  description: card.description,
+                                  abstract: card.abstract || '',
+                                  description: card.description || '',
                                   contentIds: card.programContentIds || [],
                                   index: 0,
                                 })
@@ -260,8 +260,8 @@ const ProjectCardSection: React.VFC<{
                             onClick={() =>
                               setSelectedItem({
                                 title: card.title,
-                                abstract: card.abstract,
-                                description: card.description,
+                                abstract: card.abstract || '',
+                                description: card.description || '',
                                 contentIds: card.programContentIds || [],
                                 index: 0,
                               })

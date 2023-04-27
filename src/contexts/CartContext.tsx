@@ -1,5 +1,4 @@
-import { useApolloClient, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useApolloClient, useMutation } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniqBy } from 'ramda'
@@ -83,8 +82,8 @@ export const CartProvider: React.FC = ({ children }) => {
                       ?.merchandise.member_shop_id || ''
                   : '',
                 enrollments: cartProduct.product.product_enrollments.map(enrollment => ({
-                  memberId: enrollment.member_id,
-                  isPhysical: enrollment.is_physical,
+                  memberId: enrollment.member_id || null,
+                  isPhysical: enrollment.is_physical || false,
                 })),
                 options: cartProductOptions[cartProduct.product.id],
               })),
@@ -98,8 +97,8 @@ export const CartProvider: React.FC = ({ children }) => {
                 enrollments: data.product
                   .find(product => product.id === cartProduct.productId)
                   ?.product_enrollments.map(enrollment => ({
-                    memberId: enrollment.member_id,
-                    isPhysical: enrollment.is_physical,
+                    memberId: enrollment.member_id || null,
+                    isPhysical: enrollment.is_physical || false,
                   })),
               })),
             ],

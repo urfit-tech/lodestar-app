@@ -65,8 +65,9 @@ const CartPage: React.VFC = () => {
         (!Number(settings['feature.cart.disable']) || !location.search.match('direct')) && (
           <Tracking.Checkout resources={filteredResourceCollection} onCheckout={() => setCheckoutAlready(true)} />
         )}
+
       {/* group cart products by product owner */}
-      {shopIds.length > 1 && typeof shopId === 'undefined' && (
+      {shopIds.length > 1 && typeof shopId === 'undefined' ? (
         <div className="container py-5">
           <Typography.Title level={3} className="mb-4">
             <Icon type="shopping-cart" className="mr-2" />
@@ -83,19 +84,15 @@ const CartPage: React.VFC = () => {
             />
           ))}
         </div>
-      )}
-
-      {typeof shopId === 'string' && (
+      ) : shopIds.length === 1 || (typeof shopId === 'string' && shopId === '') ? (
+        <CheckoutBlock member={member} shopId={shopIds[0] || ''} cartProducts={cartProducts} />
+      ) : typeof shopId === 'string' && shopId !== '' ? (
         <CheckoutBlock
           member={member}
           shopId={shopId}
           cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === (shopId || ''))}
         />
-      )}
-
-      {shopIds.length === 1 && <CheckoutBlock member={member} shopId={shopIds[0] || ''} cartProducts={cartProducts} />}
-
-      {cartProducts.length === 0 && (
+      ) : (
         <div className="container py-5">
           <Typography.Title level={3} className="mb-4">
             <Icon type="shopping-cart" className="mr-2" />

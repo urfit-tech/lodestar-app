@@ -1,4 +1,5 @@
 import { Button, Divider, SkeletonText } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -16,11 +17,11 @@ import ActivityTicketPaymentButton from '../../components/activity/ActivityTicke
 import { AuthModalContext } from '../../components/auth/AuthModal'
 import CreatorCard from '../../components/common/CreatorCard'
 import { BREAK_POINT } from '../../components/common/Responsive'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useActivity } from '../../hooks/activity'
 import { usePublicMember } from '../../hooks/member'
+import NotFoundPage from '../NotFoundPage'
 import ActivityPageHelmet from './ActivityPageHelmet'
 
 const ActivityContent = styled(Container)`
@@ -88,7 +89,7 @@ const ActivityPage: React.VFC = () => {
   }
 
   if (error || !activity) {
-    return <DefaultLayout white>{formatMessage(commonMessages.status.readingError)}</DefaultLayout>
+    return <NotFoundPage />
   }
 
   return (

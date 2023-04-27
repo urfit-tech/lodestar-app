@@ -284,6 +284,7 @@ export const commonMessages = {
   content: defineMessages({
     memberProfile: { id: 'common.memberProfile', defaultMessage: '個人檔案' },
     personalSettings: { id: 'common.personalSettings', defaultMessage: '個人設定' },
+    learningAchievement: { id: 'common.learningAchievement', defaultMessage: 'Learning Achievement' },
     companySettings: { id: 'common.companySettings', defaultMessage: '公司設定' },
     courseProblem: { id: 'common.courseProblem', defaultMessage: '課程問題' },
     practiceManagement: { id: 'common.practiceManagement', defaultMessage: '作業管理' },
@@ -461,9 +462,11 @@ export const commonMessages = {
     },
     selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
     delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
-    noOrderLog: { id: 'common.text.noOrderLog', default: '尚無消費紀錄' },
+    noOrderLog: { id: 'common.text.noOrderLog', defaultMessage: '尚無消費紀錄' },
     appliedTag: { id: 'common.text.appliedTag', defaultMessage: '已送出標記申請' },
-    publish: { id: 'common.text.publish', default: 'publish' },
+    publish: { id: 'common.text.publish', defaultMessage: 'publish' },
+    emailIsAlreadyExist: { id: 'common.text.emailIsAlreadyExist', defaultMessage: 'Email is already exist' },
+    usernameIsAlreadyExist: { id: 'common.text.usernameIsAlreadyExist', defaultMessage: 'Username is already exist' },
   }),
 }
 
@@ -474,9 +477,6 @@ export const voucherMessages = {
   }),
   content: defineMessages({
     details: { id: 'voucher.content', defaultMessage: '詳情' },
-    fromNow: { id: 'voucher.fromNow', defaultMessage: '即日起' },
-    noUsePeriod: { id: 'voucher.noUsePeriod', defaultMessage: '無使用期限' },
-    redeemable: { id: 'voucher.redeemable', defaultMessage: '可兌換' },
     amount: { id: 'voucher.amount', defaultMessage: '數量' },
     editProject: { id: 'voucher.modal.project.edit', defaultMessage: '編輯方案' },
   }),
@@ -1448,6 +1448,7 @@ export const usersMessages = {
     notYet: { id: 'common.notYet', defaultMessage: '未啟用' },
     available: { id: 'common.available', defaultMessage: '可使用' },
     expired: { id: 'common.expired', defaultMessage: '已失效' },
+    used: { id: 'common.used', defaultMessage: 'used' },
   }),
   title: defineMessages({
     coupon: { id: 'common.coupon', defaultMessage: '折價券' },

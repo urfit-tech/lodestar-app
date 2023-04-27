@@ -1,7 +1,7 @@
-import { useMutation } from '@apollo/react-hooks'
+import { gql, useMutation } from '@apollo/client'
 import { Button, ButtonGroup, useDisclosure, useToast } from '@chakra-ui/react'
 import { EditorState } from 'braft-editor'
-import gql from 'graphql-tag'
+import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
@@ -12,7 +12,6 @@ import { createUploadFn, handleError } from '../../helpers'
 import { codeMessages, commonMessages } from '../../helpers/translation'
 import CommonModal from '../common/CommonModal'
 import MessageButton from '../common/MessageButton'
-import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   fillSuggest: { id: 'practice.label.fillSuggest', defaultMessage: '填寫建議' },

@@ -1,7 +1,7 @@
 import { Tab, TabPanels, Tabs } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { commonMessages } from '../../helpers/translation'
+import { usersMessages } from '../../helpers/translation'
 import { StyledTabList, StyledTabPanel } from '../../pages/GroupBuyingCollectionPage'
 import Voucher, { VoucherProps } from './Voucher'
 
@@ -16,13 +16,24 @@ const VoucherCollectionTabs: React.VFC<{ vouchers: VoucherProps[] }> = ({ vouche
   }[] = [
     {
       key: 'available',
-      name: formatMessage(commonMessages.status.available),
-      isDisplay: voucher => !!voucher.available,
+      name: formatMessage(usersMessages.tab.available),
+      isDisplay: voucher => voucher.available,
+    },
+    {
+      key: 'notYet',
+      name: formatMessage(usersMessages.tab.notYet),
+      isDisplay: voucher =>
+        (voucher.startedAt && voucher.startedAt.getTime() > Date.now() && !voucher.status.used) || false,
     },
     {
       key: 'unavailable',
-      name: formatMessage(commonMessages.status.expired),
-      isDisplay: voucher => !voucher.available,
+      name: formatMessage(usersMessages.tab.expired),
+      isDisplay: voucher => (voucher.endedAt && voucher.endedAt.getTime() < Date.now()) || false,
+    },
+    {
+      key: 'used',
+      name: formatMessage(usersMessages.tab.used),
+      isDisplay: voucher => voucher.status.used || false,
     },
   ]
 

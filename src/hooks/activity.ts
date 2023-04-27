@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { flatten, prop, sum, uniqBy } from 'ramda'
 import { DeepPick } from 'ts-deep-pick/lib'
 import hasura from '../hasura'
@@ -67,6 +66,27 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
     },
   )
 
+  const {
+    loading: getActivityTileLoading,
+    error: getActivityTileError,
+    data: getActivityTileData,
+    refetch: getActivityTileRefetch,
+  } = useQuery<hasura.GET_ACTIVITY_TITLE, hasura.GET_ACTIVITY_TITLEVariables>(
+    gql`
+      query GET_ACTIVITY_TITLE($categoryId: String!) {
+        category_by_pk(id: $categoryId) {
+          id
+          name
+        }
+      }
+    `,
+    {
+      variables: {
+        categoryId: options?.categoryId || '',
+      },
+    },
+  )
+
   const activities: DeepPick<
     Activity,
     | 'id'
@@ -95,7 +115,7 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
           .filter(activity => activity.published_at && new Date(activity.published_at).getTime() < Date.now())
           .map(activity => ({
             id: activity.id,
-            coverUrl: activity.cover_url,
+            coverUrl: activity.cover_url || null,
             title: activity.title,
             description: '',
             isParticipantsVisible: activity.is_participants_visible,
@@ -123,6 +143,8 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
     errorActivities: error,
     refetchActivities: refetch,
     activities,
+    title: getActivityTileData?.category_by_pk?.name,
+    getActivityTileLoading,
   }
 }
 
@@ -294,8 +316,8 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
     ? {
         id: activityId,
         title: data.activity_by_pk.title,
-        description: data.activity_by_pk.description,
-        coverUrl: data.activity_by_pk.cover_url,
+        description: data.activity_by_pk.description || '',
+        coverUrl: data.activity_by_pk.cover_url || null,
         publishedAt: data.activity_by_pk.published_at ? new Date(data.activity_by_pk.published_at) : null,
         organizerId: data.activity_by_pk.organizer_id,
         tags: data.activity_by_pk.activity_tags.map(v => v.tag_name),
@@ -306,7 +328,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
           title: v.title,
           price: v.price,
           count: v.count,
-          description: v.description,
+          description: v.description || '',
           startedAt: new Date(v.started_at),
           endedAt: new Date(v.ended_at),
           isPublished: v.is_published,
@@ -328,8 +350,8 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
         })),
         sessions: data.activity_by_pk.activity_sessions.map(v => ({
           id: v.id,
-          location: v.location,
-          onlineLink: v.online_link,
+          location: v.location || null,
+          onlineLink: v.online_link || null,
           startedAt: new Date(v.started_at),
           endedAt: new Date(v.ended_at),
         })),
@@ -425,13 +447,13 @@ export const useActivitySession = (sessionId: string, memberId: string) => {
           title: data.activity_session_by_pk.title,
           startedAt: new Date(data.activity_session_by_pk.started_at),
           endedAt: new Date(data.activity_session_by_pk.ended_at),
-          location: data.activity_session_by_pk.location,
-          onlineLink: data.activity_session_by_pk.online_link,
-          description: data.activity_session_by_pk.description,
+          location: data.activity_session_by_pk.location || null,
+          onlineLink: data.activity_session_by_pk.online_link || null,
+          description: data.activity_session_by_pk.description || null,
           threshold: data.activity_session_by_pk.threshold,
           activity: {
             title: data.activity_session_by_pk.activity.title,
-            coverUrl: data.activity_session_by_pk.activity.cover_url,
+            coverUrl: data.activity_session_by_pk.activity.cover_url || null,
           },
           isParticipantsVisible: data.activity_session_by_pk.activity.is_participants_visible,
           isEnrolled: data.activity_session_by_pk.activity_enrollments.length > 0,
@@ -546,7 +568,7 @@ export const useActivityTicket = (ticketId: string) => {
           endedAt: new Date(data.activity_ticket_by_pk.ended_at),
           price: data.activity_ticket_by_pk.price,
           count: data.activity_ticket_by_pk.count,
-          description: data.activity_ticket_by_pk.description,
+          description: data.activity_ticket_by_pk.description || '',
           isPublished: data.activity_ticket_by_pk.is_published,
           title: data.activity_ticket_by_pk.title,
           currencyId: data.activity_ticket_by_pk.currency_id,
@@ -554,17 +576,17 @@ export const useActivityTicket = (ticketId: string) => {
             id: activitySessionTicket.activity_session.id,
             type: activitySessionTicket.activity_session_type as ActivitySession['type'],
             title: activitySessionTicket.activity_session.title,
-            description: activitySessionTicket.activity_session.description,
+            description: activitySessionTicket.activity_session.description || '',
             threshold: activitySessionTicket.activity_session.threshold,
             startedAt: new Date(activitySessionTicket.activity_session.started_at),
             endedAt: new Date(activitySessionTicket.activity_session.ended_at),
-            location: activitySessionTicket.activity_session.location,
-            onlineLink: activitySessionTicket.activity_session.online_link,
+            location: activitySessionTicket.activity_session.location || null,
+            onlineLink: activitySessionTicket.activity_session.online_link || null,
           })),
           activity: {
             id: data.activity_ticket_by_pk.activity.id,
             title: data.activity_ticket_by_pk.activity.title,
-            coverUrl: data.activity_ticket_by_pk.activity.cover_url,
+            coverUrl: data.activity_ticket_by_pk.activity.cover_url || null,
             categories: data.activity_ticket_by_pk.activity.activity_categories.map(activityCategory => ({
               id: activityCategory.category.id,
               name: activityCategory.category.name,

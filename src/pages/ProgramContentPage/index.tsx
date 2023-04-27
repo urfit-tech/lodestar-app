@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react'
 import { Icon, Layout } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { defineMessage, useIntl } from 'react-intl'
@@ -10,10 +10,9 @@ import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../components/common/Responsive'
-import { StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
+import { EmptyBlock, StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../../components/program/ProgramContentMenu'
 import ProgramContentNoAuthBlock from '../../components/program/ProgramContentNoAuthBlock'
-import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import { ProgressProvider } from '../../contexts/ProgressContext'
 import { hasJsonStructure } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -33,7 +32,6 @@ const StyledLink = styled(Link)`
 
 const ProgramContentPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { play: playInBackground, updateElementList, currentResource } = useContext(MediaPlayerContext)
   const history = useHistory()
   const { programId, programContentId } = useParams<{
     programId: string
@@ -62,26 +60,6 @@ const ProgramContentPage: React.VFC = () => {
         title={program?.title || programId}
         extra={
           <div>
-            {Boolean(+settings['feature.backgroundPlay.enabled']) && !currentResource && (
-              <Button
-                variant="link"
-                onClick={() => {
-                  const programContentList =
-                    program?.contentSections.flatMap(contentSection => contentSection.contents) || []
-                  updateElementList?.(
-                    programContentList.map(content => ({
-                      title: content.title,
-                      type: 'ProgramContent',
-                      target: content.id,
-                    })) || [],
-                  )
-                  const currentIndex = programContentList.findIndex(content => content.id === programContentId)
-                  currentIndex >= 0 && playInBackground?.(currentIndex)
-                }}
-              >
-                Background Player
-              </Button>
-            )}
             {enabledModules.customer_review && (
               <Button
                 colorScheme="primary"
@@ -130,6 +108,8 @@ const ProgramContentPage: React.VFC = () => {
             } else {
               history.push('/')
             }
+          } else {
+            history.push(`/programs/${programId}?visitIntro=1`)
           }
         }}
       />
@@ -175,6 +155,7 @@ const ProgramContentPage: React.VFC = () => {
                     />
                   </StyledSideBar>
                 </div>
+                <EmptyBlock height="64px" />
               </div>
             )}
           </ProgressProvider>

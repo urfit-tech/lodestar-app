@@ -26,6 +26,21 @@ const voucherMessages = {
       id: 'voucher.VoucherExchangeModal.emptyNoticeText2',
       defaultMessage: 'please contact staff for assistance',
     },
+    exchanging: {
+      id: 'voucher.VoucherExchangeModal.exchanging',
+      defaultMessage: '兌換中',
+    },
+  }),
+  VoucherCollectionBLock: defineMessages({
+    exchangeVoucher: {
+      id: 'voucher.VoucherCollectionBLock.exchangeVoucher',
+      defaultMessage: '兌換成功，請到「我的主頁」查看',
+    },
+  }),
+  Voucher: defineMessages({
+    fromNow: { id: 'voucher.Voucher.fromNow', defaultMessage: '即日起' },
+    noUsePeriod: { id: 'voucher.Voucher.noUsePeriod', defaultMessage: '無使用期限' },
+    redeemable: { id: 'voucher.Voucher.redeemable', defaultMessage: '可兌換' },
   }),
 }
 

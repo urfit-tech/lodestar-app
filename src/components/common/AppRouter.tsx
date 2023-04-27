@@ -320,6 +320,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/settings/social-cards',
     pageName: 'member/SocialCardCollectionPage',
   },
+  member_learning_achievement: {
+    path: '/settings/learning-achievement',
+    pageName: 'member/LearningAchievementPage',
+  },
   member_certificates_admin: {
     path: '/settings/certificates',
     pageName: 'member/CertificateCollectionAdminPage',

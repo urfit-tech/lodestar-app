@@ -1,9 +1,8 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { Button, Skeleton } from '@chakra-ui/react'
 import { Form, message, Select, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
-import gql from 'graphql-tag'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -153,7 +152,7 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                     validator: (rule, value, callback) => {
                       const regex = /^\+?\(?[0-9]+\)?-?[0-9]+$/g
                       if (!form.getFieldValue('phone').match(regex)) {
-                        callback(formatMessage(profileMessages.ProfileOtherAdminCard.entercorrectPhone))
+                        callback(formatMessage(profileMessages.ProfileOtherAdminCard.enterCorrectPhone))
                       } else {
                         callback()
                       }
@@ -227,6 +226,7 @@ export const useIsEditableProperty = (isBusiness: boolean = false) => {
           name
           placeholder
           is_editable
+          is_required
           member_properties {
             id
             member_id
@@ -244,6 +244,7 @@ export const useIsEditableProperty = (isBusiness: boolean = false) => {
       name: v.name,
       placeholder: v.placeholder?.replace(/[()]/g, ''),
       isEditable: v.is_editable,
+      isRequired: v.is_required,
       memberProperties: v.member_properties,
     })) || []
 

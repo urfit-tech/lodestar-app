@@ -15,6 +15,7 @@ type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth
 
 const OAuth2Page: React.VFC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
+  console.log({ provider })
 
   if (['parenting', 'commonhealth', 'cw'].includes(provider)) {
     return <Oauth2Section />
@@ -144,9 +145,35 @@ const Oauth2Section: React.VFC = () => {
   }: {
     redirect: string
   } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
-
+  console.log(
+    'outside',
+    JSON.stringify({
+      currentMemberId,
+      appId,
+      code,
+      accountLinkToken,
+      host,
+      provider,
+      redirect,
+      socialLogin,
+    }),
+  )
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && appId && code) {
+    console.log(
+      'inside',
+      JSON.stringify({
+        currentMemberId,
+        appId,
+        code,
+        accountLinkToken,
+        host,
+        provider,
+        redirect,
+        socialLogin,
+      }),
+    )
+    if (!currentMemberId && appId && code && host && provider && redirect && socialLogin) {
+      console.log('get token start')
       const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(

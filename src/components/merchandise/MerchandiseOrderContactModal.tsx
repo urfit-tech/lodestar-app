@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { Button, ButtonGroup, FormControl, FormErrorMessage, Icon, useDisclosure, useToast } from '@chakra-ui/react'
 import { Button as AntdButton } from 'antd'
 import BraftEditor, { EditorState } from 'braft-editor'
-import gql from 'graphql-tag'
 import { CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -18,7 +18,6 @@ import { ReactComponent as IconEmail } from '../../images/email-o.svg'
 import { OrderContact } from '../../types/merchandise'
 import CommonModal from '../common/CommonModal'
 import { AvatarImage } from '../common/Image'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   contactMessage: { id: 'merchandise.ui.contactMessage', defaultMessage: '聯絡訊息' },

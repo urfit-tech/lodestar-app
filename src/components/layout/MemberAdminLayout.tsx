@@ -1,4 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
+import { Box, Spacer, Text } from '@chakra-ui/layout'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { filter } from 'ramda'
 import { useLocation } from 'react-router-dom'
@@ -31,6 +32,7 @@ const MemberAdminLayout: React.FC<{
   content: {
     title: string
     icon?: React.FC
+    endText?: string
   }
 }> = ({ content, children }) => {
   const location = useLocation()
@@ -53,6 +55,12 @@ const MemberAdminLayout: React.FC<{
           <StyledHeading className="d-flex mb-4">
             <Icon as={content.icon} className="my-auto mr-3" />
             <span>{content.title}</span>
+            <Spacer />
+            <Box display="flex" alignItems="center">
+              <Text color="var(--gray-dark)" fontSize="xs">
+                {content.endText}
+              </Text>
+            </Box>
           </StyledHeading>
           {children}
         </StyledContent>
