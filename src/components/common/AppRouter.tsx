@@ -324,6 +324,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/settings/learning-achievement',
     pageName: 'member/LearningAchievementPage',
   },
+  member_learning_achievement_with_member_id: {
+    path: '/settings/learning-achievement/:memberId',
+    pageName: 'member/LearningAchievementPage',
+  },
   member_certificates_admin: {
     path: '/settings/certificates',
     pageName: 'member/CertificateCollectionAdminPage',
