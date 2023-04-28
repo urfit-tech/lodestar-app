@@ -1,5 +1,4 @@
 import { Avatar, Box, Center, Divider, Tag, Text } from '@chakra-ui/react'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
@@ -62,12 +61,17 @@ const BadgeProgressBox = styled(Box)`
 type InfoCardProps = Pick<LearnedStatistic, 'avgProgramProgressPercent'> & {
   achievementCount: number
   achievementTag: string | null
+  memberName: string
 }
 
-const InfoCard: React.FC<InfoCardProps> = ({ avgProgramProgressPercent, achievementCount, achievementTag }) => {
+const InfoCard: React.FC<InfoCardProps> = ({
+  avgProgramProgressPercent,
+  achievementCount,
+  achievementTag,
+  memberName,
+}) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { currentMember } = useAuth()
 
   const pushToProfile = (): void => {
     history.push('/settings/profile')
@@ -84,7 +88,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ avgProgramProgressPercent, achievem
         <Box m="2">
           <CustomerNameBox>
             <Text color="var(--gray-darker)" fontSize="20px" as="b">
-              {currentMember?.name}
+              {memberName}
             </Text>
             <EditIcon onClick={pushToProfile} />
           </CustomerNameBox>

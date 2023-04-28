@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
@@ -17,6 +18,7 @@ import RadarCard from '../../components/learningAchievement/RadarCard'
 import learningAchievementMessages from '../../components/learningAchievement/translation'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
+import { usePublicMember } from '../../hooks/member'
 import { ReactComponent as LearningAchievementIcon } from '../../images/icon-grid-view.svg'
 
 const StyledRowGrid = styled.div`
@@ -101,15 +103,17 @@ export type MemberAchievement = {
 
 const LearningAchievementPage: React.FC = () => {
   const { formatMessage } = useIntl()
+  const { memberId } = useParams<{ memberId: string }>()
   const { currentMemberId } = useAuth()
   const { learnedStatistic, learnedStatisticLoading, learnedStatisticError } = useLearnedStatistic(
-    currentMemberId || '',
+    memberId || currentMemberId || '',
   )
   const {
     memberAchievement,
     loading: memberAchievementLoading,
     error: memberAchievementError,
-  } = useAchievement(currentMemberId || '')
+  } = useAchievement(memberId || currentMemberId || '')
+  const { member } = usePublicMember(memberId || currentMemberId || '')
 
   const getAchievementTag = () => {
     const tagFilter = memberAchievement?.filter(a => a.countable)
@@ -149,6 +153,7 @@ const LearningAchievementPage: React.FC = () => {
               avgProgramProgressPercent={learnedStatistic.avgProgramProgressPercent}
               achievementCount={memberAchievement?.length || 0}
               achievementTag={getAchievementTag()}
+              memberName={member?.name || ''}
             />
             <StyledRowGrid>
               <ProgramSummaryCard
@@ -338,4 +343,5 @@ const useAchievement = (memberId: string) => {
 
   return { memberAchievement, loading, error }
 }
+
 export default LearningAchievementPage
