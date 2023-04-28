@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { MemberAchievement } from '../../pages/member/LearningAchievementPage'
@@ -54,7 +55,9 @@ type BadgeCardProps = { memberAchievement: MemberAchievement[] }
 const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { data } = useMemberLearnedLog(currentMemberId || '')
+  const { memberId } = useParams<{ memberId: string }>()
+
+  const { data } = useMemberLearnedLog(memberId || currentMemberId || '')
 
   return (
     <StyledCard>
