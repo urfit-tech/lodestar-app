@@ -1,4 +1,5 @@
 import { Divider, Icon, Tag, Typography } from 'antd'
+import { content } from 'html2canvas/dist/types/css/property-descriptors/content'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
@@ -111,6 +112,20 @@ const ProgramContentListSection: React.VFC<{
 
       {program.contentSections
         .filter(programContentSection => programContentSection.contents.length)
+        .map(programContentSection => ({
+          id: programContentSection.id,
+          title: programContentSection.title,
+          description: programContentSection.description,
+          materialsCount: programContentSection.materialsCount,
+          contents: isEnrolled
+            ? programContentSection.contents
+            : programContentSection.contents.filter(programContent =>
+                program.isIntroductionSectionVisible
+                  ? programContent
+                  : programContent.displayMode === DisplayModeEnum.trial ||
+                    programContent.displayMode === DisplayModeEnum.loginToTrial,
+              ),
+        }))
         .map(programContentSection => (
           <ProgramSectionBlock key={programContentSection.id}>
             <ProgramSectionTitle className="mb-3">{programContentSection.title}</ProgramSectionTitle>
