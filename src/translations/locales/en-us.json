@@ -770,6 +770,7 @@
   "issue.reply.message.confirm": "This action cannot be undone",
   "layout.GlobalSearchModal.atLeastTwoChar": "Please enter at least two characters",
   "learningAchievement.*.afternoon": "午茶配著學",
+  "learningAchievement.*.dataCountSince": "※Data in this part counted since {time}",
   "learningAchievement.*.evening": "晚自習充電",
   "learningAchievement.*.midnight": "夜貓好專注",
   "learningAchievement.*.morning": "晨型高效能",

@@ -76,32 +76,6 @@ const EmbeddedImage = styled.div`
   z-index: 0;
 `
 
-const chartOptions = {
-  layout: {
-    padding: 0,
-  },
-  elements: {
-    line: {
-      tension: 0,
-      borderWidth: 10,
-    },
-  },
-  scales: {
-    r: {
-      min: 0,
-      max: 1,
-      ticks: {
-        stepSize: 2,
-        display: false,
-      },
-
-      pointLabels: {
-        font: { size: 16, weight: 'bold' },
-      },
-    },
-  },
-}
-
 const LearningCategory: React.FC<{
   children: ReactElement
   value: number
@@ -154,7 +128,66 @@ const RadarCard: React.FC<RadarCardProps> = ({
     continuance: progressProgramCount,
     concentrate: progressProgramTime,
   }
+  const chartOptions = {
+    layout: {
+      padding: 0,
+    },
+    elements: {
+      line: {
+        tension: 0,
+        borderWidth: 10,
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            let unit: string = ''
+            let value: number = 0
+            switch (context.label) {
+              case formatMessage(learningAchievementMessages.RadarCard.explore):
+                value = RadarData.explore
+                unit = formatMessage(learningAchievementMessages.RadarCard.lessons)
+                break
+              case formatMessage(learningAchievementMessages.RadarCard.continuance):
+                unit = formatMessage(learningAchievementMessages.RadarCard.programs)
+                value = RadarData.continuance
+                break
+              case formatMessage(learningAchievementMessages.RadarCard.concentrate):
+                unit = formatMessage(learningAchievementMessages.RadarCard.hours)
+                value = RadarData.concentrate
+                break
+              default:
+                return
+            }
+            let label = context.dataset.label || ''
+            if (label) {
+              label += ': '
+            }
+            if (context.parsed.r !== null) {
+              label += value
+              label += unit
+            }
+            return label
+          },
+        },
+      },
+    },
+    scales: {
+      r: {
+        min: 0,
+        max: 1,
+        ticks: {
+          stepSize: 2,
+          display: false,
+        },
 
+        pointLabels: {
+          font: { size: 16, weight: 'bold' },
+        },
+      },
+    },
+  }
   const chartData = {
     labels: [
       formatMessage(learningAchievementMessages.RadarCard.explore),

@@ -1,4 +1,5 @@
 import { Box, Progress, Spacer, Text } from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -115,9 +116,17 @@ const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions
   return (
     <StyledCard>
       <StyledColGrid>
-        <Text as="b" fontSize="lg">
-          {formatMessage(learningAchievementMessages.ProgressBarCard.learningMarathon)}
-        </Text>
+        <Box display="flex" alignItems="center">
+          <Text as="b" fontSize="lg">
+            {formatMessage(learningAchievementMessages.ProgressBarCard.learningMarathon)}
+          </Text>
+          <Spacer />
+          <Text as="b" fontSize="xs" color="var(--gray-dark)">
+            {formatMessage(learningAchievementMessages['*'].dataCountSince, {
+              time: dayjs(new Date(2023, 4, 15)).format('YYYY/M/DD'),
+            })}
+          </Text>
+        </Box>
         <StyledRowGrid>
           <ConsecutiveDays>
             <Text zIndex="1" fontSize="sm" pl="4">

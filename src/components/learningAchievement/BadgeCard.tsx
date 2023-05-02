@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { Divider, Text } from '@chakra-ui/react'
+import { Box, Divider, Spacer, Text } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
@@ -58,9 +58,17 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
 
   return (
     <StyledCard>
-      <Text as="b" fontSize="lg">
-        {formatMessage(learningAchievementMessages.BadgeCard.badges)}
-      </Text>
+      <Box display="flex" alignItems="center">
+        <Text as="b" fontSize="lg">
+          {formatMessage(learningAchievementMessages.BadgeCard.badges)}
+        </Text>
+        <Spacer />
+        <Text as="b" fontSize="xs" color="var(--gray-dark)">
+          {formatMessage(learningAchievementMessages['*'].dataCountSince, {
+            time: dayjs(new Date(2023, 4, 15)).format('YYYY/M/DD'),
+          })}
+        </Text>
+      </Box>
       <StyledColGrid>
         <StyledRowGrid>
           <Badge
