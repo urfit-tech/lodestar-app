@@ -9,6 +9,7 @@ const learningAchievementMessages = {
     midnight: { id: 'learningAchievement.*.midnight', defaultMessage: '夜貓好專注' },
     weekend: { id: 'learningAchievement.*.weekend', defaultMessage: '週末學不厭' },
     updateEveryDay: { id: 'learningAchievement.*.updateEveryDay', defaultMessage: '※Update data at {time} every day' },
+    dataCountSince: { id: 'learningAchievement.*.dataCountSince', defaultMessage: '※Data in this part counted since {time}' },
   }),
   InfoCard: defineMessages({
     peices: { id: 'learningAchievement.InfoCard.peices', defaultMessage: 'pcs.' },
