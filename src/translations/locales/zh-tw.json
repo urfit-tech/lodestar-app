@@ -770,6 +770,7 @@
   "issue.reply.message.confirm": "此動作無法復原",
   "layout.GlobalSearchModal.atLeastTwoChar": "請輸入至少兩個以上字元",
   "learningAchievement.*.afternoon": "午茶配著學",
+  "learningAchievement.*.dataCountSince": "※本區自{time}開始統計數據",
   "learningAchievement.*.evening": "晚自習充電",
   "learningAchievement.*.midnight": "夜貓好專注",
   "learningAchievement.*.morning": "晨型高效能",
