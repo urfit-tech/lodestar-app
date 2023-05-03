@@ -62,6 +62,7 @@ type InfoCardProps = Pick<LearnedStatistic, 'avgProgramProgressPercent'> & {
   achievementCount: number
   achievementTag: string | null
   memberName: string
+  memberPictureUrl: string
 }
 
 const InfoCard: React.FC<InfoCardProps> = ({
@@ -69,20 +70,21 @@ const InfoCard: React.FC<InfoCardProps> = ({
   achievementCount,
   achievementTag,
   memberName,
+  memberPictureUrl,
 }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-
   const pushToProfile = (): void => {
     history.push('/settings/profile')
   }
+
 
   return (
     <StyledCard>
       <InfoBox>
         <Box>
           <Center>
-            <Avatar size="xl" />
+            <Avatar size="xl" src={memberPictureUrl}/>
           </Center>
         </Box>
         <Box m="2">

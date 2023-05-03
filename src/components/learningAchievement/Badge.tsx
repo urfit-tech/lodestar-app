@@ -10,6 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import dayjs from 'dayjs'
+import { isEmpty } from 'lodash'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -50,6 +51,12 @@ const BadgeCounter = styled(Box)`
   justify-content: center; /
 `
 
+const StyledButton = styled.button<{
+  cursorPointer: boolean | undefined
+}>`
+  cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'auto')};
+`
+
 const Badge: React.FC<{
   src: string | undefined
   repeatable?: boolean | undefined
@@ -80,15 +87,17 @@ const Badge: React.FC<{
   isCountable,
 }) => {
   const { formatMessage } = useIntl()
-
+  const cursorPointer = (): boolean | undefined => {
+    return isCountable && !isEmpty(badgeCollectedTime)
+  }
   return (
     <BadgeLayout>
       <Popover variant="responsive" trigger={isMobile ? 'click' : 'hover'}>
         <PopoverTrigger>
-          <button>
+          <StyledButton cursorPointer={cursorPointer()}>
             <BadgeImage>
               <Image
-                opacity={badgeCollectedTime?.length! > 0 ? 1 : 0.3}
+                opacity={badgeCollectedTime?.length! > 0 ? 1 : 0.1}
                 src={`https://static.kolable.com/images/cw/learning_achievement/${src}.png`}
               />
               {isCountable && badgeCollectedTime?.length! > 1 && (
@@ -97,7 +106,7 @@ const Badge: React.FC<{
                 </BadgeCounter>
               )}
             </BadgeImage>
-          </button>
+          </StyledButton>
         </PopoverTrigger>
         {isCountable && badgeCollectedTime?.length! > 0 && (
           <PopoverContent>
