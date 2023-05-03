@@ -30,6 +30,7 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
   const { authToken, currentMemberId } = useAuth()
   const [resourceList, setSourceList] = useState(defaultMediaPlayValue.resourceList)
   const [currentIndex, setCurrentIndex] = useState<number>()
+  const [mimeType, setMimeType] = useState('')
   const [sourceUrl, setSourceUrl] = useState('')
   const [visible, setVisible] = useState(defaultMediaPlayValue.visible)
   const currentResource = currentIndex === undefined ? null : resourceList[currentIndex]
@@ -71,21 +72,27 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
           setSourceUrl(url)
         })
       } else if (currentResource?.options?.contentType === 'video') {
-        axios
-          .post(
-            `${process.env.REACT_APP_API_BASE_ROOT}/videos/${currentResource.options.videoId}/token`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
+        if (currentResource?.options?.source === 'azure') {
+          setMimeType('application/x-mpegURL')
+          setSourceUrl(`${currentResource?.options?.sourceUrl}(format=m3u8-cmaf)`)
+        } else if (currentResource?.options?.source === 'cloudflare') {
+          axios
+            .post(
+              `${process.env.REACT_APP_API_BASE_ROOT}/videos/${currentResource.options.videoId}/token`,
+              {},
+              {
+                headers: {
+                  Authorization: `Bearer ${authToken}`,
+                },
               },
-            },
-          )
-          .then(({ data }) => {
-            if (data.code === 'SUCCESS') {
-              setSourceUrl(`https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`)
-            }
-          })
+            )
+            .then(({ data }) => {
+              if (data.code === 'SUCCESS') {
+                setMimeType('application/x-mpegURL')
+                setSourceUrl(`https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`)
+              }
+            })
+        }
       }
       document.title = `${currentResource.title}${settings['title_concat'] || false ? ` | ${settings['title']}` : ''}`
     }
@@ -119,6 +126,7 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
         >
           <AudioPlayer
             title={currentResource.title}
+            mimeType={mimeType}
             audioUrl={sourceUrl}
             lastProgress={lastProgress}
             onPrev={
