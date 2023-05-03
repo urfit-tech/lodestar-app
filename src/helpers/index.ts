@@ -458,3 +458,5 @@ export const isMobile: boolean = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|
 )
 
 export const isAndroid = /android/i.test(window.navigator.userAgent.toLowerCase())
+
+export const isIOS = /(iPhone|iPad|iPod|iOS)/i.test(window.navigator.userAgent)
