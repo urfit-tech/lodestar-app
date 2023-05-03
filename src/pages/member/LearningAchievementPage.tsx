@@ -154,6 +154,7 @@ const LearningAchievementPage: React.FC = () => {
               achievementCount={memberAchievement?.length || 0}
               achievementTag={getAchievementTag()}
               memberName={member?.name || ''}
+              memberPictureUrl={member?.pictureUrl || ''}
             />
             <StyledRowGrid>
               <ProgramSummaryCard
