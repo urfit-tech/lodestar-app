@@ -110,8 +110,8 @@ const ProgramPage: React.VFC = () => {
   }
 
   useEffect(() => {
-    if (customerReviewBlockRef.current && params.moveToBlock) {
-      customerReviewBlockRef.current.scrollIntoView({ behavior: 'smooth' })
+    if (customerReviewBlockRef.current && params.moveToBlock === 'customer-review') {
+      setTimeout(() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' }), 1000)
     }
   }, [customerReviewBlockRef, params])
 

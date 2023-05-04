@@ -1,11 +1,13 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
-import { Button, Form, Icon, message, Spin } from 'antd'
+import { Icon } from '@chakra-ui/react'
+import { Button, Form, message, Spin } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useEffect, useState } from 'react'
+import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -54,9 +56,9 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   const [loading, setLoading] = useState(false)
 
   const { data: memberEmailData, loading: loadingMemberEmail } = useQuery<
-    hasura.GET_EMAIL_BY_MEMBER_ID,
-    hasura.GET_EMAIL_BY_MEMBER_IDVariables
-  >(GET_EMAIL_BY_MEMBER_ID, { variables: { memberId: memberId || '' } })
+    hasura.GET_EMAIL_AND_NAME_BY_MEMBER_ID,
+    hasura.GET_EMAIL_AND_NAME_BY_MEMBER_IDVariables
+  >(GET_EMAIL_AND_NAME_BY_MEMBER_ID, { variables: { memberId: memberId || '' } })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -69,6 +71,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
               `${process.env.REACT_APP_API_BASE_ROOT}/auth/set-participant-password`,
               {
                 appId,
+                name: values.name,
                 memberId,
                 password: values.password,
               },
@@ -175,6 +178,24 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
         )}
 
         <Form onSubmit={handleSubmit}>
+          {isProjectPortfolioParticipant && memberEmailData && (
+            <Form.Item>
+              {form.getFieldDecorator('name', {
+                initialValue: memberEmailData?.member_public[0].name,
+                rules: [
+                  {
+                    required: true,
+                    message: formatMessage(commonMessages.form.message.name),
+                  },
+                ],
+              })(
+                <MigrationInput
+                  placeholder={formatMessage(commonMessages.form.message.name)}
+                  suffix={<Icon as={AiOutlineUser} />}
+                />,
+              )}
+            </Form.Item>
+          )}
           <Form.Item>
             {form.getFieldDecorator('password', {
               rules: [
@@ -187,7 +208,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
               <MigrationInput
                 type="password"
                 placeholder={formatMessage(usersMessages.placeholder.enterNewPassword)}
-                suffix={<Icon type="lock" />}
+                suffix={<Icon as={AiOutlineLock} />}
               />,
             )}
           </Form.Item>
@@ -213,7 +234,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
               <MigrationInput
                 type="password"
                 placeholder={formatMessage(usersMessages.placeholder.enterNewPasswordAgain)}
-                suffix={<Icon type="lock" />}
+                suffix={<Icon as={AiOutlineLock} />}
               />,
             )}
           </Form.Item>
@@ -228,11 +249,12 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   )
 }
 
-const GET_EMAIL_BY_MEMBER_ID = gql`
-  query GET_EMAIL_BY_MEMBER_ID($memberId: String!) {
+const GET_EMAIL_AND_NAME_BY_MEMBER_ID = gql`
+  query GET_EMAIL_AND_NAME_BY_MEMBER_ID($memberId: String!) {
     member_public(where: { id: { _eq: $memberId } }) {
       id
       email
+      name
     }
   }
 `

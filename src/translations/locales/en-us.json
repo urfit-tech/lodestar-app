@@ -888,7 +888,7 @@
   "page.ProgramPage.bar": "Bar Message",
   "page.ProgramPage.foo": "Foo Message",
   "page.ResetPasswordPage.TitleFirstText": "你的帳號為 {account}",
-  "page.ResetPasswordPage.TitleSecondText": "請輸入新密碼",
+  "page.ResetPasswordPage.TitleSecondText": "請輸入密碼來完成帳號設定",
   "page.SearchPage.activity": "Activity",
   "page.SearchPage.creator": "Master",
   "page.SearchPage.fundingProject": "Funding Project",

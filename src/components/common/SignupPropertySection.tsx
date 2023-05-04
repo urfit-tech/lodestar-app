@@ -81,9 +81,9 @@ const SignupPropertySection: React.VFC<SignPropertySectionProps> = ({ form, onMo
                 value: value,
               }
             })
-            process.env.REACT_APP_GRAPHQL_ENDPOINT &&
+            process.env.REACT_APP_GRAPHQL_PH_ENDPOINT &&
               Axios.post(
-                process.env.REACT_APP_GRAPHQL_ENDPOINT,
+                process.env.REACT_APP_GRAPHQL_PH_ENDPOINT,
                 {
                   query: `mutation UPDATE_MEMBER_INFO($memberId: String!, $name: String, $memberProperties: [member_property_insert_input!]!) {
                     update_member(where: {id: {_eq: $memberId}}, _set: {name: $name}) {

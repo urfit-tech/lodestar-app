@@ -164,9 +164,9 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
               await uploadFile(path, companyPictureFile, authToken)
             }
 
-            process.env.REACT_APP_GRAPHQL_ENDPOINT &&
+            process.env.REACT_APP_GRAPHQL_PH_ENDPOINT &&
               Axios.post(
-                process.env.REACT_APP_GRAPHQL_ENDPOINT,
+                process.env.REACT_APP_GRAPHQL_PH_ENDPOINT,
                 {
                   query: `mutation UPDATE_MEMBER_INFO($memberId: String!, $setMember: member_set_input, $memberProperties: [member_property_insert_input!]!) {
                     update_member(where: { id: { _eq: $memberId } }, _set: $setMember) {
