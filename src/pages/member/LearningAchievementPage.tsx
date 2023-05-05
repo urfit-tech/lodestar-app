@@ -263,7 +263,7 @@ const useLearnedStatistic = (memberId: string) => {
           productOptions: data.product_options
             ?.map((option: { title: string; progressPercent: number; productId: string }) => ({
               title: option?.title,
-              progressPercent: Math.round(option?.progressPercent * 100),
+              progressPercent: Math.floor(option?.progressPercent * 100),
               purchasedAt: dayjs(
                 orderProductPurchaseData?.order_product.find(op => op.product_id === option?.productId)?.created_at,
               ).format('YYYY-MM-DD'),
