@@ -1,6 +1,8 @@
 import { gql, useQuery } from '@apollo/client'
 import { Box, Divider, Spacer, Text } from '@chakra-ui/react'
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -12,6 +14,9 @@ import AdminCard from '../common/AdminCard'
 import { BREAK_POINT } from '../common/Responsive'
 import Badge from './Badge'
 import learningAchievementMessages from './translation'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const StyledCard = styled(AdminCard)`
   display: flex;
@@ -189,7 +194,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
 }
 
 const useMemberLearnedLog = (memberId: string) => {
-  const today = dayjs()
+  const today = dayjs().tz('Asia/Taipei')
   const day = today.day()
   const lastMonday = today
     .subtract(7 + ((day + 6) % 7), 'day')
@@ -229,6 +234,13 @@ const useMemberLearnedLog = (memberId: string) => {
     },
   )
 
+  const dayOfPeriod = (period: Date) => {
+    return dayjs(period).tz('Asia/Taipei').day()
+  }
+  const hourOfPeriod = (period: Date) => {
+    return dayjs(period).tz('Asia/Taipei').hour()
+  }
+
   // fix it
   const durationByAchievement = [
     {
@@ -237,19 +249,19 @@ const useMemberLearnedLog = (memberId: string) => {
         data &&
         data.member_learned_log.filter(
           log =>
-            dayjs(log.period).day() !== 0 &&
-            dayjs(log.period).day() !== 6 &&
-            dayjs(log.period).hour() >= 7 &&
-            dayjs(log.period).hour() <= 11,
+            dayOfPeriod(log.period) !== 0 &&
+            dayOfPeriod(log.period) !== 6 &&
+            hourOfPeriod(log.period) >= 7 &&
+            hourOfPeriod(log.period) <= 11,
         ).length > 0
           ? Math.round(
               data?.member_learned_log
                 .filter(
                   log =>
-                    dayjs(log.period).day() !== 0 &&
-                    dayjs(log.period).day() !== 6 &&
-                    dayjs(log.period).hour() >= 7 &&
-                    dayjs(log.period).hour() <= 11,
+                    dayOfPeriod(log.period) !== 0 &&
+                    dayOfPeriod(log.period) !== 6 &&
+                    hourOfPeriod(log.period) >= 7 &&
+                    hourOfPeriod(log.period) <= 11,
                 )
                 .map(log => log.duration)
                 .reduce((a, b) => a + b) / 60,
@@ -262,19 +274,19 @@ const useMemberLearnedLog = (memberId: string) => {
         data &&
         data.member_learned_log.filter(
           log =>
-            dayjs(log.period).day() !== 0 &&
-            dayjs(log.period).day() !== 6 &&
-            dayjs(log.period).hour() >= 12 &&
-            dayjs(log.period).hour() <= 14,
+            dayOfPeriod(log.period) !== 0 &&
+            dayOfPeriod(log.period) !== 6 &&
+            hourOfPeriod(log.period) >= 12 &&
+            hourOfPeriod(log.period) <= 14,
         ).length > 0
           ? Math.round(
               data.member_learned_log
                 .filter(
                   log =>
-                    dayjs(log.period).day() !== 0 &&
-                    dayjs(log.period).day() !== 6 &&
-                    dayjs(log.period).hour() >= 12 &&
-                    dayjs(log.period).hour() <= 14,
+                    dayOfPeriod(log.period) !== 0 &&
+                    dayOfPeriod(log.period) !== 6 &&
+                    hourOfPeriod(log.period) >= 12 &&
+                    hourOfPeriod(log.period) <= 14,
                 )
                 .map(log => log.duration)
                 .reduce((a, b) => a + b) / 60,
@@ -287,19 +299,19 @@ const useMemberLearnedLog = (memberId: string) => {
         data &&
         data.member_learned_log.filter(
           log =>
-            dayjs(log.period).day() !== 0 &&
-            dayjs(log.period).day() !== 6 &&
-            dayjs(log.period).hour() >= 15 &&
-            dayjs(log.period).hour() <= 18,
+            dayOfPeriod(log.period) !== 0 &&
+            dayOfPeriod(log.period) !== 6 &&
+            hourOfPeriod(log.period) >= 15 &&
+            hourOfPeriod(log.period) <= 18,
         ).length > 0
           ? Math.round(
               data.member_learned_log
                 .filter(
                   log =>
-                    dayjs(log.period).day() !== 0 &&
-                    dayjs(log.period).day() !== 6 &&
-                    dayjs(log.period).hour() >= 15 &&
-                    dayjs(log.period).hour() <= 18,
+                    dayOfPeriod(log.period) !== 0 &&
+                    dayOfPeriod(log.period) !== 6 &&
+                    hourOfPeriod(log.period) >= 15 &&
+                    hourOfPeriod(log.period) <= 18,
                 )
                 .map(log => log.duration)
                 .reduce((a, b) => a + b) / 60,
@@ -312,19 +324,19 @@ const useMemberLearnedLog = (memberId: string) => {
         data &&
         data.member_learned_log.filter(
           log =>
-            dayjs(log.period).day() !== 0 &&
-            dayjs(log.period).day() !== 6 &&
-            dayjs(log.period).hour() >= 19 &&
-            dayjs(log.period).hour() <= 23,
+            dayOfPeriod(log.period) !== 0 &&
+            dayOfPeriod(log.period) !== 6 &&
+            hourOfPeriod(log.period) >= 19 &&
+            hourOfPeriod(log.period) <= 23,
         ).length > 0
           ? Math.round(
               data.member_learned_log
                 .filter(
                   log =>
-                    dayjs(log.period).day() !== 0 &&
-                    dayjs(log.period).day() !== 6 &&
-                    dayjs(log.period).hour() >= 19 &&
-                    dayjs(log.period).hour() <= 23,
+                    dayOfPeriod(log.period) !== 0 &&
+                    dayOfPeriod(log.period) !== 6 &&
+                    hourOfPeriod(log.period) >= 19 &&
+                    hourOfPeriod(log.period) <= 23,
                 )
                 .map(log => log.duration)
                 .reduce((a, b) => a + b) / 60,
@@ -337,19 +349,19 @@ const useMemberLearnedLog = (memberId: string) => {
         data &&
         data.member_learned_log.filter(
           log =>
-            dayjs(log.period).day() !== 0 &&
-            dayjs(log.period).day() !== 6 &&
-            dayjs(log.period).hour() >= 0 &&
-            dayjs(log.period).hour() <= 6,
+            dayOfPeriod(log.period) !== 0 &&
+            dayOfPeriod(log.period) !== 6 &&
+            hourOfPeriod(log.period) >= 0 &&
+            hourOfPeriod(log.period) <= 6,
         ).length > 0
           ? Math.round(
               data.member_learned_log
                 .filter(
                   log =>
-                    dayjs(log.period).day() !== 0 &&
-                    dayjs(log.period).day() !== 6 &&
-                    dayjs(log.period).hour() >= 0 &&
-                    dayjs(log.period).hour() <= 6,
+                    dayOfPeriod(log.period) !== 0 &&
+                    dayOfPeriod(log.period) !== 6 &&
+                    hourOfPeriod(log.period) >= 0 &&
+                    hourOfPeriod(log.period) <= 6,
                 )
                 .map(log => log.duration)
                 .reduce((a, b) => a + b) / 60,
@@ -360,10 +372,10 @@ const useMemberLearnedLog = (memberId: string) => {
       key: 'learning-achievement-weekend',
       value:
         data &&
-        data.member_learned_log.filter(log => dayjs(log.period).day() === 0 && dayjs(log.period).day() === 6).length > 0
+        data.member_learned_log.filter(log => dayOfPeriod(log.period) === 0 && dayOfPeriod(log.period) === 6).length > 0
           ? Math.round(
               data.member_learned_log
-                .filter(log => dayjs(log.period).day() === 0 && dayjs(log.period).day() === 6)
+                .filter(log => dayOfPeriod(log.period) === 0 && dayOfPeriod(log.period) === 6)
                 .map(log => log.duration)
                 .reduce((a, b) => a + b) / 60,
             )
