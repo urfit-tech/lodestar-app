@@ -235,10 +235,10 @@ const useMemberLearnedLog = (memberId: string) => {
   )
 
   const dayOfPeriod = (period: Date) => {
-    return dayjs(period).tz('Asia/Taipei').day()
+    return dayjs(new Date(period)).tz('Asia/Taipei').day()
   }
   const hourOfPeriod = (period: Date) => {
-    return dayjs(period).tz('Asia/Taipei').hour()
+    return dayjs(new Date(period)).tz('Asia/Taipei').hour()
   }
 
   // fix it
@@ -372,10 +372,10 @@ const useMemberLearnedLog = (memberId: string) => {
       key: 'learning-achievement-weekend',
       value:
         data &&
-        data.member_learned_log.filter(log => dayOfPeriod(log.period) === 0 && dayOfPeriod(log.period) === 6).length > 0
+        data.member_learned_log.filter(log => dayOfPeriod(log.period) === 0 || dayOfPeriod(log.period) === 6).length > 0
           ? Math.round(
               data.member_learned_log
-                .filter(log => dayOfPeriod(log.period) === 0 && dayOfPeriod(log.period) === 6)
+                .filter(log => dayOfPeriod(log.period) === 0 || dayOfPeriod(log.period) === 6)
                 .map(log => log.duration)
                 .reduce((a, b) => a + b) / 60,
             )
