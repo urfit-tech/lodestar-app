@@ -10,12 +10,15 @@ import {
   Text,
 } from '@chakra-ui/react'
 import dayjs from 'dayjs'
+import minMax from 'dayjs/plugin/minMax'
 import { isEmpty } from 'lodash'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { isMobile } from '../../helpers'
 import learningAchievementMessages from './translation'
+
+dayjs.extend(minMax)
 
 const BadgeLayout = styled.div`
   display: flex;
@@ -90,6 +93,7 @@ const Badge: React.FC<{
   const cursorPointer = (): boolean | undefined => {
     return isCountable && !isEmpty(badgeCollectedTime)
   }
+
   return (
     <BadgeLayout>
       <Popover variant="responsive" trigger={isMobile ? 'click' : 'hover'}>
@@ -97,7 +101,13 @@ const Badge: React.FC<{
           <StyledButton cursorPointer={cursorPointer()}>
             <BadgeImage>
               <Image
-                opacity={badgeCollectedTime?.length! > 0 ? 1 : 0.1}
+                opacity={
+                  badgeCollectedTime &&
+                  badgeCollectedTime.length! > 0 &&
+                  checkAchievementIsThisWeek(dayjs.max(badgeCollectedTime.map(time => dayjs(time))).toDate())
+                    ? 1
+                    : 0.1
+                }
                 src={`https://static.kolable.com/images/cw/learning_achievement/${src}.png`}
               />
               {isCountable && badgeCollectedTime?.length! > 1 && (
@@ -196,6 +206,17 @@ const Badge: React.FC<{
       </BadgeText>
     </BadgeLayout>
   )
+}
+
+const checkAchievementIsThisWeek = (date: Date) => {
+  const today = dayjs().tz('Asia/Taipei')
+  const day = today.day()
+  const thisMonday = today
+    .subtract(day - (day === 0 ? -6 : 1), 'day')
+    .startOf('day')
+    .toISOString()
+
+  return dayjs(new Date(date)).isAfter(thisMonday)
 }
 
 export default Badge
