@@ -166,7 +166,7 @@ const LearningAchievementPage: React.FC = () => {
                 totalProgramContentCount={learnedStatistic.totalProgramContentCount}
                 totalProgramTime={learnedStatistic.totalProgramTime}
                 progressProgramContentCount={learnedStatistic.progressProgramContentCount}
-                progressProgramTime={Math.round(learnedStatistic.progressProgramTime)}
+                progressProgramTime={Math.floor(learnedStatistic.progressProgramTime)}
                 progressProgramCount={learnedStatistic.progressProgramCount}
               />
             </StyledRowGrid>
@@ -254,16 +254,16 @@ const useLearnedStatistic = (memberId: string) => {
               data.program_tag_options?.find((data: { tagName: string; count: number }) => data.tagName === tag)
                 ?.count || 0,
           })),
-          avgProgramProgressPercent: Math.round(data.avg_program_progress_percent * 100) || 0,
+          avgProgramProgressPercent: Math.floor(Number((data.avg_program_progress_percent * 100).toFixed(2))) || 0,
           totalProgramContentCount: data.total_program_content_count || 0,
           progressProgramContentCount: data.progress_program_content_count || 0,
           progressProgramCount: data.progress_program_count || 0,
-          totalProgramTime: Math.round(data.total_program_time / 3600) || 0, // hr
-          progressProgramTime: Math.round(data.progress_program_time / 3600) || 0, //hr
+          totalProgramTime: Math.floor(data.total_program_time / 3600) || 0, // hr
+          progressProgramTime: Math.floor(data.progress_program_time / 3600) || 0, //hr
           productOptions: data.product_options
             ?.map((option: { title: string; progressPercent: number; productId: string }) => ({
               title: option?.title,
-              progressPercent: Math.floor(option?.progressPercent * 100),
+              progressPercent: Math.floor(Number((option?.progressPercent * 100).toFixed(2))),
               purchasedAt: dayjs(
                 orderProductPurchaseData?.order_product.find(op => op.product_id === option?.productId)?.created_at,
               ).format('YYYY-MM-DD'),
