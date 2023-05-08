@@ -1,5 +1,4 @@
 import { Divider, Icon, Tag, Typography } from 'antd'
-import { content } from 'html2canvas/dist/types/css/property-descriptors/content'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
@@ -116,7 +115,6 @@ const ProgramContentListSection: React.VFC<{
           id: programContentSection.id,
           title: programContentSection.title,
           description: programContentSection.description,
-          materialsCount: programContentSection.materialsCount,
           contents: isEnrolled
             ? programContentSection.contents
             : programContentSection.contents.filter(programContent =>

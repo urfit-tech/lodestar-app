@@ -6,17 +6,11 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import ExamBlock from '../../components/exam/ExamBlock'
 import ExerciseBlock from '../../components/exercise/ExerciseBlock'
 import { useExam, useExercisePublic, useSpecificExercise } from '../../hooks/exam'
-import {
-  ProgramContent,
-  ProgramContentAttachmentProps,
-  ProgramContentBodyProps,
-  ProgramContentMaterialProps,
-} from '../../types/program'
+import { ProgramContent, ProgramContentAttachmentProps, ProgramContentBodyProps } from '../../types/program'
 
 const ProgramContentExerciseBlock: React.VFC<{
   programContent: ProgramContent & {
     programContentBody: ProgramContentBodyProps | null
-    materials: ProgramContentMaterialProps[]
     attachments: ProgramContentAttachmentProps[]
   }
   nextProgramContentId?: string
