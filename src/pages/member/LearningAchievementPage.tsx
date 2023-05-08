@@ -331,15 +331,17 @@ const useAchievement = (memberId: string) => {
   )
 
   const memberAchievement: MemberAchievement[] | null = data
-    ? data.member_achievement.map(a => ({
-        memberId: a.member_id || memberId,
-        createdAt: a.created_at,
-        updatedAt: a.updated_at,
-        name: a.app_achievement?.name || '',
-        isPublic: !!a.app_achievement?.is_public,
-        countable: !!a.app_achievement?.countable,
-        achievementId: a.app_achievement?.id,
-      }))
+    ? data.member_achievement
+        .map(a => ({
+          memberId: a.member_id || memberId,
+          createdAt: a.created_at,
+          updatedAt: a.updated_at,
+          name: a.app_achievement?.name || '',
+          isPublic: !!a.app_achievement?.is_public,
+          countable: !!a.app_achievement?.countable,
+          achievementId: a.app_achievement?.id,
+        }))
+        .sort((a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf())
     : null
 
   return { memberAchievement, loading, error }
