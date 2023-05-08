@@ -7,11 +7,11 @@ import IssueThreadBlock from '../../components/issue/IssueThreadBlock'
 import PracticeDisplayedCollection from '../../components/practice/PracticeDisplayedCollection'
 import ProgramContentMaterialBlock from '../../components/program/ProgramContentMaterialBlock'
 import { programMessages } from '../../helpers/translation'
+import { useProgramContentMaterial } from '../../hooks/program'
 import {
   ProgramContent,
   ProgramContentAttachmentProps,
   ProgramContentBodyProps,
-  ProgramContentMaterialProps,
   ProgramRole,
 } from '../../types/program'
 import { StyledContentBlock } from './index.styled'
@@ -34,7 +34,6 @@ const ProgramContentTabs: React.VFC<{
   programRoles: ProgramRole[]
   programContent: ProgramContent & {
     programContentBody: ProgramContentBodyProps | null
-    materials: ProgramContentMaterialProps[]
     attachments: ProgramContentAttachmentProps[]
   }
   issueEnabled?: boolean
@@ -42,11 +41,12 @@ const ProgramContentTabs: React.VFC<{
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const [activeKey, setActiveKey] = useState('issue')
+  const { data: materials } = useProgramContentMaterial(programContent.id)
 
   let isIssueThreadVisible =
     programContent?.contentType === 'exercise' || programContent?.contentType === 'exam' ? false : issueEnabled
   const isPracticesVisible = enabledModules.practice && programContent.programContentBody?.type === 'practice'
-  const isMaterialVisible = programContent.materials.length !== 0
+  const isMaterialVisible = materials ? materials.length !== 0 : false
 
   useEffect(() => {
     if (isPracticesVisible) {
