@@ -177,6 +177,9 @@ const MemberProfileButton: React.VFC<{
 
   const authPayload = parsePayload(authToken || '')
   const loggedInMembers = authPayload?.loggedInMembers || []
+  const pushToProfile = (): void => {
+    history.push('/settings/learning-achievement')
+  }
 
   const content = (
     <Wrapper>
@@ -283,17 +286,19 @@ const MemberProfileButton: React.VFC<{
   )
 
   return (
-    <Popover placement="bottomRight" trigger="click" content={content}>
+    <>
       <Responsive.Default>
-        <Button type="link" icon="menu" />
+        <Popover placement="bottomRight" trigger="click" content={content}>
+            <Button type="link" icon="menu" />
+        </Popover>
       </Responsive.Default>
 
       <Responsive.Desktop>
-        <div className="cursor-pointer">
+        <div className="cursor-pointer" onClick={pushToProfile}>
           {renderMemberProfile?.(member) || <MemberAvatar memberId={member.id} size={36} />}
         </div>
       </Responsive.Desktop>
-    </Popover>
+    </>
   )
 }
 

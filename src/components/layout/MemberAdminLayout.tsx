@@ -2,7 +2,7 @@ import { Icon } from '@chakra-ui/icons'
 import { Box, Spacer, Text } from '@chakra-ui/layout'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { filter } from 'ramda'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { useAuthModal } from '../../hooks/auth'
@@ -12,6 +12,7 @@ import { useAppRouter } from '../common/AppRouter'
 import PageHelmet from '../common/PageHelmet'
 import Responsive from '../common/Responsive'
 import DefaultLayout from './DefaultLayout'
+import { message, Icon as AntdIcon } from 'antd'
 
 const StyledContent = styled.div<{ white?: boolean; footerHeight: number }>`
   min-width: 240px;
@@ -41,6 +42,8 @@ const MemberAdminLayout: React.FC<{
   const defaultSelectedKeys = Object.keys(filter(routeProps => routeProps.path === location.pathname, routesMap))
   const { renderMemberAdminMenu } = useCustomRenderer()
   const authModal = useAuthModal()
+  const history = useHistory()
+  const { logout } = useAuth()
 
   return (
     <DefaultLayout noFooter>
@@ -49,6 +52,24 @@ const MemberAdminLayout: React.FC<{
         <Responsive.Desktop>
           <StyledContent className="py-5" footerHeight={0}>
             <MemberAdminMenu renderAdminMenu={renderMemberAdminMenu} defaultSelectedKeys={defaultSelectedKeys} />
+            <ul
+              className="ant-menu ant-menu-light ant-menu-root ant-menu-inline"
+              style={{ marginTop: '20px', paddingRight: '5px', background: 'transparent', border: 'none' }}
+            >
+              <li
+                className="ant-menu-item" style={{ paddingLeft: '3rem', borderRadius: '0 100px 100px 0' }}
+                onClick={
+                  (() => {
+                    logout && logout()
+                    history.push('/')
+                    message.success('已成功登出')
+                  })
+                }
+              >
+                <AntdIcon type="logout" className="mr-2" />
+                登出
+              </li>
+            </ul>
           </StyledContent>
         </Responsive.Desktop>
         <StyledContent className="flex-grow-1 p-3 p-sm-5" footerHeight={0}>

@@ -26,6 +26,7 @@ import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
+import { ReactComponent as LearningAchievementIcon } from '../../images/icon-grid-view.svg'
 import { useAppRouter } from './AppRouter'
 
 const StyledMenu = styled(Menu)`
@@ -39,7 +40,9 @@ const StyledMenu = styled(Menu)`
   }
 
   & .ant-menu-item {
+    display: flex;
     padding-left: 3rem !important;
+    align-items: center;
     border-radius: 0 100px 100px 0;
     &:active {
       background: transparent !important;
@@ -107,15 +110,15 @@ export const MemberAdminMenu: React.VFC<
     //     </Menu.Item>
     //   ),
     // },
-    // {
-    //   key: 'member_learning_achievement',
-    //   item: (
-    //     <Menu.Item key="member_learning_achievement">
-    //       <Icon as={LearningAchievementIcon} className="mr-2" />
-    //       {formatMessage(commonMessages.content.learningAchievement)}
-    //     </Menu.Item>
-    //   ),
-    // },
+    {
+      key: 'member_learning_achievement',
+      item: (
+        <Menu.Item key="member_learning_achievement">
+          <Icon as={LearningAchievementIcon} className="mr-2" />
+          {formatMessage(commonMessages.content.learningAchievement)}
+        </Menu.Item>
+      ),
+    },
     {
       key: 'member_profile_admin',
       item:
