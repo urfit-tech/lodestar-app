@@ -89,7 +89,7 @@ export type ProgramContentSection = {
   id: string
   title: string
   description: string | null
-  materialsCount?: number
+  // materialsCount?: number
 }
 
 export type DisplayMode = keyof typeof DisplayModeEnum
@@ -113,7 +113,7 @@ export type ProgramContent = {
   listPrice: number | null
   salePrice: number | null
   soldAt: Date | null
-  materials?: ProgramContentMaterialProps[]
+  // materials?: ProgramContentMaterialProps[]
   videos?: { id: string; size: number; options: any; data: any }[]
   contentBodyId: string
 }

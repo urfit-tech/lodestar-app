@@ -12,7 +12,6 @@ import {
   ProgramContent,
   ProgramContentAttachmentProps,
   ProgramContentBodyProps,
-  ProgramContentMaterialProps,
   ProgramPlan,
   ProgramRole,
   ProgramRoleName,
@@ -336,11 +335,6 @@ export const useProgram = (programId: string) => {
                 id
                 type
               }
-              program_content_materials {
-                id
-                data
-                created_at
-              }
               program_content_videos {
                 attachment {
                   id
@@ -443,11 +437,6 @@ export const useProgram = (programId: string) => {
                 salePrice: programContent.sale_price,
                 soldAt: programContent.sold_at && new Date(programContent.sold_at),
                 contentBodyId: programContent.content_body_id,
-                materials: programContent.program_content_materials.map(v => ({
-                  id: v.id,
-                  data: v.data,
-                  createdAt: v.created_at,
-                })),
                 videos: programContent.program_content_videos.map(v => ({
                   id: v.attachment.id,
                   size: v.attachment.size,
@@ -508,11 +497,6 @@ export const GET_PROGRAM_CONTENT = gql`
         data
         type
       }
-      program_content_materials {
-        id
-        data
-        created_at
-      }
       program_content_videos {
         attachment {
           id
@@ -542,7 +526,6 @@ export const useProgramContent = (programContentId: string) => {
   const programContent:
     | (ProgramContent & {
         programContentBody: ProgramContentBodyProps | null
-        materials: ProgramContentMaterialProps[]
         attachments: ProgramContentAttachmentProps[]
       })
     | null = useMemo(
@@ -575,11 +558,6 @@ export const useProgramContent = (programContentId: string) => {
                   data: data.program_content_by_pk.program_content_body.data,
                 }
               : null,
-            materials: data.program_content_by_pk.program_content_materials.map(v => ({
-              id: v.id,
-              data: v.data,
-              createdAt: v.created_at,
-            })),
             videos: data.program_content_by_pk.program_content_videos.map(v => ({
               id: v.attachment.id,
               size: v.attachment.size,
