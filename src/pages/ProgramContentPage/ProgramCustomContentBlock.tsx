@@ -7,7 +7,7 @@ import { BraftContent } from 'lodestar-app-element/src/components/common/StyledB
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, includes } from 'ramda'
-import React, { ReactElement, useContext, useEffect } from 'react'
+import React, { ReactElement, useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../../components/common/Responsive'
@@ -59,6 +59,7 @@ const ProgramCustomContentBlock: React.VFC<{
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const { hasProgramContentPermission } = useHasProgramContentPermission(programContentId)
+  const endedAtRef = useRef(0)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
@@ -103,6 +104,25 @@ const ProgramCustomContentBlock: React.VFC<{
     }).catch(() => {})
   }, 5000)
 
+  const insertPlayerEventLog = throttle(async (data: { playbackRate: number; startedAt: number; endedAt: number }) => {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+        {
+          programContentId,
+          data: {
+            ...data,
+            startedAt: endedAtRef.current || data.startedAt,
+          },
+        },
+        { headers: { authorization: `Bearer ${authToken}` } },
+      )
+      endedAtRef.current = data.endedAt
+    } catch (error) {
+      console.error(`Failed to insert player event log`, error)
+    }
+  }, 5000)
+
   return (
     <StyledProgramContentBlock id="program_customize_content_block">
       {((programContent.contentType === 'video' &&
@@ -127,27 +147,14 @@ const ProgramCustomContentBlock: React.VFC<{
             programContentId={programContentId}
             nextProgramContent={nextProgramContent}
             onVideoEvent={e => {
+              insertPlayerEventLog(e.videoState)
               if (e.type === 'progress') {
                 insertProgramProgress(e.progress)
               }
               if (e.type === 'ended') {
+                endedAtRef.current = 0
                 insertProgramProgress(1)?.then(() => refetchProgress())
               }
-              axios
-                .post(
-                  `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
-                  {
-                    programContentId,
-                    data: e.videoState,
-                  },
-                  { headers: { authorization: `Bearer ${authToken}` } },
-                )
-                .then(({ data: { code, result } }) => {
-                  if (code === 'SUCCESS') {
-                    return
-                  }
-                })
-                .catch(() => {})
             }}
           />
         )}
