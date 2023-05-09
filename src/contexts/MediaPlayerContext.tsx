@@ -2,7 +2,7 @@ import axios from 'axios'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import 'video.js/dist/video-js.css'
 import AudioPlayer from '../components/common/AudioPlayer'
 import { getFileDownloadableLink } from '../helpers'
@@ -33,6 +33,8 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
   const [sourceUrl, setSourceUrl] = useState('')
   const [visible, setVisible] = useState(defaultMediaPlayValue.visible)
   const currentResource = currentIndex === undefined ? null : resourceList[currentIndex]
+  const endedAtRef = useRef(0)
+
   const { programContentProgress, refetchProgress } = useProgramContentProgress(
     currentResource?.options?.programId,
     currentMemberId || '',
@@ -91,6 +93,26 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
     }
   }, [currentResource?.options?.contentType, currentResource?.options?.programId, currentResource?.target])
 
+  const insertPlayerEventLog = throttle(async (data: { playbackRate: number; startedAt: number; endedAt: number }) => {
+    try {
+      currentResource &&
+        (await axios.post(
+          `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+          {
+            programContentId: currentResource.target,
+            data: {
+              ...data,
+              startedAt: endedAtRef.current || data.startedAt,
+            },
+          },
+          { headers: { authorization: `Bearer ${authToken}` } },
+        ))
+      endedAtRef.current = data.endedAt
+    } catch (error) {
+      console.error(`Failed to insert player event log`, error)
+    }
+  }, 5000)
+
   return (
     <MediaPlayerContext.Provider
       value={{
@@ -136,27 +158,13 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
                 : undefined
             }
             onAudioEvent={e => {
+              insertPlayerEventLog(e.audioState)
               if (e.type === 'progress') {
                 insertProgramProgress(e.progress)
-              } else {
-                axios
-                  .post(
-                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
-                    {
-                      programContentId: currentResource.target,
-                      data: e.audioState,
-                    },
-                    { headers: { authorization: `Bearer ${authToken}` } },
-                  )
-                  .then(({ data: { code, result } }) => {
-                    if (code === 'SUCCESS') {
-                      return
-                    }
-                  })
-                  .catch(() => {})
-                if (e.type === 'ended') {
-                  insertProgramProgress(1)?.then(() => refetchProgress())
-                }
+              }
+              if (e.type === 'ended') {
+                endedAtRef.current = 0
+                insertProgramProgress(1)?.then(() => refetchProgress())
               }
             }}
             onClose={() => {
