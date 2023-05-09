@@ -255,26 +255,25 @@ const ProgramContentBlock: React.VFC<{
             onVideoEvent={e => {
               if (e.type === 'progress') {
                 insertProgramProgress(e.progress)
-              } else {
-                axios
-                  .post(
-                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
-                    {
-                      programContentId,
-                      data: e.videoState,
-                    },
-                    { headers: { authorization: `Bearer ${authToken}` } },
-                  )
-                  .then(({ data: { code, result } }) => {
-                    if (code === 'SUCCESS') {
-                      return
-                    }
-                  })
-                  .catch(() => {})
-                if (e.type === 'ended') {
-                  insertProgramProgress(1)?.then(() => refetchProgress())
-                }
               }
+              if (e.type === 'ended') {
+                insertProgramProgress(1)?.then(() => refetchProgress())
+              }
+              axios
+                .post(
+                  `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+                  {
+                    programContentId,
+                    data: e.videoState,
+                  },
+                  { headers: { authorization: `Bearer ${authToken}` } },
+                )
+                .then(({ data: { code, result } }) => {
+                  if (code === 'SUCCESS') {
+                    return
+                  }
+                })
+                .catch(() => {})
             }}
           />
         )}
