@@ -4,7 +4,6 @@ import { Button, SkeletonText, Switch } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import Cookies from 'js-cookie'
-import { throttle } from 'lodash'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -200,32 +199,32 @@ const ProgramContentBlock: React.VFC<{
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
-  const insertProgramProgress = throttle(async (progress: number) => {
-    const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
-    return await insertProgress(programContentId, {
-      progress: currentProgress > 1 ? 1 : Math.max(currentProgress, initialProgress),
-      lastProgress: progress,
-    }).catch(() => {})
-  }, 5000)
+  const insertProgramProgress = async (progress: number) => {
+    try {
+      const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
+      await insertProgress(programContentId, {
+        progress: currentProgress > 1 ? 1 : Math.max(currentProgress, initialProgress),
+        lastProgress: progress,
+      })
+    } catch (error) {
+      console.error(`Failed to insert program progress`, error)
+    }
+  }
 
-  const insertPlayerEventLog = throttle(async (data: { playbackRate: number; startedAt: number; endedAt: number }) => {
+  const insertPlayerEventLog = async (data: { playbackRate: number; startedAt: number; endedAt: number }) => {
     try {
       await axios.post(
         `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
         {
           programContentId,
-          data: {
-            ...data,
-            startedAt: endedAtRef.current || data.startedAt,
-          },
+          data,
         },
         { headers: { authorization: `Bearer ${authToken}` } },
       )
-      endedAtRef.current = data.endedAt
     } catch (error) {
       console.error(`Failed to insert player event log`, error)
     }
-  }, 5000)
+  }
 
   return (
     <div id="program_content_block" className="pt-4 p-sm-4">
@@ -273,12 +272,15 @@ const ProgramContentBlock: React.VFC<{
             programContentId={programContentId}
             nextProgramContent={nextProgramContent}
             onVideoEvent={e => {
-              insertPlayerEventLog(e.videoState)
-              if (e.type === 'progress') {
-                insertProgramProgress(e.progress)
+              if (Math.abs(e.videoState.endedAt - endedAtRef.current) >= 5) {
+                insertPlayerEventLog({ ...e.videoState, startedAt: endedAtRef.current || e.videoState.startedAt })
+                if (e.type === 'progress') {
+                  insertProgramProgress(e.progress)
+                }
+                endedAtRef.current = e.videoState.endedAt
               }
               if (e.type === 'ended') {
-                endedAtRef.current = 0
+                insertPlayerEventLog({ ...e.videoState, startedAt: endedAtRef.current || e.videoState.startedAt })
                 insertProgramProgress(1)?.then(() => refetchProgress())
               }
             }}
@@ -313,12 +315,15 @@ const ProgramContentBlock: React.VFC<{
                 : undefined
             }
             onAudioEvent={e => {
-              insertPlayerEventLog(e.audioState)
-              if (e.type === 'progress') {
-                insertProgramProgress(e.progress)
+              if (Math.abs(e.audioState.endedAt - endedAtRef.current) >= 5) {
+                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
+                if (e.type === 'progress') {
+                  insertProgramProgress(e.progress)
+                }
+                endedAtRef.current = e.audioState.endedAt
               }
               if (e.type === 'ended') {
-                endedAtRef.current = 0
+                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
                 insertProgramProgress(1)
               }
             }}

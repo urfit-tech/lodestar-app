@@ -100,25 +100,21 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
     }
   }, [currentResource?.options?.contentType, currentResource?.options?.programId, currentResource?.target])
 
-  const insertPlayerEventLog = throttle(async (data: { playbackRate: number; startedAt: number; endedAt: number }) => {
+  const insertPlayerEventLog = async (data: { playbackRate: number; startedAt: number; endedAt: number }) => {
     try {
       currentResource &&
         (await axios.post(
           `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
           {
             programContentId: currentResource.target,
-            data: {
-              ...data,
-              startedAt: endedAtRef.current || data.startedAt,
-            },
+            data,
           },
           { headers: { authorization: `Bearer ${authToken}` } },
         ))
-      endedAtRef.current = data.endedAt
     } catch (error) {
       console.error(`Failed to insert player event log`, error)
     }
-  }, 5000)
+  }
 
   return (
     <MediaPlayerContext.Provider
@@ -166,12 +162,15 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
                 : undefined
             }
             onAudioEvent={e => {
-              insertPlayerEventLog(e.audioState)
-              if (e.type === 'progress') {
-                insertProgramProgress(e.progress)
+              if (Math.abs(e.audioState.endedAt - endedAtRef.current) >= 5) {
+                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
+                if (e.type === 'progress') {
+                  insertProgramProgress(e.progress)
+                }
+                endedAtRef.current = e.audioState.endedAt
               }
               if (e.type === 'ended') {
-                endedAtRef.current = 0
+                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
                 insertProgramProgress(1)?.then(() => refetchProgress())
               }
             }}
