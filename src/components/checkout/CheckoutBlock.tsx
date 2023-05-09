@@ -1,4 +1,4 @@
-import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast, Text } from '@chakra-ui/react'
+import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
 import { defineMessage } from '@formatjs/intl'
 import { Form, message, Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
@@ -185,6 +185,7 @@ const CheckoutBlock: React.VFC<{
   const [groupBuying, setGroupBuying] = useState<{
     [productId: string]: {
       memberIds: string[]
+      memberEmails: string[]
       withError: boolean
     }
   }>({})
@@ -207,6 +208,7 @@ const CheckoutBlock: React.VFC<{
           ...(groupBuying[currentValue.productId]
             ? {
                 groupBuyingPartnerIds: groupBuying[currentValue.productId].memberIds,
+                groupBuyingPartnerEmails: groupBuying[currentValue.productId].memberEmails,
               }
             : {}),
         },
