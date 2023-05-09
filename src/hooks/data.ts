@@ -179,6 +179,7 @@ export const useMemberContract = (memberContractId: string) => {
           revoked_at
           agreed_options
           member {
+            name
             email
             member_properties(where: { property: { name: { _eq: "本名" } } }) {
               value
@@ -205,7 +206,10 @@ export const useMemberContract = (memberContractId: string) => {
           agreedAt: data.member_contract_by_pk.agreed_at || null,
           agreedIp: data.member_contract_by_pk.agreed_ip || null,
           agreedOptions: data.member_contract_by_pk.agreed_options || {},
-          memberName: data.member_contract_by_pk.member.member_properties[0]?.value || null,
+          memberName:
+            data.member_contract_by_pk.member.member_properties[0]?.value ||
+            data.member_contract_by_pk.member.name ||
+            null,
           memberEmail: data.member_contract_by_pk.member.email || null,
           revokedAt: data.member_contract_by_pk.revoked_at || null,
           contract: {
