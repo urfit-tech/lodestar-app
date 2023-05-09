@@ -112,15 +112,30 @@ const ContractPage: React.VFC = () => {
         <StyledCard>
           <div className="text-center">
             {memberContract.revokedAt ? (
-              <p>已於 {moment(memberContract.revokedAt).format('YYYY-MM-DD HH:mm:ss')} 解除此契約</p>
+              <>
+                <p>
+                  姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                </p>
+                <p>已於 {moment(memberContract.revokedAt).format('YYYY-MM-DD HH:mm:ss')} 解除此契約</p>
+              </>
             ) : memberContract.agreedAt ? (
-              <p>已於 {moment(memberContract.agreedAt).format('YYYY-MM-DD HH:mm:ss')} 同意此契約</p>
+              <>
+                <p>
+                  姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                </p>
+                <p>已於 {moment(memberContract.agreedAt).format('YYYY-MM-DD HH:mm:ss')} 同意此契約</p>
+              </>
             ) : memberContract.startedAt && moment() >= moment(memberContract.startedAt) ? (
               <p>此合約已失效</p>
             ) : (
-              <Checkbox checked={!!memberContract.agreedAt} onChange={handleCheck}>
-                我已詳細閱讀並同意上述契約並願意遵守規定
-              </Checkbox>
+              <>
+                <p>
+                  姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                </p>
+                <Checkbox checked={!!memberContract.agreedAt} onChange={handleCheck}>
+                  我已詳細閱讀並同意上述契約並願意遵守規定
+                </Checkbox>
+              </>
             )}
           </div>
         </StyledCard>
