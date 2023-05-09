@@ -10,7 +10,8 @@ const rootElement = document.getElementById('root')
 const renderAuthModal = (visible: boolean) =>
   visible ? (
     (() => {
-      const state = btoa(JSON.stringify({ provider: 'cw', redirect: window.location.pathname }))
+      // const state = btoa(JSON.stringify({ provider: 'cw', redirect: window.location.pathname }))
+      const state = btoa(JSON.stringify({ provider: 'cw', redirect: '/settings/learning-achievement' }))
       const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/cw`)
       const oauthRoot = process.env.REACT_APP_CW_OAUTH_BASE_ROOT || 'https://dev-account.cwg.tw'
       const oauthClientId = process.env.REACT_APP_CW_OAUTH_CLIENT_ID || '89'
