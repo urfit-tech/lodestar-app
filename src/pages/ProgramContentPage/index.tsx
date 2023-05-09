@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import { Button, Flex, Skeleton, Spinner } from '@chakra-ui/react'
 import { Icon, Layout } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -10,6 +10,7 @@ import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../components/common/Responsive'
+import DefaultLayout from '../../components/layout/DefaultLayout'
 import { EmptyBlock, StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../../components/program/ProgramContentMenu'
 import ProgramContentNoAuthBlock from '../../components/program/ProgramContentNoAuthBlock'
@@ -17,6 +18,7 @@ import { ProgressProvider } from '../../contexts/ProgressContext'
 import { hasJsonStructure } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
+import ForbiddenPage from '../ForbiddenPage'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramContentPageHelmet from './ProgramContentPageHelmet'
@@ -43,15 +45,27 @@ const ProgramContentPage: React.VFC = () => {
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
 
-  if (isAuthenticating || loadingProgram) {
-    return <></>
-  }
-
   let oldProgramInfo = {}
   if (hasJsonStructure(localStorage.getItem(`${appId}.program.info`) || '')) {
     JSON.parse(localStorage.getItem(`${appId}.program.info`) || '')
   }
-  localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
+  programId &&
+    programContentId &&
+    localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
+
+  if (isAuthenticating || loadingProgram) {
+    return (
+      <DefaultLayout>
+        <Flex h="100vh" alignItems="center" justifyContent="center">
+          <Spinner />
+        </Flex>
+      </DefaultLayout>
+    )
+  }
+
+  if (!program?.contentSections) {
+    return <ForbiddenPage />
+  }
 
   return (
     <Layout>
