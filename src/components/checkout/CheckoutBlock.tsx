@@ -185,6 +185,7 @@ const CheckoutBlock: React.VFC<{
   const [groupBuying, setGroupBuying] = useState<{
     [productId: string]: {
       memberIds: string[]
+      memberEmails: string[]
       withError: boolean
     }
   }>({})
@@ -207,6 +208,7 @@ const CheckoutBlock: React.VFC<{
           ...(groupBuying[currentValue.productId]
             ? {
                 groupBuyingPartnerIds: groupBuying[currentValue.productId].memberIds,
+                groupBuyingPartnerEmails: groupBuying[currentValue.productId].memberEmails,
               }
             : {}),
         },
