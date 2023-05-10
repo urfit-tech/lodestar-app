@@ -63,7 +63,7 @@ const ProgramContentPage: React.VFC = () => {
     )
   }
 
-  if (!program?.contentSections) {
+  if (!program) {
     return <ForbiddenPage />
   }
 
