@@ -43,7 +43,6 @@ const MemberAdminLayout: React.FC<{
   const { renderMemberAdminMenu } = useCustomRenderer()
   const authModal = useAuthModal()
   const history = useHistory()
-  const { logout } = useAuth()
 
   return (
     <DefaultLayout noFooter>
@@ -60,8 +59,10 @@ const MemberAdminLayout: React.FC<{
                 className="ant-menu-item"
                 style={{ display: 'flex', paddingLeft: '3rem', alignItems: 'center', borderRadius: '0 100px 100px 0' }}
                 onClick={() => {
-                  logout && logout()
-                  history.push('/')
+                  localStorage.clear()
+                  window.location.assign(
+                    `${process.env.REACT_APP_API_BASE_ROOT}/auth/logout?redirect=${window.location.origin}`,
+                  )
                   message.success('已成功登出')
                 }}
               >
