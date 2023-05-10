@@ -18,10 +18,10 @@ export const useAuthModal = () => {
         const state = btoa(
           JSON.stringify({
             provider: 'parenting',
-            redirect:
-              window.location.pathname +
-              '?' +
-              new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
+            redirect: '/settings/learning-achievement',
+            // window.location.pathname +
+            // '?' +
+            // new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
           }),
         )
         const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/parenting`)
@@ -32,10 +32,10 @@ export const useAuthModal = () => {
         const state = btoa(
           JSON.stringify({
             provider: 'cw',
-            redirect:
-              window.location.pathname +
-              '?' +
-              new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
+            redirect: '/settings/learning-achievement',
+            // window.location.pathname +
+            // '?' +
+            // new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
           }),
         )
         const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/cw`)
