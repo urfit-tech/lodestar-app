@@ -11,6 +11,7 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
+import { checkLearningSystem } from '../../helpers/learning'
 import { commonMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
 import { PlusIcon } from '../../images/index'
@@ -181,6 +182,8 @@ const MemberProfileButton: React.VFC<{
     history.push('/settings/learning-achievement')
   }
 
+  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isPushToMemberLearningPage
+
   const content = (
     <Wrapper>
       <StyledList split={false}>
@@ -285,18 +288,28 @@ const MemberProfileButton: React.VFC<{
     </Wrapper>
   )
 
+  const desktopComponent = (
+    <div className="cursor-pointer" onClick={isPushToMemberLearningPage ? pushToProfile : undefined}>
+      {renderMemberProfile?.(member) || <MemberAvatar memberId={member.id} size={36} />}
+    </div>
+  )
+
   return (
     <>
       <Responsive.Default>
         <Popover placement="bottomRight" trigger="click" content={content}>
-            <Button type="link" icon="menu" />
+          <Button type="link" icon="menu" />
         </Popover>
       </Responsive.Default>
 
       <Responsive.Desktop>
-        <div className="cursor-pointer" onClick={pushToProfile}>
-          {renderMemberProfile?.(member) || <MemberAvatar memberId={member.id} size={36} />}
-        </div>
+        {isPushToMemberLearningPage ? (
+          desktopComponent
+        ) : (
+          <Popover placement="bottomRight" trigger="click" content={content}>
+            {desktopComponent}
+          </Popover>
+        )}
       </Responsive.Desktop>
     </>
   )

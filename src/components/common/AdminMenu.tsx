@@ -22,11 +22,11 @@ import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
 import { ReactComponent as DeviceIcon } from '../../images/device.svg'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { ReactComponent as GroupBuyIcon } from '../../images/group-buy.svg'
+import { ReactComponent as LearningAchievementIcon } from '../../images/icon-grid-view.svg'
 import { ReactComponent as IdentityIcon } from '../../images/identity.svg'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
-import { ReactComponent as LearningAchievementIcon } from '../../images/icon-grid-view.svg'
 import { useAppRouter } from './AppRouter'
 
 const StyledMenu = styled(Menu)`
@@ -113,7 +113,10 @@ export const MemberAdminMenu: React.VFC<
     {
       key: 'member_learning_achievement',
       item: (
-        <Menu.Item key="member_learning_achievement">
+        <Menu.Item
+          key="member_learning_achievement"
+          hidden={settings['custom'] ? !(JSON.parse(settings['custom']).isShowMemberLearningPage === '1') : true}
+        >
           <Icon as={LearningAchievementIcon} className="mr-2" />
           {formatMessage(commonMessages.content.learningAchievement)}
         </Menu.Item>

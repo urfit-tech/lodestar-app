@@ -1,11 +1,13 @@
 import { Icon } from '@chakra-ui/icons'
 import { Box, Spacer, Text } from '@chakra-ui/layout'
 import { Icon as AntdIcon, message } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { filter } from 'ramda'
 import { useHistory, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
+import { checkLearningSystem } from '../../helpers/learning'
 import { useAuthModal } from '../../hooks/auth'
 import { AuthModalContext } from '../auth/AuthModal'
 import { MemberAdminMenu } from '../common/AdminMenu'
@@ -43,6 +45,9 @@ const MemberAdminLayout: React.FC<{
   const { renderMemberAdminMenu } = useCustomRenderer()
   const authModal = useAuthModal()
   const history = useHistory()
+  const { settings } = useApp()
+
+  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isPushToMemberLearningPage
 
   return (
     <DefaultLayout noFooter>
@@ -61,7 +66,9 @@ const MemberAdminLayout: React.FC<{
                 onClick={() => {
                   localStorage.clear()
                   window.location.assign(
-                    `${process.env.REACT_APP_API_BASE_ROOT}/auth/logout?redirect=${window.location.origin}`,
+                    `${process.env.REACT_APP_API_BASE_ROOT}/auth/logout?redirect=${
+                      isPushToMemberLearningPage ? window.location.origin : window.location.href
+                    }`,
                   )
                   message.success('已成功登出')
                 }}
