@@ -824,7 +824,7 @@
   "learningAchievement.RadarCard.lessonsCompleted": "已觀課章節數",
   "learningAchievement.RadarCard.programs": "門",
   "learningAchievement.RadarCard.programsCompleted": "已完課數量",
-  "learningAchievement.RadarCard.totalHours": "總學習時長",
+  "learningAchievement.RadarCard.totalHours": "已觀課時長",
   "line.button.bindingStart": "開始綁定",
   "line.status.isBinding": "綁定處理中...",
   "line.title.linePersonalizedServiceBinding": "Line個人化服務綁定",
