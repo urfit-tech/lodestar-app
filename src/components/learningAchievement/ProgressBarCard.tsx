@@ -1,9 +1,10 @@
 import { Box, Progress, Spacer, Text } from '@chakra-ui/react'
-import dayjs from 'dayjs'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import AdminCard from '../../components/common/AdminCard'
+import { checkLearningSystem } from '../../helpers/learning'
 import { ReactComponent as BarChartIcon } from '../../images/bar-chart.svg'
 import { ReactComponent as Flag } from '../../images/flag.svg'
 import { LearnedStatistic } from '../../pages/member/LearningAchievementPage'
@@ -98,6 +99,7 @@ type ProgressBarCardProps = Pick<LearnedStatistic, 'consecutiveDayOptions'>
 
 const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions }) => {
   const { formatMessage } = useIntl()
+  const { settings } = useApp()
   const progressBarData = {
     bestRecord: consecutiveDayOptions.personalMaxConsecutiveDay,
     siteAverage: consecutiveDayOptions.allMemberAvgConsecutiveDay,
@@ -123,7 +125,7 @@ const ProgressBarCard: React.FC<ProgressBarCardProps> = ({ consecutiveDayOptions
           <Spacer />
           <Text as="b" fontSize="xs" color="var(--gray-dark)">
             {formatMessage(learningAchievementMessages['*'].dataCountSince, {
-              time: dayjs(new Date(2023, 4, 15)).format('YYYY/M/DD'),
+              time: checkLearningSystem(settings['custom']).startTime,
             })}
           </Text>
         </Box>
