@@ -3,12 +3,14 @@ import { Box, Divider, Spacer, Text } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
+import { checkLearningSystem } from '../../helpers/learning'
 import { MemberAchievement } from '../../pages/member/LearningAchievementPage'
 import AdminCard from '../common/AdminCard'
 import { BREAK_POINT } from '../common/Responsive'
@@ -61,7 +63,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { memberId } = useParams<{ memberId: string }>()
-
+  const { settings } = useApp()
   const { data } = useMemberLearnedLog(memberId || currentMemberId || '')
 
   return (
@@ -73,7 +75,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
         <Spacer />
         <Text as="b" fontSize="xs" color="var(--gray-dark)">
           {formatMessage(learningAchievementMessages['*'].dataCountSince, {
-            time: dayjs(new Date(2023, 4, 15)).format('YYYY/M/DD'),
+            time: checkLearningSystem(settings['custom']).startTime,
           })}
         </Text>
       </Box>
@@ -119,7 +121,9 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
             badgeCollectedTime={memberAchievement.filter(a => a.name === '21天持續學習').map(a => a.createdAt)}
           />
           <RemindText fontSize="xs">
-            {formatMessage(learningAchievementMessages.BadgeCard.updateEveryDay, { time: 9 })}
+            {formatMessage(learningAchievementMessages.BadgeCard.updateEveryDay, {
+              time: memberAchievement[memberAchievement.length]?.updatedHour || 6,
+            })}
           </RemindText>
         </StyledRowGrid>
         <Divider width="85%" />

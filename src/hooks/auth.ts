@@ -13,7 +13,7 @@ export const useAuthModal = () => {
     utm = {}
   }
 
-  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isPushToMemberLearningPage
+  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isStart
   return {
     open: (setAuthModalVisible: React.Dispatch<React.SetStateAction<boolean>> | undefined) => {
       if (settings['auth.parenting.client_id'] && settings['auth.email.disabled']) {

@@ -89,16 +89,17 @@ export type LearnedStatistic = {
     allMemberMaxConsecutiveDay: number
     allMemberAvgConsecutiveDay: number
   }
+  updatedHour: number
 }
 
 export type MemberAchievement = {
   memberId: string
   createdAt: Date
-  updatedAt: Date
   achievementId: string
   name: string
   countable: boolean
   isPublic: boolean
+  updatedHour: number
 }
 
 const LearningAchievementPage: React.FC = () => {
@@ -145,7 +146,9 @@ const LearningAchievementPage: React.FC = () => {
           content={{
             icon: LearningAchievementIcon,
             title: formatMessage(commonMessages.content.learningAchievement),
-            endText: formatMessage(learningAchievementMessages['*'].updateEveryDay, { time: 9 }),
+            endText: formatMessage(learningAchievementMessages['*'].updateEveryDay, {
+              time: learnedStatistic.updatedHour,
+            }),
           }}
         >
           <StyledColGrid>
@@ -202,6 +205,7 @@ const useLearnedStatistic = (memberId: string) => {
           max_consecutive_day
           avg_consecutive_day
           the_newest_consecutive_day
+          updated_at
         }
       }
     `,
@@ -280,6 +284,7 @@ const useLearnedStatistic = (memberId: string) => {
             allMemberAvgConsecutiveDay:
               consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].avg_consecutive_day || 0,
           },
+          updatedHour: dayjs(data.updated_at).hour(),
         }))[0]
       : {
           memberId,
@@ -301,6 +306,7 @@ const useLearnedStatistic = (memberId: string) => {
             allMemberMaxConsecutiveDay: 0,
             allMemberAvgConsecutiveDay: 0,
           },
+          updatedHour: 4,
         }
 
   return { learnedStatistic, learnedStatisticLoading, learnedStatisticError }
@@ -335,11 +341,11 @@ const useAchievement = (memberId: string) => {
         .map(a => ({
           memberId: a.member_id || memberId,
           createdAt: a.created_at,
-          updatedAt: a.updated_at,
           name: a.app_achievement?.name || '',
           isPublic: !!a.app_achievement?.is_public,
           countable: !!a.app_achievement?.countable,
           achievementId: a.app_achievement?.id,
+          updatedHour: dayjs(a.updated_at).hour(),
         }))
         .sort((a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf())
     : null
