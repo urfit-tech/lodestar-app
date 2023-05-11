@@ -115,7 +115,6 @@ const ProgramContentListSection: React.VFC<{
           id: programContentSection.id,
           title: programContentSection.title,
           description: programContentSection.description,
-          materialsCount: programContentSection.materialsCount,
           contents: isEnrolled
             ? programContentSection.contents
             : programContentSection.contents.filter(programContent =>

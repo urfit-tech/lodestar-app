@@ -119,6 +119,10 @@ const ProgramPage: React.VFC = () => {
     ReactGA.ga('send', 'pageview')
   }, [])
 
+  if (!loadingEnrolledProgramIds && !visitIntro && isEnrolled) {
+    return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
+  }
+
   if (loadingProgram || enrolledProgramPackages.loading || loadingEnrolledProgramIds) {
     return (
       <DefaultLayout>
@@ -131,10 +135,6 @@ const ProgramPage: React.VFC = () => {
 
   if (!program) {
     return <ForbiddenPage />
-  }
-
-  if (!visitIntro && isEnrolled) {
-    return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
   }
 
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
