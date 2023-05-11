@@ -137,10 +137,9 @@ export const CustomNavLinks: React.VFC = () => {
 
 const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElement> }> = ({ onClick }) => {
   const { formatMessage } = useIntl()
-  const history = useHistory()
+  const { settings } = useApp()
   const { close } = useContext(PodcastPlayerContext)
-  const { logout } = useAuth()
-
+  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isStart
   return (
     <List.Item
       className="cursor-pointer"
@@ -148,8 +147,12 @@ const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElemen
         onClick ||
         (() => {
           close?.()
-          logout && logout()
-          history.push('/')
+          localStorage.clear()
+          window.location.assign(
+            `${process.env.REACT_APP_API_BASE_ROOT}/auth/logout?redirect=${
+              isPushToMemberLearningPage ? window.location.origin : window.location.href
+            }`,
+          )
           message.success('已成功登出')
         })
       }
@@ -173,7 +176,7 @@ const MemberProfileButton: React.VFC<{
   const { setVisible: setAuthModalVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const { renderMemberProfile, renderMemberAdminMenu, renderLogout, renderMyPageNavItem, renderCreatorPageNavItem } =
     useCustomRenderer()
-  const { logout, switchMember, authToken } = useAuth()
+  const { switchMember, authToken } = useAuth()
   const { enabledModules, settings } = useApp()
 
   const authPayload = parsePayload(authToken || '')
@@ -182,7 +185,7 @@ const MemberProfileButton: React.VFC<{
     history.push('/settings/learning-achievement')
   }
 
-  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isPushToMemberLearningPage
+  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isStart
 
   const content = (
     <Wrapper>
@@ -241,7 +244,12 @@ const MemberProfileButton: React.VFC<{
           {renderLogout?.({
             logout: () => {
               close?.()
-              logout?.()
+              localStorage.clear()
+              window.location.assign(
+                `${process.env.REACT_APP_API_BASE_ROOT}/auth/logout?redirect=${
+                  isPushToMemberLearningPage ? window.location.origin : window.location.href
+                }`,
+              )
             },
             DefaultLogout,
           }) || <DefaultLogout />}

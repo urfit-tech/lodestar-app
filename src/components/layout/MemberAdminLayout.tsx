@@ -47,8 +47,7 @@ const MemberAdminLayout: React.FC<{
   const history = useHistory()
   const { settings } = useApp()
 
-  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isPushToMemberLearningPage
-
+  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isStart
   return (
     <DefaultLayout noFooter>
       <PageHelmet title={content.title} />
