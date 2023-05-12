@@ -122,7 +122,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ memberAchievement }) => {
           />
           <RemindText fontSize="xs">
             {formatMessage(learningAchievementMessages.BadgeCard.updateEveryDay, {
-              time: memberAchievement[memberAchievement.length]?.updatedHour || 6,
+              time: checkLearningSystem(settings['custom']).updatedHour,
             })}
           </RemindText>
         </StyledRowGrid>
