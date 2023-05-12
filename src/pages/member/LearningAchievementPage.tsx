@@ -2,6 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -17,6 +18,7 @@ import ProgressBarCard from '../../components/learningAchievement/ProgressBarCar
 import RadarCard from '../../components/learningAchievement/RadarCard'
 import learningAchievementMessages from '../../components/learningAchievement/translation'
 import hasura from '../../hasura'
+import { checkLearningSystem } from '../../helpers/learning'
 import { commonMessages } from '../../helpers/translation'
 import { usePublicMember } from '../../hooks/member'
 import { ReactComponent as LearningAchievementIcon } from '../../images/icon-grid-view.svg'
@@ -89,7 +91,6 @@ export type LearnedStatistic = {
     allMemberMaxConsecutiveDay: number
     allMemberAvgConsecutiveDay: number
   }
-  updatedHour: number
 }
 
 export type MemberAchievement = {
@@ -99,11 +100,11 @@ export type MemberAchievement = {
   name: string
   countable: boolean
   isPublic: boolean
-  updatedHour: number
 }
 
 const LearningAchievementPage: React.FC = () => {
   const { formatMessage } = useIntl()
+  const { settings } = useApp()
   const { memberId } = useParams<{ memberId: string }>()
   const { currentMemberId } = useAuth()
   const { learnedStatistic, learnedStatisticLoading, learnedStatisticError } = useLearnedStatistic(
@@ -147,7 +148,7 @@ const LearningAchievementPage: React.FC = () => {
             icon: LearningAchievementIcon,
             title: formatMessage(commonMessages.content.learningAchievement),
             endText: formatMessage(learningAchievementMessages['*'].updateEveryDay, {
-              time: learnedStatistic.updatedHour,
+              time: checkLearningSystem(settings['custom']).updatedHour,
             }),
           }}
         >
@@ -284,7 +285,6 @@ const useLearnedStatistic = (memberId: string) => {
             allMemberAvgConsecutiveDay:
               consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].avg_consecutive_day || 0,
           },
-          updatedHour: dayjs(data.updated_at).hour(),
         }))[0]
       : {
           memberId,
@@ -306,7 +306,6 @@ const useLearnedStatistic = (memberId: string) => {
             allMemberMaxConsecutiveDay: 0,
             allMemberAvgConsecutiveDay: 0,
           },
-          updatedHour: 4,
         }
 
   return { learnedStatistic, learnedStatisticLoading, learnedStatisticError }
@@ -345,7 +344,6 @@ const useAchievement = (memberId: string) => {
           isPublic: !!a.app_achievement?.is_public,
           countable: !!a.app_achievement?.countable,
           achievementId: a.app_achievement?.id,
-          updatedHour: dayjs(a.updated_at).hour(),
         }))
         .sort((a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf())
     : null
