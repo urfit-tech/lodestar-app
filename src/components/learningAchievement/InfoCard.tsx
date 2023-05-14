@@ -52,9 +52,18 @@ const BadgeProgressBox = styled(Box)`
   display: flex;
   width: 100%;
   justify-content: center;
+
   align-items: center;
   @media (min-width: ${BREAK_POINT}px) {
     justify-content: end;
+  }
+`
+
+const StyledTagBlock = styled.div`
+  display: flex;
+  justify-content: center;
+  @media (min-width: ${BREAK_POINT}px) {
+    justify-content: start;
   }
 `
 
@@ -78,13 +87,12 @@ const InfoCard: React.FC<InfoCardProps> = ({
     history.push('/settings/profile')
   }
 
-
   return (
     <StyledCard>
       <InfoBox>
         <Box>
           <Center>
-            <Avatar size="xl" src={memberPictureUrl}/>
+            <Avatar size="xl" src={memberPictureUrl} />
           </Center>
         </Box>
         <Box m="2">
@@ -95,9 +103,11 @@ const InfoCard: React.FC<InfoCardProps> = ({
             <EditIcon onClick={pushToProfile} />
           </CustomerNameBox>
           {achievementTag && (
-            <Tag size="lg" mt="2" borderRadius="full" variant="solid" backgroundColor="#049d96">
-              {achievementTag}
-            </Tag>
+            <StyledTagBlock>
+              <Tag size="lg" mt="2" borderRadius="full" variant="solid" backgroundColor="#049d96">
+                {achievementTag}
+              </Tag>
+            </StyledTagBlock>
           )}
         </Box>
       </InfoBox>
