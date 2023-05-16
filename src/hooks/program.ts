@@ -300,11 +300,6 @@ export const useProgram = (programId: string) => {
             auto_renewed
             is_countdown_timer_visible
             group_buying_people
-            program_plan_enrollments_aggregate {
-              aggregate {
-                count
-              }
-            }
           }
           program_review_score {
             score
@@ -344,7 +339,22 @@ export const useProgram = (programId: string) => {
                 }
               }
             }
-            program_contents_aggregate(where: { published_at: { _is_null: false } }) {
+          }
+        }
+      }
+    `,
+    { variables: { programId } },
+  )
+  const { data: programPlanEnrollmentsAggregateData } = useQuery<
+    hasura.GetProgramPlanEnrollmentsAggregate,
+    hasura.GetProgramPlanEnrollmentsAggregateVariables
+  >(
+    gql`
+      query GetProgramPlanEnrollmentsAggregate($programId: uuid!) {
+        program_by_pk(id: $programId) {
+          program_plans {
+            id
+            program_plan_enrollments_aggregate {
               aggregate {
                 count
               }
@@ -355,6 +365,7 @@ export const useProgram = (programId: string) => {
     `,
     { variables: { programId } },
   )
+
   const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(
     () =>
       loading || error || !data || !data.program_by_pk
@@ -413,7 +424,9 @@ export const useProgram = (programId: string) => {
               publishedAt: programPlan.published_at,
               isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
               groupBuyingPeople: programPlan.group_buying_people || 1,
-              enrollmentCount: programPlan.program_plan_enrollments_aggregate.aggregate?.count || 0,
+              enrollmentCount:
+                programPlanEnrollmentsAggregateData?.program_by_pk?.program_plans.find(v => v.id === programPlan.id)
+                  ?.program_plan_enrollments_aggregate.aggregate?.count || 0,
             })),
             duration: data.program_by_pk.program_duration?.duration,
             score: data.program_by_pk.program_review_score?.score,
