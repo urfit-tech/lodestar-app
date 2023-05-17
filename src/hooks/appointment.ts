@@ -174,6 +174,8 @@ export const useEnrolledAppointmentCollection = (memberId: string) => {
           started_at
           ended_at
           canceled_at
+          order_product_id
+          issue
           appointment_plan {
             id
             title
