@@ -14,9 +14,10 @@ const ProgramContentPageHelmet: React.VFC<
   const app = useApp()
   const { defaultLocale } = useContext(LocaleContext)
   const ogLocale = getOgLocale(defaultLocale)
-  const programPlans = program.plans.map(plan =>
-    plan.salePrice !== null && moment() <= moment(plan.endedAt) ? plan.salePrice : plan.listPrice,
-  )
+  const programPlans =
+    program?.plans?.map(plan =>
+      plan.salePrice !== null && moment() <= moment(plan.endedAt) ? plan.salePrice : plan.listPrice,
+    ) || []
 
   const programContent = program.contentSections
     .map(({ contents }) => contents)
