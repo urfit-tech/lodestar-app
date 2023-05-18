@@ -19,6 +19,8 @@ import { hasJsonStructure } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
 import ForbiddenPage from '../ForbiddenPage'
+import LoadingPage from '../LoadingPage'
+import NotFoundPage from '../NotFoundPage'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramContentPageHelmet from './ProgramContentPageHelmet'
@@ -54,17 +56,11 @@ const ProgramContentPage: React.VFC = () => {
     localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
 
   if (isAuthenticating || loadingProgram) {
-    return (
-      <DefaultLayout>
-        <Flex h="100vh" alignItems="center" justifyContent="center">
-          <Spinner />
-        </Flex>
-      </DefaultLayout>
-    )
+    return <LoadingPage />
   }
 
   if (!program) {
-    return <ForbiddenPage />
+    return <NotFoundPage />
   }
 
   return (
