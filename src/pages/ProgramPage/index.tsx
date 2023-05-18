@@ -78,23 +78,26 @@ const StyledButtonWrapper = styled.div`
 
 const ProgramPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { programId } = useParams<{ programId: string }>()
   const { pathname } = useLocation()
   const { currentMemberId } = useAuth()
+  const location = useLocation()
+  const params = queryString.parse(location.search)
+  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
+  const [previousPage] = useQueryParam('back', StringParam)
+  const { programId } = useParams<{ programId: string }>()
   const { id: appId, settings, enabledModules, loading: loadingApp } = useApp()
-  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
+  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
   const { loadingProgram, program, addProgramView } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
+  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const { programPlansEnrollmentsAggregateList } = useProgramPlansEnrollmentsAggregateList(
+    program?.plans.map(plan => plan.id) || [],
+  )
+
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
-  const location = useLocation()
-  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
-  const params = queryString.parse(location.search)
-  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
-  const isEnrolled = enrolledProgramIds.includes(programId)
-  const [previousPage] = useQueryParam('back', StringParam)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
 
   try {
