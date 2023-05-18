@@ -116,7 +116,7 @@ const StyledModalMetaBlock = styled.div`
 `
 
 type AppointmentCardProps = FormComponentProps &
-  AppointmentEnrollment & {
+  Omit<AppointmentEnrollment, 'member'> & {
     onRefetch?: () => void
   }
 const AppointmentCard: React.VFC<AppointmentCardProps> = ({
@@ -125,7 +125,6 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
   endedAt,
   canceledAt,
   creator,
-  member,
   appointmentUrl,
   appointmentIssue,
   orderProduct,

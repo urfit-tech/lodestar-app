@@ -176,11 +176,6 @@ export const useEnrolledAppointmentCollection = (memberId: string) => {
           canceled_at
           order_product_id
           issue
-          member {
-            id
-            name
-            picture_url
-          }
           appointment_plan {
             id
             title
@@ -202,7 +197,7 @@ export const useEnrolledAppointmentCollection = (memberId: string) => {
     { variables: { memberId }, fetchPolicy: 'no-cache' },
   )
 
-  const enrolledAppointments: AppointmentEnrollment[] =
+  const enrolledAppointments: Omit<AppointmentEnrollment, 'member'>[] =
     loading || error || !data
       ? []
       : data.appointment_enrollment.map(enrollment => ({
@@ -213,11 +208,6 @@ export const useEnrolledAppointmentCollection = (memberId: string) => {
           creator: {
             avatarUrl: enrollment.appointment_plan?.creator?.picture_url || null,
             name: enrollment.appointment_plan?.creator?.name || enrollment.appointment_plan?.creator?.username || '',
-          },
-          member: {
-            name: enrollment?.member?.name || '',
-            email: '',
-            phone: '',
           },
           appointmentUrl:
             (enrollment.order_product &&
