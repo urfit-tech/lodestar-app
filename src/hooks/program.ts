@@ -358,24 +358,7 @@ export const useProgram = (programId: string) => {
     `,
     { variables: { programId } },
   )
-  const { loading: loadingProgramPlanEnrollmentsAggregateData, data: programPlanEnrollmentsAggregateData } = useQuery<
-    hasura.GetProgramPlanEnrollmentsAggregate,
-    hasura.GetProgramPlanEnrollmentsAggregateVariables
-  >(
-    gql`
-      query GetProgramPlanEnrollmentsAggregate($programPlanIds: [uuid!]!) {
-        program_plan(where: { id: { _in: $programPlanIds } }) {
-          id
-          program_plan_enrollments_aggregate {
-            aggregate {
-              count
-            }
-          }
-        }
-      }
-    `,
-    { variables: { programPlanIds: data?.program_by_pk?.program_plans.map(v => v.id) } },
-  )
+
   const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(() => {
     return {
       id: data?.program_by_pk?.id,
@@ -434,9 +417,9 @@ export const useProgram = (programId: string) => {
           publishedAt: programPlan.published_at,
           isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
           groupBuyingPeople: programPlan.group_buying_people || 1,
-          enrollmentCount:
-            programPlanEnrollmentsAggregateData?.program_plan.find(v => v.id === programPlan.id)
-              ?.program_plan_enrollments_aggregate.aggregate?.count || 0,
+          // enrollmentCount:
+          //   programPlanEnrollmentsAggregateData?.program_plan.find(v => v.id === programPlan.id)
+          //     ?.program_plan_enrollments_aggregate.aggregate?.count || 0,
         })) || [],
       duration: data?.program_by_pk?.program_duration?.duration,
       score: data?.program_by_pk?.program_review_score?.score,
@@ -470,7 +453,7 @@ export const useProgram = (programId: string) => {
           })),
         })) || [],
     }
-  }, [data, programPlans, programPlanEnrollmentsAggregateData])
+  }, [data, programPlans])
 
   const [addProgramViewsHandler] = useMutation<hasura.ADD_PROGRAM_VIEWS, hasura.ADD_PROGRAM_VIEWSVariables>(gql`
     mutation ADD_PROGRAM_VIEWS($programId: uuid!) {
@@ -491,7 +474,40 @@ export const useProgram = (programId: string) => {
     refetchProgram: refetch,
     addProgramView,
     loadingProgramPlans,
-    loadingProgramPlanEnrollmentsAggregateData,
+  }
+}
+
+export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]) => {
+  const { loading, data } = useQuery<
+    hasura.GetProgramPlansEnrollmentsAggregate,
+    hasura.GetProgramPlansEnrollmentsAggregateVariables
+  >(
+    gql`
+      query GetProgramPlansEnrollmentsAggregate($programPlanIds: [uuid!]!) {
+        program_plan(where: { id: { _in: $programPlanIds } }) {
+          id
+          program_plan_enrollments_aggregate {
+            aggregate {
+              count
+            }
+          }
+        }
+      }
+    `,
+    { variables: { programPlanIds } },
+  )
+  const programPlansEnrollmentsAggregateList: {
+    id: string
+    enrollmentCount: number
+  }[] =
+    data?.program_plan.map(v => ({
+      id: v.id,
+      enrollmentCount: v.program_plan_enrollments_aggregate.aggregate?.count || 0,
+    })) || []
+
+  return {
+    loading,
+    programPlansEnrollmentsAggregateList,
   }
 }
 

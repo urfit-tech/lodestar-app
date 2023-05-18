@@ -19,7 +19,7 @@ import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, handleError, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
+import { useEnrolledProgramIds, useProgram, useProgramPlansEnrollmentsAggregateList } from '../../hooks/program'
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import { ReactComponent as PlayIcon } from '../../images/play-fill-icon.svg'
 import ForbiddenPage from '../ForbiddenPage'
@@ -99,6 +99,8 @@ const ProgramPage: React.VFC = () => {
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
+
+  const isEnrolled = enrolledProgramIds.includes(programId)
 
   try {
     const visitedPrograms = JSON.parse(sessionStorage.getItem('kolable.programs.visited') || '[]') as string[]
@@ -239,14 +241,22 @@ const ProgramPage: React.VFC = () => {
                       <ProgramInfoCard instructorId={instructorId} program={program} />
                     </Responsive.Desktop>
 
-                    {!isEnrolledByProgramPackage && (
+                    {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
                       <div className="mb-5">
                         <div id="subscription">
                           {program.plans
                             .filter(programPlan => programPlan.publishedAt)
                             .map(programPlan => (
                               <div key={programPlan.id} className="mb-3">
-                                <ProgramPlanCard programId={program.id} programPlan={programPlan} />
+                                <ProgramPlanCard
+                                  programId={program.id}
+                                  programPlan={programPlan}
+                                  enrollmentCount={
+                                    programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)
+                                      ?.enrollmentCount || 0
+                                  }
+                                  isProgramSoldOut={Boolean(program.isSoldOut)}
+                                />
                               </div>
                             ))}
                         </div>
