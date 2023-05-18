@@ -7,7 +7,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useEffect, useState } from 'react'
-import { AiOutlineUser,AiOutlineLock } from 'react-icons/ai'
+import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -207,8 +207,12 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
             })(
               <MigrationInput
                 type="password"
-                placeholder={formatMessage(usersMessages.placeholder.enterNewPassword)}
-                suffix={<Icon as={AiOutlineLock}/>}
+                placeholder={
+                  isProjectPortfolioParticipant
+                    ? formatMessage(usersMessages.placeholder.enterNewPasswordParticipant)
+                    : formatMessage(usersMessages.placeholder.enterNewPassword)
+                }
+                suffix={<Icon as={AiOutlineLock} />}
               />,
             )}
           </Form.Item>
@@ -233,8 +237,12 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
             })(
               <MigrationInput
                 type="password"
-                placeholder={formatMessage(usersMessages.placeholder.enterNewPasswordAgain)}
-                suffix={<Icon as={AiOutlineLock}/>}
+                placeholder={
+                  isProjectPortfolioParticipant
+                    ? formatMessage(usersMessages.placeholder.enterNewPasswordAgainParticipant)
+                    : formatMessage(usersMessages.placeholder.enterNewPasswordAgain)
+                }
+                suffix={<Icon as={AiOutlineLock} />}
               />,
             )}
           </Form.Item>
