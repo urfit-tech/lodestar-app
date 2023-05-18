@@ -182,7 +182,9 @@ const CreatorTabs: React.VFC<{
     {
       key: 'otherProject',
       name: formatMessage(usersMessages.tab.addProjectsTab2),
-      content: projects.filter(v => v.authorId !== creatorId),
+      content: projects
+        .filter(v => v.authorId !== creatorId)
+        .sort((p1, p2) => p2.roleCreatedAt.getTime() - p1.roleCreatedAt.getTime()),
     },
   ]
   const tabContents: {
