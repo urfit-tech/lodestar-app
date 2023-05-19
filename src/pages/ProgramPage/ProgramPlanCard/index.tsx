@@ -65,7 +65,7 @@ const ProgramPlanCard: React.VFC<{
     isSubscription: boolean
     groupBuyingPeople: number
   }
-  enrollmentCount: number
+  enrollmentCount?: number
   isProgramSoldOut?: boolean
 }> = ({ programId, programPlan, enrollmentCount, isProgramSoldOut }) => {
   const { formatMessage } = useIntl()
@@ -106,7 +106,7 @@ const ProgramPlanCard: React.VFC<{
       </header>
       <StyledBraftContent>
         <BraftContent>{programPlan.description}</BraftContent>
-        {programPlan.isParticipantsVisible && (
+        {programPlan.isParticipantsVisible && enrollmentCount && (
           <StyledEnrollment>
             <span className="mr-2">{enrollmentCount}</span>
             <span>{formatMessage(commonMessages.unit.people)}</span>

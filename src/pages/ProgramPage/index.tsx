@@ -23,6 +23,7 @@ import { useEnrolledProgramIds, useProgram, useProgramPlansEnrollmentsAggregateL
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import { ReactComponent as PlayIcon } from '../../images/play-fill-icon.svg'
 import ForbiddenPage from '../ForbiddenPage'
+import LoadingPage from '../LoadingPage'
 import { CustomizeProgramBanner, PerpetualProgramBanner } from './ProgramBanner'
 import ProgramBestReviewsCarousel from './ProgramBestReviewsCarousel'
 import ProgramContentListSection from './ProgramContentListSection'
@@ -128,13 +129,7 @@ const ProgramPage: React.VFC = () => {
   }
 
   if (loadingProgram || enrolledProgramPackages.loading || loadingEnrolledProgramIds) {
-    return (
-      <DefaultLayout>
-        <Box className="d-flex justify-content-center align-items-center" h="100vh">
-          <Spinner />
-        </Box>
-      </DefaultLayout>
-    )
+    return <LoadingPage />
   }
 
   if (!program) {
@@ -253,7 +248,7 @@ const ProgramPage: React.VFC = () => {
                                   programPlan={programPlan}
                                   enrollmentCount={
                                     programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)
-                                      ?.enrollmentCount || 0
+                                      ?.enrollmentCount
                                   }
                                   isProgramSoldOut={Boolean(program.isSoldOut)}
                                 />
