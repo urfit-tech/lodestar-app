@@ -16,7 +16,7 @@ import CountDownTimeBlock from '../../../components/common/CountDownTimeBlock'
 import GiftPlanTag from '../../../components/common/GiftPlanTag'
 import PaymentButton from '../../../components/common/PaymentButton'
 import { commonMessages, productMessages } from '../../../helpers/translation'
-import { useEnrolledPlanIds, useProgram } from '../../../hooks/program'
+import { useEnrolledPlanIds } from '../../../hooks/program'
 import { ProgramPlan } from '../../../types/program'
 
 const StyledAdminCard = styled(AdminCard)`
@@ -64,14 +64,14 @@ const ProgramPlanCard: React.VFC<{
   programPlan: ProgramPlan & {
     isSubscription: boolean
     groupBuyingPeople: number
-    enrollmentCount: number
   }
-}> = ({ programId, programPlan }) => {
+  enrollmentCount?: number
+  isProgramSoldOut?: boolean
+}> = ({ programId, programPlan, enrollmentCount, isProgramSoldOut }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { program } = useProgram(programId)
   const { productGiftPlan } = useProductGiftPlan(`ProgramPlan_${programPlan?.id}`)
   const { enabledModules } = useApp()
 
@@ -106,14 +106,14 @@ const ProgramPlanCard: React.VFC<{
       </header>
       <StyledBraftContent>
         <BraftContent>{programPlan.description}</BraftContent>
-        {programPlan.isParticipantsVisible && (
+        {programPlan.isParticipantsVisible && enrollmentCount && (
           <StyledEnrollment>
-            <span className="mr-2">{programPlan.enrollmentCount}</span>
+            <span className="mr-2">{enrollmentCount}</span>
             <span>{formatMessage(commonMessages.unit.people)}</span>
           </StyledEnrollment>
         )}
       </StyledBraftContent>
-      {program?.isSoldOut ? (
+      {isProgramSoldOut ? (
         <Button isFullWidth isDisabled>
           {formatMessage(commonMessages.button.soldOut)}
         </Button>
