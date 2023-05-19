@@ -40,7 +40,6 @@ export type Program = ProgramBriefProps & {
   plans: (ProgramPlan & {
     isSubscription: boolean
     groupBuyingPeople: number
-    enrollmentCount: number
   })[]
   contentSections: (ProgramContentSection & {
     contents: ProgramContent[]
