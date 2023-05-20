@@ -307,7 +307,6 @@ export const useOrderLogsWithMerchandiseSpec = (memberId: string) => {
           deliver_message
           shipping
           invoice_options
-
           order_products(where: { product_id: { _like: "Merchandise%" } }) {
             id
             product_id
@@ -315,18 +314,6 @@ export const useOrderLogsWithMerchandiseSpec = (memberId: string) => {
             order_product_files {
               id
               data
-            }
-          }
-          order_contacts {
-            id
-            order_id
-            message
-            created_at
-            updated_at
-            member {
-              id
-              name
-              picture_url
             }
           }
         }
