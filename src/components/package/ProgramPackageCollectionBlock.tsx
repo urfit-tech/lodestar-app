@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
+import { useExpiredOwnedProducts } from '../../hooks/data'
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import EmptyCover from '../../images/empty-cover.png'
 import RadioCard from '../RadioCard'
@@ -36,15 +37,13 @@ const StyledTitle = styled(Typography.Title)`
   }
 `
 
-const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; expiredOwnedProgramPackagePlanIds: string[] }> = ({
-  memberId,
-  expiredOwnedProgramPackagePlanIds,
-}) => {
+const ProgramPackageCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
-  const [isExpired, setIsExpired] = useState(false)
-  const { loading, error, data: programPackages } = useEnrolledProgramPackage(memberId)
   const { settings } = useApp()
-
+  const [isExpired, setIsExpired] = useState(false)
+  const { loadingExpiredOwnedProducts, expiredOwnedProducts: expiredOwnedProgramPackagePlanIds } =
+    useExpiredOwnedProducts(memberId, 'ProgramPackagePlan')
+  const { loading, error, data: programPackages } = useEnrolledProgramPackage(memberId)
   const {
     loadingProgramPackages,
     errorProgramPackages,
@@ -64,7 +63,7 @@ const ProgramPackageCollectionBlock: React.VFC<{ memberId: string; expiredOwnedP
   })
   const group = getRootProps()
 
-  if (loading || loadingProgramPackages) {
+  if (loading || loadingExpiredOwnedProducts || loadingProgramPackages) {
     return (
       <div className="container py-3">
         <Typography.Title level={4}>{formatMessage(commonMessages.ui.packages)}</Typography.Title>
