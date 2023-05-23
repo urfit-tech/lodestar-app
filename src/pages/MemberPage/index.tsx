@@ -1,4 +1,4 @@
-import { SkeletonText, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
+import { Flex, SkeletonText, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -16,14 +16,8 @@ import ProgramPackageCollectionBlock from '../../components/package/ProgramPacka
 import EnrolledProgramCollectionBlock from '../../containers/program/EnrolledProgramCollectionBlock'
 import ProjectPlanCollectionBlock from '../../containers/project/ProjectPlanCollectionBlock'
 import { commonMessages } from '../../helpers/translation'
-import { useEnrolledActivityTickets } from '../../hooks/activity'
-import { useEnrolledAppointmentCollection } from '../../hooks/appointment'
-import { useExpiredOwnedProducts } from '../../hooks/data'
+import { useMemberPageEnrollmentsCounts } from '../../hooks/common'
 import { usePublicMember } from '../../hooks/member'
-import { useOrderLogsWithMerchandiseSpec } from '../../hooks/merchandise'
-import { useEnrolledPodcastPrograms } from '../../hooks/podcast'
-import { useEnrolledProgramPackagePlanIds } from '../../hooks/programPackage'
-import { useEnrolledProjectPlanIds } from '../../hooks/project'
 import { MemberPublicProps } from '../../types/member'
 import ActivityTicketCollectionBlock from './ActivityTicketCollectionBlock'
 import AppointmentPlanCollectionBlock from './AppointmentPlanCollectionBlock'
@@ -49,17 +43,22 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   const { formatMessage } = useIntl()
   const { memberId } = useParams<{ memberId: string }>()
   const { isAuthenticated, currentMemberId, permissions } = useAuth()
-  const { id: appId, settings, loading: loadingApp, navs } = useApp()
+  const { id: appId, settings, loading: loadingApp } = useApp()
   const { member } = usePublicMember(memberId)
-  const { loadingProgramPackageIds, enrolledProgramPackagePlanIds } = useEnrolledProgramPackagePlanIds(memberId)
-  const { loadingExpiredOwnedProducts, expiredOwnedProducts: expiredOwnedProgramPackagePlanIds } =
-    useExpiredOwnedProducts(memberId, 'ProgramPackagePlan')
-  const { loadingEnrolledProjectPlanIds, enrolledProjectPlanIds } = useEnrolledProjectPlanIds(memberId)
-  const { loadingTickets, enrolledActivityTickets } = useEnrolledActivityTickets(memberId)
-  const { loadingPodcastProgramIds, enrolledPodcastPrograms } = useEnrolledPodcastPrograms(memberId)
-  const { loadingEnrolledAppointments, enrolledAppointments } = useEnrolledAppointmentCollection(memberId)
-  const { loadingOrderLogs, orderLogs } = useOrderLogsWithMerchandiseSpec(memberId)
-
+  const {
+    loadingProgramPackageEnrollments,
+    loadingProjectPlanEnrollments,
+    loadingActivityTicketEnrollments,
+    loadingPodcastProgramEnrollments,
+    loadingAppointmentEnrollments,
+    loadingMerchandiseOrderEnrollments,
+    programPackageEnrollments,
+    projectPlanEnrollments,
+    activityTicketEnrollments,
+    podcastProgramEnrollments,
+    appointmentEnrollments,
+    merchandiseOrderEnrollments,
+  } = useMemberPageEnrollmentsCounts(memberId)
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
 
   let content = null
@@ -67,16 +66,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   if (memberId === 'currentMemberId' && isAuthenticated) {
     return <Redirect to={`/members/${currentMemberId}`} />
   }
-  if (
-    !currentMemberId ||
-    loadingProgramPackageIds ||
-    loadingEnrolledProjectPlanIds ||
-    loadingTickets ||
-    loadingPodcastProgramIds ||
-    loadingEnrolledAppointments ||
-    loadingOrderLogs ||
-    loadingExpiredOwnedProducts
-  ) {
+  if (!currentMemberId) {
     content = <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
@@ -93,14 +83,11 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       content: (
         <>
           <EnrolledProgramCollectionBlock memberId={memberId} />
-          {(enrolledProgramPackagePlanIds.length > 0 ||
-            (settings['feature.expired_program_package_plan.enable'] === '1' &&
-              expiredOwnedProgramPackagePlanIds.length > 0)) && (
-            <ProgramPackageCollectionBlock
-              memberId={memberId}
-              expiredOwnedProgramPackagePlanIds={expiredOwnedProgramPackagePlanIds}
-            />
-          )}
+          {programPackageEnrollments > 0 ? (
+            settings['feature.expired_program_package_plan.enable'] === '0' ? null : (
+              <ProgramPackageCollectionBlock memberId={memberId} />
+            )
+          ) : null}
         </>
       ),
     },
@@ -109,7 +96,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       name: formatMessage(commonMessages.tab.project),
       isVisible:
         (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROJECT_INFO)) &&
-        enrolledProjectPlanIds.length > 0,
+        projectPlanEnrollments > 0,
       content: <ProjectPlanCollectionBlock memberId={memberId} />,
     },
     {
@@ -117,7 +104,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       name: formatMessage(commonMessages.tab.activity),
       isVisible:
         (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_ACTIVITY_INFO)) &&
-        enrolledActivityTickets.length > 0,
+        activityTicketEnrollments > 0,
       content: <ActivityTicketCollectionBlock memberId={memberId} />,
     },
     {
@@ -125,7 +112,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       name: formatMessage(commonMessages.tab.podcast),
       isVisible:
         (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PODCAST_INFO)) &&
-        enrolledPodcastPrograms.length > 0,
+        podcastProgramEnrollments > 0,
       content: <PodcastProgramCollectionBlock memberId={memberId} />,
     },
     {
@@ -133,7 +120,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       name: formatMessage(commonMessages.tab.appointment),
       isVisible:
         (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_APPOINTMENT_INFO)) &&
-        enrolledAppointments.length > 0,
+        appointmentEnrollments > 0,
       content: <AppointmentPlanCollectionBlock memberId={memberId} />,
     },
     {
@@ -141,7 +128,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       name: formatMessage(messages.merchandiseOrderLog),
       isVisible:
         (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_MERCHANDISE_INFO)) &&
-        orderLogs.length > 0,
+        merchandiseOrderEnrollments > 0,
       content: <MerchandiseOrderCollectionBlock memberId={memberId} />,
     },
   ].filter(v => v.isVisible)
@@ -154,17 +141,29 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       <div style={{ background: 'white' }}>
         <div className="container">
           <StyledTabList>
-            {tabContents.map(v => (
-              <Tab key={v.key} onClick={() => setActiveKey(v.key)}>
-                {v.name}
-              </Tab>
-            ))}
+            <>
+              {tabContents.map(v => (
+                <Tab key={v.key} onClick={() => setActiveKey(v.key)}>
+                  {v.name}
+                </Tab>
+              ))}
+              {loadingProgramPackageEnrollments ||
+              loadingProjectPlanEnrollments ||
+              loadingActivityTicketEnrollments ||
+              loadingPodcastProgramEnrollments ||
+              loadingAppointmentEnrollments ||
+              loadingMerchandiseOrderEnrollments ? (
+                <Flex ml="0.5rem" alignItems="center">
+                  <Spinner />
+                </Flex>
+              ) : null}
+            </>
           </StyledTabList>
         </div>
       </div>
       <TabPanels>
         {tabContents.map(v => (
-          <StyledTabPanel>{v.content}</StyledTabPanel>
+          <StyledTabPanel key={v.key}>{v.content}</StyledTabPanel>
         ))}
       </TabPanels>
     </Tabs>
