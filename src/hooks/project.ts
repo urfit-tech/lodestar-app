@@ -127,9 +127,12 @@ export const useMemberProjectCollection = (memberId: string) => {
               }
             }
           }
-          author: project_roles(
-            where: { _and: [{ identity: { name: { _eq: "author" } } }, { agreed_at: { _is_null: false } }] }
-          ) {
+          author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
+            id
+            member_id
+            created_at
+          }
+          memberRoles: project_roles(order_by: { created_at: desc }) {
             id
             member_id
             created_at
@@ -161,7 +164,7 @@ export const useMemberProjectCollection = (memberId: string) => {
           isParticipantsVisible: project.is_participants_visible,
           isCountdownTimerVisible: project.is_countdown_timer_visible,
           authorId: project.author[0]?.member_id,
-          roleCreatedAt: new Date(project.author[0].created_at),
+          roleCreatedAt: new Date(project.memberRoles[0].created_at),
           totalSales: project.project_sales?.total_sales,
           views: project.views,
           enrollmentCount: sum(
