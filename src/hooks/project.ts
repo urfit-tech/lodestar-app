@@ -127,9 +127,7 @@ export const useMemberProjectCollection = (memberId: string) => {
               }
             }
           }
-          author: project_roles(
-            where: { _and: [{ identity: { name: { _eq: "author" } } }, { agreed_at: { _is_null: false } }] }
-          ) {
+          author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
             id
             member_id
             created_at
