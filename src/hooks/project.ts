@@ -196,6 +196,7 @@ export const useProject = (projectId: string) => {
           created_at
           published_at
           expired_at
+          meta_tag
           is_participants_visible
           is_countdown_timer_visible
           project_sales {
@@ -271,6 +272,7 @@ export const useProject = (projectId: string) => {
           createdAt: new Date(data.project_by_pk.created_at),
           publishedAt: data.project_by_pk.published_at ? new Date(data.project_by_pk.published_at) : null,
           expiredAt: data.project_by_pk.expired_at ? new Date(data.project_by_pk.expired_at) : null,
+          metaTag: data.project_by_pk.meta_tag || null,
           isParticipantsVisible: data.project_by_pk.is_participants_visible,
           isCountdownTimerVisible: data.project_by_pk.is_countdown_timer_visible,
           totalSales: data.project_by_pk.project_sales?.total_sales || 0,
