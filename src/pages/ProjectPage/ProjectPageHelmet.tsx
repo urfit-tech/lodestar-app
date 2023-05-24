@@ -1,7 +1,10 @@
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import moment from 'moment'
+import { useContext } from 'react'
 import PageHelmet from '../../components/common/PageHelmet'
+import LocaleContext from '../../contexts/LocaleContext'
+import { getBraftContent, getOgLocale } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { ProjectProps } from '../../types/project'
 
@@ -11,16 +14,17 @@ const ProjectPageHelmet: React.VFC<{ project: ProjectProps }> = ({ project }) =>
     project?.projectPlans?.map(plan =>
       plan.salePrice !== null && moment() <= moment(plan.soldAt) ? plan.salePrice : plan.listPrice,
     ) || []
-
+  const { defaultLocale } = useContext(LocaleContext)
+  const ogLocale = getOgLocale(defaultLocale)
   const { resourceCollection } = useResourceCollection([`${app.id}:project:${project.id}`])
   const { averageScore, reviewCount } = useReviewAggregate(`/projects/${project.id}`)
   const { productReviews } = useProductReviews(`/projects/${project.id}`)
 
   return (
     <PageHelmet
-      title={project.title}
-      description={project.abstract || app.settings['description']}
-      keywords={[]}
+      title={project.metaTag?.seo?.pageTitle || project.title}
+      description={project.metaTag?.seo?.description || project.abstract || app.settings['description']}
+      keywords={project.metaTag?.seo?.keywords?.split(',') || []}
       jsonLd={[
         {
           '@context': 'https://schema.org',
@@ -89,11 +93,40 @@ const ProjectPageHelmet: React.VFC<{ project: ProjectProps }> = ({ project }) =>
       ]}
       openGraph={[
         { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
+        { property: 'og:site_name', content: app.settings['name'] },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: window.location.href },
-        { property: 'og:title', content: project.title || app.settings['open_graph.title'] },
-        { property: 'og:description', content: project.abstract || app.settings['description'] },
-        { property: 'og:image', content: project.coverUrl || app.settings['open_graph.image'] },
+        {
+          property: 'og:title',
+          content:
+            project.metaTag?.openGraph?.title ||
+            project.title ||
+            app.settings['open_graph.title'] ||
+            app.settings['title'],
+        },
+        {
+          property: 'og:description',
+          content: getBraftContent(
+            project?.description ||
+              project.abstract ||
+              app.settings['open_graph.description'] ||
+              app.settings['description'] ||
+              '{}',
+          )?.slice(0, 150),
+        },
+        { property: 'og:locale', content: ogLocale },
+        {
+          property: 'og:image',
+          content:
+            project.metaTag?.openGraph?.image ||
+            project.previewUrl ||
+            project.coverUrl ||
+            app.settings['open_graph.image'] ||
+            app.settings['logo'],
+        },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { property: 'og:image:alt', content: project.metaTag?.openGraph?.imageAlt },
       ]}
     />
   )

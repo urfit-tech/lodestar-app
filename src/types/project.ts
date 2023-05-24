@@ -1,5 +1,5 @@
 import { Member } from 'lodestar-app-element/src/types/data'
-import { Category, Tag } from './general'
+import { Category, MetaTag, Tag } from './general'
 
 type ProjectSectionProps = {
   id: string
@@ -19,7 +19,6 @@ export type ProjectPlanBasicProps = {
   coverUrl: string | null
   title: string
   description: string | null
-
   isSubscription: boolean
   periodAmount: number | null
   periodType: string | null // Y / M / W / D
@@ -74,12 +73,11 @@ export type ProjectProps = ProjectBasicProps & {
   updates: any
   comments: any
   contents: any
-
   createdAt: Date
   publishedAt: Date | null
-
   projectSections: ProjectSectionProps[]
   projectPlans?: ProjectPlanProps[]
+  metaTag: MetaTag | null
 }
 
 type Identity = {
