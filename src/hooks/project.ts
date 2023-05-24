@@ -77,6 +77,7 @@ export const useMemberProjectCollection = (memberId: string) => {
             _or: [{ project_roles: { member_id: { _eq: $memberId }, project: { published_at: { _is_null: false } } } }]
             project_roles: { identity: { name: { _eq: "author" } } }
           }
+          order_by: { published_at: desc }
         ) {
           id
           type
@@ -90,6 +91,7 @@ export const useMemberProjectCollection = (memberId: string) => {
           target_unit
           target_amount
           expired_at
+          published_at
           is_participants_visible
           is_countdown_timer_visible
           views
@@ -125,9 +127,12 @@ export const useMemberProjectCollection = (memberId: string) => {
               }
             }
           }
-          author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
+          author: project_roles(
+            where: { _and: [{ identity: { name: { _eq: "author" } } }, { agreed_at: { _is_null: false } }] }
+          ) {
             id
             member_id
+            created_at
           }
         }
       }
@@ -152,9 +157,11 @@ export const useMemberProjectCollection = (memberId: string) => {
           targetAmount: project.target_amount,
           targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
           expiredAt: project.expired_at ? new Date(project.expired_at) : null,
+          publishedAt: new Date(project.published_at),
           isParticipantsVisible: project.is_participants_visible,
           isCountdownTimerVisible: project.is_countdown_timer_visible,
           authorId: project.author[0]?.member_id,
+          roleCreatedAt: new Date(project.author[0].created_at),
           totalSales: project.project_sales?.total_sales,
           views: project.views,
           enrollmentCount: sum(
