@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Spinner } from '@chakra-ui/react'
+import { Button, Icon } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
@@ -20,10 +20,11 @@ import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, handleError, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
+import { useEnrolledProgramIds, useProgram, useProgramPlansEnrollmentsAggregateList } from '../../hooks/program'
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import { ReactComponent as PlayIcon } from '../../images/play-fill-icon.svg'
 import ForbiddenPage from '../ForbiddenPage'
+import LoadingPage from '../LoadingPage'
 import { CustomizeProgramBanner, PerpetualProgramBanner } from './ProgramBanner'
 import ProgramBestReviewsCarousel from './ProgramBestReviewsCarousel'
 import ProgramContentListSection from './ProgramContentListSection'
@@ -79,24 +80,29 @@ const StyledButtonWrapper = styled.div`
 
 const ProgramPage: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { programId } = useParams<{ programId: string }>()
   const { pathname } = useLocation()
   const { currentMemberId } = useAuth()
+  const location = useLocation()
+  const params = queryString.parse(location.search)
+  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
+  const [previousPage] = useQueryParam('back', StringParam)
+  const { programId } = useParams<{ programId: string }>()
   const { id: appId, settings, enabledModules, loading: loadingApp } = useApp()
-  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
+  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
   const { loadingProgram, program, addProgramView } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
+  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const { programPlansEnrollmentsAggregateList } = useProgramPlansEnrollmentsAggregateList(
+    program?.plans.map(plan => plan.id) || [],
+  )
+
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
-  const location = useLocation()
-  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
-  const params = queryString.parse(location.search)
-  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
-  const isEnrolled = enrolledProgramIds.includes(programId)
-  const [previousPage] = useQueryParam('back', StringParam)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
+
+  const isEnrolled = enrolledProgramIds.includes(programId)
 
   try {
     const visitedPrograms = JSON.parse(sessionStorage.getItem('kolable.programs.visited') || '[]') as string[]
@@ -124,13 +130,7 @@ const ProgramPage: React.VFC = () => {
   }
 
   if (loadingProgram || enrolledProgramPackages.loading || loadingEnrolledProgramIds) {
-    return (
-      <DefaultLayout>
-        <Box className="d-flex justify-content-center align-items-center" h="100vh">
-          <Spinner />
-        </Box>
-      </DefaultLayout>
-    )
+    return <LoadingPage />
   }
 
   if (!program) {
@@ -257,23 +257,23 @@ const ProgramPage: React.VFC = () => {
                         <ProgramContentCountBlock program={program} />
                       </StyledProgramInfoCard>
                     </Responsive.Desktop>
-                  </div>
-                  <div
-                    id="program-plans-card"
-                    className={
-                      program.plans.filter(programPlan => programPlan.publishedAt).length === 1
-                        ? 'positionSticky'
-                        : undefined
-                    }
-                  >
-                    {!isEnrolledByProgramPackage && (
+
+                    {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
                       <div className="mb-5">
                         <div id="subscription">
                           {program.plans
                             .filter(programPlan => programPlan.publishedAt)
                             .map(programPlan => (
                               <div key={programPlan.id} className="mb-3">
-                                <ProgramPlanCard programId={program.id} programPlan={programPlan} />
+                                <ProgramPlanCard
+                                  programId={program.id}
+                                  programPlan={programPlan}
+                                  enrollmentCount={
+                                    programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)
+                                      ?.enrollmentCount
+                                  }
+                                  isProgramSoldOut={Boolean(program.isSoldOut)}
+                                />
                               </div>
                             ))}
                         </div>

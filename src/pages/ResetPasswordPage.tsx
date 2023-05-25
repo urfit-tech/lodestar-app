@@ -207,7 +207,11 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
             })(
               <MigrationInput
                 type="password"
-                placeholder={formatMessage(usersMessages.placeholder.enterNewPassword)}
+                placeholder={
+                  isProjectPortfolioParticipant
+                    ? formatMessage(usersMessages.placeholder.enterNewPasswordParticipant)
+                    : formatMessage(usersMessages.placeholder.enterNewPassword)
+                }
                 suffix={<Icon as={AiOutlineLock} />}
               />,
             )}
@@ -233,7 +237,11 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
             })(
               <MigrationInput
                 type="password"
-                placeholder={formatMessage(usersMessages.placeholder.enterNewPasswordAgain)}
+                placeholder={
+                  isProjectPortfolioParticipant
+                    ? formatMessage(usersMessages.placeholder.enterNewPasswordAgainParticipant)
+                    : formatMessage(usersMessages.placeholder.enterNewPasswordAgain)
+                }
                 suffix={<Icon as={AiOutlineLock} />}
               />,
             )}

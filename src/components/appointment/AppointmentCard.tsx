@@ -1,6 +1,6 @@
-import { gql, useApolloClient } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
-import { Textarea } from '@chakra-ui/react'
+import { SkeletonCircle, SkeletonText, Spinner, Textarea } from '@chakra-ui/react'
 import { Button, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
@@ -20,7 +20,6 @@ import { useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/app
 import DefaultAvatar from '../../images/avatar.svg'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
-import { AppointmentEnrollment } from '../../types/appointment'
 import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
 
@@ -115,36 +114,28 @@ const StyledModalMetaBlock = styled.div`
   border-radius: 4px;
 `
 
-type AppointmentCardProps = FormComponentProps &
-  Omit<AppointmentEnrollment, 'member'> & {
-    onRefetch?: () => void
-  }
-const AppointmentCard: React.VFC<AppointmentCardProps> = ({
-  title,
-  startedAt,
-  endedAt,
-  canceledAt,
-  creator,
-  appointmentUrl,
-  appointmentIssue,
-  orderProduct,
-  onRefetch,
-  form,
-}) => {
+type AppointmentCardProps = FormComponentProps & {
+  orderProductId: string
+  appointmentPlanId: string
+  onRefetch?: () => void
+  loadingCreator?: boolean
+}
+
+const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appointmentPlanId, onRefetch, form }) => {
   const { id: appId, enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId } = useAuth()
   const apolloClient = useApolloClient()
-  const updateAppointmentIssue = useUpdateAppointmentIssue(orderProduct.id, orderProduct.options)
-  const cancelAppointment = useCancelAppointment(orderProduct.id, orderProduct.options)
-
   const [issueModalVisible, setIssueModalVisible] = useState(false)
   const [cancelModalVisible, setCancelModalVisible] = useState(false)
   const [canceledReason, setCanceledReason] = useState('')
   const [loading, setLoading] = useState(false)
-
-  const isFinished = Date.now() > endedAt.getTime()
-  const isCanceled = !!canceledAt
+  const { loading: loadingOrderProduct, orderProduct } = useOrderProduct(orderProductId)
+  const { loading: loadingAppointmentPlanPreview, appointmentPlanPreview } =
+    useAppointmentPlanPreview(appointmentPlanId)
+  const { loading: loadingCreator, creator } = useCreator(appointmentPlanPreview.creatorId)
+  const updateAppointmentIssue = useUpdateAppointmentIssue(orderProductId, orderProduct.options)
+  const cancelAppointment = useCancelAppointment(orderProductId, orderProduct.options)
 
   const handleSubmit = () => {
     form.validateFields((errors, values) => {
@@ -173,22 +164,49 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       .finally(() => setLoading(false))
   }
 
+  if (loadingOrderProduct) {
+    return (
+      <StyledCard>
+        <SkeletonText mt="1" noOfLines={3} spacing="4" />
+      </StyledCard>
+    )
+  }
+
+  const isFinished = orderProduct.endedAt ? Date.now() > orderProduct.endedAt.getTime() : true
+  const isCanceled = !!orderProduct.canceledAt
+
   return (
     <StyledCard>
       <StyledInfo className="d-flex align-items-start" withMask={isCanceled}>
         <div className="flex-shrink-0 mr-4">
-          <CustomRatioImage width="3rem" ratio={1} src={creator.avatarUrl || DefaultAvatar} shape="circle" />
+          {loadingCreator ? (
+            <SkeletonCircle size="3rem" />
+          ) : (
+            <CustomRatioImage width="3rem" ratio={1} src={creator.avatarUrl || DefaultAvatar} shape="circle" />
+          )}
         </div>
         <div className="flex-grow-1">
-          <StyledTitle>{title}</StyledTitle>
+          {loadingAppointmentPlanPreview ? (
+            <SkeletonText noOfLines={2} spacing="2" w="50%" mb="0.75rem" />
+          ) : (
+            <StyledTitle>{appointmentPlanPreview.title} </StyledTitle>
+          )}
           <StyledMetaBlock className="d-flex justify-content-start">
             <div className="mr-3">
               <Icon as={CalendarOIcon} className="mr-1" />
-              <span>{dateRangeFormatter({ startedAt, endedAt, dateFormat: 'MM/DD(dd)' })}</span>
+              {orderProduct.startedAt && orderProduct.endedAt ? (
+                <span>
+                  {dateRangeFormatter({
+                    startedAt: orderProduct.startedAt,
+                    endedAt: orderProduct.endedAt,
+                    dateFormat: 'MM/DD(dd)',
+                  })}
+                </span>
+              ) : null}
             </div>
             <div className="d-none d-lg-block">
               <Icon as={UserOIcon} className="mr-1" />
-              <span>{creator.name}</span>
+              <span>{loadingCreator ? <Spinner boxSize="12px" /> : creator.name}</span>
             </div>
           </StyledMetaBlock>
         </div>
@@ -201,7 +219,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
               {formatMessage(messages.appointmentIssue)}
             </Button>
             {formatMessage(messages.appointmentCanceledNotation, {
-              time: moment(canceledAt).format('MM/DD(dd) HH:mm'),
+              time: moment(orderProduct.canceledAt).format('MM/DD(dd) HH:mm'),
             })}
           </StyledCanceledText>
         ) : isFinished ? (
@@ -223,10 +241,10 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
               onClick={() =>
                 window.open(
                   'https://calendar.google.com/calendar/event?action=TEMPLATE&text={{TITLE}}&dates={{STARTED_AT}}/{{ENDED_AT}}&details={{DETAILS}}'
-                    .replace('{{TITLE}}', title)
-                    .replace('{{STARTED_AT}}', moment(startedAt).format('YYYYMMDDTHHmmss'))
-                    .replace('{{ENDED_AT}}', moment(endedAt).format('YYYYMMDDTHHmmss'))
-                    .replace('{{DETAILS}}', appointmentUrl),
+                    .replace('{{TITLE}}', appointmentPlanPreview.title)
+                    .replace('{{STARTED_AT}}', moment(orderProduct.startedAt).format('YYYYMMDDTHHmmss'))
+                    .replace('{{ENDED_AT}}', moment(orderProduct.endedAt).format('YYYYMMDDTHHmmss'))
+                    .replace('{{DETAILS}}', orderProduct.appointmentUrl),
                 )
               }
             >
@@ -248,7 +266,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                         }
                       }
                     `,
-                    variables: { orderProductId: orderProduct.id },
+                    variables: { orderProductId: orderProductId },
                   })
                   const meetId = data.order_product?.[0]?.options?.meetId
 
@@ -273,12 +291,12 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                   } catch (error) {
                     console.log(`get meets error: ${error}`)
                     window.open(
-                      `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
+                      `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
                     )
                   }
                 } else {
                   window.open(
-                    `https://meet.jit.si/${orderProduct.id}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
+                    `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
                   )
                 }
               }}
@@ -315,7 +333,15 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
         <StyledModalTitle className="mb-3">{formatMessage(messages.appointmentIssue)}</StyledModalTitle>
         <StyledModalMetaBlock className="mb-3">
           <span className="mr-2">{formatMessage(messages.appointmentDate)}</span>
-          <span>{dateRangeFormatter({ startedAt, endedAt, dateFormat: 'MM/DD(dd)' })}</span>
+          {orderProduct.startedAt && orderProduct.endedAt ? (
+            <span>
+              {dateRangeFormatter({
+                startedAt: orderProduct.startedAt,
+                endedAt: orderProduct.endedAt,
+                dateFormat: 'MM/DD(dd)',
+              })}
+            </span>
+          ) : null}
         </StyledModalMetaBlock>
         <div className="mb-3">
           <strong className="mb-2">{formatMessage(messages.createAppointmentIssue)}</strong>
@@ -325,7 +351,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
         <Form colon={false} className={isFinished ? 'd-none' : ''}>
           <Form.Item>
             {form.getFieldDecorator('appointmentIssue', {
-              initialValue: BraftEditor.createEditorState(appointmentIssue),
+              initialValue: BraftEditor.createEditorState(orderProduct.appointmentIssue),
             })(
               <StyledBraftEditor
                 language="zh-hant"
@@ -354,7 +380,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
           </Form.Item>
         </Form>
 
-        {isFinished && <BraftContent>{appointmentIssue}</BraftContent>}
+        {isFinished && <BraftContent>{orderProduct.appointmentIssue}</BraftContent>}
       </StyledModal>
 
       {/* cancel modal */}
@@ -378,3 +404,100 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
 }
 
 export default Form.create<AppointmentCardProps>()(AppointmentCard)
+
+export const useAppointmentPlanPreview = (appointmentPlanId: string) => {
+  const { loading, data } = useQuery<hasura.GetAppointmentPlanPreview, hasura.GetAppointmentPlanPreviewVariables>(
+    gql`
+      query GetAppointmentPlanPreview($appointmentPlanId: uuid!) {
+        appointment_plan_by_pk(id: $appointmentPlanId) {
+          id
+          title
+          creator_id
+        }
+      }
+    `,
+    { variables: { appointmentPlanId } },
+  )
+  const appointmentPlanPreview: {
+    id: string
+    title: string
+    creatorId: string
+  } = {
+    id: data?.appointment_plan_by_pk?.id,
+    title: data?.appointment_plan_by_pk?.title || '',
+    creatorId: data?.appointment_plan_by_pk?.creator_id || '',
+  }
+  return {
+    loading,
+    appointmentPlanPreview,
+  }
+}
+
+export const useOrderProduct = (orderProductId: string) => {
+  const { loading, data } = useQuery<hasura.GetOrderProduct, hasura.GetOrderProductVariables>(
+    gql`
+      query GetOrderProduct($orderProductId: uuid!) {
+        order_product_by_pk(id: $orderProductId) {
+          id
+          started_at
+          ended_at
+          deliverables
+          options
+        }
+      }
+    `,
+    { variables: { orderProductId } },
+  )
+
+  const orderProduct: {
+    id: string
+    startedAt: Date | null
+    endedAt: Date | null
+    canceledAt: Date | null
+    appointmentUrl: string
+    appointmentIssue: string | null
+    options: any
+  } = {
+    id: data?.order_product_by_pk?.id,
+    startedAt: data?.order_product_by_pk?.started_at ? new Date(data?.order_product_by_pk.started_at) : null,
+    endedAt: data?.order_product_by_pk?.ended_at ? new Date(data?.order_product_by_pk.ended_at) : null,
+    options: data?.order_product_by_pk?.options,
+    canceledAt: data?.order_product_by_pk?.options?.['appointmentCanceledAt']
+      ? new Date(data?.order_product_by_pk?.options['appointmentCanceledAt'])
+      : null,
+    appointmentUrl: data?.order_product_by_pk?.deliverables?.['join_url']
+      ? data?.order_product_by_pk?.deliverables['join_url']
+      : null,
+    appointmentIssue: data?.order_product_by_pk?.options?.['appointmentIssue']
+      ? data?.order_product_by_pk?.options['appointmentIssue']
+      : null,
+  }
+
+  return {
+    loading,
+    orderProduct,
+  }
+}
+
+export const useCreator = (creatorId: string) => {
+  const { loading, data } = useQuery<hasura.GetCreatorInfo, hasura.GetCreatorInfoVariables>(
+    gql`
+      query GetCreatorInfo($creatorId: String) {
+        member_public(where: { id: { _eq: $creatorId } }) {
+          id
+          picture_url
+          name
+        }
+      }
+    `,
+    { variables: { creatorId } },
+  )
+  const creator: { avatarUrl: string | null; name: string } = {
+    avatarUrl: data?.member_public?.[0]?.picture_url || '',
+    name: data?.member_public?.[0]?.name || '',
+  }
+  return {
+    loading,
+    creator,
+  }
+}
