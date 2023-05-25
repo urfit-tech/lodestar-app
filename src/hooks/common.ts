@@ -669,3 +669,110 @@ export const useMemberSignUpProperty = (propertyList: string[], memberId: string
     memberName,
   }
 }
+
+export const useMemberPageEnrollmentsCounts = (memberId: string) => {
+  const { loading: loadingProgramPackageEnrollments, data: programPackageEnrollments } = useQuery<
+    hasura.GetProgramPackageEnrollments,
+    hasura.GetProgramPackageEnrollmentsVariables
+  >(
+    gql`
+      query GetProgramPackageEnrollments($memberId: String!) {
+        program_package_plan_enrollment(where: { member_id: { _eq: $memberId } }) {
+          program_package_plan_id
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+  const { loading: loadingProjectPlanEnrollments, data: projectPlanEnrollments } = useQuery<
+    hasura.GetProjectPlanEnrollments,
+    hasura.GetProjectPlanEnrollmentsVariables
+  >(
+    gql`
+      query GetProjectPlanEnrollments($memberId: String!) {
+        product_enrollment(
+          where: { _and: [{ product_id: { _like: "ProjectPlan%" } }, { member_id: { _eq: $memberId } }] }
+        ) {
+          product_id
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+
+  const { loading: loadingActivityTicketEnrollments, data: activityTicketEnrollments } = useQuery<
+    hasura.GetActivityTicketEnrollments,
+    hasura.GetActivityTicketEnrollmentsVariables
+  >(
+    gql`
+      query GetActivityTicketEnrollments($memberId: String!) {
+        activity_ticket_enrollment(where: { member_id: { _eq: $memberId } }) {
+          order_log_id
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+  const { loading: loadingPodcastProgramEnrollments, data: podcastProgramEnrollments } = useQuery<
+    hasura.GetPodcastProgramEnrollments,
+    hasura.GetPodcastProgramEnrollmentsVariables
+  >(
+    gql`
+      query GetPodcastProgramEnrollments($memberId: String!) {
+        podcast_program_enrollment(where: { member_id: { _eq: $memberId } }) {
+          podcast_program {
+            id
+          }
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+  const { loading: loadingAppointmentEnrollments, data: appointmentEnrollments } = useQuery<
+    hasura.GetAppointmentEnrollments,
+    hasura.GetAppointmentEnrollmentsVariables
+  >(
+    gql`
+      query GetAppointmentEnrollments($memberId: String!) {
+        appointment_enrollment(where: { member_id: { _eq: $memberId } }) {
+          appointment_plan_id
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+  const { loading: loadingMerchandiseOrderEnrollments, data: merchandiseOrderEnrollments } = useQuery<
+    hasura.GetMerchandiseOrderEnrollments,
+    hasura.GetMerchandiseOrderEnrollmentsVariables
+  >(
+    gql`
+      query GetMerchandiseOrderEnrollments($memberId: String!) {
+        order_log(
+          where: {
+            member_id: { _eq: $memberId }
+            status: { _eq: "SUCCESS" }
+            order_products: { product_id: { _like: "Merchandise%" } }
+          }
+        ) {
+          id
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+
+  return {
+    loadingProgramPackageEnrollments,
+    loadingProjectPlanEnrollments,
+    loadingActivityTicketEnrollments,
+    loadingPodcastProgramEnrollments,
+    loadingAppointmentEnrollments,
+    loadingMerchandiseOrderEnrollments,
+    programPackageEnrollments: programPackageEnrollments?.program_package_plan_enrollment.length || 0,
+    projectPlanEnrollments: projectPlanEnrollments?.product_enrollment.length || 0,
+    activityTicketEnrollments: activityTicketEnrollments?.activity_ticket_enrollment.length || 0,
+    podcastProgramEnrollments: podcastProgramEnrollments?.podcast_program_enrollment.length || 0,
+    appointmentEnrollments: appointmentEnrollments?.appointment_enrollment.length || 0,
+    merchandiseOrderEnrollments: merchandiseOrderEnrollments?.order_log.length || 0,
+  }
+}

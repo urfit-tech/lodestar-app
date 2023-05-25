@@ -1,7 +1,7 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
 import moment from 'moment'
 import hasura from '../hasura'
-import { AppointmentEnrollment, AppointmentPeriod, AppointmentPlan, ReservationType } from '../types/appointment'
+import { AppointmentPeriod, AppointmentPlan, ReservationType } from '../types/appointment'
 
 export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) => {
   const { loading, error, data, refetch } = useQuery<
@@ -171,55 +171,22 @@ export const useEnrolledAppointmentCollection = (memberId: string) => {
     gql`
       query GET_ENROLLED_APPOINTMENT_PLAN($memberId: String) {
         appointment_enrollment(where: { member_id: { _eq: $memberId } }, order_by: { started_at: desc }) {
-          started_at
-          ended_at
-          canceled_at
           order_product_id
-          issue
-          appointment_plan {
-            id
-            title
-            creator {
-              id
-              picture_url
-              name
-              username
-            }
-          }
-          order_product {
-            id
-            deliverables
-            options
-          }
+          appointment_plan_id
         }
       }
     `,
     { variables: { memberId }, fetchPolicy: 'no-cache' },
   )
 
-  const enrolledAppointments: Omit<AppointmentEnrollment, 'member'>[] =
-    loading || error || !data
-      ? []
-      : data.appointment_enrollment.map(enrollment => ({
-          title: enrollment.appointment_plan ? enrollment.appointment_plan.title : '',
-          startedAt: new Date(enrollment.started_at),
-          endedAt: new Date(enrollment.ended_at),
-          canceledAt: enrollment.canceled_at ? new Date(enrollment.canceled_at) : null,
-          creator: {
-            avatarUrl: enrollment.appointment_plan?.creator?.picture_url || null,
-            name: enrollment.appointment_plan?.creator?.name || enrollment.appointment_plan?.creator?.username || '',
-          },
-          appointmentUrl:
-            (enrollment.order_product &&
-              enrollment.order_product.deliverables &&
-              enrollment.order_product.deliverables['join_url']) ||
-            '',
-          appointmentIssue: enrollment.issue || null,
-          orderProduct: {
-            id: enrollment.order_product_id,
-            options: enrollment.order_product?.options,
-          },
-        }))
+  const enrolledAppointments: {
+    orderProductId: string
+    appointmentPlanId: string
+  }[] =
+    data?.appointment_enrollment.map(v => ({
+      orderProductId: v.order_product_id,
+      appointmentPlanId: v.appointment_plan_id,
+    })) || []
 
   return {
     loadingEnrolledAppointments: loading,
