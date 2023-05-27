@@ -30,28 +30,6 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
               position
             }
           }
-          activity_enrollments_aggregate {
-            aggregate {
-              count
-            }
-          }
-          activity_sessions_aggregate {
-            aggregate {
-              min {
-                started_at
-              }
-              max {
-                ended_at
-              }
-            }
-          }
-          activity_tickets_aggregate {
-            aggregate {
-              sum {
-                count
-              }
-            }
-          }
         }
       }
     `,
@@ -59,19 +37,17 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
       variables: {
         condition: {
           organizer_id: { _eq: options?.organizerId },
-          published_at: { _is_null: false },
+          published_at: { _is_null: false, _lte: 'now()' },
           is_private: { _eq: false },
         },
       },
     },
   )
 
-  const {
-    loading: getActivityTileLoading,
-    error: getActivityTileError,
-    data: getActivityTileData,
-    refetch: getActivityTileRefetch,
-  } = useQuery<hasura.GET_ACTIVITY_TITLE, hasura.GET_ACTIVITY_TITLEVariables>(
+  const { loading: getActivityTileLoading, data: getActivityTileData } = useQuery<
+    hasura.GET_ACTIVITY_TITLE,
+    hasura.GET_ACTIVITY_TITLEVariables
+  >(
     gql`
       query GET_ACTIVITY_TITLE($categoryId: String!) {
         category_by_pk(id: $categoryId) {
@@ -94,13 +70,9 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
     | 'title'
     | 'description'
     | 'isParticipantsVisible'
-    | 'startedAt'
-    | 'endedAt'
     | 'organizerId'
     | 'supportLocales'
     | 'categories'
-    | 'participantCount'
-    | 'totalSeats'
     | 'tags'
     | 'publishedAt'
   >[] =
@@ -112,7 +84,6 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
               ? activity.activity_categories.some(category => category.category.id === options.categoryId)
               : activity,
           )
-          .filter(activity => activity.published_at && new Date(activity.published_at).getTime() < Date.now())
           .map(activity => ({
             id: activity.id,
             coverUrl: activity.cover_url || null,
@@ -120,12 +91,6 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
             description: '',
             isParticipantsVisible: activity.is_participants_visible,
             publishedAt: activity.published_at ? new Date(activity.published_at) : null,
-            startedAt:
-              activity.activity_sessions_aggregate.aggregate?.min?.started_at &&
-              new Date(activity.activity_sessions_aggregate.aggregate.min.started_at),
-            endedAt:
-              activity.activity_sessions_aggregate.aggregate?.max?.ended_at &&
-              new Date(activity.activity_sessions_aggregate.aggregate.max.ended_at),
             organizerId: activity.organizer_id,
             supportLocales: activity.support_locales,
             tags: activity.activity_tags.map(v => v.tag_name),
@@ -134,8 +99,6 @@ export const usePublishedActivityCollection = (options?: { organizerId?: string;
               name: activityCategory.category.name,
               position: activityCategory.category.position,
             })),
-            participantCount: activity.activity_enrollments_aggregate.aggregate?.count || 0,
-            totalSeats: activity.activity_tickets_aggregate.aggregate?.sum?.count || 0,
           }))
 
   return {
