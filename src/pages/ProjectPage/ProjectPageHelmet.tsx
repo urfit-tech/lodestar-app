@@ -106,14 +106,15 @@ const ProjectPageHelmet: React.VFC<{ project: ProjectProps }> = ({ project }) =>
         },
         {
           property: 'og:description',
-          content: getBraftContent(
+          content:
             project?.metaTag?.openGraph?.description ||
+            getBraftContent(
               project?.description ||
-              project.abstract ||
-              app.settings['open_graph.description'] ||
-              app.settings['description'] ||
-              '{}',
-          )?.slice(0, 150),
+                project.abstract ||
+                app.settings['open_graph.description'] ||
+                app.settings['description'] ||
+                '{}',
+            )?.slice(0, 150),
         },
         { property: 'og:locale', content: ogLocale },
         {
