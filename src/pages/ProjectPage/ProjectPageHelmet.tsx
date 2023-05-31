@@ -107,7 +107,8 @@ const ProjectPageHelmet: React.VFC<{ project: ProjectProps }> = ({ project }) =>
         {
           property: 'og:description',
           content: getBraftContent(
-            project?.description ||
+            project?.metaTag?.openGraph?.description ||
+              project?.description ||
               project.abstract ||
               app.settings['open_graph.description'] ||
               app.settings['description'] ||
@@ -120,7 +121,6 @@ const ProjectPageHelmet: React.VFC<{ project: ProjectProps }> = ({ project }) =>
           content:
             project.metaTag?.openGraph?.image ||
             project.previewUrl ||
-            project.coverUrl ||
             app.settings['open_graph.image'] ||
             app.settings['logo'],
         },
