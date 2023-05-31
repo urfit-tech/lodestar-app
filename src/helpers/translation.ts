@@ -802,9 +802,6 @@ export const productMessages = {
         defaultMessage: '請留下你的真實聯絡資料，以確保獲得預約時段的最新消息',
       },
     }),
-    content: defineMessages({
-      timezone: { id: 'product.appointment.content.timezone', defaultMessage: '時間以 {city} (GMT{timezone}) 顯示' },
-    }),
   },
   program: {
     defaults: defineMessages({

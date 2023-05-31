@@ -1,3 +1,4 @@
+import { gql, useQuery } from '@apollo/client'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
@@ -13,13 +14,12 @@ import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { productMessages } from '../../helpers/translation'
+import hasura from '../../hasura'
 import { AppointmentPeriod, AppointmentPlan } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
-import AppointmentPeriodCollection from './AppointmentPeriodCollection'
-import hasura from '../../hasura'
-import { useQuery, gql } from '@apollo/client'
 import CoinCheckoutModal from '../checkout/CoinCheckoutModal'
+import AppointmentPeriodCollection from './AppointmentPeriodCollection'
+import appointmentMessages from './translation'
 
 const StyledTab = styled.div`
   margin-bottom: 0.75rem;
@@ -164,11 +164,10 @@ const AppointmentPlanCollection: React.FC<{
 }> = ({ appointmentPlans }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { isAuthenticated, currentMemberId } = useAuth()
+  const { isAuthenticated } = useAuth()
   const tracking = useTracking()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
 
-  const { remainingCoins } = useMemberCoinsRemaining(currentMemberId || '')
   const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriod | null>(null)
 
   const diffPlanBookedTimes = [
@@ -193,7 +192,7 @@ const AppointmentPlanCollection: React.FC<{
             </div>
           )}
           <StyledTimeStandardBlock className="mb-4">
-            {formatMessage(productMessages.appointment.content.timezone, {
+            {formatMessage(appointmentMessages.AppointmentCollectionTabs.timezone, {
               city: momentTz.tz.guess().split('/')[1],
               timezone: moment().zone(momentTz.tz.guess()).format('Z'),
             })}
