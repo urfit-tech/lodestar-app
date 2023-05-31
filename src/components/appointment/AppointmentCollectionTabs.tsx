@@ -17,6 +17,9 @@ import { productMessages } from '../../helpers/translation'
 import { AppointmentPeriod, AppointmentPlan } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
 import AppointmentPeriodCollection from './AppointmentPeriodCollection'
+import hasura from '../../hasura'
+import { useQuery, gql } from '@apollo/client'
+import CoinCheckoutModal from '../checkout/CoinCheckoutModal'
 
 const StyledTab = styled.div`
   margin-bottom: 0.75rem;
@@ -161,9 +164,11 @@ const AppointmentPlanCollection: React.FC<{
 }> = ({ appointmentPlans }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, currentMemberId } = useAuth()
   const tracking = useTracking()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
+
+  const { remainingCoins } = useMemberCoinsRemaining(currentMemberId || '')
   const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriod | null>(null)
 
   const diffPlanBookedTimes = [
@@ -193,44 +198,102 @@ const AppointmentPlanCollection: React.FC<{
               timezone: moment().zone(momentTz.tz.guess()).format('Z'),
             })}
           </StyledTimeStandardBlock>
+          {appointmentPlan.currency.id === 'LSC' ? (
+            <CoinCheckoutModal
+              productId={`AppointmentPlan_${appointmentPlan.id}`}
+              amount={1}
+              currencyId={appointmentPlan.currency.id}
+              phoneInputEnabled={true}
+              renderTrigger={({ setVisible }) => (
+                <AppointmentPeriodCollection
+                  appointmentPeriods={appointmentPlan.periods}
+                  reservationAmount={appointmentPlan.reservationAmount}
+                  reservationType={appointmentPlan.reservationType}
+                  onClick={period => {
+                    if (!isAuthenticated) {
+                      setAuthModalVisible?.(true)
+                    } else {
+                      ReactGA.plugin.execute('ec', 'addProduct', {
+                        id: appointmentPlan.id,
+                        name: appointmentPlan.title,
+                        category: 'AppointmentPlan',
+                        price: `${appointmentPlan.price}`,
+                        quantity: '1',
+                        currency: 'LTC',
+                      })
+                      ReactGA.plugin.execute('ec', 'setAction', 'add')
+                      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+                      setSelectedPeriod(period)
+                      setVisible?.()
 
-          <CheckoutProductModal
-            defaultProductId={`AppointmentPlan_${appointmentPlan.id}`}
-            renderTrigger={({ onOpen }) => (
-              <AppointmentPeriodCollection
-                appointmentPeriods={appointmentPlan.periods}
-                reservationAmount={appointmentPlan.reservationAmount}
-                reservationType={appointmentPlan.reservationType}
-                onClick={period => {
-                  if (!isAuthenticated) {
-                    setAuthModalVisible?.(true)
-                  } else {
-                    ReactGA.plugin.execute('ec', 'addProduct', {
-                      id: appointmentPlan.id,
-                      name: appointmentPlan.title,
-                      category: 'AppointmentPlan',
-                      price: `${appointmentPlan.price}`,
-                      quantity: '1',
-                      currency: 'TWD',
-                    })
-                    ReactGA.plugin.execute('ec', 'setAction', 'add')
-                    ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                    setSelectedPeriod(period)
-                    onOpen?.()
+                      const resource = resourceCollection[idx]
+                      resource && tracking.click(resource, { position: idx + 1 })
+                    }
+                  }}
+                  diffPlanBookedTimes={diffPlanBookedTimes}
+                />
+              )}
+            />
+          ) : (
+            <CheckoutProductModal
+              defaultProductId={`AppointmentPlan_${appointmentPlan.id}`}
+              renderTrigger={({ onOpen }) => (
+                <AppointmentPeriodCollection
+                  appointmentPeriods={appointmentPlan.periods}
+                  reservationAmount={appointmentPlan.reservationAmount}
+                  reservationType={appointmentPlan.reservationType}
+                  onClick={period => {
+                    if (!isAuthenticated) {
+                      setAuthModalVisible?.(true)
+                    } else {
+                      ReactGA.plugin.execute('ec', 'addProduct', {
+                        id: appointmentPlan.id,
+                        name: appointmentPlan.title,
+                        category: 'AppointmentPlan',
+                        price: `${appointmentPlan.price}`,
+                        quantity: '1',
+                        currency: 'TWD',
+                      })
+                      ReactGA.plugin.execute('ec', 'setAction', 'add')
+                      ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
+                      setSelectedPeriod(period)
+                      onOpen?.()
 
-                    const resource = resourceCollection[idx]
-                    resource && tracking.click(resource, { position: idx + 1 })
-                  }
-                }}
-                diffPlanBookedTimes={diffPlanBookedTimes}
-              />
-            )}
-            startedAt={selectedPeriod?.startedAt}
-          />
+                      const resource = resourceCollection[idx]
+                      resource && tracking.click(resource, { position: idx + 1 })
+                    }
+                  }}
+                  diffPlanBookedTimes={diffPlanBookedTimes}
+                />
+              )}
+              startedAt={selectedPeriod?.startedAt}
+            />
+          )}
         </div>
       ))}
     </>
   )
+}
+
+const useMemberCoinsRemaining = (memberId: string) => {
+  const { data } = useQuery<hasura.GET_MEMBER_COIN_REMAINING, hasura.GET_MEMBER_COIN_REMAININGVariables>(
+    gql`
+      query GET_MEMBER_COIN_REMAINING($memberId: String!) {
+        coin_status(where: { member_id: { _eq: $memberId } }) {
+          remaining
+        }
+      }
+    `,
+    {
+      variables: { memberId },
+    },
+  )
+  const remainingCoins =
+    data?.coin_status.reduce((total, coin) => {
+      return (total += coin.remaining)
+    }, 0) || 0
+
+  return { remainingCoins }
 }
 
 export default AppointmentCollectionTabs
