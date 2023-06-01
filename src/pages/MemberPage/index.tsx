@@ -143,7 +143,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
           <StyledTabList>
             <>
               {tabContents.map(v => (
-                <Tab key={v.key} onClick={() => setActiveKey(v.key)}>
+                <Tab key={v.key} onClick={() => setActiveKey(v.key)} mr="2rem">
                   {v.name}
                 </Tab>
               ))}
