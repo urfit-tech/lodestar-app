@@ -31,7 +31,8 @@ const PostItemCollection: React.VFC<{
   const { formatMessage } = useIntl()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
   const categories = uniqBy(category => category.id, posts.map(post => post.categories).flat())
-  const displayPost = selectedCategoryId || pageName === 'creatorPage' ? posts : posts.slice(3)
+  const displayPost =
+    selectedCategoryId || pageName === 'creatorPage' ? posts : posts.filter(post => post.pinnedAt === null)
   return (
     <>
       {withTagSelector && (
