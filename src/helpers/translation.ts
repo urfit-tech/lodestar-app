@@ -787,7 +787,6 @@ export const productMessages = {
       email: { id: 'common.meta.email', defaultMessage: '信箱：' },
       phone: { id: 'common.meta.phone', defaultMessage: '手機：' },
       orderNo: { id: 'common.meta.orderNo', defaultMessage: '票券編號：' },
-      remaining: { id: 'product.activity.content.remaining', defaultMessage: '剩餘' },
     }),
   },
   appointment: {
