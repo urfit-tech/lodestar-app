@@ -15,7 +15,7 @@ import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useExamExercise } from '../../hooks/exam'
 import { usePracticeExist } from '../../hooks/practice'
-import { useEnrolledProgramIds, useProgramContentBody } from '../../hooks/program'
+import { useEnrolledProgramIds, useProgramContentBody, useProgramContentMaterial } from '../../hooks/program'
 import { MicrophoneIcon } from '../../images'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
@@ -298,6 +298,7 @@ const SortBySectionItem: React.VFC<{
   const { currentExamExerciseData, loadingCurrentExamData, errorCurrentExamData, refetchCurrentExamData } =
     useExamExercise(programContent.id, currentMemberId || '', exerciseId)
   const { practiceIds } = usePracticeExist({ memberId: currentMemberId, programContentId: programContent.id })
+  const { data: materials, loading: materailLoading } = useProgramContentMaterial(programContent.id)
 
   let progress = 0
   if (contentType === 'exercise' || contentType === 'exam') {
@@ -407,11 +408,11 @@ const SortBySectionItem: React.VFC<{
             </>
           )}
         </div>
-        {programContent.materials && programContent?.materials.length !== 0 && (
+        {!materailLoading && materials && materials.length !== 0 && (
           <div>
             <StyledIcon as={AttachmentIcon} className="mr-2" />
             {formatMessage(programMessages.ProgramContentMenu.materialAmount, {
-              amount: programContent?.materials.length,
+              amount: materials.length,
             })}
           </div>
         )}
@@ -467,6 +468,7 @@ const SortByDateItem: React.VFC<{
     exerciseId,
   )
   const { practiceIds } = usePracticeExist({ memberId: currentMemberId, programContentId: programContent.id })
+  const { data: materials, loading: materailLoading } = useProgramContentMaterial(programContent.id)
 
   let progress = 0
   const contentType = programContentProgress?.find(
@@ -516,11 +518,11 @@ const SortByDateItem: React.VFC<{
         <StyledIcon as={AiOutlinePlaySquare} className="mr-2" />
         {programContent.publishedAt && dateFormatter(programContent.publishedAt)}
       </div>
-      {programContent.materials && programContent?.materials.length !== 0 && (
+      {!materailLoading && materials && materials.length !== 0 && (
         <div className="mt-2">
           <StyledIcon as={AttachmentIcon} className="mr-2" />
           {formatMessage(programMessages.ProgramContentMenu.materialAmount, {
-            amount: programContent?.materials.length,
+            amount: materials.length,
           })}
         </div>
       )}

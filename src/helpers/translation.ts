@@ -1474,6 +1474,14 @@ export const usersMessages = {
       id: 'users.form.placeholder.password.again',
       defaultMessage: '再次輸入新密碼',
     },
+    enterNewPasswordParticipant: {
+      id: 'users.form.placeholder.password.enter.participant',
+      defaultMessage: '請輸入密碼',
+    },
+    enterNewPasswordAgainParticipant: {
+      id: 'users.form.placeholder.password.again.participant',
+      defaultMessage: '請再次輸入密碼',
+    },
   }),
 }
 

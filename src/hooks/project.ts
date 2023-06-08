@@ -77,6 +77,7 @@ export const useMemberProjectCollection = (memberId: string) => {
             _or: [{ project_roles: { member_id: { _eq: $memberId }, project: { published_at: { _is_null: false } } } }]
             project_roles: { identity: { name: { _eq: "author" } } }
           }
+          order_by: { published_at: desc }
         ) {
           id
           type
@@ -90,6 +91,7 @@ export const useMemberProjectCollection = (memberId: string) => {
           target_unit
           target_amount
           expired_at
+          published_at
           is_participants_visible
           is_countdown_timer_visible
           views
@@ -128,6 +130,12 @@ export const useMemberProjectCollection = (memberId: string) => {
           author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
             id
             member_id
+            created_at
+          }
+          memberRoles: project_roles(order_by: { created_at: desc }) {
+            id
+            member_id
+            created_at
           }
         }
       }
@@ -152,9 +160,11 @@ export const useMemberProjectCollection = (memberId: string) => {
           targetAmount: project.target_amount,
           targetUnit: project.target_unit as ProjectIntroProps['targetUnit'],
           expiredAt: project.expired_at ? new Date(project.expired_at) : null,
+          publishedAt: new Date(project.published_at),
           isParticipantsVisible: project.is_participants_visible,
           isCountdownTimerVisible: project.is_countdown_timer_visible,
           authorId: project.author[0]?.member_id,
+          roleCreatedAt: new Date(project.memberRoles[0].created_at),
           totalSales: project.project_sales?.total_sales,
           views: project.views,
           enrollmentCount: sum(
@@ -196,6 +206,7 @@ export const useProject = (projectId: string) => {
           created_at
           published_at
           expired_at
+          meta_tag
           is_participants_visible
           is_countdown_timer_visible
           project_sales {
@@ -271,6 +282,7 @@ export const useProject = (projectId: string) => {
           createdAt: new Date(data.project_by_pk.created_at),
           publishedAt: data.project_by_pk.published_at ? new Date(data.project_by_pk.published_at) : null,
           expiredAt: data.project_by_pk.expired_at ? new Date(data.project_by_pk.expired_at) : null,
+          metaTag: data.project_by_pk.meta_tag || null,
           isParticipantsVisible: data.project_by_pk.is_participants_visible,
           isCountdownTimerVisible: data.project_by_pk.is_countdown_timer_visible,
           totalSales: data.project_by_pk.project_sales?.total_sales || 0,

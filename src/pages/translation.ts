@@ -122,7 +122,7 @@ const pageMessages = {
   }),
   ResetPasswordPage: defineMessages({
     TitleFirstText: { id: 'page.ResetPasswordPage.TitleFirstText', defaultMessage: '你的帳號為 {account}' },
-    TitleSecondText: { id: 'page.ResetPasswordPage.TitleSecondText', defaultMessage: '請輸入新密碼' },
+    TitleSecondText: { id: 'page.ResetPasswordPage.TitleSecondText', defaultMessage: '請輸入密碼來完成帳號設定' },
   }),
 }
 

@@ -179,6 +179,7 @@ const durationFormat: (time: number) => string = time => {
 const AudioPlayer: React.VFC<{
   title: string
   mode?: 'default' | 'preview'
+  mimeType?: string
   audioUrl?: string
   lastProgress?: number
   autoPlay?: boolean
@@ -186,7 +187,18 @@ const AudioPlayer: React.VFC<{
   onNext?: () => void
   onAudioEvent?: (event: AudioEvent) => void
   onClose?: () => void
-}> = ({ title, mode = 'default', audioUrl, lastProgress, autoPlay, onPrev, onNext, onAudioEvent, onClose }) => {
+}> = ({
+  title,
+  mode = 'default',
+  mimeType,
+  audioUrl,
+  lastProgress,
+  autoPlay,
+  onPrev,
+  onNext,
+  onAudioEvent,
+  onClose,
+}) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const modeRef = useRef<AudioPlayerMode>('loop')
   const [visible, setVisible] = useState(false)
@@ -206,12 +218,12 @@ const AudioPlayer: React.VFC<{
   }
 
   useEffect(() => {
-    if (audioRef.current && audioUrl?.includes('.m3u8') && HLS.isSupported()) {
+    if (audioUrl && audioRef.current && mimeType === 'application/x-mpegURL' && HLS.isSupported()) {
       const hls = new HLS()
       hls.loadSource(audioUrl)
       hls.attachMedia(audioRef.current)
     }
-  }, [audioUrl])
+  }, [audioUrl, mimeType])
 
   useEffect(() => {
     duration > 0 && setLoading(false)

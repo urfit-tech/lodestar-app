@@ -1,10 +1,12 @@
 import { Skeleton } from '@chakra-ui/skeleton'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext, useEffect, useRef } from 'react'
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
 import 'video.js/dist/video-js.min.css'
 import 'videojs-contrib-quality-levels'
 import 'videojs-hls-quality-selector'
 import LocaleContext from '../../contexts/LocaleContext'
+import { isIOS, isMobile } from '../../helpers'
 
 type VideoJsPlayerProps = {
   loading?: boolean
@@ -33,6 +35,7 @@ type VideoJsPlayerProps = {
 const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   const playerRef = useRef<VideoJsPlayer | null>(null)
   const { currentLocale } = useContext(LocaleContext)
+  const { enabledModules } = useApp()
 
   const videoOptions: VideoJsPlayerOptions = {
     html5: {
@@ -83,6 +86,12 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
         }
       },
     },
+    controlBar:
+      isMobile && isIOS && enabledModules.background_mode
+        ? {
+            pictureInPictureToggle: false,
+          }
+        : undefined,
   }
 
   const setCaption = (player: VideoJsPlayer) => {

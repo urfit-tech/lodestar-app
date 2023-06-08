@@ -21,7 +21,7 @@ import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { getFileDownloadableLink, isMobile } from '../../helpers'
+import { getFileDownloadableLink, isAndroid, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { CarIcon } from '../../images'
@@ -34,9 +34,6 @@ import ProgramContentTabs from './ProgramContentTabs'
 import ProgramContentPageMessages from './translation'
 
 const StyledTitleBlock = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding-bottom: 1.25rem;
   border-bottom: 1px solid #e8e8e8;
 `
@@ -349,10 +346,10 @@ const ProgramContentBlock: React.VFC<{
 
       {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) && (
         <StyledContentBlock className="mb-3">
-          {isMobile && enabledModules.background_mode ? (
+          {isMobile && !isAndroid && enabledModules.background_mode ? (
             <StyledTitleBlock>
-              <StyledMobileTitle>{programContent.title}</StyledMobileTitle>
-              <div>
+              <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
+              <div className="d-flex justify-content-end">
                 <span className="mr-2">
                   {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
                 </span>
@@ -376,6 +373,10 @@ const ProgramContentBlock: React.VFC<{
                               programId: programId,
                               contentType: content.contentType,
                               videoId: content.contentType === 'video' ? content?.videos?.[0]?.id : undefined,
+                              source: content.videos?.[0]?.options?.cloudflare
+                                ? 'cloudflare'
+                                : content.videos?.[0]?.data?.source,
+                              sourceUrl: content.videos?.[0]?.data?.url,
                             },
                             target: content.id,
                           })) || [],

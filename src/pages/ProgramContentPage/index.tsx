@@ -17,6 +17,8 @@ import { ProgressProvider } from '../../contexts/ProgressContext'
 import { hasJsonStructure } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
+import LoadingPage from '../LoadingPage'
+import NotFoundPage from '../NotFoundPage'
 import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramContentPageHelmet from './ProgramContentPageHelmet'
@@ -43,15 +45,21 @@ const ProgramContentPage: React.VFC = () => {
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
 
-  if (isAuthenticating || loadingProgram) {
-    return <></>
-  }
-
   let oldProgramInfo = {}
   if (hasJsonStructure(localStorage.getItem(`${appId}.program.info`) || '')) {
     JSON.parse(localStorage.getItem(`${appId}.program.info`) || '')
   }
-  localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
+  programId &&
+    programContentId &&
+    localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
+
+  if (isAuthenticating || loadingProgram) {
+    return <LoadingPage />
+  }
+
+  if (!program) {
+    return <NotFoundPage />
+  }
 
   return (
     <Layout>

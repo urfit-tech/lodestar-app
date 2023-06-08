@@ -12,7 +12,6 @@ import {
   ProgramContent,
   ProgramContentAttachmentProps,
   ProgramContentBodyProps,
-  ProgramContentMaterialProps,
   ProgramPlan,
   ProgramRole,
   ProgramRoleName,
@@ -259,6 +258,9 @@ export const useProgram = (programId: string) => {
           editors {
             member_id
           }
+          program_plans {
+            id
+          }
           program_categories(order_by: { position: asc }) {
             id
             category {
@@ -275,37 +277,6 @@ export const useProgram = (programId: string) => {
             id
             name
             member_id
-          }
-          program_plans(order_by: { created_at: asc }) {
-            id
-            type
-            title
-            description
-            gains
-            currency {
-              id
-              label
-              unit
-              name
-            }
-            list_price
-            sale_price
-            sold_at
-            discount_down_price
-            period_amount
-            period_type
-            started_at
-            ended_at
-            is_participants_visible
-            published_at
-            auto_renewed
-            is_countdown_timer_visible
-            group_buying_people
-            program_plan_enrollments_aggregate {
-              aggregate {
-                count
-              }
-            }
           }
           program_review_score {
             score
@@ -336,11 +307,6 @@ export const useProgram = (programId: string) => {
                 id
                 type
               }
-              program_content_materials {
-                id
-                data
-                created_at
-              }
               program_content_videos {
                 attachment {
                   id
@@ -350,115 +316,144 @@ export const useProgram = (programId: string) => {
                 }
               }
             }
-            program_contents_aggregate(where: { published_at: { _is_null: false } }) {
-              aggregate {
-                count
-              }
-            }
           }
         }
       }
     `,
     { variables: { programId } },
   )
-  const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(
-    () =>
-      loading || error || !data || !data.program_by_pk
-        ? null
-        : {
-            id: data.program_by_pk.id,
-            coverUrl: data.program_by_pk.cover_url || null,
-            coverMobileUrl: data.program_by_pk.cover_mobile_url || null,
-            coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url || null,
-            title: data.program_by_pk.title,
-            abstract: data.program_by_pk.abstract || '',
-            publishedAt: new Date(data.program_by_pk.published_at),
-            isSoldOut: data.program_by_pk.is_sold_out || false,
-            description: data.program_by_pk.description || '',
-            coverVideoUrl: data.program_by_pk.cover_video_url || null,
-            metaTag: data.program_by_pk.meta_tag,
-            isIssuesOpen: data.program_by_pk.is_issues_open,
-            isEnrolledCountVisible: data.program_by_pk.is_enrolled_count_visible,
-            isPrivate: data.program_by_pk.is_private,
-            isCountdownTimerVisible: data.program_by_pk.is_countdown_timer_visible,
-            isIntroductionSectionVisible: data.program_by_pk.is_introduction_section_visible,
-            tags: data.program_by_pk.program_tags.map(programTag => programTag.tag.name),
-            editors: data.program_by_pk.editors.map(v => v?.member_id || ''),
-            categories: data.program_by_pk.program_categories.map(programCategory => ({
-              id: programCategory.category.id,
-              name: programCategory.category.name,
-            })),
-            roles: data.program_by_pk.program_roles.map(programRole => ({
-              id: programRole.id,
-              name: programRole.name as ProgramRoleName,
-              memberId: programRole.member_id,
-              memberName: programRole.member_id,
-            })),
-            plans: data.program_by_pk.program_plans.map(programPlan => ({
-              id: programPlan.id,
-              type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
-              title: programPlan.title || '',
-              description: programPlan.description || '',
-              gains: programPlan.gains,
-              currency: {
-                id: programPlan.currency.id,
-                label: programPlan.currency.label,
-                unit: programPlan.currency.unit,
-                name: programPlan.currency.name,
-              },
-              isSubscription: programPlan.auto_renewed,
-              listPrice: programPlan.list_price,
-              salePrice: programPlan.sale_price,
-              soldAt: programPlan.sold_at && new Date(programPlan.sold_at),
-              discountDownPrice: programPlan.discount_down_price,
-              periodAmount: programPlan.period_amount,
-              periodType: programPlan.period_type as PeriodType,
-              startedAt: programPlan.started_at,
-              endedAt: programPlan.ended_at,
-              isParticipantsVisible: programPlan.is_participants_visible,
-              publishedAt: programPlan.published_at,
-              isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
-              groupBuyingPeople: programPlan.group_buying_people || 1,
-              enrollmentCount: programPlan.program_plan_enrollments_aggregate.aggregate?.count || 0,
-            })),
-            duration: data.program_by_pk.program_duration?.duration,
-            score: data.program_by_pk.program_review_score?.score,
-            contentSections: data.program_by_pk.program_content_sections.map(programContentSection => ({
-              id: programContentSection.id,
-              title: programContentSection.title,
-              description: programContentSection.description || '',
-              contents: programContentSection.program_contents.map(programContent => ({
-                id: programContent.id,
-                title: programContent.title,
-                abstract: programContent.abstract || '',
-                metadata: programContent.metadata,
-                duration: programContent.duration,
-                contentType:
-                  programContent.program_content_videos.length > 0
-                    ? 'video'
-                    : programContent.program_content_type?.type || '',
-                publishedAt: new Date(programContent.published_at),
-                displayMode: programContent.display_mode as DisplayMode,
-                listPrice: programContent.list_price,
-                salePrice: programContent.sale_price,
-                soldAt: programContent.sold_at && new Date(programContent.sold_at),
-                contentBodyId: programContent.content_body_id,
-                materials: programContent.program_content_materials.map(v => ({
-                  id: v.id,
-                  data: v.data,
-                  createdAt: v.created_at,
-                })),
-                videos: programContent.program_content_videos.map(v => ({
-                  id: v.attachment.id,
-                  size: v.attachment.size,
-                  options: v.attachment.options,
-                  data: v.attachment.data,
-                })),
-              })),
-            })),
-          },
-    [data, error, loading],
+  const { loading: loadingProgramPlans, data: programPlans } = useQuery<
+    hasura.GetProgramPlans,
+    hasura.GetProgramPlansVariables
+  >(
+    gql`
+      query GetProgramPlans($programId: uuid!) {
+        program_plan(where: { program_id: { _eq: $programId } }, order_by: { created_at: asc }) {
+          id
+          type
+          title
+          description
+          gains
+          currency {
+            id
+            label
+            unit
+            name
+          }
+          list_price
+          sale_price
+          sold_at
+          discount_down_price
+          period_amount
+          period_type
+          started_at
+          ended_at
+          is_participants_visible
+          published_at
+          auto_renewed
+          is_countdown_timer_visible
+          group_buying_people
+        }
+      }
+    `,
+    { variables: { programId } },
   )
+
+  const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(() => {
+    return {
+      id: data?.program_by_pk?.id,
+      coverUrl: data?.program_by_pk?.cover_url || null,
+      coverMobileUrl: data?.program_by_pk?.cover_mobile_url || null,
+      coverThumbnailUrl: data?.program_by_pk?.cover_thumbnail_url || null,
+      title: data?.program_by_pk?.title || '',
+      abstract: data?.program_by_pk?.abstract || '',
+      publishedAt: new Date(data?.program_by_pk?.published_at),
+      isSoldOut: data?.program_by_pk?.is_sold_out || false,
+      description: data?.program_by_pk?.description || '',
+      coverVideoUrl: data?.program_by_pk?.cover_video_url || null,
+      metaTag: data?.program_by_pk?.meta_tag,
+      isIssuesOpen: data?.program_by_pk?.is_issues_open || true,
+      isEnrolledCountVisible: data?.program_by_pk?.is_enrolled_count_visible,
+      isPrivate: data?.program_by_pk?.is_private || false,
+      isCountdownTimerVisible: data?.program_by_pk?.is_countdown_timer_visible,
+      isIntroductionSectionVisible: data?.program_by_pk?.is_introduction_section_visible,
+      tags: data?.program_by_pk?.program_tags.map(programTag => programTag.tag.name) || [],
+      editors: data?.program_by_pk?.editors.map(v => v?.member_id || ''),
+      categories:
+        data?.program_by_pk?.program_categories.map(programCategory => ({
+          id: programCategory.category.id,
+          name: programCategory.category.name,
+        })) || [],
+      roles:
+        data?.program_by_pk?.program_roles.map(programRole => ({
+          id: programRole.id,
+          name: programRole.name as ProgramRoleName,
+          memberId: programRole.member_id,
+          memberName: programRole.member_id,
+        })) || [],
+      plans:
+        programPlans?.program_plan.map(programPlan => ({
+          id: programPlan.id,
+          type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
+          title: programPlan.title || '',
+          description: programPlan.description || '',
+          gains: programPlan.gains,
+          currency: {
+            id: programPlan.currency.id,
+            label: programPlan.currency.label,
+            unit: programPlan.currency.unit,
+            name: programPlan.currency.name,
+          },
+          isSubscription: programPlan.auto_renewed,
+          listPrice: programPlan.list_price,
+          salePrice: programPlan.sale_price,
+          soldAt: programPlan.sold_at && new Date(programPlan.sold_at),
+          discountDownPrice: programPlan.discount_down_price,
+          periodAmount: programPlan.period_amount,
+          periodType: programPlan.period_type as PeriodType,
+          startedAt: programPlan.started_at,
+          endedAt: programPlan.ended_at,
+          isParticipantsVisible: programPlan.is_participants_visible,
+          publishedAt: programPlan.published_at,
+          isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
+          groupBuyingPeople: programPlan.group_buying_people || 1,
+          // enrollmentCount:
+          //   programPlanEnrollmentsAggregateData?.program_plan.find(v => v.id === programPlan.id)
+          //     ?.program_plan_enrollments_aggregate.aggregate?.count || 0,
+        })) || [],
+      duration: data?.program_by_pk?.program_duration?.duration,
+      score: data?.program_by_pk?.program_review_score?.score,
+      contentSections:
+        data?.program_by_pk?.program_content_sections.map(programContentSection => ({
+          id: programContentSection.id,
+          title: programContentSection.title,
+          description: programContentSection.description || '',
+          contents: programContentSection.program_contents.map(programContent => ({
+            id: programContent.id,
+            title: programContent.title,
+            abstract: programContent.abstract || '',
+            metadata: programContent.metadata,
+            duration: programContent.duration,
+            contentType:
+              programContent.program_content_videos.length > 0
+                ? 'video'
+                : programContent.program_content_type?.type || '',
+            publishedAt: new Date(programContent.published_at),
+            displayMode: programContent.display_mode as DisplayMode,
+            listPrice: programContent.list_price,
+            salePrice: programContent.sale_price,
+            soldAt: programContent.sold_at && new Date(programContent.sold_at),
+            contentBodyId: programContent.content_body_id,
+            videos: programContent.program_content_videos.map(v => ({
+              id: v.attachment.id,
+              size: v.attachment.size,
+              options: v.attachment.options,
+              data: v.attachment.data,
+            })),
+          })),
+        })) || [],
+    }
+  }, [data, programPlans])
 
   const [addProgramViewsHandler] = useMutation<hasura.ADD_PROGRAM_VIEWS, hasura.ADD_PROGRAM_VIEWSVariables>(gql`
     mutation ADD_PROGRAM_VIEWS($programId: uuid!) {
@@ -478,6 +473,41 @@ export const useProgram = (programId: string) => {
     program,
     refetchProgram: refetch,
     addProgramView,
+    loadingProgramPlans,
+  }
+}
+
+export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]) => {
+  const { loading, data } = useQuery<
+    hasura.GetProgramPlansEnrollmentsAggregate,
+    hasura.GetProgramPlansEnrollmentsAggregateVariables
+  >(
+    gql`
+      query GetProgramPlansEnrollmentsAggregate($programPlanIds: [uuid!]!) {
+        program_plan(where: { id: { _in: $programPlanIds } }) {
+          id
+          program_plan_enrollments_aggregate {
+            aggregate {
+              count
+            }
+          }
+        }
+      }
+    `,
+    { variables: { programPlanIds } },
+  )
+  const programPlansEnrollmentsAggregateList: {
+    id: string
+    enrollmentCount: number
+  }[] =
+    data?.program_plan.map(v => ({
+      id: v.id,
+      enrollmentCount: v.program_plan_enrollments_aggregate.aggregate?.count || 0,
+    })) || []
+
+  return {
+    loading,
+    programPlansEnrollmentsAggregateList,
   }
 }
 
@@ -508,11 +538,6 @@ export const GET_PROGRAM_CONTENT = gql`
         data
         type
       }
-      program_content_materials {
-        id
-        data
-        created_at
-      }
       program_content_videos {
         attachment {
           id
@@ -542,7 +567,6 @@ export const useProgramContent = (programContentId: string) => {
   const programContent:
     | (ProgramContent & {
         programContentBody: ProgramContentBodyProps | null
-        materials: ProgramContentMaterialProps[]
         attachments: ProgramContentAttachmentProps[]
       })
     | null = useMemo(
@@ -575,11 +599,6 @@ export const useProgramContent = (programContentId: string) => {
                   data: data.program_content_by_pk.program_content_body.data,
                 }
               : null,
-            materials: data.program_content_by_pk.program_content_materials.map(v => ({
-              id: v.id,
-              data: v.data,
-              createdAt: v.created_at,
-            })),
             videos: data.program_content_by_pk.program_content_videos.map(v => ({
               id: v.attachment.id,
               size: v.attachment.size,
