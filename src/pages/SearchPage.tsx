@@ -290,10 +290,6 @@ const SearchResultBlock: React.VFC<{
                     title={activity.title}
                     coverUrl={activity.coverUrl || undefined}
                     isParticipantsVisible={activity.isParticipantsVisible}
-                    participantCount={activity.participantCount}
-                    totalSeats={activity.totalSeats}
-                    startedAt={activity.startedAt || undefined}
-                    endedAt={activity.endedAt || undefined}
                   />
                 </div>
               ))}

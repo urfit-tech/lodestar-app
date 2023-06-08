@@ -144,10 +144,7 @@ const ActivityCollectionPage = () => {
 }
 
 const ActivityCollection: React.FC<{
-  activities: DeepPick<
-    Activity,
-    'id' | 'title' | 'coverUrl' | 'isParticipantsVisible' | 'participantCount' | 'totalSeats' | 'startedAt' | 'endedAt'
-  >[]
+  activities: DeepPick<Activity, 'id' | 'title' | 'coverUrl' | 'isParticipantsVisible'>[]
 }> = ({ activities }) => {
   const { id: appId } = useApp()
   const tracking = useTracking()
@@ -167,10 +164,6 @@ const ActivityCollection: React.FC<{
             title={activity.title}
             coverUrl={activity.coverUrl || undefined}
             isParticipantsVisible={activity.isParticipantsVisible}
-            participantCount={activity.participantCount}
-            totalSeats={activity.totalSeats}
-            startedAt={activity.startedAt || undefined}
-            endedAt={activity.endedAt || undefined}
             onClick={() => {
               const resource = resourceCollection[idx]
               resource && tracking.click(resource, { position: idx + 1 })
