@@ -10,6 +10,9 @@ const activityMessages = {
     enterLinkPage: { id: 'activity.ActivitySessionItem.enterLinkPage', defaultMessage: '進入直播頁面' },
     add: { id: 'activity.ActivitySessionItem.add', defaultMessage: '新增' },
   }),
+  ActivityParticipantMeta: defineMessages({
+    remaining: { id: 'activityMessages.ActivityParticipantMeta.remaining', defaultMessage: '剩餘' },
+  }),
 }
 
 export default activityMessages
