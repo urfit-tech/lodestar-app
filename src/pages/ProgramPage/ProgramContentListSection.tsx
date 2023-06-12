@@ -160,9 +160,9 @@ const ProgramContentListSection: React.VFC<{
                           <StyledObscure onClick={() => setVisible(true)}>
                             <StyledTag color={theme.colors.primary[500]}>
                               {formatMessage(
-                                programContent.contentType === 'video'
-                                  ? productMessages.program.content.trial
-                                  : productMessages.program.content.audioTrial,
+                                programContent.contentType === 'audio'
+                                  ? productMessages.program.content.audioTrial
+                                  : productMessages.program.content.trial,
                               )}
                             </StyledTag>
                           </StyledObscure>
@@ -171,9 +171,9 @@ const ProgramContentListSection: React.VFC<{
                     ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
                       <StyledTag color={theme.colors.primary[500]}>
                         {formatMessage(
-                          programContent.contentType === 'video'
-                            ? productMessages.program.content.trial
-                            : productMessages.program.content.audioTrial,
+                          programContent.contentType === 'audio'
+                            ? productMessages.program.content.audioTrial
+                            : productMessages.program.content.trial,
                         )}
                       </StyledTag>
                     ) : null}
@@ -232,9 +232,9 @@ const ProgramContentListSection: React.VFC<{
                           <StyledObscure onClick={() => setVisible(true)}>
                             <StyledTag color={theme.colors.primary[500]}>
                               {formatMessage(
-                                programContent.contentType === 'video'
-                                  ? productMessages.program.content.trial
-                                  : productMessages.program.content.audioTrial,
+                                programContent.contentType === 'audio'
+                                  ? productMessages.program.content.audioTrial
+                                  : productMessages.program.content.trial,
                               )}
                             </StyledTag>
                           </StyledObscure>
@@ -244,9 +244,9 @@ const ProgramContentListSection: React.VFC<{
                       <StyledObscure>
                         <StyledTag color={theme.colors.primary[500]}>
                           {formatMessage(
-                            programContent.contentType === 'video'
-                              ? productMessages.program.content.trial
-                              : productMessages.program.content.audioTrial,
+                            programContent.contentType === 'audio'
+                              ? productMessages.program.content.audioTrial
+                              : productMessages.program.content.trial,
                           )}
                         </StyledTag>
                       </StyledObscure>

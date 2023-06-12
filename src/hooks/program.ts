@@ -372,7 +372,7 @@ export const useProgram = (programId: string) => {
       description: data?.program_by_pk?.description || '',
       coverVideoUrl: data?.program_by_pk?.cover_video_url || null,
       metaTag: data?.program_by_pk?.meta_tag,
-      isIssuesOpen: data?.program_by_pk?.is_issues_open || true,
+      isIssuesOpen: data?.program_by_pk?.is_issues_open === false ? false : true,
       isEnrolledCountVisible: data?.program_by_pk?.is_enrolled_count_visible,
       isPrivate: data?.program_by_pk?.is_private || false,
       isCountdownTimerVisible: data?.program_by_pk?.is_countdown_timer_visible,
