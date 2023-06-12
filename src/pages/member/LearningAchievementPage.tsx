@@ -17,6 +17,7 @@ import ProgramSummaryCard from '../../components/learningAchievement/ProgramSumm
 import ProgressBarCard from '../../components/learningAchievement/ProgressBarCard'
 import RadarCard from '../../components/learningAchievement/RadarCard'
 import learningAchievementMessages from '../../components/learningAchievement/translation'
+import VoucherProgramCard from '../../components/learningAchievement/VoucherProgramCard'
 import hasura from '../../hasura'
 import { checkLearningSystem } from '../../helpers/learning'
 import { commonMessages } from '../../helpers/translation'
@@ -177,6 +178,7 @@ const LearningAchievementPage: React.FC = () => {
             <ProgressBarCard consecutiveDayOptions={learnedStatistic.consecutiveDayOptions} />
             <ProgramProgressDetailCard productOptions={learnedStatistic.productOptions} />
             <BadgeCard memberAchievement={memberAchievement || []} />
+            <VoucherProgramCard currentMemberId={currentMemberId}/>
           </StyledColGrid>
         </MemberAdminLayout>
       )}
