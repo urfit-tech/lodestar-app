@@ -19,6 +19,8 @@ import { ReactComponent as SuccessIcon } from '../../images/status-success.svg'
 import { ApiResponse } from '../../types/general'
 import GroupBuyingReceivedPageMessages from './translation'
 import hasura from '../../hasura'
+import { Spin } from 'antd'
+import { handleError } from 'lodestar-app-element/src/helpers'
 
 const StyledContainer = styled.div`
   padding: 4rem 1rem;
@@ -65,10 +67,9 @@ const StyledIcon = styled.div`
 const GroupBuyingReceivedPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { authToken } = useAuth()
   const [token] = useQueryParam('token', StringParam)
-  const { isAuthenticated, currentMemberId } = useAuth()
-  const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'success' | 'failed'>('idle')
+  const { isAuthenticated, currentMemberId, authToken } = useAuth()
+  const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'success' | 'failed' | 'transferred'>('idle')
   const [payload, setPayload] = useState<{
     appId: string
     email: string
@@ -78,12 +79,12 @@ const GroupBuyingReceivedPage: React.VFC = () => {
     ownerName: string
     exp: number
   } | null>(null)
+  const { transferredAt, ownerId, loading: getOrderLogLoading } = useGetOrderLog(payload?.orderId || '')
 
   useEffect(() => {
     if (!token) {
       return
     }
-
     try {
       const tmpPayload = jwt.decode(token) as any
       if (
@@ -107,29 +108,12 @@ const GroupBuyingReceivedPage: React.VFC = () => {
         ownerName: tmpPayload.ownerName,
         exp: tmpPayload.exp,
       })
-      if (tmpPayload.exp < Math.floor(Date.now() / 1000)) {
-        setSendingState('success')
-      }
-    } catch (error) {}
-  }, [token])
+      if (tmpPayload.exp < Math.floor(Date.now() / 1000)) setSendingState(() => 'failed')
+      if (transferredAt) setSendingState(() => 'transferred')
+      if (ownerId === currentMemberId) setSendingState(() => 'success')
+    } catch (error) {handleError(error)}
+  }, [token, transferredAt, ownerId, currentMemberId])
 
-  const useGetOrderLog = () => {
-    const { loading, error, data, refetch, fetchMore } = useQuery(
-      gql`
-        query GET_ORDER_LOG_TRANSFERRED($orderId: String!) {
-          order_log(where: { id: { _eq: $orderId } }) {
-            member_id
-            transferred_at
-          }
-        }
-      `,
-      {
-        variables: {
-          orderId: payload?.orderId,
-        },
-      },
-    )
-  }
   const handleSubmit = () => {
     setSendingState('loading')
     if (currentMemberId) {
@@ -149,7 +133,10 @@ const GroupBuyingReceivedPage: React.VFC = () => {
             setSendingState('failed')
           }
         })
-        .catch(() => setSendingState('failed'))
+        .catch(error => {
+          handleError(error)
+          setSendingState('failed')
+        })
     }
   }
 
@@ -198,13 +185,22 @@ const GroupBuyingReceivedPage: React.VFC = () => {
       message: `課程已超過領取效期，請與 ${payload?.ownerName} 聯繫。`,
       onClick: () => history.push('/'),
     },
+    transferred: {
+      Icon: <ChakraIcon as={AlertIcon} w="64px" h="64px" />,
+      buttonTitle: '回首頁',
+      title: `該項目已被領取`,
+      message: `該項目已被領取，請與 ${payload?.ownerName} 聯繫。`,
+      onClick: () => history.push('/'),
+    },
   }
 
   return (
     <DefaultLayout noFooter centeredBox>
       <StyledContainer>
         <div className="mb-4">{sendingStateOject[sendingState].Icon}</div>
-        {payload ? (
+        {getOrderLogLoading ? (
+          <Spin />
+        ) : payload ? (
           <>
             <StyledTitle>{sendingStateOject[sendingState].title}</StyledTitle>
             <StyledItemInfo>{sendingStateOject[sendingState].message}</StyledItemInfo>
@@ -230,3 +226,26 @@ const GroupBuyingReceivedPage: React.VFC = () => {
 }
 
 export default GroupBuyingReceivedPage
+
+const useGetOrderLog = (orderId: string) => {
+  const { data, loading } = useQuery<hasura.GET_ORDER_LOG_TRANSFERRED, hasura.GET_ORDER_LOG_TRANSFERREDVariables>(
+    gql`
+      query GET_ORDER_LOG_TRANSFERRED($orderId: String!) {
+        order_log_by_pk(id: $orderId) {
+          member_id
+          transferred_at
+        }
+      }
+    `,
+    {
+      variables: { orderId },
+    },
+  )
+  const transferredAt = data?.order_log_by_pk?.transferred_at
+  const ownerId = data?.order_log_by_pk?.member_id
+  return {
+    transferredAt,
+    ownerId,
+    loading,
+  }
+}
