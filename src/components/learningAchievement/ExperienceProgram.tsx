@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
 import { BREAK_POINT } from '../common/Responsive'
 
-const VoucherProgramLayout = styled(Box)`
-  min-width: 310px;  
+const ExperienceProgramLayout = styled(Box)`
+  min-width: 310px;
   min-height: 150px;
   max-height: 150px;
   display: flex;
@@ -20,14 +20,14 @@ const VoucherProgramLayout = styled(Box)`
   }
 `
 
-type VoucherProgramProps = {
+type ExperienceProgramProps = {
   programTitle: string
   programAbstract: string | null | undefined
   programInstructors: (string | null | undefined)[]
   programId: string
 }
 
-const VoucherProgram: React.FC<VoucherProgramProps> = ({
+const ExperienceProgram: React.FC<ExperienceProgramProps> = ({
   programTitle,
   programAbstract,
   programInstructors,
@@ -35,7 +35,7 @@ const VoucherProgram: React.FC<VoucherProgramProps> = ({
 }) => {
   const programPath = `${window.location.origin.toString()}/programs/${programId}`
   return (
-    <VoucherProgramLayout onClick={() => window.open(programPath)} cursor="pointer">
+    <ExperienceProgramLayout onClick={() => window.open(programPath)} cursor="pointer">
       <Box h="24px" borderColor="#049D96" borderWidth="2px" position="absolute" left="0px" />
       <Text as="b" fontSize="md" color="var(--gray-darker)" isTruncated noOfLines={1}>
         {programTitle}
@@ -49,8 +49,8 @@ const VoucherProgram: React.FC<VoucherProgramProps> = ({
           {programInstructors?.join('、')}
         </Text>
       </Box>
-    </VoucherProgramLayout>
+    </ExperienceProgramLayout>
   )
 }
 
-export default VoucherProgram
+export default ExperienceProgram

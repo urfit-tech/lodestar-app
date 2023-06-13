@@ -1,15 +1,16 @@
+import { gql, useQuery } from '@apollo/client'
 import { Box, Spinner, Text } from '@chakra-ui/react'
+import { isEmpty } from 'lodash'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import hasura from '../../hasura'
+import { checkLearningSystem } from '../../helpers/learning'
 import AdminCard from '../common/AdminCard'
 import { BREAK_POINT } from '../common/Responsive'
+import ExperienceProgram from './ExperienceProgram'
 import learningAchievementMessages from './translation'
-import hasura from '../../hasura'
-import VoucherProgram from './VoucherProgram'
-import { gql, useQuery } from '@apollo/client'
-import { isEmpty } from 'lodash'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 
 const StyledCard = styled(AdminCard)`
   .ant-card-body {
@@ -48,39 +49,39 @@ type VoucherProduct = {
   product: { __typename?: 'product' | undefined; type: string; target: string }
 }
 
-const VoucherProgramCard: React.FC<{ currentMemberId: string | null }> = ({ currentMemberId }) => {
+const ExperienceProgramCard: React.FC<{ currentMemberId: string | null }> = ({ currentMemberId }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
-  const voucherProgramLevel = JSON.parse(settings['custom']).voucherProgramLevel // this setting is for cw！ if need to change, modify in db
   const {
-    voucherProgramPlan,
-    voucherProgramPackagePlan,
+    experienceProgramPlan,
+    experienceProgramPackagePlan,
     loading: targetsLoading,
-  } = useVoucherTargets(currentMemberId || '', voucherProgramLevel)
-  const { voucherProgramByPlan, loading: planLoading } = useVoucherProgramByPlan(voucherProgramPlan)
-  const { voucherProgramByPackage, loading: packageLoading } = useVoucherProgramByPackage(voucherProgramPackagePlan)
-  const voucherPrograms = [...voucherProgramByPlan, ...voucherProgramByPackage]
+  } = useVoucherTargets(currentMemberId || '', checkLearningSystem(settings['custom']).experienceProgramLevel)
+  const { experienceProgramByPlan, loading: planLoading } = useExperienceProgramByPlan(experienceProgramPlan)
+  const { experienceProgramByPackage, loading: packageLoading } =
+    useExperienceProgramByPackage(experienceProgramPackagePlan)
+  const experiencePrograms = [...experienceProgramByPlan, ...experienceProgramByPackage]
   const isCardLoading = packageLoading && planLoading && targetsLoading
 
   return (
     <StyledCard>
       <StyledColGrid>
         <Text as="b" fontSize="lg">
-          {formatMessage(learningAchievementMessages.VoucherProgramCard.myProgram)}
+          {formatMessage(learningAchievementMessages.ExperienceProgramCard.myProgram)}
         </Text>
         <StyledRowGrid>
           {isCardLoading && <Spinner />}
-          {!isCardLoading && isEmpty(voucherProgramPlan) && isEmpty(voucherProgramPackagePlan) && (
-            <div>{formatMessage(learningAchievementMessages.VoucherProgramCard.noProgram)}</div>
+          {!isCardLoading && isEmpty(experienceProgramPlan) && isEmpty(experienceProgramPackagePlan) && (
+            <div>{formatMessage(learningAchievementMessages.ExperienceProgramCard.noProgram)}</div>
           )}
           {!isCardLoading &&
-            voucherPrograms.map((voucherProgram, i) => (
+            experiencePrograms.map((experienceProgram, i) => (
               <div key={i}>
-                <VoucherProgram
-                  programTitle={voucherProgram.title}
-                  programAbstract={voucherProgram.abstract}
-                  programInstructors={voucherProgram.instructors}
-                  programId={voucherProgram.id}
+                <ExperienceProgram
+                  programTitle={experienceProgram.title}
+                  programAbstract={experienceProgram.abstract}
+                  programInstructors={experienceProgram.instructors}
+                  programId={experienceProgram.id}
                 />
               </div>
             ))}
@@ -111,28 +112,28 @@ export const useVoucherTargets = (memberId: string, level: number) => {
     { variables: { memberId, level } },
   )
   const voucherProducts: VoucherProduct[] = data ? data.order_log.map(o => o.order_products).flat() : []
-  const voucherProgramPlan: string[] = voucherProducts
+  const experienceProgramPlan: string[] = voucherProducts
     ?.filter(vp => vp.product.type === 'ProgramPlan')
     .map(vp => vp.product.target)
-  const voucherProgramPackagePlan: string[] = voucherProducts
+  const experienceProgramPackagePlan: string[] = voucherProducts
     ?.filter(vp => vp.product.type === 'ProgramPackagePlan')
     .map(vp => vp.product.target)
 
   return {
-    voucherProgramPlan,
-    voucherProgramPackagePlan,
+    experienceProgramPlan,
+    experienceProgramPackagePlan,
     loading,
     error,
   }
 }
 
-export const useVoucherProgramByPlan = (targets: string[]) => {
+export const useExperienceProgramByPlan = (targets: string[]) => {
   const { data, loading, error } = useQuery<
-    hasura.GET_VOUCHER_PROGRAM_BY_PLAN,
-    hasura.GET_VOUCHER_PROGRAM_BY_PLANVariables
+    hasura.GET_EXPERIENCE_PROGRAM_BY_PLAN,
+    hasura.GET_EXPERIENCE_PROGRAM_BY_PLANVariables
   >(
     gql`
-      query GET_VOUCHER_PROGRAM_BY_PLAN($targets: [uuid!]) {
+      query GET_EXPERIENCE_PROGRAM_BY_PLAN($targets: [uuid!]) {
         program_plan(where: { id: { _in: $targets } }) {
           program {
             id
@@ -150,23 +151,23 @@ export const useVoucherProgramByPlan = (targets: string[]) => {
     { variables: { targets } },
   )
 
-  const voucherProgramByPlan =
+  const experienceProgramByPlan =
     data?.program_plan.map(pp => ({
       id: pp.program.id,
       title: pp.program.title,
       abstract: pp.program.abstract,
       instructors: pp.program.instructors.map(i => i.member?.name),
     })) || []
-  return { voucherProgramByPlan, loading, error }
+  return { experienceProgramByPlan, loading, error }
 }
 
-export const useVoucherProgramByPackage = (targets: string[]) => {
+export const useExperienceProgramByPackage = (targets: string[]) => {
   const { data, loading, error } = useQuery<
-    hasura.GET_VOUCHER_PROGRAM_BY_PACKAGE,
-    hasura.GET_VOUCHER_PROGRAM_BY_PACKAGEVariables
+    hasura.GET_EXPERIENCE_PROGRAM_BY_PACKAGE,
+    hasura.GET_EXPERIENCE_PROGRAM_BY_PACKAGEVariables
   >(
     gql`
-      query GET_VOUCHER_PROGRAM_BY_PACKAGE($targets: [uuid!]) {
+      query GET_EXPERIENCE_PROGRAM_BY_PACKAGE($targets: [uuid!]) {
         program_package_plan(where: { id: { _in: $targets } }) {
           program_package {
             program_package_programs {
@@ -187,7 +188,7 @@ export const useVoucherProgramByPackage = (targets: string[]) => {
     `,
     { variables: { targets } },
   )
-  const voucherProgramByPackage =
+  const experienceProgramByPackage =
     data?.program_package_plan
       .map(pp => {
         return pp.program_package.program_package_programs.map(p => {
@@ -201,6 +202,6 @@ export const useVoucherProgramByPackage = (targets: string[]) => {
       })
       .flat() || []
 
-  return { voucherProgramByPackage, loading, error }
+  return { experienceProgramByPackage, loading, error }
 }
-export default VoucherProgramCard
+export default ExperienceProgramCard

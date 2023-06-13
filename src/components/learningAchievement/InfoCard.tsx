@@ -6,11 +6,12 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import AdminCard from '../../components/common/AdminCard'
+import { checkLearningSystem } from '../../helpers/learning'
 import { ReactComponent as EditIcon } from '../../images/edit.svg'
 import { LearnedStatistic } from '../../pages/member/LearningAchievementPage'
 import { BREAK_POINT } from '../common/Responsive'
+import { useExperienceProgramByPackage, useExperienceProgramByPlan, useVoucherTargets } from './ExperienceProgramCard'
 import learningAchievementMessages from './translation'
-import { useVoucherProgramByPlan, useVoucherProgramByPackage, useVoucherTargets } from './VoucherProgramCard'
 
 const StyledCard = styled(AdminCard)`
   .ant-card-body {
@@ -88,14 +89,13 @@ const InfoCard: React.FC<InfoCardProps> = ({
   const history = useHistory()
   const { settings } = useApp()
   const { currentMemberId } = useAuth()
-  const voucherProgramLevel = JSON.parse(settings['custom']).voucherProgramLevel // this setting is for cw！ if need to change, modify in db
-  const { voucherProgramPlan, voucherProgramPackagePlan } = useVoucherTargets(
+  const { experienceProgramPlan, experienceProgramPackagePlan } = useVoucherTargets(
     currentMemberId || '',
-    voucherProgramLevel,
+    checkLearningSystem(settings['custom']).experienceProgramLevel,
   )
-  const { voucherProgramByPlan } = useVoucherProgramByPlan(voucherProgramPlan)
-  const { voucherProgramByPackage } = useVoucherProgramByPackage(voucherProgramPackagePlan)
-  const voucherPrograms = [...voucherProgramByPlan, ...voucherProgramByPackage]
+  const { experienceProgramByPlan } = useExperienceProgramByPlan(experienceProgramPlan)
+  const { experienceProgramByPackage } = useExperienceProgramByPackage(experienceProgramPackagePlan)
+  const experiencePrograms = [...experienceProgramByPlan, ...experienceProgramByPackage]
   const pushToProfile = (): void => {
     history.push('/settings/profile')
   }
@@ -137,10 +137,10 @@ const InfoCard: React.FC<InfoCardProps> = ({
         </Center>
         <Box textAlign="center">
           <Text fontSize="lg" as="b">
-            {voucherPrograms.length}
+            {experiencePrograms.length}
             {formatMessage(learningAchievementMessages.InfoCard.lesson)}
           </Text>
-          <Text fontSize="xs">{formatMessage(learningAchievementMessages.InfoCard.totalVoucherProgram)}</Text>
+          <Text fontSize="xs">{formatMessage(learningAchievementMessages.InfoCard.totalExperienceProgram)}</Text>
         </Box>
         <Center height="50px" width="20px">
           <Divider orientation="vertical" />
