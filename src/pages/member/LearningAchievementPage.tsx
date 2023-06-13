@@ -11,13 +11,13 @@ import styled from 'styled-components'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import BadgeCard from '../../components/learningAchievement/BadgeCard'
+import ExperienceProgramCard from '../../components/learningAchievement/ExperienceProgramCard'
 import InfoCard from '../../components/learningAchievement/InfoCard'
 import ProgramProgressDetailCard from '../../components/learningAchievement/ProgramProgressDetailCard'
 import ProgramSummaryCard from '../../components/learningAchievement/ProgramSummaryCard'
 import ProgressBarCard from '../../components/learningAchievement/ProgressBarCard'
 import RadarCard from '../../components/learningAchievement/RadarCard'
 import learningAchievementMessages from '../../components/learningAchievement/translation'
-import VoucherProgramCard from '../../components/learningAchievement/VoucherProgramCard'
 import hasura from '../../hasura'
 import { checkLearningSystem } from '../../helpers/learning'
 import { commonMessages } from '../../helpers/translation'
@@ -178,7 +178,7 @@ const LearningAchievementPage: React.FC = () => {
             <ProgressBarCard consecutiveDayOptions={learnedStatistic.consecutiveDayOptions} />
             <ProgramProgressDetailCard productOptions={learnedStatistic.productOptions} />
             <BadgeCard memberAchievement={memberAchievement || []} />
-            <VoucherProgramCard currentMemberId={currentMemberId}/>
+            <ExperienceProgramCard currentMemberId={currentMemberId} />
           </StyledColGrid>
         </MemberAdminLayout>
       )}

@@ -18,7 +18,10 @@ const learningAchievementMessages = {
     peices: { id: 'learningAchievement.InfoCard.peices', defaultMessage: 'pcs.' },
     badgesCollected: { id: 'learningAchievement.InfoCard.badgesCollected', defaultMessage: 'badges' },
     totalProgramProgress: { id: 'learningAchievement.InfoCard.medalsCollected', defaultMessage: 'progress' },
-    totalVoucherProgram: { id: 'learningAchievement.InfoCard.totalVoucherProgram', defaultMessage: 'voucher program' },
+    totalExperienceProgram: {
+      id: 'learningAchievement.InfoCard.totalExperienceProgram',
+      defaultMessage: 'voucher program',
+    },
     lesson: { id: 'learningAchievement.InfoCard.lesson', defaultMessage: 'Lesson' },
   }),
   ProgramSummaryCard: defineMessages({
@@ -124,10 +127,10 @@ const learningAchievementMessages = {
     weekend: { id: 'learningAchievement.Badge.weekend', defaultMessage: '*Every weekend' },
     continued: { id: 'learningAchievement.Badge.continued', defaultMessage: 'continued' },
   }),
-  VoucherProgramCard: defineMessages({
-    noProgram: { id: 'learningAchievement.VoucherProgramCard.programName', defaultMessage: 'No Program' },
+  ExperienceProgramCard: defineMessages({
+    noProgram: { id: 'learningAchievement.ExperienceProgramCard.programName', defaultMessage: 'No Program' },
     myProgram: {
-      id: 'learningAchievement.VoucherProgramCard.myProgram',
+      id: 'learningAchievement.ExperienceProgramCard.myProgram',
       defaultMessage: 'My Voucher Program',
     },
   }),
