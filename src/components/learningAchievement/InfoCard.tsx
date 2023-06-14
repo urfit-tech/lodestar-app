@@ -4,13 +4,19 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import AdminCard from '../../components/common/AdminCard'
 import { checkLearningSystem } from '../../helpers/learning'
 import { ReactComponent as EditIcon } from '../../images/edit.svg'
 import { LearnedStatistic } from '../../pages/member/LearningAchievementPage'
 import { BREAK_POINT } from '../common/Responsive'
-import { useExperienceProgramByPackage, useExperienceProgramByPlan, useVoucherTargets } from './ExperienceProgramCard'
+import {
+  uniqueObjectArray,
+  useExperienceProgramByPackage,
+  useExperienceProgramByPlan,
+  useExperienceTargets,
+} from './ExperienceProgramCard'
 import learningAchievementMessages from './translation'
 
 const StyledCard = styled(AdminCard)`
@@ -88,14 +94,15 @@ const InfoCard: React.FC<InfoCardProps> = ({
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { settings } = useApp()
+  const { memberId } = useParams<{ memberId: string }>()
   const { currentMemberId } = useAuth()
-  const { experienceProgramPlan, experienceProgramPackagePlan } = useVoucherTargets(
-    currentMemberId || '',
+  const { experienceProgramPlan, experienceProgramPackagePlan } = useExperienceTargets(
+    memberId || currentMemberId || '',
     checkLearningSystem(settings['custom']).experienceProgramLevel,
   )
   const { experienceProgramByPlan } = useExperienceProgramByPlan(experienceProgramPlan)
   const { experienceProgramByPackage } = useExperienceProgramByPackage(experienceProgramPackagePlan)
-  const experiencePrograms = [...experienceProgramByPlan, ...experienceProgramByPackage]
+  const experiencePrograms = uniqueObjectArray([...experienceProgramByPlan, ...experienceProgramByPackage])
   const pushToProfile = (): void => {
     history.push('/settings/profile')
   }
@@ -132,7 +139,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
           </Text>
           <Text fontSize="xs">{formatMessage(learningAchievementMessages.InfoCard.badgesCollected)}</Text>
         </Box>
-        <Center height="50px" width="20px">
+        <Center height="50px" width="40px">
           <Divider orientation="vertical" />
         </Center>
         <Box textAlign="center">
@@ -142,7 +149,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
           </Text>
           <Text fontSize="xs">{formatMessage(learningAchievementMessages.InfoCard.totalExperienceProgram)}</Text>
         </Box>
-        <Center height="50px" width="20px">
+        <Center height="50px" width="40px">
           <Divider orientation="vertical" />
         </Center>
         <Box textAlign="center">
