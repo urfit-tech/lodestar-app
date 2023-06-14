@@ -4,6 +4,7 @@ import { isEmpty } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { checkLearningSystem } from '../../helpers/learning'
@@ -17,9 +18,7 @@ const StyledCard = styled(AdminCard)`
     align-items: center;
     gap: 30px;
     padding: 20px;
-    max-height: 600px;
     @media (min-width: ${BREAK_POINT}px) {
-      height: 250px;
       flex-direction: row;
     }
   }
@@ -36,33 +35,49 @@ const StyledRowGrid = styled(Box)`
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  height: 500px;
+  height: auto;
+  max-height: 500px;
   overflow-y: scroll;
   @media (min-width: ${BREAK_POINT}px) {
     flex-direction: row;
-    height: 250px;
   }
 `
 
-type VoucherProduct = {
+type ExperienceProduct = {
   __typename?: 'order_product' | undefined
   product: { __typename?: 'product' | undefined; type: string; target: string }
 }
 
+export const uniqueObjectArray = (array: any[]) => {
+  return array.filter((value, index) => {
+    const _value = JSON.stringify(value)
+    return (
+      index ===
+      array.findIndex(obj => {
+        return JSON.stringify(obj) === _value
+      })
+    )
+  })
+}
+
 const ExperienceProgramCard: React.FC<{ currentMemberId: string | null }> = ({ currentMemberId }) => {
   const { formatMessage } = useIntl()
+  const { memberId } = useParams<{ memberId: string }>()
   const { settings } = useApp()
   const {
     experienceProgramPlan,
     experienceProgramPackagePlan,
     loading: targetsLoading,
-  } = useVoucherTargets(currentMemberId || '', checkLearningSystem(settings['custom']).experienceProgramLevel)
+  } = useExperienceTargets(
+    memberId || currentMemberId || '',
+    checkLearningSystem(settings['custom']).experienceProgramLevel,
+  )
   const { experienceProgramByPlan, loading: planLoading } = useExperienceProgramByPlan(experienceProgramPlan)
   const { experienceProgramByPackage, loading: packageLoading } =
     useExperienceProgramByPackage(experienceProgramPackagePlan)
-  const experiencePrograms = [...experienceProgramByPlan, ...experienceProgramByPackage]
   const isCardLoading = packageLoading && planLoading && targetsLoading
-
+  const experiencePrograms = [...experienceProgramByPlan, ...experienceProgramByPackage,...experienceProgramByPlan, ...experienceProgramByPackage,...experienceProgramByPlan, ...experienceProgramByPackage]
+  // const experiencePrograms = uniqueObjectArray([...experienceProgramByPlan, ...experienceProgramByPackage])
   return (
     <StyledCard>
       <StyledColGrid>
@@ -91,11 +106,30 @@ const ExperienceProgramCard: React.FC<{ currentMemberId: string | null }> = ({ c
   )
 }
 
-export const useVoucherTargets = (memberId: string, level: number) => {
-  const { data, loading, error } = useQuery<hasura.GET_VOUCHER_PRODUCT, hasura.GET_VOUCHER_PRODUCTVariables>(
+export const useExperienceTargets = (memberId: string, level: number) => {
+  const { data, loading, error } = useQuery<hasura.GET_EXPERIENCE_PRODUCT, hasura.GET_EXPERIENCE_PRODUCTVariables>(
     gql`
-      query GET_VOUCHER_PRODUCT($memberId: String!, $level: numeric) {
-        order_log(where: { member_id: { _eq: $memberId } }) {
+      query GET_EXPERIENCE_PRODUCT($memberId: String!, $level: numeric) {
+        order_log(
+          where: {
+            _and: [
+              { member_id: { _eq: $memberId } }
+              { order_products: { delivered_at: { _is_null: false } } }
+              {
+                _or: [
+                  { order_products: { ended_at: { _gte: "now()" } } }
+                  { order_products: { ended_at: { _is_null: true } } }
+                ]
+              }
+              {
+                _or: [
+                  { order_products: { started_at: { _lte: "now()" } } }
+                  { order_products: { started_at: { _is_null: true } } }
+                ]
+              }
+            ]
+          }
+        ) {
           order_products(
             where: {
               product: { _and: [{ level: { _eq: $level } }, { type: { _in: ["ProgramPlan", "ProgramPackagePlan"] } }] }
@@ -111,13 +145,13 @@ export const useVoucherTargets = (memberId: string, level: number) => {
     `,
     { variables: { memberId, level } },
   )
-  const voucherProducts: VoucherProduct[] = data ? data.order_log.map(o => o.order_products).flat() : []
-  const experienceProgramPlan: string[] = voucherProducts
-    ?.filter(vp => vp.product.type === 'ProgramPlan')
-    .map(vp => vp.product.target)
-  const experienceProgramPackagePlan: string[] = voucherProducts
-    ?.filter(vp => vp.product.type === 'ProgramPackagePlan')
-    .map(vp => vp.product.target)
+  const experienceProducts: ExperienceProduct[] = data ? data.order_log.map(o => o.order_products).flat() : []
+  const experienceProgramPlan: string[] = experienceProducts
+    ?.filter(ep => ep.product.type === 'ProgramPlan')
+    .map(ep => ep.product.target)
+  const experienceProgramPackagePlan: string[] = experienceProducts
+    ?.filter(ep => ep.product.type === 'ProgramPackagePlan')
+    .map(ep => ep.product.target)
 
   return {
     experienceProgramPlan,
