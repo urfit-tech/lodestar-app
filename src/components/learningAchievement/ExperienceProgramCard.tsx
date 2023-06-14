@@ -37,7 +37,7 @@ const StyledRowGrid = styled(Box)`
   width: 100%;
   height: auto;
   max-height: 500px;
-  overflow-y: scroll;
+  overflow-y: auto;
   @media (min-width: ${BREAK_POINT}px) {
     flex-direction: row;
   }
@@ -76,8 +76,7 @@ const ExperienceProgramCard: React.FC<{ currentMemberId: string | null }> = ({ c
   const { experienceProgramByPackage, loading: packageLoading } =
     useExperienceProgramByPackage(experienceProgramPackagePlan)
   const isCardLoading = packageLoading && planLoading && targetsLoading
-  const experiencePrograms = [...experienceProgramByPlan, ...experienceProgramByPackage,...experienceProgramByPlan, ...experienceProgramByPackage,...experienceProgramByPlan, ...experienceProgramByPackage]
-  // const experiencePrograms = uniqueObjectArray([...experienceProgramByPlan, ...experienceProgramByPackage])
+  const experiencePrograms = uniqueObjectArray([...experienceProgramByPlan, ...experienceProgramByPackage])
   return (
     <StyledCard>
       <StyledColGrid>
