@@ -109,6 +109,7 @@
     "react-app-rewired": "^2.1.8",
     "react-bootstrap": "^1.1.1",
     "react-dom": "17.0.2",
+    "react-error-overlay": "6.0.9",
     "react-facebook-pixel": "1.0.4",
     "react-ga": "3.3.0",
     "react-gtm-module": "^2.0.8",
@@ -163,7 +164,8 @@
   },
   "resolutions": {
     "@craftjs/utils": "0.1.0-beta.20",
-    "@types/react": "17.0.0"
+    "@types/react": "17.0.0",
+    "react-error-overlay": "6.0.9"
   },
   "engines": {
     "node": ">=14.16.0 <17.0.0"

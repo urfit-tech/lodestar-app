@@ -172,7 +172,9 @@ const AppointmentPlanCollection: React.FC<{
 
   const diffPlanBookedTimes = [
     ...appointmentPlans.map(appointmentPlan =>
-      appointmentPlan.periods.filter(period => period.booked).map(v => moment(v.startedAt).format('YYYY-MM-DD HH:mm')),
+      appointmentPlan.periods
+        .filter(period => Boolean(period.booked >= appointmentPlan.capacity && appointmentPlan.capacity !== -1))
+        .map(v => moment(v.startedAt).format('YYYY-MM-DD HH:mm')),
     ),
   ].flat(1)
 

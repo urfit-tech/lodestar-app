@@ -20,6 +20,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
           is_private
           reservation_amount
           reservation_type
+          capacity
           currency {
             id
             label
@@ -51,6 +52,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
           price: appointmentPlan.price,
           phone: null,
           supportLocales: appointmentPlan.support_locales,
+          capacity: appointmentPlan.capacity,
           currency: {
             id: appointmentPlan.currency.id,
             label: appointmentPlan.currency.label,
@@ -61,7 +63,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
             id: `${period.started_at}`,
             startedAt: new Date(period.started_at),
             endedAt: new Date(period.ended_at),
-            booked: !!period.booked,
+            booked: period.booked,
             available: !!period.available,
           })),
           isPrivate: appointmentPlan.is_private,
@@ -87,6 +89,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) 
           description
           duration
           price
+          capacity
           support_locales
           currency {
             id
@@ -136,6 +139,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) 
           price: data.appointment_plan_by_pk.price,
           phone: null,
           supportLocales: data.appointment_plan_by_pk.support_locales,
+          capacity: data.appointment_plan_by_pk.capacity,
           currency: {
             id: data.appointment_plan_by_pk.currency.id,
             label: data.appointment_plan_by_pk.currency.label,
@@ -146,7 +150,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) 
             id: `${period.started_at}`,
             startedAt: new Date(period.started_at),
             endedAt: new Date(period.ended_at),
-            booked: !!period.booked,
+            booked: period.booked,
           })),
           creator: {
             id: data.appointment_plan_by_pk.creator?.id || '',
