@@ -232,7 +232,10 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
             <Button
               type="primary"
               onClick={async () => {
-                if (enabledModules.meet_service) {
+                const joinUrl =
+                  orderProduct.options?.joinUrl ||
+                  `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`
+                if (enabledModules.meet_service && !orderProduct.options?.joinUrl) {
                   const { data } = await apolloClient.query<
                     hasura.GET_APPOINTMENT_PERIOD_MEET_ID,
                     hasura.GET_APPOINTMENT_PERIOD_MEET_IDVariables
@@ -269,14 +272,10 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
                       )
                   } catch (error) {
                     console.log(`get meets error: ${error}`)
-                    window.open(
-                      `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
-                    )
+                    window.open(joinUrl)
                   }
                 } else {
-                  window.open(
-                    `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
-                  )
+                  window.open(joinUrl)
                 }
               }}
             >
