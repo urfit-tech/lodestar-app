@@ -13,13 +13,14 @@ export type AppointmentPlan = {
   isPrivate?: boolean
   reservationAmount?: number
   reservationType?: ReservationType | null
+  capacity: number
 }
 
 export type AppointmentPeriod = {
   id: string
   startedAt: Date
   endedAt: Date
-  booked: boolean
+  booked: number
   available?: boolean
 }
 
