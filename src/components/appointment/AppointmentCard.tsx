@@ -11,39 +11,17 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React, { useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { dateRangeFormatter } from '../../helpers'
-import { commonMessages } from '../../helpers/translation'
 import { useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/appointment'
 import DefaultAvatar from '../../images/avatar.svg'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
-import { AppointmentEnrollment } from '../../types/appointment'
 import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
-
-const messages = defineMessages({
-  appointmentIssue: { id: 'appointment.button.appointmentIssue', defaultMessage: '提問單' },
-  appointmentIssueDescription: {
-    id: 'appointment.text.appointmentIssueDescription',
-    defaultMessage: '建議以 1.  2. 方式點列問題，並適時換行讓老師更容易閱讀，若無問題則填寫「無」',
-  },
-  appointmentDate: { id: 'appointment.text.appointmentDate', defaultMessage: '諮詢日期' },
-  createAppointmentIssue: { id: 'appointment.label.createAppointmentIssue', defaultMessage: '我要提問' },
-  appointmentCanceledNotation: {
-    id: 'appointment.text.appointmentCanceledNotation',
-    defaultMessage: '已於 {time} 取消預約',
-  },
-  cancelAppointment: { id: 'appointment.ui.cancelAppointment', defaultMessage: '取消預約' },
-  confirmCancelAlert: { id: 'appointment.label.confirmCancelAlert', defaultMessage: '確定要取消預約嗎？' },
-  confirmCancelNotation: {
-    id: 'appointment.text.confirmCancelNotation',
-    defaultMessage: '取消預約後將會寄送通知給諮詢老師，並重新開放此時段，若需退費請主動聯繫平台。',
-  },
-  canceledReason: { id: 'appointment.label.canceledReason', defaultMessage: '取消原因' },
-})
+import appointmentMessages from './translation'
 
 const StyledCard = styled.div`
   background-color: white;
@@ -149,7 +127,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
         .then(() => {
           onRefetch && onRefetch()
           setIssueModalVisible(false)
-          message.success(commonMessages.message.success)
+          message.success(appointmentMessages['*'].saveSuccessfully)
         })
         .finally(() => setLoading(false))
     })
@@ -217,23 +195,23 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
         {isCanceled ? (
           <StyledCanceledText>
             <Button type="link" size="small" className="mr-3" onClick={() => setIssueModalVisible(true)}>
-              {formatMessage(messages.appointmentIssue)}
+              {formatMessage(appointmentMessages.AppointmentCard.appointmentIssue)}
             </Button>
-            {formatMessage(messages.appointmentCanceledNotation, {
+            {formatMessage(appointmentMessages.AppointmentCard.appointmentCanceledNotation, {
               time: moment(orderProduct.canceledAt).format('MM/DD(dd) HH:mm'),
             })}
           </StyledCanceledText>
         ) : isFinished ? (
           <>
             <Button type="link" size="small" className="mr-3" onClick={() => setIssueModalVisible(true)}>
-              {formatMessage(messages.appointmentIssue)}
+              {formatMessage(appointmentMessages.AppointmentCard.appointmentIssue)}
             </Button>
-            <StyledBadge>{formatMessage(commonMessages.status.finished)}</StyledBadge>
+            <StyledBadge>{formatMessage(appointmentMessages['*'].finished)}</StyledBadge>
           </>
         ) : (
           <>
             <Button type="link" size="small" className="mr-3" onClick={() => setIssueModalVisible(true)}>
-              {formatMessage(messages.appointmentIssue)}
+              {formatMessage(appointmentMessages.AppointmentCard.appointmentIssue)}
             </Button>
             <Button
               type="link"
@@ -249,12 +227,15 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
                 )
               }
             >
-              {formatMessage(commonMessages.button.toCalendar)}
+              {formatMessage(appointmentMessages.AppointmentCard.toCalendar)}
             </Button>
             <Button
               type="primary"
               onClick={async () => {
-                if (enabledModules.meet_service) {
+                const joinUrl =
+                  orderProduct.options?.joinUrl ||
+                  `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`
+                if (enabledModules.meet_service && !orderProduct.options?.joinUrl) {
                   const { data } = await apolloClient.query<
                     hasura.GET_APPOINTMENT_PERIOD_MEET_ID,
                     hasura.GET_APPOINTMENT_PERIOD_MEET_IDVariables
@@ -291,24 +272,20 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
                       )
                   } catch (error) {
                     console.log(`get meets error: ${error}`)
-                    window.open(
-                      `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
-                    )
+                    window.open(joinUrl)
                   }
                 } else {
-                  window.open(
-                    `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`,
-                  )
+                  window.open(joinUrl)
                 }
               }}
             >
-              {formatMessage(commonMessages.button.attend)}
+              {formatMessage(appointmentMessages.AppointmentCard.attend)}
             </Button>
             <Dropdown
               overlay={
                 <Menu>
                   <Menu.Item onClick={() => setCancelModalVisible(true)}>
-                    {formatMessage(messages.cancelAppointment)}
+                    {formatMessage(appointmentMessages.AppointmentCard.cancelAppointment)}
                   </Menu.Item>
                 </Menu>
               }
@@ -325,15 +302,17 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
         width={660}
         visible={issueModalVisible}
         footer={isFinished ? null : undefined}
-        okText={formatMessage(commonMessages.button.save)}
-        cancelText={formatMessage(commonMessages.ui.cancel)}
+        okText={formatMessage(appointmentMessages['*'].save)}
+        cancelText={formatMessage(appointmentMessages['*'].cancel)}
         okButtonProps={{ loading }}
         onOk={handleSubmit}
         onCancel={() => setIssueModalVisible(false)}
       >
-        <StyledModalTitle className="mb-3">{formatMessage(messages.appointmentIssue)}</StyledModalTitle>
+        <StyledModalTitle className="mb-3">
+          {formatMessage(appointmentMessages.AppointmentCard.appointmentIssue)}
+        </StyledModalTitle>
         <StyledModalMetaBlock className="mb-3">
-          <span className="mr-2">{formatMessage(messages.appointmentDate)}</span>
+          <span className="mr-2">{formatMessage(appointmentMessages.AppointmentCard.appointmentDate)}</span>
           {orderProduct.startedAt && orderProduct.endedAt ? (
             <span>
               {dateRangeFormatter({
@@ -345,8 +324,8 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
           ) : null}
         </StyledModalMetaBlock>
         <div className="mb-3">
-          <strong className="mb-2">{formatMessage(messages.createAppointmentIssue)}</strong>
-          <div>{formatMessage(messages.appointmentIssueDescription)}</div>
+          <strong className="mb-2">{formatMessage(appointmentMessages.AppointmentCard.createAppointmentIssue)}</strong>
+          <div>{formatMessage(appointmentMessages.AppointmentCard.appointmentIssueDescription)}</div>
         </div>
 
         <Form colon={false} className={isFinished ? 'd-none' : ''}>
@@ -389,15 +368,17 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
         width={384}
         centered
         visible={cancelModalVisible}
-        okText={formatMessage(messages.cancelAppointment)}
-        cancelText={formatMessage(commonMessages.ui.back)}
+        okText={formatMessage(appointmentMessages.AppointmentCard.cancelAppointment)}
+        cancelText={formatMessage(appointmentMessages['*'].back)}
         okButtonProps={{ loading, type: 'danger', disabled: !canceledReason }}
         onOk={() => handleCancel()}
         onCancel={() => setCancelModalVisible(false)}
       >
-        <StyledModalTitle className="mb-4">{formatMessage(messages.confirmCancelAlert)}</StyledModalTitle>
-        <div className="mb-4">{formatMessage(messages.confirmCancelNotation)}</div>
-        <StyledModalSubTitle>{formatMessage(messages.canceledReason)}</StyledModalSubTitle>
+        <StyledModalTitle className="mb-4">
+          {formatMessage(appointmentMessages.AppointmentCard.confirmCancelAlert)}
+        </StyledModalTitle>
+        <div className="mb-4">{formatMessage(appointmentMessages.AppointmentCard.confirmCancelNotation)}</div>
+        <StyledModalSubTitle>{formatMessage(appointmentMessages.AppointmentCard.canceledReason)}</StyledModalSubTitle>
         <Textarea onChange={e => setCanceledReason(e.target.value)} />
       </StyledModal>
     </StyledCard>
