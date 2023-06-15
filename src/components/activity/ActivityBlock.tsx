@@ -59,6 +59,7 @@ const ActivityBlock: React.VFC<ActivityBlockProps> = ({
   >(GetActivitySessionAggregate, {
     variables: {
       condition: {
+        id: { _eq: id },
         organizer_id: { _eq: options?.organizerId },
         published_at: { _is_null: false, _lte: 'now()' },
         is_private: { _eq: false },
