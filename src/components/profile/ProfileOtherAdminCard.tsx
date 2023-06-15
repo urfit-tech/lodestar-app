@@ -172,9 +172,9 @@ const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, me
                   initialValue: defaultValue,
                   rules: [
                     {
-                      required: false,
+                      required: property.isRequired,
                       message: formatMessage(profileMessages.ProfileOtherAdminCard.enter, {
-                        enterlabel: property.name,
+                        enterLabel: property.name,
                       }),
                     },
                   ],

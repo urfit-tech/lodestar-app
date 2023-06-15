@@ -253,6 +253,7 @@ const useCoinLogCollections = ({ memberId, current }: { memberId: string; curren
           }
           limit: 10
           offset: $offset
+          order_by: { created_at: desc }
         ) {
           id
           title
