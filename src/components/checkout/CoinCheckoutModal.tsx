@@ -1,10 +1,10 @@
-import { Box, Button, Divider, Input, Skeleton, useDisclosure, useToast } from '@chakra-ui/react'
+import { Box, Button, Divider, Input, Skeleton, useDisclosure } from '@chakra-ui/react'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { validationRegExp } from 'lodestar-app-element/src/helpers'
 import { sum } from 'ramda'
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -54,7 +54,8 @@ const CoinCheckoutModal: React.VFC<{
   renderTrigger?: React.VFC<{
     setVisible: () => void
   }>
-}> = ({ productId, amount, currencyId, phoneInputEnabled, renderTrigger }) => {
+  startedAt?: Date
+}> = ({ productId, amount, currencyId, phoneInputEnabled, renderTrigger, startedAt }) => {
   const history = useHistory()
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -81,6 +82,7 @@ const CoinCheckoutModal: React.VFC<{
     options: {
       [productId]: {
         from: window.location.pathname,
+        startedAt,
       },
     },
   })

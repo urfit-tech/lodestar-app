@@ -202,9 +202,10 @@ const AppointmentPlanCollection: React.FC<{
           {appointmentPlan.currency.id === 'LSC' ? (
             <CoinCheckoutModal
               productId={`AppointmentPlan_${appointmentPlan.id}`}
-              amount={1}
+              amount={appointmentPlan.price}
               currencyId={appointmentPlan.currency.id}
               phoneInputEnabled={true}
+              startedAt={selectedPeriod?.startedAt}
               renderTrigger={({ setVisible }) => (
                 <AppointmentPeriodCollection
                   appointmentPeriods={appointmentPlan.periods}
