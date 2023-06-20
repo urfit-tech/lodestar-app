@@ -13,7 +13,9 @@ export const useAuthModal = () => {
     utm = {}
   }
 
-  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isStart
+  const pathName = window.location.pathname
+  const isPushToCouponsVoucherPage = pathName.includes('/coupons') || pathName.includes('/voucher')
+  const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isStart && !isPushToCouponsVoucherPage
   return {
     open: (setAuthModalVisible: React.Dispatch<React.SetStateAction<boolean>> | undefined) => {
       if (settings['auth.parenting.client_id'] && settings['auth.email.disabled']) {
