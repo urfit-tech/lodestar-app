@@ -3,6 +3,11 @@ import styled, { css } from 'styled-components'
 import { ReactComponent as HeartIcon } from '../../images/icon-heart-o.svg'
 import { ReactComponent as HeartFillIcon } from '../../images/icon-heart.svg'
 
+const StyledIconButtonBlock = styled.div`
+  display: flex;
+  align-items: center;
+`
+
 const StyledIconButton = styled(IconButton)<{ isActive?: boolean }>`
   &&& {
     border: 1px solid ${props => (props.isActive ? props.theme['@primary-color'] : 'var(--gray)')};
@@ -33,7 +38,7 @@ const LikedCountButton: React.VFC<{ onClick: () => void; isLiked: boolean; count
   count,
 }) => {
   return (
-    <div onClick={onClick}>
+    <StyledIconButtonBlock onClick={onClick}>
       <StyledIconButton
         variant="ghost"
         isActive={isLiked}
@@ -41,7 +46,7 @@ const LikedCountButton: React.VFC<{ onClick: () => void; isLiked: boolean; count
         className="mr-2"
       />
       <StyledLikedCount isActive={isLiked}>{count}</StyledLikedCount>
-    </div>
+    </StyledIconButtonBlock>
   )
 }
 
