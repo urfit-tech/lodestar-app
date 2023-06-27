@@ -1,4 +1,4 @@
-import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
+import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast, Text } from '@chakra-ui/react'
 import { defineMessage } from '@formatjs/intl'
 import { Form, message, Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
@@ -99,6 +99,7 @@ const CheckoutBlock: React.VFC<{
 
   const updateMemberMetadata = useUpdateMemberMetadata()
   const toast = useToast()
+  const app = useApp()
 
   const cartProductIds = cartProducts.map(v => v.productId.split('_')[1])
   const { hasPhysicalProduct } = usePhysicalProductCollection(cartProductIds)
@@ -184,6 +185,7 @@ const CheckoutBlock: React.VFC<{
   const [groupBuying, setGroupBuying] = useState<{
     [productId: string]: {
       memberIds: string[]
+      memberEmails: string[]
       withError: boolean
     }
   }>({})
@@ -206,6 +208,7 @@ const CheckoutBlock: React.VFC<{
           ...(groupBuying[currentValue.productId]
             ? {
                 groupBuyingPartnerIds: groupBuying[currentValue.productId].memberIds,
+                groupBuyingPartnerEmails: groupBuying[currentValue.productId].memberEmails,
               }
             : {}),
         },
@@ -391,9 +394,19 @@ const CheckoutBlock: React.VFC<{
             <StyledBlockTitle className="mb-3">{formatMessage(checkoutMessages.label.groupBuying)}</StyledBlockTitle>
             <OrderedList className="mb-4">
               <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription1)}</StyledListItem>
-              <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription2)}</StyledListItem>
               <StyledListItem>
-                {formatMessage(checkoutMessages.text.groupBuyingDescription3, { modal: <GroupBuyingRuleModal /> })}
+                {formatMessage(checkoutMessages.text.groupBuyingDescription2, {
+                  appName: app.name,
+                  warning: (
+                    <span style={{ color: 'var(--error)' }}>
+                      {formatMessage(checkoutMessages.text.groupBuyingDescriptionComfirmWarning)}
+                    </span>
+                  ),
+                })}
+              </StyledListItem>
+              <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription3)}</StyledListItem>
+              <StyledListItem>
+                {formatMessage(checkoutMessages.text.groupBuyingDescription4, { modal: <GroupBuyingRuleModal /> })}
               </StyledListItem>
             </OrderedList>
             {cartProducts.map(
