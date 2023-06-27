@@ -119,7 +119,7 @@ const GroupBuyingReceivedPage: React.VFC = () => {
     if (currentMemberId) {
       axios
         .put<ApiResponse>(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/order/transfer-received-order`,
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/orders/transfer-received-order`,
           {
             token,
             memberId: currentMemberId,
