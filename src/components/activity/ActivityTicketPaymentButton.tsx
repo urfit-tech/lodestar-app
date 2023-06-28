@@ -91,7 +91,6 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
               const resource = resourceCollection.find(notEmpty)
               resource && tracking.addToCart(resource, { direct: true })
               handleAddCart()?.then(() => {
-                Number(settings['feature.cart.disable']) && resource && tracking.checkout([resource])
                 history.push('/cart?direct=true', { productUrn: resource?.urn })
               })
             }}
