@@ -1,5 +1,5 @@
 import { Button, Icon as ChakraIcon } from '@chakra-ui/react'
-import { gql, useQuery } from '@apollo/client'
+
 import axios from 'axios'
 import dayjs from 'dayjs'
 import jwt from 'jsonwebtoken'
@@ -18,7 +18,6 @@ import { ReactComponent as AlertIcon } from '../../images/status-alert.svg'
 import { ReactComponent as SuccessIcon } from '../../images/status-success.svg'
 import { ApiResponse } from '../../types/general'
 import GroupBuyingReceivedPageMessages from './translation'
-import hasura from '../../hasura'
 import { Spin } from 'antd'
 import { handleError } from 'lodestar-app-element/src/helpers'
 
@@ -79,7 +78,7 @@ const GroupBuyingReceivedPage: React.VFC = () => {
     ownerName: string
     exp: number
   } | null>(null)
-  const { transferredAt, ownerId, loading: getOrderLogLoading } = useGetOrderLog(payload?.orderId || '')
+  const { isLoading, orderLog } = useGetOrderLog(payload?.orderId, authToken || '')
 
   useEffect(() => {
     if (!token) {
@@ -109,10 +108,12 @@ const GroupBuyingReceivedPage: React.VFC = () => {
         exp: tmpPayload.exp,
       })
       if (tmpPayload.exp < Math.floor(Date.now() / 1000)) setSendingState(() => 'failed')
-      if (transferredAt) setSendingState(() => 'transferred')
-      if (ownerId === currentMemberId) setSendingState(() => 'success')
-    } catch (error) {handleError(error)}
-  }, [token, transferredAt, ownerId, currentMemberId])
+      if (orderLog?.transferredAt) setSendingState(() => 'transferred')
+      if (orderLog?.memberId === currentMemberId) setSendingState(() => 'success')
+    } catch (error) {
+      handleError(error)
+    }
+  }, [token, currentMemberId, authToken, orderLog])
 
   const handleSubmit = () => {
     setSendingState('loading')
@@ -198,7 +199,7 @@ const GroupBuyingReceivedPage: React.VFC = () => {
     <DefaultLayout noFooter centeredBox>
       <StyledContainer>
         <div className="mb-4">{sendingStateOject[sendingState].Icon}</div>
-        {getOrderLogLoading ? (
+        {isLoading ? (
           <Spin />
         ) : payload ? (
           <>
@@ -227,25 +228,29 @@ const GroupBuyingReceivedPage: React.VFC = () => {
 
 export default GroupBuyingReceivedPage
 
-const useGetOrderLog = (orderId: string) => {
-  const { data, loading } = useQuery<hasura.GET_ORDER_LOG_TRANSFERRED, hasura.GET_ORDER_LOG_TRANSFERREDVariables>(
-    gql`
-      query GET_ORDER_LOG_TRANSFERRED($orderId: String!) {
-        order_log_by_pk(id: $orderId) {
-          member_id
-          transferred_at
-        }
+const useGetOrderLog = (orderId: string | undefined, authToken: string) => {
+  const [orderLog, setOrderLog] = useState<any>(null)
+  const [error, setError] = useState<any>('')
+  const [isLoading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    setLoading(true)
+    ;(async () => {
+      try {
+        const response = await axios.get<ApiResponse>(
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/orders/${orderId}`,
+          {
+            headers: { authorization: `Bearer ${authToken}` },
+          },
+        )
+        setOrderLog(() => response.data.result)
+      } catch (error) {
+        setError(error)
+      } finally {
+        setLoading(false)
       }
-    `,
-    {
-      variables: { orderId },
-    },
-  )
-  const transferredAt = data?.order_log_by_pk?.transferred_at
-  const ownerId = data?.order_log_by_pk?.member_id
-  return {
-    transferredAt,
-    ownerId,
-    loading,
-  }
+    })()
+  }, [orderId, authToken])
+
+  return { isLoading, orderLog, error }
 }
