@@ -1,8 +1,11 @@
+import { gql, useQuery } from '@apollo/client'
 import { Button, Icon as ChakraIcon } from '@chakra-ui/react'
+import { Spin } from 'antd'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import jwt from 'jsonwebtoken'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { handleError } from 'lodestar-app-element/src/helpers'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -11,6 +14,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { AuthModalContext } from '../../components/auth/AuthModal'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
+import hasura from '../../hasura'
 import { rgba } from '../../helpers'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { ReactComponent as AlertIcon } from '../../images/status-alert.svg'
@@ -63,10 +67,9 @@ const StyledIcon = styled.div`
 const GroupBuyingReceivedPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { authToken } = useAuth()
   const [token] = useQueryParam('token', StringParam)
-  const { isAuthenticated, currentMemberId } = useAuth()
-  const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'success' | 'failed'>('idle')
+  const { isAuthenticated, currentMemberId, authToken } = useAuth()
+  const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'success' | 'failed' | 'transferred'>('idle')
   const [payload, setPayload] = useState<{
     appId: string
     email: string
@@ -76,12 +79,12 @@ const GroupBuyingReceivedPage: React.VFC = () => {
     ownerName: string
     exp: number
   } | null>(null)
+  const { transferredAt, ownerId, loading: getOrderLogLoading } = useGetOrderLog(payload?.orderId || '')
 
   useEffect(() => {
     if (!token) {
       return
     }
-
     try {
       const tmpPayload = jwt.decode(token) as any
       if (
@@ -105,18 +108,20 @@ const GroupBuyingReceivedPage: React.VFC = () => {
         ownerName: tmpPayload.ownerName,
         exp: tmpPayload.exp,
       })
-      if (tmpPayload.exp < Math.floor(Date.now() / 1000)) {
-        setSendingState('success')
-      }
-    } catch (error) {}
-  }, [token])
+      if (tmpPayload.exp < Math.floor(Date.now() / 1000)) setSendingState(() => 'failed')
+      if (transferredAt) setSendingState(() => 'transferred')
+      if (ownerId === currentMemberId) setSendingState(() => 'success')
+    } catch (error) {
+      handleError(error)
+    }
+  }, [token, transferredAt, ownerId, currentMemberId])
 
   const handleSubmit = () => {
     setSendingState('loading')
     if (currentMemberId) {
       axios
         .put<ApiResponse>(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/order/transfer-received-order`,
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/orders/transfer-received-order`,
           {
             token,
             memberId: currentMemberId,
@@ -130,7 +135,10 @@ const GroupBuyingReceivedPage: React.VFC = () => {
             setSendingState('failed')
           }
         })
-        .catch(() => setSendingState('failed'))
+        .catch(error => {
+          handleError(error)
+          setSendingState('failed')
+        })
     }
   }
 
@@ -179,13 +187,22 @@ const GroupBuyingReceivedPage: React.VFC = () => {
       message: `課程已超過領取效期，請與 ${payload?.ownerName} 聯繫。`,
       onClick: () => history.push('/'),
     },
+    transferred: {
+      Icon: <ChakraIcon as={AlertIcon} w="64px" h="64px" />,
+      buttonTitle: '回首頁',
+      title: `該項目已被領取`,
+      message: `該項目已被領取，請與 ${payload?.ownerName} 聯繫。`,
+      onClick: () => history.push('/'),
+    },
   }
 
   return (
     <DefaultLayout noFooter centeredBox>
       <StyledContainer>
         <div className="mb-4">{sendingStateOject[sendingState].Icon}</div>
-        {payload ? (
+        {getOrderLogLoading ? (
+          <Spin />
+        ) : payload ? (
           <>
             <StyledTitle>{sendingStateOject[sendingState].title}</StyledTitle>
             <StyledItemInfo>{sendingStateOject[sendingState].message}</StyledItemInfo>
@@ -211,3 +228,26 @@ const GroupBuyingReceivedPage: React.VFC = () => {
 }
 
 export default GroupBuyingReceivedPage
+
+const useGetOrderLog = (orderId: string) => {
+  const { data, loading } = useQuery<hasura.GET_ORDER_LOG_TRANSFERRED, hasura.GET_ORDER_LOG_TRANSFERREDVariables>(
+    gql`
+      query GET_ORDER_LOG_TRANSFERRED($orderId: String!) {
+        order_log_by_pk(id: $orderId) {
+          member_id
+          transferred_at
+        }
+      }
+    `,
+    {
+      variables: { orderId },
+    },
+  )
+  const transferredAt = data?.order_log_by_pk?.transferred_at
+  const ownerId = data?.order_log_by_pk?.member_id
+  return {
+    transferredAt,
+    ownerId,
+    loading,
+  }
+}

@@ -95,7 +95,6 @@ const ProgramPlanPaymentButton: React.VFC<{
                 const resource = resourceCollection.find(notEmpty)
                 resource && tracking.addToCart(resource, { direct: true })
                 handleAddCart()?.then(() => {
-                  Number(settings['feature.cart.disable']) && resource && tracking.checkout([resource])
                   history.push('/cart?direct=true', { productUrn: resource?.urn })
                 })
               }}

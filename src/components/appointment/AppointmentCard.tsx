@@ -93,6 +93,13 @@ const StyledModalMetaBlock = styled.div`
   border-radius: 4px;
 `
 
+const StyledLabel = styled.div`
+  color: var(--gray-darker);
+  font-size: 14px;
+  line-height: normal;
+  letter-spacing: 0.4px;
+`
+
 type AppointmentCardProps = FormComponentProps & {
   orderProductId: string
   appointmentPlanId: string
@@ -229,58 +236,65 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({ orderProductId, appo
             >
               {formatMessage(appointmentMessages.AppointmentCard.toCalendar)}
             </Button>
-            <Button
-              type="primary"
-              onClick={async () => {
-                const joinUrl =
-                  orderProduct.options?.joinUrl ||
-                  `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`
-                if (enabledModules.meet_service && !orderProduct.options?.joinUrl) {
-                  const { data } = await apolloClient.query<
-                    hasura.GET_APPOINTMENT_PERIOD_MEET_ID,
-                    hasura.GET_APPOINTMENT_PERIOD_MEET_IDVariables
-                  >({
-                    query: gql`
-                      query GET_APPOINTMENT_PERIOD_MEET_ID($orderProductId: uuid!) {
-                        order_product(where: { id: { _eq: $orderProductId } }) {
-                          id
-                          options
-                        }
-                      }
-                    `,
-                    variables: { orderProductId: orderProductId },
-                  })
-                  const meetId = data.order_product?.[0]?.options?.meetId
 
-                  try {
-                    await axios
-                      .post(
-                        `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/kolable/meets/${meetId}`,
-                        {
-                          role: 'guest',
-                          name: `${appId}-${currentMemberId}`,
-                        },
-                        {
-                          headers: {
-                            Authorization: `Bearer ${authToken}`,
-                            'x-api-key': 'kolable',
+            {loadingAppointmentPlanPreview ? (
+              <SkeletonText noOfLines={1} spacing="4" w="90px" />
+            ) : !orderProduct.options?.joinUrl && appointmentPlanPreview.meetGenerationMethod === 'manual' ? (
+              <StyledLabel>尚未設定連結</StyledLabel>
+            ) : (
+              <Button
+                type="primary"
+                onClick={async () => {
+                  const joinUrl =
+                    orderProduct.options?.joinUrl ||
+                    `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`
+                  if (enabledModules.meet_service && !orderProduct.options?.joinUrl) {
+                    const { data } = await apolloClient.query<
+                      hasura.GET_APPOINTMENT_PERIOD_MEET_ID,
+                      hasura.GET_APPOINTMENT_PERIOD_MEET_IDVariables
+                    >({
+                      query: gql`
+                        query GET_APPOINTMENT_PERIOD_MEET_ID($orderProductId: uuid!) {
+                          order_product(where: { id: { _eq: $orderProductId } }) {
+                            id
+                            options
+                          }
+                        }
+                      `,
+                      variables: { orderProductId: orderProductId },
+                    })
+                    const meetId = data.order_product?.[0]?.options?.meetId
+
+                    try {
+                      await axios
+                        .post(
+                          `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/kolable/meets/${meetId}`,
+                          {
+                            role: 'guest',
+                            name: `${appId}-${currentMemberId}`,
                           },
-                        },
-                      )
-                      .then(({ data: { code, message, data } }) =>
-                        window.open(data.target, '_blank', 'noopener=yes,noreferrer=yes'),
-                      )
-                  } catch (error) {
-                    console.log(`get meets error: ${error}`)
+                          {
+                            headers: {
+                              Authorization: `Bearer ${authToken}`,
+                              'x-api-key': 'kolable',
+                            },
+                          },
+                        )
+                        .then(({ data: { code, message, data } }) =>
+                          window.open(data.target, '_blank', 'noopener=yes,noreferrer=yes'),
+                        )
+                    } catch (error) {
+                      console.log(`get meets error: ${error}`)
+                      window.open(joinUrl)
+                    }
+                  } else {
                     window.open(joinUrl)
                   }
-                } else {
-                  window.open(joinUrl)
-                }
-              }}
-            >
-              {formatMessage(appointmentMessages.AppointmentCard.attend)}
-            </Button>
+                }}
+              >
+                {formatMessage(appointmentMessages.AppointmentCard.attend)}
+              </Button>
+            )}
             <Dropdown
               overlay={
                 <Menu>
@@ -395,6 +409,7 @@ export const useAppointmentPlanPreview = (appointmentPlanId: string) => {
           id
           title
           creator_id
+          meet_generation_method
         }
       }
     `,
@@ -404,10 +419,12 @@ export const useAppointmentPlanPreview = (appointmentPlanId: string) => {
     id: string
     title: string
     creatorId: string
+    meetGenerationMethod: string
   } = {
     id: data?.appointment_plan_by_pk?.id,
     title: data?.appointment_plan_by_pk?.title || '',
     creatorId: data?.appointment_plan_by_pk?.creator_id || '',
+    meetGenerationMethod: data?.appointment_plan_by_pk?.meet_generation_method || 'auto',
   }
   return {
     loading,
