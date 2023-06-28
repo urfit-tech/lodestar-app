@@ -62,8 +62,8 @@ const CartPage: React.VFC = () => {
       {!checkoutAlready &&
         (location.state?.productUrn ? filteredResourceUrns.includes(location.state.productUrn) : true) &&
         filteredResourceCollection.length > 0 &&
-        (!Number(settings['feature.cart.disable']) || !location.search.match('direct')) && (
-          <Tracking.Checkout resources={filteredResourceCollection} onCheckout={() => setCheckoutAlready(true)} />
+        !Number(settings['feature.cart.disable']) && (
+          <Tracking.ViewCart resources={filteredResourceCollection} onViewCart={() => setCheckoutAlready(true)} />
         )}
 
       {/* group cart products by product owner */}
