@@ -31,11 +31,13 @@ const profileMessages = {
   }),
   ProfileBasicBusinessCard: defineMessages({
     basicInfo: { id: 'profileMessages.ProfileBasicBusinessCard.basicInfo', defaultMessage: '基本資料' },
-    companyPicture: { id: 'profileMessages.ProfileBasicBusinessCard.companyPicture', defaultMessage: '公司資料' },
+    companyPicture: { id: 'profileMessages.ProfileBasicBusinessCard.companyPicture', defaultMessage: '公司 Logo' },
     notUploaded: { id: 'profileMessages.ProfileBasicBusinessCard.notUploaded', defaultMessage: '尚未上傳' },
   }),
   ProfileIntroBusinessCard: defineMessages({
-    intro: { id: 'profileMessages.ProfileIntroBusinessCard.intro', defaultMessage: '公司介紹' },
+    basicInfo: { id: 'profileMessages.ProfileIntroBusinessCard.basicInfo', defaultMessage: '公司描述' },
+    abstract: { id: 'profileMessages.ProfileIntroBusinessCard.abstract', defaultMessage: '公司介紹' },
+    intro: { id: 'profileMessages.ProfileIntroBusinessCard.intro', defaultMessage: '公司簡述' },
   }),
 }
 
