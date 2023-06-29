@@ -61,8 +61,7 @@ const CartPage: React.VFC = () => {
     <DefaultLayout>
       {!checkoutAlready &&
         (location.state?.productUrn ? filteredResourceUrns.includes(location.state.productUrn) : true) &&
-        filteredResourceCollection.length > 0 &&
-        !Number(settings['feature.cart.disable']) && (
+        filteredResourceCollection.length > 0 && (
           <Tracking.ViewCart resources={filteredResourceCollection} onViewCart={() => setCheckoutAlready(true)} />
         )}
 
