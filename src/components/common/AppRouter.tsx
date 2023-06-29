@@ -137,10 +137,6 @@ const defaultRoutesMap: RoutesMap = {
     path: '/@:username',
     pageName: 'ProfilePage',
   },
-  group_buying_received: {
-    path: '/group-buying-received',
-    pageName: 'GroupBuyingReceivedPage',
-  },
 
   // system - checkout
   order: {
