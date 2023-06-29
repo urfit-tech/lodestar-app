@@ -84,7 +84,7 @@ const GroupBuyingReceivedPage: React.VFC = () => {
       case 'ProgramPlan':
         return { idleTitle: '你已收到一堂課程', name: '課程', successMessage: '現在你可使用課程囉！' }
       case 'ActivityTicket':
-        return { idleTitle: '你已收到一張票券', name: '票券', successMessage: '現在你可使用票卷囉！' }
+        return { idleTitle: '你已收到一張票券', name: '票券', successMessage: '接下來就可以參與活動囉！' }
       default:
         return { idleTitle: '你已收到一個商品', name: '商品', successMessage: '現在你可使用產品囉！' }
     }
@@ -192,7 +192,7 @@ const GroupBuyingReceivedPage: React.VFC = () => {
       Icon: <ChakraIcon as={AlertIcon} w="64px" h="64px" />,
       buttonTitle: '回首頁',
       title: `超過領取效期`,
-      message: `課程已超過領取效期，請與 ${payload?.ownerName} 聯繫。`,
+      message: `${productWording().name}已超過領取效期，請與 ${payload?.ownerName} 聯繫。`,
       onClick: () => history.push('/'),
     },
     transferred: {
