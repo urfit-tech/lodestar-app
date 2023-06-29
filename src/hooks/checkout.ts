@@ -2,9 +2,13 @@ import { gql, useQuery } from '@apollo/client'
 import Axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { notEmpty } from 'lodestar-app-element/src/helpers'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
 import { prop, sum } from 'ramda'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import hasura from '../hasura'
 import {
@@ -29,6 +33,7 @@ export const useCheck = ({
   shipping: ShippingProps | null
   options: { [ProductId: string]: any }
 }) => {
+  const tracking = useTracking()
   const { authToken } = useAuth()
   const { id: appId } = useApp()
   const [check, setCheck] = useState<CheckProps>({
@@ -39,6 +44,11 @@ export const useCheck = ({
   const [orderChecking, setOrderChecking] = useState(false)
   const [orderPlacing, setOrderPlacing] = useState(false)
   const [checkError, setCheckError] = useState<Error | null>(null)
+  const { resourceCollection } = useResourceCollection(
+    productIds.map(
+      productId => `${appId}:${getResourceByProductId(productId).type}:${getResourceByProductId(productId).target}`,
+    ),
+  )
 
   useEffect(() => {
     setOrderChecking(true)
@@ -85,54 +95,50 @@ export const useCheck = ({
     JSON.stringify(shipping),
   ])
 
-  const placeOrder = useCallback(
-    async (
-      paymentType: 'perpetual' | 'subscription' | 'groupBuying',
-      invoice: InvoiceProps,
-      payment?: PaymentProps | null,
-    ) => {
-      setOrderPlacing(true)
-      const { ip, country, countryCode } = await fetchCurrentGeolocation()
-      return Axios.post<{
-        code: string
-        message: string
-        result: {
-          orderId: string
-          totalAmount: number
-          paymentNo: string | null
-          payToken: string | null
-          products: { name: string; price: number }[]
-          discounts: { name: string; price: number }[]
-        }
-      }>(
-        `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
-        {
-          clientBackUrl: window.location.origin,
-          paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
-          productIds,
-          discountId,
-          shipping,
-          invoice,
-          geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
-          options,
-        },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-        .then(({ data: { code, result, message } }) => {
-          if (code === 'SUCCESS') {
-            ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
-            ReactGA.ga('send', 'pageview')
-            return result
-          } else {
-            throw new Error(message)
-          }
-        })
-        .finally(() => setOrderPlacing(false))
-    },
-    [authToken, discountId, options, productIds, shipping],
-  )
+  const placeOrder = async (
+    paymentType: 'perpetual' | 'subscription' | 'groupBuying',
+    invoice: InvoiceProps,
+    payment?: PaymentProps | null,
+  ) => {
+    setOrderPlacing(true)
+    const { ip, country, countryCode } = await fetchCurrentGeolocation()
+    ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
+    tracking.checkout(resourceCollection.filter(notEmpty))
+    const {
+      data: { code, message, result },
+    } = await Axios.post<{
+      code: string
+      message: string
+      result: {
+        orderId: string
+        totalAmount: number
+        paymentNo: string | null
+        payToken: string | null
+        products: { name: string; price: number }[]
+        discounts: { name: string; price: number }[]
+      }
+    }>(
+      `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
+      {
+        clientBackUrl: window.location.origin,
+        paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
+        productIds,
+        discountId,
+        shipping,
+        invoice,
+        geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
+        options,
+      },
+      {
+        headers: { authorization: `Bearer ${authToken}` },
+      },
+    )
+    if (code === 'SUCCESS') {
+      return result
+    } else {
+      throw new Error('create order failed: ' + message)
+    }
+  }
 
   const totalPrice =
     sum(check.orderProducts.map(prop('price'))) -

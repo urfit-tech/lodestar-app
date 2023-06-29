@@ -81,7 +81,6 @@ const PaymentButton: React.VFC<{
                 isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true)
                 const resource = resourceCollection.find(notEmpty)
                 resource && tracking.addToCart(resource, { direct: true })
-                resource && tracking.checkout([resource])
               }}
             >
               {formatMessage(commonMessages.button.subscribeNow)}
@@ -115,7 +114,6 @@ const PaymentButton: React.VFC<{
               const resource = resourceCollection.find(notEmpty)
               resource && tracking.addToCart(resource, { direct: true })
               handleAddCart()?.then(() => {
-                Number(settings['feature.cart.disable']) && resource && tracking.checkout([resource])
                 history.push('/cart?direct=true', { productUrn: resource?.urn })
               })
             }}
