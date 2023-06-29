@@ -1,4 +1,4 @@
-import { Button, Select } from '@chakra-ui/react'
+import { Button, Select, Spinner } from '@chakra-ui/react'
 import { Dropdown, Icon, Menu } from 'antd'
 import { max, min } from 'lodash'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
@@ -120,7 +120,7 @@ const MerchandiseBlock: React.VFC<{
   const [imageIndex, setImageIndex] = useState(0)
   const [selectedSpec, setSelectedSpec] = useState(merchandise.specs[0])
   const [quantity, setQuantity] = useState(1)
-  const { merchandiseSpec } = useMerchandiseSpecQuantity(selectedSpec.id)
+  const { loadingMerchandiseSpec, merchandiseSpec } = useMerchandiseSpecQuantity(selectedSpec.id)
 
   const inCartQuantity = getCartProduct?.(`MerchandiseSpec_${selectedSpec.id}`)?.options?.quantity || 0
   const remainQuantity = (merchandiseSpec?.buyableQuantity || 0) - inCartQuantity
@@ -269,9 +269,13 @@ const MerchandiseBlock: React.VFC<{
               remainQuantity={remainQuantity > 0 ? remainQuantity : 0}
               onChange={value => setQuantity(value || 0)}
             />
-            <span className="ml-3">
-              {formatMessage(messages.remain)} {remainQuantity > 0 ? remainQuantity : 0}
-            </span>
+            {loadingMerchandiseSpec ? (
+              <Spinner className="ml-3" />
+            ) : (
+              <span className="ml-3">
+                {formatMessage(messages.remain)} {remainQuantity > 0 ? remainQuantity : 0}
+              </span>
+            )}
           </StyledInfo>
         )}
 

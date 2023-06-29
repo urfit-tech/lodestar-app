@@ -789,7 +789,6 @@ export const productMessages = {
       email: { id: 'common.meta.email', defaultMessage: '信箱：' },
       phone: { id: 'common.meta.phone', defaultMessage: '手機：' },
       orderNo: { id: 'common.meta.orderNo', defaultMessage: '票券編號：' },
-      remaining: { id: 'product.activity.content.remaining', defaultMessage: '剩餘' },
     }),
   },
   appointment: {
@@ -803,9 +802,6 @@ export const productMessages = {
         id: 'product.appointment.warning.text',
         defaultMessage: '請留下你的真實聯絡資料，以確保獲得預約時段的最新消息',
       },
-    }),
-    content: defineMessages({
-      timezone: { id: 'product.appointment.content.timezone', defaultMessage: '時間以 {city} (GMT{timezone}) 顯示' },
     }),
   },
   program: {

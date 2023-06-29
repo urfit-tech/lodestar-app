@@ -1,13 +1,14 @@
-import { Icon } from '@chakra-ui/react'
+import { gql, useQuery } from '@apollo/client'
+import { Icon, Spinner } from '@chakra-ui/react'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import moment from 'moment'
 import React from 'react'
-import { AiOutlineCalendar, AiOutlineUser } from 'react-icons/ai'
-import { useIntl } from 'react-intl'
+import { AiOutlineCalendar } from 'react-icons/ai'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
+import hasura from '../../hasura'
+import ActivityParticipantMeta from './ActivityParticipantMeta'
 
 const StyledWrapper = styled.div`
   overflow: hidden;
@@ -40,10 +41,7 @@ type ActivityBlockProps = {
   title: string
   coverUrl?: string
   isParticipantsVisible?: boolean
-  participantCount: number
-  totalSeats: number
-  startedAt?: Date
-  endedAt?: Date
+  options?: { organizerId?: string }
   onClick?: () => void
 }
 const ActivityBlock: React.VFC<ActivityBlockProps> = ({
@@ -51,16 +49,35 @@ const ActivityBlock: React.VFC<ActivityBlockProps> = ({
   title,
   coverUrl,
   isParticipantsVisible,
-  participantCount,
-  totalSeats,
-  startedAt,
-  endedAt,
+  options,
   onClick,
 }) => {
   const history = useHistory()
-  const { formatMessage } = useIntl()
-  const startDate = startedAt ? moment(startedAt).format('YYYY-MM-DD(dd)') : ''
-  const endDate = endedAt ? moment(endedAt).format('YYYY-MM-DD(dd)') : ''
+  const { loading: loadingGetActivitySessionAggregate, data: activitySessionAggregate } = useQuery<
+    hasura.GetActivitySessionAggregate,
+    hasura.GetActivitySessionAggregateVariables
+  >(GetActivitySessionAggregate, {
+    variables: {
+      condition: {
+        id: { _eq: id },
+        organizer_id: { _eq: options?.organizerId },
+        published_at: { _is_null: false, _lte: 'now()' },
+        is_private: { _eq: false },
+      },
+    },
+  })
+
+  const startDate = activitySessionAggregate?.activity_session_aggregate.aggregate?.min?.started_at
+    ? moment(new Date(activitySessionAggregate?.activity_session_aggregate.aggregate?.min?.started_at)).format(
+        'YYYY-MM-DD(dd)',
+      )
+    : ''
+
+  const endDate = activitySessionAggregate?.activity_session_aggregate.aggregate?.max?.ended_at
+    ? moment(new Date(activitySessionAggregate.activity_session_aggregate.aggregate.max.ended_at)).format(
+        'YYYY-MM-DD(dd)',
+      )
+    : ''
 
   return (
     <StyledWrapper
@@ -76,21 +93,17 @@ const ActivityBlock: React.VFC<ActivityBlockProps> = ({
           <Link to={`/activities/${id}`}>{title}</Link>
         </StyledTitle>
 
-        <StyledMeta className="mb-2">
-          {isParticipantsVisible && (
-            <>
-              <Icon as={AiOutlineUser} />
-              <span className="ml-2">
-                {formatMessage(productMessages.activity.content.remaining)}
-                {participantCount && totalSeats ? totalSeats - participantCount : totalSeats}
-              </span>
-            </>
-          )}
-        </StyledMeta>
+        {isParticipantsVisible ? (
+          <div className="mb-2">
+            <ActivityParticipantMeta activityId={id} options={{ organizerId: options?.organizerId }} />
+          </div>
+        ) : null}
 
         <StyledMeta>
           <Icon as={AiOutlineCalendar} />
-          {startDate && endDate ? (
+          {loadingGetActivitySessionAggregate ? (
+            <Spinner />
+          ) : startDate && endDate ? (
             <span className="ml-2">
               {startDate}
               {startDate !== endDate ? ` ~ ${endDate}` : ''}
@@ -103,3 +116,18 @@ const ActivityBlock: React.VFC<ActivityBlockProps> = ({
 }
 
 export default ActivityBlock
+
+const GetActivitySessionAggregate = gql`
+  query GetActivitySessionAggregate($condition: activity_bool_exp!) {
+    activity_session_aggregate(where: { activity: $condition }) {
+      aggregate {
+        min {
+          started_at
+        }
+        max {
+          ended_at
+        }
+      }
+    }
+  }
+`

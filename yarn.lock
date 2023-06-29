@@ -3366,6 +3366,11 @@
   resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-3.0.3.tgz#d6bfbbdd0c187354ca555213d1962f6d0691ff4e"
   integrity sha512-Xe7IImK09HP1sv2M/aI+48a20VX+TdRJucfq4vfRVy6nWN8PYPOEnlMRSgxJAgYQIXJVL8dZ4/ilAM7dWNaOww==
 
+"@types/js-cookie@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-3.0.3.tgz#d6bfbbdd0c187354ca555213d1962f6d0691ff4e"
+  integrity sha512-Xe7IImK09HP1sv2M/aI+48a20VX+TdRJucfq4vfRVy6nWN8PYPOEnlMRSgxJAgYQIXJVL8dZ4/ilAM7dWNaOww==
+
 "@types/js-yaml@^4.0.0":
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-4.0.5.tgz#738dd390a6ecc5442f35e7f03fa1431353f7e138"
@@ -10580,6 +10585,11 @@ js-cookie@^3.0.1:
   resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-3.0.4.tgz#9ae3c5f6eb34d2292d76e0579fabfe7c872e1fae"
   integrity sha512-tlu5VGqPFMP5eBefnmszCFZkPXG2n527NRN9XdNtN6FZ5n/0e98TdDm8BOz290OIIsxtXb9XTJjfqE6gVhOHQw==
 
+js-cookie@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-3.0.5.tgz#0b7e2fd0c01552c58ba86e0841f94dc2557dcdbc"
+  integrity sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -11199,9 +11209,9 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#v1.47.0:
+lodestar-app-element@urfit-tech/lodestar-app-element#v1.49.0:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/f4c38cfc8b817c9e0dafbf0237cb93be71c57d3c"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/cfaa744452d06ffaba96c579ded30c278ddbed97"
   dependencies:
     "@apollo/client" "^3.7.11"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -11212,6 +11222,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#v1.47.0:
     "@emotion/react" "11"
     "@emotion/styled" "11"
     "@fingerprintjs/fingerprintjs" "^3.3.6"
+    "@types/js-cookie" "^3.0.3"
     "@types/mustache" "4.0.1"
     "@types/node" "12.0.0"
     "@types/ramda" "0.27.45"
@@ -11233,6 +11244,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#v1.47.0:
     framer-motion "2.9.4"
     graphql "^16.6.0"
     graphql-ws "^5.12.1"
+    js-cookie "^3.0.5"
     jsonwebtoken "8.5.1"
     libphonenumber-js "1.9.34"
     moment "^2.29.1"
