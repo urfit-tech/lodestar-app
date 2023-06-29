@@ -66,6 +66,7 @@ const GroupBuyingReceivedPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)
+  const [type] = useQueryParam('type', StringParam)
   const { isAuthenticated, currentMemberId, authToken } = useAuth()
   const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'success' | 'failed' | 'transferred'>('idle')
   const [payload, setPayload] = useState<{
@@ -78,7 +79,16 @@ const GroupBuyingReceivedPage: React.VFC = () => {
     exp: number
   } | null>(null)
   const { isLoading, orderLog } = useGetOrderLog(payload?.orderId, authToken || '')
-
+  const productWording: () => { idleTitle: string; name: string; successMessage: string } = () => {
+    switch (type) {
+      case 'ProgramPlan':
+        return { idleTitle: '你已收到一堂課程', name: '課程', successMessage: '現在你可使用課程囉！' }
+      case 'ActivityTicket':
+        return { idleTitle: '你已收到一張票券', name: '票券', successMessage: '接下來就可以參與活動囉！' }
+      default:
+        return { idleTitle: '你已收到一個商品', name: '商品', successMessage: '現在你可使用產品囉！' }
+    }
+  }
   useEffect(() => {
     if (!token) {
       return
@@ -148,8 +158,8 @@ const GroupBuyingReceivedPage: React.VFC = () => {
         </StyledIcon>
       ),
       buttonTitle: '確認領取',
-      title: `你已收到一堂課程`,
-      message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」的課程，請於 ${dayjs(
+      title: productWording().idleTitle,
+      message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」的${productWording().name}，請於 ${dayjs(
         new Date((payload?.exp as number) * 1000 || 0),
       ).format('YYYY-MM-DD')} 前領取。`,
       onClick: (modalVisible?: (visible: boolean) => void) => {
@@ -167,22 +177,22 @@ const GroupBuyingReceivedPage: React.VFC = () => {
         </StyledIcon>
       ),
       buttonTitle: '立即接收',
-      title: `接收課程`,
+      title: `接收${productWording().name}`,
       message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」${payload?.exp}`,
       onClick: null,
     },
     success: {
       Icon: <ChakraIcon as={SuccessIcon} w="64px" h="64px" />,
       buttonTitle: '立即查看',
-      title: `已收到課程`,
-      message: `現在你可使用課程囉！`,
+      title: `已收到${productWording().name}`,
+      message: productWording().successMessage,
       onClick: () => history.push(`/members/${currentMemberId}`),
     },
     failed: {
       Icon: <ChakraIcon as={AlertIcon} w="64px" h="64px" />,
       buttonTitle: '回首頁',
       title: `超過領取效期`,
-      message: `課程已超過領取效期，請與 ${payload?.ownerName} 聯繫。`,
+      message: `${productWording().name}已超過領取效期，請與 ${payload?.ownerName} 聯繫。`,
       onClick: () => history.push('/'),
     },
     transferred: {
