@@ -147,8 +147,8 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                   </Box>
                 ) : null}
 
-                <Flex mb="1.5rem">
-                  <Flex alignItems="center" color="primary.500">
+                <Flex mb="1.5rem" justifyContent="space-between">
+                  <Flex alignItems="center" flexWrap="wrap" color="primary.500">
                     {portfolio.projectTags.map(tag => (
                       <Box as="span" mr="2" fontSize="14px" lineHeight="22px" letterSpacing="0.4px">
                         #{tag.name}
@@ -156,9 +156,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                     ))}
                   </Flex>
 
-                  <Spacer />
-
-                  <Flex>
+                  <Flex alignItems="center">
                     <ApplyTagModal projectId={id} />
                     <SocialSharePopover url={window.location.href} />
                     <LikesCountButton
@@ -336,7 +334,6 @@ const useProjectPortfolio = (projectId: string) => {
               tag: { project_tags: { project: { type: { _eq: "portfolio" }, published_at: { _lt: "now()" } } } }
             }
             order_by: { position: asc }
-            limit: 3
           ) {
             id
             tag_name

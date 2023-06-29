@@ -46,6 +46,24 @@ const commonMessages = {
       defaultMessage: 'please enter your name.',
     },
   }),
+  InAppBrowserWarningModal: defineMessages({
+    notSupportInAppBrowserTitle: {
+      id: 'common.InAppBrowserWarningModal.notSupportInAppBrowserTitle',
+      defaultMessage: 'Not support in app Browser',
+    },
+    notSupportInAppBrowserDescription: {
+      id: 'common.InAppBrowserWarningModal.notSupportInAppBrowserDescription',
+      defaultMessage: 'Please use another browser to browse this website.',
+    },
+    openPage: {
+      id: 'common.InAppBrowserWarningModal.openPage',
+      defaultMessage: 'Open page',
+    },
+    notSupportInAppBrowserLeadDescription: {
+      id: 'common.InAppBrowserWarningModal.notSupportInAppBrowserLeadDescription',
+      defaultMessage: 'Click "More Options" (three dots in the lower right corner) and click "Open in browser"',
+    },
+  }),
 }
 
 export default commonMessages
