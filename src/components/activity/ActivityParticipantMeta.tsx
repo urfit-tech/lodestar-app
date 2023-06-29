@@ -71,7 +71,7 @@ const ActivityParticipantMeta: React.VFC<{ activityId: string; options?: { organ
 export default ActivityParticipantMeta
 const GetActivitiesEnrollmentAggregate = gql`
   query GetActivitiesEnrollmentAggregate($condition: activity_bool_exp!) {
-    activity_enrollment_aggregate(where: { activity: $condition }) {
+    activity_enrollment_aggregate(where: { activity: $condition }, distinct_on: order_log_id) {
       aggregate {
         count
       }

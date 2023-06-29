@@ -9,12 +9,20 @@ const learningAchievementMessages = {
     midnight: { id: 'learningAchievement.*.midnight', defaultMessage: '夜貓好專注' },
     weekend: { id: 'learningAchievement.*.weekend', defaultMessage: '週末學不厭' },
     updateEveryDay: { id: 'learningAchievement.*.updateEveryDay', defaultMessage: '※Update data at {time} every day' },
-    dataCountSince: { id: 'learningAchievement.*.dataCountSince', defaultMessage: '※Data in this part counted since {time}' },
+    dataCountSince: {
+      id: 'learningAchievement.*.dataCountSince',
+      defaultMessage: '※Data in this part counted since {time}',
+    },
   }),
   InfoCard: defineMessages({
     peices: { id: 'learningAchievement.InfoCard.peices', defaultMessage: 'pcs.' },
     badgesCollected: { id: 'learningAchievement.InfoCard.badgesCollected', defaultMessage: 'badges' },
     totalProgramProgress: { id: 'learningAchievement.InfoCard.medalsCollected', defaultMessage: 'progress' },
+    totalExperienceProgram: {
+      id: 'learningAchievement.InfoCard.totalExperienceProgram',
+      defaultMessage: 'voucher program',
+    },
+    lesson: { id: 'learningAchievement.InfoCard.lesson', defaultMessage: 'Lesson' },
   }),
   ProgramSummaryCard: defineMessages({
     programInProgress: {
@@ -118,6 +126,13 @@ const learningAchievementMessages = {
     weeklyTime: { id: 'learningAchievement.Badge.weeklyTime', defaultMessage: '*Every week {startTime} ~ {endTime}' },
     weekend: { id: 'learningAchievement.Badge.weekend', defaultMessage: '*Every weekend' },
     continued: { id: 'learningAchievement.Badge.continued', defaultMessage: 'continued' },
+  }),
+  ExperienceProgramCard: defineMessages({
+    noProgram: { id: 'learningAchievement.ExperienceProgramCard.programName', defaultMessage: 'No Program' },
+    myProgram: {
+      id: 'learningAchievement.ExperienceProgramCard.myProgram',
+      defaultMessage: 'My Voucher Program',
+    },
   }),
 }
 
