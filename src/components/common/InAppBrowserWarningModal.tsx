@@ -31,7 +31,7 @@ const StyledWarningDescription = styled.p`
 const InAppBrowserWarningModal = () => {
   const { formatMessage } = useIntl()
 
-  const isInAppBrowser = window.navigator.userAgent.includes('Line') || window.navigator.userAgent.includes('FB')
+  const isInAppBrowser = window.navigator.userAgent.includes('Line')
   const lineOpenDefaultBrowserParams = window.navigator.userAgent.includes('Line') ? 'openExternalBrowser=1' : ''
 
   return isInAppBrowser ? (
