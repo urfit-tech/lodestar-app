@@ -92,7 +92,7 @@ const GroupBuyingReceivedPage: React.VFC = () => {
         return { idleTitle: '你已收到一個商品', name: '商品', successMessage: '現在你可使用產品囉！' }
     }
   }
-  const handleAuthButtonClick = () => {
+  const setAuthModalVisible = () => {
     authModal.open(setVisible)
   }
   useEffect(() => {
@@ -168,9 +168,9 @@ const GroupBuyingReceivedPage: React.VFC = () => {
       message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」的${productWording().name}，請於 ${dayjs(
         new Date((payload?.exp as number) * 1000 || 0),
       ).format('YYYY-MM-DD')} 前領取。`,
-      onClick: (modalVisible?: (visible: boolean) => void) => {
+      onClick: () => {
         if (!isAuthenticated) {
-          modalVisible?.(true)
+          setAuthModalVisible()
         } else {
           handleSubmit()
         }
@@ -220,7 +220,7 @@ const GroupBuyingReceivedPage: React.VFC = () => {
           <>
             <StyledTitle>{sendingStateOject[sendingState].title}</StyledTitle>
             <StyledItemInfo>{sendingStateOject[sendingState].message}</StyledItemInfo>
-            <Button w="150px" variant="primary" isLoading={sendingState === 'loading'} onClick={handleAuthButtonClick}>
+            <Button w="150px" variant="primary" isLoading={sendingState === 'loading'} onClick={() => sendingStateOject[sendingState].onClick?.()}>
               {sendingStateOject[sendingState].buttonTitle}
             </Button>
           </>
