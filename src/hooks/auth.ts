@@ -13,8 +13,9 @@ export const useAuthModal = () => {
     utm = {}
   }
 
-  const isGroupBuyingReceivedPage = window.location.pathname === '/group-buying-received'
+  
   const pathName = window.location.pathname
+  const isGroupBuyingReceivedPage = pathName.includes('/group-buying-received')
   const isPushToCouponsVoucherPage = pathName.includes('/coupons') || pathName.includes('/voucher')
   const isPushToMemberLearningPage =
     checkLearningSystem(settings['custom']).isStart && !isPushToCouponsVoucherPage && !isGroupBuyingReceivedPage
