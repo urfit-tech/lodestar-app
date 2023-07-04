@@ -62,10 +62,12 @@ const NotificationItem: React.VFC<{
         avatar={<AvatarImage src={avatar || ''} />}
         title={description}
         description={
-          <div style={{ color: '#9b9b9b' }}>
-            <span className="mr-1">{type && <Icon type={getNotificationIconType(type)} />}</span>
-            <span>{moment(updatedAt).fromNow()}</span>
-            {extra && <span>・{extra}</span>}
+          <div style={{ color: '#9b9b9b', display: 'flex' }}>
+            <div className="mr-1" style={{ alignItems: 'center', display: 'flex' }}>
+              {type && <Icon type={getNotificationIconType(type)} />}
+            </div>
+            <div>{moment(updatedAt).fromNow()}</div>
+            {extra && <div>・{extra}</div>}
           </div>
         }
       />
