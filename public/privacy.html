@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="zh-TW" style="--chakra-ui-color-mode:light;">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap-grid.min.css"
+        integrity="sha256-D9AvR0EzkNZoWZVSvI3ch+uf/Z5izrIpcbsykVphwPU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.0/animate.min.css">
+    <link rel="stylesheet" charset="UTF-8"
+        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css">
+    <link href="//amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+    <link href="/static/css/158.5f0d3870.chunk.css" rel="stylesheet">
+    <link href="/static/css/main.9a7c083f.chunk.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/">
+    <style type="text/css">
+        @font-face {
+            font-family: 'bf-icons';
+            src: url(data:font/ttf;base64,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) format("truetype");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .braft-finder [class^="braft-icon-"],
+        .braft-finder [class*=" braft-icon-"] {
+            /* use !important to prevent issues with browser extensions that change fonts */
+            font-family: 'bf-icons' !important;
+            font-style: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+            /* Better Font Rendering =========== */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .braft-finder .braft-icon-code:before {
+            content: "\E903";
+        }
+
+        .braft-finder .braft-icon-pause:before {
+            content: "\E034";
+        }
+
+        .braft-finder .braft-icon-play_arrow:before {
+            content: "\E037";
+        }
+
+        .braft-finder .braft-icon-bin:before {
+            content: "\E9AC";
+        }
+
+        .braft-finder .braft-icon-replay:before {
+            content: "\E042";
+        }
+
+        .braft-finder .braft-icon-close:before {
+            content: "\E913";
+        }
+
+        .braft-finder .braft-icon-music:before {
+            content: "\E90E";
+        }
+
+        .braft-finder .braft-icon-camera:before {
+            content: "\E911";
+        }
+
+        .braft-finder .braft-icon-file-text:before {
+            content: "\E926";
+        }
+
+        .braft-finder .braft-icon-film:before {
+            content: "\E91C";
+        }
+
+        .braft-finder .braft-icon-paste:before {
+            content: "\E92D";
+        }
+
+        .braft-finder .braft-icon-spinner:before {
+            content: "\E980";
+        }
+
+        .braft-finder .braft-icon-media:before {
+            content: "\E90F";
+        }
+
+        .braft-finder .braft-icon-add:before {
+            content: "\E918";
+        }
+
+        .braft-finder .braft-icon-done:before {
+            content: "\E912";
+        }
+
+        .braft-finder .braft-icon-drop-down:before {
+            content: "\E906";
+        }
+
+        .braft-finder .braft-icon-drop-up:before {
+            content: "\E909";
+        }
+
+        .braft-finder .braft-icon-help:before {
+            content: "\E902";
+        }
+
+        .braft-finder .braft-icon-info:before {
+            content: "\E901";
+        }
+
+        .braft-finder .braft-icon-menu:before {
+            content: "\E908";
+        }
+
+        .pull-left {
+            float: left;
+        }
+
+        .pull-right {
+            float: right;
+        }
+
+        .braft-finder .bf-uploader {
+            position: relative;
+            height: 370px;
+            margin: 0;
+        }
+
+        .braft-finder .bf-uploader.draging .bf-list-wrap,
+        .braft-finder .bf-uploader.draging .bf-add-external {
+            pointer-events: none;
+        }
+
+        .braft-finder .bf-uploader input::-webkit-input-placeholder {
+            color: #ccc;
+        }
+
+        .braft-finder .bf-uploader input::-moz-placeholder {
+            color: #ccc;
+        }
+
+        .braft-finder .bf-uploader input::-ms-input-placeholder {
+            color: #ccc;
+        }
+
+        .braft-finder .bf-list-wrap {
+            position: relative;
+            height: 370px;
+        }
+
+        .braft-finder .bf-list-tools {
+            z-index: 1;
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 20px;
+            padding: 0 15px;
+            background-color: #fff;
+        }
+
+        .braft-finder .bf-list-tools span {
+            height: 26px;
+            font-size: 12px;
+            line-height: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .braft-finder .bf-list-tools span[disabled] {
+            opacity: .3;
+            pointer-events: none;
+        }
+
+        .braft-finder .bf-list-tools .bf-select-all,
+        .braft-finder .bf-list-tools .bf-deselect-all {
+            float: left;
+            margin-right: 5px;
+            color: #bbb;
+        }
+
+        .braft-finder .bf-list-tools .bf-select-all:hover,
+        .braft-finder .bf-list-tools .bf-deselect-all:hover {
+            color: #3498db;
+        }
+
+        .braft-finder .bf-list-tools .bf-remove-selected {
+            float: right;
+            color: #e74c3c;
+        }
+
+        .braft-finder .bf-list-tools .bf-remove-selected:hover {
+            color: #c92e1e;
+        }
+
+        .braft-finder .bf-list {
+            position: absolute;
+            z-index: 1;
+            top: 30px;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            margin: 0;
+            padding: 0 10px;
+            list-style: none;
+            overflow: auto;
+        }
+
+        .braft-finder .bf-list::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+            background-color: #fff;
+        }
+
+        .braft-finder .bf-list::-webkit-scrollbar-track {
+            background-color: #fff;
+        }
+
+        .braft-finder .bf-list::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .braft-finder .bf-item,
+        .braft-finder .bf-add-item {
+            position: relative;
+            display: block;
+            float: left;
+            width: 113px;
+            height: 113px;
+            margin: 5px;
+            overflow: hidden;
+            border-radius: 3px;
+        }
+
+        .braft-finder .bf-item.uploading {
+            pointer-events: none;
+        }
+
+        .braft-finder .bf-item.error::before {
+            display: block;
+            content: "\E901";
+        }
+
+        .braft-finder .bf-item.error::after {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(231, 76, 60, 0.8);
+            content: '';
+        }
+
+        .braft-finder .bf-item.error:hover::after {
+            background-color: rgba(231, 76, 60, 0.9);
+        }
+
+        .braft-finder .bf-item.error .bf-item-uploading {
+            display: none;
+        }
+
+        .braft-finder .bf-add-item {
+            background-color: #ecedef;
+            color: #999;
+        }
+
+        .braft-finder .bf-add-item:hover {
+            background-color: #e1e2e3;
+        }
+
+        .braft-finder .bf-add-item i {
+            display: block;
+            width: 113px;
+            height: 113px;
+            font-size: 48px;
+            line-height: 113px;
+            text-align: center;
+        }
+
+        .braft-finder .bf-add-item input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .braft-finder .bf-item::before {
+            display: none;
+            position: absolute;
+            z-index: 2;
+            top: 0;
+            left: 0;
+            width: 113px;
+            height: 113px;
+            color: #fff;
+            font-size: 48px;
+            font-family: 'bf-icons';
+            line-height: 113px;
+            text-align: center;
+        }
+
+        .braft-finder .bf-item::after {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(52, 152, 219, 0);
+            content: '';
+        }
+
+        .braft-finder .bf-item:hover::after {
+            background-color: rgba(52, 152, 219, 0.3);
+        }
+
+        .braft-finder .bf-item:hover .bf-item-remove {
+            display: block;
+        }
+
+        .braft-finder .bf-item.active::before {
+            display: block;
+            content: "\E912";
+        }
+
+        .braft-finder .bf-item.active::after {
+            background-color: rgba(52, 152, 219, 0.6);
+        }
+
+        .braft-finder .bf-item.active:hover::after {
+            background-color: rgba(52, 152, 219, 0.8);
+        }
+
+        .braft-finder .bf-item.active:hover .bf-item-remove {
+            display: none;
+        }
+
+        .braft-finder .bf-item-uploading {
+            box-sizing: border-box;
+            position: absolute;
+            z-index: 3;
+            top: 52px;
+            left: 10px;
+            width: 93px;
+            height: 10px;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            box-shadow: 0 0 0 100px rgba(0, 0, 0, 0.5);
+        }
+
+        .braft-finder .bf-item-uploading-bar {
+            height: 10px;
+            background-color: #3498db;
+            border-radius: 0;
+        }
+
+        .braft-finder .bf-item-remove {
+            display: none;
+            position: absolute;
+            z-index: 2;
+            top: 0;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            color: #fff;
+            font-size: 18px;
+            line-height: 28px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .braft-finder .bf-item-remove:hover {
+            color: #e74c3c;
+        }
+
+        .braft-finder .bf-item-title {
+            display: none;
+            box-sizing: border-box;
+            position: absolute;
+            z-index: 2;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            padding: 0 5px;
+            overflow: hidden;
+            background-image: linear-gradient(rgba(0, 0, 0, 0), black);
+            color: #fff;
+            font-size: 12px;
+            line-height: 55px;
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .braft-finder .bf-image {
+            width: 100%;
+            height: 100%;
+            background-color: #eee;
+            user-select: none;
+        }
+
+        .braft-finder .bf-image img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .braft-finder .bf-video {
+            background-color: #8e44ad;
+        }
+
+        .braft-finder .bf-audio {
+            background-color: #f39c12;
+        }
+
+        .braft-finder .bf-embed {
+            background-color: #f1c40f;
+        }
+
+        .braft-finder .bf-icon {
+            display: block;
+            width: 113px;
+            height: 113px;
+            overflow: hidden;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .braft-finder .bf-icon i,
+        .braft-finder .bf-icon span {
+            display: block;
+        }
+
+        .braft-finder .bf-icon i {
+            margin-top: 35px;
+            font-size: 24px;
+        }
+
+        .braft-finder .bf-icon span {
+            width: 103px;
+            margin: 10px auto;
+            overflow: hidden;
+            font-size: 12px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .braft-finder .bf-drag-uploader {
+            box-sizing: border-box;
+            position: absolute;
+            z-index: 2;
+            top: 0;
+            right: 15px;
+            left: 15px;
+            height: 100%;
+            background-color: #fff;
+            border: dashed 1px #bbb;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .braft-finder .bf-drag-uploader:hover,
+        .braft-finder .bf-drag-uploader.draging {
+            background-color: #f1f2f3;
+        }
+
+        .braft-finder .bf-drag-uploader.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .braft-finder .bf-uploader-buttons {
+            height: 370px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .braft-finder .bf-drag-tip {
+            display: inline-block;
+            margin-top: 150px;
+            color: #ccc;
+            text-align: center;
+            font-size: 28px;
+            font-weight: normal;
+            line-height: 40px;
+        }
+
+        .braft-finder .bf-drag-tip input {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            color: #fff;
+            text-indent: -100px;
+            cursor: pointer;
+        }
+
+        .braft-finder .bf-manager-footer {
+            height: 36px;
+            margin: 10px 0;
+            padding: 0 15px;
+        }
+
+        .braft-finder .bf-manager-footer .button {
+            float: right;
+            height: 36px;
+            margin-left: 5px;
+            padding: 0 35px;
+            font-size: 12px;
+            font-weight: 700;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .braft-finder .bf-manager-footer .button-insert {
+            color: #fff;
+            background-color: #3498db;
+        }
+
+        .braft-finder .bf-manager-footer .button-insert:hover {
+            background-color: #2084c7;
+        }
+
+        .braft-finder .bf-manager-footer .button-insert[disabled] {
+            opacity: .3;
+            pointer-events: none;
+            filter: grayscale(0.4);
+        }
+
+        .braft-finder .bf-manager-footer .button-cancel {
+            color: #999;
+            background-color: #e8e8e9;
+        }
+
+        .braft-finder .bf-manager-footer .button-cancel:hover {
+            background-color: #d8d8d9;
+        }
+
+        .braft-finder .bf-toggle-external-form {
+            color: #666;
+            font-size: 12px;
+            line-height: 36px;
+        }
+
+        .braft-finder .bf-toggle-external-form span {
+            color: #bbb;
+            line-height: 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .braft-finder .bf-toggle-external-form span:hover {
+            color: #3498db;
+        }
+
+        .braft-finder .bf-toggle-external-form span i {
+            position: relative;
+            top: 2px;
+            font-size: 16px;
+        }
+
+        .braft-finder .bf-add-external {
+            position: absolute;
+            z-index: 3;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: #fff;
+        }
+
+        .braft-finder .bf-add-external input {
+            border: solid 1px rgba(0, 0, 0, 0.3);
+            border: solid 0.5px rgba(0, 0, 0, 0.3);
+            box-shadow: none;
+        }
+
+        .braft-finder .bf-add-external input:focus {
+            border-color: #3498db;
+            box-shadow: none;
+        }
+
+        .braft-finder .bf-external-form {
+            width: 500px;
+            max-width: 90%;
+            margin: 91px auto 0 auto;
+        }
+
+        .braft-finder .bf-external-input {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            margin-bottom: 10px;
+        }
+
+        .braft-finder .bf-external-input div {
+            position: absolute;
+            top: 0;
+            right: 85px;
+            left: 0;
+            height: 40px;
+        }
+
+        .braft-finder .bf-external-input input,
+        .braft-finder .bf-external-input textarea {
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            height: 40px;
+            padding: 0 10px;
+            border: none;
+            border-radius: 3px;
+            outline: none;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3);
+            color: #999;
+            font-size: 18px;
+        }
+
+        .braft-finder .bf-external-input input:focus,
+        .braft-finder .bf-external-input textarea:focus {
+            box-shadow: inset 0 0 0 1px #3498db;
+        }
+
+        .braft-finder .bf-external-input textarea {
+            height: 100px;
+            font-size: 14px;
+        }
+
+        .braft-finder .bf-external-input button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 40px;
+            background-color: #3498db;
+            border: none;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .braft-finder .bf-external-input button:disabled {
+            opacity: .3;
+            pointer-events: none;
+            filter: grayscale(0.4);
+        }
+
+        .braft-finder .bf-external-input button:hover {
+            background-color: #2084c7;
+        }
+
+        .braft-finder .bf-switch-external-type {
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .braft-finder .bf-switch-external-type button {
+            width: auto;
+            height: 30px;
+            margin: 10px 5px;
+            padding: 0 10px;
+            background-color: #e8e9ea;
+            border: none;
+            border-radius: 3px;
+            color: #999;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .braft-finder .bf-switch-external-type button:hover {
+            background-color: #d8d9da;
+        }
+
+        .braft-finder .bf-switch-external-type button:only-child {
+            display: none;
+        }
+
+        .braft-finder .bf-switch-external-type[data-type="IMAGE"] [data-type="IMAGE"],
+        .braft-finder .bf-switch-external-type[data-type="VIDEO"] [data-type="VIDEO"],
+        .braft-finder .bf-switch-external-type[data-type="AUDIO"] [data-type="AUDIO"],
+        .braft-finder .bf-switch-external-type[data-type="EMBED"] [data-type="EMBED"],
+        .braft-finder .bf-switch-external-type[data-type="FILE"] [data-type="FILE"] {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .braft-finder .bf-external-tip {
+            display: block;
+            margin-top: 15px;
+            color: #ccc;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+    <style data-styled="active" data-styled-version="5.1.1">
+        .kfZOQo button {
+            font-size: 20px;
+        }
+
+        .kfZOQo .ant-badge-count {
+            top: 8px;
+            right: 4px;
+        }
+
+        .htgBjT.htgBjT,
+        .htgBjT.htgBjT:hover,
+        .htgBjT.htgBjT:active,
+        .htgBjT.htgBjT:focus {
+            color: var(--gray-darker);
+        }
+
+        .gzcrzB {
+            overflow: hidden;
+        }
+
+        .gzcrzB.hidden {
+            height: 0;
+            border: 0;
+        }
+
+        .jJFvBj {
+            height: 36px;
+            line-height: 36px;
+        }
+
+        .jJFvBj a {
+            display: inline-block;
+        }
+
+        .gldpTw {
+            width: auto;
+            max-width: 100%;
+            max-height: 36px;
+        }
+
+        .dLAucL.dLAucL {
+            position: absolute;
+            top: 0.25rem;
+            right: 0;
+            padding: 0 0.25rem;
+            line-height: 1rem;
+            min-height: 1rem;
+            font-size: 12px;
+        }
+
+        .fcqzIr {
+            position: relative;
+            height: calc(100vh - 4rem);
+            overflow: hidden auto;
+        }
+
+        .fcqzIr.full-height {
+            padding-top: 4rem;
+            height: 100vh;
+        }
+
+        .DEoPL {
+            min-height: calc(100vh - 4rem - 0px);
+        }
+
+        .hyPNMc {
+            min-height: calc(100vh - 4rem - 65px);
+        }
+
+        .cBuwhn {
+            padding-top: 1.25rem;
+        }
+
+        .nnuJi.nnuJi {
+            color: var(--gray-dark);
+            font-size: 14px;
+        }
+
+        .hMYTdE {
+            font-size: 0.75rem;
+        }
+
+        .gUhPC {
+            height: 64px;
+            background: white;
+            border-top: 1px solid #ececec;
+            color: #9b9b9b;
+        }
+
+        .gUhPC a {
+            margin-bottom: 1.25rem;
+            line-height: 1;
+        }
+
+        .gUhPC .blank {
+            width: 100%;
+        }
+
+        .gUhPC .divider {
+            border-top: 1px solid #ececec;
+        }
+
+        @media (min-width:992px) {
+            .gUhPC .blank {
+                width: auto;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                -ms-flex-positive: 1;
+                flex-grow: 1;
+            }
+        }
+
+        .elwNsP {
+            font-size: 14px;
+            color: #9b9b9b;
+        }
+
+        .elwNsP:not(:first-child) {
+            margin-left: 2rem;
+        }
+
+        .bSwWwA {
+            font-size: 14px;
+            color: #9b9b9b;
+        }
+
+        .bSwWwA:not(:first-child) {
+            margin-left: 2rem;
+        }
+
+        .jnzTeZ {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-align-items: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border: solid 0.5px #ececec;
+            border-radius: 50%;
+            color: #585858;
+        }
+
+        .jnzTeZ:not(:first-child) {
+            margin-left: 0.75rem;
+        }
+
+        @media (min-width:992px) {
+            .blank+.jnzTeZ {
+                margin-left: 2rem;
+            }
+        }
+
+        .jakOsZ {
+            display: grid;
+            place-items: center;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+        }
+
+        .jDQkea.jDQkea .css-r6z5ec {
+            z-index: 20;
+        }
+
+        .jZXJgo {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-align-items: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            height: calc(100vh - 64px);
+        }
+
+        .cpFNgU.cpFNgU {
+            margin-bottom: 36px;
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 1.3;
+            -webkit-letter-spacing: 0.77px;
+            -moz-letter-spacing: 0.77px;
+            -ms-letter-spacing: 0.77px;
+            letter-spacing: 0.77px;
+        }
+
+        .dQpeAq.dQpeAq {
+            margin-top: 41px;
+            margin-bottom: 13px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .XBhvs.XBhvs {
+            margin-bottom: 20px;
+        }
+
+        .XBhvs .ant-card-body {
+            padding: 40px;
+        }
+
+        .XBhvs p,
+        .XBhvs li {
+            margin-bottom: 0;
+            line-height: 1.69;
+            -webkit-letter-spacing: 0.2px;
+            -moz-letter-spacing: 0.2px;
+            -ms-letter-spacing: 0.2px;
+            letter-spacing: 0.2px;
+        }
+
+        .XBhvs ol {
+            padding-left: 50px;
+        }
+
+        .XBhvs ol li {
+            padding-left: 16px;
+        }
+
+        .cezain {
+            background: #f7f8f8;
+            padding-top: 56px;
+            padding-bottom: 80px;
+            text-align: justify;
+        }
+
+        .cezain>.sc-pjGbq {
+            text-align: center;
+        }
+    </style>
+    <style data-emotion="css-global" data-s=""></style>
+    <style data-emotion="css-global" data-s=""></style>
+    <style data-emotion="css" data-s=""></style>
+    <script charset="utf-8" src="/static/js/151.fb1ce085.chunk.js"></script>
+</head>
+
+<body class="chakra-ui-light"><noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"><audio></audio>
+        <section class="sc-oTaid sc-psRme jDQkea ant-layout">
+            <header class="sc-paWVw gzcrzB d-flex align-items-center justify-content-between  ant-layout-header">
+                <div class="d-flex align-items-center">
+                    <div class="sc-pjTqr jJFvBj mr-4"><a href="/"><img
+                                src="https://static-dev.kolable.com/images/demo/logo_1672632118215.png/240?v=1672632118215"
+                                alt="logo" class="sc-qQlgh gldpTw"></a></div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="sc-pzLqt jakOsZ"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                            viewBox="0 0 16 16" focusable="false" class="chakra-icon css-13otjrl">
+                            <path fill="currentColor" fill-rule="evenodd"
+                                d="M6.667.667c3.313 0 6 2.686 6 6 0 1.174-.338 2.27-.92 3.194l2.772 2.772c.52.52.52 1.365 0 1.886-.52.52-1.365.52-1.886 0l-2.772-2.773c-.925.583-2.02.92-3.194.92-3.314 0-6-2.686-6-6 0-3.313 2.686-6 6-6zm0 2c-2.21 0-4 1.79-4 4 0 2.209 1.79 4 4 4 2.209 0 4-1.791 4-4 0-2.21-1.791-4-4-4z">
+                            </path>
+                        </svg></div><span class="sc-pRFHb kfZOQo mr-2 ant-badge"><button type="button"
+                            class="chakra-button sc-pZCuu htgBjT css-2uj70d"><svg stroke="currentColor"
+                                fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" focusable="false"
+                                class="chakra-icon css-13otjrl" height="1em" width="1em"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M922.9 701.9H327.4l29.9-60.9 496.8-.9c16.8 0 31.2-12 34.2-28.6l68.8-385.1c1.8-10.1-.9-20.5-7.5-28.4a34.99 34.99 0 0 0-26.6-12.5l-632-2.1-5.4-25.4c-3.4-16.2-18-28-34.6-28H96.5a35.3 35.3 0 1 0 0 70.6h125.9L246 312.8l58.1 281.3-74.8 122.1a34.96 34.96 0 0 0-3 36.8c6 11.9 18.1 19.4 31.5 19.4h62.8a102.43 102.43 0 0 0-20.6 61.7c0 56.6 46 102.6 102.6 102.6s102.6-46 102.6-102.6c0-22.3-7.4-44-20.6-61.7h161.1a102.43 102.43 0 0 0-20.6 61.7c0 56.6 46 102.6 102.6 102.6s102.6-46 102.6-102.6c0-22.3-7.4-44-20.6-61.7H923c19.4 0 35.3-15.8 35.3-35.3a35.42 35.42 0 0 0-35.4-35.2zM305.7 253l575.8 1.9-56.4 315.8-452.3.8L305.7 253zm96.9 612.7c-17.4 0-31.6-14.2-31.6-31.6 0-17.4 14.2-31.6 31.6-31.6s31.6 14.2 31.6 31.6a31.6 31.6 0 0 1-31.6 31.6zm325.1 0c-17.4 0-31.6-14.2-31.6-31.6 0-17.4 14.2-31.6 31.6-31.6s31.6 14.2 31.6 31.6a31.6 31.6 0 0 1-31.6 31.6z">
+                                </path>
+                            </svg></button></span><button type="button" class="ant-btn ml-2 mr-2"><span>登
+                            入</span></button><button type="button" class="ant-btn ant-btn-link ant-btn-icon-only"><i
+                            aria-label="icon: menu" class="anticon anticon-menu"><svg viewBox="64 64 896 896"
+                                focusable="false" class="" data-icon="menu" width="1em" height="1em" fill="currentColor"
+                                aria-hidden="true">
+                                <path
+                                    d="M904 160H120c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8zm0 624H120c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8zm0-312H120c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8z">
+                                </path>
+                            </svg></i></button>
+                </div>
+            </header>
+            <main class="sc-oTmHo fcqzIr ant-layout-content" id="layout-content">
+                <div class="sc-pbJYR hyPNMc">
+                    <section class="sc-qZuGl cezain">
+                        <h1 class="ant-typography sc-pjGbq cpFNgU">使用條款</h1>
+                        <div class="container">
+                            <div class="ant-card sc-qQXoI XBhvs ant-card-bordered">
+                                <div class="ant-card-body">
+                                    <h2 class="ant-typography sc-pjGbq cpFNgU">隱私權條款</h2>
+                                    <h3 class="ant-typography sc-psdsT dQpeAq">隱私權保護政策的適用範圍</h3>
+                                    <p>隱私權保護政策內容，包括 如何處理在您使用網站服務時收集到的個人識別資料。隱私權保護政策不適用於
+                                        以外的相關連結網站，也不適用於非 所委託或參與管理的人員。</p>
+                                    <h3 class="ant-typography sc-psdsT dQpeAq">個人資料的蒐集、處理及利用方式</h3>
+                                    <p>當您造訪 或使用
+                                        所提供之功能服務時，我們將視該服務功能性質，請您提供必要的個人資料，並在該特定目的範圍內處理及利用您的個人資料；非經您書面同意，
+                                        不會將個人資料用於其他用途。</p>
+                                    <p>於一般瀏覽時，伺服器會自行記錄相關行徑，包括您使用連線設備的IP位址、使用時間、使用的瀏覽器、瀏覽及點選資料記錄等，做為我們增進網站服務的參考依據，此記錄為內部應用，決不對外公佈。
+                                    </p>
+                                    <h3 class="ant-typography sc-psdsT dQpeAq">網站對外的相關連結</h3>
+                                    <p> 的網頁提供其他網站的網路連結，您也可經由 所提供的連結，點選進入其他網站。但該連結網站不適用
+                                        的隱私權保護政策，您必須參考該連結網站中的隱私權保護政策。</p>
+                                    <h3 class="ant-typography sc-psdsT dQpeAq">與第三人共用個人資料之政策</h3>
+                                    <p> 絕不會提供、交換、出租或出售任何您的個人資料給其他個人、團體、私人企業或公務機關，但有法律依據或合約義務者，不在此限。</p>
+                                    <p> 如舉辦任何回饋活動，你所提供給主辦單位的得獎連絡資料，也僅供此活動使用。
+                                        不會將活動資料直接交付或售予第三方。如果 與第三方服務合作，亦應依法要求該第三方
+                                        的會員網站使用對應的約定及隱私權政策， 將會盡全力保障所有會員個人資料的安全性。</p>
+                                    <h3 class="ant-typography sc-psdsT dQpeAq">更新/刪除您的個人資訊</h3>
+                                    <p>若您已註冊並希望自「」提供的系統中刪除您提供給我們的任何註冊資訊，請透過分頁底部的「聯絡我們」連結與我們聯繫。根據您的需求，我們將盡力於30天內自活動數據庫中刪除您的註冊資訊，並在可行的情況下從我們的備份媒體中刪除您的註冊資訊。
+                                    </p>
+                                    <p>請注意，永久刪除您的註冊資訊，您的所有個人資料亦從資料庫中清除。這道流程完成後，您再也無法使用您的任一項服務，您的使用者帳號與所有資料均將永久移除，「」將無法恢復您的帳號，或於日後擷取您的個人資料。若您於日後聯絡「」支援管道，系統將無法辨認您的帳號與找回已刪除的帳號。
+                                    </p>
+                                    <h3 class="ant-typography sc-psdsT dQpeAq">COOKIE之使用</h3>
+                                    <p>為了提供您最佳的服務，
+                                        會在您的電腦中放置並取用我們的Cookie，若您不願接受Cookie的寫入，您可在您使用的瀏覽器功能項中設定隱私權等級為高，即可拒絕Cookie的寫入，但可能會導至網站某些功能無法正常執行。
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="ant-card sc-qQXoI XBhvs ant-card-bordered">
+                                <div class="ant-card-body">
+                                    <h2 class="ant-typography sc-pjGbq cpFNgU">Facebook 資料刪除指示</h2>
+                                    <p>根據 Facebook 政策，我們必須提供「Facebook 資料刪除指示說明」，如果您想刪除此平台上的 Facebook 登入應用數據，您可以按照以下步驟進行：
+                                    </p>
+                                    <p>
+                                    <ol>
+                                        <li>進入您的 Facebook 帳號的「設定和隱私」選單並點擊「設定」</li>
+                                        <li>向下滾動並點擊「應用程式和網站」</li>
+                                        <li>找到並點擊此應用程式（）</li>
+                                        <li>點擊「移除」按鈕，即成功地刪除了您的應用程式活動。</li>
+                                    </ol>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <footer class="sc-pjumZ gUhPC">
+                    <div class="container">
+                        <div class="sc-pZdvY cBuwhn d-flex align-items-center justify-content-center flex-wrap">
+                            <div class="blank"></div><a href="https://lin.ee/r4w7Fg5" target="_blank"
+                                rel="noopener noreferrer" class="sc-qYGWS jnzTeZ"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 13 12"
+                                    focusable="false" class="chakra-icon css-13otjrl">
+                                    <g fill="none" fill-rule="evenodd">
+                                        <g fill="currentColor" fill-rule="nonzero">
+                                            <g>
+                                                <g>
+                                                    <path
+                                                        d="M6.004.016C2.694.016 0 2.215 0 4.917c0 2.42 2.136 4.449 5.021 4.834.196.042.462.13.53.297.06.152.039.386.018.544l-.082.513c-.022.151-.12.596.525.324.646-.27 3.46-2.052 4.721-3.51.863-.95 1.275-1.923 1.275-3.002 0-2.702-2.694-4.901-6.004-4.901zm-2.35 6.508H2.46c-.172 0-.315-.143-.315-.316v-2.4c0-.174.143-.318.315-.318.174 0 .315.144.315.317v2.084h.879c.174 0 .315.142.315.317 0 .173-.141.316-.315.316zm1.234-.316c0 .173-.141.316-.316.316-.172 0-.314-.143-.314-.316v-2.4c0-.174.142-.318.316-.318.173 0 .314.144.314.317v2.4zm2.872 0c0 .136-.087.256-.216.3-.032.01-.066.015-.1.015-.105 0-.195-.045-.255-.126L5.967 4.728v1.48c0 .172-.14.316-.316.316-.173 0-.313-.144-.313-.317v-2.4c0-.136.087-.256.215-.3.03-.01.068-.016.097-.016.098 0 .188.053.248.128L7.13 5.295V3.807c0-.173.141-.317.315-.317.173 0 .315.144.315.317v2.4zM9.69 4.69c.174 0 .314.144.314.318 0 .173-.14.317-.315.317h-.878v.566h.878c.175 0 .315.142.315.317 0 .173-.14.316-.315.316H8.495c-.172 0-.313-.143-.313-.316v-2.4c0-.174.14-.318.315-.318H9.69c.173 0 .313.144.313.317 0 .176-.14.317-.315.317h-.878v.566h.878z"
+                                                        transform="translate(-1175 -5386) translate(0 5348) translate(1175.816 38)">
+                                                    </path>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg></a><a href="https://lin.ee/r4w7Fg5" target="_blank" rel="noopener noreferrer"
+                                class="sc-qYGWS jnzTeZ"><svg width="6px" height="12px" viewBox="0 0 6 12"
+                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                    focusable="false" class="chakra-icon css-13otjrl">
+                                    <title>facebook</title>
+                                    <desc>Created with Sketch.</desc>
+                                    <g id="Symbols" stroke="none" stroke-width="1" fill="#585858" fill-rule="evenodd">
+                                        <g id="footer" transform="translate(-1140.000000, -19.000000)"
+                                            fill="currentColor" fill-rule="nonzero">
+                                            <g id="icon-fb" transform="translate(1131.000000, 13.000000)">
+                                                <g id="facebook" transform="translate(9.818182, 6.545455)">
+                                                    <path
+                                                        d="M4.71737537,5.45889925 L3.23680352,5.45889925 C3.23680352,7.90194501 3.23680352,10.9090909 3.23680352,10.9090909 L1.04288856,10.9090909 C1.04288856,10.9090909 1.04288856,7.93109649 1.04288856,5.45889925 L0,5.45889925 L0,3.53262979 L1.04288856,3.53262979 L1.04288856,2.2866878 C1.04288856,1.39434953 1.45344575,0 3.25696481,0 L4.88269795,0.00643604183 L4.88269795,1.87629549 C4.88269795,1.87629549 3.89479472,1.87629549 3.70271261,1.87629549 C3.5106305,1.87629549 3.23753666,1.97548625 3.23753666,2.40102219 L3.23753666,3.53300838 L4.90909091,3.53300838 L4.71737537,5.45889925 Z"
+                                                        id="Path"></path>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg></a>
+                            <div>
+                                <div class="mx-3 ant-divider ant-divider-vertical" role="separator"></div><button
+                                    type="button"
+                                    class="ant-btn sc-oTzgz nnuJi ant-dropdown-trigger ant-btn-link ant-btn-sm"><span>繁中</span><i
+                                        aria-label="icon: down" class="anticon anticon-down"><svg
+                                            viewBox="64 64 896 896" focusable="false" class="" data-icon="down"
+                                            width="1em" height="1em" fill="currentColor" aria-hidden="true">
+                                            <path
+                                                d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z">
+                                            </path>
+                                        </svg></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="sc-pbvYO hMYTdE py-3 text-center"><span>Copyright © 2023 Demo All rights reserved</span>
+                    </div>
+                </footer>
+            </main>
+        </section>
+    </div>
+    <script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-KWSF7SP"></script>
+    <script src="https://unpkg.com/array-flat-polyfill"></script>
+    <script src="https://js.tappaysdk.com/tpdirect/v5.7.0"></script>
+    <script>!function (e) { function c(c) { for (var d, a, n = c[0], b = c[1], o = c[2], u = 0, l = []; u < n.length; u++)a = n[u], Object.prototype.hasOwnProperty.call(t, a) && t[a] && l.push(t[a][0]), t[a] = 0; for (d in b) Object.prototype.hasOwnProperty.call(b, d) && (e[d] = b[d]); for (i && i(c); l.length;)l.shift()(); return r.push.apply(r, o || []), f() } function f() { for (var e, c = 0; c < r.length; c++) { for (var f = r[c], d = !0, a = 1; a < f.length; a++) { var b = f[a]; 0 !== t[b] && (d = !1) } d && (r.splice(c--, 1), e = n(n.s = f[0])) } return e } var d = {}, a = { 157: 0 }, t = { 157: 0 }, r = []; function n(c) { if (d[c]) return d[c].exports; var f = d[c] = { i: c, l: !1, exports: {} }; return e[c].call(f.exports, f, f.exports, n), f.l = !0, f.exports } n.e = function (e) { var c = []; a[e] ? c.push(a[e]) : 0 !== a[e] && { 1: 1, 3: 1, 5: 1, 8: 1, 12: 1, 15: 1, 17: 1, 18: 1, 22: 1, 41: 1, 42: 1, 44: 1, 46: 1, 48: 1, 50: 1, 54: 1, 58: 1, 59: 1, 61: 1 }[e] && c.push(a[e] = new Promise((function (c, f) { for (var d = "static/css/" + ({}[e] || e) + "." + { 0: "31d6cfe0", 1: "6075e310", 2: "31d6cfe0", 3: "c19e5601", 4: "31d6cfe0", 5: "cad2ed85", 6: "31d6cfe0", 7: "31d6cfe0", 8: "6b9ea567", 9: "31d6cfe0", 10: "31d6cfe0", 11: "31d6cfe0", 12: "6b9ea567", 13: "31d6cfe0", 14: "31d6cfe0", 15: "e7563ef8", 16: "31d6cfe0", 17: "950526a8", 18: "6b9ea567", 19: "31d6cfe0", 20: "31d6cfe0", 21: "31d6cfe0", 22: "6b9ea567", 23: "31d6cfe0", 24: "31d6cfe0", 25: "31d6cfe0", 26: "31d6cfe0", 27: "31d6cfe0", 28: "31d6cfe0", 29: "31d6cfe0", 30: "31d6cfe0", 31: "31d6cfe0", 32: "31d6cfe0", 33: "31d6cfe0", 34: "31d6cfe0", 35: "31d6cfe0", 36: "31d6cfe0", 37: "31d6cfe0", 38: "31d6cfe0", 39: "31d6cfe0", 40: "31d6cfe0", 41: "8cb54f53", 42: "6b9ea567", 43: "31d6cfe0", 44: "6b9ea567", 45: "31d6cfe0", 46: "e7563ef8", 47: "31d6cfe0", 48: "e7563ef8", 49: "31d6cfe0", 50: "6b9ea567", 51: "31d6cfe0", 52: "31d6cfe0", 53: "31d6cfe0", 54: "6b9ea567", 55: "31d6cfe0", 56: "31d6cfe0", 57: "31d6cfe0", 58: "605aefc2", 59: "6b9ea567", 60: "31d6cfe0", 61: "6b9ea567", 62: "31d6cfe0", 63: "31d6cfe0", 64: "31d6cfe0", 65: "31d6cfe0", 66: "31d6cfe0", 67: "31d6cfe0", 68: "31d6cfe0", 69: "31d6cfe0", 70: "31d6cfe0", 71: "31d6cfe0", 72: "31d6cfe0", 73: "31d6cfe0", 74: "31d6cfe0", 75: "31d6cfe0", 76: "31d6cfe0", 77: "31d6cfe0", 78: "31d6cfe0", 79: "31d6cfe0", 80: "31d6cfe0", 81: "31d6cfe0", 82: "31d6cfe0", 83: "31d6cfe0", 84: "31d6cfe0", 85: "31d6cfe0", 86: "31d6cfe0", 87: "31d6cfe0", 88: "31d6cfe0", 89: "31d6cfe0", 90: "31d6cfe0", 91: "31d6cfe0", 92: "31d6cfe0", 93: "31d6cfe0", 94: "31d6cfe0", 95: "31d6cfe0", 96: "31d6cfe0", 97: "31d6cfe0", 98: "31d6cfe0", 99: "31d6cfe0", 100: "31d6cfe0", 101: "31d6cfe0", 102: "31d6cfe0", 103: "31d6cfe0", 104: "31d6cfe0", 105: "31d6cfe0", 106: "31d6cfe0", 107: "31d6cfe0", 108: "31d6cfe0", 109: "31d6cfe0", 110: "31d6cfe0", 111: "31d6cfe0", 112: "31d6cfe0", 113: "31d6cfe0", 114: "31d6cfe0", 115: "31d6cfe0", 116: "31d6cfe0", 117: "31d6cfe0", 118: "31d6cfe0", 119: "31d6cfe0", 120: "31d6cfe0", 121: "31d6cfe0", 122: "31d6cfe0", 123: "31d6cfe0", 124: "31d6cfe0", 125: "31d6cfe0", 126: "31d6cfe0", 127: "31d6cfe0", 128: "31d6cfe0", 129: "31d6cfe0", 130: "31d6cfe0", 131: "31d6cfe0", 132: "31d6cfe0", 133: "31d6cfe0", 134: "31d6cfe0", 135: "31d6cfe0", 136: "31d6cfe0", 137: "31d6cfe0", 138: "31d6cfe0", 139: "31d6cfe0", 140: "31d6cfe0", 141: "31d6cfe0", 142: "31d6cfe0", 143: "31d6cfe0", 144: "31d6cfe0", 145: "31d6cfe0", 146: "31d6cfe0", 147: "31d6cfe0", 148: "31d6cfe0", 149: "31d6cfe0", 150: "31d6cfe0", 151: "31d6cfe0", 152: "31d6cfe0", 153: "31d6cfe0", 154: "31d6cfe0", 155: "31d6cfe0" }[e] + ".chunk.css", t = n.p + d, r = document.getElementsByTagName("link"), b = 0; b < r.length; b++) { var o = (i = r[b]).getAttribute("data-href") || i.getAttribute("href"); if ("stylesheet" === i.rel && (o === d || o === t)) return c() } var u = document.getElementsByTagName("style"); for (b = 0; b < u.length; b++) { var i; if ((o = (i = u[b]).getAttribute("data-href")) === d || o === t) return c() } var l = document.createElement("link"); l.rel = "stylesheet", l.type = "text/css", l.onload = c, l.onerror = function (c) { var d = c && c.target && c.target.src || t, r = new Error("Loading CSS chunk " + e + " failed.\n(" + d + ")"); r.code = "CSS_CHUNK_LOAD_FAILED", r.request = d, delete a[e], l.parentNode.removeChild(l), f(r) }, l.href = t, document.getElementsByTagName("head")[0].appendChild(l) })).then((function () { a[e] = 0 }))); var f = t[e]; if (0 !== f) if (f) c.push(f[2]); else { var d = new Promise((function (c, d) { f = t[e] = [c, d] })); c.push(f[2] = d); var r, b = document.createElement("script"); b.charset = "utf-8", b.timeout = 120, n.nc && b.setAttribute("nonce", n.nc), b.src = function (e) { return n.p + "static/js/" + ({}[e] || e) + "." + { 0: "555c2649", 1: "02929514", 2: "e964c0c4", 3: "0914e518", 4: "541ea338", 5: "c0955a4b", 6: "38c231bb", 7: "ab307d95", 8: "3de9ea0b", 9: "7ca5ebfb", 10: "1a3015ec", 11: "ce85f9ce", 12: "7b913bcd", 13: "0fd13bfe", 14: "0db04f28", 15: "19f1bf3a", 16: "6c90efcc", 17: "4a301203", 18: "2c0ce547", 19: "f6193fb0", 20: "a7cb2f8f", 21: "def59c1b", 22: "db4dfd26", 23: "ae6b714f", 24: "bf0a83c2", 25: "83e8317e", 26: "a626e35d", 27: "f6e4953e", 28: "b388705e", 29: "a0cb44b1", 30: "f8d698a1", 31: "f9585ee0", 32: "d67ef112", 33: "a71fd4f1", 34: "26191707", 35: "152c862a", 36: "e40f6af4", 37: "60af68c4", 38: "a293a09c", 39: "937b4541", 40: "86a25929", 41: "43b4ddf8", 42: "9734ab09", 43: "96e5b394", 44: "1d83e6e3", 45: "d23761ed", 46: "48d76483", 47: "edcf826e", 48: "f8ee262d", 49: "a5fc275f", 50: "bdd36265", 51: "3c12e001", 52: "7ba903e0", 53: "2469b16f", 54: "fed3f23d", 55: "8ed21f5e", 56: "67a462c2", 57: "d2cc7017", 58: "987f57d3", 59: "e2d4d4ab", 60: "cab3ccbc", 61: "ce7c2234", 62: "865737bb", 63: "6460c2ff", 64: "b910eb05", 65: "d881f971", 66: "f61ca09e", 67: "0860bc91", 68: "99f572c9", 69: "339c382c", 70: "ef2cb34f", 71: "47a01dce", 72: "1ca09eb7", 73: "71973e03", 74: "a8e1cfb8", 75: "aaed5f8c", 76: "e94da629", 77: "d548f622", 78: "977e335d", 79: "a8b19d93", 80: "358b3d44", 81: "51eeee34", 82: "f43cd245", 83: "f8fa0c87", 84: "26127362", 85: "93db77f4", 86: "cb09b735", 87: "97acf447", 88: "c9813b47", 89: "a33c2679", 90: "30e00afb", 91: "ed0fc24e", 92: "e527f0ee", 93: "78ea9318", 94: "eaa60ac5", 95: "ecd4baad", 96: "4982e011", 97: "0dca8286", 98: "dd7ead8e", 99: "9ea21b56", 100: "e58d1ed9", 101: "9423a0b3", 102: "c112ad8a", 103: "d808acdf", 104: "3891c88c", 105: "6e2b70db", 106: "345025e4", 107: "3c0edbcd", 108: "cea4b4bf", 109: "e28e676d", 110: "1f0fa67c", 111: "33cb0f30", 112: "73087823", 113: "3324f249", 114: "aca29a77", 115: "192ec910", 116: "2c3ae3a7", 117: "ea11de67", 118: "20874eaa", 119: "0459a8c1", 120: "ad56371a", 121: "d1ecf9b1", 122: "7aae223a", 123: "6729d99c", 124: "a30e0af1", 125: "f7e19359", 126: "f72c1f8a", 127: "8f9c91bc", 128: "abb5acfe", 129: "7d1bc711", 130: "fd2d3cfd", 131: "3f4232b2", 132: "e5fac244", 133: "a22d2300", 134: "3823d0f1", 135: "b18cae4a", 136: "4838fe1e", 137: "d5df262b", 138: "26a2364b", 139: "759602ca", 140: "2e5c6817", 141: "b2c7bd74", 142: "7ecc39a7", 143: "84762eee", 144: "09e8f73b", 145: "0a520ee0", 146: "05fca84b", 147: "de07e4a5", 148: "9b7eb38c", 149: "6628bb74", 150: "9d63e765", 151: "fb1ce085", 152: "bd3cfe6b", 153: "67126339", 154: "18772162", 155: "4b75b623" }[e] + ".chunk.js" }(e); var o = new Error; r = function (c) { b.onerror = b.onload = null, clearTimeout(u); var f = t[e]; if (0 !== f) { if (f) { var d = c && ("load" === c.type ? "missing" : c.type), a = c && c.target && c.target.src; o.message = "Loading chunk " + e + " failed.\n(" + d + ": " + a + ")", o.name = "ChunkLoadError", o.type = d, o.request = a, f[1](o) } t[e] = void 0 } }; var u = setTimeout((function () { r({ type: "timeout", target: b }) }), 12e4); b.onerror = b.onload = r, document.head.appendChild(b) } return Promise.all(c) }, n.m = e, n.c = d, n.d = function (e, c, f) { n.o(e, c) || Object.defineProperty(e, c, { enumerable: !0, get: f }) }, n.r = function (e) { "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(e, "__esModule", { value: !0 }) }, n.t = function (e, c) { if (1 & c && (e = n(e)), 8 & c) return e; if (4 & c && "object" == typeof e && e && e.__esModule) return e; var f = Object.create(null); if (n.r(f), Object.defineProperty(f, "default", { enumerable: !0, value: e }), 2 & c && "string" != typeof e) for (var d in e) n.d(f, d, function (c) { return e[c] }.bind(null, d)); return f }, n.n = function (e) { var c = e && e.__esModule ? function () { return e.default } : function () { return e }; return n.d(c, "a", c), c }, n.o = function (e, c) { return Object.prototype.hasOwnProperty.call(e, c) }, n.p = "/", n.oe = function (e) { throw console.error(e), e }; var b = this["webpackJsonplodestar-app"] = this["webpackJsonplodestar-app"] || [], o = b.push.bind(b); b.push = c, b = b.slice(); for (var u = 0; u < b.length; u++)c(b[u]); var i = o; f() }([])</script>
+    <script src="/static/js/158.5c5845ed.chunk.js"></script>
+    <script src="/static/js/main.92aacd3e.chunk.js"></script>
+    <div id="chakra-toast-portal">
+        <ul id="chakra-toast-manager-top"
+            style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column; margin: 0px auto; top: 0px; right: 0px; left: 0px;">
+        </ul>
+        <ul id="chakra-toast-manager-top-left"
+            style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column; top: 0px; left: 0px;">
+        </ul>
+        <ul id="chakra-toast-manager-top-right"
+            style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column; top: 0px; right: 0px;">
+        </ul>
+        <ul id="chakra-toast-manager-bottom-left"
+            style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column; bottom: 0px; left: 0px;">
+        </ul>
+        <ul id="chakra-toast-manager-bottom"
+            style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column; margin: 0px auto; bottom: 0px; right: 0px; left: 0px;">
+        </ul>
+        <ul id="chakra-toast-manager-bottom-right"
+            style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column; bottom: 0px; right: 0px;">
+        </ul>
+    </div>
+</body>
+
+</html>
