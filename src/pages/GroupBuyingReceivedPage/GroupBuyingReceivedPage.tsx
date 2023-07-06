@@ -220,7 +220,12 @@ const GroupBuyingReceivedPage: React.VFC = () => {
           <>
             <StyledTitle>{sendingStateOject[sendingState].title}</StyledTitle>
             <StyledItemInfo>{sendingStateOject[sendingState].message}</StyledItemInfo>
-            <Button w="150px" variant="primary" isLoading={sendingState === 'loading'} onClick={() => sendingStateOject[sendingState].onClick?.()}>
+            <Button
+              w="150px"
+              variant="primary"
+              isLoading={sendingState === 'loading'}
+              onClick={() => sendingStateOject[sendingState].onClick?.()}
+            >
               {sendingStateOject[sendingState].buttonTitle}
             </Button>
           </>
