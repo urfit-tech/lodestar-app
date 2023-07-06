@@ -344,29 +344,31 @@ const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
     <AppRouterContext.Provider value={{ routesMap }}>
       <BrowserRouter>
         <QueryParamProvider ReactRouterRoute={Route}>
-          <React.Suspense fallback={<LoadingPage />}>
-            <Switch>
-              {Object.values(routesMap).map(routeMap => (
-                <Route
-                  exact
-                  key={routeMap.path}
-                  path={routeMap.path}
-                  render={() => (
-                    <AppPage
-                      renderFallback={() =>
-                        typeof routeMap.pageName === 'string' ? (
-                          <LoadablePage key={routeMap.path} pageName={routeMap.pageName} />
-                        ) : (
-                          routeMap.pageName
-                        )
-                      }
-                    />
-                  )}
-                />
-              ))}
-              <Route component={NotFoundPage} />
-            </Switch>
-          </React.Suspense>
+          <AppPage
+            renderFallback={() => {
+              return (
+                <React.Suspense fallback={<LoadingPage />}>
+                  <Switch>
+                    {Object.values(routesMap).map(routeMap => (
+                      <Route
+                        exact
+                        key={routeMap.path}
+                        path={routeMap.path}
+                        render={() =>
+                          typeof routeMap.pageName === 'string' ? (
+                            <LoadablePage pageName={routeMap.pageName} />
+                          ) : (
+                            routeMap.pageName
+                          )
+                        }
+                      />
+                    ))}
+                    <Route component={NotFoundPage} />
+                  </Switch>
+                </React.Suspense>
+              )
+            }}
+          />
           {children}
         </QueryParamProvider>
       </BrowserRouter>
