@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import jwt from 'jsonwebtoken'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -14,6 +14,7 @@ import { AuthModalContext } from '../../components/auth/AuthModal'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { rgba } from '../../helpers'
+import { useAuthModal } from '../../hooks/auth'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { ReactComponent as AlertIcon } from '../../images/status-alert.svg'
 import { ReactComponent as SuccessIcon } from '../../images/status-success.svg'
@@ -68,6 +69,8 @@ const GroupBuyingReceivedPage: React.VFC = () => {
   const [token] = useQueryParam('token', StringParam)
   const [type] = useQueryParam('type', StringParam)
   const { isAuthenticated, currentMemberId, authToken } = useAuth()
+  const authModal = useAuthModal()
+  const { setVisible } = useContext(AuthModalContext)
   const [sendingState, setSendingState] = useState<'idle' | 'loading' | 'success' | 'failed' | 'transferred'>('idle')
   const [payload, setPayload] = useState<{
     appId: string
@@ -88,6 +91,9 @@ const GroupBuyingReceivedPage: React.VFC = () => {
       default:
         return { idleTitle: '你已收到一個商品', name: '商品', successMessage: '現在你可使用產品囉！' }
     }
+  }
+  const setAuthModalVisible = () => {
+    authModal.open(setVisible)
   }
   useEffect(() => {
     if (!token) {
@@ -162,9 +168,9 @@ const GroupBuyingReceivedPage: React.VFC = () => {
       message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」的${productWording().name}，請於 ${dayjs(
         new Date((payload?.exp as number) * 1000 || 0),
       ).format('YYYY-MM-DD')} 前領取。`,
-      onClick: (modalVisible?: (visible: boolean) => void) => {
+      onClick: () => {
         if (!isAuthenticated) {
-          modalVisible?.(true)
+          setAuthModalVisible()
         } else {
           handleSubmit()
         }
@@ -214,18 +220,14 @@ const GroupBuyingReceivedPage: React.VFC = () => {
           <>
             <StyledTitle>{sendingStateOject[sendingState].title}</StyledTitle>
             <StyledItemInfo>{sendingStateOject[sendingState].message}</StyledItemInfo>
-            <AuthModalContext.Consumer>
-              {({ setVisible: setAuthModalVisible }) => (
-                <Button
-                  w="150px"
-                  variant="primary"
-                  isLoading={sendingState === 'loading'}
-                  onClick={() => sendingStateOject[sendingState].onClick?.(setAuthModalVisible)}
-                >
-                  {sendingStateOject[sendingState].buttonTitle}
-                </Button>
-              )}
-            </AuthModalContext.Consumer>
+            <Button
+              w="150px"
+              variant="primary"
+              isLoading={sendingState === 'loading'}
+              onClick={() => sendingStateOject[sendingState].onClick?.()}
+            >
+              {sendingStateOject[sendingState].buttonTitle}
+            </Button>
           </>
         ) : (
           <>{formatMessage(GroupBuyingReceivedPageMessages['*'].noItem)}</>

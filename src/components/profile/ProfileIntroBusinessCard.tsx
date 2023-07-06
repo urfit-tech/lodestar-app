@@ -1,16 +1,30 @@
-import { Button } from '@chakra-ui/react'
+import { Button, Textarea } from '@chakra-ui/react'
 import { Form, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
+import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
 import { braftLanguageFn, handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
-import { StyledForm } from '../layout'
 import profileMessages from './translation'
+
+const StyledForm = styled(Form)`
+  .ant-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    .ant-row {
+      flex-direction: row;
+    }
+  }
+`
 
 type ProfileIntroBusinessCardProps = CardProps & FormComponentProps & { memberId: string }
 
@@ -37,7 +51,7 @@ const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ fo
             name: member.name,
             pictureUrl: member.pictureUrl,
             title: member.title,
-            abstract: member.abstract || '',
+            abstract: values.companyAbstract || '',
             description: values.companyIntro?.toRAW(),
           },
         })
@@ -53,18 +67,27 @@ const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ fo
   return (
     <AdminCard {...cardProps}>
       <Typography.Title className="mb-4" level={4}>
-        {formatMessage(profileMessages.ProfileIntroBusinessCard.intro)}
+        {formatMessage(profileMessages.ProfileIntroBusinessCard.basicInfo)}
       </Typography.Title>
       <StyledForm
         labelCol={{ span: 24, md: { span: 4 } }}
         wrapperCol={{ span: 24, md: { span: 8 } }}
         onSubmit={handleSubmit}
       >
-        <Form.Item>
+        <Form.Item label={formatMessage(profileMessages.ProfileIntroBusinessCard.abstract)}>
+          {form.getFieldDecorator('companyAbstract', {
+            initialValue: (member && member.abstract) || '',
+            rules: [{ max: 100 }],
+          })(<Textarea rows={2} />)}
+        </Form.Item>
+        <Form.Item
+          label={formatMessage(profileMessages.ProfileIntroBusinessCard.intro)}
+          wrapperCol={{ md: { span: 20 } }}
+        >
           {form.getFieldDecorator('companyIntro', {
             initialValue: member && BraftEditor.createEditorState(member.description),
           })(
-            <BraftEditor
+            <StyledBraftEditor
               language={braftLanguageFn}
               controls={[
                 'headings',
@@ -90,7 +113,7 @@ const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ fo
                 'separator',
                 'fullscreen',
               ]}
-            ></BraftEditor>,
+            ></StyledBraftEditor>,
           )}
         </Form.Item>
         <Form.Item wrapperCol={{ md: { offset: 4 } }}>

@@ -864,3 +864,19 @@ export const useProgramContentExamId = (programContentId: string) => {
     examId,
   }
 }
+
+export const useMutateMaterialAuditLog = () => {
+  const [insertMaterialAuditLog] = useMutation<
+    hasura.InsertMaterialAuditLog,
+    hasura.InsertMaterialAuditLogVariables
+  >(gql`
+    mutation InsertMaterialAuditLog($data: material_audit_log_insert_input!) {
+      insert_material_audit_log_one(object: $data) {
+        id
+      }
+    }
+  `)
+  return {
+    insertMaterialAuditLog,
+  }
+}
