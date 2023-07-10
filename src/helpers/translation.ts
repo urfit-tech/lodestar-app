@@ -460,12 +460,14 @@ export const commonMessages = {
       defaultMessage: '請填寫對方在站上註冊的電子信箱',
     },
     selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
-    delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
+    delivered: { id: 'common.text.delivered', defaultMessage: '已發送的會員' },
     noOrderLog: { id: 'common.text.noOrderLog', defaultMessage: '尚無消費紀錄' },
     appliedTag: { id: 'common.text.appliedTag', defaultMessage: '已送出標記申請' },
     publish: { id: 'common.text.publish', defaultMessage: 'publish' },
     emailIsAlreadyExist: { id: 'common.text.emailIsAlreadyExist', defaultMessage: 'Email is already exist' },
     usernameIsAlreadyExist: { id: 'common.text.usernameIsAlreadyExist', defaultMessage: 'Username is already exist' },
+    emailFormatError:{ id: 'common.text.emailFormatError', defaultMessage: 'Email format error' },
+    emailChecking:{ id: 'common.text.emailChecking', defaultMessage: 'Email checking ...' },
   }),
 }
 
@@ -537,7 +539,7 @@ export const checkoutMessages = {
     },
     partnerEmail: {
       id: 'checkout.label.partnerEmail',
-      defaultMessage: '同行者信箱',
+      defaultMessage: '第{index}位同行者',
     },
     groupBuyingRuleTitle: {
       id: 'checkout.label.groupBuyingRuleTitle',
@@ -568,13 +570,20 @@ export const checkoutMessages = {
     },
     groupBuyingDescription2: {
       id: 'checkout.text.groupBuyingDescription2',
-      defaultMessage: '若本次未填寫同行者信箱，則會保留在後台的「我的揪團」，可以之後再指定開通給其他會員。',
+      defaultMessage: '請{warning}；若因填寫錯誤導致權益開通失敗，造成權益損失，{appName}恕不負責。',
+    },
+    groupBuyingDescriptionComfirmWarning: {
+      id: 'checkout.text.groupBuyingDescriptionComfirmWarning',
+      defaultMessage: '務必確認同行者信箱帳號正確i',
     },
     groupBuyingDescription3: {
       id: 'checkout.text.groupBuyingDescription3',
+      defaultMessage: '若本次未填寫同行者信箱，則會保留在後台的「我的揪團」，可以之後再指定開通給其他會員。',
+    },
+    groupBuyingDescription4: {
+      id: 'checkout.text.groupBuyingDescription4',
       defaultMessage: '注意事項：購買即同意以下多人同行揪團{modal}辦法。',
     },
-
     groupBuyingRuleLink: {
       id: 'checkout.text.groupBuyingRuleLink',
       defaultMessage: '規定與退費',
