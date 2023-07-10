@@ -29,7 +29,7 @@ const CraftBlock: React.VFC<{
       const id = hash.replace('#', '')
       const element = document.getElementById(id)
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        element.scrollIntoView({ behavior: 'smooth' })
       }
     }, 0)
   }, [hash])
