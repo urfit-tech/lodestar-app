@@ -460,12 +460,14 @@ export const commonMessages = {
       defaultMessage: '請填寫對方在站上註冊的電子信箱',
     },
     selfDeliver: { id: 'common.text.selfDeliver', defaultMessage: '不能發送給自己' },
-    delivered: { id: 'common.text.delivered', defaultMessage: '已發送的電子郵件' },
+    delivered: { id: 'common.text.delivered', defaultMessage: '已發送的會員' },
     noOrderLog: { id: 'common.text.noOrderLog', defaultMessage: '尚無消費紀錄' },
     appliedTag: { id: 'common.text.appliedTag', defaultMessage: '已送出標記申請' },
     publish: { id: 'common.text.publish', defaultMessage: 'publish' },
     emailIsAlreadyExist: { id: 'common.text.emailIsAlreadyExist', defaultMessage: 'Email is already exist' },
     usernameIsAlreadyExist: { id: 'common.text.usernameIsAlreadyExist', defaultMessage: 'Username is already exist' },
+    emailFormatError:{ id: 'common.text.emailFormatError', defaultMessage: 'Email format error' },
+    emailChecking:{ id: 'common.text.emailChecking', defaultMessage: 'Email checking ...' },
   }),
 }
 
