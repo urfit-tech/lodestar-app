@@ -63,7 +63,7 @@ const StyledIcon = styled.div`
   }
 `
 
-const GroupBuyingReceivedPage: React.VFC = () => {
+const GroupBuyingReceivedContainer: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)
@@ -211,32 +211,37 @@ const GroupBuyingReceivedPage: React.VFC = () => {
   }
 
   return (
-    <DefaultLayout noFooter centeredBox>
-      <StyledContainer>
-        <div className="mb-4">{sendingStateOject[sendingState].Icon}</div>
-        {isLoading ? (
-          <Spin />
-        ) : payload ? (
-          <>
-            <StyledTitle>{sendingStateOject[sendingState].title}</StyledTitle>
-            <StyledItemInfo>{sendingStateOject[sendingState].message}</StyledItemInfo>
-            <Button
-              w="150px"
-              variant="primary"
-              isLoading={sendingState === 'loading'}
-              onClick={() => sendingStateOject[sendingState].onClick?.()}
-            >
-              {sendingStateOject[sendingState].buttonTitle}
-            </Button>
-          </>
-        ) : (
-          <>{formatMessage(GroupBuyingReceivedPageMessages['*'].noItem)}</>
-        )}
-      </StyledContainer>
-    </DefaultLayout>
+    <StyledContainer>
+      <div className="mb-4">{sendingStateOject[sendingState].Icon}</div>
+      {isLoading ? (
+        <Spin />
+      ) : payload ? (
+        <>
+          <StyledTitle>{sendingStateOject[sendingState].title}</StyledTitle>
+          <StyledItemInfo>{sendingStateOject[sendingState].message}</StyledItemInfo>
+          <Button
+            w="150px"
+            variant="primary"
+            isLoading={sendingState === 'loading'}
+            onClick={() => sendingStateOject[sendingState].onClick?.()}
+          >
+            {sendingStateOject[sendingState].buttonTitle}
+          </Button>
+        </>
+      ) : (
+        <>{formatMessage(GroupBuyingReceivedPageMessages['*'].noItem)}</>
+      )}
+    </StyledContainer>
   )
 }
 
+const GroupBuyingReceivedPage: React.VFC = () => {
+  return (
+    <DefaultLayout noFooter centeredBox>
+      <GroupBuyingReceivedContainer />
+    </DefaultLayout>
+  )
+}
 export default GroupBuyingReceivedPage
 
 const useGetOrderLog = (orderId: string | undefined, authToken: string) => {
