@@ -394,14 +394,10 @@ const CheckoutBlock: React.VFC<{
             <StyledBlockTitle className="mb-3">{formatMessage(checkoutMessages.label.groupBuying)}</StyledBlockTitle>
             <OrderedList className="mb-4">
               <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription1)}</StyledListItem>
-              <StyledListItem>
+              <StyledListItem style={{ color: 'var(--error)', fontWeight: 'bolder' }}>
                 {formatMessage(checkoutMessages.text.groupBuyingDescription2, {
                   appName: app.name,
-                  warning: (
-                    <span style={{ color: 'var(--error)' }}>
-                      {formatMessage(checkoutMessages.text.groupBuyingDescriptionComfirmWarning)}
-                    </span>
-                  ),
+                  warning: <span>{formatMessage(checkoutMessages.text.groupBuyingDescriptionComfirmWarning)}</span>,
                 })}
               </StyledListItem>
               <StyledListItem>{formatMessage(checkoutMessages.text.groupBuyingDescription3)}</StyledListItem>
