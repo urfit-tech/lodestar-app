@@ -55,10 +55,8 @@ const VoucherDeliverModal: React.VFC<{
   const [email, setEmail] = useState('')
   const [redeemLinkChecking, setRedeemLinkChecking] = useState(false)
   const [redeemLink, setRedeemLink] = useState('')
-
   const { memberId, validateStatus } = useMemberValidation(email)
   const memberStatus = memberId === currentMemberId ? 'error' : validateStatus
-
   const [updateVoucherMember] = useMutation<types.UPDATE_VOUCHER_MEMBER, types.UPDATE_VOUCHER_MEMBERVariables>(gql`
     mutation UPDATE_VOUCHER_MEMBER($voucherId: uuid!, $memberId: String!) {
       update_voucher_by_pk(pk_columns: { id: $voucherId }, _set: { member_id: $memberId }) {
@@ -101,6 +99,7 @@ const VoucherDeliverModal: React.VFC<{
             position: 'top',
           })
           onClose()
+          setEmail('')
         })
         .catch(handleError)
     }
@@ -172,6 +171,7 @@ const VoucherDeliverModal: React.VFC<{
           <Input
             type="email"
             status={memberStatus}
+            defaultValue={email}
             placeholder={formatMessage(commonMessages.text.fillInEnrolledEmail)}
             onBlur={e => setEmail(e.target.value)}
           />

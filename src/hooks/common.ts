@@ -529,7 +529,7 @@ export const useSimpleProductCollection = () => {
 
 export const useMemberValidation = (email: string) => {
   const { currentMemberId } = useAuth()
-  const { id: appId, settings } = useApp()
+  const { id: appId } = useApp()
   const { loading, error, data, refetch } = useQuery(
     gql`
       query SEARCH_MEMBER($email: String!, $appId: String!) {
