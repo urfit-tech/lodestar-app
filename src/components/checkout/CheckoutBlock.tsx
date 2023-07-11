@@ -326,10 +326,10 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
-    if (referrerEmail && !validateStatus) {
+    if (settings['payment.referrer.type'] !== 'any' && referrerEmail && !validateStatus) {
       return
     }
-    if (validateStatus === 'error') {
+    if (settings['payment.referrer.type'] !== 'any' && validateStatus === 'error') {
       referrerRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -499,7 +499,7 @@ const CheckoutBlock: React.VFC<{
                 validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : validateStatus}
                 hasFeedback
                 help={
-                  validateStatus === 'error'
+                  settings['payment.referrer.type'] !== 'any' && validateStatus === 'error'
                     ? referrerId === currentMemberId
                       ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
                       : formatMessage(commonMessages.text.notFoundMemberEmail)
@@ -534,7 +534,7 @@ const CheckoutBlock: React.VFC<{
                 validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : validateStatus}
                 hasFeedback
                 help={
-                  validateStatus === 'error'
+                  settings['payment.referrer.type'] !== 'any' && validateStatus === 'error'
                     ? referrerId === currentMemberId
                       ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
                       : formatMessage(commonMessages.text.notFoundMemberEmail)

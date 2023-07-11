@@ -545,16 +545,13 @@ export const useMemberValidation = (email: string) => {
 
   const memberId: string | null = data?.member_public[0]?.id || null
 
-  const validateStatus: 'success' | 'error' | 'validating' | undefined =
-    settings['payment.referrer.type'] === 'any'
-      ? 'success'
-      : !email
-      ? undefined
-      : loading
-      ? 'validating'
-      : !memberId || memberId === currentMemberId
-      ? 'error'
-      : 'success'
+  const validateStatus: 'success' | 'error' | 'validating' | undefined = !email
+    ? undefined
+    : loading
+    ? 'validating'
+    : !memberId || memberId === currentMemberId
+    ? 'error'
+    : 'success'
 
   return {
     loadingMemberId: loading,
