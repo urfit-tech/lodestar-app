@@ -49,7 +49,7 @@ const InAppBrowserWarningModal = () => {
   if (isLineInAppBrowser) window.location.assign(lineOpenExternalBrowserUrl)
 
   useEffect(() => {
-    if (isLineInAppBrowser) {
+    if (isInAppBrowser) {
       toast({
         title: `為提供您最佳的網站使用體驗，避免網站的功能受限制，建議不要使用APP中的瀏覽器，而是透夠預設的瀏覽器開啟網站`,
         status: 'warning',
