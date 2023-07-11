@@ -63,6 +63,11 @@ const commonMessages = {
       id: 'common.InAppBrowserWarningModal.notSupportInAppBrowserLeadDescription',
       defaultMessage: 'Click "More Options" (three dots in the lower right corner) and click "Open in browser"',
     },
+    warning: {
+      id: 'common.InAppBrowserWarningModal.warning',
+      defaultMessage:
+        'To provide you with the best website experience and to avoid limited website functionality, it is recommended not to use the browser within an app, but rather to open the website through the default browser.',
+    },
   }),
 }
 
