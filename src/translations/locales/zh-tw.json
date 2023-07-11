@@ -304,7 +304,7 @@
   "common.InAppBrowserWarningModal.notSupportInAppBrowserLeadDescription": "請點擊右下角的操作選項，並選擇以其他瀏覽器開啟",
   "common.InAppBrowserWarningModal.notSupportInAppBrowserTitle": "不支援App內建瀏覽器",
   "common.InAppBrowserWarningModal.openPage": "開啟頁面",
-  "common.InAppBrowserWarningModal.warning": "為提供您最佳的網站使用體驗，避免網站的功能受限制，建議不要使用APP中的瀏覽器，而是透夠預設的瀏覽器開啟網站",
+  "common.InAppBrowserWarningModal.warning": "為提供您最佳的網站使用體驗，避免網站的功能受限制，建議不要使用APP中的瀏覽器，而是透過預設的瀏覽器開啟網站",
   "common.SignupPropertyModal.signupInfo": "註冊資訊",
   "common.SignupPropertySection.enterName": "請填入姓名",
   "common.SignupPropertySection.name": "姓名",
