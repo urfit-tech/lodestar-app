@@ -1,5 +1,14 @@
-import { Button, Flex, Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react'
-import React from 'react'
+import {
+  Button,
+  Flex,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  useToast,
+} from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { WarningIcon } from '../../images'
@@ -29,15 +38,39 @@ const StyledWarningDescription = styled.p`
 `
 
 const InAppBrowserWarningModal = () => {
+  const [isOpen, setIsOpen] = useState(true)
   const { formatMessage } = useIntl()
+  const toast = useToast({ duration: 15000, isClosable: true })
 
-  const isInAppBrowser = window.navigator.userAgent.includes('Line')
-  const lineOpenDefaultBrowserParams = window.navigator.userAgent.includes('Line') ? 'openExternalBrowser=1' : ''
+  const userAgent = window.navigator.userAgent
+  const isInAppBrowser = checkInAppBrowser(userAgent).isInAppBrowser
+  const isLineInAppBrowser = checkInAppBrowser(userAgent).isLineInAppBrowser
+  const lineOpenExternalBrowserUrl = addOpenExternalBrowserParam(`${window.location.href}`)
+  if (isLineInAppBrowser) window.location.assign(lineOpenExternalBrowserUrl)
 
-  return isInAppBrowser ? (
-    <Modal size="xs" isOpen={true} onClose={() => {}} isCentered>
+  useEffect(() => {
+    if (isInAppBrowser) {
+      toast({
+        title: formatMessage(commonMessages.InAppBrowserWarningModal.warning),
+        status: 'warning',
+        isClosable: true,
+        position: 'bottom',
+      })
+    }
+  }, [isInAppBrowser])
+
+  return isInAppBrowser && isLineInAppBrowser ? (
+    <Modal
+      size="xs"
+      isOpen={isOpen}
+      onClose={() => {
+        setIsOpen(false)
+      }}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent>
+        <ModalCloseButton />
         <ModalBody>
           <Flex mt={12} mb={5} justifyContent="center">
             <WarningIcon />
@@ -48,25 +81,41 @@ const InAppBrowserWarningModal = () => {
           <StyledWarningDescription>
             {formatMessage(commonMessages.InAppBrowserWarningModal.notSupportInAppBrowserDescription)}
           </StyledWarningDescription>
-          {lineOpenDefaultBrowserParams ? (
-            <Flex mb={10} justifyContent="center">
-              <Button
-                colorScheme="gray"
-                variant="outline"
-                onClick={() => window.open(`${window.location.href}?${lineOpenDefaultBrowserParams}`, '_blank')}
-              >
-                {formatMessage(commonMessages.InAppBrowserWarningModal.openPage)}
-              </Button>
-            </Flex>
-          ) : (
-            <StyledWarningDescription>
-              {formatMessage(commonMessages.InAppBrowserWarningModal.notSupportInAppBrowserLeadDescription)}
-            </StyledWarningDescription>
-          )}
+          <Flex mb={10} justifyContent="center">
+            <Button
+              colorScheme="gray"
+              variant="outline"
+              onClick={() => window.open(lineOpenExternalBrowserUrl, '_blank')}
+            >
+              {formatMessage(commonMessages.InAppBrowserWarningModal.openPage)}
+            </Button>
+          </Flex>
         </ModalBody>
       </ModalContent>
     </Modal>
   ) : null
+}
+
+const addOpenExternalBrowserParam = (url: string) => {
+  let urlObj = new URL(url)
+  const params = new URLSearchParams(urlObj.search)
+  urlObj.search = ''
+  urlObj.searchParams.append('openExternalBrowser', '1')
+  for (let pair of Array.from(params)) {
+    urlObj.searchParams.append(pair[0], pair[1])
+  }
+  return urlObj.toString()
+}
+
+const checkInAppBrowser = (userAgent: string) => {
+  const isLineInAppBrowser = userAgent.includes('Line')
+  const isFBInAppBrowser = userAgent.includes('FB')
+  const isInAppBrowser = isLineInAppBrowser || isFBInAppBrowser
+  return {
+    isInAppBrowser,
+    isLineInAppBrowser,
+    isFBInAppBrowser,
+  }
 }
 
 export default InAppBrowserWarningModal
