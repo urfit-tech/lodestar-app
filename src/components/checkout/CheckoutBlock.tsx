@@ -1,4 +1,4 @@
-import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast, Text } from '@chakra-ui/react'
+import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
 import { defineMessage } from '@formatjs/intl'
 import { Form, message, Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
@@ -318,10 +318,10 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
-    if (referrerEmail && !validateStatus) {
+    if (settings['payment.referrer.type'] !== 'any' && referrerEmail && !validateStatus) {
       return
     }
-    if (validateStatus === 'error') {
+    if (settings['payment.referrer.type'] !== 'any' && validateStatus === 'error') {
       referrerRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -491,7 +491,7 @@ const CheckoutBlock: React.VFC<{
                 validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : validateStatus}
                 hasFeedback
                 help={
-                  validateStatus === 'error'
+                  settings['payment.referrer.type'] !== 'any' && validateStatus === 'error'
                     ? referrerId === currentMemberId
                       ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
                       : formatMessage(commonMessages.text.notFoundMemberEmail)
@@ -526,7 +526,7 @@ const CheckoutBlock: React.VFC<{
                 validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : validateStatus}
                 hasFeedback
                 help={
-                  validateStatus === 'error'
+                  settings['payment.referrer.type'] !== 'any' && validateStatus === 'error'
                     ? referrerId === currentMemberId
                       ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
                       : formatMessage(commonMessages.text.notFoundMemberEmail)
