@@ -1,6 +1,5 @@
 import { gql, useMutation } from '@apollo/client'
 import {
-  Box,
   Button,
   ButtonGroup,
   Divider,
@@ -8,7 +7,6 @@ import {
   FormErrorMessage,
   FormLabel,
   Icon,
-  Spinner,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
@@ -51,13 +49,8 @@ const GroupBuyingDeliverModal: React.VFC<{
   const [isLoading, setLoading] = useState<boolean>(false)
   const [email, setEmail] = useState('')
   const { currentMemberId, authToken } = useAuth()
-  const { loadingMemberId, memberId } = useMemberValidation(email)
-  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$/
-  const isEmailInvalid = !!email && !emailRegex.test(email)
-  const memberStatus =
-    loadingMemberId || isEmailInvalid || memberId === currentMemberId || partnerMemberIds.includes(memberId || '')
-      ? 'error'
-      : 'success'
+  const { memberId, validateStatus } = useMemberValidation(email)
+  const memberStatus = partnerMemberIds.includes(memberId || '') ? 'error' : validateStatus
   const toast = useToast()
   const [updateOrder] = useMutation<types.UPDATE_ORDER, types.UPDATE_ORDERVariables>(gql`
     mutation UPDATE_ORDER($orderId: String!, $memberId: String!, $transferredAt: timestamptz!) {
@@ -88,6 +81,8 @@ const GroupBuyingDeliverModal: React.VFC<{
             duration: 1500,
             position: 'top',
           })
+          onClose()
+          setEmail('')
         })
         .catch(handleError)
         .finally(() => setLoading(false))
@@ -112,6 +107,7 @@ const GroupBuyingDeliverModal: React.VFC<{
             duration: 1500,
             position: 'top',
           })
+          setEmail('')
         })
         .catch(handleError)
         .finally(() => setLoading(false))
@@ -145,28 +141,21 @@ const GroupBuyingDeliverModal: React.VFC<{
         closeOnOverlayClick={false}
       >
         <StyledTitle className="mb-4">{title}</StyledTitle>
-        <FormControl isInvalid={memberStatus === 'error'}>
+        <FormControl isInvalid={memberId === currentMemberId || validateStatus === 'error'}>
           <FormLabel>{formatMessage(commonMessages.label.targetPartner)}</FormLabel>
           <Input
             type="email"
             status={memberStatus}
+            defaultValue={email}
             placeholder={formatMessage(commonMessages.text.fillInEnrolledEmail)}
             onBlur={e => setEmail(e.target.value)}
-            onChange={e => setEmail(e.target.value)}
           />
           <FormErrorMessage>
-            {isEmailInvalid ? (
-              formatMessage(commonMessages.text.emailFormatError)
-            ) : loadingMemberId ? (
-              <Box display="flex" alignItems="center">
-                <Spinner size="sm" mr="10px" />
-                {formatMessage(commonMessages.text.emailChecking)}
-              </Box>
-            ) : memberId === currentMemberId ? (
-              formatMessage(commonMessages.text.selfDeliver)
-            ) : partnerMemberIds.includes(memberId || '') ? (
-              formatMessage(commonMessages.text.delivered)
-            ) : undefined}
+            {memberId === currentMemberId
+              ? formatMessage(commonMessages.text.selfDeliver)
+              : validateStatus === 'error'
+              ? formatMessage(commonMessages.text.notFoundMemberEmail)
+              : undefined}
           </FormErrorMessage>
         </FormControl>
       </CommonModal>
