@@ -101,6 +101,7 @@ const VoucherDeliverModal: React.VFC<{
             position: 'top',
           })
           onClose()
+          setEmail('')
         })
         .catch(handleError)
     }
@@ -172,6 +173,7 @@ const VoucherDeliverModal: React.VFC<{
           <Input
             type="email"
             status={memberStatus}
+            defaultValue={email}
             placeholder={formatMessage(commonMessages.text.fillInEnrolledEmail)}
             onBlur={e => setEmail(e.target.value)}
           />
