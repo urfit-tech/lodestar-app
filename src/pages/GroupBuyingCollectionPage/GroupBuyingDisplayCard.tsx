@@ -51,13 +51,8 @@ const GroupBuyingDeliverModal: React.VFC<{
   const [isLoading, setLoading] = useState<boolean>(false)
   const [email, setEmail] = useState('')
   const { currentMemberId, authToken } = useAuth()
-  const { loadingMemberId, memberId } = useMemberValidation(email)
-  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$/
-  const isEmailInvalid = !!email && !emailRegex.test(email)
-  const memberStatus =
-    loadingMemberId || isEmailInvalid || memberId === currentMemberId || partnerMemberIds.includes(memberId || '')
-      ? 'error'
-      : 'success'
+  const { memberId, nonMemberValidateStatus, isEmailInvalid } = useMemberValidation(email)
+  const memberStatus = partnerMemberIds.includes(memberId || '') ? 'error' : nonMemberValidateStatus
   const toast = useToast()
   const [updateOrder] = useMutation<types.UPDATE_ORDER, types.UPDATE_ORDERVariables>(gql`
     mutation UPDATE_ORDER($orderId: String!, $memberId: String!, $transferredAt: timestamptz!) {
@@ -88,6 +83,8 @@ const GroupBuyingDeliverModal: React.VFC<{
             duration: 1500,
             position: 'top',
           })
+          setEmail('')
+          onClose()
         })
         .catch(handleError)
         .finally(() => setLoading(false))
@@ -112,6 +109,8 @@ const GroupBuyingDeliverModal: React.VFC<{
             duration: 1500,
             position: 'top',
           })
+          setEmail('')
+          onClose()
         })
         .catch(handleError)
         .finally(() => setLoading(false))
@@ -134,7 +133,7 @@ const GroupBuyingDeliverModal: React.VFC<{
             </Button>
             <Button
               colorScheme="primary"
-              isDisabled={!email || memberStatus === 'error'}
+              isDisabled={!email || memberStatus === 'error' || memberStatus === 'validating'}
               isLoading={isLoading}
               onClick={handleSubmit}
             >
@@ -153,12 +152,11 @@ const GroupBuyingDeliverModal: React.VFC<{
             defaultValue={email}
             placeholder={formatMessage(commonMessages.text.fillInEnrolledEmail)}
             onBlur={e => setEmail(e.target.value)}
-            onChange={e => setEmail(e.target.value)}
           />
           <FormErrorMessage>
             {isEmailInvalid ? (
               formatMessage(commonMessages.text.emailFormatError)
-            ) : loadingMemberId ? (
+            ) : memberStatus === 'validating' ? (
               <Box display="flex" alignItems="center">
                 <Spinner size="sm" mr="10px" />
                 {formatMessage(commonMessages.text.emailChecking)}

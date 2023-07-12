@@ -56,8 +56,8 @@ const VoucherDeliverModal: React.VFC<{
   const [redeemLinkChecking, setRedeemLinkChecking] = useState(false)
   const [redeemLink, setRedeemLink] = useState('')
 
-  const { memberId, validateStatus } = useMemberValidation(email)
-  const memberStatus = memberId === currentMemberId ? 'error' : validateStatus
+  const { memberId, siteMemberValidateStatus, isEmailInvalid } = useMemberValidation(email)
+  const memberStatus = memberId === currentMemberId ? 'error' : siteMemberValidateStatus
 
   const [updateVoucherMember] = useMutation<types.UPDATE_VOUCHER_MEMBER, types.UPDATE_VOUCHER_MEMBERVariables>(gql`
     mutation UPDATE_VOUCHER_MEMBER($voucherId: uuid!, $memberId: String!) {
@@ -123,7 +123,9 @@ const VoucherDeliverModal: React.VFC<{
             </Button>
             <Button
               colorScheme="primary"
-              isDisabled={memberId === currentMemberId || [undefined, 'error', 'validating'].includes(validateStatus)}
+              isDisabled={
+                memberId === currentMemberId || [undefined, 'error', 'validating'].includes(siteMemberValidateStatus)
+              }
               onClick={handleSubmit}
             >
               {formatMessage(commonMessages.ui.send)}
@@ -168,7 +170,7 @@ const VoucherDeliverModal: React.VFC<{
           </InputGroup>
         </FormControl>
         <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
-        <FormControl isInvalid={memberId === currentMemberId || validateStatus === 'error'}>
+        <FormControl isInvalid={memberId === currentMemberId || siteMemberValidateStatus === 'error'}>
           <FormLabel>{formatMessage(commonMessages.label.targetPartner)}</FormLabel>
           <Input
             type="email"
@@ -180,7 +182,9 @@ const VoucherDeliverModal: React.VFC<{
           <FormErrorMessage>
             {memberId === currentMemberId
               ? formatMessage(commonMessages.text.selfDeliver)
-              : validateStatus === 'error'
+              : isEmailInvalid
+              ? formatMessage(commonMessages.text.emailFormatError)
+              : siteMemberValidateStatus === 'error'
               ? formatMessage(commonMessages.text.notFoundMemberEmail)
               : undefined}
           </FormErrorMessage>
