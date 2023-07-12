@@ -29,6 +29,7 @@ type groupBuyingOrderProps = {
   startedAt: Date | null
   endedAt: Date | null
   transferredAt: Date | null
+  emailedNonSiteMemberEmail: { email: string; timestamp: string } | null
 }
 
 export const StyledTabList = styled(TabList)`
@@ -146,6 +147,7 @@ const GroupBuyingCollectionPage: React.VFC = () => {
                     {displayOrders.map(order => (
                       <div className="col-12 col-md-6 col-lg-4 mb-4" key={order.id}>
                         <GroupBuyingDisplayCard
+                          emailedNonSiteMemberEmail={order.emailedNonSiteMemberEmail}
                           orderId={order.id}
                           imgUrl={order.coverUrl}
                           title={order.name}
@@ -193,6 +195,7 @@ const useGroupBuyingLogs = (memberId: string | null) => {
           started_at
           ended_at
           transferred_at
+          options
           name
           cover_url
           parent_order_log {
@@ -209,7 +212,6 @@ const useGroupBuyingLogs = (memberId: string | null) => {
       },
     },
   )
-
   const groupBuyingOrderCollection: groupBuyingOrderProps[] =
     data?.order_group_buying_log.map(v => ({
       id: v.order_id || '',
@@ -227,8 +229,9 @@ const useGroupBuyingLogs = (memberId: string | null) => {
       transferredAt: v.transferred_at ? new Date(v.transferred_at) : null,
       coverUrl: v.cover_url || '',
       partnerMemberIds: uniq(v.parent_order_log?.sub_order_logs.map(v => v.member_id) || []),
+      emailedNonSiteMemberEmail: v.options?.emailedNonSiteMemberEmail || null,
     })) || []
-  console.log({ loading, error, data })
+
   return {
     loading,
     error,
