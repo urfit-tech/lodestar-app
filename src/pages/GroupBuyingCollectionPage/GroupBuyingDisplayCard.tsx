@@ -150,6 +150,7 @@ const GroupBuyingDeliverModal: React.VFC<{
           <Input
             type="email"
             status={memberStatus}
+            defaultValue={email}
             placeholder={formatMessage(commonMessages.text.fillInEnrolledEmail)}
             onBlur={e => setEmail(e.target.value)}
             onChange={e => setEmail(e.target.value)}
@@ -192,10 +193,21 @@ const GroupBuyingDisplayCard: React.VFC<{
   imgUrl: string
   title: string
   transferredAt: Date | null
+  emailedNonSiteMemberEmail: { email: string; timestamp: string } | null
   sentByCurrentMember: boolean
   memberEmail: string | null
   onRefetch?: (() => void) | null
-}> = ({ partnerMemberIds, orderId, imgUrl, title, transferredAt, sentByCurrentMember, memberEmail, onRefetch }) => {
+}> = ({
+  emailedNonSiteMemberEmail,
+  partnerMemberIds,
+  orderId,
+  imgUrl,
+  title,
+  transferredAt,
+  sentByCurrentMember,
+  memberEmail,
+  onRefetch,
+}) => {
   const { formatMessage } = useIntl()
   return (
     <StyledCard className="p-4">
@@ -231,6 +243,25 @@ const GroupBuyingDisplayCard: React.VFC<{
             title={title}
             onRefetch={onRefetch}
           />
+          {emailedNonSiteMemberEmail && (
+            <>
+              <Divider className="my-3" />
+              <StyledCardMeta>
+                <div className="d-flex">
+                  <Icon as={UserOIcon} className="my-auto mr-1" />
+                  <span>{formatMessage(commonMessages.label.inviteNonSiteMember)}：</span>
+                  <span>{emailedNonSiteMemberEmail.email}</span>
+                </div>
+                <div className="d-flex">
+                  <Icon as={CalendarAltOIcon} className="my-auto  mr-1" />
+                  <span>
+                    {formatMessage(commonMessages.label.date)}
+                    {moment(emailedNonSiteMemberEmail.timestamp).format('YYYY-MM-DD HH:mm')}
+                  </span>
+                </div>
+              </StyledCardMeta>
+            </>
+          )}
         </div>
       )}
     </StyledCard>
