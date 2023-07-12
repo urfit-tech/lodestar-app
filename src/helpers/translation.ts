@@ -250,6 +250,7 @@ export const commonMessages = {
     isExpired: { id: 'common.label.isExpired', defaultMessage: '已到期' },
     applyTag: { id: 'common.label.applyTag', defaultMessage: '申請標記' },
     participateRole: { id: 'common.label.participateRole', defaultMessage: '參與職位' },
+    inviteNonSiteMember: { id: 'common.label.inviteNonSiteMember', defaultMessage: '已邀請非會員' },
   }),
   form: {
     message: defineMessages({
