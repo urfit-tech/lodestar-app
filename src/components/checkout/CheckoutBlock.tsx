@@ -500,7 +500,7 @@ const CheckoutBlock: React.VFC<{
                 hasFeedback
                 help={
                   settings['payment.referrer.type'] !== 'any' && siteMemberValidateStatus === 'error'
-                    ? referrerId === currentMemberId
+                    ? currentMemberId && referrerId === currentMemberId
                       ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
                       : formatMessage(commonMessages.text.notFoundMemberEmail)
                     : undefined
@@ -535,7 +535,7 @@ const CheckoutBlock: React.VFC<{
                 hasFeedback
                 help={
                   settings['payment.referrer.type'] !== 'any' && siteMemberValidateStatus === 'error'
-                    ? referrerId === currentMemberId
+                    ? currentMemberId && referrerId === currentMemberId
                       ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
                       : formatMessage(commonMessages.text.notFoundMemberEmail)
                     : undefined
