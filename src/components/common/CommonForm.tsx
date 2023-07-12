@@ -5,10 +5,10 @@ import styled, { css } from 'styled-components'
 import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.svg'
 import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 
-const StyledInput = styled(ChakraInput)<{ isSuccess: true }>`
+const StyledInput = styled(ChakraInput)<{ issuccess: 'true' }>`
   && {
     ${props =>
-      props.isSuccess &&
+      props.issuccess === 'true' &&
       css`
         border-color: var(--success);
         box-shadow: 0 0 0 1px var(--success);
@@ -47,7 +47,7 @@ const Input: React.VFC<
       <StyledInput
         isInvalid={status === 'error'}
         isDisabled={status === 'validating'}
-        isSuccess={status === 'success'}
+        issuccess={(status === 'success').toString()}
         focusBorderColor="primary.500"
         errorBorderColor="danger.500"
         {...inputProps}
