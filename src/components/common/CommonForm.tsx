@@ -5,6 +5,8 @@ import styled, { css } from 'styled-components'
 import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.svg'
 import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 
+type Status = 'error' | 'success'
+
 const StyledInput = styled(ChakraInput)<{ issuccess: 'true' }>`
   && {
     ${props =>
@@ -15,7 +17,7 @@ const StyledInput = styled(ChakraInput)<{ issuccess: 'true' }>`
       `}
   }
 `
-const StyledInputRightElement = styled(InputRightElement)<{ status: 'error' | 'success' }>`
+const StyledInputRightElement = styled(InputRightElement)<{ status: Status }>`
   && {
     font-size: 20px;
     ${props =>
