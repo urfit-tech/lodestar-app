@@ -72,7 +72,9 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
     ? {
         id: data.program_package_plan_by_pk.id,
         productType: 'ProgramPackagePlan',
-        title: data.program_package_plan_by_pk.title,
+        title: `${data?.program_package_plan_by_pk?.program_package?.title || ''} - ${
+          data?.program_package_plan_by_pk?.title || ''
+        }`,
         coverUrl: data.program_package_plan_by_pk.program_package?.cover_url || undefined,
         listPrice: data.program_package_plan_by_pk.list_price,
         isOnSale: data.program_package_plan_by_pk.sold_at

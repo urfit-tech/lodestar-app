@@ -181,14 +181,17 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
                   variables: {
                     memberId: currentMemberId,
                     setMember: isBusinessMember
-                      ? { picture_url: pictureUrl }
+                      ? {
+                          picture_url: pictureUrl,
+                          abstract: signupInfos?.find(v => v.id === 'companyAbstract')?.value,
+                        }
                       : {
                           name: isBusinessMember
                             ? signupInfos?.find(v => v.id === 'companyShortName')?.value
                             : signupInfos?.find(v => v.id === 'name')?.value,
                         },
                     memberProperties: signupInfos
-                      ?.filter(v => v.id !== 'name' && v.id !== 'pictureUrl')
+                      ?.filter(v => v.id !== 'name' && v.id !== 'pictureUrl' && v.id !== 'companyAbstract')
                       ?.map(v => ({
                         member_id: currentMemberId,
                         property_id: v.id,
@@ -334,10 +337,11 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
                   const propertyValues = { ...values, ...submitValues }
                   setSignupInfos(
                     Object.keys(propertyValues)
-                      .map(key => ({
-                        id: propertyIdMap[key],
-                        value: propertyValues[key],
-                      }))
+                      .map(key =>
+                        key === 'companyAbstract'
+                          ? { id: 'companyAbstract', value: propertyValues[key] }
+                          : { id: propertyIdMap[key], value: propertyValues[key] },
+                      )
                       .filter(property => property.id !== undefined && property.value !== undefined),
                   )
                   setAuthState('register')
