@@ -7,6 +7,7 @@ import {
   FormLabel,
   InputGroup,
   InputRightElement,
+  Spinner,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
@@ -179,6 +180,12 @@ const VoucherDeliverModal: React.VFC<{
             placeholder={formatMessage(commonMessages.text.fillInEnrolledEmail)}
             onBlur={e => setEmail(e.target.value)}
           />
+          {memberStatus === 'validating' && (
+            <>
+              <Spinner size="sm" mr="10px" />
+              {formatMessage(commonMessages.text.emailChecking)}
+            </>
+          )}
           <FormErrorMessage>
             {memberId === currentMemberId
               ? formatMessage(commonMessages.text.selfDeliver)

@@ -1,6 +1,5 @@
 import { gql, useMutation } from '@apollo/client'
 import {
-  Box,
   Button,
   ButtonGroup,
   Divider,
@@ -153,19 +152,20 @@ const GroupBuyingDeliverModal: React.VFC<{
             placeholder={formatMessage(commonMessages.text.fillInEnrolledEmail)}
             onBlur={e => setEmail(e.target.value)}
           />
+          {memberStatus === 'validating' && (
+            <>
+              <Spinner size="sm" mr="10px" />
+              {formatMessage(commonMessages.text.emailChecking)}
+            </>
+          )}
           <FormErrorMessage>
-            {isEmailInvalid ? (
-              formatMessage(commonMessages.text.emailFormatError)
-            ) : memberStatus === 'validating' ? (
-              <Box display="flex" alignItems="center">
-                <Spinner size="sm" mr="10px" />
-                {formatMessage(commonMessages.text.emailChecking)}
-              </Box>
-            ) : memberId === currentMemberId ? (
-              formatMessage(commonMessages.text.selfDeliver)
-            ) : partnerMemberIds.includes(memberId || '') ? (
-              formatMessage(commonMessages.text.delivered)
-            ) : undefined}
+            {isEmailInvalid
+              ? formatMessage(commonMessages.text.emailFormatError)
+              : memberId === currentMemberId
+              ? formatMessage(commonMessages.text.selfDeliver)
+              : partnerMemberIds.includes(memberId || '')
+              ? formatMessage(commonMessages.text.delivered)
+              : undefined}
           </FormErrorMessage>
         </FormControl>
       </CommonModal>
