@@ -1,10 +1,10 @@
-import { Button, Icon } from '@chakra-ui/react'
+import { Box, Button, Icon, Spinner } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import queryString from 'query-string'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -79,22 +79,6 @@ const StyledButtonWrapper = styled.div`
 `
 
 const ProgramPage: React.VFC = () => {
-  const [pageFrom] = useQueryParam('pageFrom', StringParam)
-  const [utmSource] = useQueryParam('utm_source', StringParam)
-  const tracking = useTracking()
-  const { programId } = useParams<{ programId: string }>()
-  const { id: appId } = useApp()
-  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
-  useEffect(() => {
-    const resource = resourceCollection[0]
-    if (resource) {
-      tracking.detail(resource, { collection: pageFrom || undefined, utmSource: utmSource || '' })
-    }
-  }, [resourceCollection, tracking, pageFrom, utmSource])
-
-  return <ProgramPageContent />
-}
-const ProgramPageContent: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { pathname } = useLocation()
   const { currentMemberId } = useAuth()
@@ -106,6 +90,7 @@ const ProgramPageContent: React.VFC = () => {
   const { id: appId, settings, enabledModules, loading: loadingApp } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
+  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
   const { loadingProgram, program, addProgramView } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
   const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
@@ -176,6 +161,7 @@ const ProgramPageContent: React.VFC = () => {
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
       {!loadingApp && <ProgramPageHelmet program={program} onLoaded={() => setMetaLoaded(true)} />}
+      {resourceCollection[0] && metaLoaded && <Tracking.Detail resource={resourceCollection[0]} />}
 
       <div>
         {Number(settings['layout.program_page']) ? (
