@@ -70,6 +70,7 @@ export type PodcastProgramPopoverProps = {
   isEnrolled?: boolean
   isSubscribed?: boolean
   onSubscribe?: () => void
+  isIndividuallySale?: boolean
 }
 const PodcastProgramPopover: React.FC<
   PodcastProgramPopoverProps & {
@@ -88,6 +89,7 @@ const PodcastProgramPopover: React.FC<
   isEnrolled,
   isSubscribed,
   onSubscribe,
+  isIndividuallySale,
   children,
 }) => {
   const { formatMessage } = useIntl()
@@ -168,7 +170,7 @@ const PodcastProgramPopover: React.FC<
               {formatMessage(commonMessages.button.enterPodcast)}
             </Button>
           </Link>
-        ) : isProductInCart && isProductInCart('PodcastProgram', podcastProgramId) ? (
+        ) : !isIndividuallySale ? null : isProductInCart && isProductInCart('PodcastProgram', podcastProgramId) ? (
           <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
             {formatMessage(commonMessages.button.cart)}
           </Button>

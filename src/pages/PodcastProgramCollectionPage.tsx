@@ -125,6 +125,7 @@ const PodcastProgramCollectionPage: React.VFC = () => {
                           description={podcastProgram.description}
                           categories={podcastProgram.categories}
                           instructor={podcastProgram.instructor}
+                          isIndividuallySale={podcastProgram.isIndividuallySale}
                           onSubscribe={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
                         >
                           <PodcastProgramCard
