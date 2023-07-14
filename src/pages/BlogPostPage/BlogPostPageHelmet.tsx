@@ -9,9 +9,6 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
   const app = useApp()
   const { defaultLocale } = useContext(LocaleContext)
   const ogLocale = getOgLocale(defaultLocale)
-  const nameSlices = post.author.name.split(' ')
-  const lastName = nameSlices.pop() || ''
-  const firstName = nameSlices.join(' ') || ''
 
   return (
     <PageHelmet

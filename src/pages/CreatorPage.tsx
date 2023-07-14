@@ -32,7 +32,7 @@ import { useAppointmentPlanCollection } from '../hooks/appointment'
 import { usePostPreviewCollection } from '../hooks/blog'
 import { usePublicMember } from '../hooks/member'
 import { useMerchandiseCollection } from '../hooks/merchandise'
-import { useEnrolledPodcastPlansCreators, usePodcastPlanIds, usePodcastProgramCollection } from '../hooks/podcast'
+import { useEnrolledPodcastPlansCreators, usePodcastProgramCollection } from '../hooks/podcast'
 import { usePublishedProgramCollection } from '../hooks/program'
 import { useMemberProjectCollection } from '../hooks/project'
 import { MemberPublicProps } from '../types/member'
@@ -146,7 +146,6 @@ const CreatorTabs: React.VFC<{
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { enabledModules } = useApp()
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
-  const [defaultActive] = useQueryParam('active', StringParam)
   const [isMerchandisesPhysical] = useQueryParam('isPhysical', BooleanParam)
 
   const { currentMemberId, isAuthenticated } = useAuth()
@@ -161,7 +160,6 @@ const CreatorTabs: React.VFC<{
   })
 
   const { posts } = usePostPreviewCollection({ authorId: creatorId })
-  const { podcastPlanIds } = usePodcastPlanIds(creatorId)
   const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(currentMemberId || '')
   const { podcastPrograms } = usePodcastProgramCollection(creatorId)
   const { appointmentPlans } = useAppointmentPlanCollection(creatorId, moment().endOf('minute').toDate())

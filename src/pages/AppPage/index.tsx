@@ -163,7 +163,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
         const { ip, country, countryCode } = await fetchCurrentGeolocation()
 
         const {
-          data: { code, message, result },
+          data: { code },
         } = await Axios.post(
           `${process.env.REACT_APP_API_BASE_ROOT}/auth/refresh-token`,
           { appId, fingerPrintId, geoLocation: { ip, country, countryCode } },
