@@ -1,12 +1,16 @@
 import { gql, useQuery } from '@apollo/client'
 import { Button, Divider, Icon, Spinner } from '@chakra-ui/react'
-import { Checkbox, Modal } from 'antd'
+import { Checkbox, message, Modal } from 'antd'
+import axios from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import ProductItem from '../../components/common/ProductItem'
 import hasura from '../../hasura'
+import { handleError } from '../../helpers'
+import { fetchCurrentGeolocation } from '../../hooks/util'
 import { ReactComponent as EmptyBoxIcon } from '../../images/icons-empty-box.svg'
 import voucherMessages from './translation'
 
@@ -26,14 +30,26 @@ const StyledNotice = styled.div`
   letter-spacing: 0.4px;
 `
 const VoucherExchangeModal: React.VFC<{
+  voucherId: string
   productQuantityLimit: number
   description: string | null
   productIds: string[]
   disabledProductIds: string[]
   loading: boolean
-  onExchange?: (setVisible: React.Dispatch<React.SetStateAction<boolean>>, selectedProductIds: string[]) => void
-}> = ({ productQuantityLimit, description, productIds, disabledProductIds, onExchange, loading }) => {
+  onLoading?: (status: boolean) => void
+  onRefetch?: () => void
+}> = ({
+  voucherId,
+  productQuantityLimit,
+  description,
+  productIds,
+  disabledProductIds,
+  loading,
+  onLoading,
+  onRefetch,
+}) => {
   const { formatMessage } = useIntl()
+  const { currentMemberId, authToken } = useAuth()
   const [visible, setVisible] = useState(false)
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
 
@@ -54,6 +70,40 @@ const VoucherExchangeModal: React.VFC<{
       ? validActivityTicketIds?.activity_ticket_enrollment_count.find(w => w.activity_ticket_id === v.split('_')[1])
       : v,
   )
+
+  const handleExchange = async (selectedProductIds: string[], voucherId: string) => {
+    onLoading?.(true)
+    if (!currentMemberId) {
+      return
+    }
+    const { ip, country, countryCode } = await fetchCurrentGeolocation()
+    await axios
+      .post(
+        `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
+        {
+          paymentModel: { type: 'perpetual' },
+          discountId: `Voucher_${voucherId}`,
+          productIds: selectedProductIds,
+          invoice: {},
+          geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
+        },
+        {
+          headers: { authorization: `Bearer ${authToken}` },
+        },
+      )
+      .then(() => {
+        message.success(formatMessage(voucherMessages.VoucherCollectionBLock.exchangeVoucher))
+        onRefetch?.()
+      })
+      .catch(error => handleError(error))
+      .finally(() => {
+        onLoading?.(false)
+        setVisible(false)
+        //   setTimeout(() => {
+        //     window.location.reload()
+        //   }, 2000)
+      })
+  }
 
   return (
     <>
@@ -137,11 +187,7 @@ const VoucherExchangeModal: React.VFC<{
                 colorScheme="primary"
                 isLoading={loading || loadingValidityCheck}
                 isDisabled={selectedProductIds.length === 0 || selectedProductIds.length > productQuantityLimit}
-                onClick={() => {
-                  if (onExchange) {
-                    onExchange(setVisible, selectedProductIds)
-                  }
-                }}
+                onClick={() => handleExchange(selectedProductIds, voucherId)}
               >
                 {formatMessage(voucherMessages.VoucherExchangeModal.exchange)}
               </Button>
