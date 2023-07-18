@@ -52,6 +52,7 @@ const VoucherCollectionBlock: React.VFC = () => {
         )}
         <VoucherExchangeModal
           voucherId={voucher.id}
+          voucherPlanId={voucher.voucherPlanId}
           productQuantityLimit={voucher.productQuantityLimit}
           productIds={voucher.productIds}
           disabledProductIds={enrolledProductIds}

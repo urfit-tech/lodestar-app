@@ -42,6 +42,7 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
 
   const enrolledVoucherCollection: (VoucherProps & {
     productIds: string[]
+    voucherPlanId: string
   })[] =
     data?.voucher.map(voucher => ({
       id: voucher.id,
@@ -62,6 +63,7 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
         code: voucher.voucher_code.code,
       },
       status: { outdated: voucher.status?.outdated, used: voucher.status?.used },
+      voucherPlanId: voucher.voucher_code.voucher_plan.id,
     })) || []
 
   return {

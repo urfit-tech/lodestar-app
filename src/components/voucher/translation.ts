@@ -4,6 +4,7 @@ const voucherMessages = {
   '*': defineMessages({
     close: { id: 'voucher.*.close', defaultMessage: 'close' },
     cancel: { id: 'voucher.*.cancel', defaultMessage: 'cancel' },
+    send: { id: 'voucher.*.send', defaultMessage: '送出' },
   }),
   VoucherDeliverModal: defineMessages({
     giftLink: { id: 'voucher.VoucherDeliverModal.giftLink', defaultMessage: '贈送連結' },
@@ -30,6 +31,18 @@ const voucherMessages = {
       id: 'voucher.VoucherExchangeModal.exchanging',
       defaultMessage: '兌換中',
     },
+    pleaseEnterPinCode: {
+      id: 'voucher.VoucherExchangeModal.pleaseEnterPinCode',
+      defaultMessage: '請輸入兌換 PIN 碼',
+    },
+    pinCode: {
+      id: 'voucher.VoucherExchangeModal.pinCode',
+      defaultMessage: 'PIN 碼',
+    },
+    errorPinCode:{
+      id:'voucher.VoucherExchangeModal.errorPinCode',
+      defaultMessage:"錯誤的 PIN 碼"
+    }
   }),
   VoucherCollectionBLock: defineMessages({
     exchangeVoucher: {
