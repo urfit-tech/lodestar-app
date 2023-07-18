@@ -56,6 +56,7 @@ const VoucherExchangeModal: React.VFC<{
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
   const [hasPinCode, setHasPinCode] = useState(false)
   const [pinCode, setPinCode] = useState<string | null>(null)
+  const [exchanging, setExchanging] = useState(false)
 
   // check the validity of product which type is ActivityTicket
   // session ended_at and ticket buy
@@ -77,7 +78,10 @@ const VoucherExchangeModal: React.VFC<{
 
   const exchangeVoucher = async (selectedProductIds: string[], voucherId: string) => {
     onLoading?.(true)
+    setExchanging(true)
+
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
+    message.info(formatMessage(voucherMessages.VoucherExchangeModal.exchangingInfo))
     await axios
       .post(
         `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
@@ -92,19 +96,28 @@ const VoucherExchangeModal: React.VFC<{
           headers: { authorization: `Bearer ${authToken}` },
         },
       )
-      .then(() => {
-        message.success(formatMessage(voucherMessages.VoucherCollectionBLock.exchangeVoucher))
-        onRefetch?.()
+      .then(res => {
+        if (res.data.code.split('_')[0] === 'E') {
+          message.error(formatMessage(voucherMessages.VoucherExchangeModal.exchangingError))
+        } else {
+          message.success(formatMessage(voucherMessages.VoucherExchangeModal.exchangeVoucher))
+          onRefetch?.()
+        }
       })
       .catch(error => handleError(error))
       .finally(() => {
         onLoading?.(false)
+        setExchanging(false)
         setVisible(false)
+        setHasPinCode(false)
+        setSelectedProductIds([])
       })
   }
 
   const handleExchange = async (voucherPlanId: string) => {
     onLoading?.(true)
+    setExchanging(true)
+
     if (!currentMemberId) {
       return
     }
@@ -116,17 +129,20 @@ const VoucherExchangeModal: React.VFC<{
       .then(res => {
         if (res.data.result.hasPinCode) {
           setHasPinCode(res.data.result.hasPinCode)
+          onLoading?.(false)
+          setExchanging(false)
           return
         } else {
           exchangeVoucher(selectedProductIds, voucherId)
         }
       })
       .catch(error => handleError(error))
-      .finally(() => onLoading?.(false))
   }
 
   const handleExchangeWithPinCode = async (voucherPlanId: string, pinCode: string | null) => {
     onLoading?.(true)
+    setExchanging(true)
+
     if (!pinCode) {
       return message.info(formatMessage(voucherMessages.VoucherExchangeModal.pleaseEnterPinCode))
     }
@@ -145,11 +161,12 @@ const VoucherExchangeModal: React.VFC<{
         if (res.data.result.pinCodeCorrect) {
           exchangeVoucher(selectedProductIds, voucherId)
         } else {
-          message.error(formatMessage(voucherMessages.VoucherExchangeModal.errorPinCode))
+          onLoading?.(false)
+          setExchanging(false)
+          return message.error(formatMessage(voucherMessages.VoucherExchangeModal.errorPinCode))
         }
       })
       .catch(error => handleError(error))
-      .finally(() => onLoading?.(false))
   }
 
   return (
@@ -163,7 +180,17 @@ const VoucherExchangeModal: React.VFC<{
         {formatMessage(voucherMessages.VoucherExchangeModal.useNow)}
       </Button>
 
-      <Modal centered destroyOnClose footer={null} visible={visible} onCancel={() => setVisible(false)}>
+      <Modal
+        centered
+        destroyOnClose
+        footer={null}
+        visible={visible}
+        onCancel={() => {
+          onLoading?.(false)
+          setExchanging(false)
+          setVisible(false)
+        }}
+      >
         {hasPinCode ? (
           <>
             <StyledTitle className="mb-4">
@@ -171,14 +198,26 @@ const VoucherExchangeModal: React.VFC<{
             </StyledTitle>
 
             <Text className="mb-2">{formatMessage(voucherMessages.VoucherExchangeModal.pinCode)}：</Text>
-            <Input className="mb-3" pinCode={pinCode} onChange={e => setPinCode(e.target.value)} />
+            <Input
+              className="mb-3"
+              pinCode={pinCode}
+              onChange={e => setPinCode(e.target.value)}
+              disabled={loading || exchanging}
+            />
             <div className="text-right">
-              <Button className="mr-2" onClick={() => setVisible(false)}>
+              <Button
+                className="mr-2"
+                onClick={() => {
+                  setVisible(false)
+                  setHasPinCode(false)
+                  setSelectedProductIds([])
+                }}
+              >
                 {formatMessage(voucherMessages['*'].cancel)}
               </Button>
               <Button
                 colorScheme="primary"
-                isLoading={loading || loadingValidityCheck}
+                isLoading={loading}
                 isDisabled={selectedProductIds.length === 0 || selectedProductIds.length > productQuantityLimit}
                 onClick={() => handleExchangeWithPinCode(voucherPlanId, pinCode)}
               >
@@ -249,12 +288,19 @@ const VoucherExchangeModal: React.VFC<{
             )}
 
             <div className="text-right">
-              <Button className="mr-2" onClick={() => setVisible(false)}>
+              <Button
+                className="mr-2"
+                onClick={() => {
+                  setExchanging(false)
+                  setVisible(false)
+                  setSelectedProductIds([])
+                }}
+              >
                 {formatMessage(voucherMessages['*'].cancel)}
               </Button>
               <Button
                 colorScheme="primary"
-                isLoading={loading || loadingValidityCheck}
+                isLoading={loading || exchanging || loadingValidityCheck}
                 isDisabled={selectedProductIds.length === 0 || selectedProductIds.length > productQuantityLimit}
                 onClick={() => handleExchange(voucherPlanId)}
               >

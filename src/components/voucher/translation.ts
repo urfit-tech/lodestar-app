@@ -39,14 +39,20 @@ const voucherMessages = {
       id: 'voucher.VoucherExchangeModal.pinCode',
       defaultMessage: 'PIN 碼',
     },
-    errorPinCode:{
-      id:'voucher.VoucherExchangeModal.errorPinCode',
-      defaultMessage:"錯誤的 PIN 碼"
-    }
-  }),
-  VoucherCollectionBLock: defineMessages({
+    errorPinCode: {
+      id: 'voucher.VoucherExchangeModal.errorPinCode',
+      defaultMessage: '錯誤的 PIN 碼',
+    },
+    exchangingInfo: {
+      id: 'voucher.VoucherExchangeModal.exchangingInfo',
+      defaultMessage: '兌換中，請稍候',
+    },
+    exchangingError: {
+      id: 'voucher.VoucherExchangeModal.exchangingError',
+      defaultMessage: '兌換失敗',
+    },
     exchangeVoucher: {
-      id: 'voucher.VoucherCollectionBLock.exchangeVoucher',
+      id: 'voucher.VoucherExchangeModal.exchangeVoucher',
       defaultMessage: '兌換成功，請到「我的主頁」查看',
     },
   }),
