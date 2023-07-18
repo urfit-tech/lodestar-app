@@ -34,6 +34,7 @@ export const usePodcastProgramCollection = (creatorId?: string) => {
           sold_at
           published_at
           support_locales
+          is_individually_sale
           podcast_program_roles(where: { name: { _eq: "instructor" } }) {
             id
             member {
@@ -95,6 +96,7 @@ export const usePodcastProgramCollection = (creatorId?: string) => {
             })),
             publishedAt: new Date(podcastProgram.published_at),
             supportLocales: podcastProgram.support_locales,
+            isIndividuallySale: podcastProgram.is_individually_sale,
           }
         })
 
