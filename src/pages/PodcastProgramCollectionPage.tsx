@@ -137,6 +137,7 @@ const PodcastProgramCollectionPage: React.VFC = () => {
                             duration={podcastProgram.duration}
                             durationSecond={podcastProgram.durationSecond}
                             isEnrolled={isEnrolled}
+                            isIndividuallySale={podcastProgram.isIndividuallySale}
                           />
                         </PodcastProgramPopover>
                       )}

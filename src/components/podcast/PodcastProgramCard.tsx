@@ -1,9 +1,9 @@
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import styled from 'styled-components'
 import { durationFullFormatter } from '../../helpers'
 import EmptyCover from '../../images/empty-cover.png'
 import { AvatarImage, CustomRatioImage } from '../common/Image'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 
 const StyledWrapper = styled.div`
@@ -80,6 +80,7 @@ export type PodcastProgramCardProps = {
   percent?: number
   isEnrolled?: boolean
   noPrice?: boolean
+  isIndividuallySale?: boolean
 }
 const PodcastProgramCard: React.VFC<PodcastProgramCardProps> = ({
   coverUrl,
@@ -93,6 +94,7 @@ const PodcastProgramCard: React.VFC<PodcastProgramCardProps> = ({
   percent,
   isEnrolled,
   noPrice,
+  isIndividuallySale,
 }) => {
   return (
     <StyledWrapper className="d-flex justify-content-between">
@@ -115,7 +117,7 @@ const PodcastProgramCard: React.VFC<PodcastProgramCardProps> = ({
             <span>{instructor?.name}</span>
           </div>
 
-          {!noPrice && (
+          {!noPrice && isIndividuallySale && (
             <div className="text-right">
               <PriceLabel variant="inline" listPrice={listPrice} salePrice={salePrice} />
             </div>
