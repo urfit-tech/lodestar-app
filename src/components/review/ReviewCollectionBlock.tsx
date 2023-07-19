@@ -162,6 +162,13 @@ const useEnrolledMembers = (targetId: string) => {
         program_plan_enrollment(where: { program_plan: { program_id: { _eq: $targetId } } }) {
           member_id
         }
+        program_package_plan_enrollment(
+          where: {
+            program_package_plan: { program_package: { program_package_programs: { program_id: { _eq: $targetId } } } }
+          }
+        ) {
+          member_id
+        }
       }
     `,
     { variables: { targetId } },
@@ -169,6 +176,7 @@ const useEnrolledMembers = (targetId: string) => {
   const enrolledMembers: (string | null)[] = [
     ...(data?.program_enrollment?.map(v => v.member_id || null) || []),
     ...(data?.program_plan_enrollment?.map(v => v.member_id || null) || []),
+    ...(data?.program_package_plan_enrollment?.map(v => v.member_id || null) || []),
   ]
 
   return {
