@@ -109,17 +109,17 @@ const authMessages = {
       defaultMessage: '確定',
     },
   }),
-  AskLoginPage: defineMessages({
+  AskLoginModal: defineMessages({
     title: {
-      id: 'auth.AskLoginPage.title',
+      id: 'auth.AskLoginModal.title',
       defaultMessage: 'You are not logged in',
     },
     description: {
-      id: 'auth.AskLoginPage.description',
+      id: 'auth.AskLoginModal.description',
       defaultMessage: 'Login now to browse content',
     },
     goToLogin: {
-      id: 'auth.AskLoginPage.goToLogin',
+      id: 'auth.AskLoginModal.goToLogin',
       defaultMessage: 'Go to login',
     },
   }),

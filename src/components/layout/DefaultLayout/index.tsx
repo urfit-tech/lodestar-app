@@ -14,7 +14,7 @@ import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
 import { useMember } from '../../../hooks/member'
 import DefaultAvatar from '../../../images/avatar.svg'
-import AskLoginPage from '../../auth/AskLoginPage'
+import AskLoginModal from '../../auth/AskLoginModal'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
 import CartDropdown from '../../checkout/CartDropdown'
 import Footer from '../../common/Footer'
@@ -282,7 +282,7 @@ const DefaultLayout: React.FC<{
         </StyledLayoutHeader>
 
         <StyledLayoutContent id="layout-content" className={`${noHeader ? 'full-height' : ''}`}>
-          {!isAuthenticated && !isAuthenticating && pathName.includes('/settings') && <AskLoginPage />}
+          {!isAuthenticated && !isAuthenticating && pathName.includes('/settings') && <AskLoginModal />}
           {settings['feature.email_verification.enabled'] === '1' && isUnVerifiedEmails && !noNotificationBar && (
             <StyledNotificationBar variant="warning">
               <p>
