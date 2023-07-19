@@ -105,7 +105,9 @@ const DefaultLayout: React.FC<{
   return (
     <AuthModalContext.Provider value={{ visible, setVisible, isBusinessMember, setIsBusinessMember }}>
       {visible && <AuthModal noGeneralLogin={noGeneralLogin} renderTitle={renderAuthModalTitle} />}
-
+      {!isAuthenticated && !isAuthenticating && (pathName.includes('/settings') || pathName.includes('/members')) && (
+        <AskLoginModal />
+      )}
       <StyledLayoutWrapper variant={white ? 'white' : undefined}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
           <div className="d-flex align-items-center">

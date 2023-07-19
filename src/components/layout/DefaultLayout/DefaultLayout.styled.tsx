@@ -10,6 +10,7 @@ export const StyledLayout = styled(Layout)<{ variant?: 'white' }>`
 `
 export const StyledLayoutHeader = styled(Layout.Header)`
   overflow: hidden;
+  z-index: 2;
 
   &.hidden {
     height: 0;
