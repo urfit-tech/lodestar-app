@@ -79,7 +79,7 @@ const AskLoginModal: React.VFC = () => {
       width="100%"
       backgroundColor="rgba(255, 255, 255, 0.6)"
       pos="absolute"
-      zIndex="1"
+      zIndex="3"
     >
       <CenteredBox>
         <StyledWrapper>
