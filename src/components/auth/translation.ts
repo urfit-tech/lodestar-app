@@ -109,6 +109,20 @@ const authMessages = {
       defaultMessage: '確定',
     },
   }),
+  AskLoginPage: defineMessages({
+    title: {
+      id: 'auth.AskLoginPage.title',
+      defaultMessage: 'You are not logged in',
+    },
+    description: {
+      id: 'auth.AskLoginPage.description',
+      defaultMessage: 'Login now to browse content',
+    },
+    goToLogin: {
+      id: 'auth.AskLoginPage.goToLogin',
+      defaultMessage: 'Go to login',
+    },
+  }),
 }
 
 export default authMessages

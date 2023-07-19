@@ -13,12 +13,17 @@ export const useAuthModal = () => {
     utm = {}
   }
 
-  
   const pathName = window.location.pathname
   const isGroupBuyingReceivedPage = pathName.includes('/group-buying-received')
   const isPushToCouponsVoucherPage = pathName.includes('/coupons') || pathName.includes('/voucher')
+  const isPushToCartPage = pathName.includes('/cart')
+  const isPushToPrograms = pathName.includes('/programs/')
   const isPushToMemberLearningPage =
-    checkLearningSystem(settings['custom']).isStart && !isPushToCouponsVoucherPage && !isGroupBuyingReceivedPage
+    checkLearningSystem(settings['custom']).isStart &&
+    !isPushToCouponsVoucherPage &&
+    !isGroupBuyingReceivedPage &&
+    !isPushToCartPage &&
+    !isPushToPrograms
   const defaultRedirectUrl =
     window.location.pathname +
     '?' +
