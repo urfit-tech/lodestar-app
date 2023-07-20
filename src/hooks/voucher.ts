@@ -1,9 +1,9 @@
-import { gql, useQuery } from '@apollo/client'
+import { gql, NetworkStatus, useQuery } from '@apollo/client'
 import { VoucherProps } from '../components/voucher/Voucher'
 import hasura from '../hasura'
 
 export const useEnrolledVoucherCollection = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
+  const { loading, error, data, refetch, networkStatus } = useQuery<
     hasura.GET_ENROLLED_VOUCHER_COLLECTION,
     hasura.GET_ENROLLED_VOUCHER_COLLECTIONVariables
   >(
@@ -37,11 +37,13 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
     `,
     {
       variables: { memberId },
+      notifyOnNetworkStatusChange: true,
     },
   )
 
   const enrolledVoucherCollection: (VoucherProps & {
     productIds: string[]
+    voucherPlanId: string
   })[] =
     data?.voucher.map(voucher => ({
       id: voucher.id,
@@ -62,10 +64,11 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
         code: voucher.voucher_code.code,
       },
       status: { outdated: voucher.status?.outdated, used: voucher.status?.used },
+      voucherPlanId: voucher.voucher_code.voucher_plan.id,
     })) || []
 
   return {
-    loading,
+    loading: loading || networkStatus === NetworkStatus.refetch,
     error,
     enrolledVoucherCollection,
     refetch,
