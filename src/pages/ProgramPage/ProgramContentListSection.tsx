@@ -85,6 +85,7 @@ const ProgramContentListSection: React.VFC<{
   const isEnrolled = enrolledProgramIds.includes(program.id)
 
   const layoutContent = document.getElementById('layout-content')
+
   useEffect(() => {
     const autoScroll = setTimeout(() => {
       const url = new URL(window.location.href)

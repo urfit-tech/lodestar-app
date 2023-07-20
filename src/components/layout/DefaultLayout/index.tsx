@@ -236,7 +236,7 @@ const DefaultLayout: React.FC<{
                         onClick={() => history.push(`/creators/${currentMemberId}`)}
                       >
                         <Link to={`/creators/${currentMemberId}`}>
-                          {formatMessage(commonMessages.button.creatorPage)}
+                          {settings['nav.creator_page.name'] || formatMessage(commonMessages.button.creatorPage)}
                         </Link>
                       </MenuButton>
                     </Menu>
@@ -256,7 +256,9 @@ const DefaultLayout: React.FC<{
                         }
                         onClick={() => history.push(`/members/${currentMemberId}`)}
                       >
-                        <Link to={`/members/${currentMemberId}`}>{formatMessage(commonMessages.button.myPage)}</Link>
+                        <Link to={`/members/${currentMemberId}`}>
+                          {settings['nav.my_page.name'] || formatMessage(commonMessages.button.myPage)}
+                        </Link>
                       </MenuButton>
                     </Menu>
                   )))}

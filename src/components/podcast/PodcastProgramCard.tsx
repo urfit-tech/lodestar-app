@@ -80,6 +80,7 @@ export type PodcastProgramCardProps = {
   percent?: number
   isEnrolled?: boolean
   noPrice?: boolean
+  isIndividuallySale?: boolean
 }
 const PodcastProgramCard: React.VFC<PodcastProgramCardProps> = ({
   coverUrl,
@@ -93,6 +94,7 @@ const PodcastProgramCard: React.VFC<PodcastProgramCardProps> = ({
   percent,
   isEnrolled,
   noPrice,
+  isIndividuallySale,
 }) => {
   return (
     <StyledWrapper className="d-flex justify-content-between">
@@ -115,7 +117,7 @@ const PodcastProgramCard: React.VFC<PodcastProgramCardProps> = ({
             <span>{instructor?.name}</span>
           </div>
 
-          {!noPrice && (
+          {!noPrice && isIndividuallySale && (
             <div className="text-right">
               <PriceLabel variant="inline" listPrice={listPrice} salePrice={salePrice} />
             </div>
