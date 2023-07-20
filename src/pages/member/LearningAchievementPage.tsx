@@ -305,11 +305,12 @@ const useLearnedStatistic = (memberId: string) => {
           consecutiveDayOptions: {
             personalConsecutiveDay: 0,
             personalMaxConsecutiveDay: 0,
-            allMemberMaxConsecutiveDay: 0,
-            allMemberAvgConsecutiveDay: 0,
+            allMemberMaxConsecutiveDay:
+              consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].max_consecutive_day || 0,
+            allMemberAvgConsecutiveDay:
+              consecutiveDayStatisticData?.cw_consecutive_day_statistic[0].avg_consecutive_day || 0,
           },
         }
-
   return { learnedStatistic, learnedStatisticLoading, learnedStatisticError }
 }
 

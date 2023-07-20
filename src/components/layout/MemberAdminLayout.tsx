@@ -9,7 +9,6 @@ import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { checkLearningSystem } from '../../helpers/learning'
 import { useAuthModal } from '../../hooks/auth'
-import { AuthModalContext } from '../auth/AuthModal'
 import { MemberAdminMenu } from '../common/AdminMenu'
 import { useAppRouter } from '../common/AppRouter'
 import PageHelmet from '../common/PageHelmet'
@@ -92,14 +91,6 @@ const MemberAdminLayout: React.FC<{
           {children}
         </StyledContent>
       </div>
-      <AuthModalContext.Consumer>
-        {({ setVisible: setAuthModalVisible }) => {
-          if (!isAuthenticating && !isAuthenticated && !currentMemberId) {
-            authModal.open(setAuthModalVisible)
-          }
-          return <></>
-        }}
-      </AuthModalContext.Consumer>
     </DefaultLayout>
   )
 }

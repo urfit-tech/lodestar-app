@@ -1,7 +1,6 @@
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import { checkLearningSystem } from '../helpers/learning'
 
 export const useAuthModal = () => {
   const tracking = useTracking()
@@ -13,27 +12,16 @@ export const useAuthModal = () => {
     utm = {}
   }
 
-  const isGroupBuyingReceivedPage = window.location.pathname === '/group-buying-received'
-  const pathName = window.location.pathname
-  const isPushToCouponsVoucherPage = pathName.includes('/coupons') || pathName.includes('/voucher')
-  const isPushToMemberLearningPage =
-    checkLearningSystem(settings['custom']).isStart && !isPushToCouponsVoucherPage && !isGroupBuyingReceivedPage
-  const defaultRedirectUrl =
-    window.location.pathname +
-    '?' +
-    new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString()
-  const redirectUrl: () => string = () => {
-    if (isPushToMemberLearningPage) return '/settings/learning-achievement'
-    return defaultRedirectUrl
-  }
-
   return {
     open: (setAuthModalVisible: React.Dispatch<React.SetStateAction<boolean>> | undefined) => {
       if (settings['auth.parenting.client_id'] && settings['auth.email.disabled']) {
         const state = btoa(
           JSON.stringify({
             provider: 'parenting',
-            redirect: redirectUrl(),
+            redirect:
+              window.location.pathname +
+              '?' +
+              new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
           }),
         )
         const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/parenting`)
@@ -44,7 +32,10 @@ export const useAuthModal = () => {
         const state = btoa(
           JSON.stringify({
             provider: 'cw',
-            redirect: redirectUrl(),
+            redirect:
+              window.location.pathname +
+              '?' +
+              new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
           }),
         )
         const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/cw`)

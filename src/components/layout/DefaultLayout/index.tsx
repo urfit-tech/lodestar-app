@@ -14,6 +14,7 @@ import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
 import { useMember } from '../../../hooks/member'
 import DefaultAvatar from '../../../images/avatar.svg'
+import AskLoginModal from '../../auth/AskLoginModal'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
 import CartDropdown from '../../checkout/CartDropdown'
 import Footer from '../../common/Footer'
@@ -88,7 +89,7 @@ const DefaultLayout: React.FC<{
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
   const { renderFooter } = useCustomRenderer()
-  const { currentMemberId, isAuthenticated, currentMember } = useAuth()
+  const { currentMemberId, isAuthenticated, isAuthenticating, currentMember } = useAuth()
   const { name, settings, enabledModules } = useApp()
   const { member } = useMember(currentMemberId || '')
   const { navs } = useNav()
@@ -99,11 +100,14 @@ const DefaultLayout: React.FC<{
   const [visible, setVisible] = useState(false)
 
   const isUnVerifiedEmails = member ? !member.verifiedEmails?.includes(member.email) : false
+  const pathName = window.location.pathname
 
   return (
     <AuthModalContext.Provider value={{ visible, setVisible, isBusinessMember, setIsBusinessMember }}>
       {visible && <AuthModal noGeneralLogin={noGeneralLogin} renderTitle={renderAuthModalTitle} />}
-
+      {!isAuthenticated && !isAuthenticating && (pathName.includes('/settings') || pathName.includes('/members')) && (
+        <AskLoginModal />
+      )}
       <StyledLayoutWrapper variant={white ? 'white' : undefined}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
           <div className="d-flex align-items-center">
@@ -280,6 +284,7 @@ const DefaultLayout: React.FC<{
         </StyledLayoutHeader>
 
         <StyledLayoutContent id="layout-content" className={`${noHeader ? 'full-height' : ''}`}>
+          {!isAuthenticated && !isAuthenticating && pathName.includes('/settings') && <AskLoginModal />}
           {settings['feature.email_verification.enabled'] === '1' && isUnVerifiedEmails && !noNotificationBar && (
             <StyledNotificationBar variant="warning">
               <p>
