@@ -78,7 +78,12 @@ const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ fo
           {form.getFieldDecorator('companyAbstract', {
             initialValue: (member && member.abstract) || '',
             rules: [{ max: 100 }],
-          })(<Textarea rows={2} />)}
+          })(
+            <Textarea
+              rows={2}
+              placeholder={formatMessage(profileMessages.ProfileIntroBusinessCard.companyAbstractPlaceholder)}
+            />,
+          )}
         </Form.Item>
         <Form.Item
           label={formatMessage(profileMessages.ProfileIntroBusinessCard.intro)}
@@ -113,6 +118,7 @@ const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ fo
                 'separator',
                 'fullscreen',
               ]}
+              placeholder={formatMessage(profileMessages.ProfileIntroBusinessCard.companyIntroPlaceholder)}
             ></StyledBraftEditor>,
           )}
         </Form.Item>
