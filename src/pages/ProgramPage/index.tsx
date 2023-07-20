@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Spinner } from '@chakra-ui/react'
+import { Button, Icon } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
@@ -87,7 +87,7 @@ const ProgramPage: React.VFC = () => {
   const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
   const [previousPage] = useQueryParam('back', StringParam)
   const { programId } = useParams<{ programId: string }>()
-  const { settings, enabledModules, loading: loadingApp } = useApp()
+  const { id: appId, settings, enabledModules, loading: loadingApp } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
   const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
