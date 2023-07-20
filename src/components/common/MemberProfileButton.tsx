@@ -221,7 +221,7 @@ const MemberProfileButton: React.VFC<{
         <Responsive.Default>
           <CustomNavLinks />
           {renderCreatorPageNavItem?.({ memberId: member.id }) ||
-            (!(settings['nav.creator_page.enabled'] === '0') && (
+            (!!Number(settings['nav.creator_page.enabled']) && (
               <List.Item onClick={() => history.push(`/creators/${member.id}`)} style={{ cursor: 'pointer' }}>
                 <BlankIcon className="mr-2" />
                 {formatMessage(commonMessages.content.creatorPage)}
