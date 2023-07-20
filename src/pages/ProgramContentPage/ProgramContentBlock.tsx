@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { gql, useQuery } from '@apollo/client'
 import { Icon, LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText, Switch } from '@chakra-ui/react'

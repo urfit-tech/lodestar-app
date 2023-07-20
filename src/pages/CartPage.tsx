@@ -24,7 +24,7 @@ const CartPage: React.VFC = () => {
   const [checkoutAlready, setCheckoutAlready] = useState(false)
   const [shopId] = useQueryParam('shopId', StringParam)
   const { cartProducts } = useContext(CartContext)
-  const { id: appId, settings } = useApp()
+  const { id: appId} = useApp()
   const { isAuthenticating, currentMemberId } = useAuth()
   const { loadingMember, member } = useMember(currentMemberId || '')
   const cartProductGroups = groupBy(cartProduct => cartProduct.shopId || '', cartProducts)

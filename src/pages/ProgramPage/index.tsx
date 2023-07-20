@@ -102,7 +102,7 @@ const ProgramPageContent: React.VFC = () => {
   const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
   const [previousPage] = useQueryParam('back', StringParam)
   const { programId } = useParams<{ programId: string }>()
-  const { id: appId, settings, enabledModules, loading: loadingApp } = useApp()
+  const { settings, enabledModules, loading: loadingApp } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
   const { loadingProgram, program, addProgramView } = useProgram(programId)
