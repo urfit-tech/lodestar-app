@@ -1,4 +1,4 @@
-import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast, Text } from '@chakra-ui/react'
+import { Box, Checkbox, Icon, Input, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
 import { defineMessage } from '@formatjs/intl'
 import { Form, message, Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/'
@@ -92,10 +92,13 @@ const CheckoutBlock: React.VFC<{
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
-  const [isApproved, setIsApproved] = useState(settings['checkout.approvement'] !== 'true')
+  const [isApproved, setIsApproved] = useState(localStorage.getItem('kolable.checkout.approvement') === 'true')
+
+  // 讓「我同意」按鈕在使用者重新進入後保持一樣
   useEffect(() => {
-    setIsApproved(settings['checkout.approvement'] !== 'true')
-  }, [settings])
+    localStorage.setItem('kolable.checkout.approvement', JSON.stringify(isApproved))
+    setIsApproved(localStorage.getItem('kolable.checkout.approvement') === 'true')
+  }, [isApproved])
 
   const updateMemberMetadata = useUpdateMemberMetadata()
   const toast = useToast()
