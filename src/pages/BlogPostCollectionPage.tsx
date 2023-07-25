@@ -97,7 +97,7 @@ const BlogPostCollectionPage: React.VFC = () => {
               >
                 <div className="col-6 col-lg-4">
                   <PostPreviewCover
-                    variant="list-item"
+                    variant="featuring"
                     coverUrl={post.coverUrl}
                     withVideo={typeof post.videoUrl === 'string'}
                   />
