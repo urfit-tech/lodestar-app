@@ -101,7 +101,13 @@ const DefaultLayout: React.FC<{
 
   return (
     <AuthModalContext.Provider value={{ visible, setVisible, isBusinessMember, setIsBusinessMember }}>
-      {visible && <AuthModal noGeneralLogin={noGeneralLogin} renderTitle={renderAuthModalTitle} />}
+      {visible && (
+        <AuthModal
+          noGeneralLogin={noGeneralLogin}
+          renderTitle={renderAuthModalTitle}
+          defaultAuthState={settings['entry_page.first_method'] === 'register' ? 'register' : 'login'}
+        />
+      )}
 
       <StyledLayoutWrapper variant={white ? 'white' : undefined}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
