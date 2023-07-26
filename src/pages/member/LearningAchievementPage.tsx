@@ -143,7 +143,7 @@ const LearningAchievementPage: React.FC = () => {
 
   return (
     <ChakraProvider theme={learningAchievementTheme}>
-      {!learnedStatisticLoading && learnedStatistic && (
+      {learnedStatistic && (
         <MemberAdminLayout
           content={{
             icon: LearningAchievementIcon,
