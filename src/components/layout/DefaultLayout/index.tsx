@@ -105,7 +105,7 @@ const DefaultLayout: React.FC<{
         <AuthModal
           noGeneralLogin={noGeneralLogin}
           renderTitle={renderAuthModalTitle}
-          defaultAuthState={settings['entry_page.first_method'] === 'register' ? 'register' : 'login'}
+          defaultAuthState={settings['entry_page.method'] === 'register' ? 'register' : 'login'}
         />
       )}
 
