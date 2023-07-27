@@ -116,7 +116,7 @@ const CheckoutBlock: React.VFC<{
   const cachedPaymentInfo: {
     shipping: ShippingProps
     invoice: InvoiceProps
-    payment: PaymentProps
+    payment: PaymentProps | null
   } = {
     shipping: {
       name: '',
@@ -136,10 +136,13 @@ const CheckoutBlock: React.VFC<{
       phone: '',
       email: member?.email || '',
     },
-    payment: {
-      gateway: settings['payment.perpetual.default_gateway'] || 'spgateway',
-      method: settings['payment.perpetual.default_gateway_method'] || 'credit',
-    } as PaymentProps,
+    payment:
+      settings['payment.perpetual.default_gateway'] && settings['payment.perpetual.default_gateway_method']
+        ? ({
+            gateway: settings['payment.perpetual.default_gateway'],
+            method: settings['payment.perpetual.default_gateway_method'],
+          } as PaymentProps)
+        : null,
   }
   try {
     const cachedShipping = localStorage.getItem('kolable.cart.shipping')
@@ -165,10 +168,12 @@ const CheckoutBlock: React.VFC<{
         }
     cachedPaymentInfo.payment = cachedPayment
       ? (JSON.parse(cachedPayment) as PaymentProps)
-      : {
+      : cachedPaymentInfo.payment && member?.payment
+      ? {
           ...cachedPaymentInfo.payment,
-          ...member?.payment,
+          ...member.payment,
         }
+      : null
   } catch {}
 
   const contactInfoRef = useRef<HTMLDivElement | null>(null)
@@ -181,7 +186,7 @@ const CheckoutBlock: React.VFC<{
 
   const [shipping, setShipping] = useState<ShippingProps>(cachedPaymentInfo.shipping)
   const [invoice, setInvoice] = useState<InvoiceProps>(cachedPaymentInfo.invoice)
-  const [payment, setPayment] = useState<PaymentProps | null>(null)
+  const [payment, setPayment] = useState<PaymentProps | null>(cachedPaymentInfo.payment)
   const [errorContactFields, setErrorContactFields] = useState<string[]>([])
   const [isValidating, setIsValidating] = useState(false)
   const [referrerEmail, setReferrerEmail] = useState('')
