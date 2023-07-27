@@ -152,9 +152,6 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
     handleError(errorProperties || errorMemberProperties)
   }
 
-  if (loadingProperties || loadingMemberProperties) {
-    return <Skeleton loading={loading} avatar active />
-  }
   return (
     <AdminCard {...cardProps}>
       <Typography.Title className="mb-4" level={4}>
@@ -183,58 +180,62 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
             </>
           )}
         </StyledFormItem>
-        {properties.map(property => {
-          let defaultValue = memberProperties.find(field => field.id === property.id)?.value || ''
-          return (
-            <Form.Item label={`${property.name}`} key={property.id}>
-              {form.getFieldDecorator(`${property.id}`, {
-                initialValue: defaultValue,
-                rules: [
-                  {
-                    required: property.isRequired,
-                    message: formatMessage(profileMessages.ProfileOtherAdminCard.enter, {
-                      enterLabel: property.name,
-                    }),
-                  },
-                  {
-                    validator: async (_, value, callback) => {
-                      if (
-                        property.name === '公司統編' &&
-                        value?.toString().length === 8 &&
-                        !checkUniformNumber(value)
-                      ) {
-                        await callback(formatMessage(profileMessages.ProfileOtherAdminCard.uniformNumberIsInvalidated))
-                      }
-                      await callback()
+        <Skeleton isLoaded={!loadingMemberProperties || !loadingProperties} fadeDuration={1}>
+          {properties.map(property => {
+            let defaultValue = memberProperties.find(field => field.id === property.id)?.value || ''
+            return (
+              <Form.Item label={`${property.name}`} key={property.id}>
+                {form.getFieldDecorator(`${property.id}`, {
+                  initialValue: defaultValue,
+                  rules: [
+                    {
+                      required: property.isRequired,
+                      message: formatMessage(profileMessages.ProfileOtherAdminCard.enter, {
+                        enterLabel: property.name,
+                      }),
                     },
-                  },
-                ],
-              })(
-                property?.placeholder?.includes('/') ? (
-                  <Select disabled={loading}>
-                    {property?.placeholder?.split('/').map((value: string, idx: number) => (
-                      <Select.Option key={idx} value={value}>
-                        {property.name === '公司類型'
-                          ? companyTypes.filter(companyType => companyType.value === value)[0]?.label
-                          : value}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                ) : (
-                  <MigrationInput type={property.id} disabled={loading} />
-                ),
-              )}
-            </Form.Item>
-          )
-        })}
-        <Form.Item wrapperCol={{ md: { offset: 4 } }}>
-          <Button variant="outline" className="mr-2" onClick={() => form.resetFields()}>
-            {formatMessage(commonMessages.ui.cancel)}
-          </Button>
-          <Button variant="primary" type="submit" disabled={loading} isLoading={loading} _hover={{}}>
-            {formatMessage(commonMessages.button.save)}
-          </Button>
-        </Form.Item>
+                    {
+                      validator: async (_, value, callback) => {
+                        if (
+                          property.name === '公司統編' &&
+                          value?.toString().length === 8 &&
+                          !checkUniformNumber(value)
+                        ) {
+                          await callback(
+                            formatMessage(profileMessages.ProfileOtherAdminCard.uniformNumberIsInvalidated),
+                          )
+                        }
+                        await callback()
+                      },
+                    },
+                  ],
+                })(
+                  property?.placeholder?.includes('/') ? (
+                    <Select disabled={loading}>
+                      {property?.placeholder?.split('/').map((value: string, idx: number) => (
+                        <Select.Option key={idx} value={value}>
+                          {property.name === '公司類型'
+                            ? companyTypes.filter(companyType => companyType.value === value)[0]?.label
+                            : value}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  ) : (
+                    <MigrationInput type={property.id} disabled={loading} />
+                  ),
+                )}
+              </Form.Item>
+            )
+          })}
+          <Form.Item wrapperCol={{ md: { offset: 4 } }}>
+            <Button variant="outline" className="mr-2" onClick={() => form.resetFields()}>
+              {formatMessage(commonMessages.ui.cancel)}
+            </Button>
+            <Button variant="primary" type="submit" disabled={loading} isLoading={loading} _hover={{}}>
+              {formatMessage(commonMessages.button.save)}
+            </Button>
+          </Form.Item>
+        </Skeleton>
       </StyledForm>
     </AdminCard>
   )

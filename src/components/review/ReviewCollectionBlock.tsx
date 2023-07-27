@@ -68,7 +68,10 @@ const ReviewCollectionBlock: React.VFC<{
   const { currentMemberId, currentUserRole } = useAuth()
   const { settings, id: appId } = useApp()
   const { loadingReviewAggregate, averageScore, reviewCount, refetchReviewAggregate } = useReviewAggregate(path)
-  const { loadingEnrolledMembers, enrolledMembers } = useEnrolledMembers(targetId)
+  const { loadingIsCurrentMemberEnrollment, isCurrentMemberEnrollment } = useIsCurrentMemberEnrollment(
+    targetId,
+    currentMemberId,
+  )
   const { loadingProductEditorIds, productEditorIds } = useProductEditorIds(targetId)
   const { loadingCurrentMemberReview, currentMemberReview, refetchCurrentMemberReview } = useCurrentMemberReview(
     currentMemberId,
@@ -87,7 +90,12 @@ const ReviewCollectionBlock: React.VFC<{
     (currentMemberId && productEditorIds?.includes(currentMemberId))
   )
 
-  if (loadingEnrolledMembers || loadingProductEditorIds || loadingReviewAggregate || loadingCurrentMemberReview) {
+  if (
+    loadingIsCurrentMemberEnrollment ||
+    loadingProductEditorIds ||
+    loadingReviewAggregate ||
+    loadingCurrentMemberReview
+  ) {
     return (
       <>
         <StyledTitle>{title || formatMessage(reviewMessages.title.programReview)}</StyledTitle>
@@ -114,7 +122,7 @@ const ReviewCollectionBlock: React.VFC<{
             amount: isMoreThanReviewLowerBound || isProductAdmin ? reviewCount : 0,
           })}
         </StyledReviewAmount>
-        {enrolledMembers.includes(currentMemberId) && (
+        {isCurrentMemberEnrollment ? (
           <ReviewModal
             path={path}
             memberReviews={currentMemberReview}
@@ -122,7 +130,7 @@ const ReviewCollectionBlock: React.VFC<{
             onRefetchReviewAggregate={refetchReviewAggregate}
             onRefetchCurrentMemberReview={refetchCurrentMemberReview}
           />
-        )}
+        ) : null}
       </div>
 
       {isMoreThanReviewLowerBound || isProductAdmin ? (
@@ -130,7 +138,7 @@ const ReviewCollectionBlock: React.VFC<{
           {isProductAdmin ? (
             <ReviewAdminItemCollection targetId={targetId} path={path} appId={appId} />
           ) : currentUserRole === 'anonymous' ||
-            (currentUserRole !== 'general-member' && !enrolledMembers.includes(currentMemberId)) ? (
+            (currentUserRole !== 'general-member' && !isCurrentMemberEnrollment) ? (
             <ReviewPublicItemCollection targetId={targetId} path={path} appId={appId} />
           ) : (
             <ReviewMemberItemCollection ref={reviewMemberItemRef} targetId={targetId} path={path} appId={appId} />
@@ -152,29 +160,43 @@ const ReviewCollectionBlock: React.VFC<{
   )
 }
 
-const useEnrolledMembers = (targetId: string) => {
-  const { loading, error, data } = useQuery<hasura.GET_ENROLLED_MEMBERS, hasura.GET_ENROLLED_MEMBERSVariables>(
+const useIsCurrentMemberEnrollment = (targetId: string, memberId: string | null) => {
+  const { loading, error, data } = useQuery<
+    hasura.GetCurrentMemberEnrollment,
+    hasura.GetCurrentMemberEnrollmentVariables
+  >(
     gql`
-      query GET_ENROLLED_MEMBERS($targetId: uuid!) {
-        program_enrollment(where: { program_id: { _eq: $targetId } }) {
+      query GetCurrentMemberEnrollment($targetId: uuid!, $memberId: String) {
+        program_enrollment(where: { program_id: { _eq: $targetId }, member_id: { _eq: $memberId } }) {
           member_id
         }
-        program_plan_enrollment(where: { program_plan: { program_id: { _eq: $targetId } } }) {
+        program_plan_enrollment(
+          where: { program_plan: { program_id: { _eq: $targetId } }, member_id: { _eq: $memberId } }
+        ) {
+          member_id
+        }
+        program_package_plan_enrollment(
+          where: {
+            member_id: { _eq: $memberId }
+            program_package_plan: { program_package: { program_package_programs: { program_id: { _eq: $targetId } } } }
+          }
+        ) {
           member_id
         }
       }
     `,
-    { variables: { targetId } },
+    { variables: { targetId, memberId } },
   )
   const enrolledMembers: (string | null)[] = [
     ...(data?.program_enrollment?.map(v => v.member_id || null) || []),
     ...(data?.program_plan_enrollment?.map(v => v.member_id || null) || []),
+    ...(data?.program_package_plan_enrollment?.map(v => v.member_id || null) || []),
   ]
 
   return {
-    loadingEnrolledMembers: loading,
-    errorEnrolledMembers: error,
-    enrolledMembers,
+    loadingIsCurrentMemberEnrollment: loading,
+    errorIsCurrentMemberEnrollment: error,
+    isCurrentMemberEnrollment: enrolledMembers.length > 0,
   }
 }
 

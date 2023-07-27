@@ -38,6 +38,14 @@ const profileMessages = {
     basicInfo: { id: 'profileMessages.ProfileIntroBusinessCard.basicInfo', defaultMessage: '公司描述' },
     abstract: { id: 'profileMessages.ProfileIntroBusinessCard.abstract', defaultMessage: '公司介紹' },
     intro: { id: 'profileMessages.ProfileIntroBusinessCard.intro', defaultMessage: '公司簡述' },
+    companyAbstractPlaceholder: {
+      id: 'profileMessages.ProfileIntroBusinessCard.companyAbstractPlaceholder',
+      defaultMessage: '歡迎介紹貴公司的所在地、領域技能、目前的業務範圍',
+    },
+    companyIntroPlaceholder: {
+      id: 'profileMessages.ProfileIntroBusinessCard.companyIntroPlaceholder',
+      defaultMessage: '歡迎介紹貴公司的聯繫方式、社群相關平台',
+    },
   }),
 }
 
