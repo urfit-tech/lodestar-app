@@ -92,13 +92,10 @@ const CheckoutBlock: React.VFC<{
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
-  const [isApproved, setIsApproved] = useState(localStorage.getItem('kolable.checkout.approvement') === 'true')
-
-  // 讓「我同意」按鈕在使用者重新進入後保持一樣
+  const [isApproved, setIsApproved] = useState(settings['checkout.approvement'] !== 'true')
   useEffect(() => {
-    localStorage.setItem('kolable.checkout.approvement', JSON.stringify(isApproved))
-    setIsApproved(localStorage.getItem('kolable.checkout.approvement') === 'true')
-  }, [isApproved])
+    setIsApproved(settings['checkout.approvement'] !== 'true')
+  }, [settings])
 
   const updateMemberMetadata = useUpdateMemberMetadata()
   const toast = useToast()
