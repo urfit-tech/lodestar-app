@@ -573,7 +573,7 @@ const CheckoutBlock: React.VFC<{
       )}
       <div className="mb-3">
         <CheckoutCard
-          isDisabled={isApproved === false}
+          isDisabled={settings['checkout.approvement'] === 'true' && isApproved === false}
           check={check}
           cartProducts={cartProducts}
           discountId={discountId}
