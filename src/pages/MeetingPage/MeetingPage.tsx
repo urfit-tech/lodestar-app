@@ -16,7 +16,7 @@ const StyledForm = styled.form`
   padding: 48px 24px;
 `
 const MeetingPage = () => {
-  const { settings, id: appId } = useApp()
+  const { settings } = useApp()
   const { currentMemberId } = useAuth()
   const { username: managerUsername } = useParams<{ username: string }>()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -25,7 +25,10 @@ const MeetingPage = () => {
 
   // 取得目前登入使用者的廣告素材
   const adProperty = memberProperties.find(({ name }) => name === '廣告素材')?.value
-    ? memberProperties.find(({ name }) => name === '廣告素材')?.value
+    ? memberProperties
+        .find(({ name }) => name === '廣告素材')
+        ?.value.split(',')
+        .map(value => value.trim())
     : null
 
   const [updateMemberCreated] = useMutation<hasura.UPDATE_MEMBER_CREATED, hasura.UPDATE_MEMBER_CREATEDVariables>(
@@ -44,7 +47,7 @@ const MeetingPage = () => {
           value: `${
             !adProperty
               ? 'inbound_英鎊'
-              : adProperty?.includes('inbound_英鎊')
+              : adProperty?.splice(adProperty.indexOf('inbound_英鎊') - 1, 1).join(',') + ',inbound_英鎊'
               ? adProperty
               : adProperty + ', inbound_英鎊'
           }`,
@@ -52,6 +55,10 @@ const MeetingPage = () => {
       ],
     },
   })
+
+  const isInsertingAdProperty = JSON.parse(settings['custom.ad_property.list']).map(
+    (value: { behavior: string }) => value['behavior'] === 'meeting',
+  )
 
   if (settings['custom.permission_group.salesLead'] !== '1') {
     return <NotFoundPage />
@@ -84,11 +91,11 @@ const MeetingPage = () => {
       { name: '聯盟成交編號', value: utm.utm_term || '' },
     ]
 
-    if (appId === 'sixdigital') {
+    if (isInsertingAdProperty) {
       postAdProperty.push({ name: '廣告素材', value: 'inbound_英鎊' })
     }
 
-    if (currentMemberId !== null && appId === 'sixdigital') {
+    if (currentMemberId !== null && isInsertingAdProperty) {
       updateMemberCreated()
         .then(() => updateMemberProperties())
         .finally(() => {
