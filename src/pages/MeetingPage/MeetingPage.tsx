@@ -64,6 +64,8 @@ const MeetingPage = () => {
     return <NotFoundPage />
   }
 
+  console.log(isInsertingAdProperty)
+
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = e => {
     setIsSubmitting(true)
     e.preventDefault()
@@ -96,9 +98,12 @@ const MeetingPage = () => {
     }
 
     if (currentMemberId !== null && isInsertingAdProperty) {
-      updateMemberCreated().catch(error => {
-        console.error('Error during service worker registration:', error)
-      })
+      console.log('hi')
+      updateMemberCreated()
+        .then(() => updateMemberProperties())
+        .catch(error => {
+          console.error('Error during submitting:', error)
+        })
     }
 
     fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
