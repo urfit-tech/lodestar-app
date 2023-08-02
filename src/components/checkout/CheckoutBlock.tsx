@@ -199,7 +199,7 @@ const CheckoutBlock: React.VFC<{
   }>({})
   const [isGiftPlanDeliverable, setIsGiftPlanDeliverable] = useState(false)
 
-  const { memberId: referrerId, validateStatus } = useMemberValidation(referrerEmail)
+  const { memberId: referrerId, siteMemberValidateStatus } = useMemberValidation(referrerEmail)
 
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
@@ -326,10 +326,10 @@ const CheckoutBlock: React.VFC<{
       return
     }
 
-    if (referrerEmail && !validateStatus) {
+    if (settings['payment.referrer.type'] !== 'any' && referrerEmail && !siteMemberValidateStatus) {
       return
     }
-    if (validateStatus === 'error') {
+    if (settings['payment.referrer.type'] !== 'any' && siteMemberValidateStatus === 'error') {
       referrerRef.current?.scrollIntoView({ behavior: 'smooth' })
       return
     }
@@ -496,11 +496,11 @@ const CheckoutBlock: React.VFC<{
             </div>
             <div className="col-12 col-lg-6">
               <Form.Item
-                validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : validateStatus}
+                validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : siteMemberValidateStatus}
                 hasFeedback
                 help={
-                  validateStatus === 'error'
-                    ? referrerId === currentMemberId
+                  settings['payment.referrer.type'] !== 'any' && siteMemberValidateStatus === 'error'
+                    ? currentMemberId && referrerId === currentMemberId
                       ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
                       : formatMessage(commonMessages.text.notFoundMemberEmail)
                     : undefined
@@ -531,11 +531,11 @@ const CheckoutBlock: React.VFC<{
             </div>
             <div className="col-12 col-lg-6">
               <Form.Item
-                validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : validateStatus}
+                validateStatus={settings['payment.referrer.type'] === 'any' ? undefined : siteMemberValidateStatus}
                 hasFeedback
                 help={
-                  validateStatus === 'error'
-                    ? referrerId === currentMemberId
+                  settings['payment.referrer.type'] !== 'any' && siteMemberValidateStatus === 'error'
+                    ? currentMemberId && referrerId === currentMemberId
                       ? formatMessage(commonMessages.text.selfReferringIsNotAllowed)
                       : formatMessage(commonMessages.text.notFoundMemberEmail)
                     : undefined
