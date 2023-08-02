@@ -98,7 +98,6 @@ const MeetingPage = () => {
     }
 
     if (currentMemberId !== null && isInsertingAdProperty) {
-      console.log('hi')
       updateMemberCreated()
         .then(() => updateMemberProperties())
         .catch(error => {
