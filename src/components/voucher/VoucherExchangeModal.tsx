@@ -3,6 +3,7 @@ import { Button, Divider, Icon, Input, Spinner, Text } from '@chakra-ui/react'
 import { Checkbox, message, Modal } from 'antd'
 import axios from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -52,11 +53,13 @@ const VoucherExchangeModal: React.VFC<{
 }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken } = useAuth()
+  const { settings } = useApp()
   const [visible, setVisible] = useState(false)
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
   const [hasPinCode, setHasPinCode] = useState(false)
   const [pinCode, setPinCode] = useState<string | null>(null)
   const [exchanging, setExchanging] = useState(false)
+  const myPageName = settings['nav.my_page.name'] ? settings['nav.my_page.name'] : '我的主頁'
 
   // check the validity of product which type is ActivityTicket
   // session ended_at and ticket buy
@@ -100,7 +103,7 @@ const VoucherExchangeModal: React.VFC<{
         if (res.data.code.split('_')[0] === 'E') {
           message.error(formatMessage(voucherMessages.VoucherExchangeModal.exchangingError))
         } else {
-          message.success(formatMessage(voucherMessages.VoucherExchangeModal.exchangeVoucher))
+          message.success(formatMessage(voucherMessages.VoucherExchangeModal.exchangeVoucher, { myPageName }))
           onRefetch?.()
         }
       })
