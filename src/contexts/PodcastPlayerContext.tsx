@@ -132,6 +132,11 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
               ? setPlaying(true)
               : setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
           } else if (modeRef.current === 'random') {
+            if (podcastProgramIds.length === 1) {
+              setPlaying(true)
+              return
+            }
+
             setCurrentIndex(index => {
               let currentHadPlayedIndexList = [...hadPlayedIndexList, index]
               if (currentHadPlayedIndexList.length === podcastProgramIds.length) {
