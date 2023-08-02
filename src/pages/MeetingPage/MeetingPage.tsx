@@ -1,10 +1,15 @@
+import { useMutation, useQuery } from '@apollo/client'
 import { Badge, Button, Checkbox, CheckboxGroup, FormControl, FormLabel, Heading, Input, Stack } from '@chakra-ui/react'
+import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../../components/layout/DefaultLayout'
+import { useMemberPropertyCollection } from '../../components/profile/ProfileOtherAdminCard'
+import hasura from '../../hasura'
 import NotFoundPage from '../NotFoundPage'
 
 const StyledForm = styled.form`
@@ -12,8 +17,48 @@ const StyledForm = styled.form`
 `
 const MeetingPage = () => {
   const { settings } = useApp()
+  const { currentMemberId } = useAuth()
   const { username: managerUsername } = useParams<{ username: string }>()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { data: categoryData } = useQuery<hasura.GET_PROPERTIES_AND_CATEGORIES>(GET_PROPERTIES_AND_CATEGORIES)
+  const { memberProperties } = useMemberPropertyCollection(currentMemberId!)
+
+  // 取得目前登入使用者的廣告素材
+  const adProperty = memberProperties.find(({ name }) => name === '廣告素材')?.value
+    ? memberProperties
+        .find(({ name }) => name === '廣告素材')
+        ?.value.split(',')
+        .map(value => value.trim())
+    : null
+
+  const [updateMemberCreated] = useMutation<hasura.UPDATE_MEMBER_CREATED, hasura.UPDATE_MEMBER_CREATEDVariables>(
+    UPDATE_MEMBER_CREATED,
+    { variables: { memberId: currentMemberId! } },
+  )
+  const [updateMemberProperties] = useMutation<
+    hasura.UPDATE_MEMBER_PROPERTIES,
+    hasura.UPDATE_MEMBER_PROPERTIESVariables
+  >(UPDATE_MEMBER_PROPERTIES, {
+    variables: {
+      memberPropertiesInput: [
+        {
+          member_id: currentMemberId,
+          property_id: categoryData?.property.find(({ name }) => name === '廣告素材')!.id,
+          value: `${
+            !adProperty
+              ? 'inbound_英鎊'
+              : adProperty?.splice(adProperty.indexOf('inbound_英鎊') - 1, 1).join(',') + ',inbound_英鎊'
+              ? adProperty
+              : adProperty + ', inbound_英鎊'
+          }`,
+        },
+      ],
+    },
+  })
+
+  const isInsertingAdProperty = JSON.parse(settings['custom.ad_property.list']).some(
+    (value: { behavior: string }) => value['behavior'] === 'meeting',
+  )
 
   if (settings['custom.permission_group.salesLead'] !== '1') {
     return <NotFoundPage />
@@ -36,6 +81,28 @@ const MeetingPage = () => {
     } catch (error) {
       utm = {}
     }
+
+    const postAdProperty = [
+      { name: '介紹人', value: referal },
+      { name: '名單分級', value: 'SSR' },
+      { name: '來源網址', value: window.location.href },
+      { name: '聯盟來源', value: utm.utm_source || '' },
+      { name: '聯盟會員編號', value: utm.utm_id || '' },
+      { name: '聯盟成交編號', value: utm.utm_term || '' },
+    ]
+
+    if (isInsertingAdProperty) {
+      postAdProperty.push({ name: '廣告素材', value: 'inbound_英鎊' })
+    }
+
+    if (currentMemberId !== null && isInsertingAdProperty) {
+      updateMemberCreated()
+        .then(() => updateMemberProperties())
+        .catch(error => {
+          console.error('Error during submitting:', error)
+        })
+    }
+
     fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
       method: 'post',
       body: JSON.stringify({
@@ -45,14 +112,7 @@ const MeetingPage = () => {
         managerUsername,
         taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
         categoryNames: fields,
-        properties: [
-          { name: '介紹人', value: referal },
-          { name: '名單分級', value: 'SSR' },
-          { name: '來源網址', value: window.location.href },
-          { name: '聯盟來源', value: utm.utm_source || '' },
-          { name: '聯盟會員編號', value: utm.utm_id || '' },
-          { name: '聯盟成交編號', value: utm.utm_term || '' },
-        ],
+        properties: postAdProperty,
       }),
       credentials: 'include',
       headers: {
@@ -188,5 +248,38 @@ const MeetingPage = () => {
     </DefaultLayout>
   )
 }
+
+const GET_PROPERTIES_AND_CATEGORIES = gql`
+  query GET_PROPERTIES_AND_CATEGORIES {
+    property(where: { type: { _eq: "member" } }) {
+      id
+      name
+    }
+    category(where: { class: { _eq: "member" } }) {
+      id
+      name
+    }
+  }
+`
+
+const UPDATE_MEMBER_CREATED = gql`
+  mutation UPDATE_MEMBER_CREATED($memberId: String!) {
+    update_member_by_pk(pk_columns: { id: $memberId }, _set: { created_at: "NOW()" }) {
+      id
+      username
+    }
+  }
+`
+
+const UPDATE_MEMBER_PROPERTIES = gql`
+  mutation UPDATE_MEMBER_PROPERTIES($memberPropertiesInput: [member_property_insert_input!]!) {
+    insert_member_property(
+      objects: $memberPropertiesInput
+      on_conflict: { constraint: member_property_member_id_property_id_key, update_columns: [value] }
+    ) {
+      affected_rows
+    }
+  }
+`
 
 export default MeetingPage
