@@ -56,7 +56,7 @@ const MeetingPage = () => {
     },
   })
 
-  const isInsertingAdProperty = JSON.parse(settings['custom.ad_property.list']).map(
+  const isInsertingAdProperty = JSON.parse(settings['custom.ad_property.list']).some(
     (value: { behavior: string }) => value['behavior'] === 'meeting',
   )
 
@@ -96,45 +96,40 @@ const MeetingPage = () => {
     }
 
     if (currentMemberId !== null && isInsertingAdProperty) {
-      updateMemberCreated()
-        .then(() => updateMemberProperties())
-        .finally(() => {
+      updateMemberCreated().catch(error => {
+        console.error('Error during service worker registration:', error)
+      })
+    }
+
+    fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
+      method: 'post',
+      body: JSON.stringify({
+        phone,
+        email,
+        name,
+        managerUsername,
+        taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
+        categoryNames: fields,
+        properties: postAdProperty,
+      }),
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then(({ code, message }: { code: string; message: string }) => {
+        if (code === 'SUCCESS') {
           Cookies.remove('utm')
           alert('已成功預約專屬諮詢！')
-          setIsSubmitting(false)
-          window.location.reload()
-        })
-    } else {
-      fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
-        method: 'post',
-        body: JSON.stringify({
-          phone,
-          email,
-          name,
-          managerUsername,
-          taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
-          categoryNames: fields,
-          properties: postAdProperty,
-        }),
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        } else {
+          alert(`發生錯誤，請聯繫 contact@xuemi.co。錯誤訊息：${message}`)
+        }
       })
-        .then(res => res.json())
-        .then(({ code, message }: { code: string; message: string }) => {
-          if (code === 'SUCCESS') {
-            Cookies.remove('utm')
-            alert('已成功預約專屬諮詢！')
-          } else {
-            alert(`發生錯誤，請聯繫 contact@xuemi.co。錯誤訊息：${message}`)
-          }
-        })
-        .finally(() => {
-          setIsSubmitting(false)
-          window.location.reload()
-        })
-    }
+      .finally(() => {
+        setIsSubmitting(false)
+        window.location.reload()
+      })
   }
   return (
     <DefaultLayout centeredBox>
