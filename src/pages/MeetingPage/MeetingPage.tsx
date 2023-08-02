@@ -64,8 +64,6 @@ const MeetingPage = () => {
     return <NotFoundPage />
   }
 
-  console.log(isInsertingAdProperty)
-
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = e => {
     setIsSubmitting(true)
     e.preventDefault()
