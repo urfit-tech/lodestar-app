@@ -1365,7 +1365,7 @@
   "voucher.Voucher.fromNow": "即日起",
   "voucher.Voucher.noUsePeriod": "無使用期限",
   "voucher.Voucher.redeemable": "可兌換",
-  "voucher.VoucherCollectionBLock.exchangeVoucher": "兌換成功，請到「我的主頁」查看",
+  "voucher.VoucherCollectionBLock.exchangeVoucher": "兌換成功，請到「我的課程」查看",
   "voucher.VoucherDeliverModal.copyLink": "Sao chép liên kết",
   "voucher.VoucherDeliverModal.giftLink": "Liên kết quà tặng",
   "voucher.VoucherDeliverModal.transfer": "Chuyển khoản",
