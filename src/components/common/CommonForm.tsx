@@ -5,26 +5,31 @@ import styled, { css } from 'styled-components'
 import { ReactComponent as CheckCircleIcon } from '../../images/checked-circle.svg'
 import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
 
-const StyledInput = styled(ChakraInput)<{ isSuccess: true }>`
+type Status = 'error' | 'validating' | 'success'
+
+// Todo: Can move Input style to lodestar-app-element but must check Input used components.
+
+const StyledInput = styled(ChakraInput)<{ variants: Status }>`
   && {
     ${props =>
-      props.isSuccess &&
+      props.variants === 'success' &&
       css`
         border-color: var(--success);
         box-shadow: 0 0 0 1px var(--success);
       `}
   }
 `
-const StyledInputRightElement = styled(InputRightElement)<{ status: 'error' | 'success' }>`
+
+const StyledInputRightElement = styled(InputRightElement)<{ variants: Status }>`
   && {
     font-size: 20px;
     ${props =>
-      props.status === 'success' &&
+      props.variants === 'success' &&
       css`
         color: var(--success);
       `}
     ${props =>
-      props.status === 'error' &&
+      props.variants === 'error' &&
       css`
         color: var(--error);
       `}
@@ -33,7 +38,7 @@ const StyledInputRightElement = styled(InputRightElement)<{ status: 'error' | 's
 
 const Input: React.VFC<
   {
-    status?: 'error' | 'validating' | 'success'
+    status?: Status
   } & InputProps
 > = ({ status, ...inputProps }) => {
   const icon = {
@@ -44,15 +49,8 @@ const Input: React.VFC<
 
   return (
     <InputGroup>
-      <StyledInput
-        isInvalid={status === 'error'}
-        isDisabled={status === 'validating'}
-        isSuccess={status === 'success'}
-        focusBorderColor="primary.500"
-        errorBorderColor="danger.500"
-        {...inputProps}
-      />
-      {status && icon[status] && <StyledInputRightElement status={status} children={<Icon as={icon[status]} />} />}
+      <StyledInput variants={status} focusBorderColor="primary.500" errorBorderColor="danger.500" {...inputProps} />
+      {status && icon[status] && <StyledInputRightElement variants={status} children={<Icon as={icon[status]} />} />}
     </InputGroup>
   )
 }
