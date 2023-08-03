@@ -5,6 +5,7 @@ import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import queryString from 'query-string'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -79,6 +80,22 @@ const StyledButtonWrapper = styled.div`
 `
 
 const ProgramPage: React.VFC = () => {
+  const [pageFrom] = useQueryParam('pageFrom', StringParam)
+  const [utmSource] = useQueryParam('utm_source', StringParam)
+  const tracking = useTracking()
+  const { programId } = useParams<{ programId: string }>()
+  const { id: appId } = useApp()
+  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
+  useEffect(() => {
+    const resource = resourceCollection[0]
+    if (resource && tracking && pageFrom && utmSource && tracking) {
+      tracking.detail(resource, { collection: pageFrom || undefined, utmSource: utmSource || '' })
+    }
+  }, [resourceCollection, tracking, pageFrom, utmSource])
+
+  return <ProgramPageContent />
+}
+const ProgramPageContent: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { pathname } = useLocation()
   const { currentMemberId } = useAuth()

@@ -1,4 +1,5 @@
 import { gql, useApolloClient, useMutation } from '@apollo/client'
+import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniqBy } from 'ramda'
@@ -43,8 +44,19 @@ export const CartProvider: React.FC = ({ children }) => {
     } catch (error) {
       cachedCartProducts = []
     }
-
     return cachedCartProducts
+  }
+
+  const getUtmAndDmpId = () => {
+    let dmpId = null
+    let utm = null
+    try {
+      utm = JSON.parse(Cookies.get('utm'))
+      dmpId = JSON.parse(Cookies.get('__eruid'))
+    } catch (error) {
+      console.log('getUtmAndDmpId:' + error)
+    }
+    return { dmpId, utm }
   }
 
   // sync cart products: save to localStorage & update to remote
@@ -119,7 +131,7 @@ export const CartProvider: React.FC = ({ children }) => {
           if (!currentMemberId) {
             return
           }
-
+          const { utm, dmpId } = getUtmAndDmpId()
           updateCartProducts({
             variables: {
               memberId: currentMemberId,
@@ -127,6 +139,10 @@ export const CartProvider: React.FC = ({ children }) => {
                 app_id: appId,
                 member_id: currentMemberId,
                 product_id: product.productId,
+                options: {
+                  utm,
+                  dmpId,
+                },
               })),
             },
           }).catch(() => {})
