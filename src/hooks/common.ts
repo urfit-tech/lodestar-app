@@ -542,25 +542,34 @@ export const useMemberValidation = (email: string) => {
     `,
     { variables: { email, appId } },
   )
-
+  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$/
+  const isEmailInvalid = !!email && !emailRegex.test(email)
   const memberId: string | null = data?.member_public[0]?.id || null
 
-  const validateStatus: 'success' | 'error' | 'validating' | undefined =
-    settings['payment.referrer.type'] === 'any'
-      ? 'success'
-      : !email
-      ? undefined
-      : loading
-      ? 'validating'
-      : !memberId || memberId === currentMemberId
-      ? 'error'
-      : 'success'
+  type Status = 'success' | 'error' | 'validating' | undefined
+
+  const siteMemberValidateStatus: Status = !email
+    ? undefined
+    : loading
+    ? 'validating'
+    : !memberId || memberId === currentMemberId || isEmailInvalid
+    ? 'error'
+    : 'success'
+
+  const nonMemberValidateStatus: Status = !email
+    ? undefined
+    : loading
+    ? 'validating'
+    : memberId === currentMemberId || isEmailInvalid
+    ? 'error'
+    : 'success'
 
   return {
-    loadingMemberId: loading,
     errorMemberId: error,
+    isEmailInvalid,
     memberId,
-    validateStatus,
+    siteMemberValidateStatus,
+    nonMemberValidateStatus,
     refetchMemberId: refetch,
   }
 }

@@ -68,6 +68,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const [duration, setDuration] = useState(0)
   // const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(currentPodcastProgramId)
   const [progress, setProgress] = useState(0)
+  const [hadPlayedIndexList, setHadPlayedIndexList] = useState<number[]>([])
 
   useEffect(() => {
     localStorage.setItem('podcast.rate', JSON.stringify(rate))
@@ -82,6 +83,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('podcastProgramIds', JSON.stringify(podcastProgramIds))
+    setHadPlayedIndexList([])
   }, [podcastProgramIds])
 
   useEffect(() => {
@@ -91,6 +93,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('podcastAlbumId', podcastAlbumId)
+    setHadPlayedIndexList([])
   }, [podcastAlbumId])
 
   useInterval(() => {
@@ -125,11 +128,33 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
         onPause={() => setPlaying(false)}
         onEnded={() => {
           if (modeRef.current === 'loop') {
-            setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
+            podcastProgramIds.length === 1
+              ? setPlaying(true)
+              : setCurrentIndex(index => (index + 1) % podcastProgramIds.length)
           } else if (modeRef.current === 'random') {
-            setCurrentIndex(
-              index => (index + Math.floor(Math.random() * (podcastProgramIds.length - 1))) % podcastProgramIds.length,
-            )
+            if (podcastProgramIds.length === 1) {
+              setPlaying(true)
+              return
+            }
+
+            setCurrentIndex(index => {
+              let currentHadPlayedIndexList = [...hadPlayedIndexList, index]
+              if (currentHadPlayedIndexList.length === podcastProgramIds.length) {
+                currentHadPlayedIndexList = []
+                setHadPlayedIndexList([])
+              } else {
+                setHadPlayedIndexList(indexList => [...indexList, index])
+              }
+
+              let nextIndex = -1
+              let isPlayedIndex = true
+              while (isPlayedIndex) {
+                nextIndex =
+                  (index + Math.floor(Math.random() * (podcastProgramIds.length - 1))) % podcastProgramIds.length
+                isPlayedIndex = currentHadPlayedIndexList.includes(nextIndex)
+              }
+              return nextIndex
+            })
           }
         }}
       />

@@ -66,7 +66,7 @@ const CouponCollectionAdminPage: React.VFC = () => {
             </StyledTabList>
             <TabPanels>
               {tabContents.map(v => (
-                <StyledTabPanel className="row">
+                <StyledTabPanel className="row" key={v.key}>
                   {reverse(v.coupons).map(coupon => (
                     <div className="mb-3 col-12 col-md-6" key={coupon.id}>
                       <CouponAdminCard coupon={coupon} currentTab={v.key} />

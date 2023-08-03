@@ -3,7 +3,7 @@ import { Box, Flex, Image, Skeleton, Tab, TabList, TabPanel, TabPanels, Tabs } f
 import { EmptyBlock } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniq } from 'ramda'
-import React, { useState } from 'react'
+import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
@@ -56,8 +56,6 @@ const GroupBuyingCollectionPage: React.VFC = () => {
   const { currentMemberId } = useAuth()
   const { loading, error, groupBuyingOrderCollection, refetch } = useGroupBuyingLogs(currentMemberId)
 
-  const [tab, setTab] = useState('sendable')
-
   const tabContents: {
     key: string
     name: string
@@ -93,9 +91,7 @@ const GroupBuyingCollectionPage: React.VFC = () => {
       <Tabs colorScheme="primary">
         <StyledTabList>
           {tabContents.map(v => (
-            <Tab key={v.key} onClick={() => setTab(v.key)} isSelected={v.key === tab}>
-              {v.name}
-            </Tab>
+            <Tab key={v.key}>{v.name}</Tab>
           ))}
         </StyledTabList>
 
@@ -104,7 +100,7 @@ const GroupBuyingCollectionPage: React.VFC = () => {
             const displayOrders = groupBuyingOrderCollection.filter(v.isDisplay)
 
             return (
-              <StyledTabPanel>
+              <StyledTabPanel key={v.key}>
                 {loading || !currentMemberId ? (
                   <div className="row">
                     {Array.from(Array(9)).map((v, index) => (

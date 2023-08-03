@@ -232,6 +232,7 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
                       salePrice={salePrice}
                       periodAmount={periodAmount}
                       periodType={periodType || undefined}
+                      currencyId={program.plans[0]?.currency.id}
                     />
                   )}
                 </div>
