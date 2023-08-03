@@ -53,7 +53,7 @@ const voucherMessages = {
     },
     exchangeVoucher: {
       id: 'voucher.VoucherExchangeModal.exchangeVoucher',
-      defaultMessage: '兌換成功，請到「我的主頁」查看',
+      defaultMessage: '兌換成功，請到「{myPageName}」查看',
     },
   }),
   Voucher: defineMessages({

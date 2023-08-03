@@ -86,7 +86,7 @@ const ProgramPage: React.VFC = () => {
   const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
   useEffect(() => {
     const resource = resourceCollection[0]
-    if (resource && tracking && pageFrom && utmSource) {
+    if (resource && tracking && pageFrom && utmSource && tracking) {
       tracking.detail(resource, { collection: pageFrom || undefined, utmSource: utmSource || '' })
     }
   }, [resourceCollection, tracking, pageFrom, utmSource])

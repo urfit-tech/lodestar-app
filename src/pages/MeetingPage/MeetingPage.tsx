@@ -56,7 +56,7 @@ const MeetingPage = () => {
     },
   })
 
-  const isInsertingAdProperty = JSON.parse(settings['custom.ad_property.list']).some(
+  const isInsertingAdProperty = JSON.parse(settings['custom.ad_property.list'] || '{}').some(
     (value: { behavior: string }) => value['behavior'] === 'meeting',
   )
 
