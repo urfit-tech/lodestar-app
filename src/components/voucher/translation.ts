@@ -52,8 +52,8 @@ const voucherMessages = {
       defaultMessage: '兌換失敗',
     },
     exchangeVoucher: {
-      id: 'voucher.VoucherExchangeModal.exchangeVoucher',
-      defaultMessage: '兌換成功，請到「我的主頁」查看',
+      id: 'voucher.VoucherCollectionBLock.exchangeVoucher',
+      defaultMessage: '兌換成功，請到「我的課程」查看',
     },
   }),
   Voucher: defineMessages({
