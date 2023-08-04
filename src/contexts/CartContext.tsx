@@ -7,6 +7,7 @@ import hasura from '../hasura'
 import { CartProductProps } from '../types/checkout'
 import { ProductType } from '../types/product'
 import Cookies from 'js-cookie'
+import { isEmpty } from 'lodash'
 
 const CartContext = React.createContext<{
   cartProducts: CartProductProps[]
@@ -102,6 +103,7 @@ export const CartProvider: React.FC = ({ children }) => {
               // local cart product
               ...cachedCartProducts.map(cartProduct => ({
                 ...cartProduct,
+
                 shopId: cartProduct.productId.startsWith('MerchandiseSpec_')
                   ? data.merchandise_spec.find(v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''))
                       ?.merchandise.member_shop_id || ''
@@ -131,19 +133,23 @@ export const CartProvider: React.FC = ({ children }) => {
           if (!currentMemberId) {
             return
           }
-          const { utm, dmpId } = getUtmAndDmpId()
+
           updateCartProducts({
             variables: {
               memberId: currentMemberId,
-              cartProductObjects: filteredProducts.map(product => ({
-                app_id: appId,
-                member_id: currentMemberId,
-                product_id: product.productId,
-                options: {
-                  utm,
-                  dmpId,
-                },
-              })),
+              cartProductObjects: filteredProducts.map(product => {
+                const dmpId = product?.options?.dmpId || ''
+                const utm = product?.options?.utm
+                const options = {}
+                if (utm) Object.assign(options, { utm })
+                if (dmpId) Object.assign(options, { dmpId })
+                return {
+                  app_id: appId,
+                  member_id: currentMemberId,
+                  product_id: product.productId,
+                  options: !isEmpty(options) ? options : null,
+                }
+              }),
             },
           }).catch(() => {})
         })
@@ -172,6 +178,7 @@ export const CartProvider: React.FC = ({ children }) => {
           productTarget: string,
           productOptions?: { [key: string]: any },
         ) => {
+          const { utm, dmpId } = getUtmAndDmpId()
           const cachedCartProducts = getLocalCartProducts()
           const repeatedCartProduct = cachedCartProducts.find(
             cartProduct => cartProduct.productId === `${productType}_${productTarget}`,
@@ -188,7 +195,7 @@ export const CartProvider: React.FC = ({ children }) => {
                 ? {
                     quantity: (productOptions?.quantity || 1) + (repeatedCartProduct?.options?.quantity || 0),
                   }
-                : productOptions,
+                : { ...productOptions, utm, dmpId },
           })
 
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
