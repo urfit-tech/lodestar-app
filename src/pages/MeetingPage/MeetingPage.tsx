@@ -47,16 +47,16 @@ const MeetingPage = () => {
           value: `${
             !adProperty
               ? 'inbound_英鎊'
-              : adProperty?.splice(adProperty.indexOf('inbound_英鎊') - 1, 1).join(',') + ',inbound_英鎊'
-              ? adProperty
-              : adProperty + ', inbound_英鎊'
+              : adProperty && adProperty.includes('inbound_英鎊')
+              ? adProperty.slice(adProperty.indexOf('inbound_英鎊') - 1, 1).join(',') + ',inbound_英鎊'
+              : adProperty.join(',') + ',inbound_英鎊'
           }`,
         },
       ],
     },
   })
 
-  const isInsertingAdProperty = JSON.parse(settings['custom.ad_property.list']).some(
+  const isInsertingAdProperty = JSON.parse(settings['custom.ad_property.list'] || '{}').some(
     (value: { behavior: string }) => value['behavior'] === 'meeting',
   )
 
