@@ -49,14 +49,10 @@ export const CartProvider: React.FC = ({ children }) => {
   }
 
   const getUtmAndDmpId = () => {
-    let dmpId = null
-    let utm = null
-    try {
-      utm = JSON.parse(Cookies.get('utm'))
-      dmpId = JSON.parse(Cookies.get('__eruid'))
-    } catch (error) {
-      console.log('getUtmAndDmpId:' + error)
-    }
+    const dmpId = Cookies.get('__eruid')
+    let utm = Cookies.get('utm')
+    utm = utm ? JSON.parse(utm) : null
+
     return { dmpId, utm }
   }
 
