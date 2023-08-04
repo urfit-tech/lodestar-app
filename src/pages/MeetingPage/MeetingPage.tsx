@@ -47,9 +47,9 @@ const MeetingPage = () => {
           value: `${
             !adProperty
               ? 'inbound_英鎊'
-              : adProperty?.splice(adProperty.indexOf('inbound_英鎊') - 1, 1).join(',') + ',inbound_英鎊'
-              ? adProperty
-              : adProperty + ', inbound_英鎊'
+              : adProperty && adProperty.includes('inbound_英鎊')
+              ? adProperty.slice(adProperty.indexOf('inbound_英鎊') - 1, 1).join(',') + ',inbound_英鎊'
+              : adProperty.join(',') + ',inbound_英鎊'
           }`,
         },
       ],
