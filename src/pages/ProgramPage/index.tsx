@@ -83,13 +83,18 @@ const ProgramPage: React.VFC = () => {
   const tracking = useTracking()
   const { programId } = useParams<{ programId: string }>()
   const { id: appId } = useApp()
-  const { resourceCollection } = useResourceCollection([`${appId}:program:${programId}`], true)
+  const { isAuthenticating } = useAuth()
+  const { loading: loadingResourceCollection, resourceCollection } = useResourceCollection(
+    [`${appId}:program:${programId}`],
+    true,
+  )
+
   useEffect(() => {
     const resource = resourceCollection[0]
-    if (resource && tracking && pageFrom && utmSource && tracking) {
+    if (!isAuthenticating && !loadingResourceCollection && resource && tracking) {
       tracking.detail(resource, { collection: pageFrom || undefined, utmSource: utmSource || '' })
     }
-  }, [resourceCollection, tracking, pageFrom, utmSource])
+  }, [resourceCollection, tracking, pageFrom, utmSource, isAuthenticating, loadingResourceCollection])
 
   return <ProgramPageContent />
 }
@@ -108,13 +113,11 @@ const ProgramPageContent: React.VFC = () => {
   const { loadingProgram, program, addProgramView } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
   const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
-  const { programPlansEnrollmentsAggregateList } = useProgramPlansEnrollmentsAggregateList(
-    program?.plans.map(plan => plan.id) || [],
-  )
+  const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
+    useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
 
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
-  const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
 
   const isEnrolled = enrolledProgramIds.includes(programId)
 
@@ -143,7 +146,12 @@ const ProgramPageContent: React.VFC = () => {
     return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
   }
 
-  if (loadingProgram || enrolledProgramPackages.loading || loadingEnrolledProgramIds) {
+  if (
+    loadingProgram ||
+    enrolledProgramPackages.loading ||
+    loadingEnrolledProgramIds ||
+    loadingProgramPlansEnrollmentsAggregateList
+  ) {
     return <LoadingPage />
   }
 
@@ -165,7 +173,7 @@ const ProgramPageContent: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
-      {!loadingApp && <ProgramPageHelmet program={program} onLoaded={() => setMetaLoaded(true)} />}
+      {!loadingApp && <ProgramPageHelmet program={program} />}
 
       <div>
         {Number(settings['layout.program_page']) ? (
