@@ -125,12 +125,12 @@ export const CartProvider: React.FC = ({ children }) => {
             variables: {
               memberId: currentMemberId,
               cartProductObjects: filteredProducts.map(product => {
-                const trackingCookie = getTrackingCookie()
+                const tracking = product?.options?.tracking || {}
                 return {
                   app_id: appId,
                   member_id: currentMemberId,
                   product_id: product.productId,
-                  options: { tracking: trackingCookie },
+                  options: { tracking },
                 }
               }),
             },
