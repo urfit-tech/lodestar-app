@@ -1,11 +1,10 @@
 import { gql, useApolloClient, useMutation } from '@apollo/client'
-import Cookies from 'js-cookie'
-import { isEmpty } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniqBy } from 'ramda'
 import React, { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
+import { getTrackingCookie } from '../helpers'
 import { CartProductProps } from '../types/checkout'
 import { ProductType } from '../types/product'
 
@@ -46,14 +45,6 @@ export const CartProvider: React.FC = ({ children }) => {
       cachedCartProducts = []
     }
     return cachedCartProducts
-  }
-
-  const getUtmAndDmpId = () => {
-    const dmpId = Cookies.get('__eruid')
-    let utm = Cookies.get('utm')
-    utm = utm ? JSON.parse(utm) : null
-
-    return { dmpId, utm }
   }
 
   // sync cart products: save to localStorage & update to remote
@@ -134,16 +125,12 @@ export const CartProvider: React.FC = ({ children }) => {
             variables: {
               memberId: currentMemberId,
               cartProductObjects: filteredProducts.map(product => {
-                const dmpId = product?.options?.dmpId || ''
-                const utm = product?.options?.utm
-                const options = {}
-                if (utm) Object.assign(options, { utm })
-                if (dmpId) Object.assign(options, { dmpId })
+                const trackingCookie = getTrackingCookie()
                 return {
                   app_id: appId,
                   member_id: currentMemberId,
                   product_id: product.productId,
-                  options: !isEmpty(options) ? options : null,
+                  options: { tracking: trackingCookie },
                 }
               }),
             },
@@ -174,7 +161,6 @@ export const CartProvider: React.FC = ({ children }) => {
           productTarget: string,
           productOptions?: { [key: string]: any },
         ) => {
-          const { utm, dmpId } = getUtmAndDmpId()
           const cachedCartProducts = getLocalCartProducts()
           const repeatedCartProduct = cachedCartProducts.find(
             cartProduct => cartProduct.productId === `${productType}_${productTarget}`,
@@ -182,7 +168,7 @@ export const CartProvider: React.FC = ({ children }) => {
           const newCartProducts = Number(settings['feature.cart.disable'])
             ? []
             : cachedCartProducts.filter(cartProduct => cartProduct.productId !== `${productType}_${productTarget}`)
-
+          const trackingCookie = getTrackingCookie()
           newCartProducts.push({
             productId: `${productType}_${productTarget}`,
             shopId: '',
@@ -190,8 +176,9 @@ export const CartProvider: React.FC = ({ children }) => {
               productType === 'MerchandiseSpec'
                 ? {
                     quantity: (productOptions?.quantity || 1) + (repeatedCartProduct?.options?.quantity || 0),
+                    tracking: trackingCookie,
                   }
-                : { ...productOptions, utm, dmpId },
+                : { ...productOptions, tracking: trackingCookie },
           })
 
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
