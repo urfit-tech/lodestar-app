@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import axios, { AxiosRequestConfig } from 'axios'
+import Cookies from 'js-cookie'
 import moment from 'moment'
 import queryString from 'query-string'
 import { useEffect, useRef, useState } from 'react'
@@ -460,3 +461,13 @@ export const isMobile: boolean = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|
 export const isAndroid = /android/i.test(window.navigator.userAgent.toLowerCase())
 
 export const isIOS = /(iPhone|iPad|iPod|iOS)/i.test(window.navigator.userAgent)
+
+export const getTrackingCookie = () => {
+  const dmpId = Cookies.get('__eruid') // dmpId
+  let utm = Cookies.get('utm')
+  utm = utm ? JSON.parse(utm) : null
+  const trackingCookie = {}
+  if (utm) Object.assign(trackingCookie, { utm })
+  if (dmpId) Object.assign(trackingCookie, { dmpId })
+  return trackingCookie
+}
