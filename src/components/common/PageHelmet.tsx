@@ -15,6 +15,7 @@ const PageHelmet: React.FC<
     keywords: string[]
     keywordsConcat: boolean
     jsonLd: WithContext<Thing>[]
+    isNoIndex: boolean
     openGraph: { property: string; content: string }[]
     openGraphConcat: boolean
     onLoaded: () => void
@@ -66,6 +67,7 @@ const PageHelmet: React.FC<
       />
       <meta key="keywords" name="keywords" content={xss(keywords)} />
       {props.jsonLd && <script type="application/ld+json">{xss(JSON.stringify(props.jsonLd))}</script>}
+      {props.isNoIndex ? <meta name="robots" content="noindex , nofollow" /> : null}
       {openGraph.map(({ property, content }, index) => (
         <meta key={index} property={property} content={xss(content)} />
       ))}
