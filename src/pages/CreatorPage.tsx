@@ -113,6 +113,7 @@ const CreatorPage: React.VFC = () => {
         title={creatorName}
         description={description}
         keywords={[creatorName]}
+        isNoIndex={true}
         openGraph={[
           { property: 'og:title', content: creatorName },
           { property: 'og:image', content: avatarUrl! },
