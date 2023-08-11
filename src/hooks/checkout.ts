@@ -50,6 +50,8 @@ export const useCheck = ({
     ),
   )
 
+  const { orderDiscount } = useDiscount(discountId || '')
+
   useEffect(() => {
     setOrderChecking(true)
     Axios.post<{
@@ -103,7 +105,7 @@ export const useCheck = ({
     setOrderPlacing(true)
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
     ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
-    tracking.checkout(resourceCollection.filter(notEmpty))
+    tracking.checkout(resourceCollection.filter(notEmpty), orderDiscount)
     const {
       data: { code, message, result },
     } = await Axios.post<{
@@ -328,5 +330,33 @@ export const usePhysicalProductCollection = (productIds: string[]) => {
     loading,
     error,
     hasPhysicalProduct,
+  }
+}
+
+export const useDiscount = (discountId: string) => {
+  const { loading, error, data } = useQuery<hasura.GetDiscount, hasura.GetDiscountVariables>(
+    gql`
+      query GetDiscount($discountId: uuid) {
+        order_discount_by_pk(id: { _eq: $discountId }) {
+          id
+          name
+          price
+        }
+      }
+    `,
+    { variables: { discountId } },
+  )
+  const orderDiscount = data?.order_discount_by_pk
+    ? {
+        id: data?.order_discount_by_pk?.id,
+        name: data?.order_discount_by_pk?.name,
+        price: data?.order_discount_by_pk?.price,
+      }
+    : null
+
+  return {
+    loading,
+    error,
+    orderDiscount,
   }
 }
