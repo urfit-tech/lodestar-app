@@ -11,6 +11,7 @@ import { prop, sum } from 'ramda'
 import { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import hasura from '../hasura'
+import { getTrackingCookie } from '../helpers'
 import {
   CheckProps,
   InvoiceProps,
@@ -104,6 +105,7 @@ export const useCheck = ({
   ) => {
     setOrderPlacing(true)
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
+    const trackingCookie = getTrackingCookie()
     ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
     tracking.checkout(resourceCollection.filter(notEmpty), orderDiscount)
     const {
@@ -130,6 +132,7 @@ export const useCheck = ({
         invoice,
         geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
         options,
+        tracking: trackingCookie
       },
       {
         headers: { authorization: `Bearer ${authToken}` },
