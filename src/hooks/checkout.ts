@@ -51,7 +51,7 @@ export const useCheck = ({
     ),
   )
 
-  const { orderDiscount } = useDiscount(discountId || '')
+  const { coupon } = useCoupon(discountId?.split('_')[0] === 'Coupon' ? discountId?.split('_')[1] : '')
 
   useEffect(() => {
     setOrderChecking(true)
@@ -107,7 +107,7 @@ export const useCheck = ({
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
     const trackingCookie = getTrackingCookie()
     ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
-    tracking.checkout(resourceCollection.filter(notEmpty), orderDiscount)
+    tracking.checkout(resourceCollection.filter(notEmpty), coupon)
     const {
       data: { code, message, result },
     } = await Axios.post<{
@@ -132,7 +132,7 @@ export const useCheck = ({
         invoice,
         geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
         options,
-        tracking: trackingCookie
+        tracking: trackingCookie,
       },
       {
         headers: { authorization: `Bearer ${authToken}` },
@@ -336,30 +336,36 @@ export const usePhysicalProductCollection = (productIds: string[]) => {
   }
 }
 
-export const useDiscount = (discountId: string) => {
-  const { loading, error, data } = useQuery<hasura.GetDiscount, hasura.GetDiscountVariables>(
+export const useCoupon = (couponId: string) => {
+  const { loading, error, data } = useQuery<hasura.GetCoupon, hasura.GetCouponVariables>(
     gql`
-      query GetDiscount($discountId: uuid) {
-        order_discount_by_pk(id: { _eq: $discountId }) {
+      query GetCoupon($couponId: uuid) {
+        coupon_by_pk(id: { _eq: $couponId }) {
           id
-          name
-          price
+          coupon_code {
+            id
+            coupon_plan {
+              id
+              title
+              amount
+            }
+          }
         }
       }
     `,
-    { variables: { discountId } },
+    { variables: { couponId } },
   )
-  const orderDiscount = data?.order_discount_by_pk
+  const coupon = data?.coupon_by_pk
     ? {
-        id: data?.order_discount_by_pk?.id,
-        name: data?.order_discount_by_pk?.name,
-        price: data?.order_discount_by_pk?.price,
+        id: data?.coupon_by_pk.id,
+        title: data?.coupon_by_pk.coupon_code.coupon_plan.title,
+        amount: data?.coupon_by_pk.coupon_code.coupon_plan.amount,
       }
     : null
 
   return {
     loading,
     error,
-    orderDiscount,
+    coupon,
   }
 }
