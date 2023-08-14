@@ -339,8 +339,8 @@ export const usePhysicalProductCollection = (productIds: string[]) => {
 export const useCoupon = (couponId: string) => {
   const { loading, error, data } = useQuery<hasura.GetCoupon, hasura.GetCouponVariables>(
     gql`
-      query GetCoupon($couponId: uuid) {
-        coupon_by_pk(id: { _eq: $couponId }) {
+      query GetCoupon($couponId: uuid!) {
+        coupon_by_pk(id: $couponId) {
           id
           coupon_code {
             id
