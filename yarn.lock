@@ -7005,6 +7005,11 @@ damerau-levenshtein@^1.0.7:
   resolved "https://registry.yarnpkg.com/damerau-levenshtein/-/damerau-levenshtein-1.0.8.tgz#b43d286ccbd36bc5b2f7ed41caf2d0aba1f8a6e7"
   integrity sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==
 
+dangerously-set-html-content@^1.0.13:
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/dangerously-set-html-content/-/dangerously-set-html-content-1.0.13.tgz#d2f86afba518be992165f9aae553b9da265e5c3f"
+  integrity sha512-C/6Rm8L3BgjFX0ugETpWS3MyrRqTycVbqlSKDhqeoMaZAfCw2Xx1qcj4CYGnZnn61tCJ3JZdHnWCcNEXvhh4sA==
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -11394,9 +11399,9 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#master:
+lodestar-app-element@urfit-tech/lodestar-app-element#17a9f15f0:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/a0ff79783ab4c6eeabc3d1557a4338f9384821d6"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/17a9f15f0efd5cec77036c5c443f84660c2b983f"
   dependencies:
     "@apollo/client" "^3.7.11"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -11425,6 +11430,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     axios "0.21.4"
     braft-editor "2.3.9"
     classnames "^2.3.1"
+    dangerously-set-html-content "^1.0.13"
     dayjs "^1.11.7"
     framer-motion "2.9.4"
     graphql "^16.6.0"
