@@ -67,12 +67,12 @@ const MeetingPage = () => {
       memberPropertiesInput: [
         {
           member_id: currentMemberId,
-          property_id: categoryData?.property.find(({ name }) => name === '廣告素材')!.id,
+          property_id: categoryData?.property.find(({ name }) => name === '廣告素材')?.id,
           value: adPropertyValue,
         },
         {
           member_id: currentMemberId,
-          property_id: categoryData?.property.find(({ name }) => name === '行銷活動')!.id,
+          property_id: categoryData?.property.find(({ name }) => name === '行銷活動')?.id,
           value: marketingActivitiesPropertyValue,
         },
       ],
