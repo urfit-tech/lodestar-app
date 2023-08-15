@@ -51,7 +51,14 @@ const AppointmentPeriodCollection: React.VFC<{
 
           <div className="d-flex flex-wrap justify-content-start">
             {periods.map(period => {
-              const ItemElem = <AppointmentItem key={period.id} id={period.id} startedAt={period.startedAt} />
+              const ItemElem = (
+                <AppointmentItem
+                  key={period.id}
+                  id={period.id}
+                  startedAt={period.startedAt}
+                  isEnrolled={period.currentMemberBooked}
+                />
+              )
 
               return isAuthenticated ? (
                 <div key={period.id} onClick={() => onClick && onClick(period)}>
