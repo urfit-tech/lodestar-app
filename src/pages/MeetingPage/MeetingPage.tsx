@@ -48,7 +48,7 @@ const MeetingPage = () => {
             !adProperty
               ? 'inbound_英鎊'
               : adProperty && adProperty.includes('inbound_英鎊')
-              ? adProperty.slice(adProperty.indexOf('inbound_英鎊') - 1, 1).join(',') + ',inbound_英鎊'
+              ? [...adProperty.filter(property => property !== 'inbound_英鎊'), 'inbound_英鎊'].join(',')
               : adProperty.join(',') + ',inbound_英鎊'
           }`,
         },
