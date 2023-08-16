@@ -38,21 +38,28 @@ const MeetingPage = () => {
         .map(value => value.trim())
     : null
 
+  const customMeetingAdProperty =
+    JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.['adProperty'] || ''
+  const customMeetingMarketingActivitiesProperty =
+    JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.['marketingActivitiesProperty'] || ''
+
   const adPropertyValue = `${
     !adProperty
-      ? 'inbound_英鎊'
-      : adProperty && adProperty.includes('inbound_英鎊')
-      ? adProperty.slice(adProperty.indexOf('inbound_英鎊') - 1, 1).join(',') + ',inbound_英鎊'
-      : adProperty.join(',') + ',inbound_英鎊'
+      ? customMeetingAdProperty
+      : adProperty && adProperty.includes(customMeetingAdProperty)
+      ? [...adProperty.filter(property => property !== customMeetingAdProperty), customMeetingAdProperty].join(',')
+      : `${adProperty.join(',')},${customMeetingAdProperty}`
   }`
 
   const marketingActivitiesPropertyValue = `${
     !marketingActivitiesProperty
-      ? 'inbound_英鎊'
-      : marketingActivitiesProperty && marketingActivitiesProperty.includes('inbound_英鎊')
-      ? marketingActivitiesProperty.slice(marketingActivitiesProperty.indexOf('inbound_英鎊') - 1, 1).join(',') +
-        ',inbound_英鎊'
-      : marketingActivitiesProperty.join(',') + ',inbound_英鎊'
+      ? customMeetingMarketingActivitiesProperty
+      : marketingActivitiesProperty && marketingActivitiesProperty.includes(customMeetingMarketingActivitiesProperty)
+      ? [
+          ...marketingActivitiesProperty.filter(property => property !== customMeetingMarketingActivitiesProperty),
+          customMeetingMarketingActivitiesProperty,
+        ].join(',')
+      : `${marketingActivitiesProperty.join(',')},${customMeetingAdProperty}`
   }`
 
   const [updateMemberCreated] = useMutation<hasura.UPDATE_MEMBER_CREATED, hasura.UPDATE_MEMBER_CREATEDVariables>(
