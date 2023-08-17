@@ -1,6 +1,5 @@
 import { Button } from '@chakra-ui/react'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
-import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
@@ -20,7 +19,8 @@ import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
 import NotFoundPage from '../NotFoundPage'
-import ProgramPackagePageHelmet from './ProgramPackagePageHelmet'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { StringParam, useQueryParam } from 'use-query-params'
 
 const StyledTitle = styled.h2`
   ${CommonLargeTitleMixin}
@@ -47,9 +47,28 @@ const messages = defineMessages({
 
 const ProgramPackagePage: React.VFC = () => {
   const { id: appId } = useApp()
-  const { formatMessage } = useIntl()
+  const tracking = useTracking()
+  const { isAuthenticating } = useAuth()
+  const [pageFrom] = useQueryParam('pageFrom', StringParam)
+  const [utmSource] = useQueryParam('utm_source', StringParam)
   const { programPackageId } = useParams<{ programPackageId: string }>()
-  const { resourceCollection } = useResourceCollection([`${appId}:program_package:${programPackageId}`], true)
+  const { loading: loadingResourceCollection, resourceCollection } = useResourceCollection(
+    [`${appId}:program_package:${programPackageId}`],
+    true,
+  )
+
+  useEffect(() => {
+    const resource = resourceCollection[0]
+    if (!isAuthenticating && !loadingResourceCollection && resource && tracking) {
+      tracking.detail(resource, { collection: pageFrom || undefined, utmSource: utmSource || '' })
+    }
+  }, [resourceCollection, tracking, pageFrom, utmSource, isAuthenticating, loadingResourceCollection])
+
+  return <ProgramPackagePageContent programPackageId={programPackageId} />
+}
+
+const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ programPackageId }) => {
+  const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { loadingProgramPackage, errorProgramPackage, programPackageIntroduction } =
     useProgramPackageIntroduction(programPackageId)
@@ -93,8 +112,6 @@ const ProgramPackagePage: React.VFC = () => {
 
   return (
     <DefaultLayout white footerBottomSpace="4rem">
-      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
-      {programPackageIntroduction && <ProgramPackagePageHelmet programPackage={programPackageIntroduction} />}
       <ProgramPackageBanner
         title={programPackageIntroduction.title}
         coverUrl={programPackageIntroduction.coverUrl}
