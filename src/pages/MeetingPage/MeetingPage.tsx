@@ -30,6 +30,37 @@ const MeetingPage = () => {
         ?.value.split(',')
         .map(value => value.trim())
     : null
+  // 取得目前登入使用者的行銷活動
+  const marketingActivitiesProperty = memberProperties.find(({ name }) => name === '行銷活動')?.value
+    ? memberProperties
+        .find(({ name }) => name === '行銷活動')
+        ?.value.split(',')
+        .map(value => value.trim())
+    : null
+
+  const customMeetingAdProperty =
+    JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.['adProperty'] || ''
+  const customMeetingMarketingActivitiesProperty =
+    JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.['marketingActivitiesProperty'] || ''
+
+  const adPropertyValue = `${
+    !adProperty
+      ? customMeetingAdProperty
+      : adProperty && adProperty.includes(customMeetingAdProperty)
+      ? [...adProperty.filter(property => property !== customMeetingAdProperty), customMeetingAdProperty].join(',')
+      : `${adProperty.join(',')},${customMeetingAdProperty}`
+  }`
+
+  const marketingActivitiesPropertyValue = `${
+    !marketingActivitiesProperty
+      ? customMeetingMarketingActivitiesProperty
+      : marketingActivitiesProperty && marketingActivitiesProperty.includes(customMeetingMarketingActivitiesProperty)
+      ? [
+          ...marketingActivitiesProperty.filter(property => property !== customMeetingMarketingActivitiesProperty),
+          customMeetingMarketingActivitiesProperty,
+        ].join(',')
+      : `${marketingActivitiesProperty.join(',')},${customMeetingAdProperty}`
+  }`
 
   const [updateMemberCreated] = useMutation<hasura.UPDATE_MEMBER_CREATED, hasura.UPDATE_MEMBER_CREATEDVariables>(
     UPDATE_MEMBER_CREATED,
@@ -43,22 +74,17 @@ const MeetingPage = () => {
       memberPropertiesInput: [
         {
           member_id: currentMemberId,
-          property_id: categoryData?.property.find(({ name }) => name === '廣告素材')!.id,
-          value: `${
-            !adProperty
-              ? 'inbound_英鎊'
-              : adProperty && adProperty.includes('inbound_英鎊')
-              ? adProperty.slice(adProperty.indexOf('inbound_英鎊') - 1, 1).join(',') + ',inbound_英鎊'
-              : adProperty.join(',') + ',inbound_英鎊'
-          }`,
+          property_id: categoryData?.property.find(({ name }) => name === '廣告素材')?.id,
+          value: adPropertyValue,
+        },
+        {
+          member_id: currentMemberId,
+          property_id: categoryData?.property.find(({ name }) => name === '行銷活動')?.id,
+          value: marketingActivitiesPropertyValue,
         },
       ],
     },
   })
-
-  const isInsertingAdProperty = JSON.parse(settings['custom.ad_property.list'] || '{}').some(
-    (value: { behavior: string }) => value['behavior'] === 'meeting',
-  )
 
   if (settings['custom.permission_group.salesLead'] !== '1') {
     return <NotFoundPage />
@@ -82,56 +108,61 @@ const MeetingPage = () => {
       utm = {}
     }
 
-    const postAdProperty = [
-      { name: '介紹人', value: referal },
-      { name: '名單分級', value: 'SSR' },
-      { name: '來源網址', value: window.location.href },
-      { name: '聯盟來源', value: utm.utm_source || '' },
-      { name: '聯盟會員編號', value: utm.utm_id || '' },
-      { name: '聯盟成交編號', value: utm.utm_term || '' },
-    ]
-
-    if (isInsertingAdProperty) {
-      postAdProperty.push({ name: '廣告素材', value: 'inbound_英鎊' })
-    }
-
-    if (currentMemberId !== null && isInsertingAdProperty) {
+    if (currentMemberId !== null) {
       updateMemberCreated()
         .then(() => updateMemberProperties())
         .catch(error => {
           console.error('Error during submitting:', error)
         })
-    }
-
-    fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
-      method: 'post',
-      body: JSON.stringify({
-        phone,
-        email,
-        name,
-        managerUsername,
-        taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
-        categoryNames: fields,
-        properties: postAdProperty,
-      }),
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(({ code, message }: { code: string; message: string }) => {
-        if (code === 'SUCCESS') {
+        .finally(() => {
           Cookies.remove('utm')
           alert('已成功預約專屬諮詢！')
-        } else {
-          alert(`發生錯誤，請聯繫 contact@xuemi.co。錯誤訊息：${message}`)
-        }
+          setIsSubmitting(false)
+          window.location.reload()
+        })
+    } else {
+      fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
+        method: 'post',
+        body: JSON.stringify({
+          phone,
+          email,
+          name,
+          managerUsername,
+          taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
+          categoryNames: fields,
+          properties: [
+            { name: '介紹人', value: referal },
+            { name: '名單分級', value: 'SSR' },
+            { name: '來源網址', value: window.location.href },
+            { name: '聯盟來源', value: utm.utm_source || '' },
+            { name: '聯盟會員編號', value: utm.utm_id || '' },
+            { name: '聯盟成交編號', value: utm.utm_term || '' },
+            { name: '廣告素材', value: adPropertyValue },
+            {
+              name: '行銷活動',
+              value: marketingActivitiesPropertyValue,
+            },
+          ],
+        }),
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
-      .finally(() => {
-        setIsSubmitting(false)
-        window.location.reload()
-      })
+        .then(res => res.json())
+        .then(({ code, message }: { code: string; message: string }) => {
+          if (code === 'SUCCESS') {
+            Cookies.remove('utm')
+            alert('已成功預約專屬諮詢！')
+          } else {
+            alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
+          }
+        })
+        .finally(() => {
+          setIsSubmitting(false)
+          window.location.reload()
+        })
+    }
   }
   return (
     <DefaultLayout centeredBox>

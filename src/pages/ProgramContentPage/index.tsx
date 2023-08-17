@@ -3,6 +3,7 @@ import { Icon, Layout } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { defineMessage, useIntl } from 'react-intl'
@@ -63,6 +64,17 @@ const ProgramContentPage: React.VFC = () => {
 
   return (
     <Layout>
+      {settings['hubspot.portal_id'] ? (
+        <Helmet>
+          <script
+            type="text/javascript"
+            id="hs-script-loader"
+            async
+            defer
+            src={`//js.hs-scripts.com/${settings['hubspot.portal_id']}.js`}
+          />
+        </Helmet>
+      ) : null}
       {!loadingApp && <ProgramContentPageHelmet program={program!} contentId={programContentId} />}
       <StyledPageHeader
         title={program?.title || programId}
