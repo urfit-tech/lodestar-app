@@ -3,6 +3,7 @@ import { Typography } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import { defineMessages, useIntl } from 'react-intl'
 import { Redirect, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -170,6 +171,17 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   )
   return (
     <DefaultLayout>
+      {settings['hubspot.portal_id'] ? (
+        <Helmet>
+          <script
+            type="text/javascript"
+            id="hs-script-loader"
+            async
+            defer
+            src={`//js.hs-scripts.com/${settings['hubspot.portal_id']}.js`}
+          />
+        </Helmet>
+      ) : null}
       {/* // TODO: need to extend page helmet */}
       {!loadingApp && <PageHelmet title={formatMessage(commonMessages.content.myPage)} />}
       <div className=" py-4 py-sm-5" style={{ background: 'white' }}>

@@ -9,7 +9,10 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
   >(
     gql`
       query GET_ENROLLED_VOUCHER_COLLECTION($memberId: String!) {
-        voucher(where: { member_id: { _eq: $memberId } }, order_by: [{ created_at: desc }]) {
+        voucher(
+          where: { member_id: { _eq: $memberId }, voucher_code: { deleted_at: { _is_null: true } } }
+          order_by: [{ created_at: desc }]
+        ) {
           id
           status {
             outdated

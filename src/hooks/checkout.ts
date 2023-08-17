@@ -11,6 +11,7 @@ import { prop, sum } from 'ramda'
 import { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import hasura from '../hasura'
+import { getTrackingCookie } from '../helpers'
 import {
   CheckProps,
   InvoiceProps,
@@ -49,6 +50,8 @@ export const useCheck = ({
       productId => `${appId}:${getResourceByProductId(productId).type}:${getResourceByProductId(productId).target}`,
     ),
   )
+
+  const { coupon } = useCoupon(discountId?.split('_')[0] === 'Coupon' ? discountId?.split('_')[1] : '')
 
   useEffect(() => {
     setOrderChecking(true)
@@ -102,8 +105,9 @@ export const useCheck = ({
   ) => {
     setOrderPlacing(true)
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
+    const trackingCookie = getTrackingCookie()
     ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
-    tracking.checkout(resourceCollection.filter(notEmpty))
+    tracking.checkout(resourceCollection.filter(notEmpty), coupon)
     const {
       data: { code, message, result },
     } = await Axios.post<{
@@ -128,6 +132,7 @@ export const useCheck = ({
         invoice,
         geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
         options,
+        tracking: trackingCookie,
       },
       {
         headers: { authorization: `Bearer ${authToken}` },
@@ -328,5 +333,39 @@ export const usePhysicalProductCollection = (productIds: string[]) => {
     loading,
     error,
     hasPhysicalProduct,
+  }
+}
+
+export const useCoupon = (couponId: string) => {
+  const { loading, error, data } = useQuery<hasura.GetCoupon, hasura.GetCouponVariables>(
+    gql`
+      query GetCoupon($couponId: uuid!) {
+        coupon_by_pk(id: $couponId) {
+          id
+          coupon_code {
+            id
+            coupon_plan {
+              id
+              title
+              amount
+            }
+          }
+        }
+      }
+    `,
+    { variables: { couponId } },
+  )
+  const coupon = data?.coupon_by_pk
+    ? {
+        id: data?.coupon_by_pk.id,
+        title: data?.coupon_by_pk.coupon_code.coupon_plan.title,
+        amount: data?.coupon_by_pk.coupon_code.coupon_plan.amount,
+      }
+    : null
+
+  return {
+    loading,
+    error,
+    coupon,
   }
 }
