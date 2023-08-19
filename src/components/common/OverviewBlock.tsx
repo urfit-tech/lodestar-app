@@ -58,25 +58,27 @@ const OverviewBlock: React.VFC<{
 
   return (
     <>
-      <StyledSideBarBlock>
-        <h4 className="mb-4">{formatMessage(commonMessages.title.addCourse)}</h4>
-        {programs.slice(0, 3).map(program => (
-          <Link key={program.id} to={`/programs/${program.id}?back=${previousPage}`}>
-            <div className="d-flex align-items-center mb-3">
-              <StyledImage
-                className="flex-shrink-0"
-                src={program.coverUrl || EmptyCover}
-                alt={program.title || program.id}
-              />
-              <StyledTitle>{program.title}</StyledTitle>
-            </div>
-          </Link>
-        ))}
-        <StyledLink onClick={() => onChangeTab && onChangeTab('programs')}>
-          {formatMessage(commonMessages.content.browse)}
-          <Icon as={ArrowRightIcon} className="ml-2" />
-        </StyledLink>
-      </StyledSideBarBlock>
+      {programs.length > 0 && (
+        <StyledSideBarBlock>
+          <h4 className="mb-4">{formatMessage(commonMessages.title.addCourse)}</h4>
+          {programs.slice(0, 3).map(program => (
+            <Link key={program.id} to={`/programs/${program.id}?back=${previousPage}`}>
+              <div className="d-flex align-items-center mb-3">
+                <StyledImage
+                  className="flex-shrink-0"
+                  src={program.coverUrl || EmptyCover}
+                  alt={program.title || program.id}
+                />
+                <StyledTitle>{program.title}</StyledTitle>
+              </div>
+            </Link>
+          ))}
+          <StyledLink onClick={() => onChangeTab && onChangeTab('programs')}>
+            {formatMessage(commonMessages.content.browse)}
+            <Icon as={ArrowRightIcon} className="ml-2" />
+          </StyledLink>
+        </StyledSideBarBlock>
+      )}
 
       {podcastPrograms.length > 0 && (
         <StyledSideBarBlock>
