@@ -163,7 +163,11 @@ const CreatorTabs: React.VFC<{
   const { posts } = usePostPreviewCollection({ authorId: creatorId })
   const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(currentMemberId || '')
   const { podcastPrograms } = usePodcastProgramCollection(creatorId)
-  const { appointmentPlans } = useAppointmentPlanCollection(creatorId, moment().endOf('minute').toDate())
+  const { appointmentPlans } = useAppointmentPlanCollection(
+    creatorId,
+    moment().endOf('minute').toDate(),
+    currentMemberId || '',
+  )
   const { merchandises } = useMerchandiseCollection({
     isPhysical: isMerchandisesPhysical !== undefined ? !!isMerchandisesPhysical : undefined,
     ownerId: creatorId,
