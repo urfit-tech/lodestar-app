@@ -105,71 +105,149 @@ const ProgramContentListSection: React.VFC<{
     }
   }, [])
 
+  const programContentSections = program.contentSections
+    .filter(programContentSection => programContentSection.contents.length)
+    .map(programContentSection => ({
+      id: programContentSection.id,
+      title: programContentSection.title,
+      description: programContentSection.description,
+      contents: isEnrolled
+        ? programContentSection.contents
+        : programContentSection.contents.filter(programContent =>
+            program.isIntroductionSectionVisible
+              ? programContent
+              : programContent.displayMode === DisplayModeEnum.trial ||
+                programContent.displayMode === DisplayModeEnum.loginToTrial,
+          ),
+    }))
   return (
     <>
-      <StyledTitle>{formatMessage(productMessages.program.title.content)}</StyledTitle>
-      <Divider className="mt-1" />
-
-      {program.contentSections
-        .filter(programContentSection => programContentSection.contents.length)
-        .map(programContentSection => ({
-          id: programContentSection.id,
-          title: programContentSection.title,
-          description: programContentSection.description,
-          contents: isEnrolled
-            ? programContentSection.contents
-            : programContentSection.contents.filter(programContent =>
-                program.isIntroductionSectionVisible
-                  ? programContent
-                  : programContent.displayMode === DisplayModeEnum.trial ||
-                    programContent.displayMode === DisplayModeEnum.loginToTrial,
-              ),
-        }))
-        .map(programContentSection => (
-          <ProgramSectionBlock key={programContentSection.id}>
+      {programContentSections.some(programContentSection => programContentSection.contents.length > 0) && (
+        <>
+          <StyledTitle>{formatMessage(productMessages.program.title.content)}</StyledTitle>
+          <Divider className="mt-1" />
+        </>
+      )}
+      {programContentSections.map(programContentSection => (
+        <ProgramSectionBlock key={programContentSection.id}>
+          {programContentSection.contents.length > 0 && (
             <ProgramSectionTitle className="mb-3">{programContentSection.title}</ProgramSectionTitle>
-            {programContentSection.contents.map(programContent =>
-              isMobile ? (
-                <MobileProgramContentItem
-                  key={programContent.id}
-                  isEnrolled={isEnrolled}
-                  onClick={() => {
-                    if (isEnrolled) {
-                      history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
-                    }
-                    if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
-                      const url = new URL(window.location.href)
-                      url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
-                      url.searchParams.set('programContentId', programContent.id)
-                      window.history.pushState({}, '', url.toString())
-                      setAuthModalVisible?.(true)
-                    }
-                  }}
-                >
-                  <Typography.Text className="d-flex align-items-center">
-                    <span>{programContent.title}</span>
-                  </Typography.Text>
+          )}
+          {programContentSection.contents.map(programContent =>
+            isMobile ? (
+              <MobileProgramContentItem
+                key={programContent.id}
+                isEnrolled={isEnrolled}
+                onClick={() => {
+                  if (isEnrolled) {
+                    history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
+                  }
+                  if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
+                    const url = new URL(window.location.href)
+                    url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
+                    url.searchParams.set('programContentId', programContent.id)
+                    window.history.pushState({}, '', url.toString())
+                    setAuthModalVisible?.(true)
+                  }
+                }}
+              >
+                <Typography.Text className="d-flex align-items-center">
+                  <span>{programContent.title}</span>
+                </Typography.Text>
 
-                  <StyledDuration className="mt-2 d-flex align-items-center duration-text">
-                    {(programContent.displayMode === DisplayModeEnum.trial ||
-                      (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
-                    !isEnrolled ? (
-                      <ProgramContentTrialModal
-                        programId={program.id}
-                        programContentId={programContent.id}
-                        render={({ setVisible }) => (
-                          <StyledObscure onClick={() => setVisible(true)}>
-                            <StyledTag color={theme.colors.primary[500]}>
-                              {formatMessage(
-                                programContent.contentType === 'audio'
-                                  ? productMessages.program.content.audioTrial
-                                  : productMessages.program.content.trial,
-                              )}
-                            </StyledTag>
-                          </StyledObscure>
-                        )}
-                      />
-                    ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
+                <StyledDuration className="mt-2 d-flex align-items-center duration-text">
+                  {(programContent.displayMode === DisplayModeEnum.trial ||
+                    (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
+                  !isEnrolled ? (
+                    <ProgramContentTrialModal
+                      programId={program.id}
+                      programContentId={programContent.id}
+                      render={({ setVisible }) => (
+                        <StyledObscure onClick={() => setVisible(true)}>
+                          <StyledTag color={theme.colors.primary[500]}>
+                            {formatMessage(
+                              programContent.contentType === 'audio'
+                                ? productMessages.program.content.audioTrial
+                                : productMessages.program.content.trial,
+                            )}
+                          </StyledTag>
+                        </StyledObscure>
+                      )}
+                    />
+                  ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
+                    <StyledTag color={theme.colors.primary[500]}>
+                      {formatMessage(
+                        programContent.contentType === 'audio'
+                          ? productMessages.program.content.audioTrial
+                          : productMessages.program.content.trial,
+                      )}
+                    </StyledTag>
+                  ) : null}
+                  {programContent.contentType === 'video' ? (
+                    <Icon type="video-camera" className="mr-2" />
+                  ) : programContent.contentType === 'audio' ? (
+                    <MicrophoneIcon className="mr-2" />
+                  ) : (
+                    <Icon type="file-text" className="mr-2" />
+                  )}
+                  {durationFormatter(programContent.duration) || ''}
+                  <span className="ml-2">
+                    {moment().isBefore(moment(programContent.publishedAt)) &&
+                      ` (${moment(programContent.publishedAt).format('MM/DD')} ${formatMessage(
+                        commonMessages.text.publish,
+                      )}) `}
+                  </span>
+                </StyledDuration>
+              </MobileProgramContentItem>
+            ) : (
+              <ProgramContentItem
+                key={programContent.id}
+                isEnrolled={isEnrolled}
+                onClick={() => {
+                  if (isEnrolled) {
+                    history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
+                  }
+                  if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
+                    const url = new URL(window.location.href)
+                    url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
+                    url.searchParams.set('programContentId', programContent.id)
+                    window.history.pushState({}, '', url.toString())
+                    setAuthModalVisible?.(true)
+                  }
+                }}
+              >
+                <Typography.Text className="d-flex align-items-center">
+                  {programContent.contentType === 'video' ? (
+                    <Icon type="video-camera" className="mr-2" />
+                  ) : programContent.contentType === 'audio' ? (
+                    <MicrophoneIcon className="mr-2" />
+                  ) : (
+                    <Icon type="file-text" className="mr-2" />
+                  )}
+                  <span>{programContent.title}</span>
+                </Typography.Text>
+
+                <StyledDuration>
+                  {(programContent.displayMode === DisplayModeEnum.trial ||
+                    (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
+                  !isEnrolled ? (
+                    <ProgramContentTrialModal
+                      programId={program.id}
+                      programContentId={programContent.id}
+                      render={({ setVisible }) => (
+                        <StyledObscure onClick={() => setVisible(true)}>
+                          <StyledTag color={theme.colors.primary[500]}>
+                            {formatMessage(
+                              programContent.contentType === 'audio'
+                                ? productMessages.program.content.audioTrial
+                                : productMessages.program.content.trial,
+                            )}
+                          </StyledTag>
+                        </StyledObscure>
+                      )}
+                    />
+                  ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
+                    <StyledObscure>
                       <StyledTag color={theme.colors.primary[500]}>
                         {formatMessage(
                           programContent.contentType === 'audio'
@@ -177,94 +255,21 @@ const ProgramContentListSection: React.VFC<{
                             : productMessages.program.content.trial,
                         )}
                       </StyledTag>
-                    ) : null}
-                    {programContent.contentType === 'video' ? (
-                      <Icon type="video-camera" className="mr-2" />
-                    ) : programContent.contentType === 'audio' ? (
-                      <MicrophoneIcon className="mr-2" />
-                    ) : (
-                      <Icon type="file-text" className="mr-2" />
-                    )}
-                    {durationFormatter(programContent.duration) || ''}
-                    <span className="ml-2">
-                      {moment().isBefore(moment(programContent.publishedAt)) &&
-                        ` (${moment(programContent.publishedAt).format('MM/DD')} ${formatMessage(
-                          commonMessages.text.publish,
-                        )}) `}
-                    </span>
-                  </StyledDuration>
-                </MobileProgramContentItem>
-              ) : (
-                <ProgramContentItem
-                  key={programContent.id}
-                  isEnrolled={isEnrolled}
-                  onClick={() => {
-                    if (isEnrolled) {
-                      history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
-                    }
-                    if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
-                      const url = new URL(window.location.href)
-                      url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
-                      url.searchParams.set('programContentId', programContent.id)
-                      window.history.pushState({}, '', url.toString())
-                      setAuthModalVisible?.(true)
-                    }
-                  }}
-                >
-                  <Typography.Text className="d-flex align-items-center">
-                    {programContent.contentType === 'video' ? (
-                      <Icon type="video-camera" className="mr-2" />
-                    ) : programContent.contentType === 'audio' ? (
-                      <MicrophoneIcon className="mr-2" />
-                    ) : (
-                      <Icon type="file-text" className="mr-2" />
-                    )}
-                    <span>{programContent.title}</span>
-                  </Typography.Text>
-
-                  <StyledDuration>
-                    {(programContent.displayMode === DisplayModeEnum.trial ||
-                      (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
-                    !isEnrolled ? (
-                      <ProgramContentTrialModal
-                        programId={program.id}
-                        programContentId={programContent.id}
-                        render={({ setVisible }) => (
-                          <StyledObscure onClick={() => setVisible(true)}>
-                            <StyledTag color={theme.colors.primary[500]}>
-                              {formatMessage(
-                                programContent.contentType === 'audio'
-                                  ? productMessages.program.content.audioTrial
-                                  : productMessages.program.content.trial,
-                              )}
-                            </StyledTag>
-                          </StyledObscure>
-                        )}
-                      />
-                    ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
-                      <StyledObscure>
-                        <StyledTag color={theme.colors.primary[500]}>
-                          {formatMessage(
-                            programContent.contentType === 'audio'
-                              ? productMessages.program.content.audioTrial
-                              : productMessages.program.content.trial,
-                          )}
-                        </StyledTag>
-                      </StyledObscure>
-                    ) : null}
-                    <span className="mr-2">
-                      {moment().isBefore(moment(programContent.publishedAt)) &&
-                        ` (${moment(programContent.publishedAt).format('MM/DD')} ${formatMessage(
-                          commonMessages.text.publish,
-                        )})`}
-                    </span>
-                    {durationFormatter(programContent.duration) || ''}
-                  </StyledDuration>
-                </ProgramContentItem>
-              ),
-            )}
-          </ProgramSectionBlock>
-        ))}
+                    </StyledObscure>
+                  ) : null}
+                  <span className="mr-2">
+                    {moment().isBefore(moment(programContent.publishedAt)) &&
+                      ` (${moment(programContent.publishedAt).format('MM/DD')} ${formatMessage(
+                        commonMessages.text.publish,
+                      )})`}
+                  </span>
+                  {durationFormatter(programContent.duration) || ''}
+                </StyledDuration>
+              </ProgramContentItem>
+            ),
+          )}
+        </ProgramSectionBlock>
+      ))}
     </>
   )
 }
