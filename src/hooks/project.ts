@@ -67,7 +67,7 @@ export const useEnrolledProjectPlanIds = (memberId: string) => {
   }
 }
 export const useMemberProjectCollection = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GET_MEMBER_PROJECT, hasura.GET_MEMBER_PROJECTVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_MEMBER_PROJECT, hasura.GET_MEMBER_PROJECTVariables>(
     gql`
       query GET_MEMBER_PROJECT($memberId: String!) {
         project(
