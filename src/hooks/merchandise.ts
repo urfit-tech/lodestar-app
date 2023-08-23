@@ -299,6 +299,7 @@ export const useOrderLogsWithMerchandiseSpec = (memberId: string) => {
             status: { _eq: "SUCCESS" }
             order_products: { product_id: { _like: "Merchandise%" } }
           }
+          order_by: { created_at: desc }
         ) {
           id
           created_at
