@@ -1,4 +1,3 @@
-import { gql, useQuery } from '@apollo/client'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
@@ -14,7 +13,6 @@ import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import hasura from '../../hasura'
 import { AppointmentPeriod, AppointmentPlan } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
 import CoinCheckoutModal from '../checkout/CoinCheckoutModal'
@@ -275,27 +273,6 @@ const AppointmentPlanCollection: React.FC<{
       ))}
     </>
   )
-}
-
-const useMemberCoinsRemaining = (memberId: string) => {
-  const { data } = useQuery<hasura.GET_MEMBER_COIN_REMAINING, hasura.GET_MEMBER_COIN_REMAININGVariables>(
-    gql`
-      query GET_MEMBER_COIN_REMAINING($memberId: String!) {
-        coin_status(where: { member_id: { _eq: $memberId } }) {
-          remaining
-        }
-      }
-    `,
-    {
-      variables: { memberId },
-    },
-  )
-  const remainingCoins =
-    data?.coin_status.reduce((total, coin) => {
-      return (total += coin.remaining)
-    }, 0) || 0
-
-  return { remainingCoins }
 }
 
 export default AppointmentCollectionTabs
