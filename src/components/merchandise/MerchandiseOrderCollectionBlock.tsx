@@ -141,7 +141,7 @@ const MerchandiseOrderCard: React.VFC<{
           {orderLog.createdAt && (
             <StyledPurchaseDate className="mb-4 d-flex align-items-center">
               <Icon as={CalendarOIcon} className="mr-2" />
-              {`${dayjs(orderLog.createdAt).format('YYYY-MM-DD HH:mm:00')} ${formatMessage(messages.purchase)}`}
+              {`${dayjs(orderLog.createdAt).format('YYYY-MM-DD HH:mm')} ${formatMessage(messages.purchase)}`}
             </StyledPurchaseDate>
           )}
 
@@ -172,7 +172,7 @@ const MerchandiseOrderCard: React.VFC<{
         <StyledDeliveryMessage className="mt-4 p-4">
           <div className="d-flex justify-content-between">
             <h4 className="seller">{formatMessage(messages.seller)}</h4>
-            <span className="delivered-at">{dayjs(orderLog.deliveredAt).format('YYYY-MM-DD HH:mm:00')}</span>
+            <span className="delivered-at">{dayjs(orderLog.deliveredAt).format('YYYY-MM-DD HH:mm')}</span>
           </div>
 
           <div className="deliver-message">{orderLog.deliverMessage}</div>
