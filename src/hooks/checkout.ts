@@ -37,7 +37,7 @@ export const useCheck = ({
 }) => {
   const tracking = useTracking()
   const { authToken } = useAuth()
-  const { id: appId } = useApp()
+  const { id: appId, enabledModules, settings } = useApp()
   const [check, setCheck] = useState<CheckProps>({
     orderProducts: [],
     orderDiscounts: [],
@@ -109,7 +109,8 @@ export const useCheck = ({
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
     const trackingCookie = getTrackingCookie()
     const trackingOptions = { ...trackingCookie }
-    if (conversionApiData) Object.assign(trackingOptions, { fb: conversionApiData })
+    if (settings['tracking.fb_pixel_id'] && settings['tracking.fb_access_token'] && enabledModules.fb_conversion_api)
+      Object.assign(trackingOptions, { fb: conversionApiData })
 
     ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
     tracking.checkout(resourceCollection.filter(notEmpty), coupon)
