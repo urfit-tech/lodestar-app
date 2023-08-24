@@ -11399,9 +11399,9 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#17a9f15f0:
+lodestar-app-element@urfit-tech/lodestar-app-element#a656110dda0:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/17a9f15f0efd5cec77036c5c443f84660c2b983f"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/a656110dda0d717ab71bd0015a76f5309096bd14"
   dependencies:
     "@apollo/client" "^3.7.11"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"

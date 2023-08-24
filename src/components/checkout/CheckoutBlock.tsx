@@ -16,7 +16,9 @@ import PaymentSelector from 'lodestar-app-element/src/components/selectors/Payme
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { validateContactInfo } from 'lodestar-app-element/src/helpers'
+import { getConversionApiData } from 'lodestar-app-element/src/helpers/conversionApi'
 import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
+import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import { prop, sum } from 'ramda'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
@@ -87,7 +89,7 @@ const CheckoutBlock: React.VFC<{
 }> = ({ member, shopId, cartProducts, isFieldsValidate, renderInvoice, renderTerms }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
+  const { isAuthenticating, isAuthenticated, currentMemberId, authToken } = useAuth()
   const { settings, enabledModules } = useApp()
   const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
@@ -355,6 +357,24 @@ const CheckoutBlock: React.VFC<{
       })
     }
 
+    const contents: ConversionApiContent[] = check.orderProducts.map(orderProduct => ({
+      id: orderProduct.productId,
+      quantity: orderProduct.options?.quantity || 1,
+      title: orderProduct.name,
+    }))
+    const event: ConversionApiEvent = {
+      sourceUrl: window.location.href,
+      purchaseData: {
+        value: check ? sum(check.orderProducts.map(prop('price'))) - sum(check.orderDiscounts.map(prop('price'))) : 0,
+        currency: 'TWD',
+      },
+    }
+
+    const { conversionApiData, conversionApi } = getConversionApiData(member, { contents, event })
+    if (settings['tracking.fb_pixel_id'] && settings['tracking.fb_access_token']) {
+      if (authToken) await conversionApi(authToken, 'AddPaymentInfo').catch(error => console.log(error))
+    }
+
     const { orderId, paymentNo, payToken } = await placeOrder(
       'perpetual',
       {
@@ -362,6 +382,7 @@ const CheckoutBlock: React.VFC<{
         referrerEmail: referrerEmail || undefined,
       },
       payment,
+      conversionApiData,
     )
 
     await updateMemberMetadata({
