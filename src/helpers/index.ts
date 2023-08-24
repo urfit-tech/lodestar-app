@@ -463,11 +463,15 @@ export const isAndroid = /android/i.test(window.navigator.userAgent.toLowerCase(
 export const isIOS = /(iPhone|iPad|iPod|iOS)/i.test(window.navigator.userAgent)
 
 export const getTrackingCookie = () => {
+  const fbc = Cookies.get('_fbc') // dmpId
+  const fbp = Cookies.get('_fbp') // dmpId
   const dmpId = Cookies.get('__eruid') // dmpId
   let utm = Cookies.get('utm')
   utm = utm ? JSON.parse(utm) : null
   const trackingCookie = {}
   if (utm) Object.assign(trackingCookie, { utm })
   if (dmpId) Object.assign(trackingCookie, { dmpId })
+  if (fbc) Object.assign(trackingCookie, { fbc })
+  if (fbp) Object.assign(trackingCookie, { fbp })
   return trackingCookie
 }
