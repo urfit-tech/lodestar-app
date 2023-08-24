@@ -52,7 +52,7 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onRefetc
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId } = useAuth()
   const [loading, setLoading] = useState(false)
-  const [voucherCode, setVoucherCode] = useQueryParam('voucherCode', StringParam)
+  const [voucherCode] = useQueryParam('voucherCode', StringParam)
 
   const handleInsert = (setLoading: React.Dispatch<React.SetStateAction<boolean>>, voucherCode: string) => {
     if (!currentMemberId) {

@@ -21,6 +21,7 @@ export type AppointmentPeriod = {
   startedAt: Date
   endedAt: Date
   booked: number
+  currentMemberBooked: boolean | undefined
   available?: boolean
 }
 

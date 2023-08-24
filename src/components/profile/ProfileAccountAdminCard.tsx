@@ -60,7 +60,7 @@ const StyledFormItem = styled(Form.Item)`
   }
 `
 
-const UnVerifiedSuffix: React.VFC<{}> = ({}) => {
+const UnVerifiedSuffix: React.VFC<{}> = () => {
   const { formatMessage } = useIntl()
 
   return (
