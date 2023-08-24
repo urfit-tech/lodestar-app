@@ -28,7 +28,7 @@ const CartContext = React.createContext<{
 })
 
 export const CartProvider: React.FC = ({ children }) => {
-  const { id: appId, settings } = useApp()
+  const { id: appId, settings, enabledModules } = useApp()
   const apolloClient = useApolloClient()
   const { currentMemberId, authToken } = useAuth()
   const { member } = useMember(currentMemberId || '')
@@ -175,7 +175,11 @@ export const CartProvider: React.FC = ({ children }) => {
             },
           }
           const { conversionApi, conversionApiData } = getConversionApiData(member, { contents, event })
-          if (settings['tracking.fb_pixel_id'] && settings['tracking.fb_access_token']) {
+          if (
+            settings['tracking.fb_pixel_id'] &&
+            settings['tracking.fb_access_token'] &&
+            enabledModules.fb_conversion_api
+          ) {
             if (authToken) await conversionApi(authToken, 'AddToCart').catch(error => console.log(error))
             Object.assign(trackingOptions, { fb: conversionApiData })
           }
