@@ -531,7 +531,7 @@ export const useSimpleProductCollection = () => {
 
 export const useMemberValidation = (email: string) => {
   const { currentMemberId } = useAuth()
-  const { id: appId, settings } = useApp()
+  const { id: appId } = useApp()
   const { loading, error, data, refetch } = useQuery(
     gql`
       query SEARCH_MEMBER($email: String!, $appId: String!) {
@@ -579,7 +579,7 @@ export const useIdentity = (type: MetaProductType, roleName?: string) => {
     type: { _eq: type },
     name: { _eq: roleName },
   }
-  const { loading, error, data, refetch } = useQuery<hasura.GET_IDENTITY, hasura.GET_IDENTITYVariables>(
+  const { loading, error, data } = useQuery<hasura.GET_IDENTITY, hasura.GET_IDENTITYVariables>(
     gql`
       query GET_IDENTITY($condition: identity_bool_exp!) {
         identity(where: $condition, order_by: { position: asc }) {

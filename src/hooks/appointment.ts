@@ -3,13 +3,13 @@ import moment from 'moment'
 import hasura from '../hasura'
 import { AppointmentPeriod, AppointmentPlan, ReservationType } from '../types/appointment'
 
-export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) => {
+export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, currentMemberId: string) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_APPOINTMENT_PLAN_COLLECTION,
     hasura.GET_APPOINTMENT_PLAN_COLLECTIONVariables
   >(
     gql`
-      query GET_APPOINTMENT_PLAN_COLLECTION($memberId: String!, $startedAt: timestamptz) {
+      query GET_APPOINTMENT_PLAN_COLLECTION($memberId: String!, $currentMemberId: String, $startedAt: timestamptz) {
         appointment_plan(where: { creator_id: { _eq: $memberId }, published_at: { _is_null: false } }) {
           id
           title
@@ -27,6 +27,11 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
             unit
             name
           }
+          appointment_enrollments(where: { member_id: { _eq: $currentMemberId } }) {
+            member_id
+            appointment_plan_id
+            started_at
+          }
           appointment_periods(where: { started_at: { _gt: $startedAt } }, order_by: { started_at: asc }) {
             started_at
             ended_at
@@ -36,7 +41,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
         }
       }
     `,
-    { variables: { memberId, startedAt } },
+    { variables: { memberId, startedAt, currentMemberId } },
   )
 
   const appointmentPlans: (AppointmentPlan & {
@@ -65,6 +70,12 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
             endedAt: new Date(period.ended_at),
             booked: period.booked,
             available: !!period.available,
+            currentMemberBooked: appointmentPlan.appointment_enrollments.some(
+              enrollment =>
+                enrollment.member_id === currentMemberId &&
+                enrollment.appointment_plan_id === appointmentPlan.id &&
+                enrollment.started_at === period.started_at,
+            ),
           })),
           isPrivate: appointmentPlan.is_private,
           reservationAmount: appointmentPlan.reservation_amount,
@@ -79,10 +90,10 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date) 
   }
 }
 
-export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) => {
+export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: string, startedAt?: Date) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_APPOINTMENT_PLAN, hasura.GET_APPOINTMENT_PLANVariables>(
     gql`
-      query GET_APPOINTMENT_PLAN($appointmentPlanId: uuid!, $startedAt: timestamptz!) {
+      query GET_APPOINTMENT_PLAN($appointmentPlanId: uuid!, $currentMemberId: String!, $startedAt: timestamptz!) {
         appointment_plan_by_pk(id: $appointmentPlanId) {
           id
           title
@@ -96,6 +107,11 @@ export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) 
             label
             unit
             name
+          }
+          appointment_enrollments(where: { member_id: { _eq: $currentMemberId } }) {
+            member_id
+            appointment_plan_id
+            started_at
           }
           appointment_periods(
             where: { available: { _eq: true }, started_at: { _gt: $startedAt } }
@@ -115,7 +131,13 @@ export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) 
         }
       }
     `,
-    { variables: { appointmentPlanId, startedAt: startedAt || moment().endOf('minute').toDate() } },
+    {
+      variables: {
+        appointmentPlanId,
+        currentMemberId: currentMemberId || '',
+        startedAt: startedAt || moment().endOf('minute').toDate(),
+      },
+    },
   )
 
   const appointmentPlan:
@@ -151,6 +173,12 @@ export const useAppointmentPlan = (appointmentPlanId: string, startedAt?: Date) 
             startedAt: new Date(period.started_at),
             endedAt: new Date(period.ended_at),
             booked: period.booked,
+            currentMemberBooked: data.appointment_plan_by_pk?.appointment_enrollments.some(
+              enrollment =>
+                enrollment.member_id === currentMemberId &&
+                enrollment.appointment_plan_id === data.appointment_plan_by_pk?.id &&
+                enrollment.started_at === period.started_at,
+            ),
           })),
           creator: {
             id: data.appointment_plan_by_pk.creator?.id || '',

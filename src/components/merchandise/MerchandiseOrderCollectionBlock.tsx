@@ -1,9 +1,9 @@
 import { gql, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import moment from 'moment-timezone'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -141,7 +141,7 @@ const MerchandiseOrderCard: React.VFC<{
           {orderLog.createdAt && (
             <StyledPurchaseDate className="mb-4 d-flex align-items-center">
               <Icon as={CalendarOIcon} className="mr-2" />
-              {`${moment(orderLog.createdAt).format('YYYY-MM-DD hh:mm')} ${formatMessage(messages.purchase)}`}
+              {`${dayjs(orderLog.createdAt).format('YYYY-MM-DD HH:mm')} ${formatMessage(messages.purchase)}`}
             </StyledPurchaseDate>
           )}
 
@@ -172,7 +172,7 @@ const MerchandiseOrderCard: React.VFC<{
         <StyledDeliveryMessage className="mt-4 p-4">
           <div className="d-flex justify-content-between">
             <h4 className="seller">{formatMessage(messages.seller)}</h4>
-            <span className="delivered-at">{moment(orderLog.deliveredAt).format('YYYY-MM-DD HH:mm')}</span>
+            <span className="delivered-at">{dayjs(orderLog.deliveredAt).format('YYYY-MM-DD HH:mm')}</span>
           </div>
 
           <div className="deliver-message">{orderLog.deliverMessage}</div>
