@@ -1,10 +1,13 @@
 import { gql, useApolloClient, useMutation } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { getConversionApiData } from 'lodestar-app-element/src/helpers/conversionApi'
+import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import { uniqBy } from 'ramda'
 import React, { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
+import { useMember } from '../hooks/member'
 import { CartProductProps } from '../types/checkout'
 import { ProductType } from '../types/product'
 
@@ -25,9 +28,10 @@ const CartContext = React.createContext<{
 })
 
 export const CartProvider: React.FC = ({ children }) => {
-  const { id: appId, settings } = useApp()
+  const { id: appId, settings, enabledModules } = useApp()
   const apolloClient = useApolloClient()
-  const { currentMemberId } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
+  const { member } = useMember(currentMemberId || '')
   const [updateCartProducts] = useMutation<hasura.UPDATE_CART_PRODUCTS, hasura.UPDATE_CART_PRODUCTSVariables>(
     UPDATE_CART_PRODUCTS,
   )
@@ -161,6 +165,25 @@ export const CartProvider: React.FC = ({ children }) => {
           productTarget: string,
           productOptions?: { [key: string]: any },
         ) => {
+          const trackingCookie = getTrackingCookie()
+          const trackingOptions = { ...trackingCookie }
+          const contents: ConversionApiContent[] = [{ id: `${productType}_${productTarget}`, quantity: 1 }]
+          const event: ConversionApiEvent = {
+            sourceUrl: window.location.href,
+            purchaseData: {
+              currency: 'TWD',
+            },
+          }
+          const { conversionApi, conversionApiData } = getConversionApiData(member, { contents, event })
+          if (
+            settings['tracking.fb_pixel_id'] &&
+            settings['tracking.fb_access_token'] &&
+            enabledModules.fb_conversion_api
+          ) {
+            if (authToken) await conversionApi(authToken, 'AddToCart').catch(error => console.log(error))
+            Object.assign(trackingOptions, { fb: conversionApiData })
+          }
+
           const cachedCartProducts = getLocalCartProducts()
           const repeatedCartProduct = cachedCartProducts.find(
             cartProduct => cartProduct.productId === `${productType}_${productTarget}`,
@@ -168,19 +191,18 @@ export const CartProvider: React.FC = ({ children }) => {
           const newCartProducts = Number(settings['feature.cart.disable'])
             ? []
             : cachedCartProducts.filter(cartProduct => cartProduct.productId !== `${productType}_${productTarget}`)
-          const trackingCookie = getTrackingCookie()
-          newCartProducts.push({
+          const newCartProduct = {
             productId: `${productType}_${productTarget}`,
             shopId: '',
             options:
               productType === 'MerchandiseSpec'
                 ? {
                     quantity: (productOptions?.quantity || 1) + (repeatedCartProduct?.options?.quantity || 0),
-                    tracking: trackingCookie,
+                    tracking: trackingOptions,
                   }
-                : { ...productOptions, tracking: trackingCookie },
-          })
-
+                : { ...productOptions, tracking: trackingOptions },
+          }
+          newCartProducts.push(newCartProduct)
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
           syncCartProducts()
         },
