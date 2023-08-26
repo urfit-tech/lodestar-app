@@ -253,33 +253,28 @@ const ProgramPageContent: React.VFC = () => {
                 </Responsive.Desktop>
               ) : (
                 <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                  <div>
-                    <Responsive.Desktop>
-                      <ProgramInfoCard instructorId={instructorId} program={program} />
-                    </Responsive.Desktop>
+                  <Responsive.Desktop>
+                    <ProgramInfoCard instructorId={instructorId} program={program} />
+                  </Responsive.Desktop>
 
-                    {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
-                      <div className="mb-5">
-                        <div id="subscription">
-                          {program.plans
-                            .filter(programPlan => programPlan.publishedAt)
-                            .map(programPlan => (
-                              <div key={programPlan.id} className="mb-3">
-                                <ProgramPlanCard
-                                  programId={program.id}
-                                  programPlan={programPlan}
-                                  enrollmentCount={
-                                    programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)
-                                      ?.enrollmentCount
-                                  }
-                                  isProgramSoldOut={Boolean(program.isSoldOut)}
-                                />
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
+                    <div id="subscription" className="mb-5 positionSticky">
+                      {program.plans
+                        .filter(programPlan => programPlan.publishedAt)
+                        .map(programPlan => (
+                          <div key={programPlan.id} className="mb-3">
+                            <ProgramPlanCard
+                              programId={program.id}
+                              programPlan={programPlan}
+                              enrollmentCount={
+                                programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)?.enrollmentCount
+                              }
+                              isProgramSoldOut={Boolean(program.isSoldOut)}
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  )}
                 </StyledIntroWrapper>
               )}
             </div>

@@ -1,11 +1,11 @@
 import { Button } from 'antd'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import { ProjectPlanProps } from '../../types/project'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import ProjectPlanCollection from './ProjectPlanCollection'
 
 const TabPaneContent = styled.div<{ collapsed?: boolean }>`
@@ -50,8 +50,8 @@ const FundingIntroductionPane: React.VFC<{
 
   return (
     <div className="container">
-      <div className="row">
-        <TabPaneContent className="col-12 col-lg-8 mb-5" collapsed={collapsed}>
+      <div className="row mb-5">
+        <TabPaneContent className="col-12 col-lg-8" collapsed={collapsed}>
           {<BraftContent>{introduction}</BraftContent>}
 
           {collapsed && (
@@ -63,8 +63,10 @@ const FundingIntroductionPane: React.VFC<{
           )}
         </TabPaneContent>
 
-        <div className="col-12 col-lg-4 mb-5">
-          <ProjectPlanCollection projectPlans={projectPlans} />
+        <div className="col-12 col-lg-4">
+          <div className="positionSticky">
+            <ProjectPlanCollection projectPlans={projectPlans} />
+          </div>
         </div>
       </div>
     </div>
