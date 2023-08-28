@@ -2,7 +2,7 @@ import { Menu, MenuButton, MenuList } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -16,6 +16,7 @@ import { useMember } from '../../../hooks/member'
 import DefaultAvatar from '../../../images/avatar.svg'
 import AskLoginModal from '../../auth/AskLoginModal'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
+import TOSModal from '../../auth/TOSModal'
 import CartDropdown from '../../checkout/CartDropdown'
 import Footer from '../../common/Footer'
 import GlobalSearchInput from '../../common/GlobalSearchInput'
@@ -98,9 +99,16 @@ const DefaultLayout: React.FC<{
   const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
   const [isBusinessMember, setIsBusinessMember] = useState(false)
   const [visible, setVisible] = useState(false)
+  const [isTOSModalVisible, setIsTOSModalVisible] = useState(false)
 
   const isUnVerifiedEmails = member ? !member.verifiedEmails?.includes(member.email) : false
   const pathName = window.location.pathname
+
+  useEffect(() => {
+    // check cookie
+    // check tos
+    setIsTOSModalVisible(true)
+  }, [])
 
   return (
     <AuthModalContext.Provider value={{ visible, setVisible, isBusinessMember, setIsBusinessMember }}>
@@ -109,7 +117,11 @@ const DefaultLayout: React.FC<{
         <AskLoginModal />
       )}
 
-      <StyledLayoutWrapper variant={white ? 'white' : undefined} noHeader>
+      {isTOSModalVisible && isAuthenticated && !isAuthenticating ? (
+        <TOSModal onConfirm={() => setIsTOSModalVisible(false)} />
+      ) : null}
+
+      <StyledLayoutWrapper variant={white ? 'white' : undefined}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
           <div className="d-flex align-items-center">
             <LogoBlock>
