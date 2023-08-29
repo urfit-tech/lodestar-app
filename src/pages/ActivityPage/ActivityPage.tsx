@@ -4,7 +4,7 @@ import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -53,6 +53,8 @@ const ActivityPage: React.VFC = () => {
   const { id: appId } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:activity:${activityId}`], true)
   const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
+  const [isPlanListSticky, setIsPlanListSticky] = useState(false)
+  const planListHeightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (activity) {
@@ -77,6 +79,7 @@ const ActivityPage: React.VFC = () => {
         ReactGA.plugin.execute('ec', 'setAction', 'detail')
       }
       ReactGA.ga('send', 'pageview')
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 100)
     }
   }, [activity])
 
@@ -119,7 +122,7 @@ const ActivityPage: React.VFC = () => {
           </Col>
 
           <Col xs={12} lg={4}>
-            <div className="positionSticky">
+            <div className={`${isPlanListSticky ? 'positionSticky' : ''}`} ref={planListHeightRef}>
               <AuthModalContext.Consumer>
                 {({ setVisible: setAuthModalVisible }) =>
                   activity.tickets.map(ticket => {

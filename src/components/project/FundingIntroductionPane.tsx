@@ -1,6 +1,6 @@
 import { Button } from 'antd'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
@@ -47,6 +47,14 @@ const FundingIntroductionPane: React.VFC<{
 }> = ({ introduction, projectPlans }) => {
   const [collapsed, setCollapsed] = useState(false)
   const { formatMessage } = useIntl()
+  const [isPlanListSticky, setIsPlanListSticky] = useState(false)
+  const planListHeightRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (projectPlans) {
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 100)
+    }
+  }, [projectPlans])
 
   return (
     <div className="container">
@@ -64,7 +72,7 @@ const FundingIntroductionPane: React.VFC<{
         </TabPaneContent>
 
         <div className="col-12 col-lg-4">
-          <div className="positionSticky">
+          <div className={`${isPlanListSticky ? 'positionSticky' : ''}`} ref={planListHeightRef}>
             <ProjectPlanCollection projectPlans={projectPlans} />
           </div>
         </div>

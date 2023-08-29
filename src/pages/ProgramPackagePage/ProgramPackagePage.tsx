@@ -5,7 +5,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import React, { createRef, useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
@@ -75,8 +75,9 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ pr
   const { loadingProgramPackageIds, enrolledProgramPackagePlanIds } = useEnrolledProgramPackagePlanIds(
     currentMemberId || '',
   )
-
-  const planBlockRef = createRef<HTMLDivElement>()
+  const [isPlanListSticky, setIsPlanListSticky] = useState(false)
+  const planBlockRef = useRef<HTMLDivElement>(null)
+  const planListHeightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (programPackageIntroduction) {
@@ -99,6 +100,7 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ pr
       })
       ReactGA.plugin.execute('ec', 'setAction', 'detail')
       ReactGA.ga('send', 'pageview')
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 100)
     }
   }, [programPackageIntroduction])
 
@@ -157,7 +159,7 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ pr
                 />
               </div>
               <div ref={planBlockRef} className="col-12 col-lg-4 pt-5">
-                <div className="positionSticky">
+                <div ref={planListHeightRef} className={`${isPlanListSticky ? 'positionSticky' : ''}`}>
                   {programPackageIntroduction.plans.map(programPackagePlan => (
                     <div key={programPackagePlan.id} className="mb-4">
                       <ProgramPackagePlanCard

@@ -115,9 +115,11 @@ const ProgramPageContent: React.VFC = () => {
   const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
+  const [isPlanListSticky, setIsPlanListSticky] = useState(false)
 
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
+  const planListHeightRef = useRef<HTMLDivElement>(null)
 
   const isEnrolled = enrolledProgramIds.includes(programId)
 
@@ -141,6 +143,12 @@ const ProgramPageContent: React.VFC = () => {
   useEffect(() => {
     ReactGA.ga('send', 'pageview')
   }, [])
+
+  useEffect(() => {
+    if (!loadingProgramPlansEnrollmentsAggregateList) {
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 100)
+    }
+  }, [loadingProgramPlansEnrollmentsAggregateList])
 
   if (!loadingEnrolledProgramIds && !visitIntro && isEnrolled) {
     return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
@@ -258,7 +266,11 @@ const ProgramPageContent: React.VFC = () => {
                   </Responsive.Desktop>
 
                   {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
-                    <div id="subscription" className="mb-5 positionSticky">
+                    <div
+                      id="subscription"
+                      className={`mb-5${isPlanListSticky ? ' positionSticky' : ''}`}
+                      ref={planListHeightRef}
+                    >
                       {program.plans
                         .filter(programPlan => programPlan.publishedAt)
                         .map(programPlan => (
