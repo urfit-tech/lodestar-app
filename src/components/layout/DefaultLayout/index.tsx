@@ -1,7 +1,10 @@
 import { Menu, MenuButton, MenuList } from '@chakra-ui/react'
+import axios from 'axios'
+import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { LodestarWindow } from 'lodestar-app-element/src/types/lodestar.window'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
@@ -39,6 +42,8 @@ import {
   StyledNavTag,
 } from './DefaultLayout.styled'
 import GlobalSearchModal from './GlobalSearchModal'
+
+declare let window: LodestarWindow
 
 const StyledLayoutWrapper = styled(StyledLayout)`
   && {
@@ -105,10 +110,25 @@ const DefaultLayout: React.FC<{
   const pathName = window.location.pathname
 
   useEffect(() => {
-    // check cookie
-    // check tos
-    setIsTOSModalVisible(true)
-  }, [])
+    let tos: any
+    try {
+      tos = JSON.parse(Cookies.get('tos') || '{}')
+    } catch (error) {
+      tos = {}
+    }
+    if (isAuthenticated && tos?.memberId !== currentMemberId) {
+      axios
+        .get(`${process.env.REACT_APP_CW_API_BASE_ROOT}/member/tos`, {
+          params: {
+            email: window.lodestar.getCurrentMember()?.email || currentMember?.email,
+            product: 'kolable',
+          },
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(({ data }) => (data.success ? null : setIsTOSModalVisible(true)))
+        .catch(error => process.env.NODE_ENV === 'development' && console.error(`can not get tos api, error: ${error}`))
+    }
+  }, [isAuthenticated, currentMemberId, currentMember?.email])
 
   return (
     <AuthModalContext.Provider value={{ visible, setVisible, isBusinessMember, setIsBusinessMember }}>

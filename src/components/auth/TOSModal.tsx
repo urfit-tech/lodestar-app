@@ -1,10 +1,16 @@
 import { Box, Button, Link, Stack } from '@chakra-ui/react'
+import Cookies from 'js-cookie'
+import axios from 'axios'
+import { LodestarWindow } from 'lodestar-app-element/src/types/lodestar.window'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../helpers'
 import authMessages from './translation'
+
+declare let window: LodestarWindow
 
 const CenteredBox = styled.div`
   margin: 1rem;
@@ -22,12 +28,35 @@ const CenteredBox = styled.div`
 
 const TOSModal: React.VFC<{ onConfirm?: () => void }> = ({ onConfirm }) => {
   const theme = useAppTheme()
+  const { currentMemberId, currentMember } = useAuth()
   const { formatMessage } = useIntl()
 
   const handleClick = () => {
-    //call tos api
-    //set cookie
-    onConfirm?.()
+    axios
+      .post(
+        `${process.env.REACT_APP_CW_API_BASE_ROOT}/member/tos`,
+        {
+          email: window.lodestar.getCurrentMember()?.email || currentMember?.email,
+          product: 'kolable',
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+      .catch(error => process.env.NODE_ENV === 'development' && console.error(`can not post tos api, error:${error}`))
+      .finally(() => {
+        Cookies.set(
+          'tos',
+          JSON.stringify({
+            memberId: currentMemberId,
+            checkTime: new Date().getTime(),
+          }),
+          {
+            expires: 1,
+          },
+        )
+        onConfirm?.()
+      })
   }
 
   return (
