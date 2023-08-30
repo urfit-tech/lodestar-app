@@ -79,7 +79,7 @@ const ActivityPage: React.VFC = () => {
         ReactGA.plugin.execute('ec', 'setAction', 'detail')
       }
       ReactGA.ga('send', 'pageview')
-      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 100)
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 104)
     }
   }, [activity])
 
