@@ -123,6 +123,10 @@ const authMessages = {
       defaultMessage: 'Go to login',
     },
   }),
+  TOSModal: defineMessages({
+    title: { id: 'auth.TOSModal.title', defaultMessage: '歡迎來到天下學習 Master Cheers' },
+    confirm: { id: 'auth.TOSModal.confirm', defaultMessage: '我知道了' },
+  }),
 }
 
 export default authMessages
