@@ -196,6 +196,7 @@ const MeetingPage = () => {
           console.error('Error during submitting:', error)
         })
         .finally(() => {
+          setIsSubmitting(false)
           Cookies.remove('utm')
           alert('已成功預約專屬諮詢！')
           window.location.reload()
@@ -235,10 +236,11 @@ const MeetingPage = () => {
             Cookies.remove('utm')
             alert('已成功預約專屬諮詢！')
           } else {
-            alert(`發生錯誤，請聯繫 contact@xuemi.co。錯誤訊息：${message}`)
+            alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
           }
         })
         .finally(() => {
+          setIsSubmitting(false)
           window.location.reload()
         })
     }
