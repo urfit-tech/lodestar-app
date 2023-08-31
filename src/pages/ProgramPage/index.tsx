@@ -146,7 +146,7 @@ const ProgramPageContent: React.VFC = () => {
 
   useEffect(() => {
     if (!loadingProgramPlansEnrollmentsAggregateList) {
-      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 104)
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 40)
     }
   }, [loadingProgramPlansEnrollmentsAggregateList])
 
@@ -268,7 +268,7 @@ const ProgramPageContent: React.VFC = () => {
                   {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
                     <div
                       id="subscription"
-                      className={`mb-5${isPlanListSticky ? ' positionSticky' : ''}`}
+                      className={`mb-5${isPlanListSticky ? ' programPlanSticky' : ''}`}
                       ref={planListHeightRef}
                     >
                       {program.plans

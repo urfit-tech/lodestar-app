@@ -79,7 +79,7 @@ const ActivityPage: React.VFC = () => {
         ReactGA.plugin.execute('ec', 'setAction', 'detail')
       }
       ReactGA.ga('send', 'pageview')
-      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 104)
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 56)
     }
   }, [activity])
 
@@ -122,7 +122,7 @@ const ActivityPage: React.VFC = () => {
           </Col>
 
           <Col xs={12} lg={4}>
-            <div className={`${isPlanListSticky ? 'positionSticky' : ''}`} ref={planListHeightRef}>
+            <div className={`${isPlanListSticky ? 'activityPlanSticky' : ''}`} ref={planListHeightRef}>
               <AuthModalContext.Consumer>
                 {({ setVisible: setAuthModalVisible }) =>
                   activity.tickets.map(ticket => {

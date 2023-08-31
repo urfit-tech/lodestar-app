@@ -100,7 +100,7 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ pr
       })
       ReactGA.plugin.execute('ec', 'setAction', 'detail')
       ReactGA.ga('send', 'pageview')
-      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 104)
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 40)
     }
   }, [programPackageIntroduction])
 
@@ -159,7 +159,7 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ pr
                 />
               </div>
               <div ref={planBlockRef} className="col-12 col-lg-4 pt-5">
-                <div ref={planListHeightRef} className={`${isPlanListSticky ? 'positionSticky' : ''}`}>
+                <div ref={planListHeightRef} className={`${isPlanListSticky ? 'programPackagePlanSticky' : ''}`}>
                   {programPackageIntroduction.plans.map(programPackagePlan => (
                     <div key={programPackagePlan.id} className="mb-4">
                       <ProgramPackagePlanCard

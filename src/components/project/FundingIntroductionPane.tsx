@@ -52,7 +52,7 @@ const FundingIntroductionPane: React.VFC<{
 
   useEffect(() => {
     if (projectPlans) {
-      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 104)
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 110)
     }
   }, [projectPlans])
 
@@ -72,7 +72,7 @@ const FundingIntroductionPane: React.VFC<{
         </TabPaneContent>
 
         <div className="col-12 col-lg-4">
-          <div className={`${isPlanListSticky ? 'positionSticky' : ''}`} ref={planListHeightRef}>
+          <div className={`${isPlanListSticky ? 'projectPlanSticky' : ''}`} ref={planListHeightRef}>
             <ProjectPlanCollection projectPlans={projectPlans} />
           </div>
         </div>
