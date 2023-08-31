@@ -7,6 +7,7 @@ import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
+import { ConversionApiData } from 'lodestar-app-element/src/types/conversionApi'
 import { prop, sum } from 'ramda'
 import { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
@@ -36,7 +37,7 @@ export const useCheck = ({
 }) => {
   const tracking = useTracking()
   const { authToken } = useAuth()
-  const { id: appId } = useApp()
+  const { id: appId, enabledModules, settings } = useApp()
   const [check, setCheck] = useState<CheckProps>({
     orderProducts: [],
     orderDiscounts: [],
@@ -102,10 +103,15 @@ export const useCheck = ({
     paymentType: 'perpetual' | 'subscription' | 'groupBuying',
     invoice: InvoiceProps,
     payment?: PaymentProps | null,
+    conversionApiData?: ConversionApiData,
   ) => {
     setOrderPlacing(true)
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
     const trackingCookie = getTrackingCookie()
+    const trackingOptions = { ...trackingCookie }
+    if (settings['tracking.fb_pixel_id'] && settings['tracking.fb_access_token'] && enabledModules.fb_conversion_api)
+      Object.assign(trackingOptions, { fb: conversionApiData })
+
     ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
     tracking.checkout(resourceCollection.filter(notEmpty), coupon)
     const {
@@ -132,7 +138,7 @@ export const useCheck = ({
         invoice,
         geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
         options,
-        tracking: trackingCookie,
+        tracking: trackingOptions,
       },
       {
         headers: { authorization: `Bearer ${authToken}` },
