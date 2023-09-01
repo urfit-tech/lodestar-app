@@ -21,6 +21,7 @@ const StyledCover = styled.div`
   padding-top: 2.5rem;
 `
 const StyledTabs = styled(Tabs)`
+  overflow: unset;
   .ant-tabs-bar {
     display: flex;
     justify-content: space-between;

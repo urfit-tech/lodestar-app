@@ -1,14 +1,16 @@
 import { Button } from '@chakra-ui/react'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import React, { createRef, useEffect } from 'react'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import { StringParam, useQueryParam } from 'use-query-params'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ProgramCollection from '../../components/package/ProgramCollection'
 import ProgramPackageBanner from '../../components/package/ProgramPackageBanner'
@@ -19,8 +21,6 @@ import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
 import NotFoundPage from '../NotFoundPage'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import { StringParam, useQueryParam } from 'use-query-params'
 
 const StyledTitle = styled.h2`
   ${CommonLargeTitleMixin}
@@ -75,8 +75,9 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ pr
   const { loadingProgramPackageIds, enrolledProgramPackagePlanIds } = useEnrolledProgramPackagePlanIds(
     currentMemberId || '',
   )
-
-  const planBlockRef = createRef<HTMLDivElement>()
+  const [isPlanListSticky, setIsPlanListSticky] = useState(false)
+  const planBlockRef = useRef<HTMLDivElement>(null)
+  const planListHeightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (programPackageIntroduction) {
@@ -99,6 +100,7 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ pr
       })
       ReactGA.plugin.execute('ec', 'setAction', 'detail')
       ReactGA.ga('send', 'pageview')
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 40)
     }
   }, [programPackageIntroduction])
 
@@ -157,16 +159,18 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ pr
                 />
               </div>
               <div ref={planBlockRef} className="col-12 col-lg-4 pt-5">
-                {programPackageIntroduction.plans.map(programPackagePlan => (
-                  <div key={programPackagePlan.id} className="mb-4">
-                    <ProgramPackagePlanCard
-                      programPackageId={programPackageId}
-                      {...programPackagePlan}
-                      loading={loadingProgramPackageIds}
-                      isEnrolled={enrolledProgramPackagePlanIds.includes(programPackagePlan.id)}
-                    />
-                  </div>
-                ))}
+                <div ref={planListHeightRef} className={`${isPlanListSticky ? 'programPackagePlanSticky' : ''}`}>
+                  {programPackageIntroduction.plans.map(programPackagePlan => (
+                    <div key={programPackagePlan.id} className="mb-4">
+                      <ProgramPackagePlanCard
+                        programPackageId={programPackageId}
+                        {...programPackagePlan}
+                        loading={loadingProgramPackageIds}
+                        isEnrolled={enrolledProgramPackagePlanIds.includes(programPackagePlan.id)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </>
           ) : (
