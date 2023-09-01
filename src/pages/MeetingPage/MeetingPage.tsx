@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { useMemberPropertyCollection } from '../../components/profile/ProfileOtherAdminCard'
 import hasura from '../../hasura'
+import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 
 const StyledForm = styled.form`
@@ -147,7 +148,7 @@ const MeetingPage = () => {
 
   const [insertMemberTask] = useMutation<hasura.InsertMemberTask, hasura.InsertMemberTaskVariables>(InsertMemberTask)
 
-  const { data: memberData } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
+  const { data: memberData, loading } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
     GetMemberByUsername,
     {
       variables: { appId, username: managerUsername },
@@ -156,7 +157,11 @@ const MeetingPage = () => {
 
   const managerId = managerUsername ? memberData?.member_public[0]?.id || undefined : undefined
 
-  if (settings['custom.permission_group.salesLead'] !== '1' || (managerUsername && !managerId)) {
+  if (loading) {
+    return <LoadingPage />
+  }
+
+  if (settings['custom.permission_group.salesLead'] !== '1' || (managerUsername && !managerId && !loading)) {
     return <NotFoundPage />
   }
 
@@ -245,6 +250,7 @@ const MeetingPage = () => {
         })
     }
   }
+
   return (
     <DefaultLayout centeredBox>
       <StyledForm onSubmit={handleSubmit}>
