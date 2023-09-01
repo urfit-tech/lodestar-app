@@ -168,14 +168,6 @@ export const AppointmentPlanCollection: React.FC<{
 
   const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriod | null>(null)
 
-  const diffPlanBookedTimes = [
-    ...appointmentPlans.map(appointmentPlan =>
-      appointmentPlan.periods
-        .filter(period => Boolean(period.booked >= appointmentPlan.capacity && appointmentPlan.capacity !== -1))
-        .map(v => moment(v.startedAt).format('YYYY-MM-DD HH:mm')),
-    ),
-  ].flat(1)
-
   const { resourceCollection } = useResourceCollection(
     appId ? appointmentPlans.map(appointmentPlan => `${appId}:appointment_plan:${appointmentPlan.id}`) : [],
     true,
@@ -207,6 +199,7 @@ export const AppointmentPlanCollection: React.FC<{
               renderTrigger={({ setVisible }) => (
                 <AppointmentPeriodCollection
                   appointmentPeriods={appointmentPlan.periods}
+                  appointmentPlanCapacity={appointmentPlan.capacity}
                   reservationAmount={appointmentPlan.reservationAmount}
                   reservationType={appointmentPlan.reservationType}
                   onClick={period => {
@@ -230,7 +223,6 @@ export const AppointmentPlanCollection: React.FC<{
                       resource && tracking.click(resource, { position: idx + 1 })
                     }
                   }}
-                  diffPlanBookedTimes={diffPlanBookedTimes}
                 />
               )}
             />
@@ -240,6 +232,7 @@ export const AppointmentPlanCollection: React.FC<{
               renderTrigger={({ onOpen }) => (
                 <AppointmentPeriodCollection
                   appointmentPeriods={appointmentPlan.periods}
+                  appointmentPlanCapacity={appointmentPlan.capacity}
                   reservationAmount={appointmentPlan.reservationAmount}
                   reservationType={appointmentPlan.reservationType}
                   onClick={period => {
@@ -263,7 +256,6 @@ export const AppointmentPlanCollection: React.FC<{
                       resource && tracking.click(resource, { position: idx + 1 })
                     }
                   }}
-                  diffPlanBookedTimes={diffPlanBookedTimes}
                 />
               )}
               startedAt={selectedPeriod?.startedAt}

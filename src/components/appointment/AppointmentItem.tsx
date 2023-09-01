@@ -1,22 +1,22 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
-import { productMessages } from '../../helpers/translation'
+import appointmentMessages from './translation'
 
-const StyledItemWrapper = styled.div<{ variant?: 'default' | 'excluded' | 'disabled' }>`
+const StyledItemWrapper = styled.div<{ variant?: 'default' | 'isEnrolled' | 'isMeetingFull' }>`
   position: relative;
   margin-bottom: 0.5rem;
   margin-right: 0.5rem;
   padding: 0.75rem;
   width: 6rem;
   overflow: hidden;
-  border: solid 1px ${props => (props.variant === 'disabled' ? 'var(--gray-light)' : 'var(--gray-dark)')};
-  color: ${props => (props.variant === 'disabled' ? 'var(--gray-dark)' : 'var(--gray-darker)')};
+  border: solid 1px ${props => (props.variant === 'default' ? 'var(--gray-dark)' : 'var(--gray-light)')};
+  color: ${props => (props.variant === 'default' ? 'var(--gray-darker)' : 'var(--gray-dark)')};
   border-radius: 4px;
   cursor: ${props => (props.variant !== 'default' ? 'not-allowed' : 'pointer')};
 
   ${props =>
-    props.variant === 'excluded'
+    props.variant !== 'default'
       ? css`
           ::before {
             display: block;
@@ -46,7 +46,6 @@ const StyledItemMeta = styled.div`
 `
 
 const AppointmentItem: React.VFC<{
-  id: string
   startedAt: Date
   isEnrolled?: boolean
   isExcluded?: boolean
@@ -60,11 +59,13 @@ const AppointmentItem: React.VFC<{
         {startedAt.getHours().toString().padStart(2, '0')}:{startedAt.getMinutes().toString().padStart(2, '0')}
       </StyledItemTitle>
       <StyledItemMeta>
-        {isEnrolled
-          ? formatMessage(productMessages.appointment.status.booked)
-          : isExcluded
-          ? formatMessage(productMessages.appointment.status.closed)
-          : formatMessage(productMessages.appointment.status.bookable)}
+        {variant === 'default'
+          ? formatMessage(appointmentMessages.AppointmentItem.bookable)
+          : variant === 'isEnrolled'
+          ? formatMessage(appointmentMessages.AppointmentItem.booked)
+          : variant === 'isMeetingFull'
+          ? formatMessage(appointmentMessages.AppointmentItem.isMeetingFull)
+          : ''}
       </StyledItemMeta>
     </StyledItemWrapper>
   )
