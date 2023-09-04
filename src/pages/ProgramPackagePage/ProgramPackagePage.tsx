@@ -100,7 +100,7 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string }> = ({ pr
       })
       ReactGA.plugin.execute('ec', 'setAction', 'detail')
       ReactGA.ga('send', 'pageview')
-      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 40)
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 104)
     }
   }, [programPackageIntroduction])
 
