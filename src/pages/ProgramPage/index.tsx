@@ -146,7 +146,7 @@ const ProgramPageContent: React.VFC = () => {
 
   useEffect(() => {
     if (!loadingProgramPlansEnrollmentsAggregateList) {
-      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 40)
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 104)
     }
   }, [loadingProgramPlansEnrollmentsAggregateList])
 
