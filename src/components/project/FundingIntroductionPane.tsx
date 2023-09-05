@@ -52,7 +52,7 @@ const FundingIntroductionPane: React.VFC<{
 
   useEffect(() => {
     if (projectPlans) {
-      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 174)
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 200)
     }
   }, [projectPlans])
 
