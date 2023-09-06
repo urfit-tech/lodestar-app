@@ -1,69 +1,18 @@
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { Badge, Button, Checkbox, CheckboxGroup, FormControl, FormLabel, Heading, Input, Stack } from '@chakra-ui/react'
 import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../../components/layout/DefaultLayout'
-import { useMemberPropertyCollection } from '../../components/profile/ProfileOtherAdminCard'
 import hasura from '../../hasura'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 
 const StyledForm = styled.form`
   padding: 48px 24px;
-`
-
-const GetPropertiesAndCategories = gql`
-  query GetPropertiesAndCategories {
-    property(where: { type: { _eq: "member" } }) {
-      id
-      name
-    }
-    category(where: { class: { _eq: "member" } }) {
-      id
-      name
-    }
-  }
-`
-
-const UpdateMemberCreated = gql`
-  mutation UpdateMemberCreated($memberId: String!) {
-    update_member_by_pk(pk_columns: { id: $memberId }, _set: { created_at: "NOW()" }) {
-      id
-      username
-    }
-  }
-`
-
-const UpdateMemberProperties = gql`
-  mutation UpdateMemberProperties($memberPropertiesInput: [member_property_insert_input!]!) {
-    insert_member_property(
-      objects: $memberPropertiesInput
-      on_conflict: { constraint: member_property_member_id_property_id_key, update_columns: [value] }
-    ) {
-      affected_rows
-    }
-  }
-`
-
-const InsertMemberTask = gql`
-  mutation InsertMemberTask($currentMemberId: String!, $managerId: String!, $taskTitle: String!) {
-    insert_member_task(
-      objects: {
-        member_id: $currentMemberId
-        author_id: $managerId
-        executor_id: $managerId
-        title: $taskTitle
-        due_at: "now()"
-      }
-    ) {
-      affected_rows
-    }
-  }
 `
 
 const GetMemberByUsername = gql`
@@ -76,77 +25,15 @@ const GetMemberByUsername = gql`
 
 const MeetingPage = () => {
   const { id: appId, settings } = useApp()
-  const { currentMemberId, currentMember } = useAuth()
   const { username: managerUsername } = useParams<{ username: string }>()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { data: categoryData } = useQuery<hasura.GetPropertiesAndCategories>(GetPropertiesAndCategories)
-  const { memberProperties } = useMemberPropertyCollection(currentMemberId!)
 
-  // 取得目前登入使用者的廣告素材
-  const adProperty = memberProperties.find(({ name }) => name === '廣告素材')?.value
-    ? memberProperties
-        .find(({ name }) => name === '廣告素材')
-        ?.value.split(',')
-        .map(value => value.trim())
-    : null
+  const customAdProperty = (propertyName: string) => {
+    return JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.[propertyName] || ''
+  }
 
-  // 取得目前登入使用者的行銷活動
-  const marketingActivitiesProperty = memberProperties.find(({ name }) => name === '行銷活動')?.value
-    ? memberProperties
-        .find(({ name }) => name === '行銷活動')
-        ?.value.split(',')
-        .map(value => value.trim())
-    : null
-
-  const customMeetingAdProperty =
-    JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.['adProperty'] || ''
-  const customMeetingMarketingActivitiesProperty =
-    JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.['marketingActivitiesProperty'] || ''
-
-  const adPropertyValue = `${
-    !adProperty
-      ? customMeetingAdProperty
-      : adProperty && adProperty.includes(customMeetingAdProperty)
-      ? [...adProperty.filter(property => property !== customMeetingAdProperty), customMeetingAdProperty].join(',')
-      : `${adProperty.join(',')},${customMeetingAdProperty}`
-  }`
-
-  const marketingActivitiesPropertyValue = `${
-    !marketingActivitiesProperty
-      ? customMeetingMarketingActivitiesProperty
-      : marketingActivitiesProperty && marketingActivitiesProperty.includes(customMeetingMarketingActivitiesProperty)
-      ? [
-          ...marketingActivitiesProperty.filter(property => property !== customMeetingMarketingActivitiesProperty),
-          customMeetingMarketingActivitiesProperty,
-        ].join(',')
-      : `${marketingActivitiesProperty.join(',')},${customMeetingAdProperty}`
-  }`
-
-  const [updateMemberCreated] = useMutation<hasura.UpdateMemberCreated, hasura.UpdateMemberCreatedVariables>(
-    UpdateMemberCreated,
-    { variables: { memberId: currentMemberId! } },
-  )
-  const [updateMemberProperties] = useMutation<hasura.UpdateMemberProperties, hasura.UpdateMemberPropertiesVariables>(
-    UpdateMemberProperties,
-    {
-      variables: {
-        memberPropertiesInput: [
-          {
-            member_id: currentMemberId,
-            property_id: categoryData?.property.find(({ name }) => name === '廣告素材')?.id,
-            value: adPropertyValue,
-          },
-          {
-            member_id: currentMemberId,
-            property_id: categoryData?.property.find(({ name }) => name === '行銷活動')?.id,
-            value: marketingActivitiesPropertyValue,
-          },
-        ],
-      },
-    },
-  )
-
-  const [insertMemberTask] = useMutation<hasura.InsertMemberTask, hasura.InsertMemberTaskVariables>(InsertMemberTask)
+  const customMeetingAdProperty = customAdProperty('adProperty')
+  const customMeetingMarketingActivitiesProperty = customAdProperty('marketingActivitiesProperty')
 
   const { data: memberData, loading } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
     GetMemberByUsername,
@@ -183,72 +70,48 @@ const MeetingPage = () => {
       utm = {}
     }
 
-    if (currentMemberId !== null && email === currentMember?.email) {
-      updateMemberCreated()
-        .then(() => {
-          if (managerId) {
-            insertMemberTask({
-              variables: {
-                currentMemberId,
-                managerId: managerId,
-                taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
-              },
-            })
-          }
-          updateMemberProperties()
-        })
-        .catch(error => {
-          console.error('Error during submitting:', error)
-        })
-        .finally(() => {
-          setIsSubmitting(false)
+    // This API includes an update event
+    fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
+      method: 'post',
+      body: JSON.stringify({
+        phone,
+        email,
+        name,
+        managerUsername,
+        taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
+        categoryNames: fields,
+        properties: [
+          { name: '介紹人', value: referal },
+          { name: '名單分級', value: 'SSR' },
+          { name: '來源網址', value: window.location.href },
+          { name: '聯盟來源', value: utm.utm_source || '' },
+          { name: '聯盟會員編號', value: utm.utm_id || '' },
+          { name: '聯盟成交編號', value: utm.utm_term || '' },
+          { name: '廣告素材', value: customMeetingAdProperty },
+          {
+            name: '行銷活動',
+            value: customMeetingMarketingActivitiesProperty,
+          },
+        ],
+      }),
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then(({ code, message }: { code: string; message: string }) => {
+        if (code === 'SUCCESS') {
           Cookies.remove('utm')
           alert('已成功預約專屬諮詢！')
-          window.location.reload()
-        })
-    } else if (email !== currentMember?.email || !currentMemberId) {
-      fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
-        method: 'post',
-        body: JSON.stringify({
-          phone,
-          email,
-          name,
-          managerUsername,
-          taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
-          categoryNames: fields,
-          properties: [
-            { name: '介紹人', value: referal },
-            { name: '名單分級', value: 'SSR' },
-            { name: '來源網址', value: window.location.href },
-            { name: '聯盟來源', value: utm.utm_source || '' },
-            { name: '聯盟會員編號', value: utm.utm_id || '' },
-            { name: '聯盟成交編號', value: utm.utm_term || '' },
-            { name: '廣告素材', value: adPropertyValue },
-            {
-              name: '行銷活動',
-              value: marketingActivitiesPropertyValue,
-            },
-          ],
-        }),
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        } else {
+          alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
+        }
       })
-        .then(res => res.json())
-        .then(({ code, message }: { code: string; message: string }) => {
-          if (code === 'SUCCESS') {
-            Cookies.remove('utm')
-            alert('已成功預約專屬諮詢！')
-          } else {
-            alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
-          }
-        })
-        .finally(() => {
-          setIsSubmitting(false)
-          window.location.reload()
-        })
-    }
+      .finally(() => {
+        setIsSubmitting(false)
+        window.location.reload()
+      })
   }
 
   return (
