@@ -30,7 +30,6 @@ import {
   StyledLayoutHeader,
   StyledLogo,
   StyledMenuItem,
-  StyledMenuTag,
   StyledNavAnimationButton,
   StyledNavButton,
   StyledNavTag,
@@ -133,40 +132,17 @@ const DefaultLayout: React.FC<{
                             ? StyledNavAnimationButton
                             : StyledNavButton
                         }
-                        onClick={() => nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')}
+                        onClick={() => {
+                          nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')
+                        }}
                       >
                         <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
+                        {nav.tag && (
+                          <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                            {nav.tag}
+                          </StyledNavTag>
+                        )}
                       </MenuButton>
-                      {nav.subNavs?.length > 0 && (
-                        <MenuList>
-                          {nav.subNavs?.map((v, idx) =>
-                            v.external ? (
-                              <StyledMenuItem
-                                key={idx}
-                                _focus={{ bg: '#fff' }}
-                                onClick={() => v.href && window.open(v.href, '_blank', 'noopener=yes,noreferrer=yes')}
-                              >
-                                <Link to={v.href} target="_blank" rel="noopener noreferrer">
-                                  {v.label}
-                                </Link>
-                              </StyledMenuItem>
-                            ) : (
-                              <StyledMenuItem
-                                key={idx}
-                                _focus={{ bg: '#fff' }}
-                                onClick={() => v.href && history.push(v.href)}
-                              >
-                                <Link to={v.href}>{v.label}</Link>
-                                {v.tag && (
-                                  <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                                    {v.tag}
-                                  </StyledMenuTag>
-                                )}
-                              </StyledMenuItem>
-                            ),
-                          )}
-                        </MenuList>
-                      )}
                     </Menu>
                   ) : (
                     <Menu key={nav.id}>
@@ -176,7 +152,15 @@ const DefaultLayout: React.FC<{
                             ? StyledNavAnimationButton
                             : StyledNavButton
                         }
-                        onClick={() => nav.href && history.push(nav.href)}
+                        onClick={e => {
+                          if (nav.href) {
+                            if (nav.href[0] === '/') {
+                              history.push(nav.href)
+                            } else {
+                              window.location.assign(nav.href)
+                            }
+                          }
+                        }}
                       >
                         <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
                         {nav.tag && (
@@ -187,29 +171,32 @@ const DefaultLayout: React.FC<{
                       </MenuButton>
                       {nav.subNavs.length > 0 && (
                         <MenuList>
-                          {nav.subNavs?.map((v, idx) =>
-                            v.external ? (
+                          {nav.subNavs?.map((subNav, idx) =>
+                            subNav.external ? (
                               <StyledMenuItem
                                 key={idx}
-                                _focus={{ bg: '#fff' }}
-                                onClick={() => v.href && window.open(v.href, '_blank', 'noopener=yes,noreferrer=yes')}
+                                _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}
+                                onClick={() =>
+                                  subNav.href && window.open(subNav.href, '_blank', 'noopener=yes,noreferrer=yes')
+                                }
                               >
-                                <Link to={v.href} target="_blank" rel="noopener noreferrer">
-                                  {v.label}
-                                </Link>
+                                {subNav.label}
                               </StyledMenuItem>
                             ) : (
                               <StyledMenuItem
                                 key={idx}
                                 _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}
-                                onClick={() => v.href && history.push(v.href)}
+                                onClick={() => {
+                                  if (subNav.href) {
+                                    if (subNav.href[0] === '/') {
+                                      history.push(subNav.href)
+                                    } else {
+                                      window.location.assign(subNav.href)
+                                    }
+                                  }
+                                }}
                               >
-                                <Link to={v.href}>{v.label}</Link>
-                                {v.tag && (
-                                  <StyledMenuTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                                    {v.tag}
-                                  </StyledMenuTag>
-                                )}
+                                {subNav.label}
                               </StyledMenuItem>
                             ),
                           )}

@@ -115,9 +115,11 @@ const ProgramPageContent: React.VFC = () => {
   const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
+  const [isPlanListSticky, setIsPlanListSticky] = useState(false)
 
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
+  const planListHeightRef = useRef<HTMLDivElement>(null)
 
   const isEnrolled = enrolledProgramIds.includes(programId)
 
@@ -141,6 +143,12 @@ const ProgramPageContent: React.VFC = () => {
   useEffect(() => {
     ReactGA.ga('send', 'pageview')
   }, [])
+
+  useEffect(() => {
+    if (!loadingProgramPlansEnrollmentsAggregateList) {
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 104)
+    }
+  }, [loadingProgramPlansEnrollmentsAggregateList])
 
   if (!loadingEnrolledProgramIds && !visitIntro && isEnrolled) {
     return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
@@ -253,33 +261,32 @@ const ProgramPageContent: React.VFC = () => {
                 </Responsive.Desktop>
               ) : (
                 <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                  <div>
-                    <Responsive.Desktop>
-                      <ProgramInfoCard instructorId={instructorId} program={program} />
-                    </Responsive.Desktop>
+                  <Responsive.Desktop>
+                    <ProgramInfoCard instructorId={instructorId} program={program} />
+                  </Responsive.Desktop>
 
-                    {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
-                      <div className="mb-5">
-                        <div id="subscription">
-                          {program.plans
-                            .filter(programPlan => programPlan.publishedAt)
-                            .map(programPlan => (
-                              <div key={programPlan.id} className="mb-3">
-                                <ProgramPlanCard
-                                  programId={program.id}
-                                  programPlan={programPlan}
-                                  enrollmentCount={
-                                    programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)
-                                      ?.enrollmentCount
-                                  }
-                                  isProgramSoldOut={Boolean(program.isSoldOut)}
-                                />
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
+                    <div
+                      id="subscription"
+                      className={`mb-5${isPlanListSticky ? ' programPlanSticky' : ''}`}
+                      ref={planListHeightRef}
+                    >
+                      {program.plans
+                        .filter(programPlan => programPlan.publishedAt)
+                        .map(programPlan => (
+                          <div key={programPlan.id} className="mb-3">
+                            <ProgramPlanCard
+                              programId={program.id}
+                              programPlan={programPlan}
+                              enrollmentCount={
+                                programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)?.enrollmentCount
+                              }
+                              isProgramSoldOut={Boolean(program.isSoldOut)}
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  )}
                 </StyledIntroWrapper>
               )}
             </div>

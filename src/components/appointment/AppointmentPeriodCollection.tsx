@@ -60,8 +60,17 @@ const AppointmentPeriodCollection: React.VFC<{
                 />
               )
 
-              return isAuthenticated ? (
+              return isAuthenticated && !period.currentMemberBooked ? (
                 <div key={period.id} onClick={() => onClick && onClick(period)}>
+                  {ItemElem}
+                </div>
+              ) : isAuthenticated && period.currentMemberBooked ? (
+                <div
+                  key={period.id}
+                  onClick={() => {
+                    return
+                  }}
+                >
                   {ItemElem}
                 </div>
               ) : (
