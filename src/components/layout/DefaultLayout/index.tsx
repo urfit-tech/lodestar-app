@@ -117,15 +117,19 @@ const DefaultLayout: React.FC<{
     }
     if (isAuthenticated && tos?.memberId !== currentMemberId) {
       axios
-        .get(`${process.env.REACT_APP_CW_API_BASE_ROOT}/member/tos`, {
+        .get(`${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/cw/tos`, {
           params: {
             email: window.lodestar.getCurrentMember()?.email || currentMember?.email,
             product: 'kolable',
           },
           headers: { 'Content-Type': 'application/json' },
         })
-        .then(({ data }) => (data.success ? null : setIsTOSModalVisible(true)))
-        .catch(error => process.env.NODE_ENV === 'development' && console.error(`can not get tos api, error: ${error}`))
+        .then(({ data }) => (data.code === 'SUCCESS' ? null : setIsTOSModalVisible(true)))
+        .catch(
+          error =>
+            process.env.NODE_ENV === 'development' &&
+            console.error(`can not get kolable-server tos api, error: ${error}`),
+        )
     }
   }, [isAuthenticated, currentMemberId, currentMember?.email])
 
