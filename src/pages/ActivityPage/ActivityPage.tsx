@@ -4,7 +4,7 @@ import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -53,6 +53,8 @@ const ActivityPage: React.VFC = () => {
   const { id: appId } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:activity:${activityId}`], true)
   const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
+  const [isPlanListSticky, setIsPlanListSticky] = useState(false)
+  const planListHeightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (activity) {
@@ -77,6 +79,7 @@ const ActivityPage: React.VFC = () => {
         ReactGA.plugin.execute('ec', 'setAction', 'detail')
       }
       ReactGA.ga('send', 'pageview')
+      setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 110)
     }
   }, [activity])
 
@@ -119,78 +122,80 @@ const ActivityPage: React.VFC = () => {
           </Col>
 
           <Col xs={12} lg={4}>
-            <AuthModalContext.Consumer>
-              {({ setVisible: setAuthModalVisible }) =>
-                activity.tickets.map(ticket => {
-                  return (
-                    <div key={ticket.id} className="mb-4">
-                      <ActivityTicketCard
-                        title={ticket.title}
-                        description={ticket.description || undefined}
-                        price={ticket.price}
-                        count={ticket.count}
-                        startedAt={ticket.startedAt}
-                        endedAt={ticket.endedAt}
-                        isPublished={ticket.isPublished}
-                        sessions={activity.ticketSessions
-                          .filter(ticketSession => ticketSession.ticket.id === ticket.id)
-                          .map(ticketSession => ({
-                            id: ticketSession.session.id,
-                            type: ticketSession.session.type,
-                            title: ticketSession.session.title,
-                          }))}
-                        participants={ticket.participants}
-                        currencyId={ticket.currencyId}
-                        extra={
-                          !activity ||
-                          !activity.publishedAt ||
-                          activity.publishedAt.getTime() > Date.now() ||
-                          ticket.startedAt.getTime() > Date.now() ? (
-                            <Button isFullWidth isDisabled>
-                              {formatMessage(commonMessages.button.unreleased)}
-                            </Button>
-                          ) : ticket.enrollments.length > 0 ? (
-                            <Button
-                              variant="outline"
-                              isFullWidth
-                              onClick={() =>
-                                history.push(
-                                  `/orders/${ticket.enrollments[0].orderId}/products/${ticket.enrollments[0].orderProductId}`,
-                                )
-                              }
-                            >
-                              {formatMessage(commonMessages.button.ticket)}
-                            </Button>
-                          ) : ticket.participants >= ticket.count ? (
-                            <Button isFullWidth isDisabled>
-                              {formatMessage(commonMessages.button.soldOut)}
-                            </Button>
-                          ) : ticket.endedAt.getTime() < Date.now() ? (
-                            <Button isFullWidth isDisabled>
-                              {formatMessage(commonMessages.button.cutoff)}
-                            </Button>
-                          ) : isAuthenticated ? (
-                            <ActivityTicketPaymentButton
-                              ticketId={ticket.id}
-                              ticketPrice={ticket.price}
-                              ticketCurrencyId={ticket.currencyId}
-                            />
-                          ) : (
-                            <Button
-                              colorScheme="primary"
-                              isFullWidth
-                              onClick={() => setAuthModalVisible && setAuthModalVisible(true)}
-                            >
-                              {formatMessage(commonMessages.button.register)}
-                            </Button>
-                          )
-                        }
-                      />
-                    </div>
-                  )
-                })
-              }
-            </AuthModalContext.Consumer>
+            <div className={`${isPlanListSticky ? 'activityPlanSticky' : ''}`} ref={planListHeightRef}>
+              <AuthModalContext.Consumer>
+                {({ setVisible: setAuthModalVisible }) =>
+                  activity.tickets.map(ticket => {
+                    return (
+                      <div key={ticket.id} className="mb-4">
+                        <ActivityTicketCard
+                          title={ticket.title}
+                          description={ticket.description || undefined}
+                          price={ticket.price}
+                          count={ticket.count}
+                          startedAt={ticket.startedAt}
+                          endedAt={ticket.endedAt}
+                          isPublished={ticket.isPublished}
+                          sessions={activity.ticketSessions
+                            .filter(ticketSession => ticketSession.ticket.id === ticket.id)
+                            .map(ticketSession => ({
+                              id: ticketSession.session.id,
+                              type: ticketSession.session.type,
+                              title: ticketSession.session.title,
+                            }))}
+                          participants={ticket.participants}
+                          currencyId={ticket.currencyId}
+                          extra={
+                            !activity ||
+                            !activity.publishedAt ||
+                            activity.publishedAt.getTime() > Date.now() ||
+                            ticket.startedAt.getTime() > Date.now() ? (
+                              <Button isFullWidth isDisabled>
+                                {formatMessage(commonMessages.button.unreleased)}
+                              </Button>
+                            ) : ticket.enrollments.length > 0 ? (
+                              <Button
+                                variant="outline"
+                                isFullWidth
+                                onClick={() =>
+                                  history.push(
+                                    `/orders/${ticket.enrollments[0].orderId}/products/${ticket.enrollments[0].orderProductId}`,
+                                  )
+                                }
+                              >
+                                {formatMessage(commonMessages.button.ticket)}
+                              </Button>
+                            ) : ticket.participants >= ticket.count ? (
+                              <Button isFullWidth isDisabled>
+                                {formatMessage(commonMessages.button.soldOut)}
+                              </Button>
+                            ) : ticket.endedAt.getTime() < Date.now() ? (
+                              <Button isFullWidth isDisabled>
+                                {formatMessage(commonMessages.button.cutoff)}
+                              </Button>
+                            ) : isAuthenticated ? (
+                              <ActivityTicketPaymentButton
+                                ticketId={ticket.id}
+                                ticketPrice={ticket.price}
+                                ticketCurrencyId={ticket.currencyId}
+                              />
+                            ) : (
+                              <Button
+                                colorScheme="primary"
+                                isFullWidth
+                                onClick={() => setAuthModalVisible && setAuthModalVisible(true)}
+                              >
+                                {formatMessage(commonMessages.button.register)}
+                              </Button>
+                            )
+                          }
+                        />
+                      </div>
+                    )
+                  })
+                }
+              </AuthModalContext.Consumer>
+            </div>
           </Col>
         </Row>
 

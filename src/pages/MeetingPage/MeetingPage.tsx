@@ -15,12 +15,70 @@ import NotFoundPage from '../NotFoundPage'
 const StyledForm = styled.form`
   padding: 48px 24px;
 `
+
+const GetPropertiesAndCategories = gql`
+  query GetPropertiesAndCategories {
+    property(where: { type: { _eq: "member" } }) {
+      id
+      name
+    }
+    category(where: { class: { _eq: "member" } }) {
+      id
+      name
+    }
+  }
+`
+
+const UpdateMemberCreated = gql`
+  mutation UpdateMemberCreated($memberId: String!) {
+    update_member_by_pk(pk_columns: { id: $memberId }, _set: { created_at: "NOW()" }) {
+      id
+      username
+    }
+  }
+`
+
+const UpdateMemberProperties = gql`
+  mutation UpdateMemberProperties($memberPropertiesInput: [member_property_insert_input!]!) {
+    insert_member_property(
+      objects: $memberPropertiesInput
+      on_conflict: { constraint: member_property_member_id_property_id_key, update_columns: [value] }
+    ) {
+      affected_rows
+    }
+  }
+`
+
+const InsertMemberTask = gql`
+  mutation InsertMemberTask($currentMemberId: String!, $managerId: String!, $taskTitle: String!) {
+    insert_member_task(
+      objects: {
+        member_id: $currentMemberId
+        author_id: $managerId
+        executor_id: $managerId
+        title: $taskTitle
+        due_at: "now()"
+      }
+    ) {
+      affected_rows
+    }
+  }
+`
+
+const GetMemberByUsername = gql`
+  query GetMemberByUsername($appId: String!, $username: String!) {
+    member_public(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
+      id
+    }
+  }
+`
+
 const MeetingPage = () => {
-  const { settings } = useApp()
-  const { currentMemberId } = useAuth()
+  const { id: appId, settings } = useApp()
+  const { currentMemberId, currentMember } = useAuth()
   const { username: managerUsername } = useParams<{ username: string }>()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { data: categoryData } = useQuery<hasura.GET_PROPERTIES_AND_CATEGORIES>(GET_PROPERTIES_AND_CATEGORIES)
+  const { data: categoryData } = useQuery<hasura.GetPropertiesAndCategories>(GetPropertiesAndCategories)
   const { memberProperties } = useMemberPropertyCollection(currentMemberId!)
 
   // 取得目前登入使用者的廣告素材
@@ -30,6 +88,7 @@ const MeetingPage = () => {
         ?.value.split(',')
         .map(value => value.trim())
     : null
+
   // 取得目前登入使用者的行銷活動
   const marketingActivitiesProperty = memberProperties.find(({ name }) => name === '行銷活動')?.value
     ? memberProperties
@@ -62,31 +121,42 @@ const MeetingPage = () => {
       : `${marketingActivitiesProperty.join(',')},${customMeetingAdProperty}`
   }`
 
-  const [updateMemberCreated] = useMutation<hasura.UPDATE_MEMBER_CREATED, hasura.UPDATE_MEMBER_CREATEDVariables>(
-    UPDATE_MEMBER_CREATED,
+  const [updateMemberCreated] = useMutation<hasura.UpdateMemberCreated, hasura.UpdateMemberCreatedVariables>(
+    UpdateMemberCreated,
     { variables: { memberId: currentMemberId! } },
   )
-  const [updateMemberProperties] = useMutation<
-    hasura.UPDATE_MEMBER_PROPERTIES,
-    hasura.UPDATE_MEMBER_PROPERTIESVariables
-  >(UPDATE_MEMBER_PROPERTIES, {
-    variables: {
-      memberPropertiesInput: [
-        {
-          member_id: currentMemberId,
-          property_id: categoryData?.property.find(({ name }) => name === '廣告素材')?.id,
-          value: adPropertyValue,
-        },
-        {
-          member_id: currentMemberId,
-          property_id: categoryData?.property.find(({ name }) => name === '行銷活動')?.id,
-          value: marketingActivitiesPropertyValue,
-        },
-      ],
+  const [updateMemberProperties] = useMutation<hasura.UpdateMemberProperties, hasura.UpdateMemberPropertiesVariables>(
+    UpdateMemberProperties,
+    {
+      variables: {
+        memberPropertiesInput: [
+          {
+            member_id: currentMemberId,
+            property_id: categoryData?.property.find(({ name }) => name === '廣告素材')?.id,
+            value: adPropertyValue,
+          },
+          {
+            member_id: currentMemberId,
+            property_id: categoryData?.property.find(({ name }) => name === '行銷活動')?.id,
+            value: marketingActivitiesPropertyValue,
+          },
+        ],
+      },
     },
-  })
+  )
 
-  if (settings['custom.permission_group.salesLead'] !== '1') {
+  const [insertMemberTask] = useMutation<hasura.InsertMemberTask, hasura.InsertMemberTaskVariables>(InsertMemberTask)
+
+  const { data: memberData } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
+    GetMemberByUsername,
+    {
+      variables: { appId, username: managerUsername },
+    },
+  )
+
+  const managerId = managerUsername ? memberData?.member_public[0]?.id || undefined : undefined
+
+  if (settings['custom.permission_group.salesLead'] !== '1' || (managerUsername && !managerId)) {
     return <NotFoundPage />
   }
 
@@ -108,19 +178,30 @@ const MeetingPage = () => {
       utm = {}
     }
 
-    if (currentMemberId !== null) {
+    if (currentMemberId !== null && email === currentMember?.email) {
       updateMemberCreated()
-        .then(() => updateMemberProperties())
+        .then(() => {
+          if (managerId) {
+            insertMemberTask({
+              variables: {
+                currentMemberId,
+                managerId: managerId,
+                taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
+              },
+            })
+          }
+          updateMemberProperties()
+        })
         .catch(error => {
           console.error('Error during submitting:', error)
         })
         .finally(() => {
+          setIsSubmitting(false)
           Cookies.remove('utm')
           alert('已成功預約專屬諮詢！')
-          setIsSubmitting(false)
           window.location.reload()
         })
-    } else {
+    } else if (email !== currentMember?.email || !currentMemberId) {
       fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
         method: 'post',
         body: JSON.stringify({
@@ -279,38 +360,5 @@ const MeetingPage = () => {
     </DefaultLayout>
   )
 }
-
-const GET_PROPERTIES_AND_CATEGORIES = gql`
-  query GET_PROPERTIES_AND_CATEGORIES {
-    property(where: { type: { _eq: "member" } }) {
-      id
-      name
-    }
-    category(where: { class: { _eq: "member" } }) {
-      id
-      name
-    }
-  }
-`
-
-const UPDATE_MEMBER_CREATED = gql`
-  mutation UPDATE_MEMBER_CREATED($memberId: String!) {
-    update_member_by_pk(pk_columns: { id: $memberId }, _set: { created_at: "NOW()" }) {
-      id
-      username
-    }
-  }
-`
-
-const UPDATE_MEMBER_PROPERTIES = gql`
-  mutation UPDATE_MEMBER_PROPERTIES($memberPropertiesInput: [member_property_insert_input!]!) {
-    insert_member_property(
-      objects: $memberPropertiesInput
-      on_conflict: { constraint: member_property_member_id_property_id_key, update_columns: [value] }
-    ) {
-      affected_rows
-    }
-  }
-`
 
 export default MeetingPage
