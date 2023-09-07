@@ -1,9 +1,9 @@
 import { Box, Button, Link, Stack } from '@chakra-ui/react'
-import Cookies from 'js-cookie'
 import axios from 'axios'
-import { LodestarWindow } from 'lodestar-app-element/src/types/lodestar.window'
+import Cookies from 'js-cookie'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { LodestarWindow } from 'lodestar-app-element/src/types/lodestar.window'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
@@ -34,7 +34,7 @@ const TOSModal: React.VFC<{ onConfirm?: () => void }> = ({ onConfirm }) => {
   const handleClick = () => {
     axios
       .post(
-        `${process.env.REACT_APP_CW_API_BASE_ROOT}/member/tos`,
+        `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/cw/tos`,
         {
           email: window.lodestar.getCurrentMember()?.email || currentMember?.email,
           product: 'kolable',
@@ -43,7 +43,11 @@ const TOSModal: React.VFC<{ onConfirm?: () => void }> = ({ onConfirm }) => {
           headers: { 'Content-Type': 'application/json' },
         },
       )
-      .catch(error => process.env.NODE_ENV === 'development' && console.error(`can not post tos api, error:${error}`))
+      .catch(
+        error =>
+          process.env.NODE_ENV === 'development' &&
+          console.error(`can not post kolable-server tos api, error:${error}`),
+      )
       .finally(() => {
         Cookies.set(
           'tos',
