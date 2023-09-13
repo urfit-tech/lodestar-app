@@ -124,7 +124,16 @@ const DefaultLayout: React.FC<{
           },
           headers: { 'Content-Type': 'application/json' },
         })
-        .then(({ data }) => (data.code === 'SUCCESS' ? null : setIsTOSModalVisible(true)))
+        .then(({ data }) => {
+          ;(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') &&
+            console.log(JSON.stringify(data))
+          if (
+            data.code === 'SUCCESS' &&
+            data?.items &&
+            data.items.find((v: { result: boolean; terms: string }) => v.result === false)
+          )
+            setIsTOSModalVisible(true)
+        })
         .catch(
           error =>
             process.env.NODE_ENV === 'development' &&

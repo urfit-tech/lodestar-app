@@ -43,6 +43,10 @@ const TOSModal: React.VFC<{ onConfirm?: () => void }> = ({ onConfirm }) => {
           headers: { 'Content-Type': 'application/json' },
         },
       )
+      .then(({ data }) => {
+        ;(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') &&
+          console.log(JSON.stringify(data))
+      })
       .catch(
         error =>
           process.env.NODE_ENV === 'development' &&
