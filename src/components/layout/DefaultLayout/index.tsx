@@ -125,8 +125,7 @@ const DefaultLayout: React.FC<{
           headers: { 'Content-Type': 'application/json' },
         })
         .then(({ data }) => {
-          ;(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') &&
-            console.log(JSON.stringify(data))
+          process.env.NODE_ENV !== 'production' && console.log(JSON.stringify(data))
           if (
             data.code === 'SUCCESS' &&
             data?.items &&
