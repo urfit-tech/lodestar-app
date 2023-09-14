@@ -283,39 +283,36 @@ const ProgramPageContent: React.VFC = () => {
                 </Responsive.Desktop>
               ) : (
                 <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                  <div>
-                    <Responsive.Desktop>
-                      <ClassCouponBlock />
-                      {/* <ProgramInfoCard instructorId={instructorId} program={program} /> */}
-                      <StyledProgramInfoCard>
-                        <ProgramContentCountBlock program={program} />
-                      </StyledProgramInfoCard>
-                    </Responsive.Desktop>
+                  <Responsive.Desktop>
+                    <ClassCouponBlock />
+                    {/* <ProgramInfoCard instructorId={instructorId} program={program} /> */}
+                    <StyledProgramInfoCard>
+                      <ProgramContentCountBlock program={program} />
+                    </StyledProgramInfoCard>
+                  </Responsive.Desktop>
 
-                    {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
-                      <div
-                        id="subscription"
-                        className={`mb-5${isPlanListSticky ? ' programPlanSticky' : ''}`}
-                        ref={planListHeightRef}
-                      >
-                        {program.plans
-                          .filter(programPlan => programPlan.publishedAt)
-                          .map(programPlan => (
-                            <div key={programPlan.id} className="mb-3">
-                              <ProgramPlanCard
-                                programId={program.id}
-                                programPlan={programPlan}
-                                enrollmentCount={
-                                  programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)
-                                    ?.enrollmentCount
-                                }
-                                isProgramSoldOut={Boolean(program.isSoldOut)}
-                              />
-                            </div>
-                          ))}
-                      </div>
-                    )}
-                  </div>
+                  {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
+                    <div
+                      id="subscription"
+                      className={`mb-5${isPlanListSticky ? ' programPlanSticky' : ''}`}
+                      ref={planListHeightRef}
+                    >
+                      {program.plans
+                        .filter(programPlan => programPlan.publishedAt)
+                        .map(programPlan => (
+                          <div key={programPlan.id} className="mb-3">
+                            <ProgramPlanCard
+                              programId={program.id}
+                              programPlan={programPlan}
+                              enrollmentCount={
+                                programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)?.enrollmentCount
+                              }
+                              isProgramSoldOut={Boolean(program.isSoldOut)}
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  )}
                 </StyledIntroWrapper>
               )}
             </div>

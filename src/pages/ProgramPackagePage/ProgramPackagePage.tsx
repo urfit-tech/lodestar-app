@@ -4,16 +4,16 @@ import { BraftContent } from 'lodestar-app-element/src/components/common/StyledB
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { Resource, useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import React, { useEffect, useRef, useState } from 'react'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import ClassCouponBlock from '../../components/ClassCouponBlock'
 import CWLBreadcrumb from '../../components/common/CWLBreadcrumb'
 import Responsive from '../../components/common/Responsive'
-import { StringParam, useQueryParam } from 'use-query-params'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ProgramCollection from '../../components/package/ProgramCollection'
 import ProgramPackageBanner from '../../components/package/ProgramPackageBanner'
@@ -173,19 +173,18 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string; resourceC
                 <Responsive.Desktop>
                   <ClassCouponBlock />
                 </Responsive.Desktop>
-                {programPackageIntroduction.plans.map(programPackagePlan => (
-                  <div
-                    key={programPackagePlan.id}
-                    className={`${isPlanListSticky ? 'mb-4 programPackagePlanSticky' : 'mb-4'}`}
-                  >
-                    <ProgramPackagePlanCard
-                      programPackageId={programPackageId}
-                      {...programPackagePlan}
-                      loading={loadingProgramPackageIds}
-                      isEnrolled={enrolledProgramPackagePlanIds.includes(programPackagePlan.id)}
-                    />
-                  </div>
-                ))}
+                <div ref={planListHeightRef} className={`${isPlanListSticky ? 'programPackagePlanSticky' : ''}`}>
+                  {programPackageIntroduction.plans.map(programPackagePlan => (
+                    <div key={programPackagePlan.id} className={'mb-4'}>
+                      <ProgramPackagePlanCard
+                        programPackageId={programPackageId}
+                        {...programPackagePlan}
+                        loading={loadingProgramPackageIds}
+                        isEnrolled={enrolledProgramPackagePlanIds.includes(programPackagePlan.id)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </>
           ) : (
