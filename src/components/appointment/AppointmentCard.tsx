@@ -740,15 +740,24 @@ const useUpdateAppointmentPeriod = (orderProductId: string, options: { reschedul
         endedAt,
         data: {
           ...options,
-          rescheduleLog: [
-            ...options.rescheduleLog,
-            {
-              rescheduledAt: new Date(),
-              rescheduleMemberId: currentMemberId,
-              originScheduledDatetime: originStartedAt,
-              targetRescheduleDatetime: startedAt,
-            },
-          ],
+          rescheduleLog: options?.rescheduleLog
+            ? [
+                ...options.rescheduleLog,
+                {
+                  rescheduledAt: new Date(),
+                  rescheduleMemberId: currentMemberId,
+                  originScheduledDatetime: originStartedAt,
+                  targetRescheduleDatetime: startedAt,
+                },
+              ]
+            : [
+                {
+                  rescheduledAt: new Date(),
+                  rescheduleMemberId: currentMemberId,
+                  originScheduledDatetime: originStartedAt,
+                  targetRescheduleDatetime: startedAt,
+                },
+              ],
         },
       },
     })
