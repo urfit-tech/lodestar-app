@@ -127,8 +127,8 @@ const DefaultLayout: React.FC<{
         .then(({ data }) => {
           process.env.NODE_ENV !== 'production' && console.log(JSON.stringify(data))
           if (
-            data.code === 'SUCCESS' &&
-            data.data.items &&
+            data?.code === 'SUCCESS' &&
+            data?.data?.items &&
             data.data.items.find((v: { result: boolean; terms: string }) => v.result === false)
           )
             setIsTOSModalVisible(true)
