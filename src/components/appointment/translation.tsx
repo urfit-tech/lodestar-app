@@ -74,7 +74,8 @@ const appointmentMessages = {
   AppointmentItem: defineMessages({
     booked: { id: 'appointment.AppointmentItem.booked', defaultMessage: '已預約' },
     bookable: { id: 'appointment.AppointmentItem.bookable', defaultMessage: '可預約' },
-    isMeetingFull: { id: 'appointment.AppointmentItem.isMeetingFull', defaultMessage: '已無會議室' },
+    meetingIsFull: { id: 'appointment.AppointmentItem.meetingIsFull', defaultMessage: '已無會議室' },
+    closed: { id: 'appointment.AppointmentItem.closed', defaultMessage: '已關閉' },
   }),
 }
 

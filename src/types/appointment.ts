@@ -16,6 +16,7 @@ export type AppointmentPlan = {
   rescheduleAmount: number
   rescheduleType: ReservationType | null
   capacity: number
+  defaultMeetSystem: string
 }
 
 export type AppointmentPeriod = {

@@ -561,9 +561,11 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                 <StyledScheduleTitle>{moment(period.startedAt).format('YYYY-MM-DD(dd)')}</StyledScheduleTitle>
                 <AppointmentItem
                   id={period.id}
+                  appointmentPlanId={appointmentPlanId}
+                  appointmentPlanMeetType={appointmentPlan.defaultMeetSystem}
                   startedAt={period.startedAt}
-                  isEnrolled={period.currentMemberBooked}
-                  isExcluded={period.isBookedReachLimit || period.available}
+                  isEnrolled={period.currentMemberBooked || !period.available}
+                  isBookedReachLimit={period.isBookedReachLimit}
                   onClick={() =>
                     !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
                       ? setRescheduleAppointment({

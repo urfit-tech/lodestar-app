@@ -186,6 +186,10 @@ const AppointmentCoinModal: React.VFC<
                 </>
               ) : (
                 <AppointmentPeriodCollection
+                  appointmentPlanId={appointmentPlan.id}
+                  appointmentPlanMeetType={appointmentPlan.defaultMeetSystem}
+                  reservationAmount={appointmentPlan.reservationAmount}
+                  reservationType={appointmentPlan.reservationType}
                   appointmentPeriods={appointmentPlan.periods.filter(
                     period => moment(period.startedAt) > moment().endOf('isoWeek'),
                   )}

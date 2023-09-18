@@ -198,8 +198,9 @@ export const AppointmentPlanCollection: React.FC<{
               startedAt={selectedPeriod?.startedAt}
               renderTrigger={({ setVisible }) => (
                 <AppointmentPeriodCollection
+                  appointmentPlanId={appointmentPlan.id}
+                  appointmentPlanMeetType={appointmentPlan.defaultMeetSystem}
                   appointmentPeriods={appointmentPlan.periods}
-                  appointmentPlanCapacity={appointmentPlan.capacity}
                   reservationAmount={appointmentPlan.reservationAmount}
                   reservationType={appointmentPlan.reservationType}
                   onClick={period => {
@@ -231,8 +232,9 @@ export const AppointmentPlanCollection: React.FC<{
               defaultProductId={`AppointmentPlan_${appointmentPlan.id}`}
               renderTrigger={({ onOpen }) => (
                 <AppointmentPeriodCollection
+                  appointmentPlanId={appointmentPlan.id}
+                  appointmentPlanMeetType={appointmentPlan.defaultMeetSystem}
                   appointmentPeriods={appointmentPlan.periods}
-                  appointmentPlanCapacity={appointmentPlan.capacity}
                   reservationAmount={appointmentPlan.reservationAmount}
                   reservationType={appointmentPlan.reservationType}
                   onClick={period => {

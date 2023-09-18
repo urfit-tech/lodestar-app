@@ -17,12 +17,22 @@ const StyledScheduleTitle = styled.h3`
 `
 
 const AppointmentPeriodCollection: React.VFC<{
+  appointmentPlanId: string
+  appointmentPlanMeetType: string
   appointmentPeriods: AppointmentPeriod[]
   reservationType?: ReservationType
   reservationAmount?: number
   diffPlanBookedTimes?: String[]
   onClick: (period: AppointmentPeriod) => void
-}> = ({ appointmentPeriods, reservationType, reservationAmount, diffPlanBookedTimes, onClick }) => {
+}> = ({
+  appointmentPlanId,
+  appointmentPlanMeetType,
+  appointmentPeriods,
+  reservationType,
+  reservationAmount,
+  diffPlanBookedTimes,
+  onClick,
+}) => {
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isAuthenticated } = useAuth()
 
@@ -48,22 +58,30 @@ const AppointmentPeriodCollection: React.VFC<{
       {Object.values(periods).map(periods => (
         <div key={periods[0].id} className="mb-4">
           <StyledScheduleTitle>{moment(periods[0].startedAt).format('YYYY-MM-DD(dd)')}</StyledScheduleTitle>
-
+          {appointmentPlanId}
           <div className="d-flex flex-wrap justify-content-start">
             {periods.map(period => {
               const ItemElem = (
-                <AppointmentItem
-                  key={period.id}
-                  id={period.id}
-                  startedAt={period.startedAt}
-                  isEnrolled={period.currentMemberBooked}
-                  isExcluded={period.isBookedReachLimit || !period.available}
-                  onClick={() =>
-                    !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
-                      ? onClick(period)
-                      : null
-                  }
-                />
+                <>
+                  {`isBookedReachLimit${period.isBookedReachLimit}`}
+                  <br />
+                  {`available ${period.available}`}
+                  <AppointmentItem
+                    key={period.id}
+                    id={period.id}
+                    appointmentPlanId={appointmentPlanId}
+                    appointmentPlanMeetType={appointmentPlanMeetType}
+                    startedAt={period.startedAt}
+                    isEnrolled={period.currentMemberBooked || period.isBookedReachLimit}
+                    isExcluded={!period.available}
+                    isBookedReachLimit={period.isBookedReachLimit}
+                    onClick={() =>
+                      !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
+                        ? onClick(period)
+                        : null
+                    }
+                  />
+                </>
               )
 
               return isAuthenticated && !period.currentMemberBooked ? (
