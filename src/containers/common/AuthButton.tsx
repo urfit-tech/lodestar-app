@@ -44,9 +44,11 @@ const AuthButton: React.VFC = () => {
 
       <Responsive.Desktop>
         {renderAuthButton?.(setVisible) || (
-          <Button className="ml-2" onClick={handleClick}>
-            {formatMessage(commonMessages.button.loginRegister)}
-          </Button>
+          <a href="/#">
+            <Button className="ml-2" onClick={handleClick}>
+              {formatMessage(commonMessages.button.loginRegister)}
+            </Button>
+          </a>
         )}
       </Responsive.Desktop>
     </>
