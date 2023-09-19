@@ -62,26 +62,21 @@ const AppointmentPeriodCollection: React.VFC<{
           <div className="d-flex flex-wrap justify-content-start">
             {periods.map(period => {
               const ItemElem = (
-                <>
-                  {`isBookedReachLimit${period.isBookedReachLimit}`}
-                  <br />
-                  {`available ${period.available}`}
-                  <AppointmentItem
-                    key={period.id}
-                    id={period.id}
-                    appointmentPlanId={appointmentPlanId}
-                    appointmentPlanMeetType={appointmentPlanMeetType}
-                    startedAt={period.startedAt}
-                    isEnrolled={period.currentMemberBooked || period.isBookedReachLimit}
-                    isExcluded={!period.available}
-                    isBookedReachLimit={period.isBookedReachLimit}
-                    onClick={() =>
-                      !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
-                        ? onClick(period)
-                        : null
-                    }
-                  />
-                </>
+                <AppointmentItem
+                  key={period.id}
+                  id={period.id}
+                  appointmentPlanId={appointmentPlanId}
+                  appointmentPlanMeetType={appointmentPlanMeetType}
+                  startedAt={period.startedAt}
+                  isEnrolled={period.currentMemberBooked || period.isBookedReachLimit}
+                  isExcluded={!period.available}
+                  isBookedReachLimit={period.isBookedReachLimit}
+                  onClick={() =>
+                    !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
+                      ? onClick(period)
+                      : null
+                  }
+                />
               )
 
               return isAuthenticated && !period.currentMemberBooked ? (
