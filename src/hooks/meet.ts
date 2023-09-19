@@ -6,6 +6,7 @@ export const GetMeetByAppointmentPlanAndPeriod = gql`
     $appId: String!
     $target: uuid!
     $startedAt: timestamptz!
+    $endedAt: timestamptz!
     $memberId: String!
   ) {
     meet(
@@ -13,6 +14,7 @@ export const GetMeetByAppointmentPlanAndPeriod = gql`
         app_id: { _eq: $appId }
         target: { _eq: $target }
         started_at: { _eq: $startedAt }
+        ended_at: { _eq: $endedAt }
         meet_members: { member_id: { _eq: $memberId } }
       }
     ) {

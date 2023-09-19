@@ -283,55 +283,56 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
 
   const handleAttend = async () => {
     let joinUrl
-    if (!currentMemberId) {
-      return
-    }
-    if (appointmentPlanPreview && appointmentPlanPreview.meetGenerationMethod === 'manual') {
-      joinUrl = orderProduct.options.joinUrl
+    if (!currentMemberId || !appointmentPlan) return
+    const { data } = await apolloClient.query<
+      hasura.GetMeetByAppointmentPlanAndPeriod,
+      hasura.GetMeetByAppointmentPlanAndPeriodVariables
+    >({
+      query: GetMeetByAppointmentPlanAndPeriod,
+      variables: {
+        appId,
+        target: appointmentPlanId,
+        startedAt: orderProduct.startedAt,
+        endedAt: orderProduct.endedAt,
+        memberId: currentMemberId,
+      },
+    })
+    if (data.meet.length !== 0 && data.meet[0].options?.joinUrl) {
+      joinUrl = data.meet[0].options.joinUrl
     } else if (enabledModules.meet_service && appointmentPlan?.defaultMeetSystem === 'zoom') {
-      const { data } = await apolloClient.query<
-        hasura.GetMeetByAppointmentPlanAndPeriod,
-        hasura.GetMeetByAppointmentPlanAndPeriodVariables
-      >({
-        query: GetMeetByAppointmentPlanAndPeriod,
-        variables: { appId, target: appointmentPlanId, startedAt: orderProduct.startedAt, memberId: currentMemberId },
-      })
-
-      if (data.meet.length !== 0 && data.meet[0].options?.joinUrl) {
-        joinUrl = data.meet[0].options.joinUrl
-      } else {
-        // create zoom meeting than get joinUrl
-        try {
-          const { data: createMeetData } = await axios.post(
-            `${process.env.KOLABLE_SERVER_ENDPOINT}/kolable/meets`,
-            {
-              hostMemberId: appointmentPlan.creator.id,
-              memberId: currentMemberId,
-              type: 'appointmentPlan',
-              target: appointmentPlan.id,
-              startedAt: orderProduct.startedAt,
-              endedAt: orderProduct.endedAt,
-              autoRecording: true,
-              service: 'zoom',
-              nbfAt: orderProduct.startedAt,
-              expAt: orderProduct.endedAt,
+      // create zoom meeting than get joinUrl
+      try {
+        const { data: createMeetData } = await axios.post(
+          `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/kolable/meets`,
+          {
+            memberId: currentMemberId,
+            startedAt: orderProduct.startedAt,
+            endedAt: orderProduct.endedAt,
+            autoRecording: true,
+            nbfAt: orderProduct.startedAt,
+            expAt: orderProduct.endedAt,
+            service: 'zoom',
+            target: appointmentPlan.id,
+            hostMemberId: appointmentPlan.creator.id,
+            type: 'appointmentPlan',
+          },
+          {
+            headers: {
+              'x-api-key': process.env.KOLABLE_SERVER_API_KEY,
+              authorization: `Bearer ${authToken}`,
             },
-            {
-              headers: {
-                'x-api-key': process.env.KOLABLE_SERVER_API_KEY,
-              },
-            },
-          )
-          joinUrl = createMeetData.data?.options?.joinUrl
-        } catch (error) {
-          handleError(error)
-        }
+          },
+        )
+        joinUrl = createMeetData.data?.options?.joinUrl
+      } catch (error) {
+        handleError(error)
       }
     }
+    // default jitsi
     if (currentMember && !joinUrl) {
       joinUrl = `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${currentMember?.name}", '_blank', 'noopener=yes,noreferrer=yes'`
     }
-    window.open(joinUrl)
+    if (joinUrl) window.open(joinUrl)
   }
 
   if (loadingOrderProduct) {
