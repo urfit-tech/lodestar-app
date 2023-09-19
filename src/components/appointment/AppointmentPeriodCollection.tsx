@@ -58,7 +58,6 @@ const AppointmentPeriodCollection: React.VFC<{
       {Object.values(periods).map(periods => (
         <div key={periods[0].id} className="mb-4">
           <StyledScheduleTitle>{moment(periods[0].startedAt).format('YYYY-MM-DD(dd)')}</StyledScheduleTitle>
-          {appointmentPlanId}
           <div className="d-flex flex-wrap justify-content-start">
             {periods.map(period => {
               const ItemElem = (

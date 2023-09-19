@@ -318,7 +318,6 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
           },
           {
             headers: {
-              'x-api-key': process.env.KOLABLE_SERVER_API_KEY,
               authorization: `Bearer ${authToken}`,
             },
           },
