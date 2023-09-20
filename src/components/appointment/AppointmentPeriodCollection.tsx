@@ -30,6 +30,12 @@ const AppointmentPeriodCollection: React.VFC<{
     period => moment(period.startedAt).format('YYYY-MM-DD(dd)'),
     appointmentPeriods
       .filter(v => v.available)
+      .filter(
+        v =>
+          !diffPlanBookedTimes?.some(
+            diffPlanBookedTime => moment(v.startedAt).format('YYYY-MM-DD HH:mm').toString() === diffPlanBookedTime,
+          ),
+      )
       .filter(v =>
         reservationType && reservationAmount && reservationAmount !== 0
           ? moment(v.startedAt).subtract(reservationType, reservationAmount).toDate() > moment().toDate()
@@ -44,27 +50,41 @@ const AppointmentPeriodCollection: React.VFC<{
           <StyledScheduleTitle>{moment(periods[0].startedAt).format('YYYY-MM-DD(dd)')}</StyledScheduleTitle>
 
           <div className="d-flex flex-wrap justify-content-start">
-            {periods.map(period => (
-              <AppointmentItem
-                key={period.id}
-                id={period.id}
-                startedAt={period.startedAt}
-                isEnrolled={period.currentMemberBooked}
-                isExcluded={period.isBookedReachLimit || !period.available}
-                onClick={() => {
-                  if (!isAuthenticated && setAuthModalVisible) {
-                    setAuthModalVisible(true)
-                  } else if (
-                    !period.currentMemberBooked &&
-                    !period.isBookedReachLimit &&
-                    period.available &&
-                    isAuthenticated
-                  ) {
-                    onClick(period)
+            {periods.map(period => {
+              const ItemElem = (
+                <AppointmentItem
+                  key={period.id}
+                  id={period.id}
+                  startedAt={period.startedAt}
+                  isEnrolled={period.currentMemberBooked}
+                  isExcluded={period.isBookedReachLimit || !period.available}
+                  onClick={() =>
+                    !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
+                      ? onClick(period)
+                      : null
                   }
-                }}
-              />
-            ))}
+                />
+              )
+
+              return isAuthenticated && !period.currentMemberBooked ? (
+                <div key={period.id} onClick={() => onClick && onClick(period)}>
+                  {ItemElem}
+                </div>
+              ) : isAuthenticated && period.currentMemberBooked ? (
+                <div
+                  key={period.id}
+                  onClick={() => {
+                    return
+                  }}
+                >
+                  {ItemElem}
+                </div>
+              ) : (
+                <div key={period.id} onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
+                  {ItemElem}
+                </div>
+              )
+            })}
           </div>
         </div>
       ))}
