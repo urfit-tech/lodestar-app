@@ -278,7 +278,6 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       periodEndedAt: null,
       appointmentPlanId: '',
     })
-    setRescheduleModalVisible(true)
   }
 
   if (loadingOrderProduct) {
@@ -565,17 +564,16 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                   startedAt={period.startedAt}
                   isEnrolled={period.currentMemberBooked}
                   isExcluded={period.isBookedReachLimit || period.available}
-                  onClick={() => {
-                    if (!period.currentMemberBooked && !period.isBookedReachLimit) {
-                      setRescheduleAppointment({
-                        rescheduleAppointment: true,
-                        periodStartedAt: period.startedAt,
-                        periodEndedAt: period.endedAt,
-                        appointmentPlanId: appointmentPlanId,
-                      })
-                      setRescheduleModalVisible(false)
-                    }
-                  }}
+                  onClick={() =>
+                    !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
+                      ? setRescheduleAppointment({
+                          rescheduleAppointment: true,
+                          periodStartedAt: period.startedAt,
+                          periodEndedAt: period.endedAt,
+                          appointmentPlanId: appointmentPlanId,
+                        })
+                      : null
+                  }
                 />
               </div>
             ))}
