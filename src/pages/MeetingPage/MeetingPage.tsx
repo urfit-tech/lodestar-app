@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { Badge, Button, Checkbox, CheckboxGroup, FormControl, FormLabel, Heading, Input, Stack } from '@chakra-ui/react'
+import axios from 'axios'
 import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -61,7 +62,7 @@ const MeetingPage = () => {
     return <NotFoundPage />
   }
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = e => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
     setIsSubmitting(true)
     e.preventDefault()
     const formEntries = Array.from(new FormData(e.currentTarget).entries())
@@ -80,47 +81,49 @@ const MeetingPage = () => {
     }
 
     // This API includes an update event
-    fetch(process.env.REACT_APP_API_BASE_ROOT + '/sys/create-lead', {
-      method: 'post',
-      body: JSON.stringify({
-        phone,
-        email,
-        name,
-        managerUsername,
-        taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
-        categoryNames: fields,
-        properties: [
-          { name: '介紹人', value: referal },
-          { name: '名單分級', value: 'SSR' },
-          { name: '聯盟來源', value: utm.utm_source || '' },
-          { name: '聯盟會員編號', value: utm.utm_id || '' },
-          { name: '聯盟成交編號', value: utm.utm_term || '' },
-          { name: '廣告素材', value: customMeetingAdProperty },
-          {
-            name: '行銷活動',
-            value: customMeetingMarketingActivitiesProperty,
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_BASE_ROOT}/sys/create-lead`,
+        {
+          phone,
+          email,
+          name,
+          managerUsername,
+          taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
+          categoryNames: fields,
+          properties: [
+            { name: '介紹人', value: referal },
+            { name: '名單分級', value: 'SSR' },
+            { name: '聯盟來源', value: utm.utm_source || '' },
+            { name: '聯盟會員編號', value: utm.utm_id || '' },
+            { name: '聯盟成交編號', value: utm.utm_term || '' },
+            { name: '廣告素材', value: customMeetingAdProperty },
+            {
+              name: '行銷活動',
+              value: customMeetingMarketingActivitiesProperty,
+            },
+            ...meetQueryObject,
+          ],
+        },
+        {
+          withCredentials: true, // To include credentials in the request
+          headers: {
+            'Content-Type': 'application/json',
           },
-          ...meetQueryObject,
-        ],
-      }),
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(({ code, message }: { code: string; message: string }) => {
-        if (code === 'SUCCESS') {
-          Cookies.remove('utm')
-          alert('已成功預約專屬諮詢！')
-        } else {
-          alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
-        }
-      })
-      .finally(() => {
-        setIsSubmitting(false)
-        window.location.reload()
-      })
+        },
+      )
+      const { code, message } = res.data
+
+      if (code === 'SUCCESS') {
+        Cookies.remove('utm')
+        alert('已成功預約專屬諮詢！')
+      } else {
+        alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
+      }
+    } finally {
+      setIsSubmitting(false)
+      window.location.reload()
+    }
   }
 
   return (
