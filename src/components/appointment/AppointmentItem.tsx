@@ -62,6 +62,26 @@ const AppointmentItem: React.VFC<{
 
   const variant = isEnrolled ? 'booked' : isExcluded ? 'closed' : isBookedReachLimit ? 'meetingFull' : 'default'
 
+  // 可預約
+  //    會議室還沒滿
+  //      appointment_plan capacity !== -1
+  //      1,2 擇一
+  //      1. appointment_plan capacity 的數量大於 appointment_period booked
+  //      2. meet target 是 appointment_plan 的 id 且 meet_member 的數量小於 appointment_plan capacity
+  //    他沒預約過
+  //      appointment_plan_enrollment
+  //    這個老師同時段其他的沒有被預約
+  //      抓 meet 中的 host_member_id 為老師, 且沒有此時間的預約
+  //    假如是 zoom 的話, service 額度要夠, meet 有 service_id
+  //
+  // 已關閉
+  //   appointment_schedule -> excludes -> 陣列內的時間會等於 startedAt
+  // 會議室已滿
+  //   appointment_plan capacity !== -1 且
+  //      1,2 擇一
+  //    1. appointment_plan capacity 的數量小於 appointment_period booked
+  //    2. meet target 是 appointment_plan 的 id 且 meet_member 的數量大於等於 appointment_plan capacity
+
   return (
     <StyledItemWrapper variant={variant} onClick={onClick}>
       <StyledItemTitle>
