@@ -49,7 +49,8 @@ const CWLBreadcrumb: React.VFC<{
     const categoryLinks = programs?.subNavs.map((subNav: any) => {
       return { label: subNav.label, url: subNav.href }
     })
-    const programCategory = program.categories[0].name
+
+    const programCategory = program.categories[0]?.name
     const matchCategory = categoryLinks.find((categoryLink: any) => categoryLink.label === programCategory)
 
     breadcrumbConfig.programs = {
