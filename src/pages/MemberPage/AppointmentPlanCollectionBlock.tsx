@@ -21,7 +21,7 @@ const AppointmentPlanCollectionBlock: React.VFC<{ memberId: string }> = ({ membe
       <List>
         {enrolledAppointments.map(appointmentEnrollment => (
           <div key={appointmentEnrollment.orderProductId} className="mb-4">
-            <AppointmentCard {...appointmentEnrollment} onRefetch={refetchEnrolledAppointments} />
+            <AppointmentCard {...appointmentEnrollment} memberId={memberId} onRefetch={refetchEnrolledAppointments} />
           </div>
         ))}
       </List>

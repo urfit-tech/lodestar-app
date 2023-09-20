@@ -86,11 +86,11 @@ export const NavLinks: React.VFC = () => {
         .filter(nav => nav.block === 'footer' && nav.locale === currentLocale)
         .map(nav =>
           nav.external ? (
-            <StyledNavAnchor key={nav.label} href={nav.href} target="_blank" rel="noopener noreferrer">
+            <StyledNavAnchor key={nav.id} href={nav.href} target="_blank" rel="noopener noreferrer">
               {nav.label}
             </StyledNavAnchor>
           ) : (
-            <StyledNavLink key={nav.label} to={nav.href}>
+            <StyledNavLink key={nav.id} to={nav.href}>
               {nav.label}
             </StyledNavLink>
           ),
@@ -106,7 +106,7 @@ export const SocialLinks: React.VFC = () => {
       {navs
         .filter(nav => nav.block === 'social_media')
         .map(socialLink => (
-          <StyledSocialAnchor key={socialLink.label} href={socialLink.href} target="_blank" rel="noopener noreferrer">
+          <StyledSocialAnchor key={socialLink.id} href={socialLink.href} target="_blank" rel="noopener noreferrer">
             {socialLink.label === 'facebook' && <Icon as={FacebookIcon} />}
             {socialLink.label === 'group' && <Icon as={GroupIcon} />}
             {socialLink.label === 'youtube' && <Icon as={YoutubeIcon} />}
