@@ -21,8 +21,6 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
           reservation_amount
           reservation_type
           capacity
-          reschedule_amount
-          reschedule_type
           currency {
             id
             label
@@ -33,7 +31,6 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
             member_id
             appointment_plan_id
             started_at
-            canceled_at
           }
           appointment_periods(where: { started_at: { _gt: $startedAt } }, order_by: { started_at: asc }) {
             started_at
@@ -67,21 +64,17 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
             unit: appointmentPlan.currency.unit,
             name: appointmentPlan.currency.name,
           },
-          rescheduleAmount: appointmentPlan.reschedule_amount,
-          rescheduleType: appointmentPlan.reschedule_type as ReservationType,
           periods: appointmentPlan.appointment_periods.map(period => ({
             id: `${period.started_at}`,
             startedAt: new Date(period.started_at),
             endedAt: new Date(period.ended_at),
             booked: period.booked,
             available: !!period.available,
-            isBookedReachLimit: appointmentPlan.capacity !== -1 && period.booked >= appointmentPlan.capacity,
             currentMemberBooked: appointmentPlan.appointment_enrollments.some(
               enrollment =>
                 enrollment.member_id === currentMemberId &&
                 enrollment.appointment_plan_id === appointmentPlan.id &&
-                enrollment.started_at === period.started_at &&
-                !enrollment.canceled_at,
+                enrollment.started_at === period.started_at,
             ),
           })),
           isPrivate: appointmentPlan.is_private,
@@ -108,8 +101,6 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           duration
           price
           capacity
-          reschedule_amount
-          reschedule_type
           support_locales
           currency {
             id
@@ -121,7 +112,6 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
             member_id
             appointment_plan_id
             started_at
-            canceled_at
           }
           appointment_periods(
             where: { available: { _eq: true }, started_at: { _gt: $startedAt } }
@@ -172,8 +162,6 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           phone: null,
           supportLocales: data.appointment_plan_by_pk.support_locales,
           capacity: data.appointment_plan_by_pk.capacity,
-          rescheduleAmount: data.appointment_plan_by_pk?.reschedule_amount,
-          rescheduleType: (data.appointment_plan_by_pk.reschedule_type as ReservationType) || null,
           currency: {
             id: data.appointment_plan_by_pk.currency.id,
             label: data.appointment_plan_by_pk.currency.label,
@@ -185,15 +173,11 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
             startedAt: new Date(period.started_at),
             endedAt: new Date(period.ended_at),
             booked: period.booked,
-            isBookedReachLimit: data.appointment_plan_by_pk?.capacity
-              ? data.appointment_plan_by_pk?.capacity !== -1 && period.booked >= data.appointment_plan_by_pk?.capacity
-              : false,
             currentMemberBooked: data.appointment_plan_by_pk?.appointment_enrollments.some(
               enrollment =>
                 enrollment.member_id === currentMemberId &&
                 enrollment.appointment_plan_id === data.appointment_plan_by_pk?.id &&
-                enrollment.started_at === period.started_at &&
-                !enrollment.canceled_at,
+                enrollment.started_at === period.started_at,
             ),
           })),
           creator: {

@@ -13,7 +13,7 @@ const StyledItemWrapper = styled.div<{ variant?: 'default' | 'excluded' | 'disab
   border: solid 1px ${props => (props.variant === 'disabled' ? 'var(--gray-light)' : 'var(--gray-dark)')};
   color: ${props => (props.variant === 'disabled' ? 'var(--gray-dark)' : 'var(--gray-darker)')};
   border-radius: 4px;
-  cursor: ${props => (props.variant !== 'default' ? 'not-allowed' : 'pointer')};
+  cursor: ${props => (props.variant === 'disabled' ? 'not-allowed' : 'pointer')};
 
   ${props =>
     props.variant === 'excluded'
@@ -50,12 +50,11 @@ const AppointmentItem: React.VFC<{
   startedAt: Date
   isEnrolled?: boolean
   isExcluded?: boolean
-  onClick: () => void
-}> = ({ startedAt, isEnrolled, isExcluded, onClick }) => {
+}> = ({ id, startedAt, isEnrolled, isExcluded }) => {
   const { formatMessage } = useIntl()
 
   return (
-    <StyledItemWrapper variant={isEnrolled ? 'disabled' : isExcluded ? 'excluded' : 'default'} onClick={onClick}>
+    <StyledItemWrapper variant={isEnrolled ? 'disabled' : isExcluded ? 'excluded' : 'default'}>
       <StyledItemTitle>
         {startedAt.getHours().toString().padStart(2, '0')}:{startedAt.getMinutes().toString().padStart(2, '0')}
       </StyledItemTitle>

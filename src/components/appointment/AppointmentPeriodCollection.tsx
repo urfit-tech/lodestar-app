@@ -21,7 +21,7 @@ const AppointmentPeriodCollection: React.VFC<{
   reservationType?: ReservationType
   reservationAmount?: number
   diffPlanBookedTimes?: String[]
-  onClick: (period: AppointmentPeriod) => void
+  onClick?: (period: AppointmentPeriod) => void
 }> = ({ appointmentPeriods, reservationType, reservationAmount, diffPlanBookedTimes, onClick }) => {
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isAuthenticated } = useAuth()
@@ -57,12 +57,6 @@ const AppointmentPeriodCollection: React.VFC<{
                   id={period.id}
                   startedAt={period.startedAt}
                   isEnrolled={period.currentMemberBooked}
-                  isExcluded={period.isBookedReachLimit || !period.available}
-                  onClick={() =>
-                    !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
-                      ? onClick(period)
-                      : null
-                  }
                 />
               )
 

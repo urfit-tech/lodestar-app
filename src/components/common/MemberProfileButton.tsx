@@ -128,7 +128,7 @@ export const CustomNavLinks: React.VFC = () => {
       {navs
         .filter(nav => nav.block === 'header')
         .map(nav => {
-          return <CollapseNavLinks key={nav.id} nav={nav} />
+          return <CollapseNavLinks nav={nav} />
         })}
     </>
   )

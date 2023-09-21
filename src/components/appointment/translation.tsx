@@ -9,10 +9,6 @@ const appointmentMessages = {
     finished: { id: 'appointment.*.finished', defaultMessage: '已結束' },
   }),
   AppointmentCard: defineMessages({
-    periodDurationAtMost: {
-      id: 'appointment.text.periodDurationAtMost',
-      defaultMessage: '諮詢一次 {duration} 分鐘為限',
-    },
     attend: { id: 'appointment.AppointmentCard.attend', defaultMessage: '進入會議' },
     toCalendar: { id: 'appointment.AppointmentCard.toCalendar', defaultMessage: '加入行事曆' },
     appointmentIssue: { id: 'appointment.AppointmentCard.appointmentIssue', defaultMessage: '提問單' },
@@ -27,37 +23,6 @@ const appointmentMessages = {
       defaultMessage: '已於 {time} 取消預約',
     },
     cancelAppointment: { id: 'appointment.AppointmentCard.cancelAppointment', defaultMessage: '取消預約' },
-    rescheduleAppointment: {
-      id: 'appointment.AppointmentCard.rescheduleAppointment',
-      defaultMessage: '更換時段',
-    },
-    notRescheduleAppointmentPeriod: {
-      id: 'appointment.AppointmentCard.notRescheduleAppointmentPeriod',
-      defaultMessage: '無可更換的時段',
-    },
-    rescheduleOriginScheduled: {
-      id: 'appointment.AppointmentCard.rescheduleOriginScheduled',
-      defaultMessage: '原時段',
-    },
-    rescheduled: {
-      id: 'appointment.AppointmentCard.rescheduled',
-      defaultMessage: '更換為：',
-    },
-    rescheduleSuccess: {
-      id: 'appointment.AppointmentCard.rescheduleSuccess',
-      defaultMessage: '更換成功',
-    },
-    rescheduleSuccessAppointmentPlanTitle: {
-      id: 'appointment.AppointmentCard.rescheduleSuccessAppointmentPlanTitle',
-      defaultMessage: '{title} 已更換時段為',
-    },
-    rescheduleAppointmentPlanTitle: {
-      id: 'appointment.AppointmentCard.rescheduleAppointmentPlanTitle',
-      defaultMessage: '更換時段：{title}',
-    },
-    rescheduleConfirm: { id: 'appointment.AppointmentCard.rescheduleConfirm', defaultMessage: '確定更換' },
-    rescheduleCancel: { id: 'appointment.AppointmentCard.rescheduleCancel', defaultMessage: '重選時段' },
-    confirm: { id: 'appointment.AppointmentCard.confirm', defaultMessage: '好' },
     confirmCancelAlert: { id: 'appointment.AppointmentCard.confirmCancelAlert', defaultMessage: '確定要取消預約嗎？' },
     confirmCancelNotation: {
       id: 'appointment.AppointmentCard.confirmCancelNotation',
