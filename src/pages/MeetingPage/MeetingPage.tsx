@@ -35,7 +35,7 @@ const MeetingPage = () => {
   const meetsQueryArray = JSON.parse(settings['custom'])?.['meets'] || {}
   const meetQueryObject = meetsQueryArray.map((meet: { key: string; name: string }) => ({
     name: meet.name,
-    value: query[meet.key],
+    value: query[meet.key] || '',
   }))
 
   const customAdProperty = (propertyName: string) => {
@@ -120,6 +120,8 @@ const MeetingPage = () => {
       } else {
         alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
       }
+    } catch (error) {
+      console.log(error)
     } finally {
       setIsSubmitting(false)
       window.location.reload()
