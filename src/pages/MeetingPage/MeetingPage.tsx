@@ -32,7 +32,7 @@ const MeetingPage = () => {
   const queryUrl = window.location.search
   const { query } = queryString.parseUrl(queryUrl)
 
-  const meetsQueryArray = JSON.parse(settings['custom'])?.['meets'] || {}
+  const meetsQueryArray = JSON.parse(settings['custom'])?.['meets'] || []
   const meetQueryObject = meetsQueryArray.map((meet: { key: string; name: string }) => ({
     name: meet.name,
     value: query[meet.key] || '',
