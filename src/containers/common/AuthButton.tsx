@@ -16,6 +16,7 @@ const AuthButton: React.VFC = () => {
 
   const handleClick = () => {
     authModal.open(setVisible)
+    window.history.pushState(null, '', '#')
   }
 
   return (
@@ -44,11 +45,9 @@ const AuthButton: React.VFC = () => {
 
       <Responsive.Desktop>
         {renderAuthButton?.(setVisible) || (
-          <a href="#">
-            <Button className="ml-2" onClick={handleClick}>
-              {formatMessage(commonMessages.button.loginRegister)}
-            </Button>
-          </a>
+          <Button className="ml-2" onClick={handleClick}>
+            {formatMessage(commonMessages.button.loginRegister)}
+          </Button>
         )}
       </Responsive.Desktop>
     </>
