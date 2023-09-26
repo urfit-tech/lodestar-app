@@ -1,5 +1,6 @@
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
+import dayjs from 'dayjs'
 import { groupBy } from 'ramda'
 import React, { useContext } from 'react'
 import styled from 'styled-components'
@@ -35,21 +36,13 @@ const AppointmentPeriodCollection: React.VFC<{
   const { services } = useService()
 
   const periods = groupBy(
-    period => moment(period.startedAt).format('YYYY-MM-DD(dd)'),
-    appointmentPeriods
-      .filter(v => v.available)
-      .filter(
-        v =>
-          !diffPlanBookedTimes?.some(
-            diffPlanBookedTime => moment(v.startedAt).format('YYYY-MM-DD HH:mm').toString() === diffPlanBookedTime,
-          ),
-      )
-      .filter(v =>
-        appointmentPlan.reservationType && appointmentPlan.reservationAmount && appointmentPlan.reservationAmount !== 0
-          ? moment(v.startedAt).subtract(appointmentPlan.reservationType, appointmentPlan.reservationAmount).toDate() >
-            moment().toDate()
-          : v,
-      ),
+    period => dayjs(period.startedAt).format('YYYY-MM-DD(dd)'),
+    appointmentPeriods.filter(v =>
+      appointmentPlan.reservationType && appointmentPlan.reservationAmount && appointmentPlan.reservationAmount !== 0
+        ? dayjs(v.startedAt).subtract(appointmentPlan.reservationAmount, appointmentPlan.reservationType).toDate() >
+          dayjs().toDate()
+        : v,
+    ),
   )
 
   return (
