@@ -69,8 +69,9 @@ const StyledTimeStandardBlock = styled.div`
 `
 
 const AppointmentCollectionTabs: React.VFC<{
+  creatorId: string
   appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] })[]
-}> = ({ appointmentPlans }) => {
+}> = ({ creatorId, appointmentPlans }) => {
   const { formatMessage } = useIntl()
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string | null>(appointmentPlans[0].id)
   const { search } = useLocation()
@@ -145,6 +146,7 @@ const AppointmentCollectionTabs: React.VFC<{
       </div>
 
       <AppointmentPlanCollection
+        creatorId={creatorId}
         appointmentPlans={appointmentPlans
           .filter(v =>
             appointmentPlanId ? v.id === appointmentPlanId || v.isPrivate === false : v.isPrivate === false,
@@ -158,8 +160,9 @@ const AppointmentCollectionTabs: React.VFC<{
 }
 
 export const AppointmentPlanCollection: React.FC<{
+  creatorId: string
   appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] })[]
-}> = ({ appointmentPlans }) => {
+}> = ({ creatorId, appointmentPlans }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { isAuthenticated } = useAuth()
@@ -167,14 +170,6 @@ export const AppointmentPlanCollection: React.FC<{
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
 
   const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriod | null>(null)
-
-  const diffPlanBookedTimes = [
-    ...appointmentPlans.map(appointmentPlan =>
-      appointmentPlan.periods
-        .filter(period => Boolean(period.booked >= appointmentPlan.capacity && appointmentPlan.capacity !== -1))
-        .map(v => moment(v.startedAt).format('YYYY-MM-DD HH:mm')),
-    ),
-  ].flat(1)
 
   const { resourceCollection } = useResourceCollection(
     appId ? appointmentPlans.map(appointmentPlan => `${appId}:appointment_plan:${appointmentPlan.id}`) : [],
@@ -206,9 +201,15 @@ export const AppointmentPlanCollection: React.FC<{
               startedAt={selectedPeriod?.startedAt}
               renderTrigger={({ setVisible }) => (
                 <AppointmentPeriodCollection
+                  creatorId={creatorId}
+                  appointmentPlan={{
+                    id: appointmentPlan.id,
+                    defaultMeetGateway: appointmentPlan.defaultMeetGateway,
+                    reservationType: appointmentPlan.rescheduleType,
+                    reservationAmount: appointmentPlan.rescheduleAmount,
+                    capacity: appointmentPlan.capacity,
+                  }}
                   appointmentPeriods={appointmentPlan.periods}
-                  reservationAmount={appointmentPlan.reservationAmount}
-                  reservationType={appointmentPlan.reservationType}
                   onClick={period => {
                     if (!isAuthenticated) {
                       setAuthModalVisible?.(true)
@@ -230,7 +231,6 @@ export const AppointmentPlanCollection: React.FC<{
                       resource && tracking.click(resource, { position: idx + 1 })
                     }
                   }}
-                  diffPlanBookedTimes={diffPlanBookedTimes}
                 />
               )}
             />
@@ -239,9 +239,15 @@ export const AppointmentPlanCollection: React.FC<{
               defaultProductId={`AppointmentPlan_${appointmentPlan.id}`}
               renderTrigger={({ onOpen }) => (
                 <AppointmentPeriodCollection
+                  creatorId={creatorId}
+                  appointmentPlan={{
+                    id: appointmentPlan.id,
+                    defaultMeetGateway: appointmentPlan.defaultMeetGateway,
+                    reservationType: appointmentPlan.rescheduleType,
+                    reservationAmount: appointmentPlan.rescheduleAmount,
+                    capacity: appointmentPlan.capacity,
+                  }}
                   appointmentPeriods={appointmentPlan.periods}
-                  reservationAmount={appointmentPlan.reservationAmount}
-                  reservationType={appointmentPlan.reservationType}
                   onClick={period => {
                     if (!isAuthenticated) {
                       setAuthModalVisible?.(true)
@@ -263,7 +269,6 @@ export const AppointmentPlanCollection: React.FC<{
                       resource && tracking.click(resource, { position: idx + 1 })
                     }
                   }}
-                  diffPlanBookedTimes={diffPlanBookedTimes}
                 />
               )}
               startedAt={selectedPeriod?.startedAt}
