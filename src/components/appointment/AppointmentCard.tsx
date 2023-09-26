@@ -14,8 +14,10 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
-import { dateRangeFormatter } from '../../helpers'
+import { dateRangeFormatter, handleError } from '../../helpers'
 import { useAppointmentPlan, useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/appointment'
+import { GetMeetByTargetAndPeriod } from '../../hooks/meet'
+import { useService } from '../../hooks/service'
 import DefaultAvatar from '../../images/avatar.svg'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
@@ -128,16 +130,11 @@ type AppointmentCardProps = FormComponentProps & {
 }
 
 type AppointmentCardCreatorBlockProps = {
-  creator: {
-    avatarUrl: string | null
-    name: string | null
-  }
-  appointmentPlan: AppointmentPlan | null
+  appointmentPlan: (AppointmentPlan & { creator: { id: string; name: string | null; avatarUrl: string | null } }) | null
   loadingAppointmentPlan: boolean
 }
 
 const AppointmentCardCreatorBlock: React.FC<AppointmentCardCreatorBlockProps> = ({
-  creator,
   appointmentPlan,
   loadingAppointmentPlan,
 }) => {
@@ -150,13 +147,13 @@ const AppointmentCardCreatorBlock: React.FC<AppointmentCardCreatorBlockProps> = 
           <CustomRatioImage
             width="5rem"
             ratio={1}
-            src={creator.avatarUrl || DefaultAvatar}
+            src={appointmentPlan?.creator.avatarUrl || DefaultAvatar}
             shape="circle"
             className="mr-3"
           />
         </div>
         <div className="flex-grow-1">
-          <StyledTitle className="mb-1">{creator.name}</StyledTitle>
+          <StyledTitle className="mb-1">{appointmentPlan?.creator.name}</StyledTitle>
           <StyledMeta>
             {formatMessage(appointmentMessages.AppointmentCard.periodDurationAtMost, {
               duration: appointmentPlan?.duration,
@@ -183,10 +180,10 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
   onRefetch,
   form,
 }) => {
+  const apolloClient = useApolloClient()
   const { id: appId, enabledModules } = useApp()
   const { formatMessage } = useIntl()
-  const { authToken, currentMemberId } = useAuth()
-  const apolloClient = useApolloClient()
+  const { authToken, currentMemberId, currentMember } = useAuth()
   const [issueModalVisible, setIssueModalVisible] = useState(false)
   const [cancelModalVisible, setCancelModalVisible] = useState(false)
   const [rescheduleModalVisible, setRescheduleModalVisible] = useState(false)
@@ -198,18 +195,16 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
     appointmentPlanId: string
   }>()
   const [loading, setLoading] = useState(false)
+  const [confirm, setConfirm] = useState(false)
+  const { services } = useService()
   const { loading: loadingOrderProduct, orderProduct, refetchOrderProduct } = useOrderProduct(orderProductId)
-  const { loading: loadingAppointmentPlanPreview, appointmentPlanPreview } =
-    useAppointmentPlanPreview(appointmentPlanId)
   const { loadingAppointmentPlan, appointmentPlan, refetchAppointmentPlan } = useAppointmentPlan(
     appointmentPlanId,
-    memberId || '',
+    memberId,
   )
-  const { loading: loadingCreator, creator } = useCreator(appointmentPlanPreview.creatorId)
   const updateAppointmentIssue = useUpdateAppointmentIssue(orderProductId, orderProduct.options)
   const cancelAppointment = useCancelAppointment(orderProductId, orderProduct.options)
   const updateAppointmentPeriod = useUpdateAppointmentPeriod(orderProductId, orderProduct.options)
-  const [confirm, setConfirm] = useState(false)
 
   const handleSubmit = () => {
     form.validateFields((errors, values) => {
@@ -267,7 +262,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
         )
       }
     } catch (error) {
-      console.log(error)
+      if (process.env.NODE_ENV === 'development') console.log(error)
     }
   }
 
@@ -278,6 +273,62 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       periodEndedAt: null,
       appointmentPlanId: '',
     })
+  }
+
+  const handleAttend = async () => {
+    let joinUrl
+    if (!currentMemberId) return message.error('無法獲取當前使用者 id')
+    if (!appointmentPlan) return message.error('無法獲取當前預約方案資訊')
+    if (!appointmentPlan.creator) return message.error('無法獲取當前方案的主持者資訊')
+    const { data } = await apolloClient.query<
+      hasura.GetMeetByTargetAndPeriod,
+      hasura.GetMeetByTargetAndPeriodVariables
+    >({
+      query: GetMeetByTargetAndPeriod,
+      variables: {
+        appId,
+        target: appointmentPlanId,
+        startedAt: orderProduct.startedAt,
+        endedAt: orderProduct.endedAt,
+        memberId: currentMemberId,
+      },
+    })
+
+    if (data.meet.length !== 0 && data.meet[0].options?.joinUrl) {
+      joinUrl = data.meet[0].options.joinUrl
+    } else if (enabledModules.meet_service && appointmentPlan.defaultMeetGateway === 'zoom') {
+      // create zoom meeting than get joinUrl
+      try {
+        const { data: createMeetData } = await axios.post(
+          `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/kolable/meets`,
+          {
+            memberId: currentMemberId,
+            startedAt: orderProduct.startedAt,
+            endedAt: orderProduct.endedAt,
+            autoRecording: true,
+            nbfAt: orderProduct.startedAt,
+            expAt: orderProduct.endedAt,
+            service: 'zoom',
+            target: appointmentPlanId,
+            hostMemberId: appointmentPlan.creator.id,
+            type: 'appointmentPlan',
+          },
+          {
+            headers: {
+              authorization: `Bearer ${authToken}`,
+            },
+          },
+        )
+        joinUrl = createMeetData.data?.options?.joinUrl
+      } catch (error) {
+        handleError(error)
+      }
+    }
+    // default jitsi
+    if (currentMember && !joinUrl) {
+      joinUrl = `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${currentMember?.name}", '_blank', 'noopener=yes,noreferrer=yes'`
+    }
+    if (joinUrl) window.open(joinUrl)
   }
 
   if (loadingOrderProduct) {
@@ -295,18 +346,23 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
     <StyledCard>
       <StyledInfo className="d-flex align-items-start" withMask={isCanceled}>
         <div className="flex-shrink-0 mr-4">
-          {loadingCreator ? (
+          {loadingAppointmentPlan ? (
             <SkeletonCircle size="3rem" />
-          ) : (
-            <CustomRatioImage width="3rem" ratio={1} src={creator.avatarUrl || DefaultAvatar} shape="circle" />
-          )}
+          ) : appointmentPlan?.creator ? (
+            <CustomRatioImage
+              width="3rem"
+              ratio={1}
+              src={appointmentPlan.creator.avatarUrl || DefaultAvatar}
+              shape="circle"
+            />
+          ) : null}
         </div>
         <div className="flex-grow-1">
-          {loadingAppointmentPlanPreview ? (
+          {loadingAppointmentPlan ? (
             <SkeletonText noOfLines={2} spacing="2" w="50%" mb="0.75rem" />
-          ) : (
-            <StyledTitle>{appointmentPlanPreview.title} </StyledTitle>
-          )}
+          ) : appointmentPlan ? (
+            <StyledTitle>{appointmentPlan.title} </StyledTitle>
+          ) : null}
           <StyledMetaBlock className="d-flex justify-content-start">
             <div className="mr-3">
               <Icon as={CalendarOIcon} className="mr-1" />
@@ -322,7 +378,13 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
             </div>
             <div className="d-none d-lg-block">
               <Icon as={UserOIcon} className="mr-1" />
-              <span>{loadingCreator ? <Spinner boxSize="12px" /> : creator.name}</span>
+              <span>
+                {loadingAppointmentPlan ? (
+                  <Spinner boxSize="12px" />
+                ) : appointmentPlan?.creator ? (
+                  appointmentPlan.creator.name
+                ) : null}
+              </span>
             </div>
           </StyledMetaBlock>
         </div>
@@ -346,7 +408,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
           </StyledCanceledText>
         ) : isFinished ? (
           <StyledBadge>{formatMessage(appointmentMessages['*'].finished)}</StyledBadge>
-        ) : (
+        ) : appointmentPlan ? (
           <>
             <Button
               variant="link"
@@ -356,7 +418,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
               onClick={() =>
                 window.open(
                   'https://calendar.google.com/calendar/event?action=TEMPLATE&text={{TITLE}}&dates={{STARTED_AT}}/{{ENDED_AT}}&details={{DETAILS}}'
-                    .replace('{{TITLE}}', appointmentPlanPreview.title)
+                    .replace('{{TITLE}}', appointmentPlan.title)
                     .replace('{{STARTED_AT}}', moment(orderProduct.startedAt).format('YYYYMMDDTHHmmss'))
                     .replace('{{ENDED_AT}}', moment(orderProduct.endedAt).format('YYYYMMDDTHHmmss'))
                     .replace('{{DETAILS}}', orderProduct.appointmentUrl),
@@ -366,64 +428,24 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
               {formatMessage(appointmentMessages.AppointmentCard.toCalendar)}
             </Button>
 
-            {loadingAppointmentPlanPreview ? (
+            {loadingAppointmentPlan ? (
               <SkeletonText noOfLines={1} spacing="4" w="90px" />
-            ) : !orderProduct.options?.joinUrl && appointmentPlanPreview.meetGenerationMethod === 'manual' ? (
+            ) : !orderProduct.options?.joinUrl && appointmentPlan.meetGenerationMethod === 'manual' ? (
               <StyledLabel>尚未設定連結</StyledLabel>
-            ) : (
+            ) : // dayjs(orderProduct.startedAt).diff(new Date(), 'minute') > 10 ? (
+            //   <StyledLabel>會議尚未開始</StyledLabel>
+            // ) :
+            currentMember ? (
               <Button
                 colorScheme="primary"
-                onClick={async () => {
-                  const joinUrl =
-                    orderProduct.options?.joinUrl ||
-                    `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${creator.name}", '_blank', 'noopener=yes,noreferrer=yes'`
-                  if (enabledModules.meet_service && !orderProduct.options?.joinUrl) {
-                    const { data } = await apolloClient.query<
-                      hasura.GET_APPOINTMENT_PERIOD_MEET_ID,
-                      hasura.GET_APPOINTMENT_PERIOD_MEET_IDVariables
-                    >({
-                      query: gql`
-                        query GET_APPOINTMENT_PERIOD_MEET_ID($orderProductId: uuid!) {
-                          order_product(where: { id: { _eq: $orderProductId } }) {
-                            id
-                            options
-                          }
-                        }
-                      `,
-                      variables: { orderProductId: orderProductId },
-                    })
-                    const meetId = data.order_product?.[0]?.options?.meetId
-
-                    try {
-                      await axios
-                        .post(
-                          `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/kolable/meets/${meetId}`,
-                          {
-                            role: 'guest',
-                            name: `${appId}-${currentMemberId}`,
-                          },
-                          {
-                            headers: {
-                              Authorization: `Bearer ${authToken}`,
-                              'x-api-key': 'kolable',
-                            },
-                          },
-                        )
-                        .then(({ data: { code, message, data } }) =>
-                          window.open(data.target, '_blank', 'noopener=yes,noreferrer=yes'),
-                        )
-                    } catch (error) {
-                      console.log(`get meets error: ${error}`)
-                      window.open(joinUrl)
-                    }
-                  } else {
-                    window.open(joinUrl)
-                  }
+                onClick={() => {
+                  handleAttend()
                 }}
+                disabled={false}
               >
                 {formatMessage(appointmentMessages.AppointmentCard.attend)}
               </Button>
-            )}
+            ) : null}
             <Dropdown
               overlay={
                 <CustomMenu>
@@ -442,7 +464,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
               <AntdIcon type="more" className="ml-3" />
             </Dropdown>
           </>
-        )}
+        ) : null}
       </StyledStatusBar>
 
       {/* issue modal */}
@@ -546,7 +568,6 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
         onCancel={() => setRescheduleModalVisible(false)}
       >
         <AppointmentCardCreatorBlock
-          creator={creator}
           loadingAppointmentPlan={loadingAppointmentPlan}
           appointmentPlan={appointmentPlan}
         />
@@ -560,10 +581,19 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
               <div key={period.id}>
                 <StyledScheduleTitle>{moment(period.startedAt).format('YYYY-MM-DD(dd)')}</StyledScheduleTitle>
                 <AppointmentItem
-                  id={period.id}
-                  startedAt={period.startedAt}
+                  creatorId={appointmentPlan.creator.id}
+                  appointmentPlan={{
+                    id: appointmentPlan.id,
+                    capacity: appointmentPlan.capacity,
+                    defaultMeetGateway: appointmentPlan.defaultMeetGateway,
+                  }}
+                  period={{
+                    startedAt: period.startedAt,
+                    endedAt: period.endedAt,
+                  }}
+                  services={services}
                   isEnrolled={period.currentMemberBooked}
-                  isExcluded={period.isBookedReachLimit || period.available}
+                  isPeriodExcluded={!period.available}
                   onClick={() =>
                     !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
                       ? setRescheduleAppointment({
@@ -595,7 +625,6 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
         onCancel={handleRescheduleCancel}
       >
         <AppointmentCardCreatorBlock
-          creator={creator}
           loadingAppointmentPlan={loadingAppointmentPlan}
           appointmentPlan={appointmentPlan}
         />
@@ -680,37 +709,6 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
 }
 
 export default Form.create<AppointmentCardProps>()(AppointmentCard)
-
-export const useAppointmentPlanPreview = (appointmentPlanId: string) => {
-  const { loading, data } = useQuery<hasura.GetAppointmentPlanPreview, hasura.GetAppointmentPlanPreviewVariables>(
-    gql`
-      query GetAppointmentPlanPreview($appointmentPlanId: uuid!) {
-        appointment_plan_by_pk(id: $appointmentPlanId) {
-          id
-          title
-          creator_id
-          meet_generation_method
-        }
-      }
-    `,
-    { variables: { appointmentPlanId } },
-  )
-  const appointmentPlanPreview: {
-    id: string
-    title: string
-    creatorId: string
-    meetGenerationMethod: string
-  } = {
-    id: data?.appointment_plan_by_pk?.id,
-    title: data?.appointment_plan_by_pk?.title || '',
-    creatorId: data?.appointment_plan_by_pk?.creator_id || '',
-    meetGenerationMethod: data?.appointment_plan_by_pk?.meet_generation_method || 'auto',
-  }
-  return {
-    loading,
-    appointmentPlanPreview,
-  }
-}
 
 const useUpdateAppointmentPeriod = (orderProductId: string, options: { rescheduleLog: [] }) => {
   const [updateAppointmentPeriod] = useMutation<
@@ -807,28 +805,5 @@ export const useOrderProduct = (orderProductId: string) => {
     loading,
     orderProduct,
     refetchOrderProduct: refetch,
-  }
-}
-
-export const useCreator = (creatorId: string) => {
-  const { loading, data } = useQuery<hasura.GetCreatorInfo, hasura.GetCreatorInfoVariables>(
-    gql`
-      query GetCreatorInfo($creatorId: String) {
-        member_public(where: { id: { _eq: $creatorId } }) {
-          id
-          picture_url
-          name
-        }
-      }
-    `,
-    { variables: { creatorId } },
-  )
-  const creator: { avatarUrl: string | null; name: string } = {
-    avatarUrl: data?.member_public?.[0]?.picture_url || '',
-    name: data?.member_public?.[0]?.name || '',
-  }
-  return {
-    loading,
-    creator,
   }
 }

@@ -71,6 +71,12 @@ const appointmentMessages = {
       defaultMessage: '時間以 {city} (GMT{timezone}) 顯示',
     },
   }),
+  AppointmentItem: defineMessages({
+    booked: { id: 'appointment.AppointmentItem.booked', defaultMessage: '已預約' },
+    bookable: { id: 'appointment.AppointmentItem.bookable', defaultMessage: '可預約' },
+    meetingIsFull: { id: 'appointment.AppointmentItem.meetingIsFull', defaultMessage: '已無會議室' },
+    closed: { id: 'appointment.AppointmentItem.closed', defaultMessage: '已關閉' },
+  }),
 }
 
 export default appointmentMessages

@@ -1,4 +1,5 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
 import hasura from '../hasura'
 import { AppointmentPeriod, AppointmentPlan, ReservationType } from '../types/appointment'
@@ -23,6 +24,8 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
           capacity
           reschedule_amount
           reschedule_type
+          default_meet_gateway
+          meet_generation_method
           currency {
             id
             label
@@ -61,6 +64,8 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
           phone: null,
           supportLocales: appointmentPlan.support_locales,
           capacity: appointmentPlan.capacity,
+          defaultMeetGateway: appointmentPlan.default_meet_gateway,
+          meetGenerationMethod: appointmentPlan.meet_generation_method,
           currency: {
             id: appointmentPlan.currency.id,
             label: appointmentPlan.currency.label,
@@ -108,9 +113,13 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           duration
           price
           capacity
+          reservation_amount
+          reservation_type
           reschedule_amount
           reschedule_type
           support_locales
+          default_meet_gateway
+          meet_generation_method
           currency {
             id
             label
@@ -160,49 +169,53 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           abstract: string | null
         }
       })
-    | null =
-    loading || error || !data || !data.appointment_plan_by_pk
-      ? null
-      : {
-          id: data.appointment_plan_by_pk.id,
-          title: data.appointment_plan_by_pk.title,
-          description: data.appointment_plan_by_pk.description || '',
-          duration: data.appointment_plan_by_pk.duration,
-          price: data.appointment_plan_by_pk.price,
-          phone: null,
-          supportLocales: data.appointment_plan_by_pk.support_locales,
-          capacity: data.appointment_plan_by_pk.capacity,
-          rescheduleAmount: data.appointment_plan_by_pk?.reschedule_amount,
-          rescheduleType: (data.appointment_plan_by_pk.reschedule_type as ReservationType) || null,
-          currency: {
-            id: data.appointment_plan_by_pk.currency.id,
-            label: data.appointment_plan_by_pk.currency.label,
-            unit: data.appointment_plan_by_pk.currency.unit,
-            name: data.appointment_plan_by_pk.currency.name,
-          },
-          periods: data.appointment_plan_by_pk.appointment_periods.map(period => ({
-            id: `${period.started_at}`,
-            startedAt: new Date(period.started_at),
-            endedAt: new Date(period.ended_at),
-            booked: period.booked,
-            isBookedReachLimit: data.appointment_plan_by_pk?.capacity
-              ? data.appointment_plan_by_pk?.capacity !== -1 && period.booked >= data.appointment_plan_by_pk?.capacity
-              : false,
-            currentMemberBooked: data.appointment_plan_by_pk?.appointment_enrollments.some(
-              enrollment =>
-                enrollment.member_id === currentMemberId &&
-                enrollment.appointment_plan_id === data.appointment_plan_by_pk?.id &&
-                enrollment.started_at === period.started_at &&
-                !enrollment.canceled_at,
-            ),
-          })),
-          creator: {
-            id: data.appointment_plan_by_pk.creator?.id || '',
-            avatarUrl: data.appointment_plan_by_pk.creator?.picture_url || null,
-            name: data.appointment_plan_by_pk.creator?.name || data.appointment_plan_by_pk.creator?.username || '',
-            abstract: data.appointment_plan_by_pk.creator?.abstract || null,
-          },
-        }
+    | null = data?.appointment_plan_by_pk
+    ? {
+        id: data.appointment_plan_by_pk.id,
+        title: data.appointment_plan_by_pk.title,
+        description: data.appointment_plan_by_pk.description || '',
+        duration: data.appointment_plan_by_pk.duration,
+        price: data.appointment_plan_by_pk.price,
+        phone: null,
+        supportLocales: data.appointment_plan_by_pk.support_locales,
+        capacity: data.appointment_plan_by_pk.capacity,
+        reservationAmount: data.appointment_plan_by_pk.reservation_amount,
+        reservationType: (data.appointment_plan_by_pk.reservation_type as ReservationType) || null,
+        rescheduleAmount: data.appointment_plan_by_pk?.reschedule_amount,
+        rescheduleType: (data.appointment_plan_by_pk.reschedule_type as ReservationType) || null,
+        defaultMeetGateway: data.appointment_plan_by_pk.default_meet_gateway,
+        meetGenerationMethod: data.appointment_plan_by_pk.meet_generation_method,
+        currency: {
+          id: data.appointment_plan_by_pk.currency.id,
+          label: data.appointment_plan_by_pk.currency.label,
+          unit: data.appointment_plan_by_pk.currency.unit,
+          name: data.appointment_plan_by_pk.currency.name,
+        },
+        periods: data.appointment_plan_by_pk.appointment_periods.map(period => ({
+          id: `${period.started_at}`,
+          startedAt: new Date(period.started_at),
+          endedAt: new Date(period.ended_at),
+          booked: period.booked,
+          isBookedReachLimit: data.appointment_plan_by_pk?.capacity
+            ? data.appointment_plan_by_pk?.capacity !== -1 && period.booked >= data.appointment_plan_by_pk?.capacity
+            : false,
+          currentMemberBooked: data.appointment_plan_by_pk?.appointment_enrollments.some(
+            enrollment =>
+              enrollment.member_id === currentMemberId &&
+              enrollment.appointment_plan_id === data.appointment_plan_by_pk?.id &&
+              enrollment.started_at === period.started_at &&
+              !enrollment.canceled_at,
+          ),
+          
+        })),
+        creator: {
+          id: data.appointment_plan_by_pk.creator?.id || '',
+          avatarUrl: data.appointment_plan_by_pk.creator?.picture_url || null,
+          name: data.appointment_plan_by_pk.creator?.name || data.appointment_plan_by_pk.creator?.username || '',
+          abstract: data.appointment_plan_by_pk.creator?.abstract || null,
+        },
+      }
+    : null
 
   return {
     loadingAppointmentPlan: loading,
@@ -288,4 +301,63 @@ export const useCancelAppointment = (orderProductId: string, options: any) => {
         },
       },
     })
+}
+
+export const useMeetByAppointmentPlanIdAndPeriod = (appointmentPlanId: string, startedAt: Date, endedAt: Date) => {
+  const { id: appId } = useApp()
+  const { loading, data, error } = useQuery<
+    hasura.GetMeetByAppointmentPlanIdAndPeriod,
+    hasura.GetMeetByAppointmentPlanIdAndPeriodVariables
+  >(
+    gql`
+      query GetMeetByAppointmentPlanIdAndPeriod(
+        $target: uuid!
+        $startedAt: timestamptz!
+        $endedAt: timestamptz!
+        $appId: String!
+      ) {
+        meet(
+          where: {
+            target: { _eq: $target }
+            started_at: { _eq: $startedAt }
+            ended_at: { _eq: $endedAt }
+            app_id: { _eq: $appId }
+            deleted_at: { _is_null: true }
+            meet_members: { deleted_at: { _is_null: true } }
+          }
+        ) {
+          id
+          host_member_id
+          meet_members {
+            id
+            member_id
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        target: appointmentPlanId,
+        startedAt: startedAt.toISOString(),
+        endedAt: endedAt.toISOString(),
+        appId,
+      },
+    },
+  )
+  const meet = data?.meet?.[0]
+    ? {
+        id: data.meet[0].id,
+        hostMemberId: data.meet[0].host_member_id,
+        meetMembers: data.meet[0].meet_members.map(v => ({
+          id: v.id,
+          memberId: v.member_id,
+        })),
+      }
+    : null
+
+  return {
+    loading,
+    meet,
+    error,
+  }
 }
