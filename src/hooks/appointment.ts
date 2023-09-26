@@ -24,7 +24,8 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
           capacity
           reschedule_amount
           reschedule_type
-          default_meet_system
+          default_meet_gateway
+          meet_generation_method
           currency {
             id
             label
@@ -63,7 +64,8 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
           phone: null,
           supportLocales: appointmentPlan.support_locales,
           capacity: appointmentPlan.capacity,
-          defaultMeetSystem: appointmentPlan.default_meet_system,
+          defaultMeetGateway: appointmentPlan.default_meet_gateway,
+          meetGenerationMethod: appointmentPlan.meet_generation_method,
           currency: {
             id: appointmentPlan.currency.id,
             label: appointmentPlan.currency.label,
@@ -111,10 +113,13 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           duration
           price
           capacity
+          reservation_amount
+          reservation_type
           reschedule_amount
           reschedule_type
           support_locales
-          default_meet_system
+          default_meet_gateway
+          meet_generation_method
           currency {
             id
             label
@@ -174,9 +179,12 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
         phone: null,
         supportLocales: data.appointment_plan_by_pk.support_locales,
         capacity: data.appointment_plan_by_pk.capacity,
+        reservationAmount: data.appointment_plan_by_pk.reservation_amount,
+        reservationType: (data.appointment_plan_by_pk.reservation_type as ReservationType) || null,
         rescheduleAmount: data.appointment_plan_by_pk?.reschedule_amount,
         rescheduleType: (data.appointment_plan_by_pk.reschedule_type as ReservationType) || null,
-        defaultMeetSystem: data.appointment_plan_by_pk.default_meet_system,
+        defaultMeetGateway: data.appointment_plan_by_pk.default_meet_gateway,
+        meetGenerationMethod: data.appointment_plan_by_pk.meet_generation_method,
         currency: {
           id: data.appointment_plan_by_pk.currency.id,
           label: data.appointment_plan_by_pk.currency.label,
@@ -294,19 +302,35 @@ export const useCancelAppointment = (orderProductId: string, options: any) => {
     })
 }
 
-export const useMeetMemberByAppointmentPlan = (appointmentPlanId: string, startedAt: Date) => {
+export const useMeetByAppointmentPlanIdAndPeriod = (appointmentPlanId: string, startedAt: Date, endedAt: Date) => {
   const { id: appId } = useApp()
   const { loading, data, error } = useQuery<
-    hasura.GetMeetMemberByAppointmentPlan,
-    hasura.GetMeetMemberByAppointmentPlanVariables
+    hasura.GetMeetByAppointmentPlanIdAndPeriod,
+    hasura.GetMeetByAppointmentPlanIdAndPeriodVariables
   >(
     gql`
-      query GetMeetMemberByAppointmentPlan($target: uuid!, $startedAt: timestamptz!, $appId: String!) {
-        meet_member(
-          where: { meet: { target: { _eq: $target }, started_at: { _eq: $startedAt }, app_id: { _eq: $appId } } }
+      query GetMeetByAppointmentPlanIdAndPeriod(
+        $target: uuid!
+        $startedAt: timestamptz!
+        $endedAt: timestamptz!
+        $appId: String!
+      ) {
+        meet(
+          where: {
+            target: { _eq: $target }
+            started_at: { _eq: $startedAt }
+            ended_at: { _eq: $endedAt }
+            app_id: { _eq: $appId }
+            deleted_at: { _is_null: true }
+            meet_members: { deleted_at: { _is_null: true } }
+          }
         ) {
           id
-          member_id
+          host_member_id
+          meet_members {
+            id
+            member_id
+          }
         }
       }
     `,
@@ -314,19 +338,25 @@ export const useMeetMemberByAppointmentPlan = (appointmentPlanId: string, starte
       variables: {
         target: appointmentPlanId,
         startedAt: startedAt.toISOString(),
+        endedAt: endedAt.toISOString(),
         appId,
       },
     },
   )
-  const meetMembers: { id: string; memberId: string }[] =
-    data?.meet_member.map(v => ({
-      id: v.id,
-      memberId: v.member_id,
-    })) || []
+  const meet = data?.meet?.[0]
+    ? {
+        id: data.meet[0].id,
+        hostMemberId: data.meet[0].host_member_id,
+        meetMembers: data.meet[0].meet_members.map(v => ({
+          id: v.id,
+          memberId: v.member_id,
+        })),
+      }
+    : null
 
   return {
     loading,
-    meetMembers,
+    meet,
     error,
   }
 }

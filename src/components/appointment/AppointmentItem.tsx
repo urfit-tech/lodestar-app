@@ -1,11 +1,14 @@
+import { Skeleton } from '@chakra-ui/react'
+import { uniq } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
-import { useMeetMemberByAppointmentPlan } from '../../hooks/appointment'
+import { useMeetByAppointmentPlanIdAndPeriod } from '../../hooks/appointment'
+import { useOverLapCreatorMeets } from '../../hooks/meet'
 import appointmentMessages from './translation'
 
 const StyledItemWrapper = styled.div<{
-  variant?: 'default' | 'closed' | 'booked' | 'meetingFull'
+  variant?: 'bookable' | 'closed' | 'booked' | 'meetingFull'
 }>`
   position: relative;
   margin-bottom: 0.5rem;
@@ -16,7 +19,7 @@ const StyledItemWrapper = styled.div<{
   border: solid 1px ${props => (props.variant === 'booked' ? 'var(--gray-light)' : 'var(--gray-dark)')};
   color: ${props => (props.variant === 'booked' ? 'var(--gray-dark)' : 'var(--gray-darker)')};
   border-radius: 4px;
-  cursor: ${props => (props.variant !== 'default' ? 'not-allowed' : 'pointer')};
+  cursor: ${props => (props.variant !== 'bookable' ? 'not-allowed' : 'pointer')};
 
   ${props =>
     props.variant === 'closed'
@@ -49,50 +52,88 @@ const StyledItemMeta = styled.div`
 `
 
 const AppointmentItem: React.VFC<{
-  id: string
-  appointmentPlanId: string
-  appointmentPlanMeetType: string
-  startedAt: Date
+  creatorId: string
+  appointmentPlan: {
+    id: string
+    capacity: number
+    defaultMeetGateway: string
+  }
+  period: {
+    startedAt: Date
+    endedAt: Date
+  }
+  services: { id: string; gateway: string }[]
+  isPeriodExcluded?: boolean
   isEnrolled?: boolean
-  isExcluded?: boolean
-  isBookedReachLimit?: boolean
   onClick: () => void
-}> = ({ id, startedAt, isEnrolled, isExcluded, isBookedReachLimit, onClick }) => {
+}> = ({ creatorId, appointmentPlan, period, services, isPeriodExcluded, isEnrolled, onClick }) => {
   const { formatMessage } = useIntl()
 
-  const variant = isEnrolled ? 'booked' : isExcluded ? 'closed' : isBookedReachLimit ? 'meetingFull' : 'default'
+  const zoomServices = services.filter(service => service.gateway === 'zoom').map(service => service.id)
 
-  // 可預約
-  //    會議室還沒滿
-  //      appointment_plan capacity !== -1
-  //      1,2 擇一
-  //      1. appointment_plan capacity 的數量大於 appointment_period booked
-  //      2. meet target 是 appointment_plan 的 id 且 meet_member 的數量小於 appointment_plan capacity
-  //    他沒預約過
-  //      appointment_plan_enrollment
-  //    這個老師同時段其他的沒有被預約
-  //      抓 meet 中的 host_member_id 為老師, 且沒有此時間的預約
-  //    假如是 zoom 的話, service 額度要夠, meet 有 service_id
-  //
-  // 已關閉
-  //   appointment_schedule -> excludes -> 陣列內的時間會等於 startedAt
-  // 會議室已滿
-  //   appointment_plan capacity !== -1 且
-  //      1,2 擇一
-  //    1. appointment_plan capacity 的數量小於 appointment_period booked
-  //    2. meet target 是 appointment_plan 的 id 且 meet_member 的數量大於等於 appointment_plan capacity
+  const { loading: loadingMeetMembers, meet } = useMeetByAppointmentPlanIdAndPeriod(
+    appointmentPlan.id,
+    period.startedAt,
+    period.endedAt,
+  )
+  const { loading: loadingAvailableCreatorMeet, overLapCreatorMeets } = useOverLapCreatorMeets(
+    appointmentPlan.id,
+    period.startedAt,
+    period.endedAt,
+    creatorId,
+  )
+
+  const currentUseService = uniq(overLapCreatorMeets.map(overLapCreatorMeet => overLapCreatorMeet.serviceId))
+
+  let variant: 'bookable' | 'closed' | 'booked' | 'meetingFull' | undefined
+
+  if (isPeriodExcluded) {
+    variant = 'closed'
+  } else if (isEnrolled) {
+    variant = 'booked'
+  } else if (overLapCreatorMeets.length > 1) {
+    variant = 'meetingFull'
+  } else {
+    if (appointmentPlan.defaultMeetGateway === 'zoom') {
+      if (
+        zoomServices.length >= 1 &&
+        zoomServices.filter(zoomService => !currentUseService.includes(zoomService)).length >= 1
+      ) {
+        if (appointmentPlan.capacity !== -1) {
+          variant = 'bookable'
+        } else {
+          zoomServices.filter(zoomService => !currentUseService.includes(zoomService)).length > appointmentPlan.capacity
+            ? (variant = 'bookable')
+            : (variant = 'meetingFull')
+        }
+      } else {
+        variant = 'meetingFull'
+      }
+    } else {
+      if (appointmentPlan.capacity !== -1) {
+        meet && meet?.meetMembers.length >= appointmentPlan.capacity
+          ? (variant = 'meetingFull')
+          : (variant = 'bookable')
+      } else {
+        variant = 'bookable'
+      }
+    }
+  }
+
+  if (loadingAvailableCreatorMeet || loadingMeetMembers) return <Skeleton active />
 
   return (
     <StyledItemWrapper variant={variant} onClick={onClick}>
       <StyledItemTitle>
-        {startedAt.getHours().toString().padStart(2, '0')}:{startedAt.getMinutes().toString().padStart(2, '0')}
+        {period.startedAt.getHours().toString().padStart(2, '0')}:
+        {period.startedAt.getMinutes().toString().padStart(2, '0')}
       </StyledItemTitle>
       <StyledItemMeta>
         {variant === 'booked'
           ? formatMessage(appointmentMessages.AppointmentItem.booked)
           : variant === 'meetingFull'
           ? formatMessage(appointmentMessages.AppointmentItem.meetingIsFull)
-          : variant === 'closed'
+          : variant === 'bookable'
           ? formatMessage(appointmentMessages.AppointmentItem.bookable)
           : formatMessage(appointmentMessages.AppointmentItem.closed)}
       </StyledItemMeta>

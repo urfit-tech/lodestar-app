@@ -3,6 +3,7 @@ import moment from 'moment'
 import { groupBy } from 'ramda'
 import React, { useContext } from 'react'
 import styled from 'styled-components'
+import { useService } from '../../hooks/service'
 import { AppointmentPeriod, ReservationType } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
 import AppointmentItem from './AppointmentItem'
@@ -17,24 +18,21 @@ const StyledScheduleTitle = styled.h3`
 `
 
 const AppointmentPeriodCollection: React.VFC<{
-  appointmentPlanId: string
-  appointmentPlanMeetType: string
+  creatorId: string
+  appointmentPlan: {
+    id: string
+    defaultMeetGateway: string
+    reservationType: ReservationType
+    reservationAmount: number
+    capacity: number
+  }
   appointmentPeriods: AppointmentPeriod[]
-  reservationType?: ReservationType
-  reservationAmount?: number
   diffPlanBookedTimes?: String[]
   onClick: (period: AppointmentPeriod) => void
-}> = ({
-  appointmentPlanId,
-  appointmentPlanMeetType,
-  appointmentPeriods,
-  reservationType,
-  reservationAmount,
-  diffPlanBookedTimes,
-  onClick,
-}) => {
+}> = ({ creatorId, appointmentPlan, appointmentPeriods, diffPlanBookedTimes, onClick }) => {
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isAuthenticated } = useAuth()
+  const { services } = useService()
 
   const periods = groupBy(
     period => moment(period.startedAt).format('YYYY-MM-DD(dd)'),
@@ -47,8 +45,9 @@ const AppointmentPeriodCollection: React.VFC<{
           ),
       )
       .filter(v =>
-        reservationType && reservationAmount && reservationAmount !== 0
-          ? moment(v.startedAt).subtract(reservationType, reservationAmount).toDate() > moment().toDate()
+        appointmentPlan.reservationType && appointmentPlan.reservationAmount && appointmentPlan.reservationAmount !== 0
+          ? moment(v.startedAt).subtract(appointmentPlan.reservationType, appointmentPlan.reservationAmount).toDate() >
+            moment().toDate()
           : v,
       ),
   )
@@ -63,13 +62,19 @@ const AppointmentPeriodCollection: React.VFC<{
               const ItemElem = (
                 <AppointmentItem
                   key={period.id}
-                  id={period.id}
-                  appointmentPlanId={appointmentPlanId}
-                  appointmentPlanMeetType={appointmentPlanMeetType}
-                  startedAt={period.startedAt}
-                  isEnrolled={period.currentMemberBooked || period.isBookedReachLimit}
-                  isExcluded={!period.available}
-                  isBookedReachLimit={period.isBookedReachLimit}
+                  creatorId={creatorId}
+                  appointmentPlan={{
+                    id: appointmentPlan.id,
+                    capacity: appointmentPlan.capacity,
+                    defaultMeetGateway: appointmentPlan.defaultMeetGateway,
+                  }}
+                  period={{
+                    startedAt: period.startedAt,
+                    endedAt: period.endedAt,
+                  }}
+                  services={services}
+                  isPeriodExcluded={!period.available}
+                  isEnrolled={period.currentMemberBooked}
                   onClick={() =>
                     !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
                       ? onClick(period)

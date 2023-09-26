@@ -69,8 +69,9 @@ const StyledTimeStandardBlock = styled.div`
 `
 
 const AppointmentCollectionTabs: React.VFC<{
+  creatorId: string
   appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] })[]
-}> = ({ appointmentPlans }) => {
+}> = ({ creatorId, appointmentPlans }) => {
   const { formatMessage } = useIntl()
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string | null>(appointmentPlans[0].id)
   const { search } = useLocation()
@@ -145,6 +146,7 @@ const AppointmentCollectionTabs: React.VFC<{
       </div>
 
       <AppointmentPlanCollection
+        creatorId={creatorId}
         appointmentPlans={appointmentPlans
           .filter(v =>
             appointmentPlanId ? v.id === appointmentPlanId || v.isPrivate === false : v.isPrivate === false,
@@ -158,8 +160,9 @@ const AppointmentCollectionTabs: React.VFC<{
 }
 
 export const AppointmentPlanCollection: React.FC<{
+  creatorId: string
   appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] })[]
-}> = ({ appointmentPlans }) => {
+}> = ({ creatorId, appointmentPlans }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { isAuthenticated } = useAuth()
@@ -198,11 +201,15 @@ export const AppointmentPlanCollection: React.FC<{
               startedAt={selectedPeriod?.startedAt}
               renderTrigger={({ setVisible }) => (
                 <AppointmentPeriodCollection
-                  appointmentPlanId={appointmentPlan.id}
-                  appointmentPlanMeetType={appointmentPlan.defaultMeetSystem}
+                  creatorId={creatorId}
+                  appointmentPlan={{
+                    id: appointmentPlan.id,
+                    defaultMeetGateway: appointmentPlan.defaultMeetGateway,
+                    reservationType: appointmentPlan.rescheduleType,
+                    reservationAmount: appointmentPlan.rescheduleAmount,
+                    capacity: appointmentPlan.capacity,
+                  }}
                   appointmentPeriods={appointmentPlan.periods}
-                  reservationAmount={appointmentPlan.reservationAmount}
-                  reservationType={appointmentPlan.reservationType}
                   onClick={period => {
                     if (!isAuthenticated) {
                       setAuthModalVisible?.(true)
@@ -232,11 +239,15 @@ export const AppointmentPlanCollection: React.FC<{
               defaultProductId={`AppointmentPlan_${appointmentPlan.id}`}
               renderTrigger={({ onOpen }) => (
                 <AppointmentPeriodCollection
-                  appointmentPlanId={appointmentPlan.id}
-                  appointmentPlanMeetType={appointmentPlan.defaultMeetSystem}
+                  creatorId={creatorId}
+                  appointmentPlan={{
+                    id: appointmentPlan.id,
+                    defaultMeetGateway: appointmentPlan.defaultMeetGateway,
+                    reservationType: appointmentPlan.rescheduleType,
+                    reservationAmount: appointmentPlan.rescheduleAmount,
+                    capacity: appointmentPlan.capacity,
+                  }}
                   appointmentPeriods={appointmentPlan.periods}
-                  reservationAmount={appointmentPlan.reservationAmount}
-                  reservationType={appointmentPlan.reservationType}
                   onClick={period => {
                     if (!isAuthenticated) {
                       setAuthModalVisible?.(true)

@@ -66,7 +66,6 @@ const AppointmentCoinModal: React.VFC<
   const history = useHistory()
   const { currentMember } = useAuth()
   const { loadingAppointmentPlan, appointmentPlan } = useAppointmentPlan(appointmentPlanId)
-
   const phoneInputRef = useRef<Input | null>(null)
   const [visible, setVisible] = useState(false)
   const [selectedPeriod, setSelectedPeriod] = useState<AppointmentPeriod | null>(null)
@@ -186,10 +185,14 @@ const AppointmentCoinModal: React.VFC<
                 </>
               ) : (
                 <AppointmentPeriodCollection
-                  appointmentPlanId={appointmentPlan.id}
-                  appointmentPlanMeetType={appointmentPlan.defaultMeetSystem}
-                  reservationAmount={appointmentPlan.reservationAmount}
-                  reservationType={appointmentPlan.reservationType}
+                  creatorId={appointmentPlan.creator.id}
+                  appointmentPlan={{
+                    id: appointmentPlan.id,
+                    defaultMeetGateway: appointmentPlan.defaultMeetGateway,
+                    reservationType: appointmentPlan.rescheduleType,
+                    reservationAmount: appointmentPlan.rescheduleAmount,
+                    capacity: appointmentPlan.capacity,
+                  }}
                   appointmentPeriods={appointmentPlan.periods.filter(
                     period => moment(period.startedAt) > moment().endOf('isoWeek'),
                   )}
