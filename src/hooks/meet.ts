@@ -36,8 +36,8 @@ export const useOverLapCreatorMeets = (target: string, startedAt: Date, endedAt:
   return { loading, overLapCreatorMeets }
 }
 
-export const GetMeetByAppointmentPlanAndPeriod = gql`
-  query GetMeetByAppointmentPlanAndPeriod(
+export const GetMeetByTargetAndPeriod = gql`
+  query GetMeetByTargetAndPeriod(
     $appId: String!
     $target: uuid!
     $startedAt: timestamptz!

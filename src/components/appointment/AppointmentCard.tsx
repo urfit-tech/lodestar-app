@@ -5,7 +5,6 @@ import { Divider, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
-import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import StyledBraftEditor, { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -17,7 +16,7 @@ import styled from 'styled-components'
 import hasura from '../../hasura'
 import { dateRangeFormatter, handleError } from '../../helpers'
 import { useAppointmentPlan, useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/appointment'
-import { GetMeetByAppointmentPlanAndPeriod } from '../../hooks/meet'
+import { GetMeetByTargetAndPeriod } from '../../hooks/meet'
 import { useService } from '../../hooks/service'
 import DefaultAvatar from '../../images/avatar.svg'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
@@ -282,10 +281,10 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
     if (!appointmentPlan) return message.error('無法獲取當前預約方案資訊')
     if (!appointmentPlan.creator) return message.error('無法獲取當前方案的主持者資訊')
     const { data } = await apolloClient.query<
-      hasura.GetMeetByAppointmentPlanAndPeriod,
-      hasura.GetMeetByAppointmentPlanAndPeriodVariables
+      hasura.GetMeetByTargetAndPeriod,
+      hasura.GetMeetByTargetAndPeriodVariables
     >({
-      query: GetMeetByAppointmentPlanAndPeriod,
+      query: GetMeetByTargetAndPeriod,
       variables: {
         appId,
         target: appointmentPlanId,
