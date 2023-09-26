@@ -206,6 +206,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
               enrollment.started_at === period.started_at &&
               !enrollment.canceled_at,
           ),
+          
         })),
         creator: {
           id: data.appointment_plan_by_pk.creator?.id || '',
