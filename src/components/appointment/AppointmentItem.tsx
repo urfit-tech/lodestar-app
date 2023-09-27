@@ -4,7 +4,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { useMeetByAppointmentPlanIdAndPeriod } from '../../hooks/appointment'
-import { useOverLapCreatorMeets } from '../../hooks/meet'
+import { useOverlapMeets } from '../../hooks/meet'
 import appointmentMessages from './translation'
 
 const StyledItemWrapper = styled.div<{
@@ -79,14 +79,10 @@ const AppointmentItem: React.VFC<{
     period.startedAt,
     period.endedAt,
   )
-  const { loading: loadingAvailableCreatorMeet, overLapCreatorMeets } = useOverLapCreatorMeets(
-    appointmentPlan.id,
-    period.startedAt,
-    period.endedAt,
-    creatorId,
-  )
+  const { loading: loadingOverlapCreatorMeet, overlapMeets } = useOverlapMeets(period.startedAt, period.endedAt)
 
-  const currentUseServices = uniq(overLapCreatorMeets.map(overLapCreatorMeet => overLapCreatorMeet.serviceId))
+  const overlapCreatorMeets = overlapMeets.filter(overlapMeet => overlapMeet.hostMemberId === creatorId)
+  const currentUseServices = uniq(overlapMeets.map(overlapMeet => overlapMeet.serviceId))
 
   let variant: 'bookable' | 'closed' | 'booked' | 'meetingFull' | undefined
 
@@ -94,7 +90,7 @@ const AppointmentItem: React.VFC<{
     variant = 'closed'
   } else if (isEnrolled) {
     variant = 'booked'
-  } else if (overLapCreatorMeets.length > 1) {
+  } else if (overlapCreatorMeets.length > 1) {
     variant = 'meetingFull'
   } else {
     if (appointmentPlan.defaultMeetGateway === 'zoom') {
@@ -125,7 +121,7 @@ const AppointmentItem: React.VFC<{
     }
   }
 
-  if (loadingAvailableCreatorMeet || loadingMeetMembers) return <Skeleton active />
+  if (loadingOverlapCreatorMeet || loadingMeetMembers) return <Skeleton active />
 
   return (
     <StyledItemWrapper variant={variant} onClick={variant === 'bookable' ? onClick : undefined}>
