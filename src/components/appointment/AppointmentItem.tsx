@@ -83,7 +83,7 @@ const AppointmentItem: React.VFC<{
     creatorId,
   )
 
-  const currentUseService = uniq(overLapCreatorMeets.map(overLapCreatorMeet => overLapCreatorMeet.serviceId))
+  const currentUseServices = uniq(overLapCreatorMeets.map(overLapCreatorMeet => overLapCreatorMeet.serviceId))
 
   let variant: 'bookable' | 'closed' | 'booked' | 'meetingFull' | undefined
 
@@ -97,12 +97,14 @@ const AppointmentItem: React.VFC<{
     if (appointmentPlan.defaultMeetGateway === 'zoom') {
       if (
         zoomServices.length >= 1 &&
-        zoomServices.filter(zoomService => !currentUseService.includes(zoomService)).length >= 1
+        zoomServices.filter(zoomService => !currentUseServices.includes(zoomService)).length >= 1
       ) {
         if (appointmentPlan.capacity !== -1) {
           variant = 'bookable'
         } else {
-          zoomServices.filter(zoomService => !currentUseService.includes(zoomService)).length > appointmentPlan.capacity
+          zoomServices.filter(zoomService => !currentUseServices.includes(zoomService)).length >
+            appointmentPlan.capacity ||
+          (meet && appointmentPlan.capacity >= meet?.meetMembers.length)
             ? (variant = 'bookable')
             : (variant = 'meetingFull')
         }
