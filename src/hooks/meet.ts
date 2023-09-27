@@ -73,7 +73,7 @@ export const GetOverlapCreatorMeets = gql`
         target: { _neq: $target }
         started_at: { _lte: $endedAt }
         ended_at: { _gte: $startedAt }
-        deleted_at: { _is_null: false }
+        deleted_at: { _is_null: true }
         host_member_id: { _eq: $hostMemberId }
       }
     ) {
