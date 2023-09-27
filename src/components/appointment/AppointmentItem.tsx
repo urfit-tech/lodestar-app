@@ -16,8 +16,11 @@ const StyledItemWrapper = styled.div<{
   padding: 0.75rem;
   width: 6rem;
   overflow: hidden;
-  border: solid 1px ${props => (props.variant === 'booked' ? 'var(--gray-light)' : 'var(--gray-dark)')};
-  color: ${props => (props.variant === 'booked' ? 'var(--gray-dark)' : 'var(--gray-darker)')};
+  border: solid 1px
+    ${props =>
+      props.variant === 'booked' || props.variant === 'meetingFull' ? 'var(--gray-light)' : 'var(--gray-dark)'};
+  color: ${props =>
+    props.variant === 'booked' || props.variant === 'meetingFull' ? 'var(--gray-dark)' : 'var(--gray-darker)'};
   border-radius: 4px;
   cursor: ${props => (props.variant !== 'bookable' ? 'not-allowed' : 'pointer')};
 
@@ -125,7 +128,7 @@ const AppointmentItem: React.VFC<{
   if (loadingAvailableCreatorMeet || loadingMeetMembers) return <Skeleton active />
 
   return (
-    <StyledItemWrapper variant={variant} onClick={overLapCreatorMeets.length < 1 ? onClick : undefined}>
+    <StyledItemWrapper variant={variant} onClick={variant === 'bookable' ? onClick : undefined}>
       <StyledItemTitle>
         {period.startedAt.getHours().toString().padStart(2, '0')}:
         {period.startedAt.getMinutes().toString().padStart(2, '0')}
