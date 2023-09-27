@@ -20,7 +20,7 @@ export const useOverLapCreatorMeets = (target: string, startedAt: Date, endedAt:
   const { loading, data } = useQuery<hasura.GetOverlapCreatorMeets, hasura.GetOverlapCreatorMeetsVariables>(
     GetOverlapCreatorMeets,
     {
-      variables: { appId, target, startedAt, endedAt, hostMemberId },
+      variables: { appId, target, startedAt: startedAt.toISOString(), endedAt: endedAt.toISOString(), hostMemberId },
     },
   )
   const overLapCreatorMeets: {
