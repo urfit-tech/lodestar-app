@@ -1,4 +1,4 @@
-import { Skeleton } from '@chakra-ui/react'
+import { Skeleton, Spinner } from '@chakra-ui/react'
 import { uniq } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -66,21 +66,19 @@ const AppointmentItem: React.VFC<{
     endedAt: Date
   }
   services: { id: string; gateway: string }[]
+  loadingServices?: boolean
   isPeriodExcluded?: boolean
   isEnrolled?: boolean
   onClick: () => void
-}> = ({ creatorId, appointmentPlan, period, services, isPeriodExcluded, isEnrolled, onClick }) => {
+}> = ({ creatorId, appointmentPlan, period, services, loadingServices, isPeriodExcluded, isEnrolled, onClick }) => {
   const { formatMessage } = useIntl()
-
-  const zoomServices = services.filter(service => service.gateway === 'zoom').map(service => service.id)
-
   const { loading: loadingMeetMembers, meet } = useMeetByAppointmentPlanIdAndPeriod(
     appointmentPlan.id,
     period.startedAt,
     period.endedAt,
   )
   const { loading: loadingOverlapCreatorMeet, overlapMeets } = useOverlapMeets(period.startedAt, period.endedAt)
-
+  const zoomServices = services.filter(service => service.gateway === 'zoom').map(service => service.id)
   const overlapCreatorMeets = overlapMeets.filter(overlapMeet => overlapMeet.hostMemberId === creatorId)
   const currentUseServices = uniq(overlapMeets.map(overlapMeet => overlapMeet.serviceId))
 
@@ -98,30 +96,30 @@ const AppointmentItem: React.VFC<{
         zoomServices.length >= 1 &&
         zoomServices.filter(zoomService => !currentUseServices.includes(zoomService)).length >= 1
       ) {
-        if (appointmentPlan.capacity !== -1) {
+        if (appointmentPlan.capacity === -1) {
           variant = 'bookable'
         } else {
-          zoomServices.filter(zoomService => !currentUseServices.includes(zoomService)).length >
-            appointmentPlan.capacity ||
-          (meet && appointmentPlan.capacity >= meet?.meetMembers.length)
-            ? (variant = 'bookable')
-            : (variant = 'meetingFull')
+          if (meet) {
+            meet.meetMembers.length >= appointmentPlan.capacity ? (variant = 'meetingFull') : (variant = 'bookable')
+          } else {
+            variant = 'bookable'
+          }
         }
       } else {
         variant = 'meetingFull'
       }
     } else {
-      if (appointmentPlan.capacity !== -1) {
-        meet && meet?.meetMembers.length >= appointmentPlan.capacity
-          ? (variant = 'meetingFull')
-          : (variant = 'bookable')
-      } else {
+      if (appointmentPlan.capacity === -1) {
         variant = 'bookable'
+      } else {
+        if (meet) {
+          meet.meetMembers.length >= appointmentPlan.capacity ? (variant = 'meetingFull') : (variant = 'bookable')
+        } else {
+          variant = 'bookable'
+        }
       }
     }
   }
-
-  if (loadingOverlapCreatorMeet || loadingMeetMembers) return <Skeleton active />
 
   return (
     <StyledItemWrapper variant={variant} onClick={variant === 'bookable' ? onClick : undefined}>
@@ -130,13 +128,17 @@ const AppointmentItem: React.VFC<{
         {period.startedAt.getMinutes().toString().padStart(2, '0')}
       </StyledItemTitle>
       <StyledItemMeta>
-        {variant === 'booked'
-          ? formatMessage(appointmentMessages.AppointmentItem.booked)
-          : variant === 'meetingFull'
-          ? formatMessage(appointmentMessages.AppointmentItem.meetingIsFull)
-          : variant === 'bookable'
-          ? formatMessage(appointmentMessages.AppointmentItem.bookable)
-          : formatMessage(appointmentMessages.AppointmentItem.closed)}
+        {loadingMeetMembers || loadingOverlapCreatorMeet || loadingServices ? (
+          <Spinner />
+        ) : variant === 'booked' ? (
+          formatMessage(appointmentMessages.AppointmentItem.booked)
+        ) : variant === 'meetingFull' ? (
+          formatMessage(appointmentMessages.AppointmentItem.meetingIsFull)
+        ) : variant === 'bookable' ? (
+          formatMessage(appointmentMessages.AppointmentItem.bookable)
+        ) : (
+          formatMessage(appointmentMessages.AppointmentItem.closed)
+        )}
       </StyledItemMeta>
     </StyledItemWrapper>
   )

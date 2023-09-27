@@ -196,7 +196,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
   }>()
   const [loading, setLoading] = useState(false)
   const [confirm, setConfirm] = useState(false)
-  const { services } = useService()
+  const { loading: loadingServices, services } = useService()
   const { loading: loadingOrderProduct, orderProduct, refetchOrderProduct } = useOrderProduct(orderProductId)
   const { loadingAppointmentPlan, appointmentPlan, refetchAppointmentPlan } = useAppointmentPlan(
     appointmentPlanId,
@@ -589,6 +589,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                     endedAt: period.endedAt,
                   }}
                   services={services}
+                  loadingServices={loadingServices}
                   isEnrolled={period.currentMemberBooked}
                   isPeriodExcluded={!period.available}
                   onClick={() =>

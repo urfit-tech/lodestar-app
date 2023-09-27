@@ -33,7 +33,7 @@ const AppointmentPeriodCollection: React.VFC<{
 }> = ({ creatorId, appointmentPlan, appointmentPeriods, diffPlanBookedTimes, onClick }) => {
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isAuthenticated } = useAuth()
-  const { services } = useService()
+  const { loading: loadingServices, services } = useService()
 
   const periods = groupBy(
     period => dayjs(period.startedAt).format('YYYY-MM-DD(dd)'),
@@ -66,6 +66,7 @@ const AppointmentPeriodCollection: React.VFC<{
                     endedAt: period.endedAt,
                   }}
                   services={services}
+                  loadingServices={loadingServices}
                   isPeriodExcluded={!period.available}
                   isEnrolled={period.currentMemberBooked}
                   onClick={() =>
