@@ -139,6 +139,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
             started_at
             ended_at
             booked
+            available
           }
           creator {
             id
@@ -196,6 +197,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           startedAt: new Date(period.started_at),
           endedAt: new Date(period.ended_at),
           booked: period.booked,
+          available: !!period.available,
           isBookedReachLimit: data.appointment_plan_by_pk?.capacity
             ? data.appointment_plan_by_pk?.capacity !== -1 && period.booked >= data.appointment_plan_by_pk?.capacity
             : false,
@@ -206,7 +208,6 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
               enrollment.started_at === period.started_at &&
               !enrollment.canceled_at,
           ),
-          
         })),
         creator: {
           id: data.appointment_plan_by_pk.creator?.id || '',
