@@ -15,25 +15,24 @@ export const useMutateMeet = () => {
   }
 }
 
-export const useOverLapCreatorMeets = (target: string, startedAt: Date, endedAt: Date, hostMemberId?: string) => {
+export const useOverlapMeets = (startedAt: Date, endedAt: Date) => {
   const { id: appId } = useApp()
-  const { loading, data } = useQuery<hasura.GetOverlapCreatorMeets, hasura.GetOverlapCreatorMeetsVariables>(
-    GetOverlapCreatorMeets,
-    {
-      variables: { appId, target, startedAt: startedAt.toISOString(), endedAt: endedAt.toISOString(), hostMemberId },
-    },
-  )
-  const overLapCreatorMeets: {
+  const { loading, data } = useQuery<hasura.GetOverlapMeets, hasura.GetOverlapMeetsVariables>(GetOverlapMeets, {
+    variables: { appId, startedAt: startedAt.toISOString(), endedAt: endedAt.toISOString() },
+  })
+  const overlapMeets: {
     id: string
+    target: string
     hostMemberId: string
     serviceId: string
   }[] =
     data?.meet.map(v => ({
       id: v.id,
+      target: v.target,
       hostMemberId: v.host_member_id,
       serviceId: v.service_id,
     })) || []
-  return { loading, overLapCreatorMeets }
+  return { loading, overlapMeets }
 }
 
 export const GetMeetByTargetAndPeriod = gql`
@@ -59,26 +58,19 @@ export const GetMeetByTargetAndPeriod = gql`
   }
 `
 
-export const GetOverlapCreatorMeets = gql`
-  query GetOverlapCreatorMeets(
-    $appId: String!
-    $target: uuid!
-    $startedAt: timestamptz!
-    $endedAt: timestamptz!
-    $hostMemberId: String
-  ) {
+export const GetOverlapMeets = gql`
+  query GetOverlapMeets($appId: String!, $startedAt: timestamptz!, $endedAt: timestamptz!) {
     meet(
       where: {
         app_id: { _eq: $appId }
-        target: { _neq: $target }
         started_at: { _lte: $endedAt }
         ended_at: { _gte: $startedAt }
         deleted_at: { _is_null: true }
-        host_member_id: { _eq: $hostMemberId }
       }
     ) {
       id
       host_member_id
+      target
       service_id
     }
   }
