@@ -125,7 +125,7 @@ const AppointmentItem: React.VFC<{
   if (loadingAvailableCreatorMeet || loadingMeetMembers) return <Skeleton active />
 
   return (
-    <StyledItemWrapper variant={variant} onClick={onClick}>
+    <StyledItemWrapper variant={variant} onClick={overLapCreatorMeets.length < 1 ? onClick : undefined}>
       <StyledItemTitle>
         {period.startedAt.getHours().toString().padStart(2, '0')}:
         {period.startedAt.getMinutes().toString().padStart(2, '0')}

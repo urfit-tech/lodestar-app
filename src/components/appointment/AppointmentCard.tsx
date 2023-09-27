@@ -246,7 +246,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
           orderProduct.startedAt,
           currentMemberId || '',
         )
-        onRefetch && onRefetch()
+        onRefetch?.()
         await refetchAppointmentPlan()
         setRescheduleModalVisible(false)
         handleRescheduleCancel()
