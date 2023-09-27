@@ -293,7 +293,6 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
         memberId: currentMemberId,
       },
     })
-
     if (data.meet.length !== 0 && data.meet[0].options?.joinUrl) {
       joinUrl = data.meet[0].options.joinUrl
     } else if (enabledModules.meet_service && appointmentPlan.defaultMeetGateway === 'zoom') {
@@ -323,9 +322,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       } catch (error) {
         handleError(error)
       }
-    }
-    // default jitsi
-    if (currentMember && !joinUrl) {
+    } else {
       joinUrl = `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${currentMember?.name}", '_blank', 'noopener=yes,noreferrer=yes'`
     }
     if (joinUrl) window.open(joinUrl)
