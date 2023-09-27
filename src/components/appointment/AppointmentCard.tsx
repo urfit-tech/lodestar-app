@@ -595,7 +595,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                   isEnrolled={period.currentMemberBooked}
                   isPeriodExcluded={!period.available}
                   onClick={() =>
-                    !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
+                    !period.currentMemberBooked && !period.isBookedReachLimit && period.available
                       ? setRescheduleAppointment({
                           rescheduleAppointment: true,
                           periodStartedAt: period.startedAt,
