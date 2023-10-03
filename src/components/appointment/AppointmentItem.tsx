@@ -1,4 +1,4 @@
-import { Skeleton, Spinner } from '@chakra-ui/react'
+import { Spinner } from '@chakra-ui/react'
 import { uniq } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -77,19 +77,19 @@ const AppointmentItem: React.VFC<{
     period.startedAt,
     period.endedAt,
   )
-  const { loading: loadingOverlapCreatorMeet, overlapMeets } = useOverlapMeets(period.startedAt, period.endedAt)
+  const { loading: loadingOverlapMeet, overlapMeets } = useOverlapMeets(period.startedAt, period.endedAt)
   const zoomServices = services.filter(service => service.gateway === 'zoom').map(service => service.id)
   const overlapCreatorMeets = overlapMeets.filter(overlapMeet => overlapMeet.hostMemberId === creatorId)
   const currentUseServices = uniq(overlapMeets.map(overlapMeet => overlapMeet.serviceId))
 
-  let variant: 'bookable' | 'closed' | 'booked' | 'meetingFull' | undefined
+  let variant: 'bookable' | 'closed' | 'booked' | 'meetingFull' | 'overlap' | undefined
 
   if (isPeriodExcluded) {
     variant = 'closed'
   } else if (isEnrolled) {
     variant = 'booked'
   } else if (overlapCreatorMeets.length > 1) {
-    variant = 'meetingFull'
+    variant = 'overlap'
   } else {
     if (appointmentPlan.defaultMeetGateway === 'zoom') {
       if (
@@ -121,27 +121,31 @@ const AppointmentItem: React.VFC<{
     }
   }
 
-  return (
-    <StyledItemWrapper variant={variant} onClick={variant === 'bookable' ? onClick : undefined}>
-      <StyledItemTitle>
-        {period.startedAt.getHours().toString().padStart(2, '0')}:
-        {period.startedAt.getMinutes().toString().padStart(2, '0')}
-      </StyledItemTitle>
-      <StyledItemMeta>
-        {loadingMeetMembers || loadingOverlapCreatorMeet || loadingServices ? (
-          <Spinner />
-        ) : variant === 'booked' ? (
-          formatMessage(appointmentMessages.AppointmentItem.booked)
-        ) : variant === 'meetingFull' ? (
-          formatMessage(appointmentMessages.AppointmentItem.meetingIsFull)
-        ) : variant === 'bookable' ? (
-          formatMessage(appointmentMessages.AppointmentItem.bookable)
-        ) : (
-          formatMessage(appointmentMessages.AppointmentItem.closed)
-        )}
-      </StyledItemMeta>
-    </StyledItemWrapper>
-  )
+  if (variant === 'overlap') {
+    return null
+  } else {
+    return (
+      <StyledItemWrapper variant={variant} onClick={variant === 'bookable' ? onClick : undefined}>
+        <StyledItemTitle>
+          {period.startedAt.getHours().toString().padStart(2, '0')}:
+          {period.startedAt.getMinutes().toString().padStart(2, '0')}
+        </StyledItemTitle>
+        <StyledItemMeta>
+          {loadingMeetMembers || loadingOverlapMeet || loadingServices ? (
+            <Spinner />
+          ) : variant === 'booked' ? (
+            formatMessage(appointmentMessages.AppointmentItem.booked)
+          ) : variant === 'meetingFull' ? (
+            formatMessage(appointmentMessages.AppointmentItem.meetingIsFull)
+          ) : variant === 'bookable' ? (
+            formatMessage(appointmentMessages.AppointmentItem.bookable)
+          ) : (
+            formatMessage(appointmentMessages.AppointmentItem.closed)
+          )}
+        </StyledItemMeta>
+      </StyledItemWrapper>
+    )
+  }
 }
 
 export default AppointmentItem
