@@ -446,11 +446,11 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
             <Dropdown
               overlay={
                 <CustomMenu>
-                  {appointmentPlan?.rescheduleAmount !== -1 && (
+                  {/* {appointmentPlan?.rescheduleAmount !== -1 && (
                     <Menu.Item onClick={() => setRescheduleModalVisible(true)}>
                       {formatMessage(appointmentMessages.AppointmentCard.rescheduleAppointment)}
                     </Menu.Item>
-                  )}
+                  )} */}
                   <Menu.Item onClick={() => setCancelModalVisible(true)}>
                     {formatMessage(appointmentMessages.AppointmentCard.cancelAppointment)}
                   </Menu.Item>
