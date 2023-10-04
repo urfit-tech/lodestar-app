@@ -69,8 +69,21 @@ const AppointmentItem: React.VFC<{
   loadingServices?: boolean
   isPeriodExcluded?: boolean
   isEnrolled?: boolean
+  overLapPeriods?: string[]
   onClick: () => void
-}> = ({ creatorId, appointmentPlan, period, services, loadingServices, isPeriodExcluded, isEnrolled, onClick }) => {
+  onOverlapPeriodsChange?: (overLapPeriods: string[]) => void
+}> = ({
+  creatorId,
+  appointmentPlan,
+  period,
+  services,
+  loadingServices,
+  isPeriodExcluded,
+  isEnrolled,
+  overLapPeriods,
+  onClick,
+  onOverlapPeriodsChange,
+}) => {
   const { formatMessage } = useIntl()
   const { loading: loadingMeetMembers, meet } = useMeetByAppointmentPlanIdAndPeriod(
     appointmentPlan.id,
@@ -79,16 +92,23 @@ const AppointmentItem: React.VFC<{
   )
   const { loading: loadingOverlapMeet, overlapMeets } = useOverlapMeets(period.startedAt, period.endedAt)
   const zoomServices = services.filter(service => service.gateway === 'zoom').map(service => service.id)
-  const overlapCreatorMeets = overlapMeets.filter(overlapMeet => overlapMeet.hostMemberId === creatorId)
+  const overlapCreatorMeets = overlapMeets
+    .filter(overlapMeet => overlapMeet.hostMemberId === creatorId)
+    .filter(overlapCreatorMeet => overlapCreatorMeet.target !== appointmentPlan.id)
   const currentUseServices = uniq(overlapMeets.map(overlapMeet => overlapMeet.serviceId))
 
   let variant: 'bookable' | 'closed' | 'booked' | 'meetingFull' | 'overlap' | undefined
+
+  if (overlapCreatorMeets.length >= 1)
+    overLapPeriods &&
+      !overLapPeriods.some(overLapPeriod => overLapPeriod === appointmentPlan.id) &&
+      onOverlapPeriodsChange?.([...overLapPeriods, appointmentPlan.id])
 
   if (isPeriodExcluded) {
     variant = 'closed'
   } else if (isEnrolled) {
     variant = 'booked'
-  } else if (overlapCreatorMeets.length > 1) {
+  } else if (overlapCreatorMeets.length >= 1) {
     variant = 'overlap'
   } else {
     if (appointmentPlan.defaultMeetGateway === 'zoom') {
