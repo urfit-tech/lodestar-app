@@ -13,7 +13,11 @@ export type AppointmentPlan = {
   isPrivate?: boolean
   reservationAmount?: number
   reservationType?: ReservationType | null
+  rescheduleAmount: number
+  rescheduleType: ReservationType | null
   capacity: number
+  defaultMeetGateway: string
+  meetGenerationMethod: string
 }
 
 export type AppointmentPeriod = {
@@ -23,6 +27,7 @@ export type AppointmentPeriod = {
   booked: number
   currentMemberBooked: boolean | undefined
   available?: boolean
+  isBookedReachLimit: boolean
 }
 
 export type AppointmentEnrollment = {

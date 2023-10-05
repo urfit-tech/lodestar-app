@@ -468,8 +468,8 @@ export const commonMessages = {
     publish: { id: 'common.text.publish', defaultMessage: 'publish' },
     emailIsAlreadyExist: { id: 'common.text.emailIsAlreadyExist', defaultMessage: 'Email is already exist' },
     usernameIsAlreadyExist: { id: 'common.text.usernameIsAlreadyExist', defaultMessage: 'Username is already exist' },
-    emailFormatError:{ id: 'common.text.emailFormatError', defaultMessage: 'Email format error' },
-    emailChecking:{ id: 'common.text.emailChecking', defaultMessage: 'Email checking ...' },
+    emailFormatError: { id: 'common.text.emailFormatError', defaultMessage: 'Email format error' },
+    emailChecking: { id: 'common.text.emailChecking', defaultMessage: 'Email checking ...' },
   }),
 }
 
@@ -802,11 +802,6 @@ export const productMessages = {
     }),
   },
   appointment: {
-    status: defineMessages({
-      booked: { id: 'product.appointment.status.booked', defaultMessage: '已預約' },
-      closed: { id: 'product.appointment.status.closed', defaultMessage: '已關閉' },
-      bookable: { id: 'product.appointment.status.bookable', defaultMessage: '可預約' },
-    }),
     warningText: defineMessages({
       news: {
         id: 'product.appointment.warning.text',
