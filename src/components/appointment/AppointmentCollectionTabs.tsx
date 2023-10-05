@@ -157,7 +157,7 @@ const AppointmentCollectionTabs: React.VFC<{
   )
 }
 
-const AppointmentPlanCollection: React.FC<{
+export const AppointmentPlanCollection: React.FC<{
   appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] })[]
 }> = ({ appointmentPlans }) => {
   const { formatMessage } = useIntl()
