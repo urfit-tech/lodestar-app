@@ -18,6 +18,7 @@ const AuthButton: React.VFC = () => {
 
   const handleClick = () => {
     authModal.open(setVisible)
+    window.history.pushState(null, '', '#')
   }
 
   useEffect(() => {

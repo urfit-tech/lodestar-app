@@ -388,7 +388,7 @@ const CreatorTabs: React.VFC<{
       content: (
         <div className="row">
           <div className="col-lg-8 col-12 mb-3">
-            <AppointmentCollectionTabs appointmentPlans={appointmentPlans} />
+            <AppointmentCollectionTabs creatorId={creatorId} appointmentPlans={appointmentPlans} />
           </div>
 
           <div className="col-lg-4 col-12">
