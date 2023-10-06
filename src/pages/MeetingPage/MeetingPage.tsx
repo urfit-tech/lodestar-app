@@ -4,7 +4,6 @@ import axios from 'axios'
 import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import queryString from 'query-string'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -29,14 +28,7 @@ const MeetingPage = () => {
   const { id: appId, settings } = useApp()
   const { username: managerUsername } = useParams<{ username: string }>()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const queryUrl = window.location.search
-  const { query } = queryString.parseUrl(queryUrl)
-
-  const meetsQueryArray = JSON.parse(settings['custom'])?.['meets'] || []
-  const meetQueryObject = meetsQueryArray.map((meet: { key: string; name: string }) => ({
-    name: meet.name,
-    value: query[meet.key] || '',
-  }))
+  const landingPage = Cookies.get('landing') // setting from backend
 
   const customAdProperty = (propertyName: string) => {
     return JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.[propertyName] || ''
@@ -102,7 +94,7 @@ const MeetingPage = () => {
               name: '行銷活動',
               value: customMeetingMarketingActivitiesProperty,
             },
-            ...meetQueryObject,
+            ...(landingPage && { name: '來源網址', value: landingPage }),
           ],
         },
         {
