@@ -13,20 +13,45 @@ import hasura from '../../hasura'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramPreview, ProgramRoleName } from '../../types/program'
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ view?: string }>`
+  ${props =>
+    props.view === 'List' &&
+    `
+    display:flex;
+    align-items:center;
+  `}
   overflow: hidden;
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
 `
-const StyledMeta = styled.div`
-  padding: 1.25rem;
+const StyledMeta = styled.div<{ view?: string }>`
+  ${props =>
+    props.view === 'List'
+      ? `
+      width:80%;
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+    `
+      : `padding: 1.25rem;`}
 `
-const StyledTitle = styled.div`
+const StyledTitle = styled.div<{ view?: string }>`
   ${MultiLineTruncationMixin}
   ${CommonTitleMixin}
-  margin-bottom: 1.25rem;
-  height: 3em;
+  ${props =>
+    props.view === 'List'
+      ? `
+      margin-bottom:0px;
+      display:block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      `
+      : `
+      margin-bottom: 1.25rem;
+      height: 3rem;
+      `}
 `
 const StyledDescription = styled.div`
   ${MultiLineTruncationMixin}
@@ -36,7 +61,8 @@ const StyledDescription = styled.div`
   font-size: 14px;
   letter-spacing: 0.4px;
 `
-const AvatarPlaceHolder = styled.div`
+const AvatarPlaceHolder = styled.div<{ view?: string }>`
+  ${props => props.view === 'List' && 'width: 40%;'}
   height: 2rem;
 `
 
@@ -49,7 +75,8 @@ const ProgramCard: React.VFC<{
   withProgress?: boolean
   isExpired?: boolean
   previousPage?: string
-}> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress, isExpired, previousPage }) => {
+  view?: string
+}> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress, isExpired, previousPage, view }) => {
   const { programPreview } = useProgramPreview(programId)
   const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
 
@@ -58,51 +85,105 @@ const ProgramCard: React.VFC<{
     : 0
 
   return (
-    <Box opacity={isExpired ? '50%' : '100%'}>
-      {!noInstructor && programPreview?.roles && (
-        <AvatarPlaceHolder className="my-3">
-          {programPreview.roles
-            .filter(role => role.name === 'instructor')
-            .slice(0, 1)
-            .map(role => (
-              <MemberAvatar key={role.memberId} memberId={role.memberId} withName />
-            ))}
-        </AvatarPlaceHolder>
-      )}
+    <>
+      {view === 'Grid' && (
+        <Box opacity={isExpired ? '50%' : '100%'}>
+          {!noInstructor && programPreview?.roles && (
+            <AvatarPlaceHolder className="my-3">
+              {programPreview.roles
+                .filter(role => role.name === 'instructor')
+                .slice(0, 1)
+                .map(role => (
+                  <MemberAvatar key={role.memberId} memberId={role.memberId} withName />
+                ))}
+            </AvatarPlaceHolder>
+          )}
 
-      <Link
-        to={
-          isExpired
-            ? `/programs/${programId}?visitIntro=1`
-            : programType && previousPage
-            ? `/programs/${programId}?type=${programType}&back=${previousPage}`
-            : programType
-            ? `/programs/${programId}?type=${programType}`
-            : previousPage
-            ? `/programs/${programId}?back=${previousPage}`
-            : `/programs/${programId}`
-        }
-      >
-        <StyledWrapper>
-          <CustomRatioImage
-            width="100%"
-            ratio={9 / 16}
-            src={
-              (programPreview &&
-                (programPreview.coverThumbnailUrl || programPreview.coverUrl || programPreview.coverMobileUrl)) ||
-              EmptyCover
+          <Link
+            to={
+              isExpired
+                ? `/programs/${programId}?visitIntro=1`
+                : programType && previousPage
+                ? `/programs/${programId}?type=${programType}&back=${previousPage}`
+                : programType
+                ? `/programs/${programId}?type=${programType}`
+                : previousPage
+                ? `/programs/${programId}?back=${previousPage}`
+                : `/programs/${programId}`
             }
-            shape="rounded"
-          />
-          <StyledMeta>
-            <StyledTitle>{programPreview && programPreview.title}</StyledTitle>
-            <StyledDescription>{programPreview && programPreview.abstract}</StyledDescription>
+          >
+            <StyledWrapper>
+              <CustomRatioImage
+                width="100%"
+                ratio={9 / 16}
+                src={
+                  (programPreview &&
+                    (programPreview.coverThumbnailUrl || programPreview.coverUrl || programPreview.coverMobileUrl)) ||
+                  EmptyCover
+                }
+                shape="rounded"
+              />
+              <StyledMeta>
+                <StyledTitle>{programPreview && programPreview.title}</StyledTitle>
+                <StyledDescription>{programPreview && programPreview.abstract}</StyledDescription>
 
-            {withProgress && !loadingProgress && <ProgressBar percent={Math.floor(viewRate * 100)} />}
-          </StyledMeta>
-        </StyledWrapper>
-      </Link>
-    </Box>
+                {withProgress && !loadingProgress && <ProgressBar percent={Math.floor(viewRate * 100)} />}
+              </StyledMeta>
+            </StyledWrapper>
+          </Link>
+        </Box>
+      )}
+      {view === 'List' && (
+        <Box opacity={isExpired ? '50%' : '100%'} width="100%">
+          <Link
+            to={
+              isExpired
+                ? `/programs/${programId}?visitIntro=1`
+                : programType && previousPage
+                ? `/programs/${programId}?type=${programType}&back=${previousPage}`
+                : programType
+                ? `/programs/${programId}?type=${programType}`
+                : previousPage
+                ? `/programs/${programId}?back=${previousPage}`
+                : `/programs/${programId}`
+            }
+          >
+            <StyledWrapper view={view}>
+              <CustomRatioImage
+                width="15%"
+                height="15%"
+                margin="12px"
+                ratio={9 / 16}
+                src={
+                  (programPreview &&
+                    (programPreview.coverThumbnailUrl || programPreview.coverUrl || programPreview.coverMobileUrl)) ||
+                  EmptyCover
+                }
+                shape="rounded"
+              />
+              <StyledMeta view={view}>
+                <Box minWidth="50%" maxWidth="50%">
+                  <StyledTitle view={view}>{programPreview && programPreview.title}</StyledTitle>
+                </Box>
+                <Box width="100%" display="flex" justifyContent="flex-end">
+                  {!noInstructor && programPreview?.roles && (
+                    <AvatarPlaceHolder className="my-3" view={view}>
+                      {programPreview.roles
+                        .filter(role => role.name === 'instructor')
+                        .slice(0, 1)
+                        .map(role => (
+                          <MemberAvatar key={role.memberId} memberId={role.memberId} withName view={view} />
+                        ))}
+                    </AvatarPlaceHolder>
+                  )}
+                  {withProgress && !loadingProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="40%" />}
+                </Box>
+              </StyledMeta>
+            </StyledWrapper>
+          </Link>
+        </Box>
+      )}
+    </>
   )
 }
 

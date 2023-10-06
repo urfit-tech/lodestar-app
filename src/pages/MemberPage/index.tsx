@@ -2,7 +2,7 @@ import { Flex, SkeletonText, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } 
 import { Typography } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React from 'react'
+import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { defineMessages, useIntl } from 'react-intl'
 import { Redirect, useParams } from 'react-router-dom'
@@ -28,10 +28,23 @@ const messages = defineMessages({
   merchandiseOrderLog: { id: 'product.merchandise.tab.orderLog', defaultMessage: '商品紀錄' },
 })
 
+const StyledTabContainer = styled.div`
+  && {
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+  }
+
+  &&::-webkit-scrollbar {
+    display: none;
+  }
+`
+
 const StyledTabList = styled(TabList)`
   && {
     padding-bottom: 1px;
     border-bottom: 1px solid var(--gray);
+    white-space: nowrap;
   }
 `
 
@@ -61,6 +74,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
     merchandiseOrderEnrollments,
   } = useMemberPageEnrollmentsCounts(memberId)
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
+  const [programTab, setProgramTab] = useState('program')
 
   let content = null
 
@@ -83,10 +97,20 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       isVisible: currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROGRAM_INFO),
       content: (
         <>
-          <EnrolledProgramCollectionBlock memberId={memberId} />
-          {programPackageEnrollments > 0 ? (
+          {programTab === 'program' && (
+            <EnrolledProgramCollectionBlock
+              memberId={memberId}
+              onProgramTabClick={tab => setProgramTab(tab)}
+              programTab={programTab}
+            />
+          )}
+          {programTab === 'programPackage' && programPackageEnrollments > 0 ? (
             settings['feature.expired_program_package_plan.enable'] === '0' ? null : (
-              <ProgramPackageCollectionBlock memberId={memberId} />
+              <ProgramPackageCollectionBlock
+                memberId={memberId}
+                onProgramTabClick={tab => setProgramTab(tab)}
+                programTab={programTab}
+              />
             )
           ) : null}
         </>
@@ -140,11 +164,11 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       index={tabContents.findIndex(v => (activeKey ? v.key === activeKey : v.key === 'program'))}
     >
       <div style={{ background: 'white' }}>
-        <div className="container">
+        <StyledTabContainer className="container">
           <StyledTabList>
             <>
               {tabContents.map(v => (
-                <Tab key={v.key} onClick={() => setActiveKey(v.key)} mr="2rem">
+                <Tab key={v.key} onClick={() => setActiveKey(v.key)}>
                   {v.name}
                 </Tab>
               ))}
@@ -160,7 +184,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
               ) : null}
             </>
           </StyledTabList>
-        </div>
+        </StyledTabContainer>
       </div>
       <TabPanels>
         {tabContents.map(v => (
