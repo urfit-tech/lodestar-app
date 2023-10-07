@@ -28,7 +28,6 @@ const MeetingPage = () => {
   const { id: appId, settings } = useApp()
   const { username: managerUsername } = useParams<{ username: string }>()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const landingPage = Cookies.get('landing') // setting from backend
 
   const customAdProperty = (propertyName: string) => {
     return JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.[propertyName] || ''
@@ -64,6 +63,7 @@ const MeetingPage = () => {
     const referal = formEntries.find(entry => entry[0] === 'referal')?.[1]
     const fields = formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))
     const timeslots = formEntries.filter(entry => entry[0] === 'timeslot').map(entry => entry[1])
+    const landingPage = Cookies.get('landing') // setting from backend
 
     let utm
     try {
@@ -94,7 +94,7 @@ const MeetingPage = () => {
               name: '行銷活動',
               value: customMeetingMarketingActivitiesProperty,
             },
-            ...(landingPage && { name: '來源網址', value: landingPage }),
+            { name: '來源網址', value: landingPage || '' },
           ],
         },
         {
@@ -113,7 +113,7 @@ const MeetingPage = () => {
         alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
       }
     } catch (error) {
-      console.log(error)
+      alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${error}`)
     } finally {
       setIsSubmitting(false)
       window.location.reload()
