@@ -54,6 +54,7 @@ export type ProgramPreview = {
   title: string
   abstract: string | null
   roles: ProgramRole[]
+  deliveredAt: Date
 }
 
 export type ProgramRole = {
@@ -169,3 +170,7 @@ export type ChoiceProps = {
   isCorrect: boolean
   isSelected: boolean
 }
+
+export type ProgramContentLog = {
+  createdAt: Date
+}[]

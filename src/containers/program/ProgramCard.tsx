@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
-import { Box } from '@chakra-ui/react'
+import { Box, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { sum } from 'ramda'
 import React from 'react'
@@ -11,7 +12,7 @@ import ProgressBar from '../../components/common/ProgressBar'
 import { useProgramContentProgress } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import EmptyCover from '../../images/empty-cover.png'
-import { ProgramPreview, ProgramRoleName } from '../../types/program'
+import { ProgramContentLog, ProgramPreview, ProgramRoleName } from '../../types/program'
 
 const StyledWrapper = styled.div<{ view?: string }>`
   ${props =>
@@ -42,7 +43,7 @@ const StyledTitle = styled.div<{ view?: string }>`
   ${props =>
     props.view === 'List'
       ? `
-      margin-bottom:0px;
+      margin-bottom: 0.25rem;
       display:block;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -53,12 +54,20 @@ const StyledTitle = styled.div<{ view?: string }>`
       height: 3rem;
       `}
 `
-const StyledDescription = styled.div`
+const StyledDescription = styled.div<{ size?: string }>`
+  ${props =>
+    props.size === 'small'
+      ? `
+      font-size: 12px;
+      margin-bottom: 0.5rem;
+      `
+      : `
+      font-size: 14px;
+      height: 3em;
+      margin-bottom: 1.25rem;
+      `}
   ${MultiLineTruncationMixin}
-  margin-bottom: 1.25rem;
-  height: 3em;
   color: var(--gray-dark);
-  font-size: 14px;
   letter-spacing: 0.4px;
 `
 const AvatarPlaceHolder = styled.div<{ view?: string }>`
@@ -76,27 +85,60 @@ const ProgramCard: React.VFC<{
   isExpired?: boolean
   previousPage?: string
   view?: string
-}> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress, isExpired, previousPage, view }) => {
-  const { programPreview } = useProgramPreview(programId)
+  programDatetimeEnabled?: boolean
+}> = ({
+  memberId,
+  programId,
+  programType,
+  noInstructor,
+  noPrice,
+  withProgress,
+  isExpired,
+  previousPage,
+  view,
+  programDatetimeEnabled,
+}) => {
+  const { loadingProgramPreview, programPreview } = useProgramPreview(memberId, programId)
   const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
+  const programContentIds = programContentProgress?.map(contentProgress => contentProgress.programContentId) || []
+  const { loadingProgramContentLog, programContentLog } = useProgramContentLog(memberId, programContentIds)
 
   const viewRate = programContentProgress?.length
     ? sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length
     : 0
 
+  const lastProgressUpdatedAt = programContentProgress?.length
+    ? programContentProgress.map(contentProgress => contentProgress.updatedAt)
+    : undefined
+
+  const lastContentLogCreatedAt = programContentLog?.map(contentLog => contentLog.createdAt)
+
+  const lastViewDate = lastProgressUpdatedAt?.concat(lastContentLogCreatedAt).sort((a, b) => {
+    if (a && b) {
+      return +new Date(b) - +new Date(a)
+    }
+    return 0
+  })[0]
+
   return (
     <>
       {view === 'Grid' && (
         <Box opacity={isExpired ? '50%' : '100%'}>
-          {!noInstructor && programPreview?.roles && (
+          {loadingProgramPreview ? (
             <AvatarPlaceHolder className="my-3">
-              {programPreview.roles
-                .filter(role => role.name === 'instructor')
-                .slice(0, 1)
-                .map(role => (
-                  <MemberAvatar key={role.memberId} memberId={role.memberId} withName />
-                ))}
+              <SkeletonCircle size="10" />
             </AvatarPlaceHolder>
+          ) : (
+            !noInstructor && (
+              <AvatarPlaceHolder className="my-3">
+                {programPreview?.roles
+                  .filter(role => role.name === 'instructor')
+                  .slice(0, 1)
+                  .map(role => (
+                    <MemberAvatar key={role.memberId} memberId={role.memberId} withName />
+                  ))}
+              </AvatarPlaceHolder>
+            )
           )}
 
           <Link
@@ -124,10 +166,23 @@ const ProgramCard: React.VFC<{
                 shape="rounded"
               />
               <StyledMeta>
-                <StyledTitle>{programPreview && programPreview.title}</StyledTitle>
-                <StyledDescription>{programPreview && programPreview.abstract}</StyledDescription>
-
-                {withProgress && !loadingProgress && <ProgressBar percent={Math.floor(viewRate * 100)} />}
+                {loadingProgramPreview && loadingProgramContentLog ? (
+                  <SkeletonText m="4" noOfLines={4} spacing="4" skeletonHeight="2" />
+                ) : (
+                  <>
+                    <StyledTitle>{programPreview?.title}</StyledTitle>
+                    {programDatetimeEnabled && (
+                      <StyledDescription size="small">
+                        {`${dayjs(programPreview?.deliveredAt).format('YYYY-MM-DD')} 購買`}
+                        {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
+                      </StyledDescription>
+                    )}
+                    <StyledDescription>{programPreview?.abstract}</StyledDescription>
+                  </>
+                )}
+                {withProgress && (
+                  <ProgressBar percent={Math.floor(viewRate * 100)} width="100%" loading={loadingProgress} />
+                )}
               </StyledMeta>
             </StyledWrapper>
           </Link>
@@ -163,20 +218,42 @@ const ProgramCard: React.VFC<{
               />
               <StyledMeta view={view}>
                 <Box minWidth="50%" maxWidth="50%">
-                  <StyledTitle view={view}>{programPreview && programPreview.title}</StyledTitle>
-                </Box>
-                <Box width="100%" display="flex" justifyContent="flex-end">
-                  {!noInstructor && programPreview?.roles && (
-                    <AvatarPlaceHolder className="my-3" view={view}>
-                      {programPreview.roles
-                        .filter(role => role.name === 'instructor')
-                        .slice(0, 1)
-                        .map(role => (
-                          <MemberAvatar key={role.memberId} memberId={role.memberId} withName view={view} />
-                        ))}
-                    </AvatarPlaceHolder>
+                  {loadingProgramPreview && loadingProgramContentLog ? (
+                    <SkeletonText m="4" noOfLines={3} spacing="4" skeletonHeight="2" />
+                  ) : (
+                    <>
+                      <StyledTitle view={view}>{programPreview?.title}</StyledTitle>
+                      {programDatetimeEnabled && (
+                        <StyledDescription size="small">
+                          {`${dayjs(programPreview?.deliveredAt).format('YYYY-MM-DD')} 購買`}
+                          {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
+                        </StyledDescription>
+                      )}
+                    </>
                   )}
-                  {withProgress && !loadingProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="40%" />}
+                </Box>
+                <Box width="100%" display="flex" alignItems="center" justifyContent="flex-end">
+                  {loadingProgramPreview ? (
+                    <AvatarPlaceHolder className="my-3" view={view}>
+                      <SkeletonCircle size="10" />
+                    </AvatarPlaceHolder>
+                  ) : (
+                    <>
+                      {!noInstructor && (
+                        <AvatarPlaceHolder className="my-3" view={view}>
+                          {programPreview?.roles
+                            .filter(role => role.name === 'instructor')
+                            .slice(0, 1)
+                            .map(role => (
+                              <MemberAvatar key={role.memberId} memberId={role.memberId} withName view={view} />
+                            ))}
+                        </AvatarPlaceHolder>
+                      )}
+                    </>
+                  )}
+                  {withProgress && (
+                    <ProgressBar percent={Math.floor(viewRate * 100)} width="40%" loading={loadingProgress} />
+                  )}
                 </Box>
               </StyledMeta>
             </StyledWrapper>
@@ -189,10 +266,10 @@ const ProgramCard: React.VFC<{
 
 export default ProgramCard
 
-const useProgramPreview = (programId: string) => {
-  const { loading, data, error, refetch } = useQuery<hasura.GET_PROGRAM_PREVIEW, hasura.GET_PROGRAM_PREVIEWVariables>(
+const useProgramPreview = (memberId: string, programId: string) => {
+  const { loading, data, error, refetch } = useQuery<hasura.GetProgramPreview, hasura.GetProgramPreviewVariables>(
     gql`
-      query GET_PROGRAM_PREVIEW($programId: uuid!) {
+      query GetProgramPreview($memberId: String!, $programId: uuid!) {
         program_by_pk(id: $programId) {
           id
           cover_url
@@ -206,9 +283,12 @@ const useProgramPreview = (programId: string) => {
             member_id
           }
         }
+        program_enrollment(where: { member_id: { _eq: $memberId }, program_id: { _eq: $programId } }) {
+          product_delivered_at
+        }
       }
     `,
-    { variables: { programId } },
+    { variables: { memberId, programId } },
   )
 
   const programPreview: ProgramPreview | null =
@@ -227,6 +307,7 @@ const useProgramPreview = (programId: string) => {
             memberId: programRole.member_id,
             memberName: programRole.member_id,
           })),
+          deliveredAt: data.program_enrollment[0]?.product_delivered_at || undefined,
         }
 
   return {
@@ -234,5 +315,37 @@ const useProgramPreview = (programId: string) => {
     errorProgramPreview: error,
     programPreview,
     refetchProgramPreview: refetch,
+  }
+}
+
+const useProgramContentLog = (memberId: string, programContentId: Array<string>) => {
+  const { loading, data, error } = useQuery<hasura.GetProgramContentLog, hasura.GetProgramContentLogVariables>(
+    gql`
+      query GetProgramContentLog($memberId: String!, $programContentId: [uuid!]!) {
+        program_content_log(
+          where: { member_id: { _eq: $memberId }, program_content_id: { _in: $programContentId } }
+          order_by: { created_at: desc }
+          limit: 1
+        ) {
+          program_content_id
+          created_at
+        }
+      }
+    `,
+    { variables: { memberId, programContentId } },
+  )
+
+  const programContentLog: ProgramContentLog | null =
+    loading || error || !data
+      ? null
+      : data.program_content_log.map(contentLog => {
+          return {
+            createdAt: contentLog.created_at,
+          }
+        })
+
+  return {
+    loadingProgramContentLog: loading,
+    programContentLog,
   }
 }

@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Skeleton } from '@chakra-ui/react'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -26,13 +26,20 @@ const ProgressBar: React.VFC<{
   noPercent?: boolean
   className?: string
   width?: string
-}> = ({ percent, noPercent, className, width }) => {
+  loading?: boolean
+}> = ({ percent, noPercent, className, width, loading }) => {
   return (
     <Box display="flex" alignItems="center" justifyContent="space-between" className={`${className}`} width={width}>
-      <StyledBar className="progress-bar">
-        <StyledProgress percent={percent} />
-      </StyledBar>
-      {!noPercent && <StyledPercent className="ml-2">{percent}%</StyledPercent>}
+      {loading ? (
+        <Skeleton width="100%" height="10px" />
+      ) : (
+        <>
+          <StyledBar className="progress-bar">
+            <StyledProgress percent={percent} />
+          </StyledBar>
+          {!noPercent && <StyledPercent className="ml-2">{percent}%</StyledPercent>}
+        </>
+      )}
     </Box>
   )
 }

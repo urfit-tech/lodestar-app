@@ -203,6 +203,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                     isExpired={isExpired}
                     previousPage={`members_${memberId}`}
                     view={view}
+                    programDatetimeEnabled={settings['program.datetime.enabled'] === '1'}
                   />
                 </div>
               )}
@@ -215,6 +216,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                     isExpired={isExpired}
                     previousPage={`members_${memberId}`}
                     view={view}
+                    programDatetimeEnabled={settings['program.datetime.enabled'] === '1'}
                   />
                 </Box>
               )}
