@@ -11,7 +11,7 @@ export type AppointmentPlan = {
   supportLocales: string[] | null
   currency: CurrencyProps
   isPrivate?: boolean
-  reservationAmount?: number
+  reservationAmount: number
   reservationType?: ReservationType | null
   rescheduleAmount: number
   rescheduleType: ReservationType | null
