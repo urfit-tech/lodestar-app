@@ -52,47 +52,44 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
 
   const appointmentPlans: (AppointmentPlan & {
     periods: AppointmentPeriod[]
-  })[] =
-    loading || error || !data
-      ? []
-      : data.appointment_plan.map(appointmentPlan => ({
-          id: appointmentPlan.id,
-          title: appointmentPlan.title,
-          description: appointmentPlan.description || '',
-          duration: appointmentPlan.duration,
-          price: appointmentPlan.price,
-          phone: null,
-          supportLocales: appointmentPlan.support_locales,
-          capacity: appointmentPlan.capacity,
-          defaultMeetGateway: appointmentPlan.default_meet_gateway,
-          meetGenerationMethod: appointmentPlan.meet_generation_method,
-          currency: {
-            id: appointmentPlan.currency.id,
-            label: appointmentPlan.currency.label,
-            unit: appointmentPlan.currency.unit,
-            name: appointmentPlan.currency.name,
-          },
-          rescheduleAmount: appointmentPlan.reschedule_amount,
-          rescheduleType: appointmentPlan.reschedule_type as ReservationType,
-          periods: appointmentPlan.appointment_periods.map(period => ({
-            id: `${period.started_at}`,
-            startedAt: new Date(period.started_at),
-            endedAt: new Date(period.ended_at),
-            booked: period.booked,
-            available: !!period.available,
-            isBookedReachLimit: appointmentPlan.capacity !== -1 && period.booked >= appointmentPlan.capacity,
-            currentMemberBooked: appointmentPlan.appointment_enrollments.some(
-              enrollment =>
-                enrollment.member_id === currentMemberId &&
-                enrollment.appointment_plan_id === appointmentPlan.id &&
-                enrollment.started_at === period.started_at &&
-                !enrollment.canceled_at,
-            ),
-          })),
-          isPrivate: appointmentPlan.is_private,
-          reservationAmount: appointmentPlan.reservation_amount,
-          reservationType: (appointmentPlan.reservation_type as ReservationType) || 'hour',
-        }))
+  })[] = data?.appointment_plan.map(appointmentPlan => ({
+    id: appointmentPlan.id,
+    title: appointmentPlan.title,
+    description: appointmentPlan.description || '',
+    duration: appointmentPlan.duration,
+    price: appointmentPlan.price,
+    phone: null,
+    supportLocales: appointmentPlan.support_locales,
+    capacity: appointmentPlan.capacity,
+    defaultMeetGateway: appointmentPlan.default_meet_gateway,
+    meetGenerationMethod: appointmentPlan.meet_generation_method,
+    currency: {
+      id: appointmentPlan.currency.id,
+      label: appointmentPlan.currency.label,
+      unit: appointmentPlan.currency.unit,
+      name: appointmentPlan.currency.name,
+    },
+    rescheduleAmount: appointmentPlan.reschedule_amount,
+    rescheduleType: appointmentPlan.reschedule_type as ReservationType,
+    periods: appointmentPlan.appointment_periods.map(period => ({
+      id: `${period.started_at}`,
+      startedAt: new Date(period.started_at),
+      endedAt: new Date(period.ended_at),
+      booked: period.booked,
+      available: !!period.available,
+      isBookedReachLimit: appointmentPlan.capacity !== -1 && period.booked >= appointmentPlan.capacity,
+      currentMemberBooked: appointmentPlan.appointment_enrollments.some(
+        enrollment =>
+          enrollment.member_id === currentMemberId &&
+          enrollment.appointment_plan_id === appointmentPlan.id &&
+          enrollment.started_at === period.started_at &&
+          !enrollment.canceled_at,
+      ),
+    })),
+    isPrivate: appointmentPlan.is_private,
+    reservationAmount: appointmentPlan.reservation_amount,
+    reservationType: (appointmentPlan.reservation_type as ReservationType) || 'hour',
+  })) || []
 
   return {
     loadingAppointmentPlans: loading,
@@ -162,16 +159,16 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
 
   const appointmentPlan:
     | (AppointmentPlan & {
-        periods: AppointmentPeriod[]
-        creator: {
-          id: string
-          avatarUrl: string | null
-          name: string
-          abstract: string | null
-        }
-      })
+      periods: AppointmentPeriod[]
+      creator: {
+        id: string
+        avatarUrl: string | null
+        name: string
+        abstract: string | null
+      }
+    })
     | null = data?.appointment_plan_by_pk
-    ? {
+      ? {
         id: data.appointment_plan_by_pk.id,
         title: data.appointment_plan_by_pk.title,
         description: data.appointment_plan_by_pk.description || '',
@@ -216,8 +213,12 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           abstract: data.appointment_plan_by_pk.creator?.abstract || null,
         },
       }
-    : null
+      : null
+  if (appointmentPlan) {
+    console.log(appointmentPlan.id)
+    console.log(appointmentPlan?.rescheduleAmount)
 
+  }
   return {
     loadingAppointmentPlan: loading,
     errorAppointmentPlan: error,
@@ -347,13 +348,13 @@ export const useMeetByAppointmentPlanIdAndPeriod = (appointmentPlanId: string, s
   )
   const meet = data?.meet?.[0]
     ? {
-        id: data.meet[0].id,
-        hostMemberId: data.meet[0].host_member_id,
-        meetMembers: data.meet[0].meet_members.map(v => ({
-          id: v.id,
-          memberId: v.member_id,
-        })),
-      }
+      id: data.meet[0].id,
+      hostMemberId: data.meet[0].host_member_id,
+      meetMembers: data.meet[0].meet_members.map(v => ({
+        id: v.id,
+        memberId: v.member_id,
+      })),
+    }
     : null
 
   return {
