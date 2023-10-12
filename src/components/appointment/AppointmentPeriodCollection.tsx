@@ -27,11 +27,12 @@ const AppointmentPeriodBlock: React.VFC<{
     reservationAmount: number
     capacity: number
   }
+  services: { id: string; gateway: string }[]
+  loadingServices: boolean
   onClick: (period: AppointmentPeriod) => void
-}> = ({ periods, creatorId, appointmentPlan, onClick }) => {
+}> = ({ periods, creatorId, appointmentPlan, services, loadingServices, onClick }) => {
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isAuthenticated } = useAuth()
-  const { loading: loadingServices, services } = useService()
   const [overLapPeriods, setOverLapPeriods] = useState<string[]>([])
 
   return (
@@ -102,6 +103,7 @@ const AppointmentPeriodCollection: React.VFC<{
   appointmentPeriods: AppointmentPeriod[]
   onClick: (period: AppointmentPeriod) => void
 }> = ({ creatorId, appointmentPlan, appointmentPeriods, onClick }) => {
+  const { loading: loadingServices, services } = useService()
   const periods = groupBy(
     period => dayjs(period.startedAt).format('YYYY-MM-DD(dd)'),
     appointmentPeriods.filter(v =>
@@ -120,6 +122,8 @@ const AppointmentPeriodCollection: React.VFC<{
           creatorId={creatorId}
           appointmentPlan={appointmentPlan}
           onClick={onClick}
+          services={services}
+          loadingServices={loadingServices}
         />
       ))}
     </>
