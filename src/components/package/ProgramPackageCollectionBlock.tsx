@@ -1,8 +1,10 @@
 import { gql, useQuery } from '@apollo/client'
 import { Box, Center, Divider, Flex, HStack, SkeletonText, Text, useRadioGroup } from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React, { Fragment, useState } from 'react'
+import { flatten } from 'ramda'
+import React, { Fragment, useMemo, useState } from 'react'
 import { FiGrid, FiList } from 'react-icons/fi'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -10,8 +12,7 @@ import styled from 'styled-components'
 import { CustomRatioImage } from '../../components/common/Image'
 import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useExpiredOwnedProducts } from '../../hooks/data'
-import { useEnrolledProgramPackage } from '../../hooks/programPackage'
+import { useExpiredOwnedProducts, useValidOwnedProducts } from '../../hooks/data'
 import EmptyCover from '../../images/empty-cover.png'
 import RadioCard from '../RadioCard'
 
@@ -28,15 +29,24 @@ const StyledCard = styled.div<{ view?: string }>`
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
 `
 
+const StyledDescription = styled.div<{ view?: string }>`
+  ${MultiLineTruncationMixin}
+  ${props =>
+    props.view === 'List' &&
+    `
+    margin-top:4px;
+  `}
+  font-size: 12px;
+  color: var(--gray-dark);
+  letter-spacing: 0.4px;
+`
+
 const StyledMeta = styled.div<{ view?: string }>`
   ${props =>
     props.view === 'List'
       ? `
       width:80%;
-      display:flex;
-      justify-content: space-between;
-      align-items:center;
-    `
+      `
       : `padding: 1.25rem;`}
 `
 
@@ -97,15 +107,54 @@ const ProgramPackageCollectionBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const [isExpired, setIsExpired] = useState(false)
-  const [view, setView] = useState('Grid')
-  const { loadingExpiredOwnedProducts, expiredOwnedProducts: expiredOwnedProgramPackagePlanIds } =
+  const localStorageView = localStorage.getItem('programPackageView')
+  const [view, setView] = useState(localStorageView ? localStorageView : 'Grid')
+  const { loadingExpiredOwnedProducts, expiredOwnedProducts: expiredOwnedProgramPackagePlans } =
     useExpiredOwnedProducts(memberId, 'ProgramPackagePlan')
-  const { loading, error, data: programPackages } = useEnrolledProgramPackage(memberId)
+  const { loadingValidOwnedProducts, validOwnedProducts: validOwnedProgramPackagePlans } = useValidOwnedProducts(
+    memberId,
+    'ProgramPackagePlan',
+  )
+  const ownedProgramPackagePlanIds = validOwnedProgramPackagePlans.map(v => v.programPackagePlanId)
+  const expiredOwnedProgramPackagePlanIds = expiredOwnedProgramPackagePlans.map(v => v.programPackagePlanId)
+  const { loadingExpiredProgramPackages, errorExpiredProgramPackages, expiredProgramPackages } =
+    useExpiredProgramPackages(expiredOwnedProgramPackagePlanIds)
   const {
-    loadingProgramPackages,
-    errorProgramPackages,
-    programPackages: expiredProgramPackages,
-  } = useProgramPackages(expiredOwnedProgramPackagePlanIds)
+    loadingProgramPackages: loadingValidProgramPackages,
+    errorProgramPackages: errorValidProgramPackages,
+    programPackages: validOwnedProgramPackages,
+  } = useProgramPackages(ownedProgramPackagePlanIds, memberId)
+  const programIds = (isExpired ? expiredProgramPackages : validOwnedProgramPackages)
+    .map(v => v.programs.map(v => v.programId))
+    .flat()
+  const { programContent } = useProgramContentIds(programIds, memberId)
+  const programPackage = (isExpired ? expiredProgramPackages : validOwnedProgramPackages).map(programPackage => {
+    const newPrograms = programPackage.programs.map(p => {
+      const content = programContent?.find(contentItem => contentItem.programId === p.programId)
+
+      return {
+        ...p,
+        lastView: content ? content.lastView : undefined,
+      }
+    })
+
+    const recentLastView = newPrograms.reduce((latest, program) => {
+      if (!latest) return program.lastView
+      if (!program.lastView) return latest
+      return new Date(program.lastView) > new Date(latest) ? program.lastView : latest
+    }, null)
+
+    const deliveredAt = (isExpired ? expiredOwnedProgramPackagePlans : validOwnedProgramPackagePlans).find(
+      p => programPackage.planId === p.programPackagePlanId,
+    )?.deliveredAt
+
+    return {
+      ...programPackage,
+      programs: newPrograms,
+      recentLastView,
+      deliveredAt,
+    }
+  })
 
   const options = [
     formatMessage(commonMessages.label.availableForLimitTime),
@@ -124,7 +173,12 @@ const ProgramPackageCollectionBlock: React.VFC<{
     },
   })
 
-  if (loading || loadingExpiredOwnedProducts || loadingProgramPackages) {
+  if (
+    loadingValidOwnedProducts ||
+    loadingExpiredOwnedProducts ||
+    loadingValidProgramPackages ||
+    loadingExpiredProgramPackages
+  ) {
     return (
       <div className="container py-3">
         <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
@@ -133,7 +187,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
     )
   }
 
-  if (error || errorProgramPackages) {
+  if (errorValidProgramPackages || errorExpiredProgramPackages) {
     return (
       <div className="container py-3">
         <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
@@ -156,7 +210,13 @@ const ProgramPackageCollectionBlock: React.VFC<{
           <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
             <Flex marginRight="20px" cursor="pointer">
               {
-                <HStack spacing="5px" onClick={() => setView(view === 'Grid' ? 'List' : 'Grid')}>
+                <HStack
+                  spacing="5px"
+                  onClick={() => {
+                    setView(view === 'Grid' ? 'List' : 'Grid')
+                    localStorage.setItem('programPackageView', view === 'Grid' ? 'List' : 'Grid')
+                  }}
+                >
                   {view === 'Grid' && (
                     <>
                       <FiList />
@@ -185,13 +245,13 @@ const ProgramPackageCollectionBlock: React.VFC<{
           </HStack>
         )}
       </Box>
-      {programPackages.length === 0 &&
+      {validOwnedProgramPackages.length === 0 &&
         !isExpired &&
         settings['feature.expired_program_package_plan.enable'] === '1' &&
         expiredProgramPackages.length > 0 && <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>}
 
       <div className="row">
-        {(isExpired ? expiredProgramPackages : programPackages).map(programPackage => (
+        {programPackage.map(programPackage => (
           <Fragment key={programPackage.id}>
             {view === 'Grid' && (
               <Box className="col-12 col-md-6 col-lg-4 mb-4" opacity={isExpired ? '50%' : '100%'}>
@@ -211,6 +271,14 @@ const ProgramPackageCollectionBlock: React.VFC<{
                     />
                     <StyledMeta>
                       <StyledTitle>{programPackage.title}</StyledTitle>
+                      {settings['program.datetime.enabled'] === '1' && (
+                        <StyledDescription>
+                          {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
+                          {programPackage.recentLastView
+                            ? ` / ${dayjs(programPackage.recentLastView).format('YYYY-MM-DD')} 上次觀看`
+                            : ` / 尚未觀看`}
+                        </StyledDescription>
+                      )}
                     </StyledMeta>
                   </StyledCard>
                 </Link>
@@ -237,6 +305,14 @@ const ProgramPackageCollectionBlock: React.VFC<{
                       />
                       <StyledMeta view={view}>
                         <StyledTitle view={view}>{programPackage.title}</StyledTitle>
+                        {settings['program.datetime.enabled'] === '1' && (
+                          <StyledDescription view={view}>
+                            {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
+                            {programPackage.recentLastView
+                              ? ` / ${dayjs(programPackage.recentLastView).format('YYYY-MM-DD')} 上次觀看`
+                              : ` / 尚未觀看`}
+                          </StyledDescription>
+                        )}
                       </StyledMeta>
                     </StyledCard>
                   </Link>
@@ -252,19 +328,87 @@ const ProgramPackageCollectionBlock: React.VFC<{
 
 export default ProgramPackageCollectionBlock
 
-const useProgramPackages = (programPackagePlanIds: string[]) => {
+const useProgramPackages = (programPackagePlanIds: string[], memberId: string) => {
   const { loading, error, data } = useQuery<
-    hasura.GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS,
-    hasura.GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDSVariables
+    hasura.GetProgramPackageByProgramPackagePlanIds,
+    hasura.GetProgramPackageByProgramPackagePlanIdsVariables
   >(
     gql`
-      query GET_PROGRAM_PACKAGE_BY_PROGRAM_PACKAGE_PLAN_IDS($programPackagePlanIds: [uuid!]) {
-        program_package_plan(where: { id: { _in: $programPackagePlanIds } }, distinct_on: program_package_id) {
+      query GetProgramPackageByProgramPackagePlanIds($programPackagePlanIds: [uuid!], $memberId: String!) {
+        program_package_plan(
+          where: {
+            id: { _in: $programPackagePlanIds }
+            program_package_plan_enrollments: { member_id: { _eq: $memberId } }
+          }
+          distinct_on: program_package_id
+        ) {
           id
+          is_tempo_delivery
           program_package {
             id
             cover_url
             title
+            program_package_programs {
+              program {
+                id
+                title
+              }
+              program_tempo_deliveries {
+                id
+              }
+            }
+          }
+        }
+      }
+    `,
+    {
+      variables: { programPackagePlanIds, memberId },
+    },
+  )
+
+  const programPackages =
+    data?.program_package_plan
+      .map(v => ({
+        id: v.program_package?.id,
+        coverUrl: v.program_package?.cover_url || undefined,
+        title: v.program_package?.title,
+        planId: v.id,
+        programs: v.program_package.program_package_programs.map(v => ({
+          programId: v.program.id,
+          isDelivered: !!v.program_tempo_deliveries.length,
+        })),
+        isTempoDelivery: v.is_tempo_delivery,
+      }))
+      // TODO: if product is unpublished, optimize the user experience
+      .filter(w => !!w.id) || []
+
+  return {
+    loadingProgramPackages: loading,
+    errorProgramPackages: error,
+    programPackages,
+  }
+}
+
+const useExpiredProgramPackages = (programPackagePlanIds: string[]) => {
+  const { loading, error, data } = useQuery<
+    hasura.GetExpiredProgramPackageByProgramPackagePlanIds,
+    hasura.GetExpiredProgramPackageByProgramPackagePlanIdsVariables
+  >(
+    gql`
+      query GetExpiredProgramPackageByProgramPackagePlanIds($programPackagePlanIds: [uuid!]) {
+        program_package_plan(where: { id: { _in: $programPackagePlanIds } }, distinct_on: program_package_id) {
+          id
+          is_tempo_delivery
+          program_package {
+            id
+            cover_url
+            title
+            program_package_programs {
+              program {
+                id
+                title
+              }
+            }
           }
         }
       }
@@ -274,23 +418,183 @@ const useProgramPackages = (programPackagePlanIds: string[]) => {
     },
   )
 
-  const programPackages: {
-    id: string
-    coverUrl: string | undefined
-    title: string
-  }[] =
+  const expiredProgramPackages =
     data?.program_package_plan
       .map(v => ({
         id: v.program_package?.id,
         coverUrl: v.program_package?.cover_url || undefined,
         title: v.program_package?.title,
+        planId: v.id,
+        programs: v.program_package.program_package_programs.map(v => ({
+          programId: v.program.id,
+        })),
+        isTempoDelivery: v.is_tempo_delivery,
       }))
       // TODO: if product is unpublished, optimize the user experience
       .filter(w => !!w.id) || []
 
   return {
-    loadingProgramPackages: loading,
-    errorProgramPackages: error,
-    programPackages,
+    loadingExpiredProgramPackages: loading,
+    errorExpiredProgramPackages: error,
+    expiredProgramPackages,
+  }
+}
+
+export const useProgramContentProgress = (programIds: string[], memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GetProgramContentProgressByProgramIds,
+    hasura.GetProgramContentProgressByProgramIdsVariables
+  >(
+    gql`
+      query GetProgramContentProgressByProgramIds($programIds: [uuid!]!, $memberId: String!) {
+        program_content_body(
+          where: { program_contents: { program_content_section: { program_id: { _in: $programIds } } } }
+        ) {
+          type
+          program_contents(where: { published_at: { _is_null: false } }, order_by: { published_at: desc }) {
+            id
+            content_section_id
+            program_content_progress(where: { member_id: { _eq: $memberId } }) {
+              id
+              progress
+              last_progress
+              updated_at
+            }
+          }
+        }
+      }
+    `,
+    { variables: { programIds, memberId } },
+  )
+
+  const programContentProgress = useMemo(
+    () =>
+      loading || error || !data
+        ? undefined
+        : flatten(
+            data.program_content_body.map(contentBody =>
+              contentBody.program_contents.map(content => {
+                return {
+                  programContentBodyType: contentBody.type || null,
+                  programContentId: content.id,
+                  programContentSectionId: content.content_section_id,
+                  progress: content.program_content_progress[0]?.progress || 0,
+                  lastProgress: content.program_content_progress[0]?.last_progress || 0,
+                  updatedAt: content.program_content_progress[0]?.updated_at || undefined,
+                }
+              }),
+            ),
+          ),
+    [data, error, loading],
+  )
+
+  return {
+    loadingProgress: loading,
+    errorProgress: error,
+    programContentProgress,
+    refetchProgress: refetch,
+  }
+}
+
+export const useProgramContentIds = (programIds: string[], memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<hasura.GetProgramContent, hasura.GetProgramContentVariables>(
+    gql`
+      query GetProgramContent($programIds: [uuid!]!, $memberId: String!) {
+        program(where: { id: { _in: $programIds } }) {
+          id
+          program_content_progress_enrollments(order_by: { updated_at: desc }, limit: 1) {
+            updated_at
+          }
+        }
+        program_content_log(
+          where: {
+            program_content: { program_content_section: { program_id: { _in: $programIds } } }
+            member_id: { _eq: $memberId }
+          }
+          order_by: { created_at: desc }
+          limit: 1
+        ) {
+          program_content {
+            program_content_section {
+              program_id
+            }
+          }
+          created_at
+        }
+      }
+    `,
+    { variables: { programIds, memberId } },
+  )
+
+  const programContent = data?.program.map(p => {
+    const progressProgressId = p.id
+    const progressLastUpdatedAt = p.program_content_progress_enrollments[0]?.updated_at
+
+    const contentLog = data?.program_content_log.find(
+      logItem => logItem.program_content.program_content_section.program_id === progressProgressId,
+    )
+    const contentLogLastView = contentLog?.created_at
+
+    const lastView =
+      contentLogLastView && (!progressLastUpdatedAt || contentLogLastView > progressLastUpdatedAt)
+        ? contentLogLastView
+        : progressLastUpdatedAt
+
+    return {
+      programId: progressProgressId,
+      lastView,
+    }
+  })
+
+  return {
+    loadingProgramContentIds: loading,
+    errorProgramContentIds: error,
+    programContent,
+    refetchProgress: refetch,
+  }
+}
+
+export const useProgramContentLastView = (programContentIds: string[], memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GetProgramContentLastView,
+    hasura.GetProgramContentLastViewVariables
+  >(
+    gql`
+      query GetProgramContentLastView($programContentIds: [uuid!]!, $memberId: String!) {
+        program_content_log(
+          where: { program_content_id: { _in: $programContentIds }, member_id: { _eq: $memberId } }
+          order_by: { created_at: desc }
+          limit: 1
+        ) {
+          program_content_id
+          created_at
+        }
+        program_content_progress(
+          where: { program_content_id: { _in: $programContentIds }, member_id: { _eq: $memberId } }
+          order_by: { updated_at: desc }
+          limit: 1
+        ) {
+          program_content_id
+          updated_at
+        }
+      }
+    `,
+    { variables: { programContentIds, memberId } },
+  )
+
+  const programContentLastView = data?.program_content_log.map(contentLog =>
+    data.program_content_progress.map(contentProgress => ({
+      contentLogContentId: contentLog.program_content_id,
+      contentLogCreatedAt: contentLog.created_at,
+      contentProgressId: contentProgress.program_content_id,
+      contentProgressUpdatedAt: contentProgress.updated_at,
+    })),
+  )
+
+  return {
+    loadingProgramContentLastView: loading,
+    errorProgramContentLastView: error,
+    programContentLastView,
+    refetchProgramContentLastView: refetch,
   }
 }

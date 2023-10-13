@@ -54,18 +54,18 @@ const StyledTitle = styled.div<{ view?: string }>`
       height: 3rem;
       `}
 `
-const StyledDescription = styled.div<{ size?: string }>`
+const StyledDescription = styled.div<{ size?: string; view?: string }>`
   ${props =>
     props.size === 'small'
       ? `
       font-size: 12px;
-      margin-bottom: 0.5rem;
       `
       : `
       font-size: 14px;
       height: 3em;
       margin-bottom: 1.25rem;
       `}
+  ${props => (props.view === 'List' ? '' : 'margin-bottom: 0.5rem;')}
   ${MultiLineTruncationMixin}
   color: var(--gray-dark);
   letter-spacing: 0.4px;
@@ -224,7 +224,7 @@ const ProgramCard: React.VFC<{
                     <>
                       <StyledTitle view={view}>{programPreview?.title}</StyledTitle>
                       {programDatetimeEnabled && (
-                        <StyledDescription size="small">
+                        <StyledDescription size="small" view={view}>
                           {`${dayjs(programPreview?.deliveredAt).format('YYYY-MM-DD')} 購買`}
                           {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
                         </StyledDescription>
@@ -318,7 +318,7 @@ const useProgramPreview = (memberId: string, programId: string) => {
   }
 }
 
-const useProgramContentLog = (memberId: string, programContentId: Array<string>) => {
+export const useProgramContentLog = (memberId: string, programContentId: Array<string>) => {
   const { loading, data, error } = useQuery<hasura.GetProgramContentLog, hasura.GetProgramContentLogVariables>(
     gql`
       query GetProgramContentLog($memberId: String!, $programContentId: [uuid!]!) {

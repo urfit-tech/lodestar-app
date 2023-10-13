@@ -62,8 +62,14 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     variables: { memberId },
   })
 
-  const { loadingExpiredOwnedProducts, errorExpiredOwnedProducts, expiredOwnedProducts, refetchExpiredOwnedProducts } =
-    useExpiredOwnedProducts(memberId, 'ProgramPlan')
+  const {
+    loadingExpiredOwnedProducts,
+    errorExpiredOwnedProducts,
+    expiredOwnedProducts: expiredOwnedProgramPlans,
+    refetchExpiredOwnedProducts,
+  } = useExpiredOwnedProducts(memberId, 'ProgramPlan')
+
+  const expiredOwnedProgramPackagePlanIds = expiredOwnedProgramPlans.map(v => v.programPackagePlanId)
 
   const {
     loading: loadingExpiredProgramByProgramPlans,
@@ -74,7 +80,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     GET_PROGRAM_IDS_BY_PROGRAM_PLAN_IDS,
     {
       variables: {
-        programPlanIds: expiredOwnedProducts,
+        programPlanIds: expiredOwnedProgramPackagePlanIds,
       },
     },
   )
@@ -117,7 +123,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     errorExpiredOwnedProducts ||
     errorExpiredProgramByProgramPlans ||
     !ownedPrograms ||
-    !expiredOwnedProducts
+    !expiredOwnedProgramPlans
   ) {
     return (
       <div className="container py-3">
