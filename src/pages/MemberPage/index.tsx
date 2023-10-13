@@ -66,7 +66,6 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
     loadingPodcastProgramEnrollments,
     loadingAppointmentEnrollments,
     loadingMerchandiseOrderEnrollments,
-    programPackageEnrollments,
     projectPlanEnrollments,
     activityTicketEnrollments,
     podcastProgramEnrollments,
@@ -104,15 +103,13 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
               programTab={programTab}
             />
           )}
-          {programTab === 'programPackage' && programPackageEnrollments > 0 ? (
-            settings['feature.expired_program_package_plan.enable'] === '0' ? null : (
-              <ProgramPackageCollectionBlock
-                memberId={memberId}
-                onProgramTabClick={tab => setProgramTab(tab)}
-                programTab={programTab}
-              />
-            )
-          ) : null}
+          {programTab === 'programPackage' && (
+            <ProgramPackageCollectionBlock
+              memberId={memberId}
+              onProgramTabClick={tab => setProgramTab(tab)}
+              programTab={programTab}
+            />
+          )}
         </>
       ),
     },

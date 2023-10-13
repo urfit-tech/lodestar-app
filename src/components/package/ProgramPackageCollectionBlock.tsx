@@ -206,32 +206,32 @@ const ProgramPackageCollectionBlock: React.VFC<{
         marginBottom="1rem"
       >
         <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
-        {settings['feature.expired_program_package_plan.enable'] === '1' && expiredProgramPackages.length > 0 && (
-          <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
-            <Flex marginRight="20px" cursor="pointer">
-              {
-                <HStack
-                  spacing="5px"
-                  onClick={() => {
-                    setView(view === 'Grid' ? 'List' : 'Grid')
-                    localStorage.setItem('programPackageView', view === 'Grid' ? 'List' : 'Grid')
-                  }}
-                >
-                  {view === 'Grid' && (
-                    <>
-                      <FiList />
-                      <span>{formatMessage(commonMessages.term.list)}</span>
-                    </>
-                  )}
-                  {view === 'List' && (
-                    <>
-                      <FiGrid />
-                      <span>{formatMessage(commonMessages.term.grid)}</span>
-                    </>
-                  )}
-                </HStack>
-              }
-            </Flex>
+        <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
+          <Flex marginRight="20px" cursor="pointer">
+            {
+              <HStack
+                spacing="5px"
+                onClick={() => {
+                  setView(view === 'Grid' ? 'List' : 'Grid')
+                  localStorage.setItem('programPackageView', view === 'Grid' ? 'List' : 'Grid')
+                }}
+              >
+                {view === 'Grid' && (
+                  <>
+                    <FiList />
+                    <span>{formatMessage(commonMessages.term.list)}</span>
+                  </>
+                )}
+                {view === 'List' && (
+                  <>
+                    <FiGrid />
+                    <span>{formatMessage(commonMessages.term.grid)}</span>
+                  </>
+                )}
+              </HStack>
+            }
+          </Flex>
+          {settings['feature.expired_program_package_plan.enable'] === '1' && expiredProgramPackages.length > 0 && (
             <HStack spacing="12px">
               {options.map(value => {
                 const radio = getRadioProps({ value })
@@ -242,13 +242,11 @@ const ProgramPackageCollectionBlock: React.VFC<{
                 )
               })}
             </HStack>
-          </HStack>
-        )}
+          )}
+        </HStack>
       </Box>
-      {validOwnedProgramPackages.length === 0 &&
-        !isExpired &&
-        settings['feature.expired_program_package_plan.enable'] === '1' &&
-        expiredProgramPackages.length > 0 && <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>}
+
+      {programPackage.length === 0 && <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>}
 
       <div className="row">
         {programPackage.map(programPackage => (
