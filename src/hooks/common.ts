@@ -2,10 +2,12 @@ import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { MetaProductType } from 'lodestar-app-element/src/types/metaProduct'
+import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../hasura'
+import { getProductEnrollmentFromLodestar, transformProgramEnrollmentData } from '../helpers'
 import { commonMessages } from '../helpers/translation'
-import { SignupProperty } from '../types/general'
+import { MemberPageProductType, ProductData, SignupProperty } from '../types/general'
 import { ProductType } from '../types/product'
 import { PeriodType } from '../types/program'
 
@@ -786,4 +788,39 @@ export const useMemberPageEnrollmentsCounts = (memberId: string) => {
     appointmentEnrollments: appointmentEnrollments?.appointment_enrollment.length || 0,
     merchandiseOrderEnrollments: merchandiseOrderEnrollments?.order_log.length || 0,
   }
+}
+
+export const useProductEnrollment = <T extends MemberPageProductType>(product: T) => {
+  let config: { transformDataFunction: (data: any) => any[] }
+  switch (product) {
+    case 'program':
+    case 'expiredProgram':
+      config = { transformDataFunction: transformProgramEnrollmentData }
+  }
+
+  const { authToken } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<any>()
+  const [data, setData] = useState<ProductData<T>[]>([])
+
+  const fetch = useCallback(async () => {
+    if (authToken) {
+      try {
+        setLoading(true)
+        const programEnrollmentData = await getProductEnrollmentFromLodestar(product, authToken)
+        setData(config.transformDataFunction(programEnrollmentData))
+      } catch (err) {
+        console.log(err)
+        setError(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+  }, [authToken])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
+  return { fetch, data, error, loading }
 }

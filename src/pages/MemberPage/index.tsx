@@ -1,4 +1,4 @@
-import { Flex, SkeletonText, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
+import { SkeletonText, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -12,17 +12,11 @@ import { renderMemberAbstract } from '../../components/common/CustomRender'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
-import MerchandiseOrderCollectionBlock from '../../components/merchandise/MerchandiseOrderCollectionBlock'
-import ProgramPackageCollectionBlock from '../../components/package/ProgramPackageCollectionBlock'
 import EnrolledProgramCollectionBlock from '../../containers/program/EnrolledProgramCollectionBlock'
-import ProjectPlanCollectionBlock from '../../containers/project/ProjectPlanCollectionBlock'
 import { commonMessages } from '../../helpers/translation'
-import { useMemberPageEnrollmentsCounts } from '../../hooks/common'
+import { useProductEnrollment } from '../../hooks/common'
 import { usePublicMember } from '../../hooks/member'
 import { MemberPublicProps } from '../../types/member'
-import ActivityTicketCollectionBlock from './ActivityTicketCollectionBlock'
-import AppointmentPlanCollectionBlock from './AppointmentPlanCollectionBlock'
-import PodcastProgramCollectionBlock from './PodcastProgramCollectionBlock'
 
 const messages = defineMessages({
   merchandiseOrderLog: { id: 'product.merchandise.tab.orderLog', defaultMessage: '商品紀錄' },
@@ -59,21 +53,33 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   const { isAuthenticated, currentMemberId, permissions } = useAuth()
   const { id: appId, settings, loading: loadingApp } = useApp()
   const { member } = usePublicMember(memberId)
-  const {
-    loadingProgramPackageEnrollments,
-    loadingProjectPlanEnrollments,
-    loadingActivityTicketEnrollments,
-    loadingPodcastProgramEnrollments,
-    loadingAppointmentEnrollments,
-    loadingMerchandiseOrderEnrollments,
-    projectPlanEnrollments,
-    activityTicketEnrollments,
-    podcastProgramEnrollments,
-    appointmentEnrollments,
-    merchandiseOrderEnrollments,
-  } = useMemberPageEnrollmentsCounts(memberId)
+  // const {
+  //   loadingProgramPackageEnrollments,
+  //   loadingProjectPlanEnrollments,
+  //   loadingActivityTicketEnrollments,
+  //   loadingPodcastProgramEnrollments,
+  //   loadingAppointmentEnrollments,
+  //   loadingMerchandiseOrderEnrollments,
+  //   projectPlanEnrollments,
+  //   activityTicketEnrollments,
+  //   podcastProgramEnrollments,
+  //   appointmentEnrollments,
+  //   merchandiseOrderEnrollments,
+  // } = useMemberPageEnrollmentsCounts(memberId)
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
   const [programTab, setProgramTab] = useState('program')
+  const {
+    fetch: fetchProgramEnrollment,
+    data: programEnrollment,
+    error: programEnrollmentError,
+    loading: programEnrollmentLoading,
+  } = useProductEnrollment('program')
+  const {
+    fetch: fetchExpiredProgramEnrollment,
+    data: expiredProgramEnrollment,
+    error: expiredProgramEnrollmentError,
+    loading: expiredProgramEnrollmentLoading,
+  } = useProductEnrollment('expiredProgram')
 
   let content = null
 
@@ -98,61 +104,64 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
         <>
           {programTab === 'program' && (
             <EnrolledProgramCollectionBlock
-              memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
+              programEnrollment={programEnrollment}
+              expiredProgramEnrollment={expiredProgramEnrollment}
+              loading={programEnrollmentLoading}
+              isError={Boolean(programEnrollmentError) || Boolean(expiredProgramEnrollmentError)}
             />
           )}
-          {programTab === 'programPackage' && (
+          {/* {programTab === 'programPackage' && (
             <ProgramPackageCollectionBlock
               memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
             />
-          )}
+          )} */}
         </>
       ),
     },
-    {
-      key: 'project-plan',
-      name: formatMessage(commonMessages.tab.project),
-      isVisible:
-        (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROJECT_INFO)) &&
-        projectPlanEnrollments > 0,
-      content: <ProjectPlanCollectionBlock memberId={memberId} />,
-    },
-    {
-      key: 'activity-ticket',
-      name: formatMessage(commonMessages.tab.activity),
-      isVisible:
-        (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_ACTIVITY_INFO)) &&
-        activityTicketEnrollments > 0,
-      content: <ActivityTicketCollectionBlock memberId={memberId} />,
-    },
-    {
-      key: 'podcast',
-      name: formatMessage(commonMessages.tab.podcast),
-      isVisible:
-        (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PODCAST_INFO)) &&
-        podcastProgramEnrollments > 0,
-      content: <PodcastProgramCollectionBlock memberId={memberId} />,
-    },
-    {
-      key: 'appointment',
-      name: formatMessage(commonMessages.tab.appointment),
-      isVisible:
-        (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_APPOINTMENT_INFO)) &&
-        appointmentEnrollments > 0,
-      content: <AppointmentPlanCollectionBlock memberId={memberId} />,
-    },
-    {
-      key: 'merchandise-order',
-      name: formatMessage(messages.merchandiseOrderLog),
-      isVisible:
-        (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_MERCHANDISE_INFO)) &&
-        merchandiseOrderEnrollments > 0,
-      content: <MerchandiseOrderCollectionBlock memberId={memberId} />,
-    },
+    // {
+    //   key: 'project-plan',
+    //   name: formatMessage(commonMessages.tab.project),
+    //   isVisible:
+    //     (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROJECT_INFO)) &&
+    //     projectPlanEnrollments > 0,
+    //   content: <ProjectPlanCollectionBlock memberId={memberId} />,
+    // },
+    // {
+    //   key: 'activity-ticket',
+    //   name: formatMessage(commonMessages.tab.activity),
+    //   isVisible:
+    //     (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_ACTIVITY_INFO)) &&
+    //     activityTicketEnrollments > 0,
+    //   content: <ActivityTicketCollectionBlock memberId={memberId} />,
+    // },
+    // {
+    //   key: 'podcast',
+    //   name: formatMessage(commonMessages.tab.podcast),
+    //   isVisible:
+    //     (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PODCAST_INFO)) &&
+    //     podcastProgramEnrollments > 0,
+    //   content: <PodcastProgramCollectionBlock memberId={memberId} />,
+    // },
+    // {
+    //   key: 'appointment',
+    //   name: formatMessage(commonMessages.tab.appointment),
+    //   isVisible:
+    //     (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_APPOINTMENT_INFO)) &&
+    //     appointmentEnrollments > 0,
+    //   content: <AppointmentPlanCollectionBlock memberId={memberId} />,
+    // },
+    // {
+    //   key: 'merchandise-order',
+    //   name: formatMessage(messages.merchandiseOrderLog),
+    //   isVisible:
+    //     (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_MERCHANDISE_INFO)) &&
+    //     merchandiseOrderEnrollments > 0,
+    //   content: <MerchandiseOrderCollectionBlock memberId={memberId} />,
+    // },
   ].filter(v => v.isVisible)
 
   content = (
@@ -169,7 +178,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
                   {v.name}
                 </Tab>
               ))}
-              {loadingProgramPackageEnrollments ||
+              {/* {loadingProgramPackageEnrollments ||
               loadingProjectPlanEnrollments ||
               loadingActivityTicketEnrollments ||
               loadingPodcastProgramEnrollments ||
@@ -178,7 +187,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
                 <Flex ml="0.5rem" alignItems="center">
                   <Spinner />
                 </Flex>
-              ) : null}
+              ) : null} */}
             </>
           </StyledTabList>
         </StyledTabContainer>

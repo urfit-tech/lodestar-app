@@ -1,3 +1,5 @@
+import { ProgramEnrollment } from './program'
+
 export type Category = {
   id: string
   name: string
@@ -73,3 +75,16 @@ export type SignupProperty = {
   ruleMessage?: string
   rowAmount?: number
 }
+
+export type MemberPageProductType =
+  | 'program'
+  | 'expiredProgram'
+  | 'programPackage'
+  | 'expiredProgramPackage'
+  | 'podcast'
+
+export type ProductData<T extends MemberPageProductType> = T extends 'program'
+  ? ProgramEnrollment
+  : T extends 'expiredProgram'
+  ? ProgramEnrollment
+  : never

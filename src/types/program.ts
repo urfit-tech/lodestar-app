@@ -61,6 +61,7 @@ export type ProgramRole = {
   name: ProgramRoleName
   memberId: string
   memberName: string
+  createdAt?: Date
 }
 
 export type ProgramPlan = {
@@ -173,3 +174,25 @@ export type ChoiceProps = {
 export type ProgramContentLog = {
   createdAt: Date
 }[]
+
+export type ProgramEnrollment = Pick<
+  Program,
+  'id' | 'abstract' | 'coverMobileUrl' | 'coverUrl' | 'roles' | 'title' | 'coverThumbnailUrl'
+> & {
+  viewRate: number
+  deliveredAt: Date | null
+  lastViewedAt: Date | null
+}
+
+export type LodestarProgramEnrollment = {
+  id: string
+  title: string
+  abstract: string | null
+  cover_url: string | null
+  cover_mobile_url: string | null
+  cover_thumbnail_url: string | null
+  view_rate: string | null
+  delivered_at: string | null
+  last_viewed_at: string | null
+  roles: { id: string; member_id: string; member_name: string; name: string; created_at: string | null }[]
+}
