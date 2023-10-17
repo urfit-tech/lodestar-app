@@ -54,7 +54,6 @@ export type ProgramPreview = {
   title: string
   abstract: string | null
   roles: ProgramRole[]
-  deliveredAt: Date
 }
 
 export type ProgramRole = {

@@ -1,10 +1,24 @@
 import { gql, useQuery } from '@apollo/client'
-import { Box, Center, Divider, Flex, HStack, SkeletonText, Text, useRadioGroup } from '@chakra-ui/react'
+import {
+  Box,
+  Center,
+  Divider,
+  Flex,
+  HStack,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Select,
+  SkeletonText,
+  Text,
+  useRadioGroup,
+} from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { flatten } from 'ramda'
-import React, { Fragment, useMemo, useState } from 'react'
+import React, { Fragment, useState } from 'react'
+import { BiSearch, BiSort } from 'react-icons/bi'
 import { FiGrid, FiList } from 'react-icons/fi'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -68,6 +82,10 @@ const StyledTitle = styled.div<{ view?: string }>`
       `}
 `
 
+const StyledSelect = styled(Select)`
+  padding-left: 35px !important;
+`
+
 const ProgramTab = ({ onProgramTabClick, tab }: { onProgramTabClick: (tab: string) => void; tab: string }) => {
   const { formatMessage } = useIntl()
   return (
@@ -109,6 +127,8 @@ const ProgramPackageCollectionBlock: React.VFC<{
   const [isExpired, setIsExpired] = useState(false)
   const localStorageView = localStorage.getItem('programPackageView')
   const [view, setView] = useState(localStorageView ? localStorageView : 'Grid')
+  const [sort, setSort] = useState('newPurchaseDate')
+  const [search, setSearch] = useState('')
   const { loadingExpiredOwnedProducts, expiredOwnedProducts: expiredOwnedProgramPackagePlans } =
     useExpiredOwnedProducts(memberId, 'ProgramPackagePlan')
   const { loadingValidOwnedProducts, validOwnedProducts: validOwnedProgramPackagePlans } = useValidOwnedProducts(
@@ -128,33 +148,55 @@ const ProgramPackageCollectionBlock: React.VFC<{
     .map(v => v.programs.map(v => v.programId))
     .flat()
   const { programContent } = useProgramContentIds(programIds, memberId)
-  const programPackage = (isExpired ? expiredProgramPackages : validOwnedProgramPackages).map(programPackage => {
-    const newPrograms = programPackage.programs.map(p => {
-      const content = programContent?.find(contentItem => contentItem.programId === p.programId)
+  const programPackage = (isExpired ? expiredProgramPackages : validOwnedProgramPackages)
+    .map(programPackage => {
+      const newPrograms = programPackage.programs.map(p => {
+        const content = programContent?.find(contentItem => contentItem.programId === p.programId)
+
+        return {
+          ...p,
+          lastView: content ? content.lastView : undefined,
+        }
+      })
+
+      const recentLastView = newPrograms.reduce((latest, program) => {
+        if (!latest) return program.lastView
+        if (!program.lastView) return latest
+        return new Date(program.lastView) > new Date(latest) ? program.lastView : latest
+      }, 0)
+
+      const deliveredAt = (isExpired ? expiredOwnedProgramPackagePlans : validOwnedProgramPackagePlans).find(
+        p => programPackage.planId === p.programPackagePlanId,
+      )?.deliveredAt
 
       return {
-        ...p,
-        lastView: content ? content.lastView : undefined,
+        ...programPackage,
+        programs: newPrograms,
+        recentLastView,
+        deliveredAt,
       }
     })
-
-    const recentLastView = newPrograms.reduce((latest, program) => {
-      if (!latest) return program.lastView
-      if (!program.lastView) return latest
-      return new Date(program.lastView) > new Date(latest) ? program.lastView : latest
-    }, null)
-
-    const deliveredAt = (isExpired ? expiredOwnedProgramPackagePlans : validOwnedProgramPackagePlans).find(
-      p => programPackage.planId === p.programPackagePlanId,
-    )?.deliveredAt
-
-    return {
-      ...programPackage,
-      programs: newPrograms,
-      recentLastView,
-      deliveredAt,
-    }
-  })
+    .sort((a, b) => {
+      if (sort === 'newPurchaseDate') {
+        return +new Date(b.deliveredAt) - +new Date(a.deliveredAt)
+      }
+      if (sort === 'oldPurchaseDate') {
+        return +new Date(a.deliveredAt) - +new Date(b.deliveredAt)
+      }
+      if (sort === 'newLastViewDate') {
+        return +new Date(b.recentLastView) - +new Date(a.recentLastView)
+      }
+      if (sort === 'oldLastViewDate') {
+        return +new Date(a.recentLastView) - +new Date(b.recentLastView)
+      }
+      return 0
+    })
+    .filter(programPackage => {
+      if (search !== '') {
+        return programPackage.title.includes(search)
+      }
+      return true
+    })
 
   const options = [
     formatMessage(commonMessages.label.availableForLimitTime),
@@ -245,6 +287,36 @@ const ProgramPackageCollectionBlock: React.VFC<{
           )}
         </HStack>
       </Box>
+
+      <HStack justifyContent={'space-between'} marginBottom="32px">
+        <HStack spacing="12px">
+          <InputGroup>
+            <InputLeftElement>
+              <BiSort />
+            </InputLeftElement>
+            <StyledSelect
+              onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setSort(event.target.value)}
+              defaultValue={sort}
+            >
+              <option value="newPurchaseDate">購買日期（新到舊）</option>
+              <option value="oldPurchaseDate">購買日期（舊到新）</option>
+              <option value="newLastViewDate">最後觀課日（新到舊）</option>
+              <option value="oldLastViewDate">最後觀課日（舊到新）</option>
+            </StyledSelect>
+          </InputGroup>
+        </HStack>
+        <Box>
+          <InputGroup>
+            <Input
+              placeholder="搜尋關鍵字"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
+            />
+            <InputRightElement>
+              <BiSearch />
+            </InputRightElement>
+          </InputGroup>
+        </Box>
+      </HStack>
 
       {programPackage.length === 0 && <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>}
 
@@ -435,62 +507,6 @@ const useExpiredProgramPackages = (programPackagePlanIds: string[]) => {
     loadingExpiredProgramPackages: loading,
     errorExpiredProgramPackages: error,
     expiredProgramPackages,
-  }
-}
-
-export const useProgramContentProgress = (programIds: string[], memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetProgramContentProgressByProgramIds,
-    hasura.GetProgramContentProgressByProgramIdsVariables
-  >(
-    gql`
-      query GetProgramContentProgressByProgramIds($programIds: [uuid!]!, $memberId: String!) {
-        program_content_body(
-          where: { program_contents: { program_content_section: { program_id: { _in: $programIds } } } }
-        ) {
-          type
-          program_contents(where: { published_at: { _is_null: false } }, order_by: { published_at: desc }) {
-            id
-            content_section_id
-            program_content_progress(where: { member_id: { _eq: $memberId } }) {
-              id
-              progress
-              last_progress
-              updated_at
-            }
-          }
-        }
-      }
-    `,
-    { variables: { programIds, memberId } },
-  )
-
-  const programContentProgress = useMemo(
-    () =>
-      loading || error || !data
-        ? undefined
-        : flatten(
-            data.program_content_body.map(contentBody =>
-              contentBody.program_contents.map(content => {
-                return {
-                  programContentBodyType: contentBody.type || null,
-                  programContentId: content.id,
-                  programContentSectionId: content.content_section_id,
-                  progress: content.program_content_progress[0]?.progress || 0,
-                  lastProgress: content.program_content_progress[0]?.last_progress || 0,
-                  updatedAt: content.program_content_progress[0]?.updated_at || undefined,
-                }
-              }),
-            ),
-          ),
-    [data, error, loading],
-  )
-
-  return {
-    loadingProgress: loading,
-    errorProgress: error,
-    programContentProgress,
-    refetchProgress: refetch,
   }
 }
 

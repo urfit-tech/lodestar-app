@@ -12,7 +12,7 @@ import ProgressBar from '../../components/common/ProgressBar'
 import { useProgramContentProgress } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import EmptyCover from '../../images/empty-cover.png'
-import { ProgramContentLog, ProgramPreview, ProgramRoleName } from '../../types/program'
+import { ProgramPreview, ProgramRoleName } from '../../types/program'
 
 const StyledWrapper = styled.div<{ view?: string }>`
   ${props =>
@@ -86,6 +86,7 @@ const ProgramCard: React.VFC<{
   previousPage?: string
   view?: string
   programDatetimeEnabled?: boolean
+  programDeliveredAt?: Date
 }> = ({
   memberId,
   programId,
@@ -97,28 +98,25 @@ const ProgramCard: React.VFC<{
   previousPage,
   view,
   programDatetimeEnabled,
+  programDeliveredAt,
 }) => {
-  const { loadingProgramPreview, programPreview } = useProgramPreview(memberId, programId)
+  const { loadingProgramPreview, programPreview } = useProgramPreview(programId)
   const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
-  const programContentIds = programContentProgress?.map(contentProgress => contentProgress.programContentId) || []
-  const { loadingProgramContentLog, programContentLog } = useProgramContentLog(memberId, programContentIds)
 
   const viewRate = programContentProgress?.length
     ? sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length
     : 0
 
-  const lastProgressUpdatedAt = programContentProgress?.length
-    ? programContentProgress.map(contentProgress => contentProgress.updatedAt)
+  const lastViewDate = programContentProgress?.length
+    ? programContentProgress
+        .map(contentProgress => contentProgress.updatedAt)
+        .sort((a, b) => {
+          if (a && b) {
+            return +new Date(b) - +new Date(a)
+          }
+          return 0
+        })[0]
     : undefined
-
-  const lastContentLogCreatedAt = programContentLog?.map(contentLog => contentLog.createdAt)
-
-  const lastViewDate = lastProgressUpdatedAt?.concat(lastContentLogCreatedAt).sort((a, b) => {
-    if (a && b) {
-      return +new Date(b) - +new Date(a)
-    }
-    return 0
-  })[0]
 
   return (
     <>
@@ -166,14 +164,14 @@ const ProgramCard: React.VFC<{
                 shape="rounded"
               />
               <StyledMeta>
-                {loadingProgramPreview && loadingProgramContentLog ? (
+                {loadingProgramPreview ? (
                   <SkeletonText m="4" noOfLines={4} spacing="4" skeletonHeight="2" />
                 ) : (
                   <>
                     <StyledTitle>{programPreview?.title}</StyledTitle>
                     {programDatetimeEnabled && (
                       <StyledDescription size="small">
-                        {`${dayjs(programPreview?.deliveredAt).format('YYYY-MM-DD')} 購買`}
+                        {`${dayjs(programDeliveredAt).format('YYYY-MM-DD')} 購買`}
                         {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
                       </StyledDescription>
                     )}
@@ -218,14 +216,14 @@ const ProgramCard: React.VFC<{
               />
               <StyledMeta view={view}>
                 <Box minWidth="50%" maxWidth="50%">
-                  {loadingProgramPreview && loadingProgramContentLog ? (
+                  {loadingProgramPreview ? (
                     <SkeletonText m="4" noOfLines={3} spacing="4" skeletonHeight="2" />
                   ) : (
                     <>
                       <StyledTitle view={view}>{programPreview?.title}</StyledTitle>
                       {programDatetimeEnabled && (
                         <StyledDescription size="small" view={view}>
-                          {`${dayjs(programPreview?.deliveredAt).format('YYYY-MM-DD')} 購買`}
+                          {`${dayjs(programDeliveredAt).format('YYYY-MM-DD')} 購買`}
                           {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
                         </StyledDescription>
                       )}
@@ -266,10 +264,10 @@ const ProgramCard: React.VFC<{
 
 export default ProgramCard
 
-const useProgramPreview = (memberId: string, programId: string) => {
+const useProgramPreview = (programId: string) => {
   const { loading, data, error, refetch } = useQuery<hasura.GetProgramPreview, hasura.GetProgramPreviewVariables>(
     gql`
-      query GetProgramPreview($memberId: String!, $programId: uuid!) {
+      query GetProgramPreview($programId: uuid!) {
         program_by_pk(id: $programId) {
           id
           cover_url
@@ -283,12 +281,9 @@ const useProgramPreview = (memberId: string, programId: string) => {
             member_id
           }
         }
-        program_enrollment(where: { member_id: { _eq: $memberId }, program_id: { _eq: $programId } }) {
-          product_delivered_at
-        }
       }
     `,
-    { variables: { memberId, programId } },
+    { variables: { programId } },
   )
 
   const programPreview: ProgramPreview | null =
@@ -307,7 +302,6 @@ const useProgramPreview = (memberId: string, programId: string) => {
             memberId: programRole.member_id,
             memberName: programRole.member_id,
           })),
-          deliveredAt: data.program_enrollment[0]?.product_delivered_at || undefined,
         }
 
   return {
@@ -315,37 +309,5 @@ const useProgramPreview = (memberId: string, programId: string) => {
     errorProgramPreview: error,
     programPreview,
     refetchProgramPreview: refetch,
-  }
-}
-
-export const useProgramContentLog = (memberId: string, programContentId: Array<string>) => {
-  const { loading, data, error } = useQuery<hasura.GetProgramContentLog, hasura.GetProgramContentLogVariables>(
-    gql`
-      query GetProgramContentLog($memberId: String!, $programContentId: [uuid!]!) {
-        program_content_log(
-          where: { member_id: { _eq: $memberId }, program_content_id: { _in: $programContentId } }
-          order_by: { created_at: desc }
-          limit: 1
-        ) {
-          program_content_id
-          created_at
-        }
-      }
-    `,
-    { variables: { memberId, programContentId } },
-  )
-
-  const programContentLog: ProgramContentLog | null =
-    loading || error || !data
-      ? null
-      : data.program_content_log.map(contentLog => {
-          return {
-            createdAt: contentLog.created_at,
-          }
-        })
-
-  return {
-    loadingProgramContentLog: loading,
-    programContentLog,
   }
 }
