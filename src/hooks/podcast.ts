@@ -1,7 +1,6 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { uniq } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
 import { PodcastProgramProps } from '../containers/podcast/PodcastProgramTimeline'
 import hasura from '../hasura'
@@ -327,60 +326,6 @@ export const useEnrolledPodcastProgramWithCreatorId: (creatorId: string) => {
   }
 }
 
-export const useEnrolledPodcastPlansCreators = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GET_ENROLLED_PODCAST_PLAN,
-    hasura.GET_ENROLLED_PODCAST_PLANVariables
-  >(
-    gql`
-      query GET_ENROLLED_PODCAST_PLAN($memberId: String!) {
-        podcast_plan_enrollment(where: { member_id: { _eq: $memberId } }) {
-          podcast_plan {
-            creator {
-              id
-              picture_url
-              name
-              username
-            }
-          }
-        }
-      }
-    `,
-    { variables: { memberId } },
-  )
-
-  const enrolledPodcastPlansCreators: {
-    id: string
-    pictureUrl: string | null
-    name: string | null
-    username: string
-  }[] =
-    loading || error || !data
-      ? []
-      : uniq(
-          data.podcast_plan_enrollment.map(enrollment =>
-            enrollment && enrollment.podcast_plan && enrollment.podcast_plan.creator
-              ? {
-                  id: enrollment.podcast_plan.creator.id || '',
-                  pictureUrl: enrollment.podcast_plan.creator.picture_url || null,
-                  name: enrollment.podcast_plan.creator.name || '',
-                  username: enrollment.podcast_plan.creator.username || '',
-                }
-              : {
-                  id: '',
-                  pictureUrl: '',
-                  name: '',
-                  username: '',
-                },
-          ),
-        )
-
-  return {
-    enrolledPodcastPlansCreators,
-    loadingPodcastPlanIds: loading,
-    refetchPodcastPlan: refetch,
-  }
-}
 export const usePodcastProgram: (podcastProgramId: string) => {
   status: 'loading' | 'error' | 'success' | 'idle'
   podcastProgram: {
