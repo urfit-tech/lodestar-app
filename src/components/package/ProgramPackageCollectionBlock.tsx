@@ -225,10 +225,9 @@ const ProgramPackageCollectionBlock: React.VFC<{
         display="flex"
         flexDirection={{ base: 'column', md: 'row' }}
         justifyContent="space-between"
-        alignItems="center"
         marginBottom="24px"
       >
-        <HStack justifyContent="space-between">
+        <HStack justifyContent="space-between" marginBottom={{ base: '20px', md: '0px' }}>
           {(programCounts > 0 || programPackageCounts > 0) && (
             <ProgramTab
               onProgramTabClick={onProgramTabClick}
@@ -258,6 +257,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
           className="member-page-program-search"
           width={{ base: '100%' }}
           display={{ base: 'block', md: 'none' }}
+          backgroundColor="white"
         >
           <Input
             placeholder="搜尋關鍵字"
@@ -323,7 +323,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
         (expiredProgramPackageEnrollment.length > 0 && isExpired)) && (
         <>
           <HStack justifyContent={'space-between'} display={{ base: 'none', md: 'flex' }} marginBottom="32px">
-            <InputGroup className="member-page-program-sort" width="fit-content">
+            <InputGroup className="member-page-program-sort" width="fit-content" backgroundColor="white">
               <InputLeftElement>
                 <BiSort />
               </InputLeftElement>
@@ -338,7 +338,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
                 ))}
               </StyledSelect>
             </InputGroup>
-            <InputGroup className="member-page-program-search" width="fit-content">
+            <InputGroup className="member-page-program-search" width="fit-content" backgroundColor="white">
               <Input
                 placeholder="搜尋關鍵字"
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
