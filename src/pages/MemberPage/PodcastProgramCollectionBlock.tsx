@@ -1,7 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Dropdown, Form, Icon as AntdIcon, Menu } from 'antd'
 import { CommonLargeTitleMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -11,12 +11,8 @@ import PodcastProgramTimeline, { PodcastProgramProps } from '../../containers/po
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { handleError } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import {
-  useDeletePlaylist,
-  useEnrolledPodcastPlansCreators,
-  usePlaylistCollection,
-  useUpdatePlaylist,
-} from '../../hooks/podcast'
+import { useProductEnrollment } from '../../hooks/common'
+import { useDeletePlaylist, usePlaylistCollection, useUpdatePlaylist } from '../../hooks/podcast'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 
 const StyledTitle = styled.h3`
@@ -50,14 +46,11 @@ const PodcastProgramCollectionBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { setup } = useContext(PodcastPlayerContext)
-  const { enrolledPodcastPlansCreators, refetchPodcastPlan } = useEnrolledPodcastPlansCreators(memberId)
+  const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan')
+
   const { playlists, totalPodcastProgramCount, refetchPlaylists } = usePlaylistCollection(memberId)
   const updatePlaylist = useUpdatePlaylist()
   const deletePlaylist = useDeletePlaylist()
-
-  useEffect(() => {
-    refetchPodcastPlan()
-  }, [refetchPodcastPlan])
 
   return (
     <div className="container py-3">
@@ -88,24 +81,21 @@ const PodcastProgramCollectionBlock: React.VFC<{
 
         <div className="col-12 col-lg-4 mb-5 pl-4">
           <StyledTitle>{formatMessage(productMessages.podcast.title.subscribe)}</StyledTitle>
-          {enrolledPodcastPlansCreators.length === 0 ? (
+          {podcastPlanEnrollment.length === 0 ? (
             <StyledParagraph>{formatMessage(productMessages.podcast.content.unsubscribed)}</StyledParagraph>
           ) : (
-            enrolledPodcastPlansCreators.map(enrolledPodcastPlansCreator => (
-              <Link
-                key={enrolledPodcastPlansCreator.id}
-                to={`/creators/${enrolledPodcastPlansCreator.id}?tabkey=podcasts`}
-              >
+            podcastPlanEnrollment.map(podcastPlan => (
+              <Link key={podcastPlan.creator.id} to={`/creators/${podcastPlan.creator.id}?tabkey=podcasts`}>
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <div className="d-flex justify-content-between align-items-center">
                     <AvatarImage
                       shape="circle"
                       size="64px"
                       className="flex-shrink-0 mr-3"
-                      src={enrolledPodcastPlansCreator.pictureUrl}
+                      src={podcastPlan.creator.pictureUrl}
                     />
                     <StyledEnrolledPodcastPlanCreatorName>
-                      {enrolledPodcastPlansCreator.name || enrolledPodcastPlansCreator.username}
+                      {podcastPlan.creator.name || podcastPlan.creator.username}
                     </StyledEnrolledPodcastPlanCreatorName>
                   </div>
                   <Icon as={AngleRightIcon} />

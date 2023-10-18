@@ -1,4 +1,5 @@
 import { PodcastProgramProps } from '../containers/podcast/PodcastProgramTimeline'
+import { PodcastPlanEnrollment } from './podcast'
 import { ProgramEnrollment } from './program'
 import { ProgramPackageEnrollment } from './programPackage'
 
@@ -84,6 +85,7 @@ export type MemberPageProductType =
   | 'programPackage'
   | 'expiredProgramPackage'
   | 'podcast'
+  | 'podcast-plan'
 
 export type ProductData<T extends MemberPageProductType> = T extends 'program'
   ? ProgramEnrollment
@@ -95,4 +97,6 @@ export type ProductData<T extends MemberPageProductType> = T extends 'program'
   ? ProgramPackageEnrollment
   : T extends 'podcast'
   ? PodcastProgramProps
+  : T extends 'podcast-plan'
+  ? PodcastPlanEnrollment
   : never

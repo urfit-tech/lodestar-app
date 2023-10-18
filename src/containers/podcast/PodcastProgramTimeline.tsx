@@ -6,7 +6,6 @@ import styled from 'styled-components'
 import { PodcastProgramCardProps } from '../../components/podcast/PodcastProgramCard'
 import { PodcastProgramPopoverProps } from '../../components/podcast/PodcastProgramPopover'
 import { useProductEnrollment } from '../../hooks/common'
-import { useEnrolledPodcastPlansCreators } from '../../hooks/podcast'
 
 const StyledTimeline = styled(Timeline)`
   && .ant-timeline-item-head {
@@ -39,7 +38,7 @@ const PodcastProgramTimeline: React.VFC<{
   }) => React.ReactElement
 }> = ({ memberId, podcastPrograms, renderItem }) => {
   const { data: podcastEnrollment } = useProductEnrollment('podcast')
-  const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(memberId || '')
+  const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan')
 
   const podcastProgramsGroupByDate: { [date: string]: PodcastProgramProps[] } = groupBy(
     podcast => moment(podcast.publishedAt).format('YYYY-MM-DD(dd)'),
@@ -56,7 +55,7 @@ const PodcastProgramTimeline: React.VFC<{
               const isEnrolled = podcastEnrollment.map(v => v.id).includes(podcastProgram.id)
               const isSubscribed =
                 !!podcastProgram.instructor &&
-                enrolledPodcastPlansCreators.map(v => v.id).includes(podcastProgram.instructor.id)
+                podcastPlanEnrollment.map(v => v.creator.id).includes(podcastProgram.instructor.id)
 
               return (
                 <StyledProgram key={podcastProgram.id} className="pl-3" id={podcastProgram.id}>

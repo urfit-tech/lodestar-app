@@ -61,3 +61,13 @@ export type PodcastProgramContentProps = {
     name: string
   }
 }
+
+export type PodcastPlanEnrollment = {
+  id: string
+  creator: {
+    id: string
+    pictureUrl: string | null
+    name: string
+    username: string
+  }
+}
