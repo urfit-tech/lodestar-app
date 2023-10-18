@@ -108,7 +108,7 @@ const DefaultLayout: React.FC<{
         />
       )}
 
-      <StyledLayoutWrapper variant={white ? 'white' : undefined} noHeader>
+      <StyledLayoutWrapper variant={white ? 'white' : undefined} header={noHeader ? 'noHeader' : ''}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
           <div className="d-flex align-items-center">
             <LogoBlock className="mr-4">
