@@ -1,5 +1,4 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
 import hasura from '../hasura'
 import { AppointmentPeriod, AppointmentPlan, ReservationType } from '../types/appointment'
@@ -52,44 +51,45 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
 
   const appointmentPlans: (AppointmentPlan & {
     periods: AppointmentPeriod[]
-  })[] = data?.appointment_plan.map(appointmentPlan => ({
-    id: appointmentPlan.id,
-    title: appointmentPlan.title,
-    description: appointmentPlan.description || '',
-    duration: appointmentPlan.duration,
-    price: appointmentPlan.price,
-    phone: null,
-    supportLocales: appointmentPlan.support_locales,
-    capacity: appointmentPlan.capacity,
-    defaultMeetGateway: appointmentPlan.default_meet_gateway,
-    meetGenerationMethod: appointmentPlan.meet_generation_method,
-    currency: {
-      id: appointmentPlan.currency.id,
-      label: appointmentPlan.currency.label,
-      unit: appointmentPlan.currency.unit,
-      name: appointmentPlan.currency.name,
-    },
-    rescheduleAmount: appointmentPlan.reschedule_amount,
-    rescheduleType: appointmentPlan.reschedule_type as ReservationType,
-    periods: appointmentPlan.appointment_periods.map(period => ({
-      id: `${period.started_at}`,
-      startedAt: new Date(period.started_at),
-      endedAt: new Date(period.ended_at),
-      booked: period.booked,
-      available: !!period.available,
-      isBookedReachLimit: appointmentPlan.capacity !== -1 && period.booked >= appointmentPlan.capacity,
-      currentMemberBooked: appointmentPlan.appointment_enrollments.some(
-        enrollment =>
-          enrollment.member_id === currentMemberId &&
-          enrollment.appointment_plan_id === appointmentPlan.id &&
-          enrollment.started_at === period.started_at &&
-          !enrollment.canceled_at,
-      ),
-    })),
-    isPrivate: appointmentPlan.is_private,
-    reservationAmount: appointmentPlan.reservation_amount,
-    reservationType: (appointmentPlan.reservation_type as ReservationType) || 'hour',
-  })) || []
+  })[] =
+    data?.appointment_plan.map(appointmentPlan => ({
+      id: appointmentPlan.id,
+      title: appointmentPlan.title,
+      description: appointmentPlan.description || '',
+      duration: appointmentPlan.duration,
+      price: appointmentPlan.price,
+      phone: null,
+      supportLocales: appointmentPlan.support_locales,
+      capacity: appointmentPlan.capacity,
+      defaultMeetGateway: appointmentPlan.default_meet_gateway,
+      meetGenerationMethod: appointmentPlan.meet_generation_method,
+      currency: {
+        id: appointmentPlan.currency.id,
+        label: appointmentPlan.currency.label,
+        unit: appointmentPlan.currency.unit,
+        name: appointmentPlan.currency.name,
+      },
+      rescheduleAmount: appointmentPlan.reschedule_amount,
+      rescheduleType: appointmentPlan.reschedule_type as ReservationType,
+      periods: appointmentPlan.appointment_periods.map(period => ({
+        id: `${period.started_at}`,
+        startedAt: new Date(period.started_at),
+        endedAt: new Date(period.ended_at),
+        booked: period.booked,
+        available: !!period.available,
+        isBookedReachLimit: appointmentPlan.capacity !== -1 && period.booked >= appointmentPlan.capacity,
+        currentMemberBooked: appointmentPlan.appointment_enrollments.some(
+          enrollment =>
+            enrollment.member_id === currentMemberId &&
+            enrollment.appointment_plan_id === appointmentPlan.id &&
+            enrollment.started_at === period.started_at &&
+            !enrollment.canceled_at,
+        ),
+      })),
+      isPrivate: appointmentPlan.is_private,
+      reservationAmount: appointmentPlan.reservation_amount,
+      reservationType: (appointmentPlan.reservation_type as ReservationType) || 'hour',
+    })) || []
 
   return {
     loadingAppointmentPlans: loading,
@@ -159,16 +159,16 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
 
   const appointmentPlan:
     | (AppointmentPlan & {
-      periods: AppointmentPeriod[]
-      creator: {
-        id: string
-        avatarUrl: string | null
-        name: string
-        abstract: string | null
-      }
-    })
+        periods: AppointmentPeriod[]
+        creator: {
+          id: string
+          avatarUrl: string | null
+          name: string
+          abstract: string | null
+        }
+      })
     | null = data?.appointment_plan_by_pk
-      ? {
+    ? {
         id: data.appointment_plan_by_pk.id,
         title: data.appointment_plan_by_pk.title,
         description: data.appointment_plan_by_pk.description || '',
@@ -213,12 +213,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           abstract: data.appointment_plan_by_pk.creator?.abstract || null,
         },
       }
-      : null
-  if (appointmentPlan) {
-    console.log(appointmentPlan.id)
-    console.log(appointmentPlan?.rescheduleAmount)
-
-  }
+    : null
   return {
     loadingAppointmentPlan: loading,
     errorAppointmentPlan: error,
@@ -303,63 +298,4 @@ export const useCancelAppointment = (orderProductId: string, options: any) => {
         },
       },
     })
-}
-
-export const useMeetByAppointmentPlanIdAndPeriod = (appointmentPlanId: string, startedAt: Date, endedAt: Date) => {
-  const { id: appId } = useApp()
-  const { loading, data, error } = useQuery<
-    hasura.GetMeetByAppointmentPlanIdAndPeriod,
-    hasura.GetMeetByAppointmentPlanIdAndPeriodVariables
-  >(
-    gql`
-      query GetMeetByAppointmentPlanIdAndPeriod(
-        $target: uuid!
-        $startedAt: timestamptz!
-        $endedAt: timestamptz!
-        $appId: String!
-      ) {
-        meet(
-          where: {
-            target: { _eq: $target }
-            started_at: { _eq: $startedAt }
-            ended_at: { _eq: $endedAt }
-            app_id: { _eq: $appId }
-            deleted_at: { _is_null: true }
-            meet_members: { deleted_at: { _is_null: true } }
-          }
-        ) {
-          id
-          host_member_id
-          meet_members {
-            id
-            member_id
-          }
-        }
-      }
-    `,
-    {
-      variables: {
-        target: appointmentPlanId,
-        startedAt: startedAt.toISOString(),
-        endedAt: endedAt.toISOString(),
-        appId,
-      },
-    },
-  )
-  const meet = data?.meet?.[0]
-    ? {
-      id: data.meet[0].id,
-      hostMemberId: data.meet[0].host_member_id,
-      meetMembers: data.meet[0].meet_members.map(v => ({
-        id: v.id,
-        memberId: v.member_id,
-      })),
-    }
-    : null
-
-  return {
-    loading,
-    meet,
-    error,
-  }
 }

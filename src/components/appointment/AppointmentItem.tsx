@@ -3,8 +3,7 @@ import { uniq } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
-import { useMeetByAppointmentPlanIdAndPeriod } from '../../hooks/appointment'
-import { useOverlapMeets } from '../../hooks/meet'
+import { useMeetByTargetAndPeriod, useOverlapMeets } from '../../hooks/meet'
 import appointmentMessages from './translation'
 
 const StyledItemWrapper = styled.div<{
@@ -85,7 +84,7 @@ const AppointmentItem: React.VFC<{
   onOverlapPeriodsChange,
 }) => {
   const { formatMessage } = useIntl()
-  const { loading: loadingMeetMembers, meet } = useMeetByAppointmentPlanIdAndPeriod(
+  const { loading: loadingMeetMembers, meet } = useMeetByTargetAndPeriod(
     appointmentPlan.id,
     period.startedAt,
     period.endedAt,

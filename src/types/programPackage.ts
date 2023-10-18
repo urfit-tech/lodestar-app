@@ -35,3 +35,9 @@ export type ProgramPackage = ProgramPackageProps & {
   programs: ProgramPackageProgram[]
   plans: ProgramPackagePlanProps[]
 }
+
+export type ProgramPackageEnrollment = Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title'> & {
+  viewRate: number
+  deliveredAt: Date | null
+  lastViewedAt: Date | null
+}

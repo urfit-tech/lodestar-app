@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl'
 import { css, FlattenSimpleInterpolation } from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import { BREAK_POINT } from '../components/common/Responsive'
-import { ApiResponse } from '../types/general'
+import { ApiResponse, MemberPageProductType } from '../types/general'
 import { helperMessages } from './translation'
 
 export const TPDirect = (window as any)['TPDirect']
@@ -474,4 +474,33 @@ export const getTrackingCookie = () => {
   if (fbc) Object.assign(trackingCookie, { fbc })
   if (fbp) Object.assign(trackingCookie, { fbp })
   return trackingCookie
+}
+
+const getLodestarRoute = (product: MemberPageProductType) => {
+  switch (product) {
+    case 'program':
+      return '/programs'
+    case 'expiredProgram':
+      return '/programs/expired'
+    case 'programPackage':
+      return '/program-packages'
+    case 'expiredProgramPackage':
+      return '/program-packages/expired'
+    case 'podcast':
+      return '/podcasts'
+    case 'podcast-plan':
+      return '/podcast-plans'
+  }
+}
+
+export const getProductEnrollmentFromLodestar = async (product: MemberPageProductType, authToken: string) => {
+  const route = getLodestarRoute(product)
+  if (route) {
+    const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+      headers: { authorization: `Bearer ${authToken}` },
+    })
+
+    return data
+  }
+  return null
 }
