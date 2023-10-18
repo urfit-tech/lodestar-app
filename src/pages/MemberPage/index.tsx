@@ -2,7 +2,7 @@ import { Flex, SkeletonText, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } 
 import { Typography } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React from 'react'
+import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { defineMessages, useIntl } from 'react-intl'
 import { Redirect, useParams } from 'react-router-dom'
@@ -17,7 +17,7 @@ import ProgramPackageCollectionBlock from '../../components/package/ProgramPacka
 import EnrolledProgramCollectionBlock from '../../containers/program/EnrolledProgramCollectionBlock'
 import ProjectPlanCollectionBlock from '../../containers/project/ProjectPlanCollectionBlock'
 import { commonMessages } from '../../helpers/translation'
-import { useMemberPageEnrollmentsCounts } from '../../hooks/common'
+import { useMemberPageEnrollmentsCounts, useProductEnrollment } from '../../hooks/common'
 import { usePublicMember } from '../../hooks/member'
 import { MemberPublicProps } from '../../types/member'
 import ActivityTicketCollectionBlock from './ActivityTicketCollectionBlock'
@@ -28,10 +28,23 @@ const messages = defineMessages({
   merchandiseOrderLog: { id: 'product.merchandise.tab.orderLog', defaultMessage: '商品紀錄' },
 })
 
+const StyledTabContainer = styled.div`
+  && {
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+  }
+
+  &&::-webkit-scrollbar {
+    display: none;
+  }
+`
+
 const StyledTabList = styled(TabList)`
   && {
     padding-bottom: 1px;
     border-bottom: 1px solid var(--gray);
+    white-space: nowrap;
   }
 `
 
@@ -47,20 +60,41 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   const { id: appId, settings, loading: loadingApp } = useApp()
   const { member } = usePublicMember(memberId)
   const {
-    loadingProgramPackageEnrollments,
     loadingProjectPlanEnrollments,
     loadingActivityTicketEnrollments,
-    loadingPodcastProgramEnrollments,
     loadingAppointmentEnrollments,
     loadingMerchandiseOrderEnrollments,
-    programPackageEnrollments,
     projectPlanEnrollments,
     activityTicketEnrollments,
-    podcastProgramEnrollments,
     appointmentEnrollments,
     merchandiseOrderEnrollments,
   } = useMemberPageEnrollmentsCounts(memberId)
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
+  const [programTab, setProgramTab] = useState('program')
+  const {
+    fetch: fetchProgramEnrollment,
+    data: programEnrollment,
+    error: programEnrollmentError,
+    loading: programEnrollmentLoading,
+  } = useProductEnrollment('program')
+  const {
+    fetch: fetchExpiredProgramEnrollment,
+    data: expiredProgramEnrollment,
+    error: expiredProgramEnrollmentError,
+    loading: expiredProgramEnrollmentLoading,
+  } = useProductEnrollment('expiredProgram')
+  const {
+    data: programPackageEnrollment,
+    loading: programPackageEnrollmentLoading,
+    error: programPackageEnrollmentError,
+  } = useProductEnrollment('programPackage')
+  const { data: expiredProgramPackageEnrollment, error: expiredProgramPackageEnrollmentError } =
+    useProductEnrollment('expiredProgramPackage')
+  const {
+    data: podcastEnrollment,
+    loading: podcastEnrollmentLoading,
+    error: podcastEnrollmentError,
+  } = useProductEnrollment('podcast')
 
   let content = null
 
@@ -83,12 +117,26 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       isVisible: currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROGRAM_INFO),
       content: (
         <>
-          <EnrolledProgramCollectionBlock memberId={memberId} />
-          {programPackageEnrollments > 0 ? (
-            settings['feature.expired_program_package_plan.enable'] === '0' ? null : (
-              <ProgramPackageCollectionBlock memberId={memberId} />
-            )
-          ) : null}
+          {programTab === 'program' && (
+            <EnrolledProgramCollectionBlock
+              onProgramTabClick={tab => setProgramTab(tab)}
+              programTab={programTab}
+              programEnrollment={programEnrollment}
+              expiredProgramEnrollment={expiredProgramEnrollment}
+              loading={programEnrollmentLoading}
+              isError={Boolean(programEnrollmentError) || Boolean(expiredProgramEnrollmentError)}
+            />
+          )}
+          {programTab === 'programPackage' && (
+            <ProgramPackageCollectionBlock
+              onProgramTabClick={tab => setProgramTab(tab)}
+              programTab={programTab}
+              programPackageEnrollment={programPackageEnrollment}
+              expiredProgramPackageEnrollment={expiredProgramPackageEnrollment}
+              loading={programPackageEnrollmentLoading}
+              isError={Boolean(programPackageEnrollmentError) || Boolean(expiredProgramPackageEnrollmentError)}
+            />
+          )}
         </>
       ),
     },
@@ -113,8 +161,15 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       name: formatMessage(commonMessages.tab.podcast),
       isVisible:
         (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PODCAST_INFO)) &&
-        podcastProgramEnrollments > 0,
-      content: <PodcastProgramCollectionBlock memberId={memberId} />,
+        podcastEnrollment.length > 0,
+      content: (
+        <PodcastProgramCollectionBlock
+          memberId={memberId}
+          podcastEnrollment={podcastEnrollment}
+          loading={podcastEnrollmentLoading}
+          isError={Boolean(podcastEnrollmentError)}
+        />
+      ),
     },
     {
       key: 'appointment',
@@ -140,18 +195,19 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       index={tabContents.findIndex(v => (activeKey ? v.key === activeKey : v.key === 'program'))}
     >
       <div style={{ background: 'white' }}>
-        <div className="container">
+        <StyledTabContainer className="container">
           <StyledTabList>
             <>
               {tabContents.map(v => (
-                <Tab key={v.key} onClick={() => setActiveKey(v.key)} mr="2rem">
+                <Tab key={v.key} onClick={() => setActiveKey(v.key)}>
                   {v.name}
                 </Tab>
               ))}
-              {loadingProgramPackageEnrollments ||
+              {programEnrollmentLoading ||
+              programPackageEnrollmentLoading ||
               loadingProjectPlanEnrollments ||
               loadingActivityTicketEnrollments ||
-              loadingPodcastProgramEnrollments ||
+              podcastEnrollmentLoading ||
               loadingAppointmentEnrollments ||
               loadingMerchandiseOrderEnrollments ? (
                 <Flex ml="0.5rem" alignItems="center">
@@ -160,7 +216,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
               ) : null}
             </>
           </StyledTabList>
-        </div>
+        </StyledTabContainer>
       </div>
       <TabPanels>
         {tabContents.map(v => (

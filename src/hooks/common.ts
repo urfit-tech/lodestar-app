@@ -2,10 +2,12 @@ import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { MetaProductType } from 'lodestar-app-element/src/types/metaProduct'
+import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../hasura'
+import { getProductEnrollmentFromLodestar } from '../helpers'
 import { commonMessages } from '../helpers/translation'
-import { SignupProperty } from '../types/general'
+import { MemberPageProductType, ProductData, SignupProperty } from '../types/general'
 import { ProductType } from '../types/product'
 import { PeriodType } from '../types/program'
 
@@ -682,19 +684,6 @@ export const useMemberSignUpProperty = (propertyList: string[], memberId: string
 }
 
 export const useMemberPageEnrollmentsCounts = (memberId: string) => {
-  const { loading: loadingProgramPackageEnrollments, data: programPackageEnrollments } = useQuery<
-    hasura.GetProgramPackageEnrollments,
-    hasura.GetProgramPackageEnrollmentsVariables
-  >(
-    gql`
-      query GetProgramPackageEnrollments($memberId: String!) {
-        program_package_plan_enrollment(where: { member_id: { _eq: $memberId } }) {
-          program_package_plan_id
-        }
-      }
-    `,
-    { variables: { memberId } },
-  )
   const { loading: loadingProjectPlanEnrollments, data: projectPlanEnrollments } = useQuery<
     hasura.GetProjectPlanEnrollments,
     hasura.GetProjectPlanEnrollmentsVariables
@@ -724,21 +713,7 @@ export const useMemberPageEnrollmentsCounts = (memberId: string) => {
     `,
     { variables: { memberId } },
   )
-  const { loading: loadingPodcastProgramEnrollments, data: podcastProgramEnrollments } = useQuery<
-    hasura.GetPodcastProgramEnrollments,
-    hasura.GetPodcastProgramEnrollmentsVariables
-  >(
-    gql`
-      query GetPodcastProgramEnrollments($memberId: String!) {
-        podcast_program_enrollment(where: { member_id: { _eq: $memberId } }) {
-          podcast_program {
-            id
-          }
-        }
-      }
-    `,
-    { variables: { memberId } },
-  )
+
   const { loading: loadingAppointmentEnrollments, data: appointmentEnrollments } = useQuery<
     hasura.GetAppointmentEnrollments,
     hasura.GetAppointmentEnrollmentsVariables
@@ -773,17 +748,41 @@ export const useMemberPageEnrollmentsCounts = (memberId: string) => {
   )
 
   return {
-    loadingProgramPackageEnrollments,
     loadingProjectPlanEnrollments,
     loadingActivityTicketEnrollments,
-    loadingPodcastProgramEnrollments,
     loadingAppointmentEnrollments,
     loadingMerchandiseOrderEnrollments,
-    programPackageEnrollments: programPackageEnrollments?.program_package_plan_enrollment.length || 0,
     projectPlanEnrollments: projectPlanEnrollments?.product_enrollment.length || 0,
     activityTicketEnrollments: activityTicketEnrollments?.activity_ticket_enrollment.length || 0,
-    podcastProgramEnrollments: podcastProgramEnrollments?.podcast_program_enrollment.length || 0,
     appointmentEnrollments: appointmentEnrollments?.appointment_enrollment.length || 0,
     merchandiseOrderEnrollments: merchandiseOrderEnrollments?.order_log.length || 0,
   }
+}
+
+export const useProductEnrollment = <T extends MemberPageProductType>(product: T) => {
+  const { authToken } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<any>()
+  const [data, setData] = useState<ProductData<T>[]>([])
+
+  const fetch = useCallback(async () => {
+    if (authToken) {
+      try {
+        setLoading(true)
+        const programEnrollmentData = await getProductEnrollmentFromLodestar(product, authToken)
+        setData(programEnrollmentData)
+      } catch (err) {
+        console.log(err)
+        setError(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+  }, [authToken])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
+  return { fetch, data, error, loading }
 }

@@ -1,7 +1,6 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { ProductType } from 'lodestar-app-element/src/types/product'
 import { sum } from 'ramda'
 import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -267,42 +266,6 @@ export const useUploadAttachments = () => {
     } catch (error) {
       handleError(error)
     }
-  }
-}
-
-export const useExpiredOwnedProducts = (memberId: string, productType: ProductType) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GET_EXPIRED_OWNED_PRODUCTS,
-    hasura.GET_EXPIRED_OWNED_PRODUCTSVariables
-  >(
-    gql`
-      query GET_EXPIRED_OWNED_PRODUCTS($memberId: String!, $productType: String!) {
-        order_product(
-          where: {
-            product: { type: { _eq: $productType } }
-            order_log: { status: { _eq: "SUCCESS" }, member_id: { _eq: $memberId } }
-            ended_at: { _is_null: false, _lt: "now()" }
-          }
-        ) {
-          id
-          product {
-            id
-            target
-          }
-        }
-      }
-    `,
-    {
-      variables: { memberId, productType },
-    },
-  )
-  const expiredOwnedProducts = data?.order_product.map(v => v.product.target) || []
-
-  return {
-    loadingExpiredOwnedProducts: loading,
-    errorExpiredOwnedProducts: error,
-    expiredOwnedProducts,
-    refetchExpiredOwnedProducts: refetch,
   }
 }
 

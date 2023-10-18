@@ -11,6 +11,7 @@ type ProgressProps = {
     programContentSectionId: string
     progress: number
     lastProgress: number
+    updatedAt: Date | undefined
   }[]
   refetchProgress?: () => void
   insertProgress?: (
@@ -88,11 +89,11 @@ export const useInsertProgress = (memberId: string) => {
 
 export const useProgramContentProgress = (programId: string, memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    hasura.GET_PROGRAM_CONTENT_PROGRESS,
-    hasura.GET_PROGRAM_CONTENT_PROGRESSVariables
+    hasura.GetProgramContentProgress,
+    hasura.GetProgramContentProgressVariables
   >(
     gql`
-      query GET_PROGRAM_CONTENT_PROGRESS($programId: uuid!, $memberId: String!) {
+      query GetProgramContentProgress($programId: uuid!, $memberId: String!) {
         program_content_body(
           where: { program_contents: { program_content_section: { program_id: { _eq: $programId } } } }
         ) {
@@ -104,6 +105,7 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
               id
               progress
               last_progress
+              updated_at
             }
           }
         }
@@ -125,6 +127,7 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
                   programContentSectionId: content.content_section_id,
                   progress: content.program_content_progress[0]?.progress || 0,
                   lastProgress: content.program_content_progress[0]?.last_progress || 0,
+                  updatedAt: content.program_content_progress[0]?.updated_at || undefined,
                 }
               }),
             ),

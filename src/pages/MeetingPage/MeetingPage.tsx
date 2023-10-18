@@ -12,6 +12,12 @@ import hasura from '../../hasura'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 
+type CategoryCheckboxes = {
+  title: string
+  description: string
+  value: string
+}[]
+
 const StyledForm = styled.form`
   padding: 48px 24px;
 `
@@ -29,12 +35,11 @@ const MeetingPage = () => {
   const { username: managerUsername } = useParams<{ username: string }>()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const customAdProperty = (propertyName: string) => {
-    return JSON.parse(settings['custom.ad_property.list'] || '{}')?.['meeting']?.[propertyName] || ''
+  const categoryCheckboxes = JSON.parse(settings['custom.meeting_page']).categoryCheckboxes as CategoryCheckboxes // array of checkboxes
+  // custom property default values
+  const propertyDefaultValue = JSON.parse(settings['custom.meeting_page']).propertyDefaultValue as {
+    [key: string]: string
   }
-
-  const customMeetingAdProperty = customAdProperty('adProperty')
-  const customMeetingMarketingActivitiesProperty = customAdProperty('marketingActivitiesProperty')
 
   const { data: memberData, loading } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
     GetMemberByUsername,
@@ -85,16 +90,13 @@ const MeetingPage = () => {
           categoryNames: fields,
           properties: [
             { name: '介紹人', value: referal },
-            { name: '名單分級', value: 'SSR' },
             { name: '聯盟來源', value: utm.utm_source || '' },
             { name: '聯盟會員編號', value: utm.utm_id || '' },
             { name: '聯盟成交編號', value: utm.utm_term || '' },
-            { name: '廣告素材', value: customMeetingAdProperty },
-            {
-              name: '行銷活動',
-              value: customMeetingMarketingActivitiesProperty,
-            },
             { name: '來源網址', value: landingPage || '' },
+            { name: '廣告素材', value: propertyDefaultValue['廣告素材'] || '' },
+            { name: '行銷活動', value: propertyDefaultValue['行銷活動'] || '' },
+            { name: '名單分級', value: propertyDefaultValue['名單分級'] || '' },
           ],
         },
         {
@@ -142,66 +144,14 @@ const MeetingPage = () => {
           <FormLabel>有興趣了解領域</FormLabel>
           <CheckboxGroup colorScheme="primary">
             <Stack>
-              <Checkbox name="field" value="插畫">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  插畫
-                </Badge>
-                廣告海報、貼圖等
-              </Checkbox>
-              <Checkbox name="field" value="平面設計">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  平面設計
-                </Badge>
-                CIS、排版、色彩等
-              </Checkbox>
-              <Checkbox name="field" value="UIUX">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  UI/UX
-                </Badge>
-                使用者流程、介面設計與體驗
-              </Checkbox>
-              <Checkbox name="field" value="前後端工程/前端工程/前端設計">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  網站前端
-                </Badge>
-                切版、前端框架等
-              </Checkbox>
-              <Checkbox name="field" value="前後端工程/網頁前後端工程/全端">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  網站後端
-                </Badge>
-                API、資安、後端框架等
-              </Checkbox>
-              <Checkbox name="field" value="Python">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  資料分析
-                </Badge>
-                視覺化圖表、機器學習、人工智慧等
-              </Checkbox>
-              <Checkbox name="field" value="自動化交易/Python">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  自動化交易
-                </Badge>
-                量化分析、金融投資、理財機器人等
-              </Checkbox>
-              <Checkbox name="field" value="前端工程/Python">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  程式語言應用
-                </Badge>
-                Python、JavaScript
-              </Checkbox>
-              <Checkbox name="field" value="C4D/動畫">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  動畫製作
-                </Badge>
-                2D 設計、3D 設計、腳本製作等
-              </Checkbox>
-              <Checkbox name="field" value="影音自媒體/行銷">
-                <Badge className="mr-1" variant="outline" colorScheme="primary">
-                  影音自媒體
-                </Badge>
-                行銷、數據追蹤、影音剪輯等
-              </Checkbox>
+              {categoryCheckboxes.map(checkbox => (
+                <Checkbox name="field" value={checkbox.value}>
+                  <Badge className="mr-1" variant="outline" colorScheme="primary">
+                    {checkbox.title}
+                  </Badge>
+                  {checkbox.description}
+                </Checkbox>
+              ))}
             </Stack>
           </CheckboxGroup>
         </FormControl>
