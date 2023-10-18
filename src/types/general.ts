@@ -1,4 +1,5 @@
 import { ProgramEnrollment } from './program'
+import { ProgramPackageEnrollment } from './programPackage'
 
 export type Category = {
   id: string
@@ -87,4 +88,8 @@ export type ProductData<T extends MemberPageProductType> = T extends 'program'
   ? ProgramEnrollment
   : T extends 'expiredProgram'
   ? ProgramEnrollment
+  : T extends 'programPackage'
+  ? ProgramPackageEnrollment
+  : T extends 'expiredProgramPackage'
+  ? ProgramPackageEnrollment
   : never

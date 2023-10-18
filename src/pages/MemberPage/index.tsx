@@ -12,6 +12,7 @@ import { renderMemberAbstract } from '../../components/common/CustomRender'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
+import ProgramPackageCollectionBlock from '../../components/package/ProgramPackageCollectionBlock'
 import EnrolledProgramCollectionBlock from '../../containers/program/EnrolledProgramCollectionBlock'
 import { commonMessages } from '../../helpers/translation'
 import { useProductEnrollment } from '../../hooks/common'
@@ -80,6 +81,13 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
     error: expiredProgramEnrollmentError,
     loading: expiredProgramEnrollmentLoading,
   } = useProductEnrollment('expiredProgram')
+  const {
+    data: programPackageEnrollment,
+    loading: programPackageEnrollmentLoading,
+    error: programPackageEnrollmentError,
+  } = useProductEnrollment('programPackage')
+  const { data: expiredProgramPackageEnrollment, error: expiredProgramPackageEnrollmentError } =
+    useProductEnrollment('expiredProgramPackage')
 
   let content = null
 
@@ -112,13 +120,16 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
               isError={Boolean(programEnrollmentError) || Boolean(expiredProgramEnrollmentError)}
             />
           )}
-          {/* {programTab === 'programPackage' && (
+          {programTab === 'programPackage' && (
             <ProgramPackageCollectionBlock
-              memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
+              programPackageEnrollment={programPackageEnrollment}
+              expiredProgramPackageEnrollment={expiredProgramPackageEnrollment}
+              loading={programPackageEnrollmentLoading}
+              isError={Boolean(programPackageEnrollmentError) || Boolean(expiredProgramPackageEnrollmentError)}
             />
-          )} */}
+          )}
         </>
       ),
     },

@@ -1,7 +1,6 @@
 import { message } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import axios, { AxiosRequestConfig } from 'axios'
-import dayjs from 'dayjs'
 import Cookies from 'js-cookie'
 import moment from 'moment'
 import queryString from 'query-string'
@@ -11,7 +10,6 @@ import { css, FlattenSimpleInterpolation } from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { ApiResponse, MemberPageProductType } from '../types/general'
-import { LodestarProgramEnrollment, ProgramEnrollment, ProgramRoleName } from '../types/program'
 import { helperMessages } from './translation'
 
 export const TPDirect = (window as any)['TPDirect']
@@ -484,6 +482,10 @@ const getLodestarRoute = (product: MemberPageProductType) => {
       return '/programs'
     case 'expiredProgram':
       return '/programs/expired'
+    case 'programPackage':
+      return '/program-packages'
+    case 'expiredProgramPackage':
+      return '/program-packages/expired'
   }
 }
 
@@ -497,25 +499,4 @@ export const getProductEnrollmentFromLodestar = async (product: MemberPageProduc
     return data
   }
   return null
-}
-
-export const transformProgramEnrollmentData = (data: LodestarProgramEnrollment[]): ProgramEnrollment[] => {
-  return data.map((program: LodestarProgramEnrollment) => ({
-    id: program.id,
-    title: program.title,
-    abstract: program.abstract,
-    coverUrl: program.cover_url,
-    coverMobileUrl: program.cover_mobile_url,
-    coverThumbnailUrl: program.cover_thumbnail_url,
-    viewRate: Number(program.view_rate || 0),
-    deliveredAt: program.delivered_at ? dayjs(program.delivered_at).toDate() : null,
-    lastViewedAt: program.last_viewed_at ? dayjs(program.last_viewed_at).toDate() : null,
-    roles: program.roles.map(role => ({
-      id: role.id,
-      memberId: role.member_id,
-      memberName: role.member_name,
-      name: role.name as ProgramRoleName,
-      createdAt: role.created_at ? dayjs(role.created_at).toDate() : undefined,
-    })),
-  }))
 }

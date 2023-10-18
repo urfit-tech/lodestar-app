@@ -5,7 +5,7 @@ import { MetaProductType } from 'lodestar-app-element/src/types/metaProduct'
 import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../hasura'
-import { getProductEnrollmentFromLodestar, transformProgramEnrollmentData } from '../helpers'
+import { getProductEnrollmentFromLodestar } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { MemberPageProductType, ProductData, SignupProperty } from '../types/general'
 import { ProductType } from '../types/product'
@@ -791,13 +791,6 @@ export const useMemberPageEnrollmentsCounts = (memberId: string) => {
 }
 
 export const useProductEnrollment = <T extends MemberPageProductType>(product: T) => {
-  let config: { transformDataFunction: (data: any) => any[] }
-  switch (product) {
-    case 'program':
-    case 'expiredProgram':
-      config = { transformDataFunction: transformProgramEnrollmentData }
-  }
-
   const { authToken } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<any>()
@@ -808,7 +801,7 @@ export const useProductEnrollment = <T extends MemberPageProductType>(product: T
       try {
         setLoading(true)
         const programEnrollmentData = await getProductEnrollmentFromLodestar(product, authToken)
-        setData(config.transformDataFunction(programEnrollmentData))
+        setData(programEnrollmentData)
       } catch (err) {
         console.log(err)
         setError(err)
