@@ -169,3 +169,7 @@ export type ChoiceProps = {
   isCorrect: boolean
   isSelected: boolean
 }
+
+export type ProgramContentLog = {
+  createdAt: Date
+}[]
