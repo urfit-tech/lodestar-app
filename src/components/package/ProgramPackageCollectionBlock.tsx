@@ -8,6 +8,10 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Select,
   SkeletonText,
   Text,
@@ -23,26 +27,20 @@ import { FiGrid, FiList } from 'react-icons/fi'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { CustomRatioImage } from '../../components/common/Image'
+import { ProgramCover } from '../../components/common/Image'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramPackageEnrollment } from '../../types/programPackage'
 import RadioCard from '../RadioCard'
 
-const StyledCard = styled.div<{ view?: string }>`
-  ${props =>
-    props.view === 'List' &&
-    `
-    display:flex;
-    align-items:center;
-  `}
+const StyledCard = styled(Box)`
   overflow: hidden;
   background: white;
   border-radius: 4px;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
 `
 
-const StyledDescription = styled.div<{ view?: string }>`
+const StyledDescription = styled(Text)<{ view?: string }>`
   ${MultiLineTruncationMixin}
   ${props =>
     props.view === 'List' &&
@@ -63,7 +61,7 @@ const StyledMeta = styled.div<{ view?: string }>`
       : `padding: 1.25rem;`}
 `
 
-const StyledTitle = styled.div<{ view?: string }>`
+const StyledTitle = styled(Text)<{ view?: string }>`
   ${MultiLineTruncationMixin}
   ${CommonTitleMixin}
   ${props =>
@@ -73,7 +71,6 @@ const StyledTitle = styled.div<{ view?: string }>`
       display:block;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
       `
       : `
       margin-bottom: 1.25rem;
@@ -85,42 +82,67 @@ const StyledSelect = styled(Select)`
   padding-left: 35px !important;
 `
 
-const ProgramTab = ({ onProgramTabClick, tab }: { onProgramTabClick: (tab: string) => void; tab: string }) => {
+const ProgramTab = ({
+  onProgramTabClick,
+  tab,
+  programPackageCounts,
+  programCounts,
+}: {
+  onProgramTabClick: (tab: string) => void
+  tab: string
+  programPackageCounts: number
+  programCounts: number
+}) => {
   const { formatMessage } = useIntl()
   return (
     <>
       <Flex cursor="pointer">
         <HStack spacing="10px">
-          <Text
-            fontSize="2xl"
-            as="b"
-            onClick={() => onProgramTabClick('program')}
-            color={tab === 'program' ? 'black' : '#cdcdcd'}
-          >
-            {formatMessage(productMessages.program.title.course)}
-          </Text>
-          <Center height="20px">
-            <Divider orientation="vertical" />
-          </Center>
-          <Text
-            fontSize="2xl"
-            as="b"
-            onClick={() => onProgramTabClick('programPackage')}
-            color={tab === 'programPackage' ? 'black' : '#cdcdcd'}
-          >
-            {formatMessage(commonMessages.ui.packages)}
-          </Text>
+          {programCounts > 0 && (
+            <Text
+              fontSize="2xl"
+              as="b"
+              onClick={() => onProgramTabClick('program')}
+              color={tab === 'program' ? 'black' : '#cdcdcd'}
+            >
+              {formatMessage(productMessages.program.title.course)}
+            </Text>
+          )}
+          {programCounts > 0 && programPackageCounts > 0 && (
+            <Center height="20px">
+              <Divider orientation="vertical" />
+            </Center>
+          )}
+          {programPackageCounts > 0 && (
+            <Text
+              fontSize="2xl"
+              as="b"
+              onClick={() => onProgramTabClick('programPackage')}
+              color={tab === 'programPackage' ? 'black' : '#cdcdcd'}
+            >
+              {formatMessage(commonMessages.ui.packages)}
+            </Text>
+          )}
         </HStack>
       </Flex>
     </>
   )
 }
 
+const sortOptions = [
+  { value: 'newPurchaseDate', name: '購買日期（新到舊）' },
+  { value: 'oldPurchaseDate', name: '購買日期（舊到新）' },
+  { value: 'newLastViewDate', name: '最後觀課日（新到舊）' },
+  { value: 'oldLastViewDate', name: '最後觀課日（舊到新）' },
+]
+
 const ProgramPackageCollectionBlock: React.VFC<{
   onProgramTabClick: (tab: string) => void
   programTab: string
   programPackageEnrollment: ProgramPackageEnrollment[]
   expiredProgramPackageEnrollment: ProgramPackageEnrollment[]
+  programPackageCounts: number
+  programCounts: number
   loading: boolean
   isError: boolean
 }> = ({
@@ -128,6 +150,8 @@ const ProgramPackageCollectionBlock: React.VFC<{
   onProgramTabClick,
   programPackageEnrollment,
   expiredProgramPackageEnrollment,
+  programPackageCounts,
+  programCounts,
   loading,
   isError,
 }) => {
@@ -182,7 +206,6 @@ const ProgramPackageCollectionBlock: React.VFC<{
   if (loading) {
     return (
       <div className="container py-3">
-        <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </div>
     )
@@ -191,7 +214,6 @@ const ProgramPackageCollectionBlock: React.VFC<{
   if (isError) {
     return (
       <div className="container py-3">
-        <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
         <div>{formatMessage(commonMessages.status.readingError)}</div>
       </div>
     )
@@ -203,10 +225,52 @@ const ProgramPackageCollectionBlock: React.VFC<{
         display="flex"
         flexDirection={{ base: 'column', md: 'row' }}
         justifyContent="space-between"
-        alignContent="center"
-        marginBottom="1rem"
+        alignItems="center"
+        marginBottom="24px"
       >
-        <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
+        <HStack justifyContent="space-between">
+          {(programCounts > 0 || programPackageCounts > 0) && (
+            <ProgramTab
+              onProgramTabClick={onProgramTabClick}
+              tab={programTab}
+              programCounts={programCounts}
+              programPackageCounts={programPackageCounts}
+            />
+          )}
+
+          <HStack spacing="25px" display={{ md: 'none' }}>
+            <Menu>
+              <MenuButton className="member-page-program-sort">
+                <BiSort />
+              </MenuButton>
+              <MenuList>
+                {sortOptions.map(s => (
+                  <MenuItem key={s.value} onClick={() => setSort(s.value)}>
+                    {s.name}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </HStack>
+        </HStack>
+
+        <InputGroup
+          className="member-page-program-search"
+          width={{ base: '100%' }}
+          display={{ base: 'block', md: 'none' }}
+        >
+          <Input
+            placeholder="搜尋關鍵字"
+            value={search}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setSearch(event.target.value.trim().toLowerCase())
+            }
+          />
+          <InputRightElement>
+            <BiSearch />
+          </InputRightElement>
+        </InputGroup>
+
         <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
           <Flex marginRight="20px" cursor="pointer">
             {
@@ -248,110 +312,147 @@ const ProgramPackageCollectionBlock: React.VFC<{
         </HStack>
       </Box>
 
-      <HStack justifyContent={'space-between'} marginBottom="32px">
-        <HStack spacing="12px">
-          <InputGroup>
-            <InputLeftElement>
-              <BiSort />
-            </InputLeftElement>
-            <StyledSelect
-              onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setSort(event.target.value)}
-              defaultValue={sort}
-            >
-              <option value="newPurchaseDate">購買日期（新到舊）</option>
-              <option value="oldPurchaseDate">購買日期（舊到新）</option>
-              <option value="newLastViewDate">最後觀課日（新到舊）</option>
-              <option value="oldLastViewDate">最後觀課日（舊到新）</option>
-            </StyledSelect>
-          </InputGroup>
-        </HStack>
-        <Box>
-          <InputGroup>
-            <Input
-              placeholder="搜尋關鍵字"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
-            />
-            <InputRightElement>
-              <BiSearch />
-            </InputRightElement>
-          </InputGroup>
-        </Box>
-      </HStack>
+      {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length > 0 && !isExpired && (
+        <p>沒有可觀看的課程組合</p>
+      )}
+      {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length === 0 && programCounts === 0 && (
+        <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>
+      )}
 
-      {programPackage.length === 0 && <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>}
+      {((programPackageEnrollment.length > 0 && !isExpired) ||
+        (expiredProgramPackageEnrollment.length > 0 && isExpired)) && (
+        <>
+          <HStack justifyContent={'space-between'} display={{ base: 'none', md: 'flex' }} marginBottom="32px">
+            <InputGroup className="member-page-program-sort" width="fit-content">
+              <InputLeftElement>
+                <BiSort />
+              </InputLeftElement>
+              <StyledSelect
+                onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setSort(event.target.value)}
+                defaultValue={sort}
+              >
+                {sortOptions.map(s => (
+                  <option key={s.value} value={s.value}>
+                    {s.name}
+                  </option>
+                ))}
+              </StyledSelect>
+            </InputGroup>
+            <InputGroup className="member-page-program-search" width="fit-content">
+              <Input
+                placeholder="搜尋關鍵字"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
+              />
+              <InputRightElement>
+                <BiSearch />
+              </InputRightElement>
+            </InputGroup>
+          </HStack>
 
-      <div className="row">
-        {programPackage.map(programPackage => (
-          <Fragment key={programPackage.id}>
-            {view === 'Grid' && (
-              <Box className="col-12 col-md-6 col-lg-4 mb-4" opacity={isExpired ? '50%' : '100%'}>
-                <Link
-                  to={
-                    isExpired
-                      ? `/program-packages/${programPackage.id}`
-                      : `/program-packages/${programPackage.id}/contents?memberId=${currentMemberId}`
-                  }
-                >
-                  <StyledCard>
-                    <CustomRatioImage
-                      width="100%"
-                      ratio={9 / 16}
-                      src={programPackage.coverUrl || EmptyCover}
-                      shape="rounded"
-                    />
-                    <StyledMeta>
-                      <StyledTitle>{programPackage.title}</StyledTitle>
-                      {settings['program.datetime.enabled'] === '1' && (
-                        <StyledDescription>
-                          {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
-                          {programPackage.lastViewedAt
-                            ? ` / ${dayjs(programPackage.lastViewedAt).format('YYYY-MM-DD')} 上次觀看`
-                            : ` / 尚未觀看`}
-                        </StyledDescription>
-                      )}
-                    </StyledMeta>
-                  </StyledCard>
-                </Link>
-              </Box>
-            )}
-            {view === 'List' && (
-              <Box display="flex" width="100%" marginBottom="12px" opacity={isExpired ? '50%' : '100%'}>
-                <Box width="100%">
-                  <Link
-                    to={
-                      isExpired
-                        ? `/program-packages/${programPackage.id}`
-                        : `/program-packages/${programPackage.id}/contents?memberId=${currentMemberId}`
-                    }
+          <Flex
+            gridGap={view === 'List' ? '12px' : '15px'}
+            flexDirection={view === 'List' ? 'column' : 'row'}
+            wrap={view === 'List' ? 'nowrap' : 'wrap'}
+            alignItems="center"
+          >
+            {programPackage.map(programPackage => (
+              <Fragment key={programPackage.id}>
+                {view === 'Grid' && (
+                  <Box
+                    marginBottom="1rem"
+                    flex={{ base: '0 0 100%', md: '0 0 48%', lg: '0 0 32%' }}
+                    maxWidth={{ base: '100%', md: '48%', lg: '32%' }}
+                    opacity={isExpired ? '50%' : '100%'}
                   >
-                    <StyledCard view={view}>
-                      <CustomRatioImage
-                        width="15%"
-                        height="15%"
-                        margin="12px"
-                        ratio={9 / 16}
-                        src={programPackage.coverUrl || EmptyCover}
-                        shape="rounded"
-                      />
-                      <StyledMeta view={view}>
-                        <StyledTitle view={view}>{programPackage.title}</StyledTitle>
+                    <Link
+                      to={
+                        isExpired
+                          ? `/program-packages/${programPackage.id}`
+                          : `/program-packages/${programPackage.id}/contents?memberId=${currentMemberId}`
+                      }
+                    >
+                      <StyledCard>
+                        <ProgramCover
+                          width="100%"
+                          paddingTop="calc(100% * 9/16)"
+                          src={programPackage.coverUrl || EmptyCover}
+                          shape="rounded"
+                        />
+                        <StyledMeta>
+                          <StyledTitle>{programPackage.title}</StyledTitle>
+                          {settings['program.datetime.enabled'] === '1' && (
+                            <StyledDescription>
+                              {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
+                              {programPackage.lastViewedAt
+                                ? ` / ${dayjs(programPackage.lastViewedAt).format('YYYY-MM-DD')} 上次觀看`
+                                : ` / 尚未觀看`}
+                            </StyledDescription>
+                          )}
+                        </StyledMeta>
+                      </StyledCard>
+                    </Link>
+                  </Box>
+                )}
+                {view === 'List' && (
+                  <Box width="100%" opacity={isExpired ? '50%' : '100%'}>
+                    <Link
+                      to={
+                        isExpired
+                          ? `/program-packages/${programPackage.id}`
+                          : `/program-packages/${programPackage.id}/contents?memberId=${currentMemberId}`
+                      }
+                    >
+                      <StyledCard>
+                        <Box
+                          display="flex"
+                          marginY={{ base: '16px', md: '0px' }}
+                          marginX={{ base: '12px', md: '0px' }}
+                          alignItems="center"
+                        >
+                          <ProgramCover
+                            width={{ base: '40%', md: '15%' }}
+                            height={{ base: '40%', md: '15%' }}
+                            paddingTop={{ base: 'calc(40% * 9/16)', md: 'calc(15% * 9/16)' }}
+                            margin={{ base: '0px 16px 0px 0px', md: '12px' }}
+                            src={programPackage.coverUrl || EmptyCover}
+                            shape="rounded"
+                          />
+                          <StyledMeta view={view}>
+                            <StyledTitle fontSize="1rem" noOfLines={{ base: 2, md: 1 }} view={view}>
+                              {programPackage.title}
+                            </StyledTitle>
+                            {settings['program.datetime.enabled'] === '1' && (
+                              <StyledDescription display={{ base: 'none', md: 'block' }} view={view}>
+                                {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
+                                {programPackage.lastViewedAt
+                                  ? ` / ${dayjs(programPackage.lastViewedAt).format('YYYY-MM-DD')} 上次觀看`
+                                  : ` / 尚未觀看`}
+                              </StyledDescription>
+                            )}
+                          </StyledMeta>
+                        </Box>
                         {settings['program.datetime.enabled'] === '1' && (
-                          <StyledDescription view={view}>
+                          <StyledDescription
+                            display={{ base: 'block', md: 'none' }}
+                            marginX="12px"
+                            marginBottom="16px"
+                            view={view}
+                          >
                             {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
                             {programPackage.lastViewedAt
                               ? ` / ${dayjs(programPackage.lastViewedAt).format('YYYY-MM-DD')} 上次觀看`
                               : ` / 尚未觀看`}
                           </StyledDescription>
                         )}
-                      </StyledMeta>
-                    </StyledCard>
-                  </Link>
-                </Box>
-              </Box>
-            )}
-          </Fragment>
-        ))}
-      </div>
+                      </StyledCard>
+                    </Link>
+                  </Box>
+                )}
+              </Fragment>
+            ))}
+          </Flex>
+        </>
+      )}
     </div>
   )
 }
