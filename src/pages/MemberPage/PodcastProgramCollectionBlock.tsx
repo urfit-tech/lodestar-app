@@ -7,14 +7,13 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { AvatarImage } from '../../components/common/Image'
 import PodcastProgramCard from '../../components/podcast/PodcastProgramCard'
-import PodcastProgramTimeline from '../../containers/podcast/PodcastProgramTimeline'
+import PodcastProgramTimeline, { PodcastProgramProps } from '../../containers/podcast/PodcastProgramTimeline'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { handleError } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import {
   useDeletePlaylist,
   useEnrolledPodcastPlansCreators,
-  useEnrolledPodcastPrograms,
   usePlaylistCollection,
   useUpdatePlaylist,
 } from '../../hooks/podcast'
@@ -42,20 +41,23 @@ const StyledPlaylistItem = styled.div`
 `
 const StyledInput = styled.input``
 
-const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
+const PodcastProgramCollectionBlock: React.VFC<{
+  memberId: string
+  podcastEnrollment: PodcastProgramProps[]
+  loading: boolean
+  isError: boolean
+}> = ({ memberId, podcastEnrollment, loading, isError }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { setup } = useContext(PodcastPlayerContext)
-  const { enrolledPodcastPrograms, refetchPodcastProgramIds } = useEnrolledPodcastPrograms(memberId)
   const { enrolledPodcastPlansCreators, refetchPodcastPlan } = useEnrolledPodcastPlansCreators(memberId)
   const { playlists, totalPodcastProgramCount, refetchPlaylists } = usePlaylistCollection(memberId)
   const updatePlaylist = useUpdatePlaylist()
   const deletePlaylist = useDeletePlaylist()
 
   useEffect(() => {
-    refetchPodcastProgramIds()
     refetchPodcastPlan()
-  }, [refetchPodcastProgramIds, refetchPodcastPlan])
+  }, [refetchPodcastPlan])
 
   return (
     <div className="container py-3">
@@ -65,7 +67,7 @@ const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ member
 
           <PodcastProgramTimeline
             memberId={memberId}
-            podcastPrograms={enrolledPodcastPrograms}
+            podcastPrograms={podcastEnrollment}
             renderItem={({ podcastProgram, isEnrolled }) => (
               <Link to={`/podcasts/${podcastProgram.id}`} key={podcastProgram.id}>
                 <PodcastProgramCard
@@ -116,14 +118,14 @@ const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ member
           <StyledPlaylistItem
             className="cursor-pointer"
             onClick={() => {
-              if (enrolledPodcastPrograms.length === 0) {
+              if (podcastEnrollment.length === 0) {
                 return
               }
-              history.push(`/podcasts/${enrolledPodcastPrograms[0].id}`)
+              history.push(`/podcasts/${podcastEnrollment[0].id}`)
               setup?.({
-                podcastProgramIds: enrolledPodcastPrograms.map(podcastProgram => podcastProgram.id),
+                podcastProgramIds: podcastEnrollment.map(podcastProgram => podcastProgram.id),
                 currentIndex: 0,
-                title: `${formatMessage(productMessages.podcast.title.allPodcast)} (${enrolledPodcastPrograms.length})`,
+                title: `${formatMessage(productMessages.podcast.title.allPodcast)} (${podcastEnrollment.length})`,
               })
             }}
           >

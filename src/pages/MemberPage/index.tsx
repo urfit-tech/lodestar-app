@@ -162,7 +162,14 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       isVisible:
         (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PODCAST_INFO)) &&
         podcastEnrollment.length > 0,
-      content: <PodcastProgramCollectionBlock memberId={memberId} />,
+      content: (
+        <PodcastProgramCollectionBlock
+          memberId={memberId}
+          podcastEnrollment={podcastEnrollment}
+          loading={podcastEnrollmentLoading}
+          isError={Boolean(podcastEnrollmentError)}
+        />
+      ),
     },
     {
       key: 'appointment',

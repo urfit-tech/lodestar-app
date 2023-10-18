@@ -5,7 +5,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { PodcastProgramCardProps } from '../../components/podcast/PodcastProgramCard'
 import { PodcastProgramPopoverProps } from '../../components/podcast/PodcastProgramPopover'
-import { useEnrolledPodcastPlansCreators, useEnrolledPodcastPrograms } from '../../hooks/podcast'
+import { useProductEnrollment } from '../../hooks/common'
+import { useEnrolledPodcastPlansCreators } from '../../hooks/podcast'
 
 const StyledTimeline = styled(Timeline)`
   && .ant-timeline-item-head {
@@ -26,7 +27,7 @@ export type PodcastProgramProps = PodcastProgramPopoverProps &
   PodcastProgramCardProps & {
     id: string
     publishedAt: Date
-    supportLocales: string[] | null
+    supportLocales?: string[] | null
   }
 const PodcastProgramTimeline: React.VFC<{
   memberId: string | null
@@ -37,7 +38,7 @@ const PodcastProgramTimeline: React.VFC<{
     isSubscribed: boolean
   }) => React.ReactElement
 }> = ({ memberId, podcastPrograms, renderItem }) => {
-  const { enrolledPodcastPrograms } = useEnrolledPodcastPrograms(memberId || '')
+  const { data: podcastEnrollment } = useProductEnrollment('podcast')
   const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(memberId || '')
 
   const podcastProgramsGroupByDate: { [date: string]: PodcastProgramProps[] } = groupBy(
@@ -52,7 +53,7 @@ const PodcastProgramTimeline: React.VFC<{
           <StyledTitle className="mb-4">{date}</StyledTitle>
           {renderItem &&
             podcastProgramsGroupByDate[date].map(podcastProgram => {
-              const isEnrolled = enrolledPodcastPrograms.map(v => v.id).includes(podcastProgram.id)
+              const isEnrolled = podcastEnrollment.map(v => v.id).includes(podcastProgram.id)
               const isSubscribed =
                 !!podcastProgram.instructor &&
                 enrolledPodcastPlansCreators.map(v => v.id).includes(podcastProgram.instructor.id)

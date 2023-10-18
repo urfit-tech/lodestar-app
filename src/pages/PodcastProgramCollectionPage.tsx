@@ -29,7 +29,7 @@ const PodcastProgramCollectionPage: React.VFC = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
 
   const categories = sortBy(prop('position'))(
-    uniqBy(category => category.id, flatten(podcastPrograms.map(podcastProgram => podcastProgram.categories))),
+    uniqBy(category => category?.id, flatten(podcastPrograms.map(podcastProgram => podcastProgram.categories))),
   )
 
   useEffect(() => {
@@ -78,13 +78,13 @@ const PodcastProgramCollectionPage: React.VFC = () => {
           </StyledButton>
           {categories.map(category => (
             <StyledButton
-              key={category.id}
+              key={category?.id}
               colorScheme="primary"
-              variant={selectedCategoryId === category.id ? 'solid' : 'outline'}
+              variant={selectedCategoryId === category?.id ? 'solid' : 'outline'}
               className="ml-2 mb-2"
-              onClick={() => setSelectedCategoryId(category.id)}
+              onClick={() => setSelectedCategoryId(category?.id || '')}
             >
-              {category.name}
+              {category?.name}
             </StyledButton>
           ))}
         </div>
@@ -101,7 +101,7 @@ const PodcastProgramCollectionPage: React.VFC = () => {
                     .filter(
                       podcastProgram =>
                         !selectedCategoryId ||
-                        podcastProgram.categories.some(category => category.id === selectedCategoryId),
+                        podcastProgram.categories?.some(category => category.id === selectedCategoryId),
                     )
                     .filter(
                       podcastProgram =>
