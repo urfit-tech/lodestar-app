@@ -26,10 +26,18 @@ const ProgressBar: React.VFC<{
   noPercent?: boolean
   className?: string
   width?: string
+  marginBottom?: string
   loading?: boolean
-}> = ({ percent, noPercent, className, width, loading }) => {
+}> = ({ percent, noPercent, className, width, marginBottom, loading }) => {
   return (
-    <Box display="flex" alignItems="center" justifyContent="space-between" className={`${className}`} width={width}>
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      className={`${className}`}
+      width={width}
+      marginBottom={marginBottom}
+    >
       {loading ? (
         <Skeleton width="100%" height="10px" />
       ) : (

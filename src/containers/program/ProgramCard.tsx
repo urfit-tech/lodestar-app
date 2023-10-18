@@ -1,23 +1,17 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Text } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { CustomRatioImage } from '../../components/common/Image'
+import { ProgramCover } from '../../components/common/Image'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import ProgressBar from '../../components/common/ProgressBar'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramRole } from '../../types/program'
 
-const StyledWrapper = styled.div<{ view?: string }>`
-  ${props =>
-    props.view === 'List' &&
-    `
-    display:flex;
-    align-items:center;
-  `}
+const StyledWrapper = styled(Box)`
   overflow: hidden;
   background-color: white;
   border-radius: 4px;
@@ -34,24 +28,22 @@ const StyledMeta = styled.div<{ view?: string }>`
     `
       : `padding: 1.25rem;`}
 `
-const StyledTitle = styled.div<{ view?: string }>`
+const StyledTitle = styled(Text)<{ view?: string }>`
   ${MultiLineTruncationMixin}
   ${CommonTitleMixin}
   ${props =>
     props.view === 'List'
       ? `
-      margin-bottom: 0.25rem;
       display:block;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
       `
       : `
       margin-bottom: 1.25rem;
       height: 3rem;
       `}
 `
-const StyledDescription = styled.div<{ size?: string; view?: string }>`
+const StyledDescription = styled(Text)<{ size?: string; view?: string }>`
   ${props =>
     props.size === 'small'
       ? `
@@ -67,7 +59,7 @@ const StyledDescription = styled.div<{ size?: string; view?: string }>`
   color: var(--gray-dark);
   letter-spacing: 0.4px;
 `
-const AvatarPlaceHolder = styled.div<{ view?: string }>`
+const AvatarPlaceHolder = styled(Box)<{ view?: string }>`
   ${props => props.view === 'List' && 'width: 40%;'}
   height: 2rem;
 `
@@ -139,9 +131,9 @@ const ProgramCard: React.VFC<{
             }
           >
             <StyledWrapper>
-              <CustomRatioImage
+              <ProgramCover
                 width="100%"
-                ratio={9 / 16}
+                paddingTop="calc(100% * 9/16)"
                 src={coverThumbnailUrl || coverUrl || coverMobileUrl || EmptyCover}
                 shape="rounded"
               />
@@ -162,7 +154,7 @@ const ProgramCard: React.VFC<{
         </Box>
       )}
       {view === 'List' && (
-        <Box opacity={isExpired ? '50%' : '100%'} width="100%">
+        <Box opacity={isExpired ? '50%' : '100%'}>
           <Link
             to={
               isExpired
@@ -176,40 +168,68 @@ const ProgramCard: React.VFC<{
                 : `/programs/${programId}`
             }
           >
-            <StyledWrapper view={view}>
-              <CustomRatioImage
-                width="15%"
-                height="15%"
-                margin="12px"
-                ratio={9 / 16}
-                src={coverThumbnailUrl || coverUrl || coverMobileUrl || EmptyCover}
-                shape="rounded"
-              />
-              <StyledMeta view={view}>
-                <Box minWidth="50%" maxWidth="50%">
-                  <StyledTitle view={view}>{title}</StyledTitle>
-                  {datetimeEnabled && (
-                    <StyledDescription size="small" view={view}>
-                      {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
-                      {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
-                    </StyledDescription>
-                  )}
-                </Box>
-                <Box width="100%" display="flex" alignItems="center" justifyContent="flex-end">
-                  {!noInstructor && (
-                    <AvatarPlaceHolder className="my-3" view={view}>
-                      {roles
-                        .filter(role => role.name === 'instructor')
-                        .slice(0, 1)
-                        .map(role => (
-                          <MemberAvatar key={role.memberId} memberId={role.memberId} withName view={view} />
-                        ))}
-                    </AvatarPlaceHolder>
-                  )}
+            <StyledWrapper>
+              <Box display="flex" marginY={{ base: '16px', md: '0px' }} marginX={{ base: '12px', md: '0px' }}>
+                <ProgramCover
+                  width={{ base: '40%', md: '15%' }}
+                  height={{ base: '40%', md: '15%' }}
+                  paddingTop={{ base: 'calc(40% * 9/16)', md: 'calc(15% * 9/16)' }}
+                  margin={{ base: '0px 16px 0px 0px', md: '12px' }}
+                  src={coverThumbnailUrl || coverUrl || coverMobileUrl || EmptyCover}
+                  shape="rounded"
+                />
+                <StyledMeta view={view}>
+                  <Box minWidth={{ base: '100%', md: '50%' }} maxWidth={{ base: '100%', md: '50%' }}>
+                    <StyledTitle noOfLines={{ base: 2, md: 1 }} view={view}>
+                      {title}
+                    </StyledTitle>
+                    {datetimeEnabled && (
+                      <StyledDescription size="small" display={{ base: 'none', md: 'block' }} view={view}>
+                        {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
+                        {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
+                      </StyledDescription>
+                    )}
+                    {!noInstructor && (
+                      <Box display={{ base: 'block', md: 'none' }}>
+                        {roles
+                          .filter(role => role.name === 'instructor')
+                          .slice(0, 1)
+                          .map(role => (
+                            <MemberAvatar key={role.memberId} memberId={role.memberId} withName noAvatar view={view} />
+                          ))}
+                      </Box>
+                    )}
+                  </Box>
 
-                  {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="40%" />}
-                </Box>
-              </StyledMeta>
+                  <Box
+                    width="100%"
+                    alignItems="center"
+                    justifyContent="flex-end"
+                    display={{ base: 'none', md: 'flex' }}
+                  >
+                    {!noInstructor && (
+                      <AvatarPlaceHolder marginY="1rem" view={view}>
+                        {roles
+                          .filter(role => role.name === 'instructor')
+                          .slice(0, 1)
+                          .map(role => (
+                            <MemberAvatar key={role.memberId} memberId={role.memberId} withName view={view} />
+                          ))}
+                      </AvatarPlaceHolder>
+                    )}
+                    {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="40%" />}
+                  </Box>
+                </StyledMeta>
+              </Box>
+              <Box display={{ base: 'block', md: 'none' }} marginX="12px" marginBottom="16px">
+                {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} marginBottom="8px" />}
+                {datetimeEnabled && (
+                  <StyledDescription size="small" view={view}>
+                    {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
+                    {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
+                  </StyledDescription>
+                )}
+              </Box>
             </StyledWrapper>
           </Link>
         </Box>
