@@ -759,7 +759,7 @@ export const useMemberPageEnrollmentsCounts = (memberId: string) => {
   }
 }
 
-export const useProductEnrollment = <T extends MemberPageProductType>(product: T) => {
+export const useProductEnrollment = <T extends MemberPageProductType>(product: T, memberId?: string) => {
   const { authToken } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<any>()
@@ -769,7 +769,7 @@ export const useProductEnrollment = <T extends MemberPageProductType>(product: T
     if (authToken) {
       try {
         setLoading(true)
-        const programEnrollmentData = await getProductEnrollmentFromLodestar(product, authToken)
+        const programEnrollmentData = await getProductEnrollmentFromLodestar(product, authToken, memberId)
         setData(programEnrollmentData)
       } catch (err) {
         console.log(err)

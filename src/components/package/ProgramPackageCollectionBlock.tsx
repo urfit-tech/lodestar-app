@@ -20,7 +20,6 @@ import {
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { Fragment, useState } from 'react'
 import { BiSearch, BiSort } from 'react-icons/bi'
 import { FiGrid, FiList } from 'react-icons/fi'
@@ -137,6 +136,7 @@ const sortOptions = [
 ]
 
 const ProgramPackageCollectionBlock: React.VFC<{
+  memberId: string
   onProgramTabClick: (tab: string) => void
   programTab: string
   programPackageEnrollment: ProgramPackageEnrollment[]
@@ -146,6 +146,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
   loading: boolean
   isError: boolean
 }> = ({
+  memberId,
   programTab,
   onProgramTabClick,
   programPackageEnrollment,
@@ -155,7 +156,6 @@ const ProgramPackageCollectionBlock: React.VFC<{
   loading,
   isError,
 }) => {
-  const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const [isExpired, setIsExpired] = useState(false)
@@ -368,7 +368,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
                       to={
                         isExpired
                           ? `/program-packages/${programPackage.id}`
-                          : `/program-packages/${programPackage.id}/contents?memberId=${currentMemberId}`
+                          : `/program-packages/${programPackage.id}/contents?memberId=${memberId}`
                       }
                     >
                       <StyledCard>
@@ -399,7 +399,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
                       to={
                         isExpired
                           ? `/program-packages/${programPackage.id}`
-                          : `/program-packages/${programPackage.id}/contents?memberId=${currentMemberId}`
+                          : `/program-packages/${programPackage.id}/contents?memberId=${memberId}`
                       }
                     >
                       <StyledCard>

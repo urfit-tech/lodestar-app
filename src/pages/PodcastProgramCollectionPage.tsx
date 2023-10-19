@@ -96,7 +96,6 @@ const PodcastProgramCollectionPage: React.VFC = () => {
             <div className="row">
               <div className="col-12 col-lg-8 mb-5">
                 <PodcastProgramTimeline
-                  memberId={currentMemberId}
                   podcastPrograms={podcastPrograms
                     .filter(
                       podcastProgram =>

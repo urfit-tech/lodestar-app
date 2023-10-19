@@ -72,33 +72,34 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   } = useMemberPageEnrollmentsCounts(memberId)
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
   const [programTab, setProgramTab] = useState('program')
+
   const {
     fetch: fetchProgramEnrollment,
     data: programEnrollment,
     error: programEnrollmentError,
     loading: programEnrollmentLoading,
-  } = useProductEnrollment('program')
+  } = useProductEnrollment('program', memberId)
   const {
     fetch: fetchExpiredProgramEnrollment,
     data: expiredProgramEnrollment,
     error: expiredProgramEnrollmentError,
     loading: expiredProgramEnrollmentLoading,
-  } = useProductEnrollment('expiredProgram')
+  } = useProductEnrollment('expiredProgram', memberId)
   const {
     data: programPackageEnrollment,
     loading: programPackageEnrollmentLoading,
     error: programPackageEnrollmentError,
-  } = useProductEnrollment('programPackage')
+  } = useProductEnrollment('programPackage', memberId)
   const {
     data: expiredProgramPackageEnrollment,
     loading: expiredProgramPackageEnrollmentLoading,
     error: expiredProgramPackageEnrollmentError,
-  } = useProductEnrollment('expiredProgramPackage')
+  } = useProductEnrollment('expiredProgramPackage', memberId)
   const {
     data: podcastEnrollment,
     loading: podcastEnrollmentLoading,
     error: podcastEnrollmentError,
-  } = useProductEnrollment('podcast')
+  } = useProductEnrollment('podcast', memberId)
   const programCounts = programEnrollment.length + expiredProgramEnrollment.length
   const programPackageCounts = programPackageEnrollment.length + expiredProgramPackageEnrollment.length
   let content = null
@@ -124,6 +125,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
         <>
           {programTab === 'program' && (
             <EnrolledProgramCollectionBlock
+              memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
               programEnrollment={programEnrollment}
@@ -136,6 +138,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
           )}
           {programTab === 'programPackage' && (
             <ProgramPackageCollectionBlock
+              memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
               programPackageEnrollment={programPackageEnrollment}
