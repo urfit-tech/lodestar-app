@@ -18,7 +18,6 @@ import {
   useRadioGroup,
 } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { Fragment, useState } from 'react'
 import { BiSearch, BiSort } from 'react-icons/bi'
 import { FiGrid, FiList } from 'react-icons/fi'
@@ -102,6 +101,7 @@ const filterOptions = [
 ]
 
 const EnrolledProgramCollectionBlock: React.VFC<{
+  memberId: string
   onProgramTabClick: (tab: string) => void
   programTab: string
   programEnrollment: ProgramEnrollment[]
@@ -111,6 +111,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   isError: boolean
   loading: boolean
 }> = ({
+  memberId,
   onProgramTabClick,
   programTab,
   programEnrollment,
@@ -120,7 +121,6 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   isError,
   loading,
 }) => {
-  const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
   const localStorageView = localStorage.getItem('programView')
@@ -434,7 +434,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                       viewRate={program.viewRate}
                       withProgress={!isExpired}
                       isExpired={isExpired}
-                      previousPage={`members_${currentMemberId}`}
+                      previousPage={`members_${memberId}`}
                     />
                   </Box>
                 )}
@@ -454,7 +454,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                       viewRate={program.viewRate}
                       withProgress={!isExpired}
                       isExpired={isExpired}
-                      previousPage={`members_${currentMemberId}`}
+                      previousPage={`members_${memberId}`}
                     />
                   </Box>
                 )}
