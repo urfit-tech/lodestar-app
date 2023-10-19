@@ -46,9 +46,9 @@ const PodcastProgramCollectionBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { setup } = useContext(PodcastPlayerContext)
-  const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan')
+  const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan', memberId)
 
-  const { playlists, totalPodcastProgramCount, refetchPlaylists } = usePlaylistCollection(memberId)
+  const { playlists, totalPodcastProgramCount, refetchPlaylists } = usePlaylistCollection(memberId || '')
   const updatePlaylist = useUpdatePlaylist()
   const deletePlaylist = useDeletePlaylist()
 
@@ -59,7 +59,6 @@ const PodcastProgramCollectionBlock: React.VFC<{
           <StyledTitle>{formatMessage(productMessages.podcast.title.podcast)}</StyledTitle>
 
           <PodcastProgramTimeline
-            memberId={memberId}
             podcastPrograms={podcastEnrollment}
             renderItem={({ podcastProgram, isEnrolled }) => (
               <Link to={`/podcasts/${podcastProgram.id}`} key={podcastProgram.id}>
