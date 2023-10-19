@@ -162,7 +162,7 @@ const CreatorTabs: React.VFC<{
   })
 
   const { posts } = usePostPreviewCollection({ authorId: creatorId })
-  const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan')
+  const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan', currentMemberId || undefined)
 
   const { podcastPrograms } = usePodcastProgramCollection(creatorId)
   const { appointmentPlans } = useAppointmentPlanCollection(
@@ -329,7 +329,6 @@ const CreatorTabs: React.VFC<{
           <div className="row">
             <div className="col-12 col-lg-8 mb-3">
               <PodcastProgramTimeline
-                memberId={currentMemberId}
                 podcastPrograms={podcastPrograms}
                 renderItem={({ podcastProgram, isEnrolled, isSubscribed }) => {
                   const elem = (
