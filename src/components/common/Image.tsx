@@ -1,3 +1,4 @@
+import { Box } from '@chakra-ui/react'
 import styled from 'styled-components'
 import DefaultAvatar from '../../images/avatar.svg'
 
@@ -23,7 +24,9 @@ export const AvatarImage = styled.div<AvatarImageProps>`
 `
 
 type CustomRatioImageProps = {
+  margin?: string
   width: string
+  height?: string
   ratio: number
   src: string
   shape?: 'rounded' | 'circle'
@@ -31,7 +34,18 @@ type CustomRatioImageProps = {
 }
 export const CustomRatioImage = styled.div<CustomRatioImageProps>`
   padding-top: calc(${props => props.width} * ${props => props.ratio});
+  margin: ${props => props.margin};
   width: ${props => props.width};
+  height: ${props => props.height};
+  background-image: url(${props => props.src});
+  background-size: cover;
+  background-position: center;
+  ${props =>
+    props.shape === 'rounded' ? 'border-radius: 4px;' : props.shape === 'circle' ? 'border-radius: 50%;' : ''};
+  opacity: ${props => props.disabled && 0.4};
+`
+
+export const ProgramCover = styled(Box)<CustomRatioImageProps>`
   background-image: url(${props => props.src});
   background-size: cover;
   background-position: center;

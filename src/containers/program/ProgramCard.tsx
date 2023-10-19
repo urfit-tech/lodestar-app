@@ -1,157 +1,241 @@
-import { gql, useQuery } from '@apollo/client'
-import { Box } from '@chakra-ui/react'
+import { Box, Text } from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
-import { sum } from 'ramda'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { CustomRatioImage } from '../../components/common/Image'
+import { ProgramCover } from '../../components/common/Image'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import ProgressBar from '../../components/common/ProgressBar'
-import { useProgramContentProgress } from '../../contexts/ProgressContext'
-import hasura from '../../hasura'
 import EmptyCover from '../../images/empty-cover.png'
-import { ProgramPreview, ProgramRoleName } from '../../types/program'
+import { ProgramRole } from '../../types/program'
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled(Box)`
   overflow: hidden;
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
 `
-const StyledMeta = styled.div`
-  padding: 1.25rem;
+const StyledMeta = styled.div<{ view?: string }>`
+  ${props =>
+    props.view === 'List'
+      ? `
+      width:80%;
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+    `
+      : `padding: 1.25rem;`}
 `
-const StyledTitle = styled.div`
+const StyledTitle = styled(Text)<{ view?: string }>`
   ${MultiLineTruncationMixin}
   ${CommonTitleMixin}
-  margin-bottom: 1.25rem;
-  height: 3em;
+  ${props =>
+    props.view === 'List'
+      ? `
+      display:block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      `
+      : `
+      margin-bottom: 1.25rem;
+      height: 3rem;
+      `}
 `
-const StyledDescription = styled.div`
+const StyledDescription = styled(Text)<{ size?: string; view?: string }>`
+  ${props =>
+    props.size === 'small'
+      ? `
+      font-size: 12px;
+      `
+      : `
+      font-size: 14px;
+      height: 3em;
+      margin-bottom: 1.25rem;
+      `}
+  ${props => (props.view === 'List' ? '' : 'margin-bottom: 0.5rem;')}
   ${MultiLineTruncationMixin}
-  margin-bottom: 1.25rem;
-  height: 3em;
   color: var(--gray-dark);
-  font-size: 14px;
   letter-spacing: 0.4px;
 `
-const AvatarPlaceHolder = styled.div`
+const AvatarPlaceHolder = styled(Box)<{ view?: string }>`
+  ${props => props.view === 'List' && 'width: 40%;'}
   height: 2rem;
 `
 
 const ProgramCard: React.VFC<{
-  memberId: string
   programId: string
   programType?: string
   noInstructor?: boolean
-  noPrice?: boolean
   withProgress?: boolean
   isExpired?: boolean
   previousPage?: string
-}> = ({ memberId, programId, programType, noInstructor, noPrice, withProgress, isExpired, previousPage }) => {
-  const { programPreview } = useProgramPreview(programId)
-  const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
-
-  const viewRate = programContentProgress?.length
-    ? sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length
-    : 0
+  view?: string
+  deliveredAt: Date | null
+  roles: ProgramRole[]
+  coverThumbnailUrl: string | null
+  coverUrl: string | null
+  coverMobileUrl: string | null
+  title: string
+  abstract: string
+  lastViewDate: Date | null
+  viewRate: number
+}> = ({
+  programId,
+  programType,
+  previousPage,
+  noInstructor,
+  isExpired,
+  view,
+  roles,
+  coverThumbnailUrl,
+  coverUrl,
+  coverMobileUrl,
+  deliveredAt,
+  title,
+  abstract,
+  lastViewDate,
+  withProgress,
+  viewRate,
+}) => {
+  const { settings } = useApp()
+  const datetimeEnabled = settings['program.datetime.enabled'] === '1'
 
   return (
-    <Box opacity={isExpired ? '50%' : '100%'}>
-      {!noInstructor && programPreview?.roles && (
-        <AvatarPlaceHolder className="my-3">
-          {programPreview.roles
-            .filter(role => role.name === 'instructor')
-            .slice(0, 1)
-            .map(role => (
-              <MemberAvatar key={role.memberId} memberId={role.memberId} withName />
-            ))}
-        </AvatarPlaceHolder>
-      )}
+    <>
+      {view === 'Grid' && (
+        <Box opacity={isExpired ? '50%' : '100%'}>
+          {!noInstructor && (
+            <AvatarPlaceHolder className="my-3">
+              {roles
+                .filter(role => role.name === 'instructor')
+                .slice(0, 1)
+                .map(role => (
+                  <MemberAvatar key={role.memberId} memberId={role.memberId} withName />
+                ))}
+            </AvatarPlaceHolder>
+          )}
 
-      <Link
-        to={
-          isExpired
-            ? `/programs/${programId}?visitIntro=1`
-            : programType && previousPage
-            ? `/programs/${programId}?type=${programType}&back=${previousPage}`
-            : programType
-            ? `/programs/${programId}?type=${programType}`
-            : previousPage
-            ? `/programs/${programId}?back=${previousPage}`
-            : `/programs/${programId}`
-        }
-      >
-        <StyledWrapper>
-          <CustomRatioImage
-            width="100%"
-            ratio={9 / 16}
-            src={
-              (programPreview &&
-                (programPreview.coverThumbnailUrl || programPreview.coverUrl || programPreview.coverMobileUrl)) ||
-              EmptyCover
+          <Link
+            to={
+              isExpired
+                ? `/programs/${programId}?visitIntro=1`
+                : programType && previousPage
+                ? `/programs/${programId}?type=${programType}&back=${previousPage}`
+                : programType
+                ? `/programs/${programId}?type=${programType}`
+                : previousPage
+                ? `/programs/${programId}?back=${previousPage}`
+                : `/programs/${programId}`
             }
-            shape="rounded"
-          />
-          <StyledMeta>
-            <StyledTitle>{programPreview && programPreview.title}</StyledTitle>
-            <StyledDescription>{programPreview && programPreview.abstract}</StyledDescription>
+          >
+            <StyledWrapper>
+              <ProgramCover
+                width="100%"
+                paddingTop="calc(100% * 9/16)"
+                src={coverThumbnailUrl || coverUrl || coverMobileUrl || EmptyCover}
+                shape="rounded"
+              />
+              <StyledMeta>
+                <StyledTitle>{title}</StyledTitle>
+                {datetimeEnabled && (
+                  <StyledDescription size="small">
+                    {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
+                    {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
+                  </StyledDescription>
+                )}
+                <StyledDescription>{abstract}</StyledDescription>
 
-            {withProgress && !loadingProgress && <ProgressBar percent={Math.floor(viewRate * 100)} />}
-          </StyledMeta>
-        </StyledWrapper>
-      </Link>
-    </Box>
+                {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="100%" />}
+              </StyledMeta>
+            </StyledWrapper>
+          </Link>
+        </Box>
+      )}
+      {view === 'List' && (
+        <Box opacity={isExpired ? '50%' : '100%'}>
+          <Link
+            to={
+              isExpired
+                ? `/programs/${programId}?visitIntro=1`
+                : programType && previousPage
+                ? `/programs/${programId}?type=${programType}&back=${previousPage}`
+                : programType
+                ? `/programs/${programId}?type=${programType}`
+                : previousPage
+                ? `/programs/${programId}?back=${previousPage}`
+                : `/programs/${programId}`
+            }
+          >
+            <StyledWrapper>
+              <Box display="flex" marginY={{ base: '16px', md: '0px' }} marginX={{ base: '12px', md: '0px' }}>
+                <ProgramCover
+                  width={{ base: '40%', md: '15%' }}
+                  height={{ base: '40%', md: '15%' }}
+                  paddingTop={{ base: 'calc(40% * 9/16)', md: 'calc(15% * 9/16)' }}
+                  margin={{ base: '0px 16px 0px 0px', md: '12px' }}
+                  src={coverThumbnailUrl || coverUrl || coverMobileUrl || EmptyCover}
+                  shape="rounded"
+                />
+                <StyledMeta view={view}>
+                  <Box minWidth={{ base: '100%', md: '50%' }} maxWidth={{ base: '100%', md: '50%' }}>
+                    <StyledTitle noOfLines={{ base: 2, md: 1 }} view={view}>
+                      {title}
+                    </StyledTitle>
+                    {datetimeEnabled && (
+                      <StyledDescription size="small" display={{ base: 'none', md: 'block' }} view={view}>
+                        {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
+                        {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
+                      </StyledDescription>
+                    )}
+                    {!noInstructor && (
+                      <Box display={{ base: 'block', md: 'none' }}>
+                        {roles
+                          .filter(role => role.name === 'instructor')
+                          .slice(0, 1)
+                          .map(role => (
+                            <MemberAvatar key={role.memberId} memberId={role.memberId} withName noAvatar view={view} />
+                          ))}
+                      </Box>
+                    )}
+                  </Box>
+
+                  <Box
+                    width="100%"
+                    alignItems="center"
+                    justifyContent="flex-end"
+                    display={{ base: 'none', md: 'flex' }}
+                  >
+                    {!noInstructor && (
+                      <AvatarPlaceHolder marginY="1rem" view={view}>
+                        {roles
+                          .filter(role => role.name === 'instructor')
+                          .slice(0, 1)
+                          .map(role => (
+                            <MemberAvatar key={role.memberId} memberId={role.memberId} withName view={view} />
+                          ))}
+                      </AvatarPlaceHolder>
+                    )}
+                    {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="40%" />}
+                  </Box>
+                </StyledMeta>
+              </Box>
+              <Box display={{ base: 'block', md: 'none' }} marginX="12px" marginBottom="16px">
+                {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} marginBottom="8px" />}
+                {datetimeEnabled && (
+                  <StyledDescription size="small" view={view}>
+                    {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
+                    {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
+                  </StyledDescription>
+                )}
+              </Box>
+            </StyledWrapper>
+          </Link>
+        </Box>
+      )}
+    </>
   )
 }
 
 export default ProgramCard
-
-const useProgramPreview = (programId: string) => {
-  const { loading, data, error, refetch } = useQuery<hasura.GET_PROGRAM_PREVIEW, hasura.GET_PROGRAM_PREVIEWVariables>(
-    gql`
-      query GET_PROGRAM_PREVIEW($programId: uuid!) {
-        program_by_pk(id: $programId) {
-          id
-          cover_url
-          cover_mobile_url
-          cover_thumbnail_url
-          title
-          abstract
-          program_roles(order_by: [{ created_at: asc }, { id: desc }]) {
-            id
-            name
-            member_id
-          }
-        }
-      }
-    `,
-    { variables: { programId } },
-  )
-
-  const programPreview: ProgramPreview | null =
-    loading || error || !data || !data.program_by_pk
-      ? null
-      : {
-          id: data.program_by_pk.id,
-          coverUrl: data.program_by_pk.cover_url || null,
-          coverMobileUrl: data.program_by_pk.cover_mobile_url || null,
-          coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url || null,
-          title: data.program_by_pk.title,
-          abstract: data.program_by_pk.abstract || '',
-          roles: data.program_by_pk.program_roles.map(programRole => ({
-            id: programRole.id,
-            name: programRole.name as ProgramRoleName,
-            memberId: programRole.member_id,
-            memberName: programRole.member_id,
-          })),
-        }
-
-  return {
-    loadingProgramPreview: loading,
-    errorProgramPreview: error,
-    programPreview,
-    refetchProgramPreview: refetch,
-  }
-}

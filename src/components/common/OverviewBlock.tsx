@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { PodcastProgramProps } from '../../containers/podcast/PodcastProgramTimeline'
 import { commonMessages } from '../../helpers/translation'
-import { useEnrolledPodcastPlansCreators, useEnrolledPodcastProgramIds } from '../../hooks/podcast'
+import { useProductEnrollment } from '../../hooks/common'
+import { useEnrolledPodcastProgramIds } from '../../hooks/podcast'
 import { ReactComponent as ArrowRightIcon } from '../../images/angle-right.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramBriefProps } from '../../types/program'
@@ -54,7 +55,7 @@ const OverviewBlock: React.VFC<{
   const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
   const { enrolledPodcastProgramIds } = useEnrolledPodcastProgramIds(currentMemberId || '')
-  const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(currentMemberId || '')
+  const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan')
 
   return (
     <>
@@ -87,7 +88,7 @@ const OverviewBlock: React.VFC<{
             const isEnrolled = enrolledPodcastProgramIds.includes(podcastProgram.id)
             const isSubscribed =
               !!podcastProgram.instructor &&
-              enrolledPodcastPlansCreators.map(v => v.id).includes(podcastProgram.instructor.id)
+              podcastPlanEnrollment.map(v => v.creator.id).includes(podcastProgram.instructor.id)
 
             return (
               <PodcastProgramPopover
