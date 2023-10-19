@@ -152,7 +152,7 @@ const DefaultLayout: React.FC<{
         <TOSModal onConfirm={() => setIsTOSModalVisible(false)} />
       ) : null}
 
-      <StyledLayoutWrapper variant={white ? 'white' : undefined}>
+      <StyledLayoutWrapper variant={white ? 'white' : undefined} header={noHeader ? 'noHeader' : ''}>
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
           <div className="d-flex align-items-center">
             <LogoBlock>

@@ -25,11 +25,11 @@ const messages = defineMessages({
   emptyContactMessage: { id: 'error.form.contactMessage', defaultMessage: '請輸入訊息' },
 })
 
-const StyledButton = styled(Button)<{ isMark?: boolean }>`
+const StyledButton = styled(Button)<{ mark?: string }>`
   position: relative;
 
   ${props =>
-    props.isMark &&
+    props.mark === 'isMark' &&
     css`
       &::after {
         position: absolute;
@@ -138,7 +138,7 @@ const MerchandiseOrderContactModal: React.VFC<{ orderId: string }> = ({ orderId 
     <>
       <StyledButton
         isLoading={loading || error}
-        isMark={isUnread}
+        mark={isUnread ? 'isMark' : ''}
         leftIcon={<Icon as={IconEmail} />}
         variant="ghost"
         colorScheme="white"
