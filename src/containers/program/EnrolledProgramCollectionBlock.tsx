@@ -187,7 +187,8 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     .filter(program => {
       const viewRate = Math.floor(program.viewRate * 100)
       if (search !== '') {
-        if (program.title.includes(search) || getCreatorName(program).includes(search)) {
+        const keyword = search.toLowerCase()
+        if (program.title.includes(keyword) || getCreatorName(program).includes(keyword)) {
           return filter === 'inProgress'
             ? viewRate > 0 && viewRate < 100
             : filter === 'Done'
@@ -236,7 +237,8 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     })
     .filter(program => {
       if (search !== '') {
-        return program.title.includes(search) || getCreatorName(program).includes(search)
+        const keyword = search.toLowerCase()
+        return program.title.includes(keyword) || getCreatorName(program).includes(keyword)
       } else {
         return true
       }
@@ -259,7 +261,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
               programCounts={programCounts}
             />
           )}
-          {((programs.length > 0 && !isExpired) || (expiredPrograms.length > 0 && isExpired)) && (
+          {((programEnrollment.length > 0 && !isExpired) || (expiredProgramEnrollment.length > 0 && isExpired)) && (
             <HStack spacing="25px" display={{ md: 'none' }}>
               <Menu>
                 <MenuButton className="member-page-program-sort">
@@ -300,9 +302,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
           <Input
             placeholder="搜尋關鍵字"
             value={search}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(event.target.value.trim().toLowerCase())
-            }
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
           />
           <InputRightElement>
             <BiSearch />
@@ -310,7 +310,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
         </InputGroup>
 
         <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
-          {((programs.length > 0 && !isExpired) || (expiredPrograms.length > 0 && isExpired)) && (
+          {((programEnrollment.length > 0 && !isExpired) || (expiredProgramEnrollment.length > 0 && isExpired)) && (
             <Flex marginRight="20px" cursor="pointer">
               {
                 <HStack
@@ -336,7 +336,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
               }
             </Flex>
           )}
-          {expiredPrograms.length !== 0 && settings['feature.expired_program_plan.enable'] === '1' && (
+          {expiredProgramEnrollment.length !== 0 && settings['feature.expired_program_plan.enable'] === '1' && (
             <HStack spacing="12px">
               {options.map(value => {
                 const radio = getRadioProps({ value })
@@ -351,12 +351,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
         </HStack>
       </Box>
 
-      {programs.length === 0 && expiredPrograms.length > 0 && !isExpired && <p>沒有可觀看的課程</p>}
-      {programs.length === 0 && expiredPrograms.length === 0 && programPackageCounts === 0 && (
-        <div>{formatMessage(productMessages.program.content.noProgram)}</div>
-      )}
-
-      {((programs.length > 0 && !isExpired) || (expiredPrograms.length > 0 && isExpired)) && (
+      {((programEnrollment.length > 0 && !isExpired) || (expiredProgramEnrollment.length > 0 && isExpired)) && (
         <>
           <HStack justifyContent={'space-between'} marginBottom="32px" display={{ base: 'none', md: 'flex' }}>
             <HStack spacing="12px">
@@ -367,6 +362,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                 <StyledSelect
                   onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setSort(event.target.value)}
                   defaultValue={sort}
+                  disabled={(!isExpired && programs.length === 0) || (isExpired && expiredPrograms.length === 0)}
                 >
                   {sortOptions.map(s => (
                     <option key={s.value} value={s.value}>
@@ -383,6 +379,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                   <StyledSelect
                     default={filter}
                     onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setFilter(event.target.value)}
+                    disabled={(!isExpired && programs.length === 0) || (isExpired && expiredPrograms.length === 0)}
                   >
                     {filterOptions.map(f => (
                       <option key={f.value} value={f.value}>
@@ -397,9 +394,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
               <Input
                 placeholder="搜尋關鍵字"
                 value={search}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setSearch(event.target.value.trim().toLowerCase())
-                }
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
               />
               <InputRightElement>
                 <BiSearch />
@@ -462,6 +457,16 @@ const EnrolledProgramCollectionBlock: React.VFC<{
             ))}
           </Flex>
         </>
+      )}
+
+      {programEnrollment.length === 0 && expiredProgramEnrollment.length > 0 && !isExpired && <p>沒有可觀看的課程</p>}
+      {programEnrollment.length === 0 && expiredProgramEnrollment.length === 0 && programPackageCounts === 0 && (
+        <div>{formatMessage(productMessages.program.content.noProgram)}</div>
+      )}
+
+      {search !== '' && !isExpired && programEnrollment.length > 0 && programs.length === 0 && <p>查無相關課程</p>}
+      {search !== '' && isExpired && expiredProgramEnrollment.length > 0 && expiredPrograms.length === 0 && (
+        <p>查無相關課程</p>
       )}
     </div>
   )
