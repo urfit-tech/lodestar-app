@@ -181,7 +181,8 @@ const ProgramPackageCollectionBlock: React.VFC<{
     })
     .filter(programPackage => {
       if (search !== '') {
-        return programPackage.title.includes(search)
+        const keyword = search.toLowerCase()
+        return programPackage.title.includes(keyword)
       }
       return true
     })
@@ -262,9 +263,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
           <Input
             placeholder="搜尋關鍵字"
             value={search}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(event.target.value.trim().toLowerCase())
-            }
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
           />
           <InputRightElement>
             <BiSearch />
@@ -312,13 +311,6 @@ const ProgramPackageCollectionBlock: React.VFC<{
         </HStack>
       </Box>
 
-      {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length > 0 && !isExpired && (
-        <p>沒有可觀看的課程組合</p>
-      )}
-      {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length === 0 && programCounts === 0 && (
-        <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>
-      )}
-
       {((programPackageEnrollment.length > 0 && !isExpired) ||
         (expiredProgramPackageEnrollment.length > 0 && isExpired)) && (
         <>
@@ -330,6 +322,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
               <StyledSelect
                 onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setSort(event.target.value)}
                 defaultValue={sort}
+                disabled={programPackage.length === 0}
               >
                 {sortOptions.map(s => (
                   <option key={s.value} value={s.value}>
@@ -453,6 +446,13 @@ const ProgramPackageCollectionBlock: React.VFC<{
           </Flex>
         </>
       )}
+      {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length > 0 && !isExpired && (
+        <p>沒有可觀看的課程組合</p>
+      )}
+      {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length === 0 && programCounts === 0 && (
+        <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>
+      )}
+      {search !== '' && programPackageEnrollment.length > 0 && programPackage.length === 0 && <p>查無相關課程組合</p>}
     </div>
   )
 }
