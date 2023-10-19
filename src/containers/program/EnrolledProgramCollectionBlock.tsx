@@ -248,9 +248,10 @@ const EnrolledProgramCollectionBlock: React.VFC<{
         display="flex"
         flexDirection={{ base: 'column', md: 'row' }}
         justifyContent="space-between"
+        alignItems="center"
         marginBottom="24px"
       >
-        <HStack justifyContent="space-between" marginBottom={{ base: '20px', md: '0px' }}>
+        <HStack justifyContent="space-between">
           {(programCounts > 0 || programPackageCounts > 0) && (
             <ProgramTab
               onProgramTabClick={onProgramTabClick}
@@ -295,7 +296,6 @@ const EnrolledProgramCollectionBlock: React.VFC<{
           className="member-page-program-search"
           width={{ base: '100%' }}
           display={{ base: 'block', md: 'none' }}
-          backgroundColor="white"
         >
           <Input
             placeholder="搜尋關鍵字"
@@ -360,7 +360,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
         <>
           <HStack justifyContent={'space-between'} marginBottom="32px" display={{ base: 'none', md: 'flex' }}>
             <HStack spacing="12px">
-              <InputGroup className="member-page-program-sort" backgroundColor="white">
+              <InputGroup className="member-page-program-sort">
                 <InputLeftElement>
                   <BiSort />
                 </InputLeftElement>
@@ -376,7 +376,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                 </StyledSelect>
               </InputGroup>
               {!isExpired && (
-                <InputGroup className="member-page-program-filter" backgroundColor="white">
+                <InputGroup className="member-page-program-filter">
                   <InputLeftElement>
                     <RiFilter2Fill />
                   </InputLeftElement>
@@ -393,7 +393,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                 </InputGroup>
               )}
             </HStack>
-            <InputGroup className="member-page-program-search" width="fit-content" backgroundColor="white">
+            <InputGroup className="member-page-program-search" width="fit-content">
               <Input
                 placeholder="搜尋關鍵字"
                 value={search}
