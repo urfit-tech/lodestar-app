@@ -105,9 +105,7 @@ const SignupForm: React.VFC<
                   })(
                     <Select placeholder={signupProperty.placeHolder}>
                       {signupProperty.selectOptions?.map(selectOption => (
-                        <Select.Option key={selectOption} value={selectOption}>
-                          {selectOption}
-                        </Select.Option>
+                        <Select.Option value={selectOption}>{selectOption}</Select.Option>
                       ))}
                     </Select>,
                   )}

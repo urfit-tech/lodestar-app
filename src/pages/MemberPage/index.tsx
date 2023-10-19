@@ -53,7 +53,6 @@ const StyledTabPanel = styled(TabPanel)`
     padding: 24px 0;
   }
 `
-
 const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.ReactNode }> = ({ renderText }) => {
   const { formatMessage } = useIntl()
   const { memberId } = useParams<{ memberId: string }>()
@@ -89,18 +88,14 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
     loading: programPackageEnrollmentLoading,
     error: programPackageEnrollmentError,
   } = useProductEnrollment('programPackage')
-  const {
-    data: expiredProgramPackageEnrollment,
-    loading: expiredProgramPackageEnrollmentLoading,
-    error: expiredProgramPackageEnrollmentError,
-  } = useProductEnrollment('expiredProgramPackage')
+  const { data: expiredProgramPackageEnrollment, error: expiredProgramPackageEnrollmentError } =
+    useProductEnrollment('expiredProgramPackage')
   const {
     data: podcastEnrollment,
     loading: podcastEnrollmentLoading,
     error: podcastEnrollmentError,
   } = useProductEnrollment('podcast')
-  const programCounts = programEnrollment.length + expiredProgramEnrollment.length
-  const programPackageCounts = programPackageEnrollment.length + expiredProgramPackageEnrollment.length
+
   let content = null
 
   if (memberId === 'currentMemberId' && isAuthenticated) {
@@ -128,9 +123,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
               programTab={programTab}
               programEnrollment={programEnrollment}
               expiredProgramEnrollment={expiredProgramEnrollment}
-              programPackageCounts={programPackageCounts}
-              programCounts={programCounts}
-              loading={programEnrollmentLoading || expiredProgramEnrollmentLoading}
+              loading={programEnrollmentLoading}
               isError={Boolean(programEnrollmentError) || Boolean(expiredProgramEnrollmentError)}
             />
           )}
@@ -140,9 +133,7 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
               programTab={programTab}
               programPackageEnrollment={programPackageEnrollment}
               expiredProgramPackageEnrollment={expiredProgramPackageEnrollment}
-              programPackageCounts={programPackageCounts}
-              programCounts={programCounts}
-              loading={programPackageEnrollmentLoading || expiredProgramPackageEnrollmentLoading}
+              loading={programPackageEnrollmentLoading}
               isError={Boolean(programPackageEnrollmentError) || Boolean(expiredProgramPackageEnrollmentError)}
             />
           )}
