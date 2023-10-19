@@ -61,7 +61,6 @@ export type ProgramRole = {
   name: ProgramRoleName
   memberId: string
   memberName: string
-  createdAt?: Date
 }
 
 export type ProgramPlan = {
@@ -174,12 +173,3 @@ export type ChoiceProps = {
 export type ProgramContentLog = {
   createdAt: Date
 }[]
-
-export type ProgramEnrollment = Pick<
-  Program,
-  'id' | 'abstract' | 'coverMobileUrl' | 'coverUrl' | 'roles' | 'title' | 'coverThumbnailUrl'
-> & {
-  viewRate: number
-  deliveredAt: Date | null
-  lastViewedAt: Date | null
-}

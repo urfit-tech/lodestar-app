@@ -17,7 +17,7 @@ import ProgramPackageCollectionBlock from '../../components/package/ProgramPacka
 import EnrolledProgramCollectionBlock from '../../containers/program/EnrolledProgramCollectionBlock'
 import ProjectPlanCollectionBlock from '../../containers/project/ProjectPlanCollectionBlock'
 import { commonMessages } from '../../helpers/translation'
-import { useMemberPageEnrollmentsCounts, useProductEnrollment } from '../../hooks/common'
+import { useMemberPageEnrollmentsCounts } from '../../hooks/common'
 import { usePublicMember } from '../../hooks/member'
 import { MemberPublicProps } from '../../types/member'
 import ActivityTicketCollectionBlock from './ActivityTicketCollectionBlock'
@@ -60,41 +60,20 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   const { id: appId, settings, loading: loadingApp } = useApp()
   const { member } = usePublicMember(memberId)
   const {
+    loadingProgramPackageEnrollments,
     loadingProjectPlanEnrollments,
     loadingActivityTicketEnrollments,
+    loadingPodcastProgramEnrollments,
     loadingAppointmentEnrollments,
     loadingMerchandiseOrderEnrollments,
     projectPlanEnrollments,
     activityTicketEnrollments,
+    podcastProgramEnrollments,
     appointmentEnrollments,
     merchandiseOrderEnrollments,
   } = useMemberPageEnrollmentsCounts(memberId)
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
   const [programTab, setProgramTab] = useState('program')
-  const {
-    fetch: fetchProgramEnrollment,
-    data: programEnrollment,
-    error: programEnrollmentError,
-    loading: programEnrollmentLoading,
-  } = useProductEnrollment('program')
-  const {
-    fetch: fetchExpiredProgramEnrollment,
-    data: expiredProgramEnrollment,
-    error: expiredProgramEnrollmentError,
-    loading: expiredProgramEnrollmentLoading,
-  } = useProductEnrollment('expiredProgram')
-  const {
-    data: programPackageEnrollment,
-    loading: programPackageEnrollmentLoading,
-    error: programPackageEnrollmentError,
-  } = useProductEnrollment('programPackage')
-  const { data: expiredProgramPackageEnrollment, error: expiredProgramPackageEnrollmentError } =
-    useProductEnrollment('expiredProgramPackage')
-  const {
-    data: podcastEnrollment,
-    loading: podcastEnrollmentLoading,
-    error: podcastEnrollmentError,
-  } = useProductEnrollment('podcast')
 
   let content = null
 
@@ -119,22 +98,16 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
         <>
           {programTab === 'program' && (
             <EnrolledProgramCollectionBlock
+              memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
-              programEnrollment={programEnrollment}
-              expiredProgramEnrollment={expiredProgramEnrollment}
-              loading={programEnrollmentLoading}
-              isError={Boolean(programEnrollmentError) || Boolean(expiredProgramEnrollmentError)}
             />
           )}
           {programTab === 'programPackage' && (
             <ProgramPackageCollectionBlock
+              memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
-              programPackageEnrollment={programPackageEnrollment}
-              expiredProgramPackageEnrollment={expiredProgramPackageEnrollment}
-              loading={programPackageEnrollmentLoading}
-              isError={Boolean(programPackageEnrollmentError) || Boolean(expiredProgramPackageEnrollmentError)}
             />
           )}
         </>
@@ -161,15 +134,8 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       name: formatMessage(commonMessages.tab.podcast),
       isVisible:
         (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PODCAST_INFO)) &&
-        podcastEnrollment.length > 0,
-      content: (
-        <PodcastProgramCollectionBlock
-          memberId={memberId}
-          podcastEnrollment={podcastEnrollment}
-          loading={podcastEnrollmentLoading}
-          isError={Boolean(podcastEnrollmentError)}
-        />
-      ),
+        podcastProgramEnrollments > 0,
+      content: <PodcastProgramCollectionBlock memberId={memberId} />,
     },
     {
       key: 'appointment',
@@ -203,11 +169,10 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
                   {v.name}
                 </Tab>
               ))}
-              {programEnrollmentLoading ||
-              programPackageEnrollmentLoading ||
+              {loadingProgramPackageEnrollments ||
               loadingProjectPlanEnrollments ||
               loadingActivityTicketEnrollments ||
-              podcastEnrollmentLoading ||
+              loadingPodcastProgramEnrollments ||
               loadingAppointmentEnrollments ||
               loadingMerchandiseOrderEnrollments ? (
                 <Flex ml="0.5rem" alignItems="center">

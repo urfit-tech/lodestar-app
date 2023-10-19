@@ -1,8 +1,3 @@
-import { PodcastProgramProps } from '../containers/podcast/PodcastProgramTimeline'
-import { PodcastPlanEnrollment } from './podcast'
-import { ProgramEnrollment } from './program'
-import { ProgramPackageEnrollment } from './programPackage'
-
 export type Category = {
   id: string
   name: string
@@ -78,25 +73,3 @@ export type SignupProperty = {
   ruleMessage?: string
   rowAmount?: number
 }
-
-export type MemberPageProductType =
-  | 'program'
-  | 'expiredProgram'
-  | 'programPackage'
-  | 'expiredProgramPackage'
-  | 'podcast'
-  | 'podcast-plan'
-
-export type ProductData<T extends MemberPageProductType> = T extends 'program'
-  ? ProgramEnrollment
-  : T extends 'expiredProgram'
-  ? ProgramEnrollment
-  : T extends 'programPackage'
-  ? ProgramPackageEnrollment
-  : T extends 'expiredProgramPackage'
-  ? ProgramPackageEnrollment
-  : T extends 'podcast'
-  ? PodcastProgramProps
-  : T extends 'podcast-plan'
-  ? PodcastPlanEnrollment
-  : never

@@ -1,7 +1,5 @@
 import { Category } from './general'
 
-export type PodcastRoleName = 'instructor'
-
 export type PodcastProgramBriefProps = {
   id: string
   coverUrl: string | null
@@ -35,14 +33,6 @@ export type PodcastProgramContent = {
   instructorIds: string[]
 }
 
-export type PodcastRole = {
-  id: string
-  name: PodcastRole
-  memberId: string
-  memberName: string
-  createdAt?: Date
-}
-
 export type PlaylistProps = {
   id: string
   title: string
@@ -59,15 +49,5 @@ export type PodcastProgramContentProps = {
     id: string
     avatarUrl: string | null
     name: string
-  }
-}
-
-export type PodcastPlanEnrollment = {
-  id: string
-  creator: {
-    id: string
-    pictureUrl: string | null
-    name: string
-    username: string
   }
 }

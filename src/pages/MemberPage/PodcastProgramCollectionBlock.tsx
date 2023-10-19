@@ -1,18 +1,23 @@
 import { Icon } from '@chakra-ui/icons'
 import { Dropdown, Form, Icon as AntdIcon, Menu } from 'antd'
 import { CommonLargeTitleMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { AvatarImage } from '../../components/common/Image'
 import PodcastProgramCard from '../../components/podcast/PodcastProgramCard'
-import PodcastProgramTimeline, { PodcastProgramProps } from '../../containers/podcast/PodcastProgramTimeline'
+import PodcastProgramTimeline from '../../containers/podcast/PodcastProgramTimeline'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { handleError } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useProductEnrollment } from '../../hooks/common'
-import { useDeletePlaylist, usePlaylistCollection, useUpdatePlaylist } from '../../hooks/podcast'
+import {
+  useDeletePlaylist,
+  useEnrolledPodcastPlansCreators,
+  useEnrolledPodcastPrograms,
+  usePlaylistCollection,
+  useUpdatePlaylist,
+} from '../../hooks/podcast'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 
 const StyledTitle = styled.h3`
@@ -37,20 +42,20 @@ const StyledPlaylistItem = styled.div`
 `
 const StyledInput = styled.input``
 
-const PodcastProgramCollectionBlock: React.VFC<{
-  memberId: string
-  podcastEnrollment: PodcastProgramProps[]
-  loading: boolean
-  isError: boolean
-}> = ({ memberId, podcastEnrollment, loading, isError }) => {
+const PodcastProgramCollectionBlock: React.VFC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { setup } = useContext(PodcastPlayerContext)
-  const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan')
-
+  const { enrolledPodcastPrograms, refetchPodcastProgramIds } = useEnrolledPodcastPrograms(memberId)
+  const { enrolledPodcastPlansCreators, refetchPodcastPlan } = useEnrolledPodcastPlansCreators(memberId)
   const { playlists, totalPodcastProgramCount, refetchPlaylists } = usePlaylistCollection(memberId)
   const updatePlaylist = useUpdatePlaylist()
   const deletePlaylist = useDeletePlaylist()
+
+  useEffect(() => {
+    refetchPodcastProgramIds()
+    refetchPodcastPlan()
+  }, [refetchPodcastProgramIds, refetchPodcastPlan])
 
   return (
     <div className="container py-3">
@@ -60,7 +65,7 @@ const PodcastProgramCollectionBlock: React.VFC<{
 
           <PodcastProgramTimeline
             memberId={memberId}
-            podcastPrograms={podcastEnrollment}
+            podcastPrograms={enrolledPodcastPrograms}
             renderItem={({ podcastProgram, isEnrolled }) => (
               <Link to={`/podcasts/${podcastProgram.id}`} key={podcastProgram.id}>
                 <PodcastProgramCard
@@ -81,21 +86,24 @@ const PodcastProgramCollectionBlock: React.VFC<{
 
         <div className="col-12 col-lg-4 mb-5 pl-4">
           <StyledTitle>{formatMessage(productMessages.podcast.title.subscribe)}</StyledTitle>
-          {podcastPlanEnrollment.length === 0 ? (
+          {enrolledPodcastPlansCreators.length === 0 ? (
             <StyledParagraph>{formatMessage(productMessages.podcast.content.unsubscribed)}</StyledParagraph>
           ) : (
-            podcastPlanEnrollment.map(podcastPlan => (
-              <Link key={podcastPlan.creator.id} to={`/creators/${podcastPlan.creator.id}?tabkey=podcasts`}>
+            enrolledPodcastPlansCreators.map(enrolledPodcastPlansCreator => (
+              <Link
+                key={enrolledPodcastPlansCreator.id}
+                to={`/creators/${enrolledPodcastPlansCreator.id}?tabkey=podcasts`}
+              >
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <div className="d-flex justify-content-between align-items-center">
                     <AvatarImage
                       shape="circle"
                       size="64px"
                       className="flex-shrink-0 mr-3"
-                      src={podcastPlan.creator.pictureUrl}
+                      src={enrolledPodcastPlansCreator.pictureUrl}
                     />
                     <StyledEnrolledPodcastPlanCreatorName>
-                      {podcastPlan.creator.name || podcastPlan.creator.username}
+                      {enrolledPodcastPlansCreator.name || enrolledPodcastPlansCreator.username}
                     </StyledEnrolledPodcastPlanCreatorName>
                   </div>
                   <Icon as={AngleRightIcon} />
@@ -108,14 +116,14 @@ const PodcastProgramCollectionBlock: React.VFC<{
           <StyledPlaylistItem
             className="cursor-pointer"
             onClick={() => {
-              if (podcastEnrollment.length === 0) {
+              if (enrolledPodcastPrograms.length === 0) {
                 return
               }
-              history.push(`/podcasts/${podcastEnrollment[0].id}`)
+              history.push(`/podcasts/${enrolledPodcastPrograms[0].id}`)
               setup?.({
-                podcastProgramIds: podcastEnrollment.map(podcastProgram => podcastProgram.id),
+                podcastProgramIds: enrolledPodcastPrograms.map(podcastProgram => podcastProgram.id),
                 currentIndex: 0,
-                title: `${formatMessage(productMessages.podcast.title.allPodcast)} (${podcastEnrollment.length})`,
+                title: `${formatMessage(productMessages.podcast.title.allPodcast)} (${enrolledPodcastPrograms.length})`,
               })
             }}
           >

@@ -1,15 +1,18 @@
-import { Box } from '@chakra-ui/react'
+import { gql, useQuery } from '@apollo/client'
+import { Box, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { sum } from 'ramda'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CustomRatioImage } from '../../components/common/Image'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import ProgressBar from '../../components/common/ProgressBar'
+import { useProgramContentProgress } from '../../contexts/ProgressContext'
+import hasura from '../../hasura'
 import EmptyCover from '../../images/empty-cover.png'
-import { ProgramRole } from '../../types/program'
+import { ProgramPreview, ProgramRoleName } from '../../types/program'
 
 const StyledWrapper = styled.div<{ view?: string }>`
   ${props =>
@@ -73,56 +76,67 @@ const AvatarPlaceHolder = styled.div<{ view?: string }>`
 `
 
 const ProgramCard: React.VFC<{
+  memberId: string
   programId: string
   programType?: string
   noInstructor?: boolean
+  noPrice?: boolean
   withProgress?: boolean
   isExpired?: boolean
   previousPage?: string
   view?: string
-  deliveredAt: Date | null
-  roles: ProgramRole[]
-  coverThumbnailUrl: string | null
-  coverUrl: string | null
-  coverMobileUrl: string | null
-  title: string
-  abstract: string
-  lastViewDate: Date | null
-  viewRate: number
+  programDatetimeEnabled?: boolean
+  programDeliveredAt?: Date
 }> = ({
+  memberId,
   programId,
   programType,
-  previousPage,
   noInstructor,
-  isExpired,
-  view,
-  roles,
-  coverThumbnailUrl,
-  coverUrl,
-  coverMobileUrl,
-  deliveredAt,
-  title,
-  abstract,
-  lastViewDate,
+  noPrice,
   withProgress,
-  viewRate,
+  isExpired,
+  previousPage,
+  view,
+  programDatetimeEnabled,
+  programDeliveredAt,
 }) => {
-  const { settings } = useApp()
-  const datetimeEnabled = settings['program.datetime.enabled'] === '1'
+  const { loadingProgramPreview, programPreview } = useProgramPreview(programId)
+  const { loadingProgress, programContentProgress } = useProgramContentProgress(programId, memberId)
+
+  const viewRate = programContentProgress?.length
+    ? sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length
+    : 0
+
+  const lastViewDate = programContentProgress?.length
+    ? programContentProgress
+        .map(contentProgress => contentProgress.updatedAt)
+        .sort((a, b) => {
+          if (a && b) {
+            return +new Date(b) - +new Date(a)
+          }
+          return 0
+        })[0]
+    : undefined
 
   return (
     <>
       {view === 'Grid' && (
         <Box opacity={isExpired ? '50%' : '100%'}>
-          {!noInstructor && (
+          {loadingProgramPreview ? (
             <AvatarPlaceHolder className="my-3">
-              {roles
-                .filter(role => role.name === 'instructor')
-                .slice(0, 1)
-                .map(role => (
-                  <MemberAvatar key={role.memberId} memberId={role.memberId} withName />
-                ))}
+              <SkeletonCircle size="10" />
             </AvatarPlaceHolder>
+          ) : (
+            !noInstructor && (
+              <AvatarPlaceHolder className="my-3">
+                {programPreview?.roles
+                  .filter(role => role.name === 'instructor')
+                  .slice(0, 1)
+                  .map(role => (
+                    <MemberAvatar key={role.memberId} memberId={role.memberId} withName />
+                  ))}
+              </AvatarPlaceHolder>
+            )
           )}
 
           <Link
@@ -142,20 +156,31 @@ const ProgramCard: React.VFC<{
               <CustomRatioImage
                 width="100%"
                 ratio={9 / 16}
-                src={coverThumbnailUrl || coverUrl || coverMobileUrl || EmptyCover}
+                src={
+                  (programPreview &&
+                    (programPreview.coverThumbnailUrl || programPreview.coverUrl || programPreview.coverMobileUrl)) ||
+                  EmptyCover
+                }
                 shape="rounded"
               />
               <StyledMeta>
-                <StyledTitle>{title}</StyledTitle>
-                {datetimeEnabled && (
-                  <StyledDescription size="small">
-                    {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
-                    {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
-                  </StyledDescription>
+                {loadingProgramPreview ? (
+                  <SkeletonText m="4" noOfLines={4} spacing="4" skeletonHeight="2" />
+                ) : (
+                  <>
+                    <StyledTitle>{programPreview?.title}</StyledTitle>
+                    {programDatetimeEnabled && (
+                      <StyledDescription size="small">
+                        {`${dayjs(programDeliveredAt).format('YYYY-MM-DD')} 購買`}
+                        {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
+                      </StyledDescription>
+                    )}
+                    <StyledDescription>{programPreview?.abstract}</StyledDescription>
+                  </>
                 )}
-                <StyledDescription>{abstract}</StyledDescription>
-
-                {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="100%" />}
+                {withProgress && (
+                  <ProgressBar percent={Math.floor(viewRate * 100)} width="100%" loading={loadingProgress} />
+                )}
               </StyledMeta>
             </StyledWrapper>
           </Link>
@@ -182,32 +207,51 @@ const ProgramCard: React.VFC<{
                 height="15%"
                 margin="12px"
                 ratio={9 / 16}
-                src={coverThumbnailUrl || coverUrl || coverMobileUrl || EmptyCover}
+                src={
+                  (programPreview &&
+                    (programPreview.coverThumbnailUrl || programPreview.coverUrl || programPreview.coverMobileUrl)) ||
+                  EmptyCover
+                }
                 shape="rounded"
               />
               <StyledMeta view={view}>
                 <Box minWidth="50%" maxWidth="50%">
-                  <StyledTitle view={view}>{title}</StyledTitle>
-                  {datetimeEnabled && (
-                    <StyledDescription size="small" view={view}>
-                      {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
-                      {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
-                    </StyledDescription>
+                  {loadingProgramPreview ? (
+                    <SkeletonText m="4" noOfLines={3} spacing="4" skeletonHeight="2" />
+                  ) : (
+                    <>
+                      <StyledTitle view={view}>{programPreview?.title}</StyledTitle>
+                      {programDatetimeEnabled && (
+                        <StyledDescription size="small" view={view}>
+                          {`${dayjs(programDeliveredAt).format('YYYY-MM-DD')} 購買`}
+                          {lastViewDate ? ` / ${dayjs(lastViewDate).format('YYYY-MM-DD')}上次觀看` : ' / 尚未觀看'}
+                        </StyledDescription>
+                      )}
+                    </>
                   )}
                 </Box>
                 <Box width="100%" display="flex" alignItems="center" justifyContent="flex-end">
-                  {!noInstructor && (
+                  {loadingProgramPreview ? (
                     <AvatarPlaceHolder className="my-3" view={view}>
-                      {roles
-                        .filter(role => role.name === 'instructor')
-                        .slice(0, 1)
-                        .map(role => (
-                          <MemberAvatar key={role.memberId} memberId={role.memberId} withName view={view} />
-                        ))}
+                      <SkeletonCircle size="10" />
                     </AvatarPlaceHolder>
+                  ) : (
+                    <>
+                      {!noInstructor && (
+                        <AvatarPlaceHolder className="my-3" view={view}>
+                          {programPreview?.roles
+                            .filter(role => role.name === 'instructor')
+                            .slice(0, 1)
+                            .map(role => (
+                              <MemberAvatar key={role.memberId} memberId={role.memberId} withName view={view} />
+                            ))}
+                        </AvatarPlaceHolder>
+                      )}
+                    </>
                   )}
-
-                  {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="40%" />}
+                  {withProgress && (
+                    <ProgressBar percent={Math.floor(viewRate * 100)} width="40%" loading={loadingProgress} />
+                  )}
                 </Box>
               </StyledMeta>
             </StyledWrapper>
@@ -219,3 +263,51 @@ const ProgramCard: React.VFC<{
 }
 
 export default ProgramCard
+
+const useProgramPreview = (programId: string) => {
+  const { loading, data, error, refetch } = useQuery<hasura.GetProgramPreview, hasura.GetProgramPreviewVariables>(
+    gql`
+      query GetProgramPreview($programId: uuid!) {
+        program_by_pk(id: $programId) {
+          id
+          cover_url
+          cover_mobile_url
+          cover_thumbnail_url
+          title
+          abstract
+          program_roles(order_by: [{ created_at: asc }, { id: desc }]) {
+            id
+            name
+            member_id
+          }
+        }
+      }
+    `,
+    { variables: { programId } },
+  )
+
+  const programPreview: ProgramPreview | null =
+    loading || error || !data || !data.program_by_pk
+      ? null
+      : {
+          id: data.program_by_pk.id,
+          coverUrl: data.program_by_pk.cover_url || null,
+          coverMobileUrl: data.program_by_pk.cover_mobile_url || null,
+          coverThumbnailUrl: data.program_by_pk.cover_thumbnail_url || null,
+          title: data.program_by_pk.title,
+          abstract: data.program_by_pk.abstract || '',
+          roles: data.program_by_pk.program_roles.map(programRole => ({
+            id: programRole.id,
+            name: programRole.name as ProgramRoleName,
+            memberId: programRole.member_id,
+            memberName: programRole.member_id,
+          })),
+        }
+
+  return {
+    loadingProgramPreview: loading,
+    errorProgramPreview: error,
+    programPreview,
+    refetchProgramPreview: refetch,
+  }
+}

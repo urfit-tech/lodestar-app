@@ -61,7 +61,7 @@ export type PodcastProgramPopoverProps = {
   listPrice: number
   salePrice: number | null
   description?: string | null
-  categories?: Category[]
+  categories: Category[]
   instructor?: {
     id: string
     avatarUrl?: string | null
@@ -134,7 +134,7 @@ const PodcastProgramPopover: React.FC<
       </StyledMeta>
       <StyledDescription>{description}</StyledDescription>
       <StyledCategory className="mb-4">
-        {categories?.map(category => (
+        {categories.map(category => (
           <span key={category.id} className="mr-2">
             #{category.name}
           </span>

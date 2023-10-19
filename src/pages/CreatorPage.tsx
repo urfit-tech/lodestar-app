@@ -30,10 +30,9 @@ import { commonMessages, usersMessages } from '../helpers/translation'
 import { usePublishedActivityCollection } from '../hooks/activity'
 import { useAppointmentPlanCollection } from '../hooks/appointment'
 import { usePostPreviewCollection } from '../hooks/blog'
-import { useProductEnrollment } from '../hooks/common'
 import { usePublicMember } from '../hooks/member'
 import { useMerchandiseCollection } from '../hooks/merchandise'
-import { usePodcastProgramCollection } from '../hooks/podcast'
+import { useEnrolledPodcastPlansCreators, usePodcastProgramCollection } from '../hooks/podcast'
 import { usePublishedProgramCollection } from '../hooks/program'
 import { useMemberProjectCollection } from '../hooks/project'
 import { MemberPublicProps } from '../types/member'
@@ -162,8 +161,7 @@ const CreatorTabs: React.VFC<{
   })
 
   const { posts } = usePostPreviewCollection({ authorId: creatorId })
-  const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan')
-
+  const { enrolledPodcastPlansCreators } = useEnrolledPodcastPlansCreators(currentMemberId || '')
   const { podcastPrograms } = usePodcastProgramCollection(creatorId)
   const { appointmentPlans } = useAppointmentPlanCollection(
     creatorId,
@@ -174,7 +172,9 @@ const CreatorTabs: React.VFC<{
     isPhysical: isMerchandisesPhysical !== undefined ? !!isMerchandisesPhysical : undefined,
     ownerId: creatorId,
   })
-  const isEnrolledPodcastPlan = podcastPlanEnrollment.map(podcastPlan => podcastPlan.creator.id).includes(creatorId)
+  const isEnrolledPodcastPlan = enrolledPodcastPlansCreators
+    .map(enrolledPodcastPlansCreator => enrolledPodcastPlansCreator.id)
+    .includes(creatorId)
 
   const projectsTab = [
     {
