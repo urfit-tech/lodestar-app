@@ -29,14 +29,13 @@ export type PodcastProgramProps = PodcastProgramPopoverProps &
     supportLocales?: string[] | null
   }
 const PodcastProgramTimeline: React.VFC<{
-  memberId: string | null
   podcastPrograms: PodcastProgramProps[]
   renderItem?: (item: {
     podcastProgram: PodcastProgramProps
     isEnrolled: boolean
     isSubscribed: boolean
   }) => React.ReactElement
-}> = ({ memberId, podcastPrograms, renderItem }) => {
+}> = ({ podcastPrograms, renderItem }) => {
   const { data: podcastEnrollment } = useProductEnrollment('podcast')
   const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan')
 

@@ -493,12 +493,19 @@ const getLodestarRoute = (product: MemberPageProductType) => {
   }
 }
 
-export const getProductEnrollmentFromLodestar = async (product: MemberPageProductType, authToken: string) => {
+export const getProductEnrollmentFromLodestar = async (
+  product: MemberPageProductType,
+  authToken: string,
+  memberId?: string,
+) => {
   const route = getLodestarRoute(product)
   if (route) {
-    const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-      headers: { authorization: `Bearer ${authToken}` },
-    })
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}${memberId ? `/?memberId=${memberId}` : ''}`,
+      {
+        headers: { authorization: `Bearer ${authToken}` },
+      },
+    )
 
     return data
   }
