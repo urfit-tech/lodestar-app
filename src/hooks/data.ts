@@ -272,11 +272,11 @@ export const useUploadAttachments = () => {
 
 export const useExpiredOwnedProducts = (memberId: string, productType: ProductType) => {
   const { loading, error, data, refetch } = useQuery<
-    hasura.GetExpiredOwnedProducts,
-    hasura.GetExpiredOwnedProductsVariables
+    hasura.GET_EXPIRED_OWNED_PRODUCTS,
+    hasura.GET_EXPIRED_OWNED_PRODUCTSVariables
   >(
     gql`
-      query GetExpiredOwnedProducts($memberId: String!, $productType: String!) {
+      query GET_EXPIRED_OWNED_PRODUCTS($memberId: String!, $productType: String!) {
         order_product(
           where: {
             product: { type: { _eq: $productType } }
@@ -285,7 +285,6 @@ export const useExpiredOwnedProducts = (memberId: string, productType: ProductTy
           }
         ) {
           id
-          delivered_at
           product {
             id
             target
@@ -297,56 +296,13 @@ export const useExpiredOwnedProducts = (memberId: string, productType: ProductTy
       variables: { memberId, productType },
     },
   )
-  const expiredOwnedProducts =
-    data?.order_product.map(v => ({ programPackagePlanId: v.product.target, deliveredAt: v.delivered_at })) || []
+  const expiredOwnedProducts = data?.order_product.map(v => v.product.target) || []
 
   return {
     loadingExpiredOwnedProducts: loading,
     errorExpiredOwnedProducts: error,
     expiredOwnedProducts,
     refetchExpiredOwnedProducts: refetch,
-  }
-}
-
-export const useValidOwnedProducts = (memberId: string, productType: ProductType) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetValidOwnedProducts,
-    hasura.GetValidOwnedProductsVariables
-  >(
-    gql`
-      query GetValidOwnedProducts($memberId: String!, $productType: String!) {
-        order_product(
-          where: {
-            product: { type: { _eq: $productType } }
-            order_log: { status: { _eq: "SUCCESS" }, member_id: { _eq: $memberId } }
-            delivered_at: { _is_null: false }
-            _or: [{ ended_at: { _is_null: true } }, { ended_at: { _gt: "now()" } }]
-          }
-        ) {
-          id
-          name
-          delivered_at
-          started_at
-          ended_at
-          product {
-            id
-            target
-          }
-        }
-      }
-    `,
-    {
-      variables: { memberId, productType },
-    },
-  )
-  const validOwnedProducts =
-    data?.order_product.map(v => ({ programPackagePlanId: v.product.target, deliveredAt: v.delivered_at })) || []
-
-  return {
-    loadingValidOwnedProducts: loading,
-    errorValidOwnedProducts: error,
-    validOwnedProducts,
-    refetchValidOwnedProducts: refetch,
   }
 }
 
