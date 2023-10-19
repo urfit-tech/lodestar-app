@@ -8,6 +8,10 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Select,
   SkeletonText,
   Text,
@@ -15,10 +19,10 @@ import {
 } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { BiSearch, BiSort } from 'react-icons/bi'
 import { FiGrid, FiList } from 'react-icons/fi'
-import { HiFilter } from 'react-icons/hi'
+import { RiFilter2Fill } from 'react-icons/ri'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import RadioCard from '../../components/RadioCard'
@@ -31,45 +35,91 @@ const StyledSelect = styled(Select)`
   padding-left: 35px !important;
 `
 
-const ProgramTab = ({ onProgramTabClick, tab }: { onProgramTabClick: (tab: string) => void; tab: string }) => {
+const getCreatorName = (program: ProgramEnrollment) =>
+  program.roles.filter(role => role.name === 'instructor')[0]?.memberName || ''
+
+const ProgramTab = ({
+  onProgramTabClick,
+  tab,
+  programPackageCounts,
+  programCounts,
+}: {
+  onProgramTabClick: (tab: string) => void
+  tab: string
+  programPackageCounts: number
+  programCounts: number
+}) => {
   const { formatMessage } = useIntl()
   return (
     <>
       <Flex cursor="pointer">
         <HStack spacing="10px">
-          <Text
-            fontSize="2xl"
-            as="b"
-            onClick={() => onProgramTabClick('program')}
-            color={tab === 'program' ? 'black' : '#cdcdcd'}
-          >
-            {formatMessage(productMessages.program.title.course)}
-          </Text>
-          <Center height="20px">
-            <Divider orientation="vertical" />
-          </Center>
-          <Text
-            fontSize="2xl"
-            as="b"
-            onClick={() => onProgramTabClick('programPackage')}
-            color={tab === 'programPackage' ? 'black' : '#cdcdcd'}
-          >
-            {formatMessage(commonMessages.ui.packages)}
-          </Text>
+          {programCounts > 0 && (
+            <Text
+              fontSize="2xl"
+              as="b"
+              onClick={() => onProgramTabClick('program')}
+              color={tab === 'program' ? 'black' : '#cdcdcd'}
+            >
+              {formatMessage(productMessages.program.title.course)}
+            </Text>
+          )}
+          {programCounts > 0 && programPackageCounts > 0 && (
+            <Center height="20px">
+              <Divider orientation="vertical" />
+            </Center>
+          )}
+          {programPackageCounts > 0 && (
+            <Text
+              fontSize="2xl"
+              as="b"
+              onClick={() => onProgramTabClick('programPackage')}
+              color={tab === 'programPackage' ? 'black' : '#cdcdcd'}
+            >
+              {formatMessage(commonMessages.ui.packages)}
+            </Text>
+          )}
         </HStack>
       </Flex>
     </>
   )
 }
 
+const sortOptions = [
+  { value: 'newPurchaseDate', name: '購買日期（新到舊）' },
+  { value: 'oldPurchaseDate', name: '購買日期（舊到新）' },
+  { value: 'newLastViewDate', name: '最後觀課日（新到舊）' },
+  { value: 'oldLastViewDate', name: '最後觀課日（舊到新）' },
+  { value: 'lessCreatorStrokes', name: '依講師排序（筆畫少到多）' },
+  { value: 'moreCreatorStrokes', name: '依講者排序（筆畫多到少）' },
+]
+
+const filterOptions = [
+  { value: 'all', name: '全部課程' },
+  { value: 'inProgress', name: '進行中' },
+  { value: 'notStartYet', name: '尚未開始' },
+  { value: 'Done', name: '已完課' },
+]
+
 const EnrolledProgramCollectionBlock: React.VFC<{
   onProgramTabClick: (tab: string) => void
   programTab: string
   programEnrollment: ProgramEnrollment[]
   expiredProgramEnrollment: ProgramEnrollment[]
+  programPackageCounts: number
+  programCounts: number
   isError: boolean
   loading: boolean
-}> = ({ onProgramTabClick, programTab, programEnrollment, expiredProgramEnrollment, isError, loading }) => {
+}> = ({
+  onProgramTabClick,
+  programTab,
+  programEnrollment,
+  expiredProgramEnrollment,
+  programPackageCounts,
+  programCounts,
+  isError,
+  loading,
+}) => {
   const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
@@ -79,12 +129,6 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
   const { settings } = useApp()
-
-  useEffect(() => {
-    // refetchOwnerPrograms && refetchOwnerPrograms()
-    // refetchExpiredOwnedProducts && refetchExpiredOwnedProducts()
-    // refetchExpiredProgramByProgramPlans && refetchExpiredProgramByProgramPlans()
-  })
 
   const options = [
     formatMessage(commonMessages.label.availableForLimitTime),
@@ -105,9 +149,6 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   if (loading) {
     return (
       <div className="container py-3">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
-        </div>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </div>
     )
@@ -116,7 +157,6 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   if (isError || !programEnrollment || !expiredProgramEnrollment) {
     return (
       <div className="container py-3">
-        <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
         <div>{formatMessage(commonMessages.status.loadingUnable)}</div>
       </div>
     )
@@ -204,64 +244,123 @@ const EnrolledProgramCollectionBlock: React.VFC<{
 
   return (
     <div className="container py-3">
-      {programEnrollment.length === 0 && expiredProgramEnrollment.length === 0 && (
+      <Box
+        display="flex"
+        flexDirection={{ base: 'column', md: 'row' }}
+        justifyContent="space-between"
+        marginBottom="24px"
+      >
+        <HStack justifyContent="space-between" marginBottom={{ base: '20px', md: '0px' }}>
+          {(programCounts > 0 || programPackageCounts > 0) && (
+            <ProgramTab
+              onProgramTabClick={onProgramTabClick}
+              tab={programTab}
+              programPackageCounts={programPackageCounts}
+              programCounts={programCounts}
+            />
+          )}
+          {((programs.length > 0 && !isExpired) || (expiredPrograms.length > 0 && isExpired)) && (
+            <HStack spacing="25px" display={{ md: 'none' }}>
+              <Menu>
+                <MenuButton className="member-page-program-sort">
+                  <BiSort />
+                </MenuButton>
+                <MenuList>
+                  {sortOptions.map(s => (
+                    <MenuItem key={s.value} onClick={() => setSort(s.value)}>
+                      {s.name}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+              {!isExpired && (
+                <Menu>
+                  <MenuButton className="member-page-program-filter">
+                    <RiFilter2Fill />
+                  </MenuButton>
+                  <MenuList>
+                    {filterOptions.map(f => (
+                      <MenuItem key={f.value} onClick={() => setFilter(f.value)}>
+                        {f.name}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+              )}
+            </HStack>
+          )}
+        </HStack>
+
+        <InputGroup
+          className="member-page-program-search"
+          width={{ base: '100%' }}
+          display={{ base: 'block', md: 'none' }}
+          backgroundColor="white"
+        >
+          <Input
+            placeholder="搜尋關鍵字"
+            value={search}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setSearch(event.target.value.trim().toLowerCase())
+            }
+          />
+          <InputRightElement>
+            <BiSearch />
+          </InputRightElement>
+        </InputGroup>
+
+        <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
+          {((programs.length > 0 && !isExpired) || (expiredPrograms.length > 0 && isExpired)) && (
+            <Flex marginRight="20px" cursor="pointer">
+              {
+                <HStack
+                  spacing="5px"
+                  onClick={() => {
+                    setView(view === 'Grid' ? 'List' : 'Grid')
+                    localStorage.setItem('programView', view === 'Grid' ? 'List' : 'Grid')
+                  }}
+                >
+                  {view === 'Grid' && (
+                    <>
+                      <FiList />
+                      <span>{formatMessage(commonMessages.term.list)}</span>
+                    </>
+                  )}
+                  {view === 'List' && (
+                    <>
+                      <FiGrid />
+                      <span>{formatMessage(commonMessages.term.grid)}</span>
+                    </>
+                  )}
+                </HStack>
+              }
+            </Flex>
+          )}
+          {expiredPrograms.length !== 0 && settings['feature.expired_program_plan.enable'] === '1' && (
+            <HStack spacing="12px">
+              {options.map(value => {
+                const radio = getRadioProps({ value })
+                return (
+                  <RadioCard key={value} {...radio} size="md">
+                    {value}
+                  </RadioCard>
+                )
+              })}
+            </HStack>
+          )}
+        </HStack>
+      </Box>
+
+      {programs.length === 0 && expiredPrograms.length > 0 && !isExpired && <p>沒有可觀看的課程</p>}
+      {programs.length === 0 && expiredPrograms.length === 0 && programPackageCounts === 0 && (
         <div>{formatMessage(productMessages.program.content.noProgram)}</div>
       )}
 
-      {(programEnrollment.length !== 0 || expiredProgramEnrollment.length !== 0) && (
+      {((programs.length > 0 && !isExpired) || (expiredPrograms.length > 0 && isExpired)) && (
         <>
-          <Box
-            display="flex"
-            flexDirection={{ base: 'column', md: 'row' }}
-            justifyContent="space-between"
-            alignContent="center"
-            marginBottom="1rem"
-          >
-            <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
-
-            <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
-              <Flex marginRight="20px" cursor="pointer">
-                {
-                  <HStack
-                    spacing="5px"
-                    onClick={() => {
-                      setView(view === 'Grid' ? 'List' : 'Grid')
-                      localStorage.setItem('programView', view === 'Grid' ? 'List' : 'Grid')
-                    }}
-                  >
-                    {view === 'Grid' && (
-                      <>
-                        <FiList />
-                        <span>{formatMessage(commonMessages.term.list)}</span>
-                      </>
-                    )}
-                    {view === 'List' && (
-                      <>
-                        <FiGrid />
-                        <span>{formatMessage(commonMessages.term.grid)}</span>
-                      </>
-                    )}
-                  </HStack>
-                }
-              </Flex>
-              {expiredProgramEnrollment.length !== 0 && settings['feature.expired_program_plan.enable'] === '1' && (
-                <HStack spacing="12px">
-                  {options.map(value => {
-                    const radio = getRadioProps({ value })
-                    return (
-                      <RadioCard key={value} {...radio} size="md">
-                        {value}
-                      </RadioCard>
-                    )
-                  })}
-                </HStack>
-              )}
-            </HStack>
-          </Box>
-
-          <HStack justifyContent={'space-between'}>
+          <HStack justifyContent={'space-between'} marginBottom="32px" display={{ base: 'none', md: 'flex' }}>
             <HStack spacing="12px">
-              <InputGroup>
+              <InputGroup className="member-page-program-sort" backgroundColor="white">
                 <InputLeftElement>
                   <BiSort />
                 </InputLeftElement>
@@ -269,51 +368,58 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                   onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setSort(event.target.value)}
                   defaultValue={sort}
                 >
-                  <option value="newPurchaseDate">購買日期（新到舊）</option>
-                  <option value="oldPurchaseDate">購買日期（舊到新）</option>
-                  <option value="newLastViewDate">最後觀課日（新到舊）</option>
-                  <option value="oldLastViewDate">最後觀課日（舊到新）</option>
-                  <option value="lessCreatorStrokes">依講師排序（筆畫少到多）</option>
-                  <option value="moreCreatorStrokes">依講者排序（筆畫多到少）</option>
+                  {sortOptions.map(s => (
+                    <option key={s.value} value={s.value}>
+                      {s.name}
+                    </option>
+                  ))}
                 </StyledSelect>
               </InputGroup>
               {!isExpired && (
-                <InputGroup>
+                <InputGroup className="member-page-program-filter" backgroundColor="white">
                   <InputLeftElement>
-                    <HiFilter />
+                    <RiFilter2Fill />
                   </InputLeftElement>
                   <StyledSelect
                     default={filter}
                     onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setFilter(event.target.value)}
                   >
-                    <option value="all">全部課程</option>
-                    <option value="inProgress">進行中</option>
-                    <option value="notStartYet">尚未開始</option>
-                    <option value="Done">已完課</option>
+                    {filterOptions.map(f => (
+                      <option key={f.value} value={f.value}>
+                        {f.name}
+                      </option>
+                    ))}
                   </StyledSelect>
                 </InputGroup>
               )}
             </HStack>
-            <Box>
-              <InputGroup>
-                <Input
-                  placeholder="搜尋關鍵字"
-                  value={search}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    setSearch(event.target.value.trim().toLowerCase())
-                  }
-                />
-                <InputRightElement>
-                  <BiSearch />
-                </InputRightElement>
-              </InputGroup>
-            </Box>
+            <InputGroup className="member-page-program-search" width="fit-content" backgroundColor="white">
+              <Input
+                placeholder="搜尋關鍵字"
+                value={search}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearch(event.target.value.trim().toLowerCase())
+                }
+              />
+              <InputRightElement>
+                <BiSearch />
+              </InputRightElement>
+            </InputGroup>
           </HStack>
-          <div className="row">
-            {(isExpired ? expiredPrograms : programs).map(program => (
-              <Fragment key={program.id}>
+
+          <Flex
+            gridGap={view === 'List' ? '12px' : '15px'}
+            flexDirection={view === 'List' ? 'column' : 'row'}
+            wrap={view === 'List' ? 'nowrap' : 'wrap'}
+          >
+            {(isExpired ? expiredPrograms : programs).map((program, index) => (
+              <Fragment key={index}>
                 {view === 'Grid' && (
-                  <div className="col-12 mb-4 col-md-6 col-lg-4">
+                  <Box
+                    marginBottom="1rem"
+                    flex={{ base: '0 0 100%', md: '0 0 48%', lg: '0 0 32%' }}
+                    maxWidth={{ base: '100%', md: '48%', lg: '32%' }}
+                  >
                     <ProgramCard
                       programId={program.id}
                       view={view}
@@ -330,10 +436,10 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                       isExpired={isExpired}
                       previousPage={`members_${currentMemberId}`}
                     />
-                  </div>
+                  </Box>
                 )}
                 {view === 'List' && (
-                  <Box display="flex" width="100%" marginBottom="12px">
+                  <Box width="100%">
                     <ProgramCard
                       programId={program.id}
                       view={view}
@@ -354,14 +460,11 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                 )}
               </Fragment>
             ))}
-          </div>
+          </Flex>
         </>
       )}
     </div>
   )
 }
-
-const getCreatorName = (program: ProgramEnrollment) =>
-  program.roles.filter(role => role.name === 'instructor')[0]?.memberName || ''
 
 export default EnrolledProgramCollectionBlock

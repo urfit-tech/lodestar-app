@@ -5,9 +5,9 @@ import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../../helpers'
 import { BREAK_POINT } from '../../common/Responsive'
 
-export const StyledLayout = styled(Layout)<{ variant?: 'white'; noHeader?: boolean }>`
+export const StyledLayout = styled(Layout)<{ variant?: 'white'; header?: string }>`
   ${props => (props.variant === 'white' ? 'background: white;' : '')}
-  ${props => (props.noHeader ? ' .ant-layout-content { padding-top: 0px;}' : '')}
+  ${props => (props.header === 'noHeader' ? ' .ant-layout-content { padding-top: 0px;}' : '')}
 `
 export const StyledLayoutHeader = styled(Layout.Header)`
   overflow: hidden;
