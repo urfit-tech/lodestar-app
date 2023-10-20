@@ -1,7 +1,7 @@
 import { Box, Flex, HStack, SkeletonText, useRadioGroup } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { Fragment, useState } from 'react'
-import { BiSearch, BiSort } from 'react-icons/bi'
+import { BiSort } from 'react-icons/bi'
 import { useIntl } from 'react-intl'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ProgramTab, ViewSwitch } from '../../pages/MemberPage'
@@ -13,10 +13,10 @@ import PackageCard from '../package/PackageCard'
 import RadioCard from '../RadioCard'
 
 const sortOptions = [
-  { value: 'newPurchaseDate', name: '購買日期（新到舊）' },
-  { value: 'oldPurchaseDate', name: '購買日期（舊到新）' },
-  { value: 'newLastViewDate', name: '最後觀課日（新到舊）' },
-  { value: 'oldLastViewDate', name: '最後觀課日（舊到新）' },
+  { className: 'new-purchase-date', value: 'newPurchaseDate', name: '購買日期（新到舊）' },
+  { className: 'old-purchase-date', value: 'oldPurchaseDate', name: '購買日期（舊到新）' },
+  { className: 'new-last-view-date', value: 'newLastViewDate', name: '最後觀課日（新到舊）' },
+  { className: 'old-last-view-date', value: 'oldLastViewDate', name: '最後觀課日（舊到新）' },
 ]
 
 const ProgramPackageCollectionBlock: React.VFC<{
@@ -47,6 +47,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
   const [view, setView] = useState(localStorageView ? localStorageView : 'Grid')
   const [sort, setSort] = useState('newPurchaseDate')
   const [search, setSearch] = useState('')
+  const datetimeEnabled = settings['program.datetime.enabled'] === '1'
   const programPackage = (isExpired ? expiredProgramPackageEnrollment : programPackageEnrollment)
     .sort((a, b) => {
       if (sort === 'newPurchaseDate') {
@@ -66,7 +67,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
     .filter(programPackage => {
       if (search !== '') {
         const keyword = search.toLowerCase()
-        return programPackage.title.includes(keyword)
+        return programPackage.title.toLowerCase().includes(keyword)
       }
       return true
     })
@@ -133,7 +134,6 @@ const ProgramPackageCollectionBlock: React.VFC<{
 
         <CustomSearchInput
           className="member-page-program-search"
-          rightIcon={<BiSearch />}
           placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
           width={{ base: '100%' }}
           display={{ base: 'block', md: 'none' }}
@@ -141,6 +141,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
         />
         <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
           <ViewSwitch
+            className={view === 'Grid' ? 'member-page-view-list' : 'member-page-view-card'}
             view={view}
             onClick={() => {
               setView(view === 'Grid' ? 'List' : 'Grid')
@@ -179,7 +180,6 @@ const ProgramPackageCollectionBlock: React.VFC<{
             />
             <CustomSearchInput
               className="member-page-program-search"
-              rightIcon={<BiSearch />}
               placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
               width="fit-content"
               onChange={event => setSearch(event.target.value)}
@@ -209,7 +209,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
                       title={programPackage.title}
                       lastViewedAt={programPackage.lastViewedAt}
                       deliveredAt={programPackage.deliveredAt}
-                      programDateEnabled={settings['program.datetime.enabled'] === '1'}
+                      programDateEnabled={datetimeEnabled}
                       view={view}
                     />
                   </Box>
@@ -224,7 +224,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
                       title={programPackage.title}
                       lastViewedAt={programPackage.lastViewedAt}
                       deliveredAt={programPackage.deliveredAt}
-                      programDateEnabled={settings['program.datetime.enabled'] === '1'}
+                      programDateEnabled={datetimeEnabled}
                       view={view}
                     />
                   </Box>
@@ -240,10 +240,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
       {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length === 0 && programCounts === 0 && (
         <p>{formatMessage(commonMessages.content.noProgramPackage)}</p>
       )}
-      {search !== '' && !isExpired && programPackageEnrollment.length > 0 && programPackage.length === 0 && (
-        <p>{formatMessage(productMessages.programPackage.content.noSearchEnrolledProgramPackage)}</p>
-      )}
-      {search !== '' && isExpired && expiredProgramPackageEnrollment.length > 0 && programPackage.length === 0 && (
+      {search !== '' && programPackageCounts > 0 && programPackage.length === 0 && (
         <p>{formatMessage(productMessages.programPackage.content.noSearchEnrolledProgramPackage)}</p>
       )}
     </div>

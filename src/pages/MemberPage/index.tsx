@@ -110,10 +110,14 @@ export const ProgramTab: React.FC<{
   )
 }
 
-export const ViewSwitch: React.FC<{ view: string; onClick: () => void }> = ({ view, onClick }) => {
+export const ViewSwitch: React.FC<{ view: string; onClick: () => void; className?: string }> = ({
+  view,
+  onClick,
+  className,
+}) => {
   const { formatMessage } = useIntl()
   return (
-    <Flex marginRight="20px" cursor="pointer">
+    <Flex marginRight="20px" cursor="pointer" className={className}>
       {
         <HStack spacing="5px" onClick={onClick}>
           {view === 'Grid' && (

@@ -3,7 +3,7 @@ import React from 'react'
 
 const CustomMenuButton: React.FC<{
   buttonElement: React.ReactNode | string
-  options: { value: string; name: string }[]
+  options: { className?: string; value: string; name: string }[]
   onClick: (value: string) => void
   className?: string
 }> = ({ className, buttonElement, options, onClick }) => {
@@ -12,7 +12,7 @@ const CustomMenuButton: React.FC<{
       <MenuButton className={className}>{buttonElement}</MenuButton>
       <MenuList>
         {options.map((option, index) => (
-          <MenuItem key={index} onClick={() => onClick(option.value)}>
+          <MenuItem key={index} className={option.className} onClick={() => onClick(option.value)}>
             {option.name}
           </MenuItem>
         ))}

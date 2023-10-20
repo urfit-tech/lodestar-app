@@ -13,7 +13,7 @@ const StyledSelect = styled(Select)<{ 'with-icon'?: string }>`
 `
 
 const CustomChakraSelect: React.FC<{
-  options: { value: string; name: string }[]
+  options: { className?: string; value: string; name: string }[]
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
   defaultValue: string
   className?: string
@@ -30,9 +30,9 @@ const CustomChakraSelect: React.FC<{
         disabled={disabled}
         with-icon={leftIcon ? 'leftIcon' : ''}
       >
-        {options.map(s => (
-          <option key={s.value} value={s.value}>
-            {s.name}
+        {options.map(option => (
+          <option key={option.value} className={option.className} value={option.value}>
+            {option.name}
           </option>
         ))}
       </StyledSelect>
