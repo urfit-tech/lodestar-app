@@ -1,132 +1,16 @@
-import {
-  Box,
-  Center,
-  Divider,
-  Flex,
-  HStack,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Select,
-  SkeletonText,
-  Text,
-  useRadioGroup,
-} from '@chakra-ui/react'
-import dayjs from 'dayjs'
-import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
+import { Box, Flex, HStack, SkeletonText, useRadioGroup } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { Fragment, useState } from 'react'
 import { BiSearch, BiSort } from 'react-icons/bi'
-import { FiGrid, FiList } from 'react-icons/fi'
 import { useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
-import styled from 'styled-components'
-import { ProgramCover } from '../../components/common/Image'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import EmptyCover from '../../images/empty-cover.png'
+import { ProgramTab, ViewSwitch } from '../../pages/MemberPage'
 import { ProgramPackageEnrollment } from '../../types/programPackage'
+import CustomChakraSelect from '../common/CustomChakraSelect'
+import CustomMenuButton from '../common/CustomMenuButton'
+import CustomSearchInput from '../common/CustomSearchInput'
+import PackageCard from '../package/PackageCard'
 import RadioCard from '../RadioCard'
-
-const StyledCard = styled(Box)`
-  overflow: hidden;
-  background: white;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
-`
-
-const StyledDescription = styled(Text)<{ view?: string }>`
-  ${MultiLineTruncationMixin}
-  ${props =>
-    props.view === 'List' &&
-    `
-    margin-top:4px;
-  `}
-  font-size: 12px;
-  color: var(--gray-dark);
-  letter-spacing: 0.4px;
-`
-
-const StyledMeta = styled.div<{ view?: string }>`
-  ${props =>
-    props.view === 'List'
-      ? `
-      width:80%;
-      `
-      : `padding: 1.25rem;`}
-`
-
-const StyledTitle = styled(Text)<{ view?: string }>`
-  ${MultiLineTruncationMixin}
-  ${CommonTitleMixin}
-  ${props =>
-    props.view === 'List'
-      ? `
-      margin-bottom:0px;
-      display:block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      `
-      : `
-      margin-bottom: 1.25rem;
-      height: 3rem;
-      `}
-`
-
-const StyledSelect = styled(Select)`
-  padding-left: 35px !important;
-`
-
-const ProgramTab = ({
-  onProgramTabClick,
-  tab,
-  programPackageCounts,
-  programCounts,
-}: {
-  onProgramTabClick: (tab: string) => void
-  tab: string
-  programPackageCounts: number
-  programCounts: number
-}) => {
-  const { formatMessage } = useIntl()
-  return (
-    <>
-      <Flex cursor="pointer">
-        <HStack spacing="10px">
-          {programCounts > 0 && (
-            <Text
-              fontSize="2xl"
-              as="b"
-              onClick={() => onProgramTabClick('program')}
-              color={tab === 'program' ? 'black' : '#cdcdcd'}
-            >
-              {formatMessage(productMessages.program.title.course)}
-            </Text>
-          )}
-          {programCounts > 0 && programPackageCounts > 0 && (
-            <Center height="20px">
-              <Divider orientation="vertical" />
-            </Center>
-          )}
-          {programPackageCounts > 0 && (
-            <Text
-              fontSize="2xl"
-              as="b"
-              onClick={() => onProgramTabClick('programPackage')}
-              color={tab === 'programPackage' ? 'black' : '#cdcdcd'}
-            >
-              {formatMessage(commonMessages.ui.packages)}
-            </Text>
-          )}
-        </HStack>
-      </Flex>
-    </>
-  )
-}
 
 const sortOptions = [
   { value: 'newPurchaseDate', name: '購買日期（新到舊）' },
@@ -237,64 +121,33 @@ const ProgramPackageCollectionBlock: React.VFC<{
               programPackageCounts={programPackageCounts}
             />
           )}
-
           <HStack spacing="25px" display={{ md: 'none' }}>
-            <Menu>
-              <MenuButton className="member-page-program-sort">
-                <BiSort />
-              </MenuButton>
-              <MenuList>
-                {sortOptions.map(s => (
-                  <MenuItem key={s.value} onClick={() => setSort(s.value)}>
-                    {s.name}
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </Menu>
+            <CustomMenuButton
+              className="member-page-program-sort"
+              buttonElement={<BiSort />}
+              options={sortOptions}
+              onClick={value => setSort(value)}
+            />
           </HStack>
         </HStack>
 
-        <InputGroup
+        <CustomSearchInput
           className="member-page-program-search"
+          rightIcon={<BiSearch />}
+          placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
           width={{ base: '100%' }}
           display={{ base: 'block', md: 'none' }}
-          backgroundColor="white"
-        >
-          <Input
-            placeholder="搜尋關鍵字"
-            value={search}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
-          />
-          <InputRightElement>
-            <BiSearch />
-          </InputRightElement>
-        </InputGroup>
-
+          onChange={event => setSearch(event.target.value)}
+        />
         <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
-          <Flex marginRight="20px" cursor="pointer">
-            {
-              <HStack
-                spacing="5px"
-                onClick={() => {
-                  setView(view === 'Grid' ? 'List' : 'Grid')
-                  localStorage.setItem('programPackageView', view === 'Grid' ? 'List' : 'Grid')
-                }}
-              >
-                {view === 'Grid' && (
-                  <>
-                    <FiList />
-                    <span>{formatMessage(commonMessages.term.list)}</span>
-                  </>
-                )}
-                {view === 'List' && (
-                  <>
-                    <FiGrid />
-                    <span>{formatMessage(commonMessages.term.grid)}</span>
-                  </>
-                )}
-              </HStack>
-            }
-          </Flex>
+          <ViewSwitch
+            view={view}
+            onClick={() => {
+              setView(view === 'Grid' ? 'List' : 'Grid')
+              localStorage.setItem('programPackageView', view === 'Grid' ? 'List' : 'Grid')
+            }}
+          />
+
           {settings['feature.expired_program_package_plan.enable'] === '1' &&
             expiredProgramPackageEnrollment.length > 0 && (
               <HStack spacing="12px">
@@ -315,31 +168,22 @@ const ProgramPackageCollectionBlock: React.VFC<{
         (expiredProgramPackageEnrollment.length > 0 && isExpired)) && (
         <>
           <HStack justifyContent={'space-between'} display={{ base: 'none', md: 'flex' }} marginBottom="32px">
-            <InputGroup className="member-page-program-sort" width="fit-content" backgroundColor="white">
-              <InputLeftElement>
-                <BiSort />
-              </InputLeftElement>
-              <StyledSelect
-                onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setSort(event.target.value)}
-                defaultValue={sort}
-                disabled={programPackage.length === 0}
-              >
-                {sortOptions.map(s => (
-                  <option key={s.value} value={s.value}>
-                    {s.name}
-                  </option>
-                ))}
-              </StyledSelect>
-            </InputGroup>
-            <InputGroup className="member-page-program-search" width="fit-content" backgroundColor="white">
-              <Input
-                placeholder="搜尋關鍵字"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
-              />
-              <InputRightElement>
-                <BiSearch />
-              </InputRightElement>
-            </InputGroup>
+            <CustomChakraSelect
+              className="member-page-program-sort"
+              width="fit-content"
+              leftIcon={<BiSort />}
+              options={sortOptions}
+              defaultValue={sort}
+              onChange={event => setSort(event.target.value)}
+              disabled={programPackage.length === 0}
+            />
+            <CustomSearchInput
+              className="member-page-program-search"
+              rightIcon={<BiSearch />}
+              placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
+              width="fit-content"
+              onChange={event => setSearch(event.target.value)}
+            />
           </HStack>
 
           <Flex
@@ -357,88 +201,32 @@ const ProgramPackageCollectionBlock: React.VFC<{
                     maxWidth={{ base: '100%', md: '48%', lg: '32%' }}
                     opacity={isExpired ? '50%' : '100%'}
                   >
-                    <Link
-                      to={
-                        isExpired
-                          ? `/program-packages/${programPackage.id}`
-                          : `/program-packages/${programPackage.id}/contents?memberId=${memberId}`
-                      }
-                    >
-                      <StyledCard>
-                        <ProgramCover
-                          width="100%"
-                          paddingTop="calc(100% * 9/16)"
-                          src={programPackage.coverUrl || EmptyCover}
-                          shape="rounded"
-                        />
-                        <StyledMeta>
-                          <StyledTitle>{programPackage.title}</StyledTitle>
-                          {settings['program.datetime.enabled'] === '1' && (
-                            <StyledDescription>
-                              {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
-                              {programPackage.lastViewedAt
-                                ? ` / ${dayjs(programPackage.lastViewedAt).format('YYYY-MM-DD')} 上次觀看`
-                                : ` / 尚未觀看`}
-                            </StyledDescription>
-                          )}
-                        </StyledMeta>
-                      </StyledCard>
-                    </Link>
+                    <PackageCard
+                      isExpired={isExpired}
+                      memberId={memberId}
+                      coverUrl={programPackage.coverUrl}
+                      id={programPackage.id}
+                      title={programPackage.title}
+                      lastViewedAt={programPackage.lastViewedAt}
+                      deliveredAt={programPackage.deliveredAt}
+                      programDateEnabled={settings['program.datetime.enabled'] === '1'}
+                      view={view}
+                    />
                   </Box>
                 )}
                 {view === 'List' && (
                   <Box width="100%" opacity={isExpired ? '50%' : '100%'}>
-                    <Link
-                      to={
-                        isExpired
-                          ? `/program-packages/${programPackage.id}`
-                          : `/program-packages/${programPackage.id}/contents?memberId=${memberId}`
-                      }
-                    >
-                      <StyledCard>
-                        <Box
-                          display="flex"
-                          marginY={{ base: '16px', md: '0px' }}
-                          marginX={{ base: '12px', md: '0px' }}
-                          alignItems="center"
-                        >
-                          <ProgramCover
-                            width={{ base: '40%', md: '15%' }}
-                            height={{ base: '40%', md: '15%' }}
-                            paddingTop={{ base: 'calc(40% * 9/16)', md: 'calc(15% * 9/16)' }}
-                            margin={{ base: '0px 16px 0px 0px', md: '12px' }}
-                            src={programPackage.coverUrl || EmptyCover}
-                            shape="rounded"
-                          />
-                          <StyledMeta view={view}>
-                            <StyledTitle fontSize="1rem" noOfLines={{ base: 2, md: 1 }} view={view}>
-                              {programPackage.title}
-                            </StyledTitle>
-                            {settings['program.datetime.enabled'] === '1' && (
-                              <StyledDescription display={{ base: 'none', md: 'block' }} view={view}>
-                                {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
-                                {programPackage.lastViewedAt
-                                  ? ` / ${dayjs(programPackage.lastViewedAt).format('YYYY-MM-DD')} 上次觀看`
-                                  : ` / 尚未觀看`}
-                              </StyledDescription>
-                            )}
-                          </StyledMeta>
-                        </Box>
-                        {settings['program.datetime.enabled'] === '1' && (
-                          <StyledDescription
-                            display={{ base: 'block', md: 'none' }}
-                            marginX="12px"
-                            marginBottom="16px"
-                            view={view}
-                          >
-                            {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
-                            {programPackage.lastViewedAt
-                              ? ` / ${dayjs(programPackage.lastViewedAt).format('YYYY-MM-DD')} 上次觀看`
-                              : ` / 尚未觀看`}
-                          </StyledDescription>
-                        )}
-                      </StyledCard>
-                    </Link>
+                    <PackageCard
+                      isExpired={isExpired}
+                      memberId={memberId}
+                      coverUrl={programPackage.coverUrl}
+                      id={programPackage.id}
+                      title={programPackage.title}
+                      lastViewedAt={programPackage.lastViewedAt}
+                      deliveredAt={programPackage.deliveredAt}
+                      programDateEnabled={settings['program.datetime.enabled'] === '1'}
+                      view={view}
+                    />
                   </Box>
                 )}
               </Fragment>
@@ -447,12 +235,17 @@ const ProgramPackageCollectionBlock: React.VFC<{
         </>
       )}
       {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length > 0 && !isExpired && (
-        <p>沒有可觀看的課程組合</p>
+        <p>{formatMessage(productMessages.programPackage.content.noEnrolledProgramPackage)}</p>
       )}
       {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length === 0 && programCounts === 0 && (
-        <div>{formatMessage(commonMessages.content.noProgramPackage)}</div>
+        <p>{formatMessage(commonMessages.content.noProgramPackage)}</p>
       )}
-      {search !== '' && programPackageEnrollment.length > 0 && programPackage.length === 0 && <p>查無相關課程組合</p>}
+      {search !== '' && !isExpired && programPackageEnrollment.length > 0 && programPackage.length === 0 && (
+        <p>{formatMessage(productMessages.programPackage.content.noSearchEnrolledProgramPackage)}</p>
+      )}
+      {search !== '' && isExpired && expiredProgramPackageEnrollment.length > 0 && programPackage.length === 0 && (
+        <p>{formatMessage(productMessages.programPackage.content.noSearchEnrolledProgramPackage)}</p>
+      )}
     </div>
   )
 }
