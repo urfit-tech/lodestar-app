@@ -17,16 +17,6 @@ const StyledCard = styled(Box)`
   border-radius: 4px;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
 `
-const StyledMeta = styled(Box)<{ view?: string }>`
-  ${props =>
-    props.view === 'List'
-      ? `
-      display:flex;
-      justify-content: space-between;
-      align-items:center;
-    `
-      : `padding: 1.25rem;`}
-`
 const StyledTitle = styled(Text)<{ view?: string }>`
   ${MultiLineTruncationMixin}
   ${CommonTitleMixin}
@@ -173,7 +163,7 @@ const ProgramCard: React.VFC<{
                   src={coverThumbnailUrl || coverUrl || coverMobileUrl || EmptyCover}
                   shape="rounded"
                 />
-                <StyledMeta width="80%">
+                <Box padding="1.25rem">
                   <StyledTitle>{title}</StyledTitle>
                   {datetimeEnabled && (
                     <ProgramDatetime size="small" deliveredAt={deliveredAt} lastViewedAt={lastViewDate} />
@@ -181,7 +171,7 @@ const ProgramCard: React.VFC<{
                   <StyledDescription>{abstract}</StyledDescription>
 
                   {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="100%" />}
-                </StyledMeta>
+                </Box>
               </StyledCard>
             </>
           ) : (
@@ -200,7 +190,12 @@ const ProgramCard: React.VFC<{
                   src={coverThumbnailUrl || coverUrl || coverMobileUrl || EmptyCover}
                   shape="rounded"
                 />
-                <StyledMeta view={view} width={{ base: '50%', md: '80%' }}>
+                <Box
+                  width={{ base: '50%', md: '80%' }}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
                   <Box minWidth={{ base: '100%', md: '50%' }} maxWidth={{ base: '100%', md: '50%' }}>
                     <StyledTitle noOfLines={{ base: 2, md: 1 }} view={view}>
                       {title}
@@ -234,7 +229,7 @@ const ProgramCard: React.VFC<{
                     {!noInstructor && <CreatorInfo marginY="1rem" roles={roles} view={view} withName={true} />}
                     {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} width="40%" />}
                   </Box>
-                </StyledMeta>
+                </Box>
               </Box>
               <Box display={{ base: 'block', md: 'none' }} marginX="12px" marginBottom="16px">
                 {withProgress && <ProgressBar percent={Math.floor(viewRate * 100)} marginBottom="8px" />}

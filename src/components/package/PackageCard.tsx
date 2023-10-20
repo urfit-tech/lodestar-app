@@ -15,14 +15,7 @@ const StyledCard = styled(Box)`
   border-radius: 4px;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
 `
-const StyledMeta = styled.div<{ view?: string }>`
-  ${props =>
-    props.view === 'List'
-      ? `
-      width:80%;
-      `
-      : `padding: 1.25rem;`}
-`
+
 const StyledTitle = styled(Text)<{ view?: string }>`
   ${MultiLineTruncationMixin}
   ${CommonTitleMixin}
@@ -97,12 +90,12 @@ const PackageCard: React.VFC<
           {view !== 'List' ? (
             <>
               <ProgramCover width="100%" paddingTop="calc(100% * 9/16)" src={coverUrl || EmptyCover} shape="rounded" />
-              <StyledMeta>
+              <Box padding="1.25rem">
                 <StyledTitle>{title}</StyledTitle>
                 {datetimeEnabled && memberId && (
                   <PackageDatetime deliveredAt={deliveredAt} lastViewedAt={lastViewedAt} />
                 )}
-              </StyledMeta>
+              </Box>
             </>
           ) : (
             <>
@@ -120,7 +113,7 @@ const PackageCard: React.VFC<
                   src={coverUrl || EmptyCover}
                   shape="rounded"
                 />
-                <StyledMeta view={view}>
+                <Box width="80%">
                   <StyledTitle fontSize="1rem" noOfLines={{ base: 2, md: 1 }} view={view}>
                     {title}
                   </StyledTitle>
@@ -132,7 +125,7 @@ const PackageCard: React.VFC<
                       lastViewedAt={lastViewedAt}
                     />
                   )}
-                </StyledMeta>
+                </Box>
               </Box>
               {datetimeEnabled && memberId && (
                 <PackageDatetime
