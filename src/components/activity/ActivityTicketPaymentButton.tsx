@@ -34,11 +34,13 @@ type ActivityTicketPaymentButtonProps = {
   ticketId: string
   ticketPrice: number
   ticketCurrencyId: string
+  isPublished: boolean
 }
 const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> = ({
   ticketId,
   ticketPrice,
   ticketCurrencyId,
+  isPublished,
 }) => {
   const { formatMessage } = useIntl()
   const { settings, id: appId } = useApp()
@@ -87,6 +89,7 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
           <Button
             colorScheme="primary"
             isFullWidth
+            disabled={!isPublished}
             onClick={() => {
               const resource = resourceCollection.find(notEmpty)
               resource && tracking.addToCart(resource, { direct: true })

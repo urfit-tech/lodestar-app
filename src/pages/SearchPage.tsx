@@ -32,7 +32,7 @@ import { hasJsonStructure, notEmpty } from '../helpers'
 import { ReactComponent as SearchIcon } from '../images/search.svg'
 import { Activity } from '../types/activity'
 import { PostPreviewProps } from '../types/blog'
-import { MerchandiseBriefProps } from '../types/merchandise'
+import { MerchandiseBasicProps, MerchandiseSpecBasicProps } from '../types/merchandise'
 import { PodcastProgramBriefProps } from '../types/podcast'
 import {
   PeriodType,
@@ -881,6 +881,7 @@ const useSearchProductCollection = (
           abstract
           sold_at
           currency_id
+          published_at
           member {
             id
             name
@@ -1004,7 +1005,9 @@ const useSearchProductCollection = (
       name: string
       abstract: string | null
     }[]
-    merchandises: (MerchandiseBriefProps & { shopkeeper: string; abstract: string })[]
+    merchandises: (MerchandiseBasicProps & {
+      specs: MerchandiseSpecBasicProps[]
+    } & { shopkeeper: string; abstract: string })[]
     fundingProjects: (ProjectIntroProps & { authorSearchString: string })[]
     preOrderProjects: (ProjectIntroProps & { authorSearchString: string })[]
     portfolioProjects: (ProjectIntroProps & { authorSearchString: string })[]
@@ -1270,6 +1273,7 @@ const useSearchProductCollection = (
           ),
         ),
         currencyId: merchandise.currency_id,
+        publishedAt: merchandise.published_at ? new Date(merchandise.published_at) : null,
         tags: merchandise.merchandise_tags.map(v => v.tag_name),
         categories: merchandise.merchandise_categories.map(v => ({
           id: v.category.id,

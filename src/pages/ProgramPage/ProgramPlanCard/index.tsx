@@ -67,7 +67,8 @@ const ProgramPlanCard: React.VFC<{
   }
   enrollmentCount?: number
   isProgramSoldOut?: boolean
-}> = ({ programId, programPlan, enrollmentCount, isProgramSoldOut }) => {
+  isPublished?: boolean
+}> = ({ programId, programPlan, enrollmentCount, isProgramSoldOut, isPublished }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
@@ -201,7 +202,8 @@ const ProgramPlanCard: React.VFC<{
             price={isOnSale && salePrice ? salePrice : listPrice}
             currencyId={currency.id}
             isSubscription={isSubscription}
-          ></PaymentButton>
+            isPublished={isPublished}
+          />
         </>
       )}
     </StyledAdminCard>

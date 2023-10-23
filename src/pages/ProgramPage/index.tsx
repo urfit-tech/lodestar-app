@@ -282,6 +282,7 @@ const ProgramPageContent: React.VFC = () => {
                                 programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)?.enrollmentCount
                               }
                               isProgramSoldOut={Boolean(program.isSoldOut)}
+                              isPublished={Boolean(program.publishedAt)}
                             />
                           </div>
                         ))}
