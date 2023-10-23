@@ -182,6 +182,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
 
       refreshTokenAsync()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname])
 
   if (loadingAppPage) {
@@ -200,6 +201,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
             title={appPage?.metaTag?.seo?.pageTitle || appPage?.title || ''}
             description={appPage?.metaTag?.seo?.description || appPage.defaultSettings.description || ''}
             keywords={appPage?.metaTag?.seo?.keywords?.split(',')}
+            isNoIndex={!appPage.publishedAt}
             openGraph={[
               { property: 'fb:app_id', content: settings['auth.facebook_app_id'] },
               { property: 'og:site_name', content: settings['name'] },
@@ -287,6 +289,7 @@ export const usePage = (path: string) => {
           options
           craft_data
           meta_tag
+          published_at
           app_page_sections(order_by: { position: asc }) {
             id
             options
@@ -330,6 +333,7 @@ export const usePage = (path: string) => {
     craftData: { [key: string]: any } | null
     options: { [key: string]: string } | null
     metaTag: MetaTag | null
+    publishedAt: Date | null
     appPageSections: AppPageSectionProps[]
     defaultSettings: { img: string; description: string }
   } | null = data?.app_page[0]
@@ -340,6 +344,7 @@ export const usePage = (path: string) => {
         craftData: data.app_page[0].craft_data,
         options: data.app_page[0].options || null,
         metaTag: data.app_page[0].meta_tag || null,
+        publishedAt: data.app_page[0].published_at || null,
         appPageSections: data.app_page[0]
           ? data.app_page[0].app_page_sections.map(v => ({
               id: v.id,
