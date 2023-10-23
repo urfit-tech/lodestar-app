@@ -15,6 +15,7 @@ const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
       title={post.metaTag?.seo?.pageTitle || post.title}
       description={post.metaTag?.seo?.description || post.description || post.abstract || ''}
       keywords={post.metaTag?.seo?.keywords?.split(',') || post.tags}
+      isNoIndex={!post.publishedAt}
       jsonLd={[
         {
           '@context': 'https://schema.org',
