@@ -1,3 +1,4 @@
+import { Text } from '@chakra-ui/react'
 import { AvatarProps } from 'antd/lib/avatar'
 import React from 'react'
 import styled from 'styled-components'
@@ -45,19 +46,27 @@ const MemberAvatar: React.VFC<MemberAvatarProps> = ({
   }
 
   return (
-    <div className="d-flex align-items-center">
-      {renderAvatar ? (
-        renderAvatar(member)
-      ) : noAvatar ? null : (
-        <AvatarImage src={member.pictureUrl || ''} shape={shape} size={size} />
-      )}
-      {renderText && renderText(member)}
-      {withName && (
-        <MemberName className={noAvatar ? '' : 'ml-3'} view={view}>
+    <>
+      {noAvatar ? (
+        <Text fontSize="14px" color="#9b9b9b" overflow="hidden" textOverflow="ellipsis" noOfLines={2}>
           {member.name}
-        </MemberName>
+        </Text>
+      ) : (
+        <div className="d-flex align-items-center">
+          {renderAvatar ? (
+            renderAvatar(member)
+          ) : (
+            <AvatarImage src={member.pictureUrl || ''} shape={shape} size={size} />
+          )}
+          {renderText && renderText(member)}
+          {withName && (
+            <MemberName className="ml-3" view={view}>
+              {member.name}
+            </MemberName>
+          )}
+        </div>
       )}
-    </div>
+    </>
   )
 }
 

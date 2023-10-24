@@ -274,6 +274,7 @@ export const commonMessages = {
       search: { id: 'common.searchPlaceholder', defaultMessage: '選擇兌換項目' },
       referrerEmail: { id: 'common.label.referrerEmail', defaultMessage: '請輸入推薦人的註冊信箱' },
       selectRole: { id: 'common.form.placeholder.selectRole', defaultMessage: '請選擇職位' },
+      searchKeyword: { id: 'common.form.placeholder.searchKeyword', defaultMessage: '搜尋關鍵字' },
     }),
     option: defineMessages({
       unsolved: { id: 'common.select.option.unsolved', defaultMessage: '未解決' },
@@ -929,6 +930,11 @@ export const productMessages = {
       originPrice: { id: 'product.program.price.origin', defaultMessage: '原價' },
       programProblem: { id: 'common.courseProblem', defaultMessage: '課程問題' },
       noProgram: { id: 'product.program.title.course.no', defaultMessage: '沒有參與任何課程' },
+      noEnrolledProgram: { id: 'product.program.content.noEnrolledProgram', defaultMessage: '沒有可觀看的課程' },
+      noSearchEnrolledProgram: {
+        id: 'product.program.content.noSearchEnrolledProgram',
+        defaultMessage: '查無相關課程',
+      },
     }),
     paragraph: defineMessages({
       firstTime: { id: 'product.program.paragraph.firstTime', defaultMessage: '首期優惠' },
@@ -1012,6 +1018,16 @@ export const productMessages = {
       availableForLimitTime: {
         id: 'programPackage.label.availableForLimitTime',
         defaultMessage: '可觀看 {amount} {unit}',
+      },
+    }),
+    content: defineMessages({
+      noEnrolledProgramPackage: {
+        id: 'product.programPackage.content.noEnrolledProgramPackage',
+        defaultMessage: '沒有可觀看的課程組合',
+      },
+      noSearchEnrolledProgramPackage: {
+        id: 'product.programPackage.content.noSearchEnrolledProgramPackage',
+        defaultMessage: '查無相關課程組合',
       },
     }),
   },
