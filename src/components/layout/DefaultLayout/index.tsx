@@ -60,8 +60,8 @@ const StyledNotificationBar = styled.div<{ variant?: string }>`
 
 const DefaultLayout: React.FC<{
   white?: boolean
-  noHeader?: boolean
-  noFooter?: boolean
+  noHeader?: boolean | null
+  noFooter?: boolean | null
   noCart?: boolean
   noGeneralLogin?: boolean
   noNotificationBar?: boolean
@@ -108,7 +108,10 @@ const DefaultLayout: React.FC<{
         />
       )}
 
-      <StyledLayoutWrapper variant={white ? 'white' : undefined} header={noHeader ? 'noHeader' : ''}>
+      <StyledLayoutWrapper
+        variant={white ? 'white' : undefined}
+        header={noHeader ? 'noHeader' : '' /* for remove blank on the top */}
+      >
         <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
           <div className="d-flex align-items-center">
             <LogoBlock className="mr-4">

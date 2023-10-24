@@ -1,6 +1,7 @@
 import { Spinner } from '@chakra-ui/react'
 import React from 'react'
 import styled from 'styled-components'
+import { BooleanParam, useQueryParams } from 'use-query-params'
 import DefaultLayout from '../components/layout/DefaultLayout'
 
 const StyledDiv = styled.div`
@@ -11,8 +12,12 @@ const StyledDiv = styled.div`
 `
 
 const LoadingPage: React.VFC = () => {
+  const [{ noHeader }] = useQueryParams({
+    noHeader: BooleanParam,
+  })
+
   return (
-    <DefaultLayout noFooter>
+    <DefaultLayout noFooter noHeader={noHeader}>
       <StyledDiv className="loading">
         <Spinner size="lg" />
       </StyledDiv>
