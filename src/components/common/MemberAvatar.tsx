@@ -26,6 +26,7 @@ type MemberAvatarProps = AvatarProps & {
   renderText?: (member: MemberPublicProps) => React.ReactNode
   withName?: boolean
   view?: string
+  noAvatar?: boolean
 }
 const MemberAvatar: React.VFC<MemberAvatarProps> = ({
   memberId,
@@ -35,6 +36,7 @@ const MemberAvatar: React.VFC<MemberAvatarProps> = ({
   renderText,
   withName,
   view,
+  noAvatar,
 }) => {
   const { member } = usePublicMember(memberId)
 
@@ -44,10 +46,14 @@ const MemberAvatar: React.VFC<MemberAvatarProps> = ({
 
   return (
     <div className="d-flex align-items-center">
-      {renderAvatar ? renderAvatar(member) : <AvatarImage src={member.pictureUrl || ''} shape={shape} size={size} />}
+      {renderAvatar ? (
+        renderAvatar(member)
+      ) : noAvatar ? null : (
+        <AvatarImage src={member.pictureUrl || ''} shape={shape} size={size} />
+      )}
       {renderText && renderText(member)}
       {withName && (
-        <MemberName className="ml-3" view={view}>
+        <MemberName className={noAvatar ? '' : 'ml-3'} view={view}>
           {member.name}
         </MemberName>
       )}
