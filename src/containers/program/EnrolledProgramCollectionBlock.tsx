@@ -1,107 +1,39 @@
-import {
-  Box,
-  Center,
-  Divider,
-  Flex,
-  HStack,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Select,
-  SkeletonText,
-  Text,
-  useRadioGroup,
-} from '@chakra-ui/react'
+import { Box, Flex, HStack, SkeletonText, useRadioGroup } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { Fragment, useState } from 'react'
-import { BiSearch, BiSort } from 'react-icons/bi'
-import { FiGrid, FiList } from 'react-icons/fi'
+import { BiSort } from 'react-icons/bi'
 import { RiFilter2Fill } from 'react-icons/ri'
 import { useIntl } from 'react-intl'
-import styled from 'styled-components'
+import CustomChakraSelect from '../../components/common/CustomChakraSelect'
+import CustomMenuButton from '../../components/common/CustomMenuButton'
+import CustomSearchInput from '../../components/common/CustomSearchInput'
 import RadioCard from '../../components/RadioCard'
 import { commonMessages, productMessages } from '../../helpers/translation'
+import { ProgramTab, ViewSwitch } from '../../pages/MemberPage'
 import { ProgramEnrollment } from '../../types/program'
 import ProgramCard from './ProgramCard'
 
-const StyledSelect = styled(Select)`
-  width: fit-content !important;
-  padding-left: 35px !important;
-`
-
 const getCreatorName = (program: ProgramEnrollment) =>
-  program.roles.filter(role => role.name === 'instructor')[0]?.memberName || ''
-
-const ProgramTab = ({
-  onProgramTabClick,
-  tab,
-  programPackageCounts,
-  programCounts,
-}: {
-  onProgramTabClick: (tab: string) => void
-  tab: string
-  programPackageCounts: number
-  programCounts: number
-}) => {
-  const { formatMessage } = useIntl()
-  return (
-    <>
-      <Flex cursor="pointer">
-        <HStack spacing="10px">
-          {programCounts > 0 && (
-            <Text
-              fontSize="2xl"
-              as="b"
-              onClick={() => onProgramTabClick('program')}
-              color={tab === 'program' ? 'black' : '#cdcdcd'}
-            >
-              {formatMessage(productMessages.program.title.course)}
-            </Text>
-          )}
-          {programCounts > 0 && programPackageCounts > 0 && (
-            <Center height="20px">
-              <Divider orientation="vertical" />
-            </Center>
-          )}
-          {programPackageCounts > 0 && (
-            <Text
-              fontSize="2xl"
-              as="b"
-              onClick={() => onProgramTabClick('programPackage')}
-              color={tab === 'programPackage' ? 'black' : '#cdcdcd'}
-            >
-              {formatMessage(commonMessages.ui.packages)}
-            </Text>
-          )}
-        </HStack>
-      </Flex>
-    </>
-  )
-}
+  program.roles.filter(role => role.name === 'instructor')[0]?.memberName.toLowerCase() || ''
 
 const sortOptions = [
-  { value: 'newPurchaseDate', name: '購買日期（新到舊）' },
-  { value: 'oldPurchaseDate', name: '購買日期（舊到新）' },
-  { value: 'newLastViewDate', name: '最後觀課日（新到舊）' },
-  { value: 'oldLastViewDate', name: '最後觀課日（舊到新）' },
-  { value: 'lessCreatorStrokes', name: '依講師排序（筆畫少到多）' },
-  { value: 'moreCreatorStrokes', name: '依講者排序（筆畫多到少）' },
+  { className: 'new-purchase-date', value: 'newPurchaseDate', name: '購買日期（新到舊）' },
+  { className: 'old-purchase-date', value: 'oldPurchaseDate', name: '購買日期（舊到新）' },
+  { className: 'new-last-view-date', value: 'newLastViewDate', name: '最後觀課日（新到舊）' },
+  { className: 'old-last-view-date', value: 'oldLastViewDate', name: '最後觀課日（舊到新）' },
+  { className: 'less-creator-strokes', value: 'lessCreatorStrokes', name: '依講師排序（筆畫少到多）' },
+  { className: 'more-creator-strokes', value: 'moreCreatorStrokes', name: '依講師排序（筆畫多到少）' },
 ]
 
 const filterOptions = [
-  { value: 'all', name: '全部課程' },
-  { value: 'inProgress', name: '進行中' },
-  { value: 'notStartYet', name: '尚未開始' },
-  { value: 'Done', name: '已完課' },
+  { className: 'all', value: 'all', name: '全部課程' },
+  { className: 'in-progress', value: 'inProgress', name: '進行中' },
+  { className: 'no-start-yet', value: 'notStartYet', name: '尚未開始' },
+  { className: 'done', value: 'Done', name: '已完課' },
 ]
 
 const EnrolledProgramCollectionBlock: React.VFC<{
+  memberId: string
   onProgramTabClick: (tab: string) => void
   programTab: string
   programEnrollment: ProgramEnrollment[]
@@ -111,6 +43,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   isError: boolean
   loading: boolean
 }> = ({
+  memberId,
   onProgramTabClick,
   programTab,
   programEnrollment,
@@ -120,7 +53,6 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   isError,
   loading,
 }) => {
-  const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
   const localStorageView = localStorage.getItem('programView')
@@ -129,6 +61,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
   const { settings } = useApp()
+  const datetimeEnabled = settings['program.datetime.enabled'] === '1'
 
   const options = [
     formatMessage(commonMessages.label.availableForLimitTime),
@@ -162,7 +95,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     )
   }
 
-  const programs = programEnrollment
+  const programs = (!isExpired ? programEnrollment : expiredProgramEnrollment)
     .sort((a, b) => {
       if (sort === 'newPurchaseDate') {
         return +new Date(b.deliveredAt || 0) - +new Date(a.deliveredAt || 0)
@@ -187,7 +120,20 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     .filter(program => {
       const viewRate = Math.floor(program.viewRate * 100)
       if (search !== '') {
-        if (program.title.includes(search) || getCreatorName(program).includes(search)) {
+        const keyword = search.toLowerCase()
+        if (program.title.toLowerCase().includes(keyword) || getCreatorName(program).includes(keyword)) {
+          const filterProgram = !isExpired && filter
+          return filterProgram === 'inProgress'
+            ? viewRate > 0 && viewRate < 100
+            : filterProgram === 'Done'
+            ? viewRate === 100
+            : filterProgram === 'notStartYet'
+            ? viewRate === 0
+            : true
+        }
+        return false
+      } else {
+        if (!isExpired) {
           return filter === 'inProgress'
             ? viewRate > 0 && viewRate < 100
             : filter === 'Done'
@@ -195,49 +141,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
             : filter === 'notStartYet'
             ? viewRate === 0
             : true
-        } else {
-          return false
         }
-      } else {
-        if (filter === 'inProgress') {
-          return viewRate > 0 && viewRate < 100
-        }
-        if (filter === 'Done') {
-          return viewRate === 100
-        }
-        if (filter === 'notStartYet') {
-          return viewRate === 0
-        }
-        return true
-      }
-    })
-
-  const expiredPrograms = expiredProgramEnrollment
-    .sort((a, b) => {
-      if (sort === 'newPurchaseDate') {
-        return +new Date(b.deliveredAt || 0) - +new Date(a.deliveredAt || 0)
-      }
-      if (sort === 'oldPurchaseDate') {
-        return +new Date(a.deliveredAt || 0) - +new Date(b.deliveredAt || 0)
-      }
-      if (sort === 'newLastViewDate') {
-        return +new Date(b.lastViewedAt || 0) - +new Date(a.lastViewedAt || 0)
-      }
-      if (sort === 'oldLastViewDate') {
-        return +new Date(a.lastViewedAt || 0) - +new Date(b.lastViewedAt || 0)
-      }
-      if (sort === 'lessCreatorStrokes') {
-        return getCreatorName(a).localeCompare(getCreatorName(b), 'zh-Hant')
-      }
-      if (sort === 'moreCreatorStrokes') {
-        return getCreatorName(b).localeCompare(getCreatorName(a), 'zh-Hant')
-      }
-      return 0
-    })
-    .filter(program => {
-      if (search !== '') {
-        return program.title.includes(search) || getCreatorName(program).includes(search)
-      } else {
         return true
       }
     })
@@ -259,84 +163,43 @@ const EnrolledProgramCollectionBlock: React.VFC<{
               programCounts={programCounts}
             />
           )}
-          {((programs.length > 0 && !isExpired) || (expiredPrograms.length > 0 && isExpired)) && (
-            <HStack spacing="25px" display={{ md: 'none' }}>
-              <Menu>
-                <MenuButton className="member-page-program-sort">
-                  <BiSort />
-                </MenuButton>
-                <MenuList>
-                  {sortOptions.map(s => (
-                    <MenuItem key={s.value} onClick={() => setSort(s.value)}>
-                      {s.name}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-              {!isExpired && (
-                <Menu>
-                  <MenuButton className="member-page-program-filter">
-                    <RiFilter2Fill />
-                  </MenuButton>
-                  <MenuList>
-                    {filterOptions.map(f => (
-                      <MenuItem key={f.value} onClick={() => setFilter(f.value)}>
-                        {f.name}
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Menu>
-              )}
-            </HStack>
-          )}
-        </HStack>
 
-        <InputGroup
+          <HStack spacing="25px" display={{ md: 'none' }}>
+            <CustomMenuButton
+              className="member-page-program-sort"
+              buttonElement={<BiSort />}
+              options={sortOptions}
+              onClick={value => setSort(value)}
+            />
+            {!isExpired && (
+              <CustomMenuButton
+                className="member-page-program-filter"
+                buttonElement={<RiFilter2Fill />}
+                options={filterOptions}
+                onClick={value => setFilter(value)}
+              />
+            )}
+          </HStack>
+        </HStack>
+        <CustomSearchInput
           className="member-page-program-search"
+          placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
           width={{ base: '100%' }}
           display={{ base: 'block', md: 'none' }}
-          backgroundColor="white"
-        >
-          <Input
-            placeholder="搜尋關鍵字"
-            value={search}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(event.target.value.trim().toLowerCase())
-            }
-          />
-          <InputRightElement>
-            <BiSearch />
-          </InputRightElement>
-        </InputGroup>
+          onChange={event => setSearch(event.target.value)}
+        />
 
         <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
-          {((programs.length > 0 && !isExpired) || (expiredPrograms.length > 0 && isExpired)) && (
-            <Flex marginRight="20px" cursor="pointer">
-              {
-                <HStack
-                  spacing="5px"
-                  onClick={() => {
-                    setView(view === 'Grid' ? 'List' : 'Grid')
-                    localStorage.setItem('programView', view === 'Grid' ? 'List' : 'Grid')
-                  }}
-                >
-                  {view === 'Grid' && (
-                    <>
-                      <FiList />
-                      <span>{formatMessage(commonMessages.term.list)}</span>
-                    </>
-                  )}
-                  {view === 'List' && (
-                    <>
-                      <FiGrid />
-                      <span>{formatMessage(commonMessages.term.grid)}</span>
-                    </>
-                  )}
-                </HStack>
-              }
-            </Flex>
-          )}
-          {expiredPrograms.length !== 0 && settings['feature.expired_program_plan.enable'] === '1' && (
+          <ViewSwitch
+            className={view === 'Grid' ? 'member-page-view-list' : 'member-page-view-card'}
+            view={view}
+            onClick={() => {
+              setView(view === 'Grid' ? 'List' : 'Grid')
+              localStorage.setItem('programView', view === 'Grid' ? 'List' : 'Grid')
+            }}
+          />
+
+          {expiredProgramEnrollment.length !== 0 && settings['feature.expired_program_plan.enable'] === '1' && (
             <HStack spacing="12px">
               {options.map(value => {
                 const radio = getRadioProps({ value })
@@ -351,60 +214,35 @@ const EnrolledProgramCollectionBlock: React.VFC<{
         </HStack>
       </Box>
 
-      {programs.length === 0 && expiredPrograms.length > 0 && !isExpired && <p>沒有可觀看的課程</p>}
-      {programs.length === 0 && expiredPrograms.length === 0 && programPackageCounts === 0 && (
-        <div>{formatMessage(productMessages.program.content.noProgram)}</div>
-      )}
-
-      {((programs.length > 0 && !isExpired) || (expiredPrograms.length > 0 && isExpired)) && (
+      {((programEnrollment.length > 0 && !isExpired) || (expiredProgramEnrollment.length > 0 && isExpired)) && (
         <>
           <HStack justifyContent={'space-between'} marginBottom="32px" display={{ base: 'none', md: 'flex' }}>
             <HStack spacing="12px">
-              <InputGroup className="member-page-program-sort" backgroundColor="white">
-                <InputLeftElement>
-                  <BiSort />
-                </InputLeftElement>
-                <StyledSelect
-                  onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setSort(event.target.value)}
-                  defaultValue={sort}
-                >
-                  {sortOptions.map(s => (
-                    <option key={s.value} value={s.value}>
-                      {s.name}
-                    </option>
-                  ))}
-                </StyledSelect>
-              </InputGroup>
+              <CustomChakraSelect
+                className="member-page-program-sort"
+                leftIcon={<BiSort />}
+                options={sortOptions}
+                defaultValue={sort}
+                onChange={event => setSort(event.target.value)}
+                disabled={programs.length === 0}
+              />
               {!isExpired && (
-                <InputGroup className="member-page-program-filter" backgroundColor="white">
-                  <InputLeftElement>
-                    <RiFilter2Fill />
-                  </InputLeftElement>
-                  <StyledSelect
-                    default={filter}
-                    onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setFilter(event.target.value)}
-                  >
-                    {filterOptions.map(f => (
-                      <option key={f.value} value={f.value}>
-                        {f.name}
-                      </option>
-                    ))}
-                  </StyledSelect>
-                </InputGroup>
+                <CustomChakraSelect
+                  className="member-page-program-filter"
+                  leftIcon={<RiFilter2Fill />}
+                  options={filterOptions}
+                  defaultValue={filter}
+                  onChange={event => setFilter(event.target.value)}
+                  disabled={programs.length === 0}
+                />
               )}
             </HStack>
-            <InputGroup className="member-page-program-search" width="fit-content" backgroundColor="white">
-              <Input
-                placeholder="搜尋關鍵字"
-                value={search}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setSearch(event.target.value.trim().toLowerCase())
-                }
-              />
-              <InputRightElement>
-                <BiSearch />
-              </InputRightElement>
-            </InputGroup>
+            <CustomSearchInput
+              className="member-page-program-search"
+              placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
+              width="it-content"
+              onChange={event => setSearch(event.target.value)}
+            />
           </HStack>
 
           <Flex
@@ -412,7 +250,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
             flexDirection={view === 'List' ? 'column' : 'row'}
             wrap={view === 'List' ? 'nowrap' : 'wrap'}
           >
-            {(isExpired ? expiredPrograms : programs).map((program, index) => (
+            {programs.map((program, index) => (
               <Fragment key={index}>
                 {view === 'Grid' && (
                   <Box
@@ -432,9 +270,10 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                       abstract={program.abstract || ''}
                       lastViewDate={program.lastViewedAt}
                       viewRate={program.viewRate}
+                      datetimeEnabled={datetimeEnabled}
                       withProgress={!isExpired}
                       isExpired={isExpired}
-                      previousPage={`members_${currentMemberId}`}
+                      previousPage={`members_${memberId}`}
                     />
                   </Box>
                 )}
@@ -452,9 +291,10 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                       abstract={program.abstract || ''}
                       lastViewDate={program.lastViewedAt}
                       viewRate={program.viewRate}
+                      datetimeEnabled={datetimeEnabled}
                       withProgress={!isExpired}
                       isExpired={isExpired}
-                      previousPage={`members_${currentMemberId}`}
+                      previousPage={`members_${memberId}`}
                     />
                   </Box>
                 )}
@@ -462,6 +302,16 @@ const EnrolledProgramCollectionBlock: React.VFC<{
             ))}
           </Flex>
         </>
+      )}
+
+      {programEnrollment.length === 0 && expiredProgramEnrollment.length > 0 && !isExpired && (
+        <p>{formatMessage(productMessages.program.content.noEnrolledProgram)}</p>
+      )}
+      {programEnrollment.length === 0 && expiredProgramEnrollment.length === 0 && programPackageCounts === 0 && (
+        <p>{formatMessage(productMessages.program.content.noProgram)}</p>
+      )}
+      {search !== '' && programCounts > 0 && programs.length === 0 && (
+        <p>{formatMessage(productMessages.program.content.noSearchEnrolledProgram)}</p>
       )}
     </div>
   )

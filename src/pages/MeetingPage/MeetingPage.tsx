@@ -6,7 +6,9 @@ import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { BooleanParam } from 'serialize-query-params'
 import styled from 'styled-components'
+import { useQueryParams } from 'use-query-params'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import hasura from '../../hasura'
 import LoadingPage from '../LoadingPage'
@@ -31,8 +33,13 @@ const GetMemberByUsername = gql`
 `
 
 const MeetingPage = () => {
-  const { id: appId, settings } = useApp()
+  const { id: appId, settings, loading: loadingAppData } = useApp()
   const { username: managerUsername } = useParams<{ username: string }>()
+  const [{ noHeader, noFooter }] = useQueryParams({
+    noHeader: BooleanParam,
+    noFooter: BooleanParam,
+  })
+
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const categoryCheckboxes = JSON.parse(settings['custom.meeting_page']).categoryCheckboxes as CategoryCheckboxes // array of checkboxes
@@ -50,7 +57,7 @@ const MeetingPage = () => {
 
   const managerId = managerUsername ? memberData?.member_public[0]?.id || undefined : undefined
 
-  if (loading) {
+  if (loading && loadingAppData) {
     return <LoadingPage />
   }
 
@@ -123,7 +130,7 @@ const MeetingPage = () => {
   }
 
   return (
-    <DefaultLayout centeredBox>
+    <DefaultLayout centeredBox noFooter={noFooter} noHeader={noHeader}>
       <StyledForm onSubmit={handleSubmit}>
         <Heading as="h3" size="lg" className="mb-4 text-center">
           {managerUsername} 預約連結
