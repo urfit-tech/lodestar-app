@@ -1,4 +1,3 @@
-import { gql, useQuery } from '@apollo/client'
 import {
   Box,
   Center,
@@ -15,17 +14,16 @@ import {
   useRadioGroup,
 } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { flatten, uniq } from 'ramda'
-import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import React, { Fragment, useEffect, useState } from 'react'
 import { BiSearch, BiSort } from 'react-icons/bi'
 import { FiGrid, FiList } from 'react-icons/fi'
 import { HiFilter } from 'react-icons/hi'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import RadioCard from '../../components/RadioCard'
-import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useExpiredOwnedProducts } from '../../hooks/data'
+import { ProgramEnrollment } from '../../types/program'
 import ProgramCard from './ProgramCard'
 
 const StyledSelect = styled(Select)`
@@ -65,10 +63,14 @@ const ProgramTab = ({ onProgramTabClick, tab }: { onProgramTabClick: (tab: strin
 }
 
 const EnrolledProgramCollectionBlock: React.VFC<{
-  memberId: string
   onProgramTabClick: (tab: string) => void
   programTab: string
-}> = ({ memberId, onProgramTabClick, programTab }) => {
+  programEnrollment: ProgramEnrollment[]
+  expiredProgramEnrollment: ProgramEnrollment[]
+  isError: boolean
+  loading: boolean
+}> = ({ onProgramTabClick, programTab, programEnrollment, expiredProgramEnrollment, isError, loading }) => {
+  const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
   const localStorageView = localStorage.getItem('programView')
@@ -77,39 +79,11 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
   const { settings } = useApp()
-  const { loadingOwnedPrograms, ownedPrograms, errorOwnedPrograms, refetchOwnerPrograms } = useOwnedProgram(memberId)
-  const programIds = ownedPrograms?.map(v => v.programId) || []
-  const { loadingLastView, errorLastView, programLastView } = useProgramLastViewAndCreatorName(programIds, memberId)
-  const { loadingProgress, errorProgress, programContentProgress } = useProgramContentProgress(programIds, memberId)
-
-  const {
-    loadingExpiredOwnedProducts,
-    errorExpiredOwnedProducts,
-    expiredOwnedProducts: expiredOwnedProgramPlans,
-    refetchExpiredOwnedProducts,
-  } = useExpiredOwnedProducts(memberId, 'ProgramPlan')
-
-  const expiredOwnedProgramPackagePlanIds = expiredOwnedProgramPlans.map(v => v.programPackagePlanId)
-
-  const {
-    expiredProgramByProgramPlans,
-    errorExpiredProgramByProgramPlans,
-    refetchExpiredProgramByProgramPlans,
-    loadingExpiredProgramByProgramPlans,
-  } = useProgram(expiredOwnedProgramPackagePlanIds)
-
-  const expiredProgramIds = expiredProgramByProgramPlans.map(programPlan => programPlan.programId)
-
-  const {
-    loadingLastView: loadingExpiredProgramLastView,
-    errorLastView: errorExpiredProgramLastView,
-    programLastView: expiredProgramLastView,
-  } = useProgramLastViewAndCreatorName(expiredProgramIds, memberId)
 
   useEffect(() => {
-    refetchOwnerPrograms && refetchOwnerPrograms()
-    refetchExpiredOwnedProducts && refetchExpiredOwnedProducts()
-    refetchExpiredProgramByProgramPlans && refetchExpiredProgramByProgramPlans()
+    // refetchOwnerPrograms && refetchOwnerPrograms()
+    // refetchExpiredOwnedProducts && refetchExpiredOwnedProducts()
+    // refetchExpiredProgramByProgramPlans && refetchExpiredProgramByProgramPlans()
   })
 
   const options = [
@@ -128,14 +102,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     },
   })
 
-  if (
-    loadingOwnedPrograms ||
-    loadingExpiredOwnedProducts ||
-    loadingExpiredProgramByProgramPlans ||
-    loadingExpiredProgramLastView ||
-    loadingLastView ||
-    loadingProgress
-  ) {
+  if (loading) {
     return (
       <div className="container py-3">
         <div className="d-flex justify-content-between align-items-center mb-3">
@@ -146,16 +113,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     )
   }
 
-  if (
-    errorOwnedPrograms ||
-    errorExpiredOwnedProducts ||
-    errorExpiredProgramByProgramPlans ||
-    errorExpiredProgramLastView ||
-    errorLastView ||
-    errorProgress ||
-    !ownedPrograms ||
-    !expiredOwnedProgramPlans
-  ) {
+  if (isError || !programEnrollment || !expiredProgramEnrollment) {
     return (
       <div className="container py-3">
         <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
@@ -164,82 +122,32 @@ const EnrolledProgramCollectionBlock: React.VFC<{
     )
   }
 
-  const programs = ownedPrograms
-    .map(p => {
-      const programId = p.programId
-      const matchLastView = programLastView?.find(l => l.programId === p.programId)
-      const programProgress = programContentProgress?.reduce(
-        (
-          progressResult: {
-            [key: string]: { programId: string; title: string; programProgress: number; count: number }
-          },
-          progress,
-        ) => {
-          const progressProgramId = progress.programId
-          if (progress.programId === p.programId) {
-            if (!progressResult[progressProgramId]) {
-              progressResult[progressProgramId] = {
-                programId: progress.programId,
-                title: progress.programTitle,
-                programProgress: progress.progress,
-                count: 1,
-              }
-            } else {
-              progressResult[progressProgramId] = {
-                programId: progress.programId,
-                title: progress.programTitle,
-                programProgress: progressResult[progressProgramId].programProgress + progress.progress,
-                count: progressResult[progressProgramId].count + 1,
-              }
-            }
-          }
-          return progressResult
-        },
-        {},
-      )
-
-      return {
-        ...p,
-        lastView: matchLastView?.lastView,
-        programProgress:
-          programProgress && programProgress[programId]
-            ? {
-                programId: programProgress[programId].programId,
-                title: programProgress[programId].title,
-                progress: programProgress[programId].programProgress,
-                contentBodyLength: programProgress[programId].count,
-              }
-            : {},
-        creatorName: p.creatorName || '',
-      }
-    })
+  const programs = programEnrollment
     .sort((a, b) => {
       if (sort === 'newPurchaseDate') {
-        return +new Date(b.deliveredAt) - +new Date(a.deliveredAt)
+        return +new Date(b.deliveredAt || 0) - +new Date(a.deliveredAt || 0)
       }
       if (sort === 'oldPurchaseDate') {
-        return +new Date(a.deliveredAt) - +new Date(b.deliveredAt)
+        return +new Date(a.deliveredAt || 0) - +new Date(b.deliveredAt || 0)
       }
       if (sort === 'newLastViewDate') {
-        return +new Date(b.lastView) - +new Date(a.lastView)
+        return +new Date(b.lastViewedAt || 0) - +new Date(a.lastViewedAt || 0)
       }
       if (sort === 'oldLastViewDate') {
-        return +new Date(a.lastView) - +new Date(b.lastView)
+        return +new Date(a.lastViewedAt || 0) - +new Date(b.lastViewedAt || 0)
       }
       if (sort === 'lessCreatorStrokes') {
-        return a.creatorName.localeCompare(b.creatorName, 'zh-Hant')
+        return getCreatorName(a).localeCompare(getCreatorName(b), 'zh-Hant')
       }
       if (sort === 'moreCreatorStrokes') {
-        return b.creatorName.localeCompare(a.creatorName, 'zh-Hant')
+        return getCreatorName(b).localeCompare(getCreatorName(a), 'zh-Hant')
       }
       return 0
     })
     .filter(program => {
-      const progress = program.programProgress?.progress || 0
-      const contentBodyLength = program.programProgress?.contentBodyLength || 0
-      const viewRate = Math.floor((progress / contentBodyLength) * 100)
+      const viewRate = Math.floor(program.viewRate * 100)
       if (search !== '') {
-        if (program.programTitle.includes(search) || program.creatorName.includes(search)) {
+        if (program.title.includes(search) || getCreatorName(program).includes(search)) {
           return filter === 'inProgress'
             ? viewRate > 0 && viewRate < 100
             : filter === 'Done'
@@ -264,54 +172,31 @@ const EnrolledProgramCollectionBlock: React.VFC<{
       }
     })
 
-  const expiredPrograms = expiredProgramByProgramPlans
-    .map(program => {
-      const programId = program.programId
-      const matchProgramPlan = expiredOwnedProgramPlans.find(
-        programPlan => programPlan.programPackagePlanId === program.planId,
-      )
-      const matchLastView = expiredProgramLastView?.find(l => l.programId === program.programId)
-      const latestDeliveredAt: { [key: string]: Date } = {}
-
-      if (matchProgramPlan) {
-        const deliveredAt = matchProgramPlan.deliveredAt
-        if (!latestDeliveredAt[programId] || (deliveredAt && deliveredAt > latestDeliveredAt[programId])) {
-          latestDeliveredAt[programId] = deliveredAt
-        }
-      }
-
-      return {
-        programId,
-        programTitle: program.programTitle || '',
-        creatorName: program.creatorName || '',
-        lastView: matchLastView?.lastView,
-        deliveredAt: latestDeliveredAt[programId] || undefined,
-      }
-    })
+  const expiredPrograms = expiredProgramEnrollment
     .sort((a, b) => {
       if (sort === 'newPurchaseDate') {
-        return +new Date(b.deliveredAt) - +new Date(a.deliveredAt)
+        return +new Date(b.deliveredAt || 0) - +new Date(a.deliveredAt || 0)
       }
       if (sort === 'oldPurchaseDate') {
-        return +new Date(a.deliveredAt) - +new Date(b.deliveredAt)
+        return +new Date(a.deliveredAt || 0) - +new Date(b.deliveredAt || 0)
       }
       if (sort === 'newLastViewDate') {
-        return +new Date(b.lastView) - +new Date(a.lastView)
+        return +new Date(b.lastViewedAt || 0) - +new Date(a.lastViewedAt || 0)
       }
       if (sort === 'oldLastViewDate') {
-        return +new Date(a.lastView) - +new Date(b.lastView)
+        return +new Date(a.lastViewedAt || 0) - +new Date(b.lastViewedAt || 0)
       }
       if (sort === 'lessCreatorStrokes') {
-        return a.creatorName.localeCompare(b.creatorName, 'zh-Hant')
+        return getCreatorName(a).localeCompare(getCreatorName(b), 'zh-Hant')
       }
       if (sort === 'moreCreatorStrokes') {
-        return b.creatorName.localeCompare(a.creatorName, 'zh-Hant')
+        return getCreatorName(b).localeCompare(getCreatorName(a), 'zh-Hant')
       }
       return 0
     })
     .filter(program => {
       if (search !== '') {
-        return program.programTitle.includes(search) || program.creatorName.includes(search)
+        return program.title.includes(search) || getCreatorName(program).includes(search)
       } else {
         return true
       }
@@ -319,11 +204,11 @@ const EnrolledProgramCollectionBlock: React.VFC<{
 
   return (
     <div className="container py-3">
-      {ownedPrograms.length === 0 && expiredPrograms.length === 0 && (
+      {programEnrollment.length === 0 && expiredProgramEnrollment.length === 0 && (
         <div>{formatMessage(productMessages.program.content.noProgram)}</div>
       )}
 
-      {(ownedPrograms.length !== 0 || expiredPrograms.length !== 0) && (
+      {(programEnrollment.length !== 0 || expiredProgramEnrollment.length !== 0) && (
         <>
           <Box
             display="flex"
@@ -359,7 +244,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                   </HStack>
                 }
               </Flex>
-              {expiredPrograms.length !== 0 && settings['feature.expired_program_plan.enable'] === '1' && (
+              {expiredProgramEnrollment.length !== 0 && settings['feature.expired_program_plan.enable'] === '1' && (
                 <HStack spacing="12px">
                   {options.map(value => {
                     const radio = getRadioProps({ value })
@@ -426,32 +311,44 @@ const EnrolledProgramCollectionBlock: React.VFC<{
           </HStack>
           <div className="row">
             {(isExpired ? expiredPrograms : programs).map(program => (
-              <Fragment key={program.programId}>
+              <Fragment key={program.id}>
                 {view === 'Grid' && (
                   <div className="col-12 mb-4 col-md-6 col-lg-4">
                     <ProgramCard
-                      memberId={memberId}
-                      programId={program.programId}
+                      programId={program.id}
+                      view={view}
+                      roles={program.roles}
+                      coverThumbnailUrl={program.coverThumbnailUrl}
+                      coverUrl={program.coverUrl}
+                      coverMobileUrl={program.coverMobileUrl}
+                      deliveredAt={program.deliveredAt}
+                      title={program.title}
+                      abstract={program.abstract || ''}
+                      lastViewDate={program.lastViewedAt}
+                      viewRate={program.viewRate}
                       withProgress={!isExpired}
                       isExpired={isExpired}
-                      previousPage={`members_${memberId}`}
-                      programDeliveredAt={program.deliveredAt}
-                      view={view}
-                      programDatetimeEnabled={settings['program.datetime.enabled'] === '1'}
+                      previousPage={`members_${currentMemberId}`}
                     />
                   </div>
                 )}
                 {view === 'List' && (
                   <Box display="flex" width="100%" marginBottom="12px">
                     <ProgramCard
-                      memberId={memberId}
-                      programId={program.programId}
+                      programId={program.id}
+                      view={view}
+                      roles={program.roles}
+                      coverThumbnailUrl={program.coverThumbnailUrl}
+                      coverUrl={program.coverUrl}
+                      coverMobileUrl={program.coverMobileUrl}
+                      deliveredAt={program.deliveredAt}
+                      title={program.title}
+                      abstract={program.abstract || ''}
+                      lastViewDate={program.lastViewedAt}
+                      viewRate={program.viewRate}
                       withProgress={!isExpired}
                       isExpired={isExpired}
-                      previousPage={`members_${memberId}`}
-                      programDeliveredAt={program.deliveredAt}
-                      view={view}
-                      programDatetimeEnabled={settings['program.datetime.enabled'] === '1'}
+                      previousPage={`members_${currentMemberId}`}
                     />
                   </Box>
                 )}
@@ -464,269 +361,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   )
 }
 
-export const useOwnedProgram = (memberId: string) => {
-  const { loading, data, error, refetch } = useQuery<hasura.GetOwnedPrograms, hasura.GetOwnedProgramsVariables>(
-    gql`
-      query GetOwnedPrograms($memberId: String!) {
-        program_enrollment(where: { member_id: { _eq: $memberId } }) {
-          program_id
-          product_delivered_at
-          program {
-            title
-            program_roles(where: { name: { _eq: "instructor" } }, order_by: [{ created_at: asc }, { id: desc }]) {
-              member {
-                name
-              }
-            }
-          }
-        }
-        program_plan_enrollment(where: { member_id: { _eq: $memberId } }) {
-          program_plan {
-            program_id
-            program {
-              title
-              program_roles(
-                where: { name: { _eq: "instructor" } }
-                order_by: [{ created_at: asc }, { id: desc }]
-                limit: 1
-              ) {
-                member {
-                  name
-                }
-              }
-            }
-          }
-          product_delivered_at
-        }
-      }
-    `,
-    { variables: { memberId } },
-  )
-
-  const programIds = data
-    ? uniq(
-        flatten([
-          ...data.program_enrollment.map(programEnrollment => programEnrollment.program_id),
-          ...data.program_plan_enrollment.map(programPlanEnrollment =>
-            programPlanEnrollment.program_plan ? programPlanEnrollment.program_plan.program_id : null,
-          ),
-        ]),
-      )
-    : []
-
-  const ownedPrograms:
-    | {
-        programId: string
-        programTitle: string
-        creatorName: string
-        deliveredAt: Date
-      }[]
-    | null =
-    loading || error || !data
-      ? null
-      : programIds.map(programId => {
-          const programEnrollment = data.program_enrollment.find(enrollment => enrollment.program_id === programId)
-          const matchProgramPlanEnrollment = data.program_plan_enrollment.find(
-            programPlan => programPlan.program_plan?.program_id === programId,
-          )
-
-          const programTitle = matchProgramPlanEnrollment
-            ? matchProgramPlanEnrollment.program_plan?.program.title || ''
-            : programEnrollment?.program?.title || ''
-
-          const creatorName = matchProgramPlanEnrollment
-            ? matchProgramPlanEnrollment.program_plan?.program.program_roles.map(r => r.member?.name)[0] || ''
-            : programEnrollment?.program?.program_roles.map(r => r.member?.name)[0] || ''
-
-          const deliveredAt = matchProgramPlanEnrollment
-            ? matchProgramPlanEnrollment.product_delivered_at
-            : programEnrollment?.product_delivered_at
-
-          return {
-            programId,
-            programTitle,
-            creatorName,
-            deliveredAt,
-          }
-        })
-
-  return {
-    refetchOwnerPrograms: refetch,
-    loadingOwnedPrograms: loading,
-    errorOwnedPrograms: error,
-    ownedPrograms,
-    programIds,
-  }
-}
-
-export const useProgram = (programPlanIds: string[]) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetProgramIdsByProgramPlanIds,
-    hasura.GetProgramIdsByProgramPlanIdsVariables
-  >(
-    gql`
-      query GetProgramIdsByProgramPlanIds($programPlanIds: [uuid!]) {
-        program_plan(where: { id: { _in: $programPlanIds } }, distinct_on: program_id) {
-          id
-          program {
-            id
-            title
-            program_roles(
-              where: { name: { _eq: "instructor" } }
-              order_by: [{ created_at: asc }, { id: desc }]
-              limit: 1
-            ) {
-              member {
-                name
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      variables: { programPlanIds },
-    },
-  )
-
-  const expiredProgramByProgramPlans =
-    loading || error || !data
-      ? []
-      : data.program_plan.map(programPlan => ({
-          planId: programPlan.id,
-          programId: programPlan.program.id,
-          programTitle: programPlan.program.title,
-          creatorName: programPlan.program.program_roles.map(r => r.member?.name)[0] || '',
-        }))
-
-  return {
-    loadingExpiredProgramByProgramPlans: loading,
-    errorExpiredProgramByProgramPlans: error,
-    expiredProgramByProgramPlans,
-    refetchExpiredProgramByProgramPlans: refetch,
-  }
-}
-
-const useProgramLastViewAndCreatorName = (programIds: string[], memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetProgramContentLastViewAndCreatorNameByProgramIds,
-    hasura.GetProgramContentLastViewAndCreatorNameByProgramIdsVariables
-  >(
-    gql`
-      query GetProgramContentLastViewAndCreatorNameByProgramIds($programIds: [uuid!]!, $memberId: String!) {
-        program(
-          where: {
-            id: { _in: $programIds }
-            program_content_progress_enrollments: {
-              program_content: { published_at: { _is_null: false } }
-              member_id: { _eq: $memberId }
-            }
-          }
-        ) {
-          id
-          title
-          program_content_progress_enrollments(order_by: { updated_at: desc }, limit: 1) {
-            updated_at
-          }
-          program_roles(
-            where: { name: { _eq: "instructor" } }
-            order_by: [{ created_at: asc }, { id: desc }]
-            limit: 1
-          ) {
-            member {
-              name
-            }
-          }
-        }
-      }
-    `,
-    { variables: { programIds, memberId } },
-  )
-
-  const programLastView =
-    loading || error || !data
-      ? undefined
-      : data.program
-          .map(p =>
-            p.program_content_progress_enrollments.map(progress => ({
-              programId: p.id,
-              title: p.title,
-              creatorName: p.program_roles.map(r => r.member?.name)[0] || '',
-              lastView: progress.updated_at,
-            })),
-          )
-          .flat()
-
-  return {
-    loadingLastView: loading,
-    errorLastView: error,
-    programLastView,
-    refetchLastView: refetch,
-  }
-}
-
-const useProgramContentProgress = (programIds: string[], memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetProgramContentProgressByProgramIds,
-    hasura.GetProgramContentProgressByProgramIdsVariables
-  >(
-    gql`
-      query GetProgramContentProgressByProgramIds($programIds: [uuid!]!, $memberId: String!) {
-        program_content_body(
-          where: {
-            program_contents: {
-              program_content_section: {
-                program: { published_at: { _is_null: false } }
-                program_id: { _in: $programIds }
-              }
-            }
-          }
-        ) {
-          type
-          program_contents(where: { published_at: { _is_null: false } }, order_by: { published_at: desc }) {
-            program_content_section {
-              program {
-                id
-                title
-              }
-            }
-            program_content_progress(where: { member_id: { _eq: $memberId } }) {
-              id
-              progress
-              updated_at
-            }
-          }
-        }
-      }
-    `,
-    { variables: { programIds, memberId } },
-  )
-
-  const programContentProgress = useMemo(
-    () =>
-      loading || error || !data
-        ? undefined
-        : flatten(
-            data.program_content_body.map(contentBody =>
-              contentBody.program_contents.map(content => {
-                return {
-                  programId: content.program_content_section.program.id,
-                  programTitle: content.program_content_section.program.title,
-                  progress: content.program_content_progress[0]?.progress || 0,
-                  updatedAt: content.program_content_progress[0]?.updated_at || undefined,
-                }
-              }),
-            ),
-          ),
-    [data, error, loading],
-  )
-
-  return {
-    loadingProgress: loading,
-    errorProgress: error,
-    programContentProgress,
-    refetchProgress: refetch,
-  }
-}
+const getCreatorName = (program: ProgramEnrollment) =>
+  program.roles.filter(role => role.name === 'instructor')[0]?.memberName || ''
 
 export default EnrolledProgramCollectionBlock

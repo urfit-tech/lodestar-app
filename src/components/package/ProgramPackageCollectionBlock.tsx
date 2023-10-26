@@ -1,4 +1,3 @@
-import { gql, useQuery } from '@apollo/client'
 import {
   Box,
   Center,
@@ -17,6 +16,7 @@ import {
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { Fragment, useState } from 'react'
 import { BiSearch, BiSort } from 'react-icons/bi'
 import { FiGrid, FiList } from 'react-icons/fi'
@@ -24,10 +24,9 @@ import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CustomRatioImage } from '../../components/common/Image'
-import hasura from '../../hasura'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useExpiredOwnedProducts, useValidOwnedProducts } from '../../hooks/data'
 import EmptyCover from '../../images/empty-cover.png'
+import { ProgramPackageEnrollment } from '../../types/programPackage'
 import RadioCard from '../RadioCard'
 
 const StyledCard = styled.div<{ view?: string }>`
@@ -118,10 +117,21 @@ const ProgramTab = ({ onProgramTabClick, tab }: { onProgramTabClick: (tab: strin
 }
 
 const ProgramPackageCollectionBlock: React.VFC<{
-  memberId: string
   onProgramTabClick: (tab: string) => void
   programTab: string
-}> = ({ memberId, programTab, onProgramTabClick }) => {
+  programPackageEnrollment: ProgramPackageEnrollment[]
+  expiredProgramPackageEnrollment: ProgramPackageEnrollment[]
+  loading: boolean
+  isError: boolean
+}> = ({
+  programTab,
+  onProgramTabClick,
+  programPackageEnrollment,
+  expiredProgramPackageEnrollment,
+  loading,
+  isError,
+}) => {
+  const { currentMemberId } = useAuth()
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const [isExpired, setIsExpired] = useState(false)
@@ -129,65 +139,19 @@ const ProgramPackageCollectionBlock: React.VFC<{
   const [view, setView] = useState(localStorageView ? localStorageView : 'Grid')
   const [sort, setSort] = useState('newPurchaseDate')
   const [search, setSearch] = useState('')
-  const { loadingExpiredOwnedProducts, expiredOwnedProducts: expiredOwnedProgramPackagePlans } =
-    useExpiredOwnedProducts(memberId, 'ProgramPackagePlan')
-  const { loadingValidOwnedProducts, validOwnedProducts: validOwnedProgramPackagePlans } = useValidOwnedProducts(
-    memberId,
-    'ProgramPackagePlan',
-  )
-  const ownedProgramPackagePlanIds = validOwnedProgramPackagePlans.map(v => v.programPackagePlanId)
-  const expiredOwnedProgramPackagePlanIds = expiredOwnedProgramPackagePlans.map(v => v.programPackagePlanId)
-  const { loadingExpiredProgramPackages, errorExpiredProgramPackages, expiredProgramPackages } =
-    useExpiredProgramPackages(expiredOwnedProgramPackagePlanIds)
-  const {
-    loadingProgramPackages: loadingValidProgramPackages,
-    errorProgramPackages: errorValidProgramPackages,
-    programPackages: validOwnedProgramPackages,
-  } = useProgramPackages(ownedProgramPackagePlanIds, memberId)
-  const programIds = (isExpired ? expiredProgramPackages : validOwnedProgramPackages)
-    .map(v => v.programs.map(v => v.programId))
-    .flat()
-  const { programContent } = useProgramContentIds(programIds, memberId)
-  const programPackage = (isExpired ? expiredProgramPackages : validOwnedProgramPackages)
-    .map(programPackage => {
-      const newPrograms = programPackage.programs.map(p => {
-        const content = programContent?.find(contentItem => contentItem.programId === p.programId)
-
-        return {
-          ...p,
-          lastView: content ? content.lastView : undefined,
-        }
-      })
-
-      const recentLastView = newPrograms.reduce((latest, program) => {
-        if (!latest) return program.lastView
-        if (!program.lastView) return latest
-        return new Date(program.lastView) > new Date(latest) ? program.lastView : latest
-      }, 0)
-
-      const deliveredAt = (isExpired ? expiredOwnedProgramPackagePlans : validOwnedProgramPackagePlans).find(
-        p => programPackage.planId === p.programPackagePlanId,
-      )?.deliveredAt
-
-      return {
-        ...programPackage,
-        programs: newPrograms,
-        recentLastView,
-        deliveredAt,
-      }
-    })
+  const programPackage = (isExpired ? expiredProgramPackageEnrollment : programPackageEnrollment)
     .sort((a, b) => {
       if (sort === 'newPurchaseDate') {
-        return +new Date(b.deliveredAt) - +new Date(a.deliveredAt)
+        return +new Date(b.deliveredAt || 0) - +new Date(a.deliveredAt || 0)
       }
       if (sort === 'oldPurchaseDate') {
-        return +new Date(a.deliveredAt) - +new Date(b.deliveredAt)
+        return +new Date(a.deliveredAt || 0) - +new Date(b.deliveredAt || 0)
       }
       if (sort === 'newLastViewDate') {
-        return +new Date(b.recentLastView) - +new Date(a.recentLastView)
+        return +new Date(b.lastViewedAt || 0) - +new Date(a.lastViewedAt || 0)
       }
       if (sort === 'oldLastViewDate') {
-        return +new Date(a.recentLastView) - +new Date(b.recentLastView)
+        return +new Date(a.lastViewedAt || 0) - +new Date(b.lastViewedAt || 0)
       }
       return 0
     })
@@ -215,12 +179,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
     },
   })
 
-  if (
-    loadingValidOwnedProducts ||
-    loadingExpiredOwnedProducts ||
-    loadingValidProgramPackages ||
-    loadingExpiredProgramPackages
-  ) {
+  if (loading) {
     return (
       <div className="container py-3">
         <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
@@ -229,7 +188,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
     )
   }
 
-  if (errorValidProgramPackages || errorExpiredProgramPackages) {
+  if (isError) {
     return (
       <div className="container py-3">
         <ProgramTab onProgramTabClick={onProgramTabClick} tab={programTab} />
@@ -273,18 +232,19 @@ const ProgramPackageCollectionBlock: React.VFC<{
               </HStack>
             }
           </Flex>
-          {settings['feature.expired_program_package_plan.enable'] === '1' && expiredProgramPackages.length > 0 && (
-            <HStack spacing="12px">
-              {options.map(value => {
-                const radio = getRadioProps({ value })
-                return (
-                  <RadioCard key={value} {...radio} size="md">
-                    {value}
-                  </RadioCard>
-                )
-              })}
-            </HStack>
-          )}
+          {settings['feature.expired_program_package_plan.enable'] === '1' &&
+            expiredProgramPackageEnrollment.length > 0 && (
+              <HStack spacing="12px">
+                {options.map(value => {
+                  const radio = getRadioProps({ value })
+                  return (
+                    <RadioCard key={value} {...radio} size="md">
+                      {value}
+                    </RadioCard>
+                  )
+                })}
+              </HStack>
+            )}
         </HStack>
       </Box>
 
@@ -329,7 +289,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
                   to={
                     isExpired
                       ? `/program-packages/${programPackage.id}`
-                      : `/program-packages/${programPackage.id}/contents?memberId=${memberId}`
+                      : `/program-packages/${programPackage.id}/contents?memberId=${currentMemberId}`
                   }
                 >
                   <StyledCard>
@@ -344,8 +304,8 @@ const ProgramPackageCollectionBlock: React.VFC<{
                       {settings['program.datetime.enabled'] === '1' && (
                         <StyledDescription>
                           {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
-                          {programPackage.recentLastView
-                            ? ` / ${dayjs(programPackage.recentLastView).format('YYYY-MM-DD')} 上次觀看`
+                          {programPackage.lastViewedAt
+                            ? ` / ${dayjs(programPackage.lastViewedAt).format('YYYY-MM-DD')} 上次觀看`
                             : ` / 尚未觀看`}
                         </StyledDescription>
                       )}
@@ -361,7 +321,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
                     to={
                       isExpired
                         ? `/program-packages/${programPackage.id}`
-                        : `/program-packages/${programPackage.id}/contents?memberId=${memberId}`
+                        : `/program-packages/${programPackage.id}/contents?memberId=${currentMemberId}`
                     }
                   >
                     <StyledCard view={view}>
@@ -378,8 +338,8 @@ const ProgramPackageCollectionBlock: React.VFC<{
                         {settings['program.datetime.enabled'] === '1' && (
                           <StyledDescription view={view}>
                             {`${dayjs(programPackage.deliveredAt).format('YYYY-MM-DD')} 購買`}
-                            {programPackage.recentLastView
-                              ? ` / ${dayjs(programPackage.recentLastView).format('YYYY-MM-DD')} 上次觀看`
+                            {programPackage.lastViewedAt
+                              ? ` / ${dayjs(programPackage.lastViewedAt).format('YYYY-MM-DD')} 上次觀看`
                               : ` / 尚未觀看`}
                           </StyledDescription>
                         )}
@@ -397,218 +357,3 @@ const ProgramPackageCollectionBlock: React.VFC<{
 }
 
 export default ProgramPackageCollectionBlock
-
-const useProgramPackages = (programPackagePlanIds: string[], memberId: string) => {
-  const { loading, error, data } = useQuery<
-    hasura.GetProgramPackageByProgramPackagePlanIds,
-    hasura.GetProgramPackageByProgramPackagePlanIdsVariables
-  >(
-    gql`
-      query GetProgramPackageByProgramPackagePlanIds($programPackagePlanIds: [uuid!], $memberId: String!) {
-        program_package_plan(
-          where: {
-            id: { _in: $programPackagePlanIds }
-            program_package_plan_enrollments: { member_id: { _eq: $memberId } }
-          }
-          distinct_on: program_package_id
-        ) {
-          id
-          is_tempo_delivery
-          program_package {
-            id
-            cover_url
-            title
-            program_package_programs {
-              program {
-                id
-                title
-              }
-              program_tempo_deliveries {
-                id
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      variables: { programPackagePlanIds, memberId },
-    },
-  )
-
-  const programPackages =
-    data?.program_package_plan
-      .map(v => ({
-        id: v.program_package?.id,
-        coverUrl: v.program_package?.cover_url || undefined,
-        title: v.program_package?.title,
-        planId: v.id,
-        programs: v.program_package.program_package_programs.map(v => ({
-          programId: v.program.id,
-          isDelivered: !!v.program_tempo_deliveries.length,
-        })),
-        isTempoDelivery: v.is_tempo_delivery,
-      }))
-      // TODO: if product is unpublished, optimize the user experience
-      .filter(w => !!w.id) || []
-
-  return {
-    loadingProgramPackages: loading,
-    errorProgramPackages: error,
-    programPackages,
-  }
-}
-
-const useExpiredProgramPackages = (programPackagePlanIds: string[]) => {
-  const { loading, error, data } = useQuery<
-    hasura.GetExpiredProgramPackageByProgramPackagePlanIds,
-    hasura.GetExpiredProgramPackageByProgramPackagePlanIdsVariables
-  >(
-    gql`
-      query GetExpiredProgramPackageByProgramPackagePlanIds($programPackagePlanIds: [uuid!]) {
-        program_package_plan(where: { id: { _in: $programPackagePlanIds } }, distinct_on: program_package_id) {
-          id
-          is_tempo_delivery
-          program_package {
-            id
-            cover_url
-            title
-            program_package_programs {
-              program {
-                id
-                title
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      variables: { programPackagePlanIds },
-    },
-  )
-
-  const expiredProgramPackages =
-    data?.program_package_plan
-      .map(v => ({
-        id: v.program_package?.id,
-        coverUrl: v.program_package?.cover_url || undefined,
-        title: v.program_package?.title,
-        planId: v.id,
-        programs: v.program_package.program_package_programs.map(v => ({
-          programId: v.program.id,
-        })),
-        isTempoDelivery: v.is_tempo_delivery,
-      }))
-      // TODO: if product is unpublished, optimize the user experience
-      .filter(w => !!w.id) || []
-
-  return {
-    loadingExpiredProgramPackages: loading,
-    errorExpiredProgramPackages: error,
-    expiredProgramPackages,
-  }
-}
-
-export const useProgramContentIds = (programIds: string[], memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GetProgramContent, hasura.GetProgramContentVariables>(
-    gql`
-      query GetProgramContent($programIds: [uuid!]!, $memberId: String!) {
-        program(where: { id: { _in: $programIds } }) {
-          id
-          program_content_progress_enrollments(order_by: { updated_at: desc }, limit: 1) {
-            updated_at
-          }
-        }
-        program_content_log(
-          where: {
-            program_content: { program_content_section: { program_id: { _in: $programIds } } }
-            member_id: { _eq: $memberId }
-          }
-          order_by: { created_at: desc }
-          limit: 1
-        ) {
-          program_content {
-            program_content_section {
-              program_id
-            }
-          }
-          created_at
-        }
-      }
-    `,
-    { variables: { programIds, memberId } },
-  )
-
-  const programContent = data?.program.map(p => {
-    const progressProgressId = p.id
-    const progressLastUpdatedAt = p.program_content_progress_enrollments[0]?.updated_at
-
-    const contentLog = data?.program_content_log.find(
-      logItem => logItem.program_content.program_content_section.program_id === progressProgressId,
-    )
-    const contentLogLastView = contentLog?.created_at
-
-    const lastView =
-      contentLogLastView && (!progressLastUpdatedAt || contentLogLastView > progressLastUpdatedAt)
-        ? contentLogLastView
-        : progressLastUpdatedAt
-
-    return {
-      programId: progressProgressId,
-      lastView,
-    }
-  })
-
-  return {
-    loadingProgramContentIds: loading,
-    errorProgramContentIds: error,
-    programContent,
-    refetchProgress: refetch,
-  }
-}
-
-export const useProgramContentLastView = (programContentIds: string[], memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetProgramContentLastView,
-    hasura.GetProgramContentLastViewVariables
-  >(
-    gql`
-      query GetProgramContentLastView($programContentIds: [uuid!]!, $memberId: String!) {
-        program_content_log(
-          where: { program_content_id: { _in: $programContentIds }, member_id: { _eq: $memberId } }
-          order_by: { created_at: desc }
-          limit: 1
-        ) {
-          program_content_id
-          created_at
-        }
-        program_content_progress(
-          where: { program_content_id: { _in: $programContentIds }, member_id: { _eq: $memberId } }
-          order_by: { updated_at: desc }
-          limit: 1
-        ) {
-          program_content_id
-          updated_at
-        }
-      }
-    `,
-    { variables: { programContentIds, memberId } },
-  )
-
-  const programContentLastView = data?.program_content_log.map(contentLog =>
-    data.program_content_progress.map(contentProgress => ({
-      contentLogContentId: contentLog.program_content_id,
-      contentLogCreatedAt: contentLog.created_at,
-      contentProgressId: contentProgress.program_content_id,
-      contentProgressUpdatedAt: contentProgress.updated_at,
-    })),
-  )
-
-  return {
-    loadingProgramContentLastView: loading,
-    errorProgramContentLastView: error,
-    programContentLastView,
-    refetchProgramContentLastView: refetch,
-  }
-}

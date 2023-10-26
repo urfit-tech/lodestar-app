@@ -73,7 +73,7 @@ export type PodcastProgramCardProps = {
     name: string
   } | null
   salePrice?: number
-  listPrice: number
+  listPrice?: number
   duration: number
   durationSecond: number
   variant?: 'progress'
@@ -117,7 +117,7 @@ const PodcastProgramCard: React.VFC<PodcastProgramCardProps> = ({
             <span>{instructor?.name}</span>
           </div>
 
-          {!noPrice && isIndividuallySale && (
+          {!noPrice && listPrice && isIndividuallySale && (
             <div className="text-right">
               <PriceLabel variant="inline" listPrice={listPrice} salePrice={salePrice} />
             </div>
