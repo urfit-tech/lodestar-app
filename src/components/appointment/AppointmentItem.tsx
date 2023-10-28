@@ -98,10 +98,11 @@ const AppointmentItem: React.VFC<{
 
   let variant: 'bookable' | 'closed' | 'booked' | 'meetingFull' | 'overlap' | undefined
 
-  if (overlapCreatorMeets.length >= 1)
+  if (overlapCreatorMeets.length >= 1) {
     overLapPeriods &&
       !overLapPeriods.some(overLapPeriod => overLapPeriod === appointmentPlan.id) &&
       onOverlapPeriodsChange?.([...overLapPeriods, appointmentPlan.id])
+  }
 
   if (isPeriodExcluded) {
     variant = 'closed'
