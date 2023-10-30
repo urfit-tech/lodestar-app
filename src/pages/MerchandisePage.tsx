@@ -47,7 +47,7 @@ const MerchandisePage: React.VFC = () => {
     <DefaultLayout white>
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       {/* // TODO: need to extend page helmet */}
-      {!loadingApp && <PageHelmet title={merchandise?.title} />}
+      {!loadingApp && <PageHelmet title={merchandise?.title} isNoIndex={!merchandise?.publishedAt} />}
       <StyledContainer className="container">
         <div className="my-4">{merchandise && <MerchandiseBlock merchandise={merchandise} withPaymentButton />}</div>
 

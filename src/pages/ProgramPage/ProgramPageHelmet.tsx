@@ -27,6 +27,7 @@ const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentPr
         description={program.metaTag?.seo?.description || program.description || ''}
         keywords={program.metaTag?.seo?.keywords?.split(',') || program.tags}
         onLoaded={onLoaded}
+        isNoIndex={program.isPrivate || !program.publishedAt}
         jsonLd={[
           {
             '@context': 'https://schema.org',
