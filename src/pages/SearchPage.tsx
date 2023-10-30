@@ -590,6 +590,7 @@ const useSearchProductCollection = (
         program_package(
           where: {
             published_at: { _is_null: false }
+            is_private: { _eq: false }
             _or: [
               { title: { _ilike: $title } }
               { description: { _ilike: $description } }
