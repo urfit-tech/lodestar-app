@@ -91,6 +91,7 @@ const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ 
       title={activity.title}
       description={getBraftContent(activity.description || app.settings['description'])}
       keywords={activity.tags}
+      isNoIndex={!activity.publishedAt}
       jsonLd={[
         {
           '@context': 'https://schema.org',

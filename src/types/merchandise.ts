@@ -16,6 +16,7 @@ export type MerchandiseBasicProps = {
     url: string
     isCover: boolean
   }[]
+  publishedAt: Date | null
 }
 
 export type MerchandiseBriefProps = MerchandiseBasicProps & {

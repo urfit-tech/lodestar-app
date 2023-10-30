@@ -95,6 +95,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
   isCountdownTimerVisible,
   totalSales,
   enrollmentCount,
+  publishedAt,
 }) => {
   const { formatMessage } = useIntl()
   const isDesktop = useMediaQuery({ minWidth: BREAK_POINT })
@@ -148,7 +149,13 @@ const FundingPage: React.VFC<ProjectProps> = ({
                   {formatMessage(commonMessages.button.cutoff)}
                 </Button>
               ) : (
-                <Button type="primary" size="large" block onClick={() => handleTabsChange('plans')}>
+                <Button
+                  type="primary"
+                  size="large"
+                  block
+                  onClick={() => handleTabsChange('plans')}
+                  disabled={!publishedAt}
+                >
                   {formatMessage(commonMessages.button.pledge)}
                 </Button>
               )}

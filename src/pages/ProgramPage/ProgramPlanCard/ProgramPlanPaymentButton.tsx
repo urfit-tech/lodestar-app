@@ -36,8 +36,8 @@ const ProgramPlanPaymentButton: React.VFC<{
   programPlan: ProgramPlan & {
     isSubscription: boolean
     groupBuyingPeople: number
-  }
-}> = ({ programPlan }) => {
+  } & { isPublished?: boolean }
+}> = ({ programPlan }, isPublished) => {
   const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { addCartProduct, isProductInCart } = useContext(CartContext)
@@ -91,6 +91,7 @@ const ProgramPlanPaymentButton: React.VFC<{
             <Button
               colorScheme="primary"
               isFullWidth
+              disabled={!isPublished}
               onClick={() => {
                 const resource = resourceCollection.find(notEmpty)
                 resource && tracking.addToCart(resource, { direct: true })
