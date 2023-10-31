@@ -36,7 +36,7 @@ const ProgramPlanPaymentButton: React.VFC<{
   programPlan: ProgramPlan & {
     isSubscription: boolean
     groupBuyingPeople: number
-  } & { isPublished?: boolean }
+  }
 }> = ({ programPlan }, isPublished) => {
   const tracking = useTracking()
   const { formatMessage } = useIntl()
@@ -59,7 +59,12 @@ const ProgramPlanPaymentButton: React.VFC<{
   return (
     <>
       {isProductInCart?.('ProgramPlan', programPlan.id) ? (
-        <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
+        <Button
+          colorScheme="primary"
+          isFullWidth
+          isDisabled={!programPlan.publishedAt}
+          onClick={() => history.push(`/cart`)}
+        >
           {formatMessage(commonMessages.button.cart)}
         </Button>
       ) : (
@@ -71,6 +76,7 @@ const ProgramPlanPaymentButton: React.VFC<{
               colorScheme="primary"
               isFullWidth
               isMultiline
+              isDisabled={!programPlan.publishedAt}
               onClick={() => {
                 resourceCollection[0] && tracking.addToCart(resourceCollection[0])
                 handleAddCart()
@@ -91,7 +97,7 @@ const ProgramPlanPaymentButton: React.VFC<{
             <Button
               colorScheme="primary"
               isFullWidth
-              disabled={!isPublished}
+              disabled={!programPlan.publishedAt}
               onClick={() => {
                 const resource = resourceCollection.find(notEmpty)
                 resource && tracking.addToCart(resource, { direct: true })

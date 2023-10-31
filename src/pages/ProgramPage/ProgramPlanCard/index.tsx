@@ -133,7 +133,7 @@ const ProgramPlanCard: React.VFC<{
             <Button
               colorScheme="primary"
               isFullWidth
-              isDisabled={isAuthenticated && isLoading}
+              isDisabled={(isAuthenticated && isLoading) || !programPlan.publishedAt}
               onClick={() => {
                 if (!isAuthenticated) {
                   setAuthModalVisible?.(true)
@@ -171,7 +171,7 @@ const ProgramPlanCard: React.VFC<{
             <Button
               colorScheme="primary"
               isFullWidth
-              isDisabled={isAuthenticated && isLoading}
+              isDisabled={(isAuthenticated && isLoading) || !programPlan.publishedAt}
               onClick={() => {
                 if (!isAuthenticated) {
                   setAuthModalVisible?.(true)

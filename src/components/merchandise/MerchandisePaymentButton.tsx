@@ -74,7 +74,12 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
 
   if (!merchandise.isPhysical && inCartQuantity) {
     return (
-      <Button colorScheme="primary" isFullWidth onClick={() => history.push('/cart')}>
+      <Button
+        colorScheme="primary"
+        isFullWidth
+        isDisabled={!merchandise.publishedAt}
+        onClick={() => history.push('/cart')}
+      >
         {formatMessage(commonMessages.button.cart)}
       </Button>
     )

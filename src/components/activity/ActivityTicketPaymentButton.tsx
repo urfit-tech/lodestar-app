@@ -58,7 +58,7 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
   return (
     <>
       {isProductInCart?.('ActivityTicket', ticketId) ? (
-        <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
+        <Button colorScheme="primary" isFullWidth disabled={!isPublished} onClick={() => history.push(`/cart`)}>
           {formatMessage(commonMessages.button.cart)}
         </Button>
       ) : ticketCurrencyId === 'LSC' ? (
@@ -76,6 +76,7 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
               colorScheme="primary"
               isFullWidth
               isMultiline
+              disabled={!isPublished}
               onClick={() => {
                 resourceCollection[0] && tracking.addToCart(resourceCollection[0], { direct: false })
                 handleAddCart()
