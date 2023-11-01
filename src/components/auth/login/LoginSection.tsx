@@ -13,12 +13,14 @@ import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { handleError } from '../../helpers'
-import { authMessages, codeMessages, commonMessages } from '../../helpers/translation'
-import { AuthState } from '../../types/member'
-import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
-import { FacebookLoginButton, GoogleLoginButton, LineLoginButton, ParentingLoginButton } from './SocialLoginButton'
-import * as localAuthMessages from './translation'
+import { handleError } from '../../../helpers'
+import { authMessages, codeMessages, commonMessages } from '../../../helpers/translation'
+import { AuthState } from '../../../types/member'
+import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from '../AuthModal'
+import { FacebookLoginButton, GoogleLoginButton, LineLoginButton, ParentingLoginButton } from '../SocialLoginButton'
+import * as localAuthMessages from '../translation'
+import OverBindDeviceModal from './OverBindDeviceModal'
+import OverLoginDeviceModal from './OverLoginDeviceModal'
 
 const ForgetPassword = styled.div`
   margin-bottom: 1.5rem;
@@ -30,14 +32,14 @@ const ForgetPassword = styled.div`
   }
 `
 
-const StyledModal = styled(Modal)`
+export const StyledModal = styled(Modal)`
   && .ant-modal-footer {
     border-top: 0;
     padding: 0 1.5rem 1.5rem;
   }
 `
 
-const StyledModalTitle = styled.div`
+export const StyledModalTitle = styled.div`
   ${CommonTitleMixin}
 `
 
@@ -63,8 +65,8 @@ const LoginSection: React.VFC<{
       password: '',
     },
   })
-  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false)
-  const [showLoginAlert, setShowLoginAlert] = useState<boolean>(false)
+  const [isOverLoginDeviceModalVisible, setIsOverLoginDeviceModalVisible] = useState(false)
+  const [isOverBindDeviceModalVisible, setIsOverBindDeviceModalVisible] = useState(false)
   const [passwordShow, setPasswordShow] = useState(false)
 
   const handleLogin = handleSubmit(
@@ -87,9 +89,9 @@ const LoginSection: React.VFC<{
         })
         .catch(error => {
           if (error instanceof LoginDeviceError) {
-            setAlertModalVisible(true)
+            setIsOverLoginDeviceModalVisible(true)
           } else if (error instanceof BindDeviceError) {
-            setShowLoginAlert(true)
+            setIsOverBindDeviceModalVisible(true)
           }
 
           if (error instanceof BackendServerError) {
@@ -177,7 +179,6 @@ const LoginSection: React.VFC<{
             (!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
               <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
             ))}
-
           <InputGroup className="mb-3">
             <Input
               name="account"
@@ -186,7 +187,6 @@ const LoginSection: React.VFC<{
             />
             <InputRightElement children={<Icon as={AiOutlineUser} />} />
           </InputGroup>
-
           <InputGroup className="mb-3">
             <Input
               type={passwordShow ? 'text' : 'password'}
@@ -204,15 +204,12 @@ const LoginSection: React.VFC<{
               }
             />
           </InputGroup>
-
           <ForgetPassword>
             <Link to="/forgot-password">{formatMessage(authMessages.link.forgotPassword)}</Link>
           </ForgetPassword>
-
           <Button variant="primary" isFullWidth isLoading={loading} onClick={handleLogin}>
             {formatMessage(commonMessages.button.login)}
           </Button>
-
           <StyledAction>
             <span>
               {formatMessage(isBusinessMember ? authMessages.content.noCompany : authMessages.content.noMember)}
@@ -227,54 +224,22 @@ const LoginSection: React.VFC<{
               {formatMessage(isBusinessMember ? commonMessages.button.instantlySignUp : commonMessages.button.signUp)}
             </Button>
           </StyledAction>
+          <OverLoginDeviceModal
+            visible={isOverLoginDeviceModalVisible}
+            onClose={() => {
+              setIsOverLoginDeviceModalVisible(false)
+            }}
+            onOk={handleForceLogin}
+            loading={forceLoginLoading}
+          />
 
-          {/* check device modal */}
-          <StyledModal
-            width={400}
-            centered
-            visible={alertModalVisible}
-            okText={formatMessage(localAuthMessages.default.LoginSection.forceLogout)}
-            cancelText={formatMessage(localAuthMessages.default.LoginSection.cancelLogin)}
-            okButtonProps={{ loading: forceLoginLoading, type: 'primary' }}
-            onOk={() => handleForceLogin()}
-            onCancel={() => {
-              setAlertModalVisible(false)
-              setIsBusinessMember?.(false)
+          <OverBindDeviceModal
+            visible={isOverBindDeviceModalVisible}
+            onClose={() => {
+              setIsOverBindDeviceModalVisible(false)
               setLoading(false)
             }}
-          >
-            <StyledModalTitle className="mb-4">
-              {formatMessage(localAuthMessages.default.LoginSection.loginAlertModalTitle)}
-            </StyledModalTitle>
-            <div className="mb-4">
-              {formatMessage(localAuthMessages.default.LoginSection.loginAlertModelDescription)}
-            </div>
-          </StyledModal>
-
-          {/* device reach limit alert */}
-          <StyledModal
-            width={400}
-            centered
-            visible={showLoginAlert}
-            okText={formatMessage(localAuthMessages.default.LoginSection.deviceReachLimitConfirm)}
-            okButtonProps={{ type: 'primary' }}
-            onOk={() => {
-              setShowLoginAlert(false)
-              setLoading(false)
-            }}
-            cancelText={null}
-            onCancel={() => {
-              setShowLoginAlert(false)
-              setLoading(false)
-            }}
-          >
-            <StyledModalTitle className="mb-4">
-              {formatMessage(localAuthMessages.default.LoginSection.deviceReachLimitTitle)}
-            </StyledModalTitle>
-            <div className="mb-4">
-              {formatMessage(localAuthMessages.default.LoginSection.deviceReachLimitDescription)}
-            </div>
-          </StyledModal>
+          />
         </>
       )}
     </>
