@@ -179,6 +179,7 @@ const FundingPage: React.VFC<ProjectProps> = ({
               <FundingIntroductionPane
                 introduction={(isDesktop && introductionDesktop ? introductionDesktop : introduction) || ''}
                 projectPlans={projectPlans}
+                publishedAt={publishedAt}
               />
             )}
           </Tabs.TabPane>
@@ -186,7 +187,11 @@ const FundingPage: React.VFC<ProjectProps> = ({
             projectSections.map(projectSection =>
               projectSection.type === 'funding_contents' ? (
                 <Tabs.TabPane tab={projectSection.options.title} key="contents">
-                  <FundingContentsPane contents={projectSection.options.items} projectPlans={projectPlans || []} />
+                  <FundingContentsPane
+                    contents={projectSection.options.items}
+                    projectPlans={projectPlans || []}
+                    publishedAt={publishedAt}
+                  />
                 </Tabs.TabPane>
               ) : projectSection.type === 'funding_updates' ? (
                 <Tabs.TabPane
@@ -197,17 +202,25 @@ const FundingPage: React.VFC<ProjectProps> = ({
                   }
                   key="updates"
                 >
-                  <FundingUpdatesPane updates={projectSection.options.items} projectPlans={projectPlans || []} />
+                  <FundingUpdatesPane
+                    updates={projectSection.options.items}
+                    projectPlans={projectPlans || []}
+                    publishedAt={publishedAt}
+                  />
                 </Tabs.TabPane>
               ) : projectSection.type === 'funding_comments' ? (
                 <Tabs.TabPane tab={projectSection.options.title} key="comments">
-                  <FundingCommentsPane comments={projectSection.options.items} projectPlans={projectPlans || []} />
+                  <FundingCommentsPane
+                    comments={projectSection.options.items}
+                    projectPlans={projectPlans || []}
+                    publishedAt={publishedAt}
+                  />
                 </Tabs.TabPane>
               ) : null,
             )}
 
           <Tabs.TabPane tab={formatMessage(productMessages.project.tab.project)} key="plans">
-            <FundingPlansPane projectPlans={projectPlans || []} />
+            <FundingPlansPane projectPlans={projectPlans || []} publishedAt={publishedAt} />
           </Tabs.TabPane>
         </StyledTabs>
       </div>

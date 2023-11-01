@@ -26,13 +26,14 @@ const StyledWrapper = styled.div`
 
 const FundingPlansPane: React.VFC<{
   projectPlans: ProjectPlanProps[]
-}> = ({ projectPlans }) => {
+  publishedAt: Date | null
+}> = ({ projectPlans, publishedAt }) => {
   return (
     <div className="container mb-5" id="funding-plans">
       <div className="row">
         <div className="col-12">
           <StyledWrapper className="d-flex align-items-start justify-content-start flex-wrap">
-            <ProjectPlanCollection projectPlans={projectPlans} />
+            <ProjectPlanCollection projectPlans={projectPlans} publishedAt={publishedAt} />
           </StyledWrapper>
         </div>
       </div>

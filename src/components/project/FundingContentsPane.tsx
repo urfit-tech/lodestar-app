@@ -56,7 +56,8 @@ const FundingContentsPane: React.VFC<{
     }[]
   }[]
   projectPlans: ProjectPlanProps[]
-}> = ({ contents, projectPlans }) => {
+  publishedAt: Date | null
+}> = ({ contents, projectPlans, publishedAt }) => {
   return (
     <div className="container">
       <div className="row">
@@ -83,7 +84,7 @@ const FundingContentsPane: React.VFC<{
           ))}
         </div>
         <div className="col-12 col-lg-4 mb-5">
-          <ProjectPlanCollection projectPlans={projectPlans} />
+          <ProjectPlanCollection projectPlans={projectPlans} publishedAt={publishedAt} />
         </div>
       </div>
     </div>
