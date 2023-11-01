@@ -1,12 +1,18 @@
 // import { message } from 'antd'
+import { message } from 'antd'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useEffect } from 'react'
+import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
+import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 // import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
+import OverBindDeviceModal from '../components/auth/login/OverBindDeviceModal'
+import OverLoginDeviceModal from '../components/auth/login/OverLoginDeviceModal'
 import { handleError } from '../helpers'
+import { codeMessages } from '../helpers/translation'
 // import { profileMessages } from '../helpers/translation'
 // import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
 import LoadingPage from '../pages/LoadingPage'
@@ -16,6 +22,7 @@ type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth
 const OAuth2Page: React.VFC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
 
+  // cw oauth has already move to lodestar-app-backend
   if (['parenting', 'commonhealth', 'cw'].includes(provider)) {
     return <Oauth2Section />
   }
@@ -23,15 +30,17 @@ const OAuth2Page: React.VFC = () => {
   return <DefaultOauth2Section />
 }
 
-// TODO: add oauth2 sections of Facebook, Google, Line
 const DefaultOauth2Section: React.VFC = () => {
-  // const { formatMessage } = useIntl()
+  const { formatMessage } = useIntl()
   const history = useHistory()
   const [code] = useQueryParam('code', StringParam)
   const [state] = useQueryParam('state', StringParam)
   const { settings } = useApp()
   const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
   // const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
+  const [isOverLoginDeviceModalVisible, setIsOverLoginDeviceModalVisible] = useState(false)
+  const [isOverBindDeviceModalVisible, setIsOverBindDeviceModalVisible] = useState(false)
+  const [forceLoginLoading, setForceLoginLoading] = useState(false)
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
@@ -106,6 +115,19 @@ const DefaultOauth2Section: React.VFC = () => {
             provider: provider,
             providerToken: data.id_token,
             accountLinkToken: accountLinkToken,
+          }).catch(error => {
+            if (error instanceof LoginDeviceError) {
+              setIsOverLoginDeviceModalVisible(true)
+            } else if (error instanceof BindDeviceError) {
+              setIsOverBindDeviceModalVisible(true)
+            }
+
+            if (error instanceof BackendServerError) {
+              const code = error.code as keyof typeof codeMessages
+              message.error(formatMessage(codeMessages[code]))
+            } else {
+              message.error(error.message)
+            }
           })
         })
         .then(() => (window.location.href = redirect))
@@ -120,12 +142,58 @@ const DefaultOauth2Section: React.VFC = () => {
         provider: provider,
         providerToken: accessToken,
       })
-        .then(() => (window.location.href = redirect))
-        .catch(handleError)
+        .then(r => {
+          window.location.href = redirect
+        })
+        .catch(error => {
+          if (error instanceof LoginDeviceError) {
+            setIsOverLoginDeviceModalVisible(true)
+          } else if (error instanceof BindDeviceError) {
+            setIsOverBindDeviceModalVisible(true)
+          }
+
+          if (error instanceof BackendServerError) {
+            const code = error.code as keyof typeof codeMessages
+            message.error(formatMessage(codeMessages[code]))
+          } else {
+            message.error(error.message)
+          }
+        })
     }
   }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
 
-  return <LoadingPage />
+  return (
+    <>
+      <LoadingPage />
+      <OverBindDeviceModal
+        visible={isOverBindDeviceModalVisible}
+        onClose={() => {
+          window.location.href = redirect
+        }}
+      />
+      <OverLoginDeviceModal
+        visible={isOverLoginDeviceModalVisible}
+        onClose={() => {
+          window.location.href = redirect
+        }}
+        onOk={() => {
+          if (provider) {
+            setForceLoginLoading(true)
+            socialLogin?.({
+              provider: provider,
+              providerToken: accessToken,
+              isForceLogin: true,
+            })
+              .then(r => {
+                window.location.href = redirect
+              })
+              .catch(handleError)
+          }
+        }}
+        loading={forceLoginLoading}
+      />
+    </>
+  )
 }
 
 const Oauth2Section: React.VFC = () => {
