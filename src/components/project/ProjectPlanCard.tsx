@@ -64,7 +64,11 @@ const StyledProjectPlanInfoBlock = styled.div<{ active?: boolean }>`
   }
 `
 
-const ProjectPlanCard: React.VFC<ProjectPlanProps> = ({
+const ProjectPlanCard: React.VFC<
+  ProjectPlanProps & {
+    publishedAt: Date | null
+  }
+> = ({
   id,
   projectTitle,
   coverUrl,
@@ -84,6 +88,7 @@ const ProjectPlanCard: React.VFC<ProjectPlanProps> = ({
   isLimited,
   buyableQuantity,
   projectPlanEnrollmentCount,
+  publishedAt,
 }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
@@ -140,6 +145,7 @@ const ProjectPlanCard: React.VFC<ProjectPlanProps> = ({
               target={id}
               price={isOnSale && salePrice ? salePrice : listPrice}
               isSubscription={isSubscription}
+              isPublished={!!publishedAt}
             />
           ) : null}
         </div>

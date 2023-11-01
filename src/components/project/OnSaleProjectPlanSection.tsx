@@ -56,7 +56,8 @@ const StyledContainer = styled.div`
 
 const OnSaleProjectPlanSection: React.VFC<{
   projectPlans: ProjectPlanProps[]
-}> = ({ projectPlans }) => {
+  publishedAt: Date | null
+}> = ({ projectPlans, publishedAt }) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -67,7 +68,7 @@ const OnSaleProjectPlanSection: React.VFC<{
         <StyledContainer className="row">
           {projectPlans.map(projectPlan => (
             <div key={projectPlan.id} className="col-lg-6 col-12">
-              <ProjectPlanCard {...projectPlan} />
+              <ProjectPlanCard {...projectPlan} publishedAt={publishedAt} />
             </div>
           ))}
         </StyledContainer>
