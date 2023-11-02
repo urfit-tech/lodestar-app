@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { AuthState } from '../../types/member'
 import { BREAK_POINT } from '../common/Responsive'
-import LoginSection from './LoginSection'
+import LoginSection from './login/LoginSection'
 import RegisterSection from './RegisterSection'
 
 const StyledContainer = styled.div`

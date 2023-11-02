@@ -42,7 +42,8 @@ const PaymentButton: React.VFC<{
   currencyId?: string
   isSubscription?: boolean
   quantity?: number
-}> = ({ type, target, price, isSubscription, currencyId, quantity }) => {
+  isPublished?: boolean
+}> = ({ type, target, price, isSubscription, currencyId, quantity, isPublished }) => {
   const tracking = useTracking()
   const { isAuthenticated } = useAuth()
   const { formatMessage } = useIntl()
@@ -76,7 +77,7 @@ const PaymentButton: React.VFC<{
             <Button
               variant="primary"
               isFullWidth
-              isDisabled={isLoading}
+              isDisabled={isLoading || !isPublished}
               onClick={() => {
                 isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true)
                 const resource = resourceCollection.find(notEmpty)
@@ -98,6 +99,7 @@ const PaymentButton: React.VFC<{
               colorScheme="primary"
               isFullWidth
               isMultiline
+              isDisabled={!isPublished}
               onClick={() => {
                 resourceCollection[0] && tracking.addToCart(resourceCollection[0])
                 handleAddCart()
@@ -110,6 +112,7 @@ const PaymentButton: React.VFC<{
           <Button
             colorScheme="primary"
             isFullWidth
+            isDisabled={!isPublished}
             onClick={() => {
               const resource = resourceCollection.find(notEmpty)
               resource && tracking.addToCart(resource, { direct: true })

@@ -7,6 +7,7 @@ export type ProgramPackageProps = {
   coverUrl: string | null
   description: string | null
   metaTag?: MetaTag
+  publishedAt: Date | null
 }
 
 export type ProgramPackagePlanProps = {

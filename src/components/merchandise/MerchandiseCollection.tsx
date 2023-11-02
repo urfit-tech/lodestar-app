@@ -27,6 +27,7 @@ const MerchandiseCollection: React.FC<{ merchandises: MerchandiseBriefProps[] }>
             currencyId={merchandise.currencyId}
             specs={merchandise.specs}
             images={merchandise.images}
+            publishedAt={merchandise.publishedAt}
             onClick={() => {
               const resource = resourceCollection[idx]
               resource && tracking.click(resource, { position: idx + 1 })

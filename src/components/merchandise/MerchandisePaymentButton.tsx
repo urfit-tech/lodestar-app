@@ -74,7 +74,12 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
 
   if (!merchandise.isPhysical && inCartQuantity) {
     return (
-      <Button colorScheme="primary" isFullWidth onClick={() => history.push('/cart')}>
+      <Button
+        colorScheme="primary"
+        isFullWidth
+        isDisabled={!merchandise.publishedAt}
+        onClick={() => history.push('/cart')}
+      >
         {formatMessage(commonMessages.button.cart)}
       </Button>
     )
@@ -114,7 +119,9 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
           <Button
             className="d-flex align-items-center mr-2"
             variant="outline"
-            isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
+            isDisabled={
+              !merchandise.publishedAt || (merchandise.isLimited && (quantity === 0 || quantity > remainQuantity))
+            }
             onClick={() => {
               const resource = resourceCollection.find(notEmpty)
               if (quantity) {
@@ -132,7 +139,9 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
         <Button
           colorScheme="primary"
           isFullWidth
-          isDisabled={merchandise.isLimited && (quantity === 0 || quantity > remainQuantity)}
+          isDisabled={
+            !merchandise.publishedAt || (merchandise.isLimited && (quantity === 0 || quantity > remainQuantity))
+          }
           onClick={() => {
             const resource = resourceCollection.find(notEmpty)
             if (quantity) {
@@ -180,7 +189,7 @@ const CustomizedMerchandisePaymentBlock: React.VFC<{
         <Button
           colorScheme="primary"
           isFullWidth
-          isDisabled={(isAuthenticated && isLoading) || quantity <= 0}
+          isDisabled={!merchandise.publishedAt || (isAuthenticated && isLoading) || quantity <= 0}
           onClick={() => {
             if (isModalDisable) {
               toast({

@@ -181,6 +181,7 @@ const ProgramPackagePageContent: React.VFC<{ programPackageId: string; resourceC
                         {...programPackagePlan}
                         loading={loadingProgramPackageIds}
                         isEnrolled={enrolledProgramPackagePlanIds.includes(programPackagePlan.id)}
+                        isPublished={!!programPackageIntroduction.publishedAt}
                       />
                     </div>
                   ))}

@@ -3,7 +3,6 @@ import { BraftContent } from 'lodestar-app-element/src/components/common/StyledB
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
-import ClassCouponBlock from '../../components/ClassCouponBlock'
 import { commonMessages } from '../../helpers/translation'
 import { ProjectPlanProps } from '../../types/project'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
@@ -45,7 +44,8 @@ const StyledExpandButton = styled(Button)`
 const FundingIntroductionPane: React.VFC<{
   introduction: string
   projectPlans: ProjectPlanProps[]
-}> = ({ introduction, projectPlans }) => {
+  publishedAt: Date | null
+}> = ({ introduction, projectPlans, publishedAt }) => {
   const [collapsed, setCollapsed] = useState(false)
   const { formatMessage } = useIntl()
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
@@ -74,7 +74,7 @@ const FundingIntroductionPane: React.VFC<{
 
         <div className="col-12 col-lg-4">
           <div className={`${isPlanListSticky ? 'projectPlanSticky' : ''}`} ref={planListHeightRef}>
-            <ProjectPlanCollection projectPlans={projectPlans} />
+            <ProjectPlanCollection projectPlans={projectPlans} publishedAt={publishedAt} />
           </div>
         </div>
       </div>

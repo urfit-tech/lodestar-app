@@ -67,7 +67,8 @@ const ProgramPlanCard: React.VFC<{
   }
   enrollmentCount?: number
   isProgramSoldOut?: boolean
-}> = ({ programId, programPlan, enrollmentCount, isProgramSoldOut }) => {
+  isPublished?: boolean
+}> = ({ programId, programPlan, enrollmentCount, isProgramSoldOut, isPublished }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
@@ -132,7 +133,7 @@ const ProgramPlanCard: React.VFC<{
             <Button
               colorScheme="primary"
               isFullWidth
-              isDisabled={isAuthenticated && isLoading}
+              isDisabled={(isAuthenticated && isLoading) || !programPlan.publishedAt}
               onClick={() => {
                 if (!isAuthenticated) {
                   setAuthModalVisible?.(true)
@@ -170,7 +171,7 @@ const ProgramPlanCard: React.VFC<{
             <Button
               colorScheme="primary"
               isFullWidth
-              isDisabled={isAuthenticated && isLoading}
+              isDisabled={(isAuthenticated && isLoading) || !programPlan.publishedAt}
               onClick={() => {
                 if (!isAuthenticated) {
                   setAuthModalVisible?.(true)
@@ -201,7 +202,8 @@ const ProgramPlanCard: React.VFC<{
             price={isOnSale && salePrice ? salePrice : listPrice}
             currencyId={currency.id}
             isSubscription={isSubscription}
-          ></PaymentButton>
+            isPublished={isPublished}
+          />
         </>
       )}
     </StyledAdminCard>

@@ -367,7 +367,7 @@ export const useProgram = (programId: string) => {
       coverThumbnailUrl: data?.program_by_pk?.cover_thumbnail_url || null,
       title: data?.program_by_pk?.title || '',
       abstract: data?.program_by_pk?.abstract || '',
-      publishedAt: new Date(data?.program_by_pk?.published_at),
+      publishedAt: data?.program_by_pk?.published_at ? new Date(data?.program_by_pk?.published_at) : null,
       isSoldOut: data?.program_by_pk?.is_sold_out || false,
       description: data?.program_by_pk?.description || '',
       coverVideoUrl: data?.program_by_pk?.cover_video_url || null,
