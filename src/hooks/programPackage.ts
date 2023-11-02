@@ -17,6 +17,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
           cover_url
           description
           meta_tag
+          published_at
           program_package_programs(order_by: { position: asc }) {
             id
             program {
@@ -69,6 +70,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
           description: null,
           plans: [],
           programs: [],
+          publishedAt: null,
         }
       : {
           id: programPackageId,
@@ -76,6 +78,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
           coverUrl: data.program_package_by_pk.cover_url || null,
           description: data.program_package_by_pk.description || '',
           metaTag: data.program_package_by_pk.meta_tag,
+          publishedAt: data.program_package_by_pk.published_at,
           plans: data.program_package_by_pk.program_package_plans.map(programPackagePlan => ({
             id: programPackagePlan.id,
             title: programPackagePlan.title,
@@ -307,6 +310,7 @@ export const useProgramPackage = (programPackageId: string, memberId: string | n
     coverUrl: data?.program_package_by_pk?.cover_url || null,
     description: null,
     isEnrolled: !!data?.program_package_plan_enrollment.length,
+    publishedAt: data?.program_package_by_pk?.published_at,
   }
 
   const isTempoDelivery =

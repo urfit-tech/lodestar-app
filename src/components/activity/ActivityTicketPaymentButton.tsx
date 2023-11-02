@@ -34,11 +34,13 @@ type ActivityTicketPaymentButtonProps = {
   ticketId: string
   ticketPrice: number
   ticketCurrencyId: string
+  isPublished: boolean
 }
 const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> = ({
   ticketId,
   ticketPrice,
   ticketCurrencyId,
+  isPublished,
 }) => {
   const { formatMessage } = useIntl()
   const { settings, id: appId } = useApp()
@@ -56,7 +58,7 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
   return (
     <>
       {isProductInCart?.('ActivityTicket', ticketId) ? (
-        <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
+        <Button colorScheme="primary" isFullWidth disabled={!isPublished} onClick={() => history.push(`/cart`)}>
           {formatMessage(commonMessages.button.cart)}
         </Button>
       ) : ticketCurrencyId === 'LSC' ? (
@@ -74,6 +76,7 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
               colorScheme="primary"
               isFullWidth
               isMultiline
+              disabled={!isPublished}
               onClick={() => {
                 resourceCollection[0] && tracking.addToCart(resourceCollection[0], { direct: false })
                 handleAddCart()
@@ -87,6 +90,7 @@ const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> =
           <Button
             colorScheme="primary"
             isFullWidth
+            disabled={!isPublished}
             onClick={() => {
               const resource = resourceCollection.find(notEmpty)
               resource && tracking.addToCart(resource, { direct: true })

@@ -27,6 +27,7 @@ export const useMerchandiseCollection = (options?: {
           sold_at
           is_physical
           currency_id
+          published_at
           merchandise_tags(order_by: { position: asc }) {
             tag_name
           }
@@ -96,6 +97,7 @@ export const useMerchandiseCollection = (options?: {
               ),
             ),
             currencyId: merchandise.currency_id,
+            publishedAt: merchandise.published_at ? new Date(merchandise.published_at) : null,
             tags: merchandise.merchandise_tags.map(v => v.tag_name),
             categories: merchandise.merchandise_categories.map(v => ({
               id: v.category.id,
@@ -184,6 +186,7 @@ export const useMerchandise = (merchandiseId: string) => {
           is_customized
           is_countdown_timer_visible
           currency_id
+          published_at
           merchandise_tags(order_by: { position: asc }) {
             tag_name
           }
@@ -251,7 +254,7 @@ export const useMerchandise = (merchandiseId: string) => {
           isPhysical: data.merchandise_by_pk.is_physical,
           isCustomized: data.merchandise_by_pk.is_customized,
           isCountdownTimerVisible: data.merchandise_by_pk.is_countdown_timer_visible,
-
+          publishedAt: data.merchandise_by_pk.published_at ? new Date(data.merchandise_by_pk.published_at) : null,
           images: data.merchandise_by_pk.merchandise_imgs.map(image => ({
             id: image.id,
             url: image.url,

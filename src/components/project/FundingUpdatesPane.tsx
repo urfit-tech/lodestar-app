@@ -41,7 +41,8 @@ const FundingUpdatesPane: React.VFC<{
     description: string
   }[]
   projectPlans: ProjectPlanProps[]
-}> = ({ updates, projectPlans }) => {
+  publishedAt: Date | null
+}> = ({ updates, projectPlans, publishedAt }) => {
   return (
     <div className="container">
       <div className="row">
@@ -58,7 +59,7 @@ const FundingUpdatesPane: React.VFC<{
           </StyledTimeline>
         </div>
         <div className="col-12 col-lg-4 mb-5">
-          <ProjectPlanCollection projectPlans={projectPlans} />
+          <ProjectPlanCollection projectPlans={projectPlans} publishedAt={publishedAt} />
         </div>
       </div>
     </div>

@@ -25,6 +25,7 @@ const ProjectPageHelmet: React.VFC<{ project: ProjectProps }> = ({ project }) =>
       title={project.metaTag?.seo?.pageTitle || project.title}
       description={project.metaTag?.seo?.description || project.abstract || app.settings['description']}
       keywords={project.metaTag?.seo?.keywords?.split(',') || []}
+      isNoIndex={!project.publishedAt}
       jsonLd={[
         {
           '@context': 'https://schema.org',

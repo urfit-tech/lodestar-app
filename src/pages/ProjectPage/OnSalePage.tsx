@@ -27,6 +27,7 @@ const OnSalePage: React.VFC<ProjectProps> = ({
   updates,
   comments,
   projectPlans,
+  publishedAt
 }) => {
   const isDesktop = useMediaQuery({ minWidth: BREAK_POINT })
 
@@ -47,7 +48,7 @@ const OnSalePage: React.VFC<ProjectProps> = ({
       <OnSaleTrialSection {...contents.trial} />
       <OnSaleComparisonSection comparisons={contents.comparisons} />
 
-      <OnSaleProjectPlanSection projectPlans={projectPlans || []} />
+      <OnSaleProjectPlanSection projectPlans={projectPlans || []} publishedAt={publishedAt} />
 
       <OnSaleCommentSection comments={comments} />
       <OnSaleCallToActionSection updates={updates} expiredAt={expiredAt} projectId={id} />
