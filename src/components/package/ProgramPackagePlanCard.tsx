@@ -38,6 +38,7 @@ const ProgramPackagePlanCard: React.VFC<
     programPackageId: string
     loading?: boolean
     isEnrolled?: boolean
+    isPublished?: boolean
   }
 > = ({
   id,
@@ -54,6 +55,7 @@ const ProgramPackagePlanCard: React.VFC<
   enrollmentCount,
   programPackageId,
   isEnrolled,
+  isPublished,
 }) => {
   const { formatMessage } = useIntl()
   const isOnSale = soldAt ? Date.now() < soldAt.getTime() : false
@@ -109,6 +111,7 @@ const ProgramPackagePlanCard: React.VFC<
             target={id}
             price={isOnSale && salePrice ? salePrice : listPrice}
             isSubscription={isSubscription}
+            isPublished={isPublished}
           />
         )}
       </div>

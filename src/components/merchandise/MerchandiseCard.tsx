@@ -3,7 +3,7 @@ import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import EmptyCover from '../../images/empty-cover.png'
-import { MerchandiseBriefProps } from '../../types/merchandise'
+import { MerchandiseBasicProps, MerchandiseSpecBasicProps } from '../../types/merchandise'
 import { CustomRatioImage } from '../common/Image'
 
 const StyledTitle = styled.h3`
@@ -15,8 +15,10 @@ const StyledTitle = styled.h3`
 `
 
 const MerchandiseCard: React.VFC<
-  Omit<MerchandiseBriefProps, 'tags' | 'categories' | 'isPhysical'> & {
+  Omit<MerchandiseBasicProps, 'tags' | 'categories' | 'isPhysical'> & {
+    specs: MerchandiseSpecBasicProps[]
     onClick?: () => void
+    publishedAt?: Date | null
   }
 > = ({ id, title, minPrice, maxPrice, images, currencyId, specs, soldAt, onClick }) => {
   const isOnSale = (soldAt?.getTime() || 0) > Date.now()

@@ -1,3 +1,4 @@
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
@@ -9,7 +10,6 @@ import { PeriodType } from '../../types/program'
 import { ProjectPlanProps } from '../../types/project'
 import PaymentButton from '../common/PaymentButton'
 import ShortenPeriodTypeLabel from '../common/ShortenPeriodTypeLabel'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   limited: { id: 'product.project.text.limited', defaultMessage: '限量' },
@@ -64,7 +64,11 @@ const StyledProjectPlanInfoBlock = styled.div<{ active?: boolean }>`
   }
 `
 
-const ProjectPlanCard: React.VFC<ProjectPlanProps> = ({
+const ProjectPlanCard: React.VFC<
+  ProjectPlanProps & {
+    publishedAt: Date | null
+  }
+> = ({
   id,
   projectTitle,
   coverUrl,
@@ -84,6 +88,7 @@ const ProjectPlanCard: React.VFC<ProjectPlanProps> = ({
   isLimited,
   buyableQuantity,
   projectPlanEnrollmentCount,
+  publishedAt,
 }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
@@ -140,6 +145,7 @@ const ProjectPlanCard: React.VFC<ProjectPlanProps> = ({
               target={id}
               price={isOnSale && salePrice ? salePrice : listPrice}
               isSubscription={isSubscription}
+              isPublished={!!publishedAt}
             />
           ) : null}
         </div>

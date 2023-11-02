@@ -24,7 +24,8 @@ const StyledDescription = styled.div`
 const FundingCommentsPane: React.VFC<{
   comments: FundingCommentProps[]
   projectPlans: ProjectPlanProps[]
-}> = ({ comments, projectPlans }) => {
+  publishedAt: Date | null
+}> = ({ comments, projectPlans, publishedAt }) => {
   return (
     <div className="container">
       <div className="row">
@@ -43,7 +44,7 @@ const FundingCommentsPane: React.VFC<{
           ))}
         </div>
         <div className="col-12 col-lg-4 mb-5">
-          <ProjectPlanCollection projectPlans={projectPlans} />
+          <ProjectPlanCollection projectPlans={projectPlans} publishedAt={publishedAt} />
         </div>
       </div>
     </div>

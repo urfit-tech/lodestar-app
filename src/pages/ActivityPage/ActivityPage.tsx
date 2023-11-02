@@ -178,6 +178,7 @@ const ActivityPage: React.VFC = () => {
                                 ticketId={ticket.id}
                                 ticketPrice={ticket.price}
                                 ticketCurrencyId={ticket.currencyId}
+                                isPublished={Boolean(activity.publishedAt)}
                               />
                             ) : (
                               <Button
