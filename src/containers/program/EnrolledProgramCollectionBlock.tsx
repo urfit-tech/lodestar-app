@@ -224,7 +224,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                 options={sortOptions}
                 defaultValue={sort}
                 onChange={event => setSort(event.target.value)}
-                disabled={programs.length === 0}
+                disabled={search !== '' && programCounts > 0 && programs.length === 0}
               />
               {!isExpired && (
                 <CustomChakraSelect
@@ -233,7 +233,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                   options={filterOptions}
                   defaultValue={filter}
                   onChange={event => setFilter(event.target.value)}
-                  disabled={programs.length === 0}
+                  disabled={search !== '' && programCounts > 0 && programs.length === 0}
                 />
               )}
             </HStack>

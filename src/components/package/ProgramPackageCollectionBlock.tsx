@@ -176,7 +176,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
               options={sortOptions}
               defaultValue={sort}
               onChange={event => setSort(event.target.value)}
-              disabled={programPackage.length === 0}
+              disabled={search !== '' && programPackageCounts > 0 && programPackage.length === 0}
             />
             <CustomSearchInput
               className="member-page-program-search"
