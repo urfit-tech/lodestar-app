@@ -38,8 +38,8 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   programTab: string
   programEnrollment: ProgramEnrollment[]
   expiredProgramEnrollment: ProgramEnrollment[]
-  programPackageCounts: number
-  programCounts: number
+  totalProgramPackageCounts: number
+  totalProgramCounts: number
   isError: boolean
   loading: boolean
 }> = ({
@@ -48,8 +48,8 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   programTab,
   programEnrollment,
   expiredProgramEnrollment,
-  programPackageCounts,
-  programCounts,
+  totalProgramPackageCounts,
+  totalProgramCounts,
   isError,
   loading,
 }) => {
@@ -155,12 +155,12 @@ const EnrolledProgramCollectionBlock: React.VFC<{
         marginBottom="24px"
       >
         <HStack justifyContent="space-between" marginBottom={{ base: '20px', md: '0px' }}>
-          {(programCounts > 0 || programPackageCounts > 0) && (
+          {(totalProgramCounts > 0 || totalProgramPackageCounts > 0) && (
             <ProgramTab
               onProgramTabClick={onProgramTabClick}
               tab={programTab}
-              programPackageCounts={programPackageCounts}
-              programCounts={programCounts}
+              totalProgramPackageCounts={totalProgramPackageCounts}
+              totalProgramCounts={totalProgramCounts}
             />
           )}
 
@@ -224,7 +224,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                 options={sortOptions}
                 defaultValue={sort}
                 onChange={event => setSort(event.target.value)}
-                disabled={search !== '' && programCounts > 0 && programs.length === 0}
+                disabled={search !== '' && totalProgramCounts > 0 && programs.length === 0}
               />
               {!isExpired && (
                 <CustomChakraSelect
@@ -233,7 +233,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
                   options={filterOptions}
                   defaultValue={filter}
                   onChange={event => setFilter(event.target.value)}
-                  disabled={search !== '' && programCounts > 0 && programs.length === 0}
+                  disabled={search !== '' && totalProgramCounts > 0 && programs.length === 0}
                 />
               )}
             </HStack>
@@ -307,10 +307,10 @@ const EnrolledProgramCollectionBlock: React.VFC<{
       {programEnrollment.length === 0 && expiredProgramEnrollment.length > 0 && !isExpired && (
         <p>{formatMessage(productMessages.program.content.noEnrolledProgram)}</p>
       )}
-      {programEnrollment.length === 0 && expiredProgramEnrollment.length === 0 && programPackageCounts === 0 && (
+      {programEnrollment.length === 0 && expiredProgramEnrollment.length === 0 && totalProgramPackageCounts === 0 && (
         <p>{formatMessage(productMessages.program.content.noProgram)}</p>
       )}
-      {search !== '' && programCounts > 0 && programs.length === 0 && (
+      {search !== '' && totalProgramCounts > 0 && programs.length === 0 && (
         <p>{formatMessage(productMessages.program.content.noSearchEnrolledProgram)}</p>
       )}
     </div>
