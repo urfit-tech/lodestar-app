@@ -451,12 +451,12 @@ const ProgramContentPlayerWrapper = (props: {
           if (data.code === 'SUCCESS') {
             setSources([
               {
-                type: 'application/dash+xml',
-                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
-              },
-              {
                 type: 'application/x-mpegURL',
                 src: `https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`,
+              },
+              {
+                type: 'application/dash+xml',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
               },
             ])
             setPoster(`https://cloudflarestream.com/${data.result.token}/thumbnails/thumbnail.jpg`)
