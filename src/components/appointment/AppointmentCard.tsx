@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Button, ButtonGroup, SkeletonCircle, SkeletonText, Spinner, Textarea } from '@chakra-ui/react'
 import { Divider, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 'antd'
@@ -186,16 +186,18 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
   const { authToken, currentMemberId, currentMember } = useAuth()
   const [issueModalVisible, setIssueModalVisible] = useState(false)
   const [cancelModalVisible, setCancelModalVisible] = useState(false)
-  const [rescheduleModalVisible, setRescheduleModalVisible] = useState(false)
   const [canceledReason, setCanceledReason] = useState('')
+  const [rescheduleModalVisible, setRescheduleModalVisible] = useState(false)
   const [rescheduleAppointment, setRescheduleAppointment] = useState<{
-    rescheduleAppointment: boolean
+    status: 'period' | 'confirm' | 'result'
     periodStartedAt: Date | null
     periodEndedAt: Date | null
-    appointmentPlanId: string
-  }>()
+  }>({
+    status: 'period',
+    periodStartedAt: null,
+    periodEndedAt: null,
+  })
   const [loading, setLoading] = useState(false)
-  const [confirm, setConfirm] = useState(false)
   const { loading: loadingServices, services } = useService()
   const { loading: loadingOrderProduct, orderProduct, refetchOrderProduct } = useOrderProduct(orderProductId)
   const { loadingAppointmentPlan, appointmentPlan, refetchAppointmentPlan } = useAppointmentPlan(
@@ -204,7 +206,6 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
   )
   const updateAppointmentIssue = useUpdateAppointmentIssue(orderProductId, orderProduct.options)
   const cancelAppointment = useCancelAppointment(orderProductId, orderProduct.options)
-  const updateAppointmentPeriod = useUpdateAppointmentPeriod(orderProductId, orderProduct.options)
 
   const handleSubmit = () => {
     form.validateFields((errors, values) => {
@@ -240,26 +241,29 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
 
     try {
       if (rescheduleAppointment) {
-        await updateAppointmentPeriod(
-          rescheduleAppointment.periodStartedAt,
-          rescheduleAppointment.periodEndedAt,
-          orderProduct.startedAt,
-          currentMemberId || '',
-        )
-        onRefetch?.()
-        await refetchAppointmentPlan()
-        setRescheduleModalVisible(false)
-        handleRescheduleCancel()
-        await refetchOrderProduct()
-        setConfirm(true)
-        setLoading(false)
-        await axios.post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/product/${orderProductId}/reschedule`,
-          {},
-          {
-            headers: { authorization: `Bearer ${authToken}` },
-          },
-        )
+        await axios
+          .post(
+            `${process.env.REACT_APP_API_BASE_ROOT}/product/${orderProductId}/reschedule`,
+            {
+              meetId: orderProduct.options?.['meetId'],
+              memberId,
+              appointmentPlanId: appointmentPlanId,
+              startedAt: rescheduleAppointment.periodStartedAt,
+              endedAt: rescheduleAppointment.periodEndedAt,
+            },
+            {
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
+          .then(() => {
+            onRefetch?.()
+            refetchAppointmentPlan()
+            refetchOrderProduct()
+            handleRescheduleCancel()
+          })
+          .finally(() => {
+            setLoading(false)
+          })
       }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') console.log(error)
@@ -268,11 +272,11 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
 
   const handleRescheduleCancel = () => {
     setRescheduleAppointment({
-      rescheduleAppointment: false,
+      status: 'period',
       periodStartedAt: null,
       periodEndedAt: null,
-      appointmentPlanId: '',
     })
+    setRescheduleModalVisible(false)
   }
 
   const handleAttend = async () => {
@@ -446,11 +450,11 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
             <Dropdown
               overlay={
                 <CustomMenu>
-                  {/* {appointmentPlan?.rescheduleAmount !== -1 && (
+                  {appointmentPlan?.rescheduleAmount !== -1 && (
                     <Menu.Item onClick={() => setRescheduleModalVisible(true)}>
                       {formatMessage(appointmentMessages.AppointmentCard.rescheduleAppointment)}
                     </Menu.Item>
-                  )} */}
+                  )}
                   <Menu.Item onClick={() => setCancelModalVisible(true)}>
                     {formatMessage(appointmentMessages.AppointmentCard.cancelAppointment)}
                   </Menu.Item>
@@ -560,9 +564,9 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       <Modal
         width={384}
         centered
-        visible={rescheduleModalVisible}
+        visible={rescheduleModalVisible && rescheduleAppointment?.status === 'period'}
         footer={null}
-        onCancel={() => setRescheduleModalVisible(false)}
+        onCancel={handleRescheduleCancel}
       >
         <AppointmentCardCreatorBlock
           loadingAppointmentPlan={loadingAppointmentPlan}
@@ -595,10 +599,9 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                   onClick={() =>
                     !period.currentMemberBooked && !period.isBookedReachLimit && period.available
                       ? setRescheduleAppointment({
-                          rescheduleAppointment: true,
+                          status: 'confirm',
                           periodStartedAt: period.startedAt,
                           periodEndedAt: period.endedAt,
-                          appointmentPlanId: appointmentPlanId,
                         })
                       : null
                   }
@@ -608,7 +611,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
           </>
         )}
         <ButtonGroup w="100%" display="flex" marginTop="24px" justifyContent="flex-end">
-          <Button variant="outline" onClick={() => setRescheduleModalVisible(false)}>
+          <Button variant="outline" onClick={handleRescheduleCancel}>
             {formatMessage(appointmentMessages['*'].back)}
           </Button>
         </ButtonGroup>
@@ -618,7 +621,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       <Modal
         width={384}
         centered
-        visible={rescheduleAppointment?.rescheduleAppointment}
+        visible={rescheduleModalVisible && rescheduleAppointment?.status === 'confirm'}
         footer={null}
         onCancel={handleRescheduleCancel}
       >
@@ -650,7 +653,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
             </span>
           ) : null}
         </StyledScheduleTitle>
-        <Button variant="outline" marginRight="8px" width="100%" onClick={handleRescheduleCancel}>
+        <Button disabled={loading} variant="outline" marginRight="8px" width="100%" onClick={handleRescheduleCancel}>
           {formatMessage(appointmentMessages.AppointmentCard.rescheduleCancel)}
         </Button>
         <Button isLoading={loading} onClick={handleReschedule} width="100%" marginTop="16px" colorScheme="primary">
@@ -661,10 +664,10 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       <Modal
         width={384}
         centered
-        visible={confirm}
+        visible={rescheduleModalVisible && rescheduleAppointment?.status === 'result'}
         bodyStyle={{ textAlign: 'center' }}
         footer={null}
-        onCancel={() => setConfirm(false)}
+        onCancel={handleRescheduleCancel}
       >
         <AntdIcon
           className="mb-5"
@@ -697,7 +700,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
           marginRight="8px"
           colorScheme="primary"
           width="100%"
-          onClick={() => setConfirm(false)}
+          onClick={handleRescheduleCancel}
         >
           {formatMessage(appointmentMessages.AppointmentCard.confirm)}
         </Button>
@@ -707,57 +710,6 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
 }
 
 export default Form.create<AppointmentCardProps>()(AppointmentCard)
-
-const useUpdateAppointmentPeriod = (orderProductId: string, options: { rescheduleLog: [] }) => {
-  const [updateAppointmentPeriod] = useMutation<
-    hasura.UpdateAppointmentPeriod,
-    hasura.UpdateAppointmentPeriodVariables
-  >(gql`
-    mutation UpdateAppointmentPeriod(
-      $orderProductId: uuid!
-      $startedAt: timestamptz!
-      $endedAt: timestamptz!
-      $data: jsonb
-    ) {
-      update_order_product(
-        where: { id: { _eq: $orderProductId } }
-        _set: { started_at: $startedAt, ended_at: $endedAt, updated_at: "NOW()", options: $data }
-      ) {
-        affected_rows
-      }
-    }
-  `)
-
-  return (startedAt: Date | null, endedAt: Date | null, originStartedAt: Date | null, currentMemberId: string) =>
-    updateAppointmentPeriod({
-      variables: {
-        orderProductId,
-        startedAt,
-        endedAt,
-        data: {
-          ...options,
-          rescheduleLog: options?.rescheduleLog
-            ? [
-                ...options.rescheduleLog,
-                {
-                  rescheduledAt: new Date(),
-                  rescheduleMemberId: currentMemberId,
-                  originScheduledDatetime: originStartedAt,
-                  targetRescheduleDatetime: startedAt,
-                },
-              ]
-            : [
-                {
-                  rescheduledAt: new Date(),
-                  rescheduleMemberId: currentMemberId,
-                  originScheduledDatetime: originStartedAt,
-                  targetRescheduleDatetime: startedAt,
-                },
-              ],
-        },
-      },
-    })
-}
 
 export const useOrderProduct = (orderProductId: string) => {
   const { loading, data, refetch } = useQuery<hasura.GetOrderProduct, hasura.GetOrderProductVariables>(

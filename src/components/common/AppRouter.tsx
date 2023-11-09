@@ -27,6 +27,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/meets/:username',
     pageName: 'MeetingPage',
   },
+  meetsCompleted: {
+    path: '/meets/us/completed',
+    pageName: 'MeetingCompletedPage',
+  },
   // system
   error: {
     path: '/error',
