@@ -1,7 +1,9 @@
 import { Button } from '@chakra-ui/react'
 import { Icon, Layout } from 'antd'
+import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
@@ -43,6 +45,7 @@ const ProgramContentPage: React.VFC = () => {
   const { enabledModules, settings, id: appId, loading: loadingApp } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
+  const { resourceCollection } = useResourceCollection([`${appId}:program_content:${programContentId}`])
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
 
@@ -64,6 +67,7 @@ const ProgramContentPage: React.VFC = () => {
 
   return (
     <Layout>
+      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       {settings['hubspot.portal_id'] ? (
         <Helmet>
           <script

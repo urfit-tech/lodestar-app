@@ -5,7 +5,7 @@ import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { BooleanParam } from 'serialize-query-params'
 import styled from 'styled-components'
 import { useQueryParams } from 'use-query-params'
@@ -34,6 +34,7 @@ const GetMemberByUsername = gql`
 
 const MeetingPage = () => {
   const { id: appId, settings, loading: loadingAppData } = useApp()
+  const history = useHistory()
   const { username: managerUsername } = useParams<{ username: string }>()
   const [{ noHeader, noFooter }] = useQueryParams({
     noHeader: BooleanParam,
@@ -117,7 +118,7 @@ const MeetingPage = () => {
 
       if (code === 'SUCCESS') {
         Cookies.remove('utm')
-        alert('已成功預約專屬諮詢！')
+        history.push('/meets/us/completed')
       } else {
         alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
       }
