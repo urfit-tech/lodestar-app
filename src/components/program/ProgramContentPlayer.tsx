@@ -431,8 +431,8 @@ const ProgramContentPlayerWrapper = (props: {
       // setSource({ type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' })
       // TODO: change into cloudflare, because azure is too slow...
       setSources([
-        { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
         { type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' },
+        { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
       ])
     }
     if (props.options?.cloudflare) {
