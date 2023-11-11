@@ -3,6 +3,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext, useEffect, useRef } from 'react'
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
 import 'video.js/dist/video-js.min.css'
+import 'videojs-contrib-dash'
 import 'videojs-contrib-quality-levels'
 import 'videojs-hls-quality-selector'
 import LocaleContext from '../../contexts/LocaleContext'
@@ -45,9 +46,9 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
         useBandwidthFromLocalStorage: true,
         useNetworkInformationApi: true,
       },
-      nativeTextTracks: false,
-      nativeAudioTracks: false,
-      nativeVideoTracks: false,
+      nativeTextTracks: videojs.browser.IS_SAFARI,
+      nativeAudioTracks: videojs.browser.IS_SAFARI,
+      nativeVideoTracks: videojs.browser.IS_SAFARI,
     },
     language: currentLocale,
     playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
