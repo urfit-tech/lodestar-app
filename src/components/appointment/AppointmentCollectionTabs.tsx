@@ -205,7 +205,7 @@ export const AppointmentPlanCollection: React.FC<{
                   appointmentPlan={{
                     id: appointmentPlan.id,
                     defaultMeetGateway: appointmentPlan.defaultMeetGateway,
-                    reservationType: appointmentPlan.rescheduleType,
+                    reservationType: appointmentPlan.reservationType,
                     reservationAmount: appointmentPlan.reservationAmount,
                     capacity: appointmentPlan.capacity,
                   }}
@@ -243,7 +243,7 @@ export const AppointmentPlanCollection: React.FC<{
                   appointmentPlan={{
                     id: appointmentPlan.id,
                     defaultMeetGateway: appointmentPlan.defaultMeetGateway,
-                    reservationType: appointmentPlan.rescheduleType,
+                    reservationType: appointmentPlan.reservationType,
                     reservationAmount: appointmentPlan.reservationAmount,
                     capacity: appointmentPlan.capacity,
                   }}
