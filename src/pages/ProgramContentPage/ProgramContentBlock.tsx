@@ -10,19 +10,17 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
-import { useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
-import AudioPlayer from '../../components/common/AudioPlayer'
 import { EmptyBlock } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { getFileDownloadableLink, isAndroid, isMobile } from '../../helpers'
+import { isAndroid, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { CarIcon } from '../../images'
@@ -84,7 +82,7 @@ const ProgramContentBlock: React.VFC<{
   programContentId: string
   issueEnabled?: boolean
   editors?: string[]
-}> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
+}> = ({ programId, programContentId, programRoles, programContentSections, issueEnabled }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const {
@@ -94,38 +92,19 @@ const ProgramContentBlock: React.VFC<{
     play: playInBackground,
     setMediaPlayerVisible,
   } = useContext(MediaPlayerContext)
-  const { loading: loadingApp, enabledModules, id: appId } = useApp()
+  const { loading: loadingApp, enabledModules } = useApp()
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const { hasProgramContentPermission, isLoginTrial } = useHasProgramContentPermission(programContentId)
-  const [audioUrl, setAudioUrl] = useState<string>()
   const endedAtRef = useRef(0)
 
   const instructor = programRoles.filter(role => role.name === 'instructor')[0]
-  const {
-    params: { programContentId: currentContentId },
-    url,
-  } = useRouteMatch<{ programContentId: string }>()
-  const urlParams = new URLSearchParams(window.location.search)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
     programContentProgress?.find(progress => progress.programContentId === programContentId)?.progress || 0
 
-  const currentProgramContentProgress = programContentProgress?.find(
-    progress => progress.programContentId === programContentId,
-  )
-
-  const lastProgress =
-    (!!currentProgramContentProgress?.lastProgress && currentProgramContentProgress?.lastProgress !== 1) ||
-    currentProgramContentProgress?.progress !== 1
-      ? currentProgramContentProgress?.lastProgress || 0
-      : 0
-
-  const prevProgramContent = flatten(programContentSections.map(v => v.contents)).find(
-    (_, i, contents) => contents[i + 1]?.id === programContentId,
-  )
   const nextProgramContent = flatten(programContentSections.map(v => v.contents)).find(
     (_, i, contents) => contents[i - 1]?.id === programContentId,
   )
@@ -162,14 +141,6 @@ const ProgramContentBlock: React.VFC<{
     hasProgramContentPermission,
     programContent?.publishedAt,
   ])
-
-  useEffect(() => {
-    if (programContentBodyType === 'audio') {
-      getFileDownloadableLink(`audios/${appId}/${programId}/${programContentId}`, authToken).then(url => {
-        setAudioUrl(url)
-      })
-    }
-  }, [programContentBodyType, programContentId, programId])
 
   useEffect(() => {
     if (currentResource) {
@@ -283,49 +254,6 @@ const ProgramContentBlock: React.VFC<{
               if (e.type === 'ended') {
                 insertPlayerEventLog({ ...e.videoState, startedAt: endedAtRef.current || e.videoState.startedAt })
                 insertProgramProgress(1)?.then(() => refetchProgress())
-              }
-            }}
-          />
-        )}
-
-      {programContent.contentType === 'audio' &&
-        !currentResource &&
-        ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
-          currentUserRole === 'app-owner') && (
-          <AudioPlayer
-            autoPlay
-            title={programContent.title}
-            audioUrl={audioUrl}
-            lastProgress={lastProgress}
-            onPrev={
-              prevProgramContent
-                ? () => {
-                    history.push(
-                      `${url.replace(currentContentId, prevProgramContent?.id || '')}?back=${urlParams.get('back')}`,
-                    )
-                  }
-                : undefined
-            }
-            onNext={
-              nextProgramContent
-                ? () => {
-                    history.push(
-                      `${url.replace(currentContentId, nextProgramContent?.id || '')}?back=${urlParams.get('back')}`,
-                    )
-                  }
-                : undefined
-            }
-            onAudioEvent={e => {
-              if (Math.abs(e.audioState.endedAt - endedAtRef.current) >= 5) {
-                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
-                if (e.type === 'progress') {
-                  insertProgramProgress(e.progress)
-                }
-                endedAtRef.current = e.audioState.endedAt
-              }
-              if (e.type === 'ended') {
-                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
-                insertProgramProgress(1)
               }
             }}
           />

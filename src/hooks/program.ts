@@ -431,6 +431,8 @@ export const useProgram = (programId: string) => {
           contents: programContentSection.program_contents.map(programContent => ({
             id: programContent.id,
             title: programContent.title,
+            programId: data?.program_by_pk?.id,
+            contentSectionTitle: programContentSection.title,
             abstract: programContent.abstract || '',
             metadata: programContent.metadata,
             duration: programContent.duration,
@@ -525,6 +527,9 @@ export const GET_PROGRAM_CONTENT = gql`
       sold_at
       metadata
       duration
+      program_content_section {
+        title
+      }
       program_content_plans {
         id
         program_plan {
@@ -568,6 +573,7 @@ export const useProgramContent = (programContentId: string) => {
     | (ProgramContent & {
         programContentBody: ProgramContentBodyProps | null
         attachments: ProgramContentAttachmentProps[]
+        contentSectionTitle: string
       })
     | null = useMemo(
     () =>
@@ -576,6 +582,7 @@ export const useProgramContent = (programContentId: string) => {
         : {
             id: data.program_content_by_pk.id,
             title: data.program_content_by_pk.title,
+            contentSectionTitle: data.program_content_by_pk.program_content_section.title,
             abstract: data.program_content_by_pk.abstract || '',
             metadata: data.program_content_by_pk.metadata,
             duration: data.program_content_by_pk.duration,
@@ -878,5 +885,147 @@ export const useMutateMaterialAuditLog = () => {
   `)
   return {
     insertMaterialAuditLog,
+  }
+}
+
+export const useProgramContentLog = (programId: string, memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<hasura.GetProgramContentLog, hasura.GetProgramContentLogVariables>(
+    gql`
+      query GetProgramContentLog($programId: uuid!, $memberId: String!) {
+        program_content_log(
+          where: {
+            member_id: { _eq: $memberId }
+            program_content: { program_content_section: { program_id: { _eq: $programId } } }
+          }
+          distinct_on: program_content_id
+          order_by: [{ created_at: desc, program_content_id: asc }]
+        ) {
+          created_at
+          program_content_id
+          ended_at
+        }
+      }
+    `,
+    { variables: { programId, memberId } },
+  )
+
+  const programContentLog =
+    loading || error || !data
+      ? undefined
+      : data.program_content_log.map(log => ({
+          contentId: log.program_content_id,
+          endedAt: log.ended_at,
+        }))
+
+  return {
+    loadingContentLog: loading,
+    errorContentLog: error,
+    programContentLog,
+    refetchContentLog: refetch,
+  }
+}
+
+export const useInsertProgress = ({
+  memberId,
+  programContentId,
+  progress,
+  lastProgress,
+}: {
+  memberId: string
+  programContentId: string
+  progress: number
+  lastProgress: number
+}) => {
+  const [insertProgramContentProgress] = useMutation<
+    hasura.INSERT_PROGRAM_CONTENT_PROGRESS,
+    hasura.INSERT_PROGRAM_CONTENT_PROGRESSVariables
+  >(
+    gql`
+      mutation INSERT_PROGRAM_CONTENT_PROGRESS(
+        $memberId: String!
+        $programContentId: uuid!
+        $progress: numeric!
+        $lastProgress: numeric!
+      ) {
+        insert_program_content_progress(
+          objects: {
+            member_id: $memberId
+            program_content_id: $programContentId
+            progress: $progress
+            last_progress: $lastProgress
+          }
+          on_conflict: {
+            constraint: program_content_progress_member_id_program_content_id_key
+            update_columns: [progress, last_progress]
+          }
+        ) {
+          affected_rows
+        }
+      }
+    `,
+    {
+      variables: {
+        memberId,
+        programContentId,
+        progress,
+        lastProgress,
+      },
+    },
+  )
+  return insertProgramContentProgress
+}
+
+export const useProgramId = (contentId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GetProgramIdByContentId,
+    hasura.GetProgramIdByContentIdVariables
+  >(
+    gql`
+      query GetProgramIdByContentId($contentId: uuid!) {
+        program(
+          where: {
+            program_content_sections: {
+              program_contents: { program_content_audios: { program_content_id: { _eq: $contentId } } }
+            }
+          }
+        ) {
+          id
+        }
+      }
+    `,
+    { variables: { contentId } },
+  )
+  const recentProgramId = loading || error || !data ? undefined : data.program.map(program => program.id)[0]
+  return {
+    recentProgramId,
+    RefetchRecentProgramId: refetch,
+    loadingRecentProgramId: loading,
+  }
+}
+
+export const useRecentProgramContentLogContentId = (memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GetRecentProgramContentLogContentId,
+    hasura.GetRecentProgramContentLogContentIdVariables
+  >(
+    gql`
+      query GetRecentProgramContentLogContentId($memberId: String!) {
+        program_content_log(where: { member_id: { _eq: $memberId } }, order_by: { created_at: desc }, limit: 1) {
+          created_at
+          program_content_id
+          ended_at
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+
+  const recentProgramContent =
+    loading || error || !data
+      ? undefined
+      : data.program_content_log.map(log => ({ contentId: log.program_content_id, endedAt: log.ended_at }))[0]
+  return {
+    recentProgramContent,
+    RefetchRecentProgramContentId: refetch,
   }
 }

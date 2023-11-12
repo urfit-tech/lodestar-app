@@ -42,7 +42,7 @@ export type Program = ProgramBriefProps & {
     groupBuyingPeople: number
   })[]
   contentSections: (ProgramContentSection & {
-    contents: ProgramContent[]
+    contents: (ProgramContent & { programId?: string; contentSectionTitle?: string; progress?: number })[]
   })[]
 }
 
