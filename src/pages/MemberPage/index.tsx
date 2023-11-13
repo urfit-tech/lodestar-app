@@ -207,6 +207,11 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       isVisible: currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROGRAM_INFO),
       content: (
         <>
+          {!programEnrollmentLoading && totalProgramCounts === 0 && totalProgramPackageCounts === 0 && (
+            <div className="container py-3">
+              <p>{formatMessage(productMessages.program.content.noProgram)}</p>
+            </div>
+          )}
           {totalProgramCounts > 0 && programTab === 'program' && (
             <EnrolledProgramCollectionBlock
               memberId={memberId}
