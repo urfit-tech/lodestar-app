@@ -395,10 +395,6 @@ export const commonMessages = {
       id: 'common.text.repairingDescription',
       defaultMessage: '本系統正在進行例行性維護，暫時無法提供服務。{br}造成不便敬請見諒。',
     },
-    noProgramPackage: {
-      id: 'common.content.noProgramPackage',
-      defaultMessage: '沒有參與任何課程組合',
-    },
   }),
   unknown: defineMessages({
     default: { id: 'common.unknown', defaultMessage: '未知' },

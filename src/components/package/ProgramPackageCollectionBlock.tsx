@@ -137,6 +137,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
           placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
           width={{ base: '100%' }}
           display={{ base: 'block', md: 'none' }}
+          defaultValue={search}
           onChange={event => setSearch(event.target.value)}
         />
         <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
@@ -181,6 +182,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
               className="member-page-program-search"
               placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
               width="fit-content"
+              defaultValue={search}
               onChange={event => setSearch(event.target.value)}
             />
           </HStack>
@@ -236,10 +238,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
       {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length > 0 && !isExpired && (
         <p>{formatMessage(productMessages.programPackage.content.noEnrolledProgramPackage)}</p>
       )}
-      {programPackageEnrollment.length === 0 &&
-        expiredProgramPackageEnrollment.length === 0 &&
-        totalProgramCounts === 0 && <p>{formatMessage(commonMessages.content.noProgramPackage)}</p>}
-      {totalProgramPackageCounts > 0 && programPackage.length === 0 && (
+      {search !== '' && programPackageEnrollment.length > 0 && programPackage.length === 0 && (
         <p>{formatMessage(productMessages.programPackage.content.noSearchEnrolledProgramPackage)}</p>
       )}
     </div>
