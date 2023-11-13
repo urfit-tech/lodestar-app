@@ -186,6 +186,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
           placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
           width={{ base: '100%' }}
           display={{ base: 'block', md: 'none' }}
+          defaultValue={search}
           onChange={event => setSearch(event.target.value)}
         />
 
@@ -239,6 +240,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
               className="member-page-program-search"
               placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
               width="it-content"
+              defaultValue={search}
               onChange={event => setSearch(event.target.value)}
             />
           </HStack>
@@ -301,14 +303,10 @@ const EnrolledProgramCollectionBlock: React.VFC<{
           </Flex>
         </>
       )}
-
       {programEnrollment.length === 0 && expiredProgramEnrollment.length > 0 && !isExpired && (
         <p>{formatMessage(productMessages.program.content.noEnrolledProgram)}</p>
       )}
-      {programEnrollment.length === 0 && expiredProgramEnrollment.length === 0 && totalProgramPackageCounts === 0 && (
-        <p>{formatMessage(productMessages.program.content.noProgram)}</p>
-      )}
-      {totalProgramCounts > 0 && programs.length === 0 && (
+      {programEnrollment.length > 0 && programs.length === 0 && (
         <p>{formatMessage(productMessages.program.content.noSearchEnrolledProgram)}</p>
       )}
     </div>
