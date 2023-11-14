@@ -25,8 +25,8 @@ const ProgramPackageCollectionBlock: React.VFC<{
   programTab: string
   programPackageEnrollment: ProgramPackageEnrollment[]
   expiredProgramPackageEnrollment: ProgramPackageEnrollment[]
-  programPackageCounts: number
-  programCounts: number
+  totalProgramPackageCounts: number
+  totalProgramCounts: number
   loading: boolean
   isError: boolean
 }> = ({
@@ -35,8 +35,8 @@ const ProgramPackageCollectionBlock: React.VFC<{
   onProgramTabClick,
   programPackageEnrollment,
   expiredProgramPackageEnrollment,
-  programPackageCounts,
-  programCounts,
+  totalProgramPackageCounts,
+  totalProgramCounts,
   loading,
   isError,
 }) => {
@@ -114,12 +114,12 @@ const ProgramPackageCollectionBlock: React.VFC<{
         marginBottom="24px"
       >
         <HStack justifyContent="space-between" marginBottom={{ base: '20px', md: '0px' }}>
-          {(programCounts > 0 || programPackageCounts > 0) && (
+          {(totalProgramCounts > 0 || totalProgramPackageCounts > 0) && (
             <ProgramTab
               onProgramTabClick={onProgramTabClick}
               tab={programTab}
-              programCounts={programCounts}
-              programPackageCounts={programPackageCounts}
+              totalProgramCounts={totalProgramCounts}
+              totalProgramPackageCounts={totalProgramPackageCounts}
             />
           )}
           <HStack spacing="25px" display={{ md: 'none' }}>
@@ -137,6 +137,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
           placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
           width={{ base: '100%' }}
           display={{ base: 'block', md: 'none' }}
+          defaultValue={search}
           onChange={event => setSearch(event.target.value)}
         />
         <HStack marginTop={{ base: '1rem', md: '0px' }} justifyContent={{ base: 'space-between', md: 'normal' }}>
@@ -176,12 +177,12 @@ const ProgramPackageCollectionBlock: React.VFC<{
               options={sortOptions}
               defaultValue={sort}
               onChange={event => setSort(event.target.value)}
-              disabled={programPackage.length === 0}
             />
             <CustomSearchInput
               className="member-page-program-search"
               placeholder={formatMessage(commonMessages.form.placeholder.searchKeyword)}
               width="fit-content"
+              defaultValue={search}
               onChange={event => setSearch(event.target.value)}
             />
           </HStack>
@@ -237,10 +238,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
       {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length > 0 && !isExpired && (
         <p>{formatMessage(productMessages.programPackage.content.noEnrolledProgramPackage)}</p>
       )}
-      {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length === 0 && programCounts === 0 && (
-        <p>{formatMessage(commonMessages.content.noProgramPackage)}</p>
-      )}
-      {search !== '' && programPackageCounts > 0 && programPackage.length === 0 && (
+      {search !== '' && programPackageEnrollment.length > 0 && programPackage.length === 0 && (
         <p>{formatMessage(productMessages.programPackage.content.noSearchEnrolledProgramPackage)}</p>
       )}
     </div>

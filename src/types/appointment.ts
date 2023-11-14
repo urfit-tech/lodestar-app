@@ -12,7 +12,7 @@ export type AppointmentPlan = {
   currency: CurrencyProps
   isPrivate?: boolean
   reservationAmount: number
-  reservationType?: ReservationType | null
+  reservationType: ReservationType | null
   rescheduleAmount: number
   rescheduleType: ReservationType | null
   capacity: number
