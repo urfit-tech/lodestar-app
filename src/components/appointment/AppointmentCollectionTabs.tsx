@@ -214,6 +214,8 @@ export const AppointmentPlanCollection: React.FC<{
                     if (!isAuthenticated) {
                       setAuthModalVisible?.(true)
                     } else {
+                      setSelectedPeriod(period)
+                      setVisible?.()
                       ReactGA.plugin.execute('ec', 'addProduct', {
                         id: appointmentPlan.id,
                         name: appointmentPlan.title,
@@ -224,9 +226,6 @@ export const AppointmentPlanCollection: React.FC<{
                       })
                       ReactGA.plugin.execute('ec', 'setAction', 'add')
                       ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                      setSelectedPeriod(period)
-                      setVisible?.()
-
                       const resource = resourceCollection[idx]
                       resource && tracking.click(resource, { position: idx + 1 })
                     }
@@ -252,6 +251,8 @@ export const AppointmentPlanCollection: React.FC<{
                     if (!isAuthenticated) {
                       setAuthModalVisible?.(true)
                     } else {
+                      onOpen?.()
+                      setSelectedPeriod(period)
                       ReactGA.plugin.execute('ec', 'addProduct', {
                         id: appointmentPlan.id,
                         name: appointmentPlan.title,
@@ -262,9 +263,6 @@ export const AppointmentPlanCollection: React.FC<{
                       })
                       ReactGA.plugin.execute('ec', 'setAction', 'add')
                       ReactGA.ga('send', 'event', 'UX', 'click', 'add to cart')
-                      setSelectedPeriod(period)
-                      onOpen?.()
-
                       const resource = resourceCollection[idx]
                       resource && tracking.click(resource, { position: idx + 1 })
                     }
