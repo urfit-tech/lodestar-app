@@ -9,6 +9,7 @@ import appointmentMessages from './translation'
 const StyledItemWrapper = styled.div<{
   variant?: 'bookable' | 'closed' | 'booked' | 'meetingFull'
 }>`
+  user-select: none;
   position: relative;
   margin-bottom: 0.5rem;
   margin-right: 0.5rem;
@@ -145,7 +146,17 @@ const AppointmentItem: React.VFC<{
     return null
   } else {
     return (
-      <StyledItemWrapper variant={variant} onClick={variant === 'bookable' ? onClick : undefined}>
+      <StyledItemWrapper
+        variant={variant}
+        onClick={e => {
+          if (variant !== 'bookable') {
+            e.stopPropagation()
+            e.preventDefault()
+          } else {
+            onClick()
+          }
+        }}
+      >
         <StyledItemTitle>
           {period.startedAt.getHours().toString().padStart(2, '0')}:
           {period.startedAt.getMinutes().toString().padStart(2, '0')}
