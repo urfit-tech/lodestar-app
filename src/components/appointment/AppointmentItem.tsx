@@ -94,7 +94,7 @@ const AppointmentItem: React.VFC<{
   const zoomServices = services.filter(service => service.gateway === 'zoom').map(service => service.id)
   const overlapCreatorMeets = overlapMeets
     .filter(overlapMeet => overlapMeet.hostMemberId === creatorId)
-    .filter(overlapCreatorMeet => overlapCreatorMeet.target !== appointmentPlan.id)
+    .filter(overlapMeet => overlapMeet.target !== appointmentPlan.id)
   const currentUseServices = uniq(overlapMeets.map(overlapMeet => overlapMeet.serviceId))
 
   let variant: 'bookable' | 'closed' | 'booked' | 'meetingFull' | 'overlap' | undefined
