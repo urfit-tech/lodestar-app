@@ -132,12 +132,17 @@ export const GetOverlapMeets = gql`
         started_at: { _lte: $endedAt }
         ended_at: { _gte: $startedAt }
         deleted_at: { _is_null: true }
+        meet_members: { deleted_at: { _is_null: true } }
       }
     ) {
       id
       host_member_id
       target
       service_id
+      meet_members {
+        id
+        member_id
+      }
     }
   }
 `
