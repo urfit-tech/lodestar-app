@@ -96,7 +96,7 @@ const PlaylistOverlay: React.VFC<{
 }> = ({ title, playList, currentIndex }) => {
   const history = useHistory()
   const { formatMessage } = useIntl()
-  const { setup, changePlayingState } = useContext(AudioPlayerContext)
+  const { setup, isBackgroundMode } = useContext(AudioPlayerContext)
 
   return (
     <StyledWrapper>
@@ -110,21 +110,34 @@ const PlaylistOverlay: React.VFC<{
       >
         <StyledListContent>
           {playList.map((item, index) => {
-            const { title, programId, id: contentId, contentSectionTitle, contentType, progress = 0 } = item
+            const {
+              title,
+              programId,
+              id: contentId,
+              contentSectionTitle,
+              contentType,
+              progress = 0,
+              audios,
+              videos,
+            } = item
             return (
               <PlayListItem
                 key={index}
                 title={title}
                 progress={progress}
-                programId={programId}
-                programContentId={contentId}
                 duration={item.duration || 0}
                 isPlaying={index === currentIndex}
                 contentType={contentType}
                 onClick={() => {
-                  if (contentType !== 'audio') {
+                  if (
+                    (contentType !== 'audio' && contentType !== 'video') ||
+                    (contentType === 'audio' && audios?.length === 0) ||
+                    (!isBackgroundMode && contentType === 'video') ||
+                    (isBackgroundMode && videos[0]?.data?.source === 'youtube')
+                  ) {
                     history.push(`/programs/${programId}/contents/${contentId}`)
-                  } else {
+                  }
+                  if (contentType === 'audio') {
                     window.location.pathname.includes('contents') &&
                       history.push(`/programs/${programId}/contents/${contentId}`)
                   }
@@ -133,8 +146,8 @@ const PlaylistOverlay: React.VFC<{
                     contentSectionTitle: contentSectionTitle || '',
                     programId,
                     contentId,
+                    contentType: contentType || '',
                   })
-                  changePlayingState?.(true)
                 }}
               />
             )
@@ -145,16 +158,13 @@ const PlaylistOverlay: React.VFC<{
   )
 }
 const PlayListItem: React.VFC<{
-  withHandler?: boolean
-  isPlaying?: boolean
+  isPlaying: boolean
   duration: number
-  programId?: string
   progress: number
-  programContentId?: string
-  contentType?: string | null
+  contentType: string | null
   title: string
-  onClick?: () => void
-}> = ({ title, contentType, isPlaying, onClick, progress, duration, programId, programContentId }) => {
+  onClick: () => void
+}> = ({ title, contentType, isPlaying, onClick, progress, duration }) => {
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
 
   return (

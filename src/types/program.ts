@@ -114,7 +114,8 @@ export type ProgramContent = {
   salePrice: number | null
   soldAt: Date | null
   // materials?: ProgramContentMaterialProps[]
-  videos?: { id: string; size: number; options: any; data: any }[]
+  videos: { id: string; size: number; options: { cloudflare?: object }; data: { source?: string } }[]
+  audios: { data: object }[]
   contentBodyId: string
 }
 

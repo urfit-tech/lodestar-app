@@ -17,13 +17,18 @@ const GlobalAudioPlayer: React.VFC = () => {
   const {
     visible,
     isPlaying,
+    isBackgroundMode,
     programId,
+    mimeType,
     changePlayingState,
     changeGlobalPlayingState,
     audioUrl,
     contentId,
+    videoId,
     lastEndedAt,
+    contentType,
     title,
+    source,
     contentSectionTitle,
     setup,
     close,
@@ -60,16 +65,24 @@ const GlobalAudioPlayer: React.VFC = () => {
     if (pathname.includes('members') && recentProgramId && memberId === currentMemberId) {
       if (programId === recentProgramId) {
         setup?.({
+          backgroundMode: isBackgroundMode,
+          contentType,
           programId,
           contentId,
+          videoId,
+          source,
           lastEndedAt,
         })
       }
       if (programId !== recentProgramId) {
         setup?.({
+          backgroundMode: isBackgroundMode,
           programId: recentProgramId,
+          videoId: recentProgramContent?.videoId,
           contentId: recentProgramContent?.contentId,
           lastEndedAt: recentProgramContent?.endedAt,
+          contentType: recentProgramContent?.contentType,
+          source: recentProgramContent?.source,
         })
       }
       changeGlobalPlayingState?.(true)
@@ -78,21 +91,50 @@ const GlobalAudioPlayer: React.VFC = () => {
       }
     }
     if (pathname.includes('contents')) {
-      const contentId = pathname.split('/')[4]
       const programId = pathname.split('/')[2]
+      const contentId = pathname.split('/')[4]
       setProgramContentId(contentId)
-      if (programContentBodyType === 'audio') {
+      if (programContentBodyType === 'audio' && programContent) {
         refetchContentLog()
         const lastEndedAt = programContentLog?.find(contentLog => contentLog.contentId === programContentId)?.endedAt
         setup?.({
+          backgroundMode: isBackgroundMode,
           title: programContent?.title || '',
-          contentSectionTitle: programContent?.contentSectionTitle || '',
+          contentSectionTitle: programContent.contentSectionTitle || '',
           programId: programId,
           contentId: programContentId,
+          contentType: programContent.contentType || '',
           lastEndedAt,
+        })
+        if (programContent.audios.length === 0) {
+          changeGlobalPlayingState?.(false)
+        } else {
+          changeGlobalPlayingState?.(true)
+        }
+      } else if (
+        programContent &&
+        programContentBodyType === 'video' &&
+        isBackgroundMode &&
+        programContent.videos[0]?.data?.source !== 'youtube'
+      ) {
+        setup?.({
+          backgroundMode: true,
+          title: programContent?.title || '',
+          contentSectionTitle: programContent.contentSectionTitle || '',
+          programId: programId,
+          contentId: programContentId,
+          contentType: programContent.contentType || '',
+          videoId: programContent.videos[0]?.id,
+          source: programContent.videos[0]?.options?.cloudflare ? 'cloudflare' : programContent.videos[0]?.data?.source,
         })
         changeGlobalPlayingState?.(true)
       } else {
+        changeGlobalPlayingState?.(false)
+      }
+    }
+    if (pathname.includes('podcasts')) {
+      const podcastId = pathname.split('/')[2]
+      if (podcastId) {
         changeGlobalPlayingState?.(false)
       }
     }
@@ -102,21 +144,26 @@ const GlobalAudioPlayer: React.VFC = () => {
     audioPlayerVisibleState,
     changeGlobalPlayingState,
     contentId,
+    contentType,
     currentMemberId,
+    isBackgroundMode,
     lastEndedAt,
-    loadingContentLog,
     pathname,
-    programContent?.contentSectionTitle,
-    programContent?.title,
+    programContent,
     programContentBodyType,
     programContentId,
     programContentLog,
     programId,
     recentProgramContent?.contentId,
+    recentProgramContent?.contentType,
     recentProgramContent?.endedAt,
+    recentProgramContent?.source,
+    recentProgramContent?.videoId,
     recentProgramId,
     refetchContentLog,
     setup,
+    source,
+    videoId,
   ])
 
   const playList = program.contentSections
@@ -203,17 +250,42 @@ const GlobalAudioPlayer: React.VFC = () => {
     while (true) {
       nextIndex = (nextIndex + quantity + playList.length) % playList.length
 
-      if (playList[nextIndex].contentType === 'audio') {
-        const { id: contentId, programId, title, contentSectionTitle } = playList[nextIndex]
-        setup?.({
-          title,
-          contentSectionTitle: contentSectionTitle || '',
-          programId,
-          contentId,
-        })
-        changePlayingState?.(true)
+      if (isBackgroundMode) {
+        const nextContentType = playList[nextIndex].contentType
+        const nextVideo = playList[nextIndex].videos
+        const nextAudio = playList[nextIndex].audios
+        const nextContentVideoSource = nextVideo[0]?.data?.source
+        if (
+          (nextContentType === 'video' && nextContentVideoSource !== 'youtube' && nextVideo.length !== 0) ||
+          (nextContentType === 'audio' && nextAudio.length !== 0)
+        ) {
+          const { id: contentId, programId, title, contentSectionTitle, contentType, videos } = playList[nextIndex]
 
-        return
+          setup?.({
+            backgroundMode: true,
+            title: title || '',
+            contentSectionTitle: contentSectionTitle || '',
+            programId,
+            contentId,
+            contentType: contentType || '',
+            videoId: videos[0]?.id,
+            source: videos[0]?.options?.cloudflare ? 'cloudflare' : videos[0]?.data?.source,
+          })
+          return
+        }
+      } else {
+        if (playList[nextIndex].contentType === 'audio' && playList[nextIndex].audios?.length !== 0) {
+          const { id: contentId, programId, title, contentSectionTitle, contentType } = playList[nextIndex]
+
+          setup?.({
+            title,
+            contentSectionTitle: contentSectionTitle || '',
+            programId,
+            contentId,
+            contentType: contentType || '',
+          })
+          return
+        }
       }
     }
   }
@@ -228,9 +300,10 @@ const GlobalAudioPlayer: React.VFC = () => {
           isPlaying={isPlaying}
           lastEndedAt={playList[currentIndex].lastEndedAt || lastEndedAt}
           audioUrl={audioUrl}
+          mimeType={mimeType}
           mode={mode}
           currentIndex={currentIndex}
-          onPlay={() => changePlayingState?.(!isPlaying)}
+          onPlay={state => changePlayingState?.(state)}
           onClose={() => close?.()}
           onPrev={() => {
             const quantity = mode === 'random' ? Math.floor(Math.random() * playList.length) : -1

@@ -231,9 +231,9 @@ export const useLatestProgramIds = ({ limit, language }: { limit?: number; langu
 }
 
 export const useProgram = (programId: string) => {
-  const { loading, data, error, refetch } = useQuery<hasura.GET_PROGRAM, hasura.GET_PROGRAMVariables>(
+  const { loading, data, error, refetch } = useQuery<hasura.GetProgram, hasura.GetProgramVariables>(
     gql`
-      query GET_PROGRAM($programId: uuid!) {
+      query GetProgram($programId: uuid!) {
         program_by_pk(id: $programId) {
           id
           cover_url
@@ -314,6 +314,9 @@ export const useProgram = (programId: string) => {
                   options
                   data
                 }
+              }
+              program_content_audios {
+                data
               }
             }
           }
@@ -452,6 +455,9 @@ export const useProgram = (programId: string) => {
               options: v.attachment.options,
               data: v.attachment.data,
             })),
+            audios: programContent.program_content_audios.map(v => ({
+              data: v.data,
+            })),
           })),
         })) || [],
     }
@@ -513,8 +519,8 @@ export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]
   }
 }
 
-export const GET_PROGRAM_CONTENT = gql`
-  query GET_PROGRAM_CONTENT($programContentId: uuid!) {
+export const GetProgramContent = gql`
+  query GetProgramContent($programContentId: uuid!) {
     program_content_by_pk(id: $programContentId) {
       id
       title
@@ -551,6 +557,9 @@ export const GET_PROGRAM_CONTENT = gql`
           data
         }
       }
+      program_content_audios {
+        data
+      }
       program_content_attachments(where: { data: { _is_null: false } }) {
         attachment_id
         data
@@ -561,8 +570,8 @@ export const GET_PROGRAM_CONTENT = gql`
   }
 `
 export const useProgramContent = (programContentId: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GET_PROGRAM_CONTENT, hasura.GET_PROGRAM_CONTENTVariables>(
-    GET_PROGRAM_CONTENT,
+  const { loading, error, data, refetch } = useQuery<hasura.GetProgramContent, hasura.GetProgramContentVariables>(
+    GetProgramContent,
     {
       variables: { programContentId },
       notifyOnNetworkStatusChange: true,
@@ -611,6 +620,9 @@ export const useProgramContent = (programContentId: string) => {
               size: v.attachment.size,
               options: v.attachment.options,
               data: v.attachment.data,
+            })),
+            audios: data.program_content_by_pk.program_content_audios.map(v => ({
+              data: v.data,
             })),
             attachments: data.program_content_by_pk.program_content_attachments.map(u => ({
               id: u.attachment_id,
@@ -982,13 +994,7 @@ export const useProgramId = (contentId: string) => {
   >(
     gql`
       query GetProgramIdByContentId($contentId: uuid!) {
-        program(
-          where: {
-            program_content_sections: {
-              program_contents: { program_content_audios: { program_content_id: { _eq: $contentId } } }
-            }
-          }
-        ) {
+        program(where: { program_content_sections: { program_contents: { id: { _eq: $contentId } } } }) {
           id
         }
       }
@@ -1014,6 +1020,21 @@ export const useRecentProgramContentLogContentId = (memberId: string) => {
           created_at
           program_content_id
           ended_at
+          program_content {
+            program_content_body {
+              type
+            }
+            program_content_audios {
+              id
+            }
+            program_content_videos {
+              id
+              attachment {
+                data
+                options
+              }
+            }
+          }
         }
       }
     `,
@@ -1023,7 +1044,28 @@ export const useRecentProgramContentLogContentId = (memberId: string) => {
   const recentProgramContent =
     loading || error || !data
       ? undefined
-      : data.program_content_log.map(log => ({ contentId: log.program_content_id, endedAt: log.ended_at }))[0]
+      : data?.program_content_log.map(log => {
+          const contentType = log.program_content.program_content_body.type
+          const audiosLength = log.program_content.program_content_audios.length
+          const contentVideo = log.program_content.program_content_videos[0]
+          const videoSource = contentVideo?.attachment?.options?.cloudflare
+            ? 'cloudflare'
+            : log.program_content.program_content_videos[0]?.attachment?.data?.source
+          if (
+            (contentType === 'audio' && audiosLength !== 0) ||
+            (contentType === 'video' && videoSource) !== 'youtube'
+          ) {
+            return {
+              contentType: log.program_content.program_content_body.type || '',
+              contentId: log.program_content_id,
+              endedAt: log.ended_at,
+              source: videoSource,
+              videoId: contentVideo?.id,
+            }
+          }
+          return undefined
+        })[0]
+
   return {
     recentProgramContent,
     RefetchRecentProgramContentId: refetch,

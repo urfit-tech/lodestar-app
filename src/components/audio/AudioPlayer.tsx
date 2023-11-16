@@ -3,9 +3,10 @@ import { useInterval } from '@chakra-ui/hooks'
 import { Icon } from '@chakra-ui/icons'
 import { Box, Flex, HStack, Text } from '@chakra-ui/react'
 import { Button, Divider, Popover, Tooltip } from 'antd'
+import HLS from 'hls.js'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { AiOutlineLoading } from 'react-icons/ai'
 import { TbArrowsRight } from 'react-icons/tb'
 import { defineMessages, useIntl } from 'react-intl'
@@ -81,16 +82,16 @@ const StyledSlider = styled(Slider)<{ height?: number }>`
   }
 `
 
-const OverlayBlock = styled(Box)<{ active?: boolean }>`
+const OverlayBlock = styled(Box)<{ variant?: 'active' | '' }>`
   position: absolute;
   top: 1rem;
   z-index: 1001;
   width: 100%;
   transition: transform 0.2s ease-in-out;
-  transform: translateY(${props => (props.active ? '-100%' : '0%')});
+  transform: translateY(${props => (props.variant === 'active' ? '-100%' : '0%')});
 `
 
-const ActionBlock = styled.div<{ active?: boolean }>`
+const ActionBlock = styled.div`
   padding: 0.75rem 0;
   background: white;
   color: ${props => props.theme['@primary-color']};
@@ -388,21 +389,23 @@ const AudioPlayer: React.VFC<{
   lastEndedAt: number
   playList: (ProgramContent & { programId?: string; contentSectionTitle?: string; progress?: number })[]
   currentIndex: number
-  onPlay: () => void
+  mimeType: string
+  onPlay: (state: boolean) => void
   onClose: () => void
   onPrev: () => void
   onNext: () => void
   onAudioEvent: (event: audioEvent) => void
   onPlayModeChange: (mode: AudioPlayerMode) => void
 }> = ({
-  isPlaying,
   title,
   mode,
   contentSectionTitle,
   currentIndex,
   lastEndedAt,
   playList,
+  isPlaying,
   audioUrl,
+  mimeType,
   onPlay,
   onClose,
   onPrev,
@@ -426,10 +429,22 @@ const AudioPlayer: React.VFC<{
     setProgress(audioRef.current?.currentTime || 0)
   }, 500)
 
+  useEffect(() => {
+    if (audioUrl && audioRef.current) {
+      if (mimeType === 'application/x-mpegURL' && HLS.isSupported()) {
+        const hls = new HLS()
+        hls.loadSource(audioUrl)
+        hls.attachMedia(audioRef.current)
+      } else {
+        audioRef.current.src = audioUrl
+      }
+    }
+  }, [audioUrl, mimeType])
+
   return (
     <>
       <Box position="fixed" right="0" bottom="0" left="0" zIndex="1000">
-        <OverlayBlock active={showAction} display={{ base: 'block', md: 'none' }}>
+        <OverlayBlock variant={showAction ? 'active' : ''} display={{ base: 'block', md: 'none' }}>
           <ActionBlock className="d-flex align-items-center justify-content-around">
             <div className="flex-grow-1 text-center">
               <PlayRateButton
@@ -473,7 +488,7 @@ const AudioPlayer: React.VFC<{
             <Flex justifyContent="space-between" marginY="8px">
               {!pathname.includes('contents') && (
                 <CloseBlock alignItems="center" className="col-1">
-                  <StyledButton type="link" variant="bar" onClick={() => onClose?.()}>
+                  <StyledButton type="link" variant="bar" onClick={() => onClose()}>
                     <Icon as={TimesIcon} />
                   </StyledButton>
                 </CloseBlock>
@@ -490,11 +505,11 @@ const AudioPlayer: React.VFC<{
               <Flex alignItems="center" justifyContent="center">
                 <AudioControls
                   isLoading={isLoading}
-                  isPlaying={isPlaying}
+                  isPlaying={true}
                   onPrev={() => onPrev?.()}
                   onBackward={() => audioRef.current && (audioRef.current.currentTime = progress - 15)}
                   onPlay={() => {
-                    onPlay()
+                    onPlay(!isPlaying)
                     audioRef.current && (isPlaying ? audioRef.current.pause() : audioRef.current.play())
                     if (isPlaying && audioRef.current) {
                       onAudioEvent({
@@ -567,13 +582,14 @@ const AudioPlayer: React.VFC<{
           audioRef.current = ref
         }}
         src={audioUrl}
-        loop={mode === 'single-loop'}
         autoPlay={isPlaying}
+        loop={mode === 'single-loop'}
         onLoadedMetadata={() => {
           if (audioRef.current) {
             audioRef.current.currentTime = lastEndedAt === audioRef.current.duration ? 0 : lastEndedAt
+            audioRef.current.playbackRate = playRate
             setDuration(audioRef.current.duration)
-            audioRef.current && (audioRef.current.playbackRate = playRate)
+            onPlay(true)
           }
         }}
         onEnded={() => {
@@ -588,7 +604,7 @@ const AudioPlayer: React.VFC<{
               },
             })
           lastEndedTime.current = duration
-          playList.length === 1 ? onPlay() : onNext?.()
+          playList.length === 1 ? onPlay(true) : onNext()
         }}
         onTimeUpdate={() =>
           audioRef.current &&
