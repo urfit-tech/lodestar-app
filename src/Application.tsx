@@ -5,11 +5,13 @@ import 'braft-editor/dist/output.css'
 import { LodestarAppProvider } from 'lodestar-app-element/src/contexts/LodestarAppContext'
 import React from 'react'
 import { StyleSheetManager } from 'styled-components'
+import GlobalAudioPlayer from './components/audio/GlobalAudioPlayer'
 import AppRouter, { RouteProps } from './components/common/AppRouter'
 import InAppBrowserWarningModal from './components/common/InAppBrowserWarningModal'
 import SignupPropertyModal from './components/common/SignupPropertyModal'
 import GlobalPodcastPlayer from './components/podcast/GlobalPodcastPlayer'
 import ErrorBoundary from './containers/common/ErrorBoundary'
+import { AudioPlayerProvider } from './contexts/AudioPlayerContext'
 import { CartProvider } from './contexts/CartContext'
 import { CustomRendererProps, CustomRendererProvider } from './contexts/CustomRendererContext'
 import { LocaleProvider } from './contexts/LocaleContext'
@@ -30,19 +32,22 @@ const Application: React.FC<{
           <LocaleProvider>
             <CartProvider>
               <NotificationProvider>
-                <PodcastPlayerProvider>
-                  <MediaPlayerProvider>
-                    <ConfigProvider locale={zhTW}>
-                      <CustomRendererProvider renderer={customRender}>
-                        <AppRouter extra={extraRouteProps}>
-                          <GlobalPodcastPlayer />
-                          <SignupPropertyModal key={document.location.href} />
-                          <InAppBrowserWarningModal />
-                        </AppRouter>
-                      </CustomRendererProvider>
-                    </ConfigProvider>
-                  </MediaPlayerProvider>
-                </PodcastPlayerProvider>
+                <AudioPlayerProvider>
+                  <PodcastPlayerProvider>
+                    <MediaPlayerProvider>
+                      <ConfigProvider locale={zhTW}>
+                        <CustomRendererProvider renderer={customRender}>
+                          <AppRouter extra={extraRouteProps}>
+                            <GlobalPodcastPlayer />
+                            <GlobalAudioPlayer />
+                            <SignupPropertyModal key={document.location.href} />
+                            <InAppBrowserWarningModal />
+                          </AppRouter>
+                        </CustomRendererProvider>
+                      </ConfigProvider>
+                    </MediaPlayerProvider>
+                  </PodcastPlayerProvider>
+                </AudioPlayerProvider>
               </NotificationProvider>
             </CartProvider>
           </LocaleProvider>
