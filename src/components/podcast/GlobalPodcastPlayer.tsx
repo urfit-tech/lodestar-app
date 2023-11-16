@@ -1,4 +1,5 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
+import { useLocation } from 'react-router'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import PodcastPlayer from './PodcastPlayer'
 
@@ -21,6 +22,20 @@ const GlobalPodcastPlayer: React.VFC = () => {
     currentIndex,
     currentPodcastProgramContent,
   } = useContext(PodcastPlayerContext)
+
+  const location = useLocation()
+  const pathname = location.pathname
+
+  useEffect(() => {
+    if (pathname.includes('contents')) {
+      const contentId = pathname.split('/')[4]
+      if (contentId) {
+        close?.()
+      }
+    } else if (pathname.includes('members')) {
+      close?.()
+    }
+  }, [close, pathname])
 
   return (
     <>
