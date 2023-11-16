@@ -505,7 +505,7 @@ const AudioPlayer: React.VFC<{
               <Flex alignItems="center" justifyContent="center">
                 <AudioControls
                   isLoading={isLoading}
-                  isPlaying={true}
+                  isPlaying={isPlaying}
                   onPrev={() => onPrev?.()}
                   onBackward={() => audioRef.current && (audioRef.current.currentTime = progress - 15)}
                   onPlay={() => {
