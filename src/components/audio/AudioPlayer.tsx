@@ -41,7 +41,7 @@ import {
   TimesIcon,
 } from '../../images'
 import { ProgramContent } from '../../types/program'
-import Responsive, { BREAK_POINT } from '../common/Responsive'
+import { BREAK_POINT } from '../common/Responsive'
 import PlaylistOverlay from './PlaylistOverlay'
 
 const messages = defineMessages({
@@ -91,7 +91,7 @@ const OverlayBlock = styled(Box)<{ variant?: 'active' | '' }>`
   transform: translateY(${props => (props.variant === 'active' ? '-100%' : '0%')});
 `
 
-const ActionBlock = styled.div`
+const ActionBlock = styled(Flex)`
   padding: 0.75rem 0;
   background: white;
   color: ${props => props.theme['@primary-color']};
@@ -119,7 +119,7 @@ const StyledDuration = styled.div`
   line-height: 24px;
   letter-spacing: 0.6px;
 `
-const StyledButtonGroup = styled.div`
+const StyledButtonGroup = styled(HStack)`
   margin: 0 12px;
 
   @media (min-width: ${BREAK_POINT}px) {
@@ -349,12 +349,12 @@ const AudioControls: React.FC<{
         <Icon as={PrevIcon} />
       </StyledShiftButton>
 
-      <StyledButtonGroup className="d-flex align-items-center justify-content-center">
+      <StyledButtonGroup alignItems="center" justifyContent="center" spacing="10px">
         <StyledButton type="link" variant="bar" onClick={onBackward}>
           <Icon as={Backward15Icon} />
         </StyledButton>
 
-        <StyledButton type="link" variant="bar" className="mx-2 mx-lg-3" height="44px" onClick={onPlay}>
+        <StyledButton type="link" variant="bar" height="44px" onClick={onPlay}>
           {isLoading ? (
             <StyledRotateIcon as={AiOutlineLoading} />
           ) : (
@@ -445,7 +445,7 @@ const AudioPlayer: React.VFC<{
     <>
       <Box position="fixed" right="0" bottom="0" left="0" zIndex="1000">
         <OverlayBlock variant={showAction ? 'active' : ''} display={{ base: 'block', md: 'none' }}>
-          <ActionBlock className="d-flex align-items-center justify-content-around">
+          <ActionBlock alignItems="center" justifyContent="space-around">
             <div className="flex-grow-1 text-center">
               <PlayRateButton
                 variant="overlay"
@@ -476,30 +476,31 @@ const AudioPlayer: React.VFC<{
 
         <Box position="relative" bottom="0" zIndex="1002" background="#323232" color="white" paddingY="0.25rem">
           <Box className="container">
-            <Responsive.Default>
-              <Flex alignContent="center" justifyContent="space-between" marginTop="5px">
-                <StyledLink to={link}>
-                  <StyledTitle className="flex-grow-1">{title}</StyledTitle>
-                </StyledLink>
-                <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
-              </Flex>
-            </Responsive.Default>
+            <Flex
+              alignContent="center"
+              justifyContent="space-between"
+              marginTop="5px"
+              display={{ base: 'flex', lg: 'none' }}
+            >
+              <StyledLink to={link}>
+                <StyledTitle className="flex-grow-1">{title}</StyledTitle>
+              </StyledLink>
+              <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
+            </Flex>
 
             <Flex justifyContent="space-between" marginY="8px">
               {!pathname.includes('contents') && (
-                <CloseBlock alignItems="center" className="col-1">
+                <CloseBlock alignItems="center" marginLeft={{ base: '0px', lg: '10px' }}>
                   <StyledButton type="link" variant="bar" onClick={() => onClose()}>
                     <Icon as={TimesIcon} />
                   </StyledButton>
                 </CloseBlock>
               )}
-              <Flex justifyContent="start" alignItems="center" className="col-2 col-lg-4 d-lg-block ">
-                <Responsive.Desktop>
-                  <Link to={link}>
-                    <StyledTitle>{title}</StyledTitle>
-                  </Link>
-                  <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
-                </Responsive.Desktop>
+              <Flex justifyContent="start" alignItems="center" display={{ base: 'none', lg: 'block' }}>
+                <Link to={link}>
+                  <StyledTitle>{title}</StyledTitle>
+                </Link>
+                <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
               </Flex>
 
               <Flex alignItems="center" justifyContent="center">
@@ -529,13 +530,8 @@ const AudioPlayer: React.VFC<{
                 />
               </Flex>
 
-              <HStack
-                spacing={{ base: '10px', md: '20px' }}
-                alignItems="center"
-                justifyContent="end"
-                className="col-3 col-lg-4"
-              >
-                <HStack spacing="20px" display={{ base: 'none', md: 'block' }}>
+              <HStack spacing="10px" alignItems="center" justifyContent="end">
+                <HStack display={{ base: 'none', md: 'flex' }}>
                   <PlayRateButton
                     variant="bar"
                     playRate={playRate}
