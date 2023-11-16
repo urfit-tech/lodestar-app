@@ -431,8 +431,8 @@ const ProgramContentPlayerWrapper = (props: {
       // setSource({ type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' })
       // TODO: change into cloudflare, because azure is too slow...
       setSources([
-        { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
         { type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' },
+        { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
       ])
     }
     if (props.options?.cloudflare) {
@@ -451,12 +451,12 @@ const ProgramContentPlayerWrapper = (props: {
           if (data.code === 'SUCCESS') {
             setSources([
               {
-                type: 'application/dash+xml',
-                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
-              },
-              {
                 type: 'application/x-mpegURL',
                 src: `https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`,
+              },
+              {
+                type: 'application/dash+xml',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
               },
             ])
             setPoster(`https://cloudflarestream.com/${data.result.token}/thumbnails/thumbnail.jpg`)
