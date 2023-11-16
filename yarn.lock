@@ -11043,7 +11043,7 @@ lodash.uniq@^4.5.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element#v1.63.0:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/b1f01c1666805c695a38d509f05d6e6e831222ee"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/624d532767d192938a178540f694ba731439ce75"
   dependencies:
     "@apollo/client" "^3.7.11"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
