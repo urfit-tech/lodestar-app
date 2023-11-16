@@ -28,6 +28,7 @@ export type AppointmentPeriod = {
   currentMemberBooked: boolean | undefined
   available?: boolean
   isBookedReachLimit: boolean
+  appointmentScheduleCreatedAt: Date
 }
 
 export type AppointmentEnrollment = {
