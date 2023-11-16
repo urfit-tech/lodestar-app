@@ -71,15 +71,15 @@ const StyledTabPanel = styled(TabPanel)`
 export const ProgramTab: React.FC<{
   onProgramTabClick: (tab: string) => void
   tab: string
-  programPackageCounts: number
-  programCounts: number
-}> = ({ onProgramTabClick, tab, programPackageCounts, programCounts }) => {
+  totalProgramPackageCounts: number
+  totalProgramCounts: number
+}> = ({ onProgramTabClick, tab, totalProgramPackageCounts, totalProgramCounts }) => {
   const { formatMessage } = useIntl()
   return (
     <>
       <Flex cursor="pointer">
         <HStack spacing="10px">
-          {programCounts > 0 && (
+          {totalProgramCounts > 0 && (
             <Text
               fontSize="2xl"
               as="b"
@@ -89,17 +89,17 @@ export const ProgramTab: React.FC<{
               {formatMessage(productMessages.program.title.course)}
             </Text>
           )}
-          {programCounts > 0 && programPackageCounts > 0 && (
+          {totalProgramCounts > 0 && totalProgramPackageCounts > 0 && (
             <Center height="20px">
               <Divider orientation="vertical" />
             </Center>
           )}
-          {programPackageCounts > 0 && (
+          {totalProgramPackageCounts > 0 && (
             <Text
               fontSize="2xl"
               as="b"
               onClick={() => onProgramTabClick('programPackage')}
-              color={(programCounts === 0 && 'black') || (tab === 'programPackage' ? 'black' : '#cdcdcd')}
+              color={(totalProgramCounts === 0 && 'black') || (tab === 'programPackage' ? 'black' : '#cdcdcd')}
             >
               {formatMessage(commonMessages.ui.packages)}
             </Text>
@@ -184,8 +184,8 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
     loading: podcastEnrollmentLoading,
     error: podcastEnrollmentError,
   } = useProductEnrollment('podcast', memberId)
-  const programCounts = programEnrollment.length + expiredProgramEnrollment.length
-  const programPackageCounts = programPackageEnrollment.length + expiredProgramPackageEnrollment.length
+  const totalProgramCounts = programEnrollment.length + expiredProgramEnrollment.length
+  const totalProgramPackageCounts = programPackageEnrollment.length + expiredProgramPackageEnrollment.length
   let content = null
 
   if (memberId === 'currentMemberId' && isAuthenticated) {
@@ -207,29 +207,34 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
       isVisible: currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROGRAM_INFO),
       content: (
         <>
-          {programCounts > 0 && programTab === 'program' && (
+          {!programEnrollmentLoading && totalProgramCounts === 0 && totalProgramPackageCounts === 0 && (
+            <div className="container py-3">
+              <p>{formatMessage(productMessages.program.content.noProgram)}</p>
+            </div>
+          )}
+          {totalProgramCounts > 0 && programTab === 'program' && (
             <EnrolledProgramCollectionBlock
               memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
               programEnrollment={programEnrollment}
               expiredProgramEnrollment={expiredProgramEnrollment}
-              programPackageCounts={programPackageCounts}
-              programCounts={programCounts}
+              totalProgramPackageCounts={totalProgramPackageCounts}
+              totalProgramCounts={totalProgramCounts}
               loading={programEnrollmentLoading || expiredProgramEnrollmentLoading}
               isError={Boolean(programEnrollmentError) || Boolean(expiredProgramEnrollmentError)}
             />
           )}
-          {((programCounts === 0 && programPackageCounts > 0) ||
-            (programCounts > 0 && programTab === 'programPackage')) && (
+          {((totalProgramCounts === 0 && totalProgramPackageCounts > 0) ||
+            (totalProgramCounts > 0 && programTab === 'programPackage')) && (
             <ProgramPackageCollectionBlock
               memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
               programPackageEnrollment={programPackageEnrollment}
               expiredProgramPackageEnrollment={expiredProgramPackageEnrollment}
-              programPackageCounts={programPackageCounts}
-              programCounts={programCounts}
+              totalProgramPackageCounts={totalProgramPackageCounts}
+              totalProgramCounts={totalProgramCounts}
               loading={programPackageEnrollmentLoading || expiredProgramPackageEnrollmentLoading}
               isError={Boolean(programPackageEnrollmentError) || Boolean(expiredProgramPackageEnrollmentError)}
             />

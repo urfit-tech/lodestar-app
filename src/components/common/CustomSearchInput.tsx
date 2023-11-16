@@ -8,10 +8,11 @@ const CustomSearchInput: React.FC<{
   display?: LayoutProps['display']
   placeholder?: string
   className?: string
-}> = ({ className, width, placeholder, onChange, rightIcon, display }) => {
+  defaultValue?: string
+}> = ({ className, width, placeholder, onChange, rightIcon, display, defaultValue }) => {
   return (
     <InputGroup className={className} display={display} width={width} backgroundColor="white">
-      <Input placeholder={placeholder} onChange={onChange} />
+      <Input placeholder={placeholder} onChange={onChange} defaultValue={defaultValue} />
       {rightIcon && <InputRightElement>{rightIcon}</InputRightElement>}
     </InputGroup>
   )
