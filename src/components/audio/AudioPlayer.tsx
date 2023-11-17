@@ -1,8 +1,8 @@
 import { ButtonProps } from '@chakra-ui/button'
 import { useInterval } from '@chakra-ui/hooks'
 import { Icon } from '@chakra-ui/icons'
-import { Box, Flex, HStack, Text } from '@chakra-ui/react'
-import { Button, Divider, Popover, Tooltip } from 'antd'
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react'
+import { Divider, Popover, Tooltip } from 'antd'
 import HLS from 'hls.js'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
@@ -165,10 +165,6 @@ const CloseBlock = styled(Flex)`
     font-size: 16px;
   }
   ${desktopViewMixin(css`
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
     .chakra-icon {
       font-size: 20px;
     }
@@ -445,7 +441,7 @@ const AudioPlayer: React.VFC<{
     <>
       <Box position="fixed" right="0" bottom="0" left="0" zIndex="1000">
         <OverlayBlock variant={showAction ? 'active' : ''} display={{ base: 'block', md: 'none' }}>
-          <ActionBlock alignItems="center" justifyContent="space-around">
+          <ActionBlock alignItems="center" justifyContent="space-around" marginBottom="5px">
             <div className="flex-grow-1 text-center">
               <PlayRateButton
                 variant="overlay"
@@ -475,11 +471,12 @@ const AudioPlayer: React.VFC<{
         </Box>
 
         <Box position="relative" bottom="0" zIndex="1002" background="#323232" color="white" paddingY="0.25rem">
-          <Box className="container">
+          <Box>
             <Flex
               alignContent="center"
               justifyContent="space-between"
               marginTop="5px"
+              marginX="15px"
               display={{ base: 'flex', lg: 'none' }}
             >
               <StyledLink to={link}>
@@ -487,23 +484,34 @@ const AudioPlayer: React.VFC<{
               </StyledLink>
               <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
             </Flex>
-
-            <Flex justifyContent="space-between" marginY="8px">
-              {!pathname.includes('contents') && (
-                <CloseBlock alignItems="center" marginLeft={{ base: '0px', lg: '10px' }}>
-                  <StyledButton type="link" variant="bar" onClick={() => onClose()}>
-                    <Icon as={TimesIcon} />
-                  </StyledButton>
-                </CloseBlock>
-              )}
-              <Flex justifyContent="start" alignItems="center" display={{ base: 'none', lg: 'block' }}>
-                <Link to={link}>
-                  <StyledTitle>{title}</StyledTitle>
-                </Link>
-                <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
+            <Flex justifyContent="space-between" margin={{ base: '5px', lg: '8px 10px 5px 10px' }}>
+              <Flex>
+                {!pathname.includes('contents') && (
+                  <CloseBlock alignItems="center">
+                    <StyledButton
+                      type="link"
+                      variant="bar"
+                      onClick={() => onClose()}
+                      marginRight={{ base: '0px', lg: '10px' }}
+                    >
+                      <Icon as={TimesIcon} />
+                    </StyledButton>
+                  </CloseBlock>
+                )}
+                <Flex justifyContent="start" alignItems="center" display={{ base: 'none', lg: 'block' }}>
+                  <Link to={link}>
+                    <StyledTitle>{title}</StyledTitle>
+                  </Link>
+                  <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
+                </Flex>
               </Flex>
-
-              <Flex alignItems="center" justifyContent="center">
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                width="90%"
+                position={{ base: 'relative', lg: 'absolute' }}
+                bottom={{ base: '0px', lg: '10px' }}
+              >
                 <AudioControls
                   isLoading={isLoading}
                   isPlaying={isPlaying}
@@ -529,8 +537,7 @@ const AudioPlayer: React.VFC<{
                   onNext={() => onNext?.()}
                 />
               </Flex>
-
-              <HStack spacing="10px" alignItems="center" justifyContent="end">
+              <HStack spacing={{ base: '0px', lg: '10px' }} alignItems="center" justifyContent="end">
                 <HStack display={{ base: 'none', md: 'flex' }}>
                   <PlayRateButton
                     variant="bar"
