@@ -653,6 +653,10 @@ const AudioPlayer: React.VFC<{
             },
           })
         }
+        onError={() => {
+          onClose()
+          localStorage.removeItem('playing')
+        }}
       />
     </>
   )
