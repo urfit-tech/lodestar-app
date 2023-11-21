@@ -34,7 +34,7 @@ const TOSModal: React.VFC<{ onConfirm?: () => void }> = ({ onConfirm }) => {
   const handleClick = () => {
     axios
       .post(
-        `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/tos`,
+        `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/cw/tos`,
         {
           email: window.lodestar.getCurrentMember()?.email || currentMember?.email,
           product: 'kolable',
