@@ -258,7 +258,6 @@ const PlayRateButton: React.VFC<
     </StyledButton>
   )
 }
-
 const PlayModeButton: React.VFC<
   Omit<ButtonProps, 'variant' | 'mode' | 'onChange'> & {
     variant: 'overlay' | 'bar'
@@ -302,7 +301,7 @@ const PlayModeButton: React.VFC<
           {formatMessage(
             mode === 'sequential'
               ? messages.sequential
-              : 'list-loop'
+              : mode === 'list-loop'
               ? messages.listLoop
               : mode === 'single-loop'
               ? messages.singleLoop
@@ -653,10 +652,6 @@ const AudioPlayer: React.VFC<{
             },
           })
         }
-        onError={() => {
-          onClose()
-          localStorage.removeItem('playing')
-        }}
       />
     </>
   )
