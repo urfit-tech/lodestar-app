@@ -83,6 +83,7 @@ const GlobalAudioPlayer: React.VFC = () => {
     RefetchRecentProgramId()
     if (
       playList[currentIndex] &&
+      audioPlayerVisibleState !== 'close' &&
       ((programContentBodyType === 'audio' && programContent?.audios.length !== 0) ||
         (isBackgroundMode &&
           programContentBodyType === 'video' &&
