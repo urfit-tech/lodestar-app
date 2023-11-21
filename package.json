@@ -120,7 +120,7 @@
     "react-hot-loader": "^4.12.21",
     "react-hotjar": "^2.2.0",
     "react-howler": "^5.2.0",
-    "react-icons": "4.3.1",
+    "react-icons": "^4.11.0",
     "react-intl": "5.20.9",
     "react-intl-translations-manager": "^5.0.3",
     "react-messenger-customer-chat": "^0.8.0",
