@@ -10,19 +10,16 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
-import { useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
-import AudioPlayer from '../../components/common/AudioPlayer'
-import { EmptyBlock } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
-import MediaPlayerContext from '../../contexts/MediaPlayerContext'
+import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { getFileDownloadableLink, isAndroid, isMobile } from '../../helpers'
+import { isAndroid, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { CarIcon } from '../../images'
@@ -84,48 +81,24 @@ const ProgramContentBlock: React.VFC<{
   programContentId: string
   issueEnabled?: boolean
   editors?: string[]
-}> = ({ programId, programRoles, programContentSections, programContentId, issueEnabled }) => {
+}> = ({ programId, programContentId, programRoles, programContentSections, issueEnabled }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const {
-    resourceList,
-    currentResource,
-    updateElementList,
-    play: playInBackground,
-    setMediaPlayerVisible,
-  } = useContext(MediaPlayerContext)
-  const { loading: loadingApp, enabledModules, id: appId } = useApp()
+  const { loading: loadingApp, enabledModules } = useApp()
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const { hasProgramContentPermission, isLoginTrial } = useHasProgramContentPermission(programContentId)
-  const [audioUrl, setAudioUrl] = useState<string>()
+  const { changeGlobalPlayingState, setup, close, changeBackgroundMode, isBackgroundMode } =
+    useContext(AudioPlayerContext)
   const endedAtRef = useRef(0)
 
   const instructor = programRoles.filter(role => role.name === 'instructor')[0]
-  const {
-    params: { programContentId: currentContentId },
-    url,
-  } = useRouteMatch<{ programContentId: string }>()
-  const urlParams = new URLSearchParams(window.location.search)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
     programContentProgress?.find(progress => progress.programContentId === programContentId)?.progress || 0
 
-  const currentProgramContentProgress = programContentProgress?.find(
-    progress => progress.programContentId === programContentId,
-  )
-
-  const lastProgress =
-    (!!currentProgramContentProgress?.lastProgress && currentProgramContentProgress?.lastProgress !== 1) ||
-    currentProgramContentProgress?.progress !== 1
-      ? currentProgramContentProgress?.lastProgress || 0
-      : 0
-
-  const prevProgramContent = flatten(programContentSections.map(v => v.contents)).find(
-    (_, i, contents) => contents[i + 1]?.id === programContentId,
-  )
   const nextProgramContent = flatten(programContentSections.map(v => v.contents)).find(
     (_, i, contents) => contents[i - 1]?.id === programContentId,
   )
@@ -162,40 +135,6 @@ const ProgramContentBlock: React.VFC<{
     hasProgramContentPermission,
     programContent?.publishedAt,
   ])
-
-  useEffect(() => {
-    if (programContentBodyType === 'audio') {
-      getFileDownloadableLink(`audios/${appId}/${programId}/${programContentId}`, authToken).then(url => {
-        setAudioUrl(url)
-      })
-    }
-  }, [programContentBodyType, programContentId, programId])
-
-  useEffect(() => {
-    if (currentResource) {
-      const programContentList = programContentSections.flatMap(contentSection => contentSection.contents) || []
-      updateElementList?.(
-        programContentList.map(content => ({
-          title: content.title,
-          type: 'ProgramContent',
-          options: {
-            programId: programId,
-            contentType: content.contentType,
-            videoId: content.contentType === 'video' ? content?.videos?.[0]?.id : undefined,
-          },
-          target: content.id,
-        })) || [],
-      )
-      const currentIndex = programContentList.findIndex(content => content.id === programContentId)
-      currentIndex >= 0 && playInBackground?.(currentIndex)
-    }
-  }, [programId])
-
-  useEffect(() => {
-    if (resourceList.length === 0) {
-      refetchProgress?.()
-    }
-  }, [resourceList])
 
   if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -257,16 +196,18 @@ const ProgramContentBlock: React.VFC<{
         </div>
       )}
 
-      {currentResource && (
-        <StyledBackgroundModeDescriptionBlock>
-          <CarIcon className="mb-2" style={{ display: 'block' }} />
-          <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.currentlyInBackgroundMode)}</p>
-          <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription)}</p>
-        </StyledBackgroundModeDescriptionBlock>
-      )}
+      {isBackgroundMode &&
+        programContent.videos[0]?.data?.source !== 'youtube' &&
+        programContent.contentType === 'video' && (
+          <StyledBackgroundModeDescriptionBlock>
+            <CarIcon className="mb-2" style={{ display: 'block' }} />
+            <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.currentlyInBackgroundMode)}</p>
+            <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription)}</p>
+          </StyledBackgroundModeDescriptionBlock>
+        )}
 
-      {programContent.contentType === 'video' &&
-        !currentResource &&
+      {((programContent.contentType === 'video' && !isBackgroundMode) ||
+        programContent.videos[0]?.data?.source === 'youtube') &&
         ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
           <ProgramContentPlayer
@@ -288,49 +229,6 @@ const ProgramContentBlock: React.VFC<{
           />
         )}
 
-      {programContent.contentType === 'audio' &&
-        !currentResource &&
-        ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
-          currentUserRole === 'app-owner') && (
-          <AudioPlayer
-            autoPlay
-            title={programContent.title}
-            audioUrl={audioUrl}
-            lastProgress={lastProgress}
-            onPrev={
-              prevProgramContent
-                ? () => {
-                    history.push(
-                      `${url.replace(currentContentId, prevProgramContent?.id || '')}?back=${urlParams.get('back')}`,
-                    )
-                  }
-                : undefined
-            }
-            onNext={
-              nextProgramContent
-                ? () => {
-                    history.push(
-                      `${url.replace(currentContentId, nextProgramContent?.id || '')}?back=${urlParams.get('back')}`,
-                    )
-                  }
-                : undefined
-            }
-            onAudioEvent={e => {
-              if (Math.abs(e.audioState.endedAt - endedAtRef.current) >= 5) {
-                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
-                if (e.type === 'progress') {
-                  insertProgramProgress(e.progress)
-                }
-                endedAtRef.current = e.audioState.endedAt
-              }
-              if (e.type === 'ended') {
-                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
-                insertProgramProgress(1)
-              }
-            }}
-          />
-        )}
-
       {moment().isBefore(moment(programContent.publishedAt)) &&
         hasProgramContentPermission &&
         currentUserRole !== 'app-owner' && (
@@ -345,64 +243,57 @@ const ProgramContentBlock: React.VFC<{
           </StyledUnpublishedBlock>
         )}
 
-      {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) && (
-        <StyledContentBlock className="mb-3">
-          {isMobile && !isAndroid && enabledModules.background_mode ? (
-            <StyledTitleBlock>
-              <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
-              <div className="d-flex justify-content-end">
-                <span className="mr-2">
-                  {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
-                </span>
-                <Switch
-                  colorScheme="whatsapp"
-                  onChange={e => {
-                    if (currentResource) {
-                      updateElementList?.([])
-                      setMediaPlayerVisible?.(false)
-                      refetchProgress()
-                    } else {
-                      const programContentList =
-                        programContentSections.flatMap(contentSection => contentSection.contents) || []
-                      updateElementList?.(
-                        programContentList
-                          .filter(content => !content.videos?.some(video => video?.data?.source === 'youtube'))
-                          .map(content => ({
-                            title: content.title,
-                            type: 'ProgramContent',
-                            options: {
-                              programId: programId,
-                              contentType: content.contentType,
-                              videoId: content.contentType === 'video' ? content?.videos?.[0]?.id : undefined,
-                              source: content.videos?.[0]?.options?.cloudflare
-                                ? 'cloudflare'
-                                : content.videos?.[0]?.data?.source,
-                              sourceUrl: content.videos?.[0]?.data?.url,
-                            },
-                            target: content.id,
-                          })) || [],
-                      )
-                      refetchProgress()
-                      const currentIndex = programContentList.findIndex(content => content.id === programContentId)
-                      currentIndex >= 0 && playInBackground?.(currentIndex)
-                    }
-                  }}
-                  isChecked={currentResource ? true : false}
-                />
-              </div>
-            </StyledTitleBlock>
-          ) : (
-            <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
-          )}
-
-          {programContent.programContentBody &&
-            ((moment().isAfter(moment(programContent.publishedAt)) && hasProgramContentPermission) ||
-              currentUserRole === 'app-owner') &&
-            !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
-              <BraftContent>{programContent.programContentBody.description}</BraftContent>
+      {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam', 'audio']) &&
+        programContent.videos[0]?.data?.source !== 'youtube' && (
+          <StyledContentBlock className="mb-3">
+            {isMobile && !isAndroid && enabledModules.background_mode ? (
+              <StyledTitleBlock>
+                <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
+                <div className="d-flex justify-content-end">
+                  <span className="mr-2">
+                    {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
+                  </span>
+                  <Switch
+                    colorScheme="whatsapp"
+                    onChange={() => {
+                      if (isBackgroundMode) {
+                        changeBackgroundMode?.(false)
+                        changeGlobalPlayingState?.(false)
+                        close?.()
+                      }
+                      if (!isBackgroundMode && programContent) {
+                        setup?.({
+                          backgroundMode: true,
+                          title: programContent?.title || '',
+                          contentSectionTitle: programContent.contentSectionTitle || '',
+                          programId: programId,
+                          contentId: programContentId,
+                          contentType: programContent.contentType || '',
+                          videoId: programContent.videos[0]?.id,
+                          source: programContent.videos[0]?.options?.cloudflare
+                            ? 'cloudflare'
+                            : programContent.videos[0]?.data?.source,
+                        })
+                        changeBackgroundMode?.(true)
+                        changeGlobalPlayingState?.(true)
+                      }
+                    }}
+                    isChecked={isBackgroundMode}
+                  />
+                </div>
+              </StyledTitleBlock>
+            ) : (
+              <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
             )}
-        </StyledContentBlock>
-      )}
+
+            {programContent.programContentBody &&
+              ((moment().isAfter(moment(programContent.publishedAt)) && hasProgramContentPermission) ||
+                currentUserRole === 'app-owner') &&
+              !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
+                <BraftContent>{programContent.programContentBody.description}</BraftContent>
+              )}
+          </StyledContentBlock>
+        )}
 
       {enabledModules.practice &&
         programContent.programContentBody?.type === 'practice' &&
@@ -440,8 +331,6 @@ const ProgramContentBlock: React.VFC<{
       {programContent.programContentBody?.type !== 'practice' && instructor && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />
       )}
-
-      {resourceList.length > 0 && <EmptyBlock height="64px" />}
     </div>
   )
 }
