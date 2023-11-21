@@ -639,7 +639,7 @@ const AudioPlayer: React.VFC<{
               },
             })
           lastEndedTime.current = duration
-          playList.length === 1 ? onPlay(true) : isLast ? onPlay(false) : onNext()
+          playList.length === 1 ? onPlay(true) : isLast && mode === 'sequential' ? onPlay(false) : onNext()
         }}
         onTimeUpdate={() =>
           audioRef.current &&
