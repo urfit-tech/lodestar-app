@@ -117,7 +117,7 @@ const DefaultLayout: React.FC<{
     }
     if (isAuthenticated && tos?.memberId !== currentMemberId) {
       axios
-        .get(`${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/tos`, {
+        .get(`${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/cw/tos`, {
           params: {
             email: window.lodestar.getCurrentMember()?.email || currentMember?.email,
             product: 'kolable',
