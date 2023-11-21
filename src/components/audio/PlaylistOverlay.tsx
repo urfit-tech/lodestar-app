@@ -4,7 +4,7 @@ import { List } from 'antd'
 import React, { useContext } from 'react'
 import { AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { durationFormatter, rgba } from '../../helpers'
@@ -95,6 +95,8 @@ const PlaylistOverlay: React.VFC<{
   currentIndex: number
 }> = ({ title, playList, currentIndex }) => {
   const history = useHistory()
+  const location = useLocation()
+  const pathname = location.pathname
   const { formatMessage } = useIntl()
   const { setup, isBackgroundMode } = useContext(AudioPlayerContext)
 
@@ -129,17 +131,20 @@ const PlaylistOverlay: React.VFC<{
                 isPlaying={index === currentIndex}
                 contentType={contentType}
                 onClick={() => {
-                  if (
-                    (contentType !== 'audio' && contentType !== 'video') ||
-                    (contentType === 'audio' && audios?.length === 0) ||
-                    (!isBackgroundMode && contentType === 'video') ||
-                    (isBackgroundMode && videos[0]?.data?.source === 'youtube')
-                  ) {
+                  const videoSource = videos[0]?.data?.source
+                  if (pathname.includes('contents') && (contentType === 'audio' || contentType === 'video')) {
                     history.push(`/programs/${programId}/contents/${contentId}`)
                   }
-                  if (contentType === 'audio') {
-                    window.location.pathname.includes('contents') &&
-                      history.push(`/programs/${programId}/contents/${contentId}`)
+                  if (
+                    !pathname.includes('contents') &&
+                    ((contentType !== 'audio' && contentType !== 'video') ||
+                      (contentType === 'audio' && audios?.length === 0) ||
+                      (!isBackgroundMode && contentType === 'video') ||
+                      (isBackgroundMode &&
+                        contentType === 'video' &&
+                        (videoSource === 'youtube' || videos?.length === 0)))
+                  ) {
+                    history.push(`/programs/${programId}/contents/${contentId}`)
                   }
                   setup?.({
                     title,
