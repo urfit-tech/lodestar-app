@@ -147,8 +147,11 @@ const PlaylistOverlay: React.VFC<{
                     history.push(`/programs/${programId}/contents/${contentId}`)
                   }
                   setup?.({
+                    backgroundMode: isBackgroundMode,
                     title,
                     contentSectionTitle: contentSectionTitle || '',
+                    source: videos[0]?.options?.cloudflare ? 'cloudflare' : videos[0]?.data?.source,
+                    videoId: videos[0]?.id,
                     programId,
                     contentId,
                     contentType: contentType || '',
