@@ -85,10 +85,6 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
   useEffect(() => {
     if (contentType === 'audio') {
       getFileDownloadableLink(`audios/${appId}/${programId}/${contentId}`, authToken).then(audioUrl => {
-        if (!audioUrl) {
-          setVisible(false)
-          localStorage.removeItem('playing')
-        }
         setAudioUrl(audioUrl)
         setMimeType('')
       })
@@ -109,10 +105,6 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
             },
           )
           .then(({ data }) => {
-            if (data.code !== 'SUCCESS') {
-              setVisible(false)
-              localStorage.removeItem('playing')
-            }
             if (data.code === 'SUCCESS') {
               setMimeType('application/x-mpegURL')
               setAudioUrl(`https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`)

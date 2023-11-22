@@ -25,11 +25,15 @@
 }
 
 .ant-popover {
+  right: 0px;
   z-index: 10001;
   .ant-popover-title {
     padding: 1rem 1.25rem;
   }
   .ant-popover-inner-content {
+    position: absolute;
+    bottom:100%;
+    right: 0px;
     padding: 0;
   }
 
