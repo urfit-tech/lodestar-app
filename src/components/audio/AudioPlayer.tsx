@@ -501,6 +501,7 @@ const AudioPlayer: React.VFC<{
                     content={
                       <PlaylistOverlay title={contentSectionTitle} playList={playList} currentIndex={currentIndex} />
                     }
+                    overlayClassName="audio-player-popover"
                   >
                     <StyledButton
                       type="link"
@@ -589,6 +590,7 @@ const AudioPlayer: React.VFC<{
                   content={
                     <PlaylistOverlay title={contentSectionTitle} playList={playList} currentIndex={currentIndex} />
                   }
+                  overlayClassName="audio-player-popover"
                 >
                   <StyledButton
                     type="link"
