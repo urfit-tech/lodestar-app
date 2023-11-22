@@ -25,7 +25,7 @@ const StyledContainer = styled.div`
   padding: 8vw 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://static.kolable.com/images/haohaoming/master.png');
+  background-image: url('https://static.kolable.com/images/haohaoming/master20231122.png');
   background-size: 40vw auto;
   background-repeat: no-repeat;
   background-position: bottom right;
