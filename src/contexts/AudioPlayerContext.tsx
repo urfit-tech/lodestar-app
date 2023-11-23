@@ -68,19 +68,19 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
     contentType: string
     source: string
   } = localPlaying !== null && JSON.parse(localPlaying)
-  const [visible, setVisible] = useState(playing.visible)
+  const [visible, setVisible] = useState(playing.visible || false)
+  const [programId, setProgramId] = useState(playing.programId || '')
+  const [contentId, setContentId] = useState(playing.contentId || '')
+  const [isBackgroundMode, setIsBackgroundMode] = useState(playing.backgroundMode || false)
+  const [contentType, setContentType] = useState(playing.contentType || '')
+  const [source, setSource] = useState(playing.source || '')
+  const [videoId, setVideoId] = useState(playing.videoId || '')
   const [isPlaying, setIsPlaying] = useState(false)
+  const [lastEndedAt, setLastEndAt] = useState(0)
   const [title, setTitle] = useState('')
   const [contentSectionTitle, setContentSectionTitle] = useState('')
-  const [programId, setProgramId] = useState(playing.programId)
-  const [contentId, setContentId] = useState(playing.contentId)
-  const [isBackgroundMode, setIsBackgroundMode] = useState(playing.backgroundMode)
-  const [lastEndedAt, setLastEndAt] = useState(0)
   const [audioUrl, setAudioUrl] = useState('')
-  const [contentType, setContentType] = useState(playing.contentType)
-  const [source, setSource] = useState(playing.source)
   const [mimeType, setMimeType] = useState('')
-  const [videoId, setVideoId] = useState(playing.videoId)
 
   useEffect(() => {
     if (contentType === 'audio') {

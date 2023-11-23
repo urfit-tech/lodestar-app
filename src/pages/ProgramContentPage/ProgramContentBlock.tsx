@@ -243,10 +243,13 @@ const ProgramContentBlock: React.VFC<{
           </StyledUnpublishedBlock>
         )}
 
-      {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam', 'audio']) &&
+      {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) &&
         programContent.videos[0]?.data?.source !== 'youtube' && (
           <StyledContentBlock className="mb-3">
-            {isMobile && !isAndroid && enabledModules.background_mode ? (
+            {isMobile &&
+            !isAndroid &&
+            enabledModules.background_mode &&
+            programContent.programContentBody?.type !== 'audio' ? (
               <StyledTitleBlock>
                 <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
                 <div className="d-flex justify-content-end">
