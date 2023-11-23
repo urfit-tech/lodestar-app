@@ -231,9 +231,9 @@ export const useLatestProgramIds = ({ limit, language }: { limit?: number; langu
 }
 
 export const useProgram = (programId: string) => {
-  const { loading, data, error, refetch } = useQuery<hasura.GET_PROGRAM, hasura.GET_PROGRAMVariables>(
+  const { loading, data, error, refetch } = useQuery<hasura.GetProgram, hasura.GetProgramVariables>(
     gql`
-      query GET_PROGRAM($programId: uuid!) {
+      query GetProgram($programId: uuid!) {
         program_by_pk(id: $programId) {
           id
           cover_url
@@ -314,6 +314,9 @@ export const useProgram = (programId: string) => {
                   options
                   data
                 }
+              }
+              program_content_audios {
+                data
               }
             }
           }
@@ -431,6 +434,8 @@ export const useProgram = (programId: string) => {
           contents: programContentSection.program_contents.map(programContent => ({
             id: programContent.id,
             title: programContent.title,
+            programId: data?.program_by_pk?.id,
+            contentSectionTitle: programContentSection.title,
             abstract: programContent.abstract || '',
             metadata: programContent.metadata,
             duration: programContent.duration,
@@ -449,6 +454,9 @@ export const useProgram = (programId: string) => {
               size: v.attachment.size,
               options: v.attachment.options,
               data: v.attachment.data,
+            })),
+            audios: programContent.program_content_audios.map(v => ({
+              data: v.data,
             })),
           })),
         })) || [],
@@ -511,8 +519,8 @@ export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]
   }
 }
 
-export const GET_PROGRAM_CONTENT = gql`
-  query GET_PROGRAM_CONTENT($programContentId: uuid!) {
+export const GetProgramContent = gql`
+  query GetProgramContent($programContentId: uuid!) {
     program_content_by_pk(id: $programContentId) {
       id
       title
@@ -525,6 +533,9 @@ export const GET_PROGRAM_CONTENT = gql`
       sold_at
       metadata
       duration
+      program_content_section {
+        title
+      }
       program_content_plans {
         id
         program_plan {
@@ -546,6 +557,9 @@ export const GET_PROGRAM_CONTENT = gql`
           data
         }
       }
+      program_content_audios {
+        data
+      }
       program_content_attachments(where: { data: { _is_null: false } }) {
         attachment_id
         data
@@ -556,8 +570,8 @@ export const GET_PROGRAM_CONTENT = gql`
   }
 `
 export const useProgramContent = (programContentId: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GET_PROGRAM_CONTENT, hasura.GET_PROGRAM_CONTENTVariables>(
-    GET_PROGRAM_CONTENT,
+  const { loading, error, data, refetch } = useQuery<hasura.GetProgramContent, hasura.GetProgramContentVariables>(
+    GetProgramContent,
     {
       variables: { programContentId },
       notifyOnNetworkStatusChange: true,
@@ -568,6 +582,7 @@ export const useProgramContent = (programContentId: string) => {
     | (ProgramContent & {
         programContentBody: ProgramContentBodyProps | null
         attachments: ProgramContentAttachmentProps[]
+        contentSectionTitle: string
       })
     | null = useMemo(
     () =>
@@ -576,6 +591,7 @@ export const useProgramContent = (programContentId: string) => {
         : {
             id: data.program_content_by_pk.id,
             title: data.program_content_by_pk.title,
+            contentSectionTitle: data.program_content_by_pk.program_content_section.title,
             abstract: data.program_content_by_pk.abstract || '',
             metadata: data.program_content_by_pk.metadata,
             duration: data.program_content_by_pk.duration,
@@ -604,6 +620,9 @@ export const useProgramContent = (programContentId: string) => {
               size: v.attachment.size,
               options: v.attachment.options,
               data: v.attachment.data,
+            })),
+            audios: data.program_content_by_pk.program_content_audios.map(v => ({
+              data: v.data,
             })),
             attachments: data.program_content_by_pk.program_content_attachments.map(u => ({
               id: u.attachment_id,
@@ -878,5 +897,177 @@ export const useMutateMaterialAuditLog = () => {
   `)
   return {
     insertMaterialAuditLog,
+  }
+}
+
+export const useProgramContentLog = (programId: string, memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<hasura.GetProgramContentLog, hasura.GetProgramContentLogVariables>(
+    gql`
+      query GetProgramContentLog($programId: uuid!, $memberId: String!) {
+        program_content_log(
+          where: {
+            member_id: { _eq: $memberId }
+            program_content: { program_content_section: { program_id: { _eq: $programId } } }
+          }
+          distinct_on: program_content_id
+          order_by: [{ created_at: desc, program_content_id: asc }]
+        ) {
+          created_at
+          program_content_id
+          ended_at
+        }
+      }
+    `,
+    { variables: { programId, memberId } },
+  )
+
+  const programContentLog =
+    loading || error || !data
+      ? undefined
+      : data.program_content_log.map(log => ({
+          contentId: log.program_content_id,
+          endedAt: log.ended_at,
+        }))
+
+  return {
+    loadingContentLog: loading,
+    errorContentLog: error,
+    programContentLog,
+    refetchContentLog: refetch,
+  }
+}
+
+export const useInsertProgress = ({
+  memberId,
+  programContentId,
+  progress,
+  lastProgress,
+}: {
+  memberId: string
+  programContentId: string
+  progress: number
+  lastProgress: number
+}) => {
+  const [insertProgramContentProgress] = useMutation<
+    hasura.INSERT_PROGRAM_CONTENT_PROGRESS,
+    hasura.INSERT_PROGRAM_CONTENT_PROGRESSVariables
+  >(
+    gql`
+      mutation INSERT_PROGRAM_CONTENT_PROGRESS(
+        $memberId: String!
+        $programContentId: uuid!
+        $progress: numeric!
+        $lastProgress: numeric!
+      ) {
+        insert_program_content_progress(
+          objects: {
+            member_id: $memberId
+            program_content_id: $programContentId
+            progress: $progress
+            last_progress: $lastProgress
+          }
+          on_conflict: {
+            constraint: program_content_progress_member_id_program_content_id_key
+            update_columns: [progress, last_progress]
+          }
+        ) {
+          affected_rows
+        }
+      }
+    `,
+    {
+      variables: {
+        memberId,
+        programContentId,
+        progress,
+        lastProgress,
+      },
+    },
+  )
+  return insertProgramContentProgress
+}
+
+export const useProgramId = (contentId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GetProgramIdByContentId,
+    hasura.GetProgramIdByContentIdVariables
+  >(
+    gql`
+      query GetProgramIdByContentId($contentId: uuid!) {
+        program(where: { program_content_sections: { program_contents: { id: { _eq: $contentId } } } }) {
+          id
+        }
+      }
+    `,
+    { variables: { contentId } },
+  )
+  const recentProgramId = loading || error || !data ? undefined : data.program.map(program => program.id)[0]
+  return {
+    recentProgramId,
+    RefetchRecentProgramId: refetch,
+    loadingRecentProgramId: loading,
+  }
+}
+
+export const useRecentProgramContentLogContentId = (memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GetRecentProgramContentLogContentId,
+    hasura.GetRecentProgramContentLogContentIdVariables
+  >(
+    gql`
+      query GetRecentProgramContentLogContentId($memberId: String!) {
+        program_content_log(where: { member_id: { _eq: $memberId } }, order_by: { created_at: desc }, limit: 1) {
+          created_at
+          program_content_id
+          ended_at
+          program_content {
+            program_content_body {
+              type
+            }
+            program_content_audios {
+              id
+            }
+            program_content_videos {
+              id
+              attachment {
+                data
+                options
+              }
+            }
+          }
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+
+  const recentProgramContent =
+    loading || error || !data
+      ? undefined
+      : data?.program_content_log.map(log => {
+          const contentType = log.program_content.program_content_body.type
+          const audiosLength = log.program_content.program_content_audios.length
+          const contentVideo = log.program_content.program_content_videos[0]
+          const videoSource = contentVideo?.attachment?.options?.cloudflare
+            ? 'cloudflare'
+            : log.program_content.program_content_videos[0]?.attachment?.data?.source
+          if (
+            (contentType === 'audio' && audiosLength !== 0) ||
+            (contentType === 'video' && videoSource) !== 'youtube'
+          ) {
+            return {
+              contentType: log.program_content.program_content_body.type || '',
+              contentId: log.program_content_id,
+              endedAt: log.ended_at,
+              source: videoSource,
+              videoId: contentVideo?.id,
+            }
+          }
+          return undefined
+        })[0]
+
+  return {
+    recentProgramContent,
+    RefetchRecentProgramContentId: refetch,
   }
 }

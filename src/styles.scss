@@ -24,11 +24,37 @@
   flex-grow: 1;
 }
 
+.audio-player-popover{
+&.ant-popover {
+    right: 0px;
+    z-index: 10001;
+
+    .ant-popover-title {
+      padding: 1rem 1.25rem;
+    }
+
+    .ant-popover-inner-content {
+      position: absolute;
+      bottom: 100%;
+      right: 0px;
+      padding: 0;
+    }
+
+    @media (max-width: 767px) {
+      .ant-popover-arrow {
+        display: none;
+      }
+    }
+  }
+}
+
 .ant-popover {
-  z-index: 1001;
+  z-index: 10001;
+
   .ant-popover-title {
     padding: 1rem 1.25rem;
   }
+
   .ant-popover-inner-content {
     padding: 0;
   }
@@ -39,6 +65,7 @@
     }
   }
 }
+
 
 .ant-modal-mask {
   z-index: 1003;
