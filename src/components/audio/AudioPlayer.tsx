@@ -1,8 +1,8 @@
 import { ButtonProps } from '@chakra-ui/button'
 import { useInterval } from '@chakra-ui/hooks'
 import { Icon } from '@chakra-ui/icons'
-import { Box, Flex, HStack, Text } from '@chakra-ui/react'
-import { Button, Divider, Popover, Tooltip } from 'antd'
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react'
+import { Divider, Popover, Tooltip } from 'antd'
 import HLS from 'hls.js'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
@@ -160,20 +160,6 @@ const StyledShiftButton = styled(StyledButton)`
     display: none;
   }
 `
-const CloseBlock = styled(Flex)`
-  .chakra-icon {
-    font-size: 16px;
-  }
-  ${desktopViewMixin(css`
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    .chakra-icon {
-      font-size: 20px;
-    }
-  `)}
-`
 const StyledRotateIcon = styled(Icon)`
   font-size: 44px;
   -webkit-animation: spin 1s linear infinite;
@@ -272,7 +258,6 @@ const PlayRateButton: React.VFC<
     </StyledButton>
   )
 }
-
 const PlayModeButton: React.VFC<
   Omit<ButtonProps, 'variant' | 'mode' | 'onChange'> & {
     variant: 'overlay' | 'bar'
@@ -316,7 +301,7 @@ const PlayModeButton: React.VFC<
           {formatMessage(
             mode === 'sequential'
               ? messages.sequential
-              : 'list-loop'
+              : mode === 'list-loop'
               ? messages.listLoop
               : mode === 'single-loop'
               ? messages.singleLoop
@@ -335,21 +320,22 @@ const durationFormat: (time: number) => string = time => {
 }
 
 const AudioControls: React.FC<{
+  isPlaying: boolean
+  isLoading: boolean
+  isFirst: boolean
+  isLast: boolean
   onPrev: () => void
   onBackward: () => void
   onPlay: () => void
-  isPlaying: boolean
-  isLoading: boolean
   onForward: () => void
   onNext: () => void
-}> = ({ onPrev, onBackward, onPlay, isPlaying, isLoading, onForward, onNext }) => {
+}> = ({ isPlaying, isLoading, isFirst, isLast, onPrev, onBackward, onPlay, onForward, onNext }) => {
   return (
     <>
-      <StyledShiftButton type="link" variant="bar" onClick={onPrev}>
+      <StyledShiftButton type="link" variant="bar" onClick={onPrev} minWidth="0px" disabled={isFirst}>
         <Icon as={PrevIcon} />
       </StyledShiftButton>
-
-      <StyledButtonGroup alignItems="center" justifyContent="center" spacing="10px">
+      <StyledButtonGroup alignItems="center" justifyContent="center" spacing={{ base: '0px', lg: '10px' }}>
         <StyledButton type="link" variant="bar" onClick={onBackward}>
           <Icon as={Backward15Icon} />
         </StyledButton>
@@ -366,8 +352,7 @@ const AudioControls: React.FC<{
           <Icon as={Forward15Icon} />
         </StyledButton>
       </StyledButtonGroup>
-
-      <StyledShiftButton type="link" variant="bar" onClick={onNext}>
+      <StyledShiftButton type="link" variant="bar" onClick={onNext} minWidth="0px" disabled={isLast}>
         <Icon as={NextIcon} />
       </StyledShiftButton>
     </>
@@ -424,6 +409,8 @@ const AudioPlayer: React.VFC<{
   const { id: contentId, programId } = playList[currentIndex]
   const link = `/programs/${programId}/contents/${contentId}`
   const isLoading = duration === 0
+  const isLast = playList.length - 1 === currentIndex
+  const isFirst = currentIndex === 0
 
   useInterval(() => {
     setProgress(audioRef.current?.currentTime || 0)
@@ -445,7 +432,7 @@ const AudioPlayer: React.VFC<{
     <>
       <Box position="fixed" right="0" bottom="0" left="0" zIndex="1000">
         <OverlayBlock variant={showAction ? 'active' : ''} display={{ base: 'block', md: 'none' }}>
-          <ActionBlock alignItems="center" justifyContent="space-around">
+          <ActionBlock alignItems="center" justifyContent="space-around" marginBottom="5px">
             <div className="flex-grow-1 text-center">
               <PlayRateButton
                 variant="overlay"
@@ -475,11 +462,12 @@ const AudioPlayer: React.VFC<{
         </Box>
 
         <Box position="relative" bottom="0" zIndex="1002" background="#323232" color="white" paddingY="0.25rem">
-          <Box className="container">
+          <Box>
             <Flex
               alignContent="center"
               justifyContent="space-between"
               marginTop="5px"
+              marginX="15px"
               display={{ base: 'flex', lg: 'none' }}
             >
               <StyledLink to={link}>
@@ -487,26 +475,73 @@ const AudioPlayer: React.VFC<{
               </StyledLink>
               <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
             </Flex>
-
-            <Flex justifyContent="space-between" marginY="8px">
-              {!pathname.includes('contents') && (
-                <CloseBlock alignItems="center" marginLeft={{ base: '0px', lg: '10px' }}>
-                  <StyledButton type="link" variant="bar" onClick={() => onClose()}>
-                    <Icon as={TimesIcon} />
-                  </StyledButton>
-                </CloseBlock>
-              )}
-              <Flex justifyContent="start" alignItems="center" display={{ base: 'none', lg: 'block' }}>
-                <Link to={link}>
-                  <StyledTitle>{title}</StyledTitle>
-                </Link>
-                <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
+            <Flex
+              justifyContent="space-between"
+              alignItems="center"
+              margin={{ base: '15px 0px 15px 15px', lg: '8px 10px 5px 10px' }}
+            >
+              <Flex alignItems="center" zIndex="1000">
+                <HStack spacing="5px">
+                  {!pathname.includes('contents') && (
+                    <>
+                      <StyledButton
+                        type="link"
+                        variant="bar"
+                        onClick={() => onClose()}
+                        marginRight={{ base: '0px', lg: '10px' }}
+                        minWidth="0px"
+                      >
+                        <Icon as={TimesIcon} />
+                      </StyledButton>
+                    </>
+                  )}
+                  <Popover
+                    placement="topRight"
+                    trigger="click"
+                    content={
+                      <PlaylistOverlay title={contentSectionTitle} playList={playList} currentIndex={currentIndex} />
+                    }
+                    overlayClassName="audio-player-popover"
+                  >
+                    <StyledButton
+                      type="link"
+                      variant="bar"
+                      onClick={() => setShowAction(false)}
+                      display={{ base: 'block', lg: 'none' }}
+                      minWidth="0px"
+                    >
+                      <Tooltip placement="top" title="播放清單">
+                        <Icon as={PlaylistIcon} />
+                      </Tooltip>
+                    </StyledButton>
+                  </Popover>
+                </HStack>
+                <Flex
+                  justifyContent="start"
+                  alignItems="center"
+                  display={{ base: 'none', lg: 'block' }}
+                  marginLeft="10px"
+                >
+                  <Link to={link}>
+                    <StyledTitle>{title}</StyledTitle>
+                  </Link>
+                  <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
+                </Flex>
               </Flex>
-
-              <Flex alignItems="center" justifyContent="center">
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                width="100%"
+                position="absolute"
+                bottom="10px"
+                right="0px"
+                left="0px"
+              >
                 <AudioControls
                   isLoading={isLoading}
                   isPlaying={isPlaying}
+                  isLast={isLast}
+                  isFirst={isFirst}
                   onPrev={() => onPrev?.()}
                   onBackward={() => audioRef.current && (audioRef.current.currentTime = progress - 15)}
                   onPlay={() => {
@@ -529,8 +564,7 @@ const AudioPlayer: React.VFC<{
                   onNext={() => onNext?.()}
                 />
               </Flex>
-
-              <HStack spacing="10px" alignItems="center" justifyContent="end">
+              <HStack spacing={{ base: '0px', lg: '10px' }} alignItems="center" justifyContent="end">
                 <HStack display={{ base: 'none', md: 'flex' }}>
                   <PlayRateButton
                     variant="bar"
@@ -556,8 +590,14 @@ const AudioPlayer: React.VFC<{
                   content={
                     <PlaylistOverlay title={contentSectionTitle} playList={playList} currentIndex={currentIndex} />
                   }
+                  overlayClassName="audio-player-popover"
                 >
-                  <StyledButton type="link" variant="bar" onClick={() => setShowAction(false)}>
+                  <StyledButton
+                    type="link"
+                    variant="bar"
+                    onClick={() => setShowAction(false)}
+                    display={{ base: 'none', lg: 'block' }}
+                  >
                     <Tooltip placement="top" title="播放清單">
                       <Icon as={PlaylistIcon} />
                     </Tooltip>
@@ -578,7 +618,7 @@ const AudioPlayer: React.VFC<{
           audioRef.current = ref
         }}
         src={audioUrl}
-        autoPlay={isPlaying}
+        autoPlay={true}
         loop={mode === 'single-loop'}
         onLoadedMetadata={() => {
           if (audioRef.current) {
@@ -600,7 +640,7 @@ const AudioPlayer: React.VFC<{
               },
             })
           lastEndedTime.current = duration
-          playList.length === 1 ? onPlay(true) : onNext()
+          playList.length === 1 ? onPlay(true) : isLast && mode === 'sequential' ? onPlay(false) : onNext()
         }}
         onTimeUpdate={() =>
           audioRef.current &&
