@@ -25,6 +25,10 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
           reschedule_type
           default_meet_gateway
           meet_generation_method
+          appointment_schedules {
+            id
+            created_at
+          }
           currency {
             id
             label
@@ -42,6 +46,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
             ended_at
             booked
             available
+            appointment_schedule_id
           }
         }
       }
@@ -73,6 +78,11 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
       rescheduleType: appointmentPlan.reschedule_type as ReservationType,
       periods: appointmentPlan.appointment_periods.map(period => ({
         id: `${period.started_at}`,
+        appointmentScheduleCreatedAt: new Date(
+          appointmentPlan.appointment_schedules.filter(
+            appointmentPlanSchedule => appointmentPlanSchedule.id === period.appointment_schedule_id,
+          )[0].created_at,
+        ),
         startedAt: new Date(period.started_at),
         endedAt: new Date(period.ended_at),
         booked: period.booked,
@@ -117,6 +127,10 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           support_locales
           default_meet_gateway
           meet_generation_method
+          appointment_schedules {
+            id
+            created_at
+          }
           currency {
             id
             label
@@ -133,6 +147,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
             where: { available: { _eq: true }, started_at: { _gt: $startedAt } }
             order_by: { started_at: asc }
           ) {
+            appointment_schedule_id
             started_at
             ended_at
             booked
@@ -191,6 +206,11 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
         },
         periods: data.appointment_plan_by_pk.appointment_periods.map(period => ({
           id: `${period.started_at}`,
+          appointmentScheduleCreatedAt: new Date(
+            data.appointment_plan_by_pk?.appointment_schedules.filter(
+              appointmentSchedule => appointmentSchedule.id === period.appointment_schedule_id,
+            )[0]?.created_at,
+          ),
           startedAt: new Date(period.started_at),
           endedAt: new Date(period.ended_at),
           booked: period.booked,
