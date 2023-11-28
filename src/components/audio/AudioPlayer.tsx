@@ -371,7 +371,7 @@ const AudioPlayer: React.VFC<{
   contentSectionTitle: string
   audioUrl: string
   mode: AudioPlayerMode
-  lastEndedAt: number
+  lastProgress: number
   playList: (ProgramContent & { programId?: string; contentSectionTitle?: string; progress?: number })[]
   currentIndex: number
   mimeType: string
@@ -386,7 +386,7 @@ const AudioPlayer: React.VFC<{
   mode,
   contentSectionTitle,
   currentIndex,
-  lastEndedAt,
+  lastProgress,
   playList,
   isPlaying,
   audioUrl,
@@ -413,7 +413,9 @@ const AudioPlayer: React.VFC<{
   const isFirst = currentIndex === 0
 
   useInterval(() => {
-    setProgress(audioRef.current?.currentTime || 0)
+    if (audioRef.current) {
+      setProgress(audioRef.current.currentTime || 0)
+    }
   }, 500)
 
   useEffect(() => {
@@ -543,7 +545,10 @@ const AudioPlayer: React.VFC<{
                   isLast={isLast}
                   isFirst={isFirst}
                   onPrev={() => onPrev?.()}
-                  onBackward={() => audioRef.current && (audioRef.current.currentTime = progress - 15)}
+                  onBackward={() => {
+                    const backwardSeconds = 15
+                    audioRef.current && (audioRef.current.currentTime = progress - backwardSeconds)
+                  }}
                   onPlay={() => {
                     onPlay(!isPlaying)
                     audioRef.current && (isPlaying ? audioRef.current.pause() : audioRef.current.play())
@@ -560,7 +565,10 @@ const AudioPlayer: React.VFC<{
                       lastEndedTime.current = audioRef.current.currentTime
                     }
                   }}
-                  onForward={() => audioRef.current && (audioRef.current.currentTime = progress + 15)}
+                  onForward={() => {
+                    const forwardSeconds = 15
+                    audioRef.current && (audioRef.current.currentTime = progress + forwardSeconds)
+                  }}
                   onNext={() => onNext?.()}
                 />
               </Flex>
@@ -622,9 +630,12 @@ const AudioPlayer: React.VFC<{
         loop={mode === 'single-loop'}
         onLoadedMetadata={() => {
           if (audioRef.current) {
-            audioRef.current.currentTime = lastEndedAt === audioRef.current.duration ? 0 : lastEndedAt
+            const duration = audioRef.current.duration
+            const lastEndedAt = lastProgress * duration
+            const preSeconds = 15
+            audioRef.current.currentTime = lastEndedAt === audioRef.current.duration ? 0 : lastEndedAt - preSeconds
             audioRef.current.playbackRate = playRate
-            setDuration(audioRef.current.duration)
+            setDuration(duration)
             onPlay(true)
           }
         }}

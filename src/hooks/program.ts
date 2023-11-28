@@ -900,40 +900,43 @@ export const useMutateMaterialAuditLog = () => {
   }
 }
 
-export const useProgramContentLog = (programId: string, memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GetProgramContentLog, hasura.GetProgramContentLogVariables>(
+export const useProgramContentLastProgress = (programId: string, memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GetProgramContentLastProgress,
+    hasura.GetProgramContentLastProgressVariables
+  >(
     gql`
-      query GetProgramContentLog($programId: uuid!, $memberId: String!) {
-        program_content_log(
+      query GetProgramContentLastProgress($programId: uuid!, $memberId: String!) {
+        program_content_progress(
           where: {
             member_id: { _eq: $memberId }
             program_content: { program_content_section: { program_id: { _eq: $programId } } }
           }
           distinct_on: program_content_id
-          order_by: [{ created_at: desc, program_content_id: asc }]
+          order_by: [{ updated_at: desc, program_content_id: asc }]
         ) {
-          created_at
+          updated_at
           program_content_id
-          ended_at
+          last_progress
         }
       }
     `,
     { variables: { programId, memberId } },
   )
 
-  const programContentLog =
+  const programContentLastProgress =
     loading || error || !data
       ? undefined
-      : data.program_content_log.map(log => ({
-          contentId: log.program_content_id,
-          endedAt: log.ended_at,
+      : data.program_content_progress.map(progress => ({
+          contentId: progress.program_content_id,
+          lastProgress: progress.last_progress,
         }))
 
   return {
-    loadingContentLog: loading,
-    errorContentLog: error,
-    programContentLog,
-    refetchContentLog: refetch,
+    loadingContentLastProgress: loading,
+    errorContentLastProgress: error,
+    programContentLastProgress,
+    refetchContentLastProgress: refetch,
   }
 }
 
@@ -1009,17 +1012,17 @@ export const useProgramId = (contentId: string) => {
   }
 }
 
-export const useRecentProgramContentLogContentId = (memberId: string) => {
+export const useRecentProgramContent = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    hasura.GetRecentProgramContentLogContentId,
-    hasura.GetRecentProgramContentLogContentIdVariables
+    hasura.GetRecentProgramContent,
+    hasura.GetRecentProgramContentVariables
   >(
     gql`
-      query GetRecentProgramContentLogContentId($memberId: String!) {
-        program_content_log(where: { member_id: { _eq: $memberId } }, order_by: { created_at: desc }, limit: 1) {
-          created_at
+      query GetRecentProgramContent($memberId: String!) {
+        program_content_progress(where: { member_id: { _eq: $memberId } }, order_by: { updated_at: desc }, limit: 1) {
+          updated_at
           program_content_id
-          ended_at
+          last_progress
           program_content {
             program_content_body {
               type
@@ -1044,21 +1047,21 @@ export const useRecentProgramContentLogContentId = (memberId: string) => {
   const recentProgramContent =
     loading || error || !data
       ? undefined
-      : data?.program_content_log.map(log => {
-          const contentType = log.program_content.program_content_body.type
-          const audiosLength = log.program_content.program_content_audios.length
-          const contentVideo = log.program_content.program_content_videos[0]
+      : data?.program_content_progress.map(progress => {
+          const contentType = progress.program_content.program_content_body.type
+          const audiosLength = progress.program_content.program_content_audios.length
+          const contentVideo = progress.program_content.program_content_videos[0]
           const videoSource = contentVideo?.attachment?.options?.cloudflare
             ? 'cloudflare'
-            : log.program_content.program_content_videos[0]?.attachment?.data?.source
+            : progress.program_content.program_content_videos[0]?.attachment?.data?.source
           if (
             (contentType === 'audio' && audiosLength !== 0) ||
             (contentType === 'video' && videoSource) !== 'youtube'
           ) {
             return {
-              contentType: log.program_content.program_content_body.type || '',
-              contentId: log.program_content_id,
-              endedAt: log.ended_at,
+              contentType: progress.program_content.program_content_body.type || '',
+              contentId: progress.program_content_id,
+              lastProgress: progress.last_progress,
               source: videoSource,
               videoId: contentVideo?.id,
             }
@@ -1068,6 +1071,7 @@ export const useRecentProgramContentLogContentId = (memberId: string) => {
 
   return {
     recentProgramContent,
-    RefetchRecentProgramContentId: refetch,
+    loadingRecentProgramContent: loading,
+    RefetchRecentProgramContent: refetch,
   }
 }
