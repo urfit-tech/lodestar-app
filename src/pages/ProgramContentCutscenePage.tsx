@@ -3,7 +3,7 @@ import { Layout, PageHeader } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten } from 'ramda'
-import React from 'react'
+import React, { useContext } from 'react'
 import { AiOutlineProfile } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
@@ -13,6 +13,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { StyledLayoutContent } from '../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../components/program/ProgramContentMenu'
 import ProgramContentNoAuthBlock from '../components/program/ProgramContentNoAuthBlock'
+import AudioPlayerContext from '../contexts/AudioPlayerContext'
 import { hasJsonStructure } from '../helpers'
 import { useProgram } from '../hooks/program'
 import pageMessages from './translation'
@@ -62,6 +63,7 @@ const ProgramContentCutscenePage: React.VFC = () => {
   const { programId } = useParams<{ programId: string }>()
   const [previousPage] = useQueryParam('back', StringParam)
   const { loadingProgram, program, errorProgram } = useProgram(programId)
+  const { contentId } = useContext(AudioPlayerContext)
 
   if (loadingProgram || isAuthenticating || !program) {
     return (
@@ -136,6 +138,13 @@ const ProgramContentCutscenePage: React.VFC = () => {
           </div>
         </StyledLayoutContent>
       </Layout>
+    )
+  } else if (
+    contentId !== '' &&
+    flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(contentId)
+  ) {
+    return (
+      <Redirect to={`/programs/${programId}/contents/${contentId}?back=${previousPage || `programs_${programId}`}`} />
     )
   } else if (
     Object.keys(lastProgramContent).includes(programId) &&

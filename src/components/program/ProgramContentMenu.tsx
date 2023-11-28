@@ -10,6 +10,7 @@ import { useIntl } from 'react-intl'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
@@ -28,9 +29,10 @@ import programMessages from './translation'
 const StyledIcon = styled(Icon)`
   font-size: 16px;
 `
-const StyledProgramContentMenu = styled.div`
+const StyledProgramContentMenu = styled.div<{ visible: boolean }>`
   background: white;
   font-size: 14px;
+  ${props => props.visible && 'margin-bottom: 80px;'}
 `
 const StyledHead = styled.div`
   padding: 1.25rem;
@@ -135,6 +137,7 @@ const ProgramContentMenu: React.VFC<{
   const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
   const { search } = useLocation()
   const { currentMemberId } = useAuth()
+  const { visible } = useContext(AudioPlayerContext)
   const query = new URLSearchParams(search)
   const programPackageId = query.get('back')
   const { enrolledProgramIds, loading: enrolledProgramIdsLoading } = useEnrolledProgramIds(currentMemberId || '')
@@ -142,7 +145,7 @@ const ProgramContentMenu: React.VFC<{
   const programContents = program.contentSections.map(v => v.contents).flat()
 
   return (
-    <StyledProgramContentMenu>
+    <StyledProgramContentMenu visible={visible}>
       <StyledHead className="d-flex justify-content-between align-items-center">
         <span>{formatMessage(programMessages.ProgramContentMenu.programList)}</span>
         <StyledSelectBlock>
