@@ -81,7 +81,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
         appointmentScheduleCreatedAt: new Date(
           appointmentPlan.appointment_schedules.filter(
             appointmentPlanSchedule => appointmentPlanSchedule.id === period.appointment_schedule_id,
-          )[0].created_at,
+          )[0]?.created_at,
         ),
         startedAt: new Date(period.started_at),
         endedAt: new Date(period.ended_at),
