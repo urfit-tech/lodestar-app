@@ -34,14 +34,14 @@ const AppointmentPeriodBlock: React.VFC<{
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isAuthenticated } = useAuth()
   const [overLapPeriods, setOverLapPeriods] = useState<string[]>([])
-  
+
   return (
     <div key={periods[0].id} className="mb-4">
       {overLapPeriods.length !== periods.length ? (
         <StyledScheduleTitle>{moment(periods[0].startedAt).format('YYYY-MM-DD(dd)')}</StyledScheduleTitle>
       ) : null}
       <div className="d-flex flex-wrap justify-content-start">
-        {Object.values(groupBy(period => dayjs(period.startedAt).toDate().toISOString(), periods))
+        {Object.values(groupBy(period => dayjs(period.startedAt).format('YYYY-MM-DD-HH-MM'), periods))
           .map(periods =>
             periods.sort((a, b) => a.appointmentScheduleCreatedAt.getTime() - b.appointmentScheduleCreatedAt.getTime()),
           )
