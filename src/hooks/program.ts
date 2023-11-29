@@ -1050,16 +1050,17 @@ export const useRecentProgramContent = (memberId: string) => {
       : data?.program_content_progress.map(progress => {
           const contentType = progress.program_content.program_content_body.type
           const audiosLength = progress.program_content.program_content_audios.length
+          const videosLength = progress.program_content.program_content_videos.length
           const contentVideo = progress.program_content.program_content_videos[0]
           const videoSource = contentVideo?.attachment?.options?.cloudflare
             ? 'cloudflare'
             : progress.program_content.program_content_videos[0]?.attachment?.data?.source
           if (
             (contentType === 'audio' && audiosLength !== 0) ||
-            (contentType === 'video' && videoSource) !== 'youtube'
+            (contentType === 'video' && videoSource !== 'youtube' && videosLength !== 0)
           ) {
             return {
-              contentType: progress.program_content.program_content_body.type || '',
+              contentType: progress.program_content.program_content_body.type,
               contentId: progress.program_content_id,
               lastProgress: progress.last_progress,
               source: videoSource,

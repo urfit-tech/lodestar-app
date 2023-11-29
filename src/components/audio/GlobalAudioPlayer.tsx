@@ -96,26 +96,31 @@ const GlobalAudioPlayer: React.VFC = () => {
     if (pathname.includes('members')) {
       const memberId = pathname.split('/')[2]
       if (memberId === currentMemberId && recentProgramId && recentProgramContent) {
-        if (programId === recentProgramId) {
-          setup?.({
-            backgroundMode: isBackgroundMode,
-            contentType,
-            programId,
-            contentId,
-            videoId,
-            source,
-          })
-        } else {
-          setup?.({
-            backgroundMode: isBackgroundMode,
-            programId: recentProgramId,
-            videoId: recentProgramContent.videoId,
-            contentId: recentProgramContent.contentId,
-            contentType: recentProgramContent.contentType,
-            source: recentProgramContent.source,
-          })
+        if (
+          recentProgramContent.contentType === 'audio' ||
+          (isBackgroundMode && recentProgramContent.contentType === 'video')
+        ) {
+          if (programId === recentProgramId) {
+            setup?.({
+              backgroundMode: isBackgroundMode,
+              contentType,
+              programId,
+              contentId,
+              videoId,
+              source,
+            })
+          } else {
+            setup?.({
+              backgroundMode: isBackgroundMode,
+              programId: recentProgramId,
+              videoId: recentProgramContent.videoId,
+              contentId: recentProgramContent.contentId,
+              contentType: recentProgramContent.contentType,
+              source: recentProgramContent.source,
+            })
+          }
+          changeGlobalPlayingState?.(true)
         }
-        changeGlobalPlayingState?.(true)
         if (audioPlayerVisibleState === 'close') {
           changeGlobalPlayingState?.(false)
         }
@@ -194,6 +199,7 @@ const GlobalAudioPlayer: React.VFC = () => {
     settings,
     setup,
     source,
+    title,
     videoId,
   ])
 
