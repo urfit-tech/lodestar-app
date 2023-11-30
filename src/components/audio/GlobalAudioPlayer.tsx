@@ -5,13 +5,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import AudioPlayerContext, { AudioPlayerMode } from '../../contexts/AudioPlayerContext'
 import { useInsertProgress } from '../../contexts/ProgressContext'
-import {
-  useProgram,
-  useProgramContent,
-  useProgramContentLastProgress,
-  useProgramId,
-  useRecentProgramContent,
-} from '../../hooks/program'
+import { useProgram, useProgramContent } from '../../hooks/program'
 import AudioPlayer from './AudioPlayer'
 
 const GlobalAudioPlayer: React.VFC = () => {
@@ -25,10 +19,7 @@ const GlobalAudioPlayer: React.VFC = () => {
     changeGlobalPlayingState,
     audioUrl,
     contentId,
-    videoId,
-    contentType,
     title,
-    source,
     contentSectionTitle,
     setup,
     close,
@@ -46,28 +37,10 @@ const GlobalAudioPlayer: React.VFC = () => {
 
   const insertProgress = useInsertProgress(currentMemberId || '')
   const { program } = useProgram(programId)
-  const { programContent } = useProgramContent(programContentId)
-  const { programContentLastProgress, loadingContentLastProgress, refetchContentLastProgress } =
-    useProgramContentLastProgress(programId, currentMemberId || '')
-  const { recentProgramContent, RefetchRecentProgramContent } = useRecentProgramContent(currentMemberId || '')
-  const { recentProgramId, RefetchRecentProgramId } = useProgramId(recentProgramContent?.contentId)
+  const { programContent, loadingProgramContent } = useProgramContent(programContentId)
 
   const pathname = location.pathname
-  const playList = program.contentSections
-    .map(p => p.contents)
-    .flat()
-    .map(content => {
-      const contentId = content.id
-      const lastProgress =
-        !loadingContentLastProgress &&
-        programContentLastProgress?.find(contentLastProgress => contentLastProgress.contentId === contentId)
-          ?.lastProgress
-
-      return {
-        ...content,
-        lastProgress,
-      }
-    })
+  const playList = program.contentSections.map(p => p.contents).flat()
 
   const currentIndex = playList.findIndex(p => p.id === contentId)
 
@@ -76,8 +49,6 @@ const GlobalAudioPlayer: React.VFC = () => {
       setDocumentVisible(!documentVisible)
     }
     document.addEventListener('visibilitychange', visibilitychange)
-    RefetchRecentProgramContent()
-    RefetchRecentProgramId()
 
     if (playList[currentIndex] && audioPlayerVisibleState !== 'close') {
       const currentContentType = playList[currentIndex].contentType
@@ -93,48 +64,13 @@ const GlobalAudioPlayer: React.VFC = () => {
       changeGlobalPlayingState?.(false)
     }
 
-    if (pathname.includes('members')) {
-      const memberId = pathname.split('/')[2]
-      if (memberId === currentMemberId && recentProgramId && recentProgramContent) {
-        if (
-          recentProgramContent.contentType === 'audio' ||
-          (isBackgroundMode && recentProgramContent.contentType === 'video')
-        ) {
-          if (programId === recentProgramId) {
-            setup?.({
-              backgroundMode: isBackgroundMode,
-              contentType,
-              programId,
-              contentId,
-              videoId,
-              source,
-            })
-          } else {
-            setup?.({
-              backgroundMode: isBackgroundMode,
-              programId: recentProgramId,
-              videoId: recentProgramContent.videoId,
-              contentId: recentProgramContent.contentId,
-              contentType: recentProgramContent.contentType,
-              source: recentProgramContent.source,
-            })
-          }
-          changeGlobalPlayingState?.(true)
-        }
-        if (audioPlayerVisibleState === 'close') {
-          changeGlobalPlayingState?.(false)
-        }
-      }
-    }
-
     if (pathname.includes('contents')) {
       const programId = pathname.split('/')[2]
       const contentId = pathname.split('/')[4]
       setProgramContentId(contentId)
-      if (programContent) {
+      if (!loadingProgramContent && programContent) {
         const programContentBodyType = programContent.programContentBody?.type
         if (programContentBodyType === 'audio' && programContent.audios.length !== 0) {
-          refetchContentLastProgress()
           setup?.({
             backgroundMode: isBackgroundMode,
             title: programContent.title,
@@ -171,36 +107,24 @@ const GlobalAudioPlayer: React.VFC = () => {
     if (pathname.includes('podcasts')) {
       const podcastId = pathname.split('/')[2]
       if (podcastId) {
-        changeGlobalPlayingState?.(false)
+        close?.()
       }
     }
     return () => document.removeEventListener('visibilitychange', visibilitychange)
   }, [
-    RefetchRecentProgramContent,
-    RefetchRecentProgramId,
     audioPlayerVisibleState,
     changeGlobalPlayingState,
     close,
-    contentId,
-    contentType,
     currentIndex,
-    currentMemberId,
     documentVisible,
     isBackgroundMode,
+    loadingProgramContent,
     pathname,
     playList,
     programContent,
     programContentId,
-    programContentLastProgress,
-    programId,
-    recentProgramContent,
-    recentProgramId,
-    refetchContentLastProgress,
     settings,
     setup,
-    source,
-    title,
-    videoId,
   ])
 
   const insertProgramProgress = async ({
@@ -321,7 +245,9 @@ const GlobalAudioPlayer: React.VFC = () => {
           playList={playList}
           isPlaying={isPlaying}
           lastProgress={
-            pathname.includes('members') ? recentProgramContent?.lastProgress : playList[currentIndex]?.lastProgress
+            !loadingProgramContent && pathname.includes('contents')
+              ? programContent?.lastProgress
+              : playList[currentIndex]?.lastProgress
           }
           audioUrl={audioUrl}
           mimeType={mimeType}

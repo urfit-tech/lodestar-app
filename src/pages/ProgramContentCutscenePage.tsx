@@ -14,8 +14,7 @@ import { StyledLayoutContent } from '../components/layout/DefaultLayout/DefaultL
 import ProgramContentMenu from '../components/program/ProgramContentMenu'
 import ProgramContentNoAuthBlock from '../components/program/ProgramContentNoAuthBlock'
 import AudioPlayerContext from '../contexts/AudioPlayerContext'
-import { hasJsonStructure } from '../helpers'
-import { useProgram } from '../hooks/program'
+import { useProgram, useRecentProgramContent } from '../hooks/program'
 import pageMessages from './translation'
 
 const StyledPCPageHeader = styled(PageHeader)`
@@ -58,12 +57,12 @@ const ProgramContentCutscenePage: React.VFC = () => {
   const history = useHistory()
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
-  const { id: appId } = useApp()
-  const { isAuthenticating, isAuthenticated } = useAuth()
+  const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
   const { programId } = useParams<{ programId: string }>()
   const [previousPage] = useQueryParam('back', StringParam)
   const { loadingProgram, program, errorProgram } = useProgram(programId)
   const { contentId } = useContext(AudioPlayerContext)
+  const { recentProgramContent } = useRecentProgramContent(currentMemberId || '')
 
   if (loadingProgram || isAuthenticating || !program) {
     return (
@@ -75,12 +74,6 @@ const ProgramContentCutscenePage: React.VFC = () => {
   if (!isAuthenticated) return <ProgramContentNoAuthBlock />
 
   if (errorProgram) return <>fetch program data error</>
-
-  let lastProgramContent: { [key: string]: string } = {}
-
-  if (hasJsonStructure(localStorage.getItem(`${appId}.program.info`) || '')) {
-    lastProgramContent = JSON.parse(localStorage.getItem(`${appId}.program.info`) || '')
-  }
 
   // ProgramContentPage
   if (flatten(program?.contentSections.map(v => v.contents) || []).length === 0) {
@@ -147,12 +140,14 @@ const ProgramContentCutscenePage: React.VFC = () => {
       <Redirect to={`/programs/${programId}/contents/${contentId}?back=${previousPage || `programs_${programId}`}`} />
     )
   } else if (
-    Object.keys(lastProgramContent).includes(programId) &&
-    flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(lastProgramContent[programId])
+    recentProgramContent?.contentId &&
+    flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(
+      recentProgramContent?.contentId,
+    )
   ) {
     return (
       <Redirect
-        to={`/programs/${programId}/contents/${lastProgramContent[programId]}?back=${
+        to={`/programs/${programId}/contents/${recentProgramContent?.contentId}?back=${
           previousPage || `programs_${programId}`
         }`}
       />

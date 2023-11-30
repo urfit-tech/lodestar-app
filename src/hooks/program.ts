@@ -303,6 +303,9 @@ export const useProgram = (programId: string) => {
               sale_price
               sold_at
               content_body_id
+              program_content_progress(order_by: { updated_at: desc }, limit: 1) {
+                last_progress
+              }
               program_content_type {
                 id
                 type
@@ -449,6 +452,7 @@ export const useProgram = (programId: string) => {
             salePrice: programContent.sale_price,
             soldAt: programContent.sold_at && new Date(programContent.sold_at),
             contentBodyId: programContent.content_body_id,
+            lastProgress: programContent.program_content_progress[0]?.last_progress || 0,
             videos: programContent.program_content_videos.map(v => ({
               id: v.attachment.id,
               size: v.attachment.size,
@@ -566,6 +570,9 @@ export const GetProgramContent = gql`
         options
         created_at
       }
+      program_content_progress(order_by: { updated_at: desc }, limit: 1) {
+        last_progress
+      }
     }
   }
 `
@@ -630,6 +637,7 @@ export const useProgramContent = (programContentId: string) => {
               options: u.options,
               createdAt: u.created_at,
             })),
+            lastProgress: data.program_content_by_pk.program_content_progress[0]?.last_progress || 0,
           },
     [data],
   )
@@ -900,46 +908,6 @@ export const useMutateMaterialAuditLog = () => {
   }
 }
 
-export const useProgramContentLastProgress = (programId: string, memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetProgramContentLastProgress,
-    hasura.GetProgramContentLastProgressVariables
-  >(
-    gql`
-      query GetProgramContentLastProgress($programId: uuid!, $memberId: String!) {
-        program_content_progress(
-          where: {
-            member_id: { _eq: $memberId }
-            program_content: { program_content_section: { program_id: { _eq: $programId } } }
-          }
-          distinct_on: program_content_id
-          order_by: [{ updated_at: desc, program_content_id: asc }]
-        ) {
-          updated_at
-          program_content_id
-          last_progress
-        }
-      }
-    `,
-    { variables: { programId, memberId } },
-  )
-
-  const programContentLastProgress =
-    loading || error || !data
-      ? undefined
-      : data.program_content_progress.map(progress => ({
-          contentId: progress.program_content_id,
-          lastProgress: progress.last_progress,
-        }))
-
-  return {
-    loadingContentLastProgress: loading,
-    errorContentLastProgress: error,
-    programContentLastProgress,
-    refetchContentLastProgress: refetch,
-  }
-}
-
 export const useInsertProgress = ({
   memberId,
   programContentId,
@@ -988,28 +956,6 @@ export const useInsertProgress = ({
     },
   )
   return insertProgramContentProgress
-}
-
-export const useProgramId = (contentId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetProgramIdByContentId,
-    hasura.GetProgramIdByContentIdVariables
-  >(
-    gql`
-      query GetProgramIdByContentId($contentId: uuid!) {
-        program(where: { program_content_sections: { program_contents: { id: { _eq: $contentId } } } }) {
-          id
-        }
-      }
-    `,
-    { variables: { contentId } },
-  )
-  const recentProgramId = loading || error || !data ? undefined : data.program.map(program => program.id)[0]
-  return {
-    recentProgramId,
-    RefetchRecentProgramId: refetch,
-    loadingRecentProgramId: loading,
-  }
 }
 
 export const useRecentProgramContent = (memberId: string) => {
