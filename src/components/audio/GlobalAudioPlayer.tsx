@@ -5,13 +5,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import AudioPlayerContext, { AudioPlayerMode } from '../../contexts/AudioPlayerContext'
 import { useInsertProgress, useProgramContentProgress } from '../../contexts/ProgressContext'
-import {
-  useProgram,
-  useProgramContent,
-  useProgramContentLog,
-  useProgramId,
-  useRecentProgramContentLogContentId,
-} from '../../hooks/program'
+import { useProgram, useProgramContent, useProgramContentLog } from '../../hooks/program'
 import AudioPlayer from './AudioPlayer'
 
 const GlobalAudioPlayer: React.VFC = () => {
@@ -52,11 +46,11 @@ const GlobalAudioPlayer: React.VFC = () => {
     programId,
     currentMemberId || '',
   )
-  const { recentProgramContent, RefetchRecentProgramContentId } = useRecentProgramContentLogContentId(
-    currentMemberId || '',
-  )
   const { programContent } = useProgramContent(programContentId)
-  const { recentProgramId, RefetchRecentProgramId } = useProgramId(recentProgramContent?.contentId)
+  // const { recentProgramContent, RefetchRecentProgramContentId } = useRecentProgramContentLogContentId(
+  //   currentMemberId || '',
+  // )
+  // const { recentProgramId, RefetchRecentProgramId } = useProgramId(recentProgramContent?.contentId)
 
   const programContentBodyType = programContent?.programContentBody?.type
   const pathname = location.pathname
@@ -86,8 +80,8 @@ const GlobalAudioPlayer: React.VFC = () => {
       setDocumentVisible(!documentVisible)
     }
     document.addEventListener('visibilitychange', visibilitychange)
-    RefetchRecentProgramContentId()
-    RefetchRecentProgramId()
+    // RefetchRecentProgramContentId()
+    // RefetchRecentProgramId()
     if (
       playList[currentIndex] &&
       audioPlayerVisibleState !== 'close' &&
@@ -101,35 +95,35 @@ const GlobalAudioPlayer: React.VFC = () => {
     } else {
       changeGlobalPlayingState?.(false)
     }
-    const memberId = pathname.split('/')[2]
-    if (pathname.includes('members') && recentProgramId && memberId === currentMemberId && playList[currentIndex]) {
-      if (programId === recentProgramId) {
-        setup?.({
-          backgroundMode: isBackgroundMode,
-          contentType,
-          programId,
-          contentId,
-          videoId,
-          source,
-          lastEndedAt,
-        })
-      }
-      if (programId !== recentProgramId) {
-        setup?.({
-          backgroundMode: isBackgroundMode,
-          programId: recentProgramId,
-          videoId: recentProgramContent?.videoId,
-          contentId: recentProgramContent?.contentId,
-          lastEndedAt: recentProgramContent?.endedAt,
-          contentType: recentProgramContent?.contentType,
-          source: recentProgramContent?.source,
-        })
-      }
-      changeGlobalPlayingState?.(true)
-      if (audioPlayerVisibleState === 'close') {
-        changeGlobalPlayingState?.(false)
-      }
-    }
+    // const memberId = pathname.split('/')[2]
+    // if (pathname.includes('members') && recentProgramId && memberId === currentMemberId && playList[currentIndex]) {
+    //   if (programId === recentProgramId) {
+    //     setup?.({
+    //       backgroundMode: isBackgroundMode,
+    //       contentType,
+    //       programId,
+    //       contentId,
+    //       videoId,
+    //       source,
+    //       lastEndedAt,
+    //     })
+    //   }
+    //   if (programId !== recentProgramId) {
+    //     setup?.({
+    //       backgroundMode: isBackgroundMode,
+    //       programId: recentProgramId,
+    //       videoId: recentProgramContent?.videoId,
+    //       contentId: recentProgramContent?.contentId,
+    //       lastEndedAt: recentProgramContent?.endedAt,
+    //       contentType: recentProgramContent?.contentType,
+    //       source: recentProgramContent?.source,
+    //     })
+    //   }
+    //   changeGlobalPlayingState?.(true)
+    //   if (audioPlayerVisibleState === 'close') {
+    //     changeGlobalPlayingState?.(false)
+    //   }
+    // }
     if (pathname.includes('contents')) {
       const programId = pathname.split('/')[2]
       const contentId = pathname.split('/')[4]
@@ -181,36 +175,21 @@ const GlobalAudioPlayer: React.VFC = () => {
     }
     return () => document.removeEventListener('visibilitychange', visibilitychange)
   }, [
-    RefetchRecentProgramContentId,
-    RefetchRecentProgramId,
     audioPlayerVisibleState,
     changeGlobalPlayingState,
     close,
-    contentId,
-    contentType,
     currentIndex,
-    currentMemberId,
     documentVisible,
     isBackgroundMode,
-    lastEndedAt,
     pathname,
     playList,
     programContent,
     programContentBodyType,
     programContentId,
     programContentLog,
-    programId,
-    recentProgramContent?.contentId,
-    recentProgramContent?.contentType,
-    recentProgramContent?.endedAt,
-    recentProgramContent?.source,
-    recentProgramContent?.videoId,
-    recentProgramId,
     refetchContentLog,
     settings,
     setup,
-    source,
-    videoId,
   ])
 
   const insertProgramProgress = async ({
