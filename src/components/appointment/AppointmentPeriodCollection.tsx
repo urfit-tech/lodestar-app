@@ -41,51 +41,58 @@ const AppointmentPeriodBlock: React.VFC<{
         <StyledScheduleTitle>{moment(periods[0].startedAt).format('YYYY-MM-DD(dd)')}</StyledScheduleTitle>
       ) : null}
       <div className="d-flex flex-wrap justify-content-start">
-        {periods.map(period => {
-          const ItemElem = (
-            <AppointmentItem
-              key={period.id}
-              creatorId={creatorId}
-              appointmentPlan={{
-                id: appointmentPlan.id,
-                capacity: appointmentPlan.capacity,
-                defaultMeetGateway: appointmentPlan.defaultMeetGateway,
-              }}
-              period={{
-                startedAt: period.startedAt,
-                endedAt: period.endedAt,
-              }}
-              services={services}
-              loadingServices={loadingServices}
-              isPeriodExcluded={!period.available}
-              isEnrolled={period.currentMemberBooked}
-              onClick={() =>
-                !period.currentMemberBooked && !period.isBookedReachLimit && !period.available ? onClick(period) : null
-              }
-              overLapPeriods={overLapPeriods}
-              onOverlapPeriodsChange={setOverLapPeriods}
-            />
+        {Object.values(groupBy(period => dayjs(period.startedAt).format('YYYY-MM-DDTHH:mm:00Z'), periods))
+          .map(periods =>
+            periods.sort((a, b) => a.appointmentScheduleCreatedAt.getTime() - b.appointmentScheduleCreatedAt.getTime()),
           )
+          .map(periods => periods[0])
+          .map(period => {
+            const ItemElem = (
+              <AppointmentItem
+                key={period.id}
+                creatorId={creatorId}
+                appointmentPlan={{
+                  id: appointmentPlan.id,
+                  capacity: appointmentPlan.capacity,
+                  defaultMeetGateway: appointmentPlan.defaultMeetGateway,
+                }}
+                period={{
+                  startedAt: period.startedAt,
+                  endedAt: period.endedAt,
+                }}
+                services={services}
+                loadingServices={loadingServices}
+                isPeriodExcluded={!period.available}
+                isEnrolled={period.currentMemberBooked}
+                onClick={() =>
+                  !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
+                    ? onClick(period)
+                    : null
+                }
+                overLapPeriods={overLapPeriods}
+                onOverlapPeriodsChange={setOverLapPeriods}
+              />
+            )
 
-          return isAuthenticated && !period.currentMemberBooked ? (
-            <div key={period.id} onClick={() => onClick && onClick(period)}>
-              {ItemElem}
-            </div>
-          ) : isAuthenticated && period.currentMemberBooked ? (
-            <div
-              key={period.id}
-              onClick={() => {
-                return
-              }}
-            >
-              {ItemElem}
-            </div>
-          ) : (
-            <div key={period.id} onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
-              {ItemElem}
-            </div>
-          )
-        })}
+            return isAuthenticated && !period.currentMemberBooked ? (
+              <div key={period.id} onClick={() => onClick && onClick(period)}>
+                {ItemElem}
+              </div>
+            ) : isAuthenticated && period.currentMemberBooked ? (
+              <div
+                key={period.id}
+                onClick={() => {
+                  return
+                }}
+              >
+                {ItemElem}
+              </div>
+            ) : (
+              <div key={period.id} onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
+                {ItemElem}
+              </div>
+            )
+          })}
       </div>
     </div>
   )
