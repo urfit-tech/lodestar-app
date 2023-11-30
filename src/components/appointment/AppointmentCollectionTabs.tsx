@@ -70,7 +70,7 @@ const StyledTimeStandardBlock = styled.div`
 
 const AppointmentCollectionTabs: React.VFC<{
   creatorId: string
-  appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] })[]
+  appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] & { appointmentScheduleCreatedAt: Date }[] })[]
 }> = ({ creatorId, appointmentPlans }) => {
   const { formatMessage } = useIntl()
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string | null>(appointmentPlans[0].id)
