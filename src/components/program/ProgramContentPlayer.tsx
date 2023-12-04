@@ -1,5 +1,6 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -435,6 +436,75 @@ const ProgramContentPlayerWrapper = (props: {
         { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
       ])
     }
+    // aws cloudfront cookie
+    Cookies.remove('CloudFront-Policy')
+    Cookies.remove('CloudFront-Key-Pair-Id')
+    Cookies.remove('CloudFront-Signature')
+    // path from lambda function => cloudfront.playPaths (file generated from Media Convert)
+    if (props.options?.cloudfront?.playPaths) {
+      const { hls, dash } = props.options.cloudfront.playPaths
+      const path = hls.split('hls')
+      console.log(path)
+      axios
+        .post(
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-cookies`,
+          {
+            url: `${path[0]}*`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+            withCredentials: true,
+          },
+        )
+        .then(({ data }) => {
+          setSources([
+            {
+              type: 'application/x-mpegURL',
+              src: hls,
+            },
+            {
+              type: 'application/dash+xml',
+              src: dash,
+            },
+          ])
+          return
+        })
+        .catch(error => setError(error.toString()))
+        .finally(() => setLoading(false))
+    }
+
+    // file migrate from cloudflare => cloudfront.path (file generated from cloudflare)
+    if (props.options?.cloudfront?.path) {
+      const { path } = props.options.cloudfront
+
+      axios
+        .post(
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-cookies`,
+          {
+            url: `${path.split('manifest')[0]}*`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+            withCredentials: true,
+          },
+        )
+        .then(({ data }) => {
+          setSources([
+            {
+              type: 'application/x-mpegURL',
+              src: path,
+            },
+          ])
+          return
+        })
+        .catch(error => setError(error.toString()))
+        .finally(() => setLoading(false))
+    }
+
     if (props.options?.cloudflare) {
       setLoading(true)
       axios
