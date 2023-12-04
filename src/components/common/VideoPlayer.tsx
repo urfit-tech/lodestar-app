@@ -39,11 +39,15 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
 
   const videoOptions: VideoJsPlayerOptions = {
     html5: {
+      hls: {
+        withCredentials: true,
+      },
       vhs: {
         overrideNative: !videojs.browser.IS_SAFARI,
         limitRenditionByPlayerDimensions: false,
         useBandwidthFromLocalStorage: true,
         useNetworkInformationApi: true,
+        withCredentials: true,
       },
       nativeTextTracks: videojs.browser.IS_SAFARI,
       nativeAudioTracks: videojs.browser.IS_SAFARI,
