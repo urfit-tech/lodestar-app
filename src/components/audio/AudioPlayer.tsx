@@ -340,7 +340,7 @@ const AudioControls: React.FC<{
           <Icon as={Backward15Icon} />
         </StyledButton>
 
-        <StyledButton type="link" variant="bar" height="44px" onClick={onPlay}>
+        <StyledButton type="link" variant="bar" height="44px" onClick={onPlay} disabled={isLoading}>
           {isLoading ? (
             <StyledRotateIcon as={AiOutlineLoading} />
           ) : (
@@ -371,7 +371,7 @@ const AudioPlayer: React.VFC<{
   contentSectionTitle: string
   audioUrl: string
   mode: AudioPlayerMode
-  lastEndedAt: number
+  lastProgress: number | undefined
   playList: (ProgramContent & { programId?: string; contentSectionTitle?: string; progress?: number })[]
   currentIndex: number
   mimeType: string
@@ -386,7 +386,7 @@ const AudioPlayer: React.VFC<{
   mode,
   contentSectionTitle,
   currentIndex,
-  lastEndedAt,
+  lastProgress,
   playList,
   isPlaying,
   audioUrl,
@@ -406,14 +406,15 @@ const AudioPlayer: React.VFC<{
   const lastEndedTime = useRef<number>(0)
   const location = useLocation()
   const pathname = location.pathname
-  const { id: contentId, programId } = playList[currentIndex]
-  const link = `/programs/${programId}/contents/${contentId}`
+  const link = `/programs/${playList[currentIndex]?.programId}/contents/${playList[currentIndex]?.id}`
   const isLoading = duration === 0
   const isLast = playList.length - 1 === currentIndex
   const isFirst = currentIndex === 0
 
   useInterval(() => {
-    setProgress(audioRef.current?.currentTime || 0)
+    if (audioRef.current) {
+      setProgress(audioRef.current.currentTime || 0)
+    }
   }, 500)
 
   useEffect(() => {
@@ -543,7 +544,10 @@ const AudioPlayer: React.VFC<{
                   isLast={isLast}
                   isFirst={isFirst}
                   onPrev={() => onPrev?.()}
-                  onBackward={() => audioRef.current && (audioRef.current.currentTime = progress - 15)}
+                  onBackward={() => {
+                    const backwardSeconds = 15
+                    audioRef.current && (audioRef.current.currentTime = progress - backwardSeconds)
+                  }}
                   onPlay={() => {
                     onPlay(!isPlaying)
                     audioRef.current && (isPlaying ? audioRef.current.pause() : audioRef.current.play())
@@ -560,7 +564,10 @@ const AudioPlayer: React.VFC<{
                       lastEndedTime.current = audioRef.current.currentTime
                     }
                   }}
-                  onForward={() => audioRef.current && (audioRef.current.currentTime = progress + 15)}
+                  onForward={() => {
+                    const forwardSeconds = 15
+                    audioRef.current && (audioRef.current.currentTime = progress + forwardSeconds)
+                  }}
                   onNext={() => onNext?.()}
                 />
               </Flex>
@@ -622,9 +629,13 @@ const AudioPlayer: React.VFC<{
         loop={mode === 'single-loop'}
         onLoadedMetadata={() => {
           if (audioRef.current) {
-            audioRef.current.currentTime = lastEndedAt === audioRef.current.duration ? 0 : lastEndedAt
+            const duration = audioRef.current.duration
+            const lastEndedAt = lastProgress === undefined ? 0 : lastProgress * duration
+            const preSeconds = 15
+            audioRef.current.currentTime =
+              lastEndedAt === audioRef.current.duration || lastEndedAt === 0 ? 0 : lastEndedAt - preSeconds
             audioRef.current.playbackRate = playRate
-            setDuration(audioRef.current.duration)
+            setDuration(duration)
             onPlay(true)
           }
         }}
