@@ -32,8 +32,6 @@ const GlobalPodcastPlayer: React.VFC = () => {
       if (contentId) {
         close?.()
       }
-    } else if (pathname.includes('members')) {
-      close?.()
     }
   }, [close, pathname])
 

@@ -42,7 +42,7 @@ export type Program = ProgramBriefProps & {
     groupBuyingPeople: number
   })[]
   contentSections: (ProgramContentSection & {
-    contents: (ProgramContent & { programId?: string; contentSectionTitle?: string; progress?: number })[]
+    contents: (ProgramContent & { programId?: string; contentSectionTitle?: string })[]
   })[]
 }
 
@@ -113,6 +113,7 @@ export type ProgramContent = {
   listPrice: number | null
   salePrice: number | null
   soldAt: Date | null
+  lastProgress: number
   // materials?: ProgramContentMaterialProps[]
   videos: { id: string; size: number; options: { cloudflare?: object }; data: { source?: string } }[]
   audios: { data: object }[]
