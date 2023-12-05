@@ -15,11 +15,10 @@ type AudioPlayerContextValue = {
   programId: string
   videoId: string
   mimeType: string
-  contentType: string
+  contentType: string | null
   source: string
   contentId: string
   visible: boolean
-  lastEndedAt: number
   changePlayingState?: (state: boolean) => void
   changeGlobalPlayingState?: (state: boolean) => void
   changeBackgroundMode?: (state: boolean) => void
@@ -29,9 +28,8 @@ type AudioPlayerContextValue = {
     contentSectionTitle?: string
     programId?: string
     contentId: string
-    lastEndedAt?: number
     backgroundMode?: boolean
-    contentType?: string
+    contentType?: string | null
     videoId?: string
     source?: string
   }) => void
@@ -43,12 +41,11 @@ const defaultAudioPlayerContext: AudioPlayerContextValue = {
   audioUrl: '',
   programId: '',
   mimeType: '',
-  lastEndedAt: 0,
   source: '',
   contentId: '',
   videoId: '',
   visible: false,
-  contentType: '',
+  contentType: null,
   isPlaying: true,
   isBackgroundMode: false,
 }
@@ -72,11 +69,10 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
   const [programId, setProgramId] = useState(playing.programId || '')
   const [contentId, setContentId] = useState(playing.contentId || '')
   const [isBackgroundMode, setIsBackgroundMode] = useState(playing.backgroundMode || false)
-  const [contentType, setContentType] = useState(playing.contentType || '')
+  const [contentType, setContentType] = useState(playing.contentType || null)
   const [source, setSource] = useState(playing.source || '')
   const [videoId, setVideoId] = useState(playing.videoId || '')
   const [isPlaying, setIsPlaying] = useState(false)
-  const [lastEndedAt, setLastEndAt] = useState(0)
   const [title, setTitle] = useState('')
   const [contentSectionTitle, setContentSectionTitle] = useState('')
   const [audioUrl, setAudioUrl] = useState('')
@@ -121,7 +117,6 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
         title,
         contentSectionTitle,
         audioUrl,
-        lastEndedAt,
         mimeType,
         contentType,
         isPlaying,
@@ -152,22 +147,12 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
           localStorage.setItem('audioPlayerVisibleState', 'close')
         },
         setup: options => {
-          const {
-            title,
-            contentSectionTitle,
-            programId,
-            contentId,
-            lastEndedAt,
-            backgroundMode,
-            contentType,
-            videoId,
-            source,
-          } = options
+          const { title, contentSectionTitle, programId, contentId, backgroundMode, contentType, videoId, source } =
+            options
           title && setTitle(title)
           contentSectionTitle && setContentSectionTitle(contentSectionTitle)
           programId && setProgramId(programId)
           contentId && setContentId(contentId)
-          lastEndedAt && setLastEndAt(lastEndedAt)
           contentType && setContentType(contentType)
           videoId && setVideoId(videoId)
           source && setSource(source)

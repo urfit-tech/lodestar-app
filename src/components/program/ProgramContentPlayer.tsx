@@ -1,5 +1,6 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -421,7 +422,7 @@ const ProgramContentPlayerWrapper = (props: {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [poster, setPoster] = useState<string>()
-  const [sources, setSources] = useState<{ src: string; type: string }[]>([])
+  const [sources, setSources] = useState<{ src: string; type: string; withCredentials?: boolean }[]>([])
   const { authToken } = useAuth()
   useEffect(() => {
     if (props.data?.source === 'youtube') {
@@ -434,6 +435,76 @@ const ProgramContentPlayerWrapper = (props: {
         { type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' },
         { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
       ])
+    }
+    // aws cloudfront cookie
+    Cookies.remove('CloudFront-Policy')
+    Cookies.remove('CloudFront-Key-Pair-Id')
+    Cookies.remove('CloudFront-Signature')
+    // path from lambda function => cloudfront.playPaths (file generated from Media Convert)
+    if (props.options?.cloudfront?.playPaths) {
+      const { hls, dash } = props.options.cloudfront.playPaths
+      const path = hls.split('hls')
+      axios
+        .post(
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-cookies`,
+          {
+            url: `${path[0]}*`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+            withCredentials: true,
+          },
+        )
+        .then(({ data }) => {
+          setSources([
+            {
+              type: 'application/x-mpegURL',
+              src: hls,
+              withCredentials: true,
+            },
+            {
+              type: 'application/dash+xml',
+              src: dash,
+              withCredentials: true,
+            },
+          ])
+        })
+        .catch(error => setError(error.toString()))
+        .finally(() => setLoading(false))
+      return
+    }
+
+    // file migrate from cloudflare => cloudfront.path (file generated from cloudflare)
+    if (props.options?.cloudfront?.path) {
+      const { path } = props.options.cloudfront
+
+      axios
+        .post(
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-cookies`,
+          {
+            url: `${path.split('manifest')[0]}*`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+            withCredentials: true,
+          },
+        )
+        .then(({ data }) => {
+          setSources([
+            {
+              type: 'application/x-mpegURL',
+              src: path,
+              withCredentials: true,
+            },
+          ])
+        })
+        .catch(error => setError(error.toString()))
+        .finally(() => setLoading(false))
+      return
     }
     if (props.options?.cloudflare) {
       setLoading(true)
@@ -466,6 +537,7 @@ const ProgramContentPlayerWrapper = (props: {
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
+      return
     }
   }, [authToken, props.data, props.options, props.videoId])
   return props.children({ loading, error, sources, poster })

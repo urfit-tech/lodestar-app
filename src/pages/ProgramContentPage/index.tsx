@@ -17,7 +17,6 @@ import { EmptyBlock, StyledLayoutContent } from '../../components/layout/Default
 import ProgramContentMenu from '../../components/program/ProgramContentMenu'
 import ProgramContentNoAuthBlock from '../../components/program/ProgramContentNoAuthBlock'
 import { ProgressProvider } from '../../contexts/ProgressContext'
-import { hasJsonStructure } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useProgram } from '../../hooks/program'
 import LoadingPage from '../LoadingPage'
@@ -48,14 +47,6 @@ const ProgramContentPage: React.VFC = () => {
   const { resourceCollection } = useResourceCollection([`${appId}:program_content:${programContentId}`])
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
-
-  let oldProgramInfo = {}
-  if (hasJsonStructure(localStorage.getItem(`${appId}.program.info`) || '')) {
-    JSON.parse(localStorage.getItem(`${appId}.program.info`) || '')
-  }
-  programId &&
-    programContentId &&
-    localStorage.setItem(`${appId}.program.info`, JSON.stringify({ ...oldProgramInfo, [programId]: programContentId }))
 
   if (isAuthenticating || loadingProgram) {
     return <LoadingPage />

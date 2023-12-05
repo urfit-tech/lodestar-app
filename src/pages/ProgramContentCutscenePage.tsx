@@ -3,7 +3,7 @@ import { Layout, PageHeader } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten } from 'ramda'
-import React from 'react'
+import React, { useContext } from 'react'
 import { AiOutlineProfile } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
@@ -13,8 +13,8 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import { StyledLayoutContent } from '../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../components/program/ProgramContentMenu'
 import ProgramContentNoAuthBlock from '../components/program/ProgramContentNoAuthBlock'
-import { hasJsonStructure } from '../helpers'
-import { useProgram } from '../hooks/program'
+import AudioPlayerContext from '../contexts/AudioPlayerContext'
+import { useProgram, useRecentProgramContent } from '../hooks/program'
 import pageMessages from './translation'
 
 const StyledPCPageHeader = styled(PageHeader)`
@@ -57,11 +57,12 @@ const ProgramContentCutscenePage: React.VFC = () => {
   const history = useHistory()
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
-  const { id: appId } = useApp()
-  const { isAuthenticating, isAuthenticated } = useAuth()
+  const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
   const { programId } = useParams<{ programId: string }>()
   const [previousPage] = useQueryParam('back', StringParam)
   const { loadingProgram, program, errorProgram } = useProgram(programId)
+  const { contentId } = useContext(AudioPlayerContext)
+  const { recentProgramContent } = useRecentProgramContent(currentMemberId || '')
 
   if (loadingProgram || isAuthenticating || !program) {
     return (
@@ -73,12 +74,6 @@ const ProgramContentCutscenePage: React.VFC = () => {
   if (!isAuthenticated) return <ProgramContentNoAuthBlock />
 
   if (errorProgram) return <>fetch program data error</>
-
-  let lastProgramContent: { [key: string]: string } = {}
-
-  if (hasJsonStructure(localStorage.getItem(`${appId}.program.info`) || '')) {
-    lastProgramContent = JSON.parse(localStorage.getItem(`${appId}.program.info`) || '')
-  }
 
   // ProgramContentPage
   if (flatten(program?.contentSections.map(v => v.contents) || []).length === 0) {
@@ -138,12 +133,21 @@ const ProgramContentCutscenePage: React.VFC = () => {
       </Layout>
     )
   } else if (
-    Object.keys(lastProgramContent).includes(programId) &&
-    flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(lastProgramContent[programId])
+    contentId !== '' &&
+    flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(contentId)
+  ) {
+    return (
+      <Redirect to={`/programs/${programId}/contents/${contentId}?back=${previousPage || `programs_${programId}`}`} />
+    )
+  } else if (
+    recentProgramContent?.contentId &&
+    flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(
+      recentProgramContent?.contentId,
+    )
   ) {
     return (
       <Redirect
-        to={`/programs/${programId}/contents/${lastProgramContent[programId]}?back=${
+        to={`/programs/${programId}/contents/${recentProgramContent?.contentId}?back=${
           previousPage || `programs_${programId}`
         }`}
       />

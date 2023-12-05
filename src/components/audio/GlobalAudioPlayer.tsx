@@ -4,8 +4,8 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import AudioPlayerContext, { AudioPlayerMode } from '../../contexts/AudioPlayerContext'
-import { useInsertProgress, useProgramContentProgress } from '../../contexts/ProgressContext'
-import { useProgram, useProgramContent, useProgramContentLog } from '../../hooks/program'
+import { useInsertProgress } from '../../contexts/ProgressContext'
+import { useProgram, useProgramContent } from '../../hooks/program'
 import AudioPlayer from './AudioPlayer'
 
 const GlobalAudioPlayer: React.VFC = () => {
@@ -19,11 +19,7 @@ const GlobalAudioPlayer: React.VFC = () => {
     changeGlobalPlayingState,
     audioUrl,
     contentId,
-    videoId,
-    lastEndedAt,
-    contentType,
     title,
-    source,
     contentSectionTitle,
     setup,
     close,
@@ -40,38 +36,11 @@ const GlobalAudioPlayer: React.VFC = () => {
   const [documentVisible, setDocumentVisible] = useState(false)
 
   const insertProgress = useInsertProgress(currentMemberId || '')
-  const { programContentProgress, refetchProgress } = useProgramContentProgress(programId, currentMemberId || '')
   const { program } = useProgram(programId)
-  const { programContentLog, loadingContentLog, refetchContentLog } = useProgramContentLog(
-    programId,
-    currentMemberId || '',
-  )
-  const { programContent } = useProgramContent(programContentId)
-  // const { recentProgramContent, RefetchRecentProgramContentId } = useRecentProgramContentLogContentId(
-  //   currentMemberId || '',
-  // )
-  // const { recentProgramId, RefetchRecentProgramId } = useProgramId(recentProgramContent?.contentId)
+  const { programContent, loadingProgramContent } = useProgramContent(programContentId)
 
-  const programContentBodyType = programContent?.programContentBody?.type
   const pathname = location.pathname
-  const playList = program.contentSections
-    .map(p => p.contents)
-    .flat()
-    .map(content => {
-      const contentId = content.id
-      const progress = programContentProgress?.find(progress => progress.programContentId === contentId)
-      const lastEndedAt =
-        !loadingContentLog && programContentLog?.find(contentLog => contentLog.contentId === contentId)?.endedAt
-      const lastContentProgress = progress?.lastProgress
-      const contentProgress = progress?.progress
-
-      return {
-        ...content,
-        lastProgress: lastContentProgress,
-        progress: contentProgress,
-        lastEndedAt: lastEndedAt,
-      }
-    })
+  const playList = program.contentSections.map(p => p.contents).flat()
 
   const currentIndex = playList.findIndex(p => p.id === contentId)
 
@@ -80,97 +49,65 @@ const GlobalAudioPlayer: React.VFC = () => {
       setDocumentVisible(!documentVisible)
     }
     document.addEventListener('visibilitychange', visibilitychange)
-    // RefetchRecentProgramContentId()
-    // RefetchRecentProgramId()
-    if (
-      playList[currentIndex] &&
-      audioPlayerVisibleState !== 'close' &&
-      ((playList[currentIndex].contentType === 'audio' && playList[currentIndex].audios.length !== 0) ||
-        (isBackgroundMode &&
-          playList[currentIndex].contentType === 'video' &&
-          playList[currentIndex].videos.length !== 0))
-    ) {
-      document.title = `${playList[currentIndex].title} | ${settings['title']}`
+
+    if (playList[currentIndex] && audioPlayerVisibleState !== 'close') {
+      const currentContentType = playList[currentIndex].contentType
+      const currentAudiosLength = playList[currentIndex].audios.length
+      const currentVideosLength = playList[currentIndex].videos.length
+      if (
+        (currentContentType === 'audio' && currentAudiosLength !== 0) ||
+        (isBackgroundMode && currentContentType === 'video' && currentVideosLength !== 0)
+      )
+        document.title = `${playList[currentIndex].title} | ${settings['title']}`
       changeGlobalPlayingState?.(true)
     } else {
       changeGlobalPlayingState?.(false)
     }
-    // const memberId = pathname.split('/')[2]
-    // if (pathname.includes('members') && recentProgramId && memberId === currentMemberId && playList[currentIndex]) {
-    //   if (programId === recentProgramId) {
-    //     setup?.({
-    //       backgroundMode: isBackgroundMode,
-    //       contentType,
-    //       programId,
-    //       contentId,
-    //       videoId,
-    //       source,
-    //       lastEndedAt,
-    //     })
-    //   }
-    //   if (programId !== recentProgramId) {
-    //     setup?.({
-    //       backgroundMode: isBackgroundMode,
-    //       programId: recentProgramId,
-    //       videoId: recentProgramContent?.videoId,
-    //       contentId: recentProgramContent?.contentId,
-    //       lastEndedAt: recentProgramContent?.endedAt,
-    //       contentType: recentProgramContent?.contentType,
-    //       source: recentProgramContent?.source,
-    //     })
-    //   }
-    //   changeGlobalPlayingState?.(true)
-    //   if (audioPlayerVisibleState === 'close') {
-    //     changeGlobalPlayingState?.(false)
-    //   }
-    // }
+
     if (pathname.includes('contents')) {
       const programId = pathname.split('/')[2]
       const contentId = pathname.split('/')[4]
       setProgramContentId(contentId)
-      if (programContentBodyType === 'audio' && programContent?.audios.length !== 0) {
-        refetchContentLog()
-        const lastEndedAt = programContentLog?.find(contentLog => contentLog.contentId === programContentId)?.endedAt
-        setup?.({
-          backgroundMode: isBackgroundMode,
-          title: programContent?.title || '',
-          contentSectionTitle: programContent?.contentSectionTitle || '',
-          programId: programId,
-          contentId,
-          contentType: programContent?.contentType || '',
-          lastEndedAt,
-        })
-        if (programContent?.audios.length === 0) {
+      if (!loadingProgramContent && programContent) {
+        const programContentBodyType = programContent.programContentBody?.type
+        if (programContentBodyType === 'audio' && programContent.audios.length !== 0) {
+          setup?.({
+            backgroundMode: isBackgroundMode,
+            title: programContent.title,
+            contentSectionTitle: programContent.contentSectionTitle,
+            programId: programId,
+            contentId,
+            contentType: programContent.contentType,
+          })
+        } else if (
+          programContent &&
+          programContentBodyType === 'video' &&
+          isBackgroundMode &&
+          programContent.videos[0] &&
+          programContent.videos[0].data?.source !== 'youtube' &&
+          programContent.videos.length !== 0
+        ) {
+          const programContentVideo = programContent.videos[0]
+          setup?.({
+            backgroundMode: true,
+            title: programContent.title,
+            contentSectionTitle: programContent.contentSectionTitle,
+            programId: programId,
+            contentId: programContentId,
+            contentType: programContent.contentType,
+            videoId: programContentVideo.id,
+            source: programContentVideo.options?.cloudflare ? 'cloudflare' : programContentVideo.data?.source,
+          })
+        } else {
           close?.()
         }
-      } else if (
-        programContent &&
-        programContentBodyType === 'video' &&
-        isBackgroundMode &&
-        programContent.videos[0]?.data?.source !== 'youtube' &&
-        programContent.videos.length !== 0
-      ) {
-        setup?.({
-          backgroundMode: true,
-          title: programContent?.title || '',
-          contentSectionTitle: programContent.contentSectionTitle || '',
-          programId: programId,
-          contentId: programContentId,
-          contentType: programContent.contentType || '',
-          videoId: programContent.videos[0]?.id,
-          source: programContent.videos[0]?.options?.cloudflare ? 'cloudflare' : programContent.videos[0]?.data?.source,
-        })
-        if (programContent.videos.length === 0) {
-          close?.()
-        }
-      } else {
-        close?.()
       }
     }
+
     if (pathname.includes('podcasts')) {
       const podcastId = pathname.split('/')[2]
       if (podcastId) {
-        changeGlobalPlayingState?.(false)
+        close?.()
       }
     }
     return () => document.removeEventListener('visibilitychange', visibilitychange)
@@ -181,13 +118,11 @@ const GlobalAudioPlayer: React.VFC = () => {
     currentIndex,
     documentVisible,
     isBackgroundMode,
+    loadingProgramContent,
     pathname,
     playList,
     programContent,
-    programContentBodyType,
     programContentId,
-    programContentLog,
-    refetchContentLog,
     settings,
     setup,
   ])
@@ -253,11 +188,10 @@ const GlobalAudioPlayer: React.VFC = () => {
 
     while (true) {
       nextIndex = (nextIndex + quantity + playList.length) % playList.length
-
+      const nextContentType = playList[nextIndex].contentType
+      const nextAudio = playList[nextIndex].audios
       if (isBackgroundMode) {
-        const nextContentType = playList[nextIndex].contentType
         const nextVideo = playList[nextIndex].videos
-        const nextAudio = playList[nextIndex].audios
         const nextContentVideoSource = nextVideo[0]?.data?.source
         if (
           (nextContentType === 'video' && nextContentVideoSource !== 'youtube' && nextVideo.length !== 0) ||
@@ -282,7 +216,7 @@ const GlobalAudioPlayer: React.VFC = () => {
           return
         }
       } else {
-        if (playList[nextIndex].contentType === 'audio' && playList[nextIndex].audios?.length !== 0) {
+        if (nextContentType === 'audio' && nextAudio.length !== 0) {
           const { id: contentId, programId, title, contentSectionTitle, contentType } = playList[nextIndex]
 
           setup?.({
@@ -310,7 +244,11 @@ const GlobalAudioPlayer: React.VFC = () => {
           contentSectionTitle={contentSectionTitle}
           playList={playList}
           isPlaying={isPlaying}
-          lastEndedAt={playList[currentIndex]?.lastEndedAt || lastEndedAt}
+          lastProgress={
+            !loadingProgramContent && pathname.includes('contents')
+              ? programContent?.lastProgress
+              : playList[currentIndex]?.lastProgress
+          }
           audioUrl={audioUrl}
           mimeType={mimeType}
           mode={mode}
@@ -336,7 +274,7 @@ const GlobalAudioPlayer: React.VFC = () => {
           }}
           onAudioEvent={e => {
             const { playbackRate, startedAt, endedAt } = e.audioState
-            const { id: contentId, progress } = playList[currentIndex]
+            const { id: contentId, lastProgress } = playList[currentIndex]
             if (Math.abs(e.audioState.endedAt - endedAtRef.current) >= 5) {
               insertPlayerEventLog({
                 programContentId: contentId,
@@ -350,7 +288,7 @@ const GlobalAudioPlayer: React.VFC = () => {
                 insertProgramProgress({
                   programContentId: contentId,
                   progress: e.progress,
-                  initialProgress: progress || 0,
+                  initialProgress: lastProgress || 0,
                 })
               }
               endedAtRef.current = endedAt
@@ -368,8 +306,8 @@ const GlobalAudioPlayer: React.VFC = () => {
               insertProgramProgress({
                 programContentId: contentId,
                 progress: 1,
-                initialProgress: progress || 0,
-              }).then(() => refetchProgress())
+                initialProgress: lastProgress || 0,
+              })
             }
           }}
         />
