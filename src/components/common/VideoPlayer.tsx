@@ -36,6 +36,7 @@ type VideoJsPlayerProps = {
 const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   ;(videojs as any).Vhs.xhr.beforeRequest = (options: videojs.XhrOptions) => {
     const signed = Cookies.get('cloudfront-signed')
+    console.log(signed)
     if (options.uri && options.uri.includes('kolable.com/')) options.uri = options.uri + signed
     return options
   }
