@@ -194,9 +194,9 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   }
   return (
     <>
-      {metaLoaded && <Tracking.View />}
       {appPage ? (
         <>
+          {metaLoaded && <Tracking.View />}
           <PageHelmet
             title={appPage?.metaTag?.seo?.pageTitle || appPage?.title || ''}
             description={appPage?.metaTag?.seo?.description || appPage.defaultSettings.description || ''}
@@ -262,7 +262,10 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
           </DefaultLayout>
         </>
       ) : renderFallback ? (
-        renderFallback(location.pathname)
+        <>
+          <Tracking.View />
+          {renderFallback(location.pathname)}
+        </>
       ) : (
         <NotFoundPage />
       )}
