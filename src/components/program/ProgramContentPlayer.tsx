@@ -1,6 +1,5 @@
 import { CircularProgress, Icon } from '@chakra-ui/react'
 import axios from 'axios'
-import Cookies from 'js-cookie'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -438,12 +437,12 @@ const ProgramContentPlayerWrapper = (props: {
     }
     if (props.options?.cloudfront?.playPaths) {
       const { hls, dash } = props.options.cloudfront.playPaths
-      const path = hls.split('hls')
+      const output = hls.split('hls')
       axios
         .post(
           `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
           {
-            url: `${path[0]}*`,
+            url: `${output[0]}*`,
           },
           {
             headers: {
@@ -453,15 +452,16 @@ const ProgramContentPlayerWrapper = (props: {
         )
         .then(({ data }) => {
           const url = data.result
-          Cookies.set('cloudfront-signed', new URL(url).search, { expires: 1 / 12 })
+          const hlsPath = new URL(hls).pathname
+          const dashPath = new URL(dash).pathname
           setSources([
             {
               type: 'application/x-mpegURL',
-              src: hls,
+              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/storage${hlsPath}${new URL(url).search}`,
             },
             {
               type: 'application/dash+xml',
-              src: dash,
+              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/storage${dashPath}${new URL(url).search}`,
             },
           ])
         })
@@ -487,12 +487,12 @@ const ProgramContentPlayerWrapper = (props: {
           },
         )
         .then(({ data }) => {
-          const url = data.result
-          Cookies.set('cloudfront-signed', new URL(url).search, { expires: 1 / 12 })
+          const search = new URL(data.result).search
+          const pathname = new URL(path).pathname
           setSources([
             {
               type: 'application/x-mpegURL',
-              src: path,
+              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/storage${pathname}${search}`,
             },
           ])
         })
